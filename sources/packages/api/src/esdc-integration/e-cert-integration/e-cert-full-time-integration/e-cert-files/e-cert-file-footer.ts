@@ -10,7 +10,7 @@ import {
 } from "../../models/e-cert-integration-model";
 
 /**
- * Footer of an E-Cert file.
+ * Footer of a Full-Time E-Cert file.
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */

@@ -14,7 +14,7 @@ import { ECertFileHeader } from "../../e-cert-files/e-cert-file-header";
 const ORIGINATOR_CODE = "BC";
 
 /**
- * Header of an E-Cert file.
+ * Header of a Full-Time E-Cert file.
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */

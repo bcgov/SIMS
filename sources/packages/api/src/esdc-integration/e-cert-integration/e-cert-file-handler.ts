@@ -257,6 +257,8 @@ export class ECertFileHandler extends ESDCFileHandler {
 
   /**
    * Download all files from E-Cert Response folder on SFTP and process them all.
+   * @param eCertIntegrationService
+   * @param fileCode ECert response file code to be processed.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(
@@ -278,6 +280,7 @@ export class ECertFileHandler extends ESDCFileHandler {
 
   /**
    * Process each individual E-Cert response file from the SFTP.
+   * @param eCertIntegrationService
    * @param filePath E-Cert response file to be processed.
    * @returns Process summary and errors summary.
    */

@@ -82,7 +82,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "erfozag"
+      "id": "erfozag",
+      "addons": []
     },
     {
       "label": "eligibleAmount",
@@ -152,7 +153,8 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "inputType": "hidden",
-      "id": "e87q2yg"
+      "id": "e87q2yg",
+      "addons": []
     },
     {
       "label": "offeringIntensity",
@@ -222,7 +224,8 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "inputType": "hidden",
-      "id": "einsyks"
+      "id": "einsyks",
+      "addons": []
     },
     {
       "label": "NOA",
@@ -301,7 +304,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ev0qp2"
+      "id": "ev0qp2",
+      "addons": []
     },
     {
       "label": "Name",
@@ -380,7 +384,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "efqft3"
+      "id": "efqft3",
+      "addons": []
     },
     {
       "label": "HTML",
@@ -459,7 +464,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e4qti2l"
+      "id": "e4qti2l",
+      "addons": []
     },
     {
       "label": "Application Number",
@@ -538,7 +544,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ej6tm5i"
+      "id": "ej6tm5i",
+      "addons": []
     },
     {
       "label": "HTML",
@@ -617,7 +624,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ea88dr9"
+      "id": "ea88dr9",
+      "addons": []
     },
     {
       "title": "Eligibility",
@@ -733,7 +741,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ea4bq4o"
+          "id": "ea4bq4o",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -812,7 +821,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "en6j2ud"
+          "id": "en6j2ud",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -891,7 +901,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "etxnrq"
+          "id": "etxnrq",
+          "addons": []
         },
         {
           "label": "Tuition Remittance",
@@ -970,7 +981,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "elkl9dc"
+          "id": "elkl9dc",
+          "addons": []
         },
         {
           "label": "instructions",
@@ -1049,7 +1061,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ebau3ln"
+          "id": "ebau3ln",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -1128,7 +1141,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "eneoehn"
+          "id": "eneoehn",
+          "addons": []
         }
       ],
       "placeholder": "",
@@ -1167,7 +1181,9 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "tree": false,
-      "id": "eh387km"
+      "id": "eh387km",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "What you must do",
@@ -1246,7 +1262,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ezstqsn"
+      "id": "ezstqsn",
+      "addons": []
     },
     {
       "title": "What you must to do",
@@ -1362,7 +1379,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e4gi5y0l"
+          "id": "e4gi5y0l",
+          "addons": []
         },
         {
           "html": "<p style=\"margin-left:0cm;\">The National Student Loans Service Centre (NSLSC) will email you instructions for creating an online account. Once you've received the instructions:</p><ul><li><a href=\"https://protege-secure.csnpe-nslsc.canada.ca/en/public/register-account\">Create your account</a></li><li>Complete your master student financial assistance agreement (MSFAA)</li><li>Submit your MSFAA</li></ul><p style=\"margin-left:0cm;\">Once you've submitted your MSFAA and your Confirmation of Enrollment is complete, your money will be deposited to your account.</p>",
@@ -1433,7 +1451,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "edaj7u3"
+          "id": "edaj7u3",
+          "addons": []
         },
         {
           "label": "Already had a loan",
@@ -1512,7 +1531,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e4shruf"
+          "id": "e4shruf",
+          "addons": []
         },
         {
           "html": "<p>If you’ve had a loan in the last 2 years from StudentAid BC or have a valid MSFAA on file you don’t need to submit an MSFAA.</p><p>You should check your banking information by logging into your <a href=\"https://www.canada.ca/en/services/benefits/education/student-aid/manage-student-loan.html\">National Student Loans Service Centre account</a>. If it’s not up to date, you may not receive your loan..</p>",
@@ -1578,7 +1598,8 @@
           "showWordCount": false,
           "properties": {},
           "allowMultipleMasks": false,
-          "id": "evydbmj"
+          "id": "evydbmj",
+          "addons": []
         }
       ],
       "placeholder": "",
@@ -1617,7 +1638,9 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "tree": false,
-      "id": "eix4ea"
+      "id": "eix4ea",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "When you will receive funds",
@@ -1696,7 +1719,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ewfipr"
+      "id": "ewfipr",
+      "addons": []
     },
     {
       "title": "When you will receive funds",
@@ -1812,7 +1836,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e39k0y"
+          "id": "e39k0y",
+          "addons": []
         },
         {
           "label": "Table",
@@ -1971,7 +1996,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e7r8mlo"
+                    "id": "e7r8mlo000000",
+                    "addons": []
                   }
                 ]
               },
@@ -2054,7 +2080,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "exlna8b"
+                    "id": "exlna8b000000",
+                    "addons": []
                   }
                 ]
               }
@@ -2139,7 +2166,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eeliyod"
+                    "id": "eeliyod111111",
+                    "addons": []
                   }
                 ]
               },
@@ -2222,7 +2250,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ejihdhk"
+                    "id": "ejihdhk111111",
+                    "addons": []
                   }
                 ]
               }
@@ -2230,7 +2259,9 @@
           ],
           "header": [],
           "caption": "",
-          "id": "e6enlk9"
+          "id": "e6enlk9",
+          "addons": [],
+          "lazyLoad": false
         }
       ],
       "placeholder": "",
@@ -2269,7 +2300,9 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "tree": false,
-      "id": "eipntmj"
+      "id": "eipntmj",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "How your amount was calculated",
@@ -2348,7 +2381,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e1fc94t"
+      "id": "e1fc94t",
+      "addons": []
     },
     {
       "title": "how total was calculated",
@@ -2464,7 +2498,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ezttz5g"
+          "id": "ezttz5g",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -2543,7 +2578,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ewepno"
+          "id": "ewepno",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -2555,7 +2591,7 @@
               "value": ""
             }
           ],
-          "content": "<p>Your application was subject to the federal and provincial financial need assessment calculations, based on Canada Student Loan Program and StudentAid BC’s respective policies</p><ul><li>Total family income on the previous year's returns: <b>${{ data.assessment?.totalFamilyIncome }}</b></li><li>This Includes the income of your spouse, parents, stepparents, sponsors, or legal guardians</li><li>Scholarships and bursaries reported</li><li>Voluntary or targeted contributions reported, and</li><li>Assets reported by parents, stepparents, sponsors, or legal guardians (dependent students only)</li></ul>",
+          "content": "<p>Your application was subject to the federal and provincial financial need assessment calculations, based on Canada Student Loan Program and StudentAid BC’s respective policies</p><ul><li>Total family income on the previous year's returns: <b>${{ (data.assessment?.totalFamilyIncome).toFixed(2) }}</b></li><li>This Includes the income of your spouse, parents, stepparents, sponsors, or legal guardians</li><li>Scholarships and bursaries reported</li><li>Voluntary or targeted contributions reported, and</li><li>Assets reported by parents, stepparents, sponsors, or legal guardians (dependent students only)</li></ul>",
           "refreshOnChange": true,
           "customClass": "align-bullets",
           "hidden": false,
@@ -2622,7 +2658,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ezk5fq"
+          "id": "ewq74t4",
+          "addons": []
         }
       ],
       "placeholder": "",
@@ -2661,7 +2698,9 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "tree": false,
-      "id": "e5rw25f"
+      "id": "e5rw25f",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "title": "Your Assessment Breakdown",
@@ -2813,7 +2852,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e673hcu"
+                    "id": "e673hcu0000000000",
+                    "addons": []
                   }
                 ]
               },
@@ -2899,7 +2939,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "esv3ty"
+                    "id": "esv3ty1111111111",
+                    "addons": []
                   }
                 ]
               },
@@ -2977,7 +3018,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eqoagng"
+                    "id": "eqoagng1111111111",
+                    "addons": []
                   }
                 ]
               },
@@ -3055,7 +3097,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "egtlsfz"
+                    "id": "egtlsfz1111111111",
+                    "addons": []
                   }
                 ]
               }
@@ -3135,7 +3178,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ejwh7t"
+                    "id": "ejwh7t2222222222",
+                    "addons": []
                   }
                 ]
               },
@@ -3212,7 +3256,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eudjkpji"
+                    "id": "eudjkpji2222222222",
+                    "addons": []
                   }
                 ]
               },
@@ -3289,7 +3334,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "elzd2ml"
+                    "id": "elzd2ml2222222222",
+                    "addons": []
                   }
                 ]
               }
@@ -3369,7 +3415,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "etjk1k9"
+                    "id": "etjk1k93333333333",
+                    "addons": []
                   }
                 ]
               },
@@ -3446,7 +3493,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e93egep"
+                    "id": "e93egep3333333333",
+                    "addons": []
                   }
                 ]
               },
@@ -3523,7 +3571,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ew37b6"
+                    "id": "ew37b63333333333",
+                    "addons": []
                   }
                 ]
               }
@@ -3602,7 +3651,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "edhqbsj"
+                    "id": "edhqbsj4444444444",
+                    "addons": []
                   }
                 ]
               },
@@ -3679,7 +3729,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e5sbyftd"
+                    "id": "e5sbyftd4444444444",
+                    "addons": []
                   }
                 ]
               },
@@ -3756,7 +3807,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e8p45jv"
+                    "id": "e8p45jv4444444444",
+                    "addons": []
                   }
                 ]
               }
@@ -3836,7 +3888,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e4eszc"
+                    "id": "e4eszc5555555555",
+                    "addons": []
                   }
                 ]
               },
@@ -3913,7 +3966,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ekva4b0i"
+                    "id": "ekva4b0i5555555555",
+                    "addons": []
                   }
                 ]
               },
@@ -3990,7 +4044,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ezvrie"
+                    "id": "ezvrie5555555555",
+                    "addons": []
                   }
                 ]
               }
@@ -4069,7 +4124,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ez4dc3s"
+                    "id": "ez4dc3s6666666666",
+                    "addons": []
                   }
                 ]
               },
@@ -4146,7 +4202,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ejpf6dg"
+                    "id": "ejpf6dg6666666666",
+                    "addons": []
                   }
                 ]
               },
@@ -4223,7 +4280,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ep3ne2k"
+                    "id": "ep3ne2k6666666666",
+                    "addons": []
                   }
                 ]
               }
@@ -4302,7 +4360,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eaidab"
+                    "id": "eaidab7777777777",
+                    "addons": []
                   }
                 ]
               },
@@ -4379,7 +4438,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e8plbqc"
+                    "id": "e8plbqc7777777777",
+                    "addons": []
                   }
                 ]
               },
@@ -4456,7 +4516,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e905g78"
+                    "id": "e905g787777777777",
+                    "addons": []
                   }
                 ]
               }
@@ -4535,7 +4596,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eos814n"
+                    "id": "eos814n8888888888",
+                    "addons": []
                   }
                 ]
               },
@@ -4612,7 +4674,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ee1x1k"
+                    "id": "ee1x1k8888888888",
+                    "addons": []
                   }
                 ]
               },
@@ -4689,7 +4752,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "epmkm5g"
+                    "id": "epmkm5g8888888888",
+                    "addons": []
                   }
                 ]
               }
@@ -4769,7 +4833,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e6gygik"
+                    "id": "e6gygik9999999999",
+                    "addons": []
                   }
                 ]
               },
@@ -4846,7 +4911,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eqnf417"
+                    "id": "eqnf4179999999999",
+                    "addons": []
                   }
                 ]
               },
@@ -4923,7 +4989,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ejc81f"
+                    "id": "ejc81f9999999999",
+                    "addons": []
                   }
                 ]
               }
@@ -5002,7 +5069,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e05pfh"
+                    "id": "e05pfh10101010101010101010",
+                    "addons": []
                   }
                 ]
               },
@@ -5088,7 +5156,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "emm5cor"
+                    "id": "emm5cor11111111111111111111",
+                    "addons": []
                   }
                 ]
               },
@@ -5166,7 +5235,8 @@
                     "showWordCount": false,
                     "properties": {},
                     "allowMultipleMasks": false,
-                    "id": "e3arbzle"
+                    "id": "e3arbzle11111111111111111111",
+                    "addons": []
                   }
                 ]
               },
@@ -5244,7 +5314,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eos5qa8"
+                    "id": "eos5qa811111111111111111111",
+                    "addons": []
                   }
                 ]
               }
@@ -5324,7 +5395,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ew1uko9"
+                    "id": "ew1uko912121212121212121212",
+                    "addons": []
                   }
                 ]
               },
@@ -5402,7 +5474,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e4181x7"
+                    "id": "e4181x712121212121212121212",
+                    "addons": []
                   }
                 ]
               },
@@ -5480,7 +5553,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e8xaf5q"
+                    "id": "e8xaf5q12121212121212121212",
+                    "addons": []
                   }
                 ]
               }
@@ -5560,7 +5634,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "el3k7ow"
+                    "id": "el3k7ow13131313131313131313",
+                    "addons": []
                   }
                 ]
               },
@@ -5637,7 +5712,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eh5v82u"
+                    "id": "eh5v82u13131313131313131313",
+                    "addons": []
                   }
                 ]
               },
@@ -5715,7 +5791,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eccpsw9"
+                    "id": "eccpsw913131313131313131313",
+                    "addons": []
                   }
                 ]
               }
@@ -5795,7 +5872,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ez4gu9"
+                    "id": "ez4gu914141414141414141414",
+                    "addons": []
                   }
                 ]
               },
@@ -5872,7 +5950,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e8d9988"
+                    "id": "e8d998814141414141414141414",
+                    "addons": []
                   }
                 ]
               },
@@ -5949,7 +6028,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "erfohbe"
+                    "id": "erfohbe14141414141414141414",
+                    "addons": []
                   }
                 ]
               }
@@ -6029,7 +6109,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eldeadr"
+                    "id": "eldeadr15151515151515151515",
+                    "addons": []
                   }
                 ]
               },
@@ -6106,7 +6187,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ewl5dz"
+                    "id": "ewl5dz15151515151515151515",
+                    "addons": []
                   }
                 ]
               },
@@ -6184,7 +6266,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "erslp2nf"
+                    "id": "erslp2nf15151515151515151515",
+                    "addons": []
                   }
                 ]
               }
@@ -6256,7 +6339,8 @@
                     "showWordCount": false,
                     "properties": {},
                     "allowMultipleMasks": false,
-                    "id": "ensr1ib"
+                    "id": "ensr1ib16161616161616161616",
+                    "addons": []
                   }
                 ]
               },
@@ -6342,7 +6426,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eiv23e"
+                    "id": "eiv23e17171717171717171717",
+                    "addons": []
                   }
                 ]
               },
@@ -6350,6 +6435,10 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "labelWidth": "",
+                    "labelMargin": "",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
@@ -6359,7 +6448,28 @@
                     "content": "{{typeof data.assessment?.federalAssessmentNeed === 'number' ? '$' + (data.assessment.federalAssessmentNeed).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html35",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
@@ -6371,11 +6481,9 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -6390,7 +6498,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -6400,26 +6507,13 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "eu7rr5h"
+                    "addons": [],
+                    "id": "evpbtej17171717"
                   }
                 ]
               },
@@ -6427,6 +6521,10 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "labelWidth": "",
+                    "labelMargin": "",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
@@ -6436,7 +6534,28 @@
                     "content": "{{typeof data.assessment?.provincialAssessmentNeed === 'number' ? '$' + (data.assessment.provincialAssessmentNeed).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html36",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
@@ -6448,11 +6567,9 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -6467,7 +6584,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -6477,26 +6593,13 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "etuc70i"
+                    "addons": [],
+                    "id": "emouz4o171717"
                   }
                 ]
               }
@@ -6543,7 +6646,9 @@
           "tree": false,
           "header": [],
           "caption": "",
-          "id": "en4pfkn"
+          "id": "en4pfkn",
+          "addons": [],
+          "lazyLoad": false
         },
         {
           "label": "Table",
@@ -6656,7 +6761,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eu26xnw"
+                    "id": "eu26xnw000000",
+                    "addons": []
                   }
                 ]
               },
@@ -6739,7 +6845,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "euzo1u9"
+                    "id": "euzo1u9111111",
+                    "addons": []
                   }
                 ]
               },
@@ -6816,7 +6923,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eqxsoc4"
+                    "id": "eqxsoc4111111",
+                    "addons": []
                   }
                 ]
               }
@@ -6896,7 +7004,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "et34ed"
+                    "id": "et34ed222222",
+                    "addons": []
                   }
                 ]
               },
@@ -6973,7 +7082,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eabheip"
+                    "id": "eabheip222222",
+                    "addons": []
                   }
                 ]
               }
@@ -7052,7 +7162,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ee4qr"
+                    "id": "ee4qr333333",
+                    "addons": []
                   }
                 ]
               },
@@ -7129,7 +7240,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "els579p"
+                    "id": "els579p333333",
+                    "addons": []
                   }
                 ]
               }
@@ -7209,7 +7321,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e6o6d4c"
+                    "id": "e6o6d4c444444",
+                    "addons": []
                   }
                 ]
               },
@@ -7286,7 +7399,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "exld64b"
+                    "id": "exld64b444444",
+                    "addons": []
                   }
                 ]
               }
@@ -7372,7 +7486,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e1bv2mc"
+                    "id": "e1bv2mc555555",
+                    "addons": []
                   }
                 ]
               },
@@ -7455,7 +7570,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eu0saor"
+                    "id": "eu0saor555555",
+                    "addons": []
                   }
                 ]
               }
@@ -7540,7 +7656,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "es69g5r"
+                    "id": "es69g5r666666",
+                    "addons": []
                   }
                 ]
               },
@@ -7617,7 +7734,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "elwyjb"
+                    "id": "elwyjb666666",
+                    "addons": []
                   }
                 ]
               }
@@ -7703,7 +7821,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eo60mzi"
+                    "id": "eo60mzi777777",
+                    "addons": []
                   }
                 ]
               },
@@ -7786,7 +7905,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e510x3"
+                    "id": "e510x3777777",
+                    "addons": []
                   }
                 ]
               }
@@ -7834,7 +7954,9 @@
           "header": [],
           "caption": "",
           "id": "eaacvod",
-          "numRows": 8
+          "numRows": 8,
+          "addons": [],
+          "lazyLoad": false
         }
       ],
       "placeholder": "",
@@ -7873,7 +7995,9 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "tree": false,
-      "id": "e0glgfr"
+      "id": "e0glgfr",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "title": "Award Breakdown",
@@ -8024,7 +8148,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eyep1z"
+                    "id": "eyep1z000000",
+                    "addons": []
                   }
                 ]
               },
@@ -8101,7 +8226,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "en3zgox"
+                    "id": "en3zgox000000",
+                    "addons": []
                   }
                 ]
               },
@@ -8178,7 +8304,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eq1ihj9"
+                    "id": "eq1ihj9000000",
+                    "addons": []
                   }
                 ]
               },
@@ -8255,7 +8382,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eg72vot"
+                    "id": "eg72vot000000",
+                    "addons": []
                   }
                 ]
               }
@@ -8334,7 +8462,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e6y0ag9"
+                    "id": "e6y0ag9111111",
+                    "addons": []
                   }
                 ]
               },
@@ -8411,7 +8540,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "esx4i61"
+                    "id": "esx4i61111111",
+                    "addons": []
                   }
                 ]
               },
@@ -8488,7 +8618,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eiwhs3"
+                    "id": "eiwhs3111111",
+                    "addons": []
                   }
                 ]
               },
@@ -8565,7 +8696,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eo4a08e"
+                    "id": "eo4a08e111111",
+                    "addons": []
                   }
                 ]
               }
@@ -8645,7 +8777,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ezp2gn"
+                    "id": "ezp2gn222222",
+                    "addons": []
                   }
                 ]
               },
@@ -8723,7 +8856,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ewiug3l"
+                    "id": "ewiug3l222222",
+                    "addons": []
                   }
                 ]
               },
@@ -8800,7 +8934,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eu63wlt"
+                    "id": "eu63wlt222222",
+                    "addons": []
                   }
                 ]
               },
@@ -8877,7 +9012,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e7dfdyn"
+                    "id": "e7dfdyn222222",
+                    "addons": []
                   }
                 ]
               }
@@ -8956,7 +9092,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "etvpvh9"
+                    "id": "etvpvh9333333",
+                    "addons": []
                   }
                 ]
               },
@@ -9033,7 +9170,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eoqix4s"
+                    "id": "eoqix4s333333",
+                    "addons": []
                   }
                 ]
               },
@@ -9110,7 +9248,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eiiyrcw"
+                    "id": "eiiyrcw333333",
+                    "addons": []
                   }
                 ]
               },
@@ -9187,7 +9326,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "epryhdb"
+                    "id": "epryhdb333333",
+                    "addons": []
                   }
                 ]
               }
@@ -9266,7 +9406,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eg55l6"
+                    "id": "eg55l6444444",
+                    "addons": []
                   }
                 ]
               },
@@ -9343,7 +9484,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e73qjbi"
+                    "id": "e73qjbi444444",
+                    "addons": []
                   }
                 ]
               },
@@ -9420,7 +9562,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eiy51yt"
+                    "id": "eiy51yt444444",
+                    "addons": []
                   }
                 ]
               },
@@ -9497,7 +9640,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eb4hf4a"
+                    "id": "eb4hf4a444444",
+                    "addons": []
                   }
                 ]
               }
@@ -9576,7 +9720,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "epduorp7"
+                    "id": "epduorp7555555",
+                    "addons": []
                   }
                 ]
               },
@@ -9653,7 +9798,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e1wpock"
+                    "id": "e1wpock555555",
+                    "addons": []
                   }
                 ]
               },
@@ -9730,7 +9876,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "et101w"
+                    "id": "et101w555555",
+                    "addons": []
                   }
                 ]
               },
@@ -9807,7 +9954,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e3ivii"
+                    "id": "e3ivii555555",
+                    "addons": []
                   }
                 ]
               }
@@ -9887,7 +10035,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e8c8udm"
+                    "id": "e8c8udm666666",
+                    "addons": []
                   }
                 ]
               },
@@ -9964,7 +10113,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "egocy0c"
+                    "id": "egocy0c666666",
+                    "addons": []
                   }
                 ]
               },
@@ -10041,7 +10191,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "erlphy6"
+                    "id": "erlphy6666666",
+                    "addons": []
                   }
                 ]
               },
@@ -10118,7 +10269,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eq63n1"
+                    "id": "eq63n1666666",
+                    "addons": []
                   }
                 ]
               }
@@ -10198,7 +10350,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e489mdn"
+                    "id": "e489mdn777777",
+                    "addons": []
                   }
                 ]
               },
@@ -10275,7 +10428,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "etwq"
+                    "id": "etwq777777",
+                    "addons": []
                   }
                 ]
               },
@@ -10352,7 +10506,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e1frcjl"
+                    "id": "e1frcjl777777",
+                    "addons": []
                   }
                 ]
               },
@@ -10429,7 +10584,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e9m9gpa"
+                    "id": "e9m9gpa777777",
+                    "addons": []
                   }
                 ]
               }
@@ -10509,7 +10665,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e2fr629"
+                    "id": "e2fr629888888",
+                    "addons": []
                   }
                 ]
               },
@@ -10587,7 +10744,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ez66eu"
+                    "id": "ez66eu888888",
+                    "addons": []
                   }
                 ]
               },
@@ -10664,7 +10822,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ev02gsj"
+                    "id": "ev02gsj888888",
+                    "addons": []
                   }
                 ]
               },
@@ -10741,7 +10900,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e6ebz5"
+                    "id": "e6ebz5888888",
+                    "addons": []
                   }
                 ]
               }
@@ -10821,7 +10981,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eec1z2h"
+                    "id": "eec1z2h999999",
+                    "addons": []
                   }
                 ]
               },
@@ -10899,7 +11060,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e5p8ute"
+                    "id": "e5p8ute999999",
+                    "addons": []
                   }
                 ]
               },
@@ -10976,7 +11138,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ecy1hcp"
+                    "id": "ecy1hcp999999",
+                    "addons": []
                   }
                 ]
               },
@@ -11053,7 +11216,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ea8v2gf"
+                    "id": "ea8v2gf999999",
+                    "addons": []
                   }
                 ]
               }
@@ -11132,7 +11296,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ecwgfk9"
+                    "id": "ecwgfk9101010101010",
+                    "addons": []
                   }
                 ]
               },
@@ -11209,7 +11374,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "es2wju"
+                    "id": "es2wju101010101010",
+                    "addons": []
                   }
                 ]
               },
@@ -11286,7 +11452,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "euveg1"
+                    "id": "euveg1101010101010",
+                    "addons": []
                   }
                 ]
               },
@@ -11363,7 +11530,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eva70so"
+                    "id": "eva70so101010101010",
+                    "addons": []
                   }
                 ]
               }
@@ -11410,7 +11578,9 @@
           "tree": false,
           "header": [],
           "caption": "",
-          "id": "ebae6re"
+          "id": "ebae6re",
+          "addons": [],
+          "lazyLoad": false
         },
         {
           "label": "Table",
@@ -11523,7 +11693,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e7vcvsr"
+                    "id": "e7vcvsr000000000",
+                    "addons": []
                   }
                 ]
               },
@@ -11600,7 +11771,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e4qause"
+                    "id": "e4qause000000000",
+                    "addons": []
                   }
                 ]
               },
@@ -11677,7 +11849,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ejqk0f"
+                    "id": "ejqk0f000000000",
+                    "addons": []
                   }
                 ]
               },
@@ -11754,7 +11927,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e3994g"
+                    "id": "e3994g000000000",
+                    "addons": []
                   }
                 ]
               }
@@ -11833,7 +12007,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "et3sus7"
+                    "id": "et3sus7111111111",
+                    "addons": []
                   }
                 ]
               },
@@ -11916,7 +12091,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ee3t16b"
+                    "id": "ee3t16b111111111",
+                    "addons": []
                   }
                 ]
               },
@@ -11999,7 +12175,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "esmbnmo"
+                    "id": "esmbnmo111111111",
+                    "addons": []
                   }
                 ]
               },
@@ -12082,7 +12259,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eym9myn"
+                    "id": "eym9myn111111111",
+                    "addons": []
                   }
                 ]
               }
@@ -12168,7 +12346,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ep04ct"
+                    "id": "ep04ct222222222",
+                    "addons": []
                   }
                 ]
               },
@@ -12252,7 +12431,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "egn9ir8"
+                    "id": "egn9ir8222222222",
+                    "addons": []
                   }
                 ]
               },
@@ -12335,7 +12515,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ev9h6ek"
+                    "id": "ev9h6ek222222222",
+                    "addons": []
                   }
                 ]
               },
@@ -12418,7 +12599,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "emsdqls"
+                    "id": "emsdqls222222222",
+                    "addons": []
                   }
                 ]
               }
@@ -12497,7 +12679,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "edeojm"
+                    "id": "edeojm333333333",
+                    "addons": []
                   }
                 ]
               },
@@ -12574,7 +12757,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e0mquvu"
+                    "id": "e0mquvu333333333",
+                    "addons": []
                   }
                 ]
               },
@@ -12651,7 +12835,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eiwhe6m"
+                    "id": "eiwhe6m333333333",
+                    "addons": []
                   }
                 ]
               },
@@ -12728,7 +12913,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "es10hns"
+                    "id": "es10hns333333333",
+                    "addons": []
                   }
                 ]
               }
@@ -12807,7 +12993,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "efhnp0l"
+                    "id": "efhnp0l444444444",
+                    "addons": []
                   }
                 ]
               },
@@ -12884,7 +13071,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eh3kxqk"
+                    "id": "eh3kxqk444444444",
+                    "addons": []
                   }
                 ]
               },
@@ -12961,7 +13149,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eld8si"
+                    "id": "eld8si444444444",
+                    "addons": []
                   }
                 ]
               },
@@ -13038,7 +13227,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e2cvl9"
+                    "id": "e2cvl9444444444",
+                    "addons": []
                   }
                 ]
               }
@@ -13123,7 +13313,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eo14is0o"
+                    "id": "eo14is0o555555555",
+                    "addons": []
                   }
                 ]
               },
@@ -13131,6 +13322,8 @@
                 "components": [
                   {
                     "label": "CSPT1",
+                    "labelWidth": "",
+                    "labelMargin": "",
                     "tag": "p",
                     "className": "",
                     "attrs": [
@@ -13139,7 +13332,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.disbursement?.disbursement1cspt ? '$'+ data.disbursement.disbursement1cspt : '-'}}",
+                    "content": "{{data.disbursement?.disbursement1csgpt ? '$'+ data.disbursement.disbursement1csgpt : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
@@ -13206,7 +13399,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eli6hub"
+                    "addons": [],
+                    "id": "enw2kni555"
                   }
                 ]
               },
@@ -13214,6 +13408,8 @@
                 "components": [
                   {
                     "label": "CSPT2",
+                    "labelWidth": "",
+                    "labelMargin": "",
                     "tag": "p",
                     "className": "",
                     "attrs": [
@@ -13222,7 +13418,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.disbursement?.disbursement2cspt ? '$'+ data.disbursement.disbursement2cspt : '-'}}",
+                    "content": "{{data.disbursement?.disbursement2csgpt ? '$'+ data.disbursement.disbursement2csgpt : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
@@ -13289,7 +13485,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "elhvw4p"
+                    "addons": [],
+                    "id": "e2gmzmc55"
                   }
                 ]
               },
@@ -13297,6 +13494,8 @@
                 "components": [
                   {
                     "label": "CSPTTotal",
+                    "labelWidth": "",
+                    "labelMargin": "",
                     "tag": "p",
                     "className": "",
                     "attrs": [
@@ -13305,7 +13504,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "${{((data.disbursement?.disbursement1cspt ? parseFloat(data.disbursement.disbursement1cspt) : 0) + (data.disbursement?.disbursement2cspt ? parseFloat(data.disbursement.disbursement2cspt) : 0)).toFixed(2)}}",
+                    "content": "${{((data.disbursement?.disbursement1csgpt ? parseFloat(data.disbursement.disbursement1csgpt) : 0) + (data.disbursement?.disbursement2csgpt ? parseFloat(data.disbursement.disbursement2csgpt) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
@@ -13372,7 +13571,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "es3sv5o"
+                    "addons": [],
+                    "id": "eq9w25r5"
                   }
                 ]
               }
@@ -13458,7 +13658,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e0z3tmn"
+                    "id": "e0z3tmn666666666",
+                    "addons": []
                   }
                 ]
               },
@@ -13541,7 +13742,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "emmgvc5"
+                    "id": "emmgvc5666666666",
+                    "addons": []
                   }
                 ]
               },
@@ -13624,7 +13826,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e9jpvn6"
+                    "id": "e9jpvn6666666666",
+                    "addons": []
                   }
                 ]
               },
@@ -13707,7 +13910,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e6vwxq9"
+                    "id": "e6vwxq9666666666",
+                    "addons": []
                   }
                 ]
               }
@@ -13755,7 +13959,9 @@
           "header": [],
           "caption": "",
           "id": "e33eixr",
-          "numRows": 7
+          "numRows": 7,
+          "addons": [],
+          "lazyLoad": false
         }
       ],
       "collapsed": true,
@@ -13795,7 +14001,9 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "tree": false,
-      "id": "eftkb86b"
+      "id": "eftkb86b",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "applicationId",
@@ -13865,7 +14073,79 @@
       "inputType": "hidden",
       "id": "em1y8gd",
       "defaultValue": "",
-      "dataGridLabel": false
+      "dataGridLabel": false,
+      "addons": []
+    },
+    {
+      "label": "applicationStatus",
+      "customClass": "",
+      "modalEdit": false,
+      "defaultValue": null,
+      "persistent": true,
+      "protected": false,
+      "dbIndex": false,
+      "encrypted": false,
+      "redrawOn": "",
+      "customDefaultValue": "",
+      "calculateValue": "",
+      "calculateServer": false,
+      "key": "applicationStatus",
+      "tags": [],
+      "properties": {},
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "hidden",
+      "input": true,
+      "tableView": false,
+      "placeholder": "",
+      "prefix": "",
+      "suffix": "",
+      "multiple": false,
+      "unique": false,
+      "hidden": false,
+      "clearOnHide": true,
+      "refreshOn": "",
+      "dataGridLabel": false,
+      "labelPosition": "top",
+      "description": "",
+      "errorLabel": "",
+      "tooltip": "",
+      "hideLabel": false,
+      "tabindex": "",
+      "disabled": false,
+      "autofocus": false,
+      "widget": {
+        "type": "input"
+      },
+      "validateOn": "change",
+      "validate": {
+        "required": false,
+        "custom": "",
+        "customPrivate": false,
+        "strictDateValidation": false,
+        "multiple": false,
+        "unique": false
+      },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
+      "allowCalculateOverride": false,
+      "showCharCount": false,
+      "showWordCount": false,
+      "allowMultipleMasks": false,
+      "inputType": "hidden",
+      "id": "e6z1qd9",
+      "addons": []
     }
   ],
   "display": "form",
@@ -13873,6 +14153,6 @@
   "name": "noticeofassessment",
   "path": "noticeofassessment",
   "created": "2021-07-14T17:56:22.162Z",
-  "modified": "2022-02-01T22:36:54.214Z",
+  "modified": "2022-04-11T17:54:13.094Z",
   "machineName": "noticeOfAssessment"
 }

@@ -1,7 +1,7 @@
 import { ECertResponseRecord } from "../../e-cert-files/e-cert-response-record";
 
 /**
- * Parsing E-Certs feedback records to get the document number and associated
+ * Parsing Full-Time E-Certs feedback records to get the document number and associated
  * error codes
  * Please note that the numbers below (e.g. line.substring(31, 39))
  * represents the position of the information in a fixed text file format.

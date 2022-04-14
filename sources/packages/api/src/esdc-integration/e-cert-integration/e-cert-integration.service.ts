@@ -30,6 +30,8 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
   /**
    * Transform the text lines in parsed objects specific to the integration process.
    * @param remoteFilePath full remote file path with file name.
+   * @param eCertFileHeader
+   * @param eCertFileFooter
    * @returns Parsed records from the file.
    */
   async downloadECertResponseFile(
@@ -71,8 +73,8 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
     }
 
     /**
-     * Check if the number of records match the trailer record count
-     * Here total record count is the total records rejected
+     * Check if the number of records match the trailer record count.
+     * Here total record count is the total records rejected.
      */
     if (trailer.recordCount !== fileLines.length) {
       this.logger.error(

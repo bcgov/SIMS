@@ -13,7 +13,7 @@ import { ECertFileRecord } from "../../e-cert-files/e-cert-file-record";
 const AWARD_SLOTS = 10;
 
 /**
- * Record of an Entitlement E-Cert file.
+ * Record of an Entitlement Full-Time E-Cert file.
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */

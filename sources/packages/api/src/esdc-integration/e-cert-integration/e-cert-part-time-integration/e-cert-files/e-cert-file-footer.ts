@@ -7,7 +7,7 @@ import {
 import { ECertFileFooter } from "../../e-cert-files/e-cert-file-footer";
 
 /**
- * Footer of an E-Cert file.
+ * Footer of a Part-Time E-Cert file.
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */

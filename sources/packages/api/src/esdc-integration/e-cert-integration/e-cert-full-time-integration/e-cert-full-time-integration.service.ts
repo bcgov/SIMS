@@ -153,6 +153,11 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
     return fileLines;
   }
 
+  /**
+   * This method will call the appropriate common implementation by passing the appropriate parameters.
+   * @param remoteFilePath E-Cert response file to be processed.
+   * @returns Parsed records from the file.
+   */
   downloadResponseFile(remoteFilePath: string): Promise<ECertResponseRecord[]> {
     return this.downloadECertResponseFile(
       remoteFilePath,

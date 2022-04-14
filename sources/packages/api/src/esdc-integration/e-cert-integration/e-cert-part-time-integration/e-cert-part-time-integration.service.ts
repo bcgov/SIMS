@@ -39,7 +39,6 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
    * Create the ECert file content, by populating the
    * header, detail and trailer records.
    * @param ecertRecords student, User and application data.
-   * @param fileSequence unique file sequence.
    * @returns complete ECert content to be sent.
    */
   createRequestContent(ecertRecords: ECertRecord[]): FixedFormatFileLine[] {
@@ -140,6 +139,11 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
     return fileLines;
   }
 
+  /**
+   * This method will call the appropriate common implementation by passing the appropriate parameters.
+   * @param remoteFilePath E-Cert response file to be processed.
+   * @returns Parsed records from the file.
+   */
   downloadResponseFile(remoteFilePath: string): Promise<ECertResponseRecord[]> {
     return this.downloadECertResponseFile(
       remoteFilePath,
