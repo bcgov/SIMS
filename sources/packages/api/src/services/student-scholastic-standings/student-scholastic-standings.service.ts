@@ -58,10 +58,10 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * Save scholasticStanding and create new assessment
+   * Save scholastic standing and create new assessment
    * for an application.
    * @param applicationId application id.
-   * @param scholasticStandingData scholasticStanding data to be saved
+   * @param scholasticStandingData scholastic standing data to be saved
    */
   async saveScholasticStandingCreateReassessment(
     applicationId: number,
@@ -96,7 +96,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         id: userId,
       } as User;
 
-      // get existing offering.
+      // Get existing offering.
       const existingOffering = await this.offeringRepo
         .createQueryBuilder("offering")
         .select(["offering", "educationProgram.id", "institutionLocation.id"])
@@ -106,7 +106,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         .innerJoin("offering.educationProgram", "educationProgram")
         .innerJoin("offering.institutionLocation", "institutionLocation")
         .getOne();
-      // create new offering for StudentScholasticStanding.
+
+      // Create new offering for student scholastic standing.
       const offering = new EducationProgramOffering();
       offering.name = existingOffering.name;
       offering.studyStartDate = existingOffering.studyStartDate;
@@ -127,6 +128,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       offering.exceptionalExpenses =
         scholasticStandingData.exceptionalCosts ??
         existingOffering.exceptionalExpenses;
+
       offering.tuitionRemittanceRequestedAmount =
         existingOffering.tuitionRemittanceRequestedAmount;
       offering.offeringDelivered = existingOffering.offeringDelivered;
@@ -141,8 +143,10 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       offering.institutionLocation = {
         id: existingOffering.institutionLocation.id,
       } as InstitutionLocation;
-      // TODO: when new offering type is added for report a change, update this
+
+      // TODO: When new offering type is added for report a change/ scholastic standing, update this
       offering.offeringType = OfferingTypes.applicationSpecific;
+
       offering.offeringIntensity = existingOffering.offeringIntensity;
       offering.yearOfStudy = existingOffering.yearOfStudy;
       offering.showYearOfStudy = existingOffering.showYearOfStudy;
@@ -152,12 +156,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       offering.studyBreaks = existingOffering.studyBreaks;
       offering.offeringDeclaration = existingOffering.offeringDeclaration;
 
-      // save new offering.
+      // Save new offering.
       await transactionalEntityManager
         .getRepository(EducationProgramOffering)
         .save(offering);
 
-      // create StudentScholasticStanding.
+      // Create StudentScholasticStanding.
       const scholasticStanding = new StudentScholasticStanding();
       scholasticStanding.application = { id: applicationId } as Application;
       scholasticStanding.submittedData = scholasticStandingData;
@@ -181,7 +185,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         .getRepository(StudentScholasticStanding)
         .save(scholasticStanding);
 
-      // save current application
+      // Save current application
       application.currentAssessment = {
         id: scholasticStanding.studentAssessment.id,
       } as StudentAssessment;

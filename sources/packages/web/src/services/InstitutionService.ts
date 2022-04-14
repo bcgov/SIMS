@@ -441,8 +441,8 @@ export class InstitutionService {
 
   /**
    * Save scholastic standing and create new assessment.
-   * @param locationId location id
    * @param applicationId application id
+   * @param locationId location id
    * @param payload scholasticStanding payload
    */
   async saveScholasticStanding(

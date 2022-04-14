@@ -280,16 +280,16 @@ export class InstitutionLocationInstitutionsController extends BaseController {
 
   /**
    * Save scholastic standing and create new assessment.
-   * @param locationId location id.
+   * @param _locationId location id to check whether the
+   * request user has the permission to this location.
    * @param applicationId application id.
    * @param payload Scholastic Standing payload.
    */
   @ApiBadRequestResponse({ description: "Invalid form data" })
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Post(":locationId/application/:applicationId/scholastic-standing")
   async saveScholasticStanding(
-    @Param("locationId") locationId: number,
+    @Param("locationId") _locationId: number,
     @Param("applicationId") applicationId: number,
     @Body() payload: ScholasticStandingAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,

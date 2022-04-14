@@ -1,5 +1,4 @@
 import { IsObject, IsOptional, IsPositive } from "class-validator";
-import { StudyBreak } from "../../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
 import {
   ApplicationStatus,
   ProgramInfoStatus,

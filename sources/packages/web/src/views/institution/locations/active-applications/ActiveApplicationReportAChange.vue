@@ -1,12 +1,7 @@
 <template>
   <header-navigator
     title="Report a change"
-    :routeLocation="{
-      name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
-      params: {
-        locationId: locationId,
-      },
-    }"
+    :routeLocation="goBackRouteParams"
     subTitle="View Application"
   />
   <full-page-container class="p-m-4">
@@ -19,7 +14,7 @@
   </full-page-container>
 </template>
 <script lang="ts">
-import { useRouter } from "vue-router";
+import { RouteLocationRaw, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import formio from "@/components/generic/formio.vue";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -86,6 +81,13 @@ export default {
       await loadInitialData();
     });
 
+    const goBackRouteParams = ref({
+      name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
+      params: {
+        locationId: props.locationId,
+      },
+    } as RouteLocationRaw);
+
     const submit = async (data: ScholasticStandingAPIInDTO) => {
       try {
         await InstitutionService.shared.saveScholasticStanding(
@@ -94,12 +96,7 @@ export default {
           data,
         );
         toast.success("Change Reported", "Report a change submitted");
-        router.push({
-          name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
-          params: {
-            locationId: props.locationId,
-          },
-        });
+        router.push(goBackRouteParams.value);
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           if (
@@ -125,6 +122,7 @@ export default {
       customEventCallback,
       InstitutionRoutesConst,
       submit,
+      goBackRouteParams,
     };
   },
 };

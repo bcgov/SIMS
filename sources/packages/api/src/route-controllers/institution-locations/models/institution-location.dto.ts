@@ -1,4 +1,5 @@
 import { Allow } from "class-validator";
+import { checkboxFormioType } from "../../../types";
 import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
 import { AddressInfoOutDTO } from "../../models/common.dto";
 
@@ -119,11 +120,6 @@ export enum DesignationStatus {
    * The designation agreement status is not designated
    */
   NotDesignated = "Not designated",
-}
-
-export enum checkboxFormioType {
-  yes = "yes",
-  no = "no",
 }
 
 export class ScholasticStandingAPIInDTO {

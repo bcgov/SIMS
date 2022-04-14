@@ -153,8 +153,8 @@ export class InstitutionLocationApi extends HttpBaseClient {
 
   /**
    * Save scholastic standing and create new assessment.
-   * @param locationId location id
    * @param applicationId application id
+   * @param locationId location id
    * @param payload scholasticStanding payload
    */
   public async saveScholasticStanding(
