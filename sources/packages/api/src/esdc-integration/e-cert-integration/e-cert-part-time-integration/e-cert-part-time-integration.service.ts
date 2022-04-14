@@ -19,7 +19,10 @@ import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base
 import { ECertPartTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertPartTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertPartTimeFileRecord } from "./e-cert-files/e-cert-file-record";
-import { DisbursementValueType } from "../../../database/entities";
+import {
+  DisbursementValueType,
+  OfferingIntensity,
+} from "../../../database/entities";
 import { ECertIntegrationService } from "../e-cert-integration.service";
 import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
 
@@ -29,9 +32,12 @@ import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
  */
 @Injectable()
 export class ECertPartTimeIntegrationService extends ECertIntegrationService {
-  private readonly eCertPartTimeFileHeader: ECertPartTimeFileHeader;
-  private readonly eCertPartTimeFileFooter: ECertPartTimeFileFooter;
-  constructor(config: ConfigService, sshService: SshService) {
+  constructor(
+    private readonly eCertPartTimeFileHeader: ECertPartTimeFileHeader,
+    private readonly eCertPartTimeFileFooter: ECertPartTimeFileFooter,
+    config: ConfigService,
+    sshService: SshService,
+  ) {
     super(config.getConfig().zoneBSFTP, sshService);
   }
 
@@ -149,6 +155,7 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       remoteFilePath,
       this.eCertPartTimeFileHeader,
       this.eCertPartTimeFileFooter,
+      OfferingIntensity.partTime,
     );
   }
 }

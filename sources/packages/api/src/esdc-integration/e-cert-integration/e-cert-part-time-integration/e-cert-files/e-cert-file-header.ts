@@ -35,9 +35,9 @@ export class ECertPartTimeFileHeader implements ECertFileHeader {
 
   public createFromLine(line: string): ECertPartTimeFileHeader {
     const header = new ECertPartTimeFileHeader();
-    header.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
+    header.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     header.processDate = getDateOnlyFromFormat(
-      line.substring(47, 55),
+      line.substring(56, 64),
       DATE_FORMAT,
     );
     return header;

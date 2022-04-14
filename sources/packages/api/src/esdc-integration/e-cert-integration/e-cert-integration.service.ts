@@ -8,6 +8,9 @@ import {
   ECertRecord,
   RecordTypeCodes,
 } from "./models/e-cert-integration-model";
+import { OfferingIntensity } from "../../database/entities";
+import { ECertPartTimeResponseRecord } from "./e-cert-part-time-integration/e-cert-files/e-cert-response-record";
+import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 
 @Injectable()
 export abstract class ECertIntegrationService extends SFTPIntegrationBase<
@@ -38,6 +41,7 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
     remoteFilePath: string,
     eCertFileHeader: ECertFileHeader,
     eCertFileFooter: ECertFileFooter,
+    offeringIntensity: OfferingIntensity,
   ): Promise<ECertResponseRecord[]> {
     const fileLines = await this.downloadResponseFileLines(remoteFilePath);
     /**
@@ -89,7 +93,13 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
     let sumOfAllSin = 0;
     fileLines.forEach((line: string, index: number) => {
       const lineNumber = index + 2;
-      const eCertRecord = new ECertResponseRecord(line, lineNumber);
+      let eCertRecord: ECertResponseRecord;
+      if (offeringIntensity === OfferingIntensity.fullTime) {
+        eCertRecord = new ECertFullTimeResponseRecord(line, lineNumber);
+      }
+      if (offeringIntensity === OfferingIntensity.partTime) {
+        eCertRecord = new ECertPartTimeResponseRecord(line, lineNumber);
+      }
       sumOfAllSin += eCertRecord.sin;
       feedbackRecords.push(eCertRecord);
     });

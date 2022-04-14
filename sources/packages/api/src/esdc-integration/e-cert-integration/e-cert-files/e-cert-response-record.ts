@@ -8,7 +8,7 @@ import { ECertResponseRecordIdentification } from "../e-cert-response-record-ide
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
 @Injectable()
-export class ECertResponseRecord extends ECertResponseRecordIdentification {
+export abstract class ECertResponseRecord extends ECertResponseRecordIdentification {
   constructor(line: string, lineNumber: number) {
     super(line, lineNumber);
   }

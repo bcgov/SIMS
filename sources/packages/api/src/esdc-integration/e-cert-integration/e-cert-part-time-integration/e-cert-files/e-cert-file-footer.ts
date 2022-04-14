@@ -28,10 +28,11 @@ export class ECertPartTimeFileFooter implements ECertFileFooter {
 
   public createFromLine(line: string): ECertPartTimeFileFooter {
     const footer = new ECertPartTimeFileFooter();
-    footer.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
+    footer.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     // Here total record count is the total records.
-    footer.recordCount = parseInt(line.substring(2, 11));
-    footer.totalSINHash = parseInt(line.substring(11, 26));
+    footer.recordCount =
+      parseInt(line.substring(43, 52)) + parseInt(line.substring(52, 61));
+    footer.totalSINHash = parseInt(line.substring(61, 76));
     return footer;
   }
 }
