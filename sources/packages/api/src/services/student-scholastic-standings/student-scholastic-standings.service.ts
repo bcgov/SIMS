@@ -14,8 +14,9 @@ import {
   StudentAssessment,
   User,
 } from "../../database/entities";
-import { ScholasticStandingAPIInDTO } from "src/route-controllers/institution-locations/models/institution-location.dto";
-import { CustomNamedError } from "src/utilities";
+import { ScholasticStandingAPIInDTO } from "../../route-controllers/institution-locations/models/institution-location.dto";
+import { CustomNamedError } from "../../utilities";
+import { APPLICATION_NOT_FOUND } from "../application/application.service";
 export const NOT_A_COMPLETED_APPLICATION = "NOT_A_COMPLETED_APPLICATION";
 
 /**
@@ -75,6 +76,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .leftJoin("currentAssessment.offering", "offering")
       .getOne();
 
+    if (!application) {
+      throw new CustomNamedError(
+        "Application Not found.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+
     if (application.applicationStatus !== ApplicationStatus.completed) {
       throw new CustomNamedError(
         "Not a completed application.",
@@ -82,108 +90,107 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       );
     }
 
-    const scholasticStanding = await this.connection.transaction(
-      async (transactionalEntityManager) => {
-        const now = new Date();
-        const auditUser = {
-          id: userId,
-        } as User;
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      const now = new Date();
+      const auditUser = {
+        id: userId,
+      } as User;
 
-        // get existing offering.
-        const existingOffering = await this.offeringRepo
-          .createQueryBuilder("offering")
-          .select(["offering", "educationProgram.id", "institutionLocation.id"])
-          .where("offering.id = :offeringId", {
-            offeringId: application.currentAssessment.offering.id,
-          })
-          .innerJoin("offering.educationProgram", "educationProgram")
-          .innerJoin("offering.institutionLocation", "institutionLocation")
-          .getOne();
-        // create new offering for StudentScholasticStanding.
-        const offering = new EducationProgramOffering();
-        offering.name = existingOffering.name;
-        offering.studyStartDate = existingOffering.studyStartDate;
-        // todo: edit below fileds
-        const newStudyEndDate =
-          scholasticStandingData.dateOfChange ||
-          scholasticStandingData.dateOfCompletion ||
-          scholasticStandingData.dateOfIncompletion ||
-          scholasticStandingData.dateOfWithdrawal;
+      // get existing offering.
+      const existingOffering = await this.offeringRepo
+        .createQueryBuilder("offering")
+        .select(["offering", "educationProgram.id", "institutionLocation.id"])
+        .where("offering.id = :offeringId", {
+          offeringId: application.currentAssessment.offering.id,
+        })
+        .innerJoin("offering.educationProgram", "educationProgram")
+        .innerJoin("offering.institutionLocation", "institutionLocation")
+        .getOne();
+      // create new offering for StudentScholasticStanding.
+      const offering = new EducationProgramOffering();
+      offering.name = existingOffering.name;
+      offering.studyStartDate = existingOffering.studyStartDate;
+      const newStudyEndDate =
+        scholasticStandingData.dateOfChange ||
+        scholasticStandingData.dateOfCompletion ||
+        scholasticStandingData.dateOfIncompletion ||
+        scholasticStandingData.dateOfWithdrawal;
 
-        offering.studyEndDate = new Date(newStudyEndDate);
-        offering.actualTuitionCosts =
-          scholasticStandingData.tuition ?? existingOffering.actualTuitionCosts;
-        offering.programRelatedCosts =
-          scholasticStandingData.booksAndSupplies ??
-          existingOffering.programRelatedCosts;
-        offering.mandatoryFees =
-          scholasticStandingData.mandatoryFees ??
-          existingOffering.mandatoryFees;
-        offering.exceptionalExpenses =
-          scholasticStandingData.exceptionalCosts ??
-          existingOffering.exceptionalExpenses;
-        offering.tuitionRemittanceRequestedAmount =
-          existingOffering.tuitionRemittanceRequestedAmount;
-        offering.offeringDelivered = existingOffering.offeringDelivered;
-        offering.lacksStudyDates = existingOffering.lacksStudyDates;
-        offering.lacksStudyBreaks = existingOffering.lacksStudyBreaks;
-        offering.lacksFixedCosts = existingOffering.lacksFixedCosts;
-        offering.tuitionRemittanceRequested =
-          existingOffering.tuitionRemittanceRequested;
-        offering.educationProgram = {
-          id: existingOffering.educationProgram.id,
-        } as EducationProgram;
-        offering.institutionLocation = {
-          id: existingOffering.institutionLocation.id,
-        } as InstitutionLocation;
-        // TODO: when new offering type is added for report a change, update this
-        offering.offeringType = OfferingTypes.applicationSpecific;
-        offering.offeringIntensity = existingOffering.offeringIntensity;
-        offering.yearOfStudy = existingOffering.yearOfStudy;
-        offering.showYearOfStudy = existingOffering.showYearOfStudy;
-        offering.hasOfferingWILComponent =
-          existingOffering.hasOfferingWILComponent;
-        offering.offeringWILType = existingOffering.offeringWILType;
-        offering.studyBreaks = existingOffering.studyBreaks;
-        offering.offeringDeclaration = existingOffering.offeringDeclaration;
+      offering.studyEndDate = new Date(newStudyEndDate);
+      offering.actualTuitionCosts =
+        scholasticStandingData.tuition ?? existingOffering.actualTuitionCosts;
+      offering.programRelatedCosts =
+        scholasticStandingData.booksAndSupplies ??
+        existingOffering.programRelatedCosts;
+      offering.mandatoryFees =
+        scholasticStandingData.mandatoryFees ?? existingOffering.mandatoryFees;
+      offering.exceptionalExpenses =
+        scholasticStandingData.exceptionalCosts ??
+        existingOffering.exceptionalExpenses;
+      offering.tuitionRemittanceRequestedAmount =
+        existingOffering.tuitionRemittanceRequestedAmount;
+      offering.offeringDelivered = existingOffering.offeringDelivered;
+      offering.lacksStudyDates = existingOffering.lacksStudyDates;
+      offering.lacksStudyBreaks = existingOffering.lacksStudyBreaks;
+      offering.lacksFixedCosts = existingOffering.lacksFixedCosts;
+      offering.tuitionRemittanceRequested =
+        existingOffering.tuitionRemittanceRequested;
+      offering.educationProgram = {
+        id: existingOffering.educationProgram.id,
+      } as EducationProgram;
+      offering.institutionLocation = {
+        id: existingOffering.institutionLocation.id,
+      } as InstitutionLocation;
+      // TODO: when new offering type is added for report a change, update this
+      offering.offeringType = OfferingTypes.applicationSpecific;
+      offering.offeringIntensity = existingOffering.offeringIntensity;
+      offering.yearOfStudy = existingOffering.yearOfStudy;
+      offering.showYearOfStudy = existingOffering.showYearOfStudy;
+      offering.hasOfferingWILComponent =
+        existingOffering.hasOfferingWILComponent;
+      offering.offeringWILType = existingOffering.offeringWILType;
+      offering.studyBreaks = existingOffering.studyBreaks;
+      offering.offeringDeclaration = existingOffering.offeringDeclaration;
 
-        // save new offering.
-        await transactionalEntityManager
-          .getRepository(EducationProgramOffering)
-          .save(offering);
+      // save new offering.
+      await transactionalEntityManager
+        .getRepository(EducationProgramOffering)
+        .save(offering);
 
-        // create StudentScholasticStanding.
-        const scholasticStanding = new StudentScholasticStanding();
-        scholasticStanding.application = { id: applicationId } as Application;
-        scholasticStanding.submittedData = scholasticStandingData;
-        scholasticStanding.submittedDate = now;
-        scholasticStanding.scholasticStandingStatus =
-          ScholasticStandingStatus.Approved;
-        scholasticStanding.submittedBy = auditUser;
-        scholasticStanding.creator = auditUser;
+      // create StudentScholasticStanding.
+      const scholasticStanding = new StudentScholasticStanding();
+      scholasticStanding.application = { id: applicationId } as Application;
+      scholasticStanding.submittedData = scholasticStandingData;
+      scholasticStanding.submittedDate = now;
+      scholasticStanding.scholasticStandingStatus =
+        ScholasticStandingStatus.Approved;
+      scholasticStanding.submittedBy = auditUser;
+      scholasticStanding.creator = auditUser;
 
-        // Create the new assessment to be processed.
-        scholasticStanding.studentAssessment = {
-          application: { id: applicationId } as Application,
-          triggerType: AssessmentTriggerType.ScholasticStandingChange,
-          creator: auditUser,
-          submittedBy: auditUser,
-          submittedDate: now,
-          offering: { id: offering.id } as EducationProgramOffering,
-        } as StudentAssessment;
+      // Create the new assessment to be processed.
+      scholasticStanding.studentAssessment = {
+        application: { id: applicationId } as Application,
+        triggerType: AssessmentTriggerType.ScholasticStandingChange,
+        creator: auditUser,
+        submittedBy: auditUser,
+        submittedDate: now,
+        offering: { id: offering.id } as EducationProgramOffering,
+      } as StudentAssessment;
 
-        return transactionalEntityManager
-          .getRepository(StudentScholasticStanding)
-          .save(scholasticStanding);
-      },
-    );
+      const studentScholasticStandingObj = await transactionalEntityManager
+        .getRepository(StudentScholasticStanding)
+        .save(scholasticStanding);
 
-    application.currentAssessment = {
-      id: scholasticStanding.studentAssessment.id,
-    } as StudentAssessment;
+      // save current application
+      application.currentAssessment = {
+        id: scholasticStanding.studentAssessment.id,
+      } as StudentAssessment;
 
-    await this.applicationRepo.save(application);
+      await transactionalEntityManager
+        .getRepository(Application)
+        .save(application);
 
-    return scholasticStanding;
+      return studentScholasticStandingObj;
+    });
   }
 }

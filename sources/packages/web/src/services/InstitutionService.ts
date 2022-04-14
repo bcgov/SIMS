@@ -449,8 +449,8 @@ export class InstitutionService {
     applicationId: number,
     locationId: number,
     payload: ScholasticStandingAPIInDTO,
-  ) {
-    return ApiClient.InstitutionLocation.saveScholasticStanding(
+  ): Promise<void> {
+    await ApiClient.InstitutionLocation.saveScholasticStanding(
       applicationId,
       locationId,
       payload,

@@ -37,7 +37,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-, "src/services/http/dto/.dto.ts"  ],
+  ],
   "exclude": [
     "node_modules"
   ]

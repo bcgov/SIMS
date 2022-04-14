@@ -23,12 +23,22 @@ import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import formio from "@/components/generic/formio.vue";
 import { InstitutionService } from "@/services/InstitutionService";
-import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
+import {
+  ApiProcessError,
+  FormIOCustomEvent,
+  FormIOCustomEventTypes,
+} from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
-import { ScholasticStandingAPIInDTO } from "@/services/http/dto/ScholasticStanding.dto";
+import {
+  ANOTHER_ASSESSMENT_INPROGRESS,
+  APPLICATION_NOT_FOUND,
+  NOT_A_COMPLETED_APPLICATION,
+  ScholasticStandingAPIInDTO,
+} from "@/services/http/dto/ScholasticStanding.dto";
+import { useToastMessage } from "@/composables";
 
 export default {
   components: {
@@ -49,6 +59,8 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const initialData = ref({} as ActiveApplicationDataAPIOutDTO);
+    const toast = useToastMessage();
+
     const loadInitialData = async () => {
       initialData.value = await InstitutionService.shared.getActiveApplication(
         props.applicationId,
@@ -75,11 +87,37 @@ export default {
     });
 
     const submit = async (data: ScholasticStandingAPIInDTO) => {
-      await InstitutionService.shared.saveScholasticStanding(
-        props.applicationId,
-        props.locationId,
-        data,
-      );
+      try {
+        await InstitutionService.shared.saveScholasticStanding(
+          props.applicationId,
+          props.locationId,
+          data,
+        );
+        toast.success("Change Reported", "Report a change submitted");
+        router.push({
+          name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
+          params: {
+            locationId: props.locationId,
+          },
+        });
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          if (
+            [
+              APPLICATION_NOT_FOUND,
+              NOT_A_COMPLETED_APPLICATION,
+              ANOTHER_ASSESSMENT_INPROGRESS,
+            ].includes(error.errorType)
+          ) {
+            toast.warn("Not able to submit", error.message);
+            return;
+          }
+        }
+        toast.error(
+          "Unexpected error",
+          "An unexpected error happened during the submission.",
+        );
+      }
     };
 
     return {

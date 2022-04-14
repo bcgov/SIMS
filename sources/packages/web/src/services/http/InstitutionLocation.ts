@@ -163,16 +163,14 @@ export class InstitutionLocationApi extends HttpBaseClient {
     payload: ScholasticStandingAPIInDTO,
   ): Promise<void> {
     try {
-      await this.apiClient.post(
+      await this.postCall(
         this.addClientRoot(
           `institution/location/${locationId}/application/${applicationId}/scholastic-standing`,
         ),
         payload,
-        this.addAuthHeader(),
       );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
     }
   }
 }

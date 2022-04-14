@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
@@ -23,12 +24,14 @@ import {
 } from "../../auth/decorators";
 import {
   ApplicationService,
+  APPLICATION_NOT_FOUND,
   FormService,
   InstitutionLocationService,
+  NOT_A_COMPLETED_APPLICATION,
   StudentAssessmentService,
   StudentScholasticStandingsService,
 } from "../../services";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   dateString,
   getISODateOnlyString,
@@ -49,6 +52,9 @@ import {
   InstitutionLocationFormAPIOutDTO,
   ScholasticStandingAPIInDTO,
 } from "./models/institution-location.dto";
+import { FormNames } from "../../services/form/constants";
+
+export const ANOTHER_ASSESSMENT_INPROGRESS = "ANOTHER_ASSESSMENT_INPROGRESS";
 
 /**
  * Institution location controller for institutions Client.
@@ -278,6 +284,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * @param applicationId application id.
    * @param payload Scholastic Standing payload.
    */
+  @ApiBadRequestResponse({ description: "Invalid form data" })
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Post(":locationId/application/:applicationId/scholastic-standing")
@@ -287,17 +294,51 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     @Body() payload: ScholasticStandingAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
-    const scholasticStanding =
-      await this.studentScholasticStandingsService.saveScholasticStandingCreateReassessment(
-        applicationId,
-        userToken.userId,
+    try {
+      const submissionResult = await this.formService.dryRunSubmission(
+        FormNames.ReportScholasticStandingChange,
         payload,
       );
-    // start assessment.
-    if (scholasticStanding.studentAssessment) {
-      await this.studentAssessmentService.startAssessment(
-        scholasticStanding.studentAssessment.id,
-      );
+
+      if (!submissionResult.valid) {
+        throw new BadRequestException("Invalid submission.");
+      }
+
+      const scholasticStanding =
+        await this.studentScholasticStandingsService.saveScholasticStandingCreateReassessment(
+          applicationId,
+          userToken.userId,
+          submissionResult.data.data,
+        );
+
+      // start assessment.
+      if (scholasticStanding.studentAssessment) {
+        await this.studentAssessmentService.startAssessment(
+          scholasticStanding.studentAssessment.id,
+        );
+      }
+    } catch (error) {
+      switch (error.name) {
+        case APPLICATION_NOT_FOUND:
+        case NOT_A_COMPLETED_APPLICATION:
+          throw new UnprocessableEntityException(
+            new ApiProcessError(error.message, error.name),
+          );
+        default:
+          if (
+            error.message.includes(
+              "student_assessments_only_one_assessment_data_null",
+            )
+          ) {
+            throw new UnprocessableEntityException(
+              new ApiProcessError(
+                "Another assessment in progress.",
+                ANOTHER_ASSESSMENT_INPROGRESS,
+              ),
+            );
+          }
+          throw error;
+      }
     }
   }
 }

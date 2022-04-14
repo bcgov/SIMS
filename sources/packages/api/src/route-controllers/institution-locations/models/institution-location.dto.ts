@@ -121,26 +121,38 @@ export enum DesignationStatus {
   NotDesignated = "Not designated",
 }
 
-export enum checkboxFormType {
+export enum checkboxFormioType {
   yes = "yes",
   no = "no",
 }
 
-export interface ScholasticStandingAPIInDTO {
+export class ScholasticStandingAPIInDTO {
+  @Allow()
   scholasticStanding: string;
+  @Allow()
   dateOfChange?: string;
+  @Allow()
   booksAndSupplies?: number;
+  @Allow()
   dateOfCompletion?: string;
+  @Allow()
   exceptionalCosts?: number;
+  @Allow()
   mandatoryFees?: number;
+  @Allow()
   tuition?: number;
-  isCostDifferent?: checkboxFormType;
+  @Allow()
+  isCostDifferent?: checkboxFormioType;
+  @Allow()
   reasonOfIncompletion?: {
     grades?: boolean;
     attendance?: boolean;
     other?: boolean;
   };
+  @Allow()
   dateOfIncompletion?: string;
+  @Allow()
   notes?: string;
+  @Allow()
   dateOfWithdrawal?: string;
 }

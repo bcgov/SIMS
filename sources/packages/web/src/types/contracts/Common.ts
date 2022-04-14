@@ -31,7 +31,7 @@ export interface ContactInformation {
   phone: string;
 }
 
-export enum checkboxFormType {
+export enum checkboxFormioType {
   yes = "yes",
   no = "no",
 }
