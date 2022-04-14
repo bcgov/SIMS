@@ -244,6 +244,7 @@ export class ProgramInfoRequestController extends BaseController {
       const application = await this.applicationService.getApplicationById(
         applicationId,
       );
+
       if (!application) {
         throw new BadRequestException("Application not found.");
       }
@@ -281,14 +282,17 @@ export class ProgramInfoRequestController extends BaseController {
         } as EducationProgramOffering;
       }
 
+      const studyStartDate = new Date(payload.studentStudyStartDate);
+      const studyEndDate = new Date(payload.studentStudyEndDate);
+
       await this.applicationService.validateOverlappingDatesAndPIR(
         applicationId,
         application.student.user.lastName,
         application.student.user.id,
         application.student.sin,
         application.student.birthDate,
-        payload.studyStartDate,
-        payload.studyEndDate,
+        studyStartDate,
+        studyEndDate,
       );
 
       const updatedApplication =
