@@ -39,11 +39,12 @@ export class ECertIntegrationController extends BaseController {
    */
   @Post("process-full-time-responses")
   async processFullTimeResponses(): Promise<ESDCFileResponseDTO[]> {
-    const results = await this.eCertFileHandler.processFullTimeResponses();
-    return results.map((result) => {
+    const fullTimeResults =
+      await this.eCertFileHandler.processFullTimeResponses();
+    return fullTimeResults.map((fullTimeResult) => {
       return {
-        processSummary: result.processSummary,
-        errorsSummary: result.errorsSummary,
+        processSummary: fullTimeResult.processSummary,
+        errorsSummary: fullTimeResult.errorsSummary,
       };
     });
   }
@@ -72,11 +73,12 @@ export class ECertIntegrationController extends BaseController {
    */
   @Post("process-part-time-responses")
   async processPartTimeResponses(): Promise<ESDCFileResponseDTO[]> {
-    const results = await this.eCertFileHandler.processPartTimeResponses();
-    return results.map((result) => {
+    const partTimeResults =
+      await this.eCertFileHandler.processPartTimeResponses();
+    return partTimeResults.map((partTimeResult) => {
       return {
-        processSummary: result.processSummary,
-        errorsSummary: result.errorsSummary,
+        processSummary: partTimeResult.processSummary,
+        errorsSummary: partTimeResult.errorsSummary,
       };
     });
   }
