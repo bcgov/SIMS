@@ -72,7 +72,7 @@ describe("Location Program", () => {
       .should("be.visible");
   });
 
-  it.only("Check that user can able to add new program", { retries: 4 }, () => {
+  it("Check that user can able to add new program", { retries: 4 }, () => {
     cy.fixture("institutionProgramData").then((testdata) => {
       cy.intercept("GET", "**/institution").as("institution");
       dashboardInstitutionObject.dashboardButton().click();

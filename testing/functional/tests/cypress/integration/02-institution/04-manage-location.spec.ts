@@ -42,7 +42,7 @@ describe("Manage Locations", () => {
       .should("be.visible");
   });
 
-  it("Verify that by clicking on Start New Application button redirects to appropriate page or not", () => {
+  it("Verify that by clicking on Add New Location button redirects to appropriate page or not", () => {
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
     institutionManageLocationObject.manageLocationButton().click();
