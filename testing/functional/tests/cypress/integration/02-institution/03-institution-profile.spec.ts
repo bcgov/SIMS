@@ -87,7 +87,7 @@ describe("Institution Profile", () => {
       institutionObject
         .firstNameInstitutionInputText()
         .clear()
-        .type(data.firstNameinstitution);
+        .type(data.firstNameInstitution);
       institutionObject
         .lastNameInstitutionInputText()
         .clear()
