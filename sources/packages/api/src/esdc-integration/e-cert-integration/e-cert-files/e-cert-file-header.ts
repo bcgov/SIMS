@@ -10,6 +10,9 @@ import { RecordTypeCodes } from "../models/e-cert-integration-model";
 @Injectable()
 export abstract class ECertFileHeader implements FixedFormatFileLine {
   recordTypeCode: RecordTypeCodes;
+  processDate: Date;
+  sequence: number;
+
   abstract getFixedFormat(): string;
 
   abstract createFromLine(line: string): ECertFileHeader;

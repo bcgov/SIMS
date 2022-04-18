@@ -18,9 +18,6 @@ const ORIGINATOR_CODE = "BC";
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
 export class ECertPartTimeFileHeader extends ECertFileHeader {
-  processDate: Date;
-  sequence: number;
-
   public getFixedFormat(): string {
     const header = new StringBuilder();
     header.append(this.recordTypeCode);
