@@ -332,7 +332,6 @@
   position: absolute;
   border-radius: 30px;
   border-style: solid;
-  text-transform: uppercase;
   font-weight: 700 !important;
   font-size: 12px !important;
   color: $brand-black;
@@ -413,4 +412,19 @@
 
 .ff-form-container .formio-panel-bg-secondary .card-body {
   background-color: $color-background;
+}
+// CSS to override data grid table style.
+.ff-form-container .formio-datagrid-unset .table-bordered td,
+.ff-form-container .formio-datagrid-unset .table-bordered th,
+.ff-form-container .formio-datagrid-unset .table thead th,
+.ff-form-container .formio-datagrid-unset .table-bordered {
+  border: none;
+}
+
+.ff-form-container .formio-datagrid-unset table thead {
+  display: none;
+}
+.ff-form-container .formio-datagrid-unset .table td,
+.ff-form-container .formio-datagrid-unset .table th {
+  padding: 0;
 }

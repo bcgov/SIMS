@@ -1,9 +1,6 @@
 <template>
   <div class="p-m-4">
-    <HeaderNavigator
-      :title="locationDetails?.locationName"
-      subTitle="Report a Change"
-    />
+    <HeaderNavigator :title="locationName" subTitle="Report a Change" />
     <v-container>
       <v-sheet elevation="1" class="mx-auto mt-2">
         <v-container>
@@ -75,12 +72,15 @@ export default {
       type: Number,
       required: true,
     },
+    locationName: {
+      type: String,
+      required: true,
+    },
   },
   setup(props: any) {
     const router = useRouter();
     const { dateString } = useFormatters();
     const applications = ref([] as ActiveApplicationSummaryAPIOutDTO[]);
-    const locationDetails = ref();
 
     const goToApplicationView = (applicationId: number) => {
       router.push({
@@ -96,28 +96,16 @@ export default {
         );
     };
 
-    const loadLocationDetails = async () => {
-      locationDetails.value =
-        await InstitutionService.shared.getInstitutionLocation(
-          props.locationId,
-        );
-    };
     watch(
       () => props.locationId,
       async (currValue) => {
         //update the list
-        await Promise.all([
-          updateSummaryList(currValue),
-          loadLocationDetails(),
-        ]);
+        await updateSummaryList(currValue);
       },
     );
 
     onMounted(async () => {
-      await Promise.all([
-        updateSummaryList(props.locationId),
-        loadLocationDetails(),
-      ]);
+      await updateSummaryList(props.locationId);
     });
 
     const getApplicationStatusColorClass = (status: string) => {
@@ -131,7 +119,6 @@ export default {
       dateString,
       goToApplicationView,
       getApplicationStatusColorClass,
-      locationDetails,
     };
   },
 };

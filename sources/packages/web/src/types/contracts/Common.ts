@@ -30,8 +30,3 @@ export interface ContactInformation {
   addresses: Array<AddressInfo>;
   phone: string;
 }
-
-export enum checkboxFormioType {
-  yes = "yes",
-  no = "no",
-}

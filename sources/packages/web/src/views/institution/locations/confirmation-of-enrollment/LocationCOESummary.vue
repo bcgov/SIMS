@@ -1,7 +1,7 @@
 <template>
   <div class="p-m-4">
     <header-navigator
-      :title="locationDetails?.locationName"
+      :title="locationName"
       subTitle="Confirmation Of Enrollment"
     />
     <TabView lazy class="mt-4">
@@ -37,8 +37,6 @@
 import COESummaryData from "@/views/institution/locations/confirmation-of-enrollment/COESummaryData.vue";
 import { EnrollmentPeriod } from "@/types";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
-import { InstitutionService } from "@/services/InstitutionService";
-import { onMounted, ref, watch } from "vue";
 export default {
   components: { COESummaryData, HeaderNavigator },
   props: {
@@ -46,28 +44,13 @@ export default {
       type: Number,
       required: true,
     },
+    locationName: {
+      type: String,
+      required: true,
+    },
   },
-  setup(props: any) {
-    const locationDetails = ref();
-
-    const loadLocationDetails = async () => {
-      locationDetails.value =
-        await InstitutionService.shared.getInstitutionLocation(
-          props.locationId,
-        );
-    };
-
-    onMounted(async () => {
-      await loadLocationDetails();
-    });
-
-    watch(
-      () => props.locationId,
-      async () => {
-        await loadLocationDetails();
-      },
-    );
-    return { EnrollmentPeriod, locationDetails };
+  setup() {
+    return { EnrollmentPeriod };
   },
 };
 </script>

@@ -36,8 +36,8 @@ import {
   InstitutionLocationAPIOutDTO,
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
+  ScholasticStandingAPIInDTO,
 } from "@/services/http/dto";
-import { ScholasticStandingAPIInDTO } from "./http/dto/ScholasticStanding.dto";
 
 export class InstitutionService {
   // Share Instance

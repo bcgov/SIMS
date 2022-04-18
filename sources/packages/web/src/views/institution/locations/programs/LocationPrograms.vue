@@ -164,7 +164,7 @@ export default {
         event.sortOrder,
       );
     };
-    const loadLocationDetails = async () => {
+    const loadProgramDetails = async () => {
       locationDetails.value =
         await InstitutionService.shared.getInstitutionLocation(
           props.locationId,
@@ -178,17 +178,16 @@ export default {
       );
     };
     onMounted(async () => {
-      await Promise.all([loadSummary(), loadLocationDetails()]);
+      await Promise.all([loadSummary(), loadProgramDetails()]);
     });
 
     watch(
       () => props.locationId,
       async () => {
         // load program summary and institution details
-        await Promise.all([loadSummary(), loadLocationDetails()]);
+        await Promise.all([loadSummary(), loadProgramDetails()]);
       },
     );
-
     const goToAddNewProgram = () => {
       router.push({
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,

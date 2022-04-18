@@ -15,7 +15,7 @@
 </template>
 <script lang="ts">
 import { RouteLocationRaw, useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import formio from "@/components/generic/formio.vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
@@ -28,12 +28,12 @@ import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
 import {
-  ANOTHER_ASSESSMENT_INPROGRESS,
   APPLICATION_NOT_FOUND,
-  NOT_A_COMPLETED_APPLICATION,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ScholasticStandingAPIInDTO,
 } from "@/services/http/dto/ScholasticStanding.dto";
 import { useToastMessage } from "@/composables";
+import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
 
 export default {
   components: {
@@ -81,12 +81,15 @@ export default {
       await loadInitialData();
     });
 
-    const goBackRouteParams = ref({
-      name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
-      params: {
-        locationId: props.locationId,
-      },
-    } as RouteLocationRaw);
+    const goBackRouteParams = computed(
+      () =>
+        ({
+          name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
+          params: {
+            locationId: props.locationId,
+          },
+        } as RouteLocationRaw),
+    );
 
     const submit = async (data: ScholasticStandingAPIInDTO) => {
       try {
@@ -102,8 +105,8 @@ export default {
           if (
             [
               APPLICATION_NOT_FOUND,
-              NOT_A_COMPLETED_APPLICATION,
-              ANOTHER_ASSESSMENT_INPROGRESS,
+              INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+              ASSESSMENT_ALREADY_IN_PROGRESS,
             ].includes(error.errorType)
           ) {
             toast.warn("Not able to submit", error.message);
@@ -120,7 +123,6 @@ export default {
     return {
       initialData,
       customEventCallback,
-      InstitutionRoutesConst,
       submit,
       goBackRouteParams,
     };

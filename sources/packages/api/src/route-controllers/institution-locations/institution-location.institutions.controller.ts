@@ -13,6 +13,7 @@ import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiTags,
+  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -25,9 +26,10 @@ import {
 import {
   ApplicationService,
   APPLICATION_NOT_FOUND,
+  ASSESSMENT_ALREADY_IN_PROGRESS,
   FormService,
   InstitutionLocationService,
-  NOT_A_COMPLETED_APPLICATION,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   StudentAssessmentService,
   StudentScholasticStandingsService,
 } from "../../services";
@@ -53,8 +55,6 @@ import {
   ScholasticStandingAPIInDTO,
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
-
-export const ANOTHER_ASSESSMENT_INPROGRESS = "ANOTHER_ASSESSMENT_INPROGRESS";
 
 /**
  * Institution location controller for institutions Client.
@@ -280,16 +280,21 @@ export class InstitutionLocationInstitutionsController extends BaseController {
 
   /**
    * Save scholastic standing and create new assessment.
-   * @param _locationId location id to check whether the
-   * request user has the permission to this location.
+   * @param locationId location id to check whether the requested user and the requested application has the permission to this location.
    * @param applicationId application id.
+   * @UserToken institution user token
    * @param payload Scholastic Standing payload.
    */
-  @ApiBadRequestResponse({ description: "Invalid form data" })
+  @ApiBadRequestResponse({ description: "Invalid form data." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Application not found or invalid application or invalid" +
+      " application status or another assessment already in progress.",
+  })
   @HasLocationAccess("locationId")
   @Post(":locationId/application/:applicationId/scholastic-standing")
   async saveScholasticStanding(
-    @Param("locationId") _locationId: number,
+    @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
     @Body() payload: ScholasticStandingAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
@@ -306,12 +311,23 @@ export class InstitutionLocationInstitutionsController extends BaseController {
 
       const scholasticStanding =
         await this.studentScholasticStandingsService.saveScholasticStandingCreateReassessment(
-          applicationId,
+          locationId,
+          100,
           userToken.userId,
-          submissionResult.data.data,
+          {
+            studyEndDate:
+              submissionResult.data.data.dateOfChange ||
+              submissionResult.data.data.dateOfCompletion ||
+              submissionResult.data.data.dateOfIncompletion ||
+              submissionResult.data.data.dateOfWithdrawal,
+            tuition: submissionResult.data.data.tuition,
+            booksAndSupplies: submissionResult.data.data.booksAndSupplies,
+            mandatoryFees: submissionResult.data.data.mandatoryFees,
+            exceptionalCosts: submissionResult.data.data.exceptionalCosts,
+          },
         );
 
-      // start assessment.
+      // Start assessment.
       if (scholasticStanding.studentAssessment) {
         await this.studentAssessmentService.startAssessment(
           scholasticStanding.studentAssessment.id,
@@ -320,23 +336,12 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     } catch (error) {
       switch (error.name) {
         case APPLICATION_NOT_FOUND:
-        case NOT_A_COMPLETED_APPLICATION:
+        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+        case ASSESSMENT_ALREADY_IN_PROGRESS:
           throw new UnprocessableEntityException(
             new ApiProcessError(error.message, error.name),
           );
         default:
-          if (
-            error.message.includes(
-              "student_assessments_only_one_assessment_data_null",
-            )
-          ) {
-            throw new UnprocessableEntityException(
-              new ApiProcessError(
-                "Another assessment in progress.",
-                ANOTHER_ASSESSMENT_INPROGRESS,
-              ),
-            );
-          }
           throw error;
       }
     }

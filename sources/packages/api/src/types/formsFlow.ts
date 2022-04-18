@@ -3,8 +3,3 @@ export interface CreateApplicationPayload {
   formId: string;
   submissionId: string;
 }
-
-export enum checkboxFormioType {
-  yes = "yes",
-  no = "no",
-}

@@ -1,5 +1,4 @@
 import { Allow } from "class-validator";
-import { checkboxFormioType } from "../../../types";
 import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
 import { AddressInfoOutDTO } from "../../models/common.dto";
 
@@ -122,6 +121,7 @@ export enum DesignationStatus {
   NotDesignated = "Not designated",
 }
 
+// This DTO must/will be validated using the dryRun.
 export class ScholasticStandingAPIInDTO {
   @Allow()
   scholasticStanding: string;
@@ -138,7 +138,7 @@ export class ScholasticStandingAPIInDTO {
   @Allow()
   tuition?: number;
   @Allow()
-  isCostDifferent?: checkboxFormioType;
+  isCostDifferent?: string;
   @Allow()
   reasonOfIncompletion?: {
     grades?: boolean;
