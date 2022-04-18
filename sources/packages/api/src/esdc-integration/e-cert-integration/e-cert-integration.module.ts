@@ -9,8 +9,11 @@ import {
   DisbursementScheduleErrorsService,
 } from "../../services";
 import { ECertFileHandler } from "./e-cert-file-handler";
+import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
+import { ECertFullTimeFileHeader } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-header";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
-import { ECertFullTimeResponseService } from "./e-cert-full-time-integration/e-cert-full-time-response.service";
+import { ECertPartTimeFileFooter } from "./e-cert-part-time-integration/e-cert-files/e-cert-file-footer";
+import { ECertPartTimeFileHeader } from "./e-cert-part-time-integration/e-cert-files/e-cert-file-header";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
 
 @Module({
@@ -23,14 +26,16 @@ import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/
     DisbursementScheduleService,
     StudentRestrictionService,
     ConfigService,
-    ECertFullTimeResponseService,
     ECertFileHandler,
+    ECertPartTimeFileHeader,
+    ECertPartTimeFileFooter,
+    ECertFullTimeFileHeader,
+    ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
   ],
   exports: [
     ECertFullTimeIntegrationService,
     ECertPartTimeIntegrationService,
-    ECertFullTimeResponseService,
     ECertFileHandler,
   ],
 })
