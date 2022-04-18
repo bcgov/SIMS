@@ -310,7 +310,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     for (const feedbackRecord of responseFile) {
       try {
         await this.processErrorCodeRecords(feedbackRecord);
-        this.logger.error(
+        this.logger.log(
           `Successfully processed line ${feedbackRecord.lineNumber}.`,
         );
       } catch (error) {
