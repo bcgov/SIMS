@@ -21,7 +21,7 @@ export class ECertFullTimeResponseRecord extends ECertResponseRecord {
   }
 
   /**
-   * error code-1 associated with the document number.
+   * Error code-1 associated with the document number.
    * Index of the first error code is 731 not 641
    * because `Grant Award Code` and `Grant Award Amount`
    * be will repeating 10 times, which is not mentioned
@@ -32,28 +32,28 @@ export class ECertFullTimeResponseRecord extends ECertResponseRecord {
   }
 
   /**
-   * error code-2 associated with the document number.
+   * Error code-2 associated with the document number.
    */
   get errorCode2(): string {
     return this.line.substring(741, 751).trim();
   }
 
   /**
-   * error code-3 associated with the document number.
+   * Error code-3 associated with the document number.
    */
   get errorCode3(): string {
     return this.line.substring(751, 761).trim();
   }
 
   /**
-   * error code-4 associated with the document number.
+   * Error code-4 associated with the document number.
    */
   get errorCode4(): string {
     return this.line.substring(761, 771).trim();
   }
 
   /**
-   * error code-5 associated with the document number.
+   * Error code-5 associated with the document number.
    */
   get errorCode5(): string {
     return this.line.substring(771, 781).trim();

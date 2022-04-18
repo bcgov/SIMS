@@ -4,9 +4,18 @@ import {
 } from "../../../database/entities";
 
 export const ECERT_SENT_TITLE = "ENTITLEMENT";
-export const CSGD = "CSGD"; // Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
-export const CSGP = "CSGP"; // Amount of Grant for Students with Permanent Disabilities (CSGP-PD) at the study start.
-export const CSGPT = "CSGPT"; // Amount Grant for Part-time Students with Dependants (CSGP-PTDEP) at the study start.
+/**
+ * Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
+ */
+export const CSGD = "CSGD";
+/**
+ * Amount of Grant for Students with Permanent Disabilities (CSGP-PD) at the study start.
+ */
+export const CSGP = "CSGP";
+/**
+ * Amount Grant for Part-time Students with Dependants (CSGP-PTDEP) at the study start.
+ */
+export const CSGPT = "CSGPT";
 export interface ECertRecord {
   sin: string;
   applicationNumber: string;
