@@ -312,7 +312,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       const scholasticStanding =
         await this.studentScholasticStandingsService.saveScholasticStandingCreateReassessment(
           locationId,
-          100,
+          applicationId,
           userToken.userId,
           {
             studyEndDate:
