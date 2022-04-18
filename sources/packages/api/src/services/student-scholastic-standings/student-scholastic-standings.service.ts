@@ -138,7 +138,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         scholasticStandingData.exceptionalCosts ??
         existingOffering.exceptionalExpenses;
 
-      // TODO: When new offering type is added for report a change/ scholastic standing, update this
+      // TODO: When new offering type is added for report a change/ scholastic standing, update this.
       offering.offeringType = OfferingTypes.applicationSpecific;
 
       // Save new offering.
@@ -170,7 +170,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         .getRepository(StudentScholasticStanding)
         .save(scholasticStanding);
 
-      // Save current application
+      // Save current application.
       application.currentAssessment = {
         id: scholasticStanding.studentAssessment.id,
       } as StudentAssessment;

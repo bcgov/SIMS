@@ -25,7 +25,6 @@ export interface AddressInfo {
   city: string;
   postalCode: string;
 }
-
 export interface ContactInformation {
   addresses: Array<AddressInfo>;
   phone: string;
