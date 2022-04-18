@@ -17,9 +17,9 @@
                     "value": ""
                 }
             ],
-            "content": "<span class=\"category-header-large primary-color mr-2\">{{ data.applicationStudentName }} </span> \n<span class=\"fa fa-circle form-status-badge status-resolved-restriction py-1\"><span class=\"mx-1\">\n{{ data.applicationStatus }} </span></span>",
+            "content": "<span class=\"category-header-large primary-color mr-2\">{{ data.applicationStudentName }} </span> \n<span class=\"fa fa-circle formio-status-chip success py-1\">\n  {{ data.applicationStatus }}\n</span>\n",
             "refreshOnChange": true,
-            "customClass": "formio-success-status",
+            "customClass": "",
             "hidden": false,
             "modalEdit": false,
             "key": "studentName",
@@ -85,7 +85,7 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "addons": [],
-            "id": "ergbzbg"
+            "id": "ejqajd5"
         },
         {
             "label": "Application Number | Location Name | Study Dates",
@@ -99,7 +99,7 @@
                     "value": ""
                 }
             ],
-            "content": "<span class=\"label-bold\">Application #: </span><span class=\"label-value\">{{ data.applicationNumber}}</span><span class=\"muted-content label-value\"> | </span><span class=\"label-bold\">Location: </span><span class=\"label-value\">{{ data.applicationLocationName}}</span>\n<hr class=\"horizontal-divider\" />",
+            "content": "<span class=\"label-bold\">Application #: </span><span class=\"label-value\">{{ data.applicationNumber}}</span><span class=\"muted-content label-value\"> | </span><span class=\"label-bold\">Location: </span><span class=\"label-value\">{{ data.applicationLocationName}}</span>\n",
             "refreshOnChange": true,
             "customClass": "",
             "hidden": false,
@@ -167,7 +167,89 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "addons": [],
-            "id": "eb90up"
+            "id": "ef2w3qg"
+        },
+        {
+            "label": "HTML",
+            "labelWidth": "",
+            "labelMargin": "",
+            "tag": "hr",
+            "className": "",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "",
+            "refreshOnChange": false,
+            "customClass": "font-weight-bold",
+            "hidden": false,
+            "modalEdit": false,
+            "key": "html6",
+            "tags": [],
+            "properties": {},
+            "conditional": {
+                "show": null,
+                "when": null,
+                "eq": "",
+                "json": ""
+            },
+            "customConditional": "",
+            "logic": [],
+            "attributes": {},
+            "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+            },
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false,
+            "placeholder": "",
+            "prefix": "",
+            "suffix": "",
+            "multiple": false,
+            "defaultValue": null,
+            "protected": false,
+            "unique": false,
+            "persistent": false,
+            "clearOnHide": true,
+            "refreshOn": "",
+            "redrawOn": "",
+            "dataGridLabel": false,
+            "labelPosition": "top",
+            "description": "",
+            "errorLabel": "",
+            "tooltip": "",
+            "hideLabel": false,
+            "tabindex": "",
+            "disabled": false,
+            "autofocus": false,
+            "dbIndex": false,
+            "customDefaultValue": "",
+            "calculateValue": "",
+            "calculateServer": false,
+            "widget": null,
+            "validateOn": "change",
+            "validate": {
+                "required": false,
+                "custom": "",
+                "customPrivate": false,
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+            },
+            "allowCalculateOverride": false,
+            "encrypted": false,
+            "showCharCount": false,
+            "showWordCount": false,
+            "allowMultipleMasks": false,
+            "addons": [],
+            "id": "ewpqoih"
         },
         {
             "label": "HTML",
@@ -249,7 +331,7 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "addons": [],
-            "id": "e3tdam"
+            "id": "ey5e7q8"
         },
         {
             "title": "Program Panel",
@@ -1891,7 +1973,7 @@
                                     "layoutFixed": false,
                                     "enableRowGroups": false,
                                     "initEmpty": false,
-                                    "customClass": "formio-unique-datagrid",
+                                    "customClass": "formio-datagrid-unset label-value",
                                     "tabindex": "",
                                     "hidden": false,
                                     "hideLabel": true,
@@ -1909,7 +1991,7 @@
                                     "redrawOn": "",
                                     "clearOnHide": true,
                                     "customDefaultValue": "",
-                                    "calculateValue": "const divEl = document.getElementsByClassName('formio-unique-datagrid')[0]\r\nconst tableEl = divEl.getElementsByTagName('table')[0]\r\nconst tabelHeadEl = tableEl.getElementsByTagName('thead')[0]\r\ntableEl.classList.remove(\"table\");\r\ntableEl.classList.remove(\"datagrid-table\");\r\ntableEl.classList.remove(\"table-bordered\");\r\ntabelHeadEl.setAttribute(\"style\", \"display: none\");",
+                                    "calculateValue": "value = data.applicationOfferingStudyBreak\r\n",
                                     "calculateServer": false,
                                     "allowCalculateOverride": false,
                                     "validateOn": "change",
@@ -1927,7 +2009,7 @@
                                     },
                                     "errorLabel": "",
                                     "errors": "",
-                                    "key": "applicationOfferingStudyBreak",
+                                    "key": "applicationOfferingStudyBreakDataGrid",
                                     "tags": [],
                                     "properties": {},
                                     "conditional": {
@@ -1952,6 +2034,10 @@
                                     "components": [
                                         {
                                             "label": "Study breaks",
+                                            "labelWidth": "",
+                                            "labelMargin": "",
+                                            "tag": "p",
+                                            "className": "",
                                             "attrs": [
                                                 {
                                                     "attr": "",
@@ -1960,12 +2046,33 @@
                                             ],
                                             "content": "{{ row.breakStartDate }} - {{ row.breakEndDate }}",
                                             "refreshOnChange": true,
-                                            "customClass": "formio-html-nogrid",
+                                            "customClass": "label-value",
+                                            "hidden": false,
+                                            "dataGridLabel": false,
+                                            "modalEdit": false,
                                             "key": "html",
+                                            "tags": [],
+                                            "properties": {},
+                                            "conditional": {
+                                                "show": null,
+                                                "when": null,
+                                                "eq": "",
+                                                "json": ""
+                                            },
+                                            "customConditional": "",
+                                            "logic": [],
+                                            "attributes": {},
+                                            "overlay": {
+                                                "style": "",
+                                                "page": "",
+                                                "left": "",
+                                                "top": "",
+                                                "width": "",
+                                                "height": ""
+                                            },
                                             "type": "htmlelement",
                                             "input": false,
                                             "tableView": false,
-                                            "id": "elnti4600000000000000000000",
                                             "placeholder": "",
                                             "prefix": "",
                                             "suffix": "",
@@ -1974,12 +2081,9 @@
                                             "protected": false,
                                             "unique": false,
                                             "persistent": false,
-                                            "hidden": false,
                                             "clearOnHide": true,
                                             "refreshOn": "",
                                             "redrawOn": "",
-                                            "modalEdit": false,
-                                            "dataGridLabel": false,
                                             "labelPosition": "top",
                                             "description": "",
                                             "errorLabel": "",
@@ -1993,7 +2097,6 @@
                                             "calculateValue": "",
                                             "calculateServer": false,
                                             "widget": null,
-                                            "attributes": {},
                                             "validateOn": "change",
                                             "validate": {
                                                 "required": false,
@@ -2003,26 +2106,13 @@
                                                 "multiple": false,
                                                 "unique": false
                                             },
-                                            "conditional": {
-                                                "show": null,
-                                                "when": null,
-                                                "eq": ""
-                                            },
-                                            "overlay": {
-                                                "style": "",
-                                                "left": "",
-                                                "top": "",
-                                                "width": "",
-                                                "height": ""
-                                            },
                                             "allowCalculateOverride": false,
                                             "encrypted": false,
                                             "showCharCount": false,
                                             "showWordCount": false,
-                                            "properties": {},
                                             "allowMultipleMasks": false,
                                             "addons": [],
-                                            "tag": "p"
+                                            "id": "ehim08v0000000"
                                         }
                                     ],
                                     "placeholder": "",
@@ -2039,7 +2129,7 @@
                                     "addons": [],
                                     "tree": true,
                                     "lazyLoad": false,
-                                    "id": "etiuc7i"
+                                    "id": "ei8m3in"
                                 }
                             ],
                             "width": 6,
@@ -2282,7 +2372,7 @@
                                             "value": ""
                                         }
                                     ],
-                                    "content": "${{ data.applicationOfferingTuition ?? 0 }}",
+                                    "content": "${{ data.applicationOfferingTuition ? data.applicationOfferingTuition.toFixed(2) : 0 }}",
                                     "refreshOnChange": true,
                                     "customClass": "label-value",
                                     "hidden": false,
@@ -2351,7 +2441,7 @@
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
                                     "addons": [],
-                                    "id": "e5tg32"
+                                    "id": "ewmz9yi"
                                 }
                             ],
                             "width": 6,
@@ -2450,7 +2540,7 @@
                                             "value": ""
                                         }
                                     ],
-                                    "content": "${{ data.applicationOfferingProgramRelatedCosts ?? 0}}",
+                                    "content": "${{ data.applicationOfferingProgramRelatedCosts ? data.applicationOfferingProgramRelatedCosts.toFixed(2) : 0}}",
                                     "refreshOnChange": true,
                                     "customClass": "label-value",
                                     "hidden": false,
@@ -2519,7 +2609,7 @@
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
                                     "addons": [],
-                                    "id": "e0w9ei9"
+                                    "id": "e6xposr"
                                 }
                             ],
                             "width": 6,
@@ -2688,7 +2778,7 @@
                                             "value": ""
                                         }
                                     ],
-                                    "content": "${{ data.applicationOfferingMandatoryFess ?? 0 }}",
+                                    "content": "${{ data.applicationOfferingMandatoryFess ? data.applicationOfferingMandatoryFess.toFixed(2) : 0 }}",
                                     "refreshOnChange": true,
                                     "customClass": "label-value",
                                     "hidden": false,
@@ -2757,7 +2847,7 @@
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
                                     "addons": [],
-                                    "id": "emfb0r"
+                                    "id": "ev4h48o"
                                 }
                             ],
                             "width": 6,
@@ -2856,7 +2946,7 @@
                                             "value": ""
                                         }
                                     ],
-                                    "content": "${{ data.applicationOfferingExceptionalExpenses ?? 0 }}",
+                                    "content": "${{ data.applicationOfferingExceptionalExpenses ? data.applicationOfferingExceptionalExpenses.toFixed(2) : 0 }}",
                                     "refreshOnChange": true,
                                     "customClass": "label-value",
                                     "hidden": false,
@@ -2925,7 +3015,7 @@
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
                                     "addons": [],
-                                    "id": "e9v3gzl"
+                                    "id": "exdybpe"
                                 }
                             ],
                             "width": 6,
@@ -3065,6 +3155,88 @@
             "id": "efk88ib"
         },
         {
+            "label": "HTML",
+            "labelWidth": "",
+            "labelMargin": "",
+            "tag": "hr",
+            "className": "",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "",
+            "refreshOnChange": false,
+            "customClass": "",
+            "hidden": false,
+            "modalEdit": false,
+            "key": "html7",
+            "tags": [],
+            "properties": {},
+            "conditional": {
+                "show": null,
+                "when": null,
+                "eq": "",
+                "json": ""
+            },
+            "customConditional": "",
+            "logic": [],
+            "attributes": {},
+            "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+            },
+            "type": "htmlelement",
+            "input": false,
+            "placeholder": "",
+            "prefix": "",
+            "suffix": "",
+            "multiple": false,
+            "defaultValue": null,
+            "protected": false,
+            "unique": false,
+            "persistent": false,
+            "clearOnHide": true,
+            "refreshOn": "",
+            "redrawOn": "",
+            "tableView": false,
+            "dataGridLabel": false,
+            "labelPosition": "top",
+            "description": "",
+            "errorLabel": "",
+            "tooltip": "",
+            "hideLabel": false,
+            "tabindex": "",
+            "disabled": false,
+            "autofocus": false,
+            "dbIndex": false,
+            "customDefaultValue": "",
+            "calculateValue": "",
+            "calculateServer": false,
+            "widget": null,
+            "validateOn": "change",
+            "validate": {
+                "required": false,
+                "custom": "",
+                "customPrivate": false,
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+            },
+            "allowCalculateOverride": false,
+            "encrypted": false,
+            "showCharCount": false,
+            "showWordCount": false,
+            "allowMultipleMasks": false,
+            "addons": [],
+            "id": "efpxork"
+        },
+        {
             "label": "Report a change in student circumstance",
             "labelWidth": "",
             "labelMargin": "",
@@ -3076,7 +3248,7 @@
                     "value": ""
                 }
             ],
-            "content": "<hr class=\"horizontal-divider\" />\n<p>Report a change</p>",
+            "content": "<p>Report a change</p>",
             "refreshOnChange": false,
             "customClass": "category-header-large primary-color",
             "hidden": false,
@@ -3144,7 +3316,7 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "addons": [],
-            "id": "e15sv1b"
+            "id": "ex8co4k"
         },
         {
             "label": "<strong>Select a change in circumstance</strong>",
@@ -3198,7 +3370,7 @@
             "allowCalculateOverride": false,
             "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
@@ -3246,7 +3418,7 @@
             "addons": [],
             "inputType": "radio",
             "fieldSet": false,
-            "id": "eithvn8",
+            "id": "eai9iy6",
             "defaultValue": ""
         },
         {
@@ -3261,7 +3433,7 @@
             "hideLabel": true,
             "disabled": false,
             "modalEdit": false,
-            "key": "studentWentFromFullTimeToPartTimeStudiesViceVersaOrStartedADifferentProgramPanel",
+            "key": "differentIntensityProgramPanel",
             "tags": [],
             "properties": {},
             "customConditional": "",
@@ -3409,7 +3581,7 @@
                                         "mousewheel": true,
                                         "arrowkeys": true
                                     },
-                                    "id": "enr5rjwb"
+                                    "id": "egvmxvv"
                                 }
                             ],
                             "width": 6,
@@ -3493,7 +3665,7 @@
                     "tree": false,
                     "lazyLoad": false,
                     "autoAdjust": false,
-                    "id": "ennb0df"
+                    "id": "enha1xm"
                 }
             ],
             "placeholder": "",
@@ -3534,7 +3706,7 @@
             "addons": [],
             "tree": false,
             "lazyLoad": false,
-            "id": "e1w6u2"
+            "id": "eu80x4s"
         },
         {
             "title": "Student completed program early Panel",
@@ -5679,9 +5851,12 @@
         },
         {
             "label": "applicationId",
+            "labelWidth": "",
+            "labelMargin": "",
             "customClass": "",
             "modalEdit": false,
-            "persistent": true,
+            "defaultValue": null,
+            "persistent": false,
             "protected": false,
             "dbIndex": false,
             "encrypted": false,
@@ -5704,6 +5879,7 @@
             },
             "type": "hidden",
             "input": true,
+            "tableView": false,
             "placeholder": "",
             "prefix": "",
             "suffix": "",
@@ -5712,7 +5888,7 @@
             "hidden": false,
             "clearOnHide": true,
             "refreshOn": "",
-            "tableView": false,
+            "dataGridLabel": false,
             "labelPosition": "top",
             "description": "",
             "errorLabel": "",
@@ -5742,18 +5918,18 @@
             "showCharCount": false,
             "showWordCount": false,
             "allowMultipleMasks": false,
+            "addons": [],
             "inputType": "hidden",
-            "id": "em1y8gd",
-            "defaultValue": "",
-            "dataGridLabel": false,
-            "addons": []
+            "id": "e72g6d"
         },
         {
             "label": "applicationStatus",
+            "labelWidth": "",
+            "labelMargin": "",
             "customClass": "",
             "modalEdit": false,
             "defaultValue": null,
-            "persistent": true,
+            "persistent": false,
             "protected": false,
             "dbIndex": false,
             "encrypted": false,
@@ -5815,9 +5991,9 @@
             "showCharCount": false,
             "showWordCount": false,
             "allowMultipleMasks": false,
+            "addons": [],
             "inputType": "hidden",
-            "id": "e6z1qd9",
-            "addons": []
+            "id": "eootfh"
         }
     ],
     "display": "form",
@@ -5825,6 +6001,6 @@
     "name": "reportscholasticstandingchange",
     "path": "reportscholasticstandingchange",
     "created": "2021-09-13T18:48:47.454Z",
-    "modified": "2022-04-12T21:00:30.803Z",
+    "modified": "2022-04-18T22:33:45.487Z",
     "machineName": "reportScholasticStandingChange"
 }
