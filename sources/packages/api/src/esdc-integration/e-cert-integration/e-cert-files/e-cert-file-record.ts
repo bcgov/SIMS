@@ -8,7 +8,5 @@ import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base
  */
 @Injectable()
 export abstract class ECertFileRecord implements FixedFormatFileLine {
-  public getFixedFormat(): string {
-    throw new Error(`Method not implemented.`);
-  }
+  abstract getFixedFormat(): string;
 }

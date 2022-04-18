@@ -10,11 +10,7 @@ import { RecordTypeCodes } from "../models/e-cert-integration-model";
 @Injectable()
 export abstract class ECertFileHeader implements FixedFormatFileLine {
   recordTypeCode: RecordTypeCodes;
-  public getFixedFormat(): string {
-    throw new Error("Method not implemented.");
-  }
+  abstract getFixedFormat(): string;
 
-  public createFromLine(line: string): ECertFileHeader {
-    throw new Error(`Method not implemented, ${line} not declared.`);
-  }
+  abstract createFromLine(line: string): ECertFileHeader;
 }

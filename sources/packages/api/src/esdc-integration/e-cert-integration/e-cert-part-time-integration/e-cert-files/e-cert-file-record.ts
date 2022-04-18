@@ -12,7 +12,7 @@ import { ECertFileRecord } from "../../e-cert-files/e-cert-file-record";
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertPartTimeFileRecord implements ECertFileRecord {
+export class ECertPartTimeFileRecord extends ECertFileRecord {
   recordType: RecordTypeCodes;
   /**
    * Social insurance number of student.

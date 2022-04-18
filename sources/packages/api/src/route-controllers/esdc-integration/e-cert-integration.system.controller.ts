@@ -41,12 +41,10 @@ export class ECertIntegrationController extends BaseController {
   async processFullTimeResponses(): Promise<ESDCFileResponseDTO[]> {
     const fullTimeResults =
       await this.eCertFileHandler.processFullTimeResponses();
-    return fullTimeResults.map((fullTimeResult) => {
-      return {
-        processSummary: fullTimeResult.processSummary,
-        errorsSummary: fullTimeResult.errorsSummary,
-      };
-    });
+    return fullTimeResults.map((fullTimeResult) => ({
+      processSummary: fullTimeResult.processSummary,
+      errorsSummary: fullTimeResult.errorsSummary,
+    }));
   }
 
   /**
@@ -75,12 +73,10 @@ export class ECertIntegrationController extends BaseController {
   async processPartTimeResponses(): Promise<ESDCFileResponseDTO[]> {
     const partTimeResults =
       await this.eCertFileHandler.processPartTimeResponses();
-    return partTimeResults.map((partTimeResult) => {
-      return {
-        processSummary: partTimeResult.processSummary,
-        errorsSummary: partTimeResult.errorsSummary,
-      };
-    });
+    return partTimeResults.map((partTimeResult) => ({
+      processSummary: partTimeResult.processSummary,
+      errorsSummary: partTimeResult.errorsSummary,
+    }));
   }
 
   @InjectLogger()

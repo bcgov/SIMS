@@ -12,11 +12,7 @@ export abstract class ECertFileFooter implements FixedFormatFileLine {
   recordTypeCode: RecordTypeCodes;
   totalSINHash: number;
   recordCount: number;
-  public getFixedFormat(): string {
-    throw new Error("Method not implemented.");
-  }
+  abstract getFixedFormat(): string;
 
-  public createFromLine(line: string): ECertFileFooter {
-    throw new Error(`Method not implemented, ${line} not declared.`);
-  }
+  abstract createFromLine(line: string): ECertFileFooter;
 }

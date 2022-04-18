@@ -16,7 +16,7 @@ export class ECertFullTimeResponseRecord extends ECertResponseRecord {
   /**
    * Financial document number associated with this disbursement.
    */
-  public get documentNumber(): number {
+  get documentNumber(): number {
     return parseInt(this.line.substring(31, 39));
   }
 
@@ -27,42 +27,42 @@ export class ECertFullTimeResponseRecord extends ECertResponseRecord {
    * be will repeating 10 times, which is not mentioned
    * in the doc 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
    */
-  public get errorCode1(): string {
+  get errorCode1(): string {
     return this.line.substring(731, 741).trim();
   }
 
   /**
    * error code-2 associated with the document number.
    */
-  public get errorCode2(): string {
+  get errorCode2(): string {
     return this.line.substring(741, 751).trim();
   }
 
   /**
    * error code-3 associated with the document number.
    */
-  public get errorCode3(): string {
+  get errorCode3(): string {
     return this.line.substring(751, 761).trim();
   }
 
   /**
    * error code-4 associated with the document number.
    */
-  public get errorCode4(): string {
+  get errorCode4(): string {
     return this.line.substring(761, 771).trim();
   }
 
   /**
    * error code-5 associated with the document number.
    */
-  public get errorCode5(): string {
+  get errorCode5(): string {
     return this.line.substring(771, 781).trim();
   }
 
   /**
    * SIN associated with the document number.
    */
-  public get sin(): number {
+  get sin(): number {
     return parseInt(this.line.substring(3, 12));
   }
 }

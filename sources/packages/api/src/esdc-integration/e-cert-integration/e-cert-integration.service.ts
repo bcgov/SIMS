@@ -21,14 +21,10 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
    * @param ecertRecords
    * @param fileSequence
    */
-  createRequestContent(
+  abstract createRequestContent(
     ecertRecords: ECertRecord[],
     fileSequence?: number,
-  ): FixedFormatFileLine[] {
-    throw new Error(
-      `Method not implemented , ${ecertRecords} && ${fileSequence} not declared.`,
-    );
-  }
+  ): FixedFormatFileLine[];
 
   /**
    * Transform the text lines in parsed objects specific to the integration process.

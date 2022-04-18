@@ -18,8 +18,7 @@ const ORIGINATOR_CODE = "BC";
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertFullTimeFileHeader implements ECertFileHeader {
-  recordTypeCode: RecordTypeCodes;
+export class ECertFullTimeFileHeader extends ECertFileHeader {
   processDate: Date;
   sequence: number;
 

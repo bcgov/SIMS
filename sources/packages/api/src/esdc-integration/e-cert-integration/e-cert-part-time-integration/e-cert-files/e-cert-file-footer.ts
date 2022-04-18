@@ -11,11 +11,8 @@ import { ECertFileFooter } from "../../e-cert-files/e-cert-file-footer";
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertPartTimeFileFooter implements ECertFileFooter {
-  recordTypeCode: RecordTypeCodes;
+export class ECertPartTimeFileFooter extends ECertFileFooter {
   totalAmountDisbursed: number;
-  totalSINHash: number;
-  recordCount: number;
 
   public getFixedFormat(): string {
     const footer = new StringBuilder();
