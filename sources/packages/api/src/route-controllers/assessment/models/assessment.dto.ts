@@ -1,4 +1,4 @@
-import { StudentAssessmentStatus } from "src/services/student-assessment/student-assessment.models";
+import { StudentAssessmentStatus } from "../../../services/student-assessment/student-assessment.models";
 import {
   AssessmentTriggerType,
   ScholasticStandingStatus,

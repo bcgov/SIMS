@@ -6,4 +6,5 @@ export const FormNames = {
   DesignationAgreementDetails: "designationagreementdetails",
   ApproveDenyDesignations: "approvedenydesignation",
   InstitutionProfile: "institutionprofile",
+  ReportScholasticStandingChange: "reportscholasticstandingchange",
 };
