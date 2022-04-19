@@ -1,33 +1,21 @@
 import WelcomeObject from "../../page-objects/student-objects/WelcomeObject";
 import LoginObject from "../../page-objects/student-objects/LoginObject";
 import DashboardObject from "../../page-objects/student-objects/DashboardObject";
+import StudentCustomCommand from "../../custom-command/student/StudentCustomCommand";
 
 describe("Dashboard Page", () => {
   const welcomeObject = new WelcomeObject();
   const loginObject = new LoginObject();
   const dashboardObject = new DashboardObject();
+  const studentCustomCommand = new StudentCustomCommand();
 
+  const url = Cypress.env("studentURL");
   const username = Cypress.env("cardSerialNumber");
   const password = Cypress.env("passcode");
 
   it("Verify that user successfully redirects to Dashboard Page.", () => {
-    cy.visit("/");
-    cy.intercept("PUT", "**/device").as("waitCardSerialNumber");
-    welcomeObject.virtualTestingButton().should("be.visible").click();
-    welcomeObject.virtualTestingButtonText().should("be.visible");
-    welcomeObject.virtualDeviceId().click({ force: true });
-    cy.wait("@waitCardSerialNumber");
-    loginObject
-      .cardSerialNumberInputText()
-      .type(username)
-      .should("have.value", username);
-    loginObject.cardSerialNumberContinueButton().click();
-    loginObject
-      .passcodeInputText()
-      .type(password)
-      .should("have.value", password);
-    loginObject.passcodeContinueButton().click();
-    loginObject.verifyLoggedInText();
+    cy.visit(url);
+    studentCustomCommand.loginStudent();
   });
 
   it("Verify that all buttons are present in Dashboard Page.", () => {
