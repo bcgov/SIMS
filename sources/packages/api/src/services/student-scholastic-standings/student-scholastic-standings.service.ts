@@ -125,6 +125,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Deleting the id, from the cloned object.
       // So that when its save its considered as a new EducationProgramOffering object.
       delete offering.id;
+
       const newStudyEndDate =
         scholasticStandingData.dateOfChange ||
         scholasticStandingData.dateOfCompletion ||
