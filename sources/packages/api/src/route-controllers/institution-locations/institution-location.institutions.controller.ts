@@ -40,6 +40,7 @@ import {
   deliveryMethod,
   credentialTypeToDisplay,
   getUserFullName,
+  CustomNamedError,
 } from "../../utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
@@ -322,17 +323,20 @@ export class InstitutionLocationInstitutionsController extends BaseController {
           scholasticStanding.studentAssessment.id,
         );
       }
-    } catch (error) {
-      switch (error.name) {
-        case APPLICATION_NOT_FOUND:
-        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-        case ASSESSMENT_ALREADY_IN_PROGRESS:
-          throw new UnprocessableEntityException(
-            new ApiProcessError(error.message, error.name),
-          );
-        default:
-          throw error;
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case APPLICATION_NOT_FOUND:
+          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+          case ASSESSMENT_ALREADY_IN_PROGRESS:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          default:
+            throw error;
+        }
       }
+      throw error;
     }
   }
 }

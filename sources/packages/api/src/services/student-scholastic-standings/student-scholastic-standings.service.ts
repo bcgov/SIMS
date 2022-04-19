@@ -127,9 +127,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       delete offering.id;
 
       const newStudyEndDate =
-        scholasticStandingData.dateOfChange ||
-        scholasticStandingData.dateOfCompletion ||
-        scholasticStandingData.dateOfIncompletion ||
+        scholasticStandingData.dateOfChange ??
+        scholasticStandingData.dateOfCompletion ??
+        scholasticStandingData.dateOfIncompletion ??
         scholasticStandingData.dateOfWithdrawal;
 
       offering.studyEndDate = new Date(newStudyEndDate);

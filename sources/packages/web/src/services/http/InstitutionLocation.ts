@@ -10,9 +10,9 @@ import {
   InstitutionLocationAPIOutDTO,
   ActiveApplicationDataAPIOutDTO,
   OptionItemAPIOutDTO,
+  scholasticStandingDataAPIInDTO,
 } from "@/services/http/dto";
 
-import { ScholasticStandingAPIInDTO } from "./dto/ScholasticStanding.dto";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
     createInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
@@ -160,14 +160,14 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async saveScholasticStanding(
     applicationId: number,
     locationId: number,
-    payload: ScholasticStandingAPIInDTO,
+    payload: scholasticStandingDataAPIInDTO,
   ): Promise<void> {
     try {
       await this.postCall(
         this.addClientRoot(
           `institution/location/${locationId}/application/${applicationId}/scholastic-standing`,
         ),
-        payload,
+        { data: payload },
       );
     } catch (error: unknown) {
       this.handleAPICustomError(error);

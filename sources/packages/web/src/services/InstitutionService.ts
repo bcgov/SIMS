@@ -36,7 +36,7 @@ import {
   InstitutionLocationAPIOutDTO,
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
-  ScholasticStandingAPIInDTO,
+  scholasticStandingDataAPIInDTO,
 } from "@/services/http/dto";
 
 export class InstitutionService {
@@ -448,7 +448,7 @@ export class InstitutionService {
   async saveScholasticStanding(
     applicationId: number,
     locationId: number,
-    payload: ScholasticStandingAPIInDTO,
+    payload: scholasticStandingDataAPIInDTO,
   ): Promise<void> {
     await ApiClient.InstitutionLocation.saveScholasticStanding(
       applicationId,
