@@ -10,7 +10,7 @@ import {
   InstitutionLocationAPIOutDTO,
   ActiveApplicationDataAPIOutDTO,
   OptionItemAPIOutDTO,
-  scholasticStandingDataAPIInDTO,
+  ScholasticStandingDataAPIInDTO,
 } from "@/services/http/dto";
 
 export class InstitutionLocationApi extends HttpBaseClient {
@@ -160,7 +160,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async saveScholasticStanding(
     applicationId: number,
     locationId: number,
-    payload: scholasticStandingDataAPIInDTO,
+    payload: ScholasticStandingDataAPIInDTO,
   ): Promise<void> {
     try {
       await this.postCall(

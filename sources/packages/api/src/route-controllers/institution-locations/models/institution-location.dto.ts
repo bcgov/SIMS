@@ -120,7 +120,7 @@ export enum DesignationStatus {
    */
   NotDesignated = "Not designated",
 }
-export class scholasticStandingDataAPIInDTO {
+export class ScholasticStandingDataAPIInDTO {
   dateOfChange?: string;
   booksAndSupplies?: number;
   dateOfCompletion?: string;
@@ -134,5 +134,5 @@ export class scholasticStandingDataAPIInDTO {
 // This DTO must/will be validated using the dryRun.
 export class ScholasticStandingAPIInDTO {
   @IsNotEmptyObject()
-  data: scholasticStandingDataAPIInDTO;
+  data: ScholasticStandingDataAPIInDTO;
 }
