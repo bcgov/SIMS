@@ -302,29 +302,18 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     try {
       const submissionResult = await this.formService.dryRunSubmission(
         FormNames.ReportScholasticStandingChange,
-        payload,
+        payload.data,
       );
 
       if (!submissionResult.valid) {
         throw new BadRequestException("Invalid submission.");
       }
-
       const scholasticStanding =
         await this.studentScholasticStandingsService.saveScholasticStandingCreateReassessment(
           locationId,
           applicationId,
           userToken.userId,
-          {
-            studyEndDate:
-              submissionResult.data.data.dateOfChange ||
-              submissionResult.data.data.dateOfCompletion ||
-              submissionResult.data.data.dateOfIncompletion ||
-              submissionResult.data.data.dateOfWithdrawal,
-            tuition: submissionResult.data.data.tuition,
-            booksAndSupplies: submissionResult.data.data.booksAndSupplies,
-            mandatoryFees: submissionResult.data.data.mandatoryFees,
-            exceptionalCosts: submissionResult.data.data.exceptionalCosts,
-          },
+          submissionResult.data.data,
         );
 
       // Start assessment.

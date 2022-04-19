@@ -1,4 +1,4 @@
-import { Allow } from "class-validator";
+import { Allow, IsNotEmptyObject } from "class-validator";
 import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
 import { AddressInfoOutDTO } from "../../models/common.dto";
 
@@ -120,35 +120,19 @@ export enum DesignationStatus {
    */
   NotDesignated = "Not designated",
 }
+export class ScholasticStanding {
+  dateOfChange?: string;
+  booksAndSupplies?: number;
+  dateOfCompletion?: string;
+  exceptionalCosts?: number;
+  mandatoryFees?: number;
+  tuition?: number;
+  dateOfIncompletion?: string;
+  dateOfWithdrawal?: string;
+}
 
 // This DTO must/will be validated using the dryRun.
 export class ScholasticStandingAPIInDTO {
-  @Allow()
-  scholasticStanding: string;
-  @Allow()
-  dateOfChange?: string;
-  @Allow()
-  booksAndSupplies?: number;
-  @Allow()
-  dateOfCompletion?: string;
-  @Allow()
-  exceptionalCosts?: number;
-  @Allow()
-  mandatoryFees?: number;
-  @Allow()
-  tuition?: number;
-  @Allow()
-  isCostDifferent?: string;
-  @Allow()
-  reasonOfIncompletion?: {
-    grades?: boolean;
-    attendance?: boolean;
-    other?: boolean;
-  };
-  @Allow()
-  dateOfIncompletion?: string;
-  @Allow()
-  notes?: string;
-  @Allow()
-  dateOfWithdrawal?: string;
+  @IsNotEmptyObject()
+  data: ScholasticStanding;
 }

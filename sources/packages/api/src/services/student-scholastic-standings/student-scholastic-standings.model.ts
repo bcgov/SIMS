@@ -1,7 +1,10 @@
 export interface ScholasticStanding {
-  studyEndDate: string;
-  tuition: number;
-  booksAndSupplies: number;
-  mandatoryFees: number;
-  exceptionalCosts: number;
+  dateOfChange?: string;
+  booksAndSupplies?: number;
+  dateOfCompletion?: string;
+  exceptionalCosts?: number;
+  mandatoryFees?: number;
+  tuition?: number;
+  dateOfIncompletion?: string;
+  dateOfWithdrawal?: string;
 }

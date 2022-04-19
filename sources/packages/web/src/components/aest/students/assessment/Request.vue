@@ -41,7 +41,7 @@
                 ></template
               ></Column
             >
-            ><Column field="status" header="Status" sortable="true">
+            <Column field="status" header="Status" sortable="true">
               <template #body="slotProps"
                 ><status-chip-requested-assessment
                   :status="slotProps.data.status" /></template

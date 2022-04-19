@@ -30,7 +30,7 @@ import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
 import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-  ScholasticStandingAPIInDTO,
+  ScholasticStanding,
 } from "@/services/http/dto/ScholasticStanding.dto";
 import { useToastMessage } from "@/composables";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
@@ -91,12 +91,12 @@ export default {
         } as RouteLocationRaw),
     );
 
-    const submit = async (data: ScholasticStandingAPIInDTO) => {
+    const submit = async (data: ScholasticStanding) => {
       try {
         await InstitutionService.shared.saveScholasticStanding(
           props.applicationId,
           props.locationId,
-          data,
+          { data: data },
         );
         toast.success("Change Reported", "Report a change submitted");
         router.push(goBackRouteParams.value);

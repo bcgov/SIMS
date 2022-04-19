@@ -2,7 +2,7 @@ export const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
 export const INVALID_OPERATION_IN_THE_CURRENT_STATUS =
   "INVALID_OPERATION_IN_THE_CURRENT_STATUS";
 
-export interface ScholasticStandingAPIInDTO {
+export interface ScholasticStanding {
   scholasticStanding: string;
   dateOfChange?: string;
   booksAndSupplies?: number;
@@ -19,4 +19,7 @@ export interface ScholasticStandingAPIInDTO {
   dateOfIncompletion?: string;
   notes?: string;
   dateOfWithdrawal?: string;
+}
+export interface ScholasticStandingAPIInDTO {
+  data: ScholasticStanding;
 }
