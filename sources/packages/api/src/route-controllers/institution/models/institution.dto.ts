@@ -15,7 +15,7 @@ import { AddressInDTO, AddressOutDTO } from "../../models/common.dto";
 /**
  * DTO object for institution creation.
  */
-export class CreateInstitutionDto {
+export class InstitutionFormAPIInDTO {
   @IsNotEmpty()
   userEmail: string;
   @IsOptional()
@@ -28,7 +28,7 @@ export class CreateInstitutionDto {
   website: string;
   @IsOptional()
   regulatingBody: string;
-  @IsNotEmpty()
+  @IsDate()
   establishedDate: Date;
   //TODO Can be broken into a different DTO if needed
   //Institutions Primary Contact Information
@@ -54,11 +54,11 @@ export class CreateInstitutionDto {
   country: string;
   @IsNotEmpty()
   postalCode: string;
-  @IsNotEmpty()
+  @IsPositive()
   institutionType: number;
 }
 
-export class InstitutionDto extends PartialType(CreateInstitutionDto) {
+export class InstitutionDto extends PartialType(InstitutionFormAPIInDTO) {
   @IsOptional()
   userEmail?: string;
 

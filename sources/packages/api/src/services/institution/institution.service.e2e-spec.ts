@@ -86,10 +86,7 @@ describe("InstitutionService", () => {
 
   it("should return all institution users", async () => {
     // Setup
-    const [institution, user, institutionUser] = await factory(
-      userService,
-      service,
-    );
+    const [institution, user] = await factory(userService, service);
 
     // Create new user
     const newUser = await userFactory();
@@ -102,13 +99,14 @@ describe("InstitutionService", () => {
     });
 
     // Test
-    const [users]: [InstitutionUser[], number] = await service.allUsers(
-      null,
-      null,
-      institution.id,
-      null,
-      null,
-    );
+    const [users]: [InstitutionUser[], number] =
+      await service.getInstitutionUsers(institution.id, {
+        page: 1,
+        pageLimit: 10,
+        searchCriteria: null,
+        sortField: null,
+        sortOrder: null,
+      });
     expect(users.length).toEqual(2);
 
     // User1
@@ -169,13 +167,13 @@ describe("InstitutionService", () => {
     expect(auth.location).toBeDefined();
     expect(auth.location.id).toEqual(location.id);
 
-    const [allUsers] = await service.allUsers(
-      null,
-      null,
-      institution.id,
-      null,
-      null,
-    );
+    const [allUsers] = await service.getInstitutionUsers(institution.id, {
+      page: 1,
+      pageLimit: 10,
+      searchCriteria: null,
+      sortField: null,
+      sortOrder: null,
+    });
     const newSubjects = allUsers.filter(
       (user) => user.id === institutionUser.id,
     );

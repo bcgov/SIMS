@@ -7,13 +7,18 @@ import { InstitutionService, FormService } from "../../services";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
   getExtendedDateFormat,
+  transformToInstitutionUserRespDto,
+  PaginationOptions,
+  PaginatedResults,
 } from "../../utilities";
+import { InstitutionUser } from "../../database/entities";
 import {
   InstitutionDetailDTO,
   InstitutionContactDTO,
   InstitutionProfileDTO,
 } from "./models/institution.dto";
 import { FormNames } from "../../services/form/constants";
+import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
 
 /**
  * Service/Provider for Institutions controller to wrap the common methods.
@@ -90,5 +95,29 @@ export class InstitutionControllerService {
         "Not able to update institution due to an invalid request.",
       );
     }
+  }
+
+  /**
+   * Get institution users with page,sort and search.
+   * @param institutionId
+   * @param paginationOptions
+   * @returns Institution Users.
+   */
+  async getInstitutionUsers(
+    institutionId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
+    const [institutionUsers, count] =
+      await this.institutionService.getInstitutionUsers(
+        institutionId,
+        paginationOptions,
+      );
+
+    return {
+      results: institutionUsers.map((eachInstitutionUser: InstitutionUser) => {
+        return transformToInstitutionUserRespDto(eachInstitutionUser);
+      }),
+      count: count,
+    };
   }
 }

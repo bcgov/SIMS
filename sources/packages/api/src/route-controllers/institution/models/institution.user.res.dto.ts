@@ -1,9 +1,4 @@
-import {
-  User,
-  InstitutionLocation,
-  InstitutionUserTypeAndRole,
-  InstitutionUser,
-} from "../../../database/entities";
+import { User, InstitutionUser } from "../../../database/entities";
 export interface InstitutionUserRespDto {
   id: number;
   user: Pick<
@@ -20,15 +15,6 @@ export interface InstitutionUserRespDto {
       name: string;
     };
   }[];
-}
-export interface InstitutionUserAuthorizations {
-  location?: Pick<InstitutionLocation, "name" | "data" | "id">;
-  authType: Pick<InstitutionUserTypeAndRole, "type" | "role">;
-}
-export interface InstitutionLocationUserAuthDto {
-  id: number;
-  authorizations: InstitutionUserAuthorizations[];
-  user: Pick<User, "firstName" | "lastName" | "userName" | "isActive" | "id">;
 }
 
 export interface InstitutionUserAuth {
