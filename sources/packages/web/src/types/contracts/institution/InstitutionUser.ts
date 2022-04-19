@@ -142,14 +142,10 @@ export interface InstitutionUserAndAuthDetailsForStore {
   };
   authorizations: AuthorizationsForStore;
 }
-export interface InstitutionUserAndCount {
-  users: InstitutionUserResDto[];
-  totalUsers: number;
-}
 
 export interface InstitutionUserAndCountForDataTable {
-  users: InstitutionUserViewModel[];
-  totalUsers: number;
+  results: InstitutionUserViewModel[];
+  count: number;
 }
 
 export enum InstitutionUserRoles {

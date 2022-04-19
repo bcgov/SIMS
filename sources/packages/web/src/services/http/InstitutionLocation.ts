@@ -59,26 +59,18 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async createUser(
     createInstitutionUserDto: InstitutionUserDto,
   ): Promise<void> {
-    await this.apiClient
-      .post("institution/user", createInstitutionUserDto, this.addAuthHeader())
-      .catch((error) => {
-        this.handleCustomError(error);
-      });
+    return this.postCall<InstitutionUserDto>(
+      "institution/user",
+      createInstitutionUserDto,
+    );
   }
 
   public async getInstitutionLocationUserDetails(
     userName: string,
   ): Promise<InstitutionLocationUserAuthDto> {
-    try {
-      const result = await this.apiClient.get(
-        `institution/user/${userName}`,
-        this.addAuthHeader(),
-      );
-      return result?.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCallTyped<InstitutionLocationUserAuthDto>(
+      this.addClientRoot(`institution/user/${userName}`),
+    );
   }
 
   /**
@@ -91,15 +83,10 @@ export class InstitutionLocationApi extends HttpBaseClient {
     userName: string,
     updateInstitutionUserDto: InstitutionUserDto,
   ): Promise<void> {
-    await this.apiClient
-      .patch(
-        `institution/user/${userName}`,
-        updateInstitutionUserDto,
-        this.addAuthHeader(),
-      )
-      .catch((error) => {
-        this.handleCustomError(error);
-      });
+    return this.patchCall<InstitutionUserDto>(
+      `institution/user/${userName}`,
+      updateInstitutionUserDto,
+    );
   }
 
   public async updateUserStatus(

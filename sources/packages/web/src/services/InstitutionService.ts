@@ -3,7 +3,8 @@ import {
   SearchInstitutionResp,
   BasicInstitutionInfo,
   AESTInstitutionProgramsSummaryDto,
-} from "../types/contracts/InstituteContract";
+  PaginationParams,
+} from "@/types";
 import {
   InstitutionDto,
   EducationProgram,
@@ -18,15 +19,11 @@ import {
   InstitutionUserWithUserType,
   OptionItemDto,
   DataTableSortOrder,
-  UserFields,
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  InstitutionUserAndCount,
   InstitutionUserAndCountForDataTable,
-  FieldSortOrder,
   PaginatedResults,
   InstitutionDetailDTO,
   InstitutionContactDTO,
+  PaginationOptions,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -37,6 +34,7 @@ import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
 } from "@/services/http/dto";
+import { addPaginationOptions, addSortOptions } from "@/helpers";
 
 export class InstitutionService {
   // Share Instance
@@ -171,29 +169,33 @@ export class InstitutionService {
    * @param sortOrder, order to be sorted
    * @returns All the institution users.
    */
-  public async institutionSummary(
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    searchName?: string,
-    sortField?: UserFields,
-    sortOrder?: DataTableSortOrder,
+  public async institutionUserSummary(
+    paginationOptions: PaginationOptions,
+    institutionId?: number,
   ): Promise<InstitutionUserAndCountForDataTable> {
-    let URL = `institution/users?page=${page}&pageLimit=${pageCount}`;
-    if (searchName) {
-      URL = `${URL}&searchName=${searchName}`;
+    let url = institutionId
+      ? `institution/${institutionId}/user`
+      : "institution/user";
+    url = addPaginationOptions(
+      url,
+      paginationOptions.page,
+      paginationOptions.pageLimit,
+      "?",
+    );
+    url = addSortOptions(
+      url,
+      paginationOptions.sortField,
+      paginationOptions.sortOrder,
+    );
+
+    if (paginationOptions.searchCriteria) {
+      url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
     }
-    if (sortField && sortOrder) {
-      const sortDBOrder =
-        sortOrder === DataTableSortOrder.DESC
-          ? FieldSortOrder.DESC
-          : FieldSortOrder.ASC;
-      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-    }
-    const response: InstitutionUserAndCount =
-      await ApiClient.Institution.institutionSummary(URL);
+    const response: PaginatedResults<InstitutionUserResDto> =
+      await ApiClient.Institution.institutionUserSummary(url);
     return {
-      users: this.mapUserRolesAndLocation(response.users),
-      totalUsers: response.totalUsers,
+      results: this.mapUserRolesAndLocation(response.results),
+      count: response.count,
     };
   }
 
@@ -369,46 +371,6 @@ export class InstitutionService {
     institutionId: number,
   ): Promise<BasicInstitutionInfo> {
     return ApiClient.Institution.getBasicInstitutionInfoById(institutionId);
-  }
-
-  /**
-   * Controller method to get all institution users with the
-   * given institutionId ministry user.
-   * @param institutionId institution id
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchName, user's name keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns All the institution users for the given institution.
-   */
-  public async institutionSummaryForAEST(
-    institutionId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    searchName?: string,
-    sortField?: UserFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<InstitutionUserAndCountForDataTable> {
-    let URL = `institution/${institutionId}/user-summary?page=${page}&pageLimit=${pageCount}`;
-    if (searchName) {
-      URL = `${URL}&searchName=${searchName}`;
-    }
-    if (sortField && sortOrder) {
-      const sortDBOrder =
-        sortOrder === DataTableSortOrder.DESC
-          ? FieldSortOrder.DESC
-          : FieldSortOrder.ASC;
-      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-    }
-    const response: InstitutionUserAndCount =
-      await ApiClient.Institution.institutionSummary(URL);
-    return {
-      users: this.mapUserRolesAndLocation(response.users),
-      totalUsers: response.totalUsers,
-    };
   }
 
   /**

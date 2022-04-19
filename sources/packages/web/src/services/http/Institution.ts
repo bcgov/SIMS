@@ -5,7 +5,6 @@ import {
   OptionItemDto,
   SearchInstitutionResp,
   BasicInstitutionInfo,
-  InstitutionUserAndCount,
   DataTableSortOrder,
   UserAuth,
   FieldSortOrder,
@@ -15,6 +14,7 @@ import {
   InstitutionDetailDTO,
   InstitutionContactDTO,
   InstitutionProfileDTO,
+  InstitutionUserResDto,
 } from "@/types";
 import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 
@@ -67,16 +67,9 @@ export class InstitutionApi extends HttpBaseClient {
   }
 
   public async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
-    try {
-      const resp = await this.apiClient.get(
-        "institution/user-types-roles",
-        this.addAuthHeader(),
-      );
-      return resp.data as InstitutionUserTypeAndRoleResponseDto;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCallTyped<InstitutionUserTypeAndRoleResponseDto>(
+      this.addClientRoot("institution/user-types-roles"),
+    );
   }
 
   public async getMyInstitutionDetails(
@@ -179,11 +172,12 @@ export class InstitutionApi extends HttpBaseClient {
    * @param url url to be send
    * @returns All the institution users for the given institution.
    */
-  public async institutionSummary(
+  public async institutionUserSummary(
     url: string,
-  ): Promise<InstitutionUserAndCount> {
-    const response = await this.getCall(url);
-    return response.data as InstitutionUserAndCount;
+  ): Promise<PaginatedResults<InstitutionUserResDto>> {
+    return this.getCallTyped<PaginatedResults<InstitutionUserResDto>>(
+      this.addClientRoot(url),
+    );
   }
 
   public async getPaginatedAESTInstitutionProgramsSummary(

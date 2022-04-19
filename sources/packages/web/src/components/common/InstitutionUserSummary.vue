@@ -2,7 +2,7 @@
   <!-- This component is shared between ministry and student users -->
   <div class="mb-4">
     <span class="category-header-large color-blue">
-      All Users({{ usersListAndCount.totalUsers }})
+      All Users({{ usersListAndCount.count }})
     </span>
     <div class="float-right">
       <InputText
@@ -51,12 +51,12 @@
   </div>
   <content-group>
     <DataTable
-      :value="usersListAndCount.users"
+      :value="usersListAndCount.results"
       :lazy="true"
       :paginator="true"
       :rows="DEFAULT_PAGE_LIMIT"
       :rowsPerPageOptions="PAGINATION_LIST"
-      :totalRecords="usersListAndCount.totalUsers"
+      :totalRecords="usersListAndCount.count"
       @page="paginationAndSortEvent($event)"
       @sort="paginationAndSortEvent($event)"
       :loading="loading"
@@ -213,29 +213,17 @@ export default {
       sortOrder = DataTableSortOrder.ASC,
     ) => {
       loading.value = true;
-      switch (clientType.value) {
-        case ClientIdType.Institution:
-          usersListAndCount.value =
-            await InstitutionService.shared.institutionSummary(
-              page,
-              pageCount,
-              searchBox.value,
-              sortField,
-              sortOrder,
-            );
-          break;
-        case ClientIdType.AEST:
-          usersListAndCount.value =
-            await InstitutionService.shared.institutionSummaryForAEST(
-              props.institutionId,
-              page,
-              pageCount,
-              searchBox.value,
-              sortField,
-              sortOrder,
-            );
-          break;
-      }
+      usersListAndCount.value =
+        await InstitutionService.shared.institutionUserSummary(
+          {
+            page: page,
+            pageLimit: pageCount,
+            searchCriteria: searchBox.value,
+            sortField: sortField,
+            sortOrder: sortOrder,
+          },
+          props.institutionId,
+        );
       loading.value = false;
     };
 
