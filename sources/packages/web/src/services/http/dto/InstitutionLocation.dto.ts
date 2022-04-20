@@ -1,8 +1,8 @@
+import { DesignationAgreementStatus } from "@/types";
 import {
-  AddressInfo,
-  DesignationAgreementStatus,
-  InstitutionPrimaryContact,
-} from "@/types";
+  AddressInfoAPIOutDTO,
+  InstitutionPrimaryContactAPIOutDTO,
+} from "@/services/http/dto";
 
 export interface InstitutionLocationFormAPIInDTO {
   addressLine1: string;
@@ -38,9 +38,9 @@ export interface InstitutionLocationAPIOutDTO {
   id: number;
   name: string;
   data: {
-    address: AddressInfo;
+    address: AddressInfoAPIOutDTO;
   };
-  primaryContact: InstitutionPrimaryContact;
+  primaryContact: InstitutionPrimaryContactAPIOutDTO;
   institutionCode: string;
   designationStatus: DesignationAgreementStatus;
 }

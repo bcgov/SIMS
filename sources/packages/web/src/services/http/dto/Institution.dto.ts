@@ -1,16 +1,16 @@
+import { ClientIdType, DesignationAgreementStatus } from "@/types";
 import {
-  Address,
-  AddressInfo,
-  ClientIdType,
-  DesignationAgreementStatus,
-} from "@/types";
+  AddressAPIInDTO,
+  AddressAPIOutDTO,
+  AddressInfoAPIOutDTO,
+} from "@/services/http/dto";
 
 export interface InstitutionContactAPIOutDTO {
   primaryContactEmail: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  mailingAddress: Address;
+  mailingAddress: AddressAPIOutDTO;
 }
 
 export interface InstitutionContactAPIInDTO {
@@ -18,7 +18,7 @@ export interface InstitutionContactAPIInDTO {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  mailingAddress: Address;
+  mailingAddress: AddressAPIInDTO;
 }
 
 export interface InstitutionProfileAPIOutDTO
@@ -63,7 +63,7 @@ export interface InstitutionUserAuthTypeAPIOutDTO {
 }
 
 export interface InstitutionLocationAuthDataAPIOutDTO {
-  address: AddressInfo;
+  address: AddressInfoAPIOutDTO;
 }
 
 export interface InstitutionAuthLocationAPIOutDTO {
@@ -98,7 +98,7 @@ export interface SearchInstitutionAPIOutDTO {
   id: number;
   legalName: string;
   operatingName: string;
-  address: Address;
+  address: AddressAPIOutDTO;
 }
 
 export interface InstitutionBasicAPIOutDTO {
@@ -166,7 +166,7 @@ export interface InstitutionUserDetailAPIOutDTO {
 export interface InstitutionUserLocationsAPIOutDTO {
   id: number;
   name: string;
-  address: AddressInfo;
+  address: AddressInfoAPIOutDTO;
 }
 
 export interface UserRoleOptionAPIOutDTO {
