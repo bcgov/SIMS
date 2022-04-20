@@ -122,7 +122,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Cloning existing offering.
       const offering: EducationProgramOffering = { ...existingOffering };
 
-      // Assigning id as undefined, So that when its save its considered as a new EducationProgramOffering object.
+      // Assigning id as undefined, so that when its saved its considered as a new EducationProgramOffering object.
       offering.id = undefined;
 
       const newStudyEndDate =
