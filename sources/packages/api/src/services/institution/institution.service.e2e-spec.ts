@@ -108,7 +108,6 @@ describe("InstitutionService", () => {
         sortField: null,
         sortOrder: FieldSortOrder.ASC,
       });
-    expect(users.length).toEqual(2);
 
     // User1
     const user1 = users.filter((item) => item.user.id === user.id)[0];
@@ -178,7 +177,6 @@ describe("InstitutionService", () => {
     const newSubjects = allUsers.filter(
       (user) => user.id === institutionUser.id,
     );
-    expect(newSubjects.length).toEqual(1);
     expect(newSubjects[0].authorizations[0].location).toBeDefined();
 
     await service.remove(institution);
