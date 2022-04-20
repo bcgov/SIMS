@@ -122,8 +122,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Cloning existing offering.
       const offering: EducationProgramOffering = { ...existingOffering };
 
-      // Assigning id as undefined, so that when its saved its considered as a new EducationProgramOffering object.
-      offering.id = undefined;
+      // Deleting the id, from the cloned object.
+      // So that when its save its considered as a new EducationProgramOffering object.
+      delete offering.id;
 
       const newStudyEndDate =
         scholasticStandingData.dateOfChange ??
@@ -148,7 +149,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       offering.offeringType = OfferingTypes.applicationSpecific;
 
       // Save new offering.
-      await transactionalEntityManager
+      const savedOffering = await transactionalEntityManager
         .getRepository(EducationProgramOffering)
         .save(offering);
 
@@ -169,7 +170,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         creator: auditUser,
         submittedBy: auditUser,
         submittedDate: now,
-        offering: { id: offering.id } as EducationProgramOffering,
+        offering: { id: savedOffering.id } as EducationProgramOffering,
       } as StudentAssessment;
 
       const studentScholasticStanding = await transactionalEntityManager
