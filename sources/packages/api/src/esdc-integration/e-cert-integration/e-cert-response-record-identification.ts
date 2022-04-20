@@ -1,4 +1,4 @@
-import { RecordTypeCodes } from "../models/e-cert-full-time-integration.model";
+import { RecordTypeCodes } from "./models/e-cert-integration-model";
 
 export class ECertResponseRecordIdentification {
   constructor(line: string, lineNumber: number) {

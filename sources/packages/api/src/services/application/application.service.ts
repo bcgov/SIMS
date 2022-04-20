@@ -499,26 +499,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .select([
         "application.data",
-        "programYear.programYear",
-        "programYear.startDate",
-        "programYear.endDate",
-        "offering",
-        "offering.educationProgram",
-        "educationProgram.credentialType",
-        "educationProgram.completionYears",
-        "location.data",
-        "institution",
-        "institutionType",
-        "student",
+        "student.sin",
+        "student.birthDate",
+        "user.id",
+        "user.lastName",
       ])
-      .innerJoin("application.programYear", "programYear")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
-      .leftJoin("offering.educationProgram", "educationProgram")
-      .leftJoin("application.location", "location")
-      .leftJoin("location.institution", "institution")
-      .leftJoin("institution.institutionType", "institutionType")
       .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
       .andWhere("application.id = :applicationId", {
         applicationId,
       })
@@ -712,14 +699,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.applicationStatus",
         "offering.studyStartDate",
         "offering.studyEndDate",
-        "student",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
       ])
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .innerJoin("application.student", "student")
-      .innerJoinAndSelect("student.user", "user")
+      .innerJoin("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus is not null")
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.completed,
       })
@@ -1133,6 +1121,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "student",
         "user.firstName",
         "user.lastName",
+        "educationProgram.credentialType",
+        "educationProgram.deliveredOnline",
+        "educationProgram.deliveredOnSite",
+        "offering.offeringDelivered",
+        "offering.studyBreaks",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
+        "offering.mandatoryFees",
+        "offering.exceptionalExpenses",
       ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")

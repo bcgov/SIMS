@@ -1,4 +1,5 @@
 import { ApplicationStatus } from "../../../database/entities";
+import { StudyBreak } from "../../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
 
 export class ActiveApplicationDataAPIOutDTO {
   applicationProgramName: string;
@@ -11,6 +12,14 @@ export class ActiveApplicationDataAPIOutDTO {
   applicationNumber: string;
   applicationLocationName: string;
   applicationStatus: ApplicationStatus;
+  applicationProgramCredential: string;
+  applicationProgramDelivery: string;
+  applicationOfferingStudyDelivery: string;
+  applicationOfferingStudyBreak: StudyBreak[];
+  applicationOfferingTuition: number;
+  applicationOfferingProgramRelatedCosts: number;
+  applicationOfferingMandatoryFess: number;
+  applicationOfferingExceptionalExpenses: number;
 }
 
 export class ActiveApplicationSummaryAPIOutDTO {

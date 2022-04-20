@@ -104,7 +104,7 @@ export default {
           assessedDate: dateOnlyLongString(request.assessedDate),
           assessedByUserName: request.assessedByUserName,
           noteDescription: request.noteDescription ?? "",
-          showAudit: false,
+          showAudit: request.appealStatus !== StudentAppealStatus.Pending,
         },
       }));
       appealStatus.value = appeal.status;

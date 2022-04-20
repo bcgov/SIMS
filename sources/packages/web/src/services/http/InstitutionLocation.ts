@@ -9,6 +9,7 @@ import {
   InstitutionUserAPIInDTO,
   UserActiveStatusAPIInDTO,
   InstitutionUserLocationsAPIOutDTO,
+  ScholasticStandingDataAPIInDTO,
 } from "@/services/http/dto";
 
 export class InstitutionLocationApi extends HttpBaseClient {
@@ -124,5 +125,28 @@ export class InstitutionLocationApi extends HttpBaseClient {
         `institution/location/${locationId}/active-application/${applicationId}`,
       ),
     );
+  }
+
+  /**
+   * Save scholastic standing and create new assessment.
+   * @param applicationId application id
+   * @param locationId location id
+   * @param payload scholasticStanding payload
+   */
+  public async saveScholasticStanding(
+    applicationId: number,
+    locationId: number,
+    payload: ScholasticStandingDataAPIInDTO,
+  ): Promise<void> {
+    try {
+      await this.postCall(
+        this.addClientRoot(
+          `institution/location/${locationId}/application/${applicationId}/scholastic-standing`,
+        ),
+        { data: payload },
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 }

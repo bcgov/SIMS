@@ -59,3 +59,10 @@ export const ECERT_PART_TIME_FILE_CODE = "PBC.EDU.PTCERTS.D";
  */
 export const MSFAA_FULL_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.";
 export const MSFAA_PART_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.PT.";
+
+/**
+ * These constants are used to specify the filename code
+ * created for Full-Time/ Part-Time feedback file.
+ */
+export const ECERT_FULL_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.CERTSFB.*\\.DAT";
+export const ECERT_PART_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.ECERTSFB.PT.*\\.DAT";

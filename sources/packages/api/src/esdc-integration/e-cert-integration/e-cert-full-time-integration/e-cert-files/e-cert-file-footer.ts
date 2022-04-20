@@ -1,24 +1,20 @@
-import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-base.models";
 import { StringBuilder } from "../../../../utilities/string-builder";
-import {
-  ECERT_SENT_TITLE,
-  RecordTypeCodes,
-} from "../models/e-cert-full-time-integration.model";
 import {
   SPACE_FILLER,
   NUMBER_FILLER,
 } from "../../../models/esdc-integration.model";
+import { ECertFileFooter } from "../../e-cert-files/e-cert-file-footer";
+import {
+  ECERT_SENT_TITLE,
+  RecordTypeCodes,
+} from "../../models/e-cert-integration-model";
 
 /**
- * Footer of an E-Cert file.
+ * Footer of a Full-Time E-Cert file.
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertFullTimeFileFooter implements FixedFormatFileLine {
-  recordTypeCode: RecordTypeCodes;
-  totalSINHash: number;
-  recordCount: number;
-
+export class ECertFullTimeFileFooter extends ECertFileFooter {
   public getFixedFormat(): string {
     const footer = new StringBuilder();
     footer.append(this.recordTypeCode);
@@ -29,7 +25,7 @@ export class ECertFullTimeFileFooter implements FixedFormatFileLine {
     return footer.toString();
   }
 
-  public static createFromLine(line: string): ECertFullTimeFileFooter {
+  public createFromLine(line: string): ECertFullTimeFileFooter {
     const footer = new ECertFullTimeFileFooter();
     footer.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     // Here total record count is the total records rejected.

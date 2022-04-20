@@ -34,6 +34,7 @@ import {
   InstitutionUserTypeAndRoleAPIOutDTO,
   InstitutionUserAPIInDTO,
   UserRoleOptionAPIOutDTO,
+  ScholasticStandingDataAPIInDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -397,5 +398,23 @@ export class InstitutionService {
 
   public async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
     return ApiClient.Institution.getGetAdminRoleOptions();
+  }
+
+  /**
+   * Save scholastic standing and create new assessment.
+   * @param applicationId application id
+   * @param locationId location id
+   * @param payload scholasticStanding payload
+   */
+  async saveScholasticStanding(
+    applicationId: number,
+    locationId: number,
+    payload: ScholasticStandingDataAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.InstitutionLocation.saveScholasticStanding(
+      applicationId,
+      locationId,
+      payload,
+    );
   }
 }

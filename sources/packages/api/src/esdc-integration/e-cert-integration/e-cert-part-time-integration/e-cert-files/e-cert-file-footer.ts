@@ -1,20 +1,18 @@
-import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-base.models";
 import { StringBuilder } from "../../../../utilities/string-builder";
-import { RecordTypeCodes } from "../models/e-cert-part-time-integration.model";
+import { RecordTypeCodes } from "../../models/e-cert-integration-model";
 import {
   SPACE_FILLER,
   NUMBER_FILLER,
 } from "../../../models/esdc-integration.model";
+import { ECertFileFooter } from "../../e-cert-files/e-cert-file-footer";
 
 /**
- * Footer of an E-Cert file.
+ * Footer of a Part-Time E-Cert file.
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertPartTimeFileFooter implements FixedFormatFileLine {
-  recordTypeCode: RecordTypeCodes;
+export class ECertPartTimeFileFooter extends ECertFileFooter {
   totalAmountDisbursed: number;
-  recordCount: number;
 
   public getFixedFormat(): string {
     const footer = new StringBuilder();
@@ -25,12 +23,13 @@ export class ECertPartTimeFileFooter implements FixedFormatFileLine {
     return footer.toString();
   }
 
-  public static createFromLine(line: string): ECertPartTimeFileFooter {
+  public createFromLine(line: string): ECertPartTimeFileFooter {
     const footer = new ECertPartTimeFileFooter();
-    footer.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
+    footer.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     // Here total record count is the total records.
-    footer.recordCount = parseInt(line.substring(2, 11));
-    footer.totalAmountDisbursed = parseInt(line.substring(11, 26));
+    footer.recordCount =
+      parseInt(line.substring(43, 52)) + parseInt(line.substring(52, 61));
+    footer.totalSINHash = parseInt(line.substring(61, 76));
     return footer;
   }
 }

@@ -997,7 +997,7 @@
                                 {
                                     "label": "Status Content",
                                     "tag": "p",
-                                    "className": "status-resolved-restriction",
+                                    "className": "formio-success-status",
                                     "attrs": [
                                         {
                                             "attr": "",

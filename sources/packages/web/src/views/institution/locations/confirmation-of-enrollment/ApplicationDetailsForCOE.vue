@@ -2,7 +2,12 @@
   <div class="p-m-4">
     <HeaderNavigator
       title="Confirmation of enrolment"
-      :routeLocation="{ name: InstitutionRoutesConst.COE_SUMMARY }"
+      :routeLocation="{
+        name: InstitutionRoutesConst.COE_SUMMARY,
+        params: {
+          locationId: locationId,
+        },
+      }"
       subTitle="View Financial Aid Application"
       ><template #buttons>
         <v-btn
@@ -116,6 +121,9 @@ export default {
           );
           router.push({
             name: InstitutionRoutesConst.COE_SUMMARY,
+            params: {
+              locationId: props.locationId,
+            },
           });
         } catch {
           toast.error(
@@ -137,6 +145,9 @@ export default {
         toast.success("COE is Denied", "Application Status Has Been Updated.");
         router.push({
           name: InstitutionRoutesConst.COE_SUMMARY,
+          params: {
+            locationId: props.locationId,
+          },
         });
       } catch {
         toast.error(

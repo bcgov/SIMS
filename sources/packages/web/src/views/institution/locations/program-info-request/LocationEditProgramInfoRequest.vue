@@ -29,6 +29,7 @@ import {
 } from "@/composables";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
+  ApiProcessError,
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   GetProgramInfoRequestDto,
@@ -174,18 +175,20 @@ export default {
             locationId: props.locationId,
           },
         });
-      } catch (error) {
+      } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
         let errorMsg =
           "An error happened while saving the Program Information Request.";
-        [PIR_OR_DATE_OVERLAP_ERROR, OFFERING_INTENSITY_MISMATCH].forEach(
-          (customError) => {
-            if (error.errorType.includes(customError)) {
-              errorLabel = "Invalid submission";
-              errorMsg = error.message;
-            }
-          },
-        );
+        if (error instanceof ApiProcessError) {
+          if (
+            error.errorType === PIR_OR_DATE_OVERLAP_ERROR ||
+            error.errorType === OFFERING_INTENSITY_MISMATCH
+          ) {
+            errorLabel = "Invalid submission";
+            errorMsg = error.message;
+          }
+        }
+
         toast.error(errorLabel, errorMsg);
       }
     };
