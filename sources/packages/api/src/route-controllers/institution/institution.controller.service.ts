@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InstitutionService, FormService } from "../../services";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
@@ -12,12 +8,7 @@ import {
   PaginatedResults,
 } from "../../utilities";
 import { InstitutionUser } from "../../database/entities";
-import {
-  InstitutionDetailDTO,
-  InstitutionContactDTO,
-  InstitutionProfileDTO,
-} from "./models/institution.dto";
-import { FormNames } from "../../services/form/constants";
+import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
 import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
 
 /**
@@ -37,7 +28,7 @@ export class InstitutionControllerService {
    */
   async getInstitutionDetail(
     institutionId: number,
-  ): Promise<InstitutionDetailDTO> {
+  ): Promise<InstitutionDetailAPIOutDTO> {
     const institutionDetail =
       await this.institutionService.getInstitutionDetailById(institutionId);
 
@@ -77,24 +68,6 @@ export class InstitutionControllerService {
       },
       isBCPrivate: isBCPrivate,
     };
-  }
-
-  /**
-   * Validate dry run submission.
-   * @param payload form data to validate.
-   */
-  async validateDryRunSubmissionForUpdate(
-    payload: InstitutionContactDTO | InstitutionProfileDTO,
-  ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.InstitutionProfile,
-      payload,
-    );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to update institution due to an invalid request.",
-      );
-    }
   }
 
   /**

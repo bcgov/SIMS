@@ -1,15 +1,13 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import {
-  InstitutionUserDto,
-  InstitutionLocationUserAuthDto,
-  LocationStateForStore,
-} from "../../types";
+import { LocationStateForStore } from "@/types";
 import {
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
   InstitutionLocationAPIOutDTO,
   ActiveApplicationDataAPIOutDTO,
   OptionItemAPIOutDTO,
+  InstitutionUserAPIOutDTO,
+  InstitutionUserAPIInDTO,
 } from "@/services/http/dto";
 
 export class InstitutionLocationApi extends HttpBaseClient {
@@ -57,18 +55,18 @@ export class InstitutionLocationApi extends HttpBaseClient {
    * @param createInstitutionUserDto
    */
   public async createUser(
-    createInstitutionUserDto: InstitutionUserDto,
+    createInstitutionUserDto: InstitutionUserAPIInDTO,
   ): Promise<void> {
-    return this.postCall<InstitutionUserDto>(
-      "institution/user",
+    return this.postCall<InstitutionUserAPIInDTO>(
+      this.addClientRoot("institution/user"),
       createInstitutionUserDto,
     );
   }
 
   public async getInstitutionLocationUserDetails(
     userName: string,
-  ): Promise<InstitutionLocationUserAuthDto> {
-    return this.getCallTyped<InstitutionLocationUserAuthDto>(
+  ): Promise<InstitutionUserAPIOutDTO> {
+    return this.getCallTyped<InstitutionUserAPIOutDTO>(
       this.addClientRoot(`institution/user/${userName}`),
     );
   }
@@ -81,10 +79,10 @@ export class InstitutionLocationApi extends HttpBaseClient {
    */
   public async updateUser(
     userName: string,
-    updateInstitutionUserDto: InstitutionUserDto,
+    updateInstitutionUserDto: InstitutionUserAPIInDTO,
   ): Promise<void> {
-    return this.patchCall<InstitutionUserDto>(
-      `institution/user/${userName}`,
+    return this.patchCall<InstitutionUserAPIInDTO>(
+      this.addClientRoot(`institution/user/${userName}`),
       updateInstitutionUserDto,
     );
   }
@@ -93,31 +91,21 @@ export class InstitutionLocationApi extends HttpBaseClient {
     userName: string,
     userStatus: boolean,
   ): Promise<void> {
-    try {
-      await this.apiClient.patch(
-        `institution/user-status/${userName}`,
-        { isActive: userStatus },
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.patchCall(
+      this.addClientRoot(`institution/user-status/${userName}`),
+      {
+        isActive: userStatus,
+      },
+    );
   }
 
   public async getMyInstitutionLocationsDetails(
     header?: any,
   ): Promise<LocationStateForStore> {
-    try {
-      const res = await this.apiClient.get(
-        `institution/my-locations`,
-        header || this.addAuthHeader(),
-      );
-      return res?.data as LocationStateForStore;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCallTyped<LocationStateForStore>(
+      this.addClientRoot("institution/my-locations"),
+      header,
+    );
   }
 
   public async getOptionsList(): Promise<OptionItemAPIOutDTO[]> {

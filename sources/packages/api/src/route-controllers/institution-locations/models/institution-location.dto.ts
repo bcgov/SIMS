@@ -94,19 +94,6 @@ export interface UserLocationDto {
   name: string;
 }
 
-export interface InstitutionLocationsSummaryDto {
-  id: number;
-  name: string;
-  address: {
-    addressLine1: string;
-    addressLine2?: string;
-    province: string;
-    country: string;
-    city: string;
-    postalCode: string;
-  };
-}
-
 /**
  * Possible status for a designation.
  */

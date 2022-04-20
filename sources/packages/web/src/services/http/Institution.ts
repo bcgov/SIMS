@@ -1,73 +1,62 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
-  InstitutionDto,
   InstitutionUserAndAuthDetailsForStore,
   OptionItemDto,
-  SearchInstitutionResp,
-  BasicInstitutionInfo,
   DataTableSortOrder,
   UserAuth,
   FieldSortOrder,
-  InstitutionUserTypeAndRoleResponseDto,
   AESTInstitutionProgramsSummaryDto,
   PaginatedResults,
-  InstitutionDetailDTO,
-  InstitutionContactDTO,
-  InstitutionProfileDTO,
-  InstitutionUserResDto,
 } from "@/types";
-import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
+import {
+  ActiveApplicationSummaryAPIOutDTO,
+  InstitutionDetailAPIOutDTO,
+  InstitutionContactAPIInDTO,
+  InstitutionProfileAPIInDTO,
+  InstitutionUserAPIOutDTO,
+  SearchInstitutionAPIOutDTO,
+  InstitutionBasicAPIOutDTO,
+  InstitutionFormAPIInDTO,
+  InstitutionUserTypeAndRoleAPIOutDTO,
+} from "@/services/http/dto";
 
 export class InstitutionApi extends HttpBaseClient {
   public async createInstitution(
-    createInstitutionDto: InstitutionDto,
+    createInstitutionDto: InstitutionFormAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.apiClient.post(
-        "institution",
-        createInstitutionDto,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.postCall<InstitutionFormAPIInDTO>(
+      this.addClientRoot("institution"),
+      createInstitutionDto,
+    );
   }
 
   public async updateInstitution(
-    data: InstitutionContactDTO | InstitutionProfileDTO,
+    data: InstitutionContactAPIInDTO | InstitutionProfileAPIInDTO,
     institutionId?: number,
   ): Promise<void> {
     const url = institutionId ? `institution/${institutionId}` : "institution";
-    await this.patchCall<InstitutionContactDTO>(this.addClientRoot(url), data);
+    await this.patchCall<
+      InstitutionContactAPIInDTO | InstitutionProfileAPIInDTO
+    >(this.addClientRoot(url), data);
   }
 
   public async getDetail(
     institutionId?: number,
     authHeader?: any,
-  ): Promise<InstitutionDetailDTO> {
+  ): Promise<InstitutionDetailAPIOutDTO> {
     const url = institutionId ? `institution/${institutionId}` : "institution";
-    return this.getCallTyped<InstitutionDetailDTO>(
+    return this.getCallTyped<InstitutionDetailAPIOutDTO>(
       this.addClientRoot(url),
       authHeader,
     );
   }
 
   public async sync() {
-    try {
-      await this.apiClient.patch("institution/sync", {}, this.addAuthHeader());
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.patchCall(this.addClientRoot("institution/sync"), {});
   }
 
-  public async removeUser(id: number): Promise<void> {
-    await this.apiClient.delete(`institution/user/${id}`, this.addAuthHeader());
-  }
-
-  public async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
-    return this.getCallTyped<InstitutionUserTypeAndRoleResponseDto>(
+  public async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleAPIOutDTO> {
+    return this.getCallTyped<InstitutionUserTypeAndRoleAPIOutDTO>(
       this.addClientRoot("institution/user-types-roles"),
     );
   }
@@ -75,16 +64,10 @@ export class InstitutionApi extends HttpBaseClient {
   public async getMyInstitutionDetails(
     header?: any,
   ): Promise<InstitutionUserAndAuthDetailsForStore> {
-    try {
-      const res = await this.apiClient.get(
-        `institution/my-details`,
-        header || this.addAuthHeader(),
-      );
-      return res?.data as InstitutionUserAndAuthDetailsForStore;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCallTyped<InstitutionUserAndAuthDetailsForStore>(
+      this.addClientRoot("institution/my-details"),
+      header,
+    );
   }
 
   public async getInstitutionTypeOptions(): Promise<OptionItemDto[]> {
@@ -102,7 +85,10 @@ export class InstitutionApi extends HttpBaseClient {
 
   public async checkIfExist(guid: string, headers: any): Promise<boolean> {
     try {
-      await this.apiClient.head(`institution/${guid}`, headers);
+      await this.apiClient.head(
+        this.addClientRoot(`institution/${guid}`),
+        headers,
+      );
       return true;
     } catch (error) {
       if (404 === error.response.status) {
@@ -126,56 +112,37 @@ export class InstitutionApi extends HttpBaseClient {
   public async searchInstitutions(
     legalName: string,
     operatingName: string,
-  ): Promise<SearchInstitutionResp[]> {
-    try {
-      let queryString = "";
-      if (legalName) {
-        queryString += `legalName=${legalName}&`;
-      }
-      if (operatingName) {
-        queryString += `operatingName=${operatingName}&`;
-      }
-      const institution = await this.getCall(
-        `institution/search?${queryString.slice(0, -1)}`,
-      );
-      return institution.data as SearchInstitutionResp[];
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
+  ): Promise<SearchInstitutionAPIOutDTO[]> {
+    let queryString = "";
+    if (legalName) {
+      queryString += `legalName=${legalName}&`;
     }
+    if (operatingName) {
+      queryString += `operatingName=${operatingName}&`;
+    }
+    const url = `institution/all/search?${queryString.slice(0, -1)}`;
+    return this.getCallTyped<SearchInstitutionAPIOutDTO[]>(
+      this.addClientRoot(url),
+    );
   }
 
   public async getBasicInstitutionInfoById(
     institutionId: number,
-  ): Promise<BasicInstitutionInfo> {
-    try {
-      const response = await this.getCall(
-        `institution/${institutionId}/basic-details`,
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  ): Promise<InstitutionBasicAPIOutDTO> {
+    return this.getCallTyped<InstitutionBasicAPIOutDTO>(
+      this.addClientRoot(`institution/${institutionId}/basic-details`),
+    );
   }
 
   /**
    * Controller method to get all institution users.
-   * ! Because of code duplication, this function
-   * ! is used in both AEST(Ministry) institution summary
-   * ! as well as institution admin user summary.
-   * ! only passed URL value will be different.
-   * ! Both are using same interface
-   * ! In future, if any of them needs a
-   * ! different interface, use create a
-   * ! different functions for both
    * @param url url to be send
    * @returns All the institution users for the given institution.
    */
   public async institutionUserSummary(
     url: string,
-  ): Promise<PaginatedResults<InstitutionUserResDto>> {
-    return this.getCallTyped<PaginatedResults<InstitutionUserResDto>>(
+  ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
+    return this.getCallTyped<PaginatedResults<InstitutionUserAPIOutDTO>>(
       this.addClientRoot(url),
     );
   }
@@ -222,7 +189,8 @@ export class InstitutionApi extends HttpBaseClient {
   }
 
   public async getGetAdminRoleOptions(): Promise<UserAuth[]> {
-    const response = await this.getCall("institution/admin-roles");
-    return response.data as UserAuth[];
+    return this.getCallTyped<UserAuth[]>(
+      this.addClientRoot("institution/admin-roles"),
+    );
   }
 }

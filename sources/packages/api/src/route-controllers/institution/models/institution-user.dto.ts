@@ -1,4 +1,5 @@
 import { Type } from "class-transformer";
+import { AddressInfoOutDTO } from "../../models/common.dto";
 import {
   ArrayMinSize,
   IsArray,
@@ -52,8 +53,14 @@ export class InstitutionUserAuthTypeOutDTO {
   type: string;
 }
 
+export class InstitutionLocationAuthDataAPIOutDTO {
+  address: AddressInfoOutDTO;
+}
+
 export class InstitutionAuthLocationOutDTO {
+  id: number;
   name: string;
+  data: InstitutionLocationAuthDataAPIOutDTO;
 }
 
 export class InstitutionUserAuthOutDTO {
@@ -67,12 +74,43 @@ export class InstitutionUserSummaryOutDTO {
   email: string;
   firstName: string;
   lastName: string;
-  userName: string;
+  userName?: string;
   isActive: boolean;
 }
 
 export class InstitutionUserAPIOutDTO {
-  id: number;
+  id?: number;
   user: InstitutionUserSummaryOutDTO;
   authorizations: InstitutionUserAuthOutDTO[];
+}
+
+export class InstitutionLocationAuthOutDTO {
+  locationId: number;
+  userType: string;
+  userRole: string;
+}
+
+export class UserAuthDetailOutDTO {
+  institutionId: number;
+  authorizations: InstitutionLocationAuthOutDTO[];
+}
+
+export class InstitutionUserDetailAPIOutDTO {
+  id?: number;
+  user: InstitutionUserSummaryOutDTO;
+  authorizations: UserAuthDetailOutDTO;
+}
+
+export interface InstitutionUserLocationsAPIOutDTO {
+  id: number;
+  name: string;
+  address: AddressInfoOutDTO;
+}
+
+/**
+ * DTO To load the admin roles dropdown component
+ */
+export class UserRoleOptionAPIOutDTO {
+  name: string;
+  code: string;
 }

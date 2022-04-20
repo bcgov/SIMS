@@ -8,6 +8,7 @@ import {
   Query,
   Param,
   NotFoundException,
+  Head,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -21,12 +22,13 @@ import {
   InstitutionService,
   UserService,
   BCeIDService,
+  InstitutionLocationService,
   LEGAL_SIGNING_AUTHORITY_EXIST,
   LEGAL_SIGNING_AUTHORITY_MSG,
 } from "../../services";
 import {
-  InstitutionContactDTO,
-  InstitutionDetailDTO,
+  InstitutionContactAPIInDTO,
+  InstitutionDetailAPIOutDTO,
   InstitutionFormAPIInDTO,
 } from "./models/institution.dto";
 import { InstitutionUserTypeAndRoleAPIOutDTO } from "./models/institution-user-type-role.res.dto";
@@ -36,6 +38,9 @@ import {
   InstitutionUserAPIInDTO,
   InstitutionUserPermissionAPIInDTO,
   UserActiveStatusAPIInDTO,
+  InstitutionUserDetailAPIOutDTO,
+  InstitutionUserLocationsAPIOutDTO,
+  UserRoleOptionAPIOutDTO,
 } from "./models/institution-user.dto";
 import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import BaseController from "../BaseController";
@@ -61,6 +66,7 @@ export class InstitutionInstitutionsController extends BaseController {
     private readonly institutionControllerService: InstitutionControllerService,
     private readonly userService: UserService,
     private readonly accountService: BCeIDService,
+    private readonly locationService: InstitutionLocationService,
   ) {
     super();
   }
@@ -108,7 +114,7 @@ export class InstitutionInstitutionsController extends BaseController {
    * with total count.
    */
   @IsInstitutionAdmin()
-  @Get("/user")
+  @Get("user")
   async getInstitutionUsers(
     @Query(PaginationParams.SearchCriteria) searchName: string,
     @Query(PaginationParams.SortField) sortField: string,
@@ -137,7 +143,7 @@ export class InstitutionInstitutionsController extends BaseController {
   @Get()
   async getInstitutionDetail(
     @UserToken() token: IInstitutionUserToken,
-  ): Promise<InstitutionDetailDTO> {
+  ): Promise<InstitutionDetailAPIOutDTO> {
     return this.institutionControllerService.getInstitutionDetail(
       token.authorizations.institutionId,
     );
@@ -150,7 +156,7 @@ export class InstitutionInstitutionsController extends BaseController {
   @IsInstitutionAdmin()
   @Patch()
   async update(
-    @Body() payload: InstitutionContactDTO,
+    @Body() payload: InstitutionContactAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
     await this.institutionService.updateInstitution(
@@ -241,7 +247,7 @@ export class InstitutionInstitutionsController extends BaseController {
    * @returns
    */
   @IsInstitutionAdmin()
-  @Get("/user/:userName")
+  @Get("user/:userName")
   async getInstitutionUserByUserName(
     @Param("userName") userName: string,
   ): Promise<InstitutionUserAPIOutDTO> {
@@ -280,7 +286,7 @@ export class InstitutionInstitutionsController extends BaseController {
   }
 
   @IsInstitutionAdmin()
-  @Patch("/user/:userName")
+  @Patch("user/:userName")
   async UpdateInstitutionUserWithAuth(
     @UserToken() token: IInstitutionUserToken,
     @Param("userName") userName: string,
@@ -336,6 +342,12 @@ export class InstitutionInstitutionsController extends BaseController {
     );
   }
 
+  /**
+   * Update the active status of the user.
+   * @param token
+   * @param userName
+   * @param body
+   */
   @IsInstitutionAdmin()
   @Patch("user-status/:userName")
   async updateUserStatus(
@@ -361,5 +373,105 @@ export class InstitutionInstitutionsController extends BaseController {
       institutionUser.user.id,
       body.isActive,
     );
+  }
+
+  /**
+   * Get details of user who is logged in.
+   * @param token
+   * @returns User details.
+   */
+  @Get("my-details")
+  async getMyDetails(
+    @UserToken() token: IInstitutionUserToken,
+  ): Promise<InstitutionUserDetailAPIOutDTO> {
+    // Get logged in user and location details with auth
+    const userDetails = await this.userService.getUser(token.userName);
+    const user = {
+      firstName: userDetails?.firstName,
+      lastName: userDetails?.lastName,
+      isActive: userDetails?.isActive,
+      isAdmin: token.authorizations.isAdmin(),
+      email: userDetails?.email,
+    };
+
+    const authorizations = {
+      institutionId: token.authorizations.institutionId,
+      authorizations: token.authorizations.authorizations.map((el) => {
+        return {
+          locationId: el.locationId,
+          userType: el.userType,
+          userRole: el.userRole,
+        };
+      }),
+    };
+    return {
+      user: user,
+      authorizations: authorizations,
+    };
+  }
+
+  /**
+   * Get Location details of logged in user.
+   * @param userToken
+   * @returns Location details.
+   */
+  @Get("my-locations")
+  async getMyInstitutionLocations(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<InstitutionUserLocationsAPIOutDTO[]> {
+    // get all institution locations that user has access too.
+    const InstitutionLocationData = userToken.authorizations.isAdmin()
+      ? await this.locationService.getAllInstitutionLocations(
+          userToken?.authorizations?.institutionId,
+        )
+      : await this.locationService.getMyInstitutionLocations(
+          userToken.authorizations.getLocationsIds(),
+        );
+    return InstitutionLocationData.map((el) => {
+      return {
+        id: el.id,
+        name: el.name,
+        address: {
+          addressLine1: el.data.address?.addressLine1,
+          addressLine2: el.data.address?.addressLine2,
+          province: el.data.address?.province,
+          country: el.data.address?.country,
+          city: el.data.address?.city,
+          postalCode: el.data.address?.postalCode,
+        },
+      };
+    });
+  }
+
+  @Head("/:guid")
+  async checkIfInstitutionExist(@Param("guid") guid: string): Promise<void> {
+    const response = await this.institutionService.doesExist(guid);
+    if (!response) {
+      throw new NotFoundException(
+        `Institution with guid: ${guid} does not exist`,
+      );
+    }
+  }
+
+  /**
+   * API to get the lookup values for admin role.
+   **Note: There are are more than one type of admin role. Basic admin has role as NULL rest of them have role name.
+   **This API is exclusively for admin roles and does not include other non-admin roles.
+   * @returns Admin Roles.
+   */
+  @IsInstitutionAdmin()
+  @Get("admin-roles")
+  async getAdminRoles(): Promise<UserRoleOptionAPIOutDTO[]> {
+    const userRoles = await this.institutionService.getAdminRoles();
+    /** This API is to feed the values to drop-down component. Name and code have same value in this scenario. */
+    return userRoles.map((role) => ({
+      name: role.role || role.type,
+      code: role.role || role.type,
+    }));
+  }
+
+  @Patch("sync")
+  async sync(@UserToken() token: IInstitutionUserToken) {
+    await this.institutionService.syncInstitution(token);
   }
 }

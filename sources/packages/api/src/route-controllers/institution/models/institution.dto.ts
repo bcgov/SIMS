@@ -75,7 +75,7 @@ export class InstitutionDto extends PartialType(InstitutionFormAPIInDTO) {
   institutionTypeName: string;
 }
 
-export class InstitutionContactDTO {
+export class InstitutionContactAPIInDTO {
   @IsNotEmpty()
   primaryContactEmail: string;
   @IsNotEmpty()
@@ -89,7 +89,15 @@ export class InstitutionContactDTO {
   mailingAddress: AddressInDTO;
 }
 
-export class InstitutionProfileDTO extends InstitutionContactDTO {
+export class InstitutionContactAPIOutDTO {
+  primaryContactEmail: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactPhone: string;
+  mailingAddress: AddressOutDTO;
+}
+
+export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   @IsNotEmpty()
   operatingName: string;
   @IsNotEmpty()
@@ -106,14 +114,24 @@ export class InstitutionProfileDTO extends InstitutionContactDTO {
   institutionType: number;
 }
 
-export class InstitutionDetailDTO extends InstitutionProfileDTO {
+export class InstitutionProfileAPIOutDTO extends InstitutionContactAPIOutDTO {
+  operatingName: string;
+  primaryPhone: string;
+  primaryEmail: string;
+  website: string;
+  regulatingBody: string;
+  establishedDate: Date;
+  institutionType: number;
+}
+
+export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
   legalOperatingName: string;
   formattedEstablishedDate?: string;
   institutionTypeName?: string;
   isBCPrivate?: boolean;
 }
 
-export interface BasicInstitutionInfo {
+export class InstitutionBasicAPIOutDTO {
   operatingName: string;
   designationStatus: DesignationStatus;
 }
@@ -124,7 +142,7 @@ export interface InstitutionDetailDto {
   isBCPrivate?: boolean;
 }
 
-export interface SearchInstitutionRespDto {
+export interface SearchInstitutionAPIOutDTO {
   id: number;
   legalName: string;
   operatingName: string;

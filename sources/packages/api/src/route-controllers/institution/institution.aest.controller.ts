@@ -6,17 +6,22 @@ import {
   Param,
   Patch,
   Query,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { InstitutionService } from "../../services";
+import { Institution } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  InstitutionProfileDTO,
-  InstitutionDetailDTO,
+  InstitutionProfileAPIInDTO,
+  InstitutionDetailAPIOutDTO,
+  SearchInstitutionAPIOutDTO,
+  InstitutionBasicAPIOutDTO,
 } from "./models/institution.dto";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
+import { InstitutionLocationControllerService } from "../institution-locations/institution-location.controller.service";
 import { ApiTags } from "@nestjs/swagger";
 import {
   DEFAULT_PAGE_LIMIT,
@@ -38,6 +43,7 @@ export class InstitutionAESTController extends BaseController {
   constructor(
     private readonly institutionService: InstitutionService,
     private readonly institutionControllerService: InstitutionControllerService,
+    private readonly locationControllerService: InstitutionLocationControllerService,
   ) {
     super();
   }
@@ -47,10 +53,10 @@ export class InstitutionAESTController extends BaseController {
    * @param institutionId
    * @returns InstitutionDetailDTO.
    */
-  @Get("/:institutionId")
+  @Get(":institutionId")
   async getInstitutionDetailById(
     @Param("institutionId") institutionId: number,
-  ): Promise<InstitutionDetailDTO> {
+  ): Promise<InstitutionDetailAPIOutDTO> {
     return this.institutionControllerService.getInstitutionDetail(
       institutionId,
     );
@@ -61,10 +67,10 @@ export class InstitutionAESTController extends BaseController {
    * @param institutionId
    * @param payload
    */
-  @Patch("/:institutionId")
+  @Patch(":institutionId")
   async updateInstitution(
     @Param("institutionId") institutionId: number,
-    @Body() payload: InstitutionProfileDTO,
+    @Body() payload: InstitutionProfileAPIInDTO,
   ): Promise<void> {
     const institution =
       this.institutionService.getBasicInstitutionDetailById(institutionId);
@@ -106,5 +112,63 @@ export class InstitutionAESTController extends BaseController {
         sortOrder: sortOrder,
       },
     );
+  }
+
+  /**
+   * Search the institution based on the search criteria.
+   * @param legalName legalName of the institution.
+   * @param operatingName operatingName of the institution.
+   * @returns Searched institution details.
+   */
+  @Get("all/search")
+  async searchInstitutions(
+    @Query("legalName") legalName: string,
+    @Query("operatingName") operatingName: string,
+  ): Promise<SearchInstitutionAPIOutDTO[]> {
+    if (!legalName && !operatingName) {
+      throw new UnprocessableEntityException(
+        "Search with at least one search criteria",
+      );
+    }
+    const searchInstitutions = await this.institutionService.searchInstitution(
+      legalName,
+      operatingName,
+    );
+    return searchInstitutions.map((eachInstitution: Institution) => ({
+      id: eachInstitution.id,
+      legalName: eachInstitution.legalOperatingName,
+      operatingName: eachInstitution.operatingName,
+      address: {
+        addressLine1: eachInstitution.institutionAddress.addressLine1,
+        addressLine2: eachInstitution.institutionAddress.addressLine2,
+        city: eachInstitution.institutionAddress.city,
+        provinceState: eachInstitution.institutionAddress.provinceState,
+        country: eachInstitution.institutionAddress.country,
+        postalCode: eachInstitution.institutionAddress.postalCode,
+      },
+    }));
+  }
+
+  /**
+   * Get the Basic Institution info for the ministry institution detail page
+   * @param institutionId
+   * @returns BasicInstitutionInfo
+   */
+  @Get(":institutionId/basic-details")
+  async getBasicInstitutionInfoById(
+    @Param("institutionId") institutionId: number,
+  ): Promise<InstitutionBasicAPIOutDTO> {
+    const institutionDetail =
+      await this.institutionService.getBasicInstitutionDetailById(
+        institutionId,
+      );
+    const designationStatus =
+      await this.locationControllerService.getInstitutionDesignationStatus(
+        institutionId,
+      );
+    return {
+      operatingName: institutionDetail.operatingName,
+      designationStatus: designationStatus,
+    };
   }
 }

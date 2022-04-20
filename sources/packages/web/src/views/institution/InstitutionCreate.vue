@@ -22,8 +22,8 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import formio from "@/components/generic/formio.vue";
 import { UserService } from "@/services/UserService";
-import { InstitutionDto } from "@/types";
 import { InstitutionService } from "@/services/InstitutionService";
+import { InstitutionFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioDropdownLoader, useToastMessage } from "@/composables";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
@@ -40,7 +40,7 @@ export default {
     // Data-bind
     const initialData = ref({});
 
-    const submitted = async (data: InstitutionDto) => {
+    const submitted = async (data: InstitutionFormAPIInDTO) => {
       try {
         await InstitutionService.shared.createInstitution(data);
         await store.dispatch("institution/initialize");

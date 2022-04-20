@@ -17,26 +17,6 @@ export interface InstitutionUserRespDto {
   }[];
 }
 
-export interface InstitutionUserAuth {
-  institutionId: number;
-  authorizations: {
-    locationId?: number;
-    userType: string;
-    userRole?: string;
-  }[];
-}
-export interface InstitutionUserAndAuthDetailsDto {
-  authorizations: InstitutionUserAuth;
-  user: {
-    isAdmin: boolean;
-    firstName: string;
-    lastName: string;
-    userFullName: string;
-    isActive: boolean;
-    email: string;
-  };
-}
-
 export interface InstitutionUsersListWithTotalCount {
   users: InstitutionUser[];
   totalUsers: number;

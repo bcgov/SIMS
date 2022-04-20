@@ -1,18 +1,13 @@
 import {
   Institute,
-  SearchInstitutionResp,
-  BasicInstitutionInfo,
   AESTInstitutionProgramsSummaryDto,
   PaginationParams,
 } from "@/types";
 import {
-  InstitutionDto,
   EducationProgram,
   InstitutionLocationsDetails,
   InstitutionUserAuthDetails,
-  InstitutionUserResDto,
   InstitutionUserViewModel,
-  InstitutionUserDto,
   UserPermissionDto,
   InstitutionUserRoleLocation,
   UserAuth,
@@ -21,8 +16,6 @@ import {
   DataTableSortOrder,
   InstitutionUserAndCountForDataTable,
   PaginatedResults,
-  InstitutionDetailDTO,
-  InstitutionContactDTO,
   PaginationOptions,
 } from "../types";
 import ApiClient from "./http/ApiClient";
@@ -33,6 +26,14 @@ import {
   InstitutionLocationAPIOutDTO,
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
+  InstitutionDetailAPIOutDTO,
+  InstitutionContactAPIInDTO,
+  InstitutionUserAPIOutDTO,
+  SearchInstitutionAPIOutDTO,
+  InstitutionBasicAPIOutDTO,
+  InstitutionFormAPIInDTO,
+  InstitutionUserTypeAndRoleAPIOutDTO,
+  InstitutionUserAPIInDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -70,12 +71,12 @@ export class InstitutionService {
     return [];
   }
 
-  public async createInstitution(data: InstitutionDto): Promise<void> {
+  public async createInstitution(data: InstitutionFormAPIInDTO): Promise<void> {
     await ApiClient.Institution.createInstitution(data);
   }
 
   public async updateInstitute(
-    data: InstitutionContactDTO,
+    data: InstitutionContactAPIInDTO,
     institutionId?: number,
   ): Promise<void> {
     await ApiClient.Institution.updateInstitution(data, institutionId);
@@ -84,7 +85,7 @@ export class InstitutionService {
   public async getDetail(
     institutionId?: number,
     authHeader?: any,
-  ): Promise<InstitutionDetailDTO> {
+  ): Promise<InstitutionDetailAPIOutDTO> {
     return ApiClient.Institution.getDetail(institutionId, authHeader);
   }
 
@@ -121,7 +122,7 @@ export class InstitutionService {
   }
 
   mapUserRolesAndLocation(
-    response: InstitutionUserResDto[],
+    response: InstitutionUserAPIOutDTO[],
   ): InstitutionUserViewModel[] {
     return response.map((institutionUser) => {
       const roleArray = institutionUser.authorizations
@@ -191,7 +192,7 @@ export class InstitutionService {
     if (paginationOptions.searchCriteria) {
       url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
     }
-    const response: PaginatedResults<InstitutionUserResDto> =
+    const response: PaginatedResults<InstitutionUserAPIOutDTO> =
       await ApiClient.Institution.institutionUserSummary(url);
     return {
       results: this.mapUserRolesAndLocation(response.results),
@@ -199,11 +200,7 @@ export class InstitutionService {
     };
   }
 
-  async removeUser(id: number) {
-    return ApiClient.Institution.removeUser(id);
-  }
-
-  public async getUserTypeAndRoles() {
+  public async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleAPIOutDTO> {
     return ApiClient.Institution.getUserTypeAndRoles();
   }
 
@@ -211,7 +208,7 @@ export class InstitutionService {
     isNew: boolean,
     data: InstitutionUserAuthDetails,
   ) {
-    const payload = {} as InstitutionUserDto;
+    const payload = {} as InstitutionUserAPIInDTO;
     if (isNew) {
       payload.userId = data.userId;
     }
@@ -358,7 +355,7 @@ export class InstitutionService {
   async searchInstitutions(
     legalName: string,
     operatingName: string,
-  ): Promise<SearchInstitutionResp[]> {
+  ): Promise<SearchInstitutionAPIOutDTO[]> {
     return ApiClient.Institution.searchInstitutions(legalName, operatingName);
   }
 
@@ -369,7 +366,7 @@ export class InstitutionService {
    */
   async getBasicInstitutionInfoById(
     institutionId: number,
-  ): Promise<BasicInstitutionInfo> {
+  ): Promise<InstitutionBasicAPIOutDTO> {
     return ApiClient.Institution.getBasicInstitutionInfoById(institutionId);
   }
 

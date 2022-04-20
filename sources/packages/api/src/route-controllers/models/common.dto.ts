@@ -61,7 +61,7 @@ export class AddressOutDTO {
  */
 export class AddressInfoOutDTO {
   addressLine1: string;
-  addressLine2: string;
+  addressLine2?: string;
   city: string;
   province: string;
   country: string;
