@@ -260,7 +260,7 @@ export class ProgramInfoRequestController extends BaseController {
             payload.selectedOffering,
           );
 
-        if (offeringLocation.institutionLocation.id !== locationId) {
+        if (offeringLocation?.institutionLocation.id !== locationId) {
           throw new UnauthorizedException(
             "The location does not have access to the offering.",
           );
