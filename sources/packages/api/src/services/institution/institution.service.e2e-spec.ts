@@ -16,6 +16,7 @@ import {
 } from "../../database/factories";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
+import { FieldSortOrder } from "../../utilities";
 
 const factory = async (
   userService: UserService,
@@ -105,7 +106,7 @@ describe("InstitutionService", () => {
         pageLimit: 10,
         searchCriteria: null,
         sortField: null,
-        sortOrder: null,
+        sortOrder: FieldSortOrder.ASC,
       });
     expect(users.length).toEqual(2);
 
@@ -172,7 +173,7 @@ describe("InstitutionService", () => {
       pageLimit: 10,
       searchCriteria: null,
       sortField: null,
-      sortOrder: null,
+      sortOrder: FieldSortOrder.ASC,
     });
     const newSubjects = allUsers.filter(
       (user) => user.id === institutionUser.id,
