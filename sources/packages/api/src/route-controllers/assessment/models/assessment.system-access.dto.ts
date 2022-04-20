@@ -19,6 +19,7 @@ import {
   AssessmentTriggerType,
   DisbursementValueType,
   AssessmentStatus,
+  SupportingUserType,
 } from "../../../database/entities";
 
 export class ProgramYearDetails {
@@ -57,11 +58,21 @@ export class ApplicationStudentDetails {
   studentPDStatus?: boolean;
 }
 
+export class SupportingUsersAPIOutDTO {
+  [k: string]: SupportingUserAPIOutDTO;
+}
+
+export class SupportingUserAPIOutDTO {
+  id: number;
+  supportingUserType: SupportingUserType;
+  supportingData: any;
+}
+
 /**
  * Assessment and application information used as a main
  * source of data for assessment workflow process.
  */
-export class ApplicationAssessmentDTO {
+export class ApplicationAssessmentAPIOutDTO {
   /**
    * Origin of the assessment.
    */
@@ -94,6 +105,10 @@ export class ApplicationAssessmentDTO {
    * Student details for student application.
    */
   student: ApplicationStudentDetails;
+  /**
+   * Supporting users associated with this application.
+   */
+  supportingUsers: SupportingUsersAPIOutDTO;
 }
 
 export class UpdateProgramInfoDTO {

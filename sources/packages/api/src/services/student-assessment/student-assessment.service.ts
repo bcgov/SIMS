@@ -70,6 +70,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "location.data",
         "student.id",
         "student.studentPDVerified",
+        "supportingUser.id",
+        "supportingUser.supportingUserType",
+        "supportingUser.supportingData",
       ])
       .innerJoin("assessment.application", "application")
       .innerJoin("application.programYear", "programYear")
@@ -79,6 +82,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .leftJoin("application.location", "location")
       .leftJoin("location.institution", "institution")
       .leftJoin("institution.institutionType", "institutionType")
+      .leftJoin("application.supportingUsers", "supportingUser")
       .where("assessment.id = :assessmentId", {
         assessmentId,
       })
