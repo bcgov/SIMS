@@ -268,10 +268,12 @@ export class InstitutionLocationInstitutionsController extends BaseController {
         offering.educationProgram.deliveredOnSite,
       ),
       applicationOfferingStudyDelivery: offering.offeringDelivered,
-      applicationOfferingStudyBreak: offering.studyBreaks.map((studyBreak) => ({
-        breakStartDate: dateString(studyBreak.breakStartDate),
-        breakEndDate: dateString(studyBreak.breakEndDate),
-      })),
+      applicationOfferingStudyBreak: offering.studyBreaks?.map(
+        (studyBreak) => ({
+          breakStartDate: dateString(studyBreak.breakStartDate),
+          breakEndDate: dateString(studyBreak.breakEndDate),
+        }),
+      ),
       applicationOfferingTuition: offering.actualTuitionCosts,
       applicationOfferingProgramRelatedCosts: offering.programRelatedCosts,
       applicationOfferingMandatoryFess: offering.mandatoryFees,

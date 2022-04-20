@@ -79,11 +79,11 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     const application = await this.applicationRepo
       .createQueryBuilder("application")
       .select(["application", "currentAssessment.id", "offering.id"])
-      .where("application.id = :applicationId", { applicationId })
-      .where("location.id = :locationId", { locationId })
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("application.location", "location")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("location.id = :locationId", { locationId })
       .getOne();
 
     if (!application) {
