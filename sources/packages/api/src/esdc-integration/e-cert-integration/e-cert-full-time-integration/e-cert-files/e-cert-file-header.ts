@@ -1,28 +1,24 @@
 import { StringBuilder, getDateOnlyFromFormat } from "../../../../utilities";
-import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-base.models";
 import {
   ECERT_SENT_TITLE,
   RecordTypeCodes,
-} from "../models/e-cert-full-time-integration.model";
+} from "../../models/e-cert-integration-model";
 import {
   DATE_FORMAT,
   SPACE_FILLER,
   NUMBER_FILLER,
   TIME_FORMAT,
 } from "../../../models/esdc-integration.model";
+import { ECertFileHeader } from "../../e-cert-files/e-cert-file-header";
 
 const ORIGINATOR_CODE = "BC";
 
 /**
- * Header of an E-Cert file.
+ * Header of a Full-Time E-Cert file.
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertFullTimeFileHeader implements FixedFormatFileLine {
-  recordTypeCode: RecordTypeCodes;
-  processDate: Date;
-  sequence: number;
-
+export class ECertFullTimeFileHeader extends ECertFileHeader {
   public getFixedFormat(): string {
     const header = new StringBuilder();
     header.append(this.recordTypeCode);
@@ -35,7 +31,7 @@ export class ECertFullTimeFileHeader implements FixedFormatFileLine {
     return header.toString();
   }
 
-  public static createFromLine(line: string): ECertFullTimeFileHeader {
+  public createFromLine(line: string): ECertFullTimeFileHeader {
     const header = new ECertFullTimeFileHeader();
     header.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     header.processDate = getDateOnlyFromFormat(

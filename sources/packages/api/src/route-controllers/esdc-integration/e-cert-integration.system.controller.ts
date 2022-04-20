@@ -7,16 +7,11 @@ import { ECertFileHandler } from "../../esdc-integration/e-cert-integration/e-ce
 import { ESDCFileResponseDTO, ESDCFileResultDTO } from "./models/esdc-model";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ECertFullTimeResponseService } from "../../esdc-integration/e-cert-integration/e-cert-full-time-integration/e-cert-full-time-response.service";
-
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/e-cert")
 @ApiTags("system-access")
 export class ECertIntegrationController extends BaseController {
-  constructor(
-    private readonly eCertFileHandler: ECertFileHandler,
-    private readonly eCertFullTimeResponseService: ECertFullTimeResponseService,
-  ) {
+  constructor(private readonly eCertFileHandler: ECertFileHandler) {
     super();
   }
 
@@ -39,6 +34,20 @@ export class ECertIntegrationController extends BaseController {
   }
 
   /**
+   * Download all files from FullTime E-Cert Response folder on SFTP and process them all.
+   * @returns Summary with what was processed and the list of all errors, if any.
+   */
+  @Post("process-full-time-responses")
+  async processFullTimeResponses(): Promise<ESDCFileResponseDTO[]> {
+    const fullTimeResults =
+      await this.eCertFileHandler.processFullTimeResponses();
+    return fullTimeResults.map((fullTimeResult) => ({
+      processSummary: fullTimeResult.processSummary,
+      errorsSummary: fullTimeResult.errorsSummary,
+    }));
+  }
+
+  /**
    * Process Part-Time disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
    * @returns result of the file upload with the file generated and the
@@ -57,18 +66,17 @@ export class ECertIntegrationController extends BaseController {
   }
 
   /**
-   * Download all files from E-Cert Response folder on SFTP and process them all.
+   * Download all files from Part Time E-Cert Response folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
-  @Post("process-responses")
-  async processResponses(): Promise<ESDCFileResponseDTO[]> {
-    const results = await this.eCertFullTimeResponseService.processResponses();
-    return results.map((result) => {
-      return {
-        processSummary: result.processSummary,
-        errorsSummary: result.errorsSummary,
-      };
-    });
+  @Post("process-part-time-responses")
+  async processPartTimeResponses(): Promise<ESDCFileResponseDTO[]> {
+    const partTimeResults =
+      await this.eCertFileHandler.processPartTimeResponses();
+    return partTimeResults.map((partTimeResult) => ({
+      processSummary: partTimeResult.processSummary,
+      errorsSummary: partTimeResult.errorsSummary,
+    }));
   }
 
   @InjectLogger()

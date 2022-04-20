@@ -2,8 +2,9 @@ import WelcomeObject from "../../page-objects/student-objects/WelcomeObject";
 
 describe("Welcome Page", () => {
   const welcomeObject = new WelcomeObject();
+  const url = Cypress.env("studentURL");
   beforeEach(function () {
-    cy.visit("/");
+    cy.visit(url);
   });
 
   it("Validate student URL", () => {

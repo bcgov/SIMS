@@ -1,18 +1,18 @@
-import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-base.models";
 import { StringBuilder } from "../../../../utilities/string-builder";
-import { RecordTypeCodes } from "../models/e-cert-part-time-integration.model";
+import { RecordTypeCodes } from "../../models/e-cert-integration-model";
 import {
   SPACE_FILLER,
   NUMBER_FILLER,
   DATE_FORMAT,
 } from "../../../models/esdc-integration.model";
+import { ECertFileRecord } from "../../e-cert-files/e-cert-file-record";
 
 /**
- * Record of an Entitlement E-Cert file.
+ * Record of an Entitlement Part-Time E-Cert file.
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertPartTimeFileRecord implements FixedFormatFileLine {
+export class ECertPartTimeFileRecord extends ECertFileRecord {
   recordType: RecordTypeCodes;
   /**
    * Social insurance number of student.

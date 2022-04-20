@@ -12,22 +12,32 @@ import {
   CSGD,
   CSGP,
   CSGPT,
-} from "./models/e-cert-part-time-integration.model";
+  Award,
+  ECertRecord,
+} from "../models/e-cert-integration-model";
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import { ECertPartTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertPartTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertPartTimeFileRecord } from "./e-cert-files/e-cert-file-record";
-import { DisbursementValueType } from "../../../database/entities";
-import { Award, ECertRecord } from "../e-cert-integration-model";
+import {
+  DisbursementValueType,
+  OfferingIntensity,
+} from "../../../database/entities";
 import { ECertIntegrationService } from "../e-cert-integration.service";
+import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
 
 /**
  * Manages the file content generation and methods to
  * upload/download the files to SFTP.
  */
 @Injectable()
-export class ECertPartTimeIntegrationService extends ECertIntegrationService<void> {
-  constructor(config: ConfigService, sshService: SshService) {
+export class ECertPartTimeIntegrationService extends ECertIntegrationService {
+  constructor(
+    private readonly eCertPartTimeFileHeader: ECertPartTimeFileHeader,
+    private readonly eCertPartTimeFileFooter: ECertPartTimeFileFooter,
+    config: ConfigService,
+    sshService: SshService,
+  ) {
     super(config.getConfig().zoneBSFTP, sshService);
   }
 
@@ -35,17 +45,13 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService<voi
    * Create the ECert file content, by populating the
    * header, detail and trailer records.
    * @param ecertRecords student, User and application data.
-   * @param fileSequence unique file sequence.
    * @returns complete ECert content to be sent.
    */
-  createRequestContent(
-    ecertRecords: ECertRecord[],
-    fileSequence: number,
-  ): FixedFormatFileLine[] {
+  createRequestContent(ecertRecords: ECertRecord[]): FixedFormatFileLine[] {
     const fileLines: FixedFormatFileLine[] = [];
     // Header record
     const header = new ECertPartTimeFileHeader();
-    header.recordTypeCode = RecordTypeCodes.ECertHeader;
+    header.recordTypeCode = RecordTypeCodes.ECertPartTimeHeader;
     header.processDate = new Date();
     fileLines.push(header);
 
@@ -87,10 +93,10 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService<voi
       ]);
 
       const record = new ECertPartTimeFileRecord();
-      record.recordType = RecordTypeCodes.ECertRecord;
+      record.recordType = RecordTypeCodes.ECertPartTimeRecord;
       record.sin = ecertRecord.sin;
       record.courseLoad = ecertRecord.courseLoad;
-      record.certNumber = fileSequence;
+      record.certNumber = ecertRecord.documentNumber;
       record.disbursementDate = ecertRecord.disbursementDate;
       record.documentProducedDate = ecertRecord.documentProducedDate;
       record.disbursementAmount = disbursementAmount;
@@ -131,11 +137,25 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService<voi
       0,
     );
     const footer = new ECertPartTimeFileFooter();
-    footer.recordTypeCode = RecordTypeCodes.ECertFooter;
+    footer.recordTypeCode = RecordTypeCodes.ECertPartTimeFooter;
     footer.totalAmountDisbursed = totalAmountDisbursed;
     footer.recordCount = fileRecords.length;
     fileLines.push(footer);
 
     return fileLines;
+  }
+
+  /**
+   * This method will call the appropriate common implementation by passing the appropriate parameters.
+   * @param remoteFilePath E-Cert response file to be processed.
+   * @returns Parsed records from the file.
+   */
+  downloadResponseFile(remoteFilePath: string): Promise<ECertResponseRecord[]> {
+    return this.downloadECertResponseFile(
+      remoteFilePath,
+      this.eCertPartTimeFileHeader,
+      this.eCertPartTimeFileFooter,
+      OfferingIntensity.partTime,
+    );
   }
 }

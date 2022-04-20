@@ -94,8 +94,8 @@
 }
 
 .btn-formio-primary-outlined {
-  background: #ffffff;
-  color: $brand-blue;
+  background: #ffffff !important;
+  color: $brand-blue !important;
 }
 
 .panel-error .card-body {
@@ -314,12 +314,13 @@
   color: #ff7a00;
 }
 
-.status-resolved-restriction .form-status-badge {
+.formio-success-status .form-status-badge {
   font-weight: 700;
   border-color: $badge-border-success;
+  text-transform: none;
 }
 
-.status-resolved-restriction .fa-circle::before {
+.formio-success-status .fa-circle::before {
   color: #16c92e;
 }
 
@@ -331,7 +332,6 @@
   position: absolute;
   border-radius: 30px;
   border-style: solid;
-  text-transform: uppercase;
   font-weight: 700 !important;
   font-size: 12px !important;
   color: $brand-black;
@@ -397,4 +397,34 @@
   width: 100%;
   height: 100%;
   min-height: $image-min-height;
+}
+
+.muted-content {
+  color: $color-muted;
+}
+
+.ff-form-container .btn-formio-primary-outlined .btn-primary {
+  @extend .btn-formio-primary-outlined;
+  border: 1px solid $brand-blue !important;
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
+.ff-form-container .formio-panel-bg-secondary .card-body {
+  background-color: $color-background;
+}
+// CSS to override data grid table style.
+.ff-form-container .formio-datagrid-unset .table-bordered td,
+.ff-form-container .formio-datagrid-unset .table-bordered th,
+.ff-form-container .formio-datagrid-unset .table thead th,
+.ff-form-container .formio-datagrid-unset .table-bordered {
+  border: none;
+}
+
+.ff-form-container .formio-datagrid-unset table thead {
+  display: none;
+}
+.ff-form-container .formio-datagrid-unset .table td,
+.ff-form-container .formio-datagrid-unset .table th {
+  padding: 0;
 }

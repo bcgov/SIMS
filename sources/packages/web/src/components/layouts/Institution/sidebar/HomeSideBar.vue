@@ -112,7 +112,7 @@ export default {
                     },
                   },
                   {
-                    label: "Active Applications",
+                    label: "Report a change",
                     icon: "mdi-account-tie-outline",
                     command: () => {
                       router.push({

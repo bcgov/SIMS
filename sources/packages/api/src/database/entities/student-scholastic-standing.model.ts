@@ -7,7 +7,13 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { Application, Note, ScholasticStandingStatus, User } from ".";
+import {
+  Application,
+  Note,
+  ScholasticStandingStatus,
+  StudentAssessment,
+  User,
+} from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 
@@ -115,4 +121,17 @@ export class StudentScholasticStanding extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   note?: Note;
+  /**
+   * Student assessment associated with this student scholastic standing.
+   */
+  @OneToOne(
+    () => StudentAssessment,
+    (studentAssessment) => studentAssessment.studentScholasticStanding,
+    {
+      eager: false,
+      cascade: ["insert", "update"],
+      nullable: true,
+    },
+  )
+  studentAssessment?: StudentAssessment;
 }

@@ -7,7 +7,7 @@ import { StringBuilder } from "../utilities/string-builder";
 import { ConfigService } from "../services";
 import { ESDCIntegrationConfig } from "../types";
 export abstract class ESDCFileHandler {
-  private readonly esdcConfig: ESDCIntegrationConfig;
+  esdcConfig: ESDCIntegrationConfig;
   constructor(config: ConfigService) {
     this.esdcConfig = config.getConfig().ESDCIntegration;
   }
