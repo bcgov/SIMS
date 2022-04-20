@@ -248,32 +248,26 @@ export class ProgramInfoRequestController extends BaseController {
         throw new BadRequestException("Application not found.");
       }
 
+      let studyStartDate = payload.studyStartDate;
+      let studyEndDate = payload.studyEndDate;
       let selectedOfferingIntensity = payload.offeringIntensity;
-
-      if (payload.selectedOffering) {
-        const offering = await this.offeringService.getOfferingById(
-          payload.selectedOffering,
-        );
-        selectedOfferingIntensity = offering.offeringIntensity;
-      }
-
-      this.applicationService.checkOfferingIntensityMismatch(
-        application.data.howWillYouBeAttendingTheProgram,
-        selectedOfferingIntensity,
-      );
 
       let offeringToCompletePIR: EducationProgramOffering;
       if (payload.selectedOffering) {
         // Check if the offering belongs to the location.
-        const offeringLocationId =
+        const offeringLocation =
           await this.offeringService.getOfferingLocationId(
             payload.selectedOffering,
           );
-        if (offeringLocationId !== locationId) {
+
+        if (offeringLocation?.institutionLocation.id !== locationId) {
           throw new UnauthorizedException(
             "The location does not have access to the offering.",
           );
         }
+        studyStartDate = offeringLocation.studyStartDate;
+        studyEndDate = offeringLocation.studyEndDate;
+        selectedOfferingIntensity = offeringLocation.offeringIntensity;
         // Offering exists, is valid and just need to be associated
         // with the application to complete the PIR.
         offeringToCompletePIR = {
@@ -281,14 +275,19 @@ export class ProgramInfoRequestController extends BaseController {
         } as EducationProgramOffering;
       }
 
+      this.applicationService.checkOfferingIntensityMismatch(
+        application.data.howWillYouBeAttendingTheProgram,
+        selectedOfferingIntensity,
+      );
+
       await this.applicationService.validateOverlappingDatesAndPIR(
         applicationId,
         application.student.user.lastName,
         application.student.user.id,
         application.student.sin,
         application.student.birthDate,
-        payload.studyStartDate,
-        payload.studyEndDate,
+        studyStartDate,
+        studyEndDate,
       );
 
       const updatedApplication =

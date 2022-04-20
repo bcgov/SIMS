@@ -14,11 +14,11 @@ export interface GetProgramInfoRequestDto
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;
+  studentStudyStartDate: string;
+  studentStudyEndDate: string;
   studentSelectedProgram: string;
   studentCustomProgram: string;
   studentCustomProgramDescription: string;
-  studentStudyStartDate: string;
-  studentStudyEndDate: string;
   pirStatus: ProgramInfoStatus;
   programYearId: number;
   pirDenyReasonId?: number;
