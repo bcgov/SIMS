@@ -10,7 +10,6 @@ import {
   InstitutionUserViewModel,
   UserPermissionDto,
   InstitutionUserRoleLocation,
-  UserAuth,
   InstitutionUserWithUserType,
   OptionItemDto,
   DataTableSortOrder,
@@ -34,6 +33,7 @@ import {
   InstitutionFormAPIInDTO,
   InstitutionUserTypeAndRoleAPIOutDTO,
   InstitutionUserAPIInDTO,
+  UserRoleOptionAPIOutDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -239,7 +239,9 @@ export class InstitutionService {
     await ApiClient.InstitutionLocation.createUser(payload);
   }
 
-  public async getInstitutionLocationUserDetails(userName: string) {
+  public async getInstitutionLocationUserDetails(
+    userName: string,
+  ): Promise<InstitutionUserAPIOutDTO> {
     return ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(
       userName,
     );
@@ -259,7 +261,7 @@ export class InstitutionService {
 
   public async prepareAddUserPayload(
     isAdmin: boolean,
-    selectUser: UserAuth,
+    selectUser: UserRoleOptionAPIOutDTO,
     adminRole: string,
     institutionLocationList: InstitutionLocationsDetails[],
   ) {
@@ -393,7 +395,7 @@ export class InstitutionService {
     );
   }
 
-  public async getGetAdminRoleOptions(): Promise<UserAuth[]> {
+  public async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
     return ApiClient.Institution.getGetAdminRoleOptions();
   }
 }

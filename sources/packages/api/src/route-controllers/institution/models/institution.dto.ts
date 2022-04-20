@@ -10,7 +10,7 @@ import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-ac
 import { Type } from "class-transformer";
 
 import { DesignationStatus } from "../../../route-controllers/institution-locations/models/institution-location.dto";
-import { AddressInDTO, AddressOutDTO } from "../../models/common.dto";
+import { AddressAPIInDTO, AddressAPIOutDTO } from "../../models/common.dto";
 
 /**
  * DTO object for institution creation.
@@ -85,8 +85,8 @@ export class InstitutionContactAPIInDTO {
   @IsNotEmpty()
   primaryContactPhone: string;
   @ValidateNested()
-  @Type(() => AddressInDTO)
-  mailingAddress: AddressInDTO;
+  @Type(() => AddressAPIInDTO)
+  mailingAddress: AddressAPIInDTO;
 }
 
 export class InstitutionContactAPIOutDTO {
@@ -94,7 +94,7 @@ export class InstitutionContactAPIOutDTO {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  mailingAddress: AddressOutDTO;
+  mailingAddress: AddressAPIOutDTO;
 }
 
 export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
@@ -146,5 +146,5 @@ export interface SearchInstitutionAPIOutDTO {
   id: number;
   legalName: string;
   operatingName: string;
-  address: AddressOutDTO;
+  address: AddressAPIOutDTO;
 }

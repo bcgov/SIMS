@@ -31,7 +31,7 @@ import {
   InstitutionDetailAPIOutDTO,
   InstitutionFormAPIInDTO,
 } from "./models/institution.dto";
-import { InstitutionUserTypeAndRoleAPIOutDTO } from "./models/institution-user-type-role.res.dto";
+
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
   InstitutionUserAPIOutDTO,
@@ -41,8 +41,13 @@ import {
   InstitutionUserDetailAPIOutDTO,
   InstitutionUserLocationsAPIOutDTO,
   UserRoleOptionAPIOutDTO,
+  InstitutionUserTypeAndRoleAPIOutDTO,
 } from "./models/institution-user.dto";
-import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
 import { ClientTypeBaseRoute } from "../../types";
@@ -171,6 +176,10 @@ export class InstitutionInstitutionsController extends BaseController {
    * @param user
    * @returns Primary identifier of the created resource.
    */
+  @ApiUnprocessableEntityResponse({
+    description:
+      "User to be added either not found in account service or does not belong to same institution of logged in user.",
+  })
   @IsInstitutionAdmin()
   @Post("user")
   async createInstitutionUserWithAuth(
@@ -246,6 +255,12 @@ export class InstitutionInstitutionsController extends BaseController {
    * @param userName
    * @returns
    */
+  @ApiNotFoundResponse({
+    description: "User not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "User not active.",
+  })
   @IsInstitutionAdmin()
   @Get("user/:userName")
   async getInstitutionUserByUserName(
@@ -285,6 +300,19 @@ export class InstitutionInstitutionsController extends BaseController {
     };
   }
 
+  /**
+   * Update the permissions of institution user.
+   * @param token
+   * @param userName
+   * @param payload
+   */
+  @ApiNotFoundResponse({
+    description: "User to be updated not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "User to be updated doesn't belong to institution of logged in user.",
+  })
   @IsInstitutionAdmin()
   @Patch("user/:userName")
   async UpdateInstitutionUserWithAuth(
@@ -348,6 +376,13 @@ export class InstitutionInstitutionsController extends BaseController {
    * @param userName
    * @param body
    */
+  @ApiNotFoundResponse({
+    description: "User to be updated not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "User to be updated doesn't belong to institution of logged in user.",
+  })
   @IsInstitutionAdmin()
   @Patch("user-status/:userName")
   async updateUserStatus(
@@ -443,6 +478,12 @@ export class InstitutionInstitutionsController extends BaseController {
     });
   }
 
+  /**
+   * Check if an Institution exist.
+   ** Returns HTTP 404 if institution does not exist.
+   ** Otherwise return HTTP 200.
+   * @param guid
+   */
   @Head("/:guid")
   async checkIfInstitutionExist(@Param("guid") guid: string): Promise<void> {
     const response = await this.institutionService.doesExist(guid);

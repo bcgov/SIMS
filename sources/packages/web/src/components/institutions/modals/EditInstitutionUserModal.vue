@@ -114,13 +114,14 @@ import InputSwitch from "primevue/inputswitch";
 import { useToastMessage } from "@/composables";
 import {
   InstitutionUserAuthDetails,
-  InstitutionAuth,
-  UserAuth,
   LEGAL_SIGNING_AUTHORITY_EXIST,
   LEGAL_SIGNING_AUTHORITY_MSG,
 } from "@/types";
 
-import { InstitutionUserAPIOutDTO } from "@/services/http/dto";
+import {
+  InstitutionUserAPIOutDTO,
+  UserRoleOptionAPIOutDTO,
+} from "@/services/http/dto";
 
 export default {
   components: { Dialog, Dropdown, InputSwitch },
@@ -152,7 +153,10 @@ export default {
     const institutionLocationList = ref();
     const payLoad = ref({} as InstitutionUserAuthDetails);
     /**Initialized with default value */
-    const selectedAdminRole = ref({ name: "admin", code: "admin" } as UserAuth);
+    const selectedAdminRole = ref({
+      name: "admin",
+      code: "admin",
+    } as UserRoleOptionAPIOutDTO);
 
     const closeEditUser = async () => {
       context.emit("updateShowEditInstitutionModal");

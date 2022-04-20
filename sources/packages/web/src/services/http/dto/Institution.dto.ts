@@ -57,7 +57,7 @@ export interface InstitutionDetailAPIInDTO extends InstitutionProfileAPIInDTO {
   institutionTypeName?: string;
   isBCPrivate?: boolean;
 }
-export interface InstitutionUserAuthTypeOutDTO {
+export interface InstitutionUserAuthTypeAPIOutDTO {
   role: string;
   type: string;
 }
@@ -66,31 +66,32 @@ export interface InstitutionLocationAuthDataAPIOutDTO {
   address: AddressInfo;
 }
 
-export interface InstitutionAuthLocationOutDTO {
+export interface InstitutionAuthLocationAPIOutDTO {
   id: number;
   name: string;
   data: InstitutionLocationAuthDataAPIOutDTO;
 }
 
-export interface InstitutionUserAuthOutDTO {
+export interface InstitutionUserAuthAPIOutDTO {
   id?: number;
-  authType: InstitutionUserAuthTypeOutDTO;
-  location?: InstitutionAuthLocationOutDTO;
+  authType: InstitutionUserAuthTypeAPIOutDTO;
+  location?: InstitutionAuthLocationAPIOutDTO;
 }
 
-export interface InstitutionUserSummaryOutDTO {
+export interface InstitutionUserSummaryAPIOutDTO {
   id: number;
   email: string;
   firstName: string;
   lastName: string;
   userName: string;
   isActive: boolean;
+  userFullName?: string;
 }
 
 export interface InstitutionUserAPIOutDTO {
   id: number;
-  user: InstitutionUserSummaryOutDTO;
-  authorizations: InstitutionUserAuthOutDTO[];
+  user: InstitutionUserSummaryAPIOutDTO;
+  authorizations: InstitutionUserAuthAPIOutDTO[];
 }
 
 export interface SearchInstitutionAPIOutDTO {
@@ -140,4 +141,36 @@ export interface UserPermissionAPIInDTO {
 export interface InstitutionUserAPIInDTO {
   userId?: string;
   permissions: UserPermissionAPIInDTO[];
+}
+
+export interface UserActiveStatusAPIInDTO {
+  isActive: boolean;
+}
+
+export interface InstitutionLocationAuthAPIOutDTO {
+  locationId: number;
+  userType: string;
+  userRole: string;
+}
+
+export interface UserAuthDetailAPIOutDTO {
+  institutionId: number;
+  authorizations: InstitutionLocationAuthAPIOutDTO[];
+}
+export interface InstitutionUserDetailAPIOutDTO {
+  id?: number;
+  user: InstitutionUserSummaryAPIOutDTO;
+  authorizations: UserAuthDetailAPIOutDTO;
+}
+
+export interface InstitutionUserLocationsAPIOutDTO {
+  id: number;
+  name: string;
+  address: AddressInfo;
+}
+
+export interface UserRoleOptionAPIOutDTO {
+  name: string;
+  code: string;
+  id?: number;
 }

@@ -53,12 +53,6 @@ export interface UserPermissionDto extends InstitutionUserRoleLocation {
   userRole?: string;
 }
 
-export interface UserAuth {
-  name?: string;
-  code: string;
-  id?: string;
-}
-
 export interface InstitutionUserWithUserType
   extends InstitutionLocationsDetails {
   userType?: {

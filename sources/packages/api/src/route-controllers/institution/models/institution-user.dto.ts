@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { AddressInfoOutDTO } from "../../models/common.dto";
+import { AddressInfoAPIOutDTO } from "../../models/common.dto";
 import {
   ArrayMinSize,
   IsArray,
@@ -48,28 +48,28 @@ export class UserActiveStatusAPIInDTO {
   isActive: boolean;
 }
 
-export class InstitutionUserAuthTypeOutDTO {
+export class InstitutionUserAuthTypeAPIOutDTO {
   role?: string;
   type: string;
 }
 
 export class InstitutionLocationAuthDataAPIOutDTO {
-  address: AddressInfoOutDTO;
+  address: AddressInfoAPIOutDTO;
 }
 
-export class InstitutionAuthLocationOutDTO {
-  id: number;
-  name: string;
-  data: InstitutionLocationAuthDataAPIOutDTO;
-}
-
-export class InstitutionUserAuthOutDTO {
+export class InstitutionAuthLocationAPIOutDTO {
   id?: number;
-  authType: InstitutionUserAuthTypeOutDTO;
-  location?: InstitutionAuthLocationOutDTO;
+  name: string;
+  data?: InstitutionLocationAuthDataAPIOutDTO;
 }
 
-export class InstitutionUserSummaryOutDTO {
+export class InstitutionUserAuthAPIOutDTO {
+  id?: number;
+  authType: InstitutionUserAuthTypeAPIOutDTO;
+  location?: InstitutionAuthLocationAPIOutDTO;
+}
+
+export class InstitutionUserSummaryAPIOutDTO {
   id?: number;
   email: string;
   firstName: string;
@@ -80,31 +80,31 @@ export class InstitutionUserSummaryOutDTO {
 
 export class InstitutionUserAPIOutDTO {
   id?: number;
-  user: InstitutionUserSummaryOutDTO;
-  authorizations: InstitutionUserAuthOutDTO[];
+  user: InstitutionUserSummaryAPIOutDTO;
+  authorizations: InstitutionUserAuthAPIOutDTO[];
 }
 
-export class InstitutionLocationAuthOutDTO {
+export class InstitutionLocationAuthAPIOutDTO {
   locationId: number;
   userType: string;
   userRole: string;
 }
 
-export class UserAuthDetailOutDTO {
+export class UserAuthDetailAPIOutDTO {
   institutionId: number;
-  authorizations: InstitutionLocationAuthOutDTO[];
+  authorizations: InstitutionLocationAuthAPIOutDTO[];
 }
 
 export class InstitutionUserDetailAPIOutDTO {
   id?: number;
-  user: InstitutionUserSummaryOutDTO;
-  authorizations: UserAuthDetailOutDTO;
+  user: InstitutionUserSummaryAPIOutDTO;
+  authorizations: UserAuthDetailAPIOutDTO;
 }
 
 export interface InstitutionUserLocationsAPIOutDTO {
   id: number;
   name: string;
-  address: AddressInfoOutDTO;
+  address: AddressInfoAPIOutDTO;
 }
 
 /**
@@ -113,4 +113,9 @@ export interface InstitutionUserLocationsAPIOutDTO {
 export class UserRoleOptionAPIOutDTO {
   name: string;
   code: string;
+}
+
+export class InstitutionUserTypeAndRoleAPIOutDTO {
+  userTypes: string[];
+  userRoles: string[];
 }

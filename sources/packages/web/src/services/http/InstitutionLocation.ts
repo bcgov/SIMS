@@ -1,5 +1,4 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { LocationStateForStore } from "@/types";
 import {
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
@@ -8,6 +7,8 @@ import {
   OptionItemAPIOutDTO,
   InstitutionUserAPIOutDTO,
   InstitutionUserAPIInDTO,
+  UserActiveStatusAPIInDTO,
+  InstitutionUserLocationsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class InstitutionLocationApi extends HttpBaseClient {
@@ -91,7 +92,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
     userName: string,
     userStatus: boolean,
   ): Promise<void> {
-    return this.patchCall(
+    return this.patchCall<UserActiveStatusAPIInDTO>(
       this.addClientRoot(`institution/user-status/${userName}`),
       {
         isActive: userStatus,
@@ -101,8 +102,8 @@ export class InstitutionLocationApi extends HttpBaseClient {
 
   public async getMyInstitutionLocationsDetails(
     header?: any,
-  ): Promise<LocationStateForStore> {
-    return this.getCallTyped<LocationStateForStore>(
+  ): Promise<InstitutionUserLocationsAPIOutDTO[]> {
+    return this.getCallTyped<InstitutionUserLocationsAPIOutDTO[]>(
       this.addClientRoot("institution/my-locations"),
       header,
     );

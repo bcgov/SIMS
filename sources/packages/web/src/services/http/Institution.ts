@@ -1,9 +1,7 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
-  InstitutionUserAndAuthDetailsForStore,
   OptionItemDto,
   DataTableSortOrder,
-  UserAuth,
   FieldSortOrder,
   AESTInstitutionProgramsSummaryDto,
   PaginatedResults,
@@ -18,6 +16,8 @@ import {
   InstitutionBasicAPIOutDTO,
   InstitutionFormAPIInDTO,
   InstitutionUserTypeAndRoleAPIOutDTO,
+  InstitutionUserDetailAPIOutDTO,
+  UserRoleOptionAPIOutDTO,
 } from "@/services/http/dto";
 
 export class InstitutionApi extends HttpBaseClient {
@@ -63,8 +63,8 @@ export class InstitutionApi extends HttpBaseClient {
 
   public async getMyInstitutionDetails(
     header?: any,
-  ): Promise<InstitutionUserAndAuthDetailsForStore> {
-    return this.getCallTyped<InstitutionUserAndAuthDetailsForStore>(
+  ): Promise<InstitutionUserDetailAPIOutDTO> {
+    return this.getCallTyped<InstitutionUserDetailAPIOutDTO>(
       this.addClientRoot("institution/my-details"),
       header,
     );
@@ -188,8 +188,8 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async getGetAdminRoleOptions(): Promise<UserAuth[]> {
-    return this.getCallTyped<UserAuth[]>(
+  public async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
+    return this.getCallTyped<UserRoleOptionAPIOutDTO[]>(
       this.addClientRoot("institution/admin-roles"),
     );
   }

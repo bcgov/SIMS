@@ -8,7 +8,7 @@ import { IsNotEmpty, IsOptional } from "class-validator";
  * Common DTO for Address
  ** This DTO is used in API request body.
  */
-export class AddressInDTO {
+export class AddressAPIInDTO {
   @IsNotEmpty()
   addressLine1: string;
   @IsOptional()
@@ -27,7 +27,7 @@ export class AddressInDTO {
  * Common DTO for Address
  ** This DTO is used in API request body.
  */
-export class AddressInfoInDTO {
+export class AddressInfoAPIInDTO {
   @IsNotEmpty()
   addressLine1: string;
   @IsOptional()
@@ -46,7 +46,7 @@ export class AddressInfoInDTO {
  * Common DTO for Address.
  ** This DTO is returned as API response body.
  */
-export class AddressOutDTO {
+export class AddressAPIOutDTO {
   addressLine1: string;
   addressLine2: string;
   city: string;
@@ -59,7 +59,7 @@ export class AddressOutDTO {
  * Common DTO for Address.
  ** This DTO is returned as API response body.
  */
-export class AddressInfoOutDTO {
+export class AddressInfoAPIOutDTO {
   addressLine1: string;
   addressLine2?: string;
   city: string;

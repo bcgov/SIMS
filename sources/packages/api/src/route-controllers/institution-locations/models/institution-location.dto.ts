@@ -1,6 +1,6 @@
 import { Allow } from "class-validator";
 import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
-import { AddressInfoOutDTO } from "../../models/common.dto";
+import { AddressInfoAPIOutDTO } from "../../models/common.dto";
 
 export class GetInstitutionLocationDto {
   id: number;
@@ -82,7 +82,7 @@ export class InstitutionLocationAPIOutDTO {
   id: number;
   name: string;
   data: {
-    address: AddressInfoOutDTO;
+    address: AddressInfoAPIOutDTO;
   };
   primaryContact: InstitutionPrimaryContactOutDTO;
   institutionCode: string;
