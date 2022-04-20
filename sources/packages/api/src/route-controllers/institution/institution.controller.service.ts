@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { InstitutionService, FormService } from "../../services";
+import { InstitutionService } from "../../services";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
   getExtendedDateFormat,
@@ -16,10 +16,7 @@ import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
  */
 @Injectable()
 export class InstitutionControllerService {
-  constructor(
-    private readonly institutionService: InstitutionService,
-    private readonly formService: FormService,
-  ) {}
+  constructor(private readonly institutionService: InstitutionService) {}
 
   /**
    * Get institution detail.
