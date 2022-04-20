@@ -102,7 +102,7 @@ export class InstitutionAESTController extends BaseController {
     @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
     @Query(PaginationParams.PageLimit) pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
-    return await this.institutionControllerService.getInstitutionUsers(
+    return this.institutionControllerService.getInstitutionUsers(
       institutionId,
       {
         page: page,

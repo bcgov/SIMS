@@ -123,12 +123,12 @@ export class InstitutionInstitutionsController extends BaseController {
   async getInstitutionUsers(
     @Query(PaginationParams.SearchCriteria) searchName: string,
     @Query(PaginationParams.SortField) sortField: string,
-    @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
     @UserToken() user: IInstitutionUserToken,
+    @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
     @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
     @Query(PaginationParams.PageLimit) pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
-    return await this.institutionControllerService.getInstitutionUsers(
+    return this.institutionControllerService.getInstitutionUsers(
       user.authorizations.institutionId,
       {
         page: page,
