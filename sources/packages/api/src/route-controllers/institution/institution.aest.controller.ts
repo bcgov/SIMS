@@ -150,7 +150,7 @@ export class InstitutionAESTController extends BaseController {
   }
 
   /**
-   * Get the Basic Institution info for the ministry institution detail page
+   * Get the Basic Institution info for the ministry institution detail page.
    * @param institutionId
    * @returns BasicInstitutionInfo
    */

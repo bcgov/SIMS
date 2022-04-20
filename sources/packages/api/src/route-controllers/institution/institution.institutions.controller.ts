@@ -9,6 +9,7 @@ import {
   Param,
   NotFoundException,
   Head,
+  ForbiddenException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -44,6 +45,7 @@ import {
   InstitutionUserTypeAndRoleAPIOutDTO,
 } from "./models/institution-user.dto";
 import {
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -70,7 +72,7 @@ export class InstitutionInstitutionsController extends BaseController {
     private readonly institutionService: InstitutionService,
     private readonly institutionControllerService: InstitutionControllerService,
     private readonly userService: UserService,
-    private readonly accountService: BCeIDService,
+    private readonly bceidAccountService: BCeIDService,
     private readonly locationService: InstitutionLocationService,
   ) {
     super();
@@ -121,7 +123,7 @@ export class InstitutionInstitutionsController extends BaseController {
   @IsInstitutionAdmin()
   @Get("user")
   async getInstitutionUsers(
-    @Query(PaginationParams.SearchCriteria) searchName: string,
+    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
     @Query(PaginationParams.SortField) sortField: string,
     @UserToken() user: IInstitutionUserToken,
     @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
@@ -131,11 +133,11 @@ export class InstitutionInstitutionsController extends BaseController {
     return this.institutionControllerService.getInstitutionUsers(
       user.authorizations.institutionId,
       {
-        page: page,
-        pageLimit: pageLimit,
-        searchCriteria: searchName,
-        sortField: sortField,
-        sortOrder: sortOrder,
+        page,
+        pageLimit,
+        searchCriteria,
+        sortField,
+        sortOrder,
       },
     );
   }
@@ -192,7 +194,7 @@ export class InstitutionInstitutionsController extends BaseController {
     );
 
     // Find user on BCeID Web Service
-    const bceidUserAccount = await this.accountService.getAccountDetails(
+    const bceidUserAccount = await this.bceidAccountService.getAccountDetails(
       payload.userId,
     );
     if (!bceidUserAccount) {
@@ -229,7 +231,7 @@ export class InstitutionInstitutionsController extends BaseController {
       }
     }
 
-    // Create the user user and the related records.
+    // Create the user and the related records.
     const createdInstitutionUser =
       await this.institutionService.createInstitutionUser(
         institution.id,
@@ -261,10 +263,15 @@ export class InstitutionInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description: "User not active.",
   })
+  @ApiForbiddenResponse({
+    description:
+      "Details requested for user who does not belong to the institution of logged in user.",
+  })
   @IsInstitutionAdmin()
   @Get("user/:userName")
   async getInstitutionUserByUserName(
     @Param("userName") userName: string,
+    @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionUserAPIOutDTO> {
     // Get institutionUser
     const institutionUser =
@@ -276,6 +283,12 @@ export class InstitutionInstitutionsController extends BaseController {
     // disabled users details can't be edited
     if (!institutionUser.user.isActive) {
       throw new UnprocessableEntityException("Not an Active User.");
+    }
+    // checking if user belong to logged-in users institution
+    if (institutionUser.institution.id !== token.authorizations.institutionId) {
+      throw new ForbiddenException(
+        "Details requested for user who does not belong to the institution of logged in user.",
+      );
     }
     return {
       id: institutionUser.id,
@@ -309,13 +322,13 @@ export class InstitutionInstitutionsController extends BaseController {
   @ApiNotFoundResponse({
     description: "User to be updated not found.",
   })
-  @ApiUnprocessableEntityResponse({
+  @ApiForbiddenResponse({
     description:
-      "User to be updated doesn't belong to institution of logged in user.",
+      "User to be updated does not belong to the institution of logged in user.",
   })
   @IsInstitutionAdmin()
   @Patch("user/:userName")
-  async UpdateInstitutionUserWithAuth(
+  async updateInstitutionUserWithAuth(
     @UserToken() token: IInstitutionUserToken,
     @Param("userName") userName: string,
     @Body() payload: InstitutionUserPermissionAPIInDTO,
@@ -330,17 +343,8 @@ export class InstitutionInstitutionsController extends BaseController {
 
     // checking if user belong to logged-in users institution
     if (institutionUser.institution.id !== token.authorizations.institutionId) {
-      throw new UnprocessableEntityException(
-        "user does not belong to your institution.",
-      );
-    }
-    // Get institution
-    const institution = await this.institutionService.getInstituteByUserName(
-      userName,
-    );
-    if (!institution) {
-      throw new UnprocessableEntityException(
-        "The user has no institution associated.",
+      throw new ForbiddenException(
+        "User to be updated does not belong to the institution of logged in user.",
       );
     }
 
@@ -352,7 +356,7 @@ export class InstitutionInstitutionsController extends BaseController {
     if (addLegalSigningAuthorityExist) {
       const legalSigningAuthority =
         await this.institutionService.checkLegalSigningAuthority(
-          institution.id,
+          token.authorizations.institutionId,
         );
 
       if (legalSigningAuthority) {
@@ -379,7 +383,7 @@ export class InstitutionInstitutionsController extends BaseController {
   @ApiNotFoundResponse({
     description: "User to be updated not found.",
   })
-  @ApiUnprocessableEntityResponse({
+  @ApiForbiddenResponse({
     description:
       "User to be updated doesn't belong to institution of logged in user.",
   })
@@ -400,8 +404,8 @@ export class InstitutionInstitutionsController extends BaseController {
 
     // checking if user belong to logged-in users institution
     if (institutionUser.institution.id !== token.authorizations.institutionId) {
-      throw new UnprocessableEntityException(
-        "user does not belong to your institution.",
+      throw new ForbiddenException(
+        "User to be updated doesn't belong to institution of logged in user.",
       );
     }
     await this.userService.updateUserStatus(
@@ -428,7 +432,6 @@ export class InstitutionInstitutionsController extends BaseController {
       isAdmin: token.authorizations.isAdmin(),
       email: userDetails?.email,
     };
-
     const authorizations = {
       institutionId: token.authorizations.institutionId,
       authorizations: token.authorizations.authorizations.map((el) => {
@@ -455,13 +458,10 @@ export class InstitutionInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionUserLocationsAPIOutDTO[]> {
     // get all institution locations that user has access too.
-    const InstitutionLocationData = userToken.authorizations.isAdmin()
-      ? await this.locationService.getAllInstitutionLocations(
-          userToken?.authorizations?.institutionId,
-        )
-      : await this.locationService.getMyInstitutionLocations(
-          userToken.authorizations.getLocationsIds(),
-        );
+    const InstitutionLocationData =
+      await this.locationService.getMyInstitutionLocations(
+        userToken.authorizations.getLocationsIds(),
+      );
     return InstitutionLocationData.map((el) => {
       return {
         id: el.id,
