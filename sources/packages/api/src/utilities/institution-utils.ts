@@ -1,14 +1,14 @@
 import { InstitutionUser } from "../database/entities";
-import { InstitutionUserRespDto } from "../route-controllers/institution/models/institution.user.res.dto";
+import { InstitutionUserAPIOutDTO } from "../route-controllers/institution/models/institution-user.dto";
 
 /**
  * Util to transform institution users to InstitutionUserRespDto.
  * @param Entity
- * @returns InstitutionUserRespDto
+ * @returns Institution user DTO Object.
  */
 export const transformToInstitutionUserRespDto = (
   institutionUser: InstitutionUser,
-): InstitutionUserRespDto => {
+): InstitutionUserAPIOutDTO => {
   return {
     id: institutionUser.id,
     authorizations: institutionUser.authorizations.map((authorization) => ({
@@ -28,5 +28,5 @@ export const transformToInstitutionUserRespDto = (
       userName: institutionUser.user.userName,
       isActive: institutionUser.user.isActive,
     },
-  } as InstitutionUserRespDto;
+  };
 };

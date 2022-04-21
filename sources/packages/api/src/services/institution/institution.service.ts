@@ -17,25 +17,20 @@ import {
   InstitutionUserType,
   UserInfo,
 } from "../../types";
-import { CreateInstitutionDto } from "../../route-controllers/institution/models/institution.dto";
 import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
-import {
-  InstitutionUserTypeAndRoleResponseDto,
-  InstitutionUserPermissionDto,
-} from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
 import { AccountDetails } from "../bceid/account-details.model";
-import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
-import {
-  sortUsersColumnMap,
-  FieldSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
-} from "../../utilities";
+import { sortUsersColumnMap, PaginationOptions } from "../../utilities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
-import { UpdateInstitution } from "./institution.service.model";
+import {
+  UpdateInstitution,
+  InstitutionFormModel,
+  InstitutionUserModel,
+  InstitutionUserTypeAndRoleModel,
+  InstitutionUserPermissionModel,
+} from "./institution.service.model";
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
 export const LEGAL_SIGNING_AUTHORITY_MSG =
   "Legal signing authority already exist for this Institution.";
@@ -107,7 +102,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async createInstitutionUser(
     institutionId: number,
     bceidUserAccount: AccountDetails,
-    permissionInfo: InstitutionUserAuthDto,
+    permissionInfo: InstitutionUserModel,
   ): Promise<InstitutionUser> {
     // Used to create the relationships with institution.
     const institution = { id: institutionId } as Institution;
@@ -151,7 +146,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   async createInstitution(
     userInfo: UserInfo,
-    createInstitutionDto: CreateInstitutionDto,
+    institutionModel: InstitutionFormModel,
   ): Promise<Institution> {
     const institution = this.create();
     const user = new User();
@@ -171,37 +166,37 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     user.userName = userInfo.userName;
     user.firstName = account.user.firstname;
     user.lastName = account.user.surname;
-    user.email = createInstitutionDto.userEmail;
+    user.email = institutionModel.userEmail;
 
     institution.guid = account.institution.guid;
     institution.legalOperatingName = account.institution.legalName;
-    institution.operatingName = createInstitutionDto.operatingName;
-    institution.primaryPhone = createInstitutionDto.primaryPhone;
-    institution.primaryEmail = createInstitutionDto.primaryEmail;
-    institution.website = createInstitutionDto.website;
-    institution.regulatingBody = createInstitutionDto.regulatingBody;
-    institution.establishedDate = createInstitutionDto.establishedDate;
+    institution.operatingName = institutionModel.operatingName;
+    institution.primaryPhone = institutionModel.primaryPhone;
+    institution.primaryEmail = institutionModel.primaryEmail;
+    institution.website = institutionModel.website;
+    institution.regulatingBody = institutionModel.regulatingBody;
+    institution.establishedDate = institutionModel.establishedDate;
     institution.institutionType = {
-      id: createInstitutionDto.institutionType,
+      id: institutionModel.institutionType,
     } as InstitutionType;
 
     //Institution Primary Contact Information
     institution.institutionPrimaryContact = {
-      primaryContactFirstName: createInstitutionDto.primaryContactFirstName,
-      primaryContactLastName: createInstitutionDto.primaryContactLastName,
-      primaryContactEmail: createInstitutionDto.primaryContactEmail,
-      primaryContactPhone: createInstitutionDto.primaryContactPhone,
+      primaryContactFirstName: institutionModel.primaryContactFirstName,
+      primaryContactLastName: institutionModel.primaryContactLastName,
+      primaryContactEmail: institutionModel.primaryContactEmail,
+      primaryContactPhone: institutionModel.primaryContactPhone,
     };
 
     //Institution Address
     institution.institutionAddress = {
-      addressLine1: createInstitutionDto.addressLine1,
-      addressLine2: createInstitutionDto.addressLine2,
-      city: createInstitutionDto.city,
-      provinceState: createInstitutionDto.provinceState,
-      country: createInstitutionDto.country,
-      postalCode: createInstitutionDto.postalCode,
-      phone: createInstitutionDto.primaryPhone,
+      addressLine1: institutionModel.addressLine1,
+      addressLine2: institutionModel.addressLine2,
+      city: institutionModel.city,
+      provinceState: institutionModel.provinceState,
+      country: institutionModel.country,
+      postalCode: institutionModel.postalCode,
+      phone: institutionModel.primaryPhone,
     };
 
     await this.createAssociation({
@@ -277,24 +272,14 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   /**
    * service method to get all institution users with the
    * given institutionId.
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchName, user's name keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
    * @param institutionId institution id
+   * @param paginationOptions
    * @returns All the institution users for the given institution
    * with total count.
    */
-  async allUsers(
-    searchName: string,
-    sortField: string,
+  async getInstitutionUsers(
     institutionId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageLimit = DEFAULT_PAGE_LIMIT,
-    sortOrder = FieldSortOrder.ASC,
+    paginationOptions: PaginationOptions,
   ): Promise<[InstitutionUser[], number]> {
     // Default sort oder for user summary DataTable
     const DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE = "displayName";
@@ -325,32 +310,34 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .where("institution.id = :institutionId", { institutionId });
 
     // search by user's name
-    if (searchName) {
+    if (paginationOptions.searchCriteria) {
       institutionUsers.andWhere(
         "CONCAT(user.firstName,  ' ', user.lastName ) ILIKE :searchUser",
         {
-          searchUser: `%${searchName.trim()}%`,
+          searchUser: `%${paginationOptions.searchCriteria.trim()}%`,
         },
       );
     }
     // sorting
     sortUsersColumnMap(
-      sortField ?? DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE,
+      paginationOptions.sortField ?? DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE,
     ).forEach((sortElement, index) => {
       if (index === 0) {
-        institutionUsers.orderBy(sortElement, sortOrder);
+        institutionUsers.orderBy(sortElement, paginationOptions.sortOrder);
       } else {
-        institutionUsers.addOrderBy(sortElement, sortOrder);
+        institutionUsers.addOrderBy(sortElement, paginationOptions.sortOrder);
       }
     });
 
     // pagination
-    institutionUsers.take(pageLimit).skip(page * pageLimit);
+    institutionUsers
+      .take(paginationOptions.pageLimit)
+      .skip(paginationOptions.page * paginationOptions.pageLimit);
     // result
     return institutionUsers.getManyAndCount();
   }
 
-  async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
+  async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleModel> {
     const types: {
       type: string;
     }[] = await this.institutionUserTypeAndRoleRepo.query(
@@ -412,7 +399,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   async updateInstitutionUser(
-    permissionInfo: InstitutionUserPermissionDto,
+    permissionInfo: InstitutionUserPermissionModel,
     institutionUser: InstitutionUser,
   ): Promise<void> {
     const newAuthorizationEntries = [] as InstitutionUserAuth[];

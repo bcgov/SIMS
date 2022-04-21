@@ -2,21 +2,6 @@ import {
   InstitutionLocationData,
   InstitutionLocationsDetails,
 } from "./InstitutionLocation";
-import { InstitutionDto } from "./CreateInstitutionDto";
-export interface InstitutionUserResDto {
-  id: number;
-  user: InstitutionUserDetails;
-  authorizations: {
-    id: number;
-    authType: {
-      role?: string;
-      type: string;
-    };
-    location?: {
-      name: string;
-    };
-  }[];
-}
 
 export interface InstitutionUserViewModel {
   id: number;
@@ -31,8 +16,6 @@ export interface InstitutionUserViewModel {
 }
 
 export interface InstitutionAuthType {
-  active: boolean;
-  id: number;
   role: string;
   type: string;
 }
@@ -53,7 +36,6 @@ export interface InstitutionUserDetails {
 export interface InstitutionLocationUserAuthDto {
   id: number;
   authorizations: InstitutionAuth[];
-  institution: InstitutionDto;
   user: InstitutionUserDetails;
 }
 
@@ -69,12 +51,6 @@ export interface InstitutionUserDto {
 export interface UserPermissionDto extends InstitutionUserRoleLocation {
   userId?: string;
   userRole?: string;
-}
-
-export interface UserAuth {
-  name?: string;
-  code: string;
-  id?: string;
 }
 
 export interface InstitutionUserWithUserType
@@ -142,14 +118,10 @@ export interface InstitutionUserAndAuthDetailsForStore {
   };
   authorizations: AuthorizationsForStore;
 }
-export interface InstitutionUserAndCount {
-  users: InstitutionUserResDto[];
-  totalUsers: number;
-}
 
 export interface InstitutionUserAndCountForDataTable {
-  users: InstitutionUserViewModel[];
-  totalUsers: number;
+  results: InstitutionUserViewModel[];
+  count: number;
 }
 
 export enum InstitutionUserRoles {
