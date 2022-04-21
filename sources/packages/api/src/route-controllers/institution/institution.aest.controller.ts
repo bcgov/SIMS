@@ -49,6 +49,42 @@ export class InstitutionAESTController extends BaseController {
   }
 
   /**
+   * Search the institution based on the search criteria.
+   *!This API method is kept above getInstitutionDetailById to avoid route conflict.
+   * @param legalName legalName of the institution.
+   * @param operatingName operatingName of the institution.
+   * @returns Searched institution details.
+   */
+  @Get("search")
+  async searchInstitutions(
+    @Query("legalName") legalName: string,
+    @Query("operatingName") operatingName: string,
+  ): Promise<SearchInstitutionAPIOutDTO[]> {
+    if (!legalName && !operatingName) {
+      throw new UnprocessableEntityException(
+        "Search with at least one search criteria",
+      );
+    }
+    const searchInstitutions = await this.institutionService.searchInstitution(
+      legalName,
+      operatingName,
+    );
+    return searchInstitutions.map((eachInstitution: Institution) => ({
+      id: eachInstitution.id,
+      legalName: eachInstitution.legalOperatingName,
+      operatingName: eachInstitution.operatingName,
+      address: {
+        addressLine1: eachInstitution.institutionAddress.addressLine1,
+        addressLine2: eachInstitution.institutionAddress.addressLine2,
+        city: eachInstitution.institutionAddress.city,
+        provinceState: eachInstitution.institutionAddress.provinceState,
+        country: eachInstitution.institutionAddress.country,
+        postalCode: eachInstitution.institutionAddress.postalCode,
+      },
+    }));
+  }
+
+  /**
    * Get institution details of given institution.
    * @param institutionId
    * @returns InstitutionDetailDTO.
@@ -83,6 +119,7 @@ export class InstitutionAESTController extends BaseController {
   /**
    * Controller method to get all institution users with the
    * given institutionId.
+   * @param institutionId
    * @queryParm page, page number if nothing is passed then
    * DEFAULT_PAGE_NUMBER is taken
    * @queryParm pageLimit, page size or records per page, if nothing is
@@ -96,7 +133,7 @@ export class InstitutionAESTController extends BaseController {
   @Get(":institutionId/user")
   async getInstitutionUsers(
     @Param("institutionId") institutionId: number,
-    @Query(PaginationParams.SearchCriteria) searchName: string,
+    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
     @Query(PaginationParams.SortField) sortField: string,
     @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
     @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
@@ -105,54 +142,19 @@ export class InstitutionAESTController extends BaseController {
     return this.institutionControllerService.getInstitutionUsers(
       institutionId,
       {
-        page: page,
-        pageLimit: pageLimit,
-        searchCriteria: searchName,
-        sortField: sortField,
-        sortOrder: sortOrder,
+        page,
+        pageLimit,
+        searchCriteria,
+        sortField,
+        sortOrder,
       },
     );
-  }
-
-  /**
-   * Search the institution based on the search criteria.
-   * @param legalName legalName of the institution.
-   * @param operatingName operatingName of the institution.
-   * @returns Searched institution details.
-   */
-  @Get("all/search")
-  async searchInstitutions(
-    @Query("legalName") legalName: string,
-    @Query("operatingName") operatingName: string,
-  ): Promise<SearchInstitutionAPIOutDTO[]> {
-    if (!legalName && !operatingName) {
-      throw new UnprocessableEntityException(
-        "Search with at least one search criteria",
-      );
-    }
-    const searchInstitutions = await this.institutionService.searchInstitution(
-      legalName,
-      operatingName,
-    );
-    return searchInstitutions.map((eachInstitution: Institution) => ({
-      id: eachInstitution.id,
-      legalName: eachInstitution.legalOperatingName,
-      operatingName: eachInstitution.operatingName,
-      address: {
-        addressLine1: eachInstitution.institutionAddress.addressLine1,
-        addressLine2: eachInstitution.institutionAddress.addressLine2,
-        city: eachInstitution.institutionAddress.city,
-        provinceState: eachInstitution.institutionAddress.provinceState,
-        country: eachInstitution.institutionAddress.country,
-        postalCode: eachInstitution.institutionAddress.postalCode,
-      },
-    }));
   }
 
   /**
    * Get the Basic Institution info for the ministry institution detail page.
    * @param institutionId
-   * @returns BasicInstitutionInfo
+   * @returns Basic information of institution.
    */
   @Get(":institutionId/basic-details")
   async getBasicInstitutionInfoById(

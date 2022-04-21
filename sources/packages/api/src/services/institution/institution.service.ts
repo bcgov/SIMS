@@ -272,14 +272,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   /**
    * service method to get all institution users with the
    * given institutionId.
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchName, user's name keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
    * @param institutionId institution id
+   * @param paginationOptions
    * @returns All the institution users for the given institution
    * with total count.
    */

@@ -120,7 +120,7 @@ export class InstitutionApi extends HttpBaseClient {
     if (operatingName) {
       queryString += `operatingName=${operatingName}&`;
     }
-    const url = `institution/all/search?${queryString.slice(0, -1)}`;
+    const url = `institution/search?${queryString.slice(0, -1)}`;
     return this.getCallTyped<SearchInstitutionAPIOutDTO[]>(
       this.addClientRoot(url),
     );

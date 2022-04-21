@@ -353,7 +353,7 @@ export class InstitutionService {
    * Search Institution for ministry search page.
    * @param legalName
    * @param operatingName
-   * @returns SearchInstitutionResp[]
+   * @returns Institution search result(s).
    */
   async searchInstitutions(
     legalName: string,

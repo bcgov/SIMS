@@ -82,6 +82,7 @@ export class InstitutionInstitutionsController extends BaseController {
    * Create institution on Institution setup process.
    * @param payload
    * @param userToken
+   * @returns Primary identifier of the created resource.
    */
   @ApiUnprocessableEntityResponse({
     description: "Institution user already exist",
@@ -144,7 +145,7 @@ export class InstitutionInstitutionsController extends BaseController {
 
   /**
    * Get institution details of given institution.
-   * @returns InstitutionDetailDTO
+   * @returns Institution details.
    */
   @IsInstitutionAdmin()
   @Get()
@@ -255,7 +256,7 @@ export class InstitutionInstitutionsController extends BaseController {
   /**
    * Get institution user by user name(guid).
    * @param userName
-   * @returns
+   * @returns Institution user details.
    */
   @ApiNotFoundResponse({
     description: "User not found.",

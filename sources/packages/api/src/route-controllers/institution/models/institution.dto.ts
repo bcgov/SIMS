@@ -142,7 +142,7 @@ export interface InstitutionDetailDto {
   isBCPrivate?: boolean;
 }
 
-export interface SearchInstitutionAPIOutDTO {
+export class SearchInstitutionAPIOutDTO {
   id: number;
   legalName: string;
   operatingName: string;

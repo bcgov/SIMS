@@ -68,7 +68,7 @@ export class InstitutionControllerService {
   }
 
   /**
-   * Get institution users with page,sort and search.
+   * Get institution users with page, sort and search.
    * @param institutionId
    * @param paginationOptions
    * @returns Institution Users.

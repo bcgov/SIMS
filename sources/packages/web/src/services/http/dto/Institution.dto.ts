@@ -119,7 +119,7 @@ export interface InstitutionFormAPIInDTO {
   primaryContactEmail: string;
   primaryContactPhone: string;
   addressLine1: string;
-  addressLine2: string;
+  addressLine2?: string;
   city: string;
   provinceState: string;
   country: string;

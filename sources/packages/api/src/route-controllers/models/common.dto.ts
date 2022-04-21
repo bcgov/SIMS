@@ -48,7 +48,7 @@ export class AddressInfoAPIInDTO {
  */
 export class AddressAPIOutDTO {
   addressLine1: string;
-  addressLine2: string;
+  addressLine2?: string;
   city: string;
   provinceState: string;
   country: string;

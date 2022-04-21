@@ -13,7 +13,7 @@ export interface OptionItemAPIOutDTO {
  */
 export interface AddressAPIInDTO {
   addressLine1: string;
-  addressLine2: string;
+  addressLine2?: string;
   city: string;
   provinceState: string;
   country: string;
@@ -26,7 +26,7 @@ export interface AddressAPIInDTO {
  */
 export interface AddressInfoAPIInDTO {
   addressLine1: string;
-  addressLine2: string;
+  addressLine2?: string;
   city: string;
   province: string;
   country: string;
@@ -39,7 +39,7 @@ export interface AddressInfoAPIInDTO {
  */
 export interface AddressAPIOutDTO {
   addressLine1: string;
-  addressLine2: string;
+  addressLine2?: string;
   city: string;
   provinceState: string;
   country: string;

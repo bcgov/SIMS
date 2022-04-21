@@ -101,7 +101,7 @@ export class InstitutionUserDetailAPIOutDTO {
   authorizations: UserAuthDetailAPIOutDTO;
 }
 
-export interface InstitutionUserLocationsAPIOutDTO {
+export class InstitutionUserLocationsAPIOutDTO {
   id: number;
   name: string;
   address: AddressInfoAPIOutDTO;
