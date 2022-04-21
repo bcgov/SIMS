@@ -26,7 +26,8 @@ import {
 import {
   ApplicationAssessmentAPIOutDTO,
   CreateDisbursementsDTO,
-  SupportingUsersAPIOutDTO,
+  StudentAppealRequestAPIOutDTO,
+  SupportingUserAPIOutDTO,
   UpdateAssessmentDataDTO,
   UpdateAssessmentStatusDTO,
   UpdateAssessmentWorkflowIdDTO,
@@ -34,7 +35,12 @@ import {
 } from "./models/assessment.system-access.dto";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
-import { SupportingUser, SupportingUserType } from "../../database/entities";
+import {
+  StudentAppealRequest,
+  SupportingUser,
+  SupportingUserType,
+} from "../../database/entities";
+import { DynamicAPIOutDTO } from "../models/common.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("assessment")
@@ -108,11 +114,14 @@ export class AssessmentSystemAccessController extends BaseController {
       supportingUsers: this.flattenSupportingUsersArray(
         application.supportingUsers,
       ),
+      appeals: this.flattenStudentAppeals(
+        assessment.studentAppeal?.appealRequests,
+      ),
     };
   }
 
   /**
-   * Converts an arrays with supporting users to a object where every user
+   * Converts an arrays with supporting users to an object where every user
    * will be a property. This will keep the supporting users dynamic (it can be
    * extended to have a Parent3, Partner2 or even more types) and make easier to
    * read and process these users in the workflow.
@@ -121,14 +130,15 @@ export class AssessmentSystemAccessController extends BaseController {
    */
   private flattenSupportingUsersArray(
     supportingUsers: SupportingUser[],
-  ): SupportingUsersAPIOutDTO {
+  ): DynamicAPIOutDTO<SupportingUserAPIOutDTO> {
     if (!supportingUsers?.length) {
       return null;
     }
     // Ensures that the users will be always ordered in the same way
     supportingUsers.sort((userA, userB) => (userA.id > userB.id ? 1 : -1));
     // Object to be returned.
-    const flattenSupportingUsers = {} as SupportingUsersAPIOutDTO;
+    const flattenedSupportingUsers =
+      {} as DynamicAPIOutDTO<SupportingUserAPIOutDTO>;
     // Filter and process by type to have the items ordered also by the type (Parent1, Parent2, Partner1).
     Object.keys(SupportingUserType).forEach((supportingUserType) => {
       supportingUsers
@@ -138,7 +148,7 @@ export class AssessmentSystemAccessController extends BaseController {
         )
         .forEach((supportingUser, index) => {
           const [craIncome] = supportingUser.craIncomeVerifications;
-          flattenSupportingUsers[`${supportingUserType}${index + 1}`] = {
+          flattenedSupportingUsers[`${supportingUserType}${index + 1}`] = {
             id: supportingUser.id,
             supportingUserType: supportingUser.supportingUserType,
             supportingData: supportingUser.supportingData,
@@ -147,7 +157,31 @@ export class AssessmentSystemAccessController extends BaseController {
           };
         });
     });
-    return flattenSupportingUsers;
+    return flattenedSupportingUsers;
+  }
+
+  /**
+   * Converts an arrays with student appeal requests to an object where every
+   * appeal request will be a property named by the form.io definition name used
+   * to execute the student appeal request submission.
+   * @param appealRequests approved student appeal requests.
+   * @returns object where every student appeal request is a property.
+   */
+  private flattenStudentAppeals(
+    appealRequests: StudentAppealRequest[],
+  ): DynamicAPIOutDTO<StudentAppealRequestAPIOutDTO> {
+    if (!appealRequests?.length) {
+      return null;
+    }
+    // Object to be returned.
+    const flattenedAppealRequests =
+      {} as DynamicAPIOutDTO<StudentAppealRequestAPIOutDTO>;
+    appealRequests.forEach((appealRequest) => {
+      flattenedAppealRequests[appealRequest.submittedFormName] = {
+        submittedData: appealRequest.submittedData,
+      };
+    });
+    return flattenedAppealRequests;
   }
 
   /**
