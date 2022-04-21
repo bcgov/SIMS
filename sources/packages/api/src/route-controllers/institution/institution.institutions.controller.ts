@@ -180,7 +180,7 @@ export class InstitutionInstitutionsController extends BaseController {
    */
   @ApiUnprocessableEntityResponse({
     description:
-      "User to be added either not found in account service or does not belong to same institution of logged in user.",
+      "User to be added either not found in BCeID Account Service or does not belong to same institution of logged in user.",
   })
   @IsInstitutionAdmin()
   @Post("user")
