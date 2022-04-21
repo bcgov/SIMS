@@ -115,7 +115,7 @@ export class InstitutionInstitutionsController extends BaseController {
    * DEFAULT_PAGE_NUMBER is taken
    * @queryParm pageLimit, page size or records per page, if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
-   * @queryParm searchName, user's name keyword to be searched
+   * @queryParm searchCriteria, user's name keyword to be searched
    * @queryParm sortField, field to be sorted
    * @queryParm sortOrder, order to be sorted
    * @returns All the institution users for the given institution

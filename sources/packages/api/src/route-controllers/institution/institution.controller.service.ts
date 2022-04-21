@@ -21,7 +21,7 @@ export class InstitutionControllerService {
   /**
    * Get institution detail.
    * @param institutionId
-   * @returns InstitutionDetailDTO
+   * @returns Institution details.
    */
   async getInstitutionDetail(
     institutionId: number,

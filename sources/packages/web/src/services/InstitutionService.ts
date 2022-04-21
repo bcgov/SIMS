@@ -161,14 +161,9 @@ export class InstitutionService {
   }
 
   /**
-   * To get the institution user summary
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchName, user's name keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
+   * To get the institution user summary.
+   * @param paginationOptions
+   * @param institutionId
    * @returns All the institution users.
    */
   public async institutionUserSummary(
@@ -365,7 +360,7 @@ export class InstitutionService {
   /**
    * Get the Basic information of the institution for the ministry institution detail page header
    * @param institutionId
-   * @returns BasicInstitutionInfo
+   * @returns Institution basic information.
    */
   async getBasicInstitutionInfoById(
     institutionId: number,

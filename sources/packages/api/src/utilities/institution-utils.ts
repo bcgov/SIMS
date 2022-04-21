@@ -4,7 +4,7 @@ import { InstitutionUserAPIOutDTO } from "../route-controllers/institution/model
 /**
  * Util to transform institution users to InstitutionUserRespDto.
  * @param Entity
- * @returns InstitutionUserRespDto
+ * @returns Institution user DTO Object.
  */
 export const transformToInstitutionUserRespDto = (
   institutionUser: InstitutionUser,
