@@ -127,5 +127,5 @@ export class SupportingUser extends RecordDataModel {
     name: "supporting_user_id",
     referencedColumnName: ColumnNames.ID,
   })
-  craIncomeVerifications: CRAIncomeVerification[];
+  craIncomeVerifications?: CRAIncomeVerification[];
 }
