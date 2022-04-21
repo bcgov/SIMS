@@ -3,6 +3,8 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
@@ -12,6 +14,7 @@ import { ContactInfo } from "../../types";
 import { User } from "./user.model";
 import { Application, SupportingUserType } from ".";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
+import { CRAIncomeVerification } from "./cra-income-verification.model";
 
 /**
  * Users that provide supporting information for a Student Application
@@ -111,4 +114,18 @@ export class SupportingUser extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   application: Application;
+  /**
+   * CRA verification income associated with the supporting user.
+   * The record is created once the supporting user submits its data.
+   */
+  @OneToMany(
+    () => CRAIncomeVerification,
+    (craIncomeVerification) => craIncomeVerification.supportingUser,
+    { eager: false, cascade: false, nullable: true },
+  )
+  @JoinColumn({
+    name: "supporting_user_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  craIncomeVerifications: CRAIncomeVerification[];
 }

@@ -34,7 +34,7 @@ import {
 } from "./models/assessment.system-access.dto";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
-import { SupportingUserType } from "src/database/entities";
+import { SupportingUser, SupportingUserType } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("assessment")
@@ -69,27 +69,6 @@ export class AssessmentSystemAccessController extends BaseController {
       );
     }
     const application = assessment.application;
-
-    const supportingUsers = {} as SupportingUsersAPIOutDTO;
-    application.supportingUsers
-      ?.filter(
-        (supportingUser) =>
-          supportingUser.supportingUserType === SupportingUserType.Parent,
-      )
-      .forEach((supportingUser, index) => {
-        supportingUsers[`${SupportingUserType.Parent}${index + 1}`] =
-          supportingUser;
-      });
-    application.supportingUsers
-      ?.filter(
-        (supportingUser) =>
-          supportingUser.supportingUserType === SupportingUserType.Partner,
-      )
-      .forEach((supportingUser, index) => {
-        supportingUsers[`${SupportingUserType.Partner}${index + 1}`] =
-          supportingUser;
-      });
-
     return {
       triggerType: assessment.triggerType,
       data: application.data,
@@ -126,8 +105,49 @@ export class AssessmentSystemAccessController extends BaseController {
       student: {
         studentPDStatus: application.student.studentPDVerified,
       },
-      supportingUsers,
+      supportingUsers: this.flattenSupportingUsersArray(
+        application.supportingUsers,
+      ),
     };
+  }
+
+  /**
+   * Converts an arrays with supporting users to a object where every user
+   * will be a property. This will keep the supporting users dynamic (it can be
+   * extended to have a Parent3, Partner2 or even more types) and make easier to
+   * read and process these users in the workflow.
+   * @param supportingUsers supporting users to be converted.
+   * @returns object where every user is a property.
+   */
+  private flattenSupportingUsersArray(
+    supportingUsers: SupportingUser[],
+  ): SupportingUsersAPIOutDTO {
+    if (!supportingUsers?.length) {
+      return null;
+    }
+    // Ensures that the users will be always ordered in the same way
+    supportingUsers.sort((userA, userB) => (userA.id > userB.id ? 1 : -1));
+    // Object to be returned.
+    const flattenSupportingUsers = {} as SupportingUsersAPIOutDTO;
+    // Filter and process by type to have the items ordered also by the type (Parent1, Parent2, Partner1).
+    Object.keys(SupportingUserType).forEach((supportingUserType) => {
+      supportingUsers
+        .filter(
+          (supportingUser) =>
+            supportingUser.supportingUserType === supportingUserType,
+        )
+        .forEach((supportingUser, index) => {
+          const [craIncome] = supportingUser.craIncomeVerifications;
+          flattenSupportingUsers[`${supportingUserType}${index + 1}`] = {
+            id: supportingUser.id,
+            supportingUserType: supportingUser.supportingUserType,
+            supportingData: supportingUser.supportingData,
+            reportedIncome: craIncome?.reportedIncome,
+            craReportedIncome: craIncome?.craReportedIncome,
+          };
+        });
+    });
+    return flattenSupportingUsers;
   }
 
   /**

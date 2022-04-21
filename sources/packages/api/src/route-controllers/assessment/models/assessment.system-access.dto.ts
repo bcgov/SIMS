@@ -66,6 +66,8 @@ export class SupportingUserAPIOutDTO {
   id: number;
   supportingUserType: SupportingUserType;
   supportingData: any;
+  reportedIncome: number;
+  craReportedIncome: number;
 }
 
 /**
