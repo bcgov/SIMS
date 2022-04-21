@@ -75,7 +75,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "supportingUser.supportingUserType",
         "supportingUser.supportingData",
         "craIncomeVerification.id",
-        "craIncomeVerification.reportedIncome",
         "craIncomeVerification.craReportedIncome",
         "studentAppeal.id",
         "appealRequest.id",

@@ -42,7 +42,6 @@ export class AssessmentControllerService {
             id: supportingUser.id,
             supportingUserType: supportingUser.supportingUserType,
             supportingData: supportingUser.supportingData,
-            reportedIncome: craIncome?.reportedIncome,
             craReportedIncome: craIncome?.craReportedIncome,
           };
         });
