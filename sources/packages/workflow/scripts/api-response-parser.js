@@ -60,7 +60,7 @@ function setValuesFromPayload(payload, fieldName, fieldsNamesPath) {
         fieldValue = fieldProp.value();
       }
     }
-    setVariableWithFullName(fieldsNamesPath, fieldName, null);
+    setVariableWithFullName(fieldsNamesPath, fieldName, fieldValue);
   }
 }
 
