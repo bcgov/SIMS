@@ -19,10 +19,14 @@ export class InstitutionLocationFormAPIInDTO {
   addressLine2?: string;
   @Allow()
   city: string;
+  // This property has the country irrespective of the selectedCountry and otherCountry,
+  // so for API purpose take country from this property.
   @Allow()
   country: string;
   @Allow()
   locationName: string;
+  // This property has the postalCode irrespective of the selectedCountry and otherCountry,
+  // so for API purpose take postalCode from this property.
   @Allow()
   postalCode: string;
   @Allow()
@@ -37,6 +41,22 @@ export class InstitutionLocationFormAPIInDTO {
   primaryContactEmail: string;
   @Allow()
   primaryContactPhone: string;
+  // This property will have canada postal code.
+  // This property is for formio purpose.
+  @Allow()
+  canadaPostalCode?: string;
+  // This property will have postal code for countries other than Canada.
+  // This property is for formio purpose.
+  @Allow()
+  otherPostalCode?: string;
+  // Dropdown value, it will have either "canada" or "other".
+  // This property is for formio purpose.
+  @Allow()
+  selectedCountry?: string;
+  // When "other" is selected in selectedCountry, then this property will have a value.
+  // This property is for formio purpose.
+  @Allow()
+  otherCountry?: string;
 }
 
 /**
@@ -55,6 +75,10 @@ export class InstitutionLocationFormAPIOutDTO {
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
+  canadaPostalCode?: string;
+  otherPostalCode?: string;
+  selectedCountry?: string;
+  otherCountry?: string;
 }
 
 export class InstitutionPrimaryContactInDTO {

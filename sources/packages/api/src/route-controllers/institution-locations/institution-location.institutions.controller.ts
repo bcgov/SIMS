@@ -102,11 +102,10 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     }
 
     // If the data is valid the location is saved to SIMS DB.
-    const createdInstitutionLocation =
-      await this.locationService.createLocation(
-        userToken.authorizations.institutionId,
-        dryRunSubmissionResult.data,
-      );
+    const createdInstitutionLocation = await this.locationService.saveLocation(
+      userToken.authorizations.institutionId,
+      dryRunSubmissionResult.data.data,
+    );
 
     return { id: createdInstitutionLocation.id };
   }
@@ -141,10 +140,10 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     }
 
     // If the data is valid the location is updated to SIMS DB.
-    await this.locationService.updateLocation(
-      locationId,
+    await this.locationService.saveLocation(
       userToken.authorizations.institutionId,
       dryRunSubmissionResult.data.data,
+      locationId,
     );
   }
 
@@ -223,6 +222,11 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,
       primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
+      // Formio needed property.
+      canadaPostalCode: institutionLocation.data.address.canadaPostalCode,
+      otherPostalCode: institutionLocation.data.address.otherPostalCode,
+      selectedCountry: institutionLocation.data.address.selectedCountry,
+      otherCountry: institutionLocation.data.address.otherCountry,
     };
   }
 

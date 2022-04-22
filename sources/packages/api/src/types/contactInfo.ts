@@ -5,6 +5,10 @@ export interface AddressInfo {
   country: string;
   city: string;
   postalCode: string;
+  canadaPostalCode?: string;
+  otherPostalCode?: string;
+  selectedCountry?: string;
+  otherCountry?: string;
 }
 export interface ContactInfo {
   addresses: Array<AddressInfo>;

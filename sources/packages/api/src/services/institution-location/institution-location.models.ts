@@ -28,4 +28,8 @@ export interface InstitutionLocationModel {
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
+  canadaPostalCode?: string;
+  otherPostalCode?: string;
+  selectedCountry?: string;
+  otherCountry?: string;
 }

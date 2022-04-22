@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { Connection, SelectQueryBuilder, UpdateResult } from "typeorm";
-import { ValidatedInstitutionLocation } from "../../types";
+import { Connection, SelectQueryBuilder } from "typeorm";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
 import {
   LocationWithDesignationStatus,
@@ -31,43 +30,13 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .getOneOrFail();
   }
 
-  async createLocation(
-    institution_id: number,
-    data: ValidatedInstitutionLocation,
-  ): Promise<any> {
-    const institution = { id: institution_id };
-    const newLocation = {
-      name: data.data.locationName,
-      data: {
-        address: {
-          addressLine1: data.data.addressLine1,
-          addressLine2: data.data.addressLine2,
-          province: data.data.provinceState,
-          country: data.data.country,
-          city: data.data.city,
-          postalCode: data.data.postalCode,
-        },
-      },
-      primaryContact: {
-        firstName: data.data.primaryContactFirstName,
-        lastName: data.data.primaryContactLastName,
-        email: data.data.primaryContactEmail,
-        phoneNumber: data.data.primaryContactPhone,
-      },
-      institution: institution,
-      institutionCode: data.data.institutionCode,
-    };
-
-    return await this.repo.save(newLocation);
-  }
-
-  async updateLocation(
-    locationId: number,
+  async saveLocation(
     institutionId: number,
     data: InstitutionLocationModel,
-  ): Promise<UpdateResult> {
+    locationId?: number,
+  ): Promise<InstitutionLocation> {
     const institution = { id: institutionId };
-    const updateLocation = {
+    const saveLocation = {
       name: data.locationName,
       data: {
         address: {
@@ -77,6 +46,10 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
           country: data.country,
           city: data.city,
           postalCode: data.postalCode,
+          canadaPostalCode: data.canadaPostalCode,
+          otherPostalCode: data.otherPostalCode,
+          selectedCountry: data.selectedCountry,
+          otherCountry: data.otherCountry,
         },
       },
       primaryContact: {
@@ -87,9 +60,10 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       },
       institution: institution,
       institutionCode: data.institutionCode,
+      id: locationId ?? undefined,
     };
 
-    return await this.repo.update(locationId, updateLocation);
+    return this.repo.save(saveLocation);
   }
 
   async getAllInstitutionLocations(

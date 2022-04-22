@@ -17,6 +17,10 @@ export interface InstitutionLocationFormAPIInDTO {
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
+  canadaPostalCode?: string;
+  otherPostalCode?: string;
+  selectedCountry?: string;
+  otherCountry?: string;
 }
 
 export interface InstitutionLocationFormAPIOutDTO {
@@ -32,6 +36,10 @@ export interface InstitutionLocationFormAPIOutDTO {
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
+  canadaPostalCode?: string;
+  otherPostalCode?: string;
+  selectedCountry?: string;
+  otherCountry?: string;
 }
 
 export interface InstitutionLocationAPIOutDTO {
