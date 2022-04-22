@@ -11,7 +11,7 @@ import { DynamicAPIOutDTO } from "../models/common.dto";
 
 export class AssessmentControllerService {
   /**
-   * Converts an arrays with supporting users to an object where every user
+   * Converts an array with supporting users to an object where every user
    * will be a property. This will keep the supporting users dynamic (it can be
    * extended to have a Parent3, Partner2 or even more types) and make easier to
    * read and process these users in the workflow.
@@ -24,7 +24,7 @@ export class AssessmentControllerService {
     if (!supportingUsers?.length) {
       return null;
     }
-    // Ensures that the users will be always ordered in the same way
+    // Ensures that the users will be always ordered in the same way.
     supportingUsers.sort((userA, userB) => (userA.id > userB.id ? 1 : -1));
     // Object to be returned.
     const flattenedSupportingUsers =
@@ -50,7 +50,7 @@ export class AssessmentControllerService {
   }
 
   /**
-   * Converts an arrays with student appeal requests to an object where every
+   * Converts an array with student appeal requests to an object where every
    * appeal request will be a property named by the form.io definition name used
    * to execute the student appeal request submission.
    * @param appealRequests approved student appeal requests.
