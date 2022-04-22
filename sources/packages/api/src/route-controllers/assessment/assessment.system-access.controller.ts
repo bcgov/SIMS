@@ -3,7 +3,6 @@ import {
   Get,
   NotFoundException,
   Param,
-  HttpStatus,
   UnprocessableEntityException,
   Patch,
   Body,
@@ -18,9 +17,14 @@ import {
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import {
-  ApplicationAssessmentDTO,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
+import {
+  ApplicationAssessmentAPIOutDTO,
   CreateDisbursementsDTO,
   UpdateAssessmentDataDTO,
   UpdateAssessmentStatusDTO,
@@ -29,6 +33,7 @@ import {
 } from "./models/assessment.system-access.dto";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
+import { AssessmentControllerService } from "..";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("assessment")
@@ -38,6 +43,7 @@ export class AssessmentSystemAccessController extends BaseController {
     private readonly assessmentService: StudentAssessmentService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly assessmentControllerService: AssessmentControllerService,
   ) {
     super();
   }
@@ -50,17 +56,12 @@ export class AssessmentSystemAccessController extends BaseController {
    * @returns assessment and the related application information.
    */
   @Get(":id")
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Assessment found.",
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
+  @ApiNotFoundResponse({
     description: "Assessment id was not found.",
   })
   async getByAssessmentId(
     @Param("id") assessmentId: number,
-  ): Promise<ApplicationAssessmentDTO> {
+  ): Promise<ApplicationAssessmentAPIOutDTO> {
     const assessment = await this.assessmentService.getById(assessmentId);
     if (!assessment) {
       throw new NotFoundException(
@@ -104,7 +105,14 @@ export class AssessmentSystemAccessController extends BaseController {
       student: {
         studentPDStatus: application.student.studentPDVerified,
       },
-    } as ApplicationAssessmentDTO;
+      supportingUsers:
+        this.assessmentControllerService.flattenSupportingUsersArray(
+          application.supportingUsers,
+        ),
+      appeals: this.assessmentControllerService.flattenStudentAppeals(
+        assessment.studentAppeal?.appealRequests,
+      ),
+    };
   }
 
   /**
@@ -114,18 +122,15 @@ export class AssessmentSystemAccessController extends BaseController {
    * @returns updates the assessment offering and/or the PIR
    * (Program Info Request) related application data.
    */
-  @ApiResponse({
-    status: HttpStatus.OK,
+  @ApiOkResponse({
     description:
       "Assessment offering and/or the PIR (Program Info Request) related application data updated.",
   })
-  @ApiResponse({
-    status: HttpStatus.UNPROCESSABLE_ENTITY,
+  @ApiUnprocessableEntityResponse({
     description:
       "Not able to find the offering associated with the program and location.",
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
+  @ApiNotFoundResponse({
     description: "Assessment id was not found.",
   })
   @Patch(":id/program-info")
@@ -174,12 +179,7 @@ export class AssessmentSystemAccessController extends BaseController {
    * @param payload contains the workflowId to be updated.
    */
   @Patch(":id/workflow-id")
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Workflow id updated.",
-  })
-  @ApiResponse({
-    status: HttpStatus.UNPROCESSABLE_ENTITY,
+  @ApiUnprocessableEntityResponse({
     description:
       "Not able to update the assessment workflowId with provided data.",
   })
@@ -208,12 +208,7 @@ export class AssessmentSystemAccessController extends BaseController {
    * @param payload data to be persisted.
    */
   @Patch(":assessmentId/assessment-data")
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Assessment data saved.",
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
+  @ApiNotFoundResponse({
     description: "Assessment id was not found.",
   })
   async updateAssessmentData(
@@ -241,16 +236,10 @@ export class AssessmentSystemAccessController extends BaseController {
    * @returns created disbursements ids.
    */
   @Post(":assessmentId/disbursements")
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: "Disbursements and disbursements values saved.",
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
+  @ApiNotFoundResponse({
     description: "Assessment id was not found.",
   })
-  @ApiResponse({
-    status: HttpStatus.UNPROCESSABLE_ENTITY,
+  @ApiUnprocessableEntityResponse({
     description:
       "The disbursement information is already present or either the assessment or the application is not in the correct state.",
   })
@@ -285,10 +274,6 @@ export class AssessmentSystemAccessController extends BaseController {
    * @param payload status of the NOA approval.
    */
   @Patch(":id/noa-approval-status")
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "NOA approval updated.",
-  })
   async updateAssessmentStatus(
     @Param("id") assessmentId: number,
     @Body() payload: UpdateAssessmentStatusDTO,

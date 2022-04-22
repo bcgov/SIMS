@@ -8,6 +8,7 @@ import {
   EducationProgramOffering,
   InstitutionLocation,
   ProgramInfoStatus,
+  StudentAppealStatus,
   StudentAssessment,
 } from "../../database/entities";
 import { Connection, IsNull, UpdateResult } from "typeorm";
@@ -70,6 +71,15 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "location.data",
         "student.id",
         "student.studentPDVerified",
+        "supportingUser.id",
+        "supportingUser.supportingUserType",
+        "supportingUser.supportingData",
+        "craIncomeVerification.id",
+        "craIncomeVerification.craReportedIncome",
+        "studentAppeal.id",
+        "appealRequest.id",
+        "appealRequest.submittedFormName",
+        "appealRequest.submittedData",
       ])
       .innerJoin("assessment.application", "application")
       .innerJoin("application.programYear", "programYear")
@@ -79,6 +89,18 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .leftJoin("application.location", "location")
       .leftJoin("location.institution", "institution")
       .leftJoin("institution.institutionType", "institutionType")
+      .leftJoin("application.supportingUsers", "supportingUser")
+      .leftJoin("assessment.studentAppeal", "studentAppeal")
+      .leftJoin(
+        "studentAppeal.appealRequests",
+        "appealRequest",
+        "appealRequest.appealStatus = :appealStatus",
+        { appealStatus: StudentAppealStatus.Approved },
+      )
+      .leftJoin(
+        "supportingUser.craIncomeVerifications",
+        "craIncomeVerification",
+      )
       .where("assessment.id = :assessmentId", {
         assessmentId,
       })

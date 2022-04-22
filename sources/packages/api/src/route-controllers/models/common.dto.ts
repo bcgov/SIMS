@@ -76,3 +76,12 @@ export class OptionItemAPIOutDTO {
   id: number;
   description: string;
 }
+
+/**
+ * Allow extending the object properties dynamically
+ * while keeping the type.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export class DynamicAPIOutDTO<T> {
+  [k: string]: T;
+}

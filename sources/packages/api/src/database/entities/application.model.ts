@@ -15,6 +15,7 @@ import {
   OfferingIntensity,
   PIRDeniedReason,
   RelationshipStatus,
+  SupportingUser,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { ApplicationStudentFile } from "./application-student-file.model";
@@ -264,6 +265,21 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   currentAssessment?: StudentAssessment;
+  /**
+   * All supporting users related to the application.
+   * These users (parents/partner) will be created as needed during
+   * the execution of the original assessment workflow processing.
+   */
+  @OneToMany(
+    () => SupportingUser,
+    (supportingUser) => supportingUser.application,
+    {
+      eager: false,
+      cascade: false,
+      nullable: true,
+    },
+  )
+  supportingUsers?: SupportingUser[];
 }
 
 /**
