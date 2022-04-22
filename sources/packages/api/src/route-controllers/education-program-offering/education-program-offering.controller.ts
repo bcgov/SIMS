@@ -28,6 +28,7 @@ import {
   EducationProgramOfferingService,
   FormService,
   EducationProgramService,
+  ApplicationService,
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -48,6 +49,7 @@ import BaseController from "../BaseController";
 @ApiTags("institution")
 export class EducationProgramOfferingController extends BaseController {
   constructor(
+    private readonly applicationService: ApplicationService,
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
     private readonly programService: EducationProgramService,
@@ -257,20 +259,25 @@ export class EducationProgramOfferingController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get(
-    "location/:locationId/education-program/:programId/program-year/:programYearId/offerings-list",
+    "location/:locationId/education-program/:programId/program-year/:programYearId/applicationId/:applicationId/offerings-list",
   )
   async getProgramOfferingsForLocationForInstitution(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
+    @Param("applicationId") applicationId: number,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
+    const selectedOffering = (
+      await this.applicationService.getApplicationById(applicationId)
+    ).data.howWillYouBeAttendingTheProgram;
+
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
         programYearId,
-        undefined,
+        selectedOffering,
         includeInActivePY,
       );
     return offerings.map((offering) => ({
