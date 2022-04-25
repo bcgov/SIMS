@@ -49,3 +49,4 @@ export * from "./student-appeal/student-appeal.service";
 export * from "./student-appeal-request/student-appeal-request.service";
 export * from "./student-scholastic-standings/student-scholastic-standings.service";
 export * from "./notification/gc-notify.service";
+export * from "./notification/gc-notify-actions.service";

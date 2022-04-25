@@ -625,6 +625,8 @@ export class StudentController extends BaseController {
     //  and add the metadata (if available)
     await this.fileService.updateStudentFiles(
       existingStudent.id,
+      existingStudent.user.firstName ? existingStudent.user.firstName : "",
+      existingStudent.user.lastName,
       payload.associatedFiles,
       payload.submittedForm,
     );
