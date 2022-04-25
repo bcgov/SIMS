@@ -59,6 +59,7 @@ import {
   FieldSortOrder,
   PaginationParams,
   PaginatedResults,
+  getUserFullName,
 } from "../../utilities";
 
 /**
@@ -430,6 +431,7 @@ export class InstitutionInstitutionsController extends BaseController {
       firstName: userDetails?.firstName,
       lastName: userDetails?.lastName,
       isActive: userDetails?.isActive,
+      userFullName: getUserFullName(userDetails),
       isAdmin: token.authorizations.isAdmin(),
       email: userDetails?.email,
     };
