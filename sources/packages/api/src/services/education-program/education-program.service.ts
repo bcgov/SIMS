@@ -7,6 +7,7 @@ import {
   NoteType,
   OfferingTypes,
   User,
+  ProgramStatus,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, Repository } from "typeorm";
@@ -14,7 +15,6 @@ import {
   SaveEducationProgram,
   EducationProgramsSummary,
 } from "./education-program.service.models";
-import { ApprovalStatus } from "./constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import {
@@ -79,8 +79,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.deliveredOnline",
       ])
       .where("programs.id = :programId", { programId })
-      .andWhere("programs.approvalStatus = :approvalStatus", {
-        approvalStatus: ApprovalStatus.approved,
+      .andWhere("programs.programStatus = :programStatus", {
+        programStatus: ProgramStatus.Approved,
       })
       .getOne();
   }
@@ -120,7 +120,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.hasJointInstitution = educationProgram.hasJointInstitution;
     program.hasJointDesignatedInstitution =
       educationProgram.hasJointDesignatedInstitution;
-    program.approvalStatus = educationProgram.approvalStatus;
+    program.programStatus = educationProgram.programStatus;
     program.institution = { id: educationProgram.institutionId } as Institution;
     program.programIntensity = educationProgram.programIntensity;
     program.institutionProgramCode = educationProgram.institutionProgramCode;
@@ -142,7 +142,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.intlExchangeProgramEligibility =
       educationProgram.intlExchangeProgramEligibility;
     program.programDeclaration = educationProgram.programDeclaration;
-    program.statusUpdatedBy = { id: educationProgram.userId } as User;
+    program.assessedBy = { id: educationProgram.userId } as User;
     if (!educationProgram.id) {
       program.submittedBy = { id: educationProgram.userId } as User;
     }
@@ -170,7 +170,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .addSelect("programs.name", "programName")
       .addSelect("programs.cipCode", "cipCode")
       .addSelect("programs.credentialType", "credentialType")
-      .addSelect("programs.approvalStatus", "approvalStatus")
+      .addSelect("programs.programStatus", "programStatus")
       .addSelect(
         (query) =>
           query
@@ -217,10 +217,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       // default sort and order
       summaryResult.orderBy(
-        `CASE programs.approvalStatus
-                WHEN '${ApprovalStatus.pending}' THEN ${SortPriority.Priority1}
-                WHEN '${ApprovalStatus.approved}' THEN ${SortPriority.Priority2}
-                WHEN '${ApprovalStatus.denied}' THEN ${SortPriority.Priority3}
+        `CASE programs.programStatus
+                WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
+                WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
+                WHEN '${ProgramStatus.Denied}' THEN ${SortPriority.Priority3}
                 ELSE ${SortPriority.Priority4}
               END`,
       );
@@ -241,7 +241,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       summaryItem.credentialTypeToDisplay = credentialTypeToDisplay(
         summary.credentialType,
       );
-      summaryItem.approvalStatus = summary.approvalStatus;
+      summaryItem.programStatus = summary.programStatus;
       summaryItem.totalOfferings = summary.totalOfferings;
       return summaryItem;
     });
@@ -271,7 +271,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .addSelect("programs.createdAt", "programSubmittedAt")
       .addSelect("location.id", "locationId")
       .addSelect("location.name", "locationName")
-      .addSelect("programs.approvalStatus", "approvalStatus")
+      .addSelect("programs.programStatus", "programStatus")
       .addSelect(
         (query) =>
           query
@@ -327,10 +327,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       // default sort and order
       paginatedProgramQuery.orderBy(
-        `CASE programs.approvalStatus
-                WHEN '${ApprovalStatus.pending}' THEN ${SortPriority.Priority1}
-                WHEN '${ApprovalStatus.approved}' THEN ${SortPriority.Priority2}
-                WHEN '${ApprovalStatus.denied}' THEN ${SortPriority.Priority3}
+        `CASE programs.programStatus
+                WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
+                WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
+                WHEN '${ProgramStatus.Denied}' THEN ${SortPriority.Priority3}
                 ELSE ${SortPriority.Priority4}
               END`,
       );
@@ -349,7 +349,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       summaryItem.submittedDate = summary.programSubmittedAt;
       summaryItem.locationName = summary.locationName;
       summaryItem.locationId = summary.locationId;
-      summaryItem.programStatus = summary.approvalStatus;
+      summaryItem.programStatus = summary.programStatus;
       summaryItem.totalOfferings = summary.totalOfferings;
       summaryItem.formattedSubmittedDate = getDateOnlyFormat(
         summary.programSubmittedAt,
@@ -382,7 +382,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.cipCode",
         "programs.nocCode",
         "programs.sabcCode",
-        "programs.approvalStatus",
+        "programs.programStatus",
         "programs.programIntensity",
         "programs.institutionProgramCode",
         "programs.institution",
@@ -391,16 +391,16 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.submittedOn",
         "submittedBy.firstName",
         "submittedBy.lastName",
-        "statusUpdatedBy.firstName",
-        "statusUpdatedBy.lastName",
-        "programs.statusUpdatedOn",
+        "assessedBy.firstName",
+        "assessedBy.lastName",
+        "programs.assessedDate",
         "programs.effectiveEndDate",
       ])
       .where("programs.id = :id", { id: programId })
       .andWhere("programs.institution.id = :institutionId", { institutionId })
       .innerJoin("programs.institution", "institution")
       .leftJoin("programs.submittedBy", "submittedBy")
-      .leftJoin("programs.statusUpdatedBy", "statusUpdatedBy")
+      .leftJoin("programs.assessedBy", "assessedBy")
       .getOne();
   }
 
@@ -433,8 +433,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     offeringExistsQuery.select("1");
     return this.repo
       .createQueryBuilder("programs")
-      .where("programs.approvalStatus = :approvalStatus", {
-        approvalStatus: ApprovalStatus.approved,
+      .where("programs.programStatus = :programStatus", {
+        programStatus: ProgramStatus.Approved,
       })
       .andWhere(`exists(${offeringExistsQuery.getQuery()})`)
       .select("programs.id")
@@ -455,8 +455,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     return this.repo
       .createQueryBuilder("programs")
       .select(["programs.id", "programs.name"])
-      .where("programs.approvalStatus = :approvalStatus", {
-        approvalStatus: ApprovalStatus.approved,
+      .where("programs.programStatus = :programStatus", {
+        programStatus: ProgramStatus.Approved,
       })
       .andWhere("programs.institution.id = :institutionId", { institutionId })
       .orderBy("programs.name")
@@ -480,7 +480,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.cipCode",
         "programs.nocCode",
         "programs.sabcCode",
-        "programs.approvalStatus",
+        "programs.programStatus",
         "programs.programIntensity",
         "programs.institutionProgramCode",
         "programs.regulatoryBody",
@@ -515,13 +515,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.submittedOn",
         "submittedBy.firstName",
         "submittedBy.lastName",
-        "statusUpdatedBy.firstName",
-        "statusUpdatedBy.lastName",
-        "programs.statusUpdatedOn",
+        "assessedBy.firstName",
+        "assessedBy.lastName",
+        "programs.assessedDate",
         "programs.effectiveEndDate",
       ])
       .leftJoin("programs.submittedBy", "submittedBy")
-      .leftJoin("programs.statusUpdatedBy", "statusUpdatedBy")
+      .leftJoin("programs.assessedBy", "assessedBy")
       .innerJoin("programs.institution", "institution")
       .where("programs.id = :id", { id: programId })
       .getOne();
@@ -558,10 +558,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       // update program
       const program = new EducationProgram();
       program.id = programId;
-      program.approvalStatus = ApprovalStatus.approved;
-      program.statusUpdatedOn = new Date();
+      program.programStatus = ProgramStatus.Approved;
+      program.assessedDate = new Date();
       program.effectiveEndDate = new Date(payload.effectiveEndDate);
-      program.statusUpdatedBy = { id: userId } as User;
+      program.assessedBy = { id: userId } as User;
       program.programNote = noteObj;
 
       await transactionalEntityManager
@@ -609,9 +609,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       // update program
       const program = new EducationProgram();
       program.id = programId;
-      program.approvalStatus = ApprovalStatus.denied;
-      program.statusUpdatedOn = new Date();
-      program.statusUpdatedBy = { id: userId } as User;
+      program.programStatus = ProgramStatus.Denied;
+      program.assessedDate = new Date();
+      program.assessedBy = { id: userId } as User;
       program.programNote = noteObj;
       await transactionalEntityManager
         .getRepository(EducationProgram)
@@ -637,7 +637,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .createQueryBuilder("programs")
       .select([
         "programs.name",
-        "programs.approvalStatus",
+        "programs.programStatus",
         "programs.credentialType",
         "programs.deliveredOnline",
         "programs.deliveredOnSite",

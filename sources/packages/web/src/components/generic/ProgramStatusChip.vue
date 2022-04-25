@@ -15,7 +15,7 @@ status Badge
 </template>
 <script lang="ts">
 import { computed } from "vue";
-import { ApprovalStatus } from "@/types";
+import { ProgramStatus } from "@/types";
 import {
   COLOR_BLACK,
   COLOR_WHITE,
@@ -34,17 +34,17 @@ export default {
   setup(props: any) {
     const iconColor = computed(() => {
       switch (props.status) {
-        case ApprovalStatus.approved:
+        case ProgramStatus.Approved:
           /**
            * Education Program is approved.
            */
           return COLOR_BANNER_SUCCESS;
-        case ApprovalStatus.pending:
+        case ProgramStatus.Pending:
           /**
            * Education Program is pending.
            */
           return COLOR_BANNER_WARNING;
-        case ApprovalStatus.denied:
+        case ProgramStatus.Denied:
           /**
            * Education Program is denied.
            */
@@ -64,17 +64,17 @@ export default {
 
     const badgeClass = computed(() => {
       switch (props.status) {
-        case ApprovalStatus.approved:
+        case ProgramStatus.Approved:
           /**
            * Education Program is approved.
            */
           return "status-badge-success";
-        case ApprovalStatus.pending:
+        case ProgramStatus.Pending:
           /**
            * Education Program is pending.
            */
           return "status-badge-warning";
-        case ApprovalStatus.denied:
+        case ProgramStatus.Denied:
           /**
            * Education Program is denied.
            */

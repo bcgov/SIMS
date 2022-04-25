@@ -11,7 +11,6 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { Institution, Note, User } from ".";
 import { ProgramIntensity } from "./program-intensity.type";
-import { ApprovalStatus } from "../../services/education-program/constants";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
@@ -159,9 +158,9 @@ export class EducationProgram extends RecordDataModel {
    * Approval status of the program like pending or approved.
    */
   @Column({
-    name: "approval_status",
+    name: "program_status",
   })
-  approvalStatus: ApprovalStatus;
+  programStatus: ProgramStatus;
   /**
    * Related institution.
    */
@@ -319,14 +318,14 @@ export class EducationProgram extends RecordDataModel {
   submittedOn: Date;
 
   /**
-   * Education program status updated on.
+   * Education program assessed date.
    */
   @Column({
-    name: "status_updated_on",
+    name: "assessed_date",
     type: "timestamptz",
     nullable: false,
   })
-  statusUpdatedOn: Date;
+  assessedDate: Date;
 
   /**
    * Effective End date of the approved Education program.
@@ -353,17 +352,17 @@ export class EducationProgram extends RecordDataModel {
   programNote?: Note;
 
   /**
-   * Education program status updated by.
+   * Education program assessed by.
    */
-  @RelationId((program: EducationProgram) => program.statusUpdatedBy)
-  statusUpdatedById?: number;
+  @RelationId((program: EducationProgram) => program.assessedBy)
+  assessedById?: number;
 
-  @ManyToOne((type) => User, { eager: false, nullable: true })
+  @ManyToOne(() => User, { eager: false, nullable: true })
   @JoinColumn({
-    name: "status_updated_by",
+    name: "assessed_by",
     referencedColumnName: "id",
   })
-  statusUpdatedBy?: User;
+  assessedBy?: User;
 
   /**
    * Education program submitted by.
@@ -377,4 +376,14 @@ export class EducationProgram extends RecordDataModel {
     referencedColumnName: "id",
   })
   submittedBy: User;
+}
+
+/**
+ * Represents the approval status for a program also stored
+ * on column approval_status on table education_programs.
+ */
+export enum ProgramStatus {
+  Approved = "approved",
+  Pending = "pending",
+  Denied = "denied",
 }

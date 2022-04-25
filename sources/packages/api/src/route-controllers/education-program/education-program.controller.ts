@@ -36,7 +36,11 @@ import {
   EducationProgramsSummary,
 } from "../../services/education-program/education-program.service.models";
 import { SubsetEducationProgramDto } from "./models/summary-education-program.dto";
-import { EducationProgram, OfferingTypes } from "../../database/entities";
+import {
+  EducationProgram,
+  OfferingTypes,
+  ProgramStatus,
+} from "../../database/entities";
 import { OptionItem } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
@@ -49,7 +53,6 @@ import {
   getIDIRUserFullName,
   getUserFullName,
 } from "../../utilities";
-import { ApprovalStatus } from "../../services/education-program/constants";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 
@@ -199,13 +202,13 @@ export class EducationProgramController extends BaseController {
       cipCode: educationProgram.cipCode,
       nocCode: educationProgram.nocCode,
       sabcCode: educationProgram.sabcCode,
-      approvalStatus: educationProgram.approvalStatus,
+      programStatus: educationProgram.programStatus,
       programIntensity: educationProgram.programIntensity,
       institutionProgramCode: educationProgram.institutionProgramCode,
       submittedOn: educationProgram.submittedOn,
       submittedBy: getUserFullName(educationProgram.submittedBy),
       effectiveEndDate: getISODateOnlyString(educationProgram.effectiveEndDate),
-      statusUpdatedOn: educationProgram.statusUpdatedOn,
+      assessedDate: educationProgram.assessedDate,
       // TODO: for now - program.effectiveEndDate is added by the ministry user
       // so, if program.effectiveEndDate is null/undefined, then
       // the program was auto approved, when institution submitted the
@@ -213,11 +216,11 @@ export class EducationProgramController extends BaseController {
       // ministry user uses IDIR. Program will always denied by
       // ministry user (i.e IDIR). Will need to update in future as
       // proper decision is taken
-      statusUpdatedBy:
+      assessedBy:
         educationProgram.effectiveEndDate ||
-        educationProgram.approvalStatus === ApprovalStatus.denied
-          ? getIDIRUserFullName(educationProgram.statusUpdatedBy)
-          : getUserFullName(educationProgram.statusUpdatedBy),
+        educationProgram.programStatus === ProgramStatus.Denied
+          ? getIDIRUserFullName(educationProgram.assessedBy)
+          : getUserFullName(educationProgram.assessedBy),
     };
 
     return programDetails;

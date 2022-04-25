@@ -22,7 +22,7 @@ export interface EducationProgramBaseDto {
   cipCode: string;
   nocCode: string;
   sabcCode: string;
-  approvalStatus: ApprovalStatus;
+  programStatus: ProgramStatus;
   programIntensity: ProgramIntensity;
   institutionProgramCode?: string;
 }
@@ -33,7 +33,7 @@ export interface SummaryEducationProgramDto {
   credentialType: string;
   cipCode: string;
   totalOfferings: number;
-  approvalStatus: ApprovalStatus;
+  programStatus: ProgramStatus;
   credentialTypeToDisplay: string;
 }
 
@@ -76,15 +76,15 @@ export interface EducationProgramDetails {
 
 export interface EducationProgramData extends EducationProgramDetails {
   credentialTypeToDisplay: string;
-  approvalStatus: ApprovalStatus;
+  programStatus: ProgramStatus;
   institutionId?: number;
   id: number;
   institutionName?: string;
   submittedOn: Date;
   submittedBy: string;
-  statusUpdatedOn?: Date;
-  statusUpdatedByFirstName?: string;
-  statusUpdatedByLastName?: string;
+  assessedDate?: Date;
+  assessedByFirstName?: string;
+  assessedByLastName?: string;
   effectiveEndDate: Date;
 }
 
@@ -97,19 +97,19 @@ export interface StudentEducationProgramDto {
   deliveryMethod: string;
 }
 
-export enum ApprovalStatus {
+export enum ProgramStatus {
   /**
    * Education Program is approved.
    */
-  approved = "approved",
+  Approved = "approved",
   /**
    * Education Program is pending.
    */
-  pending = "pending",
+  Pending = "pending",
   /**
    * Education Program is denied.
    */
-  denied = "denied",
+  Denied = "denied",
 }
 
 /**

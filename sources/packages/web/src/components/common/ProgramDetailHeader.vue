@@ -25,23 +25,23 @@
     </div>
     <div
       class="row mt-1"
-      v-if="ApprovalStatus.approved === educationProgram.approvalStatus"
+      v-if="ProgramStatus.Approved === educationProgram.programStatus"
     >
       <header-title-value
         title="Approved by"
-        :value="educationProgram.statusUpdatedBy ?? '-'"
-        v-if="educationProgram.statusUpdatedBy"
+        :value="educationProgram.assessedBy ?? '-'"
+        v-if="educationProgram.assessedBy"
       />
       <div
         class="mx-2 vertical-divider"
-        v-if="educationProgram.statusUpdatedBy"
+        v-if="educationProgram.assessedBy"
       ></div>
       <header-title-value
         title="Approved"
-        v-if="educationProgram.statusUpdatedOn"
+        v-if="educationProgram.assessedDate"
         :value="
-          educationProgram.statusUpdatedOn
-            ? dateOnlyLongString(educationProgram.statusUpdatedOn)
+          educationProgram.assessedDate
+            ? dateOnlyLongString(educationProgram.assessedDate)
             : '-'
         "
       />
@@ -61,18 +61,18 @@
     </div>
     <div
       class="row mt-1"
-      v-if="ApprovalStatus.denied === educationProgram.approvalStatus"
+      v-if="ProgramStatus.Denied === educationProgram.programStatus"
     >
       <header-title-value
         title="Denied by"
-        :value="educationProgram.statusUpdatedBy"
+        :value="educationProgram.assessedBy"
       />
       <div class="mx-2 vertical-divider"></div>
       <header-title-value
         title="Denied"
         :value="
-          educationProgram.statusUpdatedOn
-            ? dateOnlyLongString(educationProgram.statusUpdatedOn)
+          educationProgram.assessedDate
+            ? dateOnlyLongString(educationProgram.assessedDate)
             : '-'
         "
       />
@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { EducationProgramData, ApprovalStatus, ClientIdType } from "@/types";
+import { EducationProgramData, ProgramStatus, ClientIdType } from "@/types";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import { useFormatters } from "@/composables";
 import { computed } from "vue";
@@ -124,7 +124,7 @@ export default {
         });
     };
     return {
-      ApprovalStatus,
+      ProgramStatus,
       goToInstitution,
       dateOnlyLongString,
       institutionName,

@@ -1,5 +1,8 @@
-import { ApprovalStatus } from "../../../services/education-program/constants";
-import { EducationProgram, ProgramIntensity } from "../../../database/entities";
+import {
+  EducationProgram,
+  ProgramIntensity,
+  ProgramStatus,
+} from "../../../database/entities";
 import {
   credentialTypeToDisplay,
   getIDIRUserFullName,
@@ -44,14 +47,14 @@ export interface EducationProgramDto {
 
 export interface EducationProgramDataDto extends EducationProgramDto {
   credentialTypeToDisplay: string;
-  approvalStatus: ApprovalStatus;
+  programStatus: ProgramStatus;
   institutionId: number;
   id: number;
   institutionName: string;
   submittedOn: Date;
   submittedBy: string;
-  statusUpdatedOn?: Date;
-  statusUpdatedBy?: string;
+  assessedDate?: Date;
+  assessedBy?: string;
   effectiveEndDate: string;
 }
 
@@ -76,7 +79,7 @@ export const transformToEducationProgramData = (
 ): EducationProgramDataDto => {
   const programDetails: EducationProgramDataDto = {
     id: program.id,
-    approvalStatus: program.approvalStatus,
+    programStatus: program.programStatus,
     name: program.name,
     description: program.description,
     credentialType: program.credentialType,
@@ -122,7 +125,7 @@ export const transformToEducationProgramData = (
     submittedOn: program.submittedOn,
     submittedBy: getUserFullName(program.submittedBy),
     effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
-    statusUpdatedOn: program.statusUpdatedOn,
+    assessedDate: program.assessedDate,
     // TODO: for now - program.effectiveEndDate is added by the ministry user
     // so, if program.effectiveEndDate is null/undefined, then
     // the program was auto approved, when institution submitted the
@@ -130,11 +133,10 @@ export const transformToEducationProgramData = (
     // ministry user uses IDIR. Program will always denied by
     // ministry user (i.e IDIR). Will need to update in future as
     // proper decision is taken
-    statusUpdatedBy:
-      program.effectiveEndDate ||
-      program.approvalStatus === ApprovalStatus.denied
-        ? getIDIRUserFullName(program.statusUpdatedBy)
-        : getUserFullName(program.statusUpdatedBy),
+    assessedBy:
+      program.effectiveEndDate || program.programStatus === ProgramStatus.Denied
+        ? getIDIRUserFullName(program.assessedBy)
+        : getUserFullName(program.assessedBy),
   };
 
   return programDetails;
@@ -147,7 +149,7 @@ export class ProgramsSummary {
   formattedSubmittedDate: string;
   locationName: string;
   locationId: number;
-  programStatus: ApprovalStatus;
+  programStatus: ProgramStatus;
   totalOfferings: number;
 }
 

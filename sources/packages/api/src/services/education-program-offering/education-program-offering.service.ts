@@ -5,6 +5,7 @@ import {
   InstitutionLocation,
   OfferingTypes,
   OfferingIntensity,
+  ProgramStatus,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
@@ -13,7 +14,6 @@ import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
 } from "./education-program-offering.service.models";
-import { ApprovalStatus } from "../education-program/constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import {
   FieldSortOrder,
@@ -277,8 +277,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addSelect("offerings.yearOfStudy")
       .addSelect("offerings.showYearOfStudy")
       .where("offerings.educationProgram.id = :programId", { programId })
-      .andWhere("programs.approvalStatus = :approvalStatus", {
-        approvalStatus: ApprovalStatus.approved,
+      .andWhere("programs.programStatus = :programStatus", {
+        programStatus: ProgramStatus.Approved,
       })
       .andWhere("offerings.institutionLocation.id = :locationId", {
         locationId,
