@@ -428,3 +428,12 @@
 .ff-form-container .formio-datagrid-unset .table th {
   padding: 0;
 }
+
+.ff-category-header-small {
+  font-family: Noto Sans;
+  font-weight: 700;
+  font-size: $font-size-content;
+  line-height: $line-height-header-sm;
+  font-style: $font-weight-bold;
+}
+

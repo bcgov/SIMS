@@ -5,7 +5,7 @@
   <v-sheet elevation="1" class="mx-auto">
     <v-container>
       <formio
-        formName="programinformationrequest"
+        formName="programinformationrequestnew"
         :data="initialData"
         @loaded="formLoaded"
         @changed="formChanged"
