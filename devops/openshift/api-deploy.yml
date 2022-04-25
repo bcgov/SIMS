@@ -186,6 +186,21 @@ objects:
                     secretKeyRef:
                       key: ${ESDC_ENVIRONMENT_CODE_NAME_KEY}
                       name: ${API_SECRET_NAME}
+                - name: GC_NOTIFY_URL
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${GC_NOTIFY_URL_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: GC_NOTIFY_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${GC_NOTIFY_API_KEY_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: GC_NOTIFY_TO_ADDRESS
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${GC_NOTIFY_TO_ADDRESS_NAME_KEY}
+                      name: ${API_SECRET_NAME}
                 - name: FILE_UPLOAD_MAX_FILE_SIZE
                   value: ${FILE_UPLOAD_MAX_FILE_SIZE}
                 - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
@@ -430,5 +445,11 @@ parameters:
     value: esdc-environment-code
   - name: SFAS_RECEIVE_FOLDER_NAME_KEY
     value: sfas-receive-folder
+  - name: GC_NOTIFY_URL_NAME_KEY
+    value: gc-notify-url
+  - name: GC_NOTIFY_API_KEY_NAME_KEY
+    value: gc-notify-api-key
+  - name: GC_NOTIFY_TO_ADDRESS_NAME_KEY
+    value: gc-notify-to-address
   - name: SWAGGER_ENABLED
     value: "true"

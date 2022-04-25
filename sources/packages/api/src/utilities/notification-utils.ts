@@ -1,0 +1,2 @@
+export const STUDENT_FILE_UPLOAD_TEMPLATE_ID =
+  "058a0fe0-03a9-442e-ac0c-8678a77c3a4f";
