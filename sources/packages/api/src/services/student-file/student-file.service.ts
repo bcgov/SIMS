@@ -92,9 +92,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * @param uniqueFileNames list of unique file names.
    */
   async updateStudentFiles(
-    studentId: number,
-    givenNames: string,
-    lastName: string,
+    student: Student,
     uniqueFileNames: string[],
     submittedData: StudentFileUploaderForm,
   ): Promise<UpdateResult> {
@@ -104,7 +102,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         .getRepository(StudentFile)
         .update(
           {
-            student: { id: studentId } as Student,
+            student: { id: student.id } as Student,
             uniqueFileName: In(uniqueFileNames),
           },
           {
@@ -116,8 +114,9 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
           },
         );
       await this.gcNotifyActionsService.sendFileUploadNotification(
-        givenNames,
-        lastName,
+        student,
+        submittedData.documentPurpose,
+        submittedData.applicationNumber,
       );
     });
     return updateResult;

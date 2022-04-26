@@ -29,4 +29,8 @@ export interface RequestPayload {
 export interface Personalisation {
   givenNames: string;
   lastName: string;
+  dob?: Date;
+  applicationNumber?: string;
+  documentPurpose?: string;
+  date?: Date;
 }
