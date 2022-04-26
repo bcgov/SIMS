@@ -7,13 +7,13 @@ import { StudentFile, Student } from "../../database/entities";
 import { CreateFile } from "./student-file.model";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { StudentFileUploaderForm } from "../../route-controllers/student/models/student.dto";
-import { GcNotifyActionsService } from "../notification/gc-notify-actions.service";
+import { GCNotifyActionsService } from "../notification/gc-notify-actions.service";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
   constructor(
     private readonly connection: Connection,
-    private readonly gcNotifyActionsService: GcNotifyActionsService,
+    private readonly gcNotifyActionsService: GCNotifyActionsService,
   ) {
     super(connection.getRepository(StudentFile));
   }

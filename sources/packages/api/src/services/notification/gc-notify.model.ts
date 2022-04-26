@@ -1,4 +1,4 @@
-export interface GcNotifyResult {
+export interface GCNotifyResult {
   content: ContentPayload;
   id: string;
   reference: string;
@@ -32,5 +32,5 @@ export interface Personalisation {
   dob?: string;
   applicationNumber?: string;
   documentPurpose?: string;
-  date?: Date;
+  date?: string;
 }

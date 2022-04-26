@@ -3,7 +3,7 @@ export type ClientType = "student" | "institution" | "aest" | "supportingUsers";
 export interface IConfig {
   auth: IAuthConfig;
   bceid: BCeIDConfig;
-  gcNotify: GcNotify;
+  gcNotify: GCNotify;
   workflow: WorkflowConfig;
   forms: FormsConfig;
   formFlowApiUrl: string;
@@ -71,7 +71,7 @@ export interface BCeIDConfig {
   credential: UserPasswordCredential;
 }
 
-export interface GcNotify {
+export interface GCNotify {
   url: string;
   apiKey: string;
   toAddress: string;

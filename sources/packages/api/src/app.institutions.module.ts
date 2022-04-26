@@ -19,8 +19,8 @@ import {
   SFASPartTimeApplicationsService,
   StudentScholasticStandingsService,
   StudentAssessmentService,
-  GcNotifyService,
-  GcNotifyActionsService,
+  GCNotifyService,
+  GCNotifyActionsService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -62,8 +62,8 @@ import { LoggerModule } from "./logger/logger.module";
     SFASPartTimeApplicationsService,
     StudentScholasticStandingsService,
     StudentAssessmentService,
-    GcNotifyService,
-    GcNotifyActionsService,
+    GCNotifyService,
+    GCNotifyActionsService,
   ],
 })
 export class AppInstitutionsModule {}

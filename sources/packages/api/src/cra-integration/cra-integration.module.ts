@@ -17,8 +17,8 @@ import {
   SINValidationService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
-  GcNotifyService,
-  GcNotifyActionsService,
+  GCNotifyService,
+  GCNotifyActionsService,
 } from "../services";
 
 @Module({
@@ -40,8 +40,8 @@ import {
     SINValidationService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
-    GcNotifyService,
-    GcNotifyActionsService,
+    GCNotifyService,
+    GCNotifyActionsService,
   ],
   exports: [
     CRAPersonalVerificationService,
