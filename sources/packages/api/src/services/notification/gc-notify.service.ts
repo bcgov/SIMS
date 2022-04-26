@@ -27,7 +27,7 @@ export class GCNotifyService {
   /**
    * Send email notification by passing the requestPayload.
    * @param payload
-   * @returns GCNotifyResult.
+   * @returns GC Notify API call response.
    */
 
   async sendEmailNotification(
