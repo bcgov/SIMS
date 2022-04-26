@@ -315,7 +315,7 @@ export class EducationProgram extends RecordDataModel {
     type: "timestamptz",
     nullable: false,
   })
-  submittedOn: Date;
+  submittedDate: Date;
 
   /**
    * Education program assessed date.
@@ -383,7 +383,7 @@ export class EducationProgram extends RecordDataModel {
  * on column approval_status on table education_programs.
  */
 export enum ProgramStatus {
-  Approved = "approved",
-  Pending = "pending",
-  Denied = "denied",
+  Approved = "Approved",
+  Pending = "Pending",
+  Declined = "Declined",
 }

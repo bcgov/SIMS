@@ -220,7 +220,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         `CASE programs.programStatus
                 WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
                 WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
-                WHEN '${ProgramStatus.Denied}' THEN ${SortPriority.Priority3}
+                WHEN '${ProgramStatus.Declined}' THEN ${SortPriority.Priority3}
                 ELSE ${SortPriority.Priority4}
               END`,
       );
@@ -330,7 +330,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         `CASE programs.programStatus
                 WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
                 WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
-                WHEN '${ProgramStatus.Denied}' THEN ${SortPriority.Priority3}
+                WHEN '${ProgramStatus.Declined}' THEN ${SortPriority.Priority3}
                 ELSE ${SortPriority.Priority4}
               END`,
       );
@@ -388,7 +388,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.institution",
         "institution.id",
         "institution.legalOperatingName",
-        "programs.submittedOn",
+        "programs.submittedDate",
         "submittedBy.firstName",
         "submittedBy.lastName",
         "assessedBy.firstName",
@@ -609,7 +609,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       // update program
       const program = new EducationProgram();
       program.id = programId;
-      program.programStatus = ProgramStatus.Denied;
+      program.programStatus = ProgramStatus.Declined;
       program.assessedDate = new Date();
       program.assessedBy = { id: userId } as User;
       program.programNote = noteObj;

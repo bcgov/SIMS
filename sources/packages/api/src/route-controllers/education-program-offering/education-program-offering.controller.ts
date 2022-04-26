@@ -43,6 +43,7 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { EducationProgramOfferingModel } from "../../services/education-program-offering/education-program-offering.service.models";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 @Controller("institution/offering")
 @ApiTags("institution")
@@ -63,7 +64,7 @@ export class EducationProgramOfferingController extends BaseController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<number> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const requestProgram = await this.programService.getInstitutionProgram(
       programId,
       userToken.authorizations.institutionId,
@@ -86,9 +87,9 @@ export class EducationProgramOfferingController extends BaseController {
       await this.programOfferingService.createEducationProgramOffering(
         locationId,
         programId,
-        payload,
+        submissionResult.data,
       );
-    return createdProgramOffering.id;
+    return { id: createdProgramOffering.id };
   }
 
   /**

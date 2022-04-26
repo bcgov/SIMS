@@ -12,7 +12,7 @@ COMMENT ON COLUMN sims.education_programs_offerings.assessed_by IS 'User who ass
 ALTER TABLE
     sims.education_programs_offerings
 ADD
-    COLUMN IF NOT EXISTS assessed_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now();
+    COLUMN IF NOT EXISTS assessed_date TIMESTAMP WITH TIME ZONE;
 
 COMMENT ON COLUMN sims.education_programs_offerings.assessed_date IS 'Date-time when the offering was assessed.';
 

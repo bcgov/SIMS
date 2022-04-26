@@ -122,7 +122,7 @@ export const transformToEducationProgramData = (
     credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
     institutionId: program.institution.id,
     institutionName: program.institution.legalOperatingName,
-    submittedOn: program.submittedOn,
+    submittedOn: program.submittedDate,
     submittedBy: getUserFullName(program.submittedBy),
     effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
     assessedDate: program.assessedDate,
@@ -134,7 +134,8 @@ export const transformToEducationProgramData = (
     // ministry user (i.e IDIR). Will need to update in future as
     // proper decision is taken
     assessedBy:
-      program.effectiveEndDate || program.programStatus === ProgramStatus.Denied
+      program.effectiveEndDate ||
+      program.programStatus === ProgramStatus.Declined
         ? getIDIRUserFullName(program.assessedBy)
         : getUserFullName(program.assessedBy),
   };

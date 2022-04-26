@@ -9,10 +9,10 @@ import {
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
-import { SaveEducationProgramOfferingDto } from "../../route-controllers/education-program-offering/models/education-program-offering.dto";
 import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
+  CreateOfferingModel,
 } from "./education-program-offering.service.models";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import {
@@ -38,7 +38,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async createEducationProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: SaveEducationProgramOfferingDto,
+    educationProgramOffering: CreateOfferingModel,
   ): Promise<EducationProgramOffering> {
     const programOffering = this.populateProgramOffering(
       locationId,
@@ -191,7 +191,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     offeringId: number,
-    educationProgramOffering: SaveEducationProgramOfferingDto,
+    educationProgramOffering: CreateOfferingModel,
   ): Promise<UpdateResult> {
     const programOffering = this.populateProgramOffering(
       locationId,
@@ -201,10 +201,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     return this.repo.update(offeringId, programOffering);
   }
 
-  populateProgramOffering(
+  private populateProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: SaveEducationProgramOfferingDto,
+    educationProgramOffering: CreateOfferingModel,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.offeringName;

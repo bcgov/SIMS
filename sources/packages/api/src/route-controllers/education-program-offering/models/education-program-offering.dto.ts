@@ -1,4 +1,4 @@
-import { OfferingTypes } from "../../../database/entities";
+import { OfferingTypes, OfferingStatus } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 import { StudyBreak } from "../../../database/entities/education-program-offering.model";
 import { ProgramOfferingModel } from "../../../services/education-program-offering/education-program-offering.service.models";
@@ -24,6 +24,10 @@ export interface ProgramOfferingBaseDTO {
   offeringWILType?: string;
   studyBreaks?: StudyBreak[];
   offeringDeclaration: boolean;
+  assessedBy?: string;
+  assessedDate?: Date;
+  submittedDate: Date;
+  offeringStatus: OfferingStatus;
 }
 /**
  * DTO for persisting program offering.
@@ -84,5 +88,7 @@ export const transformToProgramOfferingDto = (
     offeringWILType: offering.offeringWILType,
     studyBreaks: offering.studyBreaks,
     offeringDeclaration: offering.offeringDeclaration,
+    submittedDate: offering.submittedDate,
+    offeringStatus: offering.offeringStatus,
   };
 };

@@ -205,7 +205,7 @@ export class EducationProgramController extends BaseController {
       programStatus: educationProgram.programStatus,
       programIntensity: educationProgram.programIntensity,
       institutionProgramCode: educationProgram.institutionProgramCode,
-      submittedOn: educationProgram.submittedOn,
+      submittedOn: educationProgram.submittedDate,
       submittedBy: getUserFullName(educationProgram.submittedBy),
       effectiveEndDate: getISODateOnlyString(educationProgram.effectiveEndDate),
       assessedDate: educationProgram.assessedDate,
@@ -218,7 +218,7 @@ export class EducationProgramController extends BaseController {
       // proper decision is taken
       assessedBy:
         educationProgram.effectiveEndDate ||
-        educationProgram.programStatus === ProgramStatus.Denied
+        educationProgram.programStatus === ProgramStatus.Declined
           ? getIDIRUserFullName(educationProgram.assessedBy)
           : getUserFullName(educationProgram.assessedBy),
     };
