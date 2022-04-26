@@ -16,6 +16,8 @@ import {
   SINValidationService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
+  GCNotifyService,
+  GCNotifyActionsService,
 } from "../../services";
 import { DatabaseModule } from "../../database/database.module";
 import { CRAIntegrationController } from "./cra-integration.system.controller";
@@ -46,6 +48,8 @@ describe("CRAIntegrationController", () => {
         SINValidationService,
         SFASApplicationService,
         SFASPartTimeApplicationsService,
+        GCNotifyService,
+        GCNotifyActionsService,
       ],
       controllers: [CRAIntegrationController],
     })

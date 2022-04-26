@@ -20,6 +20,8 @@ import {
   SINValidationService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
+  GCNotifyService,
+  GCNotifyActionsService,
 } from "..";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
@@ -74,6 +76,8 @@ describe("Test ATBC Controller", () => {
         SINValidationService,
         SFASApplicationService,
         SFASPartTimeApplicationsService,
+        GCNotifyService,
+        GCNotifyActionsService,
       ],
     }).compile();
     userService = await moduleFixture.get(UserService);
