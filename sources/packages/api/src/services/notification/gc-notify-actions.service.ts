@@ -15,7 +15,7 @@ export class GCNotifyActionsService {
    * @param student
    * @param documentPurpose
    * @param applicationNumber
-   * @returns GCNotifyResult
+   * @returns GCNotifyResult.
    */
   async sendFileUploadNotification(
     student: Student,
