@@ -26,6 +26,7 @@ import {
   useFormioDropdownLoader,
   useFormatters,
   useToastMessage,
+  useProgramInfoRequest,
 } from "@/composables";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
@@ -59,6 +60,7 @@ export default {
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
     const programRequestData = ref();
+    const { mapProgramInfoChipStatus } = useProgramInfoRequest();
 
     // Components names on Form.IO definition that will be manipulated.
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
@@ -103,6 +105,9 @@ export default {
         denyProgramInformationRequest: !!(
           programRequestData.value.pirDenyReasonId ||
           programRequestData.value.otherReasonDesc
+        ),
+        programInfoRequestStatus: mapProgramInfoChipStatus(
+          programRequestData.value.pirStatus,
         ),
       };
 
