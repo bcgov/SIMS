@@ -61,7 +61,7 @@
     </div>
     <div
       class="row mt-1"
-      v-if="ProgramStatus.Denied === educationProgram.programStatus"
+      v-if="ProgramStatus.Declined === educationProgram.programStatus"
     >
       <header-title-value
         title="Denied by"

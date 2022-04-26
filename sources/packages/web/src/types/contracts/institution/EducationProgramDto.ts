@@ -101,15 +101,15 @@ export enum ProgramStatus {
   /**
    * Education Program is approved.
    */
-  Approved = "approved",
+  Approved = "Approved",
   /**
    * Education Program is pending.
    */
-  Pending = "pending",
+  Pending = "Pending",
   /**
-   * Education Program is denied.
+   * Education Program is Declined.
    */
-  Denied = "denied",
+  Declined = "Declined",
 }
 
 /**

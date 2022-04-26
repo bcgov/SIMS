@@ -44,7 +44,7 @@ export default {
            * Education Program is pending.
            */
           return COLOR_BANNER_WARNING;
-        case ProgramStatus.Denied:
+        case ProgramStatus.Declined:
           /**
            * Education Program is denied.
            */
@@ -74,7 +74,7 @@ export default {
            * Education Program is pending.
            */
           return "status-badge-warning";
-        case ProgramStatus.Denied:
+        case ProgramStatus.Declined:
           /**
            * Education Program is denied.
            */
