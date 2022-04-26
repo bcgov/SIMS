@@ -14,6 +14,7 @@ dayjs.extend(dayOfYear);
 
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "YYYY MMM DD";
+export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
 /**
  * get utc date time now
@@ -74,6 +75,25 @@ export const dateDifference = (
  */
 export const getPSTPDTDate = (date: string | Date, local = false): string => {
   return dayjs(new Date(date)).tz("America/Vancouver", local).format();
+};
+
+/**
+ * convert the date to (PST: UTC−08:00/PDT: UTC−07:00)
+ * @param date date to be converted to PST.
+ * @param local, if local is set to true,
+ * then the offset will be directly append to the date without
+ * converting to the timezone actual date,
+ * if set to false, the date will be converted
+ * to the actual timezone time with offset
+ * @returns date in YYYY-MM-DD HH:mm:ss format
+ */
+export const getPSTPDTDateTime = (
+  date: string | Date,
+  local = false,
+): string => {
+  return dayjs(new Date(date))
+    .tz("America/Vancouver", local)
+    .format(DATE_TIME_FORMAT);
 };
 
 /**

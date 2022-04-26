@@ -3,7 +3,6 @@ export interface GCNotifyResult {
   id: string;
   reference: string;
   scheduled_for: string;
-  ended: true;
   template: Template;
   uri: string;
 }

@@ -102,7 +102,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         .getRepository(StudentFile)
         .update(
           {
-            student: { id: student.id } as Student,
+            student,
             uniqueFileName: In(uniqueFileNames),
           },
           {
