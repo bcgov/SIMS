@@ -19,17 +19,17 @@ export interface ContentPayload {
   subject: number;
 }
 
-export interface RequestPayload {
+export interface RequestPayload<T> {
   email_address: string; //API payload require this naming convention, so we are not following camelcase.
   template_id: string; //API payload require this naming convention, so we are not following camelcase.
-  personalisation: Personalisation;
+  personalisation: T;
 }
 
-export interface Personalisation {
+export interface StudentFileUploadPersonalisation {
   givenNames: string;
   lastName: string;
-  dob?: string;
+  dob: string;
   applicationNumber?: string;
-  documentPurpose?: string;
-  date?: string;
+  documentPurpose: string;
+  date: string;
 }
