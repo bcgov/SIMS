@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { Student } from "src/database/entities";
+import { Student } from "../../database/entities";
+import { getISODateOnlyString } from "../../utilities";
 import { STUDENT_FILE_UPLOAD_TEMPLATE_ID } from "../../utilities/notification-utils";
 import { GcNotifyResult, RequestPayload } from "./gc-notify.model";
 import { GcNotifyService } from "./gc-notify.service";
@@ -18,7 +19,7 @@ export class GcNotifyActionsService {
       personalisation: {
         givenNames: student.user.firstName ? student.user.firstName : "",
         lastName: student.user.lastName,
-        dob: student.birthDate,
+        dob: getISODateOnlyString(student.birthDate),
         applicationNumber: applicationNumber,
         documentPurpose: documentPurpose,
         date: new Date(),

@@ -29,7 +29,7 @@ export interface RequestPayload {
 export interface Personalisation {
   givenNames: string;
   lastName: string;
-  dob?: Date;
+  dob?: string;
   applicationNumber?: string;
   documentPurpose?: string;
   date?: Date;
