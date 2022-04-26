@@ -2,7 +2,7 @@ export interface GCNotifyResult {
   content: ContentPayload;
   id: string;
   reference: string;
-  scheduled_for: string; //API payload require this naming convention,so we are not following camelcase.
+  scheduled_for: string; //API payload require this naming convention, so we are not following camelcase.
   template: Template;
   uri: string;
 }
@@ -15,13 +15,13 @@ export interface Template {
 
 export interface ContentPayload {
   body: string;
-  from_email: string; //API payload require this naming convention,so we are not following camelcase.
+  from_email: string; //API payload require this naming convention, so we are not following camelcase.
   subject: number;
 }
 
 export interface RequestPayload {
-  email_address: string; //API payload require this naming convention,so we are not following camelcase.
-  template_id: string; //API payload require this naming convention,so we are not following camelcase.
+  email_address: string; //API payload require this naming convention, so we are not following camelcase.
+  template_id: string; //API payload require this naming convention, so we are not following camelcase.
   personalisation: Personalisation;
 }
 

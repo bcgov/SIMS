@@ -29,23 +29,22 @@ export class GCNotifyService {
    * @param payload
    * @returns GC Notify API call response.
    */
-
   async sendEmailNotification(
     payload: RequestPayload,
   ): Promise<GCNotifyResult> {
-    let response;
     try {
-      response = await axios.post(this.gcNotifyUrl(), payload, {
+      const response = await axios.post(this.gcNotifyUrl(), payload, {
         headers: {
           Authorization: `ApiKey-v1 ${this.gcNotifyApiKey()}`,
         },
       });
+      return response.data as GCNotifyResult;
     } catch (error) {
       this.logger.error(`Error while sending email notification: ${error}`);
       throw error;
     }
-    return response.data as GCNotifyResult;
   }
+
   @InjectLogger()
   logger: LoggerService;
 }
