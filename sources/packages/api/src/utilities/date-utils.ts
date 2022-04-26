@@ -64,28 +64,28 @@ export const dateDifference = (
 };
 
 /**
- * convert the date to (PST: UTC−08:00/PDT: UTC−07:00)
+ * Convert the date to (PST: UTC−08:00/PDT: UTC−07:00).
  * @param date date to be converted to PST.
  * @param local, if local is set to true,
  * then the offset will be directly append to the date without
  * converting to the timezone actual date,
  * if set to false, the date will be converted
- * to the actual timezone time with offset
- * @returns date in  PST/PDT(PST: UTC−08:00, PDT: UTC−07:00)
+ * to the actual timezone time with offset.
+ * @returns date in  PST/PDT(PST: UTC−08:00, PDT: UTC−07:00).
  */
 export const getPSTPDTDate = (date: string | Date, local = false): string => {
   return dayjs(new Date(date)).tz("America/Vancouver", local).format();
 };
 
 /**
- * convert the date to (PST: UTC−08:00/PDT: UTC−07:00)
+ * Convert the date to (PST: UTC−08:00/PDT: UTC−07:00).
  * @param date date to be converted to PST.
  * @param local, if local is set to true,
  * then the offset will be directly append to the date without
  * converting to the timezone actual date,
  * if set to false, the date will be converted
- * to the actual timezone time with offset
- * @returns date in YYYY-MM-DD HH:mm:ss format
+ * to the actual timezone time with offset.
+ * @returns date in YYYY-MM-DD HH:mm:ss format.
  */
 export const getPSTPDTDateTime = (
   date: string | Date,
