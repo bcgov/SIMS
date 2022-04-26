@@ -15,7 +15,7 @@ export interface Template {
 
 export interface ContentPayload {
   body: string;
-  from_email: string;
+  from_email: string; //API payload require this naming convention,so we are not following camelcase.
   subject: number;
 }
 

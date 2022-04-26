@@ -7,21 +7,21 @@ import { LoggerService } from "../../logger/logger.service";
 
 @Injectable()
 export class GCNotifyService {
-  private readonly gcNotify;
+  private readonly gcNotifyConfig;
   constructor(private readonly configService: ConfigService) {
-    this.gcNotify = this.configService.getConfig().gcNotify;
+    this.gcNotifyConfig = this.configService.getConfig().gcNotify;
   }
 
   gcNotifyUrl() {
-    return this.gcNotify.url;
+    return this.gcNotifyConfig.url;
   }
 
   gcNotifyToAddress() {
-    return this.gcNotify.toAddress;
+    return this.gcNotifyConfig.toAddress;
   }
 
   gcNotifyApiKey() {
-    return this.gcNotify.apiKey;
+    return this.gcNotifyConfig.apiKey;
   }
 
   /**
