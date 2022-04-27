@@ -113,18 +113,4 @@ export class SupportingUser extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   application: Application;
-  /**
-   * CRA verification income associated with the supporting user.
-   * The record is created once the supporting user submits its data.
-   */
-  @OneToMany(
-    () => CRAIncomeVerification,
-    (craIncomeVerification) => craIncomeVerification.supportingUser,
-    { eager: false, cascade: false, nullable: true },
-  )
-  @JoinColumn({
-    name: "supporting_user_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  craIncomeVerifications?: CRAIncomeVerification[];
 }

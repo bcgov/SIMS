@@ -57,6 +57,8 @@ export class ApplicationLocationAPIOutDTO {
 
 export class ApplicationStudentAPIOutDTO {
   studentPDStatus?: boolean;
+  craReportedIncome: number;
+  taxYear: number;
 }
 
 export class SupportingUserAPIOutDTO {

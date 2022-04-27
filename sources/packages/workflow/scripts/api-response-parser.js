@@ -1,6 +1,5 @@
 // Sample code to write to the console.
 // var system = java.lang.System;
-// system.out.println("Some debug message");
 
 var httpSuccessCode = connector.getVariable("httpSuccessCode");
 var errorCodeName = connector.getVariable("errorCodeName");
@@ -30,24 +29,24 @@ var OUTPUT_HIERARCHY_SEPARATOR = "_";
 function setValuesFromPayload(payload, fieldName, fieldsNamesPath) {
   // Check if the field has some hierarchy (e.g. someParent.someChild).
   var parentIndex = fieldName.indexOf(INPUT_HIERARCHY_SEPARATOR);
-  if (parentIndex > -1) {
+  if (payload && parentIndex > -1) {
     // Extract the parent field name (e.g. someParent);
     var parentFieldName = fieldName.substring(0, parentIndex);
     fieldsNamesPath.push(parentFieldName);
     // Extract the child field name (e.g. someChild);
     var childFieldName = fieldName.substring(parentIndex + 1);
     // Ensures that the parent exists in the payload.
+    var parentPayload = null;
     if (payload.hasProp(parentFieldName)) {
-      var parentPayload = payload.prop(parentFieldName);
-      if (parentPayload.isObject()) {
-        setValuesFromPayload(parentPayload, childFieldName, fieldsNamesPath);
-      }
-    } else {
-      // If parent does not exists just set null to the variable.
-      fieldsNamesPath.push(childFieldName.split(INPUT_HIERARCHY_SEPARATOR));
-      fieldsNamesPath.push(fieldName);
-      setVariableWithFullName(fieldsNamesPath, fieldName, null);
+      parentPayload = payload.prop(parentFieldName);
     }
+    setValuesFromPayload(parentPayload, childFieldName, fieldsNamesPath);
+  } else if (payload === null) {
+    // If parent does not exists just set null to the variable.
+    fieldsNamesPath = fieldsNamesPath.concat(
+      fieldName.split(INPUT_HIERARCHY_SEPARATOR)
+    );
+    setVariableWithFullName(fieldsNamesPath, null);
   } else {
     // This means that the last field on the hierarchy was reached and
     // the variable can be set.
@@ -60,7 +59,8 @@ function setValuesFromPayload(payload, fieldName, fieldsNamesPath) {
         fieldValue = fieldProp.value();
       }
     }
-    setVariableWithFullName(fieldsNamesPath, fieldName, fieldValue);
+    fieldsNamesPath.push(fieldName);
+    setVariableWithFullName(fieldsNamesPath, fieldValue);
   }
 }
 
@@ -68,13 +68,11 @@ function setValuesFromPayload(payload, fieldName, fieldsNamesPath) {
  * Creates the variable unique names where all the hierarchy is represented,
  * for instance, someParent_someOtherParent_someChild.
  * @param fieldsNamesPath intermediate names in the hierarchy (e.g. someParent_someOtherParent).
- * @param fieldName last name in the hierarchy (e.g. someChild).
  * @param fieldValue value to be set.
  */
-function setVariableWithFullName(fieldsNamesPath, fieldName, fieldValue) {
-  fieldsNamesPath.push(fieldName);
+function setVariableWithFullName(fieldsNamesPath, fieldValue) {
   var fullVariableName = fieldsNamesPath.join(OUTPUT_HIERARCHY_SEPARATOR);
-  connector.setVariable(fullVariableName, fieldValue);
+  task.setVariableLocal(fullVariableName, fieldValue);
 }
 
 // Script entry point that will iterate through all the variables requested to be created.

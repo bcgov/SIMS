@@ -9,6 +9,7 @@ import {
   RelationId,
 } from "typeorm";
 import {
+  CRAIncomeVerification,
   EducationProgram,
   InstitutionLocation,
   MSFAANumber,
@@ -280,6 +281,22 @@ export class Application extends RecordDataModel {
     },
   )
   supportingUsers?: SupportingUser[];
+  /**
+   * CRA income verifications associated with this application.
+   * The records are created once the student submits the application
+   * and the workflow is executed for the first time (Original Assessment)
+   * and also when supporting users submits its data.
+   */
+  @OneToMany(
+    () => CRAIncomeVerification,
+    (craIncomeVerification) => craIncomeVerification.application,
+    { eager: false, cascade: false, nullable: true },
+  )
+  @JoinColumn({
+    name: "application_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  craIncomeVerifications?: CRAIncomeVerification[];
 }
 
 /**
