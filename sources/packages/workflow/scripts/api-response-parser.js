@@ -72,7 +72,7 @@ function setValuesFromPayload(payload, fieldName, fieldsNamesPath) {
  */
 function setVariableWithFullName(fieldsNamesPath, fieldValue) {
   var fullVariableName = fieldsNamesPath.join(OUTPUT_HIERARCHY_SEPARATOR);
-  task.setVariableLocal(fullVariableName, fieldValue);
+  connector.setVariable(fullVariableName, fieldValue);
 }
 
 // Script entry point that will iterate through all the variables requested to be created.
