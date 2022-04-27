@@ -69,6 +69,9 @@ export class AssessmentSystemAccessController extends BaseController {
       );
     }
     const application = assessment.application;
+    const [studentCRAIncome] = application.craIncomeVerifications?.filter(
+      (verification) => verification.supportingUserId === null,
+    );
     return {
       triggerType: assessment.triggerType,
       data: application.data,
@@ -104,10 +107,13 @@ export class AssessmentSystemAccessController extends BaseController {
       },
       student: {
         studentPDStatus: application.student.studentPDVerified,
+        craReportedIncome: studentCRAIncome?.craReportedIncome,
+        taxYear: studentCRAIncome?.taxYear,
       },
       supportingUsers:
         this.assessmentControllerService.flattenSupportingUsersArray(
           application.supportingUsers,
+          application.craIncomeVerifications,
         ),
       appeals: this.assessmentControllerService.flattenStudentAppeals(
         assessment.studentAppeal?.appealRequests,

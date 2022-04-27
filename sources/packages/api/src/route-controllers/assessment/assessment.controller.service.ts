@@ -1,4 +1,5 @@
 import {
+  CRAIncomeVerification,
   StudentAppealRequest,
   SupportingUser,
   SupportingUserType,
@@ -16,10 +17,13 @@ export class AssessmentControllerService {
    * extended to have a Parent3, Partner2 or even more types) and make easier to
    * read and process these users in the workflow.
    * @param supportingUsers supporting users to be converted.
+   * @param incomeVerifications available income verifications associated with
+   * the application associated with the supporting users.
    * @returns object where every user is a property.
    */
   flattenSupportingUsersArray(
     supportingUsers: SupportingUser[],
+    incomeVerifications?: CRAIncomeVerification[],
   ): DynamicAPIOutDTO<SupportingUserAPIOutDTO> {
     if (!supportingUsers?.length) {
       return null;
@@ -37,7 +41,10 @@ export class AssessmentControllerService {
             supportingUser.supportingUserType === supportingUserType,
         )
         .forEach((supportingUser, index) => {
-          const [craIncome] = supportingUser.craIncomeVerifications;
+          const [craIncome] = incomeVerifications?.filter(
+            (verification) =>
+              verification.supportingUserId === supportingUser.id,
+          );
           flattenedSupportingUsers[`${supportingUserType}${index + 1}`] = {
             id: supportingUser.id,
             supportingUserType: supportingUser.supportingUserType,
