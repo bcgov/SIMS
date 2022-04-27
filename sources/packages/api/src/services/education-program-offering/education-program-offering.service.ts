@@ -6,13 +6,14 @@ import {
   OfferingTypes,
   OfferingIntensity,
   ProgramStatus,
+  User,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
 import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
-  CreateOfferingModel,
+  SaveOfferingModel,
 } from "./education-program-offering.service.models";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import {
@@ -38,11 +39,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async createEducationProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: CreateOfferingModel,
+    userId: number,
+    educationProgramOffering: SaveOfferingModel,
   ): Promise<EducationProgramOffering> {
     const programOffering = this.populateProgramOffering(
       locationId,
       programId,
+      userId,
       educationProgramOffering,
     );
     return this.repo.save(programOffering);
@@ -73,6 +76,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.studyEndDate",
         "offerings.offeringDelivered",
         "offerings.offeringIntensity",
+        "offerings.offeringType",
+        "offerings.offeringStatus",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -109,7 +114,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     // result
     const [records, count] = await offeringsQuery.getManyAndCount();
-
     const offerings = records.map((educationProgramOffering) => {
       const item = new EducationProgramOfferingModel();
       item.id = educationProgramOffering.id;
@@ -122,6 +126,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       );
       item.offeringDelivered = educationProgramOffering.offeringDelivered;
       item.offeringIntensity = educationProgramOffering.offeringIntensity;
+      item.offeringType = educationProgramOffering.offeringType;
+      item.offeringStatus = educationProgramOffering.offeringStatus;
       return item;
     });
     return { results: offerings, count: count };
@@ -165,9 +171,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.offeringWILType",
         "offerings.studyBreaks",
         "offerings.offeringDeclaration",
+        "offerings.offeringType",
+        "offerings.assessedDate",
+        "offerings.submittedDate",
+        "offerings.offeringStatus",
+        "assessedBy.firstName",
+        "assessedBy.lastName",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .leftJoin("offerings.assessedBy", "assessedBy")
       .andWhere("offerings.id= :offeringId", {
         offeringId: offeringId,
       })
@@ -191,11 +204,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     offeringId: number,
-    educationProgramOffering: CreateOfferingModel,
+    userId: number,
+    educationProgramOffering: SaveOfferingModel,
   ): Promise<UpdateResult> {
     const programOffering = this.populateProgramOffering(
       locationId,
       programId,
+      userId,
       educationProgramOffering,
     );
     return this.repo.update(offeringId, programOffering);
@@ -204,7 +219,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   private populateProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: CreateOfferingModel,
+    userId: number,
+    educationProgramOffering: SaveOfferingModel,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.offeringName;
@@ -243,6 +259,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.studyBreaks = educationProgramOffering.studyBreaks;
     programOffering.offeringDeclaration =
       educationProgramOffering.offeringDeclaration;
+    programOffering.offeringType = educationProgramOffering.offeringType;
+    programOffering.offeringStatus = educationProgramOffering.offeringStatus;
+    programOffering.assessedBy = { id: userId } as User;
+    programOffering.assessedDate = new Date();
     return programOffering;
   }
 

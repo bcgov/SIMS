@@ -97,7 +97,7 @@ export class EducationProgramController extends BaseController {
     return this.programService.getSummaryForLocation(
       userToken.authorizations.institutionId,
       locationId,
-      [OfferingTypes.public],
+      [OfferingTypes.public, OfferingTypes.Private],
       {
         searchCriteria: searchCriteria,
         sortField: sortField,
@@ -396,7 +396,7 @@ export class EducationProgramController extends BaseController {
   ): Promise<PaginatedResults<ProgramsSummary>> {
     return this.programService.getPaginatedProgramsForAEST(
       institutionId,
-      [OfferingTypes.public],
+      [OfferingTypes.public, OfferingTypes.Private],
       {
         searchCriteria: searchCriteria,
         sortField: sortColumn,

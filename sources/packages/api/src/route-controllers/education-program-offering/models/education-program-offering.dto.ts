@@ -26,16 +26,11 @@ export interface ProgramOfferingBaseDTO {
   offeringDeclaration: boolean;
   assessedBy?: string;
   assessedDate?: Date;
-  submittedDate: Date;
+  submittedDate?: Date;
   offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
 }
-/**
- * DTO for persisting program offering.
- */
-export interface SaveEducationProgramOfferingDto
-  extends ProgramOfferingBaseDTO {
-  offeringType?: OfferingTypes;
-}
+
 /**
  * Summary DTO of program offering.
  */
@@ -90,5 +85,6 @@ export const transformToProgramOfferingDto = (
     offeringDeclaration: offering.offeringDeclaration,
     submittedDate: offering.submittedDate,
     offeringStatus: offering.offeringStatus,
+    offeringType: offering.offeringType,
   };
 };

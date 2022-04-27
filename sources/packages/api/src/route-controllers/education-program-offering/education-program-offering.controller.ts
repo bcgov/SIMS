@@ -18,7 +18,7 @@ import {
   Groups,
 } from "../../auth/decorators";
 import {
-  SaveEducationProgramOfferingDto,
+  ProgramOfferingBaseDTO,
   ProgramOfferingDto,
   ProgramOfferingDetailsDto,
   transformToProgramOfferingDto,
@@ -60,7 +60,7 @@ export class EducationProgramOfferingController extends BaseController {
   @HasLocationAccess("locationId")
   @Post("location/:locationId/education-program/:programId")
   async create(
-    @Body() payload: SaveEducationProgramOfferingDto,
+    @Body() payload: ProgramOfferingBaseDTO,
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @UserToken() userToken: IInstitutionUserToken,
@@ -87,7 +87,8 @@ export class EducationProgramOfferingController extends BaseController {
       await this.programOfferingService.createEducationProgramOffering(
         locationId,
         programId,
-        submissionResult.data,
+        userToken.userId,
+        submissionResult.data.data,
       );
     return { id: createdProgramOffering.id };
   }
@@ -132,7 +133,7 @@ export class EducationProgramOfferingController extends BaseController {
         page: page,
         pageLimit: pageLimit,
       },
-      [OfferingTypes.public],
+      [OfferingTypes.public, OfferingTypes.Private],
     );
   }
 
@@ -164,7 +165,7 @@ export class EducationProgramOfferingController extends BaseController {
     "location/:locationId/education-program/:programId/offering/:offeringId",
   )
   async updateProgramOffering(
-    @Body() payload: SaveEducationProgramOfferingDto,
+    @Body() payload: ProgramOfferingBaseDTO,
     @UserToken() userToken: IInstitutionUserToken,
     @Param("locationId") locationId: number,
     @Param("programId") programId?: number,
@@ -202,7 +203,8 @@ export class EducationProgramOfferingController extends BaseController {
         locationId,
         programId,
         offeringId,
-        payload,
+        userToken.userId,
+        updatingResult.data.data,
       );
     return updateProgramOffering.affected;
   }
@@ -344,7 +346,7 @@ export class EducationProgramOfferingController extends BaseController {
         page: page,
         pageLimit: pageLimit,
       },
-      [OfferingTypes.public],
+      [OfferingTypes.public, OfferingTypes.Private],
     );
   }
 

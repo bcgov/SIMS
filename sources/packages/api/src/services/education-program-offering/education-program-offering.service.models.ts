@@ -12,6 +12,8 @@ export class EducationProgramOfferingModel {
   studyEndDate: string;
   offeringDelivered: string;
   offeringIntensity: OfferingIntensity;
+  offeringType: OfferingTypes;
+  offeringStatus: OfferingStatus;
 }
 
 export interface ProgramOfferingModel {
@@ -38,9 +40,10 @@ export interface ProgramOfferingModel {
   offeringDeclaration: boolean;
   submittedDate: Date;
   offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
 }
 
-export interface CreateOfferingModel {
+export interface SaveOfferingModel {
   offeringName: string;
   studyStartDate: Date;
   studyEndDate: Date;
@@ -63,7 +66,7 @@ export interface CreateOfferingModel {
   offeringDeclaration: boolean;
   assessedBy?: string;
   assessedDate?: Date;
-  submittedDate: Date;
+  submittedDate?: Date;
   offeringStatus: OfferingStatus;
   offeringType?: OfferingTypes;
 }

@@ -256,7 +256,7 @@ export class EducationProgramOffering extends RecordDataModel {
    * Represents the current status of an offering.
    */
   @Column({
-    name: "program_status",
+    name: "offering_status",
     type: "enum",
     enum: OfferingStatus,
     enumName: "OfferingStatus",

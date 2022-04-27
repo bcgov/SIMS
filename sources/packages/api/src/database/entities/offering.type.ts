@@ -8,7 +8,11 @@ export enum OfferingTypes {
   public = "Public",
   /**
    * Offering was created to fulfill the need of
-   * a particular student application.
+   * a particular student/application.
    */
-  applicationSpecific = "Application Specific",
+  Private = "Private",
+  /**
+   * Offering created for change in scholastic standing.
+   */
+  ScholasticStanding = "Scholastic Standing",
 }
