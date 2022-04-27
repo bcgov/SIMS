@@ -42,7 +42,7 @@ export class MSFAAFileDetail implements MSFAARequestFileLine {
     record.appendDate(this.birthDate, DATE_FORMAT);
     record.appendDate(this.processDate, DATE_FORMAT);
     record.appendWithEndFiller(this.surname, 25, SPACE_FILLER);
-    record.appendWithEndFiller(this.givenName, 15, SPACE_FILLER);
+    record.appendWithEndFiller(this.givenName || "", 15, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 3); // Initials
     record.append(this.genderCode);
     record.append(this.maritalStatusCode);

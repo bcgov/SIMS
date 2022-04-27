@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectLogger } from "../../common";
 import { MSFAANumber } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
-import { getUTCNow } from "../../utilities";
+import { getUTCNow, getISODateOnlyString } from "../../utilities";
 import { EntityManager } from "typeorm";
 import {
   ConfigService,
@@ -76,7 +76,9 @@ export class MSFAARequestService extends ESDCFileHandler {
     //Create records and create the unique file sequence number
     let uploadResult: MSFAAUploadResult;
     await this.sequenceService.consumeNextSequence(
-      `MSFAA_${offeringIntensity}_SENT_FILE`,
+      `MSFAA_${offeringIntensity}_SENT_FILE_${getISODateOnlyString(
+        new Date(),
+      )}`,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
           this.logger.log("Creating MSFAA request content...");
@@ -96,7 +98,7 @@ export class MSFAARequestService extends ESDCFileHandler {
           this.logger.log("Uploading content...");
           uploadResult = await this.msfaaService.uploadContent(
             fileContent,
-            fileInfo.filePath,
+            fileInfo.filePath.slice(0, -4),
           );
 
           // Creates the repository based on the entity manager that
