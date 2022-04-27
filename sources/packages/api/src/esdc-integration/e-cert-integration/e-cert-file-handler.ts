@@ -180,11 +180,11 @@ export class ECertFileHandler extends ESDCFileHandler {
           this.logger.log(`Uploading ${offeringIntensity} content...`);
           await eCertIntegrationService.uploadContent(
             fileContent,
-            fileInfo.filePath.slice(0, -4),
+            fileInfo.filePath,
           );
 
           uploadResult = {
-            generatedFile: fileInfo.filePath.slice(0, -4),
+            generatedFile: fileInfo.filePath,
             uploadedRecords: disbursementRecords.length,
           };
         } catch (error) {

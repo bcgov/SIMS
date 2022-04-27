@@ -98,7 +98,7 @@ export class MSFAARequestService extends ESDCFileHandler {
           this.logger.log("Uploading content...");
           uploadResult = await this.msfaaService.uploadContent(
             fileContent,
-            fileInfo.filePath.slice(0, -4),
+            fileInfo.filePath,
           );
 
           // Creates the repository based on the entity manager that
