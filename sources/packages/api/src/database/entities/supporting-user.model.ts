@@ -3,7 +3,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
@@ -13,7 +12,6 @@ import { ContactInfo } from "../../types";
 import { User } from "./user.model";
 import { Application, SupportingUserType } from ".";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
-import { CRAIncomeVerification } from "./cra-income-verification.model";
 
 /**
  * Users that provide supporting information for a Student Application
