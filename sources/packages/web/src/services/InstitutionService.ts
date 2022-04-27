@@ -127,11 +127,11 @@ export class InstitutionService {
   ): InstitutionUserViewModel[] {
     return response.map((institutionUser) => {
       const roleArray = institutionUser.authorizations
-        .map((auth) => auth.authType.role || "")
+        .map((auth) => auth.authType.role ?? "")
         .filter((institutionUserRole) => institutionUserRole !== "");
       const role = roleArray.length > 0 ? roleArray.join(" ") : "-";
       const locationArray = institutionUser.authorizations
-        .map((auth) => auth.location?.name || "")
+        .map((auth) => auth.location?.name ?? "")
         .filter((loc) => loc !== "");
       const userType = institutionUser.authorizations.map(
         (auth) => auth.authType.type,

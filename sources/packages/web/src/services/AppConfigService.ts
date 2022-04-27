@@ -24,7 +24,7 @@ export class AppConfigService {
 
   private getLocalConfig() {
     if (localStorage.getItem(this._storageKey)) {
-      const configStr: string = localStorage.getItem(this._storageKey) || "";
+      const configStr: string = localStorage.getItem(this._storageKey) ?? "";
       return JSON.parse(configStr);
     }
   }

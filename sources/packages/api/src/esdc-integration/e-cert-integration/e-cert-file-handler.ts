@@ -17,6 +17,7 @@ import {
   ECERT_PART_TIME_FEEDBACK_FILE_CODE,
   getDayOfTheYear,
   getFieldOfStudyFromCIPCode,
+  getISODateOnlyString,
 } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
@@ -148,7 +149,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     const now = new Date();
     const dayOfTheYear = getDayOfTheYear(now);
     await this.sequenceService.consumeNextSequence(
-      sequenceGroup,
+      `${sequenceGroup}_${getISODateOnlyString(new Date())}`,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
           this.logger.log(
