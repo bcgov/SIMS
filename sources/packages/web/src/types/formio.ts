@@ -29,7 +29,7 @@ export enum FormIOCustomEventTypes {
   RouteToPartnerInformation = "routeToPartnerInformation",
 }
 // custom formIO headers interface.
-export interface formIOHeader {
+export interface FormIOHeader {
   headers: {
     Authorization: string;
   };

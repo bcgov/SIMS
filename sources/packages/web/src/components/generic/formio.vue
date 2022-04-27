@@ -9,7 +9,7 @@ import { Formio } from "formiojs";
 import { SetupContext } from "vue";
 import ApiClient from "@/services/http/ApiClient";
 import FormUploadService from "@/services/FormUploadService";
-import { FormIOCustomEvent, formIOHeader } from "@/types";
+import { FormIOCustomEvent, FormIOHeader } from "@/types";
 import { v4 as uuid } from "uuid";
 import { DynamicFormsService } from "@/services/DynamicFormsService";
 
@@ -44,12 +44,13 @@ export default {
 
     // Set projectUrl for nested forms.
     Formio.setProjectUrl(projectUrl);
+    Formio.setBaseUrl(projectUrl);
 
     // Set authorization for projectUrl for nested forms.
     Formio.plugins = [
       {
         priority: 0,
-        requestOptions: function (value: formIOHeader) {
+        requestOptions: function (value: FormIOHeader) {
           value.headers.Authorization = authorization;
           return value;
         },

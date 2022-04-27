@@ -91,7 +91,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      "institutionlocation",
+      FormNames.InstitutionLocation,
       payload,
     );
 
@@ -100,7 +100,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
         "Not able to create the institution location due to an invalid request.",
       );
     }
-
     // If the data is valid the location is saved to SIMS DB.
     const createdInstitutionLocation = await this.locationService.saveLocation(
       userToken.authorizations.institutionId,
@@ -129,7 +128,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   ): Promise<void> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      "institutionlocation",
+      FormNames.InstitutionLocation,
       payload,
     );
 

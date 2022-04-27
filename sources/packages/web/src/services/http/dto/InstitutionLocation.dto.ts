@@ -1,26 +1,19 @@
 import { DesignationAgreementStatus } from "@/types";
 import {
+  AddressDetailsAPIInDTO,
   AddressInfoAPIOutDTO,
   InstitutionPrimaryContactAPIOutDTO,
 } from "@/services/http/dto";
 
 export interface InstitutionLocationFormAPIInDTO {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  country: string;
   locationName: string;
-  postalCode: string;
-  provinceState: string;
   institutionCode: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
-  canadaPostalCode?: string;
-  otherPostalCode?: string;
-  selectedCountry?: string;
-  otherCountry?: string;
+  // Nested address form details.
+  addressDetails: AddressDetailsAPIInDTO;
 }
 
 export interface InstitutionLocationFormAPIOutDTO {

@@ -8,11 +8,10 @@ export class GetInstitutionLocationDto {
   name: string;
 }
 /**
- * Payload/Input DTO for institution location.
- ** Class validators are not used for DTO validation
- ** because of dry-run validation.
+ * Payload/Input DTO for address.
+ * This details are from nested form.
  */
-export class InstitutionLocationFormAPIInDTO {
+export class AddressDetailsAPIInDTO {
   @Allow()
   addressLine1: string;
   @Allow()
@@ -23,14 +22,38 @@ export class InstitutionLocationFormAPIInDTO {
   // so for API purpose take country from this property.
   @Allow()
   country: string;
-  @Allow()
-  locationName: string;
   // This property has the postalCode irrespective of the selectedCountry and otherCountry,
   // so for API purpose take postalCode from this property.
   @Allow()
   postalCode: string;
   @Allow()
   provinceState: string;
+  // This property will have canada postal code.
+  // This property is for formIO purpose.
+  @Allow()
+  canadaPostalCode?: string;
+  // This property will have postal code for countries other than Canada.
+  // This property is for formIO purpose.
+  @Allow()
+  otherPostalCode?: string;
+  // Dropdown value, it will have either "canada" or "other".
+  // This property is for formIO purpose.
+  @Allow()
+  selectedCountry?: string;
+  // When "other" is selected in selectedCountry, then this property will have a value.
+  // This property is for formIO purpose.
+  @Allow()
+  otherCountry?: string;
+}
+
+/**
+ * Payload/Input DTO for institution location.
+ ** Class validators are not used for DTO validation
+ ** because of dry-run validation.
+ */
+export class InstitutionLocationFormAPIInDTO {
+  @Allow()
+  locationName: string;
   @Allow()
   institutionCode: string;
   @Allow()
@@ -41,22 +64,9 @@ export class InstitutionLocationFormAPIInDTO {
   primaryContactEmail: string;
   @Allow()
   primaryContactPhone: string;
-  // This property will have canada postal code.
-  // This property is for formio purpose.
+  // Nested address form details.
   @Allow()
-  canadaPostalCode?: string;
-  // This property will have postal code for countries other than Canada.
-  // This property is for formio purpose.
-  @Allow()
-  otherPostalCode?: string;
-  // Dropdown value, it will have either "canada" or "other".
-  // This property is for formio purpose.
-  @Allow()
-  selectedCountry?: string;
-  // When "other" is selected in selectedCountry, then this property will have a value.
-  // This property is for formio purpose.
-  @Allow()
-  otherCountry?: string;
+  addressDetails: AddressDetailsAPIInDTO;
 }
 
 /**

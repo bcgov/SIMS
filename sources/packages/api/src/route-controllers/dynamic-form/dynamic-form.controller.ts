@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import BaseController from "../BaseController";
 import { FormService } from "../../services";
 import { AllowAuthorizedParty } from "../../auth/decorators";
@@ -22,8 +22,17 @@ export class DynamicFormController extends BaseController {
   async list(): Promise<any> {
     return this.formService.list();
   }
+
   @Get(":formName")
   async getForm(@Param("formName") formName: string): Promise<any> {
     return this.formService.fetch(formName);
+  }
+
+  // ? This controller is created for nested form POC.
+  // ? formName is 'address' and form title is
+  // ? `Address (Nested POC form)` in dev env.
+  @Post("address/submission")
+  async getAddressFormSubmission(@Body() payload: any): Promise<any> {
+    return this.formService.submission("address", payload.data);
   }
 }

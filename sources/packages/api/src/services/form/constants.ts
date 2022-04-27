@@ -7,4 +7,5 @@ export const FormNames = {
   ApproveDenyDesignations: "approvedenydesignation",
   InstitutionProfile: "institutionprofile",
   ReportScholasticStandingChange: "reportscholasticstandingchange",
+  InstitutionLocation: "institutionlocation",
 };

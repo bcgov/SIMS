@@ -46,7 +46,6 @@ export default {
         );
       }
     };
-
     onMounted(async () => {
       initialData.value = await ApplicationService.shared.getNOA(
         props.applicationId,
