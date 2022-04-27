@@ -292,10 +292,6 @@ export class Application extends RecordDataModel {
     (craIncomeVerification) => craIncomeVerification.application,
     { eager: false, cascade: false, nullable: true },
   )
-  @JoinColumn({
-    name: "application_id",
-    referencedColumnName: ColumnNames.ID,
-  })
   craIncomeVerifications?: CRAIncomeVerification[];
 }
 
