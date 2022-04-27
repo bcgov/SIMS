@@ -32,6 +32,9 @@ objects:
       atbc-username: ${ATBC_USERNAME}
       atbc-password: ${ATBC_PASSWORD}
       atbc-app: ${ATBC_APP}
+      gc-notify-url: ${GC_NOTIFY_URL}
+      gc-notify-api-key: ${GC_NOTIFY_API_KEY}
+      gc-notify-to-address: ${GC_NOTIFY_TO_ADDRESS}
 parameters:
   - name: NAME
     description: |
@@ -153,3 +156,18 @@ parameters:
     required: true
     description: |
       Folder on the SFTP where SFAS integration files will be placed.
+  - name: GC_NOTIFY_URL
+    displayName: GC notify URL
+    required: true
+    description: |
+      GC notify URL to send email notification.
+  - name: GC_NOTIFY_API_KEY
+    displayName: GC notify API Key
+    required: true
+    description: |
+      GC notify API key to send email notification.
+  - name: GC_NOTIFY_TO_ADDRESS
+    displayName: GC notify to address
+    required: true
+    description: |
+      GC notify to address to send email notification.

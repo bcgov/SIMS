@@ -624,7 +624,7 @@ export class StudentController extends BaseController {
     // files (saved during the upload) are update to its proper group,file_origin
     //  and add the metadata (if available)
     await this.fileService.updateStudentFiles(
-      existingStudent.id,
+      existingStudent,
       payload.associatedFiles,
       payload.submittedForm,
     );

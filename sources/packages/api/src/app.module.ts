@@ -38,6 +38,8 @@ import {
   StudentAssessmentService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
+  GCNotifyService,
+  GCNotifyActionsService,
 } from "./services";
 import {
   UserController,
@@ -172,6 +174,8 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     InstitutionLocationControllerService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
+    GCNotifyService,
+    GCNotifyActionsService,
   ],
 })
 export class AppModule {}
