@@ -230,16 +230,14 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     userId: number,
     updateRestrictionDTO: ResolveRestrictionDTO,
   ): Promise<StudentRestriction> {
-    const studentRestrictionEntity = await this.repo.findOne(
-      {
+    const studentRestrictionEntity = await this.repo.findOne({
+      where: {
         id: studentRestrictionId,
         student: { id: studentId } as Student,
         isActive: true,
       },
-      {
-        relations: ["resolutionNote", "modifier", "restriction"],
-      },
-    );
+      relations: { resolutionNote: true, modifier: true, restriction: true },
+    });
 
     if (!studentRestrictionEntity) {
       throw new CustomNamedError(

@@ -268,7 +268,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   async getDisbursementScheduleByDocumentNumber(
     documentNumber: number,
   ): Promise<DisbursementSchedule> {
-    return this.repo.findOne({ documentNumber: documentNumber });
+    return this.repo.findOne({ where: { documentNumber } });
   }
 
   /**

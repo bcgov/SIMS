@@ -827,14 +827,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
     auditUserId: number,
   ): Promise<ApplicationOverriddenResult> {
     // Only override application when pir status is not "not required".
-    const appToOverride = await this.repo.findOne(
-      {
+    const appToOverride = await this.repo.findOne({
+      where: {
         id: applicationId,
         location: { id: locationId },
         pirStatus: Not(ProgramInfoStatus.notRequired),
       },
-      { relations: ["studentFiles", "currentAssessment"] },
-    );
+      relations: { studentFiles: true, currentAssessment: true },
+    });
 
     if (!appToOverride) {
       throw new CustomNamedError(

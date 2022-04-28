@@ -52,7 +52,7 @@
     "soap": "^0.36.0",
     "ssh2-sftp-client": "^7.1.0",
     "swagger-ui-express": "^4.3.0",
-    "typeorm": "^0.2.30"
+    "typeorm": "^0.3.6"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.2.1",

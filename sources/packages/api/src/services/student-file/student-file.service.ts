@@ -48,7 +48,9 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     studentId: number,
     uniqueFileName: string,
   ): Promise<StudentFile> {
-    return this.repo.findOne({ uniqueFileName, student: { id: studentId } });
+    return this.repo.findOne({
+      where: { uniqueFileName, student: { id: studentId } },
+    });
   }
 
   /**
@@ -61,7 +63,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   async getStudentFileByUniqueName(
     uniqueFileName: string,
   ): Promise<StudentFile> {
-    return this.repo.findOne({ uniqueFileName: uniqueFileName });
+    return this.repo.findOne({ where: { uniqueFileName } });
   }
 
   /**

@@ -47,7 +47,7 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   async getStudentByUserId(userId: number): Promise<Student> {
-    return this.repo.findOne({ user: { id: userId } });
+    return this.repo.findOne({ where: { user: { id: userId } } });
   }
 
   /**
@@ -229,7 +229,9 @@ export class StudentService extends RecordDataModelService<Student> {
   async updatePDSentDate(studentId: number): Promise<Student> {
     // get the Student Object
     const studentToUpdate = await this.repo.findOneOrFail({
-      id: studentId,
+      where: {
+        id: studentId,
+      },
     });
     if (studentToUpdate) {
       // Date in UTC
@@ -249,7 +251,9 @@ export class StudentService extends RecordDataModelService<Student> {
   ): Promise<Student> {
     // get the Student Object
     const studentToUpdate = await this.repo.findOneOrFail({
-      id: studentId,
+      where: {
+        id: studentId,
+      },
     });
     if (studentToUpdate) {
       studentToUpdate.studentPDVerified = status;
@@ -353,8 +357,11 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param note
    */
   async saveStudentNote(studentId: number, note: Note): Promise<void> {
-    const student = await this.repo.findOne(studentId, {
-      relations: ["notes"],
+    const student = await this.repo.findOne({
+      where: { id: studentId },
+      relations: {
+        notes: true,
+      },
     });
     student.notes.push(note);
     await this.repo.save(student);
