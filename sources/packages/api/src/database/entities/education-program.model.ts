@@ -14,6 +14,16 @@ import { ProgramIntensity } from "./program-intensity.type";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
+ * Represents the approval status for a program also stored
+ * on column approval_status on table education_programs.
+ */
+export enum ProgramStatus {
+  Approved = "Approved",
+  Pending = "Pending",
+  Declined = "Declined",
+}
+
+/**
  * The main resource table to store education programs related information.
  * Tombstone information to education programs shared across institution locations.
  */
@@ -159,6 +169,10 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "program_status",
+    nullable: false,
+    type: "enum",
+    enum: ProgramStatus,
+    enumName: "ProgramStatus",
   })
   programStatus: ProgramStatus;
   /**
@@ -376,14 +390,4 @@ export class EducationProgram extends RecordDataModel {
     referencedColumnName: "id",
   })
   submittedBy: User;
-}
-
-/**
- * Represents the approval status for a program also stored
- * on column approval_status on table education_programs.
- */
-export enum ProgramStatus {
-  Approved = "Approved",
-  Pending = "Pending",
-  Declined = "Declined",
 }
