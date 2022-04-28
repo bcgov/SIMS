@@ -68,5 +68,5 @@ export interface SaveOfferingModel {
   assessedDate?: Date;
   submittedDate?: Date;
   offeringStatus: OfferingStatus;
-  offeringType?: OfferingTypes;
+  offeringType: OfferingTypes;
 }

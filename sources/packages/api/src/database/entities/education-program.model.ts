@@ -327,9 +327,9 @@ export class EducationProgram extends RecordDataModel {
   @Column({
     name: "assessed_date",
     type: "timestamptz",
-    nullable: false,
+    nullable: true,
   })
-  assessedDate: Date;
+  assessedDate?: Date;
 
   /**
    * Effective End date of the approved Education program.
