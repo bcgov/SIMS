@@ -18,7 +18,7 @@ import {
   Groups,
 } from "../../auth/decorators";
 import {
-  ProgramOfferingBaseDTO,
+  SaveOfferingDTO,
   ProgramOfferingDto,
   ProgramOfferingDetailsDto,
   transformToProgramOfferingDto,
@@ -60,7 +60,7 @@ export class EducationProgramOfferingController extends BaseController {
   @HasLocationAccess("locationId")
   @Post("location/:locationId/education-program/:programId")
   async create(
-    @Body() payload: ProgramOfferingBaseDTO,
+    @Body() payload: SaveOfferingDTO,
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @UserToken() userToken: IInstitutionUserToken,
@@ -87,7 +87,6 @@ export class EducationProgramOfferingController extends BaseController {
       await this.programOfferingService.createEducationProgramOffering(
         locationId,
         programId,
-        userToken.userId,
         submissionResult.data.data,
       );
     return { id: createdProgramOffering.id };
@@ -165,7 +164,7 @@ export class EducationProgramOfferingController extends BaseController {
     "location/:locationId/education-program/:programId/offering/:offeringId",
   )
   async updateProgramOffering(
-    @Body() payload: ProgramOfferingBaseDTO,
+    @Body() payload: SaveOfferingDTO,
     @UserToken() userToken: IInstitutionUserToken,
     @Param("locationId") locationId: number,
     @Param("programId") programId?: number,
@@ -203,7 +202,6 @@ export class EducationProgramOfferingController extends BaseController {
         locationId,
         programId,
         offeringId,
-        userToken.userId,
         updatingResult.data.data,
       );
     return updateProgramOffering.affected;

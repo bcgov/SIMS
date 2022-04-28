@@ -36,11 +36,7 @@ import {
   EducationProgramsSummary,
 } from "../../services/education-program/education-program.service.models";
 import { SubsetEducationProgramDto } from "./models/summary-education-program.dto";
-import {
-  EducationProgram,
-  OfferingTypes,
-  ProgramStatus,
-} from "../../database/entities";
+import { EducationProgram, OfferingTypes } from "../../database/entities";
 import { OptionItem } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
@@ -50,7 +46,6 @@ import {
   DEFAULT_PAGE_LIMIT,
   PaginatedResults,
   getISODateOnlyString,
-  getIDIRUserFullName,
   getUserFullName,
 } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
@@ -216,11 +211,7 @@ export class EducationProgramController extends BaseController {
       // ministry user uses IDIR. Program will always denied by
       // ministry user (i.e IDIR). Will need to update in future as
       // proper decision is taken
-      assessedBy:
-        educationProgram.effectiveEndDate ||
-        educationProgram.programStatus === ProgramStatus.Declined
-          ? getIDIRUserFullName(educationProgram.assessedBy)
-          : getUserFullName(educationProgram.assessedBy),
+      assessedBy: getUserFullName(educationProgram.assessedBy),
     };
 
     return programDetails;

@@ -5,7 +5,6 @@ import {
 } from "../../../database/entities";
 import {
   credentialTypeToDisplay,
-  getIDIRUserFullName,
   getISODateOnlyString,
   getUserFullName,
 } from "../../../utilities";
@@ -133,11 +132,7 @@ export const transformToEducationProgramData = (
     // ministry user uses IDIR. Program will always denied by
     // ministry user (i.e IDIR). Will need to update in future as
     // proper decision is taken
-    assessedBy:
-      program.effectiveEndDate ||
-      program.programStatus === ProgramStatus.Declined
-        ? getIDIRUserFullName(program.assessedBy)
-        : getUserFullName(program.assessedBy),
+    assessedBy: getUserFullName(program.assessedBy),
   };
 
   return programDetails;

@@ -6,7 +6,6 @@ import {
   OfferingTypes,
   OfferingIntensity,
   ProgramStatus,
-  User,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
@@ -39,13 +38,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async createEducationProgramOffering(
     locationId: number,
     programId: number,
-    userId: number,
     educationProgramOffering: SaveOfferingModel,
   ): Promise<EducationProgramOffering> {
     const programOffering = this.populateProgramOffering(
       locationId,
       programId,
-      userId,
       educationProgramOffering,
     );
     return this.repo.save(programOffering);
@@ -204,13 +201,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     offeringId: number,
-    userId: number,
     educationProgramOffering: SaveOfferingModel,
   ): Promise<UpdateResult> {
     const programOffering = this.populateProgramOffering(
       locationId,
       programId,
-      userId,
       educationProgramOffering,
     );
     return this.repo.update(offeringId, programOffering);
@@ -219,7 +214,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   private populateProgramOffering(
     locationId: number,
     programId: number,
-    userId: number,
     educationProgramOffering: SaveOfferingModel,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
@@ -261,8 +255,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       educationProgramOffering.offeringDeclaration;
     programOffering.offeringType = educationProgramOffering.offeringType;
     programOffering.offeringStatus = educationProgramOffering.offeringStatus;
-    programOffering.assessedBy = { id: userId } as User;
-    programOffering.assessedDate = new Date();
     return programOffering;
   }
 

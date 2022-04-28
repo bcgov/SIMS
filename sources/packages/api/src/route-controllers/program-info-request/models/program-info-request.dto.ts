@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsInt, Min, IsOptional } from "class-validator";
-import { ProgramOfferingBaseDTO } from "../../education-program-offering/models/education-program-offering.dto";
+import { SaveOfferingDTO } from "../../education-program-offering/models/education-program-offering.dto";
 import { ProgramInfoStatus } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 
-export interface CompleteProgramInfoRequestDto extends ProgramOfferingBaseDTO {
+export interface CompleteProgramInfoRequestDto extends SaveOfferingDTO {
   selectedProgram?: number;
   selectedOffering?: number;
 }

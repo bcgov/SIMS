@@ -3,7 +3,7 @@ import { OfferingIntensity } from "../../../database/entities/offering-intensity
 import { StudyBreak } from "../../../database/entities/education-program-offering.model";
 import { ProgramOfferingModel } from "../../../services/education-program-offering/education-program-offering.service.models";
 
-export interface ProgramOfferingBaseDTO {
+export interface SaveOfferingDTO {
   offeringName: string;
   studyStartDate: Date;
   studyEndDate: Date;
@@ -26,7 +26,6 @@ export interface ProgramOfferingBaseDTO {
   offeringDeclaration: boolean;
   assessedBy?: string;
   assessedDate?: Date;
-  submittedDate?: Date;
   offeringStatus: OfferingStatus;
   offeringType: OfferingTypes;
 }
@@ -45,8 +44,33 @@ export class EducationProgramOfferingDto {
 /**
  * View only DTO for program offering.
  */
-export interface ProgramOfferingDto extends ProgramOfferingBaseDTO {
+export interface ProgramOfferingDto {
   id: number;
+  offeringName: string;
+  studyStartDate: Date;
+  studyEndDate: Date;
+  actualTuitionCosts: number;
+  programRelatedCosts: number;
+  mandatoryFees: number;
+  exceptionalExpenses: number;
+  tuitionRemittanceRequestedAmount: number;
+  offeringDelivered: string;
+  lacksStudyDates: boolean;
+  lacksStudyBreaks: boolean;
+  lacksFixedCosts: boolean;
+  tuitionRemittanceRequested: string;
+  offeringIntensity: OfferingIntensity;
+  yearOfStudy: number;
+  showYearOfStudy?: boolean;
+  hasOfferingWILComponent: string;
+  offeringWILType?: string;
+  studyBreaks?: StudyBreak[];
+  offeringDeclaration: boolean;
+  assessedBy?: string;
+  assessedDate?: Date;
+  submittedDate: Date;
+  offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
 }
 
 export interface ProgramOfferingDetailsDto {

@@ -34,7 +34,7 @@
       />
       <div
         class="mx-2 vertical-divider"
-        v-if="educationProgram.assessedBy"
+        v-if="educationProgram.assessedDate"
       ></div>
       <header-title-value
         title="Approved"
