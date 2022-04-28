@@ -12,7 +12,7 @@ export enum OfferingTypes {
    */
   Private = "Private",
   /**
-   * Offering created for change in scholastic standing.
+   * Offering created for a change in scholastic standing reported by institution.
    */
   ScholasticStanding = "Scholastic Standing",
 }
