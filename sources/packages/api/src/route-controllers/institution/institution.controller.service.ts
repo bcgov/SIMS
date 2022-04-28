@@ -1,38 +1,31 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from "@nestjs/common";
-import { InstitutionService, FormService } from "../../services";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InstitutionService } from "../../services";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
   getExtendedDateFormat,
+  transformToInstitutionUserRespDto,
+  PaginationOptions,
+  PaginatedResults,
 } from "../../utilities";
-import {
-  InstitutionDetailDTO,
-  InstitutionContactDTO,
-  InstitutionProfileDTO,
-} from "./models/institution.dto";
-import { FormNames } from "../../services/form/constants";
+import { InstitutionUser } from "../../database/entities";
+import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
+import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
 
 /**
  * Service/Provider for Institutions controller to wrap the common methods.
  */
 @Injectable()
 export class InstitutionControllerService {
-  constructor(
-    private readonly institutionService: InstitutionService,
-    private readonly formService: FormService,
-  ) {}
+  constructor(private readonly institutionService: InstitutionService) {}
 
   /**
    * Get institution detail.
    * @param institutionId
-   * @returns InstitutionDetailDTO
+   * @returns Institution details.
    */
   async getInstitutionDetail(
     institutionId: number,
-  ): Promise<InstitutionDetailDTO> {
+  ): Promise<InstitutionDetailAPIOutDTO> {
     const institutionDetail =
       await this.institutionService.getInstitutionDetailById(institutionId);
 
@@ -75,20 +68,26 @@ export class InstitutionControllerService {
   }
 
   /**
-   * Validate dry run submission.
-   * @param payload form data to validate.
+   * Get institution users with page, sort and search.
+   * @param institutionId
+   * @param paginationOptions
+   * @returns Institution Users.
    */
-  async validateDryRunSubmissionForUpdate(
-    payload: InstitutionContactDTO | InstitutionProfileDTO,
-  ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.InstitutionProfile,
-      payload,
-    );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to update institution due to an invalid request.",
+  async getInstitutionUsers(
+    institutionId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
+    const [institutionUsers, count] =
+      await this.institutionService.getInstitutionUsers(
+        institutionId,
+        paginationOptions,
       );
-    }
+
+    return {
+      results: institutionUsers.map((eachInstitutionUser: InstitutionUser) => {
+        return transformToInstitutionUserRespDto(eachInstitutionUser);
+      }),
+      count: count,
+    };
   }
 }

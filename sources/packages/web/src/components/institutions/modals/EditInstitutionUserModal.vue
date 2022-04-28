@@ -113,13 +113,15 @@ import Dropdown from "primevue/dropdown";
 import InputSwitch from "primevue/inputswitch";
 import { useToastMessage } from "@/composables";
 import {
-  InstitutionLocationUserAuthDto,
   InstitutionUserAuthDetails,
-  InstitutionAuth,
-  UserAuth,
   LEGAL_SIGNING_AUTHORITY_EXIST,
   LEGAL_SIGNING_AUTHORITY_MSG,
 } from "@/types";
+
+import {
+  InstitutionUserAPIOutDTO,
+  UserRoleOptionAPIOutDTO,
+} from "@/services/http/dto";
 
 export default {
   components: { Dialog, Dropdown, InputSwitch },
@@ -143,7 +145,7 @@ export default {
   },
   emits: ["updateShowEditInstitutionModal", "getAllInstitutionUsers"],
   setup(props: any, context: any) {
-    const userData = ref({} as InstitutionLocationUserAuthDto);
+    const userData = ref({} as InstitutionUserAPIOutDTO);
     const isAdmin = ref(false);
     const toast = useToastMessage();
     const invalidUserType = ref(false);
@@ -151,7 +153,10 @@ export default {
     const institutionLocationList = ref();
     const payLoad = ref({} as InstitutionUserAuthDetails);
     /**Initialized with default value */
-    const selectedAdminRole = ref({ name: "admin", code: "admin" } as UserAuth);
+    const selectedAdminRole = ref({
+      name: "admin",
+      code: "admin",
+    } as UserRoleOptionAPIOutDTO);
 
     const closeEditUser = async () => {
       context.emit("updateShowEditInstitutionModal");
@@ -206,7 +211,7 @@ export default {
           );
 
         const adminAuth = userData.value.authorizations?.find(
-          (role: InstitutionAuth) => role.authType?.type === "admin",
+          (role) => role.authType?.type === "admin",
         );
 
         if (adminAuth) {

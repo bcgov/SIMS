@@ -10,7 +10,6 @@ export * from "@/types/contracts/institution/CreateInstitutionDto";
 export * from "@/types/contracts/institution/ProfileContract";
 export * from "@/types/contracts/institution/InstitutionLocation";
 export * from "@/types/contracts/institution/InstitutionUser";
-export * from "@/types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
 export * from "@/types/contracts/institution/EducationProgramDto";
 export * from "@/types/contracts/institution/EducationProgramOfferingDto";
 export * from "@/types/contracts/OfferingContact";

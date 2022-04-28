@@ -122,10 +122,10 @@ import InputSwitch from "primevue/inputswitch";
 import { useToastMessage } from "@/composables";
 import {
   InstitutionUserAuthDetails,
-  UserAuth,
   LEGAL_SIGNING_AUTHORITY_EXIST,
   LEGAL_SIGNING_AUTHORITY_MSG,
 } from "@/types";
+import { UserRoleOptionAPIOutDTO } from "@/services/http/dto";
 import Message from "primevue/message";
 
 export default {
@@ -153,11 +153,14 @@ export default {
     const invalidName = ref(false);
     const invalidUserType = ref(false);
     const display = ref(true);
-    const selectUser = ref({} as UserAuth);
+    const selectUser = ref({} as UserRoleOptionAPIOutDTO);
     const usersList = ref();
     const institutionLocationList = ref();
     const payLoad = ref({} as InstitutionUserAuthDetails);
-    const selectedAdminRole = ref({ name: "admin", code: "admin" } as UserAuth);
+    const selectedAdminRole = ref({
+      name: "admin",
+      code: "admin",
+    } as UserRoleOptionAPIOutDTO);
     const getInstitutionLocationList = async () => {
       //Get Institution Locations
       institutionLocationList.value =
@@ -165,7 +168,7 @@ export default {
     };
 
     const closeAddUser = async () => {
-      selectUser.value = { name: "", code: "", id: "" };
+      selectUser.value = { name: "", code: "" };
       isAdmin.value = false;
       invalidName.value = false;
       await getInstitutionLocationList();

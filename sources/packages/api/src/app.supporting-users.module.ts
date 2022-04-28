@@ -13,6 +13,8 @@ import {
   UserService,
   WorkflowActionsService,
   WorkflowService,
+  GCNotifyService,
+  GCNotifyActionsService,
 } from "./services";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -35,6 +37,8 @@ import { LoggerModule } from "./logger/logger.module";
     WorkflowService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
+    GCNotifyService,
+    GCNotifyActionsService,
   ],
 })
 export class AppSupportingUsersModule {}

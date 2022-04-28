@@ -17,9 +17,9 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
+import { InstitutionBasicAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
-import { BasicInstitutionInfo } from "@/types";
 
 export default {
   components: { StatusChipDesignationAgreement },
@@ -32,7 +32,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
 
-    const institutionBasicDetail = ref({} as BasicInstitutionInfo);
+    const institutionBasicDetail = ref({} as InstitutionBasicAPIOutDTO);
     // TODO: replace all fa isons with fas as per figma with replace with vuetify3
     const items = ref([
       {

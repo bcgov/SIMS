@@ -189,10 +189,10 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
     record.append("E"); // Indicates if e-cert or paper certificate E=E-cert; P=Paper.
     record.appendDate(this.dateOfBirth, DATE_FORMAT);
     record.appendWithEndFiller(this.lastName, 25, SPACE_FILLER);
-    record.appendWithEndFiller(this.firstName || "", 15, SPACE_FILLER);
+    record.appendWithEndFiller(this.firstName ?? "", 15, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 3); // Initials, optional, not provided.
     record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);
-    record.appendWithEndFiller(this.addressLine2 || "", 40, SPACE_FILLER);
+    record.appendWithEndFiller(this.addressLine2 ?? "", 40, SPACE_FILLER);
     record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 4); // Province, optional, not provided.
     record.repeatAppend(SPACE_FILLER, 16); // Postal code, optional, not provided.
@@ -208,7 +208,7 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
     record.repeatAppend(SPACE_FILLER, 20); // Alternate Phone Number, optional, not provided.
     record.append(this.gender, 1);
     record.append(this.maritalStatus, 1);
-    record.appendWithEndFiller(this.studentNumber || "", 12, SPACE_FILLER);
+    record.appendWithEndFiller(this.studentNumber ?? "", 12, SPACE_FILLER);
     record.append("E"); // Student’s language preference E= English, F= French.
     record.appendWithStartFiller(this.totalGrantAmount, 6, NUMBER_FILLER);
     // Add the list of awards codes and values that always fill the same amount

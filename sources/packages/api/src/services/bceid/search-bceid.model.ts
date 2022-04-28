@@ -35,8 +35,8 @@ export class SearchAccountOptions {
  * Pagination options allowed on BCeID Web Service search request.
  */
 export class PaginationOptions {
-  pageSize?: Number = PAGINATION_MAX_PAGE_SIZE;
-  pageIndex?: Number = PAGINATION_FIRST_PAGE_INDEX;
+  pageSize?: number = PAGINATION_MAX_PAGE_SIZE;
+  pageIndex?: number = PAGINATION_FIRST_PAGE_INDEX;
 }
 
 /**

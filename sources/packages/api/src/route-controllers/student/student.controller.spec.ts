@@ -20,6 +20,8 @@ import {
   SINValidationService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
+  GCNotifyService,
+  GCNotifyActionsService,
 } from "../../services";
 import { StudentController } from "./student.controller";
 import { DatabaseModule } from "../../database/database.module";
@@ -54,6 +56,8 @@ describe("StudentController", () => {
         SINValidationService,
         SFASApplicationService,
         SFASPartTimeApplicationsService,
+        GCNotifyService,
+        GCNotifyActionsService,
       ],
       controllers: [StudentController],
     }).compile();

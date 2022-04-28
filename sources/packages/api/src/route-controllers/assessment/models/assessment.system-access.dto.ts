@@ -13,21 +13,23 @@ import {
   Min,
   ValidateNested,
 } from "class-validator";
+import { DynamicAPIOutDTO } from "../../../route-controllers/models/common.dto";
 import {
   ProgramInfoStatus,
   ApplicationData,
   AssessmentTriggerType,
   DisbursementValueType,
   AssessmentStatus,
+  SupportingUserType,
 } from "../../../database/entities";
 
-export class ProgramYearDetails {
+export class ProgramYearAPIOutDTO {
   programYear: string;
   startDate: Date;
   endDate: Date;
 }
 
-export class ApplicationOfferingDetails {
+export class ApplicationOfferingAPIOutDTO {
   id: number;
   studyStartDate: Date;
   studyEndDate: Date;
@@ -40,28 +42,41 @@ export class ApplicationOfferingDetails {
   offeringIntensity: string;
 }
 
-export class ApplicationProgramDetails {
+export class ApplicationProgramAPIOutDTO {
   programCredentialType: string;
   programLength: string;
 }
 
-export class ApplicationInstitutionDetails {
+export class ApplicationInstitutionAPIOutDTO {
   institutionType: string;
 }
 
-export class ApplicationLocationDetails {
+export class ApplicationLocationAPIOutDTO {
   institutionLocationProvince: string;
 }
 
-export class ApplicationStudentDetails {
+export class ApplicationStudentAPIOutDTO {
   studentPDStatus?: boolean;
+  craReportedIncome?: number;
+  taxYear?: number;
+}
+
+export class SupportingUserAPIOutDTO {
+  id: number;
+  supportingUserType: SupportingUserType;
+  supportingData?: any;
+  craReportedIncome?: number;
+}
+
+export class StudentAppealRequestAPIOutDTO {
+  submittedData: any;
 }
 
 /**
  * Assessment and application information used as a main
  * source of data for assessment workflow process.
  */
-export class ApplicationAssessmentDTO {
+export class ApplicationAssessmentAPIOutDTO {
   /**
    * Origin of the assessment.
    */
@@ -73,27 +88,37 @@ export class ApplicationAssessmentDTO {
   /**
    * Details of the program year associated with the student application.
    */
-  programYear: ProgramYearDetails;
+  programYear: ProgramYearAPIOutDTO;
   /**
    * Offering details for student application.
    */
-  offering: ApplicationOfferingDetails;
+  offering: ApplicationOfferingAPIOutDTO;
   /**
    * Program details for student application.
    */
-  program: ApplicationProgramDetails;
+  program: ApplicationProgramAPIOutDTO;
   /**
    * Institution details for student application.
    */
-  institution: ApplicationInstitutionDetails;
+  institution: ApplicationInstitutionAPIOutDTO;
   /**
    * Location details for student application.
    */
-  location: ApplicationLocationDetails;
+  location: ApplicationLocationAPIOutDTO;
   /**
    * Student details for student application.
    */
-  student: ApplicationStudentDetails;
+  student: ApplicationStudentAPIOutDTO;
+  /**
+   * Supporting users associated with this application.
+   */
+  @Type(() => SupportingUserAPIOutDTO)
+  supportingUsers: DynamicAPIOutDTO<SupportingUserAPIOutDTO>;
+  /**
+   * Approved student appeals requests.
+   */
+  @Type(() => StudentAppealRequestAPIOutDTO)
+  appeals: DynamicAPIOutDTO<StudentAppealRequestAPIOutDTO>;
 }
 
 export class UpdateProgramInfoDTO {

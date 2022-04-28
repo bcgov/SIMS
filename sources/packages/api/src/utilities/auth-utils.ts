@@ -82,8 +82,8 @@ export const getIDIRUserFullName = (user: {
 }): string => {
   const seperator = user && user.firstName && user.lastName ? "," : "";
   return user
-    ? `${(user.lastName || "").trim()}${seperator} ${(
-        user.firstName || ""
+    ? `${(user.lastName ?? "").trim()}${seperator} ${(
+        user.firstName ?? ""
       ).trim()}`
     : "";
 };

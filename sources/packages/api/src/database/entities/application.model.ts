@@ -9,12 +9,14 @@ import {
   RelationId,
 } from "typeorm";
 import {
+  CRAIncomeVerification,
   EducationProgram,
   InstitutionLocation,
   MSFAANumber,
   OfferingIntensity,
   PIRDeniedReason,
   RelationshipStatus,
+  SupportingUser,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { ApplicationStudentFile } from "./application-student-file.model";
@@ -264,6 +266,33 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   currentAssessment?: StudentAssessment;
+  /**
+   * All supporting users related to the application.
+   * These users (parents/partner) will be created as needed during
+   * the execution of the original assessment workflow processing.
+   */
+  @OneToMany(
+    () => SupportingUser,
+    (supportingUser) => supportingUser.application,
+    {
+      eager: false,
+      cascade: false,
+      nullable: true,
+    },
+  )
+  supportingUsers?: SupportingUser[];
+  /**
+   * CRA income verifications associated with this application.
+   * The records are created once the student submits the application
+   * and the workflow is executed for the first time (Original Assessment)
+   * and also when supporting users submits its data.
+   */
+  @OneToMany(
+    () => CRAIncomeVerification,
+    (craIncomeVerification) => craIncomeVerification.application,
+    { eager: false, cascade: false, nullable: true },
+  )
+  craIncomeVerifications?: CRAIncomeVerification[];
 }
 
 /**

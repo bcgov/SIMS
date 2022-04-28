@@ -10,12 +10,12 @@ import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-ac
 import { Type } from "class-transformer";
 
 import { DesignationStatus } from "../../../route-controllers/institution-locations/models/institution-location.dto";
-import { AddressInDTO, AddressOutDTO } from "../../models/common.dto";
+import { AddressAPIInDTO, AddressAPIOutDTO } from "../../models/common.dto";
 
 /**
  * DTO object for institution creation.
  */
-export class CreateInstitutionDto {
+export class InstitutionFormAPIInDTO {
   @IsNotEmpty()
   userEmail: string;
   @IsOptional()
@@ -28,7 +28,7 @@ export class CreateInstitutionDto {
   website: string;
   @IsOptional()
   regulatingBody: string;
-  @IsNotEmpty()
+  @IsDate()
   establishedDate: Date;
   //TODO Can be broken into a different DTO if needed
   //Institutions Primary Contact Information
@@ -54,11 +54,11 @@ export class CreateInstitutionDto {
   country: string;
   @IsNotEmpty()
   postalCode: string;
-  @IsNotEmpty()
+  @IsPositive()
   institutionType: number;
 }
 
-export class InstitutionDto extends PartialType(CreateInstitutionDto) {
+export class InstitutionDto extends PartialType(InstitutionFormAPIInDTO) {
   @IsOptional()
   userEmail?: string;
 
@@ -75,7 +75,7 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
   institutionTypeName: string;
 }
 
-export class InstitutionContactDTO {
+export class InstitutionContactAPIInDTO {
   @IsNotEmpty()
   primaryContactEmail: string;
   @IsNotEmpty()
@@ -85,11 +85,19 @@ export class InstitutionContactDTO {
   @IsNotEmpty()
   primaryContactPhone: string;
   @ValidateNested()
-  @Type(() => AddressInDTO)
-  mailingAddress: AddressInDTO;
+  @Type(() => AddressAPIInDTO)
+  mailingAddress: AddressAPIInDTO;
 }
 
-export class InstitutionProfileDTO extends InstitutionContactDTO {
+export class InstitutionContactAPIOutDTO {
+  primaryContactEmail: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactPhone: string;
+  mailingAddress: AddressAPIOutDTO;
+}
+
+export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   @IsNotEmpty()
   operatingName: string;
   @IsNotEmpty()
@@ -106,14 +114,24 @@ export class InstitutionProfileDTO extends InstitutionContactDTO {
   institutionType: number;
 }
 
-export class InstitutionDetailDTO extends InstitutionProfileDTO {
+export class InstitutionProfileAPIOutDTO extends InstitutionContactAPIOutDTO {
+  operatingName: string;
+  primaryPhone: string;
+  primaryEmail: string;
+  website: string;
+  regulatingBody: string;
+  establishedDate: Date;
+  institutionType: number;
+}
+
+export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
   legalOperatingName: string;
   formattedEstablishedDate?: string;
   institutionTypeName?: string;
   isBCPrivate?: boolean;
 }
 
-export interface BasicInstitutionInfo {
+export class InstitutionBasicAPIOutDTO {
   operatingName: string;
   designationStatus: DesignationStatus;
 }
@@ -124,9 +142,9 @@ export interface InstitutionDetailDto {
   isBCPrivate?: boolean;
 }
 
-export interface SearchInstitutionRespDto {
+export class SearchInstitutionAPIOutDTO {
   id: number;
   legalName: string;
   operatingName: string;
-  address: AddressOutDTO;
+  address: AddressAPIOutDTO;
 }

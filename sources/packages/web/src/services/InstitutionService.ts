@@ -1,32 +1,21 @@
 import {
   Institute,
-  SearchInstitutionResp,
-  BasicInstitutionInfo,
   AESTInstitutionProgramsSummaryDto,
-} from "../types/contracts/InstituteContract";
+  PaginationParams,
+} from "@/types";
 import {
-  InstitutionDto,
   EducationProgram,
   InstitutionLocationsDetails,
   InstitutionUserAuthDetails,
-  InstitutionUserResDto,
   InstitutionUserViewModel,
-  InstitutionUserDto,
   UserPermissionDto,
   InstitutionUserRoleLocation,
-  UserAuth,
   InstitutionUserWithUserType,
   OptionItemDto,
   DataTableSortOrder,
-  UserFields,
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  InstitutionUserAndCount,
   InstitutionUserAndCountForDataTable,
-  FieldSortOrder,
   PaginatedResults,
-  InstitutionDetailDTO,
-  InstitutionContactDTO,
+  PaginationOptions,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -36,8 +25,18 @@ import {
   InstitutionLocationAPIOutDTO,
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
+  InstitutionDetailAPIOutDTO,
+  InstitutionContactAPIInDTO,
+  InstitutionUserAPIOutDTO,
+  SearchInstitutionAPIOutDTO,
+  InstitutionBasicAPIOutDTO,
+  InstitutionFormAPIInDTO,
+  InstitutionUserTypeAndRoleAPIOutDTO,
+  InstitutionUserAPIInDTO,
+  UserRoleOptionAPIOutDTO,
   ScholasticStandingDataAPIInDTO,
 } from "@/services/http/dto";
+import { addPaginationOptions, addSortOptions } from "@/helpers";
 
 export class InstitutionService {
   // Share Instance
@@ -73,12 +72,12 @@ export class InstitutionService {
     return [];
   }
 
-  public async createInstitution(data: InstitutionDto): Promise<void> {
+  public async createInstitution(data: InstitutionFormAPIInDTO): Promise<void> {
     await ApiClient.Institution.createInstitution(data);
   }
 
   public async updateInstitute(
-    data: InstitutionContactDTO,
+    data: InstitutionContactAPIInDTO,
     institutionId?: number,
   ): Promise<void> {
     await ApiClient.Institution.updateInstitution(data, institutionId);
@@ -87,7 +86,7 @@ export class InstitutionService {
   public async getDetail(
     institutionId?: number,
     authHeader?: any,
-  ): Promise<InstitutionDetailDTO> {
+  ): Promise<InstitutionDetailAPIOutDTO> {
     return ApiClient.Institution.getDetail(institutionId, authHeader);
   }
 
@@ -124,15 +123,15 @@ export class InstitutionService {
   }
 
   mapUserRolesAndLocation(
-    response: InstitutionUserResDto[],
+    response: InstitutionUserAPIOutDTO[],
   ): InstitutionUserViewModel[] {
     return response.map((institutionUser) => {
       const roleArray = institutionUser.authorizations
-        .map((auth) => auth.authType.role || "")
+        .map((auth) => auth.authType.role ?? "")
         .filter((institutionUserRole) => institutionUserRole !== "");
       const role = roleArray.length > 0 ? roleArray.join(" ") : "-";
       const locationArray = institutionUser.authorizations
-        .map((auth) => auth.location?.name || "")
+        .map((auth) => auth.location?.name ?? "")
         .filter((loc) => loc !== "");
       const userType = institutionUser.authorizations.map(
         (auth) => auth.authType.type,
@@ -162,47 +161,42 @@ export class InstitutionService {
   }
 
   /**
-   * To get the institution user summary
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchName, user's name keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
+   * To get the institution user summary.
+   * @param paginationOptions
+   * @param institutionId
    * @returns All the institution users.
    */
-  public async institutionSummary(
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    searchName?: string,
-    sortField?: UserFields,
-    sortOrder?: DataTableSortOrder,
+  public async institutionUserSummary(
+    paginationOptions: PaginationOptions,
+    institutionId?: number,
   ): Promise<InstitutionUserAndCountForDataTable> {
-    let URL = `institution/users?page=${page}&pageLimit=${pageCount}`;
-    if (searchName) {
-      URL = `${URL}&searchName=${searchName}`;
+    let url = institutionId
+      ? `institution/${institutionId}/user`
+      : "institution/user";
+    url = addPaginationOptions(
+      url,
+      paginationOptions.page,
+      paginationOptions.pageLimit,
+      "?",
+    );
+    url = addSortOptions(
+      url,
+      paginationOptions.sortField,
+      paginationOptions.sortOrder,
+    );
+
+    if (paginationOptions.searchCriteria) {
+      url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
     }
-    if (sortField && sortOrder) {
-      const sortDBOrder =
-        sortOrder === DataTableSortOrder.DESC
-          ? FieldSortOrder.DESC
-          : FieldSortOrder.ASC;
-      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-    }
-    const response: InstitutionUserAndCount =
-      await ApiClient.Institution.institutionSummary(URL);
+    const response: PaginatedResults<InstitutionUserAPIOutDTO> =
+      await ApiClient.Institution.institutionUserSummary(url);
     return {
-      users: this.mapUserRolesAndLocation(response.users),
-      totalUsers: response.totalUsers,
+      results: this.mapUserRolesAndLocation(response.results),
+      count: response.count,
     };
   }
 
-  async removeUser(id: number) {
-    return ApiClient.Institution.removeUser(id);
-  }
-
-  public async getUserTypeAndRoles() {
+  public async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleAPIOutDTO> {
     return ApiClient.Institution.getUserTypeAndRoles();
   }
 
@@ -210,7 +204,7 @@ export class InstitutionService {
     isNew: boolean,
     data: InstitutionUserAuthDetails,
   ) {
-    const payload = {} as InstitutionUserDto;
+    const payload = {} as InstitutionUserAPIInDTO;
     if (isNew) {
       payload.userId = data.userId;
     }
@@ -241,7 +235,9 @@ export class InstitutionService {
     await ApiClient.InstitutionLocation.createUser(payload);
   }
 
-  public async getInstitutionLocationUserDetails(userName: string) {
+  public async getInstitutionLocationUserDetails(
+    userName: string,
+  ): Promise<InstitutionUserAPIOutDTO> {
     return ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(
       userName,
     );
@@ -261,7 +257,7 @@ export class InstitutionService {
 
   public async prepareAddUserPayload(
     isAdmin: boolean,
-    selectUser: UserAuth,
+    selectUser: UserRoleOptionAPIOutDTO,
     adminRole: string,
     institutionLocationList: InstitutionLocationsDetails[],
   ) {
@@ -352,64 +348,24 @@ export class InstitutionService {
    * Search Institution for ministry search page.
    * @param legalName
    * @param operatingName
-   * @returns SearchInstitutionResp[]
+   * @returns Institution search result(s).
    */
   async searchInstitutions(
     legalName: string,
     operatingName: string,
-  ): Promise<SearchInstitutionResp[]> {
+  ): Promise<SearchInstitutionAPIOutDTO[]> {
     return ApiClient.Institution.searchInstitutions(legalName, operatingName);
   }
 
   /**
    * Get the Basic information of the institution for the ministry institution detail page header
    * @param institutionId
-   * @returns BasicInstitutionInfo
+   * @returns Institution basic information.
    */
   async getBasicInstitutionInfoById(
     institutionId: number,
-  ): Promise<BasicInstitutionInfo> {
+  ): Promise<InstitutionBasicAPIOutDTO> {
     return ApiClient.Institution.getBasicInstitutionInfoById(institutionId);
-  }
-
-  /**
-   * Controller method to get all institution users with the
-   * given institutionId ministry user.
-   * @param institutionId institution id
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchName, user's name keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns All the institution users for the given institution.
-   */
-  public async institutionSummaryForAEST(
-    institutionId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    searchName?: string,
-    sortField?: UserFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<InstitutionUserAndCountForDataTable> {
-    let URL = `institution/${institutionId}/user-summary?page=${page}&pageLimit=${pageCount}`;
-    if (searchName) {
-      URL = `${URL}&searchName=${searchName}`;
-    }
-    if (sortField && sortOrder) {
-      const sortDBOrder =
-        sortOrder === DataTableSortOrder.DESC
-          ? FieldSortOrder.DESC
-          : FieldSortOrder.ASC;
-      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-    }
-    const response: InstitutionUserAndCount =
-      await ApiClient.Institution.institutionSummary(URL);
-    return {
-      users: this.mapUserRolesAndLocation(response.users),
-      totalUsers: response.totalUsers,
-    };
   }
 
   /**
@@ -435,7 +391,7 @@ export class InstitutionService {
     );
   }
 
-  public async getGetAdminRoleOptions(): Promise<UserAuth[]> {
+  public async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
     return ApiClient.Institution.getGetAdminRoleOptions();
   }
 

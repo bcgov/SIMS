@@ -30,7 +30,6 @@ export abstract class ESDCFileHandler {
       3,
       NUMBER_FILLER,
     );
-    fileNameArray.append(".DAT");
     const fileName = fileNameArray.toString();
     const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
     return { fileName, filePath } as CreateRequestFileNameResult;

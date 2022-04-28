@@ -76,8 +76,8 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
+import { SearchInstitutionAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { SearchInstitutionResp } from "@/types";
 import { useToastMessage, useFormatters } from "@/composables";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
@@ -90,7 +90,7 @@ export default {
     const router = useRouter();
     const legalName = ref("");
     const operatingName = ref("");
-    const institutions = ref([] as SearchInstitutionResp[]);
+    const institutions = ref([] as SearchInstitutionAPIOutDTO[]);
     const goToViewInstitution = (institutionId: number) => {
       router.push({
         name: AESTRoutesConst.INSTITUTION_PROFILE,

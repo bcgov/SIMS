@@ -10,7 +10,10 @@ import {
   WorkflowActionsService,
   WorkflowService,
 } from "./services";
-import { AssessmentSystemAccessController } from "./route-controllers";
+import {
+  AssessmentControllerService,
+  AssessmentSystemAccessController,
+} from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 
@@ -26,6 +29,7 @@ import { LoggerModule } from "./logger/logger.module";
     DisbursementScheduleService,
     SequenceControlService,
     StudentRestrictionService,
+    AssessmentControllerService,
   ],
 })
 export class AppSystemAccessModule {}
