@@ -6,7 +6,7 @@ ALTER TABLE
     sims.education_programs_offerings
 ALTER COLUMN
     offering_type TYPE sims.offering_types_to_rollback USING CASE
-        WHEN offering_type = 'Scholastic Standing' then 'Private'
+        WHEN offering_type = 'Scholastic standing' then 'Private'
         else 'Public' :: sims.offering_types_to_rollback
     END;
 

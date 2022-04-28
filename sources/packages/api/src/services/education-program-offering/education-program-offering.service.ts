@@ -244,7 +244,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.tuitionRemittanceRequested =
       educationProgramOffering.tuitionRemittanceRequested;
     programOffering.offeringType =
-      educationProgramOffering.offeringType ?? OfferingTypes.public;
+      educationProgramOffering.offeringType ?? OfferingTypes.Public;
     programOffering.educationProgram = { id: programId } as EducationProgram;
     programOffering.institutionLocation = {
       id: locationId,
@@ -304,7 +304,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         locationId,
       })
       .andWhere("offerings.offeringType = :offeringType", {
-        offeringType: OfferingTypes.public,
+        offeringType: OfferingTypes.Public,
       })
       .andWhere(
         "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",

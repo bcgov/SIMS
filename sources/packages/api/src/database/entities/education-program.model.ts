@@ -9,19 +9,9 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { Institution, Note, User } from ".";
+import { Institution, Note, User, ProgramStatus } from ".";
 import { ProgramIntensity } from "./program-intensity.type";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
-
-/**
- * Represents the approval status for a program also stored
- * on column approval_status on table education_programs.
- */
-export enum ProgramStatus {
-  Approved = "Approved",
-  Pending = "Pending",
-  Declined = "Declined",
-}
 
 /**
  * The main resource table to store education programs related information.

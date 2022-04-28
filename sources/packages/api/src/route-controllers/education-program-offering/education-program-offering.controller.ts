@@ -133,7 +133,7 @@ export class EducationProgramOfferingController extends BaseController {
         page: page,
         pageLimit: pageLimit,
       },
-      [OfferingTypes.public, OfferingTypes.Private],
+      [OfferingTypes.Public, OfferingTypes.Private],
     );
   }
 
@@ -346,7 +346,7 @@ export class EducationProgramOfferingController extends BaseController {
         page: page,
         pageLimit: pageLimit,
       },
-      [OfferingTypes.public, OfferingTypes.Private],
+      [OfferingTypes.Public, OfferingTypes.Private],
     );
   }
 

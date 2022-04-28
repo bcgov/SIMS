@@ -10,18 +10,9 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { EducationProgram } from "./education-program.model";
 import { InstitutionLocation } from "./institution-location.model";
-import { OfferingTypes, User } from ".";
+import { OfferingTypes, User, OfferingStatus } from ".";
 import { OfferingIntensity } from "./offering-intensity.type";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
-
-/**
- * Represents the status of an offering.
- */
-export enum OfferingStatus {
-  Approved = "Approved",
-  Pending = "Pending",
-  Declined = "Declined",
-}
 
 /**
  * The main resource table to store education programs offerings related information.
@@ -159,6 +150,7 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "offering_type",
+    nullable: false,
     type: "enum",
     enum: OfferingTypes,
     enumName: "OfferingTypes",
