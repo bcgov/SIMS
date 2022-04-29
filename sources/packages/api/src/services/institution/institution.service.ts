@@ -626,9 +626,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       primaryContactPhone: updateInstitution.primaryContactPhone,
     };
 
-    institution.institutionAddress = {
-      ...updateInstitution.mailingAddress,
-    };
+    institution.institutionAddress = updateInstitution.mailingAddress;
     return this.repo.save(institution);
   }
 }

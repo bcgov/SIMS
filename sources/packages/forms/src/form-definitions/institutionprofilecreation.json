@@ -3269,7 +3269,7 @@
                                     "inputFormat": "plain",
                                     "protected": false,
                                     "dbIndex": false,
-                                    "case": "",
+                                    "case": "uppercase",
                                     "truncateMultipleSpaces": false,
                                     "encrypted": false,
                                     "redrawOn": "",
@@ -3326,7 +3326,7 @@
                                     "dataGridLabel": false,
                                     "addons": [],
                                     "inputType": "text",
-                                    "id": "ev0ba1q",
+                                    "id": "eqglbk9",
                                     "inputMaskPlaceholderChar": "",
                                     "defaultValue": ""
                                 },

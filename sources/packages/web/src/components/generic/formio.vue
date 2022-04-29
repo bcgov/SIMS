@@ -9,9 +9,8 @@ import { Formio } from "formiojs";
 import { SetupContext } from "vue";
 import ApiClient from "@/services/http/ApiClient";
 import FormUploadService from "@/services/FormUploadService";
-import { FormIOCustomEvent, FormIOHeader } from "@/types";
+import { FormIOCustomEvent } from "@/types";
 import { v4 as uuid } from "uuid";
-import { DynamicFormsService } from "@/services/DynamicFormsService";
 
 export default {
   emits: ["submitted", "loaded", "changed", "customEvent", "render"],
@@ -37,25 +36,6 @@ export default {
     // Wait to show the spinner when there is an API call.
     const hideSpinner = ref(true);
     let form: any;
-
-    // Get projectUrl and authorization to render nested forms.
-    const [projectUrl, authorization] =
-      DynamicFormsService.shared.formIOUrlAndBearerToken();
-
-    // Set projectUrl for nested forms.
-    Formio.setProjectUrl(projectUrl);
-
-    // Set authorization for projectUrl for nested forms.
-    Formio.plugins = [
-      {
-        priority: 0,
-        requestOptions: function (value: FormIOHeader) {
-          value.headers.Authorization = authorization;
-          return value;
-        },
-      },
-    ];
-
     // Update the form submission data and triggers the form redraw.
     // Redrawing ensures that components like dropdowns are going to
     // display the correct label associated with the correct value

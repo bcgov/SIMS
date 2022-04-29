@@ -26,7 +26,6 @@ import {
   InstitutionLocationService,
   LEGAL_SIGNING_AUTHORITY_EXIST,
   LEGAL_SIGNING_AUTHORITY_MSG,
-  FormService,
 } from "../../services";
 import {
   InstitutionContactAPIInDTO,
@@ -75,7 +74,6 @@ export class InstitutionInstitutionsController extends BaseController {
     private readonly userService: UserService,
     private readonly bceidAccountService: BCeIDService,
     private readonly locationService: InstitutionLocationService,
-    private readonly formService: FormService,
   ) {
     super();
   }

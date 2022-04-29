@@ -8,7 +8,7 @@ import {
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { FormService, InstitutionService } from "../../services";
+import { InstitutionService } from "../../services";
 import { Institution } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
@@ -44,7 +44,6 @@ export class InstitutionAESTController extends BaseController {
     private readonly institutionService: InstitutionService,
     private readonly institutionControllerService: InstitutionControllerService,
     private readonly locationControllerService: InstitutionLocationControllerService,
-    private readonly formService: FormService,
   ) {
     super();
   }

@@ -40,7 +40,6 @@ const ApiClient = {
   DesignationAgreement: new DesignationAgreementApi(),
   StudentAppealApi: new StudentAppealApi(),
   StudentAssessmentApi: new StudentAssessmentApi(),
-  DynamicFormsApi: new DynamicFormsApi(),
 };
 
 export default ApiClient;
