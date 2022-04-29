@@ -141,22 +141,24 @@ export default {
       await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReasonId");
     };
 
-    const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
-      if (FormIOCustomEventTypes.RouteToCreateProgram === event.type) {
-        router.push({
-          name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-          params: {
-            locationId: props.locationId,
-          },
-        });
-      }
-      if (
-        FormIOCustomEventTypes.RouteToProgramInformationRequestSummaryPage ===
-        event.type
-      ) {
-        router.push({
-          name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
-        });
+    const customEventCallback = async (
+      _form: any,
+      event: FormIOCustomEvent,
+    ) => {
+      switch (event.type) {
+        case FormIOCustomEventTypes.RouteToCreateProgram:
+          router.push({
+            name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
+            params: {
+              locationId: props.locationId,
+            },
+          });
+          break;
+        case FormIOCustomEventTypes.RouteToProgramInformationRequestSummaryPage:
+          router.push({
+            name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+          });
+          break;
       }
     };
 
