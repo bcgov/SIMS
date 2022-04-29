@@ -144,8 +144,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         scholasticStandingData.exceptionalCosts ??
         existingOffering.exceptionalExpenses;
 
-      // TODO: When new offering type is added for report a change/ scholastic standing, update this.
-      offering.offeringType = OfferingTypes.applicationSpecific;
+      offering.offeringType = OfferingTypes.ScholasticStanding;
 
       // Save new offering.
       const savedOffering = await transactionalEntityManager

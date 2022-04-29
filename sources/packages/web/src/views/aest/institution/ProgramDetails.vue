@@ -42,9 +42,9 @@ import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAn
 import { ref, onMounted, computed } from "vue";
 import {
   EducationProgramData,
-  ApprovalStatus,
   ApproveProgram,
   DeclineProgram,
+  ProgramStatus,
 } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
@@ -92,7 +92,7 @@ export default {
     };
 
     const isPendingProgram = computed(
-      () => educationProgram.value.approvalStatus === ApprovalStatus.pending,
+      () => educationProgram.value.programStatus === ProgramStatus.Pending,
     );
 
     const submitApproveProgram = async (approveProgramData: ApproveProgram) => {
