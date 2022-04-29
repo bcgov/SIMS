@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" id="Definitions_0oravyr" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0">
   <bpmn:collaboration id="Collaboration_0jlmrs2">
+    <bpmn:extensionElements />
     <bpmn:participant id="Participant_0ympl1d" name="Student Application Assessment" processRef="assessment-gateway" />
     <bpmn:group id="Group_16iez0e" categoryValueRef="CategoryValue_0ytk5an" />
     <bpmn:group id="Group_0zavlct" categoryValueRef="CategoryValue_1f4panc" />
@@ -20,7 +21,6 @@ The workflow from this point on should not rely or any variable created on the a
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0ib3qj3" sourceRef="TextAnnotation_1xcic1u" targetRef="Event_0bmmqma" />
     <bpmn:association id="Association_13ubkek" sourceRef="TextAnnotation_157fwdy" targetRef="Event_0a53uvu" />
-    <bpmn:group id="Group_0hghzz7" categoryValueRef="CategoryValue_01i6w1z" />
   </bpmn:collaboration>
   <bpmn:process id="assessment-gateway" name="Assessment Gateway" isExecutable="true">
     <bpmn:laneSet id="LaneSet_1xb2wts">
@@ -102,11 +102,8 @@ The workflow from this point on should not rely or any variable created on the a
         <bpmn:flowNodeRef>Gateway_0cadfpj</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1439h2o</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1sfa3ki</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0fcbd0j</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0a5b9bd</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1dhowms</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1vgiv0n</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0fsw7i8</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0yfnnvs</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:intermediateThrowEvent id="Event_0a53uvu" name="original-assessment-ready">
@@ -267,7 +264,6 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
               <camunda:value>supportingUsers.Parent1.supportingData.totalIncome</camunda:value>
               <camunda:value>supportingUsers.Parent2.supportingData.totalIncome</camunda:value>
               <camunda:value>supportingUsers.Partner1.supportingData.totalIncome</camunda:value>
-              <camunda:value>applicationId</camunda:value>
             </camunda:list>
           </camunda:inputParameter>
           <camunda:inputParameter name="errorCodeName">SIMS-GET-ASSESSMENT-ERROR</camunda:inputParameter>
@@ -286,7 +282,6 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
           <camunda:outputParameter name="supportingUserPartnerTotalIncome">${supportingUsers_Partner1_supportingData_totalIncome}</camunda:outputParameter>
           <camunda:outputParameter name="supportingUserParent1TotalIncome">${supportingUsers_Parent1_supportingData_totalIncome}</camunda:outputParameter>
           <camunda:outputParameter name="supportingUserParent2TotalIncome">${supportingUsers_Parent2_supportingData_totalIncome}</camunda:outputParameter>
-          <camunda:outputParameter name="applicationId">${applicationId}</camunda:outputParameter>
         </camunda:inputOutput>
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="javascript">execution.setVariable('error_retry', execution.getVariable("error_retry") + 1);</camunda:script>
@@ -638,7 +633,6 @@ ${workflowIdErrorMsg}</camunda:inputParameter>
               <camunda:value>supportingUsers.Partner1.craReportedIncome</camunda:value>
               <camunda:value>appeals.studentIncomeAppeal.submittedData</camunda:value>
               <camunda:value>appeals.partnerIncomeAppeal.submittedData</camunda:value>
-              <camunda:value>applicationId</camunda:value>
             </camunda:list>
           </camunda:inputParameter>
           <camunda:inputParameter name="errorCodeName">SIMS-GET-ASSESSMENT-FULL-DATA-ERROR</camunda:inputParameter>
@@ -720,7 +714,6 @@ ${workflowIdErrorMsg}</camunda:inputParameter>
           <camunda:outputParameter name="partnerCRAReportedIncome">${supportingUsers_Partner1_craReportedIncome}</camunda:outputParameter>
           <camunda:outputParameter name="studentIncomeAppealData">${appeals_studentIncomeAppeal_submittedData}</camunda:outputParameter>
           <camunda:outputParameter name="partnerIncomeAppealData">${appeals_partnerIncomeAppeal_submittedData}</camunda:outputParameter>
-          <camunda:outputParameter name="applicationId">${applicationId}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0t5tfgt</bpmn:incoming>
@@ -1399,7 +1392,7 @@ execution.setVariable("isProgramOnline", isProgramOnline);</camunda:script>
     </bpmn:exclusiveGateway>
     <bpmn:scriptTask id="Activity_1kdsiru" name="Sum Parents Assets" scriptFormat="javascript">
       <bpmn:incoming>Flow_0aejdhj</bpmn:incoming>
-      <bpmn:outgoing>Flow_0h542gm</bpmn:outgoing>
+      <bpmn:outgoing>Flow_03tbno7</bpmn:outgoing>
       <bpmn:script>var parent1NetAssests = 0;
 var parent2NetAssests = 0;
 if (execution.getVariable("parent1NetAssests")) {
@@ -1601,42 +1594,57 @@ execution.setVariable('error_retry', 0);</camunda:script>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_00037dm" sourceRef="Activity_1sfa3ki" targetRef="Gateway_06w4wzo" />
     <bpmn:sequenceFlow id="Flow_0ljan8f" sourceRef="Activity_1439h2o" targetRef="Gateway_06w4wzo" />
+    <bpmn:subProcess id="Activity_0fcbd0j" name="Student Appeals">
+      <bpmn:incoming>Flow_03tbno7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1795ldb</bpmn:outgoing>
+      <bpmn:inclusiveGateway id="Gateway_1maom06">
+        <bpmn:incoming>Flow_0yyg20c</bpmn:incoming>
+        <bpmn:incoming>Flow_07yodei</bpmn:incoming>
+        <bpmn:incoming>Flow_1l4516i</bpmn:incoming>
+        <bpmn:outgoing>Flow_0shslxe</bpmn:outgoing>
+      </bpmn:inclusiveGateway>
+      <bpmn:inclusiveGateway id="Gateway_0a0pk8j" name="AppealsGateway">
+        <bpmn:incoming>Flow_016p9rr</bpmn:incoming>
+        <bpmn:outgoing>Flow_1l4516i</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1xkk95c</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0w0594x</bpmn:outgoing>
+      </bpmn:inclusiveGateway>
+      <bpmn:scriptTask id="Activity_0rqehim" name="Student Income Appeal" scriptFormat="javascript">
+        <bpmn:incoming>Flow_1xkk95c</bpmn:incoming>
+        <bpmn:outgoing>Flow_0yyg20c</bpmn:outgoing>
+        <bpmn:script>var appealData = S(execution.getVariable("studentIncomeAppealData"));
+execution.setVariable("studentCalculatedTotalIncome", appealData.prop("studentNewIncome").value());</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:scriptTask id="Activity_0hxqlah" name="Partner Income Appeal" scriptFormat="javascript">
+        <bpmn:incoming>Flow_0w0594x</bpmn:incoming>
+        <bpmn:outgoing>Flow_07yodei</bpmn:outgoing>
+        <bpmn:script>var appealData = S(execution.getVariable("partnerIncomeAppealData"));
+execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNewIncome").value());</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="Flow_0yyg20c" sourceRef="Activity_0rqehim" targetRef="Gateway_1maom06" />
+      <bpmn:sequenceFlow id="Flow_07yodei" sourceRef="Activity_0hxqlah" targetRef="Gateway_1maom06" />
+      <bpmn:sequenceFlow id="Flow_1l4516i" name="No Appeal Requested" sourceRef="Gateway_0a0pk8j" targetRef="Gateway_1maom06" />
+      <bpmn:sequenceFlow id="Flow_1xkk95c" name="Has Student Income Appeal" sourceRef="Gateway_0a0pk8j" targetRef="Activity_0rqehim">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${studentIncomeAppealData != null}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_0w0594x" name="Has Partner Income Appeal" sourceRef="Gateway_0a0pk8j" targetRef="Activity_0hxqlah">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${partnerIncomeAppealData != null}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:startEvent id="Event_0bpwuwl">
+        <bpmn:outgoing>Flow_016p9rr</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_03yv4wq">
+        <bpmn:incoming>Flow_0shslxe</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_016p9rr" sourceRef="Event_0bpwuwl" targetRef="Gateway_0a0pk8j" />
+      <bpmn:sequenceFlow id="Flow_0shslxe" sourceRef="Gateway_1maom06" targetRef="Event_03yv4wq" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_03tbno7" sourceRef="Activity_1kdsiru" targetRef="Activity_0fcbd0j" />
+    <bpmn:sequenceFlow id="Flow_1795ldb" sourceRef="Activity_0fcbd0j" targetRef="Event_0a5b9bd" />
     <bpmn:intermediateThrowEvent id="Event_0a5b9bd" name="ready-for-assessment">
-      <bpmn:incoming>Flow_09r0npd</bpmn:incoming>
+      <bpmn:incoming>Flow_1795ldb</bpmn:incoming>
       <bpmn:linkEventDefinition id="LinkEventDefinition_0xgxkdo" name="ready-for-assessment" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_0qs4vh0" name="Has Student Income Appeal" sourceRef="Gateway_1vgiv0n" targetRef="Activity_0fsw7i8">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${studentIncomeAppealData != null}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_13jlobe" name="Has Partner Income Appeal" sourceRef="Gateway_1vgiv0n" targetRef="Activity_0yfnnvs">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${partnerIncomeAppealData != null}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0h542gm" sourceRef="Activity_1kdsiru" targetRef="Gateway_1vgiv0n" />
-    <bpmn:inclusiveGateway id="Gateway_1dhowms">
-      <bpmn:incoming>Flow_0pnv8ia</bpmn:incoming>
-      <bpmn:incoming>Flow_1ppk975</bpmn:incoming>
-      <bpmn:outgoing>Flow_09r0npd</bpmn:outgoing>
-    </bpmn:inclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_0pnv8ia" sourceRef="Activity_0fsw7i8" targetRef="Gateway_1dhowms" />
-    <bpmn:sequenceFlow id="Flow_1ppk975" sourceRef="Activity_0yfnnvs" targetRef="Gateway_1dhowms" />
-    <bpmn:inclusiveGateway id="Gateway_1vgiv0n">
-      <bpmn:incoming>Flow_0h542gm</bpmn:incoming>
-      <bpmn:outgoing>Flow_0qs4vh0</bpmn:outgoing>
-      <bpmn:outgoing>Flow_13jlobe</bpmn:outgoing>
-    </bpmn:inclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_09r0npd" sourceRef="Gateway_1dhowms" targetRef="Event_0a5b9bd" />
-    <bpmn:scriptTask id="Activity_0fsw7i8" name="Student Income Appeal" scriptFormat="javascript">
-      <bpmn:incoming>Flow_0qs4vh0</bpmn:incoming>
-      <bpmn:outgoing>Flow_0pnv8ia</bpmn:outgoing>
-      <bpmn:script>var appealData = S(execution.getVariable("studentIncomeAppealData"));
-execution.setVariable("studentCalculatedTotalIncome", appealData.prop("studentNewIncome").value());</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:scriptTask id="Activity_0yfnnvs" name="Partner Income Appeal" scriptFormat="javascript">
-      <bpmn:incoming>Flow_13jlobe</bpmn:incoming>
-      <bpmn:outgoing>Flow_1ppk975</bpmn:outgoing>
-      <bpmn:script>var appealData = S(execution.getVariable("partnerIncomeAppealData"));
-execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNewIncome").value());</bpmn:script>
-    </bpmn:scriptTask>
     <bpmn:textAnnotation id="TextAnnotation_0xdedyz">
       <bpmn:text>This will generate (or associate) the MSFAA number that will be present in the NOA</bpmn:text>
     </bpmn:textAnnotation>
@@ -1703,9 +1711,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
   <bpmn:category id="Category_19yrylo">
     <bpmn:categoryValue id="CategoryValue_0enyoth" value="Student Income" />
   </bpmn:category>
-  <bpmn:category id="Category_1ewqi90">
-    <bpmn:categoryValue id="CategoryValue_01i6w1z" value="Appeals" />
-  </bpmn:category>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0jlmrs2">
       <bpmndi:BPMNShape id="Participant_0ympl1d_di" bpmnElement="Participant_0ympl1d" isHorizontal="true">
@@ -1723,40 +1728,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <dc:Bounds x="580" y="80" width="2036" height="1280" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_09r0npd_di" bpmnElement="Flow_09r0npd">
-        <di:waypoint x="2385" y="1706" />
-        <di:waypoint x="2522" y="1706" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1ppk975_di" bpmnElement="Flow_1ppk975">
-        <di:waypoint x="2280" y="1766" />
-        <di:waypoint x="2360" y="1766" />
-        <di:waypoint x="2360" y="1731" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0pnv8ia_di" bpmnElement="Flow_0pnv8ia">
-        <di:waypoint x="2280" y="1650" />
-        <di:waypoint x="2360" y="1650" />
-        <di:waypoint x="2360" y="1681" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0h542gm_di" bpmnElement="Flow_0h542gm">
-        <di:waypoint x="1976" y="1706" />
-        <di:waypoint x="2065" y="1706" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_13jlobe_di" bpmnElement="Flow_13jlobe">
-        <di:waypoint x="2090" y="1731" />
-        <di:waypoint x="2090" y="1766" />
-        <di:waypoint x="2180" y="1766" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2093" y="1738" width="74" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0qs4vh0_di" bpmnElement="Flow_0qs4vh0">
-        <di:waypoint x="2090" y="1681" />
-        <di:waypoint x="2090" y="1650" />
-        <di:waypoint x="2180" y="1650" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2093" y="1616" width="74" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ljan8f_di" bpmnElement="Flow_0ljan8f">
         <di:waypoint x="1460" y="1650" />
         <di:waypoint x="1588" y="1650" />
@@ -2214,6 +2185,14 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
           <dc:Bounds x="678" y="532" width="68" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03tbno7_di" bpmnElement="Flow_03tbno7">
+        <di:waypoint x="1976" y="1706" />
+        <di:waypoint x="2050" y="1706" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1795ldb_di" bpmnElement="Flow_1795ldb">
+        <di:waypoint x="2150" y="1706" />
+        <di:waypoint x="2222" y="1706" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1y0ilvy_di" bpmnElement="Event_0a53uvu">
         <dc:Bounds x="2522" y="542" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -2473,24 +2452,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmndi:BPMNShape id="BPMNShape_0l9udpn" bpmnElement="Activity_1sfa3ki">
         <dc:Bounds x="1360" y="1714" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_01rgs2a" bpmnElement="Event_0a5b9bd">
-        <dc:Bounds x="2522" y="1688" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2514" y="1731" width="60" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_16y87i3" bpmnElement="Gateway_1dhowms">
-        <dc:Bounds x="2335" y="1681" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1ymsrh4" bpmnElement="Gateway_1vgiv0n">
-        <dc:Bounds x="2065" y="1681" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0200fxt_di" bpmnElement="Activity_0fsw7i8">
-        <dc:Bounds x="2180" y="1610" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1mllhnd_di" bpmnElement="Activity_0yfnnvs">
-        <dc:Bounds x="2180" y="1726" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0xdedyz_di" bpmnElement="TextAnnotation_0xdedyz">
         <dc:Bounds x="1427" y="2700" width="130" height="70" />
       </bpmndi:BPMNShape>
@@ -2516,6 +2477,16 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0cf9yon" bpmnElement="TextAnnotation_0zowv9u" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
         <dc:Bounds x="1291" y="438" width="170" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_01rgs2a" bpmnElement="Event_0a5b9bd">
+        <dc:Bounds x="2222" y="1688" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2214" y="1731" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03z8wvb_di" bpmnElement="Activity_0fcbd0j">
+        <dc:Bounds x="2050" y="1666" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1eqxjsa_di" bpmnElement="Event_1eqxjsa">
@@ -2618,12 +2589,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <dc:Bounds x="2630" y="430" width="294" height="70" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1o9gvqp" bpmnElement="Group_0hghzz7">
-        <dc:Bounds x="2005" y="1566" width="455" height="274" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2200" y="1573" width="40" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0ib3qj3_di" bpmnElement="Association_0ib3qj3">
         <di:waypoint x="360" y="1631" />
         <di:waypoint x="629" y="1701" />
@@ -2632,6 +2597,74 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <di:waypoint x="2707" y="500" />
         <di:waypoint x="2557" y="554" />
       </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_0ckxgh9">
+    <bpmndi:BPMNPlane id="BPMNPlane_1aohpuy" bpmnElement="Activity_0fcbd0j">
+      <bpmndi:BPMNEdge id="BPMNEdge_1dl4zyo" bpmnElement="Flow_0yyg20c">
+        <di:waypoint x="460" y="120" />
+        <di:waypoint x="540" y="120" />
+        <di:waypoint x="540" y="151" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0r23lxp" bpmnElement="Flow_07yodei">
+        <di:waypoint x="460" y="236" />
+        <di:waypoint x="540" y="236" />
+        <di:waypoint x="540" y="201" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1orwcul" bpmnElement="Flow_1l4516i">
+        <di:waypoint x="270" y="201" />
+        <di:waypoint x="270" y="320" />
+        <di:waypoint x="540" y="320" />
+        <di:waypoint x="540" y="201" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="282" y="288" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0shslxe_di" bpmnElement="Flow_0shslxe">
+        <di:waypoint x="565" y="176" />
+        <di:waypoint x="632" y="176" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_016p9rr_di" bpmnElement="Flow_016p9rr">
+        <di:waypoint x="188" y="176" />
+        <di:waypoint x="245" y="176" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0p2f51c" bpmnElement="Flow_1xkk95c">
+        <di:waypoint x="270" y="151" />
+        <di:waypoint x="270" y="120" />
+        <di:waypoint x="360" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="273" y="86" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_057zrec" bpmnElement="Flow_0w0594x">
+        <di:waypoint x="270" y="201" />
+        <di:waypoint x="270" y="236" />
+        <di:waypoint x="360" y="236" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="273" y="208" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_1utk5uv" bpmnElement="Gateway_1maom06">
+        <dc:Bounds x="515" y="151" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0jclh04" bpmnElement="Gateway_0a0pk8j">
+        <dc:Bounds x="245" y="151" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="309" y="166" width="83" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0eez46i" bpmnElement="Activity_0rqehim">
+        <dc:Bounds x="360" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1nehhkj" bpmnElement="Activity_0hxqlah">
+        <dc:Bounds x="360" y="196" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_03yv4wq_di" bpmnElement="Event_03yv4wq">
+        <dc:Bounds x="632" y="158" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0bpwuwl_di" bpmnElement="Event_0bpwuwl">
+        <dc:Bounds x="152" y="158" width="36" height="36" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
