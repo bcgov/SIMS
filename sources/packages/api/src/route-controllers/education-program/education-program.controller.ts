@@ -204,13 +204,6 @@ export class EducationProgramController extends BaseController {
       submittedBy: getUserFullName(educationProgram.submittedBy),
       effectiveEndDate: getISODateOnlyString(educationProgram.effectiveEndDate),
       assessedDate: educationProgram.assessedDate,
-      // TODO: for now - program.effectiveEndDate is added by the ministry user
-      // so, if program.effectiveEndDate is null/undefined, then
-      // the program was auto approved, when institution submitted the
-      // program, else the program was approved by ministry user.
-      // ministry user uses IDIR. Program will always denied by
-      // ministry user (i.e IDIR). Will need to update in future as
-      // proper decision is taken
       assessedBy: getUserFullName(educationProgram.assessedBy),
     };
 
