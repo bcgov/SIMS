@@ -252,11 +252,6 @@ export class ProgramInfoRequestController extends BaseController {
         id: payload.selectedOffering,
       } as EducationProgramOffering;
 
-      this.applicationService.checkOfferingIntensityMismatch(
-        application.data.howWillYouBeAttendingTheProgram,
-        payload.offeringIntensity,
-      );
-
       await this.applicationService.validateOverlappingDatesAndPIR(
         applicationId,
         application.student.user.lastName,

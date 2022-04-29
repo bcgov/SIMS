@@ -253,6 +253,8 @@ export class EducationProgramOfferingController extends BaseController {
    * access to their specific offerings only).
    * @param locationId location id.
    * @param programId program id.
+   * @param programYearId program year id.
+   * @param offeringIntensitySelectedByStudent offering intensity selected by student.
    * @query includeInActivePY, if includeInActivePY is true,
    * then consider both active and inactive program year.
    * @returns key/value pair list of programs for students.
@@ -260,13 +262,14 @@ export class EducationProgramOfferingController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get(
-    "location/:locationId/education-program/:programId/program-year/:programYearId/offeringIntensity/:offeringIntensity/offerings-list",
+    "location/:locationId/education-program/:programId/program-year/:programYearId/offeringIntensitySelectedByStudent/:offeringIntensitySelectedByStudent/offerings-list",
   )
   async getProgramOfferingsForLocationForInstitution(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
-    @Param("offeringIntensity") offeringIntensity: OfferingIntensity,
+    @Param("offeringIntensitySelectedByStudent")
+    offeringIntensitySelectedByStudent: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
     const offerings =
@@ -274,7 +277,7 @@ export class EducationProgramOfferingController extends BaseController {
         locationId,
         programId,
         programYearId,
-        offeringIntensity,
+        offeringIntensitySelectedByStudent,
         includeInActivePY,
       );
     return offerings.map((offering) => ({

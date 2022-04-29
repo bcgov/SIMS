@@ -169,11 +169,11 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     locationId: number,
     programId: number,
     programYearId: number,
-    selectedOffering: OfferingIntensity,
+    offeringIntensitySelectedByStudent: OfferingIntensity,
     includeInActivePY?: boolean,
   ): Promise<OptionItemDto[]> {
     try {
-      let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/selectedOffering/${selectedOffering}/offerings-list`;
+      let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/offeringIntensitySelectedByStudent/${offeringIntensitySelectedByStudent}/offerings-list`;
       if (includeInActivePY) {
         url = `${url}?includeInActivePY=${includeInActivePY}`;
       }

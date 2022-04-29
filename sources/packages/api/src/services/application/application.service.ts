@@ -1363,27 +1363,4 @@ export class ApplicationService extends RecordDataModelService<Application> {
       }
     }
   }
-
-  /**
-   * check if selected offering intensity
-   * and intensity selected by student is same.
-   * @param studentOfferingIntensity studentOfferingIntensity.
-   * @param selectedOfferingIntensity selectedOfferingIntensity.
-   * throws error if selected offering intensity
-   * and intensity selected by student are not the same.
-   */
-  checkOfferingIntensityMismatch(
-    studentOfferingIntensity: OfferingIntensity,
-    selectedOfferingIntensity: OfferingIntensity,
-  ): void {
-    if (
-      studentOfferingIntensity &&
-      selectedOfferingIntensity &&
-      studentOfferingIntensity !== selectedOfferingIntensity
-    )
-      throw new CustomNamedError(
-        "Offering Intensity does not match the students intensity",
-        OFFERING_INTENSITY_MISMATCH,
-      );
-  }
 }

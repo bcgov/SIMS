@@ -270,7 +270,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     programYearId: number,
-    selectedIntensity: OfferingIntensity,
+    offeringIntensitySelectedByStudent: OfferingIntensity,
     includeInActivePY?: boolean,
   ): Promise<Partial<EducationProgramOffering>[]> {
     const query = this.repo
@@ -301,9 +301,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .andWhere(
         "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",
       )
-      .andWhere("offerings.offeringIntensity = :selectedIntensity", {
-        selectedIntensity,
-      });
+      .andWhere(
+        "offerings.offeringIntensity = :offeringIntensitySelectedByStudent",
+        {
+          offeringIntensitySelectedByStudent,
+        },
+      );
     if (!includeInActivePY) {
       query.andWhere("programYear.active = true");
     }
