@@ -4,7 +4,41 @@ import { Allow, IsNotEmpty, IsOptional } from "class-validator";
  * TODO: Address DTOs have been with 2 different names as the
  * TODO: property province is used as provinceState in some places in code.
  **/
-
+/**
+ * Common DTO for Address
+ ** This DTO is used in API request body.
+ */
+export class AddressAPIInDTO {
+  @IsNotEmpty()
+  addressLine1: string;
+  @IsOptional()
+  addressLine2: string;
+  @IsNotEmpty()
+  city: string;
+  @IsOptional()
+  provinceState: string;
+  @IsNotEmpty()
+  country: string;
+  @IsNotEmpty()
+  postalCode: string;
+  @IsOptional()
+  // This property will have canada postal code.
+  // This property is for formIO purpose.
+  @IsOptional()
+  canadaPostalCode?: string;
+  // This property will have postal code for countries other than Canada.
+  // This property is for formIO purpose.
+  @IsOptional()
+  otherPostalCode?: string;
+  // Dropdown value, it will have either "canada" or "other".
+  // This property is for formIO purpose.
+  @IsOptional()
+  selectedCountry?: string;
+  // When "other" is selected in selectedCountry, then this property will have a value.
+  // This property is for formIO purpose.
+  @IsOptional()
+  otherCountry?: string;
+}
 /**
  * Common DTO for Address
  ** This DTO is used in API request body.

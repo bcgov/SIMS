@@ -11,6 +11,7 @@ import { Type } from "class-transformer";
 
 import { DesignationStatus } from "../../../route-controllers/institution-locations/models/institution-location.dto";
 import {
+  AddressAPIInDTO,
   AddressAPIOutDTO,
   AddressDetailsAPIInDTO,
   AddressDetailsAPIOutDTO,
@@ -76,8 +77,8 @@ export class InstitutionContactAPIInDTO {
   @IsNotEmpty()
   primaryContactPhone: string;
   @ValidateNested()
-  @Type(() => AddressDetailsAPIInDTO)
-  mailingAddress: AddressDetailsAPIInDTO;
+  @Type(() => AddressAPIInDTO)
+  mailingAddress: AddressAPIInDTO;
 }
 
 export class InstitutionContactAPIOutDTO {

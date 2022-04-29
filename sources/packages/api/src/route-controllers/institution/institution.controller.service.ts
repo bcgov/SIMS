@@ -28,7 +28,6 @@ export class InstitutionControllerService {
   ): Promise<InstitutionDetailAPIOutDTO> {
     const institutionDetail =
       await this.institutionService.getInstitutionDetailById(institutionId);
-    console.log(institutionDetail);
     if (!institutionDetail) {
       throw new NotFoundException("Institution not found.");
     }

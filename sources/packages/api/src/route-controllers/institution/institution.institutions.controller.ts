@@ -179,18 +179,9 @@ export class InstitutionInstitutionsController extends BaseController {
     @Body() payload: InstitutionContactAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.InstitutionProfile,
-      payload,
-    );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to update a student due to an invalid request.",
-      );
-    }
     await this.institutionService.updateInstitution(
       userToken.authorizations.institutionId,
-      submissionResult.data.data,
+      payload,
     );
   }
 

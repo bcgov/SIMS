@@ -20,6 +20,7 @@ export class GetInstitutionLocationDto {
 export class InstitutionLocationFormAPIInDTO extends AddressDetailsAPIInDTO {
   @Allow()
   locationName: string;
+  @Allow()
   institutionCode: string;
   @Allow()
   primaryContactFirstName: string;
