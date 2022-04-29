@@ -248,30 +248,22 @@ export class ProgramInfoRequestController extends BaseController {
         throw new BadRequestException("Application not found.");
       }
 
-      let studyStartDate = payload.studyStartDate;
-      let studyEndDate = payload.studyEndDate;
+      // Check if the offering belongs to the location.
+      const offeringLocation = await this.offeringService.getOfferingLocationId(
+        payload.selectedOffering,
+      );
 
-      let offeringToCompletePIR: EducationProgramOffering;
-      if (payload.selectedOffering) {
-        // Check if the offering belongs to the location.
-        const offeringLocation =
-          await this.offeringService.getOfferingLocationId(
-            payload.selectedOffering,
-          );
-
-        if (offeringLocation?.institutionLocation.id !== locationId) {
-          throw new UnauthorizedException(
-            "The location does not have access to the offering.",
-          );
-        }
-        studyStartDate = offeringLocation.studyStartDate;
-        studyEndDate = offeringLocation.studyEndDate;
-        // Offering exists, is valid and just need to be associated
-        // with the application to complete the PIR.
-        offeringToCompletePIR = {
-          id: payload.selectedOffering,
-        } as EducationProgramOffering;
+      if (offeringLocation?.institutionLocation.id !== locationId) {
+        throw new UnauthorizedException(
+          "The location does not have access to the offering.",
+        );
       }
+
+      // Offering exists, is valid and just need to be associated
+      // with the application to complete the PIR.
+      const offeringToCompletePIR = {
+        id: payload.selectedOffering,
+      } as EducationProgramOffering;
 
       await this.applicationService.validateOverlappingDatesAndPIR(
         applicationId,
@@ -279,8 +271,8 @@ export class ProgramInfoRequestController extends BaseController {
         application.student.user.id,
         application.student.sin,
         application.student.birthDate,
-        studyStartDate,
-        studyEndDate,
+        offeringLocation.studyStartDate,
+        offeringLocation.studyEndDate,
       );
 
       const updatedApplication =
