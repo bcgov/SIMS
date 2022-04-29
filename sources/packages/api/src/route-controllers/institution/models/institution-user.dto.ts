@@ -76,6 +76,7 @@ export class InstitutionUserSummaryAPIOutDTO {
   lastName: string;
   userName?: string;
   isActive: boolean;
+  userFullName?: string;
 }
 
 export class InstitutionUserAPIOutDTO {

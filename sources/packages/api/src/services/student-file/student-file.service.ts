@@ -7,10 +7,14 @@ import { StudentFile, Student } from "../../database/entities";
 import { CreateFile } from "./student-file.model";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { StudentFileUploaderForm } from "../../route-controllers/student/models/student.dto";
+import { GCNotifyActionsService } from "../notification/gc-notify-actions.service";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
-  constructor(connection: Connection) {
+  constructor(
+    private readonly connection: Connection,
+    private readonly gcNotifyActionsService: GCNotifyActionsService,
+  ) {
     super(connection.getRepository(StudentFile));
   }
 
@@ -88,23 +92,34 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * @param uniqueFileNames list of unique file names.
    */
   async updateStudentFiles(
-    studentId: number,
+    student: Student,
     uniqueFileNames: string[],
     submittedData: StudentFileUploaderForm,
   ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        student: { id: studentId } as Student,
-        uniqueFileName: In(uniqueFileNames),
-      },
-      {
-        groupName: submittedData.documentPurpose,
-        fileOrigin: FileOriginType.Student,
-        metadata: submittedData.applicationNumber
-          ? { applicationNumber: submittedData.applicationNumber }
-          : null,
-      },
-    );
+    let updateResult: UpdateResult;
+    await this.connection.transaction(async (transactionalEntityManager) => {
+      updateResult = await transactionalEntityManager
+        .getRepository(StudentFile)
+        .update(
+          {
+            student,
+            uniqueFileName: In(uniqueFileNames),
+          },
+          {
+            groupName: submittedData.documentPurpose,
+            fileOrigin: FileOriginType.Student,
+            metadata: submittedData.applicationNumber
+              ? { applicationNumber: submittedData.applicationNumber }
+              : null,
+          },
+        );
+      await this.gcNotifyActionsService.sendFileUploadNotification(
+        student,
+        submittedData.documentPurpose,
+        submittedData.applicationNumber,
+      );
+    });
+    return updateResult;
   }
 
   /**

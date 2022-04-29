@@ -82,7 +82,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ekheeqdg"
+      "id": "ekheeqdg",
+      "addons": []
     },
     {
       "label": "HTML",
@@ -161,7 +162,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "elkbtok"
+      "id": "elkbtok",
+      "addons": []
     },
     {
       "label": "HTML",
@@ -240,7 +242,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ee9wfci"
+      "id": "ee9wfci",
+      "addons": []
     },
     {
       "title": "Panel",
@@ -351,7 +354,10 @@
           "inputFormat": "plain",
           "inputMask": "",
           "spellcheck": true,
-          "id": "ee0f6le"
+          "id": "ee0f6le",
+          "addons": [],
+          "displayMask": "",
+          "truncateMultipleSpaces": false
         },
         {
           "label": "Program description",
@@ -433,7 +439,10 @@
           "wysiwyg": false,
           "editor": "",
           "fixedSize": true,
-          "id": "ev0808"
+          "id": "ev0808",
+          "addons": [],
+          "displayMask": "",
+          "truncateMultipleSpaces": false
         },
         {
           "label": "Credential type",
@@ -574,7 +583,9 @@
             "threshold": 0.3
           },
           "id": "e3cqf5c",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": [],
+          "searchDebounce": 0.3
         },
         {
           "label": "CIP code",
@@ -648,7 +659,10 @@
           "inputFormat": "plain",
           "inputMask": "",
           "spellcheck": true,
-          "id": "e428vwr"
+          "id": "e428vwr",
+          "addons": [],
+          "displayMask": "",
+          "truncateMultipleSpaces": false
         },
         {
           "label": "National Occupational Classifcation (NOC)",
@@ -723,7 +737,10 @@
           "inputFormat": "plain",
           "inputMask": "",
           "spellcheck": true,
-          "id": "epeke7s"
+          "id": "epeke7s",
+          "addons": [],
+          "displayMask": "",
+          "truncateMultipleSpaces": false
         },
         {
           "label": "SABC program code, if this program has been approved for SABC funding before",
@@ -806,7 +823,10 @@
           "dataGridLabel": false,
           "inputType": "text",
           "id": "e9wg9zb",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": [],
+          "displayMask": "",
+          "truncateMultipleSpaces": false
         },
         {
           "label": "Institution Program Code",
@@ -880,7 +900,10 @@
           "inputFormat": "plain",
           "inputMask": "",
           "spellcheck": true,
-          "id": "ezavw7e"
+          "id": "ezavw7e",
+          "addons": [],
+          "displayMask": "",
+          "truncateMultipleSpaces": false
         }
       ],
       "placeholder": "",
@@ -919,7 +942,9 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "tree": false,
-      "id": "egrd3p"
+      "id": "egrd3p",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "Program eligibility",
@@ -998,7 +1023,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ek6kyv"
+      "id": "ek6kyv",
+      "addons": []
     },
     {
       "title": "Panel",
@@ -1076,6 +1102,8 @@
         {
           "label": "Are students able to take this on a part time basis?",
           "labelPosition": "top",
+          "labelWidth": "",
+          "labelMargin": "",
           "optionsLabelPosition": "right",
           "description": "",
           "tooltip": "A part-time program has a course load between 20 and 59%. A full-time program must have a course load of: 60% or greater or Between 40 and 60% for students with a permanent disability.",
@@ -1123,6 +1151,7 @@
             "unique": false
           },
           "errorLabel": "",
+          "errors": "",
           "key": "programIntensity",
           "tags": [],
           "properties": {},
@@ -1157,9 +1186,10 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
+          "addons": [],
           "inputType": "radio",
           "fieldSet": false,
-          "id": "e19ahea",
+          "id": "en95iv",
           "defaultValue": ""
         },
         {
@@ -1256,7 +1286,8 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "fieldSet": false,
-          "id": "ehyzwln"
+          "id": "ehyzwln",
+          "addons": []
         },
         {
           "label": "Will the program also be offered and delivered at 100% course load on site?",
@@ -1345,7 +1376,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "esholy9",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?",
@@ -1434,7 +1466,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "elcdcu6",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?",
@@ -1523,7 +1556,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "eplb04q",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -1602,7 +1636,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ex017l"
+          "id": "ex017l",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -1681,12 +1716,15 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "eytg6z"
+          "id": "eytg6z",
+          "addons": []
         },
         {
           "label": "Program length",
           "labelPosition": "top",
           "widget": "html5",
+          "labelWidth": "",
+          "labelMargin": "",
           "placeholder": "",
           "description": "",
           "tooltip": "",
@@ -1736,6 +1774,7 @@
           "dataType": "",
           "idPath": "id",
           "valueProperty": "",
+          "limit": 100,
           "template": "<span>{{ item.label }}</span>",
           "refreshOn": "",
           "refreshOnBlur": "",
@@ -1768,6 +1807,7 @@
           },
           "unique": false,
           "errorLabel": "",
+          "errors": "",
           "key": "completionYears",
           "tags": [],
           "properties": {},
@@ -1794,26 +1834,27 @@
           },
           "selectFields": "",
           "searchField": "",
+          "searchDebounce": 0.3,
           "minSearch": 0,
           "filter": "",
-          "limit": 100,
           "redrawOn": "",
           "input": true,
+          "searchThreshold": 0.3,
           "prefix": "",
           "suffix": "",
           "dataGridLabel": false,
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
+          "addons": [],
           "lazyLoad": true,
           "authenticate": false,
           "ignoreCache": false,
-          "searchThreshold": 0.3,
           "fuseOptions": {
             "include": "score",
             "threshold": 0.3
           },
-          "id": "e2u2n1o",
+          "id": "e746zrh",
           "defaultValue": ""
         },
         {
@@ -1903,7 +1944,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "elx192",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "Does this program include a minimum of 20 instructional hours per week?",
@@ -1992,7 +2034,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "e9emf5g",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "Is this an aviation program?",
@@ -2081,7 +2124,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "ekqcvci",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -2160,7 +2204,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e2uo9e5"
+          "id": "e2uo9e5",
+          "addons": []
         },
         {
           "label": "Does this program include a minimum of 15 instructional hours per week",
@@ -2249,7 +2294,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "ei8tl3n",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -2328,7 +2374,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "exumj84"
+          "id": "exumj84",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -2407,7 +2454,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "exthyjo"
+          "id": "exthyjo",
+          "addons": []
         },
         {
           "label": "Which regulatory body does this program belong to?",
@@ -2536,10 +2584,14 @@
             "threshold": 0.3
           },
           "id": "escw5nj",
-          "defaultValue": null
+          "defaultValue": null,
+          "addons": [],
+          "searchDebounce": 0.3
         }
       ],
-      "id": "e7ab3si"
+      "id": "e7ab3si",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "HTML",
@@ -2618,7 +2670,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e1z1fry"
+      "id": "e1z1fry",
+      "addons": []
     },
     {
       "title": "Panel",
@@ -2803,10 +2856,13 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "fieldSet": false,
-          "id": "eaxt08"
+          "id": "eaxt08",
+          "addons": []
         }
       ],
-      "id": "e5zhra4"
+      "id": "e5zhra4",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "HTML",
@@ -2885,7 +2941,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ee1r44"
+      "id": "ee1r44",
+      "addons": []
     },
     {
       "title": "Panel",
@@ -3047,7 +3104,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "esmuskn",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "ESL Error",
@@ -3126,10 +3184,13 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "exiqgg3"
+          "id": "exiqgg3",
+          "addons": []
         }
       ],
-      "id": "elp3zbo"
+      "id": "elp3zbo",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "Program partnerships",
@@ -3208,7 +3269,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "esxe4ld"
+      "id": "esxe4ld",
+      "addons": []
     },
     {
       "label": "HTML",
@@ -3287,7 +3349,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ea288xg"
+      "id": "ea288xg",
+      "addons": []
     },
     {
       "title": "Panel",
@@ -3449,7 +3512,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "e1rl8gr",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "Are all institutions you partner with for this program designated by Student Aid BC?",
@@ -3538,7 +3602,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "eaa8y48",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "Join Program Error",
@@ -3612,10 +3677,13 @@
           "properties": {},
           "allowMultipleMasks": false,
           "tag": "p",
-          "id": "evafnlo"
+          "id": "evafnlo",
+          "addons": []
         }
       ],
-      "id": "e13hxz09"
+      "id": "e13hxz09",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "HTML",
@@ -3694,7 +3762,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "eh5vqst"
+      "id": "eh5vqst",
+      "addons": []
     },
     {
       "title": "Panel",
@@ -3856,7 +3925,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "exfol75",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "Is the WIL approved by your regulator or oversight body?",
@@ -3945,7 +4015,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "etm9ggd",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -4024,7 +4095,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e6l2ag"
+          "id": "e6l2ag",
+          "addons": []
         },
         {
           "label": "Does the WIL meet the program eligibility requirements according to StudentAid BC policy?",
@@ -4113,7 +4185,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "ecvd00d",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -4192,10 +4265,13 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ezpggmh"
+          "id": "ezpggmh",
+          "addons": []
         }
       ],
-      "id": "eibwfjp"
+      "id": "eibwfjp",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "HTML",
@@ -4274,7 +4350,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e4hde4o"
+      "id": "e4hde4o",
+      "addons": []
     },
     {
       "title": "Panel",
@@ -4436,7 +4513,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "e6e6rtk",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "Does the field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy?",
@@ -4525,7 +4603,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "e7spkqj",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -4604,10 +4683,13 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e151ayq"
+          "id": "e151ayq",
+          "addons": []
         }
       ],
-      "id": "e2vc9tm"
+      "id": "e2vc9tm",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "HTML",
@@ -4686,7 +4768,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ekoiavph"
+      "id": "ekoiavph",
+      "addons": []
     },
     {
       "title": "Panel",
@@ -4848,7 +4931,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "eoapr4",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "Does the international exchange meet the program eligibility requirements according to StudentAid BC policy?",
@@ -4937,7 +5021,8 @@
           "inputType": "radio",
           "fieldSet": false,
           "id": "evzt5g8",
-          "defaultValue": ""
+          "defaultValue": "",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -5016,10 +5101,13 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e5pmzo"
+          "id": "e5pmzo",
+          "addons": []
         }
       ],
-      "id": "estalv"
+      "id": "estalv",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "Declaration",
@@ -5098,7 +5186,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e2jup75"
+      "id": "e2jup75",
+      "addons": []
     },
     {
       "title": "Panel",
@@ -5250,7 +5339,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ebfilaf"
+          "id": "ebfilaf",
+          "addons": []
         },
         {
           "label": "HTML",
@@ -5329,7 +5419,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "es0rufl"
+          "id": "es0rufl",
+          "addons": []
         },
         {
           "label": "I confirm this program meets the policies outlined in the StudentAid BC policy manual.",
@@ -5404,10 +5495,13 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ed13vad"
+          "id": "ed13vad",
+          "addons": []
         }
       ],
-      "id": "e7oaook"
+      "id": "e7oaook",
+      "addons": [],
+      "lazyLoad": false
     },
     {
       "label": "Submit",
@@ -5487,7 +5581,8 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "dataGridLabel": true,
-      "id": "eept44e"
+      "id": "eept44e",
+      "addons": []
     },
     {
       "label": "isBCPrivate",
@@ -5557,10 +5652,13 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "inputType": "hidden",
-      "id": "egqexmm"
+      "id": "egqexmm",
+      "addons": []
     },
     {
-      "label": "Approval Status",
+      "label": "Program Status",
+      "labelWidth": "",
+      "labelMargin": "",
       "customClass": "",
       "modalEdit": false,
       "defaultValue": null,
@@ -5570,9 +5668,9 @@
       "encrypted": false,
       "redrawOn": "",
       "customDefaultValue": "",
-      "calculateValue": "if (data.hasJointDesignatedInstitution === \"no\" || data.eslEligibility === \"20OrMore\" || \r\n(data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned === \"no\" && earnAcademicCreditsOtherInstitution === \"no\") \r\n|| (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"no\") || (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\" && data.minHoursWeekAvi === \"no\") \r\n|| (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\") || (data.hasWILComponent === \"yes\" && data.isWILApproved === \"yes\" && data.wilProgramEligibility === \"no\") \r\n|| (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\") || (data.hasIntlExchange === \"yes\" && data.intlExchangeProgramEligibility === \"no\")) {\r\n  value = \"pending\";\r\n}\r\nelse {\r\n  value = \"approved\";\r\n}",
+      "calculateValue": "if (data.hasJointDesignatedInstitution === \"no\" || data.eslEligibility === \"20OrMore\" || \r\n(data.deliveredOnlineAlsoOnsite === \"no\" && data.sameOnlineCreditsEarned === \"no\" && earnAcademicCreditsOtherInstitution === \"no\") \r\n|| (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"no\") || (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\" && data.minHoursWeekAvi === \"no\") \r\n|| (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\") || (data.hasWILComponent === \"yes\" && data.isWILApproved === \"yes\" && data.wilProgramEligibility === \"no\") \r\n|| (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\") || (data.hasIntlExchange === \"yes\" && data.intlExchangeProgramEligibility === \"no\")) {\r\n  value = \"Pending\";\r\n}\r\nelse {\r\n  value = \"Approved\";\r\n}",
       "calculateServer": true,
-      "key": "approvalStatus",
+      "key": "programStatus",
       "tags": [],
       "properties": {},
       "logic": [],
@@ -5626,8 +5724,9 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
+      "addons": [],
       "inputType": "hidden",
-      "id": "e54szw"
+      "id": "edkeirb"
     },
     {
       "label": "applicationId",
@@ -5697,7 +5796,79 @@
       "inputType": "hidden",
       "id": "em1y8gd",
       "defaultValue": "",
-      "dataGridLabel": false
+      "dataGridLabel": false,
+      "addons": []
+    },
+    {
+      "label": "applicationStatus",
+      "customClass": "",
+      "modalEdit": false,
+      "defaultValue": null,
+      "persistent": true,
+      "protected": false,
+      "dbIndex": false,
+      "encrypted": false,
+      "redrawOn": "",
+      "customDefaultValue": "",
+      "calculateValue": "",
+      "calculateServer": false,
+      "key": "applicationStatus",
+      "tags": [],
+      "properties": {},
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "hidden",
+      "input": true,
+      "tableView": false,
+      "placeholder": "",
+      "prefix": "",
+      "suffix": "",
+      "multiple": false,
+      "unique": false,
+      "hidden": false,
+      "clearOnHide": true,
+      "refreshOn": "",
+      "dataGridLabel": false,
+      "labelPosition": "top",
+      "description": "",
+      "errorLabel": "",
+      "tooltip": "",
+      "hideLabel": false,
+      "tabindex": "",
+      "disabled": false,
+      "autofocus": false,
+      "widget": {
+        "type": "input"
+      },
+      "validateOn": "change",
+      "validate": {
+        "required": false,
+        "custom": "",
+        "customPrivate": false,
+        "strictDateValidation": false,
+        "multiple": false,
+        "unique": false
+      },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
+      "allowCalculateOverride": false,
+      "showCharCount": false,
+      "showWordCount": false,
+      "allowMultipleMasks": false,
+      "inputType": "hidden",
+      "id": "e6z1qd9",
+      "addons": []
     }
   ],
   "display": "form",
@@ -5706,5 +5877,5 @@
   "path": "educationprogram",
   "machineName": "educationProgram",
   "created": "2021-08-05T18:32:10.610Z",
-  "modified": "2022-02-01T20:48:58.401Z"
+  "modified": "2022-04-26T19:59:04.423Z"
 }

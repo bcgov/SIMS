@@ -18,7 +18,7 @@ import {
   Groups,
 } from "../../auth/decorators";
 import {
-  SaveEducationProgramOfferingDto,
+  SaveOfferingDTO,
   ProgramOfferingDto,
   ProgramOfferingDetailsDto,
   transformToProgramOfferingDto,
@@ -43,6 +43,7 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { EducationProgramOfferingModel } from "../../services/education-program-offering/education-program-offering.service.models";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 @Controller("institution/offering")
 @ApiTags("institution")
@@ -59,11 +60,11 @@ export class EducationProgramOfferingController extends BaseController {
   @HasLocationAccess("locationId")
   @Post("location/:locationId/education-program/:programId")
   async create(
-    @Body() payload: SaveEducationProgramOfferingDto,
+    @Body() payload: SaveOfferingDTO,
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<number> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const requestProgram = await this.programService.getInstitutionProgram(
       programId,
       userToken.authorizations.institutionId,
@@ -86,9 +87,9 @@ export class EducationProgramOfferingController extends BaseController {
       await this.programOfferingService.createEducationProgramOffering(
         locationId,
         programId,
-        payload,
+        submissionResult.data.data,
       );
-    return createdProgramOffering.id;
+    return { id: createdProgramOffering.id };
   }
 
   /**
@@ -131,7 +132,7 @@ export class EducationProgramOfferingController extends BaseController {
         page: page,
         pageLimit: pageLimit,
       },
-      [OfferingTypes.public],
+      [OfferingTypes.Public, OfferingTypes.Private],
     );
   }
 
@@ -163,7 +164,7 @@ export class EducationProgramOfferingController extends BaseController {
     "location/:locationId/education-program/:programId/offering/:offeringId",
   )
   async updateProgramOffering(
-    @Body() payload: SaveEducationProgramOfferingDto,
+    @Body() payload: SaveOfferingDTO,
     @UserToken() userToken: IInstitutionUserToken,
     @Param("locationId") locationId: number,
     @Param("programId") programId?: number,
@@ -201,7 +202,7 @@ export class EducationProgramOfferingController extends BaseController {
         locationId,
         programId,
         offeringId,
-        payload,
+        updatingResult.data.data,
       );
     return updateProgramOffering.affected;
   }
@@ -343,7 +344,7 @@ export class EducationProgramOfferingController extends BaseController {
         page: page,
         pageLimit: pageLimit,
       },
-      [OfferingTypes.public],
+      [OfferingTypes.Public, OfferingTypes.Private],
     );
   }
 

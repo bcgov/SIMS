@@ -134,14 +134,14 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
     const record = new StringBuilder();
     record.append(this.recordType);
     record.appendWithEndFiller(this.lastName, 25, SPACE_FILLER);
-    record.appendWithEndFiller(this.firstName || "", 15, SPACE_FILLER);
+    record.appendWithEndFiller(this.firstName ?? "", 15, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 3); // Initials, optional, not provided.
     record.append(this.sin, 9);
     record.append(this.gender, 1);
     record.appendDate(this.dateOfBirth, DATE_FORMAT);
     record.appendWithEndFiller(this.maritalStatus, 4, SPACE_FILLER);
     record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);
-    record.appendWithEndFiller(this.addressLine2 || "", 40, SPACE_FILLER);
+    record.appendWithEndFiller(this.addressLine2 ?? "", 40, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 40); // AddressLine 3, optional, not provided.
     record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
     record.appendWithEndFiller("BC", 4, SPACE_FILLER); //TODO Province, is hardcoded to "BC  ".
@@ -156,7 +156,7 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
     record.repeatAppend(SPACE_FILLER, 4); // Alternate Country, optional, not provided.
     record.repeatAppend(SPACE_FILLER, 16); // Alternate Postal Code, optional, not provided.
     record.repeatAppend(SPACE_FILLER, 16); // Alternate Telephone, optional, not provided.
-    record.appendWithEndFiller(this.studentNumber || "", 12, SPACE_FILLER);
+    record.appendWithEndFiller(this.studentNumber ?? "", 12, SPACE_FILLER);
     record.appendDate(this.disbursementDate, DATE_FORMAT);
     record.appendWithStartFiller(this.disbursementAmount, 9, NUMBER_FILLER);
     record.appendWithStartFiller(this.certNumber, 7, NUMBER_FILLER);

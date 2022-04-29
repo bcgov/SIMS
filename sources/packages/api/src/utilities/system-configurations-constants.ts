@@ -66,3 +66,9 @@ export const MSFAA_PART_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.PT.";
  */
 export const ECERT_FULL_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.CERTSFB.*\\.DAT";
 export const ECERT_PART_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.ECERTSFB.PT.*\\.DAT";
+
+/**
+ * These constants are used to specify the Template Id for email notification templates
+ */
+export const STUDENT_FILE_UPLOAD_TEMPLATE_ID =
+  "3b37994f-464f-4eb0-ad30-84739fa82377";

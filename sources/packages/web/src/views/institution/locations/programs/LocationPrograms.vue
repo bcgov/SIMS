@@ -66,12 +66,12 @@
               header="Offerings"
             ></Column>
             <Column
-              :field="ProgramSummaryFields.ApprovalStatus"
+              :field="ProgramSummaryFields.ProgramStatus"
               header="Status"
               :sortable="true"
               ><template #body="slotProps">
                 <program-status-chip
-                  :status="slotProps.data.approvalStatus"
+                  :status="slotProps.data.programStatus"
                 ></program-status-chip></template
             ></Column>
             <Column>

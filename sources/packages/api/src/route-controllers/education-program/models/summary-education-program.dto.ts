@@ -9,12 +9,12 @@ export interface SubsetEducationProgramDto {
   cipCode: string;
   nocCode: string;
   sabcCode: string;
-  approvalStatus: string;
+  programStatus: string;
   programIntensity: ProgramIntensity;
   institutionProgramCode?: string;
   submittedOn: Date;
   submittedBy: string;
-  statusUpdatedOn?: Date;
-  statusUpdatedBy?: string;
+  assessedDate?: Date;
+  assessedBy?: string;
   effectiveEndDate: string;
 }

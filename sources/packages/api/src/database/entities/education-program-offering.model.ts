@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -9,7 +10,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { EducationProgram } from "./education-program.model";
 import { InstitutionLocation } from "./institution-location.model";
-import { OfferingTypes } from ".";
+import { OfferingTypes, User, OfferingStatus } from ".";
 import { OfferingIntensity } from "./offering-intensity.type";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
@@ -149,6 +150,7 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "offering_type",
+    nullable: false,
     type: "enum",
     enum: OfferingTypes,
     enumName: "OfferingTypes",
@@ -211,6 +213,47 @@ export class EducationProgramOffering extends RecordDataModel {
     name: "offering_declaration",
   })
   offeringDeclaration: boolean;
+
+  /**
+   * User who assessed the offering.
+   */
+  @ManyToOne(() => User, { eager: false, nullable: true })
+  @JoinColumn({
+    name: "assessed_by",
+    referencedColumnName: "id",
+  })
+  assessedBy?: User;
+
+  /**
+   * Date-time at which the offering was assessed.
+   */
+  @Column({
+    name: "assessed_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  assessedDate?: Date;
+
+  /**
+   * Education program offering submitted date.
+   */
+  @Column({
+    name: "submitted_date",
+    type: "timestamptz",
+    nullable: false,
+  })
+  submittedDate: Date;
+
+  /**
+   * Represents the current status of an offering.
+   */
+  @Column({
+    name: "offering_status",
+    type: "enum",
+    enum: OfferingStatus,
+    enumName: "OfferingStatus",
+  })
+  offeringStatus: OfferingStatus;
 }
 
 /**

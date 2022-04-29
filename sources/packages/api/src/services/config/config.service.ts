@@ -28,6 +28,11 @@ export class ConfigService {
           password: process.env.BCeID_WEB_SERVICE_AUTH_USER_PASSWORD,
         },
       },
+      gcNotify: {
+        url: process.env.GC_NOTIFY_URL,
+        apiKey: process.env.GC_NOTIFY_API_KEY,
+        toAddress: process.env.GC_NOTIFY_TO_ADDRESS,
+      },
       workflow: {
         ruleEngineUrl: process.env.RULE_ENGINE_URL,
         serviceAccountCredential: {

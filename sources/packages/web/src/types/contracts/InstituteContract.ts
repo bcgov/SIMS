@@ -1,4 +1,4 @@
-import { ApprovalStatus } from "..";
+import { ProgramStatus } from "..";
 
 export interface Institute {
   name: string;
@@ -10,7 +10,7 @@ export interface AESTInstitutionProgramsSummaryDto {
   programName: string;
   submittedDate: Date;
   locationName: string;
-  programStatus: ApprovalStatus;
+  programStatus: ProgramStatus;
   totalOfferings: number;
   formattedSubmittedDate: string;
   locationId: number;

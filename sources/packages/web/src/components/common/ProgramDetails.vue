@@ -5,7 +5,7 @@
     </span>
     <program-status-chip
       class="ml-2"
-      :status="educationProgram.approvalStatus"
+      :status="educationProgram.programStatus"
     ></program-status-chip>
     <v-btn
       class="float-right"
