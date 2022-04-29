@@ -5,15 +5,15 @@ import {
   InstitutionLocation,
   OfferingTypes,
   OfferingIntensity,
+  ProgramStatus,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
-import { SaveEducationProgramOfferingDto } from "../../route-controllers/education-program-offering/models/education-program-offering.dto";
 import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
+  SaveOfferingModel,
 } from "./education-program-offering.service.models";
-import { ApprovalStatus } from "../education-program/constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import {
   FieldSortOrder,
@@ -38,7 +38,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async createEducationProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: SaveEducationProgramOfferingDto,
+    educationProgramOffering: SaveOfferingModel,
   ): Promise<EducationProgramOffering> {
     const programOffering = this.populateProgramOffering(
       locationId,
@@ -73,6 +73,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.studyEndDate",
         "offerings.offeringDelivered",
         "offerings.offeringIntensity",
+        "offerings.offeringType",
+        "offerings.offeringStatus",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -109,7 +111,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     // result
     const [records, count] = await offeringsQuery.getManyAndCount();
-
     const offerings = records.map((educationProgramOffering) => {
       const item = new EducationProgramOfferingModel();
       item.id = educationProgramOffering.id;
@@ -122,6 +123,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       );
       item.offeringDelivered = educationProgramOffering.offeringDelivered;
       item.offeringIntensity = educationProgramOffering.offeringIntensity;
+      item.offeringType = educationProgramOffering.offeringType;
+      item.offeringStatus = educationProgramOffering.offeringStatus;
       return item;
     });
     return { results: offerings, count: count };
@@ -165,9 +168,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.offeringWILType",
         "offerings.studyBreaks",
         "offerings.offeringDeclaration",
+        "offerings.offeringType",
+        "offerings.assessedDate",
+        "offerings.submittedDate",
+        "offerings.offeringStatus",
+        "assessedBy.firstName",
+        "assessedBy.lastName",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .leftJoin("offerings.assessedBy", "assessedBy")
       .andWhere("offerings.id= :offeringId", {
         offeringId: offeringId,
       })
@@ -191,7 +201,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     offeringId: number,
-    educationProgramOffering: SaveEducationProgramOfferingDto,
+    educationProgramOffering: SaveOfferingModel,
   ): Promise<UpdateResult> {
     const programOffering = this.populateProgramOffering(
       locationId,
@@ -201,10 +211,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     return this.repo.update(offeringId, programOffering);
   }
 
-  populateProgramOffering(
+  private populateProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: SaveEducationProgramOfferingDto,
+    educationProgramOffering: SaveOfferingModel,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.offeringName;
@@ -228,7 +238,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.tuitionRemittanceRequested =
       educationProgramOffering.tuitionRemittanceRequested;
     programOffering.offeringType =
-      educationProgramOffering.offeringType ?? OfferingTypes.public;
+      educationProgramOffering.offeringType ?? OfferingTypes.Public;
     programOffering.educationProgram = { id: programId } as EducationProgram;
     programOffering.institutionLocation = {
       id: locationId,
@@ -243,6 +253,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.studyBreaks = educationProgramOffering.studyBreaks;
     programOffering.offeringDeclaration =
       educationProgramOffering.offeringDeclaration;
+    programOffering.offeringType = educationProgramOffering.offeringType;
+    programOffering.offeringStatus = educationProgramOffering.offeringStatus;
     return programOffering;
   }
 
@@ -277,14 +289,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addSelect("offerings.yearOfStudy")
       .addSelect("offerings.showYearOfStudy")
       .where("offerings.educationProgram.id = :programId", { programId })
-      .andWhere("programs.approvalStatus = :approvalStatus", {
-        approvalStatus: ApprovalStatus.approved,
+      .andWhere("programs.programStatus = :programStatus", {
+        programStatus: ProgramStatus.Approved,
       })
       .andWhere("offerings.institutionLocation.id = :locationId", {
         locationId,
       })
       .andWhere("offerings.offeringType = :offeringType", {
-        offeringType: OfferingTypes.public,
+        offeringType: OfferingTypes.Public,
       })
       .andWhere(
         "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",

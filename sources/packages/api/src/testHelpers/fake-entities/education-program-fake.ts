@@ -1,8 +1,12 @@
 import * as faker from "faker";
-import { EducationProgram, Institution, User } from "../../database/entities";
+import {
+  EducationProgram,
+  Institution,
+  User,
+  ProgramStatus,
+} from "../../database/entities";
 import { createFakeInstitution } from "./institution-fake";
 import { ProgramIntensity } from "../../database/entities/program-intensity.type";
-import { ApprovalStatus } from "../../services/education-program/constants";
 
 export function createFakeEducationProgram(
   institution?: Institution,
@@ -23,7 +27,7 @@ export function createFakeEducationProgram(
   program.eslEligibility = "eslEligibility";
   program.hasJointInstitution = "hasJointInstitution";
   program.hasJointDesignatedInstitution = "hasJointDesignatedInstitution";
-  program.approvalStatus = ApprovalStatus.approved;
+  program.programStatus = ProgramStatus.Approved;
   program.hasWILComponent = "yes";
   program.hasTravel = "yes";
   program.hasIntlExchange = "yes";

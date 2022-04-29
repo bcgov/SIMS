@@ -46,10 +46,8 @@ import {
   DEFAULT_PAGE_LIMIT,
   PaginatedResults,
   getISODateOnlyString,
-  getIDIRUserFullName,
   getUserFullName,
 } from "../../utilities";
-import { ApprovalStatus } from "../../services/education-program/constants";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 
@@ -94,7 +92,7 @@ export class EducationProgramController extends BaseController {
     return this.programService.getSummaryForLocation(
       userToken.authorizations.institutionId,
       locationId,
-      [OfferingTypes.public],
+      [OfferingTypes.Public, OfferingTypes.Private],
       {
         searchCriteria: searchCriteria,
         sortField: sortField,
@@ -199,25 +197,14 @@ export class EducationProgramController extends BaseController {
       cipCode: educationProgram.cipCode,
       nocCode: educationProgram.nocCode,
       sabcCode: educationProgram.sabcCode,
-      approvalStatus: educationProgram.approvalStatus,
+      programStatus: educationProgram.programStatus,
       programIntensity: educationProgram.programIntensity,
       institutionProgramCode: educationProgram.institutionProgramCode,
-      submittedOn: educationProgram.submittedOn,
+      submittedOn: educationProgram.submittedDate,
       submittedBy: getUserFullName(educationProgram.submittedBy),
       effectiveEndDate: getISODateOnlyString(educationProgram.effectiveEndDate),
-      statusUpdatedOn: educationProgram.statusUpdatedOn,
-      // TODO: for now - program.effectiveEndDate is added by the ministry user
-      // so, if program.effectiveEndDate is null/undefined, then
-      // the program was auto approved, when institution submitted the
-      // program, else the program was approved by ministry user.
-      // ministry user uses IDIR. Program will always denied by
-      // ministry user (i.e IDIR). Will need to update in future as
-      // proper decision is taken
-      statusUpdatedBy:
-        educationProgram.effectiveEndDate ||
-        educationProgram.approvalStatus === ApprovalStatus.denied
-          ? getIDIRUserFullName(educationProgram.statusUpdatedBy)
-          : getUserFullName(educationProgram.statusUpdatedBy),
+      assessedDate: educationProgram.assessedDate,
+      assessedBy: getUserFullName(educationProgram.assessedBy),
     };
 
     return programDetails;
@@ -393,7 +380,7 @@ export class EducationProgramController extends BaseController {
   ): Promise<PaginatedResults<ProgramsSummary>> {
     return this.programService.getPaginatedProgramsForAEST(
       institutionId,
-      [OfferingTypes.public],
+      [OfferingTypes.Public, OfferingTypes.Private],
       {
         searchCriteria: searchCriteria,
         sortField: sortColumn,

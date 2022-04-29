@@ -64,7 +64,7 @@ export enum ProgramSummaryFields {
   CipCode = "cipCode",
   CredentialType = "credentialType",
   TotalOfferings = "totalOfferings",
-  ApprovalStatus = "approvalStatus",
+  ProgramStatus = "programStatus",
   IsActive = "isActive",
 }
 
