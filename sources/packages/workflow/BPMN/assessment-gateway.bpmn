@@ -254,66 +254,39 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
           <camunda:inputParameter name="fieldNames">
             <camunda:list>
               <camunda:value>data.relationshipStatus</camunda:value>
-              <camunda:value>data.indigenousStatus</camunda:value>
               <camunda:value>data.selectedProgram</camunda:value>
               <camunda:value>data.selectedLocation</camunda:value>
-              <camunda:value>data.hasDependents</camunda:value>
-              <camunda:value>data.nongovernmentfundingCosts</camunda:value>
-              <camunda:value>data.governmentFundingCosts</camunda:value>
-              <camunda:value>data.offeringIWillBeAttending</camunda:value>
               <camunda:value>data.selectedOffering</camunda:value>
-              <camunda:value>programYear.programYear</camunda:value>
-              <camunda:value>data.youthInCare</camunda:value>
-              <camunda:value>data.scholarshipsreceviedCosts</camunda:value>
-              <camunda:value>data.parentvoluntarycontributionsCosts</camunda:value>
               <camunda:value>data.taxReturnIncome</camunda:value>
-              <camunda:value>data.childsupportCosts</camunda:value>
-              <camunda:value>data.daycareCosts11YearsOrUnder</camunda:value>
-              <camunda:value>data.daycareCosts12YearsOrOver</camunda:value>
-              <camunda:value>data.livingWithParents</camunda:value>
-              <camunda:value>data.transportationCost</camunda:value>
-              <camunda:value>data.livingathomeRent</camunda:value>
-              <camunda:value>data.whenDidYouGraduateOrLeaveHighSchool</camunda:value>
               <camunda:value>programYear.startDate</camunda:value>
               <camunda:value>data.numberOfParents</camunda:value>
               <camunda:value>data.dependantstatus</camunda:value>
-              <camunda:value>data.dependants</camunda:value>
-              <camunda:value>data.pleaseProvideAnEstimationOfYourParentsIncome</camunda:value>
               <camunda:value>data.doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber</camunda:value>
               <camunda:value>data.isYourSpouseACanadianCitizen</camunda:value>
-              <camunda:value>data.estimatedSpouseIncome</camunda:value>
               <camunda:value>triggerType</camunda:value>
+              <camunda:value>supportingUsers.Parent1.supportingData.totalIncome</camunda:value>
+              <camunda:value>supportingUsers.Parent2.supportingData.totalIncome</camunda:value>
+              <camunda:value>supportingUsers.Partner1.supportingData.totalIncome</camunda:value>
+              <camunda:value>applicationId</camunda:value>
             </camunda:list>
           </camunda:inputParameter>
           <camunda:inputParameter name="errorCodeName">SIMS-GET-ASSESSMENT-ERROR</camunda:inputParameter>
           <camunda:inputParameter name="httpSuccessCode">200</camunda:inputParameter>
           <camunda:outputParameter name="assessmentTriggerType">${triggerType}</camunda:outputParameter>
-          <camunda:outputParameter name="estimatedSpouseIncome">${data_estimatedSpouseIncome}</camunda:outputParameter>
           <camunda:outputParameter name="isYourSpouseACanadianCitizen">${data_isYourSpouseACanadianCitizen}</camunda:outputParameter>
           <camunda:outputParameter name="doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber">${data_doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber}</camunda:outputParameter>
-          <camunda:outputParameter name="pleaseProvideAnEstimationOfYourParentsIncome">${data_pleaseProvideAnEstimationOfYourParentsIncome}</camunda:outputParameter>
           <camunda:outputParameter name="numberOfParents">${data_numberOfParents}</camunda:outputParameter>
           <camunda:outputParameter name="dependantstatus">${data_dependantstatus}</camunda:outputParameter>
           <camunda:outputParameter name="programYearStartDate">${programYear_startDate}</camunda:outputParameter>
-          <camunda:outputParameter name="whenDidYouGraduateOrLeaveHighSchool">${data_whenDidYouGraduateOrLeaveHighSchool}</camunda:outputParameter>
-          <camunda:outputParameter name="livingathomeRent">${data_livingathomeRent}</camunda:outputParameter>
-          <camunda:outputParameter name="transportationCost">${data_transportationCost}</camunda:outputParameter>
-          <camunda:outputParameter name="indigenousStatus">${data_indigenousStatus}</camunda:outputParameter>
           <camunda:outputParameter name="relationshipStatus">${data_relationshipStatus}</camunda:outputParameter>
-          <camunda:outputParameter name="hasDependents">${data_hasDependents}</camunda:outputParameter>
-          <camunda:outputParameter name="livingWithParents">${data_livingWithParents}</camunda:outputParameter>
-          <camunda:outputParameter name="daycareCosts12YearsOrOver">${data_daycareCosts12YearsOrOver}</camunda:outputParameter>
-          <camunda:outputParameter name="daycareCosts11YearsOrUnder">${data_daycareCosts11YearsOrUnder}</camunda:outputParameter>
-          <camunda:outputParameter name="childSupportAndOrSpousalSupport">${data_childsupportCosts}</camunda:outputParameter>
           <camunda:outputParameter name="taxReturnIncome">${data_taxReturnIncome}</camunda:outputParameter>
-          <camunda:outputParameter name="voluntaryContributions">${data_parentvoluntarycontributionsCosts}</camunda:outputParameter>
-          <camunda:outputParameter name="scholarshipAmount">${data_scholarshipsreceviedCosts}</camunda:outputParameter>
           <camunda:outputParameter name="selectedProgram">${data_selectedProgram}</camunda:outputParameter>
           <camunda:outputParameter name="selectedOffering">${data_selectedOffering}</camunda:outputParameter>
           <camunda:outputParameter name="selectedLocation">${data_selectedLocation}</camunda:outputParameter>
-          <camunda:outputParameter name="youthInCare">${data_youthInCare}</camunda:outputParameter>
-          <camunda:outputParameter name="programYear">${programYear_programYear}</camunda:outputParameter>
-          <camunda:outputParameter name="programLocation">BC</camunda:outputParameter>
+          <camunda:outputParameter name="supportingUserPartnerTotalIncome">${supportingUsers_Partner1_supportingData_totalIncome}</camunda:outputParameter>
+          <camunda:outputParameter name="supportingUserParent1TotalIncome">${supportingUsers_Parent1_supportingData_totalIncome}</camunda:outputParameter>
+          <camunda:outputParameter name="supportingUserParent2TotalIncome">${supportingUsers_Parent2_supportingData_totalIncome}</camunda:outputParameter>
+          <camunda:outputParameter name="applicationId">${applicationId}</camunda:outputParameter>
         </camunda:inputOutput>
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="javascript">execution.setVariable('error_retry', execution.getVariable("error_retry") + 1);</camunda:script>
@@ -665,6 +638,7 @@ ${workflowIdErrorMsg}</camunda:inputParameter>
               <camunda:value>supportingUsers.Partner1.craReportedIncome</camunda:value>
               <camunda:value>appeals.studentIncomeAppeal.submittedData</camunda:value>
               <camunda:value>appeals.partnerIncomeAppeal.submittedData</camunda:value>
+              <camunda:value>applicationId</camunda:value>
             </camunda:list>
           </camunda:inputParameter>
           <camunda:inputParameter name="errorCodeName">SIMS-GET-ASSESSMENT-FULL-DATA-ERROR</camunda:inputParameter>
@@ -746,6 +720,7 @@ ${workflowIdErrorMsg}</camunda:inputParameter>
           <camunda:outputParameter name="partnerCRAReportedIncome">${supportingUsers_Partner1_craReportedIncome}</camunda:outputParameter>
           <camunda:outputParameter name="studentIncomeAppealData">${appeals_studentIncomeAppeal_submittedData}</camunda:outputParameter>
           <camunda:outputParameter name="partnerIncomeAppealData">${appeals_partnerIncomeAppeal_submittedData}</camunda:outputParameter>
+          <camunda:outputParameter name="applicationId">${applicationId}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0t5tfgt</bpmn:incoming>
@@ -1748,14 +1723,40 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <dc:Bounds x="580" y="80" width="2036" height="1280" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0oxhngm" bpmnElement="TextAnnotation_0q7r9at" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
-        <dc:Bounds x="620" y="2480" width="170" height="41" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0cf9yon" bpmnElement="TextAnnotation_0zowv9u" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
-        <dc:Bounds x="1291" y="438" width="170" height="41" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_09r0npd_di" bpmnElement="Flow_09r0npd">
+        <di:waypoint x="2385" y="1706" />
+        <di:waypoint x="2522" y="1706" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ppk975_di" bpmnElement="Flow_1ppk975">
+        <di:waypoint x="2280" y="1766" />
+        <di:waypoint x="2360" y="1766" />
+        <di:waypoint x="2360" y="1731" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pnv8ia_di" bpmnElement="Flow_0pnv8ia">
+        <di:waypoint x="2280" y="1650" />
+        <di:waypoint x="2360" y="1650" />
+        <di:waypoint x="2360" y="1681" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0h542gm_di" bpmnElement="Flow_0h542gm">
+        <di:waypoint x="1976" y="1706" />
+        <di:waypoint x="2065" y="1706" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13jlobe_di" bpmnElement="Flow_13jlobe">
+        <di:waypoint x="2090" y="1731" />
+        <di:waypoint x="2090" y="1766" />
+        <di:waypoint x="2180" y="1766" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2093" y="1738" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qs4vh0_di" bpmnElement="Flow_0qs4vh0">
+        <di:waypoint x="2090" y="1681" />
+        <di:waypoint x="2090" y="1650" />
+        <di:waypoint x="2180" y="1650" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2093" y="1616" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ljan8f_di" bpmnElement="Flow_0ljan8f">
         <di:waypoint x="1460" y="1650" />
         <di:waypoint x="1588" y="1650" />
@@ -2213,40 +2214,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
           <dc:Bounds x="678" y="532" width="68" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0qs4vh0_di" bpmnElement="Flow_0qs4vh0">
-        <di:waypoint x="2090" y="1681" />
-        <di:waypoint x="2090" y="1650" />
-        <di:waypoint x="2180" y="1650" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2093" y="1616" width="74" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_13jlobe_di" bpmnElement="Flow_13jlobe">
-        <di:waypoint x="2090" y="1731" />
-        <di:waypoint x="2090" y="1766" />
-        <di:waypoint x="2180" y="1766" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2093" y="1738" width="74" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0h542gm_di" bpmnElement="Flow_0h542gm">
-        <di:waypoint x="1976" y="1706" />
-        <di:waypoint x="2065" y="1706" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0pnv8ia_di" bpmnElement="Flow_0pnv8ia">
-        <di:waypoint x="2280" y="1650" />
-        <di:waypoint x="2360" y="1650" />
-        <di:waypoint x="2360" y="1681" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1ppk975_di" bpmnElement="Flow_1ppk975">
-        <di:waypoint x="2280" y="1766" />
-        <di:waypoint x="2360" y="1766" />
-        <di:waypoint x="2360" y="1731" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_09r0npd_di" bpmnElement="Flow_09r0npd">
-        <di:waypoint x="2385" y="1706" />
-        <di:waypoint x="2522" y="1706" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1y0ilvy_di" bpmnElement="Event_0a53uvu">
         <dc:Bounds x="2522" y="542" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -2506,6 +2473,24 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmndi:BPMNShape id="BPMNShape_0l9udpn" bpmnElement="Activity_1sfa3ki">
         <dc:Bounds x="1360" y="1714" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_01rgs2a" bpmnElement="Event_0a5b9bd">
+        <dc:Bounds x="2522" y="1688" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2514" y="1731" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_16y87i3" bpmnElement="Gateway_1dhowms">
+        <dc:Bounds x="2335" y="1681" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ymsrh4" bpmnElement="Gateway_1vgiv0n">
+        <dc:Bounds x="2065" y="1681" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0200fxt_di" bpmnElement="Activity_0fsw7i8">
+        <dc:Bounds x="2180" y="1610" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mllhnd_di" bpmnElement="Activity_0yfnnvs">
+        <dc:Bounds x="2180" y="1726" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0xdedyz_di" bpmnElement="TextAnnotation_0xdedyz">
         <dc:Bounds x="1427" y="2700" width="130" height="70" />
       </bpmndi:BPMNShape>
@@ -2525,32 +2510,14 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <dc:Bounds x="810" y="1520" width="170" height="41" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_01rgs2a" bpmnElement="Event_0a5b9bd">
-        <dc:Bounds x="2522" y="1688" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2514" y="1731" width="60" height="27" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNShape id="BPMNShape_0oxhngm" bpmnElement="TextAnnotation_0q7r9at" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="620" y="2480" width="170" height="41" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_16y87i3" bpmnElement="Gateway_1dhowms">
-        <dc:Bounds x="2335" y="1681" width="50" height="50" />
+      <bpmndi:BPMNShape id="BPMNShape_0cf9yon" bpmnElement="TextAnnotation_0zowv9u" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="1291" y="438" width="170" height="41" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1ymsrh4" bpmnElement="Gateway_1vgiv0n">
-        <dc:Bounds x="2065" y="1681" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0200fxt_di" bpmnElement="Activity_0fsw7i8">
-        <dc:Bounds x="2180" y="1610" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1mllhnd_di" bpmnElement="Activity_0yfnnvs">
-        <dc:Bounds x="2180" y="1726" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1dkxw9y_di" bpmnElement="Association_1dkxw9y">
-        <di:waypoint x="695" y="2521" />
-        <di:waypoint x="654" y="2604" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0b1d0j7_di" bpmnElement="Association_0b1d0j7">
-        <di:waypoint x="1376" y="479" />
-        <di:waypoint x="1376" y="518" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1eqxjsa_di" bpmnElement="Event_1eqxjsa">
         <dc:Bounds x="1034" y="500" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -2580,6 +2547,14 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmndi:BPMNEdge id="Association_06owijv_di" bpmnElement="Association_06owijv">
         <di:waypoint x="897" y="1561" />
         <di:waypoint x="909" y="1666" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1dkxw9y_di" bpmnElement="Association_1dkxw9y">
+        <di:waypoint x="695" y="2521" />
+        <di:waypoint x="654" y="2604" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0b1d0j7_di" bpmnElement="Association_0b1d0j7">
+        <di:waypoint x="1376" y="479" />
+        <di:waypoint x="1376" y="518" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_16iez0e_di" bpmnElement="Group_16iez0e">
         <dc:Bounds x="873" y="2550" width="270" height="140" />
@@ -2643,6 +2618,12 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <dc:Bounds x="2630" y="430" width="294" height="70" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1o9gvqp" bpmnElement="Group_0hghzz7">
+        <dc:Bounds x="2005" y="1566" width="455" height="274" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2200" y="1573" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0ib3qj3_di" bpmnElement="Association_0ib3qj3">
         <di:waypoint x="360" y="1631" />
         <di:waypoint x="629" y="1701" />
@@ -2651,12 +2632,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <di:waypoint x="2707" y="500" />
         <di:waypoint x="2557" y="554" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BPMNShape_1o9gvqp" bpmnElement="Group_0hghzz7">
-        <dc:Bounds x="2005" y="1566" width="455" height="274" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2200" y="1573" width="40" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
