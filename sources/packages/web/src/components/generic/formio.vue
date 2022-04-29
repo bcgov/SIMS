@@ -36,6 +36,7 @@ export default {
     // Wait to show the spinner when there is an API call.
     const hideSpinner = ref(true);
     let form: any;
+
     // Update the form submission data and triggers the form redraw.
     // Redrawing ensures that components like dropdowns are going to
     // display the correct label associated with the correct value
