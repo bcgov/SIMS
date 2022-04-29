@@ -1,5 +1,5 @@
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { ProgramInfoStatus } from "@/types/contracts/institution/ProgramInfoRequest";
+import { ProgramInfoStatus } from "@/types";
 
 export function useProgramInfoRequest() {
   const mapProgramInfoChipStatus = (
