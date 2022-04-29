@@ -1728,6 +1728,14 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <dc:Bounds x="580" y="80" width="2036" height="1280" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1795ldb_di" bpmnElement="Flow_1795ldb">
+        <di:waypoint x="2150" y="1706" />
+        <di:waypoint x="2222" y="1706" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03tbno7_di" bpmnElement="Flow_03tbno7">
+        <di:waypoint x="1976" y="1706" />
+        <di:waypoint x="2050" y="1706" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ljan8f_di" bpmnElement="Flow_0ljan8f">
         <di:waypoint x="1460" y="1650" />
         <di:waypoint x="1588" y="1650" />
@@ -2185,14 +2193,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
           <dc:Bounds x="678" y="532" width="68" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_03tbno7_di" bpmnElement="Flow_03tbno7">
-        <di:waypoint x="1976" y="1706" />
-        <di:waypoint x="2050" y="1706" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1795ldb_di" bpmnElement="Flow_1795ldb">
-        <di:waypoint x="2150" y="1706" />
-        <di:waypoint x="2222" y="1706" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1y0ilvy_di" bpmnElement="Event_0a53uvu">
         <dc:Bounds x="2522" y="542" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -2452,6 +2452,16 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmndi:BPMNShape id="BPMNShape_0l9udpn" bpmnElement="Activity_1sfa3ki">
         <dc:Bounds x="1360" y="1714" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03z8wvb_di" bpmnElement="Activity_0fcbd0j">
+        <dc:Bounds x="2050" y="1666" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_01rgs2a" bpmnElement="Event_0a5b9bd">
+        <dc:Bounds x="2222" y="1688" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2214" y="1731" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0xdedyz_di" bpmnElement="TextAnnotation_0xdedyz">
         <dc:Bounds x="1427" y="2700" width="130" height="70" />
       </bpmndi:BPMNShape>
@@ -2477,16 +2487,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0cf9yon" bpmnElement="TextAnnotation_0zowv9u" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
         <dc:Bounds x="1291" y="438" width="170" height="41" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_01rgs2a" bpmnElement="Event_0a5b9bd">
-        <dc:Bounds x="2222" y="1688" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2214" y="1731" width="60" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_03z8wvb_di" bpmnElement="Activity_0fcbd0j">
-        <dc:Bounds x="2050" y="1666" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1eqxjsa_di" bpmnElement="Event_1eqxjsa">
@@ -2601,15 +2601,29 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_0ckxgh9">
     <bpmndi:BPMNPlane id="BPMNPlane_1aohpuy" bpmnElement="Activity_0fcbd0j">
-      <bpmndi:BPMNEdge id="BPMNEdge_1dl4zyo" bpmnElement="Flow_0yyg20c">
-        <di:waypoint x="460" y="120" />
-        <di:waypoint x="540" y="120" />
-        <di:waypoint x="540" y="151" />
+      <bpmndi:BPMNEdge id="Flow_0shslxe_di" bpmnElement="Flow_0shslxe">
+        <di:waypoint x="565" y="176" />
+        <di:waypoint x="632" y="176" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_0r23lxp" bpmnElement="Flow_07yodei">
-        <di:waypoint x="460" y="236" />
-        <di:waypoint x="540" y="236" />
-        <di:waypoint x="540" y="201" />
+      <bpmndi:BPMNEdge id="Flow_016p9rr_di" bpmnElement="Flow_016p9rr">
+        <di:waypoint x="148" y="176" />
+        <di:waypoint x="245" y="176" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_057zrec" bpmnElement="Flow_0w0594x">
+        <di:waypoint x="270" y="201" />
+        <di:waypoint x="270" y="236" />
+        <di:waypoint x="360" y="236" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="273" y="208" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0p2f51c" bpmnElement="Flow_1xkk95c">
+        <di:waypoint x="270" y="151" />
+        <di:waypoint x="270" y="120" />
+        <di:waypoint x="360" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="273" y="86" width="74" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1orwcul" bpmnElement="Flow_1l4516i">
         <di:waypoint x="270" y="201" />
@@ -2620,29 +2634,15 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
           <dc:Bounds x="282" y="288" width="54" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0shslxe_di" bpmnElement="Flow_0shslxe">
-        <di:waypoint x="565" y="176" />
-        <di:waypoint x="632" y="176" />
+      <bpmndi:BPMNEdge id="BPMNEdge_0r23lxp" bpmnElement="Flow_07yodei">
+        <di:waypoint x="460" y="236" />
+        <di:waypoint x="540" y="236" />
+        <di:waypoint x="540" y="201" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_016p9rr_di" bpmnElement="Flow_016p9rr">
-        <di:waypoint x="188" y="176" />
-        <di:waypoint x="245" y="176" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_0p2f51c" bpmnElement="Flow_1xkk95c">
-        <di:waypoint x="270" y="151" />
-        <di:waypoint x="270" y="120" />
-        <di:waypoint x="360" y="120" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="273" y="86" width="74" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_057zrec" bpmnElement="Flow_0w0594x">
-        <di:waypoint x="270" y="201" />
-        <di:waypoint x="270" y="236" />
-        <di:waypoint x="360" y="236" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="273" y="208" width="74" height="27" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="BPMNEdge_1dl4zyo" bpmnElement="Flow_0yyg20c">
+        <di:waypoint x="460" y="120" />
+        <di:waypoint x="540" y="120" />
+        <di:waypoint x="540" y="151" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_1utk5uv" bpmnElement="Gateway_1maom06">
         <dc:Bounds x="515" y="151" width="50" height="50" />
@@ -2650,7 +2650,7 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmndi:BPMNShape id="BPMNShape_0jclh04" bpmnElement="Gateway_0a0pk8j">
         <dc:Bounds x="245" y="151" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="309" y="166" width="83" height="14" />
+          <dc:Bounds x="168" y="153" width="83" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0eez46i" bpmnElement="Activity_0rqehim">
@@ -2663,7 +2663,7 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <dc:Bounds x="632" y="158" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0bpwuwl_di" bpmnElement="Event_0bpwuwl">
-        <dc:Bounds x="152" y="158" width="36" height="36" />
+        <dc:Bounds x="112" y="158" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
