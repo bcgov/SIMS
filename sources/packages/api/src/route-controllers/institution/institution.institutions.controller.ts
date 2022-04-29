@@ -101,19 +101,10 @@ export class InstitutionInstitutionsController extends BaseController {
     if (existingUser) {
       throw new UnprocessableEntityException("Institution User already exists");
     }
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.InstitutionProfileCreation,
-      payload,
-    );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to update a student due to an invalid request.",
-      );
-    }
     // Save institution
     const institution = await this.institutionService.createInstitution(
       userToken,
-      submissionResult.data.data,
+      payload,
     );
 
     return {

@@ -13,14 +13,13 @@ import { DesignationStatus } from "../../../route-controllers/institution-locati
 import {
   AddressAPIInDTO,
   AddressAPIOutDTO,
-  AddressDetailsAPIInDTO,
   AddressDetailsAPIOutDTO,
 } from "../../models/common.dto";
 
 /**
  * DTO object for institution creation.
  */
-export class InstitutionFormAPIInDTO extends AddressDetailsAPIInDTO {
+export class InstitutionFormAPIInDTO extends AddressAPIInDTO {
   @IsNotEmpty()
   userEmail: string;
   @IsOptional()

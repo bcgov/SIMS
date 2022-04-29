@@ -117,19 +117,7 @@ export class InstitutionAESTController extends BaseController {
       throw new NotFoundException("Institution not found.");
     }
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.InstitutionProfile,
-      payload,
-    );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to update a student due to an invalid request.",
-      );
-    }
-    await this.institutionService.updateInstitution(
-      institutionId,
-      submissionResult.data.data,
-    );
+    await this.institutionService.updateInstitution(institutionId, payload);
   }
 
   /**
