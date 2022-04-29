@@ -260,13 +260,13 @@ export class EducationProgramOfferingController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get(
-    "location/:locationId/education-program/:programId/program-year/:programYearId/selectedOffering/:selectedOffering/offerings-list",
+    "location/:locationId/education-program/:programId/program-year/:programYearId/offeringIntensity/:offeringIntensity/offerings-list",
   )
   async getProgramOfferingsForLocationForInstitution(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
-    @Param("selectedOffering") selectedOffering: OfferingIntensity,
+    @Param("offeringIntensity") offeringIntensity: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
     const offerings =
@@ -274,7 +274,7 @@ export class EducationProgramOfferingController extends BaseController {
         locationId,
         programId,
         programYearId,
-        selectedOffering,
+        offeringIntensity,
         includeInActivePY,
       );
     return offerings.map((offering) => ({
