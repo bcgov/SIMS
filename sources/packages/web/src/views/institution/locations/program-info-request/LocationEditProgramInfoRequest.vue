@@ -5,7 +5,7 @@
   <v-sheet elevation="1" class="mx-auto">
     <v-container>
       <formio
-        formName="programinformationrequestnew"
+        formName="programinformationrequest"
         :data="initialData"
         @loaded="formLoaded"
         @changed="formChanged"
@@ -148,6 +148,14 @@ export default {
           params: {
             locationId: props.locationId,
           },
+        });
+      }
+      if (
+        FormIOCustomEventTypes.RouteToProgramInformationRequestSummaryPage ===
+        event.type
+      ) {
+        router.push({
+          name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
         });
       }
     };
