@@ -3,7 +3,6 @@ import {
   Patch,
   Param,
   Body,
-  UnauthorizedException,
   UnprocessableEntityException,
   InternalServerErrorException,
   Get,

@@ -49,7 +49,6 @@ import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
 import { ConfigService } from "../config/config.service";
 import { IConfig } from "../../types";
-import { OFFERING_INTENSITY_MISMATCH } from "../../constants";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
