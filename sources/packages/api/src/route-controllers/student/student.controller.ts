@@ -201,7 +201,7 @@ export class StudentController extends BaseController {
 
     this.studentService.updateStudentContactByUserName(
       userToken.userName,
-      payload,
+      submissionResult.data.data,
     );
   }
 
@@ -270,7 +270,7 @@ export class StudentController extends BaseController {
     }
 
     await this.studentService.createStudent(userToken, {
-      ...payload,
+      ...submissionResult.data.data,
       sinNumber: payload.sinNumber,
     });
   }

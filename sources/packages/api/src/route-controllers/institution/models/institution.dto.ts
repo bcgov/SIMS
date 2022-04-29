@@ -10,12 +10,16 @@ import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-ac
 import { Type } from "class-transformer";
 
 import { DesignationStatus } from "../../../route-controllers/institution-locations/models/institution-location.dto";
-import { AddressAPIInDTO, AddressAPIOutDTO } from "../../models/common.dto";
+import {
+  AddressAPIOutDTO,
+  AddressDetailsAPIInDTO,
+  AddressDetailsAPIOutDTO,
+} from "../../models/common.dto";
 
 /**
  * DTO object for institution creation.
  */
-export class InstitutionFormAPIInDTO {
+export class InstitutionFormAPIInDTO extends AddressDetailsAPIInDTO {
   @IsNotEmpty()
   userEmail: string;
   @IsOptional()
@@ -41,19 +45,6 @@ export class InstitutionFormAPIInDTO {
   @IsNotEmpty()
   primaryContactPhone: string;
   //TODO Can be broken into a different DTO
-  //Primary Institution Address
-  @IsNotEmpty()
-  addressLine1: string;
-  @IsOptional()
-  addressLine2: string;
-  @IsNotEmpty()
-  city: string;
-  @IsNotEmpty()
-  provinceState: string;
-  @IsNotEmpty()
-  country: string;
-  @IsNotEmpty()
-  postalCode: string;
   @IsPositive()
   institutionType: number;
 }
@@ -85,8 +76,8 @@ export class InstitutionContactAPIInDTO {
   @IsNotEmpty()
   primaryContactPhone: string;
   @ValidateNested()
-  @Type(() => AddressAPIInDTO)
-  mailingAddress: AddressAPIInDTO;
+  @Type(() => AddressDetailsAPIInDTO)
+  mailingAddress: AddressDetailsAPIInDTO;
 }
 
 export class InstitutionContactAPIOutDTO {
@@ -94,7 +85,7 @@ export class InstitutionContactAPIOutDTO {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  mailingAddress: AddressAPIOutDTO;
+  mailingAddress: AddressDetailsAPIOutDTO;
 }
 
 export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {

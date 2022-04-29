@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
 } from "class-validator";
+import { AddressDetailsAPIInDTO } from "../../../route-controllers/models/common.dto";
 import { StudentPDStatus, StudentContact } from "../../../types";
 
 export class GetStudentContactDto {
@@ -23,14 +24,8 @@ export class GetStudentContactDto {
  * they are going to be handled by the
  * Form.IO dryRun validation.
  */
-export interface SaveStudentDto {
+export interface SaveStudentDto extends AddressDetailsAPIInDTO {
   phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
   /**
    * SIN is optional during update.
    */

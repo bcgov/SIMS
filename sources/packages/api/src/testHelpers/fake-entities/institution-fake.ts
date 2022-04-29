@@ -22,7 +22,6 @@ export function createFakeInstitution(): Institution {
     primaryContactPhone: faker.phone.phoneNumber(),
   };
   institution.institutionAddress = {
-    phone: faker.phone.phoneNumber(),
     addressLine1: faker.address.streetAddress(),
     addressLine2: faker.address.secondaryAddress(),
     provinceState: "BC",

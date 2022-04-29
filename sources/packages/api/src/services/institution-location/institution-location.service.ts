@@ -7,6 +7,7 @@ import {
   LocationWithDesignationStatus,
   InstitutionLocationModel,
 } from "./institution-location.models";
+import { transformAddressDetails } from "../../utilities";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
   constructor(
@@ -39,18 +40,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     const saveLocation = {
       name: data.locationName,
       data: {
-        address: {
-          addressLine1: data.addressLine1,
-          addressLine2: data.addressLine2,
-          province: data.provinceState,
-          country: data.country,
-          city: data.city,
-          postalCode: data.postalCode,
-          canadaPostalCode: data.canadaPostalCode,
-          otherPostalCode: data.otherPostalCode,
-          selectedCountry: data.selectedCountry,
-          otherCountry: data.otherCountry,
-        },
+        address: transformAddressDetails(data),
       },
       primaryContact: {
         firstName: data.primaryContactFirstName,

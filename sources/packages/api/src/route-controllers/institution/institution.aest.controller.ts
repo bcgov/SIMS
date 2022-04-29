@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -8,7 +9,7 @@ import {
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { InstitutionService } from "../../services";
+import { FormService, InstitutionService } from "../../services";
 import { Institution } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
@@ -31,6 +32,7 @@ import {
   PaginatedResults,
 } from "../../utilities";
 import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
+import { FormNames } from "../../services/form/constants";
 
 /**
  * Institution controller for AEST Client.
@@ -44,6 +46,7 @@ export class InstitutionAESTController extends BaseController {
     private readonly institutionService: InstitutionService,
     private readonly institutionControllerService: InstitutionControllerService,
     private readonly locationControllerService: InstitutionLocationControllerService,
+    private readonly formService: FormService,
   ) {
     super();
   }
@@ -113,7 +116,20 @@ export class InstitutionAESTController extends BaseController {
     if (!institution) {
       throw new NotFoundException("Institution not found.");
     }
-    await this.institutionService.updateInstitution(institutionId, payload);
+
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.InstitutionProfile,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to update a student due to an invalid request.",
+      );
+    }
+    await this.institutionService.updateInstitution(
+      institutionId,
+      submissionResult.data.data,
+    );
   }
 
   /**

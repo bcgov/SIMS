@@ -28,7 +28,7 @@ export class InstitutionControllerService {
   ): Promise<InstitutionDetailAPIOutDTO> {
     const institutionDetail =
       await this.institutionService.getInstitutionDetailById(institutionId);
-
+    console.log(institutionDetail);
     if (!institutionDetail) {
       throw new NotFoundException("Institution not found.");
     }
@@ -62,6 +62,10 @@ export class InstitutionControllerService {
         country: institutionDetail.institutionAddress.country,
         provinceState: institutionDetail.institutionAddress.provinceState,
         postalCode: institutionDetail.institutionAddress.postalCode,
+        selectedCountry: institutionDetail.institutionAddress.selectedCountry,
+        otherCountry: institutionDetail.institutionAddress.otherCountry,
+        canadaPostalCode: institutionDetail.institutionAddress.canadaPostalCode,
+        otherPostalCode: institutionDetail.institutionAddress.otherPostalCode,
       },
       isBCPrivate: isBCPrivate,
     };

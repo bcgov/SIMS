@@ -91,7 +91,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      "institutionlocation",
+      FormNames.InstitutionLocation,
       payload,
     );
 
@@ -129,7 +129,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   ): Promise<void> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      "institutionlocation",
+      FormNames.InstitutionLocation,
       payload,
     );
 
@@ -222,7 +222,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,
       primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
-      // Formio needed property.
       canadaPostalCode: institutionLocation.data.address.canadaPostalCode,
       otherPostalCode: institutionLocation.data.address.otherPostalCode,
       selectedCountry: institutionLocation.data.address.selectedCountry,

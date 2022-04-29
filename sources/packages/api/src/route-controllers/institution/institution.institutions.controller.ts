@@ -10,6 +10,7 @@ import {
   NotFoundException,
   Head,
   ForbiddenException,
+  BadRequestException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -26,6 +27,7 @@ import {
   InstitutionLocationService,
   LEGAL_SIGNING_AUTHORITY_EXIST,
   LEGAL_SIGNING_AUTHORITY_MSG,
+  FormService,
 } from "../../services";
 import {
   InstitutionContactAPIInDTO,
@@ -60,6 +62,7 @@ import {
   PaginationParams,
   PaginatedResults,
 } from "../../utilities";
+import { FormNames } from "../../services/form/constants";
 
 /**
  * Institution controller for institutions Client.
@@ -74,6 +77,7 @@ export class InstitutionInstitutionsController extends BaseController {
     private readonly userService: UserService,
     private readonly bceidAccountService: BCeIDService,
     private readonly locationService: InstitutionLocationService,
+    private readonly formService: FormService,
   ) {
     super();
   }
@@ -97,11 +101,19 @@ export class InstitutionInstitutionsController extends BaseController {
     if (existingUser) {
       throw new UnprocessableEntityException("Institution User already exists");
     }
-
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.InstitutionProfileCreation,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to update a student due to an invalid request.",
+      );
+    }
     // Save institution
     const institution = await this.institutionService.createInstitution(
       userToken,
-      payload,
+      submissionResult.data.data,
     );
 
     return {
@@ -167,9 +179,18 @@ export class InstitutionInstitutionsController extends BaseController {
     @Body() payload: InstitutionContactAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.InstitutionProfile,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to update a student due to an invalid request.",
+      );
+    }
     await this.institutionService.updateInstitution(
       userToken.authorizations.institutionId,
-      payload,
+      submissionResult.data.data,
     );
   }
 

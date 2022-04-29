@@ -7,7 +7,7 @@ export const PIR_OR_DATE_OVERLAP_ERROR_MESSAGE =
   "There is an existing application already with overlapping study period or a pending PIR.";
 /**
  * Gets PIR denied reason
- * @param applicationDetails application Object.
+ * @param application application Object.
  * @returns PIR denied reason.
  */
 export function getPIRDeniedReason(application: Application): string {
@@ -18,7 +18,7 @@ export function getPIRDeniedReason(application: Application): string {
 
 /**
  * Gets COE denied reason
- * @param applicationDetails application Object.
+ * @param disbursementSchedule application Object.
  * @returns COE denied reason.
  */
 export function getCOEDeniedReason(
