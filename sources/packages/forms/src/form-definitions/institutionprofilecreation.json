@@ -1,9 +1,12 @@
 {
+    "title": "Institution Creation",
+    "display": "form",
     "type": "form",
+    "name": "institutionprofilecreation",
+    "path": "institutionprofilecreation",
     "tags": [
         "common"
     ],
-    "owner": "pushan.x.mitra@gov.bc.ca",
     "components": [
         {
             "legend": "User information",
@@ -4148,12 +4151,5 @@
             "id": "e6z1qd9",
             "addons": []
         }
-    ],
-    "display": "form",
-    "name": "institutionprofilecreation",
-    "path": "institutionprofilecreation",
-    "title": "Institution Creation",
-    "machineName": "institutionpPofileCreation",
-    "created": "2021-06-28T22:07:09.693Z",
-    "modified": "2022-04-29T15:49:42.429Z"
+    ]
 }

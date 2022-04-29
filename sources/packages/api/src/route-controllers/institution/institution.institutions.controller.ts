@@ -10,7 +10,6 @@ import {
   NotFoundException,
   Head,
   ForbiddenException,
-  BadRequestException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -62,7 +61,6 @@ import {
   PaginationParams,
   PaginatedResults,
 } from "../../utilities";
-import { FormNames } from "../../services/form/constants";
 
 /**
  * Institution controller for institutions Client.
@@ -101,6 +99,7 @@ export class InstitutionInstitutionsController extends BaseController {
     if (existingUser) {
       throw new UnprocessableEntityException("Institution User already exists");
     }
+
     // Save institution
     const institution = await this.institutionService.createInstitution(
       userToken,

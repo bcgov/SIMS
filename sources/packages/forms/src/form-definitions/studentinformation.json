@@ -1,9 +1,12 @@
 {
+    "title": "Student Profile",
+    "display": "form",
     "type": "form",
+    "name": "studentInformation",
+    "path": "studentinformation",
     "tags": [
         "common"
     ],
-    "owner": "pushan.x.mitra@gov.bc.ca",
     "components": [
         {
             "title": "Student Information",
@@ -2733,12 +2736,5 @@
             "id": "e6z1qd9",
             "addons": []
         }
-    ],
-    "display": "form",
-    "name": "studentInformation",
-    "path": "studentinformation",
-    "title": "Student Profile",
-    "machineName": "studentInformation",
-    "created": "2021-06-28T22:09:26.906Z",
-    "modified": "2022-04-29T00:32:14.183Z"
+    ]
 }

@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -32,7 +31,6 @@ import {
   PaginatedResults,
 } from "../../utilities";
 import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
-import { FormNames } from "../../services/form/constants";
 
 /**
  * Institution controller for AEST Client.
@@ -116,7 +114,6 @@ export class InstitutionAESTController extends BaseController {
     if (!institution) {
       throw new NotFoundException("Institution not found.");
     }
-
     await this.institutionService.updateInstitution(institutionId, payload);
   }
 
