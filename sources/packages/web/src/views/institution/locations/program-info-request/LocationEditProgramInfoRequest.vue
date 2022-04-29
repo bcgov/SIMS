@@ -80,7 +80,7 @@ export default {
           props.locationId,
           OFFERINGS_DROPDOWN_KEY,
           programRequestData.value.programYearId,
-          props.applicationId,
+          programRequestData.value.offeringIntensitySelectedByStudent,
           true,
         );
       }

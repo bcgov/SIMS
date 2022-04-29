@@ -259,19 +259,15 @@ export class EducationProgramOfferingController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get(
-    "location/:locationId/education-program/:programId/program-year/:programYearId/applicationId/:applicationId/offerings-list",
+    "location/:locationId/education-program/:programId/program-year/:programYearId/selectedOffering/:selectedOffering/offerings-list",
   )
   async getProgramOfferingsForLocationForInstitution(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
-    @Param("applicationId") applicationId: number,
+    @Param("selectedOffering") selectedOffering: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
-    const selectedOffering = (
-      await this.applicationService.getApplicationById(applicationId)
-    ).data.howWillYouBeAttendingTheProgram;
-
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
