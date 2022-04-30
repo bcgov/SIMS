@@ -11,12 +11,20 @@ describe("Login Page", () => {
     cy.visit(url);
   });
 
-  it("Verify that user able to login with a valid username and valid password.", () => {
-    institutionCustomCommand.loginInstitution();
-  });
+  it(
+    "Verify that user able to login with a valid username and valid password.",
+    { retries: 4 },
+    () => {
+      institutionCustomCommand.loginInstitution();
+    }
+  );
 
-  it("Verify that clicking on the Log Off then it must be log out.", () => {
-    dashboardInstitutionObject.profileIconButton().click();
-    dashboardInstitutionObject.logOffButton().click();
-  });
+  it(
+    "Verify that clicking on the Log Off then it must be log out.",
+    { retries: 4 },
+    () => {
+      dashboardInstitutionObject.profileIconButton().click();
+      dashboardInstitutionObject.logOffButton().click();
+    }
+  );
 });

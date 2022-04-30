@@ -162,7 +162,7 @@ export default class LocationProgramObject {
   }
 
   wilMeetProgramRadioButton() {
-    return cy.xpath("//input[@id='ecvd00d-yes']");
+    return cy.get("#ecvd00d-yes");
   }
 
   fieldPlacementRadioButton() {

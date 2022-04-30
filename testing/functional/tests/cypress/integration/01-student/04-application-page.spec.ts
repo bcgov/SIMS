@@ -325,81 +325,89 @@ describe("Application Page", () => {
     applicationObject.nextSectionButton().click();
   });
 
-  it("Check that all fields on the Family Information page are working.", () => {
-    cy.intercept("GET", "**/program-year").as("programYear");
-    applicationObject.applicationButton().should("be.visible").click();
-    applicationObject.draftApplication().eq(0).click();
-    applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.nextSectionButton().click();
-    cy.wait("@programYear");
-    applicationObject.personalInformationButton().click();
-    applicationObject.iConfirmMyStudentAidCheckbox().click();
-    applicationObject.citizenStatusRadioButton().click();
-    applicationObject.residentOfBCRadioButton().click();
-    applicationObject.residenceNoneOfTheAboveRadioButton().click();
-    applicationObject
-      .explainSituationInputField()
-      .type("I applied but haven't received confirmation yet.");
-    applicationObject.indigenousPersonRadioButton().click();
-    applicationObject.aboriginalRadioButton().click();
-    applicationObject.legalGuardianRadioButton().click();
-    applicationObject.courseStudyStartDateRadioButton().click();
-    applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
-    applicationObject.workingFullTimeRadioButton().click();
-    applicationObject.fullTimeLaborForceRadioButton().click();
-    applicationObject.allowTrustContactRadioButton().click();
-    applicationObject.nextSectionButton().click();
-    applicationObject.marriedRadioButton().click();
-    applicationObject.dateOfMarriage().type("2023-12-01");
-    applicationObject.dependRadioButton().click();
-    applicationObject.fullNameText().type("Jason Holder");
-    applicationObject.dateOfBirth().type("2003-07-01");
-    applicationObject.attendingPostSecondarySchoolRadioButton().click();
-    applicationObject.declaredOnTaxesRadioButton().click();
-    applicationObject.addAnotherDependantButton().click();
-    applicationObject.secondCloseButton().click();
-    applicationObject.doYouHaveDependentSupportRadioButton().click();
-  });
+  it(
+    "Check that all fields on the Family Information page are working.",
+    { retries: 4 },
+    () => {
+      cy.intercept("GET", "**/program-year").as("programYear");
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().eq(0).click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait("@programYear");
+      applicationObject.personalInformationButton().click();
+      applicationObject.iConfirmMyStudentAidCheckbox().click();
+      applicationObject.citizenStatusRadioButton().click();
+      applicationObject.residentOfBCRadioButton().click();
+      applicationObject.residenceNoneOfTheAboveRadioButton().click();
+      applicationObject
+        .explainSituationInputField()
+        .type("I applied but haven't received confirmation yet.");
+      applicationObject.indigenousPersonRadioButton().click();
+      applicationObject.aboriginalRadioButton().click();
+      applicationObject.legalGuardianRadioButton().click();
+      applicationObject.courseStudyStartDateRadioButton().click();
+      applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
+      applicationObject.workingFullTimeRadioButton().click();
+      applicationObject.fullTimeLaborForceRadioButton().click();
+      applicationObject.allowTrustContactRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.marriedRadioButton().click();
+      applicationObject.dateOfMarriage().type("2023-12-01");
+      applicationObject.dependRadioButton().click();
+      applicationObject.fullNameText().type("Jason Holder");
+      applicationObject.dateOfBirth().type("2003-07-01");
+      applicationObject.attendingPostSecondarySchoolRadioButton().click();
+      applicationObject.declaredOnTaxesRadioButton().click();
+      applicationObject.addAnotherDependantButton().click();
+      applicationObject.secondCloseButton().click();
+      applicationObject.doYouHaveDependentSupportRadioButton().click();
+    }
+  );
 
-  it("Check that previous button is working in family information page.", () => {
-    cy.intercept("GET", "**/program-year").as("programYear");
-    applicationObject.applicationButton().should("be.visible").click();
-    applicationObject.draftApplication().eq(0).click();
-    applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.nextSectionButton().click();
-    cy.wait("@programYear");
-    applicationObject.personalInformationButton().click();
-    applicationObject.iConfirmMyStudentAidCheckbox().click();
-    applicationObject.citizenStatusRadioButton().click();
-    applicationObject.residentOfBCRadioButton().click();
-    applicationObject.residenceNoneOfTheAboveRadioButton().click();
-    applicationObject
-      .explainSituationInputField()
-      .type("I applied but haven't received confirmation yet.");
-    applicationObject.indigenousPersonRadioButton().click();
-    applicationObject.aboriginalRadioButton().click();
-    applicationObject.legalGuardianRadioButton().click();
-    applicationObject.courseStudyStartDateRadioButton().click();
-    applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
-    applicationObject.workingFullTimeRadioButton().click();
-    applicationObject.fullTimeLaborForceRadioButton().click();
-    applicationObject.allowTrustContactRadioButton().click();
-    applicationObject.nextSectionButton().click();
-    applicationObject.marriedRadioButton().click();
-    applicationObject.dateOfMarriage().type("2023-12-01");
-    applicationObject.dependRadioButton().click();
-    applicationObject.fullNameText().type("Jason Holder");
-    applicationObject.dateOfBirth().type("2003-07-01");
-    applicationObject.attendingPostSecondarySchoolRadioButton().click();
-    applicationObject.declaredOnTaxesRadioButton().click();
-    applicationObject.addAnotherDependantButton().click();
-    applicationObject.secondCloseButton().click();
-    applicationObject.doYouHaveDependentSupportRadioButton().click();
-    applicationObject.previousSectionButton().click();
-    applicationObject.previousSectionButton().click();
-    applicationObject.previousSectionButton().click();
-    applicationObject.welcomeText().should("be.visible");
-  });
+  it(
+    "Check that previous button is working in family information page.",
+    { retries: 4 },
+    () => {
+      cy.intercept("GET", "**/program-year").as("programYear");
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().eq(0).click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait("@programYear");
+      applicationObject.personalInformationButton().click();
+      applicationObject.iConfirmMyStudentAidCheckbox().click();
+      applicationObject.citizenStatusRadioButton().click();
+      applicationObject.residentOfBCRadioButton().click();
+      applicationObject.residenceNoneOfTheAboveRadioButton().click();
+      applicationObject
+        .explainSituationInputField()
+        .type("I applied but haven't received confirmation yet.");
+      applicationObject.indigenousPersonRadioButton().click();
+      applicationObject.aboriginalRadioButton().click();
+      applicationObject.legalGuardianRadioButton().click();
+      applicationObject.courseStudyStartDateRadioButton().click();
+      applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
+      applicationObject.workingFullTimeRadioButton().click();
+      applicationObject.fullTimeLaborForceRadioButton().click();
+      applicationObject.allowTrustContactRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.marriedRadioButton().click();
+      applicationObject.dateOfMarriage().type("2023-12-01");
+      applicationObject.dependRadioButton().click();
+      applicationObject.fullNameText().type("Jason Holder");
+      applicationObject.dateOfBirth().type("2003-07-01");
+      applicationObject.attendingPostSecondarySchoolRadioButton().click();
+      applicationObject.declaredOnTaxesRadioButton().click();
+      applicationObject.addAnotherDependantButton().click();
+      applicationObject.secondCloseButton().click();
+      applicationObject.doYouHaveDependentSupportRadioButton().click();
+      applicationObject.previousSectionButton().click();
+      applicationObject.previousSectionButton().click();
+      applicationObject.previousSectionButton().click();
+      applicationObject.welcomeText().should("be.visible");
+    }
+  );
 
   it("Verify that condition-based records are displaying or not in partner Information.", () => {
     cy.intercept("GET", "**/program-year").as("programYear");
@@ -776,12 +784,16 @@ describe("Application Page", () => {
     applicationObject.studentUpdatedText().should("be.visible");
   });
 
-  it("Verify that user able to apply for PD status in profile page .", () => {
-    applicationObject.profileSection().click();
-    applicationObject.applyForPDStatusButton().click();
-    applicationObject.applyForPDMessage().should("be.visible");
-    applicationObject.yesForApplyPDButton().click();
-  });
+  it(
+    "Verify that user able to apply for PD status in profile page .",
+    { retries: 4 },
+    () => {
+      applicationObject.profileSection().click();
+      applicationObject.applyForPDStatusButton().click();
+      applicationObject.applyForPDMessage().should("be.visible");
+      applicationObject.yesForApplyPDButton().click();
+    }
+  );
 
   it("Verify that financial aid application redirects to correct page or not.", () => {
     applicationObject.applicationButton().should("be.visible").click();

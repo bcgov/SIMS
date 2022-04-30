@@ -16,11 +16,15 @@ describe("Location Program", () => {
     institutionCustomCommand.loginInstitution();
   });
 
-  it("Verify that user redirect to location program page", () => {
-    dashboardInstitutionObject.dashboardButton().click();
-    dashboardInstitutionObject.programsButton().eq(0).click();
-    cy.url().should("contain", "/location-programs");
-  });
+  it(
+    "Verify that user redirect to location program page",
+    { retries: 4 },
+    () => {
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.programsButton().eq(0).click();
+      cy.url().should("contain", "/location-programs");
+    }
+  );
 
   it("Verify that search bar is working properly by searching incorrect word", () => {
     dashboardInstitutionObject.dashboardButton().click();
@@ -107,6 +111,7 @@ describe("Location Program", () => {
       locationProgramObject.institutionPartner().click();
       locationProgramObject.wilComponentRadioButton().click();
       locationProgramObject.wilApprovedByRegulatorRadioButton().click();
+      locationProgramObject.wait();
       locationProgramObject.wilMeetProgramRadioButton().click();
       locationProgramObject.fieldPlacementRadioButton().click();
       locationProgramObject.fieldPlacementEligibilityRadioButton().click();

@@ -14,13 +14,17 @@ describe("Manage Locations", () => {
     institutionCustomCommand.loginInstitution();
   });
 
-  it("Verify that user redirect to institution manage location page", () => {
-    dashboardInstitutionObject.dashboardButton().click();
-    dashboardInstitutionObject.manageInstitutionButton().click();
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    institutionManageLocationObject.manageLocationButton().click();
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
-  });
+  it(
+    "Verify that user redirect to institution manage location page",
+    { retries: 4 },
+    () => {
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.manageInstitutionButton().click();
+      dashboardInstitutionObject.locationVerifyText().should("be.visible");
+      institutionManageLocationObject.manageLocationButton().click();
+      dashboardInstitutionObject.locationVerifyText().should("be.visible");
+    }
+  );
 
   it("Verify that user redirect to edit page of institution manage location", () => {
     dashboardInstitutionObject.dashboardButton().click();

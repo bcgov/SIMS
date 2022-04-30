@@ -14,13 +14,17 @@ describe("Institution Profile", () => {
     institutionCustomCommand.loginInstitution();
   });
 
-  it("Verify that user redirect to institution profile page", () => {
-    dashboardInstitutionObject.dashboardButton().click();
-    dashboardInstitutionObject.manageInstitutionButton().click();
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    institutionObject.institutionDetailsButton().click();
-    institutionObject.institutionInformationText().should("be.visible");
-  });
+  it(
+    "Verify that user redirect to institution profile page",
+    { retries: 4 },
+    () => {
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.manageInstitutionButton().click();
+      dashboardInstitutionObject.locationVerifyText().should("be.visible");
+      institutionObject.institutionDetailsButton().click();
+      institutionObject.institutionInformationText().should("be.visible");
+    }
+  );
 
   it("Check that legal operating name text field should be disable or not", () => {
     dashboardInstitutionObject.dashboardButton().click();
