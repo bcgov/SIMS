@@ -1,7 +1,6 @@
 /**
  * Service model for address details.
  */
-
 export interface AddressDetailsModel {
   addressLine1: string;
   addressLine2?: string;
