@@ -17,16 +17,11 @@ export class WorkflowActionsService {
    */
   async startApplicationAssessment(
     workflowName: string,
-    applicationId: number,
     assessmentId: number,
   ): Promise<WorkflowStartResult> {
     try {
       return await this.workflowService.start(workflowName, {
         variables: {
-          applicationId: {
-            value: applicationId,
-            type: "integer",
-          },
           assessmentId: {
             value: assessmentId,
             type: "integer",

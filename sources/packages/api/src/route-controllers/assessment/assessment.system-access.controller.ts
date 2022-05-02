@@ -73,6 +73,7 @@ export class AssessmentSystemAccessController extends BaseController {
       (verification) => verification.supportingUserId === null,
     );
     return {
+      applicationId: application.id,
       triggerType: assessment.triggerType,
       data: application.data,
       programYear: {

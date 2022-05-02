@@ -49,6 +49,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .select([
         "assessment.id",
         "assessment.triggerType",
+        "application.id",
         "application.data",
         "programYear.programYear",
         "programYear.startDate",
@@ -288,7 +289,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
 
     await this.workflow.startApplicationAssessment(
       assessment.application.data.workflowName,
-      assessment.application.id,
       assessment.id,
     );
   }
