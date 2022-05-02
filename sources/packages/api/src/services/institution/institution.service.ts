@@ -196,10 +196,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       country: institutionModel.country,
       city: institutionModel.city,
       postalCode: institutionModel.postalCode,
-      canadaPostalCode: institutionModel.canadaPostalCode,
-      otherPostalCode: institutionModel.otherPostalCode,
       selectedCountry: institutionModel.selectedCountry,
-      otherCountry: institutionModel.otherCountry,
     };
 
     await this.createAssociation({

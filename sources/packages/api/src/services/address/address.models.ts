@@ -8,9 +8,6 @@ export interface AddressDetailsModel {
   city: string;
   country: string;
   postalCode: string;
-  provinceState: string;
-  canadaPostalCode?: string;
-  otherPostalCode?: string;
+  provinceState?: string;
   selectedCountry?: string;
-  otherCountry?: string;
 }

@@ -62,7 +62,7 @@ export interface InstitutionPrimaryContactAPIOutDTO {
   city: string;
   country: string;
   postalCode: string;
-  provinceState: string;
+  provinceState?: string;
   canadaPostalCode?: string;
   otherPostalCode?: string;
   selectedCountry?: string;

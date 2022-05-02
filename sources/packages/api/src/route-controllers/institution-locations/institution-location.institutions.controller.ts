@@ -41,6 +41,7 @@ import {
   credentialTypeToDisplay,
   getUserFullName,
   CustomNamedError,
+  transformAddressDetailsForForm2,
 } from "../../utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
@@ -210,22 +211,13 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       );
 
     return {
-      addressLine1: institutionLocation.data.address.addressLine1,
-      addressLine2: institutionLocation.data.address.addressLine2,
-      city: institutionLocation.data.address.city,
-      country: institutionLocation.data.address.country,
       locationName: institutionLocation.name,
-      postalCode: institutionLocation.data.address.postalCode,
-      provinceState: institutionLocation.data.address.province,
       institutionCode: institutionLocation.institutionCode,
       primaryContactFirstName: institutionLocation.primaryContact.firstName,
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,
       primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
-      canadaPostalCode: institutionLocation.data.address.canadaPostalCode,
-      otherPostalCode: institutionLocation.data.address.otherPostalCode,
-      selectedCountry: institutionLocation.data.address.selectedCountry,
-      otherCountry: institutionLocation.data.address.otherCountry,
+      ...transformAddressDetailsForForm2(institutionLocation.data.address),
     };
   }
 

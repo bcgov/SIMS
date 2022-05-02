@@ -16,29 +16,15 @@ export class AddressAPIInDTO {
   @IsNotEmpty()
   city: string;
   @IsOptional()
-  provinceState: string;
+  provinceState?: string;
   @IsNotEmpty()
   country: string;
   @IsNotEmpty()
   postalCode: string;
   @IsOptional()
-  // This property will have canada postal code.
-  // This property is for formIO purpose.
-  @IsOptional()
-  canadaPostalCode?: string;
-  // This property will have postal code for countries other than Canada.
-  // This property is for formIO purpose.
-  @IsOptional()
-  otherPostalCode?: string;
-  // Dropdown value, it will have either "canada" or "other".
-  // This property is for formIO purpose.
-  @IsOptional()
   selectedCountry?: string;
-  // When "other" is selected in selectedCountry, then this property will have a value.
-  // This property is for formIO purpose.
-  @IsOptional()
-  otherCountry?: string;
 }
+
 /**
  * Common DTO for Address
  ** This DTO is used in API request body.
@@ -79,7 +65,7 @@ export class AddressInfoAPIOutDTO {
   addressLine1: string;
   addressLine2?: string;
   city: string;
-  province: string;
+  province?: string;
   country: string;
   postalCode: string;
 }
@@ -121,23 +107,22 @@ export class AddressDetailsAPIInDTO {
   @Allow()
   postalCode: string;
   @Allow()
-  provinceState: string;
-  @Allow()
+  provinceState?: string;
   // This property will have canada postal code.
-  // This property is for formIO purpose.
-  @Allow()
+  // This property is for dry run validation, this is not saved in db.
+  @IsOptional()
   canadaPostalCode?: string;
   // This property will have postal code for countries other than Canada.
-  // This property is for formIO purpose.
-  @Allow()
+  // This property is for dry run validation, this is not saved in db.
+  @IsOptional()
   otherPostalCode?: string;
   // Dropdown value, it will have either "canada" or "other".
-  // This property is for formIO purpose.
-  @Allow()
+  // This property is for dry run validation, this is not saved in db.
+  @IsOptional()
   selectedCountry?: string;
   // When "other" is selected in selectedCountry, then this property will have a value.
-  // This property is for formIO purpose.
-  @Allow()
+  // This property is for dry run validation, this is not saved in db.
+  @IsOptional()
   otherCountry?: string;
 }
 
@@ -150,7 +135,7 @@ export class AddressDetailsAPIOutDTO {
   city: string;
   country: string;
   postalCode: string;
-  provinceState: string;
+  provinceState?: string;
   canadaPostalCode?: string;
   otherPostalCode?: string;
   selectedCountry?: string;

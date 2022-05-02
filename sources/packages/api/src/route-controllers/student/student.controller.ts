@@ -58,6 +58,7 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
+  transformAddressDetailsForForm2,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
@@ -115,7 +116,9 @@ export class StudentController extends BaseController {
       gender: existingStudent.gender,
       dateOfBirth: existingStudent.birthDate,
       contact: {
-        ...existingStudent.contactInfo.addresses[0],
+        ...transformAddressDetailsForForm2(
+          existingStudent.contactInfo.addresses[0],
+        ),
         provinceState: existingStudent.contactInfo.addresses[0].province,
         phone: existingStudent.contactInfo.phone,
       },
