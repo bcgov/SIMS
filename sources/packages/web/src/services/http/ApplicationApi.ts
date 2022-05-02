@@ -29,35 +29,6 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  /**
-   * Retrieve the Notice of Assessment (NOA) for a particular application.
-   */
-  public async getNOA(applicationId: number): Promise<NoticeOfAssessmentDTO> {
-    try {
-      const response = await this.apiClient.get(
-        this.addClientRoot(`application/${applicationId}/assessment`),
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  public async confirmAssessment(applicationId: number): Promise<void> {
-    try {
-      await this.apiClient.patch(
-        this.addClientRoot(`application/${applicationId}/confirm-assessment`),
-        {},
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
   public async updateStudentApplicationStatus(
     applicationId: number,
     payload: ApplicationStatusToBeUpdatedDto,

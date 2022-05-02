@@ -24,14 +24,6 @@ export class ApplicationService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getNOA(applicationId: number): Promise<NoticeOfAssessmentDTO> {
-    return ApiClient.Application.getNOA(applicationId);
-  }
-
-  public async confirmAssessment(applicationId: number): Promise<void> {
-    return ApiClient.Application.confirmAssessment(applicationId);
-  }
-
   public async updateStudentApplicationStatus(
     applicationId: number,
     payload: ApplicationStatusToBeUpdatedDto,

@@ -16,9 +16,15 @@ import {
 } from "../../database/entities";
 import {
   AssessmentHistorySummaryAPIOutDTO,
+  AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
 } from "./models/assessment.dto";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
+import { AssessmentControllerService } from "./assessment.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -29,6 +35,7 @@ export class AssessmentAESTController extends BaseController {
     private readonly studentAppealService: StudentAppealService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly assessmentControllerService: AssessmentControllerService,
   ) {
     super();
   }
@@ -114,5 +121,23 @@ export class AssessmentAESTController extends BaseController {
       studentAppealId: assessment.studentAppeal?.id,
       studentScholasticStandingId: assessment.studentScholasticStanding?.id,
     }));
+  }
+
+  /**
+   * Get the NOA values for a student application on a particular assessment.
+   * @param assessmentId assessment id to get the NOA values.
+   * @returns NOA and application data.
+   */
+  @Get(":assessmentId/noa")
+  @ApiNotFoundResponse({
+    description: "Assessment id not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Notice of assessment data is not present.",
+  })
+  async getAssessmentNOA(
+    @Param("assessmentId") assessmentId: number,
+  ): Promise<AssessmentNOAAPIOutDTO> {
+    return this.assessmentControllerService.getAssessmentNOA(assessmentId);
   }
 }

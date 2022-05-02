@@ -40,6 +40,7 @@ import {
   StudentAppealAESTController,
   InstitutionLocationAESTController,
   InstitutionLocationControllerService,
+  AssessmentControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -88,6 +89,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     InstitutionLocationControllerService,
     GCNotifyService,
     GCNotifyActionsService,
+    AssessmentControllerService,
   ],
 })
 export class AppAESTModule {}

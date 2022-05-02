@@ -1,5 +1,7 @@
 import {
+  Assessment,
   AssessmentTriggerType,
+  OfferingIntensity,
   ScholasticStandingStatus,
   StudentAppealStatus,
   StudentAssessmentStatus,
@@ -22,4 +24,17 @@ export interface AssessmentHistorySummaryAPIOutDTO {
   status: StudentAssessmentStatus;
   studentAppealId?: number;
   studentScholasticStandingId?: number;
+}
+
+export interface AssessmentNOAAPIOutDTO {
+  assessment: Assessment;
+  applicationNumber: string;
+  fullName: string;
+  programName: string;
+  locationName: string;
+  offeringIntensity: OfferingIntensity;
+  offeringStudyStartDate: string;
+  offeringStudyEndDate: string;
+  msfaaNumber: string;
+  disbursement: any;
 }
