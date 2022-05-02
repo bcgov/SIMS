@@ -29,9 +29,9 @@ import {
   FieldSortOrder,
   PaginationParams,
   PaginatedResults,
+  transformAddressDetailsForForm,
 } from "../../utilities";
 import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
-import { transformAddressDetailsForForm } from "../../utilities";
 
 /**
  * Institution controller for AEST Client.
