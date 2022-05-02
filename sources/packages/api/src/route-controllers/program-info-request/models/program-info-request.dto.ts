@@ -17,7 +17,6 @@ export class CompleteProgramInfoRequestAPIInDTO {
 export interface GetProgramInfoRequestDto extends SaveOfferingDTO {
   selectedOffering?: number;
   selectedProgram?: number;
-  offeringName: string;
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;
