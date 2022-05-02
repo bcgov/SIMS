@@ -173,9 +173,9 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     includeInActivePY?: boolean,
   ): Promise<OptionItemDto[]> {
     try {
-      let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/selectedOfferingIntensity/${selectedOfferingIntensity}/offerings-list`;
+      let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/offerings-list?selectedOfferingIntensity=${selectedOfferingIntensity}`;
       if (includeInActivePY) {
-        url = `${url}?includeInActivePY=${includeInActivePY}`;
+        url = `${url}&includeInActivePY=${includeInActivePY}`;
       }
       const response = await this.getCall(url);
       return response.data;

@@ -254,7 +254,7 @@ export class EducationProgramOfferingController extends BaseController {
    * @param locationId location id.
    * @param programId program id.
    * @param programYearId program year id.
-   * @param selectedOfferingIntensity offering intensity selected by student.
+   * @query selectedOfferingIntensity offering intensity selected by student.
    * @query includeInActivePY, if includeInActivePY is true,
    * then consider both active and inactive program year.
    * @returns key/value pair list of programs for students.
@@ -262,13 +262,13 @@ export class EducationProgramOfferingController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get(
-    "location/:locationId/education-program/:programId/program-year/:programYearId/selectedOfferingIntensity/:selectedOfferingIntensity/offerings-list",
+    "location/:locationId/education-program/:programId/program-year/:programYearId/offerings-list",
   )
   async getProgramOfferingsForLocationForInstitution(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
-    @Param("selectedOfferingIntensity")
+    @Query("selectedOfferingIntensity")
     selectedOfferingIntensity: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
@@ -280,6 +280,9 @@ export class EducationProgramOfferingController extends BaseController {
         selectedOfferingIntensity,
         includeInActivePY,
       );
+    if (!Object.values(OfferingIntensity).includes(selectedOfferingIntensity)) {
+      throw new NotFoundException("Invalid offering intensity.");
+    }
     return offerings.map((offering) => ({
       id: offering.id,
       description: getOfferingNameAndPeriod(offering),

@@ -13,7 +13,7 @@ import {
 import {
   CompleteProgramInfoRequestAPIInDTO,
   DenyProgramInfoRequestDto,
-  GetProgramInfoRequestDto,
+  ProgramInfoRequestAPOutDTO,
   GetPIRDeniedReasonDto,
 } from "./models/program-info-request.dto";
 import {
@@ -92,7 +92,7 @@ export class ProgramInfoRequestController extends BaseController {
   async getProgramInfoRequest(
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
-  ): Promise<GetProgramInfoRequestDto> {
+  ): Promise<ProgramInfoRequestAPOutDTO> {
     const application = await this.applicationService.getProgramInfoRequest(
       locationId,
       applicationId,
@@ -122,7 +122,7 @@ export class ProgramInfoRequestController extends BaseController {
     }
     // Offering that belongs to the original assessment.
     const offering = application.currentAssessment.offering;
-    const result = {} as GetProgramInfoRequestDto;
+    const result = {} as ProgramInfoRequestAPOutDTO;
     // Program Info Request specific data.
     result.institutionLocationName = application.location.name;
     result.applicationNumber = application.applicationNumber;
@@ -231,15 +231,6 @@ export class ProgramInfoRequestController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      const submissionResult = await this.formService.dryRunSubmission(
-        FormNames.ProgramInformationRequest,
-        payload,
-      );
-      if (!submissionResult.valid) {
-        throw new BadRequestException(
-          "Not able to complete the Program Information Request due to an invalid request.",
-        );
-      }
       // TODO: Check authorization to ensure that the location has access to this application.
       const application = await this.applicationService.getApplicationById(
         applicationId,

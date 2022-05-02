@@ -5,8 +5,11 @@ import {
   IsOptional,
   IsPositive,
 } from "class-validator";
-import { SaveOfferingDTO } from "src/route-controllers/education-program-offering/models/education-program-offering.dto";
-import { ProgramInfoStatus } from "../../../database/entities";
+import {
+  OfferingStatus,
+  OfferingTypes,
+  ProgramInfoStatus,
+} from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 
 export class CompleteProgramInfoRequestAPIInDTO {
@@ -14,7 +17,30 @@ export class CompleteProgramInfoRequestAPIInDTO {
   selectedOffering: number;
 }
 
-export interface GetProgramInfoRequestDto extends SaveOfferingDTO {
+export interface ProgramInfoRequestAPOutDTO {
+  offeringName: string;
+  studyStartDate: Date;
+  studyEndDate: Date;
+  actualTuitionCosts: number;
+  programRelatedCosts: number;
+  mandatoryFees: number;
+  exceptionalExpenses: number;
+  tuitionRemittanceRequestedAmount: number;
+  offeringDelivered: string;
+  lacksStudyDates: boolean;
+  lacksStudyBreaks: boolean;
+  lacksFixedCosts: boolean;
+  tuitionRemittanceRequested: string;
+  offeringIntensity: OfferingIntensity;
+  yearOfStudy: number;
+  showYearOfStudy?: boolean;
+  hasOfferingWILComponent: string;
+  offeringWILType?: string;
+  offeringDeclaration: boolean;
+  assessedBy?: string;
+  assessedDate?: Date;
+  offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
   selectedOffering?: number;
   selectedProgram?: number;
   institutionLocationName: string;
