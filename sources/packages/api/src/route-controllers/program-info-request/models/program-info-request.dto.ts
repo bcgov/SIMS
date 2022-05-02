@@ -17,7 +17,7 @@ export class CompleteProgramInfoRequestAPIInDTO {
   selectedOffering: number;
 }
 
-export interface ProgramInfoRequestAPOutDTO {
+export interface ProgramInfoRequestAPIOutDTO {
   offeringName: string;
   studyStartDate: Date;
   studyEndDate: Date;
