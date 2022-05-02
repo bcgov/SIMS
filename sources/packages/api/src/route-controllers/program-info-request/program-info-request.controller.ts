@@ -13,7 +13,7 @@ import {
 import {
   CompleteProgramInfoRequestAPIInDTO,
   DenyProgramInfoRequestDto,
-  ProgramInfoRequestAPOutDTO,
+  ProgramInfoRequestAPIOutDTO,
   GetPIRDeniedReasonDto,
 } from "./models/program-info-request.dto";
 import {
@@ -91,7 +91,7 @@ export class ProgramInfoRequestController extends BaseController {
   async getProgramInfoRequest(
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
-  ): Promise<ProgramInfoRequestAPOutDTO> {
+  ): Promise<ProgramInfoRequestAPIOutDTO> {
     const application = await this.applicationService.getProgramInfoRequest(
       locationId,
       applicationId,
@@ -121,7 +121,7 @@ export class ProgramInfoRequestController extends BaseController {
     }
     // Offering that belongs to the original assessment.
     const offering = application.currentAssessment.offering;
-    const result = {} as ProgramInfoRequestAPOutDTO;
+    const result = {} as ProgramInfoRequestAPIOutDTO;
     // Program Info Request specific data.
     result.institutionLocationName = application.location.name;
     result.applicationNumber = application.applicationNumber;

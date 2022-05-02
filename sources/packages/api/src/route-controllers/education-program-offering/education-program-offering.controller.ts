@@ -268,10 +268,13 @@ export class EducationProgramOfferingController extends BaseController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
-    @Query("selectedOfferingIntensity")
+    @Query("offeringIntensity")
     selectedOfferingIntensity: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
+    if (!Object.values(OfferingIntensity).includes(selectedOfferingIntensity)) {
+      throw new NotFoundException("Invalid offering intensity.");
+    }
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
@@ -280,9 +283,6 @@ export class EducationProgramOfferingController extends BaseController {
         selectedOfferingIntensity,
         includeInActivePY,
       );
-    if (!Object.values(OfferingIntensity).includes(selectedOfferingIntensity)) {
-      throw new NotFoundException("Invalid offering intensity.");
-    }
     return offerings.map((offering) => ({
       id: offering.id,
       description: getOfferingNameAndPeriod(offering),
