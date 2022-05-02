@@ -2,6 +2,7 @@ import {
   InstitutionLocationInfo,
   PrimaryContact,
 } from "../../database/entities";
+import { AddressDetailsModel } from "../address/address.models";
 
 export interface LocationWithDesignationStatus {
   id: number;
@@ -15,14 +16,8 @@ export interface LocationWithDesignationStatus {
 /**
  * Service model for institution location.
  */
-export interface InstitutionLocationModel {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  country: string;
+export interface InstitutionLocationModel extends AddressDetailsModel {
   locationName: string;
-  postalCode: string;
-  provinceState: string;
   institutionCode: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;

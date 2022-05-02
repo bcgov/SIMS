@@ -60,6 +60,7 @@ import {
   PaginationParams,
   PaginatedResults,
   getUserFullName,
+  transformAddressDetailsForForm,
 } from "../../utilities";
 
 /**
@@ -153,9 +154,17 @@ export class InstitutionInstitutionsController extends BaseController {
   async getInstitutionDetail(
     @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionDetailAPIOutDTO> {
-    return this.institutionControllerService.getInstitutionDetail(
-      token.authorizations.institutionId,
-    );
+    const institutionDetail =
+      await this.institutionControllerService.getInstitutionDetail(
+        token.authorizations.institutionId,
+      );
+
+    return {
+      ...institutionDetail,
+      mailingAddress: transformAddressDetailsForForm(
+        institutionDetail.mailingAddress,
+      ),
+    };
   }
 
   /**
