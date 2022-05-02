@@ -5,11 +5,7 @@ import {
   IsOptional,
   IsPositive,
 } from "class-validator";
-import {
-  OfferingStatus,
-  OfferingTypes,
-  ProgramInfoStatus,
-} from "../../../database/entities";
+import { OfferingTypes, ProgramInfoStatus } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 
 export class CompleteProgramInfoRequestAPIInDTO {
