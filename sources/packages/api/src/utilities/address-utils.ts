@@ -8,7 +8,7 @@ import { AddressInfo } from "../types";
  * @returns address info as AddressInfo.
  */
 export function transformAddressDetails(
-  addressDetails: Partial<AddressDetailsModel>,
+  addressDetails: AddressDetailsModel,
 ): AddressInfo {
   return {
     addressLine1: addressDetails.addressLine1,
