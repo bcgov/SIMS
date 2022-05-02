@@ -18,47 +18,26 @@ export class CompleteProgramInfoRequestAPIInDTO {
 }
 
 export interface ProgramInfoRequestAPIOutDTO {
-  offeringName: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  tuitionRemittanceRequestedAmount: number;
-  offeringDelivered: string;
-  lacksStudyDates: boolean;
-  lacksStudyBreaks: boolean;
-  lacksFixedCosts: boolean;
-  tuitionRemittanceRequested: string;
-  offeringIntensity: OfferingIntensity;
-  yearOfStudy: number;
-  showYearOfStudy?: boolean;
-  hasOfferingWILComponent: string;
-  offeringWILType?: string;
-  offeringDeclaration: boolean;
-  assessedBy?: string;
-  assessedDate?: Date;
-  offeringStatus: OfferingStatus;
-  offeringType: OfferingTypes;
-  selectedOffering?: number;
-  selectedProgram?: number;
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;
-  studentStudyStartDate: string;
-  studentStudyEndDate: string;
   studentSelectedProgram: string;
+  selectedProgram?: number;
+  selectedOffering?: number;
+  pirStatus: ProgramInfoStatus;
   studentCustomProgram: string;
   studentCustomProgramDescription: string;
-  pirStatus: ProgramInfoStatus;
+  studentStudyStartDate: string;
+  studentStudyEndDate: string;
+  offeringIntensitySelectedByStudent: OfferingIntensity;
   programYearId: number;
+  isActiveProgramYear: boolean;
+  offeringName: string;
+  offeringDelivered: string;
+  offeringType: OfferingTypes;
+  offeringIntensity: OfferingIntensity;
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
-  isActiveProgramYear: boolean;
-  offeringIntensitySelectedByStudent: OfferingIntensity;
-  programYearStartDate: Date;
-  programYearEndDate: Date;
 }
 
 export interface GetPIRDeniedReasonDto {

@@ -127,6 +127,7 @@ export class ProgramInfoRequestController extends BaseController {
     result.applicationNumber = application.applicationNumber;
     result.studentFullName = getUserFullName(application.student.user);
     result.studentSelectedProgram = application.pirProgram?.name;
+
     // If an offering is present, this value will be the program id associated
     // with the offering, otherwise the program id from PIR will be used.
     result.selectedProgram =
@@ -145,26 +146,11 @@ export class ProgramInfoRequestController extends BaseController {
     result.isActiveProgramYear = application.programYear.active;
     if (offering) {
       result.offeringName = offering.name;
-      result.studyStartDate = offering.studyStartDate;
-      result.studyEndDate = offering.studyEndDate;
-      result.actualTuitionCosts = offering.actualTuitionCosts;
-      result.programRelatedCosts = offering.programRelatedCosts;
-      result.mandatoryFees = offering.mandatoryFees;
-      result.exceptionalExpenses = offering.exceptionalExpenses;
-      result.tuitionRemittanceRequestedAmount =
-        offering.tuitionRemittanceRequestedAmount;
-      result.offeringDelivered = offering.offeringDelivered;
-      result.lacksStudyBreaks = offering.lacksStudyBreaks;
-      result.tuitionRemittanceRequested = offering.tuitionRemittanceRequested;
       result.offeringType = offering.offeringType;
       result.offeringIntensity = offering.offeringIntensity;
     }
-
     result.pirDenyReasonId = application.pirDeniedReasonId?.id;
     result.otherReasonDesc = application.pirDeniedOtherDesc;
-    result.programYearStartDate = application.programYear.startDate;
-    result.programYearEndDate = application.programYear.endDate;
-
     return result;
   }
 
