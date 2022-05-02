@@ -1,15 +1,23 @@
-import { IsNotEmpty, IsInt, Min, IsOptional } from "class-validator";
-import { SaveOfferingDTO } from "../../education-program-offering/models/education-program-offering.dto";
+import {
+  IsNotEmpty,
+  IsInt,
+  Min,
+  IsOptional,
+  IsPositive,
+} from "class-validator";
+import { SaveOfferingDTO } from "src/route-controllers/education-program-offering/models/education-program-offering.dto";
 import { ProgramInfoStatus } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 
-export interface CompleteProgramInfoRequestDto extends SaveOfferingDTO {
-  selectedProgram?: number;
-  selectedOffering?: number;
+export class CompleteProgramInfoRequestAPIInDTO {
+  @IsPositive()
+  selectedOffering: number;
 }
 
-export interface GetProgramInfoRequestDto
-  extends CompleteProgramInfoRequestDto {
+export interface GetProgramInfoRequestDto extends SaveOfferingDTO {
+  selectedOffering?: number;
+  selectedProgram?: number;
+  offeringName: string;
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;

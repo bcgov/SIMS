@@ -11,7 +11,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import {
-  CompleteProgramInfoRequestDto,
+  CompleteProgramInfoRequestAPIInDTO,
   DenyProgramInfoRequestDto,
   GetProgramInfoRequestDto,
   GetPIRDeniedReasonDto,
@@ -227,7 +227,7 @@ export class ProgramInfoRequestController extends BaseController {
   async completeProgramInfoRequest(
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
-    @Body() payload: CompleteProgramInfoRequestDto,
+    @Body() payload: CompleteProgramInfoRequestAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
@@ -258,7 +258,8 @@ export class ProgramInfoRequestController extends BaseController {
           "The location does not have access to the offering.",
         );
       }
-
+      const studyStartDate = offeringLocation.studyStartDate;
+      const studyEndDate = offeringLocation.studyEndDate;
       // Offering exists, is valid and just need to be associated
       // with the application to complete the PIR.
       const offeringToCompletePIR = {
@@ -271,8 +272,8 @@ export class ProgramInfoRequestController extends BaseController {
         application.student.user.id,
         application.student.sin,
         application.student.birthDate,
-        offeringLocation.studyStartDate,
-        offeringLocation.studyEndDate,
+        studyStartDate,
+        studyEndDate,
       );
 
       const updatedApplication =
