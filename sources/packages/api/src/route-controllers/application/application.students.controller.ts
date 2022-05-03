@@ -26,7 +26,6 @@ import {
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-  ASSESSMENT_NOT_FOUND,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -35,7 +34,6 @@ import {
   GetApplicationDataDto,
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
-  NOAApplicationDto,
   ApplicationIdentifiersDTO,
 } from "./models/application.model";
 import {
@@ -46,15 +44,8 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import {
-  ApplicationStatus,
-  AssessmentTriggerType,
-} from "../../database/entities";
-import {
-  dateString,
-  getUserFullName,
-  PIR_OR_DATE_OVERLAP_ERROR,
-} from "../../utilities";
+import { ApplicationStatus } from "../../database/entities";
+import { PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import { INVALID_APPLICATION_NUMBER } from "../../constants";
 import {
   ApiBadRequestResponse,

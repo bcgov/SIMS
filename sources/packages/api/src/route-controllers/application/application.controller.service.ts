@@ -139,8 +139,9 @@ export class ApplicationControllerService {
   ): Promise<GetApplicationDataDto> {
     const offering = applicationDetail.currentAssessment?.offering;
     return {
-      data: applicationDetail.data,
       id: applicationDetail.id,
+      assessmentId: applicationDetail.currentAssessment?.id,
+      data: applicationDetail.data,
       applicationStatus: applicationDetail.applicationStatus,
       applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,
       applicationNumber: applicationDetail.applicationNumber,

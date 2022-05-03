@@ -18,22 +18,6 @@
       </template>
     </HeaderNavigator>
     <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
-    <v-btn
-      v-if="showViewAssessment"
-      color="primary"
-      class="p-button-raised ml-2 float-right"
-      @click="
-        $router.push({
-          name: StudentRoutesConst.ASSESSMENT,
-          params: {
-            applicationId: id,
-          },
-        })
-      "
-    >
-      <v-icon size="25">mdi-text-box-plus</v-icon>
-      View Assessment
-    </v-btn>
     <CancelApplication
       :showModal="showModal"
       :applicationId="id"
@@ -223,11 +207,13 @@ export default {
         );
       }
     };
+
     const getApplicationDetails = async (applicationId: number) => {
       applicationDetails.value =
         await ApplicationService.shared.getApplicationData(applicationId);
       loadMenu();
     };
+
     watch(
       () => props.id,
       async (currValue: number) => {
@@ -235,6 +221,7 @@ export default {
         await getApplicationDetails(currValue);
       },
     );
+
     onMounted(async () => {
       const studentRestriction =
         await StudentService.shared.getStudentRestriction();
@@ -242,9 +229,11 @@ export default {
       restrictionMessage.value = studentRestriction.restrictionMessage;
       await getApplicationDetails(props.id);
     });
+
     const toggle = (event: any) => {
       menu?.value?.toggle(event);
     };
+
     return {
       items,
       toggle,

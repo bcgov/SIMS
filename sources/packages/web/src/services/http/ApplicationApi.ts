@@ -6,7 +6,6 @@ import {
   GetApplicationDataDto,
   GetApplicationBaseDTO,
   StudentApplicationAndCount,
-  NoticeOfAssessmentDTO,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,

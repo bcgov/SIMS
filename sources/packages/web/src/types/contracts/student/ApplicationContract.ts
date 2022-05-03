@@ -88,6 +88,7 @@ export interface ApplicationIdentifiersDTO {
  * Base DTO for application dynamic data
  */
 export interface GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
+  assessmentId?: number;
   data: any;
   applicationStatus: ApplicationStatus;
   applicationFormName: string;

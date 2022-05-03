@@ -74,15 +74,13 @@ export class ApplicationIdentifiersDTO {
  * Base DTO for application
  */
 export class GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
+  assessmentId?: number;
   data: ApplicationFormData;
   applicationStatus: ApplicationStatus;
   applicationFormName: string;
   applicationProgramYearID: number;
 }
 export class GetApplicationDataDto extends GetApplicationBaseDTO {
-  /**
-   * Application dynamic data.
-   */
   applicationStatusUpdatedOn: Date;
   applicationOfferingIntensity: string;
   applicationStartDate: string;

@@ -5,10 +5,11 @@
     </div>
     <full-page-container>
       <notice-of-assessment-form-view :assessmentId="assessmentId" />
-      <v-btn color="primary" @click="confirmAssessment()">
-        <v-icon size="25">mdi-text-box-plus</v-icon>
-        Confirmation of Assessment
-      </v-btn>
+      <v-row class="justify-center mt-4">
+        <v-btn color="primary" @click="confirmAssessment()">
+          Confirmation of assessment
+        </v-btn>
+      </v-row>
     </full-page-container>
   </v-container>
 </template>
@@ -17,9 +18,15 @@
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
 import { useToastMessage } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { NoticeOfAssessmentFormView },
+  components: {
+    FullPageContainer,
+    HeaderNavigator,
+    NoticeOfAssessmentFormView,
+  },
   props: {
     assessmentId: {
       type: Number,
