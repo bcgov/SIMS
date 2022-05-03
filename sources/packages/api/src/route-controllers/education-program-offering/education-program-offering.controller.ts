@@ -269,10 +269,10 @@ export class EducationProgramOfferingController extends BaseController {
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
     @Query("offeringIntensity")
-    selectedOfferingIntensity: OfferingIntensity,
+    offeringIntensity: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
-    if (!Object.values(OfferingIntensity).includes(selectedOfferingIntensity)) {
+    if (!Object.values(OfferingIntensity).includes(offeringIntensity)) {
       throw new NotFoundException("Invalid offering intensity.");
     }
     const offerings =
@@ -280,7 +280,7 @@ export class EducationProgramOfferingController extends BaseController {
         locationId,
         programId,
         programYearId,
-        selectedOfferingIntensity,
+        offeringIntensity,
         includeInActivePY,
       );
     return offerings.map((offering) => ({
