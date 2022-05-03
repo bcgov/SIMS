@@ -264,7 +264,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId location id to filter.
    * @param includeInActivePY includeInActivePY, if includeInActivePY, then both active
    * and not active program year is considered.
-   * @param selectedOfferingIntensity offering intensity selected by student.
+   * @param offeringIntensity offering intensity selected by student.
    * @param programYearId program id to be filtered.
    * @returns program offerings for location.
    */

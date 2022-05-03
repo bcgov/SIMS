@@ -254,7 +254,7 @@ export class EducationProgramOfferingController extends BaseController {
    * @param locationId location id.
    * @param programId program id.
    * @param programYearId program year id.
-   * @query selectedOfferingIntensity offering intensity selected by student.
+   * @query offeringIntensity offering intensity selected by student.
    * @query includeInActivePY, if includeInActivePY is true,
    * then consider both active and inactive program year.
    * @returns key/value pair list of programs for students.
