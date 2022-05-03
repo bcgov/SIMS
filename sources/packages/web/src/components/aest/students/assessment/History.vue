@@ -62,7 +62,7 @@
             ><Column header="Assessment">
               <template #body="{ data }">
                 <v-btn
-                  @click="viewAssessment(data.assessmentId)"
+                  @click="$emit('viewAssessment', data.assessmentId)"
                   color="primary"
                 >
                   View assessment</v-btn
@@ -126,10 +126,6 @@ export default {
       }
     };
 
-    const viewAssessment = (assessmentId: number) => {
-      context.emit("viewAssessment", assessmentId);
-    };
-
     const canShowViewRequest = (triggerType: AssessmentTriggerType) =>
       [
         AssessmentTriggerType.StudentAppeal,
@@ -143,7 +139,6 @@ export default {
       dateOnlyLongString,
       viewRequest,
       canShowViewRequest,
-      viewAssessment,
     };
   },
 };

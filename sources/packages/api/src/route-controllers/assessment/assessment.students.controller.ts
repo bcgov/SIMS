@@ -64,12 +64,12 @@ export class AssessmentStudentsController extends BaseController {
   }
 
   /**
-   * Confirm Assessment of a Student.
+   * Confirm assessment of a Student.
    * @param assessmentId assessment id to be confirmed.
    */
   @CheckRestrictions()
   @ApiUnprocessableEntityResponse({
-    description: "Student not found or Assessment confirmation failed.",
+    description: "Student not found or assessment confirmation failed.",
   })
   @Patch(":assessmentId/confirm-assessment")
   async confirmAssessmentNOA(

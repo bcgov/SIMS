@@ -70,6 +70,3 @@ export default {
   },
 };
 </script>
-
-function useRouter() { throw new Error('Function not implemented.'); } function
-useRouter() { throw new Error('Function not implemented.'); }

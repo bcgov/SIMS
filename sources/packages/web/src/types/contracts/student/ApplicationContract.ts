@@ -145,22 +145,6 @@ export interface ApplicationSummaryDTO extends ApplicationIdentifiersDTO {
 }
 
 /**
- * DTO for Notice of Assessment view
- */
-export interface NoticeOfAssessmentDTO {
-  assessment: Assessment;
-  applicationNumber: string;
-  fullName: string;
-  programName: string;
-  locationName: string;
-  offeringIntensity: OfferingIntensity;
-  offeringStudyStartDate: string;
-  offeringStudyEndDate: string;
-  msfaaNumber: string;
-  disbursement: any;
-}
-
-/**
  * Interface for BaseAssessment values that are shared between FullTime and PartTime
  */
 export interface BaseAssessment {
