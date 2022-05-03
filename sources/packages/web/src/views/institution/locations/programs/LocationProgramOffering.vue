@@ -31,7 +31,7 @@ import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { useToastMessage } from "@/composables";
+import { useToastMessage, useOffering } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 
 export default {
@@ -54,6 +54,7 @@ export default {
     const toast = useToastMessage();
     const router = useRouter();
     const initialData = ref();
+    const { mapOfferingChipStatus } = useOffering();
     const clientType = computed(() => AuthService.shared.authClientType);
 
     const isInstitutionUser = computed(() => {
@@ -81,6 +82,9 @@ export default {
             ...programOffering,
             ...programDetails,
           };
+          initialData.value.offeringChipStatus = mapOfferingChipStatus(
+            initialData.value.offeringStatus,
+          );
         } else {
           initialData.value = {
             ...programDetails,

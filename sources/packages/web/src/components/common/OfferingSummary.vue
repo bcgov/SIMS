@@ -48,14 +48,18 @@
         {{ dateOnlyLongString(slotProps.data.studyEndDate) }}
       </template></Column
     >
-    <Column :field="OfferingSummaryFields.OfferingIntensity" header="Type"
-      ><template #body="slotProps">
-        <span>{{ slotProps.data.offeringIntensity }} </span>
-      </template>
+    <Column :field="OfferingSummaryFields.OfferingIntensity" header="Intensity">
     </Column>
     <Column
       :field="OfferingSummaryFields.OfferingDelivered"
       header="Study Delivery"
+    />
+    <Column field="offeringType" header="Offering Type" />
+    <Column header="Status"
+      ><template #body="slotProps">
+        <status-chip-offering
+          :status="slotProps.data.offeringStatus"
+        /> </template
     ></Column>
     <Column>
       <template #body="slotProps">
@@ -91,8 +95,12 @@ import {
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { AuthService } from "@/services/AuthService";
+import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 
 export default {
+  components: {
+    StatusChipOffering,
+  },
   props: {
     programId: {
       type: Number,

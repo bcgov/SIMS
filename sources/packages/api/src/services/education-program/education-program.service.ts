@@ -512,7 +512,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.programDeclaration",
         "institution.id",
         "institution.legalOperatingName",
-        "programs.submittedOn",
+        "programs.submittedDate",
         "submittedBy.firstName",
         "submittedBy.lastName",
         "assessedBy.firstName",

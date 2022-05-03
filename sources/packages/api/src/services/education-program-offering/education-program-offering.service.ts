@@ -6,6 +6,7 @@ import {
   OfferingTypes,
   OfferingIntensity,
   ProgramStatus,
+  OfferingStatus,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
@@ -272,6 +273,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programYearId: number,
     selectedIntensity?: OfferingIntensity,
     includeInActivePY?: boolean,
+    offeringStatus?: OfferingStatus,
   ): Promise<Partial<EducationProgramOffering>[]> {
     const query = this.repo
       .createQueryBuilder("offerings")
@@ -307,6 +309,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     if (selectedIntensity) {
       query.andWhere("offerings.offeringIntensity = :selectedIntensity", {
         selectedIntensity,
+      });
+    }
+    if (offeringStatus) {
+      query.andWhere("offerings.offeringStatus = :offeringStatus", {
+        offeringStatus,
       });
     }
     return query.orderBy("offerings.name").getMany();

@@ -31,7 +31,11 @@ import {
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
-import { OfferingTypes, OfferingIntensity } from "../../database/entities";
+import {
+  OfferingTypes,
+  OfferingIntensity,
+  OfferingStatus,
+} from "../../database/entities";
 import {
   getOfferingNameAndPeriod,
   FieldSortOrder,
@@ -237,6 +241,7 @@ export class EducationProgramOfferingController extends BaseController {
         programYearId,
         selectedIntensity,
         includeInActivePY,
+        OfferingStatus.Approved,
       );
     return offerings.map((offering) => ({
       id: offering.id,

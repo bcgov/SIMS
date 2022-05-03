@@ -1,3 +1,5 @@
+import { OfferingStatus } from "@/types";
+
 /**
  * Program Intensities of the Program.
  */
@@ -162,4 +164,19 @@ export interface ApproveProgram {
 
 export interface DeclineProgram {
   declinedNote: string;
+}
+
+export interface ProgramOfferingHeader {
+  institutionId: number;
+  institutionName: string;
+  submittedDate: string;
+  status: ProgramStatus | OfferingStatus;
+  assessedBy: string;
+  assessedDate: string;
+  effectiveEndDate?: Date;
+}
+
+export interface ProgramOfferingApprovalLabels {
+  assessedByLabel: string;
+  assessedDateLabel: string;
 }

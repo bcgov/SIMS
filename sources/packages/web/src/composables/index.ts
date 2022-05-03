@@ -14,3 +14,4 @@ export * from "./useDesignationAgreement";
 export * from "./useAssessment";
 export * from "./useFileUtils";
 export * from "./useLocation";
+export * from "./useOffering";
