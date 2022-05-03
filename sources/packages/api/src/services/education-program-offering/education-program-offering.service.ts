@@ -302,10 +302,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       })
       .andWhere(
         "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",
-      )
-      .andWhere("offerings.offeringIntensity = :offeringIntensity", {
+      );
+    if (offeringIntensity) {
+      query.andWhere("offerings.offeringIntensity = :offeringIntensity", {
         offeringIntensity,
       });
+    }
     if (!includeInActivePY) {
       query.andWhere("programYear.active = true");
     }

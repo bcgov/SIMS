@@ -272,7 +272,10 @@ export class EducationProgramOfferingController extends BaseController {
     offeringIntensity: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
-    if (!Object.values(OfferingIntensity).includes(offeringIntensity)) {
+    if (
+      offeringIntensity &&
+      !Object.values(OfferingIntensity).includes(offeringIntensity)
+    ) {
       throw new NotFoundException("Invalid offering intensity.");
     }
     const offerings =
