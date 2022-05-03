@@ -1,11 +1,5 @@
-export interface InstitutionAddress {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
-}
+import { AddressDetailsModel } from "../address/address.models";
+
 export interface UpdateInstitution {
   operatingName: string;
   primaryPhone: string;
@@ -18,10 +12,10 @@ export interface UpdateInstitution {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  mailingAddress: InstitutionAddress;
+  mailingAddress: AddressDetailsModel;
 }
 
-export interface InstitutionFormModel {
+export interface InstitutionFormModel extends AddressDetailsModel {
   userEmail: string;
   operatingName: string;
   primaryPhone: string;
@@ -33,12 +27,6 @@ export interface InstitutionFormModel {
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
   institutionType: number;
 }
 

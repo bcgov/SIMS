@@ -1,32 +1,25 @@
 import { Allow, IsNotEmptyObject } from "class-validator";
 import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
-import { AddressInfoAPIOutDTO } from "../../models/common.dto";
+import {
+  AddressDetailsAPIInDTO,
+  AddressDetailsAPIOutDTO,
+  AddressInfoAPIOutDTO,
+} from "../../models/common.dto";
 
 export class GetInstitutionLocationDto {
   id: number;
   data: InstitutionLocationInfo;
   name: string;
 }
+
 /**
  * Payload/Input DTO for institution location.
  ** Class validators are not used for DTO validation
  ** because of dry-run validation.
  */
-export class InstitutionLocationFormAPIInDTO {
-  @Allow()
-  addressLine1: string;
-  @Allow()
-  addressLine2?: string;
-  @Allow()
-  city: string;
-  @Allow()
-  country: string;
+export class InstitutionLocationFormAPIInDTO extends AddressDetailsAPIInDTO {
   @Allow()
   locationName: string;
-  @Allow()
-  postalCode: string;
-  @Allow()
-  provinceState: string;
   @Allow()
   institutionCode: string;
   @Allow()
@@ -42,14 +35,8 @@ export class InstitutionLocationFormAPIInDTO {
 /**
  * Response/Output DTO for institution location.
  */
-export class InstitutionLocationFormAPIOutDTO {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  country: string;
+export class InstitutionLocationFormAPIOutDTO extends AddressDetailsAPIOutDTO {
   locationName: string;
-  postalCode: string;
-  provinceState: string;
   institutionCode: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;

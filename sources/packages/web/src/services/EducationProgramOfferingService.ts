@@ -145,12 +145,14 @@ export class EducationProgramOfferingService {
     locationId: number,
     programId: number,
     programYearId: number,
+    selectedOfferingIntensity: OfferingIntensity,
     includeInActivePY?: boolean,
   ): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgramOffering.getProgramOfferingsForLocationForInstitution(
       locationId,
       programId,
       programYearId,
+      selectedOfferingIntensity,
       includeInActivePY,
     );
   }

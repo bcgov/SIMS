@@ -216,12 +216,15 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .select([
         "studentAppeal.id",
         "studentAssessment.id",
+        "currentAssessment.id",
+        "currentAssessment.offering.id",
         "appealRequest.id",
         "application.id",
         "student.id",
       ])
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
       .innerJoin("studentAppeal.application", "application")
+      .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("application.student", "student")
       .leftJoin("studentAppeal.studentAssessment", "studentAssessment")
       .where("studentAppeal.id = :appealId", { appealId })
@@ -304,6 +307,9 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         // Create the new assessment to be processed.
         appealToUpdate.studentAssessment = {
           application: { id: appealToUpdate.application.id } as Application,
+          offering: {
+            id: appealToUpdate.application.currentAssessment.offeringId,
+          },
           triggerType: AssessmentTriggerType.StudentAppeal,
           creator: auditUser,
           submittedBy: auditUser,

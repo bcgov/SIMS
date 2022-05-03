@@ -2,16 +2,12 @@ import { DesignationAgreementStatus } from "@/types";
 import {
   AddressInfoAPIOutDTO,
   InstitutionPrimaryContactAPIOutDTO,
+  AddressDetailsFormAPIDTO,
 } from "@/services/http/dto";
 
-export interface InstitutionLocationFormAPIInDTO {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  country: string;
+export interface InstitutionLocationFormAPIInDTO
+  extends AddressDetailsFormAPIDTO {
   locationName: string;
-  postalCode: string;
-  provinceState: string;
   institutionCode: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
@@ -19,14 +15,9 @@ export interface InstitutionLocationFormAPIInDTO {
   primaryContactPhone: string;
 }
 
-export interface InstitutionLocationFormAPIOutDTO {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  country: string;
+export interface InstitutionLocationFormAPIOutDTO
+  extends AddressDetailsFormAPIDTO {
   locationName: string;
-  postalCode: string;
-  provinceState: string;
   institutionCode: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;

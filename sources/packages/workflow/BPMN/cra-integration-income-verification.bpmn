@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_13hoftn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_13hoftn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
   <bpmn:process id="cra-integration-income-verification" name="CRA Integration Income Verification" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_00vsd5p</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:scriptTask id="Activity_0vp5c0o" name="Define Income" scriptFormat="javascript" camunda:resultVariable="totalIncomeDefined">
-      <bpmn:incoming>Flow_14lv82f</bpmn:incoming>
-      <bpmn:outgoing>Flow_0g5f43s</bpmn:outgoing>
-      <bpmn:script>execution.getVariable("craReportedIncome") == null ? execution.getVariable("userReportedIncome") : execution.getVariable("craReportedIncome")</bpmn:script>
-    </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="Gateway_15hcna7">
       <bpmn:incoming>Flow_1sy8f2z</bpmn:incoming>
       <bpmn:outgoing>Flow_14lv82f</bpmn:outgoing>
@@ -30,8 +25,6 @@
               <camunda:script scriptFormat="javascript">var statusCode = connector.getVariable("statusCode");
 if (statusCode === 200) {
   var output = S(connector.getVariable("response"));
-  connector.setVariable("reported", output.prop("reported").value());
-  connector.setVariable("craReported", output.prop("craReported").value());
   connector.setVariable("verifiedOnCRA", output.prop("verifiedOnCRA").boolValue());
 }
 else {
@@ -45,8 +38,6 @@ else {
           <camunda:inputParameter name="applicationId">${applicationId}</camunda:inputParameter>
           <camunda:inputParameter name="craVerificationId">${craVerificationId}</camunda:inputParameter>
           <camunda:outputParameter name="verifiedOnCRA">${verifiedOnCRA}</camunda:outputParameter>
-          <camunda:outputParameter name="craReportedIncome">${craReported}</camunda:outputParameter>
-          <camunda:outputParameter name="userReportedIncome">${reported}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_14jikfo</bpmn:incoming>
@@ -93,7 +84,7 @@ else {
       <bpmn:outgoing>Flow_1b135oq</bpmn:outgoing>
       <bpmn:outgoing>Flow_0lnbvtj</bpmn:outgoing>
     </bpmn:eventBasedGateway>
-    <bpmn:sequenceFlow id="Flow_14lv82f" name="Ready" sourceRef="Gateway_15hcna7" targetRef="Activity_0vp5c0o">
+    <bpmn:sequenceFlow id="Flow_14lv82f" name="Ready" sourceRef="Gateway_15hcna7" targetRef="Event_0supscb">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${verifiedOnCRA == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1sy8f2z" sourceRef="Activity_16iw4na" targetRef="Gateway_15hcna7" />
@@ -164,9 +155,8 @@ execution.setVariable('error_retry', 0);</camunda:script>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1nvy1qr" sourceRef="Activity_1foe483" targetRef="Gateway_1jrigfq" />
     <bpmn:endEvent id="Event_0supscb">
-      <bpmn:incoming>Flow_0g5f43s</bpmn:incoming>
+      <bpmn:incoming>Flow_14lv82f</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0g5f43s" sourceRef="Activity_0vp5c0o" targetRef="Event_0supscb" />
     <bpmn:serviceTask id="Activity_0axm3xc" name="Get Token">
       <bpmn:extensionElements>
         <camunda:connector>
@@ -219,10 +209,6 @@ execution.setVariable('error_retry', 0);</camunda:script>
       <bpmndi:BPMNEdge id="Flow_0rmsvke_di" bpmnElement="Flow_0rmsvke">
         <di:waypoint x="500" y="307" />
         <di:waypoint x="550" y="307" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0g5f43s_di" bpmnElement="Flow_0g5f43s">
-        <di:waypoint x="1293" y="307" />
-        <di:waypoint x="1332" y="307" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1nvy1qr_di" bpmnElement="Flow_1nvy1qr">
         <di:waypoint x="650" y="307" />
@@ -277,19 +263,19 @@ execution.setVariable('error_retry', 0);</camunda:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_14lv82f_di" bpmnElement="Flow_14lv82f">
         <di:waypoint x="1158" y="307" />
-        <di:waypoint x="1193" y="307" />
+        <di:waypoint x="1212" y="307" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1154" y="287" width="33" height="14" />
+          <dc:Bounds x="1151" y="287" width="33" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="112" y="289" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0vp5c0o_di" bpmnElement="Activity_0vp5c0o">
-        <dc:Bounds x="1193" y="267" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_15hcna7_di" bpmnElement="Gateway_15hcna7" isMarkerVisible="true">
         <dc:Bounds x="1108" y="282" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16iw4na_di" bpmnElement="Activity_16iw4na">
+        <dc:Bounds x="980" y="267" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1efqdr1_di" bpmnElement="Activity_1efqdr1">
         <dc:Bounds x="843" y="267" width="100" height="80" />
@@ -306,9 +292,6 @@ execution.setVariable('error_retry', 0);</camunda:script>
       <bpmndi:BPMNShape id="Activity_1foe483_di" bpmnElement="Activity_1foe483">
         <dc:Bounds x="550" y="267" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0supscb_di" bpmnElement="Event_0supscb">
-        <dc:Bounds x="1332" y="289" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0axm3xc_di" bpmnElement="Activity_0axm3xc">
         <dc:Bounds x="400" y="267" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -322,10 +305,10 @@ execution.setVariable('error_retry', 0);</camunda:script>
         <dc:Bounds x="546" y="440" width="180" height="53" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1cpjiym_di" bpmnElement="TextAnnotation_1cpjiym">
-        <dc:Bounds x="190" y="130" width="345" height="63" />
+        <dc:Bounds x="190" y="130" width="345" height="90" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_16iw4na_di" bpmnElement="Activity_16iw4na">
-        <dc:Bounds x="980" y="267" width="100" height="80" />
+      <bpmndi:BPMNShape id="Event_0supscb_di" bpmnElement="Event_0supscb">
+        <dc:Bounds x="1212" y="289" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_07jx7c7_di" bpmnElement="Association_07jx7c7">
         <di:waypoint x="661" y="137" />
@@ -338,7 +321,7 @@ execution.setVariable('error_retry', 0);</camunda:script>
       <bpmndi:BPMNEdge id="Association_0y0is2i_di" bpmnElement="Association_0y0is2i">
         <di:waypoint x="313" y="267" />
         <di:waypoint x="300" y="195" />
-        <di:waypoint x="298" y="193" />
+        <di:waypoint x="304" y="220" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

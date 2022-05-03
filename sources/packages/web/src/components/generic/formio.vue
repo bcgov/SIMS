@@ -7,8 +7,8 @@
 import { onMounted, ref, watch } from "vue";
 import { Formio } from "formiojs";
 import { SetupContext } from "vue";
-import ApiClient from "../../services/http/ApiClient";
-import FormUploadService from "../../services/FormUploadService";
+import ApiClient from "@/services/http/ApiClient";
+import FormUploadService from "@/services/FormUploadService";
 import { FormIOCustomEvent } from "@/types";
 import { v4 as uuid } from "uuid";
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_13hoftn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_13hoftn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
   <bpmn:process id="cra-integration-supporting-user" name="CRA Integration Supporting User" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_00vsd5p</bpmn:outgoing>
@@ -31,93 +31,18 @@ if (statusCode !== 200) {
 }
 var supportingData = undefined;
 var output = S(connector.getVariable("response"));
-connector.setVariable("output", output);
 // Supporting data will not be defined if the data was
 // not provided yet by parent/partner.
 var hasSupportingData = !output.prop("supportingData").isNull();
-connector.setVariable("hasSupportingData", hasSupportingData);
-if (hasSupportingData) {
-  supportingData = output.prop("supportingData");
-  // set supportingData
-  connector.setVariable("supportingData", supportingData);
-  connector.setVariable(
-    "totalIncomeFromLine15000",
-    supportingData.prop("totalIncome").value()
-  );
-} else {
-  connector.setVariable("totalIncomeFromLine15000", 0);
-}
-
-//processing supporting data details
-var fieldNames = connector.getVariable("supportingUserFormAPINames");
-// Initialize all variables with null.
-// If some variable is not present the variable will be present.
-for (var i = 0; i &lt; fieldNames.length; i++) {
-  connector.setVariable(fieldNames[i], null);
-}
-
-//Function Description
-function createVariablesFromPayload(payload) {
-  for (var i = 0; i &lt; fieldNames.length; i++) {
-    var fieldName = fieldNames[i];
-    var fieldValue = 0;
-    if (payload.hasProp(fieldName)) {
-      if (payload.prop(fieldName).isArray()) {
-        fieldValue = payload.prop(fieldName);
-      } else {
-        fieldValue = payload.prop(fieldName).value();
-      }
-      connector.setVariable(fieldName, fieldValue);
-    }
-    connector.setVariable(fieldName, fieldValue);
-  }
-}
-
-//var supportingDataDetails = connector.getVariable("supportingData");
-if (supportingData) {
-  createVariablesFromPayload(supportingData);
-}</camunda:script>
+connector.setVariable("hasSupportingData", hasSupportingData);</camunda:script>
             </camunda:outputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>
         <camunda:inputOutput>
-          <camunda:inputParameter name="supportingUserFormAPINames">
-            <camunda:list>
-              <camunda:value>parentDependentTable</camunda:value>
-              <camunda:value>totalIncome</camunda:value>
-              <camunda:value>cppLine30800</camunda:value>
-              <camunda:value>cppLine31000</camunda:value>
-              <camunda:value>foreignAssets</camunda:value>
-              <camunda:value>totalIncomeTaxLine43500</camunda:value>
-              <camunda:value>eiLine31200</camunda:value>
-              <camunda:value>parentalContributions</camunda:value>
-              <camunda:value>partnerTotalPDBenefits</camunda:value>
-              <camunda:value>partnerTotalIncomeAssistance</camunda:value>
-              <camunda:value>partnerTotalEmploymentInsurance</camunda:value>
-              <camunda:value>partnerTotalStudentLoan</camunda:value>
-              <camunda:value>partnerTotalSupport</camunda:value>
-              <camunda:value>partnerLivingWithStudent</camunda:value>
-              <camunda:value>partnerStudentStudyWeeks</camunda:value>
-            </camunda:list>
-          </camunda:inputParameter>
           <camunda:inputParameter name="supportingUserId">${supportingUserId}</camunda:inputParameter>
           <camunda:inputParameter name="applicationId">${applicationId}</camunda:inputParameter>
-          <camunda:outputParameter name="partnerStudentStudyWeeks">${partnerStudentStudyWeeks}</camunda:outputParameter>
-          <camunda:outputParameter name="livingWithPartner">${partnerLivingWithStudent}</camunda:outputParameter>
-          <camunda:outputParameter name="childSpousalSupportCost">${partnerTotalSupport}</camunda:outputParameter>
-          <camunda:outputParameter name="partnerLoanPayment">${partnerTotalStudentLoan}</camunda:outputParameter>
-          <camunda:outputParameter name="partnerEmploymentInsuranceBenefits">${partnerTotalEmploymentInsurance}</camunda:outputParameter>
-          <camunda:outputParameter name="partnerDisabilityAssistance">${partnerTotalIncomeAssistance}</camunda:outputParameter>
-          <camunda:outputParameter name="partnerPermanentDisabilityBenefits">${partnerTotalPDBenefits}</camunda:outputParameter>
-          <camunda:outputParameter name="parentContributions">${parentalContributions}</camunda:outputParameter>
-          <camunda:outputParameter name="parentNetAssests">${foreignAssets}</camunda:outputParameter>
-          <camunda:outputParameter name="parentEi">${eiLine31200}</camunda:outputParameter>
-          <camunda:outputParameter name="parentTax">${totalIncomeTaxLine43500}</camunda:outputParameter>
-          <camunda:outputParameter name="parentCppSelfemploymentOther">${cppLine31000}</camunda:outputParameter>
-          <camunda:outputParameter name="parentCppEmployment">${cppLine30800}</camunda:outputParameter>
-          <camunda:outputParameter name="totalIncome">${totalIncome}</camunda:outputParameter>
-          <camunda:outputParameter name="parentDependentTable">${parentDependentTable}</camunda:outputParameter>
+          <camunda:outputParameter name="hasSupportingData">${hasSupportingData}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_14jikfo</bpmn:incoming>

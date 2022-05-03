@@ -1,25 +1,10 @@
-export interface Student {
-  phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
-}
+import { AddressDetailsFormAPIDTO } from "@/services/http/dto";
 
-export interface CreateStudent extends Student {
+export interface StudentContact extends AddressDetailsFormAPIDTO {
+  phone: string;
+}
+export interface CreateStudent extends StudentContact {
   sinNumber?: string;
-}
-
-export interface StudentContact {
-  phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
 }
 
 export interface StudentInfo {
@@ -43,17 +28,6 @@ export interface StudentInfo {
   pdSentDate: string;
   pdUpdatedDate: string;
   pdStatus: string;
-}
-
-export interface StudentProfile {
-  phone: string;
-  sinNumber?: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
 }
 
 export interface StudentFormInfo extends StudentInfo {

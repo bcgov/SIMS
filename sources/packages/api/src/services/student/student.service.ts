@@ -15,7 +15,12 @@ import { StudentContact } from "../../types/studentContact";
 import { IUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { getDateOnly, getUTCNow, removeWhiteSpaces } from "../../utilities";
+import {
+  getDateOnly,
+  getUTCNow,
+  removeWhiteSpaces,
+  transformAddressDetails,
+} from "../../utilities";
 import { CreateStudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import * as dayjs from "dayjs";
@@ -82,16 +87,7 @@ export class StudentService extends RecordDataModelService<Student> {
     student.gender = userInfo.gender;
     student.sin = removeWhiteSpaces(otherInfo.sinNumber);
     student.contactInfo = {
-      addresses: [
-        {
-          addressLine1: otherInfo.addressLine1,
-          addressLine2: otherInfo.addressLine2,
-          city: otherInfo.city,
-          province: otherInfo.provinceState,
-          country: otherInfo.country,
-          postalCode: otherInfo.postalCode,
-        },
-      ],
+      addresses: [transformAddressDetails(otherInfo)],
       phone: otherInfo.phone,
     };
     student.user = user;
@@ -124,16 +120,7 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     student.contactInfo = {
-      addresses: [
-        {
-          addressLine1: contact.addressLine1,
-          addressLine2: contact.addressLine2,
-          city: contact.city,
-          province: contact.provinceState,
-          country: contact.country,
-          postalCode: contact.postalCode,
-        },
-      ],
+      addresses: [transformAddressDetails(contact)],
       phone: contact.phone,
     };
 

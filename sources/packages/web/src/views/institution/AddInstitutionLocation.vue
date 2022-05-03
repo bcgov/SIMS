@@ -1,9 +1,7 @@
 <template>
-  <Card class="p-m-4">
-    <template #content>
-      <formio formName="institutionlocation" @submitted="submitted"></formio>
-    </template>
-  </Card>
+  <v-container>
+    <formio formName="institutionlocation" @submitted="submitted"></formio>
+  </v-container>
 </template>
 
 <script lang="ts">

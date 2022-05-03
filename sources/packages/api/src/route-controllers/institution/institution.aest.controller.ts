@@ -29,6 +29,7 @@ import {
   FieldSortOrder,
   PaginationParams,
   PaginatedResults,
+  transformAddressDetailsForForm,
 } from "../../utilities";
 import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
 
@@ -93,9 +94,16 @@ export class InstitutionAESTController extends BaseController {
   async getInstitutionDetailById(
     @Param("institutionId") institutionId: number,
   ): Promise<InstitutionDetailAPIOutDTO> {
-    return this.institutionControllerService.getInstitutionDetail(
-      institutionId,
-    );
+    const institutionDetail =
+      await this.institutionControllerService.getInstitutionDetail(
+        institutionId,
+      );
+    return {
+      ...institutionDetail,
+      mailingAddress: transformAddressDetailsForForm(
+        institutionDetail.mailingAddress,
+      ),
+    };
   }
 
   /**

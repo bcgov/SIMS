@@ -15,3 +15,4 @@ export * from "./useAssessment";
 export * from "./useFileUtils";
 export * from "./useLocation";
 export * from "./useOffering";
+export * from "./useProgramInfoRequest";

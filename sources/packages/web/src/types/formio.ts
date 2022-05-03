@@ -27,4 +27,5 @@ export enum FormIOCustomEventTypes {
   RouteToInstitutionActiveSummaryPage = "routeToInstitutionActiveSummaryPage",
   RouteToParentInformation = "routeToParentInformation",
   RouteToPartnerInformation = "routeToPartnerInformation",
+  RouteToProgramInformationRequestSummaryPage = "routeToProgramInformationRequestSummaryPage",
 }
