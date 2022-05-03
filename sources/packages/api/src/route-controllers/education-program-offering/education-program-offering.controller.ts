@@ -269,7 +269,7 @@ export class EducationProgramOfferingController extends BaseController {
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
     @Query("offeringIntensity")
-    offeringIntensity: OfferingIntensity,
+    offeringIntensity?: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
     if (
