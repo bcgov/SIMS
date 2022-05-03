@@ -1,3 +1,5 @@
+import { OfferingStatus } from "@/types";
+
 /**
  * Valid Intensity of the Offerings.
  */
@@ -36,6 +38,8 @@ export interface OfferingDTO {
   offeringWILType?: string;
   studyBreaks?: StudyBreak[];
   offeringDeclaration: boolean;
+  offeringStatus: OfferingStatus;
+  offeringChipStatus?: string;
 }
 export interface ProgramOfferingDetailsDto {
   studyStartDate?: Date;

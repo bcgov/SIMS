@@ -17,8 +17,8 @@
       <header-title-value
         title="Submitted"
         :value="
-          headerDetails.submittedOn
-            ? dateOnlyLongString(headerDetails.submittedOn)
+          headerDetails.submittedDate
+            ? dateOnlyLongString(headerDetails.submittedDate)
             : '-'
         "
       />

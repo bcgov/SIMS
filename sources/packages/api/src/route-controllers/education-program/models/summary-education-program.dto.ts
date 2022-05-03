@@ -12,7 +12,7 @@ export interface SubsetEducationProgramDto {
   programStatus: string;
   programIntensity: ProgramIntensity;
   institutionProgramCode?: string;
-  submittedOn: Date;
+  submittedDate: Date;
   submittedBy: string;
   assessedDate?: Date;
   assessedBy?: string;

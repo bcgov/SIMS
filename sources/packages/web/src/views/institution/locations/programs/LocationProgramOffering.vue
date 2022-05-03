@@ -1,15 +1,26 @@
 <template>
-  <p class="muted-heading-text">
-    <a @click="goBack()">
-      <v-icon left> mdi-arrow-left </v-icon> Program detail</a
-    >
-  </p>
-  <span class="heading-x-large">
-    <span v-if="isReadonly">View Study Period</span>
-    <span v-if="offeringId && !isReadonly">Edit Study Period</span>
-    <span v-if="!offeringId">Add Study Period</span>
-  </span>
-  <full-page-container class="mt-2">
+  <v-container>
+    <header-navigator
+      title="Program detail"
+      :routeLocation="{
+        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+        params: {
+          programId: programId,
+          locationId: locationId,
+        },
+      }"
+      :subTitle="subTitle"
+    />
+    <program-offering-detail-header
+      v-if="offeringId"
+      class="m-4"
+      :headerDetails="{
+        ...initialData,
+        status: initialData.offeringStatus,
+      }"
+    />
+  </v-container>
+  <full-page-container>
     <formio
       formName="educationprogramoffering"
       :data="initialData"
@@ -26,16 +37,23 @@ import { EducationProgramOfferingService } from "@/services/EducationProgramOffe
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import { ClientIdType } from "@/types";
+import { ClientIdType, OfferingDTO, ProgramDto } from "@/types";
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { useToastMessage, useOffering } from "@/composables";
 import { AuthService } from "@/services/AuthService";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 
 export default {
-  components: { formio, FullPageContainer },
+  components: {
+    formio,
+    FullPageContainer,
+    HeaderNavigator,
+    ProgramOfferingDetailHeader,
+  },
   props: {
     locationId: {
       type: Number,
@@ -53,7 +71,7 @@ export default {
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
-    const initialData = ref();
+    const initialData = ref({} as Partial<OfferingDTO & ProgramDto>);
     const { mapOfferingChipStatus } = useOffering();
     const clientType = computed(() => AuthService.shared.authClientType);
 
@@ -65,6 +83,16 @@ export default {
     });
     const isReadonly = computed(() => {
       return isAESTUser.value;
+    });
+
+    const subTitle = computed(() => {
+      if (isReadonly.value) {
+        return "View Study Period";
+      }
+      if (props.offeringId && !isReadonly.value) {
+        return "Edit Study Period";
+      }
+      return "Add Study Period";
     });
     const loadFormData = async () => {
       if (isInstitutionUser.value) {
@@ -83,7 +111,7 @@ export default {
             ...programDetails,
           };
           initialData.value.offeringChipStatus = mapOfferingChipStatus(
-            initialData.value.offeringStatus,
+            programOffering.offeringStatus,
           );
         } else {
           initialData.value = {
@@ -174,6 +202,8 @@ export default {
       initialData,
       isReadonly,
       goBack,
+      InstitutionRoutesConst,
+      subTitle,
     };
   },
 };
