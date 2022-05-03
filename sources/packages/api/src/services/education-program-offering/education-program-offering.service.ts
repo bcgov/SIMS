@@ -272,7 +272,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     programYearId: number,
-    offeringIntensity: OfferingIntensity,
+    offeringIntensity?: OfferingIntensity,
     includeInActivePY?: boolean,
   ): Promise<Partial<EducationProgramOffering>[]> {
     const query = this.repo
