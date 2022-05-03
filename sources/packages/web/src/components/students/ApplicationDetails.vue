@@ -68,6 +68,7 @@ export default {
           router.push({
             name: StudentRoutesConst.ASSESSMENT,
             params: {
+              applicationId: props.applicationDetails.id,
               assessmentId: props.applicationDetails.assessmentId,
             },
           });

@@ -1,7 +1,16 @@
 <template>
   <v-container>
     <div class="mb-4">
-      <header-navigator title="Assessment" subTitle="Notice of Assessment" />
+      <header-navigator
+        title="Application details"
+        subTitle="Notice of Assessment"
+        :routeLocation="{
+          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          params: {
+            id: applicationId,
+          },
+        }"
+      />
     </div>
     <full-page-container>
       <notice-of-assessment-form-view :assessmentId="assessmentId" />
@@ -20,6 +29,7 @@ import { useToastMessage } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: {
@@ -28,6 +38,10 @@ export default {
     NoticeOfAssessmentFormView,
   },
   props: {
+    applicationId: {
+      type: Number,
+      required: true,
+    },
     assessmentId: {
       type: Number,
       required: true,
@@ -52,7 +66,10 @@ export default {
       }
     };
 
-    return { confirmAssessment };
+    return { confirmAssessment, StudentRoutesConst };
   },
 };
 </script>
+
+function useRouter() { throw new Error('Function not implemented.'); } function
+useRouter() { throw new Error('Function not implemented.'); }

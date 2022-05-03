@@ -58,6 +58,9 @@ export class StudentAssessmentApi extends HttpBaseClient {
    * @param assessmentId assessment id to be confirmed.
    */
   async confirmAssessmentNOA(assessmentId: number): Promise<void> {
-    await this.patchCall(`assessment/${assessmentId}/confirm-assessment`, null);
+    await this.patchCall(
+      this.addClientRoot(`assessment/${assessmentId}/confirm-assessment`),
+      null,
+    );
   }
 }
