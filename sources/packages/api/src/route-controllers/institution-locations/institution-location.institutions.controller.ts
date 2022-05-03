@@ -41,6 +41,7 @@ import {
   credentialTypeToDisplay,
   getUserFullName,
   CustomNamedError,
+  transformAddressDetailsForForm2,
 } from "../../utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
@@ -91,7 +92,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      "institutionlocation",
+      FormNames.InstitutionLocation,
       payload,
     );
 
@@ -102,11 +103,10 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     }
 
     // If the data is valid the location is saved to SIMS DB.
-    const createdInstitutionLocation =
-      await this.locationService.createLocation(
-        userToken.authorizations.institutionId,
-        dryRunSubmissionResult.data,
-      );
+    const createdInstitutionLocation = await this.locationService.saveLocation(
+      userToken.authorizations.institutionId,
+      dryRunSubmissionResult.data.data,
+    );
 
     return { id: createdInstitutionLocation.id };
   }
@@ -130,7 +130,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   ): Promise<void> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      "institutionlocation",
+      FormNames.InstitutionLocation,
       payload,
     );
 
@@ -141,10 +141,10 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     }
 
     // If the data is valid the location is updated to SIMS DB.
-    await this.locationService.updateLocation(
-      locationId,
+    await this.locationService.saveLocation(
       userToken.authorizations.institutionId,
       dryRunSubmissionResult.data.data,
+      locationId,
     );
   }
 
@@ -211,18 +211,13 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       );
 
     return {
-      addressLine1: institutionLocation.data.address.addressLine1,
-      addressLine2: institutionLocation.data.address.addressLine2,
-      city: institutionLocation.data.address.city,
-      country: institutionLocation.data.address.country,
       locationName: institutionLocation.name,
-      postalCode: institutionLocation.data.address.postalCode,
-      provinceState: institutionLocation.data.address.province,
       institutionCode: institutionLocation.institutionCode,
       primaryContactFirstName: institutionLocation.primaryContact.firstName,
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,
       primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
+      ...transformAddressDetailsForForm2(institutionLocation.data.address),
     };
   }
 
