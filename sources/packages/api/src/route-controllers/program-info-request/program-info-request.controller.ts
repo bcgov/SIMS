@@ -28,7 +28,6 @@ import {
   EducationProgramOfferingService,
   WorkflowActionsService,
   PIR_REQUEST_NOT_FOUND_ERROR,
-  FormService,
   PIRDeniedReasonService,
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
 } from "../../services";
@@ -62,7 +61,6 @@ export class ProgramInfoRequestController extends BaseController {
     private readonly workflowService: WorkflowActionsService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly pirDeniedReasonService: PIRDeniedReasonService,
-    private readonly formService: FormService,
   ) {
     super();
   }
