@@ -1,9 +1,4 @@
-import {
-  ProgramInfoStatus,
-  COEStatus,
-  AssessmentStatus,
-  OfferingIntensity,
-} from "@/types";
+import { ProgramInfoStatus, COEStatus, AssessmentStatus } from "@/types";
 export interface SaveStudentApplicationDto {
   programYearId: number;
   data: any;
