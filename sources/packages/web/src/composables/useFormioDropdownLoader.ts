@@ -102,6 +102,7 @@ export function useFormioDropdownLoader() {
     locationId: number,
     dropdownName: string,
     programYearId: number,
+    selectedOfferingIntensity: OfferingIntensity,
     includeInActivePY?: boolean,
   ) => {
     return loadDropdown(
@@ -111,6 +112,7 @@ export function useFormioDropdownLoader() {
         locationId,
         programId,
         programYearId,
+        selectedOfferingIntensity,
         includeInActivePY,
       ),
     );

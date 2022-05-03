@@ -3,17 +3,17 @@ import {
   Patch,
   Param,
   Body,
-  UnauthorizedException,
   UnprocessableEntityException,
   InternalServerErrorException,
   Get,
   NotFoundException,
   BadRequestException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import {
-  CompleteProgramInfoRequestDto,
+  CompleteProgramInfoRequestAPIInDTO,
   DenyProgramInfoRequestDto,
-  GetProgramInfoRequestDto,
+  ProgramInfoRequestAPIOutDTO,
   GetPIRDeniedReasonDto,
 } from "./models/program-info-request.dto";
 import {
@@ -28,7 +28,6 @@ import {
   EducationProgramOfferingService,
   WorkflowActionsService,
   PIR_REQUEST_NOT_FOUND_ERROR,
-  FormService,
   PIRDeniedReasonService,
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
 } from "../../services";
@@ -44,7 +43,6 @@ import {
   AssessmentTriggerType,
 } from "../../database/entities";
 import { PIRSummaryDTO } from "../application/models/application.model";
-import { FormNames } from "../../services/form/constants";
 import { OFFERING_INTENSITY_MISMATCH } from "../../constants";
 import {
   ApiNotFoundResponse,
@@ -63,7 +61,6 @@ export class ProgramInfoRequestController extends BaseController {
     private readonly workflowService: WorkflowActionsService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly pirDeniedReasonService: PIRDeniedReasonService,
-    private readonly formService: FormService,
   ) {
     super();
   }
@@ -92,7 +89,7 @@ export class ProgramInfoRequestController extends BaseController {
   async getProgramInfoRequest(
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
-  ): Promise<GetProgramInfoRequestDto> {
+  ): Promise<ProgramInfoRequestAPIOutDTO> {
     const application = await this.applicationService.getProgramInfoRequest(
       locationId,
       applicationId,
@@ -122,12 +119,13 @@ export class ProgramInfoRequestController extends BaseController {
     }
     // Offering that belongs to the original assessment.
     const offering = application.currentAssessment.offering;
-    const result = {} as GetProgramInfoRequestDto;
+    const result = {} as ProgramInfoRequestAPIOutDTO;
     // Program Info Request specific data.
     result.institutionLocationName = application.location.name;
     result.applicationNumber = application.applicationNumber;
     result.studentFullName = getUserFullName(application.student.user);
     result.studentSelectedProgram = application.pirProgram?.name;
+
     // If an offering is present, this value will be the program id associated
     // with the offering, otherwise the program id from PIR will be used.
     result.selectedProgram =
@@ -146,26 +144,11 @@ export class ProgramInfoRequestController extends BaseController {
     result.isActiveProgramYear = application.programYear.active;
     if (offering) {
       result.offeringName = offering.name;
-      result.studyStartDate = offering.studyStartDate;
-      result.studyEndDate = offering.studyEndDate;
-      result.actualTuitionCosts = offering.actualTuitionCosts;
-      result.programRelatedCosts = offering.programRelatedCosts;
-      result.mandatoryFees = offering.mandatoryFees;
-      result.exceptionalExpenses = offering.exceptionalExpenses;
-      result.tuitionRemittanceRequestedAmount =
-        offering.tuitionRemittanceRequestedAmount;
-      result.offeringDelivered = offering.offeringDelivered;
-      result.lacksStudyBreaks = offering.lacksStudyBreaks;
-      result.tuitionRemittanceRequested = offering.tuitionRemittanceRequested;
       result.offeringType = offering.offeringType;
       result.offeringIntensity = offering.offeringIntensity;
     }
-
     result.pirDenyReasonId = application.pirDeniedReasonId?.id;
     result.otherReasonDesc = application.pirDeniedOtherDesc;
-    result.programYearStartDate = application.programYear.startDate;
-    result.programYearEndDate = application.programYear.endDate;
-
     return result;
   }
 
@@ -227,19 +210,10 @@ export class ProgramInfoRequestController extends BaseController {
   async completeProgramInfoRequest(
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
-    @Body() payload: CompleteProgramInfoRequestDto,
+    @Body() payload: CompleteProgramInfoRequestAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      const submissionResult = await this.formService.dryRunSubmission(
-        FormNames.ProgramInformationRequest,
-        payload,
-      );
-      if (!submissionResult.valid) {
-        throw new BadRequestException(
-          "Not able to complete the Program Information Request due to an invalid request.",
-        );
-      }
       // TODO: Check authorization to ensure that the location has access to this application.
       const application = await this.applicationService.getApplicationById(
         applicationId,
@@ -248,37 +222,23 @@ export class ProgramInfoRequestController extends BaseController {
         throw new BadRequestException("Application not found.");
       }
 
-      let studyStartDate = payload.studyStartDate;
-      let studyEndDate = payload.studyEndDate;
-      let selectedOfferingIntensity = payload.offeringIntensity;
-
-      let offeringToCompletePIR: EducationProgramOffering;
-      if (payload.selectedOffering) {
-        // Check if the offering belongs to the location.
-        const offeringLocation =
-          await this.offeringService.getOfferingLocationId(
-            payload.selectedOffering,
-          );
-
-        if (offeringLocation?.institutionLocation.id !== locationId) {
-          throw new UnauthorizedException(
-            "The location does not have access to the offering.",
-          );
-        }
-        studyStartDate = offeringLocation.studyStartDate;
-        studyEndDate = offeringLocation.studyEndDate;
-        selectedOfferingIntensity = offeringLocation.offeringIntensity;
-        // Offering exists, is valid and just need to be associated
-        // with the application to complete the PIR.
-        offeringToCompletePIR = {
-          id: payload.selectedOffering,
-        } as EducationProgramOffering;
-      }
-
-      this.applicationService.checkOfferingIntensityMismatch(
-        application.data.howWillYouBeAttendingTheProgram,
-        selectedOfferingIntensity,
+      // Check if the offering belongs to the location.
+      const offeringLocation = await this.offeringService.getOfferingLocationId(
+        payload.selectedOffering,
       );
+
+      if (offeringLocation?.institutionLocation.id !== locationId) {
+        throw new UnauthorizedException(
+          "The location does not have access to the offering.",
+        );
+      }
+      const studyStartDate = offeringLocation.studyStartDate;
+      const studyEndDate = offeringLocation.studyEndDate;
+      // Offering exists, is valid and just need to be associated
+      // with the application to complete the PIR.
+      const offeringToCompletePIR = {
+        id: payload.selectedOffering,
+      } as EducationProgramOffering;
 
       await this.applicationService.validateOverlappingDatesAndPIR(
         applicationId,

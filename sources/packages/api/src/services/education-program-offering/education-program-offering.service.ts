@@ -264,13 +264,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId location id to filter.
    * @param includeInActivePY includeInActivePY, if includeInActivePY, then both active
    * and not active program year is considered.
+   * @param offeringIntensity offering intensity selected by student.
+   * @param programYearId program id to be filtered.
    * @returns program offerings for location.
    */
   async getProgramOfferingsForLocation(
     locationId: number,
     programId: number,
     programYearId: number,
-    selectedIntensity?: OfferingIntensity,
+    offeringIntensity?: OfferingIntensity,
     includeInActivePY?: boolean,
   ): Promise<Partial<EducationProgramOffering>[]> {
     const query = this.repo
@@ -301,14 +303,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .andWhere(
         "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",
       );
+    if (offeringIntensity) {
+      query.andWhere("offerings.offeringIntensity = :offeringIntensity", {
+        offeringIntensity,
+      });
+    }
     if (!includeInActivePY) {
       query.andWhere("programYear.active = true");
     }
-    if (selectedIntensity) {
-      query.andWhere("offerings.offeringIntensity = :selectedIntensity", {
-        selectedIntensity,
-      });
-    }
+
     return query.orderBy("offerings.name").getMany();
   }
 
