@@ -4,8 +4,6 @@ import {
   ProgramInfoStatus,
   AssessmentStatus,
   COEStatus,
-  Assessment,
-  OfferingIntensity,
   ApplicationData,
 } from "../../../database/entities";
 
