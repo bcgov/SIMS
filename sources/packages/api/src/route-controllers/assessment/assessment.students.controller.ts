@@ -68,6 +68,9 @@ export class AssessmentStudentsController extends BaseController {
    * @param assessmentId assessment id to be confirmed.
    */
   @CheckRestrictions()
+  @ApiNotFoundResponse({
+    description: "Not able to find the assessment for the student.",
+  })
   @ApiUnprocessableEntityResponse({
     description: "Student not found or assessment confirmation failed.",
   })

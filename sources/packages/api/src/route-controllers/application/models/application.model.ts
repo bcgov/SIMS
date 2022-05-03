@@ -201,22 +201,6 @@ export interface ApplicationWithProgramYearDto {
 }
 
 /**
- * DTO for NOA view.
- */
-export interface NOAApplicationDto {
-  assessment: Assessment;
-  applicationNumber: string;
-  fullName: string;
-  programName: string;
-  locationName: string;
-  offeringIntensity: OfferingIntensity;
-  offeringStudyStartDate: string;
-  offeringStudyEndDate: string;
-  msfaaNumber: string;
-  disbursement: any;
-}
-
-/**
  * DTO object application summary info.
  */
 export interface ApplicationSummaryDTO {
