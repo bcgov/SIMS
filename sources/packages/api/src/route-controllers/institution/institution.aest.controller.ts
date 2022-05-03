@@ -75,12 +75,12 @@ export class InstitutionAESTController extends BaseController {
       legalName: eachInstitution.legalOperatingName,
       operatingName: eachInstitution.operatingName,
       address: {
-        addressLine1: eachInstitution.institutionAddress.addressLine1,
-        addressLine2: eachInstitution.institutionAddress.addressLine2,
-        city: eachInstitution.institutionAddress.city,
-        provinceState: eachInstitution.institutionAddress.provinceState,
-        country: eachInstitution.institutionAddress.country,
-        postalCode: eachInstitution.institutionAddress.postalCode,
+        addressLine1: eachInstitution.institutionAddress.address.addressLine1,
+        addressLine2: eachInstitution.institutionAddress.address.addressLine2,
+        city: eachInstitution.institutionAddress.address.city,
+        provinceState: eachInstitution.institutionAddress.address.provinceState,
+        country: eachInstitution.institutionAddress.address.country,
+        postalCode: eachInstitution.institutionAddress.address.postalCode,
       },
     }));
   }

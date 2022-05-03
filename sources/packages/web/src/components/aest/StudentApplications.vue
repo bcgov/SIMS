@@ -116,7 +116,7 @@
 <script lang="ts">
 import { onMounted, ref, computed, watch } from "vue";
 import {
-  StudentDetail,
+  // StudentDetail,
   ApplicationStatus,
   StudentApplicationAndCount,
   DEFAULT_PAGE_LIMIT,
@@ -153,7 +153,7 @@ export default {
     },
   },
   setup(props: any) {
-    const studentDetail = ref({} as StudentDetail);
+    // const studentDetail = ref({} as StudentDetail);
     const loading = ref(false);
     const applicationAndCount = ref({} as StudentApplicationAndCount);
     const defaultSortOrder = -1;
@@ -234,7 +234,7 @@ export default {
     );
 
     return {
-      studentDetail,
+      // studentDetail,
       dateString,
       ApplicationStatus,
       applicationAndCount,

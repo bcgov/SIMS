@@ -14,7 +14,7 @@ export async function institutionFactory(
     id: 1,
     name: "BC Private",
   } as InstitutionType;
-  institution.institutionAddress = {
+  institution.institutionAddress.address = {
     addressLine1: faker.address.streetAddress(),
     city: "Victoria",
     country: "Canada",

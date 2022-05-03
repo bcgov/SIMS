@@ -208,7 +208,7 @@ export class ECertFileHandler extends ESDCFileHandler {
   private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
-    const [addressInfo] = application.student.contactInfo.addresses;
+    const addressInfo = application.student.contactInfo.address;
     const fieldOfStudy = getFieldOfStudyFromCIPCode(
       application.currentAssessment.offering.educationProgram.cipCode,
     );

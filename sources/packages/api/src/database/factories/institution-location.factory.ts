@@ -11,7 +11,7 @@ export async function institutionLocationFactory(
     address: {
       addressLine1: faker.address.streetAddress(),
       city: "Victoria",
-      province: "bc",
+      provinceState: "BC",
       country: "CA",
       postalCode: "V8V1M7",
     },

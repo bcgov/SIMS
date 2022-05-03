@@ -149,7 +149,7 @@ export default {
 
       const address = studentInfo.contact;
       // TODO: Move formatted address to a common place in Vue app or API.
-      const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
+      const formattedAddress = `${address.address.addressLine1} ${address.address.addressLine2} ${address.address.city} ${address.address.provinceState} ${address.address.postalCode}  ${address.address.country}`;
       const studentFormData = {
         studentGivenNames: studentInfo.firstName,
         studentLastName: studentInfo.lastName,

@@ -35,11 +35,11 @@ import {
   StudentRestrictionDTO,
   StudentDetailDTO,
   StudentFileUploaderDTO,
+  StudentInfo,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
-import { StudentInfo } from "../../types/studentInfo";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ATBCCreateClientPayload } from "../../types";
@@ -116,10 +116,9 @@ export class StudentController extends BaseController {
       gender: existingStudent.gender,
       dateOfBirth: existingStudent.birthDate,
       contact: {
-        ...transformAddressDetailsForForm2(
-          existingStudent.contactInfo.addresses[0],
+        address: transformAddressDetailsForForm2(
+          existingStudent.contactInfo.address,
         ),
-        provinceState: existingStudent.contactInfo.addresses[0].province,
         phone: existingStudent.contactInfo.phone,
       },
       pdVerified: existingStudent.studentPDVerified,
@@ -167,20 +166,20 @@ export class StudentController extends BaseController {
 
     // The student will be created with one and only one
     // address for now. This address is also required.
-    if (student.contactInfo.addresses.length == 0) {
+    if (!student.contactInfo.address) {
       throw new InternalServerErrorException(
         `The requested student is missing required data. User name ${userToken.userName}`,
       );
     }
 
-    const address = student.contactInfo.addresses[0];
+    const address = student.contactInfo.address;
 
     return {
       phone: student.contactInfo.phone,
       addressLine1: address.addressLine1,
       addressLine2: address.addressLine2,
       city: address.city,
-      provinceState: address.province,
+      provinceState: address.provinceState,
       country: address.country,
       postalCode: address.postalCode,
     };
@@ -562,7 +561,7 @@ export class StudentController extends BaseController {
       await this.studentRestrictionService.getStudentRestrictionsByUserId(
         student.user.id,
       );
-    const address = student.contactInfo.addresses[0];
+    const address = student.contactInfo.address;
     return {
       firstName: student.user.firstName,
       lastName: student.user.lastName,
@@ -570,13 +569,15 @@ export class StudentController extends BaseController {
       gender: student.gender,
       dateOfBirth: student.birthDate,
       contact: {
+        address: {
+          addressLine1: address.addressLine1,
+          addressLine2: address.addressLine2,
+          city: address.city,
+          provinceState: address.provinceState,
+          country: address.country,
+          postalCode: address.postalCode,
+        },
         phone: student.contactInfo.phone,
-        addressLine1: address.addressLine1,
-        addressLine2: address.addressLine2,
-        city: address.city,
-        provinceState: address.province,
-        country: address.country,
-        postalCode: address.postalCode,
       },
       pdStatus: determinePDStatus(student),
       hasRestriction: studentRestrictionStatus.hasRestriction,

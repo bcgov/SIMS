@@ -11,10 +11,14 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { InstitutionAddress, InstitutionPrimaryContact } from "../../types";
+import { AddressInfo, InstitutionPrimaryContact } from "../../types";
 import { InstitutionUser } from "./institution-user.model";
 import { InstitutionType } from "./institution-type.model";
 import { Note } from ".";
+
+export interface InstitutionAddress {
+  address: AddressInfo;
+}
 
 @Entity({ name: TableNames.Institution })
 export class Institution extends RecordDataModel {

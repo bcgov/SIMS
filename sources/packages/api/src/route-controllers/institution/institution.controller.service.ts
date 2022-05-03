@@ -56,13 +56,15 @@ export class InstitutionControllerService {
       primaryContactPhone:
         institutionDetail.institutionPrimaryContact.primaryContactPhone,
       mailingAddress: {
-        addressLine1: institutionDetail.institutionAddress.addressLine1,
-        addressLine2: institutionDetail.institutionAddress.addressLine2,
-        city: institutionDetail.institutionAddress.city,
-        country: institutionDetail.institutionAddress.country,
-        provinceState: institutionDetail.institutionAddress.provinceState,
-        postalCode: institutionDetail.institutionAddress.postalCode,
-        selectedCountry: institutionDetail.institutionAddress.selectedCountry,
+        addressLine1: institutionDetail.institutionAddress.address.addressLine1,
+        addressLine2: institutionDetail.institutionAddress.address.addressLine2,
+        city: institutionDetail.institutionAddress.address.city,
+        country: institutionDetail.institutionAddress.address.country,
+        provinceState:
+          institutionDetail.institutionAddress.address.provinceState,
+        postalCode: institutionDetail.institutionAddress.address.postalCode,
+        selectedCountry:
+          institutionDetail.institutionAddress.address.selectedCountry,
       },
       isBCPrivate: isBCPrivate,
     };

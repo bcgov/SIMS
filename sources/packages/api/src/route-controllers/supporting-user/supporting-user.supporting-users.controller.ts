@@ -222,7 +222,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
       const addressInfo: AddressInfo = {
         addressLine1: payload.addressLine1,
         addressLine2: payload.addressLine2,
-        province: payload.provinceState,
+        provinceState: payload.provinceState,
         country: payload.country,
         city: payload.city,
         postalCode: payload.postalCode,
@@ -230,7 +230,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
 
       const contactInfo: ContactInfo = {
         phone: payload.phone,
-        addresses: [addressInfo],
+        address: addressInfo,
       };
 
       const updatedUser = await this.supportingUserService.updateSupportingUser(

@@ -13,13 +13,14 @@ export function transformAddressDetails(
   return {
     addressLine1: addressDetails.addressLine1,
     addressLine2: addressDetails.addressLine2,
-    province: addressDetails.provinceState,
+    provinceState: addressDetails.provinceState,
     country: addressDetails.country,
     city: addressDetails.city,
     postalCode: addressDetails.postalCode,
     selectedCountry: addressDetails.selectedCountry,
   };
 }
+
 /**
  * Util to transform address details for formIO.
  * @param addressDetails is a partial AddressDetailsModel.
@@ -63,7 +64,7 @@ export function transformAddressDetailsForForm2(
   return {
     addressLine1: addressDetails.addressLine1,
     addressLine2: addressDetails.addressLine2,
-    provinceState: addressDetails.province,
+    provinceState: addressDetails.provinceState,
     country: addressDetails.country,
     city: addressDetails.city,
     postalCode: addressDetails.postalCode,

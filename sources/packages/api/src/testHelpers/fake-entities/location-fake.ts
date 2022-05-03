@@ -10,7 +10,7 @@ export function createFakeLocation(
     address: {
       addressLine1: faker.address.streetAddress(),
       addressLine2: faker.address.secondaryAddress(),
-      province: "BC",
+      provinceState: "BC",
       country: "CAN",
       city: "Victoria",
       postalCode: faker.address.zipCode("A9A9A9"),

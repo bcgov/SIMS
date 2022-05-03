@@ -35,11 +35,11 @@ export default {
         email: studentDetail.email,
         dateOfBirth: dateOnlyLongString(studentDetail.dateOfBirth),
         phone: studentDetail.contact.phone,
-        addressLine1: studentDetail.contact.addressLine1,
-        addressLine2: studentDetail.contact.addressLine2,
-        city: studentDetail.contact.city,
-        provinceState: studentDetail.contact.provinceState,
-        postalCode: studentDetail.contact.postalCode,
+        addressLine1: studentDetail.contact.address.addressLine1,
+        addressLine2: studentDetail.contact.address.addressLine2,
+        city: studentDetail.contact.address.city,
+        provinceState: studentDetail.contact.address.provinceState,
+        postalCode: studentDetail.contact.address.postalCode,
         pdStatus: studentDetail.pdStatus ?? "None",
       };
     });

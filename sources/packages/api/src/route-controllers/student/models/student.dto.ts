@@ -5,8 +5,21 @@ import {
   IsOptional,
 } from "class-validator";
 import { AddressDetailsAPIInDTO } from "../../../route-controllers/models/common.dto";
-import { StudentPDStatus, StudentContact } from "../../../types";
+import { StudentPDStatus } from "../../../types";
 
+export class AddressAPIDTO {
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  provinceState?: string;
+  country: string;
+  postalCode: string;
+}
+
+export class ContactInformationAPIDTO {
+  address: AddressAPIDTO;
+  phone: string;
+}
 export class GetStudentContactDto {
   phone: string;
   addressLine1: string;
@@ -69,18 +82,17 @@ export interface StudentRestrictionDTO {
 /**
  * DTO object for student details.
  */
-export interface StudentDetailDTO {
+export class StudentDetailDTO {
   firstName: string;
   lastName: string;
   email: string;
   gender: string;
   dateOfBirth: Date;
-  contact: StudentContact;
+  contact: ContactInformationAPIDTO;
   pdVerified: boolean;
   pdStatus: StudentPDStatus;
   hasRestriction: boolean;
 }
-
 /**
  *  Student uploader interface
  */
@@ -120,4 +132,18 @@ export class AESTStudentFileDTO extends StudentUploadFileDTO {
 
 export class StudentFileMetadataDTO {
   applicationNumber?: string;
+}
+
+export class StudentInfo {
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: string;
+  dateOfBirth: Date;
+  contact: ContactInformationAPIDTO;
+  pdVerified: boolean;
+  validSin: boolean;
+  pdSentDate?: Date;
+  pdUpdatedDate?: Date;
+  pdStatus: StudentPDStatus;
 }

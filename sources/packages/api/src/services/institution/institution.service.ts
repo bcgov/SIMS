@@ -189,7 +189,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     };
 
     //Institution Address
-    institution.institutionAddress = {
+    institution.institutionAddress.address = {
       addressLine1: institutionModel.addressLine1,
       addressLine2: institutionModel.addressLine2,
       provinceState: institutionModel.provinceState,
@@ -623,7 +623,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       primaryContactPhone: updateInstitution.primaryContactPhone,
     };
 
-    institution.institutionAddress = updateInstitution.mailingAddress;
+    institution.institutionAddress.address = updateInstitution.mailingAddress;
     return this.repo.save(institution);
   }
 }
