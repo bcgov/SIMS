@@ -50,8 +50,8 @@ export const FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION =
  * These constants are used to specify the filename code
  * created for Full-Time/ Part-Time files while ECert request file is generated.
  */
-export const ECERT_FULL_TIME_FILE_CODE = "PBC.EDU.ECERTS.D";
-export const ECERT_PART_TIME_FILE_CODE = "PBC.EDU.PTCERTS.D";
+export const ECERT_FULL_TIME_FILE_CODE = "PBC.EDU.ECERTS.";
+export const ECERT_PART_TIME_FILE_CODE = "PBC.EDU.PTCERTS.";
 
 /**
  * These constants are used to specify the filename code

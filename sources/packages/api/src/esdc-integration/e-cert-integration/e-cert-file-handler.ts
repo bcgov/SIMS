@@ -160,7 +160,7 @@ export class ECertFileHandler extends ESDCFileHandler {
 
           // Create the request filename with the file path for the e-Cert File.
           const fileInfo = await this.createRequestFileName(
-            `${fileCode}`,
+            fileCode,
             nextSequenceNumber,
           );
 
