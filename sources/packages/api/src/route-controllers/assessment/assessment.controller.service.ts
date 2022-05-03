@@ -94,16 +94,16 @@ export class AssessmentControllerService {
   /**
    * Get the notice of assessment data from the assessment.
    * @param assessmentId assessment id to be retrieved.
-   * @param studentId optional student for authorization when needed.
+   * @param userId optional user for authorization when needed.
    * @returns notice of assessment data.
    */
   async getAssessmentNOA(
     assessmentId: number,
-    studentId?: number,
+    userId?: number,
   ): Promise<AssessmentNOAAPIOutDTO> {
     const assessment = await this.assessmentService.getAssessmentForNOA(
       assessmentId,
-      studentId,
+      userId,
     );
 
     if (!assessment) {

@@ -57,20 +57,9 @@ export class AssessmentStudentsController extends BaseController {
     @Param("assessmentId") assessmentId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<AssessmentNOAAPIOutDTO> {
-    // TODO: when we add a student token the id will be available in the token (#612).
-    const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-
-    if (!student) {
-      throw new UnprocessableEntityException(
-        "The user is not associated with a student.",
-      );
-    }
-
     return this.assessmentControllerService.getAssessmentNOA(
       assessmentId,
-      student.id,
+      userToken.userId,
     );
   }
 
@@ -84,24 +73,13 @@ export class AssessmentStudentsController extends BaseController {
   })
   @Patch(":assessmentId/confirm-assessment")
   async confirmAssessmentNOA(
-    @UserToken() userToken: IUserToken,
     @Param("assessmentId") assessmentId: number,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    // TODO: when we add a student token the id will be available in the token (#612).
-    const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-
-    if (!student) {
-      throw new UnprocessableEntityException(
-        "The user is not associated with a student.",
-      );
-    }
-
     try {
       await this.studentAssessmentService.studentConfirmAssessment(
         assessmentId,
-        student.id,
+        userToken.userId,
       );
     } catch (error) {
       switch (error.name) {
