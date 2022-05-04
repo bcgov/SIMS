@@ -4,7 +4,7 @@ export default class LocationProgramObject {
   }
 
   submitButton() {
-    return cy.get(".btn");
+    return cy.get("[name='data[submit]']");
   }
 
   wait() {
@@ -16,7 +16,7 @@ export default class LocationProgramObject {
   }
 
   credentialType() {
-    return cy.get("#e3cqf5c-credentialType");
+    return cy.get("[name='data[credentialType]']");
   }
 
   credentialTypeErrorMessage() {
@@ -90,103 +90,107 @@ export default class LocationProgramObject {
   }
 
   programNameInputText() {
-    return cy.get("#ee0f6le-name");
+    return cy.get("[name='data[name]']");
   }
 
   programDescriptionInputText() {
-    return cy.get("#ev0808-description");
+    return cy.get("[name='data[description]']");
   }
 
   credentialTypeInputText() {
-    return cy.get("#e3cqf5c-credentialType");
+    return cy.get("[name='data[credentialType]']");
   }
 
   cipCodeInputText() {
-    return cy.get("#e428vwr-cipCode");
+    return cy.get("[name='data[cipCode]']");
   }
 
   nocInputText() {
-    return cy.get("#epeke7s-nocCode");
+    return cy.get("[name='data[nocCode]']");
   }
 
   sabcInputText() {
-    return cy.get("#e9wg9zb-sabcCode");
+    return cy.get("[name='data[sabcCode]']");
   }
 
   institutionProgramCode() {
-    return cy.get("#ezavw7e-institutionProgramCode");
+    return cy.get("[name='data[institutionProgramCode]']");
   }
 
   partTimeBasisRadioButton() {
-    return cy.xpath("//input[@id='e19ahea-Full Time and Part Time']");
+    return cy.get("[name='data[programIntensity][e19ahea]']").eq(0);
   }
 
   programBeDeliveredRadioButton() {
-    return cy.get("#ehyzwln-deliveredOnSite");
+    return cy.get("[name='data[programDeliveryTypes][]']").eq(0);
   }
 
   programLengthInputText() {
-    return cy.get("#e2u2n1o-completionYears");
+    return cy.get("[name='data[completionYears]']");
   }
 
   programCourseLoadRadioButton() {
-    return cy.get("#elx192-credit");
+    return cy.get("[name='data[courseLoadCalculation][elx192]']").eq(0);
   }
 
   regulatoryBox() {
-    return cy.get("#escw5nj-regulatoryBody");
+    return cy.get("[name='data[regulatoryBody]']");
   }
 
   entranceRequirementsCheckbox() {
-    return cy.get("#eaxt08-minHighSchool");
+    return cy.get("[name='data[entranceRequirements][]']").eq(0);
   }
 
   percentageOfProgramRadioButton() {
-    return cy.xpath("//input[@id='esmuskn-lessThan20']");
+    return cy.get("[name='data[eslEligibility][esmuskn]']").eq(0);
   }
 
   programOfferedJointlyRadioButton() {
-    return cy.xpath("//input[@id='e1rl8gr-yes']");
+    return cy.get("[name='data[hasJointInstitution][e1rl8gr]']").eq(0);
   }
 
   institutionPartner() {
-    return cy.xpath("//input[@id='eaa8y48-yes']");
+    return cy
+      .get("[name='data[hasJointDesignatedInstitution][eaa8y48]']")
+      .eq(0);
   }
 
   wilComponentRadioButton() {
-    return cy.xpath("//input[@id='exfol75-yes']");
+    return cy.get("[name='data[hasWILComponent][exfol75]']").eq(0);
   }
 
   wilApprovedByRegulatorRadioButton() {
-    return cy.xpath("//input[@id='etm9ggd-yes']");
+    return cy.get("[name='data[isWILApproved][etm9ggd]']").eq(0);
   }
 
   wilMeetProgramRadioButton() {
-    return cy.get("#ecvd00d-yes");
+    return cy.get("[name='data[wilProgramEligibility][ecvd00d]']").eq(0);
   }
 
   fieldPlacementRadioButton() {
-    return cy.get("#e6e6rtk-yes");
+    return cy.get("[name='data[hasTravel][e6e6rtk]']").eq(0);
   }
 
   fieldPlacementEligibilityRadioButton() {
-    return cy.get("#e7spkqj-yes");
+    return cy.get("[name='data[travelProgramEligibility][e7spkqj]']").eq(0);
   }
 
   internationalExchangeRadioButton() {
-    return cy.get("#eoapr4-yes");
+    return cy.get("[name='data[hasIntlExchange][eoapr4]']").eq(0);
   }
 
   internationalExchangeEligibilityRadioButton() {
-    return cy.get("#evzt5g8-yes");
+    return cy
+      .get("[name='data[intlExchangeProgramEligibility][evzt5g8]']")
+      .eq(0);
   }
 
   declarationCheckbox() {
-    return cy.get(".field-required > .form-check-input");
+    return cy.get("[name='data[programDeclaration]']");
   }
 
   firstRowEditButton() {
-    return cy.get(":nth-child(1) > :nth-child(6) > .v-btn");
+    return cy.get("[type='button']").eq(6);
   }
 
   programNameAssertion(programName: string) {
@@ -202,7 +206,7 @@ export default class LocationProgramObject {
   }
 
   programNameStudyPeriod() {
-    return cy.get("#e0u54c-offeringName");
+    return cy.get("[name='data[offeringName]']");
   }
 
   yearOfStudyDropdown() {
@@ -210,79 +214,71 @@ export default class LocationProgramObject {
   }
 
   yearOfStudyDropdownInputText() {
-    return cy.xpath("//input[@aria-label='false']");
+    return cy.get("[placeholder='Type to search']");
   }
 
   displayThisToStudentCheckbox() {
-    return cy.get(
-      "#ebim1 > .form-check > .form-check-label > .form-check-input"
-    );
+    return cy.get("[name='data[showYearOfStudy]']");
   }
 
   howWillThisBeOfferedRadioButton() {
-    return cy.xpath("//input[@id='ev71tr-Part Time']");
+    return cy.get("[name='data[offeringIntensity][ev71tr]']").eq(0);
   }
 
   offeringBeDeliveredRadioButton() {
-    return cy.get("#eqelas-onsite");
+    return cy.get("[name='data[offeringDelivered][eqelas]']").eq(0);
   }
 
   workIntegratedComponentRadioButton() {
-    return cy.get("#evhzrlx-no");
+    return cy.get("[name='data[hasOfferingWILComponent][evhzrlx]']").eq(1);
   }
 
   studyStartDate() {
-    return cy.get('#eryjb2i > [ref="element"] > .input-group > .input');
+    return cy.get("[placeholder='Select date']").eq(1);
   }
 
   studyEndDate() {
-    return cy.get('#ebqtys > [ref="element"] > .input-group > .input');
+    return cy.get("[placeholder='Select date']").eq(3);
   }
 
   breakStartDate() {
-    return cy.get(
-      '#e4xdqvr0000000000000000000000000000000000000 > [ref="element"] > .input-group > .input'
-    );
+    return cy.get("[placeholder='Select date']").eq(5);
   }
 
   breakEndDate() {
-    return cy.get(
-      '#ex3qj3m0000000000000000000000000000000000000 > [ref="element"] > .input-group > .input'
-    );
+    return cy.get("[placeholder='Select date']").eq(7);
   }
 
   actualTuitionInput() {
-    return cy.get("#e3iuupj-actualTuitionCosts");
+    return cy.get("[name='data[actualTuitionCosts]']");
   }
 
   programRelatedInput() {
-    return cy.get("#edg8oot-programRelatedCosts");
+    return cy.get("[name='data[programRelatedCosts]']");
   }
 
   mandatoryFeesInput() {
-    return cy.get("#expot7k-mandatoryFees");
+    return cy.get("[name='data[mandatoryFees]']");
   }
 
   exceptionalExpensesInput() {
-    return cy.get("#e3mdxgr-exceptionalExpenses");
+    return cy.get("[name='data[exceptionalExpenses]']");
   }
 
   tuitionRemittanceRadioButton() {
-    return cy.get(
-      ":nth-child(1) > .form-check-label > #tuitionRemittanceRequested"
-    );
+    return cy.get("[name='data[tuitionRemittanceRequested][ed973vq]']").eq(0);
   }
 
   amountRequestedInput() {
-    return cy.get("#eim5ou-tuitionRemittanceRequestedAmount");
+    return cy.get("[name='data[tuitionRemittanceRequestedAmount]']");
   }
 
   declarationFormForVerification() {
-    return cy.get(".field-required > .form-check-input");
+    return cy.get("[name='data[offeringDeclaration]']");
   }
 
   submitButtonStudyPeriod() {
-    return cy.get("#e673e1 > .btn");
+    return cy.get("[name='data[submit]']");
   }
 
   educationOfferingCreatedAssertion() {
@@ -290,10 +286,10 @@ export default class LocationProgramObject {
   }
 
   searchStudyPeriodInput() {
-    return cy.get(".float-right > .p-inputtext");
+    return cy.get("[name='searchProgramName']");
   }
 
   firstRecordAssertionStudyPeriod() {
-    return cy.get(".p-datatable-tbody > :nth-child(1) > :nth-child(1)");
+    return cy.contains("2022 Fall Semester");
   }
 }

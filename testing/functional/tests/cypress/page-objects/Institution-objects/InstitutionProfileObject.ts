@@ -8,11 +8,11 @@ export default class InstitutionProfileObject {
   }
 
   legalOperatingNameInputText() {
-    return cy.get("#ek5v67e-institutionLegalName");
+    return cy.get("[name='data[institutionLegalName]']");
   }
 
   primaryEmailInputText() {
-    return cy.get("#e2xfh3d-primaryEmail");
+    return cy.get("[name='data[primaryEmail]']");
   }
 
   submitButton() {
@@ -23,22 +23,16 @@ export default class InstitutionProfileObject {
     return cy.contains("Unexpected error");
   }
 
-  //region Institution Information Form
-
-  institutionOperatingNameInputText() {
-    return cy.get("#ek9fo68-operatingName");
-  }
-
   primaryPhoneNumberInputText() {
-    return cy.get("#ee6c4q-primaryPhone");
+    return cy.get("[name='data[primaryPhone]']");
   }
 
   institutionWebsiteInputText() {
-    return cy.get("#eao17vh-website");
+    return cy.get("[name='data[website]']");
   }
 
   institutionRegulationBodyDropdown() {
-    return cy.xpath("//div[@class='form-control ui fluid selection dropdown']");
+    return cy.get(".form-control.ui");
   }
 
   institutionRegulationBodyDropdownInputType() {
@@ -50,55 +44,54 @@ export default class InstitutionProfileObject {
   }
 
   firstNameInstitutionInputText() {
-    return cy.get("#eytixvp-primaryContactFirstName");
+    return cy.get("[name='data[primaryContactFirstName]']");
   }
 
   lastNameInstitutionInputText() {
-    return cy.get("#e2q6a1-primaryContactLastName");
+    return cy.get("[name='data[primaryContactLastName]']");
   }
 
   emailInstitutionInputText() {
-    return cy.get("#efjjde8-primaryContactEmail");
+    return cy.get("[name='data[primaryContactEmail]']");
   }
 
   phoneNumberInstitutionInputText() {
-    return cy.get("#e46djjn-primaryContactPhone");
+    return cy.get("[name='data[primaryContactPhone]']");
   }
 
   firstNameAuthorizedInputText() {
-    return cy.get("#encraef-legalAuthorityFirstName");
+    return cy.get("[name='data[legalAuthorityFirstName]']");
   }
 
   lastNameAuthorizedInputText() {
-    return cy.get("#e33dhc5-legalAuthorityLastName");
+    return cy.get("[name='data[legalAuthorityLastName]']");
   }
 
   emailAuthorizedInputText() {
-    return cy.get("#ex78m-legalAuthorityEmail");
+    return cy.get("[name='data[legalAuthorityEmail]']");
   }
 
   phoneNumberAuthorizedInputText() {
-    return cy.get("#ep2tska-legalAuthorityPhone");
+    return cy.get("[name='data[legalAuthorityPhone]']");
   }
 
   addressInstitutionInputText() {
-    return cy.get("#etidnj-addressLine1");
+    return cy.get("[name='data[addressLine1]']");
   }
 
   cityInputText() {
-    return cy.get("#ef7v2mz-city");
+    return cy.get("[name='data[city]']");
   }
 
   postalInputText() {
-    return cy.get("#ekq7msk-postalCode");
+    return cy.get("[name='data[postalCode]']");
   }
 
   provinceInputText() {
-    return cy.get("#ec1sbfh-provinceState");
+    return cy.get("[name='data[provinceState]']");
   }
 
   countryInputText() {
-    return cy.get("#eqkemjt-country");
+    return cy.get("[name='data[country]']");
   }
-  //#endregion
 }

@@ -1,18 +1,18 @@
 export default class DashboardObject {
   applicationButton() {
-    return cy.xpath("//button[normalize-space()='Applications']");
+    return cy.contains("Applications");
   }
 
   notificationButton() {
-    return cy.xpath("//button[normalize-space()='Notifications']");
+    return cy.contains("Notifications");
   }
 
   fileUploaderButton() {
-    return cy.xpath("//button[normalize-space()='File Uploader']");
+    return cy.contains("File Uploader");
   }
 
   profileButton() {
-    return cy.xpath("//button[normalize-space()='Profile']");
+    return cy.contains("Profile");
   }
 
   personIconButton() {
@@ -20,7 +20,7 @@ export default class DashboardObject {
   }
 
   startapplicationButton() {
-    return cy.xpath("//button[normalize-space()='Start application']");
+    return cy.contains("Start application");
   }
 
   logOffButton() {

@@ -63,7 +63,7 @@ describe("Institution Profile", () => {
     }
   );
 
-  it("Check when user enter data only in mandatory field then able to save the details or not.", () => {
+  it.only("Check when user enter data only in mandatory field then able to save the details or not.", () => {
     cy.fixture("institutionProfileData").then((data) => {
       cy.intercept("GET", "**/institution").as("institution");
       dashboardInstitutionObject.dashboardButton().click();

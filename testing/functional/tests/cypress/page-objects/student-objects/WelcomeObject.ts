@@ -13,49 +13,27 @@ export default class WelcomeObject {
   }
 
   loginWithBCSCButton() {
-    return cy.xpath("//button[normalize-space()='Login with BCSC']");
+    return cy.contains("Login with BCSC");
   }
 
   signUpWithBCSCButton() {
-    return cy
-      .xpath("//button[normalize-space()='Sign Up with BCSC']")
-      .should("be.visible");
-  }
-
-  verifyLoginButton() {
-    return cy.xpath("//button[normalize-space()='Login with BCSC']");
+    return cy.contains("Sign Up with BCSC");
   }
 
   loginSIMSText() {
     cy.contains("Log in to: SIMS - Test");
   }
 
-  verifySignUpButton() {
-    return cy.xpath("//button[normalize-space()='Sign Up with BCSC']");
-  }
-
   SignUpSIMSText() {
     cy.contains("Log in to: SIMS - Test");
-  }
-
-  verifySetUpButton() {
-    return cy.xpath("//button[normalize-space()='Login with BCSC']");
   }
 
   getSetupButton() {
     return cy.get("#cardtap-get-setup-btn");
   }
 
-  cancelLoginButton() {
-    return cy.xpath("//button[normalize-space()='Login with BCSC']");
-  }
-
   cancelLoginButtonText() {
     return cy.get("#cancelLoginLnk");
-  }
-
-  bcServicesCardAppButton() {
-    return cy.xpath("//button[normalize-space()='Login with BCSC']");
   }
 
   bcServicesCardAppButtonText() {
@@ -68,10 +46,6 @@ export default class WelcomeObject {
 
   pairingCodeBCSCText() {
     return cy.contains("Enter this pairing code in the BC Services Card app.");
-  }
-
-  virtualTestingButton() {
-    return cy.xpath("//button[normalize-space()='Login with BCSC']");
   }
 
   virtualTestingButtonText() {

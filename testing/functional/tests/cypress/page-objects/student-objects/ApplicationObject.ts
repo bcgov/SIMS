@@ -8,7 +8,7 @@ export default class ApplicationObject {
   }
 
   applicationButton() {
-    return cy.xpath("//button[normalize-space()='Applications']");
+    return cy.contains("Applications");
   }
 
   verifyApplicationText() {
@@ -39,12 +39,8 @@ export default class ApplicationObject {
     });
   }
 
-  startApplicationStudyYearEnableButton() {
-    return cy.xpath("//button[@disabled='disabled']");
-  }
-
   removedButton() {
-    return cy.xpath("//button[normalize-space()='Remove item']");
+    return cy.contains("Remove item");
   }
 
   //Alert message in "Already In Progress"
@@ -53,21 +49,21 @@ export default class ApplicationObject {
   }
 
   applicationAlreadyInProgressTextCard() {
-    return cy.get(".v-card-actions > .v-btn");
+    return cy.contains("Close");
   }
 
   //Start Application
   startApplicationTuitionWaiverButton() {
-    return cy.xpath("//button[@name='data[startApplication1]']");
+    return cy.get("[name='data[startApplication1]']");
   }
   startApplicationBCloanForgivenessProgramButton() {
-    return cy.xpath("//button[@name='data[startApplication2]']").click();
+    return cy.get("[name='data[startApplication2]']").click();
   }
   startApplicationPacificLeaderLoanForgivenessButton() {
-    return cy.xpath("//button[@name='data[startApplication4]']").click();
+    return cy.get("[name='data[startApplication4]']").click();
   }
   startApplicationInterestFreeStatusButton() {
-    return cy.xpath("//button[@name='data[startApplication3]']").click();
+    return cy.get("[name='data[startApplication3]']").click();
   }
 
   //<EndRegion----------------------------Start New Application------------------------------>
@@ -75,7 +71,7 @@ export default class ApplicationObject {
   //<StartRegion--------------------------Draft Status------------------------------------->
 
   draftApplication() {
-    return cy.get(":nth-child(1) > .svg-inline--fa > path");
+    return cy.get("[data-prefix='fas']");
   }
 
   draftApplicationVerifyText() {
@@ -98,16 +94,8 @@ export default class ApplicationObject {
     return cy.contains("The school I will be attending is required");
   }
 
-  selectionDropdownInvalid() {
-    cy.get(".form-control.ui.fluid.selection.dropdown.is-invalid");
-  }
-
   welcomeText() {
     return cy.contains("Let’s get started on your application");
-  }
-
-  welcomeButton() {
-    return cy.get(":nth-child(1) > .page-link");
   }
 
   mySchoolIsNotListedCheckbox() {
@@ -202,11 +190,11 @@ export default class ApplicationObject {
   }
 
   programName() {
-    return cy.get("#ek2u9li-programName");
+    return cy.get("[name='data[programName]']");
   }
 
   programDescription() {
-    return cy.get("#e1w8o5a-programDescription");
+    return cy.get("[name='data[programDescription]']");
   }
 
   studyStartDate() {
@@ -238,7 +226,7 @@ export default class ApplicationObject {
   }
 
   incorrectStudentNumber() {
-    return cy.get("#ek8w4hn-studentNumber");
+    return cy.get("[name='data[studentNumber]']");
   }
 
   incorrectStudentNumberText() {
@@ -339,20 +327,16 @@ export default class ApplicationObject {
     return cy.contains("Student Information");
   }
 
-  saveButton() {
-    return cy.get("#eyrg48 > .btn");
-  }
-
   personalInformationButton() {
     return cy.get(":nth-child(3) > .page-link");
   }
 
   iConfirmMyStudentAidCheckbox() {
-    return cy.get(".field-required > span");
+    return cy.get("[name='data[studentInfoConfirmed]']");
   }
 
   citizenStatusRadioButton() {
-    return cy.get("#e8pmct9-canadianCitizen");
+    return cy.contains("Canadian citizen");
   }
 
   residentOfBCRadioButton() {
@@ -364,7 +348,7 @@ export default class ApplicationObject {
   }
 
   explainSituationInputField() {
-    return cy.get("#euh1cll-otherLivingSituation");
+    return cy.get("[name='data[otherLivingSituation]']");
   }
 
   indigenousPersonRadioButton() {
@@ -752,50 +736,49 @@ export default class ApplicationObject {
   applicationSavedSuccessfully() {
     return cy.contains("Application saved!");
   }
+
   fileUploader() {
-    return cy.xpath("//button[normalize-space()='File Uploader']");
+    return cy.contains("File Uploader");
   }
 
   documentDropdown() {
-    return cy.get(
-      ".choices__item.choices__placeholder.choices__item--selectable"
-    );
+    return cy.get("[data-id='3']").eq(0);
   }
 
   documentDropdownType() {
-    return cy.get(".choices__input.choices__input--cloned");
+    return cy.get("[placeholder='Type to search']");
   }
 
   applicationNumberInputTextFileUpload() {
-    return cy.get("#enltced-applicationNumber");
+    return cy.get("[name='data[applicationNumber]']");
   }
 
   profileSection() {
-    return cy.xpath("//button[normalize-space()='Profile']");
+    return cy.contains("Profile");
   }
 
   phoneNumberInputText() {
-    return cy.get("#ed9woqm-phone");
+    return cy.get("[name='data[phone]']");
   }
 
   addressLineInputText() {
-    return cy.get("#eekt68-addressLine1");
+    return cy.get("[name='data[addressLine1]']");
   }
 
   cityInputText() {
-    return cy.get("#ezvvjkm-city");
+    return cy.get("[name='data[city]']");
   }
 
   provinceInputText() {
-    return cy.get("#ewnyfy-provinceState");
+    return cy.get("[name='data[provinceState]']");
   }
 
   countryInputText() {
-    return cy.get("#etntvz-country");
+    return cy.get("[name='data[country]']");
   }
 
   zipCodeInputText() {
-    return cy.get("#e2eo8bk-postalCode");
+    return cy.get("[name='data[postalCode]']");
   }
 
   phoneErrorMessage() {
@@ -831,11 +814,11 @@ export default class ApplicationObject {
   }
 
   applyForPDStatusButton() {
-    return cy.get("#e5sjjyg > .btn");
+    return cy.get("[name='data[submitPDStatus]']");
   }
 
   applyForPDMessage() {
-    return cy.get(".v-card-title > .category-header-medium");
+    return cy.contains("Apply for a permanent disability status");
   }
 
   yesForApplyPDButton() {

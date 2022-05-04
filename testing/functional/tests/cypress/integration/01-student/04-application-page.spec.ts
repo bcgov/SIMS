@@ -39,7 +39,7 @@ describe("Application Page", () => {
       .should("be.visible");
     applicationObject.selectStudyYearDropdown();
     applicationObject
-      .startApplicationStudyYearEnableButton()
+      .startApplicationStudyYearDisableButton()
       .should("not.exist");
   });
 
@@ -48,7 +48,7 @@ describe("Application Page", () => {
     applicationObject.startNewApplicationButton().should("be.visible").click();
     applicationObject.selectStudyYearDropdown();
     applicationObject
-      .startApplicationStudyYearEnableButton()
+      .startApplicationStudyYearDisableButton()
       .should("not.exist");
     applicationObject.removedButton().click();
     applicationObject
@@ -64,7 +64,7 @@ describe("Application Page", () => {
       .should("be.visible");
     applicationObject.selectStudyYearDropdown();
     applicationObject
-      .startApplicationStudyYearEnableButton()
+      .startApplicationStudyYearDisableButton()
       .should("not.exist");
 
     //Info:- On click -> Alert in progress popup open
@@ -450,64 +450,72 @@ describe("Application Page", () => {
     applicationObject.noSocialInsuranceNumberMessage().should("be.visible");
   });
 
-  it("Verify that all mandatory fields in the Partner information page have error messages displayed if they are not filled out.", () => {
-    cy.intercept("GET", "**/program-year").as("programYear");
-    applicationObject.applicationButton().should("be.visible").click();
-    applicationObject.draftApplication().eq(0).click();
-    applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.nextSectionButton().click();
-    cy.wait("@programYear");
-    applicationObject.personalInformationButton().click();
-    applicationObject.iConfirmMyStudentAidCheckbox().click();
-    applicationObject.citizenStatusRadioButton().click();
-    applicationObject.residentOfBCRadioButton().click();
-    applicationObject.residenceNoneOfTheAboveRadioButton().click();
-    applicationObject
-      .explainSituationInputField()
-      .type("I applied but haven't received confirmation yet.");
-    applicationObject.indigenousPersonRadioButton().click();
-    applicationObject.aboriginalRadioButton().click();
-    applicationObject.legalGuardianRadioButton().click();
-    applicationObject.courseStudyStartDateRadioButton().click();
-    applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
-    applicationObject.workingFullTimeRadioButton().click();
-    applicationObject.fullTimeLaborForceRadioButton().click();
-    applicationObject.allowTrustContactRadioButton().click();
-    applicationObject.nextSectionButton().click();
-    applicationObject.marriedRadioButton().click();
-    applicationObject.dateOfMarriage().type("2023-12-01");
-    applicationObject.dependRadioButton().click();
-    applicationObject.fullNameText().type("Jason Holder");
-    applicationObject.dateOfBirth().type("2003-07-01");
-    applicationObject.attendingPostSecondarySchoolRadioButton().click();
-    applicationObject.declaredOnTaxesRadioButton().click();
-    applicationObject.addAnotherDependantButton().click();
-    applicationObject.secondCloseButton().click();
-    applicationObject.doYouHaveDependentSupportRadioButton().click();
-    applicationObject.nextSectionButton().click();
-    applicationObject.yesSocialInsuranceNumber().click();
-    applicationObject.yesSocialInsuranceNumberMessage().should("be.visible");
-    applicationObject.noSocialInsuranceNumber().click();
-    applicationObject.noSocialInsuranceNumberMessage().should("be.visible");
-    applicationObject.nextSectionButton().click();
-    applicationObject.pleaseFixErrorBeforeSubmittingText().should("be.visible");
-    applicationObject.financialInformationErrorMessage().should("be.visible");
-    applicationObject.partnerIncomeErrorMessage().should("be.visible");
-    applicationObject.partnerEmployedErrorMessage().should("be.visible");
-    applicationObject.financialInformationErrorMessage().should("be.visible");
-    applicationObject.partnerBeAtHomeErrorMessage().should("be.visible");
-    applicationObject.partnerBeLivingErrorMessage().should("be.visible");
-    applicationObject.partnerBeFullTimeErrorMessage().should("be.visible");
-    applicationObject.partnerReceiveIncomeErrorMessage().should("be.visible");
-    applicationObject
-      .partnerEmploymentInsuranceErrorMessage()
-      .should("be.visible");
-    applicationObject.partnerReceiptFederalErrorMessage().should("be.visible");
-    applicationObject
-      .partnerPayingCanadaStudentErrorMessage()
-      .should("be.visible");
-    applicationObject.duringStudyPeriodErrorMessage().should("be.visible");
-  });
+  it(
+    "Verify that all mandatory fields in the Partner information page have error messages displayed if they are not filled out.",
+    { retries: 4 },
+    () => {
+      cy.intercept("GET", "**/program-year").as("programYear");
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().eq(0).click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait("@programYear");
+      applicationObject.personalInformationButton().click();
+      applicationObject.iConfirmMyStudentAidCheckbox().click();
+      applicationObject.citizenStatusRadioButton().click();
+      applicationObject.residentOfBCRadioButton().click();
+      applicationObject.residenceNoneOfTheAboveRadioButton().click();
+      applicationObject
+        .explainSituationInputField()
+        .type("I applied but haven't received confirmation yet.");
+      applicationObject.indigenousPersonRadioButton().click();
+      applicationObject.aboriginalRadioButton().click();
+      applicationObject.legalGuardianRadioButton().click();
+      applicationObject.courseStudyStartDateRadioButton().click();
+      applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
+      applicationObject.workingFullTimeRadioButton().click();
+      applicationObject.fullTimeLaborForceRadioButton().click();
+      applicationObject.allowTrustContactRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.marriedRadioButton().click();
+      applicationObject.dateOfMarriage().type("2023-12-01");
+      applicationObject.dependRadioButton().click();
+      applicationObject.fullNameText().type("Jason Holder");
+      applicationObject.dateOfBirth().type("2003-07-01");
+      applicationObject.attendingPostSecondarySchoolRadioButton().click();
+      applicationObject.declaredOnTaxesRadioButton().click();
+      applicationObject.addAnotherDependantButton().click();
+      applicationObject.secondCloseButton().click();
+      applicationObject.doYouHaveDependentSupportRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.yesSocialInsuranceNumber().click();
+      applicationObject.yesSocialInsuranceNumberMessage().should("be.visible");
+      applicationObject.noSocialInsuranceNumber().click();
+      applicationObject.noSocialInsuranceNumberMessage().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      applicationObject
+        .pleaseFixErrorBeforeSubmittingText()
+        .should("be.visible");
+      applicationObject.financialInformationErrorMessage().should("be.visible");
+      applicationObject.partnerIncomeErrorMessage().should("be.visible");
+      applicationObject.partnerEmployedErrorMessage().should("be.visible");
+      applicationObject.financialInformationErrorMessage().should("be.visible");
+      applicationObject.partnerBeAtHomeErrorMessage().should("be.visible");
+      applicationObject.partnerBeLivingErrorMessage().should("be.visible");
+      applicationObject.partnerBeFullTimeErrorMessage().should("be.visible");
+      applicationObject.partnerReceiveIncomeErrorMessage().should("be.visible");
+      applicationObject
+        .partnerEmploymentInsuranceErrorMessage()
+        .should("be.visible");
+      applicationObject
+        .partnerReceiptFederalErrorMessage()
+        .should("be.visible");
+      applicationObject
+        .partnerPayingCanadaStudentErrorMessage()
+        .should("be.visible");
+      applicationObject.duringStudyPeriodErrorMessage().should("be.visible");
+    }
+  );
 
   it("Check that all fields on the Partner information page are working.", () => {
     cy.intercept("GET", "**/program-year").as("programYear");
