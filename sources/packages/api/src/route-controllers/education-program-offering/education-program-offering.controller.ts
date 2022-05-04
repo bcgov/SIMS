@@ -237,19 +237,26 @@ export class EducationProgramOfferingController extends BaseController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
-    @Query("offeringIntensity") offeringIntensity: OfferingIntensity,
+    @Query("offeringIntensity") offeringIntensity?: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
+    if (
+      offeringIntensity &&
+      !Object.values(OfferingIntensity).includes(offeringIntensity)
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
+    const offeringsFilter = {
+      offeringIntensity: offeringIntensity,
+      offeringStatus: OfferingStatus.Approved,
+      offeringTypes: [OfferingTypes.Public],
+    };
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
         programYearId,
-        {
-          offeringIntensity: offeringIntensity,
-          offeringStatus: OfferingStatus.Approved,
-          offeringTypes: [OfferingTypes.Public],
-        },
+        offeringsFilter,
         includeInActivePY,
       );
     return offerings.map((offering) => ({
@@ -288,18 +295,19 @@ export class EducationProgramOfferingController extends BaseController {
       offeringIntensity &&
       !Object.values(OfferingIntensity).includes(offeringIntensity)
     ) {
-      throw new NotFoundException("Invalid offering intensity.");
+      throw new UnprocessableEntityException("Invalid offering intensity.");
     }
+    const offeringsFilter = {
+      offeringIntensity: offeringIntensity,
+      offeringStatus: OfferingStatus.Approved,
+      offeringTypes: [OfferingTypes.Public, OfferingTypes.Private],
+    };
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
         programYearId,
-        {
-          offeringIntensity: offeringIntensity,
-          offeringStatus: OfferingStatus.Approved,
-          offeringTypes: [OfferingTypes.Public, OfferingTypes.Private],
-        },
+        offeringsFilter,
         includeInActivePY,
       );
     return offerings.map((offering) => ({
