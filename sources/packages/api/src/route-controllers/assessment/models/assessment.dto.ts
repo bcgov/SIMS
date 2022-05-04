@@ -7,7 +7,6 @@ import {
   StudentAppealStatus,
 } from "../../../database/entities";
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
 
 export class RequestAssessmentSummaryAPIOutDTO {
   id: number;
@@ -28,15 +27,11 @@ export class AssessmentHistorySummaryAPIOutDTO {
 
 export class AssessmentNOAAPIOutDTO {
   @ApiProperty({
-    description: "Dynamic output of the workflow calculation.",
+    description:
+      "Dynamic output of the workflow calculation. " +
+      "Contains data that could represent a part-time or a full-time assessment. " +
+      "Part-time and full-time will have some common and some specific properties for each payload.",
   })
-  /**
-   * Represents the dynamic content of the workflow calculation.
-   ** This property should not be mapped to a DTO class otherwise it will
-   ** have the non-mapped properties removed from the payload (by Nestjs) and the
-   ** workflow should be able to output more variables that could be directly
-   ** consumed by an API client without API code modification.
-   */
   assessment: Assessment;
   applicationNumber: string;
   fullName: string;
