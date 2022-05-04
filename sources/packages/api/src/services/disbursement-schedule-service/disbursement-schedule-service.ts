@@ -75,6 +75,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .createQueryBuilder("assessment")
       .select([
         "assessment.id",
+        "assessment.triggerType",
         "application.id",
         "application.applicationStatus",
         "disbursementSchedules.id",
