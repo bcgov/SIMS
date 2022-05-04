@@ -5,7 +5,6 @@ import {
   ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
   GetApplicationBaseDTO,
-  NoticeOfAssessmentDTO,
   DataTableSortOrder,
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
@@ -22,14 +21,6 @@ export class ApplicationService {
 
   public static get shared(): ApplicationService {
     return this.instance || (this.instance = new this());
-  }
-
-  public async getNOA(applicationId: number): Promise<NoticeOfAssessmentDTO> {
-    return ApiClient.Application.getNOA(applicationId);
-  }
-
-  public async confirmAssessment(applicationId: number): Promise<void> {
-    return ApiClient.Application.confirmAssessment(applicationId);
   }
 
   public async updateStudentApplicationStatus(

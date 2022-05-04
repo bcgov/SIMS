@@ -111,13 +111,13 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * Get the assessment data to load the NOA (Notice of Assessment)
    * for a student application.
    * @param assessmentId assessment id to be retrieved.
-   * @param studentId associated student of the application. Provide
+   * @param userId user associated to the application. Provided
    * when an authorization check is needed.
    * @returns assessment NOA data.
    */
   async getAssessmentForNOA(
     assessmentId: number,
-    studentId?: number,
+    userId?: number,
   ): Promise<StudentAssessment> {
     const query = this.repo
       .createQueryBuilder("assessment")
@@ -150,8 +150,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .where("assessment.id = :assessmentId", { assessmentId })
       .orderBy("disbursementSchedule.disbursementDate");
 
-    if (studentId) {
-      query.andWhere("student.id = :studentId", { studentId });
+    if (userId) {
+      query.andWhere("student.user.id = :userId", { userId });
     }
     return query.getOne();
   }
@@ -336,12 +336,12 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * Updates assessment and application statuses when
    * the student is confirming the NOA (Notice of Assessment).
    * @param assessmentId assessment id to be updated.
-   * @param studentId student confirming the NOA.
+   * @param userId user confirming the NOA.
    * @returns updated record.
    */
   async studentConfirmAssessment(
     assessmentId: number,
-    studentId: number,
+    userId: number,
   ): Promise<StudentAssessment> {
     const assessment = await this.repo
       .createQueryBuilder("assessment")
@@ -352,12 +352,12 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       ])
       .innerJoin("assessment.application", "application")
       .where("assessment.id = :assessmentId", { assessmentId })
-      .andWhere("application.student.id = :studentId", { studentId })
+      .andWhere("application.student.user.id = :userId", { userId })
       .getOne();
 
     if (!assessment) {
       throw new CustomNamedError(
-        `Not able to find the assessment for the student.`,
+        "Not able to find the assessment for the student.",
         ASSESSMENT_NOT_FOUND,
       );
     }

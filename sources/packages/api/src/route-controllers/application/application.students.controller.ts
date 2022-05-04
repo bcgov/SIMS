@@ -26,7 +26,6 @@ import {
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-  ASSESSMENT_NOT_FOUND,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -35,7 +34,6 @@ import {
   GetApplicationDataDto,
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
-  NOAApplicationDto,
   ApplicationIdentifiersDTO,
 } from "./models/application.model";
 import {
@@ -46,15 +44,8 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import {
-  ApplicationStatus,
-  AssessmentTriggerType,
-} from "../../database/entities";
-import {
-  dateString,
-  getUserFullName,
-  PIR_OR_DATE_OVERLAP_ERROR,
-} from "../../utilities";
+import { ApplicationStatus } from "../../database/entities";
+import { PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import { INVALID_APPLICATION_NUMBER } from "../../constants";
 import {
   ApiBadRequestResponse,
@@ -314,128 +305,6 @@ export class ApplicationStudentsController extends BaseController {
       throw new InternalServerErrorException(
         "Unexpected error while updating the draft application.",
       );
-    }
-  }
-
-  /**
-   * Fetch the NOA screen values for a student application.
-   * @param applicationId application id to fetch the NOA values.
-   * @param userToken associated student of the application.
-   * @returns NOA and application data.
-   */
-  // TODO: Move this endpoint to a specific assessment controller and use the assessment id instead of the application id.
-  @Get(":applicationId/assessment")
-  @ApiOkResponse({ description: "Retrieved assessment values." })
-  @ApiNotFoundResponse({
-    description:
-      "Application id not found or Assessment for the application is not calculated.",
-  })
-  async getAssessmentInApplication(
-    @Param("applicationId") applicationId: number,
-    @UserToken() userToken: IUserToken,
-  ): Promise<NOAApplicationDto> {
-    const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-
-    // TODO: temporary code to allow the assessment to be retrieved using the application id.
-    const [originalAssessment] =
-      await this.assessmentService.getAssessmentsByApplicationId(
-        applicationId,
-        AssessmentTriggerType.OriginalAssessment,
-      );
-    // TODO: end of the temporary code that will be removed.
-
-    const assessment = await this.assessmentService.getAssessmentForNOA(
-      originalAssessment.id,
-      student.id,
-    );
-
-    if (!assessment) {
-      throw new NotFoundException(
-        "Assessment was not found for the the student.",
-      );
-    }
-
-    if (!assessment.assessmentData) {
-      throw new NotFoundException(
-        `Assessment for the application id ${applicationId} was not calculated.`,
-      );
-    }
-    //Disbursement data is populated with dynamic key in a defined pattern to be compatible with form table.
-    const disbursementDetails = {};
-    assessment.disbursementSchedules.forEach((schedule, index) => {
-      const disbursementIdentifier = `disbursement${index + 1}`;
-      disbursementDetails[`${disbursementIdentifier}Date`] = dateString(
-        schedule.disbursementDate,
-      );
-      schedule.disbursementValues.forEach((disbursement) => {
-        const disbursementValueKey = `${disbursementIdentifier}${disbursement.valueCode.toLowerCase()}`;
-        disbursementDetails[disbursementValueKey] = disbursement.valueAmount;
-      });
-    });
-
-    return {
-      assessment: assessment.assessmentData,
-      applicationNumber: assessment.application.applicationNumber,
-      fullName: getUserFullName(assessment.application.student.user),
-      programName: assessment.offering.educationProgram.name,
-      locationName: assessment.offering.institutionLocation.name,
-      offeringIntensity: assessment.offering.offeringIntensity,
-      offeringStudyStartDate: dateString(assessment.offering.studyStartDate),
-      offeringStudyEndDate: dateString(assessment.offering.studyEndDate),
-      msfaaNumber: assessment.application.msfaaNumber.msfaaNumber,
-      disbursement: disbursementDetails,
-    };
-  }
-
-  /**
-   * Confirm Assessment of a Student.
-   * @param applicationId application id to be updated.
-   */
-  @CheckRestrictions()
-  @ApiOkResponse({ description: "Assessment confirmed." })
-  @ApiUnprocessableEntityResponse({
-    description: "Student not found or Assessment confirmation failed.",
-  })
-  @Patch(":applicationId/confirm-assessment")
-  // TODO: Move this endpoint to a specific assessment controller and use the assessment id instead of the application id.
-  async studentConfirmAssessment(
-    @UserToken() userToken: IUserToken,
-    @Param("applicationId") applicationId: number,
-  ): Promise<void> {
-    const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-
-    if (!student) {
-      throw new UnprocessableEntityException(
-        "The user is not associated with a student.",
-      );
-    }
-
-    // TODO: temporary code to allow the assessment to be retrieved using the application id.
-    const [originalAssessment] =
-      await this.assessmentService.getAssessmentsByApplicationId(
-        applicationId,
-        AssessmentTriggerType.OriginalAssessment,
-      );
-    // TODO: end of the temporary code that will be removed.
-
-    try {
-      await this.assessmentService.studentConfirmAssessment(
-        originalAssessment.id,
-        student.id,
-      );
-    } catch (error) {
-      switch (error.name) {
-        case ASSESSMENT_NOT_FOUND:
-          throw new NotFoundException(error.message);
-        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          throw error;
-      }
     }
   }
 

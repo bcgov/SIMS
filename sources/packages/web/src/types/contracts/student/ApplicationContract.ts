@@ -1,9 +1,5 @@
-import {
-  ProgramInfoStatus,
-  COEStatus,
-  AssessmentStatus,
-  OfferingIntensity,
-} from "@/types";
+import { ProgramInfoStatus, COEStatus, AssessmentStatus } from "@/types";
+
 export interface SaveStudentApplicationDto {
   programYearId: number;
   data: any;
@@ -88,6 +84,7 @@ export interface ApplicationIdentifiersDTO {
  * Base DTO for application dynamic data
  */
 export interface GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
+  assessmentId?: number;
   data: any;
   applicationStatus: ApplicationStatus;
   applicationFormName: string;
@@ -141,22 +138,6 @@ export interface ApplicationSummaryDTO extends ApplicationIdentifiersDTO {
   applicationName: string;
   submitted: string;
   status: string;
-}
-
-/**
- * DTO for Notice of Assessment view
- */
-export interface NoticeOfAssessmentDTO {
-  assessment: Assessment;
-  applicationNumber: string;
-  fullName: string;
-  programName: string;
-  locationName: string;
-  offeringIntensity: OfferingIntensity;
-  offeringStudyStartDate: string;
-  offeringStudyEndDate: string;
-  msfaaNumber: string;
-  disbursement: any;
 }
 
 /**

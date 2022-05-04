@@ -66,17 +66,20 @@ The workflow from this point on should not rely or any variable created on the a
       </bpmn:lane>
       <bpmn:lane id="Lane_1tg73uy" name="Assessment &#38; Awards">
         <bpmn:flowNodeRef>Event_1wxl0x4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0ldfkbb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0p65yh4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CallActivity_1okgvpw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1aiys42</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_1uq9e1u</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0wu28r4</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_16jzsun</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1b33apa</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0wv9pv1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1yidauz</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0u73tyi</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0ldfkbb</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0p65yh4</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>CallActivity_1okgvpw</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1aiys42</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_1uq9e1u</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_00zu2th</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0tepnnt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_00o0505</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_17ga6r2" />
       </bpmn:lane>
       <bpmn:lane id="Lane_0rbuxn8" name="Prepare for Assessment">
@@ -264,6 +267,7 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
               <camunda:value>supportingUsers.Parent1.supportingData.totalIncome</camunda:value>
               <camunda:value>supportingUsers.Parent2.supportingData.totalIncome</camunda:value>
               <camunda:value>supportingUsers.Partner1.supportingData.totalIncome</camunda:value>
+              <camunda:value>applicationId</camunda:value>
             </camunda:list>
           </camunda:inputParameter>
           <camunda:inputParameter name="errorCodeName">SIMS-GET-ASSESSMENT-ERROR</camunda:inputParameter>
@@ -282,6 +286,7 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
           <camunda:outputParameter name="supportingUserPartnerTotalIncome">${supportingUsers_Partner1_supportingData_totalIncome}</camunda:outputParameter>
           <camunda:outputParameter name="supportingUserParent1TotalIncome">${supportingUsers_Parent1_supportingData_totalIncome}</camunda:outputParameter>
           <camunda:outputParameter name="supportingUserParent2TotalIncome">${supportingUsers_Parent2_supportingData_totalIncome}</camunda:outputParameter>
+          <camunda:outputParameter name="applicationId">${applicationId}</camunda:outputParameter>
         </camunda:inputOutput>
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="javascript">execution.setVariable('error_retry', execution.getVariable("error_retry") + 1);</camunda:script>
@@ -633,6 +638,7 @@ ${workflowIdErrorMsg}</camunda:inputParameter>
               <camunda:value>supportingUsers.Partner1.craReportedIncome</camunda:value>
               <camunda:value>appeals.studentIncomeAppeal.submittedData</camunda:value>
               <camunda:value>appeals.partnerIncomeAppeal.submittedData</camunda:value>
+              <camunda:value>applicationId</camunda:value>
             </camunda:list>
           </camunda:inputParameter>
           <camunda:inputParameter name="errorCodeName">SIMS-GET-ASSESSMENT-FULL-DATA-ERROR</camunda:inputParameter>
@@ -714,6 +720,7 @@ ${workflowIdErrorMsg}</camunda:inputParameter>
           <camunda:outputParameter name="partnerCRAReportedIncome">${supportingUsers_Partner1_craReportedIncome}</camunda:outputParameter>
           <camunda:outputParameter name="studentIncomeAppealData">${appeals_studentIncomeAppeal_submittedData}</camunda:outputParameter>
           <camunda:outputParameter name="partnerIncomeAppealData">${appeals_partnerIncomeAppeal_submittedData}</camunda:outputParameter>
+          <camunda:outputParameter name="applicationId">${applicationId}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0t5tfgt</bpmn:incoming>
@@ -745,81 +752,6 @@ ${workflowIdErrorMsg}</camunda:inputParameter>
       <bpmn:outgoing>Flow_0iwnsaf</bpmn:outgoing>
       <bpmn:linkEventDefinition id="LinkEventDefinition_1u9ocgm" name="ready-for-assessment" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:endEvent id="Event_0wu28r4">
-      <bpmn:incoming>Flow_1gq6278</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:userTask id="Activity_16jzsun" name="Reviewer">
-      <bpmn:incoming>Flow_16892vr</bpmn:incoming>
-      <bpmn:outgoing>Flow_1gq6278</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:intermediateCatchEvent id="Event_1b33apa" name="wait for the institution to confirm COE">
-      <bpmn:incoming>Flow_1udpycx</bpmn:incoming>
-      <bpmn:outgoing>Flow_16892vr</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_0u3hjia" messageRef="Message_0nupyyq" />
-    </bpmn:intermediateCatchEvent>
-    <bpmn:serviceTask id="Activity_0wv9pv1" name="Update NOA Approval Status to &#39;Required&#39;">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="payload">{
-  "status": "Required"
-}</camunda:inputParameter>
-            <camunda:inputParameter name="url">${simsApiUrl}/system-access/assessment/${assessmentId}/noa-approval-status</camunda:inputParameter>
-            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="Content-Type">application/json</camunda:entry>
-                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1f4zmxl</bpmn:incoming>
-      <bpmn:outgoing>Flow_1udpycx</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_1yidauz" name="Call SIMS Api to generate MSFAA">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/msfaa-number</camunda:inputParameter>
-            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="Content-Type">application/json</camunda:entry>
-                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_19yc6c3</bpmn:incoming>
-      <bpmn:outgoing>Flow_1f4zmxl</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0u73tyi" name="Update Application Status to &#39;Assessment&#39;">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="payload">{
-  "status": "Assessment"
-}</camunda:inputParameter>
-            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/application/status</camunda:inputParameter>
-            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="Content-Type">application/json</camunda:entry>
-                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_181l06a</bpmn:incoming>
-      <bpmn:outgoing>Flow_19yc6c3</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_0ldfkbb" name="Save assessment to SIMSDB" camunda:asyncBefore="true">
       <bpmn:extensionElements>
         <camunda:connector>
@@ -1081,7 +1013,7 @@ JSON.stringify({ data: assessmentJson });
         </camunda:connector>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0fx85bq</bpmn:incoming>
-      <bpmn:outgoing>Flow_181l06a</bpmn:outgoing>
+      <bpmn:outgoing>Flow_05qdqhf</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:callActivity id="Activity_0p65yh4" name="Calculate Award" calledElement="${definition_key.get(&#34;award&#34;)}">
       <bpmn:extensionElements>
@@ -1544,12 +1476,6 @@ execution.setVariable('error_retry', 0);</camunda:script>
     <bpmn:sequenceFlow id="Flow_0qo8vzw" sourceRef="Gateway_0380uhw" targetRef="Gateway_0wkoecx" />
     <bpmn:sequenceFlow id="Flow_07wq6p8" sourceRef="Gateway_11vidi6" targetRef="Gateway_1isoyr2" />
     <bpmn:sequenceFlow id="Flow_0iwnsaf" sourceRef="Event_1wxl0x4" targetRef="Task_1uq9e1u" />
-    <bpmn:sequenceFlow id="Flow_1gq6278" sourceRef="Activity_16jzsun" targetRef="Event_0wu28r4" />
-    <bpmn:sequenceFlow id="Flow_16892vr" sourceRef="Event_1b33apa" targetRef="Activity_16jzsun" />
-    <bpmn:sequenceFlow id="Flow_1udpycx" sourceRef="Activity_0wv9pv1" targetRef="Event_1b33apa" />
-    <bpmn:sequenceFlow id="Flow_1f4zmxl" sourceRef="Activity_1yidauz" targetRef="Activity_0wv9pv1" />
-    <bpmn:sequenceFlow id="Flow_19yc6c3" sourceRef="Activity_0u73tyi" targetRef="Activity_1yidauz" />
-    <bpmn:sequenceFlow id="Flow_181l06a" sourceRef="Activity_0ldfkbb" targetRef="Activity_0u73tyi" />
     <bpmn:sequenceFlow id="Flow_0fx85bq" sourceRef="Activity_1aiys42" targetRef="Activity_0ldfkbb" />
     <bpmn:sequenceFlow id="Flow_09tnx9v" sourceRef="CallActivity_1okgvpw" targetRef="Activity_0p65yh4" />
     <bpmn:sequenceFlow id="Flow_0xq6e41" sourceRef="Activity_0p65yh4" targetRef="Activity_1aiys42" />
@@ -1645,9 +1571,127 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmn:incoming>Flow_1795ldb</bpmn:incoming>
       <bpmn:linkEventDefinition id="LinkEventDefinition_0xgxkdo" name="ready-for-assessment" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:textAnnotation id="TextAnnotation_0xdedyz">
-      <bpmn:text>This will generate (or associate) the MSFAA number that will be present in the NOA</bpmn:text>
-    </bpmn:textAnnotation>
+    <bpmn:sequenceFlow id="Flow_05qdqhf" sourceRef="Activity_0ldfkbb" targetRef="Gateway_00zu2th" />
+    <bpmn:endEvent id="Event_0wu28r4">
+      <bpmn:incoming>Flow_1gq6278</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_16jzsun" name="Reviewer">
+      <bpmn:incoming>Flow_09z4e25</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gq6278</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateCatchEvent id="Event_1b33apa" name="wait for the institution to confirm COE">
+      <bpmn:incoming>Flow_1udpycx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1i1dgfc</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0u3hjia" messageRef="Message_0nupyyq" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:serviceTask id="Activity_0wv9pv1" name="Update NOA Approval Status to &#39;Required&#39;">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">{
+  "status": "Required"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/assessment/${assessmentId}/noa-approval-status</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0xtxfdc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1udpycx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1yidauz" name="Call SIMS Api to generate MSFAA">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/msfaa-number</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19yc6c3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xtxfdc</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0u73tyi" name="Update Application Status to &#39;Assessment&#39;">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">{
+  "status": "Assessment"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/application/status</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1vtc1sq</bpmn:incoming>
+      <bpmn:outgoing>Flow_19yc6c3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_00zu2th">
+      <bpmn:incoming>Flow_05qdqhf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vtc1sq</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1hiahuz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_0tepnnt">
+      <bpmn:incoming>Flow_1i1dgfc</bpmn:incoming>
+      <bpmn:incoming>Flow_1e0klas</bpmn:incoming>
+      <bpmn:outgoing>Flow_09z4e25</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1gq6278" sourceRef="Activity_16jzsun" targetRef="Event_0wu28r4" />
+    <bpmn:sequenceFlow id="Flow_09z4e25" sourceRef="Gateway_0tepnnt" targetRef="Activity_16jzsun" />
+    <bpmn:sequenceFlow id="Flow_1udpycx" sourceRef="Activity_0wv9pv1" targetRef="Event_1b33apa" />
+    <bpmn:sequenceFlow id="Flow_1i1dgfc" sourceRef="Event_1b33apa" targetRef="Gateway_0tepnnt" />
+    <bpmn:sequenceFlow id="Flow_0xtxfdc" sourceRef="Activity_1yidauz" targetRef="Activity_0wv9pv1" />
+    <bpmn:sequenceFlow id="Flow_19yc6c3" sourceRef="Activity_0u73tyi" targetRef="Activity_1yidauz" />
+    <bpmn:sequenceFlow id="Flow_1vtc1sq" name="Assessment" sourceRef="Gateway_00zu2th" targetRef="Activity_0u73tyi">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${assessmentTriggerType == "Original assessment"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1hiahuz" name="Reassessment" sourceRef="Gateway_00zu2th" targetRef="Activity_00o0505">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${assessmentTriggerType != "Original assessment"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1e0klas" sourceRef="Activity_00o0505" targetRef="Gateway_0tepnnt" />
+    <bpmn:serviceTask id="Activity_00o0505" name="Update NOA Approval Status to &#39;Not Required&#39;">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">{
+  "status": "Not Required"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/assessment/${assessmentId}/noa-approval-status</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hiahuz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1e0klas</bpmn:outgoing>
+    </bpmn:serviceTask>
     <bpmn:textAnnotation id="TextAnnotation_0lx2onb">
       <bpmn:text>single or split disbursement model</bpmn:text>
     </bpmn:textAnnotation>
@@ -1660,7 +1704,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
     <bpmn:textAnnotation id="TextAnnotation_17l874m">
       <bpmn:text>Get the token that will be reused to update PIR</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_036j07s" sourceRef="TextAnnotation_0xdedyz" targetRef="Activity_1yidauz" />
     <bpmn:association id="Association_1e8tzpr" sourceRef="Activity_1aiys42" targetRef="TextAnnotation_0lx2onb" />
     <bpmn:association id="Association_0jw9yca" sourceRef="TextAnnotation_098jvax" targetRef="Activity_0n94rsl" />
     <bpmn:association id="Association_0t3evxv" sourceRef="TextAnnotation_09zyg53" targetRef="Activity_1w6xq7d" />
@@ -1677,6 +1720,10 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmn:text>Checkpoints created with the asynchronous continuations</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0b1d0j7" sourceRef="TextAnnotation_0zowv9u" targetRef="Activity_1i6t82u" />
+    <bpmn:textAnnotation id="TextAnnotation_0xdedyz">
+      <bpmn:text>This will generate (or associate) the MSFAA number that will be present in the NOA</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_036j07s" sourceRef="TextAnnotation_0xdedyz" targetRef="Activity_1yidauz" />
   </bpmn:process>
   <bpmn:message id="Message_10bsk3l" name="sims-pir-complete" />
   <bpmn:category id="Category_0b0l947">
@@ -1727,6 +1774,9 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmndi:BPMNShape id="Lane_1440s3a_di" bpmnElement="Lane_1440s3a" isHorizontal="true">
         <dc:Bounds x="580" y="80" width="2036" height="1280" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0xdedyz_di" bpmnElement="TextAnnotation_0xdedyz">
+        <dc:Bounds x="1900" y="2442" width="130" height="70" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1795ldb_di" bpmnElement="Flow_1795ldb">
         <di:waypoint x="2150" y="1706" />
@@ -1879,30 +1929,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmndi:BPMNEdge id="Flow_0fx85bq_di" bpmnElement="Flow_0fx85bq">
         <di:waypoint x="1280" y="2620" />
         <di:waypoint x="1327" y="2620" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_181l06a_di" bpmnElement="Flow_181l06a">
-        <di:waypoint x="1427" y="2620" />
-        <di:waypoint x="1490" y="2620" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_19yc6c3_di" bpmnElement="Flow_19yc6c3">
-        <di:waypoint x="1590" y="2620" />
-        <di:waypoint x="1640" y="2620" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1f4zmxl_di" bpmnElement="Flow_1f4zmxl">
-        <di:waypoint x="1740" y="2620" />
-        <di:waypoint x="1772" y="2620" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1udpycx_di" bpmnElement="Flow_1udpycx">
-        <di:waypoint x="1872" y="2620" />
-        <di:waypoint x="1922" y="2620" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_16892vr_di" bpmnElement="Flow_16892vr">
-        <di:waypoint x="1958" y="2620" />
-        <di:waypoint x="2010" y="2620" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1gq6278_di" bpmnElement="Flow_1gq6278">
-        <di:waypoint x="2110" y="2620" />
-        <di:waypoint x="2192" y="2620" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0iwnsaf_di" bpmnElement="Flow_0iwnsaf">
         <di:waypoint x="664" y="2620" />
@@ -2193,6 +2219,56 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
           <dc:Bounds x="678" y="532" width="68" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05qdqhf_di" bpmnElement="Flow_05qdqhf">
+        <di:waypoint x="1427" y="2620" />
+        <di:waypoint x="1483" y="2620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gq6278_di" bpmnElement="Flow_1gq6278">
+        <di:waypoint x="2340" y="2620" />
+        <di:waypoint x="2392" y="2620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09z4e25_di" bpmnElement="Flow_09z4e25">
+        <di:waypoint x="2205" y="2620" />
+        <di:waypoint x="2240" y="2620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1udpycx_di" bpmnElement="Flow_1udpycx">
+        <di:waypoint x="2020" y="2560" />
+        <di:waypoint x="2071" y="2560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i1dgfc_di" bpmnElement="Flow_1i1dgfc">
+        <di:waypoint x="2107" y="2560" />
+        <di:waypoint x="2180" y="2560" />
+        <di:waypoint x="2180" y="2595" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xtxfdc_di" bpmnElement="Flow_0xtxfdc">
+        <di:waypoint x="1877" y="2560" />
+        <di:waypoint x="1920" y="2560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19yc6c3_di" bpmnElement="Flow_19yc6c3">
+        <di:waypoint x="1727" y="2560" />
+        <di:waypoint x="1777" y="2560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vtc1sq_di" bpmnElement="Flow_1vtc1sq">
+        <di:waypoint x="1508" y="2595" />
+        <di:waypoint x="1508" y="2560" />
+        <di:waypoint x="1627" y="2560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1510" y="2543" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hiahuz_di" bpmnElement="Flow_1hiahuz">
+        <di:waypoint x="1508" y="2645" />
+        <di:waypoint x="1508" y="2690" />
+        <di:waypoint x="1915" y="2690" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1513" y="2673" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e0klas_di" bpmnElement="Flow_1e0klas">
+        <di:waypoint x="2015" y="2690" />
+        <di:waypoint x="2180" y="2690" />
+        <di:waypoint x="2180" y="2645" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1y0ilvy_di" bpmnElement="Event_0a53uvu">
         <dc:Bounds x="2522" y="542" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -2352,27 +2428,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
           <dc:Bounds x="627" y="2643" width="60" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0wu28r4_di" bpmnElement="Event_0wu28r4">
-        <dc:Bounds x="2192" y="2602" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1wlwfzf_di" bpmnElement="Activity_16jzsun">
-        <dc:Bounds x="2010" y="2580" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0hjeg8q_di" bpmnElement="Event_1b33apa">
-        <dc:Bounds x="1922" y="2602" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1913" y="2645" width="64" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0wv9pv1_di" bpmnElement="Activity_0wv9pv1">
-        <dc:Bounds x="1772" y="2580" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1yidauz_di" bpmnElement="Activity_1yidauz" bioc:stroke="#000000" bioc:fill="#ffffff" color:background-color="#ffffff" color:border-color="#000000">
-        <dc:Bounds x="1640" y="2580" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0u73tyi_di" bpmnElement="Activity_0u73tyi">
-        <dc:Bounds x="1490" y="2580" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ldfkbb_di" bpmnElement="Activity_0ldfkbb">
         <dc:Bounds x="1327" y="2580" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -2452,6 +2507,37 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmndi:BPMNShape id="BPMNShape_0l9udpn" bpmnElement="Activity_1sfa3ki">
         <dc:Bounds x="1360" y="1714" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wu28r4_di" bpmnElement="Event_0wu28r4">
+        <dc:Bounds x="2392" y="2602" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wlwfzf_di" bpmnElement="Activity_16jzsun">
+        <dc:Bounds x="2240" y="2580" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0hjeg8q_di" bpmnElement="Event_1b33apa">
+        <dc:Bounds x="2071" y="2542" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2062" y="2585" width="64" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wv9pv1_di" bpmnElement="Activity_0wv9pv1">
+        <dc:Bounds x="1920" y="2520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yidauz_di" bpmnElement="Activity_1yidauz" bioc:stroke="#000000" bioc:fill="#ffffff" color:background-color="#ffffff" color:border-color="#000000">
+        <dc:Bounds x="1777" y="2520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0u73tyi_di" bpmnElement="Activity_0u73tyi">
+        <dc:Bounds x="1627" y="2520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_00zu2th_di" bpmnElement="Gateway_00zu2th" isMarkerVisible="true">
+        <dc:Bounds x="1483" y="2595" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_11dfcbe" bpmnElement="Gateway_0tepnnt" isMarkerVisible="true">
+        <dc:Bounds x="2155" y="2595" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0s4ivph" bpmnElement="Activity_00o0505">
+        <dc:Bounds x="1915" y="2650" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_03z8wvb_di" bpmnElement="Activity_0fcbd0j">
         <dc:Bounds x="2050" y="1666" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -2461,9 +2547,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2214" y="1731" width="60" height="27" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0xdedyz_di" bpmnElement="TextAnnotation_0xdedyz">
-        <dc:Bounds x="1427" y="2700" width="130" height="70" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0lx2onb_di" bpmnElement="TextAnnotation_0lx2onb">
         <dc:Bounds x="1212" y="2480" width="100" height="55" />
@@ -2489,16 +2572,16 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <dc:Bounds x="1291" y="438" width="170" height="41" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_036j07s_di" bpmnElement="Association_036j07s">
+        <di:waypoint x="1913" y="2512" />
+        <di:waypoint x="1877" y="2540" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1eqxjsa_di" bpmnElement="Event_1eqxjsa">
         <dc:Bounds x="1034" y="500" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0upnywz_di" bpmnElement="Event_10s5nqb">
         <dc:Bounds x="960" y="500" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_036j07s_di" bpmnElement="Association_036j07s">
-        <di:waypoint x="1555" y="2700" />
-        <di:waypoint x="1645" y="2659" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1e8tzpr_di" bpmnElement="Association_1e8tzpr">
         <di:waypoint x="1240" y="2580" />
         <di:waypoint x="1252" y="2535" />
@@ -2659,11 +2742,11 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmndi:BPMNShape id="BPMNShape_1nehhkj" bpmnElement="Activity_0hxqlah">
         <dc:Bounds x="360" y="196" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_03yv4wq_di" bpmnElement="Event_03yv4wq">
-        <dc:Bounds x="632" y="158" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0bpwuwl_di" bpmnElement="Event_0bpwuwl">
         <dc:Bounds x="112" y="158" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_03yv4wq_di" bpmnElement="Event_03yv4wq">
+        <dc:Bounds x="632" y="158" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

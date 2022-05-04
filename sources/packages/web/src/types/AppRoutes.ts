@@ -8,7 +8,7 @@ export enum AppRoutes {
   StudentApplicationSummary = "my-application-summary",
   StudentFileUploader = "file-uploader",
   StudentApplicationDetails = "application/:id",
-  Assessment = "application/:applicationId/assessment",
+  Assessment = "application/:applicationId/assessment/:assessmentId",
   RequestChange = "request-change",
   // Institution
   InstitutionRoot = "/institution",
@@ -53,6 +53,7 @@ export enum AppRoutes {
   DesignationAESTView = "institution/designation/:designationId/institution/:institutionId?",
   AssessmentSummary = "assessment-summary",
   StudentAppealRequestsApproval = "request-changes/:appealId",
+  NoticeOfAssessmentView = "notice-of-assessment/:assessmentId",
   // program
   Programs = "programs",
   ViewProgram = "institution/:institutionId/location/:locationId/program/:programId",

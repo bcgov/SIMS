@@ -1,40 +1,59 @@
 <template>
-  <Card class="p-m-4">
-    <template #content>
-      <formio formName="noticeofassessment" :data="initialData"></formio>
-    </template>
-  </Card>
-  <v-btn
-    color="primary"
-    class="p-button-raised ml-2 float-right"
-    @click="confirmAssessment()"
-  >
-    <v-icon size="25">mdi-text-box-plus</v-icon>
-    Confirmation of Assessment
-  </v-btn>
+  <v-container>
+    <div class="mb-4">
+      <header-navigator
+        title="Application details"
+        subTitle="Notice of Assessment"
+        :routeLocation="{
+          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          params: {
+            id: applicationId,
+          },
+        }"
+      />
+    </div>
+  </v-container>
+  <full-page-container>
+    <notice-of-assessment-form-view :assessmentId="assessmentId" />
+    <v-row class="justify-center mt-4">
+      <v-btn color="primary" @click="confirmAssessment()">
+        Confirmation of assessment
+      </v-btn>
+    </v-row>
+  </full-page-container>
 </template>
 
 <script lang="ts">
-import formio from "../../components/generic/formio.vue";
-import { onMounted, ref } from "vue";
-import { ApplicationService } from "../../services/ApplicationService";
+import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
 import { useToastMessage } from "@/composables";
+import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
-  components: { formio },
+  components: {
+    FullPageContainer,
+    HeaderNavigator,
+    NoticeOfAssessmentFormView,
+  },
   props: {
     applicationId: {
       type: Number,
       required: true,
     },
+    assessmentId: {
+      type: Number,
+      required: true,
+    },
   },
   setup(props: any) {
-    // Hooks
     const toast = useToastMessage();
-    const initialData = ref({});
     const confirmAssessment = async () => {
       try {
-        await ApplicationService.shared.confirmAssessment(props.applicationId);
+        await StudentAssessmentsService.shared.confirmAssessmentNOA(
+          props.assessmentId,
+        );
         toast.success(
           "Completed!",
           "Confirmation of Assessment completed successfully!",
@@ -46,15 +65,8 @@ export default {
         );
       }
     };
-    onMounted(async () => {
-      initialData.value = await ApplicationService.shared.getNOA(
-        props.applicationId,
-      );
-    });
-    return {
-      initialData,
-      confirmAssessment,
-    };
+
+    return { confirmAssessment, StudentRoutesConst };
   },
 };
 </script>
