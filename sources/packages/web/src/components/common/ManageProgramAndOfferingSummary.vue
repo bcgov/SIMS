@@ -16,7 +16,11 @@
           :educationProgram="educationProgram"
         />
         <hr class="horizontal-divider" />
-        <OfferingSummary :programId="programId" :locationId="locationId" />
+        <OfferingSummary
+          :programId="programId"
+          :locationId="locationId"
+          :institutionId="institutionId"
+        />
       </v-container>
     </v-card>
   </div>

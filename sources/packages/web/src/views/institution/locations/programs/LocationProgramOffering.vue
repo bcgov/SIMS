@@ -2,13 +2,7 @@
   <v-container>
     <header-navigator
       title="Program detail"
-      :routeLocation="{
-        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-        params: {
-          programId: programId,
-          locationId: locationId,
-        },
-      }"
+      :routeLocation="getRouteLocation()"
       :subTitle="subTitle"
     />
     <program-offering-detail-header
@@ -31,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { useRouter } from "vue-router";
+import { useRouter, RouteLocationRaw } from "vue-router";
 import formio from "@/components/generic/formio.vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
@@ -66,6 +60,10 @@ export default {
     offeringId: {
       type: Number,
       required: true,
+    },
+    institutionId: {
+      type: Number,
+      required: false,
     },
   },
   setup(props: any) {
@@ -135,33 +133,28 @@ export default {
       await loadFormData();
     });
 
-    const goBack = async () => {
+    const getRouteLocation = (): RouteLocationRaw => {
       if (isInstitutionUser.value) {
         // when edit program and create program
-        router.push({
+        return {
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
           params: {
             programId: props.programId,
             locationId: props.locationId,
           },
-        });
-      } else if (isAESTUser.value) {
-        const programDetails =
-          await EducationProgramService.shared.getEducationProgramForAEST(
-            props.programId,
-          );
-        if (programDetails.institutionId) {
-          //view program mode
-          router.push({
-            name: AESTRoutesConst.PROGRAM_DETAILS,
-            params: {
-              programId: props.programId,
-              institutionId: programDetails.institutionId,
-              locationId: props.locationId,
-            },
-          });
-        }
+        };
       }
+      if (isAESTUser.value) {
+        return {
+          name: AESTRoutesConst.PROGRAM_DETAILS,
+          params: {
+            programId: props.programId,
+            institutionId: props.institutionId,
+            locationId: props.locationId,
+          },
+        };
+      }
+      return {};
     };
     const submitted = async (data: any) => {
       if (isInstitutionUser.value) {
@@ -188,7 +181,7 @@ export default {
               "Education Offering created successfully!",
             );
           }
-          goBack();
+          router.push(getRouteLocation());
         } catch (excp) {
           toast.error(
             "Unexpected error",
@@ -201,7 +194,7 @@ export default {
       submitted,
       initialData,
       isReadonly,
-      goBack,
+      getRouteLocation,
       InstitutionRoutesConst,
       subTitle,
     };

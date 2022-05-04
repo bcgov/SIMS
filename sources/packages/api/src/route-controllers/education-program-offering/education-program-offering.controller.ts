@@ -161,7 +161,12 @@ export class EducationProgramOfferingController extends BaseController {
         "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
-    return transformToProgramOfferingDto(offering);
+    return transformToProgramOfferingDto({
+      ...offering,
+      locationName: offering.institutionLocation.name,
+      institutionName:
+        offering.institutionLocation.institution.legalOperatingName,
+    });
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -241,9 +246,12 @@ export class EducationProgramOfferingController extends BaseController {
         locationId,
         programId,
         programYearId,
-        selectedIntensity,
+        {
+          offeringIntensity: selectedIntensity,
+          offeringStatus: OfferingStatus.Approved,
+          offeringTypes: [OfferingTypes.Public],
+        },
         includeInActivePY,
-        OfferingStatus.Approved,
       );
     return offerings.map((offering) => ({
       id: offering.id,
@@ -288,7 +296,11 @@ export class EducationProgramOfferingController extends BaseController {
         locationId,
         programId,
         programYearId,
-        offeringIntensity,
+        {
+          offeringIntensity: offeringIntensity,
+          offeringStatus: OfferingStatus.Approved,
+          offeringTypes: [OfferingTypes.Public, OfferingTypes.Private],
+        },
         includeInActivePY,
       );
     return offerings.map((offering) => ({
@@ -385,6 +397,11 @@ export class EducationProgramOfferingController extends BaseController {
         "offering not found because the id does not exist.",
       );
     }
-    return transformToProgramOfferingDto(offering);
+    return transformToProgramOfferingDto({
+      ...offering,
+      locationName: offering.institutionLocation.name,
+      institutionName:
+        offering.institutionLocation.institution.legalOperatingName,
+    });
   }
 }

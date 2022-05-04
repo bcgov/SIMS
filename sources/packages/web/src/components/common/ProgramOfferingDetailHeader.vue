@@ -1,16 +1,12 @@
 <template>
   <div>
+    <!-- Basic details -->
     <div class="row">
       <header-title-value title="Institution name"
         ><template #value
-          ><span
-            class="link-primary"
-            v-if="headerDetails.institutionId"
-            @click="goToInstitution()"
-          >
+          ><span class="link-primary" @click="goToInstitutionProfile()">
             {{ institutionName }}
           </span>
-          <span v-else>{{ institutionName }}</span>
         </template></header-title-value
       >
       <div class="mx-2 vertical-divider"></div>
@@ -22,7 +18,17 @@
             : '-'
         "
       />
+      <div
+        v-if="headerDetails.locationName"
+        class="mx-2 vertical-divider"
+      ></div>
+      <header-title-value
+        v-if="headerDetails.locationName"
+        title="Location"
+        :value="headerDetails.locationName"
+      />
     </div>
+    <!-- Assessment details if assessed by ministry -->
     <div
       class="row mt-1"
       v-if="headerDetails.assessedBy && headerDetails.assessedDate"
@@ -65,7 +71,10 @@ import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import { useFormatters } from "@/composables";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import {
+  AESTRoutesConst,
+  InstitutionRoutesConst,
+} from "@/constants/routes/RouteConstants";
 import { useStore } from "vuex";
 import { AuthService } from "@/services/AuthService";
 
@@ -116,7 +125,12 @@ export default {
       };
     });
 
-    const goToInstitution = () => {
+    const goToInstitutionProfile = () => {
+      if (AuthService.shared.authClientType === ClientIdType.Institution) {
+        router.push({
+          name: InstitutionRoutesConst.INSTITUTION_PROFILE,
+        });
+      }
       router.push({
         name: AESTRoutesConst.INSTITUTION_PROFILE,
         params: { institutionId: props.headerDetails.institutionId },
@@ -124,7 +138,7 @@ export default {
     };
     return {
       ProgramStatus,
-      goToInstitution,
+      goToInstitutionProfile,
       dateOnlyLongString,
       institutionName,
       approvalLabel,

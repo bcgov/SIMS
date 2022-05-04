@@ -50,7 +50,7 @@ export interface EducationProgramDataDto extends EducationProgramDto {
   institutionId: number;
   id: number;
   institutionName: string;
-  submittedOn: Date;
+  submittedDate: Date;
   submittedBy: string;
   assessedDate?: Date;
   assessedBy?: string;
@@ -121,7 +121,7 @@ export const transformToEducationProgramData = (
     credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
     institutionId: program.institution.id,
     institutionName: program.institution.legalOperatingName,
-    submittedOn: program.submittedDate,
+    submittedDate: program.submittedDate,
     submittedBy: getUserFullName(program.submittedBy),
     effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
     assessedDate: program.assessedDate,

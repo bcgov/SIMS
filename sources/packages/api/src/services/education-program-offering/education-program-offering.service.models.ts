@@ -41,6 +41,8 @@ export interface ProgramOfferingModel {
   submittedDate: Date;
   offeringStatus: OfferingStatus;
   offeringType: OfferingTypes;
+  locationName: string;
+  institutionName: string;
 }
 
 export interface SaveOfferingModel {
@@ -69,4 +71,15 @@ export interface SaveOfferingModel {
   submittedDate?: Date;
   offeringStatus: OfferingStatus;
   offeringType: OfferingTypes;
+}
+
+/**
+ * Filter object to pass all the offering optional filters.
+ ** offeringTypes defaulted to Public hence it needs to be assigned with value
+ ** only if private offerings are needed from the service.
+ */
+export class OfferingsFilter {
+  offeringTypes?: OfferingTypes[] = [OfferingTypes.Public];
+  offeringStatus?: OfferingStatus;
+  offeringIntensity?: OfferingIntensity;
 }

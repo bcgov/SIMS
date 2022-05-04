@@ -173,7 +173,8 @@ export interface ProgramOfferingHeader {
   status: ProgramStatus | OfferingStatus;
   assessedBy: string;
   assessedDate: string;
-  effectiveEndDate?: Date;
+  effectiveEndDate?: Date; //this field is only for programs.
+  locationName?: string; //this field is offering specific.
 }
 
 export interface ProgramOfferingApprovalLabels {

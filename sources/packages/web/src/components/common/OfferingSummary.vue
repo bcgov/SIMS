@@ -110,6 +110,10 @@ export default {
       type: Number,
       required: true,
     },
+    institutionId: {
+      type: Number,
+      required: true,
+    },
   },
   setup(props: any) {
     const router = useRouter();
@@ -161,6 +165,7 @@ export default {
             offeringId: offeringId,
             programId: props.programId,
             locationId: props.locationId,
+            institutionId: props.institutionId,
           },
         });
       }
