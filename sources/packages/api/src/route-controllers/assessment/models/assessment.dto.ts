@@ -30,6 +30,13 @@ export class AssessmentNOAAPIOutDTO {
   @ApiProperty({
     description: "Dynamic output of the workflow calculation.",
   })
+  /**
+   * Represents the dynamic content of the workflow calculation.
+   ** This property should not be mapped to a DTO class otherwise it will
+   ** have the non-mapped properties removed from the payload (by Nestjs) and the
+   ** workflow should be able to output more variables that could be directly
+   ** consumed by an API client without API code modification.
+   */
   assessment: Assessment;
   applicationNumber: string;
   fullName: string;
