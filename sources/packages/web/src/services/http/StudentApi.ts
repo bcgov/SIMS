@@ -2,7 +2,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   StudentInfo,
   StudentContact,
-  StudentProfile,
+  CreateStudent,
   StudentRestrictionStatus,
   SearchStudentResp,
   StudentDetail,
@@ -12,7 +12,7 @@ import {
 } from "@/types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
-  public async createStudent(studentProfile: StudentProfile): Promise<void> {
+  public async createStudent(studentProfile: CreateStudent): Promise<void> {
     try {
       await this.apiClient.post(
         "students",

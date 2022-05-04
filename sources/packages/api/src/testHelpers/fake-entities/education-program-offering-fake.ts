@@ -28,7 +28,7 @@ export function createFakeEducationProgramOffering(
   offering.educationProgram = program ?? createFakeEducationProgram();
   offering.institutionLocation = institutionLocation ?? createFakeLocation();
   offering.offeringIntensity = OfferingIntensity.fullTime;
-  offering.offeringType = OfferingTypes.public;
+  offering.offeringType = OfferingTypes.Public;
   offering.yearOfStudy = 1;
   offering.hasOfferingWILComponent = "no";
   offering.offeringDeclaration = true;

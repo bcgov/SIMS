@@ -1,9 +1,9 @@
-import { OfferingTypes } from "../../../database/entities";
+import { OfferingTypes, OfferingStatus } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 import { StudyBreak } from "../../../database/entities/education-program-offering.model";
 import { ProgramOfferingModel } from "../../../services/education-program-offering/education-program-offering.service.models";
 
-export interface ProgramOfferingBaseDTO {
+export interface SaveOfferingDTO {
   offeringName: string;
   studyStartDate: Date;
   studyEndDate: Date;
@@ -24,14 +24,12 @@ export interface ProgramOfferingBaseDTO {
   offeringWILType?: string;
   studyBreaks?: StudyBreak[];
   offeringDeclaration: boolean;
+  assessedBy?: string;
+  assessedDate?: Date;
+  offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
 }
-/**
- * DTO for persisting program offering.
- */
-export interface SaveEducationProgramOfferingDto
-  extends ProgramOfferingBaseDTO {
-  offeringType?: OfferingTypes;
-}
+
 /**
  * Summary DTO of program offering.
  */
@@ -46,8 +44,33 @@ export class EducationProgramOfferingDto {
 /**
  * View only DTO for program offering.
  */
-export interface ProgramOfferingDto extends ProgramOfferingBaseDTO {
+export interface ProgramOfferingDto {
   id: number;
+  offeringName: string;
+  studyStartDate: Date;
+  studyEndDate: Date;
+  actualTuitionCosts: number;
+  programRelatedCosts: number;
+  mandatoryFees: number;
+  exceptionalExpenses: number;
+  tuitionRemittanceRequestedAmount: number;
+  offeringDelivered: string;
+  lacksStudyDates: boolean;
+  lacksStudyBreaks: boolean;
+  lacksFixedCosts: boolean;
+  tuitionRemittanceRequested: string;
+  offeringIntensity: OfferingIntensity;
+  yearOfStudy: number;
+  showYearOfStudy?: boolean;
+  hasOfferingWILComponent: string;
+  offeringWILType?: string;
+  studyBreaks?: StudyBreak[];
+  offeringDeclaration: boolean;
+  assessedBy?: string;
+  assessedDate?: Date;
+  submittedDate: Date;
+  offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
 }
 
 export interface ProgramOfferingDetailsDto {
@@ -84,5 +107,8 @@ export const transformToProgramOfferingDto = (
     offeringWILType: offering.offeringWILType,
     studyBreaks: offering.studyBreaks,
     offeringDeclaration: offering.offeringDeclaration,
+    submittedDate: offering.submittedDate,
+    offeringStatus: offering.offeringStatus,
+    offeringType: offering.offeringType,
   };
 };

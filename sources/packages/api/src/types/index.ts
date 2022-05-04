@@ -5,7 +5,6 @@ export * from "./institutionAddress";
 export * from "./config";
 export * from "./serviceAccount";
 export * from "./form";
-export * from "./institutionLocation";
 export * from "./formsFlow";
 export * from "./institutionAuth";
 export * from "./optionItem";

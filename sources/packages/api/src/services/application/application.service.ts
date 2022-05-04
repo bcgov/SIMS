@@ -49,7 +49,6 @@ import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
 import { ConfigService } from "../config/config.service";
 import { IConfig } from "../../types";
-import { OFFERING_INTENSITY_MISMATCH } from "../../constants";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
@@ -1362,28 +1361,5 @@ export class ApplicationService extends RecordDataModelService<Application> {
         );
       }
     }
-  }
-
-  /**
-   * check if selected offering intensity
-   * and intensity selected by student is same.
-   * @param studentOfferingIntensity studentOfferingIntensity.
-   * @param selectedOfferingIntensity selectedOfferingIntensity.
-   * throws error if selected offering intensity
-   * and intensity selected by student are not the same.
-   */
-  checkOfferingIntensityMismatch(
-    studentOfferingIntensity: OfferingIntensity,
-    selectedOfferingIntensity: OfferingIntensity,
-  ): void {
-    if (
-      studentOfferingIntensity &&
-      selectedOfferingIntensity &&
-      studentOfferingIntensity !== selectedOfferingIntensity
-    )
-      throw new CustomNamedError(
-        "Offering Intensity does not match the students intensity",
-        OFFERING_INTENSITY_MISMATCH,
-      );
   }
 }

@@ -18,7 +18,7 @@ import {
   Groups,
 } from "../../auth/decorators";
 import {
-  SaveEducationProgramOfferingDto,
+  SaveOfferingDTO,
   ProgramOfferingDto,
   ProgramOfferingDetailsDto,
   transformToProgramOfferingDto,
@@ -28,6 +28,7 @@ import {
   EducationProgramOfferingService,
   FormService,
   EducationProgramService,
+  ApplicationService,
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -43,11 +44,13 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { EducationProgramOfferingModel } from "../../services/education-program-offering/education-program-offering.service.models";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 @Controller("institution/offering")
 @ApiTags("institution")
 export class EducationProgramOfferingController extends BaseController {
   constructor(
+    private readonly applicationService: ApplicationService,
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
     private readonly programService: EducationProgramService,
@@ -59,11 +62,11 @@ export class EducationProgramOfferingController extends BaseController {
   @HasLocationAccess("locationId")
   @Post("location/:locationId/education-program/:programId")
   async create(
-    @Body() payload: SaveEducationProgramOfferingDto,
+    @Body() payload: SaveOfferingDTO,
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<number> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const requestProgram = await this.programService.getInstitutionProgram(
       programId,
       userToken.authorizations.institutionId,
@@ -86,9 +89,9 @@ export class EducationProgramOfferingController extends BaseController {
       await this.programOfferingService.createEducationProgramOffering(
         locationId,
         programId,
-        payload,
+        submissionResult.data.data,
       );
-    return createdProgramOffering.id;
+    return { id: createdProgramOffering.id };
   }
 
   /**
@@ -131,7 +134,7 @@ export class EducationProgramOfferingController extends BaseController {
         page: page,
         pageLimit: pageLimit,
       },
-      [OfferingTypes.public],
+      [OfferingTypes.Public, OfferingTypes.Private],
     );
   }
 
@@ -163,7 +166,7 @@ export class EducationProgramOfferingController extends BaseController {
     "location/:locationId/education-program/:programId/offering/:offeringId",
   )
   async updateProgramOffering(
-    @Body() payload: SaveEducationProgramOfferingDto,
+    @Body() payload: SaveOfferingDTO,
     @UserToken() userToken: IInstitutionUserToken,
     @Param("locationId") locationId: number,
     @Param("programId") programId?: number,
@@ -201,7 +204,7 @@ export class EducationProgramOfferingController extends BaseController {
         locationId,
         programId,
         offeringId,
-        payload,
+        updatingResult.data.data,
       );
     return updateProgramOffering.affected;
   }
@@ -250,6 +253,8 @@ export class EducationProgramOfferingController extends BaseController {
    * access to their specific offerings only).
    * @param locationId location id.
    * @param programId program id.
+   * @param programYearId program year id.
+   * @query offeringIntensity offering intensity selected by student.
    * @query includeInActivePY, if includeInActivePY is true,
    * then consider both active and inactive program year.
    * @returns key/value pair list of programs for students.
@@ -263,14 +268,22 @@ export class EducationProgramOfferingController extends BaseController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
+    @Query("offeringIntensity")
+    offeringIntensity?: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
+    if (
+      offeringIntensity &&
+      !Object.values(OfferingIntensity).includes(offeringIntensity)
+    ) {
+      throw new NotFoundException("Invalid offering intensity.");
+    }
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
         programYearId,
-        undefined,
+        offeringIntensity,
         includeInActivePY,
       );
     return offerings.map((offering) => ({
@@ -343,7 +356,7 @@ export class EducationProgramOfferingController extends BaseController {
         page: page,
         pageLimit: pageLimit,
       },
-      [OfferingTypes.public],
+      [OfferingTypes.Public, OfferingTypes.Private],
     );
   }
 

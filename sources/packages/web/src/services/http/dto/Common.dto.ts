@@ -7,18 +7,6 @@ export interface OptionItemAPIOutDTO {
  * TODO: Address DTOs have been with 2 different names as the
  * TODO: property province is used as provinceState in some places in code.
  **/
-/**
- * Common DTO for Address
- ** This DTO is used in API request body.
- */
-export interface AddressAPIInDTO {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
-}
 
 /**
  * Common DTO for Address
@@ -64,4 +52,19 @@ export interface InstitutionPrimaryContactAPIOutDTO {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
+}
+
+/**
+ * Common DTO for address details.
+ */ export interface AddressDetailsFormAPIDTO {
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  country: string;
+  postalCode: string;
+  provinceState?: string;
+  canadaPostalCode?: string;
+  otherPostalCode?: string;
+  selectedCountry?: string;
+  otherCountry?: string;
 }

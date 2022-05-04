@@ -193,11 +193,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.institutionAddress = {
       addressLine1: institutionModel.addressLine1,
       addressLine2: institutionModel.addressLine2,
-      city: institutionModel.city,
       provinceState: institutionModel.provinceState,
       country: institutionModel.country,
+      city: institutionModel.city,
       postalCode: institutionModel.postalCode,
-      phone: institutionModel.primaryPhone,
+      selectedCountry: institutionModel.selectedCountry,
     };
 
     await this.createAssociation({
@@ -626,15 +626,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       primaryContactPhone: updateInstitution.primaryContactPhone,
     };
 
-    institution.institutionAddress = {
-      addressLine1: updateInstitution.mailingAddress.addressLine1,
-      addressLine2: updateInstitution.mailingAddress.addressLine2,
-      city: updateInstitution.mailingAddress.city,
-      provinceState: updateInstitution.mailingAddress.provinceState,
-      country: updateInstitution.mailingAddress.country,
-      postalCode: updateInstitution.mailingAddress.postalCode,
-      phone: updateInstitution.primaryPhone,
-    };
+    institution.institutionAddress = updateInstitution.mailingAddress;
     return this.repo.save(institution);
   }
 }

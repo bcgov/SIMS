@@ -17,11 +17,11 @@ import {
   getOfferingNameAndPeriod,
   getPIRDeniedReason,
 } from "../../utilities";
-import { ApprovalStatus } from "../../services/education-program/constants";
 import {
   Application,
   ApplicationData,
   DisbursementSchedule,
+  ProgramStatus,
 } from "../../database/entities";
 
 /**
@@ -87,7 +87,7 @@ export class ApplicationControllerService {
           id: selectedProgram.id,
           name: selectedProgram.name,
         };
-        if (selectedProgram.approvalStatus !== ApprovalStatus.approved) {
+        if (selectedProgram.programStatus !== ProgramStatus.Approved) {
           data.selectedProgram = null;
         }
       } else {

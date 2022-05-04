@@ -67,7 +67,7 @@
             header="Study periods"
           >
           </Column>
-          <Column :field="ProgramSummaryFields.ApprovalStatus" header="Status"
+          <Column :field="ProgramSummaryFields.ProgramStatus" header="Status"
             ><template #body="slotProps">
               <program-status-chip
                 :status="slotProps.data.programStatus"

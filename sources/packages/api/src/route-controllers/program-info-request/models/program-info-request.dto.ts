@@ -1,32 +1,39 @@
-import { IsNotEmpty, IsInt, Min, IsOptional } from "class-validator";
-import { SaveEducationProgramOfferingDto } from "../../education-program-offering/models/education-program-offering.dto";
-import { ProgramInfoStatus } from "../../../database/entities";
+import {
+  IsNotEmpty,
+  IsInt,
+  Min,
+  IsOptional,
+  IsPositive,
+} from "class-validator";
+import { OfferingTypes, ProgramInfoStatus } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 
-export interface CompleteProgramInfoRequestDto
-  extends SaveEducationProgramOfferingDto {
-  selectedProgram?: number;
-  selectedOffering?: number;
+export class CompleteProgramInfoRequestAPIInDTO {
+  @IsPositive()
+  selectedOffering: number;
 }
 
-export interface GetProgramInfoRequestDto
-  extends CompleteProgramInfoRequestDto {
+export interface ProgramInfoRequestAPIOutDTO {
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;
-  studentStudyStartDate: string;
-  studentStudyEndDate: string;
   studentSelectedProgram: string;
+  selectedProgram?: number;
+  selectedOffering?: number;
+  pirStatus: ProgramInfoStatus;
   studentCustomProgram: string;
   studentCustomProgramDescription: string;
-  pirStatus: ProgramInfoStatus;
+  studentStudyStartDate: string;
+  studentStudyEndDate: string;
+  offeringIntensitySelectedByStudent: OfferingIntensity;
   programYearId: number;
+  isActiveProgramYear: boolean;
+  offeringName: string;
+  offeringDelivered: string;
+  offeringType: OfferingTypes;
+  offeringIntensity: OfferingIntensity;
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
-  isActiveProgramYear: boolean;
-  offeringIntensitySelectedByStudent: OfferingIntensity;
-  programYearStartDate: Date;
-  programYearEndDate: Date;
 }
 
 export interface GetPIRDeniedReasonDto {

@@ -78,6 +78,10 @@ export class StudentAppealRequestAPIOutDTO {
  */
 export class ApplicationAssessmentAPIOutDTO {
   /**
+   * Application associated with this application.
+   */
+  applicationId: number;
+  /**
    * Origin of the assessment.
    */
   triggerType: AssessmentTriggerType;

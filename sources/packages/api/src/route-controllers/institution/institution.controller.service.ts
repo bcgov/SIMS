@@ -62,6 +62,7 @@ export class InstitutionControllerService {
         country: institutionDetail.institutionAddress.country,
         provinceState: institutionDetail.institutionAddress.provinceState,
         postalCode: institutionDetail.institutionAddress.postalCode,
+        selectedCountry: institutionDetail.institutionAddress.selectedCountry,
       },
       isBCPrivate: isBCPrivate,
     };
