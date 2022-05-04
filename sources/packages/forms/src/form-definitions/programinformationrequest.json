@@ -952,11 +952,60 @@
         },
         {
             "title": "Institution entered details",
+            "labelWidth": "",
+            "labelMargin": "",
+            "theme": "default",
+            "tooltip": "",
+            "customClass": "",
             "collapsible": false,
+            "hidden": false,
             "hideLabel": true,
+            "disabled": false,
+            "modalEdit": false,
             "key": "institutionEnteredDetails",
+            "tags": [],
+            "properties": {},
+            "customConditional": "",
+            "conditional": {
+                "json": "",
+                "show": null,
+                "when": null,
+                "eq": ""
+            },
+            "logic": [
+                {
+                    "name": "Check PIR Status Logic",
+                    "trigger": {
+                        "type": "javascript",
+                        "javascript": "result = (data.pirStatus !== 'Required')"
+                    },
+                    "actions": [
+                        {
+                            "name": "Disable inputs",
+                            "type": "property",
+                            "property": {
+                                "label": "Disabled",
+                                "value": "disabled",
+                                "type": "boolean"
+                            },
+                            "state": true
+                        }
+                    ]
+                }
+            ],
+            "attributes": {},
+            "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+            },
             "type": "panel",
             "label": "Institution Entered Details",
+            "breadcrumb": "default",
+            "tabindex": "",
             "input": false,
             "tableView": false,
             "components": [
@@ -1026,7 +1075,7 @@
                     "inputType": "checkbox",
                     "value": "",
                     "name": "",
-                    "id": "e64ix0b"
+                    "id": "etv8zsf"
                 },
                 {
                     "label": "Deny reason",
@@ -1133,7 +1182,7 @@
                     },
                     "customOptions": {},
                     "useExactSearch": false,
-                    "id": "e2ulhl"
+                    "id": "etzuq3i"
                 },
                 {
                     "label": "Other reason",
@@ -1218,7 +1267,7 @@
                     "wysiwyg": false,
                     "editor": "",
                     "fixedSize": true,
-                    "id": "ewhvy38"
+                    "id": "efj5elf"
                 },
                 {
                     "label": "offeringIntensitySelectedByStudent",
@@ -1286,147 +1335,76 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "e1q1z5r"
+                    "id": "e413vvm"
                 },
                 {
                     "label": "Program",
-                    "labelPosition": "top",
                     "widget": "choicesjs",
-                    "labelWidth": "",
-                    "labelMargin": "",
                     "placeholder": "<i class='fa fa-search'></i> search for the program",
-                    "description": "",
-                    "tooltip": "",
-                    "customClass": "",
-                    "tabindex": "",
-                    "hidden": false,
-                    "hideLabel": false,
-                    "uniqueOptions": false,
-                    "autofocus": false,
-                    "disabled": false,
                     "tableView": true,
-                    "modalEdit": false,
-                    "multiple": false,
-                    "dataSrc": "values",
-                    "data": {
-                        "values": [
-                            {
-                                "label": "",
-                                "value": ""
-                            }
-                        ],
-                        "resource": "",
-                        "json": "",
-                        "url": "",
-                        "custom": ""
-                    },
-                    "dataType": "",
-                    "idPath": "id",
-                    "valueProperty": "",
-                    "limit": 100,
-                    "template": "<span>{{ item.label }}</span>",
                     "refreshOn": "data",
-                    "refreshOnBlur": "",
-                    "clearOnRefresh": false,
-                    "searchEnabled": true,
-                    "selectThreshold": 0.3,
-                    "readOnlyValue": false,
-                    "customOptions": {},
-                    "useExactSearch": false,
-                    "persistent": true,
-                    "protected": false,
-                    "dbIndex": false,
-                    "encrypted": false,
-                    "clearOnHide": true,
-                    "customDefaultValue": "",
-                    "calculateValue": "",
-                    "calculateServer": false,
-                    "allowCalculateOverride": false,
-                    "validateOn": "change",
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
-                        "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
-                        "json": "",
                         "strictDateValidation": false,
                         "multiple": false,
-                        "unique": false
+                        "unique": false,
+                        "onlyAvailableItems": false
                     },
-                    "unique": false,
-                    "errorLabel": "",
-                    "errors": "",
                     "key": "selectedProgram",
-                    "tags": [],
-                    "properties": {},
-                    "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                    },
                     "customConditional": "show = !data.denyProgramInformationRequest;",
-                    "logic": [],
-                    "attributes": {},
-                    "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                    },
                     "type": "select",
-                    "indexeddb": {
-                        "filter": {}
-                    },
-                    "selectFields": "",
-                    "searchField": "",
-                    "searchDebounce": 0.3,
-                    "minSearch": 0,
-                    "filter": "",
-                    "redrawOn": "",
                     "input": true,
                     "hideOnChildrenHidden": false,
                     "searchThreshold": 0.3,
                     "prefix": "",
+                    "customClass": "",
                     "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "redrawOn": "",
+                    "modalEdit": false,
                     "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
+                    "properties": {},
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "lazyLoad": true,
-                    "authenticate": false,
-                    "ignoreCache": false,
-                    "fuseOptions": {
-                        "include": "score",
-                        "threshold": 0.3
-                    },
-                    "id": "ekhoifh",
-                    "defaultValue": null
-                },
-                {
-                    "label": "Offering",
-                    "labelPosition": "top",
-                    "widget": "choicesjs",
-                    "labelWidth": "",
-                    "labelMargin": "",
-                    "placeholder": "<i class='fa fa-search'></i> search for the offering",
-                    "description": "",
-                    "tooltip": "",
-                    "customClass": "",
-                    "tabindex": "",
-                    "hidden": false,
-                    "hideLabel": false,
-                    "uniqueOptions": false,
-                    "autofocus": false,
-                    "disabled": false,
-                    "tableView": true,
-                    "modalEdit": false,
-                    "multiple": false,
-                    "dataSrc": "values",
+                    "idPath": "id",
                     "data": {
                         "values": [
                             {
@@ -1434,126 +1412,168 @@
                                 "value": ""
                             }
                         ],
-                        "resource": "",
                         "json": "",
                         "url": "",
+                        "resource": "",
                         "custom": ""
                     },
-                    "dataType": "",
-                    "idPath": "id",
-                    "valueProperty": "",
-                    "limit": 100,
-                    "template": "<span>{{ item.label }}</span>",
-                    "refreshOn": "data",
-                    "refreshOnBlur": "",
                     "clearOnRefresh": false,
+                    "limit": 100,
+                    "dataSrc": "values",
+                    "valueProperty": "",
+                    "lazyLoad": true,
+                    "filter": "",
                     "searchEnabled": true,
-                    "selectThreshold": 0.3,
+                    "searchDebounce": 0.3,
+                    "searchField": "",
+                    "minSearch": 0,
                     "readOnlyValue": false,
+                    "authenticate": false,
+                    "ignoreCache": false,
+                    "template": "<span>{{ item.label }}</span>",
+                    "selectFields": "",
+                    "selectThreshold": 0.3,
+                    "uniqueOptions": false,
+                    "fuseOptions": {
+                        "include": "score",
+                        "threshold": 0.3
+                    },
+                    "indexeddb": {
+                        "filter": {}
+                    },
                     "customOptions": {},
                     "useExactSearch": false,
-                    "persistent": true,
+                    "id": "e5hrt79"
+                },
+                {
+                    "label": "Offering",
+                    "widget": "choicesjs",
+                    "placeholder": "<i class='fa fa-search'></i> search for the offering",
+                    "tableView": true,
+                    "refreshOn": "data",
+                    "validate": {
+                        "required": true,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false,
+                        "onlyAvailableItems": false
+                    },
+                    "key": "selectedOffering",
+                    "customConditional": "show =!data.denyProgramInformationRequest && (\r\n  // While the PIR is being completed by the user.\r\n  (data.pirStatus === \"Required\" && !data.showCustomOffering)\r\n  // Or when it was completed in some way with a public offering.\r\n  || (data.pirStatus !== \"Required\" && data.offeringType === \"Public\"));\r\n  \r\n",
+                    "type": "select",
+                    "input": true,
+                    "searchThreshold": 0.3,
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
                     "protected": false,
-                    "dbIndex": false,
-                    "encrypted": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
                     "clearOnHide": true,
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
                     "customDefaultValue": "",
                     "calculateValue": "",
                     "calculateServer": false,
-                    "allowCalculateOverride": false,
+                    "attributes": {},
                     "validateOn": "change",
-                    "validate": {
-                        "required": true,
-                        "onlyAvailableItems": false,
-                        "customMessage": "",
-                        "custom": "",
-                        "customPrivate": false,
-                        "json": "",
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false
-                    },
-                    "unique": false,
-                    "errorLabel": "",
-                    "errors": "",
-                    "key": "selectedOffering",
-                    "tags": [],
-                    "properties": {},
                     "conditional": {
                         "show": null,
                         "when": null,
-                        "eq": "",
-                        "json": ""
+                        "eq": ""
                     },
-                    "customConditional": "show =!data.denyProgramInformationRequest && (\r\n  // While the PIR is being completed by the user.\r\n  (data.pirStatus === \"Required\" && !data.showCustomOffering)\r\n  // Or when it was completed in some way with a public offering.\r\n  || (data.pirStatus !== \"Required\" && data.offeringType === \"Public\"));",
-                    "logic": [],
-                    "attributes": {},
                     "overlay": {
                         "style": "",
-                        "page": "",
                         "left": "",
                         "top": "",
                         "width": "",
                         "height": ""
                     },
-                    "type": "select",
-                    "indexeddb": {
-                        "filter": {}
-                    },
-                    "selectFields": "",
-                    "searchField": "",
-                    "searchDebounce": 0.3,
-                    "minSearch": 0,
-                    "filter": "",
-                    "redrawOn": "",
-                    "input": true,
-                    "searchThreshold": 0.3,
-                    "prefix": "",
-                    "suffix": "",
-                    "dataGridLabel": false,
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
+                    "properties": {},
                     "allowMultipleMasks": false,
                     "addons": [],
+                    "idPath": "id",
+                    "data": {
+                        "values": [
+                            {
+                                "label": "",
+                                "value": ""
+                            }
+                        ],
+                        "json": "",
+                        "url": "",
+                        "resource": "",
+                        "custom": ""
+                    },
+                    "clearOnRefresh": false,
+                    "limit": 100,
+                    "dataSrc": "values",
+                    "valueProperty": "",
                     "lazyLoad": true,
+                    "filter": "",
+                    "searchEnabled": true,
+                    "searchDebounce": 0.3,
+                    "searchField": "",
+                    "minSearch": 0,
+                    "readOnlyValue": false,
                     "authenticate": false,
                     "ignoreCache": false,
+                    "template": "<span>{{ item.label }}</span>",
+                    "selectFields": "",
+                    "selectThreshold": 0.3,
+                    "uniqueOptions": false,
                     "fuseOptions": {
                         "include": "score",
                         "threshold": 0.3
                     },
-                    "id": "ei20h9",
-                    "defaultValue": ""
+                    "indexeddb": {
+                        "filter": {}
+                    },
+                    "customOptions": {},
+                    "useExactSearch": false,
+                    "id": "eiulpp"
                 }
             ],
             "placeholder": "",
             "prefix": "",
-            "customClass": "",
             "suffix": "",
             "multiple": false,
             "defaultValue": null,
             "protected": false,
             "unique": false,
             "persistent": false,
-            "hidden": false,
             "clearOnHide": false,
             "refreshOn": "",
             "redrawOn": "",
-            "modalEdit": false,
             "dataGridLabel": false,
             "labelPosition": "top",
             "description": "",
             "errorLabel": "",
-            "tooltip": "",
-            "tabindex": "",
-            "disabled": false,
             "autofocus": false,
             "dbIndex": false,
             "customDefaultValue": "",
             "calculateValue": "",
             "calculateServer": false,
             "widget": null,
-            "attributes": {},
             "validateOn": "change",
             "validate": {
                 "required": false,
@@ -1563,30 +1583,15 @@
                 "multiple": false,
                 "unique": false
             },
-            "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-            },
-            "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-            },
             "allowCalculateOverride": false,
             "encrypted": false,
             "showCharCount": false,
             "showWordCount": false,
-            "properties": {},
             "allowMultipleMasks": false,
             "addons": [],
             "tree": false,
             "lazyLoad": false,
-            "theme": "default",
-            "breadcrumb": "default",
-            "id": "etauvl8"
+            "id": "eifwule"
         },
         {
             "html": "<p style=\"text-align:center;\">or</p>",
@@ -1601,9 +1606,9 @@
             "tags": [],
             "properties": {},
             "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
+                "show": true,
+                "when": "pirStatus",
+                "eq": "Required",
                 "json": ""
             },
             "customConditional": "",
@@ -1660,7 +1665,7 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "addons": [],
-            "id": "erxbslk"
+            "id": "em4ssua"
         },
         {
             "title": "Create program",
@@ -1680,9 +1685,9 @@
             "customConditional": "",
             "conditional": {
                 "json": "",
-                "show": null,
-                "when": null,
-                "eq": ""
+                "show": true,
+                "when": "pirStatus",
+                "eq": "Required"
             },
             "logic": [],
             "attributes": {},
@@ -1703,10 +1708,6 @@
             "components": [
                 {
                     "label": "HTML",
-                    "labelWidth": "",
-                    "labelMargin": "",
-                    "tag": "p",
-                    "className": "",
                     "attrs": [
                         {
                             "attr": "",
@@ -1716,28 +1717,7 @@
                     "content": "If program or study period does not exist",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium primary-color",
-                    "hidden": false,
-                    "modalEdit": false,
                     "key": "html4",
-                    "tags": [],
-                    "properties": {},
-                    "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                    },
-                    "customConditional": "",
-                    "logic": [],
-                    "attributes": {},
-                    "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
@@ -1749,9 +1729,11 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
+                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
+                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -1766,6 +1748,7 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
+                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                         "required": false,
@@ -1775,20 +1758,30 @@
                         "multiple": false,
                         "unique": false
                     },
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
+                    "properties": {},
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "el7up2h"
+                    "tag": "p",
+                    "id": "e98enl"
                 },
                 {
                     "label": "HTML",
-                    "labelWidth": "",
-                    "labelMargin": "",
-                    "tag": "p",
-                    "className": "",
                     "attrs": [
                         {
                             "attr": "",
@@ -1797,43 +1790,25 @@
                     ],
                     "content": "If the program the student would like to attend does not exist in StudentAid BC, you will need to create an approved program and offering entry. ",
                     "refreshOnChange": false,
-                    "customClass": "",
-                    "hidden": false,
-                    "modalEdit": false,
                     "key": "html14",
-                    "tags": [],
-                    "properties": {},
-                    "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                    },
                     "customConditional": "show = !data.denyProgramInformationRequest;",
-                    "logic": [],
-                    "attributes": {},
-                    "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
                     "placeholder": "",
                     "prefix": "",
+                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
+                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
+                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -1848,6 +1823,7 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
+                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                         "required": false,
@@ -1857,75 +1833,63 @@
                         "multiple": false,
                         "unique": false
                     },
-                    "allowCalculateOverride": false,
-                    "encrypted": false,
-                    "showCharCount": false,
-                    "showWordCount": false,
-                    "allowMultipleMasks": false,
-                    "addons": [],
-                    "id": "ek4dyah"
-                },
-                {
-                    "label": "Create new program",
-                    "labelWidth": "",
-                    "labelMargin": "",
-                    "action": "custom",
-                    "showValidations": false,
-                    "theme": "primary",
-                    "size": "md",
-                    "block": false,
-                    "leftIcon": "fa fa-plus-circle",
-                    "rightIcon": "",
-                    "shortcut": "",
-                    "description": "",
-                    "tooltip": "",
-                    "customClass": "",
-                    "tabindex": "",
-                    "disableOnInvalid": false,
-                    "hidden": false,
-                    "autofocus": false,
-                    "disabled": false,
-                    "tableView": false,
-                    "modalEdit": false,
-                    "key": "createProgram",
-                    "tags": [],
-                    "properties": {},
                     "conditional": {
                         "show": null,
                         "when": null,
-                        "eq": "",
-                        "json": ""
+                        "eq": ""
                     },
-                    "customConditional": "show = !data.denyProgramInformationRequest;",
-                    "logic": [],
-                    "attributes": {},
                     "overlay": {
                         "style": "",
-                        "page": "",
                         "left": "",
                         "top": "",
                         "width": "",
                         "height": ""
                     },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tag": "p",
+                    "id": "elifral"
+                },
+                {
+                    "label": "Create new program",
+                    "action": "custom",
+                    "showValidations": false,
+                    "leftIcon": "fa fa-plus-circle",
+                    "tableView": false,
+                    "key": "createProgram",
+                    "customConditional": "show = !data.denyProgramInformationRequest;",
                     "type": "button",
                     "custom": "form.emit('customEvent', {\n  type: \"routeToCreateProgram\"\n});",
                     "input": true,
                     "hideOnChildrenHidden": false,
                     "placeholder": "",
                     "prefix": "",
+                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
+                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
+                    "modalEdit": false,
                     "dataGridLabel": true,
                     "labelPosition": "top",
+                    "description": "",
                     "errorLabel": "",
+                    "tooltip": "",
                     "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
                     "dbIndex": false,
                     "customDefaultValue": "",
                     "calculateValue": "",
@@ -1933,6 +1897,7 @@
                     "widget": {
                         "type": "input"
                     },
+                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                         "required": false,
@@ -1942,13 +1907,31 @@
                         "multiple": false,
                         "unique": false
                     },
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
+                    "properties": {},
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "e7o1yvb"
+                    "size": "md",
+                    "rightIcon": "",
+                    "block": false,
+                    "disableOnInvalid": false,
+                    "theme": "primary",
+                    "id": "e5idy3"
                 }
             ],
             "placeholder": "",
@@ -1989,7 +1972,7 @@
             "addons": [],
             "tree": false,
             "lazyLoad": false,
-            "id": "erx08ae"
+            "id": "ekxe1t"
         },
         {
             "label": "Columns",
