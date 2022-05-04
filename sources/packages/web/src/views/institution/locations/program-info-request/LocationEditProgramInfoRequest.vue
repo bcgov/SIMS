@@ -1,7 +1,13 @@
 <template>
-  <h5 class="text-muted">
-    <span>Edit Program Information Request</span>
-  </h5>
+  <div class="p-m-4">
+    <header-navigator
+      title="Program info requests"
+      :routeLocation="{
+        name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+      }"
+      subTitle="View Application"
+    />
+  </div>
   <v-sheet elevation="1" class="mx-auto">
     <v-container>
       <formio
@@ -39,9 +45,10 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   OFFERING_INTENSITY_MISMATCH,
 } from "@/constants";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { formio },
+  components: { formio, HeaderNavigator },
   props: {
     locationId: {
       type: Number,
@@ -214,6 +221,7 @@ export default {
       formChanged,
       submitted,
       customEventCallback,
+      InstitutionRoutesConst,
     };
   },
 };
