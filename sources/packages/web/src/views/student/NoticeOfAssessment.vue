@@ -12,15 +12,15 @@
         }"
       />
     </div>
-    <full-page-container>
-      <notice-of-assessment-form-view :assessmentId="assessmentId" />
-      <v-row class="justify-center mt-4">
-        <v-btn color="primary" @click="confirmAssessment()">
-          Confirmation of assessment
-        </v-btn>
-      </v-row>
-    </full-page-container>
   </v-container>
+  <full-page-container>
+    <notice-of-assessment-form-view :assessmentId="assessmentId" />
+    <v-row class="justify-center mt-4">
+      <v-btn color="primary" @click="confirmAssessment()">
+        Confirmation of assessment
+      </v-btn>
+    </v-row>
+  </full-page-container>
 </template>
 
 <script lang="ts">

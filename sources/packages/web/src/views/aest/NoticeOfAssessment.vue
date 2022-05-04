@@ -10,10 +10,10 @@
         }"
       />
     </div>
-    <full-page-container>
-      <notice-of-assessment-form-view :assessmentId="assessmentId" />
-    </full-page-container>
   </v-container>
+  <full-page-container>
+    <notice-of-assessment-form-view :assessmentId="assessmentId" />
+  </full-page-container>
 </template>
 
 <script lang="ts">
