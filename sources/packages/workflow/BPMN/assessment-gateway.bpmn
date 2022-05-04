@@ -79,6 +79,7 @@ The workflow from this point on should not rely or any variable created on the a
         <bpmn:flowNodeRef>Activity_0u73tyi</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_00zu2th</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0tepnnt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_00o0505</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_17ga6r2" />
       </bpmn:lane>
       <bpmn:lane id="Lane_0rbuxn8" name="Prepare for Assessment">
@@ -1653,7 +1654,7 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
     </bpmn:exclusiveGateway>
     <bpmn:exclusiveGateway id="Gateway_0tepnnt">
       <bpmn:incoming>Flow_1i1dgfc</bpmn:incoming>
-      <bpmn:incoming>Flow_1hiahuz</bpmn:incoming>
+      <bpmn:incoming>Flow_1e0klas</bpmn:incoming>
       <bpmn:outgoing>Flow_09z4e25</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1gq6278" sourceRef="Activity_16jzsun" targetRef="Event_0wu28r4" />
@@ -1665,9 +1666,32 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
     <bpmn:sequenceFlow id="Flow_1vtc1sq" name="Assessment" sourceRef="Gateway_00zu2th" targetRef="Activity_0u73tyi">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${assessmentTriggerType == "Original assessment"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1hiahuz" name="Reassessment" sourceRef="Gateway_00zu2th" targetRef="Gateway_0tepnnt">
+    <bpmn:sequenceFlow id="Flow_1hiahuz" name="Reassessment" sourceRef="Gateway_00zu2th" targetRef="Activity_00o0505">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${assessmentTriggerType != "Original assessment"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1e0klas" sourceRef="Activity_00o0505" targetRef="Gateway_0tepnnt" />
+    <bpmn:serviceTask id="Activity_00o0505" name="Update NOA Approval Status to &#39;Not Required&#39;">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">{
+  "status": "Not Required"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/assessment/${assessmentId}/noa-approval-status</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hiahuz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1e0klas</bpmn:outgoing>
+    </bpmn:serviceTask>
     <bpmn:textAnnotation id="TextAnnotation_0lx2onb">
       <bpmn:text>single or split disbursement model</bpmn:text>
     </bpmn:textAnnotation>
@@ -2234,12 +2258,16 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1hiahuz_di" bpmnElement="Flow_1hiahuz">
         <di:waypoint x="1508" y="2645" />
-        <di:waypoint x="1508" y="2680" />
-        <di:waypoint x="2180" y="2680" />
-        <di:waypoint x="2180" y="2645" />
+        <di:waypoint x="1508" y="2690" />
+        <di:waypoint x="1915" y="2690" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1513" y="2663" width="74" height="14" />
+          <dc:Bounds x="1513" y="2673" width="74" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e0klas_di" bpmnElement="Flow_1e0klas">
+        <di:waypoint x="2015" y="2690" />
+        <di:waypoint x="2180" y="2690" />
+        <di:waypoint x="2180" y="2645" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1y0ilvy_di" bpmnElement="Event_0a53uvu">
         <dc:Bounds x="2522" y="542" width="36" height="36" />
@@ -2505,6 +2533,10 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_11dfcbe" bpmnElement="Gateway_0tepnnt" isMarkerVisible="true">
         <dc:Bounds x="2155" y="2595" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0s4ivph" bpmnElement="Activity_00o0505">
+        <dc:Bounds x="1915" y="2650" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_03z8wvb_di" bpmnElement="Activity_0fcbd0j">
         <dc:Bounds x="2050" y="1666" width="100" height="80" />
