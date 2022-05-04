@@ -6,6 +6,8 @@ import {
   ScholasticStandingStatus,
   StudentAppealStatus,
 } from "../../../database/entities";
+import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 
 export class RequestAssessmentSummaryAPIOutDTO {
   id: number;
@@ -25,6 +27,9 @@ export class AssessmentHistorySummaryAPIOutDTO {
 }
 
 export class AssessmentNOAAPIOutDTO {
+  @ApiProperty({
+    description: "Dynamic output of the workflow calculation.",
+  })
   assessment: Assessment;
   applicationNumber: string;
   fullName: string;
