@@ -184,7 +184,7 @@ ul.no-bullets {
   color: $brand-blue !important;
 }
 
-.link-primary{
+.link-primary {
   @extend .label-bold-primary;
   text-decoration: underline;
   cursor: pointer;

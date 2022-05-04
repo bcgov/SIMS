@@ -75,11 +75,11 @@ export interface SaveOfferingModel {
 
 /**
  * Filter object to pass all the offering optional filters.
- ** offeringTypes defaulted to Public hence it needs to be assigned with value
- ** only if private offerings are needed from the service.
+ ** offeringTypes is mandatory here, but it is assigned by the controller as
+ ** per the need of the API.
  */
-export class OfferingsFilter {
-  offeringTypes?: OfferingTypes[] = [OfferingTypes.Public];
+export interface OfferingsFilter {
+  offeringTypes: OfferingTypes[];
   offeringStatus?: OfferingStatus;
   offeringIntensity?: OfferingIntensity;
 }

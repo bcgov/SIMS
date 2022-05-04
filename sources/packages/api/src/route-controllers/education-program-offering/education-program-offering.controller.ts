@@ -164,8 +164,7 @@ export class EducationProgramOfferingController extends BaseController {
     return transformToProgramOfferingDto({
       ...offering,
       locationName: offering.institutionLocation.name,
-      institutionName:
-        offering.institutionLocation.institution.legalOperatingName,
+      institutionName: offering.institutionLocation.institution.operatingName,
     });
   }
 
@@ -238,7 +237,7 @@ export class EducationProgramOfferingController extends BaseController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
-    @Query("selectedIntensity") selectedIntensity: OfferingIntensity,
+    @Query("offeringIntensity") offeringIntensity: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
     const offerings =
@@ -247,7 +246,7 @@ export class EducationProgramOfferingController extends BaseController {
         programId,
         programYearId,
         {
-          offeringIntensity: selectedIntensity,
+          offeringIntensity: offeringIntensity,
           offeringStatus: OfferingStatus.Approved,
           offeringTypes: [OfferingTypes.Public],
         },
@@ -400,8 +399,7 @@ export class EducationProgramOfferingController extends BaseController {
     return transformToProgramOfferingDto({
       ...offering,
       locationName: offering.institutionLocation.name,
-      institutionName:
-        offering.institutionLocation.institution.legalOperatingName,
+      institutionName: offering.institutionLocation.institution.operatingName,
     });
   }
 }

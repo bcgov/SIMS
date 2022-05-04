@@ -1097,7 +1097,7 @@
           "encrypted": false,
           "redrawOn": "offeringDelivered",
           "customDefaultValue": "",
-          "calculateValue": "var mismatchValue =\r\n  !(\r\n    data.programDeliveryTypes.deliveredOnSite &&\r\n    !data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"onsite\"\r\n  ) ||\r\n  (!data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"online\") ||\r\n  (data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    (data.offeringDelivered === \"online\" ||\r\n      data.offeringDelivered === \"onsite\" ||\r\n      data.offeringDelivered === \"blended\"));\r\n\r\nvalue = !!(data.offeringDelivered && mismatchValue);",
+          "calculateValue": "const mismatchValue =\r\n  !(\r\n    data.programDeliveryTypes.deliveredOnSite &&\r\n    !data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"onsite\"\r\n  ) ||\r\n  (!data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"online\") ||\r\n  (data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    (data.offeringDelivered === \"online\" ||\r\n      data.offeringDelivered === \"onsite\" ||\r\n      data.offeringDelivered === \"blended\"));\r\n\r\nvalue = !!(data.offeringDelivered && mismatchValue);",
           "calculateServer": true,
           "key": "programOfferingDeliveryMismatch",
           "tags": [],
@@ -1155,7 +1155,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "e1po54f"
+          "id": "e9u0x6"
         },
         {
           "label": "HTML",
@@ -1347,7 +1347,7 @@
           "encrypted": false,
           "redrawOn": "",
           "customDefaultValue": "",
-          "calculateValue": "var mismatchValue = !(\r\n  data.hasOfferingWILComponent === \"no\" || data.hasWILComponent === \"yes\"\r\n);\r\n\r\nvalue = !!(data.hasOfferingWILComponent && mismatchValue);",
+          "calculateValue": "const mismatchValue = !(\r\n  data.hasOfferingWILComponent === \"no\" || data.hasWILComponent === \"yes\"\r\n);\r\n\r\nvalue = !!(data.hasOfferingWILComponent && mismatchValue);",
           "calculateServer": true,
           "key": "programOfferingWILMismatch",
           "tags": [],
@@ -1405,7 +1405,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "eu2eiw"
+          "id": "e4szclm"
         },
         {
           "label": "HTML",
@@ -2242,7 +2242,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "eq8kd8j"
+          "id": "ewb6uwd"
         },
         {
           "label": "Invalid study dates popup",
@@ -2691,7 +2691,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "datepickerMode": "day",
-              "id": "ejcc00c000000000"
+              "id": "ejcc00c00000000000000"
             },
             {
               "label": "Break end date",
@@ -2824,7 +2824,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "datepickerMode": "day",
-              "id": "eq44cvy00000000"
+              "id": "eq44cvy0000000000000"
             }
           ],
           "placeholder": "",

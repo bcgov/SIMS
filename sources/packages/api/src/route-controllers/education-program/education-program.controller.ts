@@ -205,8 +205,8 @@ export class EducationProgramController extends BaseController {
       effectiveEndDate: getISODateOnlyString(educationProgram.effectiveEndDate),
       assessedDate: educationProgram.assessedDate,
       assessedBy: getUserFullName(educationProgram.assessedBy),
+      institutionName: educationProgram.institution.operatingName,
     };
-
     return programDetails;
   }
 

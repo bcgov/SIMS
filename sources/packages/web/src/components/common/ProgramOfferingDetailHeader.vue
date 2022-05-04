@@ -2,14 +2,6 @@
   <div>
     <!-- Basic details -->
     <div class="row">
-      <header-title-value title="Institution name"
-        ><template #value
-          ><span class="link-primary" @click="goToInstitutionProfile()">
-            {{ institutionName }}
-          </span>
-        </template></header-title-value
-      >
-      <div class="mx-2 vertical-divider"></div>
       <header-title-value
         title="Submitted"
         :value="
@@ -18,6 +10,14 @@
             : '-'
         "
       />
+      <div class="mx-2 vertical-divider"></div>
+      <header-title-value title="Institution name"
+        ><template #value
+          ><span class="link-primary" @click="goToInstitutionProfile()">
+            {{ headerDetails.institutionName }}
+          </span>
+        </template></header-title-value
+      >
       <div
         v-if="headerDetails.locationName"
         class="mx-2 vertical-divider"
@@ -75,7 +75,6 @@ import {
   AESTRoutesConst,
   InstitutionRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { useStore } from "vuex";
 import { AuthService } from "@/services/AuthService";
 
 export default {
@@ -88,22 +87,13 @@ export default {
     },
   },
   setup(props: any) {
-    const store = useStore();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
-
-    const institutionName = computed((): string => {
-      if (AuthService.shared.authClientType === ClientIdType.Institution)
-        return store.state.institution.institutionState.legalOperatingName;
-      else if (AuthService.shared.authClientType === ClientIdType.AEST)
-        return props.headerDetails.institutionName;
-      else return "-";
-    });
 
     const approvalLabel = computed((): ProgramOfferingApprovalLabels => {
       if (
         props.headerDetails.status === ProgramStatus.Approved ||
-        props.headerDetails.assessedBy === OfferingStatus.Approved
+        props.headerDetails.status === OfferingStatus.Approved
       ) {
         return {
           assessedByLabel: "Approved By",
@@ -140,7 +130,6 @@ export default {
       ProgramStatus,
       goToInstitutionProfile,
       dateOnlyLongString,
-      institutionName,
       approvalLabel,
     };
   },

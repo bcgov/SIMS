@@ -31,7 +31,7 @@ import { EducationProgramOfferingService } from "@/services/EducationProgramOffe
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import { ClientIdType, OfferingDTO, ProgramDto } from "@/types";
+import { ClientIdType, OfferingFormModel, ProgramDto } from "@/types";
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
@@ -69,7 +69,7 @@ export default {
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
-    const initialData = ref({} as Partial<OfferingDTO & ProgramDto>);
+    const initialData = ref({} as Partial<OfferingFormModel & ProgramDto>);
     const { mapOfferingChipStatus } = useOffering();
     const clientType = computed(() => AuthService.shared.authClientType);
 
@@ -126,6 +126,9 @@ export default {
           initialData.value = {
             ...programOffering,
           };
+          initialData.value.offeringChipStatus = mapOfferingChipStatus(
+            programOffering.offeringStatus,
+          );
         }
       }
     };

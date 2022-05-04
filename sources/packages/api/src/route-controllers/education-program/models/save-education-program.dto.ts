@@ -120,7 +120,7 @@ export const transformToEducationProgramData = (
     programDeclaration: program.programDeclaration,
     credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
     institutionId: program.institution.id,
-    institutionName: program.institution.legalOperatingName,
+    institutionName: program.institution.operatingName,
     submittedDate: program.submittedDate,
     submittedBy: getUserFullName(program.submittedBy),
     effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),

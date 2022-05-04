@@ -175,6 +175,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "assessedBy.lastName",
         "institutionLocation.name",
         "institution.legalOperatingName",
+        "institution.operatingName",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -381,6 +382,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "assessedBy.lastName",
         "institutionLocation.name",
         "institution.legalOperatingName",
+        "institution.operatingName",
       ])
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "institutionLocation")

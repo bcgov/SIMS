@@ -81,7 +81,7 @@ export interface EducationProgramData extends EducationProgramDetails {
   programStatus: ProgramStatus;
   institutionId?: number;
   id: number;
-  institutionName?: string;
+  institutionName: string;
   submittedOn: Date;
   submittedBy: string;
   assessedDate?: Date;

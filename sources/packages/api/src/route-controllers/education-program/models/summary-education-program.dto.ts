@@ -17,4 +17,5 @@ export interface SubsetEducationProgramDto {
   assessedDate?: Date;
   assessedBy?: string;
   effectiveEndDate: string;
+  institutionName: string;
 }
