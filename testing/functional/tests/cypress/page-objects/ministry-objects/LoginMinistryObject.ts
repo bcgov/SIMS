@@ -20,7 +20,7 @@ export default class LoginMinistryObject {
   }
 
   profileIcon() {
-    return cy.get(".mdi-account");
+    return cy.get("[type='button']");
   }
 
   logOffText() {

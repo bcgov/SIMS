@@ -4,15 +4,15 @@ export default class MinistryUserViewsStudent {
   }
 
   applicationNumber() {
-    return cy.get(":nth-child(1) > .p-inputtext");
+    return cy.get("[data-cy='appNumber']");
   }
 
   givenNames() {
-    return cy.get(":nth-child(2) > .p-inputtext");
+    return cy.get("[data-cy='firstName']");
   }
 
   lastName() {
-    return cy.get(":nth-child(3) > .p-inputtext");
+    return cy.get("[data-cy='lastName']");
   }
 
   searchButton() {
@@ -28,7 +28,7 @@ export default class MinistryUserViewsStudent {
   }
 
   viewButtonFirstRow() {
-    return cy.xpath("//tbody/tr[1]/td[4]");
+    return cy.get("[type='button']").eq(2);
   }
 
   studentDetailsText() {

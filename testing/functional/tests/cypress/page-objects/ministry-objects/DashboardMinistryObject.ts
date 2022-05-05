@@ -16,10 +16,10 @@ export default class DashboardMinistryObject {
   }
 
   pendingDesignationSearchInput() {
-    return cy.get(".float-right > .p-inputtext");
+    return cy.get("[placeholder='Search Designations']");
   }
 
   pendingDesignationSearchButton() {
-    return cy.xpath("//div[@class='float-right']//button[@type='button']");
+    return cy.get("[type='button']").eq(1);
   }
 }

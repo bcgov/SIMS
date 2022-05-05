@@ -13,7 +13,7 @@
       by the system administrator in order to successfully login.</v-card-text
     >
     <v-row justify="center" class="m-3">
-      <v-btn color="primary" @click="login">
+      <v-btn color="primary" data-cy="loginWithIDIR" @click="login">
         <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
         Login with IDIR
       </v-btn>

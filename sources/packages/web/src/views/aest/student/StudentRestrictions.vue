@@ -10,6 +10,7 @@
             ><v-btn
               @click="addStudentRestriction"
               class="float-right primary-btn-background"
+              data-cy="addRestriction"
               ><font-awesome-icon :icon="['fas', 'plus']" class="mr-2" />Add
               restriction</v-btn
             ></v-col
@@ -73,10 +74,10 @@
     </div>
   </v-card>
   <ViewRestrictionModal
-    ref="viewRestriction"
+    ref="viewRestriction" 
     :restrictionData="studentRestriction"
     @submitResolutionData="resolveRestriction"
-  />
+  /> 
   <AddStudentRestrictionModal
     ref="addRestriction"
     :entityType="RestrictionEntityType.Student"
