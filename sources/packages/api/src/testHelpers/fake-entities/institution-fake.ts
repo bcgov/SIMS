@@ -21,13 +21,15 @@ export function createFakeInstitution(): Institution {
     primaryContactEmail: faker.internet.email(),
     primaryContactPhone: faker.phone.phoneNumber(),
   };
-  institution.institutionAddress.address = {
-    addressLine1: faker.address.streetAddress(),
-    addressLine2: faker.address.secondaryAddress(),
-    provinceState: "BC",
-    country: "CAN",
-    city: "Victoria",
-    postalCode: faker.address.zipCode("A9A9A9"),
+  institution.institutionAddress = {
+    address: {
+      addressLine1: faker.address.streetAddress(),
+      addressLine2: faker.address.secondaryAddress(),
+      provinceState: "BC",
+      country: "CAN",
+      city: "Victoria",
+      postalCode: faker.address.zipCode("A9A9A9"),
+    },
   };
   return institution;
 }

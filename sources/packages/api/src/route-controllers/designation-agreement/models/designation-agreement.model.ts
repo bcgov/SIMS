@@ -1,4 +1,7 @@
-import { DesignationAgreementStatus } from "../../../database/entities";
+import {
+  DesignationAgreementStatus,
+  InstitutionLocationInfo,
+} from "../../../database/entities";
 
 /**
  * This DTO contains dynamic data that must
@@ -35,7 +38,7 @@ export interface LocationsDesignationsDto {
   designationLocationId?: number;
   locationId: number;
   locationName: string;
-  locationData: any;
+  locationData: InstitutionLocationInfo;
   requested: boolean;
   approved?: boolean;
 }

@@ -37,7 +37,7 @@ export class UpdateSupportingUserApiInDTO {
   @IsNotEmpty()
   postalCode: string;
   @IsNotEmpty()
-  provinceState: string;
+  provinceState?: string;
   @IsNotEmpty()
   sin: string;
   @IsNotEmpty()

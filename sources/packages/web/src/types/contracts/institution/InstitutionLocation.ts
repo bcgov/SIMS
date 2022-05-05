@@ -21,14 +21,7 @@ export interface InstitutionLocationsDetails {
   id: number;
   name: string;
   data: {
-    address: {
-      addressLine1: string;
-      addressLine2?: string;
-      province: string;
-      country: string;
-      city: string;
-      postalCode: string;
-    };
+    address: Address;
   };
   primaryContact: InstitutionPrimaryContact;
   institution: {

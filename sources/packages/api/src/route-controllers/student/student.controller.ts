@@ -58,12 +58,12 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
-  transformAddressDetailsForForm2,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
 import { FormNames } from "../../services/form/constants";
 import { ApiTags } from "@nestjs/swagger";
+import { transformAddressDetailsForForm } from "../utils/address-utils";
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
 // For multipart forms, the max number of parts (fields + files).
@@ -116,7 +116,7 @@ export class StudentController extends BaseController {
       gender: existingStudent.gender,
       dateOfBirth: existingStudent.birthDate,
       contact: {
-        address: transformAddressDetailsForForm2(
+        address: transformAddressDetailsForForm(
           existingStudent.contactInfo.address,
         ),
         phone: existingStudent.contactInfo.phone,
@@ -570,12 +570,12 @@ export class StudentController extends BaseController {
       dateOfBirth: student.birthDate,
       contact: {
         address: {
-          addressLine1: address.addressLine1,
-          addressLine2: address.addressLine2,
-          city: address.city,
-          provinceState: address.provinceState,
-          country: address.country,
-          postalCode: address.postalCode,
+          addressLine1: address?.addressLine1,
+          addressLine2: address?.addressLine2,
+          city: address?.city,
+          provinceState: address?.provinceState,
+          country: address?.country,
+          postalCode: address?.postalCode,
         },
         phone: student.contactInfo.phone,
       },

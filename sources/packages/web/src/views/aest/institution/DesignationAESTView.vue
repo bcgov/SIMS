@@ -132,10 +132,9 @@ export default {
           locationName: location.locationName,
           requestForDesignation: location.requested,
           approvedForDesignation: location.approved,
-          locationAddress: formatter.getFormattedAddress({
-            ...location.locationData.address,
-            provinceState: location.locationData.address.province,
-          }),
+          locationAddress: formatter.getFormattedAddress(
+            location.locationData.address,
+          ),
         }));
       modelLoaded.value = true;
     };
@@ -167,10 +166,7 @@ export default {
             designationLocation.locationId = institutionLocation.id;
             designationLocation.locationName = institutionLocation.name;
             designationLocation.locationAddress = formatter.getFormattedAddress(
-              {
-                ...institutionLocation.data.address,
-                provinceState: institutionLocation.data.address.province,
-              },
+              institutionLocation.data.address,
             );
             const existingDesignationLocation =
               designationAgreement.value.locationsDesignations.find(

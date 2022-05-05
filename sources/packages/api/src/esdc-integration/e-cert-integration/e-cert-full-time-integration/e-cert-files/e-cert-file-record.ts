@@ -129,9 +129,9 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
    */
   city: string;
   /**
-   * Student country Name.
+   * Student country name.
    */
-  countryName: string;
+  country: string;
   /**
    * Student email address.
    */
@@ -196,7 +196,7 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
     record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 4); // Province, optional, not provided.
     record.repeatAppend(SPACE_FILLER, 16); // Postal code, optional, not provided.
-    record.appendWithEndFiller(this.countryName, 20, SPACE_FILLER);
+    record.appendWithEndFiller(this.country, 20, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 20); // Phone Number, optional, not provided.
     record.appendWithEndFiller(this.emailAddress, 70, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 40); // Alternate Address Line 1, optional, not provided.

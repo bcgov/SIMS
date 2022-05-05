@@ -36,7 +36,7 @@ export class InstitutionLocationControllerService {
             address: {
               addressLine1: el.locationAddress?.address?.addressLine1,
               addressLine2: el.locationAddress?.address?.addressLine2,
-              province: el.locationAddress?.address?.provinceState,
+              provinceState: el.locationAddress?.address?.provinceState,
               country: el.locationAddress?.address?.country,
               city: el.locationAddress?.address?.city,
               postalCode: el.locationAddress?.address?.postalCode,

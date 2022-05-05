@@ -151,7 +151,7 @@ export class MSFAARequestService extends ESDCFileHandler {
       addressLine1: addressInfo.addressLine1,
       addressLine2: addressInfo.addressLine2,
       city: addressInfo.city,
-      province: addressInfo.provinceState,
+      provinceState: addressInfo.provinceState,
       postalCode: addressInfo.postalCode,
       country: addressInfo.country,
       phone: pendingMSFAARecords.student.contactInfo.phone,

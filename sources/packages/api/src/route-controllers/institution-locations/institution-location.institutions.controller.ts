@@ -41,7 +41,6 @@ import {
   credentialTypeToDisplay,
   getUserFullName,
   CustomNamedError,
-  transformAddressDetailsForForm2,
 } from "../../utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
@@ -57,6 +56,7 @@ import {
   ScholasticStandingAPIInDTO,
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
+import { transformAddressDetailsForForm } from "../utils/address-utils";
 
 /**
  * Institution location controller for institutions Client.
@@ -217,7 +217,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,
       primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
-      ...transformAddressDetailsForForm2(institutionLocation.data.address),
+      ...transformAddressDetailsForForm(institutionLocation.data.address),
     };
   }
 

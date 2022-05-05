@@ -22,7 +22,7 @@ export interface UpdateSupportingUserApiInDTO
   country: string;
   phone: string;
   postalCode: string;
-  provinceState: string;
+  provinceState?: string;
   sin: string;
   supportingData: any;
 }

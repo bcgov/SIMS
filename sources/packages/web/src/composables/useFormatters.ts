@@ -91,7 +91,9 @@ export function useFormatters() {
       formattedAddress.push(address.addressLine2);
     }
     formattedAddress.push(address.city);
-    formattedAddress.push(address.provinceState);
+    if (address.provinceState) {
+      formattedAddress.push(address.provinceState);
+    }
     formattedAddress.push(address.postalCode);
     formattedAddress.push(address.country);
     return formattedAddress.join(", ");

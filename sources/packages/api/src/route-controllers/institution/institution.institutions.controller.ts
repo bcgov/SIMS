@@ -60,8 +60,8 @@ import {
   PaginationParams,
   PaginatedResults,
   getUserFullName,
-  transformAddressDetailsForForm,
 } from "../../utilities";
+import { transformAddressDetailsForForm } from "../utils/address-utils";
 
 /**
  * Institution controller for institutions Client.
@@ -481,7 +481,7 @@ export class InstitutionInstitutionsController extends BaseController {
         address: {
           addressLine1: el.data.address?.addressLine1,
           addressLine2: el.data.address?.addressLine2,
-          province: el.data.address?.provinceState,
+          provinceState: el.data.address?.provinceState,
           country: el.data.address?.country,
           city: el.data.address?.city,
           postalCode: el.data.address?.postalCode,

@@ -29,9 +29,9 @@ import {
   FieldSortOrder,
   PaginationParams,
   PaginatedResults,
-  transformAddressDetailsForForm,
 } from "../../utilities";
 import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
+import { transformAddressDetailsForForm } from "../utils/address-utils";
 
 /**
  * Institution controller for AEST Client.
@@ -75,12 +75,13 @@ export class InstitutionAESTController extends BaseController {
       legalName: eachInstitution.legalOperatingName,
       operatingName: eachInstitution.operatingName,
       address: {
-        addressLine1: eachInstitution.institutionAddress.address.addressLine1,
-        addressLine2: eachInstitution.institutionAddress.address.addressLine2,
-        city: eachInstitution.institutionAddress.address.city,
-        provinceState: eachInstitution.institutionAddress.address.provinceState,
-        country: eachInstitution.institutionAddress.address.country,
-        postalCode: eachInstitution.institutionAddress.address.postalCode,
+        addressLine1: eachInstitution.institutionAddress.address?.addressLine1,
+        addressLine2: eachInstitution.institutionAddress.address?.addressLine2,
+        city: eachInstitution.institutionAddress.address?.city,
+        provinceState:
+          eachInstitution.institutionAddress.address?.provinceState,
+        country: eachInstitution.institutionAddress.address?.country,
+        postalCode: eachInstitution.institutionAddress.address?.postalCode,
       },
     }));
   }

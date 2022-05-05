@@ -132,7 +132,7 @@ export default {
       return [
         item.data.address.addressLine1,
         item.data.address.addressLine2,
-        `${item.data.address.city} ${item.data.address.province}, ${item.data.address.postalCode}`,
+        `${item.data.address.city} ${item.data.address.provinceState}, ${item.data.address.postalCode}`,
         item.data.address.country,
       ].filter((address) => address);
     };

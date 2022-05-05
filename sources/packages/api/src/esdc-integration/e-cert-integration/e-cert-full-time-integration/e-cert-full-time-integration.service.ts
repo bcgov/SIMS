@@ -128,7 +128,7 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       record.addressLine1 = ecertRecord.addressLine1;
       record.addressLine2 = ecertRecord.addressLine2;
       record.city = ecertRecord.city;
-      record.countryName = ecertRecord.country;
+      record.country = ecertRecord.country;
       record.emailAddress = ecertRecord.email;
       record.gender = getGenderCode(ecertRecord.gender);
       record.maritalStatus = getMaritalStatusCode(ecertRecord.maritalStatus);
