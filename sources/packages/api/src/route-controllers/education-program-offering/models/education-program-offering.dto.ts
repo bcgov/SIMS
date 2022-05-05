@@ -71,6 +71,8 @@ export interface ProgramOfferingDto {
   submittedDate: Date;
   offeringStatus: OfferingStatus;
   offeringType: OfferingTypes;
+  locationName: string;
+  institutionName: string;
 }
 
 export interface ProgramOfferingDetailsDto {
@@ -110,5 +112,7 @@ export const transformToProgramOfferingDto = (
     submittedDate: offering.submittedDate,
     offeringStatus: offering.offeringStatus,
     offeringType: offering.offeringType,
+    locationName: offering.locationName,
+    institutionName: offering.institutionName,
   };
 };

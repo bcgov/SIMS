@@ -1,8 +1,12 @@
 <template>
   <div>
-    <ProgramDetailHeader
-      :educationProgram="educationProgram"
-      :institutionId="institutionId"
+    <program-offering-detail-header
+      class="m-4"
+      :headerDetails="{
+        ...educationProgram,
+        institutionId: institutionId,
+        status: educationProgram.programStatus,
+      }"
     />
     <v-card>
       <v-container>
@@ -12,7 +16,11 @@
           :educationProgram="educationProgram"
         />
         <hr class="horizontal-divider" />
-        <OfferingSummary :programId="programId" :locationId="locationId" />
+        <OfferingSummary
+          :programId="programId"
+          :locationId="locationId"
+          :institutionId="institutionId"
+        />
       </v-container>
     </v-card>
   </div>
@@ -21,12 +29,12 @@
 <script lang="ts">
 import ProgramDetails from "@/components/common/ProgramDetails.vue";
 import OfferingSummary from "@/components/common/OfferingSummary.vue";
-import ProgramDetailHeader from "@/components/common/ProgramDetailHeader.vue";
+import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 
 import { EducationProgramData } from "@/types";
 
 export default {
-  components: { ProgramDetails, OfferingSummary, ProgramDetailHeader },
+  components: { ProgramDetails, OfferingSummary, ProgramOfferingDetailHeader },
   props: {
     programId: {
       type: Number,

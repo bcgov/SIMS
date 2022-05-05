@@ -32,7 +32,11 @@ import {
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
-import { OfferingTypes, OfferingIntensity } from "../../database/entities";
+import {
+  OfferingTypes,
+  OfferingIntensity,
+  OfferingStatus,
+} from "../../database/entities";
 import {
   getOfferingNameAndPeriod,
   FieldSortOrder,
@@ -157,7 +161,11 @@ export class EducationProgramOfferingController extends BaseController {
         "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
-    return transformToProgramOfferingDto(offering);
+    return transformToProgramOfferingDto({
+      ...offering,
+      locationName: offering.institutionLocation.name,
+      institutionName: offering.institutionLocation.institution.operatingName,
+    });
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -229,15 +237,26 @@ export class EducationProgramOfferingController extends BaseController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
-    @Query("selectedIntensity") selectedIntensity: OfferingIntensity,
+    @Query("offeringIntensity") offeringIntensity?: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
+    if (
+      offeringIntensity &&
+      !Object.values(OfferingIntensity).includes(offeringIntensity)
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
+    const offeringsFilter = {
+      offeringIntensity: offeringIntensity,
+      offeringStatus: OfferingStatus.Approved,
+      offeringTypes: [OfferingTypes.Public],
+    };
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
         programYearId,
-        selectedIntensity,
+        offeringsFilter,
         includeInActivePY,
       );
     return offerings.map((offering) => ({
@@ -276,14 +295,19 @@ export class EducationProgramOfferingController extends BaseController {
       offeringIntensity &&
       !Object.values(OfferingIntensity).includes(offeringIntensity)
     ) {
-      throw new NotFoundException("Invalid offering intensity.");
+      throw new UnprocessableEntityException("Invalid offering intensity.");
     }
+    const offeringsFilter = {
+      offeringIntensity: offeringIntensity,
+      offeringStatus: OfferingStatus.Approved,
+      offeringTypes: [OfferingTypes.Public, OfferingTypes.Private],
+    };
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
         programYearId,
-        offeringIntensity,
+        offeringsFilter,
         includeInActivePY,
       );
     return offerings.map((offering) => ({
@@ -380,6 +404,10 @@ export class EducationProgramOfferingController extends BaseController {
         "offering not found because the id does not exist.",
       );
     }
-    return transformToProgramOfferingDto(offering);
+    return transformToProgramOfferingDto({
+      ...offering,
+      locationName: offering.institutionLocation.name,
+      institutionName: offering.institutionLocation.institution.operatingName,
+    });
   }
 }

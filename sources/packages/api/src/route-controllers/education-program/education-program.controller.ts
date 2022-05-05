@@ -200,13 +200,13 @@ export class EducationProgramController extends BaseController {
       programStatus: educationProgram.programStatus,
       programIntensity: educationProgram.programIntensity,
       institutionProgramCode: educationProgram.institutionProgramCode,
-      submittedOn: educationProgram.submittedDate,
+      submittedDate: educationProgram.submittedDate,
       submittedBy: getUserFullName(educationProgram.submittedBy),
       effectiveEndDate: getISODateOnlyString(educationProgram.effectiveEndDate),
       assessedDate: educationProgram.assessedDate,
       assessedBy: getUserFullName(educationProgram.assessedBy),
+      institutionName: educationProgram.institution.operatingName,
     };
-
     return programDetails;
   }
 
