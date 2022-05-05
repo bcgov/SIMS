@@ -7,7 +7,6 @@ export * from "@/types/contracts/StudentContract";
 export * from "@/types/contracts/ProgramYearContract";
 export * from "@/types/contracts/UserContract";
 export * from "@/types/contracts/institution/CreateInstitutionDto";
-export * from "@/types/contracts/institution/ProfileContract";
 export * from "@/types/contracts/institution/InstitutionLocation";
 export * from "@/types/contracts/institution/InstitutionUser";
 export * from "@/types/contracts/institution/EducationProgramDto";

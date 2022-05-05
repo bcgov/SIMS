@@ -47,26 +47,25 @@ export class InstitutionControllerService {
       formattedEstablishedDate: getExtendedDateFormat(
         institutionDetail.establishedDate,
       ),
-      primaryContactEmail:
-        institutionDetail.institutionPrimaryContact.primaryContactEmail,
+      primaryContactEmail: institutionDetail.institutionPrimaryContact.email,
       primaryContactFirstName:
-        institutionDetail.institutionPrimaryContact.primaryContactFirstName,
+        institutionDetail.institutionPrimaryContact.firstName,
       primaryContactLastName:
-        institutionDetail.institutionPrimaryContact.primaryContactLastName,
-      primaryContactPhone:
-        institutionDetail.institutionPrimaryContact.primaryContactPhone,
+        institutionDetail.institutionPrimaryContact.lastName,
+      primaryContactPhone: institutionDetail.institutionPrimaryContact.phone,
       mailingAddress: {
         addressLine1:
-          institutionDetail.institutionAddress.address?.addressLine1,
+          institutionDetail.institutionAddress.mailingAddress?.addressLine1,
         addressLine2:
-          institutionDetail.institutionAddress.address?.addressLine2,
-        city: institutionDetail.institutionAddress.address?.city,
-        country: institutionDetail.institutionAddress.address?.country,
+          institutionDetail.institutionAddress.mailingAddress?.addressLine2,
+        city: institutionDetail.institutionAddress.mailingAddress?.city,
+        country: institutionDetail.institutionAddress.mailingAddress?.country,
         provinceState:
-          institutionDetail.institutionAddress.address?.provinceState,
-        postalCode: institutionDetail.institutionAddress.address?.postalCode,
+          institutionDetail.institutionAddress.mailingAddress?.provinceState,
+        postalCode:
+          institutionDetail.institutionAddress.mailingAddress?.postalCode,
         selectedCountry:
-          institutionDetail.institutionAddress.address?.selectedCountry,
+          institutionDetail.institutionAddress.mailingAddress?.selectedCountry,
       },
       isBCPrivate: isBCPrivate,
     };

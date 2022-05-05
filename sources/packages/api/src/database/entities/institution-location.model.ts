@@ -8,21 +8,11 @@ import {
 import { Institution } from "./institution.model";
 import { RecordDataModel } from "./record.model";
 import { ColumnNames } from "../constant";
-import { AddressInfo } from "../../types";
+import { AddressInfo, PrimaryContact } from "../../types";
 
 export interface InstitutionLocationInfo {
   address: AddressInfo;
 }
-/**
- * Interface for primary contact of institution location.
- */
-export interface PrimaryContact {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-}
-
 @Entity({
   name: "institution_locations",
 })

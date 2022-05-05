@@ -61,7 +61,7 @@ import {
   PaginatedResults,
   getUserFullName,
 } from "../../utilities";
-import { transformAddressDetailsForForm } from "../utils/address-utils";
+import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
 /**
  * Institution controller for institutions Client.
@@ -161,7 +161,7 @@ export class InstitutionInstitutionsController extends BaseController {
 
     return {
       ...institutionDetail,
-      mailingAddress: transformAddressDetailsForForm(
+      mailingAddress: transformAddressDetailsForAddressBlockForm(
         institutionDetail.mailingAddress,
       ),
     };

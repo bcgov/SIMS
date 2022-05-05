@@ -129,10 +129,13 @@ export default {
     };
 
     const addressList1 = (item: InstitutionLocationsDetails) => {
+      let address = item.data.address.provinceState
+        ? `${item.data.address.city} ${item.data.address.provinceState}, ${item.data.address.postalCode}`
+        : `${item.data.address.city}, ${item.data.address.postalCode}`;
       return [
         item.data.address.addressLine1,
         item.data.address.addressLine2,
-        `${item.data.address.city} ${item.data.address.provinceState}, ${item.data.address.postalCode}`,
+        address,
         item.data.address.country,
       ].filter((address) => address);
     };

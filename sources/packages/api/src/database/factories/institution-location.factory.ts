@@ -20,7 +20,7 @@ export async function institutionLocationFactory(
     firstName: "FirstName",
     lastName: "LastName",
     email: "Email",
-    phoneNumber: "Phone",
+    phone: "Phone",
   };
   return loc;
 }

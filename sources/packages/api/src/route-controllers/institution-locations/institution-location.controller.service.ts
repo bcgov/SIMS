@@ -46,7 +46,7 @@ export class InstitutionLocationControllerService {
             primaryContactFirstName: el.primaryContact?.firstName,
             primaryContactLastName: el.primaryContact?.lastName,
             primaryContactEmail: el.primaryContact?.email,
-            primaryContactPhone: el.primaryContact?.phoneNumber,
+            primaryContactPhone: el.primaryContact?.phone,
           },
           institutionCode: el.institutionCode,
         };

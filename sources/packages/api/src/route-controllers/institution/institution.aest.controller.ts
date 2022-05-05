@@ -31,7 +31,7 @@ import {
   PaginatedResults,
 } from "../../utilities";
 import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
-import { transformAddressDetailsForForm } from "../utils/address-utils";
+import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
 /**
  * Institution controller for AEST Client.
@@ -75,13 +75,16 @@ export class InstitutionAESTController extends BaseController {
       legalName: eachInstitution.legalOperatingName,
       operatingName: eachInstitution.operatingName,
       address: {
-        addressLine1: eachInstitution.institutionAddress.address?.addressLine1,
-        addressLine2: eachInstitution.institutionAddress.address?.addressLine2,
-        city: eachInstitution.institutionAddress.address?.city,
+        addressLine1:
+          eachInstitution.institutionAddress.mailingAddress?.addressLine1,
+        addressLine2:
+          eachInstitution.institutionAddress.mailingAddress?.addressLine2,
+        city: eachInstitution.institutionAddress.mailingAddress?.city,
         provinceState:
-          eachInstitution.institutionAddress.address?.provinceState,
-        country: eachInstitution.institutionAddress.address?.country,
-        postalCode: eachInstitution.institutionAddress.address?.postalCode,
+          eachInstitution.institutionAddress.mailingAddress?.provinceState,
+        country: eachInstitution.institutionAddress.mailingAddress?.country,
+        postalCode:
+          eachInstitution.institutionAddress.mailingAddress?.postalCode,
       },
     }));
   }
@@ -101,7 +104,7 @@ export class InstitutionAESTController extends BaseController {
       );
     return {
       ...institutionDetail,
-      mailingAddress: transformAddressDetailsForForm(
+      mailingAddress: transformAddressDetailsForAddressBlockForm(
         institutionDetail.mailingAddress,
       ),
     };

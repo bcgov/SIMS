@@ -16,13 +16,13 @@ export function createFakeInstitution(): Institution {
     name: "BC Private",
   } as InstitutionType;
   institution.institutionPrimaryContact = {
-    primaryContactFirstName: faker.name.firstName(),
-    primaryContactLastName: faker.name.lastName(),
-    primaryContactEmail: faker.internet.email(),
-    primaryContactPhone: faker.phone.phoneNumber(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    phone: faker.phone.phoneNumber(),
   };
   institution.institutionAddress = {
-    address: {
+    mailingAddress: {
       addressLine1: faker.address.streetAddress(),
       addressLine2: faker.address.secondaryAddress(),
       provinceState: "BC",

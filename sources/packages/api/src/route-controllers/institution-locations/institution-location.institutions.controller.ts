@@ -56,7 +56,7 @@ import {
   ScholasticStandingAPIInDTO,
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
-import { transformAddressDetailsForForm } from "../utils/address-utils";
+import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
 /**
  * Institution location controller for institutions Client.
@@ -216,8 +216,10 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       primaryContactFirstName: institutionLocation.primaryContact.firstName,
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,
-      primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
-      ...transformAddressDetailsForForm(institutionLocation.data.address),
+      primaryContactPhone: institutionLocation.primaryContact.phone,
+      ...transformAddressDetailsForAddressBlockForm(
+        institutionLocation.data.address,
+      ),
     };
   }
 

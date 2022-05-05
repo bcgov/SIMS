@@ -1,5 +1,5 @@
 import { AddressDetailsFormAPIDTO } from "@/services/http/dto";
-import { ContactInformationAPIDTO } from "./AddressContract";
+import { ContactInformationAPIOutDTO } from "./AddressContract";
 
 export interface StudentContact extends AddressDetailsFormAPIDTO {
   phone: string;
@@ -7,14 +7,13 @@ export interface StudentContact extends AddressDetailsFormAPIDTO {
 export interface CreateStudent extends StudentContact {
   sinNumber?: string;
 }
-
 export interface StudentInfo {
   firstName: string;
   lastName: string;
   gender: string;
   email: string;
   dateOfBirth: Date;
-  contact: ContactInformationAPIDTO;
+  contact: ContactInformationAPIOutDTO;
   pdVerified: boolean;
   validSin: boolean;
   sin: string;
@@ -86,7 +85,7 @@ export interface StudentDetail {
   gender: string;
   email: string;
   dateOfBirth: Date;
-  contact: ContactInformationAPIDTO;
+  contact: ContactInformationAPIOutDTO;
   pdVerified: boolean;
   validSin: boolean;
   pdStatus: string;

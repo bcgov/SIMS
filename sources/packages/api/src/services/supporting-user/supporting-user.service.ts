@@ -68,7 +68,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       queryRunner,
       SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS,
     );
-
     try {
       await queryRunner.startTransaction();
       // Query to select the supporting user to be update.

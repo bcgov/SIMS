@@ -3,19 +3,6 @@ export interface OptionItemAPIOutDTO {
   description: string;
 }
 
-/**
- * Common DTO for Address.
- ** This DTO is returned as API response body.
- */
-export interface AddressAPIOutDTO {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  provinceState?: string;
-  country: string;
-  postalCode: string;
-}
-
 export interface InstitutionPrimaryContactAPIOutDTO {
   primaryContactEmail: string;
   primaryContactFirstName: string;
@@ -25,7 +12,8 @@ export interface InstitutionPrimaryContactAPIOutDTO {
 
 /**
  * Common DTO for address details.
- */ export interface AddressDetailsFormAPIDTO {
+ */
+export interface AddressDetailsFormAPIDTO {
   addressLine1: string;
   addressLine2?: string;
   city: string;

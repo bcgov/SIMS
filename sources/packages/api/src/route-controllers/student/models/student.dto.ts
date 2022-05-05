@@ -4,20 +4,14 @@ import {
   IsNotEmpty,
   IsOptional,
 } from "class-validator";
-import { AddressDetailsAPIInDTO } from "../../../route-controllers/models/common.dto";
+import {
+  AddressAPIOutDTO,
+  AddressDetailsAPIInDTO,
+} from "../../../route-controllers/models/common.dto";
 import { StudentPDStatus } from "../../../types";
 
-export class AddressAPIDTO {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  provinceState?: string;
-  country: string;
-  postalCode: string;
-}
-
-export class ContactInformationAPIDTO {
-  address: AddressAPIDTO;
+export class ContactInformationAPIOutDTO {
+  address: AddressAPIOutDTO;
   phone: string;
 }
 export class GetStudentContactDto {
@@ -88,7 +82,7 @@ export class StudentDetailDTO {
   email: string;
   gender: string;
   dateOfBirth: Date;
-  contact: ContactInformationAPIDTO;
+  contact: ContactInformationAPIOutDTO;
   pdVerified: boolean;
   pdStatus: StudentPDStatus;
   hasRestriction: boolean;
@@ -140,7 +134,7 @@ export class StudentInfo {
   email: string;
   gender: string;
   dateOfBirth: Date;
-  contact: ContactInformationAPIDTO;
+  contact: ContactInformationAPIOutDTO;
   pdVerified: boolean;
   validSin: boolean;
   pdSentDate?: Date;

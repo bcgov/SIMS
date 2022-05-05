@@ -1,8 +1,9 @@
-import { ClientIdType, DesignationAgreementStatus } from "@/types";
 import {
-  AddressDetailsFormAPIDTO,
   AddressAPIOutDTO,
-} from "@/services/http/dto";
+  ClientIdType,
+  DesignationAgreementStatus,
+} from "@/types";
+import { AddressDetailsFormAPIDTO } from "@/services/http/dto";
 
 export interface InstitutionContactAPIOutDTO {
   primaryContactEmail: string;

@@ -11,13 +11,13 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { AddressInfo, InstitutionPrimaryContact } from "../../types";
+import { AddressInfo, PrimaryContact } from "../../types";
 import { InstitutionUser } from "./institution-user.model";
 import { InstitutionType } from "./institution-type.model";
 import { Note } from ".";
 
 export interface InstitutionAddress {
-  address: AddressInfo;
+  mailingAddress: AddressInfo;
 }
 
 @Entity({ name: TableNames.Institution })
@@ -70,7 +70,7 @@ export class Institution extends RecordDataModel {
     type: "jsonb",
     nullable: false,
   })
-  institutionPrimaryContact: InstitutionPrimaryContact;
+  institutionPrimaryContact: PrimaryContact;
 
   @Column({
     name: "institution_address",

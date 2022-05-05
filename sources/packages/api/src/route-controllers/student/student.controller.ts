@@ -63,7 +63,7 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
 import { FormNames } from "../../services/form/constants";
 import { ApiTags } from "@nestjs/swagger";
-import { transformAddressDetailsForForm } from "../utils/address-utils";
+import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
 // For multipart forms, the max number of parts (fields + files).
@@ -116,7 +116,7 @@ export class StudentController extends BaseController {
       gender: existingStudent.gender,
       dateOfBirth: existingStudent.birthDate,
       contact: {
-        address: transformAddressDetailsForForm(
+        address: transformAddressDetailsForAddressBlockForm(
           existingStudent.contactInfo.address,
         ),
         phone: existingStudent.contactInfo.phone,

@@ -7,7 +7,7 @@ import { AddressDetailsAPIOutDTO } from "../models/common.dto";
  * address details of type AddressDetailsModel.
  * @returns address info as AddressDetailsAPIOutDTO.
  */
-export function transformAddressDetailsForForm(
+export function transformAddressDetailsForAddressBlockForm(
   addressDetails: AddressDetailsModel,
 ): AddressDetailsAPIOutDTO {
   return {

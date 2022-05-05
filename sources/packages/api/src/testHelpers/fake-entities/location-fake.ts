@@ -20,7 +20,7 @@ export function createFakeLocation(
     firstName: "FirstName",
     lastName: "LastName",
     email: "Email",
-    phoneNumber: "Phone",
+    phone: "Phone",
   };
   location.name = faker.company.companyName();
   location.institution = institution ?? createFakeInstitution();

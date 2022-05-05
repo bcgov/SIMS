@@ -1,4 +1,8 @@
-export interface AddressAPIDTO {
+/**
+ * Common DTO for Address.
+ ** This DTO is returned as API response body.
+ */
+export interface AddressAPIOutDTO {
   addressLine1: string;
   addressLine2?: string;
   city: string;
@@ -7,7 +11,7 @@ export interface AddressAPIDTO {
   postalCode: string;
 }
 
-export interface ContactInformationAPIDTO {
-  address: AddressAPIDTO;
+export interface ContactInformationAPIOutDTO {
+  address: AddressAPIOutDTO;
   phone: string;
 }

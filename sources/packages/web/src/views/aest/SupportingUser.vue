@@ -59,8 +59,8 @@ export default {
       formName.value = supportingUsersData.formName;
       let contactAddress = {};
       // Here there is only one address for now
-      if (supportingUsersData.contactInfo.addresses) {
-        const address = supportingUsersData.contactInfo.addresses;
+      if (supportingUsersData.contactInfo.address) {
+        const address = supportingUsersData.contactInfo.address;
         contactAddress = {
           city: address.city,
           country: address.country,

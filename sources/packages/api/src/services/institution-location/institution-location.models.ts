@@ -1,7 +1,5 @@
-import {
-  InstitutionLocationInfo,
-  PrimaryContact,
-} from "../../database/entities";
+import { PrimaryContact } from "../../types";
+import { InstitutionLocationInfo } from "../../database/entities";
 import { AddressDetailsModel } from "../address/address.models";
 
 export interface LocationWithDesignationStatus {

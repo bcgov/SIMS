@@ -17,11 +17,6 @@ export interface Address {
   country: string;
 }
 
-export interface ContactInformation {
-  addresses: Address;
-  phone: string;
-}
-
 export interface AddressInfo {
   addressLine1: string;
   addressLine2?: string;
