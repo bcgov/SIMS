@@ -1611,7 +1611,7 @@
                 "eq": "",
                 "json": ""
             },
-            "customConditional": "show = !data.denyProgramInformationRequest && data.pirStatus !== \"Completed\" &&\n data.pirStatus !== \"Declined\"",
+            "customConditional": "show = !data.denyProgramInformationRequest && data.pirStatus === \"Required\"",
             "logic": [],
             "attributes": {},
             "overlay": {
@@ -1665,7 +1665,7 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "addons": [],
-            "id": "ec3erag"
+            "id": "ewqc3pb"
         },
         {
             "title": "Create program",
@@ -1682,7 +1682,7 @@
             "key": "institutionEnteredDetails",
             "tags": [],
             "properties": {},
-            "customConditional": "show = !data.denyProgramInformationRequest && data.pirStatus !== \"Completed\" &&\n data.pirStatus !== \"Declined\"",
+            "customConditional": "show = !data.denyProgramInformationRequest && data.pirStatus === \"Required\"",
             "conditional": {
                 "json": "",
                 "show": null,
@@ -1778,7 +1778,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "efh0gtk"
+                    "id": "eiu32ia"
                 },
                 {
                     "label": "HTML",
@@ -1853,7 +1853,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "ed9otlg"
+                    "id": "es7xn9"
                 },
                 {
                     "label": "Create new program",
@@ -1930,7 +1930,7 @@
                     "block": false,
                     "disableOnInvalid": false,
                     "theme": "primary",
-                    "id": "e0eusn4"
+                    "id": "exf9krs"
                 }
             ],
             "placeholder": "",
@@ -1971,7 +1971,7 @@
             "addons": [],
             "tree": false,
             "lazyLoad": false,
-            "id": "et9f02l"
+            "id": "ehw4bu6"
         },
         {
             "label": "Columns",
