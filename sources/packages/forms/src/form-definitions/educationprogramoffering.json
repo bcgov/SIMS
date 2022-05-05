@@ -841,7 +841,7 @@
           "encrypted": false,
           "redrawOn": "offeringIntensity",
           "customDefaultValue": "",
-          "calculateValue": "value = !!(\r\n  data.offeringIntensity && data.programIntensity !== data.offeringIntensity\r\n);",
+          "calculateValue": "value = !!(\r\n   data.offeringIntensity && !data.programIntensity.includes(data.offeringIntensity)\r\n );",
           "calculateServer": true,
           "key": "programOfferingIntensityMismatch",
           "tags": [],
@@ -899,7 +899,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "e9f5hq4"
+          "id": "et44ct4"
         },
         {
           "label": "Study period intensity popup",
@@ -1097,7 +1097,7 @@
           "encrypted": false,
           "redrawOn": "offeringDelivered",
           "customDefaultValue": "",
-          "calculateValue": "const mismatchValue =\r\n  !(\r\n    data.programDeliveryTypes.deliveredOnSite &&\r\n    !data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"onsite\"\r\n  ) ||\r\n  (!data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"online\") ||\r\n  (data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    (data.offeringDelivered === \"online\" ||\r\n      data.offeringDelivered === \"onsite\" ||\r\n      data.offeringDelivered === \"blended\"));\r\n\r\nvalue = !!(data.offeringDelivered && mismatchValue);",
+          "calculateValue": "const mismatchValue =\r\n  !((\r\n    data.programDeliveryTypes.deliveredOnSite &&\r\n    !data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"onsite\"\r\n  ) ||\r\n  (!data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"online\") ||\r\n  (data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    (data.offeringDelivered === \"online\" ||\r\n      data.offeringDelivered === \"onsite\" ||\r\n      data.offeringDelivered === \"blended\")));\r\n\r\nvalue = !!(data.offeringDelivered && mismatchValue);",
           "calculateServer": true,
           "key": "programOfferingDeliveryMismatch",
           "tags": [],
@@ -1155,7 +1155,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "e9u0x6"
+          "id": "e2zw6lm"
         },
         {
           "label": "HTML",
@@ -1237,7 +1237,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "eex713"
+          "id": "e063s2r"
         },
         {
           "label": "Does this contain a work-integrated learning component?",
@@ -2691,7 +2691,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "datepickerMode": "day",
-              "id": "ejcc00c00000000000000"
+              "id": "ejcc00c000000000000000000000000000"
             },
             {
               "label": "Break end date",
@@ -2824,7 +2824,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "datepickerMode": "day",
-              "id": "eq44cvy0000000000000"
+              "id": "eq44cvy00000000000000000000000000"
             }
           ],
           "placeholder": "",
