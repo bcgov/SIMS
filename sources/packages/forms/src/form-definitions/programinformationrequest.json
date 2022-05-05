@@ -1606,12 +1606,12 @@
             "tags": [],
             "properties": {},
             "conditional": {
-                "show": true,
-                "when": "pirStatus",
-                "eq": "Required",
+                "show": null,
+                "when": null,
+                "eq": "",
                 "json": ""
             },
-            "customConditional": "",
+            "customConditional": "show = !data.denyProgramInformationRequest && data.pirStatus === \"Required\"",
             "logic": [],
             "attributes": {},
             "overlay": {
@@ -1665,7 +1665,7 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "addons": [],
-            "id": "em4ssua"
+            "id": "ewqc3pb"
         },
         {
             "title": "Create program",
@@ -1682,12 +1682,12 @@
             "key": "institutionEnteredDetails",
             "tags": [],
             "properties": {},
-            "customConditional": "",
+            "customConditional": "show = !data.denyProgramInformationRequest && data.pirStatus === \"Required\"",
             "conditional": {
                 "json": "",
-                "show": true,
-                "when": "pirStatus",
-                "eq": "Required"
+                "show": null,
+                "when": null,
+                "eq": ""
             },
             "logic": [],
             "attributes": {},
@@ -1778,7 +1778,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "e98enl"
+                    "id": "eiu32ia"
                 },
                 {
                     "label": "HTML",
@@ -1853,7 +1853,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "elifral"
+                    "id": "es7xn9"
                 },
                 {
                     "label": "Create new program",
@@ -1862,7 +1862,6 @@
                     "leftIcon": "fa fa-plus-circle",
                     "tableView": false,
                     "key": "createProgram",
-                    "customConditional": "show = !data.denyProgramInformationRequest;",
                     "type": "button",
                     "custom": "form.emit('customEvent', {\n  type: \"routeToCreateProgram\"\n});",
                     "input": true,
@@ -1931,7 +1930,7 @@
                     "block": false,
                     "disableOnInvalid": false,
                     "theme": "primary",
-                    "id": "e5idy3"
+                    "id": "exf9krs"
                 }
             ],
             "placeholder": "",
@@ -1972,7 +1971,7 @@
             "addons": [],
             "tree": false,
             "lazyLoad": false,
-            "id": "ekxe1t"
+            "id": "ehw4bu6"
         },
         {
             "label": "Columns",
