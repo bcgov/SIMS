@@ -11,7 +11,7 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
-import { OfferingStatus } from "src/database/entities";
+import { OfferingStatus } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
