@@ -112,8 +112,12 @@ export class InstitutionService {
 
   public async getInstitutionLocation(
     locationId: number,
+    institutionId?: number,
   ): Promise<InstitutionLocationFormAPIOutDTO> {
-    return ApiClient.InstitutionLocation.getInstitutionLocation(locationId);
+    return ApiClient.InstitutionLocation.getInstitutionLocation(
+      locationId,
+      institutionId,
+    );
   }
 
   public async getAllInstitutionLocations(

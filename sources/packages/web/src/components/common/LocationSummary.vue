@@ -132,6 +132,7 @@ export default {
         router.push({
           name: AESTRoutesConst.EDIT_INSTITUTION_LOCATION,
           params: {
+            institutionId: props.institutionId,
             locationId: locationId,
           },
         });

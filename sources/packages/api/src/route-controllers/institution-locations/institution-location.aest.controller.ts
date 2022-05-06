@@ -42,11 +42,11 @@ export class InstitutionLocationAESTController extends BaseController {
 
   /**
    * Controller method to retrieve institution location by id.
+   * @param institutionId
    * @param locationId
-   * @param userToken
    * @returns institution location.
    */
-  @Get(":locationId")
+  @Get(":institutionId/:locationId")
   async getInstitutionLocation(
     @Param("institutionId") institutionId: number,
     @Param("locationId") locationId: number,

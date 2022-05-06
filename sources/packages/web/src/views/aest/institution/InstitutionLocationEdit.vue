@@ -21,6 +21,10 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 export default {
   components: { formio },
   props: {
+    institutionId: {
+      type: Number,
+      required: true,
+    },
     locationId: {
       type: Number,
       required: true,
@@ -59,6 +63,7 @@ export default {
       initialData.value =
         await InstitutionService.shared.getInstitutionLocation(
           props.locationId,
+          props.institutionId,
         );
     });
     return {

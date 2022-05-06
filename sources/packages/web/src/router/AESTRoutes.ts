@@ -256,7 +256,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: `${AppRoutes.AESTEditInstitutionLocation}/:locationId`,
+        path: AppRoutes.AESTEditInstitutionLocation,
         name: AESTRoutesConst.EDIT_INSTITUTION_LOCATION,
         component: InstitutionLocationEdit,
         props: true,
