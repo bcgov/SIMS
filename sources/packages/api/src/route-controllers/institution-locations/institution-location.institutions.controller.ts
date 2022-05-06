@@ -41,7 +41,6 @@ import {
   credentialTypeToDisplay,
   getUserFullName,
   CustomNamedError,
-  transformAddressDetailsForForm2,
 } from "../../utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
@@ -128,23 +127,10 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     @Body() payload: InstitutionLocationFormAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
-    // Validate the location data that will be saved to SIMS DB.
-    const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      FormNames.InstitutionLocation,
-      payload,
-    );
-
-    if (!dryRunSubmissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to create the institution location due to an invalid request.",
-      );
-    }
-
-    // If the data is valid the location is updated to SIMS DB.
-    await this.locationService.saveLocation(
-      userToken.authorizations.institutionId,
-      dryRunSubmissionResult.data.data,
+    return this.locationControllerService.update(
       locationId,
+      payload,
+      userToken.authorizations.institutionId,
     );
   }
 

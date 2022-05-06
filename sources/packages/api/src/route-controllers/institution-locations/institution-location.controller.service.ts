@@ -1,19 +1,24 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { LocationWithDesignationStatus } from "../../services/institution-location/institution-location.models";
-import { InstitutionLocationService } from "../../services";
+import { FormService, InstitutionLocationService } from "../../services";
 import {
   DesignationStatus,
   InstitutionLocationAPIOutDTO,
+  InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
 } from "./models/institution-location.dto";
-import { transformAddressDetailsForForm2 } from "src/utilities";
+import { transformAddressDetailsForForm2 } from "../../utilities";
+import { FormNames } from "../../services/form/constants";
 
 /**
  * Controller service for institution location.
  */
 @Injectable()
 export class InstitutionLocationControllerService {
-  constructor(private readonly locationService: InstitutionLocationService) {}
+  constructor(
+    private readonly locationService: InstitutionLocationService,
+    private readonly formService: FormService,
+  ) {}
 
   /**
    * Retrieve institution locations and
@@ -93,5 +98,30 @@ export class InstitutionLocationControllerService {
       primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
       ...transformAddressDetailsForForm2(institutionLocation.data.address),
     };
+  }
+
+  async update(
+    locationId: number,
+    payload: InstitutionLocationFormAPIInDTO,
+    institutionId: number,
+  ) {
+    // Validate the location data that will be saved to SIMS DB.
+    const dryRunSubmissionResult = await this.formService.dryRunSubmission(
+      FormNames.InstitutionLocation,
+      payload,
+    );
+
+    if (!dryRunSubmissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to create the institution location due to an invalid request.",
+      );
+    }
+
+    // If the data is valid the location is updated to SIMS DB.
+    await this.locationService.saveLocation(
+      institutionId,
+      dryRunSubmissionResult.data.data,
+      locationId,
+    );
   }
 }

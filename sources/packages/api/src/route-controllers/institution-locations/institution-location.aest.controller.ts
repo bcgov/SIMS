@@ -1,5 +1,5 @@
-import { Controller, Get, Param } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Param, Patch } from "@nestjs/common";
+import { ApiBadRequestResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -8,6 +8,7 @@ import BaseController from "../BaseController";
 import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 import {
   InstitutionLocationAPIOutDTO,
+  InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
 } from "./models/institution-location.dto";
 
@@ -54,6 +55,29 @@ export class InstitutionLocationAESTController extends BaseController {
     return this.locationControllerService.getInstitutionLocation(
       institutionId,
       locationId,
+    );
+  }
+
+  /**
+   * Update an institution location.
+   * @param locationId
+   * @param institutionId
+   * @param payload
+   * @returns number of updated rows.
+   */
+  @ApiBadRequestResponse({
+    description: "Invalid request to update the institution location.",
+  })
+  @Patch(":institutionId/:locationId")
+  async update(
+    @Param("institutionId") institutionId: number,
+    @Param("locationId") locationId: number,
+    @Body() payload: InstitutionLocationFormAPIInDTO,
+  ): Promise<void> {
+    return this.locationControllerService.update(
+      locationId,
+      payload,
+      institutionId,
     );
   }
 }

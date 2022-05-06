@@ -25,9 +25,13 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async updateInstitutionLocation(
     locationId: number,
     updateInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
+    institutionId?: number,
   ): Promise<void> {
+    const url = institutionId
+      ? `institution/location/${institutionId}/${locationId}`
+      : `institution/location/${locationId}`;
     return this.patchCall<InstitutionLocationFormAPIInDTO>(
-      this.addClientRoot(`institution/location/${locationId}`),
+      this.addClientRoot(url),
       updateInstitutionLocationDto,
     );
   }

@@ -52,6 +52,7 @@ export default {
         await InstitutionService.shared.updateInstitutionLocation(
           props.locationId,
           data,
+          props.institutionId,
         );
         router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
         store.dispatch("institution/getUserInstitutionLocationDetails");
