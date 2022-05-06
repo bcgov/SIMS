@@ -156,11 +156,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
   /**
    * Get all records that must be part of the e-Cert files and that were not sent yet.
-   * Consider any record that is scheduled in upcoming days or in the past.
-   * Check if the student has a valid SIN.
-   * Consider only completed Student Applications with signed MSFAA date.
-   * Check if there are restrictions applied to the student account that would
-   * prevent the disbursement.
+   * Criteria to be a valid disbursement to be send.
+   * - Not sent yet;
+   * - Disbursement date in the past or in the near future (defined by DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS);
+   * - Student had the SIN number validated by the CRA;
+   * - Student has a valid signed MSFAA;
+   * - No restrictions in the student account that prevents the disbursement;
+   * - Application status must be 'Completed';
+   * - Confirmation of enrollment(COE) must be 'Completed'.
    */
   async getECertInformationToBeSent(
     offeringIntensity: OfferingIntensity,
@@ -197,8 +200,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "student.birthDate",
         "student.gender",
         "student.contactInfo",
-        "location.id",
-        "location.institutionCode",
+        "institutionLocation.id",
+        "institutionLocation.institutionCode",
         "disbursementValue.valueType",
         "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
@@ -207,9 +210,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       ])
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.application", "application")
-      .innerJoin("application.location", "location")
       .innerJoin("application.currentAssessment", "currentAssessment") // * This is to fetch the current assessment of the application, even though we have multiple reassessments
       .innerJoin("currentAssessment.offering", "offering")
+      .innerJoin("offering.institutionLocation", "institutionLocation")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
       .innerJoin("student.user", "user")
@@ -233,6 +236,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           .getExistsBlockRestrictionQuery()
           .getSql()})`,
       )
+      .andWhere("disbursement.coeStatus = :coeStatus", {
+        coeStatus: COEStatus.completed,
+      })
       .getMany();
   }
 
