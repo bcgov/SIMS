@@ -1,7 +1,11 @@
 import { OfferingTypes, OfferingStatus } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
-import { StudyBreak } from "../../../database/entities/education-program-offering.model";
-import { ProgramOfferingModel } from "../../../services/education-program-offering/education-program-offering.service.models";
+import {
+  EducationProgramOffering,
+  StudyBreak,
+} from "../../../database/entities/education-program-offering.model";
+import { getUserFullName } from "../../../utilities";
+import { IsEnum, IsNotEmpty } from "class-validator";
 
 export interface SaveOfferingDTO {
   offeringName: string;
@@ -85,7 +89,7 @@ export interface ProgramOfferingDetailsDto {
  * @returns ProgramOfferingDto
  */
 export const transformToProgramOfferingDto = (
-  offering: ProgramOfferingModel,
+  offering: EducationProgramOffering,
 ): ProgramOfferingDto => {
   return {
     id: offering.id,
@@ -112,7 +116,19 @@ export const transformToProgramOfferingDto = (
     submittedDate: offering.submittedDate,
     offeringStatus: offering.offeringStatus,
     offeringType: offering.offeringType,
-    locationName: offering.locationName,
-    institutionName: offering.institutionName,
+    locationName: offering.institutionLocation.name,
+    institutionName: offering.institutionLocation.institution.operatingName,
+    assessedBy: getUserFullName({
+      firstName: offering.assessedBy?.firstName,
+      lastName: offering.assessedBy?.lastName,
+    }),
+    assessedDate: offering.assessedDate,
   };
 };
+
+export class OfferingAssessmentAPIInDTO {
+  @IsEnum(OfferingStatus)
+  offeringStatus: OfferingStatus;
+  @IsNotEmpty()
+  assessmentNotes: string;
+}

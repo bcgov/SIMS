@@ -43,6 +43,8 @@ export interface ProgramOfferingModel {
   offeringType: OfferingTypes;
   locationName: string;
   institutionName: string;
+  assessedBy?: string;
+  assessedDate?: string;
 }
 
 export interface SaveOfferingModel {
