@@ -156,7 +156,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
   /**
    * Get all records that must be part of the e-Cert files and that were not sent yet.
-   * Criteria to be a valid disbursement to be send.
+   * Criteria to be a valid disbursement to be sent.
    * - Not sent yet;
    * - Disbursement date in the past or in the near future (defined by DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS);
    * - Student had the SIN number validated by the CRA;
