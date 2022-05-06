@@ -6,7 +6,10 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { InstitutionLocationControllerService } from "./institution-location.controller.service";
-import { InstitutionLocationAPIOutDTO } from "./models/institution-location.dto";
+import {
+  InstitutionLocationAPIOutDTO,
+  InstitutionLocationFormAPIOutDTO,
+} from "./models/institution-location.dto";
 
 /**
  * Institution location controller for institutions Client.
@@ -34,6 +37,23 @@ export class InstitutionLocationAESTController extends BaseController {
     // get all institution locations with designation statuses.
     return this.locationControllerService.getInstitutionLocations(
       institutionId,
+    );
+  }
+
+  /**
+   * Controller method to retrieve institution location by id.
+   * @param locationId
+   * @param userToken
+   * @returns institution location.
+   */
+  @Get(":locationId")
+  async getInstitutionLocation(
+    @Param("institutionId") institutionId: number,
+    @Param("locationId") locationId: number,
+  ): Promise<InstitutionLocationFormAPIOutDTO> {
+    return this.locationControllerService.getInstitutionLocation(
+      institutionId,
+      locationId,
     );
   }
 }

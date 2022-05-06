@@ -204,21 +204,10 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationFormAPIOutDTO> {
     // get all institution locations.
-    const institutionLocation =
-      await this.locationService.getInstitutionLocation(
-        userToken.authorizations.institutionId,
-        locationId,
-      );
-
-    return {
-      locationName: institutionLocation.name,
-      institutionCode: institutionLocation.institutionCode,
-      primaryContactFirstName: institutionLocation.primaryContact.firstName,
-      primaryContactLastName: institutionLocation.primaryContact.lastName,
-      primaryContactEmail: institutionLocation.primaryContact.email,
-      primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
-      ...transformAddressDetailsForForm2(institutionLocation.data.address),
-    };
+    return this.locationControllerService.getInstitutionLocation(
+      userToken.authorizations.institutionId,
+      locationId,
+    );
   }
 
   /**

@@ -24,15 +24,15 @@
     class="ma-2"
   >
     <v-row>
-      <v-col cols="10">
+      <v-col cols="11">
         <span>
           <font-awesome-icon :icon="['fas', 'map-pin']" />
           <span class="category-header-medium mx-2">{{ item.name }}</span>
           <status-chip-designation-agreement :status="item.designationStatus" />
         </span>
       </v-col>
-      <v-col cols="2" v-if="clientType === ClientIdType.Institution">
-        <v-btn variant="plain" @click="getLocation(item.id)">
+      <v-col cols="1">
+        <v-btn class="color-blue" variant="text" @click="getLocation(item.id)">
           <font-awesome-icon :icon="['fas', 'cog']" class="mr-2" />
           Edit
         </v-btn>

@@ -4,7 +4,9 @@ import { InstitutionLocationService } from "../../services";
 import {
   DesignationStatus,
   InstitutionLocationAPIOutDTO,
+  InstitutionLocationFormAPIOutDTO,
 } from "./models/institution-location.dto";
+import { transformAddressDetailsForForm2 } from "src/utilities";
 
 /**
  * Controller service for institution location.
@@ -69,5 +71,27 @@ export class InstitutionLocationControllerService {
     )
       ? DesignationStatus.Designated
       : DesignationStatus.NotDesignated;
+  }
+
+  async getInstitutionLocation(
+    institutionId: number,
+    locationId: number,
+  ): Promise<InstitutionLocationFormAPIOutDTO> {
+    // get all institution locations.
+    const institutionLocation =
+      await this.locationService.getInstitutionLocation(
+        institutionId,
+        locationId,
+      );
+
+    return {
+      locationName: institutionLocation.name,
+      institutionCode: institutionLocation.institutionCode,
+      primaryContactFirstName: institutionLocation.primaryContact.firstName,
+      primaryContactLastName: institutionLocation.primaryContact.lastName,
+      primaryContactEmail: institutionLocation.primaryContact.email,
+      primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
+      ...transformAddressDetailsForForm2(institutionLocation.data.address),
+    };
   }
 }

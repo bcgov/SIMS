@@ -23,6 +23,7 @@ import StudentApplicationView from "@/views/aest/StudentApplicationView.vue";
 import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
 import StudentNotes from "@/views/aest/student/StudentNotes.vue";
 import StudentRestrictions from "@/views/aest/student/StudentRestrictions.vue";
+import EditInstitutionLocation from "@/views/institution/EditInstitutionLocation.vue";
 import {
   AESTRoutesConst,
   SharedRouteConst,
@@ -283,6 +284,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             meta: {
               clientType: ClientIdType.AEST,
             },
+            children: [
+              {
+                path: `${AppRoutes.EditInstitutionLocation}/:locationId`,
+                name: AESTRoutesConst.EDIT_INSTITUTION_LOCATION,
+                component: EditInstitutionLocation,
+                props: true,
+                meta: {
+                  clientType: ClientIdType.AEST,
+                },
+              },
+            ],
           },
           {
             path: AppRoutes.Locations,
