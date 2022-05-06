@@ -179,7 +179,7 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
     record.appendWithStartFiller(this.fieldOfStudy, 2, NUMBER_FILLER);
     record.append(this.yearOfStudy.toString(), 1);
     record.append(this.totalYearsOfStudy.toString(), 1);
-    record.repeatAppend(SPACE_FILLER, DATE_FORMAT.length); // Cancel Date, optional, not provided.
+    record.repeatAppend(NUMBER_FILLER, DATE_FORMAT.length); // Cancel Date, optional, not provided.
     record.append("F"); // 'F' for full-time. Part time is done by another integration to another system.
     record.repeatAppend(SPACE_FILLER, 2); // Provincial field of study code, optional, not provided.
     record.appendDate(this.enrollmentConfirmationDate, DATE_FORMAT);
