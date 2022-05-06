@@ -1,25 +1,35 @@
 <template>
-  <v-container>
-    <formio
-      formName="institutionlocation"
-      :data="initialData"
-      @submitted="submitted"
-    ></formio>
-  </v-container>
+  <div class="ml-16">
+    <header-navigator
+      title="Profile"
+      subTitle="Edit Profile"
+      :routeLocation="institutionProfileRoute"
+    />
+  </div>
+  <full-page-container>
+    <location-edit-form
+      :locationData="initialData"
+      @updateInstituionLocation="updateInstituionLocation"
+    ></location-edit-form>
+  </full-page-container>
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
-import formio from "@/components/generic/formio.vue";
+import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 import { onMounted, ref } from "vue";
-import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
+import {
+  InstitutionLocationFormAPIInDTO,
+  InstitutionLocationFormAPIOutDTO,
+} from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { ClientIdType } from "@/types";
 
 export default {
-  components: { formio },
+  components: { LocationEditForm },
   props: {
     locationId: {
       type: Number,
@@ -29,10 +39,12 @@ export default {
   setup(props: any) {
     // Hooks
     const store = useStore();
-    const initialData = ref({});
+    const initialData = ref({} as InstitutionLocationFormAPIOutDTO);
     const toast = useToast();
     const router = useRouter();
-    const submitted = async (data: InstitutionLocationFormAPIInDTO) => {
+    const updateInstituionLocation = async (
+      data: InstitutionLocationFormAPIInDTO,
+    ) => {
       try {
         await InstitutionService.shared.updateInstitutionLocation(
           props.locationId,
@@ -60,10 +72,11 @@ export default {
         await InstitutionService.shared.getInstitutionLocation(
           props.locationId,
         );
+      initialData.value.clientType = ClientIdType.Institution;
     });
     return {
       initialData,
-      submitted,
+      updateInstituionLocation,
     };
   },
 };

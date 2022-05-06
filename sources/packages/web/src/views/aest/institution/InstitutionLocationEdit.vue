@@ -1,25 +1,34 @@
 <template>
-  <v-container>
-    <formio
-      formName="institutionlocation"
-      :data="initialData"
-      @submitted="submitted"
-    ></formio>
-  </v-container>
+  <div class="ml-16">
+    <header-navigator
+      title="Profile"
+      subTitle="Edit Profile"
+      :routeLocation="institutionProfileRoute"
+    />
+  </div>
+  <full-page-container>
+    <location-edit-form
+      :locationData="initialData"
+      @updateInstituionLocation="updateInstituionLocation"
+    ></location-edit-form>
+  </full-page-container>
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
-import formio from "@/components/generic/formio.vue";
 import { onMounted, ref } from "vue";
-import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
+import {
+  InstitutionLocationFormAPIInDTO,
+  InstitutionLocationFormAPIOutDTO,
+} from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 
 export default {
-  components: { formio },
+  components: { LocationEditForm },
   props: {
     institutionId: {
       type: Number,
@@ -33,10 +42,12 @@ export default {
   setup(props: any) {
     // Hooks
     const store = useStore();
-    const initialData = ref({});
+    const initialData = ref({} as InstitutionLocationFormAPIOutDTO);
     const toast = useToast();
     const router = useRouter();
-    const submitted = async (data: InstitutionLocationFormAPIInDTO) => {
+    const updateInstituionLocation = async (
+      data: InstitutionLocationFormAPIInDTO,
+    ) => {
       try {
         await InstitutionService.shared.updateInstitutionLocation(
           props.locationId,
@@ -68,7 +79,7 @@ export default {
     });
     return {
       initialData,
-      submitted,
+      updateInstituionLocation,
     };
   },
 };

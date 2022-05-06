@@ -1,4 +1,4 @@
-import { DesignationAgreementStatus } from "@/types";
+import { ClientIdType, DesignationAgreementStatus } from "@/types";
 import {
   AddressInfoAPIOutDTO,
   InstitutionPrimaryContactAPIOutDTO,
@@ -23,6 +23,7 @@ export interface InstitutionLocationFormAPIOutDTO
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
+  clientType?: ClientIdType;
 }
 
 export interface InstitutionLocationAPIOutDTO {
