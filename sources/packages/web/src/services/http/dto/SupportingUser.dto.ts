@@ -1,4 +1,5 @@
-import { ContactInformationAPIOutDTO, SupportingUserType } from "@/types";
+import { SupportingUserType } from "@/types";
+import { ContactInformationAPIOutDTO } from "./Address.dto";
 
 /**
  * Information used to uniquely identify a Student Application.

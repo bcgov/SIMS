@@ -1,6 +1,6 @@
 import {
   DesignationAgreementStatus,
-  InstitutionLocationInfo,
+  InstitutionLocationData,
 } from "../../../database/entities";
 
 /**
@@ -38,7 +38,7 @@ export interface LocationsDesignationsDto {
   designationLocationId?: number;
   locationId: number;
   locationName: string;
-  locationData: InstitutionLocationInfo;
+  locationData: InstitutionLocationData;
   requested: boolean;
   approved?: boolean;
 }

@@ -1,4 +1,4 @@
-import { AddressDetailsModel } from "../address/address.models";
+import { AddressInfo } from "../../database/entities";
 
 export interface UpdateInstitution {
   operatingName: string;
@@ -12,10 +12,10 @@ export interface UpdateInstitution {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  mailingAddress: AddressDetailsModel;
+  mailingAddress: AddressInfo;
 }
 
-export interface InstitutionFormModel extends AddressDetailsModel {
+export interface InstitutionFormModel extends AddressInfo {
   userEmail: string;
   operatingName: string;
   primaryPhone: string;

@@ -55,7 +55,12 @@ import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { ApplicationService } from "@/services/ApplicationService";
-import { useFormioUtils, useToastMessage, ModalDialog } from "@/composables";
+import {
+  useFormioUtils,
+  useToastMessage,
+  ModalDialog,
+  useFormatters,
+} from "@/composables";
 import {
   FormIOCustomEvent,
   FormIOCustomEventTypes,
@@ -95,6 +100,7 @@ export default {
     },
   },
   setup(props: any) {
+    const formatter = useFormatters();
     const router = useRouter();
     const initialData = ref({});
     const formioUtils = useFormioUtils();
@@ -148,8 +154,8 @@ export default {
         ![ApplicationStatus.draft].includes(applicationData.applicationStatus);
 
       const address = studentInfo.contact;
-      // TODO: Move formatted address to a common place in Vue app or API.
-      const formattedAddress = `${address.address.addressLine1} ${address.address.addressLine2} ${address.address.city} ${address.address.provinceState} ${address.address.postalCode}  ${address.address.country}`;
+
+      const formattedAddress = formatter.getFormattedAddress(address.address);
       const studentFormData = {
         studentGivenNames: studentInfo.firstName,
         studentLastName: studentInfo.lastName,

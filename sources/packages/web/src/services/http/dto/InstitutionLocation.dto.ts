@@ -1,7 +1,8 @@
-import { AddressAPIOutDTO, DesignationAgreementStatus } from "@/types";
+import { DesignationAgreementStatus } from "@/types";
 import {
   InstitutionPrimaryContactAPIOutDTO,
   AddressDetailsFormAPIDTO,
+  AddressAPIOutDTO,
 } from "@/services/http/dto";
 
 export interface InstitutionLocationFormAPIInDTO

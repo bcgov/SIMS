@@ -1,6 +1,5 @@
 import { IsNotEmpty, IsNotEmptyObject, IsOptional } from "class-validator";
-import { SupportingUserType } from "../../../database/entities";
-import { ContactInfo } from "../../../types";
+import { ContactInfo, SupportingUserType } from "../../../database/entities";
 
 /**
  * Information used to uniquely identify a Student Application.

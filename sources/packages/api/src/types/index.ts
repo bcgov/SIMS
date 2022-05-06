@@ -1,6 +1,4 @@
 export * from "./userInfo";
-export * from "./contactInfo";
-export * from "./primaryContact";
 export * from "./config";
 export * from "./serviceAccount";
 export * from "./form";

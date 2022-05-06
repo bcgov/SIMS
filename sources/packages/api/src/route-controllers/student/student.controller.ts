@@ -33,7 +33,7 @@ import {
   SearchStudentRespDto,
   SaveStudentDto,
   StudentRestrictionDTO,
-  StudentDetailDTO,
+  StudentDetailAPIOutDTO,
   StudentFileUploaderDTO,
   StudentInfo,
 } from "./models/student.dto";
@@ -46,7 +46,7 @@ import { ApiProcessError, ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { StudentApplicationAndCount } from "../application/models/application.model";
-import { Student, Application } from "../../database/entities";
+import { Student, Application, AddressInfo } from "../../database/entities";
 import {
   determinePDStatus,
   deliveryMethod,
@@ -555,13 +555,13 @@ export class StudentController extends BaseController {
   @Get(":studentId/aest")
   async getStudentDetails(
     @Param("studentId") studentId: number,
-  ): Promise<StudentDetailDTO> {
+  ): Promise<StudentDetailAPIOutDTO> {
     const student = await this.studentService.findById(studentId);
     const studentRestrictionStatus =
       await this.studentRestrictionService.getStudentRestrictionsByUserId(
         student.user.id,
       );
-    const address = student.contactInfo.address;
+    const address = student.contactInfo.address ?? ({} as AddressInfo);
     return {
       firstName: student.user.firstName,
       lastName: student.user.lastName,
@@ -570,18 +570,18 @@ export class StudentController extends BaseController {
       dateOfBirth: student.birthDate,
       contact: {
         address: {
-          addressLine1: address?.addressLine1,
-          addressLine2: address?.addressLine2,
-          city: address?.city,
-          provinceState: address?.provinceState,
-          country: address?.country,
-          postalCode: address?.postalCode,
+          addressLine1: address.addressLine1,
+          addressLine2: address.addressLine2,
+          city: address.city,
+          provinceState: address.provinceState,
+          country: address.country,
+          postalCode: address.postalCode,
         },
         phone: student.contactInfo.phone,
       },
       pdStatus: determinePDStatus(student),
       hasRestriction: studentRestrictionStatus.hasRestriction,
-    } as StudentDetailDTO;
+    } as StudentDetailAPIOutDTO;
   }
 
   /**

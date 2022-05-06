@@ -1,5 +1,7 @@
-import { AddressDetailsFormAPIDTO } from "@/services/http/dto";
-import { ContactInformationAPIOutDTO } from "./AddressContract";
+import {
+  AddressDetailsFormAPIDTO,
+  ContactInformationAPIOutDTO,
+} from "@/services/http/dto";
 
 export interface StudentContact extends AddressDetailsFormAPIDTO {
   phone: string;

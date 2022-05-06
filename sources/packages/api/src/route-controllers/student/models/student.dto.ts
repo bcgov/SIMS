@@ -77,7 +77,7 @@ export interface StudentRestrictionDTO {
 /**
  * DTO object for student details.
  */
-export class StudentDetailDTO {
+export class StudentDetailAPIOutDTO {
   firstName: string;
   lastName: string;
   email: string;

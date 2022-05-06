@@ -1,5 +1,5 @@
 import { Allow, IsNotEmptyObject } from "class-validator";
-import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
+import { InstitutionLocationData } from "../../../database/entities/institution-location.model";
 import {
   AddressAPIOutDTO,
   AddressDetailsAPIInDTO,
@@ -8,7 +8,7 @@ import {
 
 export class GetInstitutionLocationDto {
   id: number;
-  data: InstitutionLocationInfo;
+  data: InstitutionLocationData;
   name: string;
 }
 

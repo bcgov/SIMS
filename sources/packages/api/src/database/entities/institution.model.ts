@@ -11,10 +11,11 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { AddressInfo, PrimaryContact } from "../../types";
 import { InstitutionUser } from "./institution-user.model";
 import { InstitutionType } from "./institution-type.model";
 import { Note } from ".";
+import { AddressInfo } from "./address.type";
+import { PrimaryContact } from "./primary-contact.type";
 
 export interface InstitutionAddress {
   mailingAddress: AddressInfo;

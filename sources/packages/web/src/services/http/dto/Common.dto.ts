@@ -12,6 +12,9 @@ export interface InstitutionPrimaryContactAPIOutDTO {
 
 /**
  * Common DTO for address details.
+ * IN/OUT is not specified for this DTO, because it is
+ * a generic address interface that is used extend or used as nested type
+ * for both IN and OUT DTOs
  */
 export interface AddressDetailsFormAPIDTO {
   addressLine1: string;

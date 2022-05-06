@@ -8,9 +8,10 @@ import {
 import { Institution } from "./institution.model";
 import { RecordDataModel } from "./record.model";
 import { ColumnNames } from "../constant";
-import { AddressInfo, PrimaryContact } from "../../types";
+import { AddressInfo } from "./address.type";
+import { PrimaryContact } from "./primary-contact.type";
 
-export interface InstitutionLocationInfo {
+export interface InstitutionLocationData {
   address: AddressInfo;
 }
 @Entity({
@@ -25,7 +26,7 @@ export class InstitutionLocation extends RecordDataModel {
     type: "jsonb",
     nullable: false,
   })
-  data: InstitutionLocationInfo;
+  data: InstitutionLocationData;
 
   @Column({
     name: "name",

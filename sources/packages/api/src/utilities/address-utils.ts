@@ -1,15 +1,14 @@
-import { AddressDetailsModel } from "../services";
-import { AddressInfo } from "../types";
+import { AddressInfo } from "../database/entities";
 
 /**
  * Util to transform address details.
  * @param addressDetails is the object
  *  that has address details of type
- *  AddressDetailsModel.
+ *  AddressInfo.
  * @returns address info as AddressInfo.
  */
 export function transformAddressDetails(
-  addressDetails: AddressDetailsModel,
+  addressDetails: AddressInfo,
 ): AddressInfo {
   return {
     addressLine1: addressDetails.addressLine1,

@@ -25,13 +25,12 @@ import {
   ApplicationApiOutDTO,
   UpdateSupportingUserApiInDTO,
 } from "./models/supporting-user.dto";
-import { SupportingUserType } from "../../database/entities";
 import {
   AddressInfo,
-  ApiProcessError,
-  ClientTypeBaseRoute,
   ContactInfo,
-} from "../../types";
+  SupportingUserType,
+} from "../../database/entities";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,

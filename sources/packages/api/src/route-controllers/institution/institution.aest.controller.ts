@@ -9,7 +9,7 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { InstitutionService } from "../../services";
-import { Institution } from "../../database/entities";
+import { AddressInfo, Institution } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -70,23 +70,24 @@ export class InstitutionAESTController extends BaseController {
       legalName,
       operatingName,
     );
-    return searchInstitutions.map((eachInstitution: Institution) => ({
-      id: eachInstitution.id,
-      legalName: eachInstitution.legalOperatingName,
-      operatingName: eachInstitution.operatingName,
-      address: {
-        addressLine1:
-          eachInstitution.institutionAddress.mailingAddress?.addressLine1,
-        addressLine2:
-          eachInstitution.institutionAddress.mailingAddress?.addressLine2,
-        city: eachInstitution.institutionAddress.mailingAddress?.city,
-        provinceState:
-          eachInstitution.institutionAddress.mailingAddress?.provinceState,
-        country: eachInstitution.institutionAddress.mailingAddress?.country,
-        postalCode:
-          eachInstitution.institutionAddress.mailingAddress?.postalCode,
-      },
-    }));
+    return searchInstitutions.map((eachInstitution: Institution) => {
+      const mailingAddress =
+        eachInstitution.institutionAddress.mailingAddress ??
+        ({} as AddressInfo);
+      return {
+        id: eachInstitution.id,
+        legalName: eachInstitution.legalOperatingName,
+        operatingName: eachInstitution.operatingName,
+        address: {
+          addressLine1: mailingAddress.addressLine1,
+          addressLine2: mailingAddress.addressLine2,
+          city: mailingAddress.city,
+          provinceState: mailingAddress.provinceState,
+          country: mailingAddress.country,
+          postalCode: mailingAddress.postalCode,
+        },
+      };
+    });
   }
 
   /**

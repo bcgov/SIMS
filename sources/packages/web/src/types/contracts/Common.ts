@@ -26,7 +26,3 @@ export interface AddressInfo {
   postalCode: string;
   selectedCountry?: string;
 }
-
-export interface InstitutionLocationInfo {
-  address: AddressInfo;
-}
