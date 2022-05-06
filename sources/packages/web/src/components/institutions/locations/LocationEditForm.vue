@@ -3,7 +3,7 @@
     <formio
       formName="institutionlocation"
       :data="locationData"
-      @submitted="updateInstituionLocation"
+      @submitted="updateInstitutionLocation"
     ></formio>
   </v-container>
 </template>
@@ -20,16 +20,16 @@ export default {
       required: true,
     },
   },
-  emits: ["updateInstituionLocation"],
+  emits: ["updateInstitutionLocation"],
   setup(props: any, context: any) {
-    const updateInstituionLocation = async (
+    const updateInstitutionLocation = async (
       data: InstitutionLocationFormAPIOutDTO,
     ) => {
-      context.emit("updateInstituionLocation", data);
+      context.emit("updateInstitutionLocation", data);
     };
 
     return {
-      updateInstituionLocation,
+      updateInstitutionLocation,
     };
   },
 };

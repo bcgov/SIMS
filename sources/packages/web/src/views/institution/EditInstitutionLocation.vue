@@ -9,7 +9,7 @@
   <full-page-container>
     <location-edit-form
       :locationData="initialData"
-      @updateInstituionLocation="updateInstituionLocation"
+      @updateInstitutionLocation="updateInstitutionLocation"
     ></location-edit-form>
   </full-page-container>
 </template>
@@ -42,7 +42,7 @@ export default {
     const initialData = ref({} as InstitutionLocationFormAPIOutDTO);
     const toast = useToast();
     const router = useRouter();
-    const updateInstituionLocation = async (
+    const updateInstitutionLocation = async (
       data: InstitutionLocationFormAPIInDTO,
     ) => {
       try {
@@ -76,7 +76,7 @@ export default {
     });
     return {
       initialData,
-      updateInstituionLocation,
+      updateInstitutionLocation,
     };
   },
 };
