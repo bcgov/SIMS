@@ -81,7 +81,10 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { ref, onMounted, computed } from "vue";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import {
+  AESTRoutesConst,
+  InstitutionRoutesConst,
+} from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
@@ -106,17 +109,33 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const clientType = computed(() => AuthService.shared.authClientType);
+    const isInstitutionUser = computed(() => {
+      return clientType.value === ClientIdType.Institution;
+    });
 
+    const isAESTUser = computed(() => {
+      return clientType.value === ClientIdType.AEST;
+    });
     const goToAddNewLocation = () => {
       router.push({ name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION });
     };
     const getLocation = async (locationId: number) => {
-      router.push({
-        name: InstitutionRoutesConst.EDIT_INSTITUTION_LOCATION,
-        params: {
-          locationId: locationId,
-        },
-      });
+      if (isInstitutionUser.value) {
+        router.push({
+          name: InstitutionRoutesConst.EDIT_INSTITUTION_LOCATION,
+          params: {
+            locationId: locationId,
+          },
+        });
+      }
+      if (isAESTUser.value) {
+        router.push({
+          name: AESTRoutesConst.EDIT_INSTITUTION_LOCATION,
+          params: {
+            locationId: locationId,
+          },
+        });
+      }
     };
     const institutionLocationList = ref([] as InstitutionLocationAPIOutDTO[]);
 

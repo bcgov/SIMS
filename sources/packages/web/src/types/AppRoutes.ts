@@ -47,6 +47,7 @@ export enum AppRoutes {
   SearchInstitutions = "search-institutions",
   InstitutionDetail = "institution-detail/:institutionId",
   AESTStudentProfile = "student-profile",
+  AESTEditInstitutionLocation = "edit-institution-location",
   AESTInstitutionProfile = "institution-profile",
   AESTInstitutionProfileEdit = "institution-profile/:institutionId/edit",
   PendingDesignations = "institution/designation/pending",
