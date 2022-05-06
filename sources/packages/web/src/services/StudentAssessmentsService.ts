@@ -1,8 +1,9 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   AssessmentHistorySummaryAPIOutDTO,
+  AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
-} from "@/services/http/dto/Assessment.dto";
+} from "@/services/http/dto";
 
 /**
  * Client service layer for Student Assessments.
@@ -11,7 +12,7 @@ export class StudentAssessmentsService {
   // Shared Instance
   private static instance: StudentAssessmentsService;
 
-  public static get shared(): StudentAssessmentsService {
+  static get shared(): StudentAssessmentsService {
     return this.instance || (this.instance = new this());
   }
 
@@ -40,5 +41,24 @@ export class StudentAssessmentsService {
     applicationId: number,
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
     return ApiClient.StudentAssessmentApi.getAssessmentHistory(applicationId);
+  }
+
+  /**
+   * Get the NOA values for a student application on a particular assessment.
+   * @param assessmentId assessment id to get the NOA values.
+   * @returns NOA and application data.
+   */
+  async getAssessmentNOA(
+    assessmentId: number,
+  ): Promise<AssessmentNOAAPIOutDTO> {
+    return ApiClient.StudentAssessmentApi.getAssessmentNOA(assessmentId);
+  }
+
+  /**
+   * Confirm Assessment of a Student.
+   * @param assessmentId assessment id to be confirmed.
+   */
+  async confirmAssessmentNOA(assessmentId: number): Promise<void> {
+    await ApiClient.StudentAssessmentApi.confirmAssessmentNOA(assessmentId);
   }
 }

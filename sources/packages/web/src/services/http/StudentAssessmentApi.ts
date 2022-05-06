@@ -1,8 +1,9 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   AssessmentHistorySummaryAPIOutDTO,
+  AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
-} from "@/services/http/dto/Assessment.dto";
+} from "@/services/http/dto";
 
 /**
  * Http API client for Student Assessments.
@@ -36,6 +37,30 @@ export class StudentAssessmentApi extends HttpBaseClient {
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
     return this.getCallTyped<AssessmentHistorySummaryAPIOutDTO[]>(
       this.addClientRoot(`assessment/application/${applicationId}/history`),
+    );
+  }
+
+  /**
+   * Get the NOA values for a student application on a particular assessment.
+   * @param assessmentId assessment id to get the NOA values.
+   * @returns NOA and application data.
+   */
+  async getAssessmentNOA(
+    assessmentId: number,
+  ): Promise<AssessmentNOAAPIOutDTO> {
+    return this.getCallTyped<AssessmentNOAAPIOutDTO>(
+      this.addClientRoot(`assessment/${assessmentId}/noa`),
+    );
+  }
+
+  /**
+   * Confirm Assessment of a Student.
+   * @param assessmentId assessment id to be confirmed.
+   */
+  async confirmAssessmentNOA(assessmentId: number): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`assessment/${assessmentId}/confirm-assessment`),
+      null,
     );
   }
 }

@@ -1,12 +1,17 @@
 {
+  "title": "Education Program Offering",
+  "display": "form",
   "type": "form",
+  "name": "educationprogramoffering",
+  "path": "educationprogramoffering",
   "tags": [
     "common"
   ],
-  "owner": "andrew.schwenker@gov.bc.ca",
   "components": [
     {
       "label": "HTML",
+      "labelWidth": "",
+      "labelMargin": "",
       "tag": "p",
       "className": "",
       "attrs": [
@@ -15,7 +20,7 @@
           "value": ""
         }
       ],
-      "content": "Add study period",
+      "content": "Study period",
       "refreshOnChange": false,
       "customClass": "category-header-large primary-color",
       "hidden": false,
@@ -29,7 +34,7 @@
         "eq": "",
         "json": ""
       },
-      "customConditional": "",
+      "customConditional": "show = !!!(data.offeringChipStatus)",
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -82,8 +87,90 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e7v3zsj",
-      "addons": []
+      "addons": [],
+      "id": "euxvu"
+    },
+    {
+      "label": "HTML",
+      "labelWidth": "",
+      "labelMargin": "",
+      "tag": "p",
+      "className": "",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "<span class=\"mb-2\">Study period</span> <span class=\"fa fa-circle formio-status-chip ml-1 mt-1 {{ data.offeringChipStatus }}\">{{ data.offeringStatus }}</span>",
+      "refreshOnChange": false,
+      "customClass": "category-header-large primary-color",
+      "hidden": false,
+      "modalEdit": false,
+      "key": "html13",
+      "tags": [],
+      "properties": {},
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
+      "customConditional": "show = !!(data.offeringChipStatus)",
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false,
+      "placeholder": "",
+      "prefix": "",
+      "suffix": "",
+      "multiple": false,
+      "defaultValue": null,
+      "protected": false,
+      "unique": false,
+      "persistent": false,
+      "clearOnHide": true,
+      "refreshOn": "",
+      "redrawOn": "",
+      "dataGridLabel": false,
+      "labelPosition": "top",
+      "description": "",
+      "errorLabel": "",
+      "tooltip": "",
+      "hideLabel": false,
+      "tabindex": "",
+      "disabled": false,
+      "autofocus": false,
+      "dbIndex": false,
+      "customDefaultValue": "",
+      "calculateValue": "",
+      "calculateServer": false,
+      "widget": null,
+      "validateOn": "change",
+      "validate": {
+        "required": false,
+        "custom": "",
+        "customPrivate": false,
+        "strictDateValidation": false,
+        "multiple": false,
+        "unique": false
+      },
+      "allowCalculateOverride": false,
+      "encrypted": false,
+      "showCharCount": false,
+      "showWordCount": false,
+      "allowMultipleMasks": false,
+      "addons": [],
+      "id": "exvkfc"
     },
     {
       "label": "HTML",
@@ -241,6 +328,8 @@
         {
           "label": "Name",
           "labelPosition": "top",
+          "labelWidth": "",
+          "labelMargin": "",
           "placeholder": "Name (e.g. 2022 Fall semester, Term 1, Cohort A)",
           "description": "",
           "tooltip": "",
@@ -250,6 +339,7 @@
             "type": "input"
           },
           "inputMask": "",
+          "displayMask": "",
           "allowMultipleMasks": false,
           "customClass": "",
           "tabindex": "",
@@ -270,6 +360,7 @@
           "protected": false,
           "dbIndex": false,
           "case": "",
+          "truncateMultipleSpaces": false,
           "encrypted": false,
           "redrawOn": "",
           "clearOnHide": true,
@@ -280,19 +371,22 @@
           "validateOn": "change",
           "validate": {
             "required": true,
+            "minLength": "",
+            "maxLength": 50,
+            "minWords": "",
+            "maxWords": "",
             "pattern": "",
             "customMessage": "",
             "custom": "",
             "customPrivate": false,
             "json": "",
-            "minLength": "",
-            "maxLength": 50,
             "strictDateValidation": false,
             "multiple": false,
             "unique": false
           },
           "unique": false,
           "errorLabel": "",
+          "errors": "",
           "key": "offeringName",
           "tags": [],
           "properties": {},
@@ -304,7 +398,9 @@
           },
           "customConditional": "",
           "logic": [],
-          "attributes": {},
+          "attributes": {
+            "data-cy": "offeringName"
+          },
           "overlay": {
             "style": "",
             "page": "",
@@ -317,17 +413,17 @@
           "input": true,
           "refreshOn": "",
           "dataGridLabel": false,
-          "inputType": "text",
-          "id": "e0u54c",
-          "defaultValue": "",
           "addons": [],
-          "displayMask": "",
-          "truncateMultipleSpaces": false
+          "inputType": "text",
+          "id": "e9a1ons",
+          "defaultValue": ""
         },
         {
           "label": "Year of study",
           "labelPosition": "top",
           "widget": "choicesjs",
+          "labelWidth": "",
+          "labelMargin": "",
           "placeholder": "",
           "description": "",
           "tooltip": "",
@@ -389,6 +485,7 @@
           "dataType": "",
           "idPath": "id",
           "valueProperty": "",
+          "limit": 100,
           "template": "<span>{{ item.label }}</span>",
           "refreshOn": "",
           "refreshOnBlur": "",
@@ -421,6 +518,7 @@
           },
           "unique": false,
           "errorLabel": "",
+          "errors": "",
           "key": "yearOfStudy",
           "tags": [],
           "properties": {},
@@ -432,7 +530,9 @@
           },
           "customConditional": "",
           "logic": [],
-          "attributes": {},
+          "attributes": {
+            "data-cy": "yearOfStudy"
+          },
           "overlay": {
             "style": "",
             "page": "",
@@ -447,32 +547,33 @@
           },
           "selectFields": "",
           "searchField": "",
+          "searchDebounce": 0.3,
           "minSearch": 0,
           "filter": "",
-          "limit": 100,
           "redrawOn": "",
           "input": true,
+          "searchThreshold": 0.3,
           "prefix": "",
           "suffix": "",
           "dataGridLabel": false,
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
+          "addons": [],
           "lazyLoad": true,
           "authenticate": false,
           "ignoreCache": false,
-          "searchThreshold": 0.3,
           "fuseOptions": {
             "include": "score",
             "threshold": 0.3
           },
-          "id": "eny9x4v",
-          "defaultValue": "",
-          "addons": [],
-          "searchDebounce": 0.3
+          "id": "es3adgc",
+          "defaultValue": ""
         },
         {
           "label": "Display this to students",
+          "labelWidth": "",
+          "labelMargin": "",
           "description": "",
           "tooltip": "",
           "shortcut": "",
@@ -507,6 +608,7 @@
             "unique": false
           },
           "errorLabel": "",
+          "errors": "",
           "key": "showYearOfStudy",
           "tags": [],
           "properties": {},
@@ -518,7 +620,9 @@
           },
           "customConditional": "",
           "logic": [],
-          "attributes": {},
+          "attributes": {
+            "data-cy": "showYearOfStudy"
+          },
           "overlay": {
             "style": "",
             "page": "",
@@ -544,8 +648,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ebim1",
-          "addons": []
+          "addons": [],
+          "id": "e6rpk1p"
         },
         {
           "label": "HTML",
@@ -693,7 +797,9 @@
           },
           "customConditional": "",
           "logic": [],
-          "attributes": {},
+          "attributes": {
+            "data-cy": "offeringIntensity"
+          },
           "overlay": {
             "style": "",
             "page": "",
@@ -719,7 +825,7 @@
           "addons": [],
           "inputType": "radio",
           "fieldSet": false,
-          "id": "ecva51o",
+          "id": "ez6dhzh",
           "defaultValue": ""
         },
         {
@@ -735,7 +841,7 @@
           "encrypted": false,
           "redrawOn": "offeringIntensity",
           "customDefaultValue": "",
-          "calculateValue": "value = (data.programIntensity !== data.offeringIntensity);",
+          "calculateValue": "value = !!(\r\n   data.offeringIntensity && !data.programIntensity.includes(data.offeringIntensity)\r\n );",
           "calculateServer": true,
           "key": "programOfferingIntensityMismatch",
           "tags": [],
@@ -793,7 +899,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "e6rovne"
+          "id": "et44ct4"
         },
         {
           "label": "Study period intensity popup",
@@ -946,7 +1052,9 @@
           },
           "customConditional": "",
           "logic": [],
-          "attributes": {},
+          "attributes": {
+            "data-cy": "offeringDelivered"
+          },
           "overlay": {
             "style": "",
             "page": "",
@@ -973,7 +1081,7 @@
           "addons": [],
           "inputType": "radio",
           "fieldSet": false,
-          "id": "efieb9",
+          "id": "e3346j",
           "defaultValue": ""
         },
         {
@@ -989,7 +1097,7 @@
           "encrypted": false,
           "redrawOn": "offeringDelivered",
           "customDefaultValue": "",
-          "calculateValue": "value = !(data.programDeliveryTypes.deliveredOnSite &&\r\n    !data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"onsite\") ||\r\n  (!data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"online\") ||\r\n  (data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    (data.offeringDelivered === \"online\" || data.offeringDelivered === \"onsite\" || data.offeringDelivered === \"blended\"));",
+          "calculateValue": "const mismatchValue =\r\n  !((\r\n    data.programDeliveryTypes.deliveredOnSite &&\r\n    !data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"onsite\"\r\n  ) ||\r\n  (!data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    data.offeringDelivered === \"online\") ||\r\n  (data.programDeliveryTypes.deliveredOnSite &&\r\n    data.programDeliveryTypes.deliveredOnline &&\r\n    (data.offeringDelivered === \"online\" ||\r\n      data.offeringDelivered === \"onsite\" ||\r\n      data.offeringDelivered === \"blended\")));\r\n\r\nvalue = !!(data.offeringDelivered && mismatchValue);",
           "calculateServer": true,
           "key": "programOfferingDeliveryMismatch",
           "tags": [],
@@ -1047,7 +1155,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "e4fjmqe"
+          "id": "e2zw6lm"
         },
         {
           "label": "HTML",
@@ -1129,7 +1237,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "eex713"
+          "id": "e063s2r"
         },
         {
           "label": "Does this contain a work-integrated learning component?",
@@ -1195,7 +1303,9 @@
           },
           "customConditional": "",
           "logic": [],
-          "attributes": {},
+          "attributes": {
+            "data-cy": "hasOfferingWILComponent"
+          },
           "overlay": {
             "style": "",
             "page": "",
@@ -1221,8 +1331,8 @@
           "addons": [],
           "inputType": "radio",
           "fieldSet": false,
-          "id": "epn7nqw",
-          "defaultValue": ""
+          "id": "e1mtv4",
+          "defaultValue": null
         },
         {
           "label": "Program Offering WIL Mismatch",
@@ -1237,7 +1347,7 @@
           "encrypted": false,
           "redrawOn": "",
           "customDefaultValue": "",
-          "calculateValue": "value = !(data.hasOfferingWILComponent === \"no\" || data.hasWILComponent === \"yes\");",
+          "calculateValue": "const mismatchValue = !(\r\n  data.hasOfferingWILComponent === \"no\" || data.hasWILComponent === \"yes\"\r\n);\r\n\r\nvalue = !!(data.hasOfferingWILComponent && mismatchValue);",
           "calculateServer": true,
           "key": "programOfferingWILMismatch",
           "tags": [],
@@ -1295,7 +1405,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "eunqmim"
+          "id": "e4szclm"
         },
         {
           "label": "HTML",
@@ -1631,6 +1741,8 @@
                 {
                   "label": "Start date",
                   "labelPosition": "top",
+                  "labelWidth": "",
+                  "labelMargin": "",
                   "displayInTimezone": "viewer",
                   "useLocaleSettings": false,
                   "allowInput": true,
@@ -1667,9 +1779,9 @@
                   "enableMaxDateInput": false,
                   "enableTime": false,
                   "timePicker": {
-                    "showMeridian": true,
                     "hourStep": 1,
                     "minuteStep": 1,
+                    "showMeridian": true,
                     "readonlyInput": false,
                     "mousewheel": true,
                     "arrowkeys": true
@@ -1701,6 +1813,7 @@
                   "unique": false,
                   "validateOn": "change",
                   "errorLabel": "",
+                  "errors": "",
                   "key": "studyStartDate",
                   "tags": [],
                   "properties": {},
@@ -1712,7 +1825,9 @@
                   },
                   "customConditional": "",
                   "logic": [],
-                  "attributes": {},
+                  "attributes": {
+                    "data-cy": "studyStartDate"
+                  },
                   "overlay": {
                     "style": "",
                     "page": "",
@@ -1752,9 +1867,9 @@
                   "showCharCount": false,
                   "showWordCount": false,
                   "allowMultipleMasks": false,
+                  "addons": [],
                   "datepickerMode": "day",
-                  "id": "eryjb2i",
-                  "addons": []
+                  "id": "eix14rnj"
                 }
               ],
               "width": 6,
@@ -1769,6 +1884,8 @@
                 {
                   "label": "End date",
                   "labelPosition": "top",
+                  "labelWidth": "",
+                  "labelMargin": "",
                   "displayInTimezone": "viewer",
                   "useLocaleSettings": false,
                   "allowInput": true,
@@ -1805,9 +1922,9 @@
                   "enableMaxDateInput": false,
                   "enableTime": false,
                   "timePicker": {
-                    "showMeridian": true,
                     "hourStep": 1,
                     "minuteStep": 1,
+                    "showMeridian": true,
                     "readonlyInput": false,
                     "mousewheel": true,
                     "arrowkeys": true
@@ -1839,6 +1956,7 @@
                   "unique": false,
                   "validateOn": "change",
                   "errorLabel": "",
+                  "errors": "",
                   "key": "studyEndDate",
                   "tags": [],
                   "properties": {},
@@ -1850,7 +1968,9 @@
                   },
                   "customConditional": "",
                   "logic": [],
-                  "attributes": {},
+                  "attributes": {
+                    "data-cy": "studyEndDate"
+                  },
                   "overlay": {
                     "style": "",
                     "page": "",
@@ -1890,9 +2010,9 @@
                   "showCharCount": false,
                   "showWordCount": false,
                   "allowMultipleMasks": false,
+                  "addons": [],
                   "datepickerMode": "day",
-                  "id": "ebqtys",
-                  "addons": []
+                  "id": "ezayiwa"
                 }
               ],
               "width": 6,
@@ -2064,7 +2184,7 @@
           "encrypted": false,
           "redrawOn": "data",
           "customDefaultValue": "",
-          "calculateValue": "// To calculate the time difference of two dates\nconst differenceInTime =\n  new Date(data.studyEndDate).getTime() -\n  new Date(data.studyStartDate).getTime();\n  \n// To calculate the no. of days between two dates\nconst differenceInDays = differenceInTime / (1000 * 3600 * 24);\n\nvalue = !(differenceInDays >= 42 && differenceInDays <= 365);",
+          "calculateValue": "// To calculate the time difference of two dates\nconst differenceInTime =\n  new Date(data.studyEndDate).getTime() -\n  new Date(data.studyStartDate).getTime();\n  \n// To calculate the no. of days between two dates\nconst differenceInDays = differenceInTime / (1000 * 3600 * 24);\n\nconst mismatchValue = !(differenceInDays >= 42 && differenceInDays <= 365);\nvalue = !!(data.studyStartDate && data.studyEndDate && mismatchValue);",
           "calculateServer": true,
           "key": "invalidStudyDates",
           "tags": [],
@@ -2122,7 +2242,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "inputType": "hidden",
-          "id": "ee4814m"
+          "id": "ewb6uwd"
         },
         {
           "label": "Invalid study dates popup",
@@ -2136,7 +2256,7 @@
               "value": ""
             }
           ],
-          "content": "<strong class=\"ml-2\">This study period is ineligible for StudentAid BC funding</strong>\n<br>\n<span>Please provide Study Start dateInvalid Study Period, Dates must be between 42 and 365 days.</span>",
+          "content": "<strong class=\"ml-2\">This study period is ineligible for StudentAid BC funding</strong>\n<br>\n<span>Invalid Study Period, Dates must be between 42 and 365 days.</span>",
           "refreshOnChange": true,
           "customClass": "banner-warning",
           "hidden": false,
@@ -2204,7 +2324,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "eac16cn"
+          "id": "ej7atmm"
         },
         {
           "label": "HTML",
@@ -2442,11 +2562,33 @@
           "components": [
             {
               "label": "Break start date",
+              "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
+              "displayInTimezone": "viewer",
+              "useLocaleSettings": false,
+              "allowInput": true,
               "format": "yyyy-MM-dd",
               "placeholder": "Select date",
+              "description": "",
+              "tooltip": "",
+              "customClass": "",
+              "tabindex": "",
+              "hidden": false,
+              "hideLabel": false,
+              "autofocus": false,
+              "dataGridLabel": false,
+              "disabled": false,
               "tableView": false,
+              "modalEdit": false,
+              "shortcutButtons": [],
+              "enableDate": true,
               "enableMinDateInput": false,
               "datePicker": {
+                "minDate": null,
+                "maxDate": null,
+                "disable": "",
+                "disableFunction": "",
                 "disableWeekends": false,
                 "disableWeekdays": false,
                 "showWeeks": true,
@@ -2455,27 +2597,70 @@
                 "minMode": "day",
                 "maxMode": "year",
                 "yearRows": 4,
-                "yearColumns": 5,
-                "minDate": null,
-                "maxDate": null
+                "yearColumns": 5
               },
               "enableMaxDateInput": false,
               "enableTime": false,
+              "timePicker": {
+                "hourStep": 1,
+                "minuteStep": 1,
+                "showMeridian": true,
+                "readonlyInput": false,
+                "mousewheel": true,
+                "arrowkeys": true
+              },
+              "multiple": false,
+              "defaultValue": "",
+              "defaultDate": "",
+              "customOptions": {},
+              "persistent": true,
+              "protected": false,
+              "dbIndex": false,
+              "encrypted": false,
+              "redrawOn": "",
+              "clearOnHide": true,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "allowCalculateOverride": false,
               "validate": {
                 "required": true,
+                "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
+                "json": "",
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false
               },
+              "unique": false,
+              "validateOn": "change",
+              "errorLabel": "",
+              "errors": "",
               "key": "breakStartDate",
+              "tags": [],
+              "properties": {},
               "conditional": {
                 "show": false,
                 "when": "lacksStudyBreaks",
-                "eq": "true"
+                "eq": "true",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {
+                "data-cy": "breakStartDate"
+              },
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
               },
               "type": "datetime",
+              "timezone": "",
               "input": true,
               "widget": {
                 "type": "calendar",
@@ -2491,71 +2676,22 @@
                 "minuteIncrement": 1,
                 "time_24hr": false,
                 "minDate": null,
+                "disabledDates": "",
                 "disableWeekends": false,
                 "disableWeekdays": false,
+                "disableFunction": "",
                 "maxDate": null
               },
               "hideOnChildrenHidden": false,
-              "id": "e4xdqvr00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
               "prefix": "",
-              "customClass": "",
               "suffix": "",
-              "multiple": false,
-              "defaultValue": "",
-              "protected": false,
-              "unique": false,
-              "persistent": true,
-              "hidden": false,
-              "clearOnHide": true,
               "refreshOn": "",
-              "redrawOn": "",
-              "modalEdit": false,
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "hideLabel": false,
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "attributes": {},
-              "validateOn": "change",
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
-              "allowCalculateOverride": false,
-              "encrypted": false,
               "showCharCount": false,
               "showWordCount": false,
-              "properties": {},
               "allowMultipleMasks": false,
-              "useLocaleSettings": false,
-              "allowInput": true,
-              "enableDate": true,
-              "defaultDate": "",
-              "displayInTimezone": "viewer",
-              "timezone": "",
+              "addons": [],
               "datepickerMode": "day",
-              "timePicker": {
-                "hourStep": 1,
-                "minuteStep": 1,
-                "showMeridian": true,
-                "readonlyInput": false,
-                "mousewheel": true,
-                "arrowkeys": true
-              },
-              "customOptions": {},
-              "shortcutButtons": [],
-              "addons": []
+              "id": "ejcc00c000000000000000000000000000"
             },
             {
               "label": "Break end date",
@@ -2645,7 +2781,9 @@
               },
               "customConditional": "",
               "logic": [],
-              "attributes": {},
+              "attributes": {
+                "data-cy": "breakEndDate"
+              },
               "overlay": {
                 "style": "",
                 "page": "",
@@ -2686,7 +2824,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "datepickerMode": "day",
-              "id": "eaij81n0000000000000000000000000000000000000000000000000000000000"
+              "id": "eq44cvy00000000000000000000000000"
             }
           ],
           "placeholder": "",
@@ -3259,6 +3397,8 @@
                 {
                   "label": "Actual tuition",
                   "labelPosition": "top",
+                  "labelWidth": "",
+                  "labelMargin": "",
                   "placeholder": "",
                   "description": "",
                   "tooltip": "",
@@ -3267,6 +3407,7 @@
                   "widget": {
                     "type": "input"
                   },
+                  "displayMask": "",
                   "customClass": "",
                   "tabindex": "",
                   "autocomplete": "",
@@ -3274,17 +3415,18 @@
                   "hideLabel": false,
                   "mask": false,
                   "autofocus": false,
-                  "spellcheck": true,
                   "disabled": false,
                   "tableView": false,
                   "modalEdit": false,
                   "multiple": false,
                   "persistent": true,
                   "delimiter": true,
+                  "decimalLimit": 0,
                   "requireDecimal": false,
                   "inputFormat": "plain",
                   "protected": false,
                   "dbIndex": false,
+                  "truncateMultipleSpaces": false,
                   "encrypted": false,
                   "redrawOn": "",
                   "clearOnHide": true,
@@ -3295,12 +3437,12 @@
                   "validateOn": "change",
                   "validate": {
                     "required": true,
+                    "min": "",
+                    "max": "",
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
                     "json": "",
-                    "min": "",
-                    "max": "",
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
@@ -3308,6 +3450,7 @@
                     "integer": ""
                   },
                   "errorLabel": "",
+                  "errors": "",
                   "key": "actualTuitionCosts",
                   "tags": [],
                   "properties": {},
@@ -3319,7 +3462,9 @@
                   },
                   "customConditional": "",
                   "logic": [],
-                  "attributes": {},
+                  "attributes": {
+                    "data-cy": "actualTuitionCosts"
+                  },
                   "overlay": {
                     "style": "",
                     "page": "",
@@ -3329,7 +3474,7 @@
                     "height": ""
                   },
                   "type": "number",
-                  "decimalLimit": 0,
+                  "spellcheck": true,
                   "input": true,
                   "hideOnChildrenHidden": false,
                   "unique": false,
@@ -3338,9 +3483,9 @@
                   "showCharCount": false,
                   "showWordCount": false,
                   "allowMultipleMasks": false,
-                  "id": "e3iuupj",
-                  "defaultValue": null,
-                  "addons": []
+                  "addons": [],
+                  "id": "e5ka2fk",
+                  "defaultValue": ""
                 }
               ],
               "width": 3,
@@ -3355,6 +3500,8 @@
                 {
                   "label": "Program related costs",
                   "labelPosition": "top",
+                  "labelWidth": "",
+                  "labelMargin": "",
                   "placeholder": "",
                   "description": "",
                   "tooltip": "",
@@ -3363,6 +3510,7 @@
                   "widget": {
                     "type": "input"
                   },
+                  "displayMask": "",
                   "customClass": "",
                   "tabindex": "",
                   "autocomplete": "",
@@ -3370,17 +3518,18 @@
                   "hideLabel": false,
                   "mask": false,
                   "autofocus": false,
-                  "spellcheck": true,
                   "disabled": false,
                   "tableView": false,
                   "modalEdit": false,
                   "multiple": false,
                   "persistent": true,
                   "delimiter": true,
+                  "decimalLimit": 0,
                   "requireDecimal": false,
                   "inputFormat": "plain",
                   "protected": false,
                   "dbIndex": false,
+                  "truncateMultipleSpaces": false,
                   "encrypted": false,
                   "redrawOn": "",
                   "clearOnHide": true,
@@ -3391,12 +3540,12 @@
                   "validateOn": "change",
                   "validate": {
                     "required": true,
+                    "min": "",
+                    "max": "",
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
                     "json": "",
-                    "min": "",
-                    "max": "",
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
@@ -3404,6 +3553,7 @@
                     "integer": ""
                   },
                   "errorLabel": "",
+                  "errors": "",
                   "key": "programRelatedCosts",
                   "tags": [],
                   "properties": {},
@@ -3415,7 +3565,9 @@
                   },
                   "customConditional": "",
                   "logic": [],
-                  "attributes": {},
+                  "attributes": {
+                    "data-cy": "programRelatedCosts"
+                  },
                   "overlay": {
                     "style": "",
                     "page": "",
@@ -3425,7 +3577,7 @@
                     "height": ""
                   },
                   "type": "number",
-                  "decimalLimit": 0,
+                  "spellcheck": true,
                   "input": true,
                   "hideOnChildrenHidden": false,
                   "unique": false,
@@ -3434,9 +3586,9 @@
                   "showCharCount": false,
                   "showWordCount": false,
                   "allowMultipleMasks": false,
-                  "id": "edg8oot",
-                  "defaultValue": null,
-                  "addons": []
+                  "addons": [],
+                  "id": "e5o9x1",
+                  "defaultValue": ""
                 }
               ],
               "width": 3,
@@ -3451,6 +3603,8 @@
                 {
                   "label": "Mandatory fees",
                   "labelPosition": "top",
+                  "labelWidth": "",
+                  "labelMargin": "",
                   "placeholder": "",
                   "description": "",
                   "tooltip": "",
@@ -3459,6 +3613,7 @@
                   "widget": {
                     "type": "input"
                   },
+                  "displayMask": "",
                   "customClass": "",
                   "tabindex": "",
                   "autocomplete": "",
@@ -3466,17 +3621,18 @@
                   "hideLabel": false,
                   "mask": false,
                   "autofocus": false,
-                  "spellcheck": true,
                   "disabled": false,
                   "tableView": false,
                   "modalEdit": false,
                   "multiple": false,
                   "persistent": true,
                   "delimiter": true,
+                  "decimalLimit": 0,
                   "requireDecimal": false,
                   "inputFormat": "plain",
                   "protected": false,
                   "dbIndex": false,
+                  "truncateMultipleSpaces": false,
                   "encrypted": false,
                   "redrawOn": "",
                   "clearOnHide": true,
@@ -3487,12 +3643,12 @@
                   "validateOn": "change",
                   "validate": {
                     "required": true,
+                    "min": "",
+                    "max": "",
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
                     "json": "",
-                    "min": "",
-                    "max": "",
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
@@ -3500,6 +3656,7 @@
                     "integer": ""
                   },
                   "errorLabel": "",
+                  "errors": "",
                   "key": "mandatoryFees",
                   "tags": [],
                   "properties": {},
@@ -3511,7 +3668,9 @@
                   },
                   "customConditional": "",
                   "logic": [],
-                  "attributes": {},
+                  "attributes": {
+                    "data-cy": "mandatoryFees"
+                  },
                   "overlay": {
                     "style": "",
                     "page": "",
@@ -3521,7 +3680,7 @@
                     "height": ""
                   },
                   "type": "number",
-                  "decimalLimit": 0,
+                  "spellcheck": true,
                   "input": true,
                   "hideOnChildrenHidden": false,
                   "unique": false,
@@ -3530,9 +3689,9 @@
                   "showCharCount": false,
                   "showWordCount": false,
                   "allowMultipleMasks": false,
-                  "id": "expot7k",
-                  "defaultValue": null,
-                  "addons": []
+                  "addons": [],
+                  "id": "e2okxii",
+                  "defaultValue": ""
                 }
               ],
               "size": "md",
@@ -3547,6 +3706,8 @@
                 {
                   "label": "Exceptional expenses",
                   "labelPosition": "top",
+                  "labelWidth": "",
+                  "labelMargin": "",
                   "placeholder": "",
                   "description": "",
                   "tooltip": "",
@@ -3555,6 +3716,7 @@
                   "widget": {
                     "type": "input"
                   },
+                  "displayMask": "",
                   "customClass": "",
                   "tabindex": "",
                   "autocomplete": "",
@@ -3562,17 +3724,18 @@
                   "hideLabel": false,
                   "mask": false,
                   "autofocus": false,
-                  "spellcheck": true,
                   "disabled": false,
                   "tableView": false,
                   "modalEdit": false,
                   "multiple": false,
                   "persistent": true,
                   "delimiter": true,
+                  "decimalLimit": 0,
                   "requireDecimal": false,
                   "inputFormat": "plain",
                   "protected": false,
                   "dbIndex": false,
+                  "truncateMultipleSpaces": false,
                   "encrypted": false,
                   "redrawOn": "",
                   "clearOnHide": true,
@@ -3583,12 +3746,12 @@
                   "validateOn": "change",
                   "validate": {
                     "required": true,
+                    "min": "",
+                    "max": "",
                     "customMessage": "",
                     "custom": "",
                     "customPrivate": false,
                     "json": "",
-                    "min": "",
-                    "max": "",
                     "strictDateValidation": false,
                     "multiple": false,
                     "unique": false,
@@ -3596,6 +3759,7 @@
                     "integer": ""
                   },
                   "errorLabel": "",
+                  "errors": "",
                   "key": "exceptionalExpenses",
                   "tags": [],
                   "properties": {},
@@ -3607,7 +3771,9 @@
                   },
                   "customConditional": "",
                   "logic": [],
-                  "attributes": {},
+                  "attributes": {
+                    "data-cy": "exceptionalExpenses"
+                  },
                   "overlay": {
                     "style": "",
                     "page": "",
@@ -3617,7 +3783,7 @@
                     "height": ""
                   },
                   "type": "number",
-                  "decimalLimit": 0,
+                  "spellcheck": true,
                   "input": true,
                   "hideOnChildrenHidden": false,
                   "unique": false,
@@ -3626,9 +3792,9 @@
                   "showCharCount": false,
                   "showWordCount": false,
                   "allowMultipleMasks": false,
-                  "id": "e3mdxgr",
-                  "defaultValue": null,
-                  "addons": []
+                  "addons": [],
+                  "id": "emm8p3s",
+                  "defaultValue": ""
                 }
               ],
               "size": "md",
@@ -3847,7 +4013,8 @@
           "customConditional": "",
           "logic": [],
           "attributes": {
-            "id": "tuitionRemittanceRequested"
+            "id": "tuitionRemittanceRequested",
+            "data-cy": "tuitionRemittanceRequested"
           },
           "overlay": {
             "style": "",
@@ -3874,12 +4041,14 @@
           "addons": [],
           "inputType": "radio",
           "fieldSet": false,
-          "id": "esfouv8",
+          "id": "ealgvrd",
           "defaultValue": ""
         },
         {
           "label": "Amount requested",
           "labelPosition": "top",
+          "labelWidth": "",
+          "labelMargin": "",
           "placeholder": "",
           "description": "",
           "tooltip": "",
@@ -3888,6 +4057,7 @@
           "widget": {
             "type": "input"
           },
+          "displayMask": "",
           "customClass": "",
           "tabindex": "",
           "autocomplete": "",
@@ -3895,17 +4065,18 @@
           "hideLabel": false,
           "mask": false,
           "autofocus": false,
-          "spellcheck": true,
           "disabled": false,
           "tableView": false,
           "modalEdit": false,
           "multiple": false,
           "persistent": true,
           "delimiter": true,
+          "decimalLimit": 0,
           "requireDecimal": false,
           "inputFormat": "plain",
           "protected": false,
           "dbIndex": false,
+          "truncateMultipleSpaces": false,
           "encrypted": false,
           "redrawOn": "",
           "clearOnHide": true,
@@ -3916,12 +4087,12 @@
           "validateOn": "change",
           "validate": {
             "required": true,
+            "min": "",
+            "max": "",
             "customMessage": "",
             "custom": "",
             "customPrivate": false,
             "json": "",
-            "min": "",
-            "max": "",
             "strictDateValidation": false,
             "multiple": false,
             "unique": false,
@@ -3929,6 +4100,7 @@
             "integer": ""
           },
           "errorLabel": "",
+          "errors": "",
           "key": "tuitionRemittanceRequestedAmount",
           "tags": [],
           "properties": {},
@@ -3940,7 +4112,9 @@
           },
           "customConditional": "",
           "logic": [],
-          "attributes": {},
+          "attributes": {
+            "data-cy": "tuitionRemittanceRequestedAmount"
+          },
           "overlay": {
             "style": "",
             "page": "",
@@ -3950,7 +4124,7 @@
             "height": ""
           },
           "type": "number",
-          "decimalLimit": 0,
+          "spellcheck": true,
           "input": true,
           "unique": false,
           "refreshOn": "",
@@ -3958,9 +4132,9 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "eim5ou",
-          "defaultValue": null,
-          "addons": []
+          "addons": [],
+          "id": "erzabmo",
+          "defaultValue": ""
         },
         {
           "label": "Study period availability",
@@ -4138,7 +4312,6 @@
               "disabled": false,
               "tableView": false,
               "modalEdit": false,
-              "defaultValue": null,
               "values": [
                 {
                   "label": "Yes, this offering is for all students",
@@ -4186,7 +4359,9 @@
               },
               "customConditional": "",
               "logic": [],
-              "attributes": {},
+              "attributes": {
+                "data-cy": "offeringType"
+              },
               "overlay": {
                 "style": "",
                 "page": "",
@@ -4212,7 +4387,8 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "e66yqcm"
+              "id": "e0tecw",
+              "defaultValue": ""
             }
           ],
           "id": "ejutvc3"
@@ -4452,6 +4628,8 @@
             },
             {
               "label": "I confirm this study period offering meets the policies outlined in the StudentAid BC policy manual.",
+              "labelWidth": "",
+              "labelMargin": "",
               "description": "",
               "tooltip": "",
               "shortcut": "",
@@ -4486,6 +4664,7 @@
                 "unique": false
               },
               "errorLabel": "",
+              "errors": "",
               "key": "offeringDeclaration",
               "tags": [],
               "properties": {},
@@ -4497,7 +4676,9 @@
               },
               "customConditional": "",
               "logic": [],
-              "attributes": {},
+              "attributes": {
+                "data-cy": "offeringDeclaration"
+              },
               "overlay": {
                 "style": "",
                 "page": "",
@@ -4523,8 +4704,8 @@
               "showCharCount": false,
               "showWordCount": false,
               "allowMultipleMasks": false,
-              "id": "epek39t",
-              "addons": []
+              "addons": [],
+              "id": "es6pm1"
             }
           ],
           "id": "elah0n",
@@ -4620,9 +4801,12 @@
     },
     {
       "label": "applicationId",
+      "labelWidth": "",
+      "labelMargin": "",
       "customClass": "",
       "modalEdit": false,
-      "persistent": true,
+      "defaultValue": null,
+      "persistent": "client-only",
       "protected": false,
       "dbIndex": false,
       "encrypted": false,
@@ -4645,6 +4829,7 @@
       },
       "type": "hidden",
       "input": true,
+      "tableView": false,
       "placeholder": "",
       "prefix": "",
       "suffix": "",
@@ -4653,7 +4838,7 @@
       "hidden": false,
       "clearOnHide": true,
       "refreshOn": "",
-      "tableView": false,
+      "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
       "errorLabel": "",
@@ -4683,18 +4868,18 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
+      "addons": [],
       "inputType": "hidden",
-      "id": "em1y8gd",
-      "defaultValue": "",
-      "dataGridLabel": false,
-      "addons": []
+      "id": "etv9r3"
     },
     {
       "label": "applicationStatus",
+      "labelWidth": "",
+      "labelMargin": "",
       "customClass": "",
       "modalEdit": false,
       "defaultValue": null,
-      "persistent": true,
+      "persistent": "client-only",
       "protected": false,
       "dbIndex": false,
       "encrypted": false,
@@ -4756,9 +4941,9 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
+      "addons": [],
       "inputType": "hidden",
-      "id": "e6z1qd9",
-      "addons": []
+      "id": "ejidpjh"
     },
     {
       "label": "Offering Status",
@@ -4833,12 +5018,5 @@
       "inputType": "hidden",
       "id": "eawojtn"
     }
-  ],
-  "display": "form",
-  "title": "Education Program Offering",
-  "name": "educationprogramoffering",
-  "path": "educationprogramoffering",
-  "machineName": "educationProgramOffering",
-  "created": "2021-06-28T22:04:18.848Z",
-  "modified": "2022-04-28T00:03:40.096Z"
+  ]
 }

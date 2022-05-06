@@ -184,6 +184,12 @@ ul.no-bullets {
   color: $brand-blue !important;
 }
 
+.link-primary {
+  @extend .label-bold-primary;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .label-value {
   font-size: $font-size-content;
   line-height: $line-height-header-sm;

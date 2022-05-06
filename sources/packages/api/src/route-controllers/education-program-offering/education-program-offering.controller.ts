@@ -28,10 +28,15 @@ import {
   EducationProgramOfferingService,
   FormService,
   EducationProgramService,
+  ApplicationService,
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
-import { OfferingTypes, OfferingIntensity } from "../../database/entities";
+import {
+  OfferingTypes,
+  OfferingIntensity,
+  OfferingStatus,
+} from "../../database/entities";
 import {
   getOfferingNameAndPeriod,
   FieldSortOrder,
@@ -49,6 +54,7 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 @ApiTags("institution")
 export class EducationProgramOfferingController extends BaseController {
   constructor(
+    private readonly applicationService: ApplicationService,
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
     private readonly programService: EducationProgramService,
@@ -155,7 +161,11 @@ export class EducationProgramOfferingController extends BaseController {
         "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
-    return transformToProgramOfferingDto(offering);
+    return transformToProgramOfferingDto({
+      ...offering,
+      locationName: offering.institutionLocation.name,
+      institutionName: offering.institutionLocation.institution.operatingName,
+    });
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -227,15 +237,26 @@ export class EducationProgramOfferingController extends BaseController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
-    @Query("selectedIntensity") selectedIntensity: OfferingIntensity,
+    @Query("offeringIntensity") offeringIntensity?: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
+    if (
+      offeringIntensity &&
+      !Object.values(OfferingIntensity).includes(offeringIntensity)
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
+    const offeringsFilter = {
+      offeringIntensity: offeringIntensity,
+      offeringStatus: OfferingStatus.Approved,
+      offeringTypes: [OfferingTypes.Public],
+    };
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
         programYearId,
-        selectedIntensity,
+        offeringsFilter,
         includeInActivePY,
       );
     return offerings.map((offering) => ({
@@ -251,6 +272,8 @@ export class EducationProgramOfferingController extends BaseController {
    * access to their specific offerings only).
    * @param locationId location id.
    * @param programId program id.
+   * @param programYearId program year id.
+   * @query offeringIntensity offering intensity selected by student.
    * @query includeInActivePY, if includeInActivePY is true,
    * then consider both active and inactive program year.
    * @returns key/value pair list of programs for students.
@@ -264,14 +287,27 @@ export class EducationProgramOfferingController extends BaseController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
+    @Query("offeringIntensity")
+    offeringIntensity?: OfferingIntensity,
     @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
+    if (
+      offeringIntensity &&
+      !Object.values(OfferingIntensity).includes(offeringIntensity)
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
+    const offeringsFilter = {
+      offeringIntensity: offeringIntensity,
+      offeringStatus: OfferingStatus.Approved,
+      offeringTypes: [OfferingTypes.Public, OfferingTypes.Private],
+    };
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
         programYearId,
-        undefined,
+        offeringsFilter,
         includeInActivePY,
       );
     return offerings.map((offering) => ({
@@ -368,6 +404,10 @@ export class EducationProgramOfferingController extends BaseController {
         "offering not found because the id does not exist.",
       );
     }
-    return transformToProgramOfferingDto(offering);
+    return transformToProgramOfferingDto({
+      ...offering,
+      locationName: offering.institutionLocation.name,
+      institutionName: offering.institutionLocation.institution.operatingName,
+    });
   }
 }

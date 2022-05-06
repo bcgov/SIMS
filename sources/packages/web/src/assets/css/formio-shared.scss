@@ -324,6 +324,10 @@
   color: #16c92e;
 }
 
+.banner-warning .fa-exclamation-triangle:before {
+  color: $banner-color-warning;
+}
+
 /* form.io status chip */
 .formio-status-chip {
   border-width: 1px;

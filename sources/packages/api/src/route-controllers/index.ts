@@ -38,3 +38,4 @@ export * from "./institution-locations/institution-location.controller.service";
 export * from "./institution-locations/institution-location.institutions.controller";
 export * from "./institution-locations/institution-location.students.controller";
 export * from "./institution-locations/institution-location.aest.controller";
+export * from "./assessment/assessment.students.controller";

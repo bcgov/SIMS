@@ -75,6 +75,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .createQueryBuilder("assessment")
       .select([
         "assessment.id",
+        "assessment.triggerType",
         "application.id",
         "application.applicationStatus",
         "disbursementSchedules.id",
@@ -103,7 +104,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
     if (
       assessment.triggerType !== AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus === ApplicationStatus.completed
+      assessment.application.applicationStatus !== ApplicationStatus.completed
     ) {
       throw new CustomNamedError(
         `Student Assessment and Student Application are not in the expected status. Expecting application status '${ApplicationStatus.completed}' when the assessment status is not '${AssessmentTriggerType.OriginalAssessment}'.`,

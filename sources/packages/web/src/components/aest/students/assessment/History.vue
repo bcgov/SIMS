@@ -59,7 +59,16 @@
                 }}</span
                 ><span v-else>-</span></template
               ></Column
-            ><Column header="Assessment"></Column>
+            ><Column header="Assessment">
+              <template #body="{ data }">
+                <v-btn
+                  @click="$emit('viewAssessment', data.assessmentId)"
+                  color="primary"
+                >
+                  View assessment</v-btn
+                >
+              </template>
+            </Column>
           </DataTable>
         </content-group>
       </v-container>
@@ -79,7 +88,11 @@ import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessme
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
 
 export default {
-  emits: ["viewStudentAppeal", "viewScholasticStandingChange"],
+  emits: [
+    "viewStudentAppeal",
+    "viewScholasticStandingChange",
+    "viewAssessment",
+  ],
   components: {
     StatusChipAssessmentHistory,
   },

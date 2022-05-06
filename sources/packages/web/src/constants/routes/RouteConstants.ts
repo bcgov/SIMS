@@ -96,6 +96,7 @@ export const AESTRoutesConst = {
   PENDING_DESIGNATIONS: Symbol(),
   DESIGNATION_VIEW: Symbol(),
   STUDENT_APPEAL_REQUESTS_APPROVAL: Symbol(),
+  NOTICE_OF_ASSESSMENT_VIEW: Symbol(),
 };
 
 /**

@@ -37,3 +37,4 @@ export * from "@/types/contracts/StudentAppealContract";
 export * from "@/types/contracts/AssessmentTrigger";
 export * from "@/types/contracts/ApiProcessError";
 export * from "@/types/contracts/AddressContract";
+export * from "@/types/contracts/institution/ProgramInfoRequest";

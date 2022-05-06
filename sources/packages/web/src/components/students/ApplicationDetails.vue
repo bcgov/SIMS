@@ -49,7 +49,10 @@ export default {
     const initialData = ref({} as StudentApplicationDetails);
     const dataForTracking = ref({} as StudentApplicationDetailsForTracking);
     const router = useRouter();
-    const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
+    const customEventCallback = async (
+      _form: any,
+      event: FormIOCustomEvent,
+    ) => {
       switch (event.type) {
         case FormIOCustomEventTypes.RouteToContinueApplication:
           router.push({
@@ -66,6 +69,7 @@ export default {
             name: StudentRoutesConst.ASSESSMENT,
             params: {
               applicationId: props.applicationDetails.id,
+              assessmentId: props.applicationDetails.assessmentId,
             },
           });
           break;

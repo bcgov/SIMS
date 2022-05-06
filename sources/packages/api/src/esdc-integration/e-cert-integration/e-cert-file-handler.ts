@@ -15,7 +15,6 @@ import {
   ECERT_PART_TIME_FILE_CODE,
   ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
   ECERT_PART_TIME_FEEDBACK_FILE_CODE,
-  getDayOfTheYear,
   getFieldOfStudyFromCIPCode,
   getISODateOnlyString,
 } from "../../utilities";
@@ -147,7 +146,6 @@ export class ECertFileHandler extends ESDCFileHandler {
     //Create records and create the unique file sequence number.
     let uploadResult: ECertUploadResult;
     const now = new Date();
-    const dayOfTheYear = getDayOfTheYear(now);
     await this.sequenceService.consumeNextSequence(
       `${sequenceGroup}_${getISODateOnlyString(new Date())}`,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
@@ -162,7 +160,7 @@ export class ECertFileHandler extends ESDCFileHandler {
 
           // Create the request filename with the file path for the e-Cert File.
           const fileInfo = await this.createRequestFileName(
-            `${fileCode}${now.getFullYear()}${dayOfTheYear}`,
+            fileCode,
             nextSequenceNumber,
           );
 

@@ -6,7 +6,6 @@ import {
   GetApplicationDataDto,
   GetApplicationBaseDTO,
   StudentApplicationAndCount,
-  NoticeOfAssessmentDTO,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
@@ -23,35 +22,6 @@ export class ApplicationApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return response.data as GetApplicationDataDto;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  /**
-   * Retrieve the Notice of Assessment (NOA) for a particular application.
-   */
-  public async getNOA(applicationId: number): Promise<NoticeOfAssessmentDTO> {
-    try {
-      const response = await this.apiClient.get(
-        this.addClientRoot(`application/${applicationId}/assessment`),
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  public async confirmAssessment(applicationId: number): Promise<void> {
-    try {
-      await this.apiClient.patch(
-        this.addClientRoot(`application/${applicationId}/confirm-assessment`),
-        {},
-        this.addAuthHeader(),
-      );
     } catch (error) {
       this.handleRequestError(error);
       throw error;

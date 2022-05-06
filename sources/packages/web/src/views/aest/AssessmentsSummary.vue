@@ -14,6 +14,7 @@
   <HistoryAssessment
     :applicationId="applicationId"
     @viewStudentAppeal="goToStudentAppeal"
+    @viewAssessment="gotToViewAssessment"
   />
 </template>
 <script lang="ts">
@@ -41,6 +42,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+
     const goToStudentAppeal = (appealId: number) => {
       router.push({
         name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
@@ -52,9 +54,21 @@ export default {
       });
     };
 
+    const gotToViewAssessment = (assessmentId: number) => {
+      router.push({
+        name: AESTRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
+        params: {
+          studentId: props.studentId,
+          applicationId: props.applicationId,
+          assessmentId,
+        },
+      });
+    };
+
     return {
       AESTRoutesConst,
       goToStudentAppeal,
+      gotToViewAssessment,
     };
   },
 };

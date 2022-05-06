@@ -10,13 +10,11 @@
     >
     </HeaderNavigator>
 
-    <v-container>
-      <ManageProgramAndOfferingSummary
-        :programId="programId"
-        :locationId="locationId"
-        :educationProgram="educationProgram"
-      />
-    </v-container>
+    <ManageProgramAndOfferingSummary
+      :programId="programId"
+      :locationId="locationId"
+      :educationProgram="educationProgram"
+    />
   </div>
 </template>
 

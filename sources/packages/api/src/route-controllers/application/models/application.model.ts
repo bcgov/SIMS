@@ -4,8 +4,6 @@ import {
   ProgramInfoStatus,
   AssessmentStatus,
   COEStatus,
-  Assessment,
-  OfferingIntensity,
   ApplicationData,
 } from "../../../database/entities";
 
@@ -74,15 +72,13 @@ export class ApplicationIdentifiersDTO {
  * Base DTO for application
  */
 export class GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
+  assessmentId?: number;
   data: ApplicationFormData;
   applicationStatus: ApplicationStatus;
   applicationFormName: string;
   applicationProgramYearID: number;
 }
 export class GetApplicationDataDto extends GetApplicationBaseDTO {
-  /**
-   * Application dynamic data.
-   */
   applicationStatusUpdatedOn: Date;
   applicationOfferingIntensity: string;
   applicationStartDate: string;
@@ -200,22 +196,6 @@ export interface ApplicationWithProgramYearDto {
   formName: string;
   programYearId: number;
   active: boolean;
-}
-
-/**
- * DTO for NOA view.
- */
-export interface NOAApplicationDto {
-  assessment: Assessment;
-  applicationNumber: string;
-  fullName: string;
-  programName: string;
-  locationName: string;
-  offeringIntensity: OfferingIntensity;
-  offeringStudyStartDate: string;
-  offeringStudyEndDate: string;
-  msfaaNumber: string;
-  disbursement: any;
 }
 
 /**

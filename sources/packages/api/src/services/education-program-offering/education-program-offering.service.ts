@@ -4,15 +4,14 @@ import {
   EducationProgram,
   InstitutionLocation,
   OfferingTypes,
-  OfferingIntensity,
   ProgramStatus,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
 import {
   EducationProgramOfferingModel,
-  ProgramOfferingModel,
   SaveOfferingModel,
+  OfferingsFilter,
 } from "./education-program-offering.service.models";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import {
@@ -143,7 +142,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     offeringId: number,
-  ): Promise<ProgramOfferingModel> {
+  ): Promise<EducationProgramOffering> {
     return this.repo
       .createQueryBuilder("offerings")
       .select([
@@ -174,9 +173,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.offeringStatus",
         "assessedBy.firstName",
         "assessedBy.lastName",
+        "institutionLocation.name",
+        "institution.legalOperatingName",
+        "institution.operatingName",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .innerJoin("institutionLocation.institution", "institution")
       .leftJoin("offerings.assessedBy", "assessedBy")
       .andWhere("offerings.id= :offeringId", {
         offeringId: offeringId,
@@ -262,6 +265,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * Gets program offerings for location.
    * @param programId program id to be filter.
    * @param locationId location id to filter.
+   * @param programYearId program id to be filtered.
+   * @param offeringsFilter Filter object that wraps all the optional filters that can be
+   * added to the service.
    * @param includeInActivePY includeInActivePY, if includeInActivePY, then both active
    * and not active program year is considered.
    * @returns program offerings for location.
@@ -270,7 +276,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     programYearId: number,
-    selectedIntensity?: OfferingIntensity,
+    offeringsFilter: OfferingsFilter,
     includeInActivePY?: boolean,
   ): Promise<Partial<EducationProgramOffering>[]> {
     const query = this.repo
@@ -295,19 +301,24 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .andWhere("offerings.institutionLocation.id = :locationId", {
         locationId,
       })
-      .andWhere("offerings.offeringType = :offeringType", {
-        offeringType: OfferingTypes.Public,
+      .andWhere("offerings.offeringType IN (:...offeringTypes)", {
+        offeringTypes: offeringsFilter.offeringTypes,
       })
       .andWhere(
         "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",
       );
+    if (offeringsFilter.offeringIntensity) {
+      query.andWhere("offerings.offeringIntensity = :offeringIntensity", {
+        offeringIntensity: offeringsFilter.offeringIntensity,
+      });
+    }
+    if (offeringsFilter.offeringStatus) {
+      query.andWhere("offerings.offeringStatus = :offeringStatus", {
+        offeringStatus: offeringsFilter.offeringStatus,
+      });
+    }
     if (!includeInActivePY) {
       query.andWhere("programYear.active = true");
-    }
-    if (selectedIntensity) {
-      query.andWhere("offerings.offeringIntensity = :selectedIntensity", {
-        selectedIntensity,
-      });
     }
     return query.orderBy("offerings.name").getMany();
   }
@@ -339,6 +350,47 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @returns offering object.
    */
   async getOfferingById(offeringId: number): Promise<EducationProgramOffering> {
-    return this.repo.findOne(offeringId);
+    return this.repo
+      .createQueryBuilder("offering")
+      .select([
+        "offering.id",
+        "offering.name",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
+        "offering.mandatoryFees",
+        "offering.exceptionalExpenses",
+        "offering.tuitionRemittanceRequestedAmount",
+        "offering.offeringDelivered",
+        "offering.lacksStudyDates",
+        "offering.lacksStudyBreaks",
+        "offering.lacksFixedCosts",
+        "offering.tuitionRemittanceRequested",
+        "offering.offeringIntensity",
+        "offering.yearOfStudy",
+        "offering.showYearOfStudy",
+        "offering.hasOfferingWILComponent",
+        "offering.offeringWILType",
+        "offering.studyBreaks",
+        "offering.offeringDeclaration",
+        "offering.offeringType",
+        "offering.assessedDate",
+        "offering.submittedDate",
+        "offering.offeringStatus",
+        "assessedBy.firstName",
+        "assessedBy.lastName",
+        "institutionLocation.name",
+        "institution.legalOperatingName",
+        "institution.operatingName",
+      ])
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin("offering.institutionLocation", "institutionLocation")
+      .innerJoin("institutionLocation.institution", "institution")
+      .leftJoin("offering.assessedBy", "assessedBy")
+      .where("offering.id= :offeringId", {
+        offeringId,
+      })
+      .getOne();
   }
 }

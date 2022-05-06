@@ -9,8 +9,19 @@ import {
   SupportingUserAPIOutDTO,
 } from "./models/assessment.system-access.dto";
 import { DynamicAPIOutDTO } from "../models/common.dto";
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from "@nestjs/common";
+import { StudentAssessmentService } from "../../services";
+import { AssessmentNOAAPIOutDTO } from "./models/assessment.dto";
+import { dateString, getUserFullName } from "../../utilities";
 
+@Injectable()
 export class AssessmentControllerService {
+  constructor(private readonly assessmentService: StudentAssessmentService) {}
+
   /**
    * Converts an array with supporting users to an object where every user
    * will be a property. This will keep the supporting users dynamic (it can be
@@ -78,5 +89,57 @@ export class AssessmentControllerService {
       };
     });
     return flattenedAppealRequests;
+  }
+
+  /**
+   * Get the notice of assessment data from the assessment.
+   * @param assessmentId assessment id to be retrieved.
+   * @param userId optional user for authorization when needed.
+   * @returns notice of assessment data.
+   */
+  async getAssessmentNOA(
+    assessmentId: number,
+    userId?: number,
+  ): Promise<AssessmentNOAAPIOutDTO> {
+    const assessment = await this.assessmentService.getAssessmentForNOA(
+      assessmentId,
+      userId,
+    );
+
+    if (!assessment) {
+      throw new NotFoundException("Assessment was not found.");
+    }
+
+    if (!assessment.assessmentData) {
+      throw new UnprocessableEntityException(
+        "Notice of assessment data is not present.",
+      );
+    }
+
+    //Disbursement data is populated with dynamic key in a defined pattern to be compatible with form table.
+    const disbursementDetails = {};
+    assessment.disbursementSchedules.forEach((schedule, index) => {
+      const disbursementIdentifier = `disbursement${index + 1}`;
+      disbursementDetails[`${disbursementIdentifier}Date`] = dateString(
+        schedule.disbursementDate,
+      );
+      schedule.disbursementValues.forEach((disbursement) => {
+        const disbursementValueKey = `${disbursementIdentifier}${disbursement.valueCode.toLowerCase()}`;
+        disbursementDetails[disbursementValueKey] = disbursement.valueAmount;
+      });
+    });
+
+    return {
+      assessment: assessment.assessmentData,
+      applicationNumber: assessment.application.applicationNumber,
+      fullName: getUserFullName(assessment.application.student.user),
+      programName: assessment.offering.educationProgram.name,
+      locationName: assessment.offering.institutionLocation.name,
+      offeringIntensity: assessment.offering.offeringIntensity,
+      offeringStudyStartDate: dateString(assessment.offering.studyStartDate),
+      offeringStudyEndDate: dateString(assessment.offering.studyEndDate),
+      msfaaNumber: assessment.application.msfaaNumber.msfaaNumber,
+      disbursement: disbursementDetails,
+    };
   }
 }

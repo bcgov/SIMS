@@ -1,7 +1,13 @@
 <template>
-  <h5 class="text-muted">
-    <span>Edit Program Information Request</span>
-  </h5>
+  <div class="p-m-4">
+    <header-navigator
+      title="Program info requests"
+      :routeLocation="{
+        name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+      }"
+      subTitle="View Application"
+    />
+  </div>
   <v-sheet elevation="1" class="mx-auto">
     <v-container>
       <formio
@@ -26,6 +32,7 @@ import {
   useFormioDropdownLoader,
   useFormatters,
   useToastMessage,
+  useProgramInfoRequest,
 } from "@/composables";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
@@ -38,9 +45,10 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   OFFERING_INTENSITY_MISMATCH,
 } from "@/constants";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { formio },
+  components: { formio, HeaderNavigator },
   props: {
     locationId: {
       type: Number,
@@ -59,6 +67,7 @@ export default {
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
     const programRequestData = ref();
+    const { mapProgramInfoChipStatus } = useProgramInfoRequest();
 
     // Components names on Form.IO definition that will be manipulated.
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
@@ -78,6 +87,7 @@ export default {
           props.locationId,
           OFFERINGS_DROPDOWN_KEY,
           programRequestData.value.programYearId,
+          programRequestData.value.offeringIntensitySelectedByStudent,
           true,
         );
       }
@@ -102,6 +112,9 @@ export default {
         denyProgramInformationRequest: !!(
           programRequestData.value.pirDenyReasonId ||
           programRequestData.value.otherReasonDesc
+        ),
+        programInfoRequestStatus: mapProgramInfoChipStatus(
+          programRequestData.value.pirStatus,
         ),
       };
 
@@ -135,14 +148,24 @@ export default {
       await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReasonId");
     };
 
-    const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
-      if (FormIOCustomEventTypes.RouteToCreateProgram === event.type) {
-        router.push({
-          name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-          params: {
-            locationId: props.locationId,
-          },
-        });
+    const customEventCallback = async (
+      _form: any,
+      event: FormIOCustomEvent,
+    ) => {
+      switch (event.type) {
+        case FormIOCustomEventTypes.RouteToCreateProgram:
+          router.push({
+            name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
+            params: {
+              locationId: props.locationId,
+            },
+          });
+          break;
+        case FormIOCustomEventTypes.RouteToProgramInformationRequestSummaryPage:
+          router.push({
+            name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+          });
+          break;
       }
     };
 
@@ -198,6 +221,7 @@ export default {
       formChanged,
       submitted,
       customEventCallback,
+      InstitutionRoutesConst,
     };
   },
 };

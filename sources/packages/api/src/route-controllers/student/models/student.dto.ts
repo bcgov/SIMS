@@ -14,6 +14,7 @@ export class ContactInformationAPIOutDTO {
   address: AddressAPIOutDTO;
   phone: string;
 }
+
 export class GetStudentContactDto {
   phone: string;
   addressLine1: string;
