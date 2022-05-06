@@ -78,6 +78,12 @@ export class InstitutionLocationControllerService {
       : DesignationStatus.NotDesignated;
   }
 
+  /**
+   * Get the Institution Location details.
+   * @param institutionId
+   * @param locationId
+   * @returns location details as InstitutionLocationFormAPIOutDTO.
+   */
   async getInstitutionLocation(
     institutionId: number,
     locationId: number,
@@ -100,6 +106,12 @@ export class InstitutionLocationControllerService {
     };
   }
 
+  /**
+   * Update the institution location details.
+   * @param locationId
+   * @param payload Updated information in the payload.
+   * @param institutionId
+   */
   async update(
     locationId: number,
     payload: InstitutionLocationFormAPIInDTO,
