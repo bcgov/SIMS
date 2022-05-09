@@ -1,5 +1,5 @@
 import { AddressInfo } from "./Common";
 
-export interface InstitutionLocationInfo {
+export interface InstitutionLocationData {
   address: AddressInfo;
 }

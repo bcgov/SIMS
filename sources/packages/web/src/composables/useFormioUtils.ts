@@ -6,7 +6,6 @@ import { Utils } from "formiojs";
 export function useFormioUtils() {
   // Get a component in a form definition once it is loaded.
   const getComponent = (form: any, componentKey: string): any => {
-    console.log(form.components, componentKey, "++++++++++++++++");
     return Utils.getComponent(form.components, componentKey, true);
   };
 
