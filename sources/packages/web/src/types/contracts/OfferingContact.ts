@@ -39,6 +39,8 @@ export interface OfferingDTO {
   studyBreaks?: StudyBreak[];
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
+  assessedBy?: string;
+  assessedDate?: Date;
 }
 
 /**

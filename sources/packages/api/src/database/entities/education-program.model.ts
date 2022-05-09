@@ -315,7 +315,7 @@ export class EducationProgram extends RecordDataModel {
    * Education program submitted date.
    */
   @Column({
-    name: "submitted_on",
+    name: "submitted_date",
     type: "timestamptz",
     nullable: false,
   })
