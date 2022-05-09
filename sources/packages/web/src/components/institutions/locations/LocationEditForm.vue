@@ -21,7 +21,7 @@ export default {
     },
   },
   emits: ["updateInstitutionLocation"],
-  setup(props: any, context: any) {
+  setup(context: any) {
     const updateInstitutionLocation = async (
       data: InstitutionLocationFormAPIOutDTO,
     ) => {
