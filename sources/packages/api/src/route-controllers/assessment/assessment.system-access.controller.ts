@@ -104,7 +104,7 @@ export class AssessmentSystemAccessController extends BaseController {
       },
       location: {
         institutionLocationProvince:
-          application.location?.data.address.province,
+          application.location?.data.address.provinceState,
       },
       student: {
         studentPDStatus: application.student.studentPDVerified,

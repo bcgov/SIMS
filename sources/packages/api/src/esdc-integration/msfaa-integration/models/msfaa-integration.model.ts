@@ -21,7 +21,7 @@ export interface MSFAARecord {
   addressLine1: string;
   addressLine2: string;
   city: string;
-  province: string;
+  provinceState?: string;
   postalCode: string;
   country: string;
   phone: string;

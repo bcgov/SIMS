@@ -4,15 +4,23 @@ import {
   IsNotEmpty,
   IsOptional,
 } from "class-validator";
-import { AddressDetailsAPIInDTO } from "../../../route-controllers/models/common.dto";
-import { StudentPDStatus, StudentContact } from "../../../types";
+import {
+  AddressAPIOutDTO,
+  AddressDetailsAPIInDTO,
+} from "../../../route-controllers/models/common.dto";
+import { StudentPDStatus } from "../../../types";
+
+export class ContactInformationAPIOutDTO {
+  address: AddressAPIOutDTO;
+  phone: string;
+}
 
 export class GetStudentContactDto {
   phone: string;
   addressLine1: string;
   addressLine2: string;
   city: string;
-  provinceState: string;
+  provinceState?: string;
   country: string;
   postalCode: string;
 }
@@ -69,18 +77,17 @@ export interface StudentRestrictionDTO {
 /**
  * DTO object for student details.
  */
-export interface StudentDetailDTO {
+export class StudentDetailAPIOutDTO {
   firstName: string;
   lastName: string;
   email: string;
   gender: string;
   dateOfBirth: Date;
-  contact: StudentContact;
+  contact: ContactInformationAPIOutDTO;
   pdVerified: boolean;
   pdStatus: StudentPDStatus;
   hasRestriction: boolean;
 }
-
 /**
  *  Student uploader interface
  */
@@ -120,4 +127,18 @@ export class AESTStudentFileDTO extends StudentUploadFileDTO {
 
 export class StudentFileMetadataDTO {
   applicationNumber?: string;
+}
+
+export class StudentInfo {
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: string;
+  dateOfBirth: Date;
+  contact: ContactInformationAPIOutDTO;
+  pdVerified: boolean;
+  validSin: boolean;
+  pdSentDate?: Date;
+  pdUpdatedDate?: Date;
+  pdStatus: StudentPDStatus;
 }

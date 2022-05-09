@@ -80,7 +80,7 @@
                   <span>
                     <span>{{ location?.data?.address?.addressLine1 }}, </span>
                     <span>{{ location?.data?.address?.city }}, </span>
-                    <span>{{ location?.data?.address?.province }}</span>
+                    <span>{{ location?.data?.address?.provinceState }}</span>
                     <br />
                   </span>
                 </v-col>

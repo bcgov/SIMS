@@ -97,15 +97,14 @@ describe("Test ATBC Controller", () => {
     fakestudent.birthDate = faker.date.past(18);
     fakestudent.gender = "F";
     fakestudent.contactInfo = {
-      addresses: [
-        {
-          addressLine1: faker.address.streetAddress(),
-          city: faker.address.city(),
-          country: "Canada",
-          province: "ON",
-          postalCode: faker.address.zipCode(),
-        },
-      ],
+      address: {
+        addressLine1: faker.address.streetAddress(),
+        city: faker.address.city(),
+        country: "Canada",
+        provinceState: "ON",
+        postalCode: faker.address.zipCode(),
+      },
+
       phone: faker.phone.phoneNumber(),
     };
     const simsUser = new User();

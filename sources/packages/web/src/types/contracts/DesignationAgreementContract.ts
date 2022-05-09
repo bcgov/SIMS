@@ -1,3 +1,5 @@
+import { InstitutionLocationData } from "./institutionLocationContract";
+
 export interface SubmitDesignationAgreementDto {
   dynamicData: any;
   locations: SubmittedLocationsDto[];
@@ -25,7 +27,7 @@ export interface LocationsDesignationsDto {
   designationLocationId?: number;
   locationId: number;
   locationName: string;
-  locationData: any;
+  locationData: InstitutionLocationData;
   requested: boolean;
   approved: boolean;
 }

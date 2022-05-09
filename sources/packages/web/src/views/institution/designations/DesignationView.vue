@@ -66,10 +66,9 @@ export default {
           locationName: location.locationName,
           requestForDesignation: location.requested,
           approvedForDesignation: location.approved,
-          locationAddress: formatter.getFormattedAddress({
-            ...location.locationData.address,
-            provinceState: location.locationData.address.province,
-          }),
+          locationAddress: formatter.getFormattedAddress(
+            location.locationData.address,
+          ),
         }),
       );
       modelLoaded.value = true;
