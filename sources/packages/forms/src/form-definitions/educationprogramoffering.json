@@ -103,7 +103,7 @@
         }
       ],
       "content": "<span class=\"mb-2\">Study period</span> <span class=\"fa fa-circle formio-status-chip ml-1 mt-1 {{ data.offeringChipStatus }}\">{{ data.offeringStatus }}</span>",
-      "refreshOnChange": false,
+      "refreshOnChange": true,
       "customClass": "category-header-large primary-color",
       "hidden": false,
       "modalEdit": false,
@@ -170,7 +170,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "exvkfc"
+      "id": "egng28i"
     },
     {
       "label": "HTML",
@@ -2691,7 +2691,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "datepickerMode": "day",
-              "id": "ejcc00c000000000000000000000000000"
+              "id": "ejcc00c000000000000000000000000000000"
             },
             {
               "label": "Break end date",
@@ -2824,7 +2824,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "datepickerMode": "day",
-              "id": "eq44cvy00000000000000000000000000"
+              "id": "eq44cvy00000000000000000000000000000"
             }
           ],
           "placeholder": "",
