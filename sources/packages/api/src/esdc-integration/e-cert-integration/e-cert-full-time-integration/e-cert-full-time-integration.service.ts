@@ -134,10 +134,11 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       record.maritalStatus = getMaritalStatusCode(ecertRecord.maritalStatus);
       record.studentNumber = ecertRecord.studentNumber;
       record.totalGrantAmount = totalGrantAmount;
+      // List of grants to be sent ignoring grants with 0 dollar amount.
       record.grantAwards = getDisbursementValuesByType(roundedAwards, [
         DisbursementValueType.CanadaGrant,
         DisbursementValueType.BCTotalGrant,
-      ]);
+      ]).filter((grantAward) => +grantAward.valueAmount > 0);
 
       return record;
     });

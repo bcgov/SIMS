@@ -207,8 +207,9 @@ export class ECertFileHandler extends ESDCFileHandler {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const addressInfo = application.student.contactInfo.address;
+    const offering = application.currentAssessment.offering;
     const fieldOfStudy = getFieldOfStudyFromCIPCode(
-      application.currentAssessment.offering.educationProgram.cipCode,
+      offering.educationProgram.cipCode,
     );
     const awards = disbursement.disbursementValues.map(
       (disbursementValue) =>
@@ -227,17 +228,14 @@ export class ECertFileHandler extends ESDCFileHandler {
       disbursementDate: disbursement.disbursementDate,
       documentProducedDate: now,
       negotiatedExpiryDate: disbursement.negotiatedExpiryDate,
-      schoolAmount:
-        application.currentAssessment.offering.tuitionRemittanceRequestedAmount,
-      educationalStartDate:
-        application.currentAssessment.offering.studyStartDate,
-      educationalEndDate: application.currentAssessment.offering.studyEndDate,
-      federalInstitutionCode: application.location.institutionCode,
+      schoolAmount: offering.tuitionRemittanceRequestedAmount,
+      educationalStartDate: offering.studyStartDate,
+      educationalEndDate: offering.studyEndDate,
+      federalInstitutionCode: offering.institutionLocation.institutionCode,
       weeksOfStudy: application.currentAssessment.assessmentData.weeks,
       fieldOfStudy,
-      yearOfStudy: application.currentAssessment.offering.yearOfStudy,
-      completionYears:
-        application.currentAssessment.offering.educationProgram.completionYears,
+      yearOfStudy: offering.yearOfStudy,
+      completionYears: offering.educationProgram.completionYears,
       enrollmentConfirmationDate: disbursement.coeUpdatedAt,
       dateOfBirth: application.student.birthDate,
       lastName: application.student.user.lastName,
