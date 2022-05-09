@@ -83,7 +83,7 @@ export class MSFAAIntegrationService {
       msfaaDetail.addressLine1 = msfaaRecord.addressLine1;
       msfaaDetail.addressLine2 = msfaaRecord.addressLine2 ?? "";
       msfaaDetail.city = msfaaRecord.city;
-      msfaaDetail.province = msfaaRecord.province;
+      msfaaDetail.provinceState = msfaaRecord.provinceState;
       msfaaDetail.postalCode = msfaaRecord.postalCode;
       msfaaDetail.country = msfaaRecord.country;
       msfaaDetail.phone = msfaaRecord.phone;

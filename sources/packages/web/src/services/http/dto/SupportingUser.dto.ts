@@ -1,4 +1,5 @@
-import { ContactInformation, SupportingUserType } from "@/types";
+import { SupportingUserType } from "@/types";
+import { ContactInformationAPIOutDTO } from "./Address.dto";
 
 /**
  * Information used to uniquely identify a Student Application.
@@ -17,12 +18,12 @@ export interface ApplicationIdentifierApiInDTO {
 export interface UpdateSupportingUserApiInDTO
   extends ApplicationIdentifierApiInDTO {
   addressLine1: string;
-  addressLine2: string;
+  addressLine2?: string;
   city: string;
   country: string;
   phone: string;
   postalCode: string;
-  provinceState: string;
+  provinceState?: string;
   sin: string;
   supportingData: any;
 }
@@ -40,7 +41,7 @@ export interface ApplicationSupportingUsersApiOutDTO {
 export interface SupportingUserFormDataApiOutDTO {
   formName: string;
   supportingData: any;
-  contactInfo: ContactInformation;
+  contactInfo: ContactInformationAPIOutDTO;
   sin: string;
   birthDate: Date;
   gender: string;

@@ -1,14 +1,10 @@
+import { AddressInfo } from "../../database/entities";
+
 /**
  * Information that must be provided
  * while creating a new student.
  */
-export interface CreateStudentInfo {
+export interface StudentInfo extends AddressInfo {
   phone: string;
   sinNumber: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
 }

@@ -128,16 +128,17 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       record.addressLine1 = ecertRecord.addressLine1;
       record.addressLine2 = ecertRecord.addressLine2;
       record.city = ecertRecord.city;
-      record.countryName = ecertRecord.country;
+      record.country = ecertRecord.country;
       record.emailAddress = ecertRecord.email;
       record.gender = getGenderCode(ecertRecord.gender);
       record.maritalStatus = getMaritalStatusCode(ecertRecord.maritalStatus);
       record.studentNumber = ecertRecord.studentNumber;
       record.totalGrantAmount = totalGrantAmount;
+      // List of grants to be sent ignoring grants with 0 dollar amount.
       record.grantAwards = getDisbursementValuesByType(roundedAwards, [
         DisbursementValueType.CanadaGrant,
         DisbursementValueType.BCTotalGrant,
-      ]);
+      ]).filter((grantAward) => +grantAward.valueAmount > 0);
 
       return record;
     });

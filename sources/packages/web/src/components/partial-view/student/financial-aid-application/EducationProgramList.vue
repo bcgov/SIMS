@@ -18,7 +18,7 @@
 import { SetupContext, ref, onUpdated } from "vue";
 import { InstitutionService } from "../../../../services/InstitutionService";
 import { EducationProgram } from "../../../../types/contracts/EducationContract";
-import { Institute } from "../../../../types/contracts/InstituteContract";
+import { Institute } from "../../../../types/contracts/InstitutionContract";
 export default {
   emits: ["update:modelValue", "change"],
   props: {

@@ -107,7 +107,8 @@ export default {
         await getStudentInfo();
         const data: StudentFormData = {
           ...studentAllInfo.value,
-          ...studentAllInfo.value.contact,
+          ...studentAllInfo.value.contact.address,
+          phone: studentAllInfo.value.contact.phone,
           givenNames: studentAllInfo.value.firstName,
           dateOfBirth: dateOnlyLongString(studentAllInfo.value.dateOfBirth),
           mode: FormModes.edit,

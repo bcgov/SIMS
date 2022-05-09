@@ -43,7 +43,7 @@ export class InstitutionLocationControllerService {
             address: {
               addressLine1: el.locationAddress?.address?.addressLine1,
               addressLine2: el.locationAddress?.address?.addressLine2,
-              province: el.locationAddress?.address?.province,
+              provinceState: el.locationAddress?.address?.provinceState,
               country: el.locationAddress?.address?.country,
               city: el.locationAddress?.address?.city,
               postalCode: el.locationAddress?.address?.postalCode,
@@ -53,7 +53,7 @@ export class InstitutionLocationControllerService {
             primaryContactFirstName: el.primaryContact?.firstName,
             primaryContactLastName: el.primaryContact?.lastName,
             primaryContactEmail: el.primaryContact?.email,
-            primaryContactPhone: el.primaryContact?.phoneNumber,
+            primaryContactPhone: el.primaryContact?.phone,
           },
           institutionCode: el.institutionCode,
         };

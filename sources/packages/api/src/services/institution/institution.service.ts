@@ -22,7 +22,11 @@ import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
 import { AccountDetails } from "../bceid/account-details.model";
-import { sortUsersColumnMap, PaginationOptions } from "../../utilities";
+import {
+  sortUsersColumnMap,
+  PaginationOptions,
+  transformAddressDetails,
+} from "../../utilities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import {
   UpdateInstitution,
@@ -182,21 +186,15 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
     //Institution Primary Contact Information
     institution.institutionPrimaryContact = {
-      primaryContactFirstName: institutionModel.primaryContactFirstName,
-      primaryContactLastName: institutionModel.primaryContactLastName,
-      primaryContactEmail: institutionModel.primaryContactEmail,
-      primaryContactPhone: institutionModel.primaryContactPhone,
+      firstName: institutionModel.primaryContactFirstName,
+      lastName: institutionModel.primaryContactLastName,
+      email: institutionModel.primaryContactEmail,
+      phone: institutionModel.primaryContactPhone,
     };
 
     //Institution Address
     institution.institutionAddress = {
-      addressLine1: institutionModel.addressLine1,
-      addressLine2: institutionModel.addressLine2,
-      provinceState: institutionModel.provinceState,
-      country: institutionModel.country,
-      city: institutionModel.city,
-      postalCode: institutionModel.postalCode,
-      selectedCountry: institutionModel.selectedCountry,
+      mailingAddress: transformAddressDetails(institutionModel),
     };
 
     await this.createAssociation({
@@ -501,7 +499,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   /**
    * Get the basic info of the institution by ID.
-   * @param id Institution id.
+   * @param institutionId Institution id.
    * @returns Institution retrieved, if found, otherwise returns null.
    */
   async getBasicInstitutionDetailById(
@@ -617,13 +615,15 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     } as InstitutionType;
 
     institution.institutionPrimaryContact = {
-      primaryContactFirstName: updateInstitution.primaryContactFirstName,
-      primaryContactLastName: updateInstitution.primaryContactLastName,
-      primaryContactEmail: updateInstitution.primaryContactEmail,
-      primaryContactPhone: updateInstitution.primaryContactPhone,
+      firstName: updateInstitution.primaryContactFirstName,
+      lastName: updateInstitution.primaryContactLastName,
+      email: updateInstitution.primaryContactEmail,
+      phone: updateInstitution.primaryContactPhone,
     };
 
-    institution.institutionAddress = updateInstitution.mailingAddress;
+    institution.institutionAddress = {
+      mailingAddress: transformAddressDetails(updateInstitution.mailingAddress),
+    };
     return this.repo.save(institution);
   }
 }

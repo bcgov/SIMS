@@ -11,15 +11,13 @@ export function createFakeStudent(user?: User): Student {
   student.birthDate = faker.date.past(18);
   student.gender = "X";
   student.contactInfo = {
-    addresses: [
-      {
-        addressLine1: faker.address.streetAddress(),
-        city: faker.address.city(),
-        country: "CAN",
-        province: "BC",
-        postalCode: faker.address.zipCode(),
-      },
-    ],
+    address: {
+      addressLine1: faker.address.streetAddress(),
+      city: faker.address.city(),
+      country: "CAN",
+      provinceState: "BC",
+      postalCode: faker.address.zipCode(),
+    },
     phone: faker.phone.phoneNumber(),
   };
   return student;

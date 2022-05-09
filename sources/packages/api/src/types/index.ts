@@ -1,7 +1,4 @@
 export * from "./userInfo";
-export * from "./contactInfo";
-export * from "./institutionPrimaryContact";
-export * from "./institutionAddress";
 export * from "./config";
 export * from "./serviceAccount";
 export * from "./form";
@@ -11,5 +8,4 @@ export * from "./optionItem";
 export * from "./atbc";
 export * from "./apiProcessError";
 export * from "./pdStatus";
-export * from "./studentContact";
 export * from "./clientTypeBaseRoute";

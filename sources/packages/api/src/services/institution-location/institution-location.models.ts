@@ -1,14 +1,11 @@
-import {
-  InstitutionLocationInfo,
-  PrimaryContact,
-} from "../../database/entities";
-import { AddressDetailsModel } from "../address/address.models";
+import { PrimaryContact } from "src/database/entities/primary-contact.type";
+import { AddressInfo, InstitutionLocationData } from "../../database/entities";
 
 export interface LocationWithDesignationStatus {
   id: number;
   locationName: string;
   isDesignated: boolean;
-  locationAddress?: InstitutionLocationInfo;
+  locationAddress?: InstitutionLocationData;
   institutionCode?: string;
   primaryContact?: PrimaryContact;
 }
@@ -16,7 +13,7 @@ export interface LocationWithDesignationStatus {
 /**
  * Service model for institution location.
  */
-export interface InstitutionLocationModel extends AddressDetailsModel {
+export interface InstitutionLocationModel extends AddressInfo {
   locationName: string;
   institutionCode: string;
   primaryContactFirstName: string;

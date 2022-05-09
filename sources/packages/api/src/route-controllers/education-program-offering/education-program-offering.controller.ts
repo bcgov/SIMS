@@ -28,7 +28,6 @@ import {
   EducationProgramOfferingService,
   FormService,
   EducationProgramService,
-  ApplicationService,
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -54,7 +53,6 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 @ApiTags("institution")
 export class EducationProgramOfferingController extends BaseController {
   constructor(
-    private readonly applicationService: ApplicationService,
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
     private readonly programService: EducationProgramService,
@@ -161,11 +159,7 @@ export class EducationProgramOfferingController extends BaseController {
         "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
-    return transformToProgramOfferingDto({
-      ...offering,
-      locationName: offering.institutionLocation.name,
-      institutionName: offering.institutionLocation.institution.operatingName,
-    });
+    return transformToProgramOfferingDto(offering);
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -404,10 +398,6 @@ export class EducationProgramOfferingController extends BaseController {
         "offering not found because the id does not exist.",
       );
     }
-    return transformToProgramOfferingDto({
-      ...offering,
-      locationName: offering.institutionLocation.name,
-      institutionName: offering.institutionLocation.institution.operatingName,
-    });
+    return transformToProgramOfferingDto(offering);
   }
 }

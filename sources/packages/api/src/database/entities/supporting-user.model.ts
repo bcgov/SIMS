@@ -8,9 +8,8 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { ContactInfo } from "../../types";
 import { User } from "./user.model";
-import { Application, SupportingUserType } from ".";
+import { Application, ContactInfo, SupportingUserType } from ".";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**

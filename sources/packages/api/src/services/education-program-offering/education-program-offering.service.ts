@@ -5,6 +5,11 @@ import {
   InstitutionLocation,
   OfferingTypes,
   ProgramStatus,
+  OfferingStatus,
+  Note,
+  NoteType,
+  User,
+  Institution,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
@@ -23,7 +28,7 @@ import {
 } from "../../utilities";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
-  constructor(connection: Connection) {
+  constructor(private readonly connection: Connection) {
     super(connection.getRepository(EducationProgramOffering));
   }
 
@@ -381,6 +386,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "assessedBy.firstName",
         "assessedBy.lastName",
         "institutionLocation.name",
+        "institution.id",
         "institution.legalOperatingName",
         "institution.operatingName",
       ])
@@ -392,5 +398,55 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         offeringId,
       })
       .getOne();
+  }
+
+  /**
+   * Assess offering to either approve or decline it.
+   * @param offeringId
+   * @param institutionId
+   * @param userId
+   * @param assessmentNotes
+   * @param offeringStatus
+   */
+  async assessOffering(
+    offeringId: number,
+    institutionId: number,
+    userId: number,
+    assessmentNotes: string,
+    offeringStatus: OfferingStatus,
+  ): Promise<void> {
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      // create the note for assessment.
+      const user = {
+        id: userId,
+      } as User;
+      const note = new Note();
+      note.description = assessmentNotes;
+      note.noteType = NoteType.Program;
+      note.creator = user;
+      const noteEntity = await transactionalEntityManager
+        .getRepository(Note)
+        .save(note);
+
+      // update offering.
+      const offering = new EducationProgramOffering();
+      offering.id = offeringId;
+      offering.offeringStatus = offeringStatus;
+      offering.assessedDate = new Date();
+      offering.assessedBy = user;
+      offering.offeringNote = noteEntity;
+
+      await transactionalEntityManager
+        .getRepository(EducationProgramOffering)
+        .save(offering);
+
+      // update institution note.
+      await transactionalEntityManager
+        .getRepository(Institution)
+        .createQueryBuilder()
+        .relation(Institution, "notes")
+        .of({ id: institutionId } as Institution)
+        .add(noteEntity);
+    });
   }
 }

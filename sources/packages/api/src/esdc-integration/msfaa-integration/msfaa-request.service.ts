@@ -134,7 +134,7 @@ export class MSFAARequestService extends ESDCFileHandler {
     pendingMSFAARecords: MSFAANumber,
     offeringIntensity: string,
   ): MSFAARecord {
-    const addressInfo = pendingMSFAARecords.student.contactInfo.addresses[0];
+    const addressInfo = pendingMSFAARecords.student.contactInfo.address;
     return {
       id: pendingMSFAARecords.id,
       msfaaNumber: pendingMSFAARecords.msfaaNumber,
@@ -151,7 +151,7 @@ export class MSFAARequestService extends ESDCFileHandler {
       addressLine1: addressInfo.addressLine1,
       addressLine2: addressInfo.addressLine2,
       city: addressInfo.city,
-      province: addressInfo.province,
+      provinceState: addressInfo.provinceState,
       postalCode: addressInfo.postalCode,
       country: addressInfo.country,
       phone: pendingMSFAARecords.student.contactInfo.phone,

@@ -28,6 +28,7 @@ export default {
       const studentDetail = await StudentService.shared.getStudentDetail(
         props.studentId,
       );
+      const address = studentDetail.contact.address;
       initialData.value = {
         firstName: studentDetail.firstName,
         lastName: studentDetail.lastName,
@@ -35,11 +36,11 @@ export default {
         email: studentDetail.email,
         dateOfBirth: dateOnlyLongString(studentDetail.dateOfBirth),
         phone: studentDetail.contact.phone,
-        addressLine1: studentDetail.contact.addressLine1,
-        addressLine2: studentDetail.contact.addressLine2,
-        city: studentDetail.contact.city,
-        provinceState: studentDetail.contact.provinceState,
-        postalCode: studentDetail.contact.postalCode,
+        addressLine1: address.addressLine1,
+        addressLine2: address.addressLine2,
+        city: address.city,
+        provinceState: address.provinceState,
+        postalCode: address.postalCode,
         pdStatus: studentDetail.pdStatus ?? "None",
       };
     });

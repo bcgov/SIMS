@@ -15,19 +15,21 @@ export async function institutionFactory(
     name: "BC Private",
   } as InstitutionType;
   institution.institutionAddress = {
-    addressLine1: faker.address.streetAddress(),
-    city: "Victoria",
-    country: "Canada",
-    postalCode: "V8V1M9",
-    provinceState: "BC",
+    mailingAddress: {
+      addressLine1: faker.address.streetAddress(),
+      city: "Victoria",
+      country: "Canada",
+      postalCode: "V8V1M9",
+      provinceState: "BC",
+    },
   };
   institution.primaryEmail = faker.internet.email();
   institution.primaryPhone = faker.phone.phoneNumber();
   institution.institutionPrimaryContact = {
-    primaryContactEmail: faker.internet.email(),
-    primaryContactLastName: faker.name.lastName(),
-    primaryContactFirstName: faker.name.firstName(),
-    primaryContactPhone: faker.phone.phoneNumber(),
+    email: faker.internet.email(),
+    lastName: faker.name.lastName(),
+    firstName: faker.name.firstName(),
+    phone: faker.phone.phoneNumber(),
   };
   institution.regulatingBody = "ICBC";
   institution.users = incoming?.users;

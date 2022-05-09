@@ -1,8 +1,7 @@
 import { ClientIdType, DesignationAgreementStatus } from "@/types";
 import {
-  AddressDetailsFormAPIDTO,
   AddressAPIOutDTO,
-  AddressInfoAPIOutDTO,
+  AddressDetailsFormAPIDTO,
 } from "@/services/http/dto";
 
 export interface InstitutionContactAPIOutDTO {
@@ -63,7 +62,7 @@ export interface InstitutionUserAuthTypeAPIOutDTO {
 }
 
 export interface InstitutionLocationAuthDataAPIOutDTO {
-  address: AddressInfoAPIOutDTO;
+  address: AddressAPIOutDTO;
 }
 
 export interface InstitutionAuthLocationAPIOutDTO {
@@ -121,7 +120,7 @@ export interface InstitutionFormAPIInDTO {
   addressLine1: string;
   addressLine2?: string;
   city: string;
-  provinceState: string;
+  provinceState?: string;
   country: string;
   postalCode: string;
   institutionType: number;
@@ -166,7 +165,7 @@ export interface InstitutionUserDetailAPIOutDTO {
 export interface InstitutionUserLocationsAPIOutDTO {
   id: number;
   name: string;
-  address: AddressInfoAPIOutDTO;
+  address: AddressAPIOutDTO;
 }
 
 export interface UserRoleOptionAPIOutDTO {

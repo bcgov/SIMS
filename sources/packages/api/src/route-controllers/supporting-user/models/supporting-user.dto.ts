@@ -1,6 +1,5 @@
 import { IsNotEmpty, IsNotEmptyObject, IsOptional } from "class-validator";
-import { SupportingUserType } from "../../../database/entities";
-import { ContactInfo } from "../../../types";
+import { ContactInfo, SupportingUserType } from "../../../database/entities";
 
 /**
  * Information used to uniquely identify a Student Application.
@@ -36,8 +35,8 @@ export class UpdateSupportingUserApiInDTO {
   phone: string;
   @IsNotEmpty()
   postalCode: string;
-  @IsNotEmpty()
-  provinceState: string;
+  @IsOptional()
+  provinceState?: string;
   @IsNotEmpty()
   sin: string;
   @IsNotEmpty()

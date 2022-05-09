@@ -1,13 +1,14 @@
 export interface AddressInfo {
   addressLine1: string;
   addressLine2?: string;
-  province?: string;
+  provinceState?: string;
   country: string;
   city: string;
   postalCode: string;
   selectedCountry?: string;
 }
+
 export interface ContactInfo {
-  addresses: Array<AddressInfo>;
+  address: AddressInfo;
   phone: string;
 }
