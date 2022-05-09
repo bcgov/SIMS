@@ -258,7 +258,7 @@ export class EducationProgramOffering extends RecordDataModel {
   /**
    * Note added by ministry user to either approve or decline an offering.
    */
-  @OneToOne(() => Note, { eager: false, cascade: true, nullable: true })
+  @OneToOne(() => Note, { eager: false, nullable: true })
   @JoinColumn({
     name: "offering_note",
     referencedColumnName: ColumnNames.ID,

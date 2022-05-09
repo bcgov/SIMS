@@ -8,7 +8,7 @@
       <div class="mt-2">
         <formio
           formName="approvedeclineoffering"
-          :data="{ offeringStatus: offeringStatus }"
+          :data="{ offeringStatus }"
           @loaded="formLoaded"
           @submitted="submitOfferingAssessment"
         ></formio>
@@ -60,14 +60,12 @@ export default {
       formData = form;
     };
 
-    const submitOfferingAssessment = async (
-      data: OfferingAssessmentAPIInDTO,
-    ) => {
+    const submitOfferingAssessment = (data: OfferingAssessmentAPIInDTO) => {
       resolvePromise(data);
     };
 
-    /** method to be called from submit button in vue modal */
-    const submitForm = async () => {
+    // method to be called from submit button in vue modal
+    const submitForm = () => {
       return formData.submit();
     };
 

@@ -16,37 +16,6 @@ export class EducationProgramOfferingModel {
   offeringStatus: OfferingStatus;
 }
 
-export interface ProgramOfferingModel {
-  id: number;
-  name: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  tuitionRemittanceRequestedAmount: number;
-  offeringDelivered: string;
-  lacksStudyDates: boolean;
-  lacksStudyBreaks: boolean;
-  lacksFixedCosts: boolean;
-  tuitionRemittanceRequested: string;
-  offeringIntensity: OfferingIntensity;
-  yearOfStudy: number;
-  showYearOfStudy?: boolean;
-  hasOfferingWILComponent: string;
-  offeringWILType?: string;
-  studyBreaks?: StudyBreak[];
-  offeringDeclaration: boolean;
-  submittedDate: Date;
-  offeringStatus: OfferingStatus;
-  offeringType: OfferingTypes;
-  locationName: string;
-  institutionName: string;
-  assessedBy?: string;
-  assessedDate?: string;
-}
-
 export interface SaveOfferingModel {
   offeringName: string;
   studyStartDate: Date;

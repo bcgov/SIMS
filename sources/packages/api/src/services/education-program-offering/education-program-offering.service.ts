@@ -400,6 +400,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .getOne();
   }
 
+  /**
+   * Assess offering to either approve or decline it.
+   * @param offeringId
+   * @param institutionId
+   * @param userId
+   * @param assessmentNotes
+   * @param offeringStatus
+   */
   async assessOffering(
     offeringId: number,
     institutionId: number,
@@ -420,7 +428,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         .getRepository(Note)
         .save(note);
 
-      // update program
+      // update offering.
       const offering = new EducationProgramOffering();
       offering.id = offeringId;
       offering.offeringStatus = offeringStatus;
@@ -432,7 +440,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         .getRepository(EducationProgramOffering)
         .save(offering);
 
-      // update institution note
+      // update institution note.
       await transactionalEntityManager
         .getRepository(Institution)
         .createQueryBuilder()

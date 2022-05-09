@@ -118,10 +118,7 @@ export const transformToProgramOfferingDto = (
     offeringType: offering.offeringType,
     locationName: offering.institutionLocation.name,
     institutionName: offering.institutionLocation.institution.operatingName,
-    assessedBy: getUserFullName({
-      firstName: offering.assessedBy?.firstName,
-      lastName: offering.assessedBy?.lastName,
-    }),
+    assessedBy: getUserFullName(offering.assessedBy),
     assessedDate: offering.assessedDate,
   };
 };
