@@ -28,6 +28,7 @@
       :headerDetails="{
         ...initialData,
         status: initialData.offeringStatus,
+        institutionId: institutionId,
       }"
     />
     <assess-offering-modal
