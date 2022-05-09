@@ -1,9 +1,9 @@
 <template>
   <div class="ml-16">
     <header-navigator
-      title="Profile"
-      subTitle="Edit Profile"
-      :routeLocation="institutionProfileRoute"
+      title="All Locations"
+      :routeLocation="goBackRouteParams"
+      subTitle="Edit Locations"
     />
   </div>
   <full-page-container>
@@ -15,16 +15,15 @@
 </template>
 
 <script lang="ts">
-import { useRouter } from "vue-router";
-import { useStore } from "vuex";
+import { RouteLocationRaw, useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import {
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
 } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 
 export default {
@@ -41,7 +40,6 @@ export default {
   },
   setup(props: any) {
     // Hooks
-    const store = useStore();
     const initialData = ref({} as InstitutionLocationFormAPIOutDTO);
     const toast = useToast();
     const router = useRouter();
@@ -54,8 +52,7 @@ export default {
           data,
           props.institutionId,
         );
-        router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
-        store.dispatch("institution/getUserInstitutionLocationDetails");
+        router.push(goBackRouteParams.value);
         toast.add({
           severity: "success",
           summary: `Your location information for ${data.locationName} have been updated`,
@@ -78,9 +75,19 @@ export default {
           props.institutionId,
         );
     });
+    const goBackRouteParams = computed(
+      () =>
+        ({
+          name: AESTRoutesConst.INSTITUTION_LOCATIONS,
+          params: {
+            locationId: props.locationId,
+          },
+        } as RouteLocationRaw),
+    );
     return {
       initialData,
       updateInstitutionLocation,
+      goBackRouteParams,
     };
   },
 };

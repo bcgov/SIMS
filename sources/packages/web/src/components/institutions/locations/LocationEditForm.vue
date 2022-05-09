@@ -1,16 +1,15 @@
 <template>
-  <v-container>
-    <formio
-      formName="institutionlocation"
-      :data="locationData"
-      @submitted="updateInstitutionLocation"
-    ></formio>
-  </v-container>
+  <formio
+    formName="institutionlocation"
+    :data="locationData"
+    @submitted="updateInstitutionLocation"
+  ></formio>
 </template>
 
 <script lang="ts">
 import formio from "@/components/generic/formio.vue";
 import { InstitutionLocationFormAPIOutDTO } from "@/services/http/dto";
+import { SetupContext } from "vue";
 
 export default {
   components: { formio },
@@ -21,7 +20,7 @@ export default {
     },
   },
   emits: ["updateInstitutionLocation"],
-  setup(context: any) {
+  setup(_props: any, context: SetupContext) {
     const updateInstitutionLocation = async (
       data: InstitutionLocationFormAPIOutDTO,
     ) => {

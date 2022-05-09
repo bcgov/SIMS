@@ -1,9 +1,9 @@
 <template>
   <div class="ml-16">
     <header-navigator
-      title="Profile"
-      subTitle="Edit Profile"
-      :routeLocation="institutionProfileRoute"
+      title="Edit Locations"
+      :routeLocation="goBackRouteParams"
+      subTitle="All Locations"
     />
   </div>
   <full-page-container>
@@ -15,11 +15,11 @@
 </template>
 
 <script lang="ts">
-import { useRouter } from "vue-router";
+import { RouteLocationRaw, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import {
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
@@ -50,7 +50,7 @@ export default {
           props.locationId,
           data,
         );
-        router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
+        router.push(goBackRouteParams.value);
         store.dispatch("institution/getUserInstitutionLocationDetails");
         toast.add({
           severity: "success",
@@ -74,9 +74,19 @@ export default {
         );
       initialData.value.clientType = ClientIdType.Institution;
     });
+    const goBackRouteParams = computed(
+      () =>
+        ({
+          name: InstitutionRoutesConst.MANAGE_LOCATIONS,
+          params: {
+            locationId: props.locationId,
+          },
+        } as RouteLocationRaw),
+    );
     return {
       initialData,
       updateInstitutionLocation,
+      goBackRouteParams,
     };
   },
 };
