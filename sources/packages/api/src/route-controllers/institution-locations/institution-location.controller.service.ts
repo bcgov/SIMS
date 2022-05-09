@@ -7,8 +7,8 @@ import {
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
 } from "./models/institution-location.dto";
-import { transformAddressDetailsForForm2 } from "../../utilities";
 import { FormNames } from "../../services/form/constants";
+import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
 /**
  * Controller service for institution location.
@@ -101,8 +101,10 @@ export class InstitutionLocationControllerService {
       primaryContactFirstName: institutionLocation.primaryContact.firstName,
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,
-      primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
-      ...transformAddressDetailsForForm2(institutionLocation.data.address),
+      primaryContactPhone: institutionLocation.primaryContact.phone,
+      ...transformAddressDetailsForAddressBlockForm(
+        institutionLocation.data.address,
+      ),
     };
   }
 
