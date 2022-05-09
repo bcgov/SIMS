@@ -3,7 +3,7 @@ import {
   RelationshipStatus,
 } from "../../../database/entities";
 
-export const ECERT_SENT_TITLE = "ENTITLEMENT";
+export const ECERT_SENT_TITLE = "NEW ENTITLEMENT";
 /**
  * Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
  */
