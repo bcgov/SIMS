@@ -426,6 +426,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       offering.offeringStatus = offeringStatus;
       offering.assessedDate = new Date();
       offering.assessedBy = user;
+      offering.offeringNote = noteEntity;
 
       await transactionalEntityManager
         .getRepository(EducationProgramOffering)
