@@ -8,13 +8,11 @@
 </template>
 
 <script lang="ts">
-import formio from "@/components/generic/formio.vue";
 import { InstitutionDto } from "@/types";
 import { useFormioDropdownLoader } from "@/composables";
 import { SetupContext } from "vue";
 
 export default {
-  components: { formio },
   props: {
     profileData: {
       type: Object,

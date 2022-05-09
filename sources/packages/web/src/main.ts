@@ -42,6 +42,7 @@ import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import formio from "@/components/generic/formio.vue";
 
 import {
   faMapPin,
@@ -134,6 +135,7 @@ AppConfigService.shared.init().then(() => {
     .component("ContentGroup", ContentGroup)
     .component("FullPageContainer", FullPageContainer)
     .component("HeaderNavigator", HeaderNavigator)
+    .component("formio", formio)
     .directive("tooltip", Tooltip)
     .mount("#app");
 });
