@@ -25,15 +25,13 @@ describe("Test student model", () => {
     sub.birthDate = faker.date.past(18);
     sub.gender = "X";
     sub.contactInfo = {
-      addresses: [
-        {
-          addressLine1: faker.address.streetAddress(),
-          city: faker.address.city(),
-          country: "can",
-          province: "bc",
-          postalCode: faker.address.zipCode(),
-        },
-      ],
+      address: {
+        addressLine1: faker.address.streetAddress(),
+        city: faker.address.city(),
+        country: "can",
+        provinceState: "bc",
+        postalCode: faker.address.zipCode(),
+      },
       phone: faker.phone.phoneNumber(),
     };
     const user = new User();
@@ -55,8 +53,8 @@ describe("Test student model", () => {
     expect(result.user).toBeDefined();
     expect(result.user.id).toEqual(sub.user.id);
     expect(result.contactInfo).toBeDefined();
-    expect(result.contactInfo.addresses.length).toEqual(1);
-    expect(result.contactInfo.addresses[0].country).toEqual("can");
+    expect(result.contactInfo.address).toBeDefined();
+    expect(result.contactInfo.address.country).toEqual("can");
 
     // Remove
     controller.remove(sub);

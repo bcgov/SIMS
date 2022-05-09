@@ -13,19 +13,16 @@ export interface Address {
   addressLine2?: string;
   city: string;
   postalCode: string;
-  provinceState: string;
+  provinceState?: string;
   country: string;
 }
 
 export interface AddressInfo {
   addressLine1: string;
   addressLine2?: string;
-  province: string;
+  provinceState?: string;
   country: string;
   city: string;
   postalCode: string;
-}
-export interface ContactInformation {
-  addresses: Array<AddressInfo>;
-  phone: string;
+  selectedCountry?: string;
 }

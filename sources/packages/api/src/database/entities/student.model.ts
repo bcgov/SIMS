@@ -9,10 +9,9 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { ContactInfo } from "../../types";
 import { User } from "./user.model";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
-import { Note } from ".";
+import { ContactInfo, Note } from ".";
 import { SINValidation } from "./sin-validation.model";
 
 @Entity({ name: TableNames.Student })

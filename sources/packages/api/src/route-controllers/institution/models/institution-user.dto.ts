@@ -1,5 +1,4 @@
 import { Type } from "class-transformer";
-import { AddressInfoAPIOutDTO } from "../../models/common.dto";
 import {
   ArrayMinSize,
   IsArray,
@@ -9,6 +8,7 @@ import {
   IsOptional,
   ValidateNested,
 } from "class-validator";
+import { AddressAPIOutDTO } from "../../../route-controllers/models/common.dto";
 import { InstitutionUserType, InstitutionUserRole } from "../../../types";
 
 export class InstitutionUserAPIInDTO {
@@ -54,7 +54,7 @@ export class InstitutionUserAuthTypeAPIOutDTO {
 }
 
 export class InstitutionLocationAuthDataAPIOutDTO {
-  address: AddressInfoAPIOutDTO;
+  address: AddressAPIOutDTO;
 }
 
 export class InstitutionAuthLocationAPIOutDTO {
@@ -105,7 +105,7 @@ export class InstitutionUserDetailAPIOutDTO {
 export class InstitutionUserLocationsAPIOutDTO {
   id: number;
   name: string;
-  address: AddressInfoAPIOutDTO;
+  address: AddressAPIOutDTO;
 }
 
 /**

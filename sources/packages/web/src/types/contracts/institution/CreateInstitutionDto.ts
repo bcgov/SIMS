@@ -17,9 +17,9 @@ export interface InstitutionDto {
   primaryContactPhone: string;
   // Primary address
   addressLine1: string;
-  addressLine2: string;
+  addressLine2?: string;
   city: string;
-  provinceState: string;
+  provinceState?: string;
   country: string;
   postalCode: string;
   institutionType: number;
@@ -38,13 +38,4 @@ export interface InstitutionDetailDto {
   institution: UpdateInstitutionDto;
   account: BCeIDDetailsDto;
   isBCPrivate: boolean;
-}
-
-export interface InstitutionAddress {
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
 }

@@ -69,10 +69,9 @@ export default {
           ({
             locationId: location.id,
             locationName: location.name,
-            locationAddress: formatter.getFormattedAddress({
-              ...location.data.address,
-              provinceState: location.data.address.province,
-            }),
+            locationAddress: formatter.getFormattedAddress(
+              location.data.address,
+            ),
             requestForDesignation: false,
           } as DesignationLocationsListItem),
       );

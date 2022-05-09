@@ -1,14 +1,14 @@
 import { Allow, IsNotEmptyObject } from "class-validator";
-import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
+import { InstitutionLocationData } from "../../../database/entities/institution-location.model";
 import {
+  AddressAPIOutDTO,
   AddressDetailsAPIInDTO,
   AddressDetailsAPIOutDTO,
-  AddressInfoAPIOutDTO,
 } from "../../models/common.dto";
 
 export class GetInstitutionLocationDto {
   id: number;
-  data: InstitutionLocationInfo;
+  data: InstitutionLocationData;
   name: string;
 }
 
@@ -69,7 +69,7 @@ export class InstitutionLocationAPIOutDTO {
   id: number;
   name: string;
   data: {
-    address: AddressInfoAPIOutDTO;
+    address: AddressAPIOutDTO;
   };
   primaryContact: InstitutionPrimaryContactOutDTO;
   institutionCode: string;

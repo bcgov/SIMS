@@ -11,7 +11,6 @@ import {
 } from "../../database/entities";
 import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
-import { StudentContact } from "../../types/studentContact";
 import { IUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
@@ -21,7 +20,7 @@ import {
   removeWhiteSpaces,
   transformAddressDetails,
 } from "../../utilities";
-import { CreateStudentInfo } from "./student.service.models";
+import { StudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import * as dayjs from "dayjs";
 
@@ -66,7 +65,7 @@ export class StudentService extends RecordDataModelService<Student> {
    */
   async createStudent(
     userInfo: UserInfo,
-    otherInfo: CreateStudentInfo,
+    otherInfo: StudentInfo,
   ): Promise<Student> {
     let user: User;
     if (userInfo.userId) {
@@ -87,7 +86,7 @@ export class StudentService extends RecordDataModelService<Student> {
     student.gender = userInfo.gender;
     student.sin = removeWhiteSpaces(otherInfo.sinNumber);
     student.contactInfo = {
-      addresses: [transformAddressDetails(otherInfo)],
+      address: transformAddressDetails(otherInfo),
       phone: otherInfo.phone,
     };
     student.user = user;
@@ -110,7 +109,7 @@ export class StudentService extends RecordDataModelService<Student> {
 
   async updateStudentContactByUserName(
     userName: string,
-    contact: StudentContact,
+    contact: StudentInfo,
   ): Promise<Student> {
     const student = await this.getStudentByUserName(userName);
     if (!student) {
@@ -120,7 +119,7 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     student.contactInfo = {
-      addresses: [transformAddressDetails(contact)],
+      address: transformAddressDetails(contact),
       phone: contact.phone,
     };
 

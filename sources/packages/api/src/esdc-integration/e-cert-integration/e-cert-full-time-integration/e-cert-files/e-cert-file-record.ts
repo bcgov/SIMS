@@ -129,9 +129,9 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
    */
   city: string;
   /**
-   * Student country Name.
+   * Student country name.
    */
-  countryName: string;
+  country: string;
   /**
    * Student email address.
    */
@@ -179,7 +179,7 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
     record.appendWithStartFiller(this.fieldOfStudy, 2, NUMBER_FILLER);
     record.append(this.yearOfStudy.toString(), 1);
     record.append(this.totalYearsOfStudy.toString(), 1);
-    record.repeatAppend(SPACE_FILLER, DATE_FORMAT.length); // Cancel Date, optional, not provided.
+    record.repeatAppend(NUMBER_FILLER, DATE_FORMAT.length); // Cancel Date, optional, not provided.
     record.append("F"); // 'F' for full-time. Part time is done by another integration to another system.
     record.repeatAppend(SPACE_FILLER, 2); // Provincial field of study code, optional, not provided.
     record.appendDate(this.enrollmentConfirmationDate, DATE_FORMAT);
@@ -196,7 +196,7 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
     record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 4); // Province, optional, not provided.
     record.repeatAppend(SPACE_FILLER, 16); // Postal code, optional, not provided.
-    record.appendWithEndFiller(this.countryName, 20, SPACE_FILLER);
+    record.appendWithEndFiller(this.country, 20, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 20); // Phone Number, optional, not provided.
     record.appendWithEndFiller(this.emailAddress, 70, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 40); // Alternate Address Line 1, optional, not provided.

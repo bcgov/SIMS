@@ -1,4 +1,4 @@
-import { ContactInfo } from "../../types";
+import { ContactInfo } from "../../database/entities";
 
 /**
  * Represents the information that must be updated

@@ -1,7 +1,5 @@
-import {
-  InstitutionLocationData,
-  InstitutionLocationsDetails,
-} from "./InstitutionLocation";
+import { Address } from "../Common";
+import { InstitutionLocationsDetails } from "./InstitutionLocation";
 
 export interface InstitutionUserViewModel {
   id: number;
@@ -19,26 +17,6 @@ export interface InstitutionAuthType {
   role: string;
   type: string;
 }
-export interface InstitutionAuth {
-  id?: number;
-  authType: InstitutionAuthType;
-  location?: InstitutionLocationData;
-}
-
-export interface InstitutionUserDetails {
-  email: string;
-  firstName: string;
-  id: number;
-  lastName: string;
-  userName: string;
-  isActive: boolean;
-}
-export interface InstitutionLocationUserAuthDto {
-  id: number;
-  authorizations: InstitutionAuth[];
-  user: InstitutionUserDetails;
-}
-
 export interface InstitutionUserRoleLocation {
   locationId?: number;
   userType?: string;
@@ -98,14 +76,7 @@ export interface InstitutionStateForStore {
 export interface LocationStateForStore {
   id: number;
   name: string;
-  address: {
-    addressLine1: string;
-    addressLine2?: string;
-    province: string;
-    country: string;
-    city: string;
-    postalCode: string;
-  };
+  address: Address;
 }
 export interface InstitutionUserAndAuthDetailsForStore {
   user: {

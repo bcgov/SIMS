@@ -33,20 +33,20 @@ import {
   SearchStudentRespDto,
   SaveStudentDto,
   StudentRestrictionDTO,
-  StudentDetailDTO,
+  StudentDetailAPIOutDTO,
   StudentFileUploaderDTO,
+  StudentInfo,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
-import { StudentInfo } from "../../types/studentInfo";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { StudentApplicationAndCount } from "../application/models/application.model";
-import { Student, Application } from "../../database/entities";
+import { Student, Application, AddressInfo } from "../../database/entities";
 import {
   determinePDStatus,
   deliveryMethod,
@@ -58,12 +58,12 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
-  transformAddressDetailsForForm2,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
 import { FormNames } from "../../services/form/constants";
 import { ApiTags } from "@nestjs/swagger";
+import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
 // For multipart forms, the max number of parts (fields + files).
@@ -116,10 +116,9 @@ export class StudentController extends BaseController {
       gender: existingStudent.gender,
       dateOfBirth: existingStudent.birthDate,
       contact: {
-        ...transformAddressDetailsForForm2(
-          existingStudent.contactInfo.addresses[0],
+        address: transformAddressDetailsForAddressBlockForm(
+          existingStudent.contactInfo.address,
         ),
-        provinceState: existingStudent.contactInfo.addresses[0].province,
         phone: existingStudent.contactInfo.phone,
       },
       pdVerified: existingStudent.studentPDVerified,
@@ -167,20 +166,20 @@ export class StudentController extends BaseController {
 
     // The student will be created with one and only one
     // address for now. This address is also required.
-    if (student.contactInfo.addresses.length == 0) {
+    if (!student.contactInfo.address) {
       throw new InternalServerErrorException(
         `The requested student is missing required data. User name ${userToken.userName}`,
       );
     }
 
-    const address = student.contactInfo.addresses[0];
+    const address = student.contactInfo.address;
 
     return {
       phone: student.contactInfo.phone,
       addressLine1: address.addressLine1,
       addressLine2: address.addressLine2,
       city: address.city,
-      provinceState: address.province,
+      provinceState: address.provinceState,
       country: address.country,
       postalCode: address.postalCode,
     };
@@ -556,13 +555,13 @@ export class StudentController extends BaseController {
   @Get(":studentId/aest")
   async getStudentDetails(
     @Param("studentId") studentId: number,
-  ): Promise<StudentDetailDTO> {
+  ): Promise<StudentDetailAPIOutDTO> {
     const student = await this.studentService.findById(studentId);
     const studentRestrictionStatus =
       await this.studentRestrictionService.getStudentRestrictionsByUserId(
         student.user.id,
       );
-    const address = student.contactInfo.addresses[0];
+    const address = student.contactInfo.address ?? ({} as AddressInfo);
     return {
       firstName: student.user.firstName,
       lastName: student.user.lastName,
@@ -570,17 +569,19 @@ export class StudentController extends BaseController {
       gender: student.gender,
       dateOfBirth: student.birthDate,
       contact: {
+        address: {
+          addressLine1: address.addressLine1,
+          addressLine2: address.addressLine2,
+          city: address.city,
+          provinceState: address.provinceState,
+          country: address.country,
+          postalCode: address.postalCode,
+        },
         phone: student.contactInfo.phone,
-        addressLine1: address.addressLine1,
-        addressLine2: address.addressLine2,
-        city: address.city,
-        provinceState: address.province,
-        country: address.country,
-        postalCode: address.postalCode,
       },
       pdStatus: determinePDStatus(student),
       hasRestriction: studentRestrictionStatus.hasRestriction,
-    } as StudentDetailDTO;
+    } as StudentDetailAPIOutDTO;
   }
 
   /**

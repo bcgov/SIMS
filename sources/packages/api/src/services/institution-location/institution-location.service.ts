@@ -46,7 +46,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         firstName: data.primaryContactFirstName,
         lastName: data.primaryContactLastName,
         email: data.primaryContactEmail,
-        phoneNumber: data.primaryContactPhone,
+        phone: data.primaryContactPhone,
       },
       institution: institution,
       institutionCode: data.institutionCode,
