@@ -56,7 +56,7 @@ import {
   ClientIdType,
   OfferingFormModel,
   OfferingStatus,
-  ProgramDto,
+  ProgramValidationModel,
 } from "@/types";
 import {
   InstitutionRoutesConst,
@@ -98,7 +98,9 @@ export default {
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
-    const initialData = ref({} as Partial<OfferingFormModel & ProgramDto>);
+    const initialData = ref(
+      {} as Partial<OfferingFormModel & ProgramValidationModel>,
+    );
     const { mapOfferingChipStatus } = useOffering();
     const clientType = computed(() => AuthService.shared.authClientType);
     const assessOfferingModalRef = ref(
@@ -135,6 +137,11 @@ export default {
         const programDetails = await EducationProgramService.shared.getProgram(
           props.programId,
         );
+        const programValidationDetails = {
+          programIntensity: programDetails.programIntensity,
+          programDeliveryTypes: programDetails.programDeliveryTypes,
+          hasWILComponent: programDetails.hasWILComponent,
+        };
         if (props.offeringId) {
           const programOffering =
             await EducationProgramOfferingService.shared.getProgramOffering(
@@ -144,14 +151,14 @@ export default {
             );
           initialData.value = {
             ...programOffering,
-            ...programDetails,
+            ...programValidationDetails,
           };
           initialData.value.offeringChipStatus = mapOfferingChipStatus(
             programOffering.offeringStatus,
           );
         } else {
           initialData.value = {
-            ...programDetails,
+            ...programValidationDetails,
           };
         }
       }
@@ -165,9 +172,14 @@ export default {
             await EducationProgramService.shared.getEducationProgramForAEST(
               props.programId,
             );
+          const programValidationDetails = {
+            programIntensity: programDetails.programIntensity,
+            programDeliveryTypes: programDetails.programDeliveryTypes,
+            hasWILComponent: programDetails.hasWILComponent,
+          };
           initialData.value = {
             ...programOffering,
-            ...programDetails,
+            ...programValidationDetails,
           };
           initialData.value.offeringChipStatus = mapOfferingChipStatus(
             programOffering.offeringStatus,
