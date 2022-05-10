@@ -27,11 +27,11 @@ describe("InstitutionController", () => {
         UserService,
         BCeIDService,
         ConfigService,
+        FormService,
         InstitutionLocationService,
         DesignationAgreementLocationService,
         InstitutionLocationControllerService,
         InstitutionControllerService,
-        FormService,
       ],
       controllers: [InstitutionInstitutionsController],
     }).compile();
