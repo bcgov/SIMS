@@ -15,9 +15,13 @@ import {
   InstitutionLocationControllerService,
   InstitutionControllerService,
 } from "../../route-controllers";
+import { JwtService } from "@nestjs/jwt";
 
 describe("InstitutionController", () => {
   let controller: InstitutionInstitutionsController;
+  const jwtService = new JwtService({
+    secretOrPrivateKey: "Secret key",
+  });
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -32,6 +36,10 @@ describe("InstitutionController", () => {
         DesignationAgreementLocationService,
         InstitutionLocationControllerService,
         InstitutionControllerService,
+        {
+          provide: JwtService,
+          useValue: jwtService,
+        },
       ],
       controllers: [InstitutionInstitutionsController],
     }).compile();
