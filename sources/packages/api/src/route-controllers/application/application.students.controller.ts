@@ -41,6 +41,7 @@ import {
   UserToken,
   CheckRestrictions,
   CheckSinValidation,
+  RequiresStudentAccount,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
@@ -57,6 +58,7 @@ import {
 import { ApplicationControllerService } from "./application.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
+@RequiresStudentAccount()
 @Controller("application")
 @ApiTags(`${ClientTypeBaseRoute.Student}-application`)
 export class ApplicationStudentsController extends BaseController {

@@ -2,7 +2,11 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable } from "@nestjs/common";
 import { KeycloakConfig } from "./keycloakConfig";
-import { IInstitutionUserToken, IUserToken } from "./userToken.interface";
+import {
+  IInstitutionUserToken,
+  StudentUserToken,
+  IUserToken,
+} from "./userToken.interface";
 import { InstitutionUserAuthService, UserService } from "../services";
 import { AuthorizedParties } from "./authorized-parties.enum";
 
@@ -22,6 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: KeycloakConfig.PEM_PublicKey,
+      audience: "sims-api",
     });
   }
 
@@ -50,6 +55,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         AuthorizedParties.institution,
         AuthorizedParties.student,
         AuthorizedParties.aest,
+        AuthorizedParties.formsFlowBPM,
       ].includes(userToken.authorizedParty)
     ) {
       // Get DB user information to be added to the token.
@@ -66,6 +72,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         userToken.isActive = dbUser.isActive;
       }
 
+      // If the token represents a student, associate the student specific data
+      // and return the student token specific object.
+      if (userToken.authorizedParty === AuthorizedParties.student) {
+        const studentUserToken = userToken as StudentUserToken;
+        studentUserToken.studentId = dbUser.studentId;
+        return studentUserToken;
+      }
+
       // If the token represents an institution, loads additional information
       // from the database that is needed for authorization.
       if (userToken.authorizedParty === AuthorizedParties.institution) {
@@ -75,6 +89,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             userToken.userName,
           );
         return institutionUserToken;
+      }
+
+      // Ensures that there is a service account user created for forms-flow-bpm.
+      if (userToken.authorizedParty === AuthorizedParties.formsFlowBPM) {
+        // If the user does not exists on DB, create one.
+        if (!userToken.userId) {
+          const newServiceAccountUser =
+            await this.userService.createServiceAccountUser(userToken.userName);
+          userToken.userId = newServiceAccountUser.id;
+        }
       }
     }
 

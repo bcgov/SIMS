@@ -27,3 +27,7 @@ export interface IUserToken {
 export interface IInstitutionUserToken extends IUserToken {
   authorizations: InstitutionUserAuthorizations;
 }
+
+export interface StudentUserToken extends IUserToken {
+  studentId?: number;
+}

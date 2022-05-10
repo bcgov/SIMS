@@ -336,12 +336,12 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * Updates assessment and application statuses when
    * the student is confirming the NOA (Notice of Assessment).
    * @param assessmentId assessment id to be updated.
-   * @param userId user confirming the NOA.
+   * @param studentId student confirming the NOA.
    * @returns updated record.
    */
   async studentConfirmAssessment(
     assessmentId: number,
-    userId: number,
+    studentId: number,
   ): Promise<StudentAssessment> {
     const assessment = await this.repo
       .createQueryBuilder("assessment")
@@ -353,7 +353,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .innerJoin("assessment.application", "application")
       .innerJoin("application.student", "student")
       .where("assessment.id = :assessmentId", { assessmentId })
-      .andWhere("student.user.id = :userId", { userId })
+      .andWhere("student.id = :studentId", { studentId })
       .getOne();
 
     if (!assessment) {

@@ -1,8 +1,12 @@
 import { Controller, Get, Injectable, NotFoundException } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { IUserToken } from "../../auth/userToken.interface";
+import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  RequiresStudentAccount,
+  UserToken,
+} from "../../auth/decorators";
 import { StudentFileService, StudentService } from "../../services";
 import BaseController from "../BaseController";
 import { StudentUploadFileDTO } from "./models/student.dto";
@@ -12,6 +16,7 @@ import { ClientTypeBaseRoute } from "../../types";
  * Student controller for Student Client.
  */
 @AllowAuthorizedParty(AuthorizedParties.student)
+@RequiresStudentAccount()
 @Controller("students")
 @ApiTags(`${ClientTypeBaseRoute.Student}-students`)
 @Injectable()
@@ -33,16 +38,10 @@ export class StudentStudentsController extends BaseController {
     description: "The user does not have a student account associated with.",
   })
   async getStudentFiles(
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: StudentUserToken,
   ): Promise<StudentUploadFileDTO[]> {
-    const existingStudent = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-    if (!existingStudent) {
-      throw new NotFoundException("Student Not found.");
-    }
     const studentDocuments = await this.fileService.getStudentUploadedFiles(
-      existingStudent.id,
+      userToken.studentId,
     );
     return studentDocuments.map((studentDocument) => ({
       fileName: studentDocument.fileName,
