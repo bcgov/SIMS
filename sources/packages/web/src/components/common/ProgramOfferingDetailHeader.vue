@@ -88,10 +88,8 @@ export default {
     const { dateOnlyLongString } = useFormatters();
     const showApprovalDetails = computed(
       () =>
-        props.headerDetails.assessedBy &&
-        props.headerDetails.assessedDate &&
-        (props.headerDetails.status !== ProgramStatus.Pending ||
-          props.headerDetails.status !== OfferingStatus.Pending),
+        props.headerDetails.status !== ProgramStatus.Pending ||
+        props.headerDetails.status !== OfferingStatus.Pending,
     );
     const approvalLabel = computed((): ProgramOfferingApprovalLabels => {
       if (
