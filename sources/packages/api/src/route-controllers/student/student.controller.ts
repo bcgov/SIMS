@@ -109,6 +109,8 @@ export class StudentController extends BaseController {
         `No user record was found with for student ${userToken.userName}`,
       );
     }
+    const address = existingStudent.contactInfo.address ?? ({} as AddressInfo);
+
     const studentInfo: StudentInfo = {
       firstName: existingUser.firstName,
       lastName: existingUser.lastName,
@@ -116,9 +118,7 @@ export class StudentController extends BaseController {
       gender: existingStudent.gender,
       dateOfBirth: existingStudent.birthDate,
       contact: {
-        address: transformAddressDetailsForAddressBlockForm(
-          existingStudent.contactInfo.address,
-        ),
+        address: transformAddressDetailsForAddressBlockForm(address),
         phone: existingStudent.contactInfo.phone,
       },
       pdVerified: existingStudent.studentPDVerified,
@@ -172,7 +172,7 @@ export class StudentController extends BaseController {
       );
     }
 
-    const address = student.contactInfo.address;
+    const address = student.contactInfo.address ?? ({} as AddressInfo);
 
     return {
       phone: student.contactInfo.phone,

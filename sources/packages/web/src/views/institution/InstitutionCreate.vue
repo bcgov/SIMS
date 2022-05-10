@@ -1,19 +1,14 @@
 <template>
-  <header-navigator title="Manage institutions" subTitle="Manage Profile" />
-  <Message severity="info">
-    Please notice that the read-only information below is retrieved from your
-    BCeID account and it is not possible to change it here. If any read-only
-    information needs to be changed please visit
-    <a href="https://www.bceid.ca/" target="_blank" rel="noopener">bceid.ca</a>.
-  </Message>
-  <full-page-container>
-    <formio
-      formName="institutionprofilecreation"
-      :data="initialData"
-      @loaded="formLoaded"
-      @submitted="submitted"
-    ></formio>
-  </full-page-container>
+  <v-container>
+    <div class="col-md-6 offset-md-3">
+      <formio
+        formName="institutionprofilecreation"
+        :data="initialData"
+        @loaded="formLoaded"
+        @submitted="submitted"
+      ></formio>
+    </div>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -26,11 +21,9 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioDropdownLoader, useToastMessage } from "@/composables";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { formio, FullPageContainer, HeaderNavigator },
+  components: { formio },
   setup() {
     // Hooks
     const store = useStore();

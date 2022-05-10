@@ -99,7 +99,6 @@ export class InstitutionInstitutionsController extends BaseController {
     if (existingUser) {
       throw new UnprocessableEntityException("Institution User already exists");
     }
-
     // Save institution
     const institution = await this.institutionService.createInstitution(
       userToken,
@@ -158,7 +157,6 @@ export class InstitutionInstitutionsController extends BaseController {
       await this.institutionControllerService.getInstitutionDetail(
         token.authorizations.institutionId,
       );
-
     return {
       ...institutionDetail,
       mailingAddress: transformAddressDetailsForAddressBlockForm(

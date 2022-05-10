@@ -1,17 +1,20 @@
 <template>
-  <header-navigator title="Manage institutions" subTitle="Manage Profile" />
-  <Message severity="info">
-    Please notice that the read-only information below is retrieved from your
-    BCeID account and it is not possible to change it here. If any read-only
-    information needs to be changed please visit
-    <a href="https://www.bceid.ca/" target="_blank" rel="noopener">bceid.ca</a>.
-  </Message>
-  <full-page-container>
-    <institution-profile-form
-      :profileData="institutionProfileModel"
-      @submitInstitutionProfile="updateInstitution"
-    ></institution-profile-form>
-  </full-page-container>
+  <v-container>
+    <header-navigator title="Manage institutions" subTitle="Manage Profile" />
+    <Message severity="info">
+      Please notice that the read-only information below is retrieved from your
+      BCeID account and it is not possible to change it here. If any read-only
+      information needs to be changed please visit
+      <a href="https://www.bceid.ca/" target="_blank" rel="noopener">bceid.ca</a
+      >.
+    </Message>
+    <div class="col-md-6 offset-md-3">
+      <institution-profile-form
+        :profileData="institutionProfileModel"
+        @submitInstitutionProfile="updateInstitution"
+      ></institution-profile-form>
+    </div>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -25,12 +28,11 @@ import {
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage } from "@/composables";
 import { useStore } from "vuex";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { FullPageContainer, InstitutionProfileForm, HeaderNavigator },
+  components: { InstitutionProfileForm, HeaderNavigator },
   setup() {
     // Hooks
     const store = useStore();

@@ -1,4 +1,5 @@
-import { Allow, IsOptional } from "class-validator";
+import { IsNotEmpty, IsOptional, ValidateIf } from "class-validator";
+import { COUNTRY_CANADA, OTHER_COUNTRY } from "../utils/address-utils";
 
 /**
  * Common DTO for Address.
@@ -35,37 +36,42 @@ export class DynamicAPIOutDTO<T> {
  * Payload/Input DTO for address details.
  */
 export class AddressDetailsAPIInDTO {
-  @Allow()
+  @IsNotEmpty()
   addressLine1: string;
-  @Allow()
+  @IsOptional()
   addressLine2?: string;
-  @Allow()
+  @IsNotEmpty()
   city: string;
   // This property has the country irrespective of the selectedCountry and otherCountry,
   // so for API purpose take country from this property.
-  @Allow()
+  @IsNotEmpty()
   country: string;
   // This property has the postalCode irrespective of the selectedCountry and otherCountry,
   // so for API purpose take postalCode from this property.
-  @Allow()
+  @IsNotEmpty()
   postalCode: string;
-  @Allow()
+  // provinceState will only have value when selectedCountry is 'canada'.
+  @ValidateIf((value) => value.selectedCountry === COUNTRY_CANADA)
+  @IsNotEmpty()
   provinceState?: string;
   // This property will have canada postal code.
   // This property is for dry run validation, this is not saved in db.
-  @IsOptional()
+  @ValidateIf((value) => value.selectedCountry === COUNTRY_CANADA)
+  @IsNotEmpty()
   canadaPostalCode?: string;
   // This property will have postal code for countries other than Canada.
   // This property is for dry run validation, this is not saved in db.
-  @IsOptional()
+  @ValidateIf((value) => value.selectedCountry === OTHER_COUNTRY)
+  @IsNotEmpty()
   otherPostalCode?: string;
   // Dropdown value, it will have either "canada" or "other".
   // This property is for dry run validation, this is not saved in db.
-  @IsOptional()
+  @IsNotEmpty()
   selectedCountry?: string;
   // When "other" is selected in selectedCountry, then this property will have a value.
   // This property is for dry run validation, this is not saved in db.
-  @IsOptional()
+  @ValidateIf((value) => value.selectedCountry === OTHER_COUNTRY)
+  @IsNotEmpty()
   otherCountry?: string;
 }
 

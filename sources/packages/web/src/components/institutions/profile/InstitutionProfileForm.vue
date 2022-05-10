@@ -21,7 +21,7 @@ export default {
     },
   },
   emits: ["submitInstitutionProfile"],
-  setup(props: any, context: any) {
+  setup(_props: any, context: any) {
     const formioDataLoader = useFormioDropdownLoader();
 
     const submitInstitutionProfile = async (data: InstitutionDto) => {

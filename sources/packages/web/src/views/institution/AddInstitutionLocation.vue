@@ -1,6 +1,13 @@
 <template>
   <v-container>
-    <formio formName="institutionlocation" @submitted="submitted"></formio>
+    <header-navigator
+      title="Manage locations"
+      :routeLocation="{ name: InstitutionRoutesConst.MANAGE_LOCATIONS }"
+      subTitle="Add Location"
+    />
+    <div class="col-md-6 offset-md-3">
+      <formio formName="institutionlocation" @submitted="submitted"></formio>
+    </div>
   </v-container>
 </template>
 
@@ -12,9 +19,10 @@ import formio from "../../components/generic/formio.vue";
 import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { formio },
+  components: { formio, HeaderNavigator },
   props: {
     createMode: {
       type: Boolean,
@@ -51,6 +59,7 @@ export default {
     };
     return {
       submitted,
+      InstitutionRoutesConst,
     };
   },
 };
