@@ -29,12 +29,12 @@ export default class ApplicationObject {
   }
 
   selectStudyYearDropdown() {
-    cy.fixture("newApplicationForm").then((_testData) => {
+    cy.fixture("newApplicationForm").then((testData) => {
       cy.get(".form-group").eq(1).click({ force: true });
       cy.wait(2000);
       cy.get(".choices__input.choices__input--cloned")
         .click({ force: true })
-        .type(_testData.selectStudyYear)
+        .type(testData.selectStudyYear)
         .type("{enter}");
     });
   }
@@ -71,7 +71,7 @@ export default class ApplicationObject {
   //<StartRegion--------------------------Draft Status------------------------------------->
 
   draftApplication() {
-    return cy.get("[data-prefix='fas']");
+    return cy.get("[type='button']").eq(8);
   }
 
   draftApplicationVerifyText() {
@@ -113,74 +113,74 @@ export default class ApplicationObject {
   }
 
   schoolIWillBeAttendingDropdown() {
-    cy.fixture("draftApplicationData").then((_testData) => {
+    cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group").eq(1).click({ force: true });
       cy.get(".choices__input.choices__input--cloned")
         .click({ force: true })
-        .type(_testData.schoolIWillBeAttending)
+        .type(testData.schoolIWillBeAttending)
         .type("{enter}");
     });
   }
 
   schoolIWillBeAttendingDropdown2() {
-    cy.fixture("draftApplicationData").then((_testData) => {
+    cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group", { timeout: 3000 }).eq(1).click({ force: true });
       cy.wait(2000);
       cy.get(".choices__input.choices__input--cloned", { timeout: 3000 })
         .click({ force: true })
-        .type(_testData.schoolIWillBeAttending2)
+        .type(testData.schoolIWillBeAttending2)
         .type("{enter}");
     });
   }
 
   howWillYouAttendProgramDropdown() {
     cy.intercept("GET", "**/options-list").as("optionListHowWillYou");
-    cy.fixture("draftApplicationData").then((_testData) => {
+    cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group").eq(4).click({ force: true });
       cy.wait("@optionListHowWillYou");
       cy.get(".choices__input.choices__input--cloned")
         .eq(1)
         .click({ force: true })
-        .type(_testData.howWillYouAttendProgram)
+        .type(testData.howWillYouAttendProgram)
         .type("{enter}", { timeout: 2000 });
     });
   }
 
   howWillYouAttendProgramDropdown2() {
     cy.intercept("GET", "**/options-list").as("optionListHowWillYou2");
-    cy.fixture("draftApplicationData").then((_testData) => {
+    cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group").eq(4).click({ force: true });
       cy.wait("@optionListHowWillYou2");
       cy.get(".choices__input.choices__input--cloned")
         .eq(1)
         .click({ force: true })
-        .type(_testData.howWillYouAttendProgram2)
+        .type(testData.howWillYouAttendProgram2)
         .type("{enter}", { timeout: 2000 });
     });
   }
 
   programIWillBeAttendingDropdown() {
     cy.intercept("GET", "**/options-list").as("optionListProgramIWill");
-    cy.fixture("draftApplicationData").then((_testData) => {
+    cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group").eq(6).click({ force: true });
       cy.wait("@optionListProgramIWill");
       cy.get(".choices__input.choices__input--cloned")
         .eq(2)
         .click({ force: true })
-        .type(_testData.programIWillBeAttendingDropdown)
+        .type(testData.programIWillBeAttendingDropdown)
         .type("{enter}", { timeout: 2000 });
     });
   }
 
   programIWillBeAttendingDropdown2() {
     cy.intercept("GET", "**/options-list").as("optionListProgramIWill2");
-    cy.fixture("draftApplicationData").then((_testData) => {
+    cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group").eq(6).click({ force: true });
       cy.wait("@optionListProgramIWill2");
       cy.get(".choices__input.choices__input--cloned")
         .eq(2)
         .click({ force: true })
-        .type(_testData.programIWillBeAttendingDropdown2)
+        .type(testData.programIWillBeAttendingDropdown2)
         .type("{enter}", { timeout: 2000 });
     });
   }
@@ -198,30 +198,30 @@ export default class ApplicationObject {
   }
 
   studyStartDate() {
-    cy.fixture("draftApplicationData").then((_testData) => {
+    cy.fixture("draftApplicationData").then((testData) => {
       cy.get('#eqnahab > [ref="element"] > .input-group > .input').type(
-        _testData.studyStartDate
+        testData.studyStartDate
       );
     });
   }
 
   studyEndDate() {
-    cy.fixture("draftApplicationData").then((_testData) => {
+    cy.fixture("draftApplicationData").then((testData) => {
       cy.get('#eyw0exi > [ref="element"] > .input-group > .input').type(
-        _testData.studyEndDate
+        testData.studyEndDate
       );
     });
   }
 
   inputStudentNumber() {
-    cy.fixture("draftApplicationData").then((_testData) => {
-      cy.get("#ek8w4hn-studentNumber").type(_testData.studentNumber);
+    cy.fixture("draftApplicationData").then((testData) => {
+      cy.get("#ek8w4hn-studentNumber").type(testData.studentNumber);
     });
   }
 
   inputStudentNumber2() {
-    cy.fixture("draftApplicationData").then((_testData) => {
-      cy.get("#ek8w4hn-studentNumber").type(_testData.studentNumber2);
+    cy.fixture("draftApplicationData").then((testData) => {
+      cy.get("#ek8w4hn-studentNumber").type(testData.studentNumber2);
     });
   }
 
@@ -235,7 +235,7 @@ export default class ApplicationObject {
 
   programOfferingDropdown() {
     cy.intercept("GET", "**/options-list").as("programOffering");
-    cy.fixture("draftApplicationData").then((_testData) => {
+    cy.fixture("draftApplicationData").then((testData) => {
       cy.xpath(
         "//div[@id='eb4inb']//div[@class='form-control ui fluid selection dropdown']"
       ).click({ force: true });
@@ -243,7 +243,7 @@ export default class ApplicationObject {
       cy.get(".choices__input.choices__input--cloned")
         .eq(3)
         .click({ force: true })
-        .type(_testData.programOffering)
+        .type(testData.programOffering)
         .type("{enter}", { timeout: 2000 });
     });
   }
@@ -256,11 +256,11 @@ export default class ApplicationObject {
 
   programPageText() {
     //Dropdown selection
-    cy.fixture("draftApplicationData").then((_testData) => {
+    cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".fa").eq(0).click({ force: true });
       cy.get(".choices__input.choices__input--cloned")
         .click({ force: true })
-        .type(_testData.searchForYourSchool)
+        .type(testData.searchForYourSchool)
         .type("{enter}");
     });
   }

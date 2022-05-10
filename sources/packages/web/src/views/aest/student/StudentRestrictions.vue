@@ -10,7 +10,7 @@
             ><v-btn
               @click="addStudentRestriction"
               class="float-right primary-btn-background"
-              data-cy="addRestriction"
+              data-cy="addRestrictionButton"
               ><font-awesome-icon :icon="['fas', 'plus']" class="mr-2" />Add
               restriction</v-btn
             ></v-col

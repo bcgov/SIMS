@@ -12,7 +12,7 @@ describe("Ministry User View Student Page", () => {
     cy.visit(url);
   });
 
-  it("Verify that the user is redirected to correct page Search student page.", () => {
+  it("Verify that the user is redirected to correct page Search student page & no results search is tested.", () => {
     ministryCustomCommand.loginMinistry();
     dashboardMinistryObject.dashboardText().should("be.visible");
     dashboardMinistryObject.searchStudentsText().click();

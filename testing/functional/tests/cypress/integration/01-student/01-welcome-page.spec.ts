@@ -27,7 +27,7 @@ describe("Welcome Page", () => {
 
   it("Verify that clicking on Sign Up with BCSC button redirects to appropriate page or not", () => {
     welcomeObject.signUpWithBCSCButton().should("be.visible").click();
-    welcomeObject.SignUpSIMSText();
+    welcomeObject.loginSIMSText();
   });
 
   it("Verify that Setup BC Service card button redirects to appropriate page or not", () => {

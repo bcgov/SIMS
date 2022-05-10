@@ -11,13 +11,9 @@ describe("Login Page", () => {
     cy.visit(url);
   });
 
-  it(
-    "Verify that user able to login with a valid username and valid password.",
-    { retries: 4 },
-    () => {
-      institutionCustomCommand.loginInstitution();
-    }
-  );
+  it("Verify login case in institution.", { retries: 4 }, () => {
+    institutionCustomCommand.loginInstitution();
+  });
 
   it(
     "Verify that clicking on the Log Off then it must be log out.",

@@ -1,5 +1,5 @@
 {
-  "baseUrl": "https://test-aest-sims.apps.silver.devops.gov.bc.ca/student",
+  "baseUrl": "https://dev-aest-sims.apps.silver.devops.gov.bc.ca/",
   "viewportWidth": 1280,
   "viewportHeight": 720,
   "retries": {

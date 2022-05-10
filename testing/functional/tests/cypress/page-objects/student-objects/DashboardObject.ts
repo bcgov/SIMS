@@ -16,7 +16,7 @@ export default class DashboardObject {
   }
 
   personIconButton() {
-    return cy.xpath("//button[contains(@class,'v-btn--size-default mr-5')]");
+    return cy.get("[type='button']").eq(5);
   }
 
   startapplicationButton() {
