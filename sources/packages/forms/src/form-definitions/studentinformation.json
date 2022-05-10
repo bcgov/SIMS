@@ -911,9 +911,9 @@
                     "tags": [],
                     "properties": {},
                     "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
+                        "show": false,
+                        "when": "mode",
+                        "eq": "create",
                         "json": ""
                     },
                     "customConditional": "",
@@ -935,7 +935,7 @@
                     "dataGridLabel": false,
                     "addons": [],
                     "inputType": "text",
-                    "id": "e4d85e",
+                    "id": "e9yeai7",
                     "defaultValue": ""
                 },
                 {

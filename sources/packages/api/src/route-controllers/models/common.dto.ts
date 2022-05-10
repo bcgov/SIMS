@@ -34,6 +34,7 @@ export class DynamicAPIOutDTO<T> {
 
 /**
  * Payload/Input DTO for address details.
+ * This is used by both dry run and non dry run controllers.
  */
 export class AddressDetailsAPIInDTO {
   @IsNotEmpty()

@@ -11,6 +11,7 @@
 import formio from "@/components/generic/formio.vue";
 import { InstitutionDto } from "@/types";
 import { useFormioDropdownLoader } from "@/composables";
+import { SetupContext } from "vue";
 
 export default {
   components: { formio },
@@ -21,7 +22,7 @@ export default {
     },
   },
   emits: ["submitInstitutionProfile"],
-  setup(_props: any, context: any) {
+  setup(_props: any, context: SetupContext) {
     const formioDataLoader = useFormioDropdownLoader();
 
     const submitInstitutionProfile = async (data: InstitutionDto) => {
