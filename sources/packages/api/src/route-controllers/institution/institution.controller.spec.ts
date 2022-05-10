@@ -7,7 +7,6 @@ import {
   ConfigService,
   InstitutionLocationService,
   DesignationAgreementLocationService,
-  FormService,
 } from "../../services";
 import { InstitutionInstitutionsController } from "./institution.institutions.controller";
 import { DatabaseModule } from "../../database/database.module";
@@ -31,7 +30,6 @@ describe("InstitutionController", () => {
         DesignationAgreementLocationService,
         InstitutionLocationControllerService,
         InstitutionControllerService,
-        FormService,
       ],
       controllers: [InstitutionInstitutionsController],
     }).compile();
