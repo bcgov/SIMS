@@ -95,6 +95,7 @@ export default {
       required: false,
     },
   },
+  //Todo: Change the initialData to a well defined contract.
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
