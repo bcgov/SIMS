@@ -35,7 +35,7 @@ export class InstitutionFormAPIInDTO extends AddressDetailsAPIInDTO {
   @IsDate()
   establishedDate: Date;
   //TODO Can be broken into a different DTO if needed
-  // Institutions Primary Contact Information
+  //Institutions Primary Contact Information
   @IsNotEmpty()
   primaryContactFirstName: string;
   @IsNotEmpty()
