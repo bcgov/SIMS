@@ -35,7 +35,7 @@ export class UserService extends DataModelService<User> {
     if (!user) {
       // When users logins for the first time there will be no users records.
       // For instance, Students, Institutions Users and Supporting Users, must complete
-      // their profiles in oder to have the user persisted to the database.
+      // their profiles in order to have the user persisted to the database.
       return null;
     }
 
