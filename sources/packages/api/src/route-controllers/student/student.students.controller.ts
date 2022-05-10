@@ -7,7 +7,7 @@ import {
   RequiresStudentAccount,
   UserToken,
 } from "../../auth/decorators";
-import { StudentFileService, StudentService } from "../../services";
+import { StudentFileService } from "../../services";
 import BaseController from "../BaseController";
 import { StudentUploadFileDTO } from "./models/student.dto";
 import { ClientTypeBaseRoute } from "../../types";
@@ -21,10 +21,7 @@ import { ClientTypeBaseRoute } from "../../types";
 @ApiTags(`${ClientTypeBaseRoute.Student}-students`)
 @Injectable()
 export class StudentStudentsController extends BaseController {
-  constructor(
-    private readonly studentService: StudentService,
-    private readonly fileService: StudentFileService,
-  ) {
+  constructor(private readonly fileService: StudentFileService) {
     super();
   }
 
