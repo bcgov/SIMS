@@ -126,13 +126,8 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   async update(
     @Param("locationId") locationId: number,
     @Body() payload: InstitutionLocationFormAPIInDTO,
-    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
-    return this.locationControllerService.update(
-      locationId,
-      payload,
-      userToken.authorizations.institutionId,
-    );
+    return this.locationControllerService.update(locationId, payload);
   }
 
   /**

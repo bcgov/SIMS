@@ -68,16 +68,12 @@ export class InstitutionLocationAESTController extends BaseController {
   @ApiBadRequestResponse({
     description: "Invalid request to update the institution location.",
   })
-  @Patch(":institutionId/:locationId")
+  @Patch(":locationId")
   async update(
     @Param("institutionId") institutionId: number,
     @Param("locationId") locationId: number,
     @Body() payload: InstitutionLocationFormAPIInDTO,
   ): Promise<void> {
-    return this.locationControllerService.update(
-      locationId,
-      payload,
-      institutionId,
-    );
+    return this.locationControllerService.update(locationId, payload);
   }
 }

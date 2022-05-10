@@ -103,12 +103,10 @@ export class InstitutionService {
   public async updateInstitutionLocation(
     locationId: number,
     institutionLocation: InstitutionLocationFormAPIInDTO,
-    institutionId?: number,
   ) {
     await ApiClient.InstitutionLocation.updateInstitutionLocation(
       locationId,
       institutionLocation,
-      institutionId,
     );
   }
 

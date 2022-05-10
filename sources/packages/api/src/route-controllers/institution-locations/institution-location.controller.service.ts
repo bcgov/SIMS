@@ -114,11 +114,7 @@ export class InstitutionLocationControllerService {
    * @param payload Updated information in the payload.
    * @param institutionId
    */
-  async update(
-    locationId: number,
-    payload: InstitutionLocationFormAPIInDTO,
-    institutionId: number,
-  ) {
+  async update(locationId: number, payload: InstitutionLocationFormAPIInDTO) {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
       FormNames.InstitutionLocation,
@@ -132,8 +128,7 @@ export class InstitutionLocationControllerService {
     }
 
     // If the data is valid the location is updated to SIMS DB.
-    await this.locationService.saveLocation(
-      institutionId,
+    await this.locationService.updateLocation(
       dryRunSubmissionResult.data.data,
       locationId,
     );

@@ -56,6 +56,34 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     return this.repo.save(saveLocation);
   }
 
+  /**
+   * Updating institution location.
+   * @param data Payload of updated data.
+   * @param locationId Location Id to update.
+   * @returns Updated location as InstitutionLocation.
+   */
+  async updateLocation(
+    data: InstitutionLocationModel,
+    locationId?: number,
+  ): Promise<InstitutionLocation> {
+    const saveLocation = {
+      name: data.locationName,
+      data: {
+        address: transformAddressDetails(data),
+      },
+      primaryContact: {
+        firstName: data.primaryContactFirstName,
+        lastName: data.primaryContactLastName,
+        email: data.primaryContactEmail,
+        phone: data.primaryContactPhone,
+      },
+      institutionCode: data.institutionCode,
+      id: locationId ?? undefined,
+    };
+
+    return this.repo.save(saveLocation);
+  }
+
   async getAllInstitutionLocations(
     institutionId: number,
   ): Promise<InstitutionLocation[]> {

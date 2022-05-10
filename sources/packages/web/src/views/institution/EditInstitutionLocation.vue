@@ -20,13 +20,11 @@ import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 import { computed, onMounted, ref } from "vue";
-import {
-  InstitutionLocationFormAPIInDTO,
-  InstitutionLocationFormAPIOutDTO,
-} from "@/services/http/dto";
+import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { ClientIdType } from "@/types";
+import { AuthService } from "@/services/AuthService";
+import { InstitutionLocationEdit } from "@/types";
 
 export default {
   components: { LocationEditForm },
@@ -39,7 +37,7 @@ export default {
   setup(props: any) {
     // Hooks
     const store = useStore();
-    const initialData = ref({} as InstitutionLocationFormAPIOutDTO);
+    const initialData = ref({} as InstitutionLocationEdit);
     const toast = useToast();
     const router = useRouter();
     const updateInstitutionLocation = async (
@@ -72,7 +70,7 @@ export default {
         await InstitutionService.shared.getInstitutionLocation(
           props.locationId,
         );
-      initialData.value.clientType = ClientIdType.Institution;
+      initialData.value.clientType = AuthService.shared.authClientType;
     });
     const goBackRouteParams = computed(
       () =>
