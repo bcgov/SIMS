@@ -9,7 +9,7 @@ import {
   DesignationAgreementLocationService,
   FormService,
 } from "../../services";
-
+import { InstitutionInstitutionsController } from "./institution.institutions.controller";
 import { DatabaseModule } from "../../database/database.module";
 import {
   InstitutionLocationControllerService,
@@ -17,7 +17,7 @@ import {
 } from "../../route-controllers";
 
 describe("InstitutionController", () => {
-  let controller: InstitutionControllerService;
+  let controller: InstitutionInstitutionsController;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -33,11 +33,11 @@ describe("InstitutionController", () => {
         InstitutionLocationControllerService,
         InstitutionControllerService,
       ],
-      controllers: [InstitutionControllerService],
+      controllers: [InstitutionInstitutionsController],
     }).compile();
     await module.init();
-    controller = module.get<InstitutionControllerService>(
-      InstitutionControllerService,
+    controller = module.get<InstitutionInstitutionsController>(
+      InstitutionInstitutionsController,
     );
   });
 
