@@ -170,32 +170,30 @@ describe("Ministry User Enters Student Note & Restrictions", () => {
   });
 
   it("Verify that the Reason dropdown should be empty without filling in the Category in Student Restriction section.", () => {
-    cy.fixture("ministryAddNewRestrictionsInStudent").then((testData) => {
-      cy.intercept("GET", "**/options-list").as("options-list");
-      cy.intercept("GET", "**/Verification").as("Verification");
-      cy.intercept("GET", "**/student/**").as("student");
-      cy.intercept("GET", "**/studentRestriction/**").as("studentRestriction");
-      ministryCustomCommand.loginMinistry();
-      dashboardMinistryObject.dashboardText().should("be.visible");
-      dashboardMinistryObject.searchStudentsText().click();
-      ministryUserViewsStudent.givenNames().type("a");
-      ministryUserViewsStudent.searchButton().eq(1).click();
-      ministryUserViewsStudent.firstNameText().should("be.visible");
-      ministryUserViewsStudent.viewButtonFirstRow().click();
-      ministryUserViewsStudent.studentDetailsText().should("be.visible");
-      ministryUserViewsStudent.studentProfileText().should("be.visible");
-      ministryUserViewsStudent.applicationsSectionsButton().click();
-      ministryUserViewsStudent.applicationSectionVerify().should("be.visible");
-      ministryUserViewsStudent.restrictionsSectionButton().click();
-      ministryUserViewsStudent.restrictionsSectionVerify().should("be.visible");
-      studentNoteRestrictionsObject
-        .addRestrictionsButton()
-        .should("be.visible")
-        .click();
-      cy.wait("@options-list");
-      studentNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
-      studentNoteRestrictionsObject.emptyDropdownMessage().should("be.visible");
-    });
+    cy.intercept("GET", "**/options-list").as("options-list");
+    cy.intercept("GET", "**/Verification").as("Verification");
+    cy.intercept("GET", "**/student/**").as("student");
+    cy.intercept("GET", "**/studentRestriction/**").as("studentRestriction");
+    ministryCustomCommand.loginMinistry();
+    dashboardMinistryObject.dashboardText().should("be.visible");
+    dashboardMinistryObject.searchStudentsText().click();
+    ministryUserViewsStudent.givenNames().type("a");
+    ministryUserViewsStudent.searchButton().eq(1).click();
+    ministryUserViewsStudent.firstNameText().should("be.visible");
+    ministryUserViewsStudent.viewButtonFirstRow().click();
+    ministryUserViewsStudent.studentDetailsText().should("be.visible");
+    ministryUserViewsStudent.studentProfileText().should("be.visible");
+    ministryUserViewsStudent.applicationsSectionsButton().click();
+    ministryUserViewsStudent.applicationSectionVerify().should("be.visible");
+    ministryUserViewsStudent.restrictionsSectionButton().click();
+    ministryUserViewsStudent.restrictionsSectionVerify().should("be.visible");
+    studentNoteRestrictionsObject
+      .addRestrictionsButton()
+      .should("be.visible")
+      .click();
+    cy.wait("@options-list");
+    studentNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
+    studentNoteRestrictionsObject.emptyDropdownMessage().should("be.visible");
   });
 
   it("Verify that user able to add restrictions in Student Restriction section.", () => {
