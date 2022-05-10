@@ -1,6 +1,6 @@
-import { Controller, Get, Injectable, NotFoundException } from "@nestjs/common";
+import { Controller, Get, Injectable } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
+import { StudentUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
