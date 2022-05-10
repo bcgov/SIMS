@@ -1,4 +1,4 @@
-import { OfferingStatus } from "@/types";
+import { ClientIdType, OfferingStatus } from "@/types";
 
 /**
  * Valid Intensity of the Offerings.
@@ -71,6 +71,7 @@ export interface OfferingFormModel {
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
   offeringChipStatus: string;
+  clientType?: ClientIdType;
 }
 
 export interface ProgramOfferingDetailsDto {

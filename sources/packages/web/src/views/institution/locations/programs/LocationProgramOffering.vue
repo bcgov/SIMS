@@ -40,7 +40,6 @@
     <formio
       formName="educationprogramoffering"
       :data="initialData"
-      :readOnly="isReadonly"
       @submitted="submitted"
     ></formio>
   </full-page-container>
@@ -155,6 +154,17 @@ export default {
             ...programDetails,
           };
         }
+        /**
+         * The property clientType is populated for institution because
+         * the form.io for education program offering has a logic at it's root level panel
+         * to disable all the form inputs when clientType is not institution.
+         * The above mentioned logic is added to the panel of the form to display the
+         * form as read-only for ministry(AEST) user and also allow the hidden component values
+         * to be calculated.
+         *! If a form.io is loaded with readOnly attribute set to true, then the restricts
+         *! hidden components to calculate it's value by design.
+         */
+        initialData.value.clientType = ClientIdType.Institution;
       }
       if (isAESTUser.value) {
         if (props.offeringId) {
@@ -162,8 +172,13 @@ export default {
             await EducationProgramOfferingService.shared.getProgramOfferingForAEST(
               props.offeringId,
             );
+          const programDetails =
+            await EducationProgramService.shared.getEducationProgramForAEST(
+              props.programId,
+            );
           initialData.value = {
             ...programOffering,
+            ...programDetails,
           };
           initialData.value.offeringChipStatus = mapOfferingChipStatus(
             programOffering.offeringStatus,
