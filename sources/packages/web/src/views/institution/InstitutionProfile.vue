@@ -8,12 +8,12 @@
       <a href="https://www.bceid.ca/" target="_blank" rel="noopener">bceid.ca</a
       >.
     </Message>
-    <div class="col-md-6 offset-md-3">
+    <full-page-container>
       <institution-profile-form
         :profileData="institutionProfileModel"
         @submitInstitutionProfile="updateInstitution"
       ></institution-profile-form>
-    </div>
+    </full-page-container>
   </v-container>
 </template>
 
@@ -30,9 +30,10 @@ import { useToastMessage } from "@/composables";
 import { useStore } from "vuex";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 export default {
-  components: { InstitutionProfileForm, HeaderNavigator },
+  components: { InstitutionProfileForm, HeaderNavigator, FullPageContainer },
   setup() {
     // Hooks
     const store = useStore();

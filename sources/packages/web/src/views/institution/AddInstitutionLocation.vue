@@ -5,9 +5,9 @@
       :routeLocation="{ name: InstitutionRoutesConst.MANAGE_LOCATIONS }"
       subTitle="Add Location"
     />
-    <div class="col-md-6 offset-md-3">
+    <full-page-container>
       <formio formName="institutionlocation" @submitted="submitted"></formio>
-    </div>
+    </full-page-container>
   </v-container>
 </template>
 
@@ -20,9 +20,10 @@ import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 export default {
-  components: { formio, HeaderNavigator },
+  components: { formio, HeaderNavigator, FullPageContainer },
   props: {
     createMode: {
       type: Boolean,

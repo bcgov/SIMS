@@ -7,14 +7,14 @@
       :restrictionMessage="restrictionMessage"
     />
     <CheckValidSINBanner />
-    <div class="col-md-6 offset-md-3">
+    <full-page-container>
       <formio
         formName="studentinformation"
         :data="initialData"
         @submitted="submitted"
         @customEvent="showPDApplicationModal"
       ></formio>
-    </div>
+    </full-page-container>
   </v-container>
 </template>
 
@@ -41,6 +41,7 @@ import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 enum FormModes {
   edit = "edit",
@@ -64,6 +65,7 @@ export default {
     CheckValidSINBanner,
     PDStatusApplicationModal,
     HeaderNavigator,
+    FullPageContainer,
   },
   props: {
     editMode: {

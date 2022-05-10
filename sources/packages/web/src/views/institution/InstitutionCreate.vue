@@ -1,14 +1,12 @@
 <template>
-  <v-container>
-    <div class="col-md-6 offset-md-3">
-      <formio
-        formName="institutionprofilecreation"
-        :data="initialData"
-        @loaded="formLoaded"
-        @submitted="submitted"
-      ></formio>
-    </div>
-  </v-container>
+  <full-page-container>
+    <formio
+      formName="institutionprofilecreation"
+      :data="initialData"
+      @loaded="formLoaded"
+      @submitted="submitted"
+    ></formio>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -21,9 +19,10 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioDropdownLoader, useToastMessage } from "@/composables";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 export default {
-  components: { formio },
+  components: { formio, FullPageContainer },
   setup() {
     // Hooks
     const store = useStore();
