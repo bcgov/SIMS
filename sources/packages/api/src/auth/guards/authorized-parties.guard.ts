@@ -68,6 +68,8 @@ export class AuthorizedPartiesGuard implements CanActivate {
         return idp === IdentityProviders.BCeID;
       case AuthorizedParties.aest:
         return idp === IdentityProviders.IDIR;
+      case AuthorizedParties.formsFlowBPM:
+        return true;
       default:
         return false;
     }
