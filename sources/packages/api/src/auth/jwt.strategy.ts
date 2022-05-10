@@ -48,8 +48,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       });
     }
 
-    // Check if it is expected that a user exists on DB for the
-    // specific authorized party (only Students and Institution for now).
+    // Check if it is expected that a user exists on DB for the specific authorized parties.
     const authorizedParties = [
       AuthorizedParties.institution,
       AuthorizedParties.student,
@@ -57,8 +56,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       AuthorizedParties.formsFlowBPM,
     ];
     if (!authorizedParties.includes(userToken.authorizedParty)) {
-      // If not present in the list just return the received token
-      // without any further processing.
+      // If not present in the list just return the received token without any further processing.
       return userToken;
     }
 
