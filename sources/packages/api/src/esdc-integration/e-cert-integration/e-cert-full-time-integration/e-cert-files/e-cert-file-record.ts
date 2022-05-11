@@ -139,11 +139,11 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
   /**
    * State/province, mandatory when Canada.
    */
-  provinceState: string;
+  provinceState?: string;
   /**
    * Postal code, mandatory when Canada.
    */
-  postalCode: string;
+  postalCode?: string;
   /**
    * Student gender M=Male F=Female.
    */
