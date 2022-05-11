@@ -107,30 +107,4 @@ export class InstitutionLocationControllerService {
       ),
     };
   }
-
-  /**
-   * Update the institution location details.
-   * @param locationId
-   * @param payload Updated information in the payload.
-   * @param institutionId
-   */
-  async update(locationId: number, payload: InstitutionLocationFormAPIInDTO) {
-    // Validate the location data that will be saved to SIMS DB.
-    const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      FormNames.InstitutionLocation,
-      payload,
-    );
-
-    if (!dryRunSubmissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to create the institution location due to an invalid request.",
-      );
-    }
-
-    // If the data is valid the location is updated to SIMS DB.
-    await this.locationService.updateLocation(
-      dryRunSubmissionResult.data.data,
-      locationId,
-    );
-  }
 }

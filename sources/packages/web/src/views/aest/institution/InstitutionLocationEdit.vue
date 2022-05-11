@@ -18,11 +18,11 @@
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import { computed, onMounted, ref } from "vue";
-import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 import { InstitutionLocationEdit } from "@/types";
+import { AESTInstitutionLocationAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: { LocationEditForm },
@@ -42,7 +42,7 @@ export default {
     const toast = useToast();
     const router = useRouter();
     const updateInstitutionLocation = async (
-      data: InstitutionLocationFormAPIInDTO,
+      data: AESTInstitutionLocationAPIInDTO,
     ) => {
       try {
         await InstitutionService.shared.updateInstitutionLocation(

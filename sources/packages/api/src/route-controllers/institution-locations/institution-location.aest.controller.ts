@@ -1,5 +1,7 @@
 import { Body, Controller, Get, Param, Patch } from "@nestjs/common";
 import { ApiBadRequestResponse, ApiTags } from "@nestjs/swagger";
+import { InstitutionLocation } from "src/database/entities";
+import { InstitutionLocationService } from "src/services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -7,8 +9,8 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 import {
+  AESTInstitutionLocationAPIInDTO,
   InstitutionLocationAPIOutDTO,
-  InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
 } from "./models/institution-location.dto";
 
@@ -22,6 +24,7 @@ import {
 export class InstitutionLocationAESTController extends BaseController {
   constructor(
     private readonly locationControllerService: InstitutionLocationControllerService,
+    private readonly locationService: InstitutionLocationService,
   ) {
     super();
   }
@@ -61,7 +64,6 @@ export class InstitutionLocationAESTController extends BaseController {
   /**
    * Update an institution location.
    * @param locationId
-   * @param institutionId
    * @param payload
    * @returns number of updated rows.
    */
@@ -70,10 +72,9 @@ export class InstitutionLocationAESTController extends BaseController {
   })
   @Patch(":locationId")
   async update(
-    @Param("institutionId") institutionId: number,
     @Param("locationId") locationId: number,
-    @Body() payload: InstitutionLocationFormAPIInDTO,
-  ): Promise<void> {
-    return this.locationControllerService.update(locationId, payload);
+    @Body() payload: AESTInstitutionLocationAPIInDTO,
+  ): Promise<InstitutionLocation> {
+    return this.locationService.updateLocationForAEST(payload, locationId);
   }
 }

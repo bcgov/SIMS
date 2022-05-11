@@ -20,7 +20,7 @@ import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 import { computed, onMounted, ref } from "vue";
-import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
+import { InstitutionLocationPrimaryContactAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { AuthService } from "@/services/AuthService";
@@ -41,7 +41,7 @@ export default {
     const toast = useToast();
     const router = useRouter();
     const updateInstitutionLocation = async (
-      data: InstitutionLocationFormAPIInDTO,
+      data: InstitutionLocationPrimaryContactAPIInDTO,
     ) => {
       try {
         await InstitutionService.shared.updateInstitutionLocation(
@@ -52,7 +52,7 @@ export default {
         store.dispatch("institution/getUserInstitutionLocationDetails");
         toast.add({
           severity: "success",
-          summary: `Your location information for ${data.locationName} have been updated`,
+          summary: `Your location information have been updated`,
           detail: "Location Details have been updated!",
           life: 5000,
         });

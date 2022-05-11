@@ -50,6 +50,7 @@ import BaseController from "../BaseController";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 import {
+  InstitutionLocationPrimaryContactAPIInDTO,
   InstitutionLocationAPIOutDTO,
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
@@ -57,6 +58,7 @@ import {
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
+import { InstitutionLocation } from "src/database/entities";
 
 /**
  * Institution location controller for institutions Client.
@@ -125,9 +127,12 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @Patch(":locationId")
   async update(
     @Param("locationId") locationId: number,
-    @Body() payload: InstitutionLocationFormAPIInDTO,
-  ): Promise<void> {
-    return this.locationControllerService.update(locationId, payload);
+    @Body() payload: InstitutionLocationPrimaryContactAPIInDTO,
+  ): Promise<InstitutionLocation> {
+    return this.locationService.updateLocationPrimaryContact(
+      payload,
+      locationId,
+    );
   }
 
   /**

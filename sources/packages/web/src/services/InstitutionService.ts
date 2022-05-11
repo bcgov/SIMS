@@ -35,6 +35,8 @@ import {
   InstitutionUserAPIInDTO,
   UserRoleOptionAPIOutDTO,
   ScholasticStandingDataAPIInDTO,
+  AESTInstitutionLocationAPIInDTO,
+  InstitutionLocationPrimaryContactAPIInDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -102,7 +104,9 @@ export class InstitutionService {
 
   public async updateInstitutionLocation(
     locationId: number,
-    institutionLocation: InstitutionLocationFormAPIInDTO,
+    institutionLocation:
+      | InstitutionLocationPrimaryContactAPIInDTO
+      | AESTInstitutionLocationAPIInDTO,
   ) {
     await ApiClient.InstitutionLocation.updateInstitutionLocation(
       locationId,

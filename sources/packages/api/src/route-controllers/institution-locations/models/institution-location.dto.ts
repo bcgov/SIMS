@@ -32,6 +32,31 @@ export class InstitutionLocationFormAPIInDTO extends AddressDetailsAPIInDTO {
   primaryContactPhone: string;
 }
 
+export class InstitutionLocationPrimaryContactAPIInDTO {
+  @Allow()
+  primaryContactFirstName: string;
+  @Allow()
+  primaryContactLastName: string;
+  @Allow()
+  primaryContactEmail: string;
+  @Allow()
+  primaryContactPhone: string;
+}
+export class AESTInstitutionLocationAPIInDTO extends AddressDetailsAPIInDTO {
+  @Allow()
+  primaryContactFirstName: string;
+  @Allow()
+  primaryContactLastName: string;
+  @Allow()
+  primaryContactEmail: string;
+  @Allow()
+  primaryContactPhone: string;
+  @Allow()
+  locationName: string;
+  @Allow()
+  institutionCode: string;
+}
+
 /**
  * Response/Output DTO for institution location.
  */

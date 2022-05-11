@@ -6,6 +6,7 @@ import { DesignationAgreementLocationService } from "../designation-agreement/de
 import {
   LocationWithDesignationStatus,
   InstitutionLocationModel,
+  InstitutionLocationPrimaryContactModel,
 } from "./institution-location.models";
 import { transformAddressDetails } from "../../utilities";
 @Injectable()
@@ -62,7 +63,30 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @param locationId Location Id to update.
    * @returns Updated location as InstitutionLocation.
    */
-  async updateLocation(
+  async updateLocationPrimaryContact(
+    data: Partial<InstitutionLocationPrimaryContactModel>,
+    locationId?: number,
+  ): Promise<InstitutionLocation> {
+    const saveLocation = {
+      primaryContact: {
+        firstName: data.primaryContactFirstName,
+        lastName: data.primaryContactLastName,
+        email: data.primaryContactEmail,
+        phone: data.primaryContactPhone,
+      },
+      id: locationId ?? undefined,
+    };
+
+    return this.repo.save(saveLocation);
+  }
+
+  /**
+   * Updating institution location.
+   * @param data Payload of updated data.
+   * @param locationId Location Id to update.
+   * @returns Updated location as InstitutionLocation.
+   */
+  async updateLocationForAEST(
     data: InstitutionLocationModel,
     locationId?: number,
   ): Promise<InstitutionLocation> {
