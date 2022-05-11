@@ -126,7 +126,6 @@ export class EducationProgramController extends BaseController {
       id,
       userToken.authorizations.institutionId,
     );
-
     if (!program) {
       throw new NotFoundException("Not able to find the requested program.");
     }
@@ -166,6 +165,7 @@ export class EducationProgramController extends BaseController {
       institutionId: userToken.authorizations.institutionId,
       id: programId,
       userId: userToken.userId,
+      locationId: payload.locationId,
     };
     return this.programService.saveEducationProgram(saveProgramPaylod);
   }
