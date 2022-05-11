@@ -7,7 +7,7 @@ import {
   PaginationOptions,
   PaginatedResults,
 } from "../../utilities";
-import { InstitutionUser } from "../../database/entities";
+import { AddressInfo, InstitutionUser } from "../../database/entities";
 import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
 import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
 
@@ -34,6 +34,11 @@ export class InstitutionControllerService {
     }
     const isBCPrivate =
       INSTITUTION_TYPE_BC_PRIVATE === institutionDetail.institutionType.id;
+
+    // {} as AddressInfo is added to prevent old data to break.
+    const mailingAddress =
+      institutionDetail.institutionAddress.mailingAddress ??
+      ({} as AddressInfo);
     return {
       legalOperatingName: institutionDetail.legalOperatingName,
       operatingName: institutionDetail.operatingName,
@@ -47,22 +52,20 @@ export class InstitutionControllerService {
       formattedEstablishedDate: getExtendedDateFormat(
         institutionDetail.establishedDate,
       ),
-      primaryContactEmail:
-        institutionDetail.institutionPrimaryContact.primaryContactEmail,
+      primaryContactEmail: institutionDetail.institutionPrimaryContact.email,
       primaryContactFirstName:
-        institutionDetail.institutionPrimaryContact.primaryContactFirstName,
+        institutionDetail.institutionPrimaryContact.firstName,
       primaryContactLastName:
-        institutionDetail.institutionPrimaryContact.primaryContactLastName,
-      primaryContactPhone:
-        institutionDetail.institutionPrimaryContact.primaryContactPhone,
+        institutionDetail.institutionPrimaryContact.lastName,
+      primaryContactPhone: institutionDetail.institutionPrimaryContact.phone,
       mailingAddress: {
-        addressLine1: institutionDetail.institutionAddress.addressLine1,
-        addressLine2: institutionDetail.institutionAddress.addressLine2,
-        city: institutionDetail.institutionAddress.city,
-        country: institutionDetail.institutionAddress.country,
-        provinceState: institutionDetail.institutionAddress.provinceState,
-        postalCode: institutionDetail.institutionAddress.postalCode,
-        selectedCountry: institutionDetail.institutionAddress.selectedCountry,
+        addressLine1: mailingAddress.addressLine1,
+        addressLine2: mailingAddress.addressLine2,
+        city: mailingAddress.city,
+        country: mailingAddress.country,
+        provinceState: mailingAddress.provinceState,
+        postalCode: mailingAddress.postalCode,
+        selectedCountry: mailingAddress.selectedCountry,
       },
       isBCPrivate: isBCPrivate,
     };

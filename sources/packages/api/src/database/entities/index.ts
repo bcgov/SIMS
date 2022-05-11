@@ -58,3 +58,4 @@ export * from "./student-appeal-requests.model";
 export * from "./assessment-trigger.type";
 export * from "./program-status.type";
 export * from "./offering-status.type";
+export * from "./address.type";

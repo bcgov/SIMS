@@ -12,6 +12,7 @@ import {
   EducationProgramOfferingDto,
 } from "@/types";
 import { addSortOptions } from "@/helpers";
+import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
    * Creates program offering and returns the id of the created resource.
@@ -240,5 +241,20 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
+  }
+
+  /**
+   * Assess an offering to approve or decline.
+   * @param offeringId
+   * @param payload
+   */
+  public async assessOffering(
+    offeringId: number,
+    payload: OfferingAssessmentAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall<OfferingAssessmentAPIInDTO>(
+      this.addClientRoot(`institution/offering/${offeringId}/assess`),
+      payload,
+    );
   }
 }

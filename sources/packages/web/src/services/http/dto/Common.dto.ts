@@ -3,50 +3,6 @@ export interface OptionItemAPIOutDTO {
   description: string;
 }
 
-/**
- * TODO: Address DTOs have been with 2 different names as the
- * TODO: property province is used as provinceState in some places in code.
- **/
-
-/**
- * Common DTO for Address
- ** This DTO is used in API request body.
- */
-export interface AddressInfoAPIInDTO {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  province: string;
-  country: string;
-  postalCode: string;
-}
-
-/**
- * Common DTO for Address.
- ** This DTO is returned as API response body.
- */
-export interface AddressAPIOutDTO {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
-}
-
-/**
- * Common DTO for Address.
- ** This DTO is returned as API response body.
- */
-export interface AddressInfoAPIOutDTO {
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  province: string;
-  country: string;
-  postalCode: string;
-}
-
 export interface InstitutionPrimaryContactAPIOutDTO {
   primaryContactEmail: string;
   primaryContactFirstName: string;
@@ -56,7 +12,11 @@ export interface InstitutionPrimaryContactAPIOutDTO {
 
 /**
  * Common DTO for address details.
- */ export interface AddressDetailsFormAPIDTO {
+ * IN/OUT is not specified for this DTO, because it is
+ * a generic address interface that is used extend or used as nested type
+ * for both IN and OUT DTOs
+ */
+export interface AddressDetailsFormAPIDTO {
   addressLine1: string;
   addressLine2?: string;
   city: string;

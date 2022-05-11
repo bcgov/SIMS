@@ -25,7 +25,7 @@ export class MSFAAFileDetail implements MSFAARequestFileLine {
   addressLine1: string;
   addressLine2?: string;
   city: string;
-  province?: string;
+  provinceState?: string;
   postalCode?: string;
   country: string;
   phone?: string;
@@ -49,7 +49,7 @@ export class MSFAAFileDetail implements MSFAARequestFileLine {
     record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);
     record.appendWithEndFiller(this.addressLine2, 40, SPACE_FILLER);
     record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
-    record.appendWithEndFiller(this.province, 4, SPACE_FILLER);
+    record.appendWithEndFiller(this.provinceState ?? "", 4, SPACE_FILLER);
     record.appendWithEndFiller(this.postalCode, 16, SPACE_FILLER);
     record.appendWithEndFiller(this.country, 20, SPACE_FILLER);
     record.appendWithEndFiller(this.phone, 20, SPACE_FILLER);

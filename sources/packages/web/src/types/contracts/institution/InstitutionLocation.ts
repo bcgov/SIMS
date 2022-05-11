@@ -8,11 +8,6 @@ export interface InstitutionPrimaryContact {
   primaryContactPhone: string;
 }
 
-export interface InstitutionLocationData {
-  id?: number;
-  name: string;
-  data: Address;
-}
 /**
  * TODO: This DTO has to be deleted when institution user APIs are refactored.
  * DTO for institution location Vue
@@ -21,14 +16,7 @@ export interface InstitutionLocationsDetails {
   id: number;
   name: string;
   data: {
-    address: {
-      addressLine1: string;
-      addressLine2?: string;
-      province: string;
-      country: string;
-      city: string;
-      postalCode: string;
-    };
+    address: Address;
   };
   primaryContact: InstitutionPrimaryContact;
   institution: {

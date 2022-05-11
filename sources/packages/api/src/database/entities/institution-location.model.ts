@@ -8,21 +8,12 @@ import {
 import { Institution } from "./institution.model";
 import { RecordDataModel } from "./record.model";
 import { ColumnNames } from "../constant";
-import { AddressInfo } from "../../types";
+import { AddressInfo } from "./address.type";
+import { PrimaryContact } from "./primary-contact.type";
 
-export interface InstitutionLocationInfo {
+export interface InstitutionLocationData {
   address: AddressInfo;
 }
-/**
- * Interface for primary contact of institution location.
- */
-export interface PrimaryContact {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-}
-
 @Entity({
   name: "institution_locations",
 })
@@ -35,7 +26,7 @@ export class InstitutionLocation extends RecordDataModel {
     type: "jsonb",
     nullable: false,
   })
-  data: InstitutionLocationInfo;
+  data: InstitutionLocationData;
 
   @Column({
     name: "name",

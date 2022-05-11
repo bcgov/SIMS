@@ -90,6 +90,7 @@ import { InstitutionLocationsDetails } from "@/types";
 import { AuthService } from "@/services/AuthService";
 import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
 import { InstitutionLocationAPIOutDTO } from "@/services/http/dto";
+import { useFormatters } from "@/composables";
 
 export default {
   components: {
@@ -104,6 +105,7 @@ export default {
     },
   },
   setup(props: any) {
+    const formatter = useFormatters();
     const router = useRouter();
     const clientType = computed(() => AuthService.shared.authClientType);
 
@@ -132,7 +134,7 @@ export default {
       return [
         item.data.address.addressLine1,
         item.data.address.addressLine2,
-        `${item.data.address.city} ${item.data.address.province}, ${item.data.address.postalCode}`,
+        formatter.getFormattedAddress(item.data.address),
         item.data.address.country,
       ].filter((address) => address);
     };

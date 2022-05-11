@@ -236,7 +236,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * the record will not be updated.
    * @param msfaaNumber MSFAA number
    * @param cancelledDate date when the MSFAA was cancelled.
-   * @param newIssusingProvince New province which is issuing the MSFAA.
+   * @param newIssuingProvince New province which is issuing the MSFAA.
    * @returns update result. Only one row is supposed to be affected.
    */
   async updateCancelledReceivedFile(

@@ -11,6 +11,7 @@ import {
   EducationProgramOfferingDto,
   PaginatedResults,
 } from "../types";
+import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
 
 export class EducationProgramOfferingService {
   // Share Instance
@@ -200,6 +201,21 @@ export class EducationProgramOfferingService {
   ): Promise<OfferingDTO> {
     return ApiClient.EducationProgramOffering.getProgramOfferingForAEST(
       offeringId,
+    );
+  }
+
+  /**
+   * Assess an offering to approve or decline.
+   * @param offeringId
+   * @param payload
+   */
+  public async assessOffering(
+    offeringId: number,
+    payload: OfferingAssessmentAPIInDTO,
+  ): Promise<void> {
+    return ApiClient.EducationProgramOffering.assessOffering(
+      offeringId,
+      payload,
     );
   }
 }

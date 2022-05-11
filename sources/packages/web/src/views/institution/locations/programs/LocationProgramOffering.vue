@@ -4,21 +4,42 @@
       title="Program detail"
       :routeLocation="getRouteLocation()"
       :subTitle="subTitle"
-    />
+    >
+      <template #buttons>
+        <v-btn
+          v-if="showActionButtons"
+          color="primary"
+          variant="outlined"
+          @click="assessOffering(OfferingStatus.Declined)"
+          >Decline</v-btn
+        >
+        <v-btn
+          class="ml-2"
+          color="primary"
+          v-if="showActionButtons"
+          @click="assessOffering(OfferingStatus.Approved)"
+          >Approve offering</v-btn
+        >
+      </template></header-navigator
+    >
     <program-offering-detail-header
       v-if="offeringId"
       class="m-4"
       :headerDetails="{
         ...initialData,
         status: initialData.offeringStatus,
+        institutionId: institutionId,
       }"
+    />
+    <assess-offering-modal
+      ref="assessOfferingModalRef"
+      :offeringStatus="offeringApprovalStatus"
     />
   </v-container>
   <full-page-container>
     <formio
       formName="educationprogramoffering"
       :data="initialData"
-      :readOnly="isReadonly"
       @submitted="submitted"
     ></formio>
   </full-page-container>
@@ -31,15 +52,22 @@ import { EducationProgramOfferingService } from "@/services/EducationProgramOffe
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import { ClientIdType, OfferingFormModel, ProgramDto } from "@/types";
+import {
+  ClientIdType,
+  OfferingFormModel,
+  OfferingStatus,
+  ProgramDto,
+} from "@/types";
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { useToastMessage, useOffering } from "@/composables";
+import { useToastMessage, useOffering, ModalDialog } from "@/composables";
 import { AuthService } from "@/services/AuthService";
+import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
+import AssessOfferingModal from "@/components/aest/institution/modals/AssessOfferingModal.vue";
 
 export default {
   components: {
@@ -47,6 +75,7 @@ export default {
     FullPageContainer,
     HeaderNavigator,
     ProgramOfferingDetailHeader,
+    AssessOfferingModal,
   },
   props: {
     locationId: {
@@ -72,7 +101,10 @@ export default {
     const initialData = ref({} as Partial<OfferingFormModel & ProgramDto>);
     const { mapOfferingChipStatus } = useOffering();
     const clientType = computed(() => AuthService.shared.authClientType);
-
+    const assessOfferingModalRef = ref(
+      {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
+    );
+    const offeringApprovalStatus = ref(OfferingStatus.Declined);
     const isInstitutionUser = computed(() => {
       return clientType.value === ClientIdType.Institution;
     });
@@ -82,6 +114,12 @@ export default {
     const isReadonly = computed(() => {
       return isAESTUser.value;
     });
+
+    const showActionButtons = computed(
+      () =>
+        initialData.value.offeringStatus === OfferingStatus.Pending &&
+        isAESTUser.value,
+    );
 
     const subTitle = computed(() => {
       if (isReadonly.value) {
@@ -124,14 +162,30 @@ export default {
             await EducationProgramOfferingService.shared.getProgramOfferingForAEST(
               props.offeringId,
             );
+          const programDetails =
+            await EducationProgramService.shared.getEducationProgramForAEST(
+              props.programId,
+            );
           initialData.value = {
             ...programOffering,
+            ...programDetails,
           };
           initialData.value.offeringChipStatus = mapOfferingChipStatus(
             programOffering.offeringStatus,
           );
         }
       }
+      /**
+       * The property clientType is populated for institution because
+       * the form.io for education program offering has a logic at it's root level panel
+       * to disable all the form inputs when clientType is not institution.
+       * The above mentioned logic is added to the panel of the form to display the
+       * form as read-only for ministry(AEST) user and also allow the hidden component values
+       * to be calculated.
+       *! If a form.io is loaded with readOnly attribute set to true, then the restricts
+       *! hidden components to calculate it's value by design.
+       */
+      initialData.value.clientType = AuthService.shared.authClientType;
     };
     onMounted(async () => {
       await loadFormData();
@@ -194,6 +248,29 @@ export default {
         }
       }
     };
+
+    const assessOffering = async (offeringStatus: OfferingStatus) => {
+      offeringApprovalStatus.value = offeringStatus;
+      const responseData = await assessOfferingModalRef.value.showModal();
+      if (responseData) {
+        try {
+          await EducationProgramOfferingService.shared.assessOffering(
+            props.offeringId,
+            responseData as OfferingAssessmentAPIInDTO,
+          );
+          toast.success(
+            `Offering ${offeringStatus}`,
+            `The given offering has been ${offeringStatus.toLowerCase()} and notes added.`,
+          );
+          await loadFormData();
+        } catch (error) {
+          toast.error(
+            "Unexpected error",
+            "Unexpected error while approving/declining the offering.",
+          );
+        }
+      }
+    };
     return {
       submitted,
       initialData,
@@ -201,6 +278,11 @@ export default {
       getRouteLocation,
       InstitutionRoutesConst,
       subTitle,
+      showActionButtons,
+      assessOffering,
+      OfferingStatus,
+      assessOfferingModalRef,
+      offeringApprovalStatus,
     };
   },
 };

@@ -10,7 +10,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { EducationProgram } from "./education-program.model";
 import { InstitutionLocation } from "./institution-location.model";
-import { OfferingTypes, User, OfferingStatus } from ".";
+import { OfferingTypes, User, OfferingStatus, Note } from ".";
 import { OfferingIntensity } from "./offering-intensity.type";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
@@ -254,6 +254,16 @@ export class EducationProgramOffering extends RecordDataModel {
     enumName: "OfferingStatus",
   })
   offeringStatus: OfferingStatus;
+
+  /**
+   * Note added by ministry user to either approve or decline an offering.
+   */
+  @OneToOne(() => Note, { eager: false, nullable: true })
+  @JoinColumn({
+    name: "offering_note",
+    referencedColumnName: ColumnNames.ID,
+  })
+  offeringNote?: Note;
 }
 
 /**
