@@ -9,7 +9,11 @@ describe("Login Page", () => {
     cy.visit(url);
   });
 
-  it("Verify that user able to login with a valid username and valid password.", () => {
-    studentCustomCommand.loginStudent();
-  });
+  it(
+    "Verify that user able to login with a valid username and valid password.",
+    { retries: 4 },
+    () => {
+      studentCustomCommand.loginStudent();
+    }
+  );
 });

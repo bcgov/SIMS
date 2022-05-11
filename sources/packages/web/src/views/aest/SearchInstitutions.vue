@@ -8,6 +8,7 @@
             <label class="field-required" for="legalName">Legal Name</label>
             <InputText
               name="legalName"
+              data-cy="legalName"
               v-model="legalName"
               @keyup.enter="searchInstitutions"
             />
@@ -18,6 +19,7 @@
             >
             <InputText
               name="operatingName"
+              data-cy="operatingName"
               v-model="operatingName"
               @keyup.enter="searchInstitutions"
             />
@@ -27,6 +29,7 @@
         ><v-btn
           :disabled="!legalName && !operatingName"
           color="primary"
+          data-cy="searchInstitutions"
           @click="searchInstitutions"
           >Search</v-btn
         ></v-col
@@ -64,6 +67,7 @@
         <template #body="slotProps">
           <v-btn
             variant="outlined"
+            data-cy="viewInstitution"
             @click="goToViewInstitution(slotProps.data.id)"
             >View</v-btn
           >

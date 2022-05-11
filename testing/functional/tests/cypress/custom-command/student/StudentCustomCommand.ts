@@ -9,7 +9,7 @@ export default class StudentCustomCommand {
     const password = Cypress.env("passcode");
 
     cy.intercept("PUT", "**/device").as("waitCardSerialNumber");
-    welcomeObject.virtualTestingButton().should("be.visible").click();
+    welcomeObject.loginWithBCSCButton().should("be.visible").click();
     welcomeObject.virtualTestingButtonText().should("be.visible");
     welcomeObject.virtualDeviceId().click({ force: true });
     cy.wait("@waitCardSerialNumber");

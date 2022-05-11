@@ -13,9 +13,10 @@
           type="text"
           placeholder="Search Designations"
           v-model="searchCriteria"
+          data-cy="searchCriteria"
           @keyup.enter="searchDesignations"
         />
-        <v-btn class="ml-2 primary-btn-background" @click="searchDesignations"
+        <v-btn class="ml-2 primary-btn-background" data-cy="searchCriteriaButton" @click="searchDesignations"
           ><font-awesome-icon :icon="['fas', 'search']" class="mr-2"
         /></v-btn>
       </template>
@@ -52,6 +53,7 @@
                 variant="outlined"
                 :color="COLOR_BLUE"
                 @click="goToViewDesignation(slotProps.data.designationId)"
+                data-cy="viewPendingDesignation"
               >
                 View
               </v-btn>

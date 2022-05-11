@@ -11,6 +11,7 @@
               label="All Notes"
               class="p-button-rounded mr-2 secondary-btn-background-lt filter-button"
               :class="{ 'primary-btn-background': !filteredNoteType }"
+              data-cy="allNotesButton"
               @click="filterNotes()"
             />
             <Button
@@ -19,6 +20,7 @@
               :label="item"
               class="p-button-rounded mr-2 secondary-btn-background-lt filter-button"
               :class="{ 'primary-btn-background': filteredNoteType === item }"
+              data-cy="noteTypeItem"
               @click="filterNotes(item)"
             />
           </div>

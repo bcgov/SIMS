@@ -6,7 +6,10 @@ import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.dec
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ProgramYearDto } from "./models/program-year.dto";
 import { ApiTags } from "@nestjs/swagger";
+import { RequiresStudentAccount } from "../../auth/decorators";
+
 @AllowAuthorizedParty(AuthorizedParties.student)
+@RequiresStudentAccount()
 @Controller("program-year")
 @ApiTags("program-year")
 export class ProgramYearController extends BaseController {

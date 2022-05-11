@@ -15,4 +15,6 @@ export abstract class ECertFileFooter implements FixedFormatFileLine {
   abstract getFixedFormat(): string;
 
   abstract createFromLine(line: string): ECertFileFooter;
+
+  abstract getFeedbackFooterRecordType(): RecordTypeCodes;
 }

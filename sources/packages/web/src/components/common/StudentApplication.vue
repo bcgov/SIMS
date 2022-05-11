@@ -14,6 +14,7 @@
         color="primary"
         v-show="!isFirstPage"
         variant="outlined"
+        data-cy="previousSection"
         @click="wizardGoPrevious"
         >Previous section</v-btn
       >

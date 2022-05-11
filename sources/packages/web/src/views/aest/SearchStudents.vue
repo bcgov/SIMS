@@ -10,16 +10,19 @@
       ><v-col
         ><InputText
           type="text"
+          data-cy="appNumber"
           v-model="appNumber"
           @keyup.enter="searchStudents()" /></v-col
       ><v-col
         ><InputText
           type="text"
+          data-cy="firstName"
           v-model="firstName"
           @keyup.enter="searchStudents()" /></v-col
       ><v-col
         ><InputText
           type="text"
+          data-cy="lastName"
           v-model="lastName"
           @keyup.enter="searchStudents()" /></v-col
       ><v-col
@@ -27,6 +30,7 @@
           :disabled="!appNumber && !firstName && !lastName"
           color="primary"
           class="p-button-raised"
+          data-cy="searchStudents"
           @click="searchStudents()"
         >
           <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
@@ -64,7 +68,7 @@
       </Column>
       <Column>
         <template #body="slotProps">
-          <v-btn variant="outlined" @click="goToViewStudent(slotProps.data.id)"
+          <v-btn variant="outlined" data-cy="viewStudent" @click="goToViewStudent(slotProps.data.id)"
             >View</v-btn
           >
         </template>

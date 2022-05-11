@@ -137,6 +137,14 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
    */
   emailAddress: string;
   /**
+   * State/province, mandatory when Canada.
+   */
+  provinceState: string;
+  /**
+   * Postal code, mandatory when Canada.
+   */
+  postalCode: string;
+  /**
    * Student gender M=Male F=Female.
    */
   gender: string;
@@ -194,8 +202,8 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
     record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);
     record.appendWithEndFiller(this.addressLine2 ?? "", 40, SPACE_FILLER);
     record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 4); // Province, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 16); // Postal code, optional, not provided.
+    record.appendWithEndFiller(this.provinceState ?? "", 4, SPACE_FILLER);
+    record.appendWithEndFiller(this.postalCode ?? "", 16, SPACE_FILLER);
     record.appendWithEndFiller(this.country, 20, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 20); // Phone Number, optional, not provided.
     record.appendWithEndFiller(this.emailAddress, 70, SPACE_FILLER);

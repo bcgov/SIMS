@@ -14,7 +14,7 @@ import { ECertFileFooter } from "../../e-cert-files/e-cert-file-footer";
 export class ECertPartTimeFileFooter extends ECertFileFooter {
   totalAmountDisbursed: number;
 
-  public getFixedFormat(): string {
+  getFixedFormat(): string {
     const footer = new StringBuilder();
     footer.append(this.recordTypeCode);
     footer.appendWithStartFiller(this.recordCount, 9, NUMBER_FILLER);
@@ -23,7 +23,7 @@ export class ECertPartTimeFileFooter extends ECertFileFooter {
     return footer.toString();
   }
 
-  public createFromLine(line: string): ECertPartTimeFileFooter {
+  createFromLine(line: string): ECertPartTimeFileFooter {
     const footer = new ECertPartTimeFileFooter();
     footer.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     // Here total record count is the total records.
@@ -31,5 +31,9 @@ export class ECertPartTimeFileFooter extends ECertFileFooter {
       parseInt(line.substring(43, 52)) + parseInt(line.substring(52, 61));
     footer.totalSINHash = parseInt(line.substring(61, 76));
     return footer;
+  }
+
+  getFeedbackFooterRecordType(): RecordTypeCodes {
+    return RecordTypeCodes.ECertPartTimeFeedbackFooter;
   }
 }
