@@ -46,7 +46,9 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
      * and remove header.
      */
     const header = eCertFileHeader.createFromLine(fileLines.shift());
-    if (header.recordTypeCode !== RecordTypeCodes.ECertPartTimeFeedbackHeader) {
+    if (
+      header.recordTypeCode !== eCertFileHeader.getFeedbackHeaderRecordType()
+    ) {
       this.logger.error(
         `The E-Cert file ${remoteFilePath} has an invalid record type code on header: ${header.recordTypeCode}`,
       );
@@ -62,7 +64,7 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
      */
     const trailer = eCertFileFooter.createFromLine(fileLines.pop());
     if (
-      trailer.recordTypeCode !== RecordTypeCodes.ECertPartTimeFeedbackFooter
+      trailer.recordTypeCode !== eCertFileFooter.getFeedbackFooterRecordType()
     ) {
       this.logger.error(
         `The E-Cert file ${remoteFilePath} has an invalid record type code on trailer: ${trailer.recordTypeCode}`,

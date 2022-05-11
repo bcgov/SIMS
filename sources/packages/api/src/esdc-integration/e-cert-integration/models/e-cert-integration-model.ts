@@ -39,6 +39,7 @@ export interface ECertRecord {
   addressLine2: string;
   city: string;
   provinceState: string;
+  postalCode: string;
   country: string;
   email: string;
   gender: string;

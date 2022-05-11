@@ -19,7 +19,7 @@ const ORIGINATOR_CODE = "BC";
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
 export class ECertFullTimeFileHeader extends ECertFileHeader {
-  public getFixedFormat(): string {
+  getFixedFormat(): string {
     const header = new StringBuilder();
     header.append(this.recordTypeCode);
     header.appendWithEndFiller(ORIGINATOR_CODE, 4, SPACE_FILLER);
@@ -31,7 +31,7 @@ export class ECertFullTimeFileHeader extends ECertFileHeader {
     return header.toString();
   }
 
-  public createFromLine(line: string): ECertFullTimeFileHeader {
+  createFromLine(line: string): ECertFullTimeFileHeader {
     const header = new ECertFullTimeFileHeader();
     header.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     header.processDate = getDateOnlyFromFormat(
@@ -39,5 +39,9 @@ export class ECertFullTimeFileHeader extends ECertFileHeader {
       DATE_FORMAT,
     );
     return header;
+  }
+
+  getFeedbackHeaderRecordType(): RecordTypeCodes {
+    return RecordTypeCodes.ECertFullTimeHeader;
   }
 }
