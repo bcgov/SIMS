@@ -10,6 +10,7 @@ import BaseController from "../BaseController";
 import {
   AllowAuthorizedParty,
   CheckRestrictions,
+  RequiresStudentAccount,
   UserToken,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -25,16 +26,15 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
   StudentAssessmentService,
-  StudentService,
 } from "../../services";
-import { IUserToken } from "../../auth/userToken.interface";
+import { StudentUserToken } from "../../auth/userToken.interface";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
+@RequiresStudentAccount()
 @Controller("assessment")
 @ApiTags(`${ClientTypeBaseRoute.Student}-assessment`)
 export class AssessmentStudentsController extends BaseController {
   constructor(
-    private readonly studentService: StudentService,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly assessmentControllerService: AssessmentControllerService,
   ) {
@@ -55,11 +55,11 @@ export class AssessmentStudentsController extends BaseController {
   })
   async getAssessmentNOA(
     @Param("assessmentId") assessmentId: number,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: StudentUserToken,
   ): Promise<AssessmentNOAAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentNOA(
       assessmentId,
-      userToken.userId,
+      userToken.studentId,
     );
   }
 
@@ -77,12 +77,12 @@ export class AssessmentStudentsController extends BaseController {
   @Patch(":assessmentId/confirm-assessment")
   async confirmAssessmentNOA(
     @Param("assessmentId") assessmentId: number,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: StudentUserToken,
   ): Promise<void> {
     try {
       await this.studentAssessmentService.studentConfirmAssessment(
         assessmentId,
-        userToken.userId,
+        userToken.studentId,
       );
     } catch (error) {
       switch (error.name) {

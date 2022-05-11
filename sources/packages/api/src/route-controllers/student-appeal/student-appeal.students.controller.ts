@@ -16,7 +16,11 @@ import {
 import { StudentAppealAPIInDTO } from "./models/student-appeal.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  RequiresStudentAccount,
+  UserToken,
+} from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   ApiTags,
@@ -34,6 +38,7 @@ import { INVALID_APPLICATION_NUMBER } from "../../constants";
 import { StudentAppealRequestModel } from "src/services/student-appeal/student-appeal.model";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
+@RequiresStudentAccount()
 @Controller("appeal")
 @ApiTags(`${ClientTypeBaseRoute.Student}-appeal`)
 export class StudentAppealStudentsController extends BaseController {

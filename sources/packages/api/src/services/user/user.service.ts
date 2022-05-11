@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
+import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "../../utilities";
 import { Connection } from "typeorm";
 import { DataModelService } from "../../database/data.model.service";
-import { User } from "../../database/entities";
+import { Student, User } from "../../database/entities";
+import { UserLoginInfo } from "./user.model";
 
 @Injectable()
 export class UserService extends DataModelService<User> {
@@ -20,25 +22,27 @@ export class UserService extends DataModelService<User> {
    * @param userName User name (same from Keycloak).
    * @returns User login info if the user was found, otherwise null.
    */
-  async getUserLoginInfo(
-    userName: string,
-  ): Promise<{ id: number; isActive: boolean }> {
+  async getUserLoginInfo(userName: string): Promise<UserLoginInfo> {
     const user = await this.repo
       .createQueryBuilder("user")
-      .where("user.user_name = :userName", { userName })
-      .select(["user.id", "user.is_active"])
+      .select("user.id", "id")
+      .addSelect("user.isActive", "isActive")
+      .addSelect("student.id", "studentId")
+      .leftJoin(Student, "student", "student.user.id = user.id")
+      .where("user.userName = :userName", { userName })
       .getRawOne();
 
     if (!user) {
-      // When Students and Institutions users logins for the first time
-      // there will no users records until the Institution Profile or
-      // Student Profile is finalized, and this is expected.
+      // When users logins for the first time there will be no users records.
+      // For instance, Students, Institutions Users and Supporting Users, must complete
+      // their profiles in order to have the user persisted to the database.
       return null;
     }
 
     return {
-      id: user.user_id,
-      isActive: user.is_active,
+      id: user.id,
+      isActive: user.isActive,
+      studentId: user.studentId,
     };
   }
 
@@ -81,6 +85,20 @@ export class UserService extends DataModelService<User> {
     user.email = email;
     user.firstName = givenNames;
     user.lastName = lastName;
+    return this.repo.save(user);
+  }
+
+  /**
+   * Creates an user associated with the a service account.
+   * @param userName user name to create the user for the service account.
+   * @returns new user created.
+   */
+  async createServiceAccountUser(userName: string) {
+    const user = new User();
+    user.userName = userName;
+    user.email = SERVICE_ACCOUNT_DEFAULT_USER_EMAIL;
+    user.firstName = null;
+    user.lastName = userName;
     return this.repo.save(user);
   }
 }

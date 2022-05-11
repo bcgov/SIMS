@@ -1,7 +1,10 @@
 import { Controller, Get } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  RequiresStudentAccount,
+} from "../../auth/decorators";
 import { InstitutionLocationService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
@@ -11,6 +14,7 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
  * Institution location controller for Students client.
  */
 @AllowAuthorizedParty(AuthorizedParties.student)
+@RequiresStudentAccount()
 @Controller("institution/location")
 @ApiTags(`${ClientTypeBaseRoute.Student}-institution/location`)
 export class InstitutionLocationStudentsController extends BaseController {
