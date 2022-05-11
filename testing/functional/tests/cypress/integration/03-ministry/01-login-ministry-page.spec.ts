@@ -19,5 +19,6 @@ describe("Login Ministry Page", () => {
     ministryCustomCommand.loginMinistry();
     loginMinistryObject.profileIcon().click();
     loginMinistryObject.logOffText().click();
+    loginMinistryObject.welcomeMessage().should("be.visible");
   });
 });

@@ -26,7 +26,7 @@
               color="primary"
               variant="outlined"
               class="mr-2"
-              data-cy="cancelButton"
+              data-cy="cancelApprovalRequestButton"
               @click="gotToAssessmentsSummary"
               >Cancel</v-btn
             >

@@ -16,7 +16,7 @@ export default class DashboardObject {
   }
 
   personIconButton() {
-    return cy.get("[type='button']").eq(5);
+    return cy.get("[type='button']").eq(4);
   }
 
   startapplicationButton() {

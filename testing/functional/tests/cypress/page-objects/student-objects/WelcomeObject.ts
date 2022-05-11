@@ -2,7 +2,10 @@ export default class WelcomeObject {
   checkCurrentUrl() {
     return cy
       .url()
-      .should("include", "https://dev-aest-sims.apps.silver.devops.gov.bc.ca/");
+      .should(
+        "include",
+        "https://test-aest-sims.apps.silver.devops.gov.bc.ca/student"
+      );
   }
 
   getWelcomeText() {
@@ -18,7 +21,7 @@ export default class WelcomeObject {
   }
 
   loginSIMSText() {
-    cy.contains("Log in to: SIMS - Dev");
+    cy.contains("Log in to: SIMS - Test");
   }
 
   getSetupButton() {

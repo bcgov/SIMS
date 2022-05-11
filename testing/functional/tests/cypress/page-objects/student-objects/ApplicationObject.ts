@@ -28,6 +28,9 @@ export default class ApplicationObject {
     return cy.xpath("//button[@disabled='disabled']");
   }
 
+  waitForSecond() {
+    return cy.focused();
+  }
   selectStudyYearDropdown() {
     cy.fixture("newApplicationForm").then((testData) => {
       cy.get(".form-group").eq(1).click({ force: true });
@@ -71,11 +74,15 @@ export default class ApplicationObject {
   //<StartRegion--------------------------Draft Status------------------------------------->
 
   draftApplication() {
-    return cy.get("[type='button']").eq(8);
+    return cy.get("[type='button']").eq(7);
   }
 
   draftApplicationVerifyText() {
-    return cy.contains("Let’s get started on your application");
+    return cy.contains("My Applications");
+  }
+
+  financialAidApplicationText() {
+    return cy.contains("Financial aid application");
   }
 
   nextSectionButton() {
