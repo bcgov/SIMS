@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { StudentUserToken } from "../userToken.interface";
 import { REQUIRES_STUDENT_ACCOUNT_KEY } from "../decorators";
@@ -23,6 +28,13 @@ export class RequiresStudentAccountGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as StudentUserToken;
-    return !!userToken?.studentId;
+
+    if (!userToken?.studentId) {
+      throw new UnauthorizedException(
+        "The user does not have a student account associated.",
+      );
+    }
+
+    return true;
   }
 }
