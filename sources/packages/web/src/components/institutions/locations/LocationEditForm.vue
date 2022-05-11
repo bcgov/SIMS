@@ -7,12 +7,10 @@
 </template>
 
 <script lang="ts">
-import formio from "@/components/generic/formio.vue";
 import { InstitutionLocationFormAPIOutDTO } from "@/services/http/dto";
 import { SetupContext } from "vue";
 
 export default {
-  components: { formio },
   props: {
     locationData: {
       type: Object,
