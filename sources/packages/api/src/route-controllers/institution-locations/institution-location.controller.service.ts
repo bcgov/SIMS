@@ -86,7 +86,7 @@ export class InstitutionLocationControllerService {
     institutionId: number,
     locationId: number,
   ): Promise<InstitutionLocationFormAPIOutDTO> {
-    // get all institution locations.
+    // Get all institution locations.
     const institutionLocation =
       await this.locationService.getInstitutionLocation(
         institutionId,

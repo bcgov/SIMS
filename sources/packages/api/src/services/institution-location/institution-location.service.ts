@@ -64,8 +64,8 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @returns Updated location as InstitutionLocation.
    */
   async updateLocationPrimaryContact(
-    data: Partial<InstitutionLocationPrimaryContactModel>,
-    locationId?: number,
+    data: InstitutionLocationPrimaryContactModel,
+    locationId: number,
   ): Promise<InstitutionLocation> {
     const saveLocation = {
       primaryContact: {
@@ -74,7 +74,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         email: data.primaryContactEmail,
         phone: data.primaryContactPhone,
       },
-      id: locationId ?? undefined,
+      id: locationId,
     };
 
     return this.repo.save(saveLocation);
@@ -88,7 +88,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    */
   async updateLocationForAEST(
     data: InstitutionLocationModel,
-    locationId?: number,
+    locationId: number,
   ): Promise<InstitutionLocation> {
     const saveLocation = {
       name: data.locationName,
@@ -102,7 +102,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         phone: data.primaryContactPhone,
       },
       institutionCode: data.institutionCode,
-      id: locationId ?? undefined,
+      id: locationId,
     };
 
     return this.repo.save(saveLocation);

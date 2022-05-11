@@ -58,7 +58,7 @@ import {
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
-import { InstitutionLocation } from "src/database/entities";
+import { InstitutionLocation } from "../../database/entities";
 
 /**
  * Institution location controller for institutions Client.
@@ -117,11 +117,8 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * Update an institution location.
    * @param locationId
    * @param payload
-   * @returns number of updated rows.
+   * @returns InstitutionLocation.
    */
-  @ApiBadRequestResponse({
-    description: "Invalid request to update the institution location.",
-  })
   @HasLocationAccess("locationId")
   @IsInstitutionAdmin()
   @Patch(":locationId")
