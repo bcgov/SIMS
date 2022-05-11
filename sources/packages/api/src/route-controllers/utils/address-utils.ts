@@ -2,7 +2,10 @@ import { AddressInfo } from "../../database/entities";
 import { AddressDetailsAPIOutDTO } from "../models/common.dto";
 // 'selectedCountry' in the form will have the value 'other',
 // when 'Other'(i.e country other than canada) is selected.
-const OTHER_COUNTRY = "other";
+export const OTHER_COUNTRY = "other";
+// 'selectedCountry' in the form will have the value 'canada',
+// when 'Canada' is selected.
+export const COUNTRY_CANADA = "canada";
 
 /**
  * Util to transform address details for formIO.
