@@ -16,7 +16,7 @@ export interface LocationWithDesignationStatus {
 export interface InstitutionLocationModel extends AddressInfo {
   locationName: string;
   institutionCode: string;
-  primaryContactFirstName?: string;
+  primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
@@ -26,7 +26,7 @@ export interface InstitutionLocationModel extends AddressInfo {
  * Service model for Institutions Institution location edit.
  */
 export interface InstitutionLocationPrimaryContactModel {
-  primaryContactFirstName?: string;
+  primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
