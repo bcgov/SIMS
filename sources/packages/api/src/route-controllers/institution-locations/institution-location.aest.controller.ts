@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch } from "@nestjs/common";
 import { ApiBadRequestResponse, ApiTags } from "@nestjs/swagger";
-import { InstitutionLocation } from "src/database/entities";
-import { InstitutionLocationService } from "src/services";
+import { InstitutionLocation } from "../../database/entities";
+import { InstitutionLocationService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
