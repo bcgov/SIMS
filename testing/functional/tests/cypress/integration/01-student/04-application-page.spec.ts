@@ -751,8 +751,8 @@ describe("Application Page", () => {
   });
 
   it("Check Draft status form is being created.", () => {
-    applicationObject.applicationButton().should("be.visible").click();
-    applicationObject.startNewApplicationButton().should("be.visible").click();
+    applicationObject.applicationButton().click();
+    applicationObject.startNewApplicationButton().click();
     applicationObject
       .startApplicationStudyYearDisableButton()
       .should("be.visible");
