@@ -1,26 +1,26 @@
 export default class DashboardObject {
   applicationButton() {
-    return cy.xpath("//button[normalize-space()='Applications']");
+    return cy.contains("Applications");
   }
 
   notificationButton() {
-    return cy.xpath("//button[normalize-space()='Notifications']");
+    return cy.contains("Notifications");
   }
 
   fileUploaderButton() {
-    return cy.xpath("//button[normalize-space()='File Uploader']");
+    return cy.contains("File Uploader");
   }
 
   profileButton() {
-    return cy.xpath("//button[normalize-space()='Profile']");
+    return cy.contains("Profile");
   }
 
   personIconButton() {
-    return cy.xpath("//button[contains(@class,'v-btn--size-default mr-5')]");
+    return cy.get("[type='button']").eq(4);
   }
 
   startapplicationButton() {
-    return cy.xpath("//button[normalize-space()='Start application']");
+    return cy.contains("Start application");
   }
 
   logOffButton() {

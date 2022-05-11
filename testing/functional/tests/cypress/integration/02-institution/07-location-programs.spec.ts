@@ -16,11 +16,15 @@ describe("Location Program", () => {
     institutionCustomCommand.loginInstitution();
   });
 
-  it("Verify that user redirect to location program page", () => {
-    dashboardInstitutionObject.dashboardButton().click();
-    dashboardInstitutionObject.programsButton().eq(0).click();
-    cy.url().should("contain", "/location-programs");
-  });
+  it(
+    "Verify that user redirect to location program page",
+    { retries: 4 },
+    () => {
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.programsButton().eq(0).click();
+      cy.url().should("contain", "/location-programs");
+    }
+  );
 
   it("Verify that search bar is working properly by searching incorrect word", () => {
     dashboardInstitutionObject.dashboardButton().click();
@@ -73,33 +77,33 @@ describe("Location Program", () => {
   });
 
   it("Check that user can able to add new program", { retries: 4 }, () => {
-    cy.fixture("institutionProgramData").then((testdata) => {
+    cy.fixture("institutionProgramData").then((testData) => {
       cy.intercept("GET", "**/institution").as("institution");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.programsButton().eq(0).click();
       cy.url().should("contain", "/location-programs");
       locationProgramObject.createNewProgramButton().click();
       cy.wait("@institution");
-      locationProgramObject.programNameInputText().type(testdata.programName);
+      locationProgramObject.programNameInputText().type(testData.programName);
       locationProgramObject
         .programDescriptionInputText()
-        .type(testdata.programDescription);
+        .type(testData.programDescription);
       locationProgramObject
         .credentialType()
-        .select(testdata.credentialType)
-        .should("have.value", testdata.credentialTypeAssertion);
-      locationProgramObject.cipCodeInputText().type(testdata.cipCode);
+        .select(testData.credentialType)
+        .should("have.value", testData.credentialTypeAssertion);
+      locationProgramObject.cipCodeInputText().type(testData.cipCode);
       locationProgramObject.partTimeBasisRadioButton().click();
       locationProgramObject.programBeDeliveredRadioButton().click();
       locationProgramObject
         .programLengthInputText()
-        .select(testdata.programLength)
-        .should("have.value", testdata.programLengthAssertion);
+        .select(testData.programLength)
+        .should("have.value", testData.programLengthAssertion);
       locationProgramObject.programCourseLoadRadioButton().click();
       locationProgramObject
         .regulatoryBox()
-        .select(testdata.regulatoryBox)
-        .should("have.value", testdata.regulatoryBoxAssertion);
+        .select(testData.regulatoryBox)
+        .should("have.value", testData.regulatoryBoxAssertion);
       locationProgramObject.entranceRequirementsCheckbox().click();
       locationProgramObject.wait();
       locationProgramObject.percentageOfProgramRadioButton().click();
@@ -107,6 +111,7 @@ describe("Location Program", () => {
       locationProgramObject.institutionPartner().click();
       locationProgramObject.wilComponentRadioButton().click();
       locationProgramObject.wilApprovedByRegulatorRadioButton().click();
+      locationProgramObject.wait();
       locationProgramObject.wilMeetProgramRadioButton().click();
       locationProgramObject.fieldPlacementRadioButton().click();
       locationProgramObject.fieldPlacementEligibilityRadioButton().click();
@@ -124,57 +129,57 @@ describe("Location Program", () => {
   });
 
   it("Verify that user able to edit created program", () => {
-    cy.fixture("institutionProgramData").then((testdata) => {
+    cy.fixture("institutionProgramData").then((testData) => {
       cy.intercept("GET", "**/location/**").as("location");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.programsButton().eq(0).click();
       cy.url().should("contain", "/location-programs");
       cy.wait("@location");
       locationProgramObject.firstRowEditButton().click();
-      locationProgramObject.programNameAssertion(testdata.programName);
+      locationProgramObject.programNameAssertion(testData.programName);
     });
   });
 
   it("Verify that user able to add study period", () => {
-    cy.fixture("institutionProgramData").then((testdata) => {
+    cy.fixture("institutionProgramData").then((testData) => {
       cy.intercept("GET", "**/education-program/**").as("educationProgram");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.programsButton().eq(0).click();
       cy.url().should("contain", "/location-programs");
       cy.wait("@educationProgram");
       locationProgramObject.firstRowEditButton().click();
-      locationProgramObject.programNameAssertion(testdata.programName);
+      locationProgramObject.programNameAssertion(testData.programName);
       locationProgramObject.addStudyPeriodButton().click();
       locationProgramObject.addStudyPeriodAssertion().should("be.visible");
       locationProgramObject.wait();
       locationProgramObject
         .programNameStudyPeriod()
-        .type(testdata.studyPeriodName);
+        .type(testData.studyPeriodName);
       locationProgramObject.yearOfStudyDropdown().click();
       locationProgramObject
         .yearOfStudyDropdownInputText()
-        .type(testdata.yearOfStudy)
+        .type(testData.yearOfStudy)
         .type("{enter}");
       locationProgramObject.displayThisToStudentCheckbox().click();
       locationProgramObject.howWillThisBeOfferedRadioButton().click();
       locationProgramObject.offeringBeDeliveredRadioButton().click();
       locationProgramObject.workIntegratedComponentRadioButton().click();
-      locationProgramObject.studyStartDate().type(testdata.startDate);
-      locationProgramObject.studyEndDate().type(testdata.endDate);
-      locationProgramObject.breakStartDate().type(testdata.breakStart);
-      locationProgramObject.breakEndDate().type(testdata.breakEnd);
-      locationProgramObject.actualTuitionInput().type(testdata.actualTuitions);
+      locationProgramObject.studyStartDate().type(testData.startDate);
+      locationProgramObject.studyEndDate().type(testData.endDate);
+      locationProgramObject.breakStartDate().type(testData.breakStart);
+      locationProgramObject.breakEndDate().type(testData.breakEnd);
+      locationProgramObject.actualTuitionInput().type(testData.actualTuitions);
       locationProgramObject
         .programRelatedInput()
-        .type(testdata.programRelatedCosts);
-      locationProgramObject.mandatoryFeesInput().type(testdata.mandatoryFees);
+        .type(testData.programRelatedCosts);
+      locationProgramObject.mandatoryFeesInput().type(testData.mandatoryFees);
       locationProgramObject
         .exceptionalExpensesInput()
-        .type(testdata.exceptionalExpenses);
+        .type(testData.exceptionalExpenses);
       locationProgramObject.tuitionRemittanceRadioButton().click();
       locationProgramObject
         .amountRequestedInput()
-        .type(testdata.amountRequested);
+        .type(testData.amountRequested);
       locationProgramObject.declarationFormForVerification().click();
       locationProgramObject.submitButtonStudyPeriod().click();
       cy.wait("@educationProgram");
@@ -185,17 +190,17 @@ describe("Location Program", () => {
   });
 
   it("Verify that search is working in study period offerings", () => {
-    cy.fixture("institutionProgramData").then((testdata) => {
+    cy.fixture("institutionProgramData").then((testData) => {
       cy.intercept("GET", "**/education-program/**").as("educationProgram");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.programsButton().eq(0).click();
       cy.url().should("contain", "/location-programs");
       cy.wait("@educationProgram");
       locationProgramObject.firstRowEditButton().click();
-      locationProgramObject.programNameAssertion(testdata.programName);
+      locationProgramObject.programNameAssertion(testData.programName);
       locationProgramObject
         .searchStudyPeriodInput()
-        .type(testdata.studyPeriodName)
+        .type(testData.studyPeriodName)
         .type("{enter}");
       locationProgramObject
         .firstRecordAssertionStudyPeriod()

@@ -14,13 +14,17 @@ describe("Manage Designations", () => {
     institutionCustomCommand.loginInstitution();
   });
 
-  it("Verify that user redirect to institution manage designation page", () => {
-    dashboardInstitutionObject.dashboardButton().click();
-    dashboardInstitutionObject.manageInstitutionButton().click();
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    manageDesignationObject.manageDesignationButton().click();
-    manageDesignationObject.designationAgreementsText().should("be.visible");
-  });
+  it(
+    "Verify that user redirect to institution manage designation page",
+    { retries: 4 },
+    () => {
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.manageInstitutionButton().click();
+      dashboardInstitutionObject.locationVerifyText().should("be.visible");
+      manageDesignationObject.manageDesignationButton().click();
+      manageDesignationObject.designationAgreementsText().should("be.visible");
+    }
+  );
 
   it("Verify that user redirect to correct url of institution manage designation", () => {
     dashboardInstitutionObject.dashboardButton().click();

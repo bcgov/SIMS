@@ -26,10 +26,11 @@
               color="primary"
               variant="outlined"
               class="mr-2"
+              data-cy="cancelApprovalRequestButton"
               @click="gotToAssessmentsSummary"
               >Cancel</v-btn
             >
-            <v-btn color="primary" class="ml-2" @click="submit"
+            <v-btn color="primary" class="ml-2" data-cy="completeStudentRequest" @click="submit"
               >Complete student request</v-btn
             ></v-row
           >

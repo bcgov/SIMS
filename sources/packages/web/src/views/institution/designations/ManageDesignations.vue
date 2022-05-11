@@ -15,6 +15,7 @@
           <v-btn
             v-if="isLegalSigningAuthority"
             class="ml-2 primary-btn-background"
+            data-cy="requestDesignation"
             @click="goToRequestDesignation()"
             ><font-awesome-icon
               :icon="['fas', 'concierge-bell']"
