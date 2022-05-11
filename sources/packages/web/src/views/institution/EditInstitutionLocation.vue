@@ -1,9 +1,9 @@
 <template>
   <div class="ml-16">
     <header-navigator
-      title="Edit Locations"
+      title="All Locations"
       :routeLocation="goBackRouteParams"
-      subTitle="All Locations"
+      subTitle="Edit Locations"
     />
   </div>
   <full-page-container>
