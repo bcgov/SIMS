@@ -1,11 +1,9 @@
 import DashboardObject from "../../page-objects/student-objects/DashboardObject";
 import StudentCustomCommand from "../../custom-command/student/StudentCustomCommand";
-import DashboardMinistryObject from "../../page-objects/ministry-objects/DashboardMinistryObject";
 
 describe("Dashboard Page", () => {
   const dashboardObject = new DashboardObject();
   const studentCustomCommand = new StudentCustomCommand();
-  const dashboardMinistryObject = new DashboardMinistryObject();
   const url = Cypress.env("studentURL");
 
   it(
