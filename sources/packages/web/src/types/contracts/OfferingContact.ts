@@ -1,4 +1,9 @@
-import { OfferingStatus } from "@/types";
+import {
+  ClientIdType,
+  OfferingStatus,
+  ProgramIntensity,
+  ProgramDeliveryTypes,
+} from "@/types";
 
 /**
  * Valid Intensity of the Offerings.
@@ -71,6 +76,14 @@ export interface OfferingFormModel {
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
   offeringChipStatus: string;
+  clientType?: ClientIdType;
+  offeringStatusToDisplay: OfferingStatus;
+}
+
+export interface ProgramValidationModel {
+  programIntensity: ProgramIntensity;
+  programDeliveryTypes: ProgramDeliveryTypes;
+  hasWILComponent: string;
 }
 
 export interface ProgramOfferingDetailsDto {
