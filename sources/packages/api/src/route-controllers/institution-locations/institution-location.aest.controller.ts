@@ -50,7 +50,7 @@ export class InstitutionLocationAESTController extends BaseController {
    * @param locationId
    * @returns institution location.
    */
-  @Get(":institutionId/:locationId")
+  @Get(":locationId/institution/:institutionId")
   async getInstitutionLocation(
     @Param("institutionId") institutionId: number,
     @Param("locationId") locationId: number,
