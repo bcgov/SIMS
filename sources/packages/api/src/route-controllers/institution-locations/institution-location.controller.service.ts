@@ -1,13 +1,11 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { LocationWithDesignationStatus } from "../../services/institution-location/institution-location.models";
 import { FormService, InstitutionLocationService } from "../../services";
 import {
   DesignationStatus,
   InstitutionLocationAPIOutDTO,
-  InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
 } from "./models/institution-location.dto";
-import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
 /**
