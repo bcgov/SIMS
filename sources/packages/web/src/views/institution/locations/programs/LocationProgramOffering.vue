@@ -157,6 +157,8 @@ export default {
           initialData.value.offeringChipStatus = mapOfferingChipStatus(
             programOffering.offeringStatus,
           );
+          initialData.value.offeringStatusToDisplay =
+            programOffering.offeringStatus;
         } else {
           initialData.value = {
             ...programValidationDetails,
@@ -185,6 +187,8 @@ export default {
           initialData.value.offeringChipStatus = mapOfferingChipStatus(
             programOffering.offeringStatus,
           );
+          initialData.value.offeringStatusToDisplay =
+            programOffering.offeringStatus;
         }
       }
       /**

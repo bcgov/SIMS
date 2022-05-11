@@ -77,6 +77,7 @@ export interface OfferingFormModel {
   offeringStatus: OfferingStatus;
   offeringChipStatus: string;
   clientType?: ClientIdType;
+  offeringStatusToDisplay: OfferingStatus;
 }
 
 export interface ProgramValidationModel {
