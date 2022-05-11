@@ -268,6 +268,7 @@ export class EducationProgramController extends BaseController {
    * Get program details for an program id.
    * @param userToken User token from request.
    * @param id program id
+   * @query locationId location id
    * @returns programs DTO.
    * ! This dynamic router will conflict with its similar patter router,
    * ! eg, @Get("programs-list"). so, always move @Get(":id") below all
@@ -280,12 +281,15 @@ export class EducationProgramController extends BaseController {
   @Get(":id")
   async getProgram(
     @Param("id") id: number,
+    @Query("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramDto> {
-    const program = await this.programService.getInstitutionProgram(
-      id,
-      userToken.authorizations.institutionId,
-    );
+    const program =
+      await this.programService.getInstitutionProgramWithTotalOfferings(
+        id,
+        userToken.authorizations.institutionId,
+        locationId,
+      );
 
     if (!program) {
       throw new NotFoundException("Not able to find the requested program.");
@@ -331,6 +335,8 @@ export class EducationProgramController extends BaseController {
       hasIntlExchange: program.hasIntlExchange,
       intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
       programDeclaration: program.programDeclaration,
+      totalOfferings: program.totalOfferings,
+      locationId: locationId,
     };
   }
 

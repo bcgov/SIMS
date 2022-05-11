@@ -23,8 +23,11 @@ export class EducationProgramService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getProgram(programId: number): Promise<ProgramDto> {
-    return ApiClient.EducationProgram.getProgram(programId);
+  public async getProgram(
+    programId: number,
+    locationId: number,
+  ): Promise<ProgramDto> {
+    return ApiClient.EducationProgram.getProgram(programId, locationId);
   }
 
   public async createProgram(data: ProgramDto): Promise<void> {

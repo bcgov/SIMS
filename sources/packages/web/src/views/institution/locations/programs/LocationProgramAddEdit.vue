@@ -71,6 +71,7 @@ export default {
         if (props.programId) {
           const program = await EducationProgramService.shared.getProgram(
             props.programId,
+            props.locationId,
           );
           initialData.value = {
             ...program,

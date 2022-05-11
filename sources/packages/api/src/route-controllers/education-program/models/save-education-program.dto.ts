@@ -42,6 +42,8 @@ export interface EducationProgramDto {
   hasIntlExchange?: string;
   intlExchangeProgramEligibility?: string;
   programDeclaration: boolean;
+  totalOfferings?: number;
+  locationId?: number;
 }
 
 export interface EducationProgramDataDto extends EducationProgramDto {

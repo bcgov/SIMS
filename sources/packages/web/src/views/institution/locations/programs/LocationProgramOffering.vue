@@ -96,6 +96,7 @@ export default {
       if (isInstitutionUser.value) {
         const programDetails = await EducationProgramService.shared.getProgram(
           props.programId,
+          props.locationId,
         );
         if (props.offeringId) {
           const programOffering =
