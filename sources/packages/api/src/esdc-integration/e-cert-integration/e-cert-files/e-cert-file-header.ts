@@ -16,4 +16,6 @@ export abstract class ECertFileHeader implements FixedFormatFileLine {
   abstract getFixedFormat(): string;
 
   abstract createFromLine(line: string): ECertFileHeader;
+
+  abstract getFeedbackHeaderRecordType(): RecordTypeCodes;
 }

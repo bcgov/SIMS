@@ -103,7 +103,7 @@ export class ECertFileHandler extends ESDCFileHandler {
   }
 
   /**
-   * Get all Full-Time/ Part-Time disbursements available to be sent to ESDC.
+   * Get all Full-Time/Part-Time disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
    * @param eCertIntegrationService
    * @param offeringIntensity disbursement offering intensity.
@@ -112,7 +112,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async generateECert(
+  private async generateECert(
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
@@ -244,6 +244,8 @@ export class ECertFileHandler extends ESDCFileHandler {
       addressLine2: addressInfo.addressLine2,
       city: addressInfo.city,
       country: addressInfo.country,
+      provinceState: addressInfo.provinceState,
+      postalCode: addressInfo.postalCode,
       email: application.student.user.email,
       gender: application.student.gender,
       maritalStatus: application.relationshipStatus,

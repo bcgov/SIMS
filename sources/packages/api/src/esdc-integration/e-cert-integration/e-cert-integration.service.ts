@@ -4,10 +4,7 @@ import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
-import {
-  ECertRecord,
-  RecordTypeCodes,
-} from "./models/e-cert-integration-model";
+import { ECertRecord } from "./models/e-cert-integration-model";
 import { OfferingIntensity } from "../../database/entities";
 import { ECertPartTimeResponseRecord } from "./e-cert-part-time-integration/e-cert-files/e-cert-response-record";
 import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
@@ -46,7 +43,9 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
      * and remove header.
      */
     const header = eCertFileHeader.createFromLine(fileLines.shift());
-    if (header.recordTypeCode !== RecordTypeCodes.ECertPartTimeFeedbackHeader) {
+    if (
+      header.recordTypeCode !== eCertFileHeader.getFeedbackHeaderRecordType()
+    ) {
       this.logger.error(
         `The E-Cert file ${remoteFilePath} has an invalid record type code on header: ${header.recordTypeCode}`,
       );
@@ -62,7 +61,7 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
      */
     const trailer = eCertFileFooter.createFromLine(fileLines.pop());
     if (
-      trailer.recordTypeCode !== RecordTypeCodes.ECertPartTimeFeedbackFooter
+      trailer.recordTypeCode !== eCertFileFooter.getFeedbackFooterRecordType()
     ) {
       this.logger.error(
         `The E-Cert file ${remoteFilePath} has an invalid record type code on trailer: ${trailer.recordTypeCode}`,
