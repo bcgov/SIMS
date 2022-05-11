@@ -1,17 +1,17 @@
 <template>
-  <div class="ml-16">
+  <v-container>
     <header-navigator
       title="Profile"
       subTitle="Edit Profile"
       :routeLocation="institutionProfileRoute"
     />
-  </div>
-  <full-page-container>
-    <institution-profile-form
-      :profileData="institutionProfileModel"
-      @submitInstitutionProfile="updateInstitution"
-    ></institution-profile-form>
-  </full-page-container>
+    <full-page-container>
+      <institution-profile-form
+        :profileData="institutionProfileModel"
+        @submitInstitutionProfile="updateInstitution"
+      ></institution-profile-form>
+    </full-page-container>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -25,12 +25,12 @@ import {
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage } from "@/composables";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 export default {
-  components: { FullPageContainer, InstitutionProfileForm, HeaderNavigator },
+  components: { InstitutionProfileForm, HeaderNavigator, FullPageContainer },
   props: {
     institutionId: {
       type: Number,
