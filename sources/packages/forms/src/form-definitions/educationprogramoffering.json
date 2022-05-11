@@ -102,7 +102,7 @@
           "value": ""
         }
       ],
-      "content": "<span class=\"mb-2\">Study period</span> <span class=\"fa fa-circle formio-status-chip ml-1 mt-1 {{ data.offeringChipStatus }}\">{{ data.offeringStatus }}</span>",
+      "content": "<span class=\"mb-2\">Study period</span> <span class=\"fa fa-circle formio-status-chip ml-1 mt-1 {{ data.offeringChipStatus }}\">{{ data.offeringStatusToDisplay }}</span>",
       "refreshOnChange": true,
       "customClass": "category-header-large primary-color",
       "hidden": false,
@@ -170,7 +170,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "egng28i"
+      "id": "e9qa6x8"
     },
     {
       "label": "HTML",
@@ -2365,7 +2365,7 @@
                 "maxDate": null
               },
               "hideOnChildrenHidden": false,
-              "id": "el3fr9",
+              "id": "el3fr90000000000000000000000",
               "prefix": "",
               "customClass": "",
               "suffix": "",
@@ -2483,7 +2483,7 @@
                 "maxDate": null
               },
               "hideOnChildrenHidden": false,
-              "id": "e7szjc8",
+              "id": "e7szjc80000000000000000000000",
               "prefix": "",
               "customClass": "",
               "suffix": "",
@@ -2868,80 +2868,6 @@
           "addons": [],
           "tag": "p",
           "id": "epa8jan"
-        },
-        {
-          "label": "HTML",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
-          "content": "Study breaks validation {{data.invalidStudyBreaks}}",
-          "refreshOnChange": false,
-          "key": "html12",
-          "type": "htmlelement",
-          "input": false,
-          "tableView": false,
-          "placeholder": "",
-          "prefix": "",
-          "customClass": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "persistent": false,
-          "hidden": false,
-          "clearOnHide": true,
-          "refreshOn": "",
-          "redrawOn": "",
-          "modalEdit": false,
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "tooltip": "",
-          "hideLabel": false,
-          "tabindex": "",
-          "disabled": false,
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "widget": null,
-          "attributes": {},
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "conditional": {
-            "show": null,
-            "when": null,
-            "eq": ""
-          },
-          "overlay": {
-            "style": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "properties": {},
-          "allowMultipleMasks": false,
-          "addons": [],
-          "tag": "p",
-          "id": "e2vzrpq"
         },
         {
           "label": "HTML",
@@ -4690,6 +4616,79 @@
       "addons": [],
       "inputType": "hidden",
       "id": "eawojtn"
+    },
+    {
+      "label": "offeringStatusToDisplay",
+      "labelWidth": "",
+      "labelMargin": "",
+      "customClass": "",
+      "modalEdit": false,
+      "defaultValue": null,
+      "persistent": "client-only",
+      "protected": false,
+      "dbIndex": false,
+      "encrypted": false,
+      "redrawOn": "",
+      "customDefaultValue": "",
+      "calculateValue": "//This property is assigned by the Vue component to display the Persisted offering status.\nvalue = data.offeringStatusToDisplay;",
+      "calculateServer": false,
+      "key": "offeringStatusToDisplay",
+      "tags": [],
+      "properties": {},
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "hidden",
+      "input": true,
+      "placeholder": "",
+      "prefix": "",
+      "suffix": "",
+      "multiple": false,
+      "unique": false,
+      "hidden": false,
+      "clearOnHide": true,
+      "refreshOn": "",
+      "tableView": false,
+      "dataGridLabel": false,
+      "labelPosition": "top",
+      "description": "",
+      "errorLabel": "",
+      "tooltip": "",
+      "hideLabel": false,
+      "tabindex": "",
+      "disabled": false,
+      "autofocus": false,
+      "widget": {
+        "type": "input"
+      },
+      "validateOn": "change",
+      "validate": {
+        "required": false,
+        "custom": "",
+        "customPrivate": false,
+        "strictDateValidation": false,
+        "multiple": false,
+        "unique": false
+      },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
+      "allowCalculateOverride": false,
+      "showCharCount": false,
+      "showWordCount": false,
+      "allowMultipleMasks": false,
+      "addons": [],
+      "inputType": "hidden",
+      "id": "eek9oun"
     }
   ]
 }
