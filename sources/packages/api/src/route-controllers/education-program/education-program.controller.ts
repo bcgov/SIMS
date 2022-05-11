@@ -29,7 +29,11 @@ import {
   DeclineProgram,
   ApproveProgram,
 } from "./models/save-education-program.dto";
-import { EducationProgramService, FormService } from "../../services";
+import {
+  EducationProgramOfferingService,
+  EducationProgramService,
+  FormService,
+} from "../../services";
 import { FormNames } from "../../services/form/constants";
 import {
   SaveEducationProgram,
@@ -57,6 +61,7 @@ export class EducationProgramController extends BaseController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
+    private readonly educationProgramOfferingService: EducationProgramOfferingService,
   ) {
     super();
   }
@@ -284,10 +289,14 @@ export class EducationProgramController extends BaseController {
     @Query("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramDto> {
-    const program =
-      await this.programService.getInstitutionProgramWithTotalOfferings(
+    const program = await this.programService.getInstitutionProgram(
+      id,
+      userToken.authorizations.institutionId,
+    );
+
+    const hasOfferings =
+      await this.educationProgramOfferingService.hasExistingOffering(
         id,
-        userToken.authorizations.institutionId,
         locationId,
       );
 
@@ -335,7 +344,7 @@ export class EducationProgramController extends BaseController {
       hasIntlExchange: program.hasIntlExchange,
       intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
       programDeclaration: program.programDeclaration,
-      totalOfferings: program.totalOfferings,
+      hasOfferings: hasOfferings,
       locationId: locationId,
     };
   }

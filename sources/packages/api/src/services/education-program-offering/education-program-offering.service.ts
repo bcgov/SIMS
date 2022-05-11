@@ -449,4 +449,25 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         .add(noteEntity);
     });
   }
+
+  /**
+   * Check if a program has at least one offering.
+   * @param programId program id.
+   * @returns true, if a program has existing offering.
+   */
+  async hasExistingOffering(
+    programId: number,
+    locationId: number,
+  ): Promise<boolean> {
+    const found = await this.repo
+      .createQueryBuilder("offerings")
+      .select("1")
+      .innerJoin("offerings.educationProgram", "educationProgram")
+      .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .where("offerings.educationProgram.id = :programId", { programId })
+      .andWhere("institutionLocation.id = :locationId", { locationId })
+      .limit(1)
+      .getRawOne();
+    return !!found;
+  }
 }

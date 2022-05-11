@@ -14,7 +14,6 @@ import { Connection, Repository } from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
-  EducationProgramWithTotalOfferings,
 } from "./education-program.service.models";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
@@ -32,10 +31,14 @@ import {
   PaginatedResults,
   SortPriority,
 } from "../../utilities";
+import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
-  constructor(private readonly connection: Connection) {
+  constructor(
+    private readonly connection: Connection,
+    private readonly educationProgramOfferingService: EducationProgramOfferingService,
+  ) {
     super(connection.getRepository(EducationProgram));
     this.offeringsRepo = connection.getRepository(EducationProgramOffering);
   }
@@ -102,14 +105,14 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
      *  prevent a user from updating fields that are not supposed
      *  to be updated if the education program has 1 or more offerings.
      */
-    const existingProgram = await this.getInstitutionProgramWithTotalOfferings(
-      educationProgram.id,
-      educationProgram.institutionId,
-      educationProgram.locationId,
-    );
+    const hasExistingOffering =
+      await this.educationProgramOfferingService.hasExistingOffering(
+        educationProgram.id,
+        educationProgram.locationId,
+      );
 
     // Assign attributes for update from payload only if existing program has no offering(s).
-    if (existingProgram && existingProgram.totalOfferings === 0) {
+    if (!hasExistingOffering) {
       program.credentialType = educationProgram.credentialType;
       program.cipCode = educationProgram.cipCode;
       program.nocCode = educationProgram.nocCode;
@@ -162,10 +165,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.id = educationProgram.id;
     program.name = educationProgram.name;
     program.description = educationProgram.description;
-    program.assessedBy = { id: educationProgram.userId } as User;
-    if (!educationProgram.id) {
-      program.submittedBy = { id: educationProgram.userId } as User;
-    }
 
     return this.repo.save(program);
   }
@@ -669,87 +668,5 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       ])
       .where("programs.id = :programId", { programId })
       .getOne();
-  }
-
-  /**
-   * Gets a program with a count of it's total offerings and ensures that this program belongs
-   * to the expected institution including the institution id and location id in the query.
-   * @param programId Program id.
-   * @param institutionId Expected institution id.
-   * @returns program with a count of total offerings
-   */
-  async getInstitutionProgramWithTotalOfferings(
-    programId: number,
-    institutionId: number,
-    locationId: number,
-  ): Promise<EducationProgramWithTotalOfferings> {
-    return this.repo
-      .createQueryBuilder("programs")
-      .addSelect("programs.name", "name")
-      .addSelect("programs.description", "description")
-      .addSelect("programs.credentialType", "credentialType")
-      .addSelect("programs.cipCode", "cipCode")
-      .addSelect("programs.nocCode", "nocCode")
-      .addSelect("programs.sabcCode", "sabcCode")
-      .addSelect("programs.regulatoryBody", "regulatoryBody")
-      .addSelect("programs.deliveredOnSite", "deliveredOnSite")
-      .addSelect("programs.deliveredOnline", "deliveredOnline")
-      .addSelect(
-        "programs.deliveredOnlineAlsoOnsite",
-        "deliveredOnlineAlsoOnsite",
-      )
-      .addSelect("programs.sameOnlineCreditsEarned", "sameOnlineCreditsEarned")
-      .addSelect(
-        "programs.earnAcademicCreditsOtherInstitution",
-        "earnAcademicCreditsOtherInstitution",
-      )
-      .addSelect("programs.courseLoadCalculation", "courseLoadCalculation")
-      .addSelect("programs.completionYears", "completionYears")
-      .addSelect("programs.hasMinimumAge", "hasMinimumAge")
-      .addSelect("programs.eslEligibility", "eslEligibility")
-      .addSelect("programs.hasJointInstitution", "hasJointInstitution")
-      .addSelect("programs.programStatus", "programStatus")
-      .addSelect(
-        "programs.hasJointDesignatedInstitution",
-        "hasJointDesignatedInstitution",
-      )
-      .addSelect("programs.programIntensity", "programIntensity")
-      .addSelect("programs.institutionProgramCode", "institutionProgramCode")
-      .addSelect("programs.minHoursWeek", "minHoursWeek")
-      .addSelect("programs.isAviationProgram", "isAviationProgram")
-      .addSelect("programs.minHoursWeekAvi", "minHoursWeekAvi")
-      .addSelect(
-        "programs.requirementsByInstitution",
-        "requirementsByInstitution",
-      )
-      .addSelect("programs.requirementsByBCITA", "requirementsByBCITA")
-      .addSelect("programs.hasWILComponent", "hasWILComponent")
-      .addSelect("programs.isWILApproved", "isWILApproved")
-      .addSelect("programs.wilProgramEligibility", "wilProgramEligibility")
-      .addSelect("programs.hasTravel", "hasTravel")
-      .addSelect(
-        "programs.travelProgramEligibility",
-        "travelProgramEligibility",
-      )
-      .addSelect("programs.hasIntlExchange", "hasIntlExchange")
-      .addSelect(
-        "programs.intlExchangeProgramEligibility",
-        "intlExchangeProgramEligibility",
-      )
-      .addSelect("programs.programDeclaration", "programDeclaration")
-      .addSelect(
-        (query) =>
-          query
-            .select("Count(*)::int as Count")
-            .from(EducationProgramOffering, "offerings")
-            .innerJoin("offerings.educationProgram", "educationProgram")
-            .innerJoin("offerings.institutionLocation", "institutionLocation")
-            .where("offerings.educationProgram.id = :programId", { programId })
-            .andWhere("institutionLocation.id = :locationId", { locationId }),
-        "totalOfferings",
-      )
-      .where("programs.id = :programId", { programId })
-      .andWhere("programs.institution.id = :institutionId", { institutionId })
-      .getRawOne();
   }
 }

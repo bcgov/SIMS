@@ -42,7 +42,7 @@ export interface EducationProgramDto {
   hasIntlExchange?: string;
   intlExchangeProgramEligibility?: string;
   programDeclaration: boolean;
-  totalOfferings?: number;
+  hasOfferings?: boolean;
   locationId?: number;
 }
 
