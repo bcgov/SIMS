@@ -107,7 +107,7 @@ export class InstitutionService {
     institutionLocation:
       | InstitutionLocationPrimaryContactAPIInDTO
       | AESTInstitutionLocationAPIInDTO,
-  ) {
+  ): Promise<void> {
     await ApiClient.InstitutionLocation.updateInstitutionLocation(
       locationId,
       institutionLocation,
