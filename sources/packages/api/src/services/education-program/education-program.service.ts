@@ -109,7 +109,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     );
 
     // Assign attributes for update from payload only if existing program has no offering(s).
-    if (existingProgram.totalOfferings === 0) {
+    if (existingProgram && existingProgram.totalOfferings === 0) {
       program.credentialType = educationProgram.credentialType;
       program.cipCode = educationProgram.cipCode;
       program.nocCode = educationProgram.nocCode;
