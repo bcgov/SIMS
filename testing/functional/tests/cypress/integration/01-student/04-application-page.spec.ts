@@ -34,7 +34,7 @@ describe("Application Page", () => {
       .should("be.visible");
   });
 
-  it("Verify that Start Application button must be enable if study year selected in application form.", () => {
+  it("Check that Start Application button is enabled if a study year is selected in the application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.startNewApplicationButton().should("be.visible").click();
     applicationObject
