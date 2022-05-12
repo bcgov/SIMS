@@ -1,5 +1,6 @@
 import { InstitutionUserAuthorizations } from "../services/institution-user-auth/institution-user-auth.models";
 import { AuthorizedParties } from "./authorized-parties.enum";
+import { IdentityProviders } from "./identity-providers.enum";
 
 /**
  * User information extracted from the token during the
@@ -21,9 +22,14 @@ export interface IUserToken {
   roles: string[];
   groups: string[];
   idp_user_name: string;
+  IDP: IdentityProviders;
   authorizedParty: AuthorizedParties;
 }
 
 export interface IInstitutionUserToken extends IUserToken {
   authorizations: InstitutionUserAuthorizations;
+}
+
+export interface StudentUserToken extends IUserToken {
+  studentId?: number;
 }

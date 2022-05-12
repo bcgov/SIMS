@@ -4,9 +4,7 @@ export default class ManageLocationObject {
   }
 
   editLocationButton() {
-    return cy.xpath(
-      "(//button[contains(@type,'button')][normalize-space()='Edit'])[1]"
-    );
+    return cy.contains("Edit");
   }
 
   additionalInstitutionLocationMessage() {
@@ -22,7 +20,7 @@ export default class ManageLocationObject {
   }
 
   institutionCode() {
-    return cy.xpath("//input[@id='eajd6ld-institutionCode']");
+    return cy.get("[name='data[institutionCode]']");
   }
 
   institutionCodeErrorMessage() {
@@ -30,7 +28,7 @@ export default class ManageLocationObject {
   }
 
   locationName() {
-    return cy.get("#eshsg2q-locationName");
+    return cy.get("[name='data[locationName]']");
   }
 
   locationNameErrorMessage() {
@@ -38,7 +36,7 @@ export default class ManageLocationObject {
   }
 
   addressFirst() {
-    return cy.get("#efqwiex-addressLine1");
+    return cy.get("[name='data[addressLine1]']");
   }
 
   addressErrorMessage() {
@@ -46,11 +44,11 @@ export default class ManageLocationObject {
   }
 
   addressSecond() {
-    return cy.get("#ewj86m-addressLine2");
+    return cy.get("[name='data[addressLine2]']");
   }
 
   cityInputText() {
-    return cy.get("#eeodxxt-city");
+    return cy.get("[name='data[city]']");
   }
 
   cityErrorMessage() {
@@ -58,7 +56,7 @@ export default class ManageLocationObject {
   }
 
   postalCode() {
-    return cy.get("#et77w0d-postalCode");
+    return cy.get("[name='data[postalCode]']");
   }
 
   postalErrorMessage() {
@@ -66,7 +64,7 @@ export default class ManageLocationObject {
   }
 
   stateInputText() {
-    return cy.get("#ev86aqq-provinceState");
+    return cy.get("[name='data[provinceState]']");
   }
 
   stateErrorMessage() {
@@ -74,7 +72,7 @@ export default class ManageLocationObject {
   }
 
   countryInputText() {
-    return cy.get("#emigtml-country");
+    return cy.get("[name='data[country]']");
   }
 
   countryErrorMessage() {
@@ -82,7 +80,7 @@ export default class ManageLocationObject {
   }
 
   firstNameInputText() {
-    return cy.get("#eq7jd6x-primaryContactFirstName");
+    return cy.get("[name='data[primaryContactFirstName]']");
   }
 
   firstNameErrorMessage() {
@@ -90,7 +88,7 @@ export default class ManageLocationObject {
   }
 
   lastNameINputText() {
-    return cy.get("#eub36lf-primaryContactLastName");
+    return cy.get("[name='data[primaryContactLastName]']");
   }
 
   lastNameErrorMessage() {
@@ -98,7 +96,7 @@ export default class ManageLocationObject {
   }
 
   emailInputText() {
-    return cy.get("#ewutrt-primaryContactEmail");
+    return cy.get("[name='data[primaryContactEmail]']");
   }
 
   emailErrorMessage() {
@@ -106,7 +104,7 @@ export default class ManageLocationObject {
   }
 
   phoneInputText() {
-    return cy.get("#eolimx-primaryContactPhone");
+    return cy.get("[name='data[primaryContactPhone]']");
   }
 
   phoneNumberErrorMessage() {

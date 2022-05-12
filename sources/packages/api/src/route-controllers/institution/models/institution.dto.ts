@@ -30,7 +30,7 @@ export class InstitutionFormAPIInDTO extends AddressDetailsAPIInDTO {
   primaryEmail: string;
   @IsNotEmpty()
   website: string;
-  @IsOptional()
+  @IsNotEmpty()
   regulatingBody: string;
   @IsDate()
   establishedDate: Date;

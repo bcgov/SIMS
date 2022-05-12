@@ -29,10 +29,7 @@
       />
     </div>
     <!-- Assessment details if assessed by ministry -->
-    <div
-      class="row mt-1"
-      v-if="headerDetails.assessedBy && headerDetails.assessedDate"
-    >
+    <div class="row mt-1" v-if="showApprovalDetails">
       <header-title-value
         :title="approvalLabel.assessedByLabel"
         :value="headerDetails.assessedBy"
@@ -89,7 +86,11 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
-
+    const showApprovalDetails = computed(
+      () =>
+        props.headerDetails.status !== ProgramStatus.Pending ||
+        props.headerDetails.status !== OfferingStatus.Pending,
+    );
     const approvalLabel = computed((): ProgramOfferingApprovalLabels => {
       if (
         props.headerDetails.status === ProgramStatus.Approved ||
@@ -131,6 +132,7 @@ export default {
       goToInstitutionProfile,
       dateOnlyLongString,
       approvalLabel,
+      showApprovalDetails,
     };
   },
 };

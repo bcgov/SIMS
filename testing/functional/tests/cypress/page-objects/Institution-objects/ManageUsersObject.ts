@@ -8,7 +8,7 @@ export default class ManageUsersObject {
   }
 
   editButtonFirstRow() {
-    return cy.get(":nth-child(1) > :nth-child(7) > :nth-child(2) > .v-btn");
+    return cy.get("[data-icon='pen']").eq(0);
   }
 
   editUserPermissions() {
@@ -24,7 +24,7 @@ export default class ManageUsersObject {
   }
 
   addUserButton() {
-    return cy.get(".p-dialog-footer > .v-btn--contained");
+    return cy.contains("Add User");
   }
 
   addUserToAccountMessage() {
@@ -32,9 +32,7 @@ export default class ManageUsersObject {
   }
 
   selectUserDropdown() {
-    return cy.xpath(
-      "//span[@class='p-dropdown-label p-inputtext p-placeholder']"
-    );
+    return cy.contains("Select a User");
   }
 
   filterInputName() {

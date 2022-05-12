@@ -1,18 +1,21 @@
 <template>
-  <PDStatusApplicationModal ref="pdStatusApplicationModal" />
-  <RestrictionBanner
-    v-if="hasRestriction"
-    :restrictionMessage="restrictionMessage"
-  />
-  <CheckValidSINBanner />
-  <full-page-container>
-    <formio
-      formName="studentinformation"
-      :data="initialData"
-      @submitted="submitted"
-      @customEvent="showPDApplicationModal"
-    ></formio>
-  </full-page-container>
+  <v-container>
+    <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
+    <PDStatusApplicationModal ref="pdStatusApplicationModal" />
+    <RestrictionBanner
+      v-if="hasRestriction"
+      :restrictionMessage="restrictionMessage"
+    />
+    <CheckValidSINBanner />
+    <full-page-container>
+      <formio
+        formName="studentinformation"
+        :data="initialData"
+        @submitted="submitted"
+        @customEvent="showPDApplicationModal"
+      ></formio>
+    </full-page-container>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -33,11 +36,12 @@ import {
   StudentContact,
   StudentFormInfo,
 } from "@/types/contracts/StudentContract";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 enum FormModes {
   edit = "edit",
@@ -58,9 +62,10 @@ export default {
   components: {
     formio,
     RestrictionBanner,
-    FullPageContainer,
     CheckValidSINBanner,
     PDStatusApplicationModal,
+    HeaderNavigator,
+    FullPageContainer,
   },
   props: {
     editMode: {

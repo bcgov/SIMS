@@ -64,7 +64,7 @@ export const MSFAA_PART_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.PT.";
  * These constants are used to specify the filename code
  * created for Full-Time/ Part-Time feedback file.
  */
-export const ECERT_FULL_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.CERTSFB.*";
+export const ECERT_FULL_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.FTECERTSFB.*";
 export const ECERT_PART_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.ECERTSFB.PT.*";
 
 /**
@@ -72,3 +72,10 @@ export const ECERT_PART_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.ECERTSFB.PT.*";
  */
 export const STUDENT_FILE_UPLOAD_TEMPLATE_ID =
   "3b37994f-464f-4eb0-ad30-84739fa82377";
+
+/**
+ * Email used during service account creation. It is the same across all the
+ * environment and there is no actual use for it right now. Used because the email
+ * is an mandatory field while creating a new user.
+ */
+export const SERVICE_ACCOUNT_DEFAULT_USER_EMAIL = "dev_sabc@gov.bc.ca";

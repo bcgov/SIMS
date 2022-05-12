@@ -15,7 +15,7 @@ import {
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
 export class ECertFullTimeFileFooter extends ECertFileFooter {
-  public getFixedFormat(): string {
+  getFixedFormat(): string {
     const footer = new StringBuilder();
     footer.append(this.recordTypeCode);
     footer.appendWithEndFiller(ECERT_SENT_TITLE, 40, SPACE_FILLER);
@@ -25,12 +25,16 @@ export class ECertFullTimeFileFooter extends ECertFileFooter {
     return footer.toString();
   }
 
-  public createFromLine(line: string): ECertFullTimeFileFooter {
+  createFromLine(line: string): ECertFullTimeFileFooter {
     const footer = new ECertFullTimeFileFooter();
     footer.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     // Here total record count is the total records rejected.
     footer.recordCount = parseInt(line.substring(52, 61));
     footer.totalSINHash = parseInt(line.substring(61, 76));
     return footer;
+  }
+
+  getFeedbackFooterRecordType(): RecordTypeCodes {
+    return RecordTypeCodes.ECertFullTimeFooter;
   }
 }
