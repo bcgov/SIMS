@@ -84,7 +84,7 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ref, onMounted, computed, SetupContext } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
