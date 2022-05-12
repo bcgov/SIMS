@@ -289,62 +289,66 @@ export class EducationProgramController extends BaseController {
     @Query("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramDto> {
-    const program = await this.programService.getInstitutionProgram(
+    const program = this.programService.getInstitutionProgram(
       id,
       userToken.authorizations.institutionId,
     );
 
     const hasOfferings =
-      await this.educationProgramOfferingService.hasExistingOffering(
-        id,
-        locationId,
-      );
+      this.educationProgramOfferingService.hasExistingOffering(id, locationId);
+
+    const [programResponse, hasOfferingsResponse] = await Promise.all([
+      program,
+      hasOfferings,
+    ]);
 
     if (!program) {
       throw new NotFoundException("Not able to find the requested program.");
     }
 
     return {
-      name: program.name,
-      description: program.description,
-      credentialType: program.credentialType,
-      cipCode: program.cipCode,
-      nocCode: program.nocCode,
-      sabcCode: program.sabcCode,
-      regulatoryBody: program.regulatoryBody,
+      name: programResponse.name,
+      description: programResponse.description,
+      credentialType: programResponse.credentialType,
+      cipCode: programResponse.cipCode,
+      nocCode: programResponse.nocCode,
+      sabcCode: programResponse.sabcCode,
+      regulatoryBody: programResponse.regulatoryBody,
       programDeliveryTypes: {
-        deliveredOnSite: program.deliveredOnSite,
-        deliveredOnline: program.deliveredOnline,
+        deliveredOnSite: programResponse.deliveredOnSite,
+        deliveredOnline: programResponse.deliveredOnline,
       },
-      deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
-      sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
+      deliveredOnlineAlsoOnsite: programResponse.deliveredOnlineAlsoOnsite,
+      sameOnlineCreditsEarned: programResponse.sameOnlineCreditsEarned,
       earnAcademicCreditsOtherInstitution:
-        program.earnAcademicCreditsOtherInstitution,
-      courseLoadCalculation: program.courseLoadCalculation,
-      completionYears: program.completionYears,
-      eslEligibility: program.eslEligibility,
-      hasJointInstitution: program.hasJointInstitution,
-      hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
-      programIntensity: program.programIntensity,
-      institutionProgramCode: program.institutionProgramCode,
-      minHoursWeek: program.minHoursWeek,
-      isAviationProgram: program.isAviationProgram,
-      minHoursWeekAvi: program.minHoursWeekAvi,
+        programResponse.earnAcademicCreditsOtherInstitution,
+      courseLoadCalculation: programResponse.courseLoadCalculation,
+      completionYears: programResponse.completionYears,
+      eslEligibility: programResponse.eslEligibility,
+      hasJointInstitution: programResponse.hasJointInstitution,
+      hasJointDesignatedInstitution:
+        programResponse.hasJointDesignatedInstitution,
+      programIntensity: programResponse.programIntensity,
+      institutionProgramCode: programResponse.institutionProgramCode,
+      minHoursWeek: programResponse.minHoursWeek,
+      isAviationProgram: programResponse.isAviationProgram,
+      minHoursWeekAvi: programResponse.minHoursWeekAvi,
       entranceRequirements: {
-        hasMinimumAge: program.hasMinimumAge,
-        minHighSchool: program.minHighSchool,
-        requirementsByInstitution: program.requirementsByInstitution,
-        requirementsByBCITA: program.requirementsByBCITA,
+        hasMinimumAge: programResponse.hasMinimumAge,
+        minHighSchool: programResponse.minHighSchool,
+        requirementsByInstitution: programResponse.requirementsByInstitution,
+        requirementsByBCITA: programResponse.requirementsByBCITA,
       },
-      hasWILComponent: program.hasWILComponent,
-      isWILApproved: program.isWILApproved,
-      wilProgramEligibility: program.wilProgramEligibility,
-      hasTravel: program.hasTravel,
-      travelProgramEligibility: program.travelProgramEligibility,
-      hasIntlExchange: program.hasIntlExchange,
-      intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
-      programDeclaration: program.programDeclaration,
-      hasOfferings: hasOfferings,
+      hasWILComponent: programResponse.hasWILComponent,
+      isWILApproved: programResponse.isWILApproved,
+      wilProgramEligibility: programResponse.wilProgramEligibility,
+      hasTravel: programResponse.hasTravel,
+      travelProgramEligibility: programResponse.travelProgramEligibility,
+      hasIntlExchange: programResponse.hasIntlExchange,
+      intlExchangeProgramEligibility:
+        programResponse.intlExchangeProgramEligibility,
+      programDeclaration: programResponse.programDeclaration,
+      hasOfferings: hasOfferingsResponse,
       locationId: locationId,
     };
   }
