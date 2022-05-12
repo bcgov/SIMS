@@ -21,6 +21,7 @@ export interface InstitutionLocationPrimaryContactAPIInDTO {
   primaryContactEmail: string;
   primaryContactPhone: string;
 }
+
 export interface AESTInstitutionLocationAPIInDTO
   extends AddressDetailsFormAPIDTO,
     InstitutionLocationPrimaryContactAPIInDTO {

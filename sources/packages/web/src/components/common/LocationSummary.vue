@@ -32,7 +32,7 @@
         </span>
       </v-col>
       <v-col cols="1">
-        <v-btn class="color-blue" variant="text" @click="getLocation(item.id)">
+        <v-btn class="primary" variant="text" @click="getLocation(item.id)">
           <font-awesome-icon :icon="['fas', 'cog']" class="mr-2" />
           Edit
         </v-btn>

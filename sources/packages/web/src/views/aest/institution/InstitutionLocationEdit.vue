@@ -23,6 +23,7 @@ import LocationEditForm from "@/components/institutions/locations/LocationEditFo
 import { InstitutionLocationEdit } from "@/types";
 import { AESTInstitutionLocationAPIInDTO } from "@/services/http/dto";
 import { useToastMessage } from "@/composables";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: { LocationEditForm },
@@ -62,6 +63,7 @@ export default {
         await InstitutionService.shared.getInstitutionLocation(
           props.locationId,
         );
+      initialData.value.clientType = AuthService.shared.authClientType;
     });
     const goBackRouteParams = computed(
       () =>
