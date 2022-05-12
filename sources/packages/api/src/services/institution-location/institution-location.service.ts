@@ -59,20 +59,20 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
 
   /**
    * Updating institution location.
-   * @param data Payload of updated data.
+   * @param institutionLocationData Payload of updated data.
    * @param locationId Location Id to update.
-   * @returns Updated location as InstitutionLocation.
+   * @returns Updated institution Location.
    */
   async updateLocationPrimaryContact(
-    data: InstitutionLocationPrimaryContactModel,
+    institutionLocationData: InstitutionLocationPrimaryContactModel,
     locationId: number,
   ): Promise<InstitutionLocation> {
     const saveLocation = {
       primaryContact: {
-        firstName: data.primaryContactFirstName,
-        lastName: data.primaryContactLastName,
-        email: data.primaryContactEmail,
-        phone: data.primaryContactPhone,
+        firstName: institutionLocationData.primaryContactFirstName,
+        lastName: institutionLocationData.primaryContactLastName,
+        email: institutionLocationData.primaryContactEmail,
+        phone: institutionLocationData.primaryContactPhone,
       },
       id: locationId,
     };
@@ -82,26 +82,26 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
 
   /**
    * Updating institution location.
-   * @param data Payload of updated data.
+   * @param institutionLocationData Payload of updated data.
    * @param locationId Location Id to update.
-   * @returns Updated location as InstitutionLocation.
+   * @returns Updated institution Location.
    */
-  async updateLocationForAEST(
-    data: InstitutionLocationModel,
+  async updateLocation(
+    institutionLocationData: InstitutionLocationModel,
     locationId: number,
   ): Promise<InstitutionLocation> {
     const saveLocation = {
-      name: data.locationName,
+      name: institutionLocationData.locationName,
       data: {
-        address: transformAddressDetails(data),
+        address: transformAddressDetails(institutionLocationData),
       },
       primaryContact: {
-        firstName: data.primaryContactFirstName,
-        lastName: data.primaryContactLastName,
-        email: data.primaryContactEmail,
-        phone: data.primaryContactPhone,
+        firstName: institutionLocationData.primaryContactFirstName,
+        lastName: institutionLocationData.primaryContactLastName,
+        email: institutionLocationData.primaryContactEmail,
+        phone: institutionLocationData.primaryContactPhone,
       },
-      institutionCode: data.institutionCode,
+      institutionCode: institutionLocationData.institutionCode,
       id: locationId,
     };
 
@@ -146,25 +146,29 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   }
 
   async getInstitutionLocation(
-    institutionId: number,
     locationId: number,
+    institutionId?: number,
   ): Promise<InstitutionLocation> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("institution_location")
       .select([
         "institution_location.name",
         "institution_location.data",
-        "institution.institutionPrimaryContact",
         "institution_location.id",
         "institution_location.institutionCode",
         "institution_location.primaryContact",
       ])
-      .leftJoin("institution_location.institution", "institution")
-      .where("institution.id = :id and institution_Location.id = :locationId", {
-        id: institutionId,
+      .where("institution_Location.id = :locationId", {
         locationId: locationId,
-      })
-      .getOne();
+      });
+    if (institutionId) {
+      query
+        .leftJoin("institution_location.institution", "institution")
+        .andWhere("institution.id = :id", {
+          id: institutionId,
+        });
+    }
+    return query.getOne();
   }
 
   async getMyInstitutionLocations(

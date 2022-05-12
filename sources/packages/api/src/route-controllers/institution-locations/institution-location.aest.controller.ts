@@ -11,7 +11,7 @@ import { InstitutionLocationControllerService } from "./institution-location.con
 import {
   AESTInstitutionLocationAPIInDTO,
   InstitutionLocationAPIOutDTO,
-  InstitutionLocationFormAPIOutDTO,
+  InstitutionLocationDetailsAPIOutDTO,
 } from "./models/institution-location.dto";
 
 /**
@@ -34,7 +34,7 @@ export class InstitutionLocationAESTController extends BaseController {
    * @param institutionId
    * @returns Institution locations form.io for drop down.
    */
-  @Get("/:institutionId")
+  @Get(":institutionId")
   async getAllInstitutionLocations(
     @Param("institutionId") institutionId: number,
   ): Promise<InstitutionLocationAPIOutDTO[]> {
@@ -46,32 +46,28 @@ export class InstitutionLocationAESTController extends BaseController {
 
   /**
    * Controller method to retrieve institution location by id.
-   * @param institutionId
    * @param locationId
    * @returns institution location.
    */
-  @Get(":locationId/institution/:institutionId")
+  @Get(":locationId/getLocation")
   async getInstitutionLocation(
-    @Param("institutionId") institutionId: number,
     @Param("locationId") locationId: number,
-  ): Promise<InstitutionLocationFormAPIOutDTO> {
-    return this.locationControllerService.getInstitutionLocation(
-      institutionId,
-      locationId,
-    );
+  ): Promise<InstitutionLocationDetailsAPIOutDTO> {
+    // Get particular institution location.
+    return this.locationControllerService.getInstitutionLocation(locationId);
   }
 
   /**
    * Update an institution location.
    * @param locationId
    * @param payload
-   * @returns InstitutionLocation.
+   * @returns institution Location.
    */
   @Patch(":locationId")
   async update(
     @Param("locationId") locationId: number,
     @Body() payload: AESTInstitutionLocationAPIInDTO,
   ): Promise<InstitutionLocation> {
-    return this.locationService.updateLocationForAEST(payload, locationId);
+    return this.locationService.updateLocation(payload, locationId);
   }
 }

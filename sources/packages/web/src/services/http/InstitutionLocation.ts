@@ -41,13 +41,9 @@ export class InstitutionLocationApi extends HttpBaseClient {
 
   public async getInstitutionLocation(
     locationId: number,
-    institutionId?: number,
   ): Promise<InstitutionLocationFormAPIOutDTO> {
-    const url = institutionId
-      ? `institution/location/${locationId}/institution/${institutionId}/`
-      : `institution/location/${locationId}`;
     return this.getCallTyped<InstitutionLocationFormAPIOutDTO>(
-      this.addClientRoot(url),
+      this.addClientRoot(`institution/location/${locationId}/getLocation`),
     );
   }
 

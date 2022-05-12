@@ -60,7 +60,7 @@ export class AESTInstitutionLocationAPIInDTO extends AddressDetailsAPIInDTO {
 /**
  * Response/Output DTO for institution location.
  */
-export class InstitutionLocationFormAPIOutDTO extends AddressDetailsAPIOutDTO {
+export class InstitutionLocationDetailsAPIOutDTO extends AddressDetailsAPIOutDTO {
   locationName: string;
   institutionCode: string;
   primaryContactFirstName: string;

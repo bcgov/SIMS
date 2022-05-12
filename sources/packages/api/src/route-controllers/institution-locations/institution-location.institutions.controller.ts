@@ -53,7 +53,7 @@ import {
   InstitutionLocationPrimaryContactAPIInDTO,
   InstitutionLocationAPIOutDTO,
   InstitutionLocationFormAPIInDTO,
-  InstitutionLocationFormAPIOutDTO,
+  InstitutionLocationDetailsAPIOutDTO,
   ScholasticStandingAPIInDTO,
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
@@ -117,7 +117,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * Update an institution location.
    * @param locationId
    * @param payload
-   * @returns InstitutionLocation.
+   * @returns updated institution location.
    */
   @HasLocationAccess("locationId")
   @IsInstitutionAdmin()
@@ -182,16 +182,16 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * @returns institution location.
    */
   @HasLocationAccess("locationId")
-  @Get(":locationId")
+  @Get(":locationId/getLocation")
   async getInstitutionLocation(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<InstitutionLocationFormAPIOutDTO> {
-    // get all institution locations.
+  ): Promise<InstitutionLocationDetailsAPIOutDTO> {
+    // Get particular institution location.
     const institutionLocation =
       await this.locationService.getInstitutionLocation(
-        userToken.authorizations.institutionId,
         locationId,
+        userToken.authorizations.institutionId,
       );
 
     return {

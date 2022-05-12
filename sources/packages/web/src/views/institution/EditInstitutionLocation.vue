@@ -1,11 +1,11 @@
 <template>
-  <div class="ml-16">
+  <v-container>
     <header-navigator
       title="All Locations"
       :routeLocation="goBackRouteParams"
       subTitle="Edit Locations"
     />
-  </div>
+  </v-container>
   <full-page-container>
     <location-edit-form
       :locationData="initialData"
@@ -17,7 +17,6 @@
 <script lang="ts">
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { useToast } from "primevue/usetoast";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 import { computed, onMounted, ref } from "vue";
 import { InstitutionLocationPrimaryContactAPIInDTO } from "@/services/http/dto";
@@ -25,6 +24,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { AuthService } from "@/services/AuthService";
 import { InstitutionLocationEdit } from "@/types";
+import { useToastMessage } from "@/composables";
 
 export default {
   components: { LocationEditForm },
@@ -38,7 +38,7 @@ export default {
     // Hooks
     const store = useStore();
     const initialData = ref({} as InstitutionLocationEdit);
-    const toast = useToast();
+    const toast = useToastMessage();
     const router = useRouter();
     const updateInstitutionLocation = async (
       data: InstitutionLocationPrimaryContactAPIInDTO,
@@ -50,19 +50,15 @@ export default {
         );
         router.push(goBackRouteParams.value);
         store.dispatch("institution/getUserInstitutionLocationDetails");
-        toast.add({
-          severity: "success",
-          summary: `Your location information have been updated`,
-          detail: "Location Details have been updated!",
-          life: 5000,
-        });
+        toast.success(
+          "Your location information have been updated",
+          "Location Details have been updated!",
+        );
       } catch (excp) {
-        toast.add({
-          severity: "error",
-          summary: "Unexpected error",
-          detail: "An error happened during the update process.",
-          life: 5000,
-        });
+        toast.error(
+          "Unexpected error",
+          "An error happened during the update process.",
+        );
       }
     };
     onMounted(async () => {

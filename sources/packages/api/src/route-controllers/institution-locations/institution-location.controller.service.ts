@@ -4,7 +4,7 @@ import { FormService, InstitutionLocationService } from "../../services";
 import {
   DesignationStatus,
   InstitutionLocationAPIOutDTO,
-  InstitutionLocationFormAPIOutDTO,
+  InstitutionLocationDetailsAPIOutDTO,
 } from "./models/institution-location.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
@@ -83,14 +83,14 @@ export class InstitutionLocationControllerService {
    * @returns location details as InstitutionLocationFormAPIOutDTO.
    */
   async getInstitutionLocation(
-    institutionId: number,
     locationId: number,
-  ): Promise<InstitutionLocationFormAPIOutDTO> {
+    institutionId?: number,
+  ): Promise<InstitutionLocationDetailsAPIOutDTO> {
     // Get all institution locations.
     const institutionLocation =
       await this.locationService.getInstitutionLocation(
-        institutionId,
         locationId,
+        institutionId,
       );
 
     return {
