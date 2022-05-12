@@ -150,20 +150,20 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     institutionId?: number,
   ): Promise<InstitutionLocation> {
     const query = this.repo
-      .createQueryBuilder("institution_location")
+      .createQueryBuilder("institutionLocation")
       .select([
-        "institution_location.name",
-        "institution_location.data",
-        "institution_location.id",
-        "institution_location.institutionCode",
-        "institution_location.primaryContact",
+        "institutionLocation.name",
+        "institutionLocation.data",
+        "institutionLocation.id",
+        "institutionLocation.institutionCode",
+        "institutionLocation.primaryContact",
       ])
-      .where("institution_Location.id = :locationId", {
+      .where("institutionLocation.id = :locationId", {
         locationId: locationId,
       });
     if (institutionId) {
       query
-        .leftJoin("institution_location.institution", "institution")
+        .innerJoin("institutionLocation.institution", "institution")
         .andWhere("institution.id = :id", {
           id: institutionId,
         });

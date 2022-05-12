@@ -5,13 +5,13 @@
       :routeLocation="goBackRouteParams"
       subTitle="Edit Locations"
     />
+    <full-page-container>
+      <location-edit-form
+        :locationData="initialData"
+        @updateInstitutionLocation="updateInstitutionLocation"
+      ></location-edit-form>
+    </full-page-container>
   </v-container>
-  <full-page-container>
-    <location-edit-form
-      :locationData="initialData"
-      @updateInstitutionLocation="updateInstitutionLocation"
-    ></location-edit-form>
-  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -41,7 +41,6 @@ export default {
     const updateInstitutionLocation = async (
       data: InstitutionLocationAPIInDTO,
     ) => {
-      console.log(data);
       try {
         await InstitutionService.shared.updateInstitutionLocation(
           props.locationId,

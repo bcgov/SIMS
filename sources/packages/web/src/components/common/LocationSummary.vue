@@ -32,7 +32,11 @@
         </span>
       </v-col>
       <v-col cols="1">
-        <v-btn color="primary" variant="text" @click="getLocation(item.id)">
+        <v-btn
+          color="primary"
+          variant="text"
+          @click="$emit('editLocation', item.id)"
+        >
           <font-awesome-icon :icon="['fas', 'cog']" class="mr-2" />
           Edit
         </v-btn>
@@ -93,6 +97,7 @@ import { InstitutionLocationAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
 
 export default {
+  emits: ["editLocation"],
   components: {
     ContentGroup,
     TitleValue,
@@ -104,15 +109,12 @@ export default {
       required: false,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(props: any) {
     const formatter = useFormatters();
     const router = useRouter();
     const clientType = computed(() => AuthService.shared.authClientType);
     const goToAddNewLocation = () => {
       router.push({ name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION });
-    };
-    const getLocation = async (locationId: number) => {
-      context.emit("editLocation", locationId);
     };
     const institutionLocationList = ref([] as InstitutionLocationAPIOutDTO[]);
 
@@ -147,7 +149,6 @@ export default {
 
     return {
       goToAddNewLocation,
-      getLocation,
       getInstitutionLocationList,
       institutionLocationList,
       ClientIdType,
