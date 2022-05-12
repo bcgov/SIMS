@@ -178,6 +178,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/getLocation")
+  @ApiNotFoundResponse({ description: "Institution Location not found." })
   async getInstitutionLocation(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,

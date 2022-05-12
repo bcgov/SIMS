@@ -32,7 +32,7 @@
         </span>
       </v-col>
       <v-col cols="1">
-        <v-btn class="primary" variant="text" @click="getLocation(item.id)">
+        <v-btn color="primary" variant="text" @click="getLocation(item.id)">
           <font-awesome-icon :icon="['fas', 'cog']" class="mr-2" />
           Edit
         </v-btn>
@@ -80,11 +80,8 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ref, onMounted, computed } from "vue";
-import {
-  AESTRoutesConst,
-  InstitutionRoutesConst,
-} from "@/constants/routes/RouteConstants";
+import { ref, onMounted, computed, SetupContext } from "vue";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
@@ -107,38 +104,15 @@ export default {
       required: false,
     },
   },
-  setup(props: any) {
+  setup(props: any, context: SetupContext) {
     const formatter = useFormatters();
     const router = useRouter();
     const clientType = computed(() => AuthService.shared.authClientType);
-    const isInstitutionUser = computed(() => {
-      return clientType.value === ClientIdType.Institution;
-    });
-
-    const isAESTUser = computed(() => {
-      return clientType.value === ClientIdType.AEST;
-    });
     const goToAddNewLocation = () => {
       router.push({ name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION });
     };
     const getLocation = async (locationId: number) => {
-      if (isInstitutionUser.value) {
-        router.push({
-          name: InstitutionRoutesConst.EDIT_INSTITUTION_LOCATION,
-          params: {
-            locationId: locationId,
-          },
-        });
-      }
-      if (isAESTUser.value) {
-        router.push({
-          name: AESTRoutesConst.EDIT_INSTITUTION_LOCATION,
-          params: {
-            institutionId: props.institutionId,
-            locationId: locationId,
-          },
-        });
-      }
+      context.emit("editLocation", locationId);
     };
     const institutionLocationList = ref([] as InstitutionLocationAPIOutDTO[]);
 

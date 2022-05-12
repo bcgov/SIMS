@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { LocationWithDesignationStatus } from "../../services/institution-location/institution-location.models";
 import { FormService, InstitutionLocationService } from "../../services";
 import {
@@ -92,7 +92,9 @@ export class InstitutionLocationControllerService {
         locationId,
         institutionId,
       );
-
+    if (!institutionLocation) {
+      throw new NotFoundException("Institution Location was not found.");
+    }
     return {
       locationName: institutionLocation.name,
       institutionCode: institutionLocation.institutionCode,
