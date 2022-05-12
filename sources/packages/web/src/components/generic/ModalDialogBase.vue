@@ -2,22 +2,24 @@
   <v-dialog v-model="showHideDialog" persistent :no-click-animation="true">
     <v-card elevation="10">
       <v-card-header>
-        <v-card-title class="text-h5">
+        <v-card-title>
           <slot name="header">
-            <v-icon v-if="icon" class="mr-2" size="45">{{ icon }}</v-icon>
-            <span v-if="title" class="category-header-medium secondary-color">{{
-              title
-            }}</span>
+            <h5 v-if="title" class="category-header-large primary-color">
+              {{ title }}
+            </h5>
           </slot>
         </v-card-title>
       </v-card-header>
+      <v-divider class="mx-6 mt-1"></v-divider>
       <v-card-text class="pt-0">
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
-      <v-divider></v-divider>
+      <v-divider class="mx-6 mt-1"></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <slot name="footer"></slot>
+        <div class="mx-3">
+          <slot name="footer"></slot>
+        </div>
       </v-card-actions>
     </v-card>
   </v-dialog>

@@ -7,6 +7,17 @@
           :recordsCount="studentFileUploads?.length"
           class="m-1"
         >
+          <template #actions>
+            <v-btn
+              color="primary"
+              data-cy="uploadFileButton"
+              @click="uploadFile"
+              ><font-awesome-icon
+                :icon="['fas', 'plus-circle']"
+                class="mr-2"
+              />Upload file</v-btn
+            >
+          </template>
         </body-header>
         <DataTable
           :value="studentFileUploads"
@@ -51,23 +62,36 @@
       </content-group>
     </div>
   </v-card>
+  <formio-modal-dialog
+    ref="fileUploadModal"
+    title="Upload file"
+    formName="uploadstudentdocumentsaest"
+  >
+    <template #actions="{ cancel, submit }">
+      <v-btn color="primary" variant="outlined" @click="cancel">Cancel</v-btn>
+      <v-btn class="float-right primary-btn-background" @click="submit"
+        >Upload now</v-btn
+      >
+    </template>
+  </formio-modal-dialog>
 </template>
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
+  FormIOForm,
   PAGINATION_LIST,
   StudentUploadFileDTO,
 } from "@/types";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters, useFileUtils } from "@/composables";
+import { useFormatters, useFileUtils, ModalDialog } from "@/composables";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
+import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 
 export default {
   components: {
-    ContentGroup,
+    FormioModalDialog,
     BodyHeader,
   },
   props: {
@@ -78,21 +102,30 @@ export default {
   },
   setup(props: any) {
     const studentFileUploads = ref([] as StudentUploadFileDTO[]);
+    const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { dateOnlyLongString } = useFormatters();
     const fileUtils = useFileUtils();
     const loadStudentFileUploads = async () => {
       studentFileUploads.value =
         await StudentService.shared.getAESTStudentFiles(props.studentId);
     };
+
     onMounted(async () => {
       await loadStudentFileUploads();
     });
+
+    const uploadFile = async () => {
+      await fileUploadModal.value.showModal();
+    };
+
     return {
       studentFileUploads,
       fileUtils,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       dateOnlyLongString,
+      uploadFile,
+      fileUploadModal,
     };
   },
 };

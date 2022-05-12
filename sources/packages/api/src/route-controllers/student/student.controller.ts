@@ -343,7 +343,7 @@ export class StudentController extends BaseController {
    * the value from 'Directory' property from form.IO file component.
    * @returns created file information.
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  @AllowAuthorizedParty(AuthorizedParties.student, AuthorizedParties.aest)
   @Post("files")
   @UseInterceptors(
     FileInterceptor("file", {
