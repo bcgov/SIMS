@@ -219,3 +219,18 @@ ul.no-bullets {
   max-height: none !important;
   max-width: none !important;
 }
+
+.v-banner-success-icon {
+  color: $banner-color-success;
+}
+
+.v-banner-success {
+  background-color: $banner-background-success !important;
+  border-width: 3px !important;
+  border-color: $banner-color-success !important;
+  border-radius: 8px !important;
+}
+
+.v-banner-content {
+  display: block !important;
+}

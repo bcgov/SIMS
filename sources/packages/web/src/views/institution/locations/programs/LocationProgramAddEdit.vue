@@ -4,12 +4,25 @@
       <v-icon left> mdi-arrow-left </v-icon> Program detail</a
     >
   </p>
-
   <span class="heading-x-large">
     <span v-if="isReadonly">View Program</span>
     <span v-if="programId && !isReadonly">Edit Program</span>
     <span v-if="!programId">Create New Program</span>
   </span>
+  <div class="mt-4 mb-2">
+    <banner
+      bannerClass="v-banner-success"
+      header="Students have applied financial aid for this program"
+      summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you’d like to edit the other fields."
+    >
+      <template #icon
+        ><font-awesome-icon
+          :icon="['fas', 'check-circle']"
+          class="mr-2 v-banner-success-icon"
+        />
+      </template>
+    </banner>
+  </div>
   <full-page-container class="mt-2">
     <formio
       formName="educationprogram"
@@ -34,9 +47,10 @@ import { ClientIdType } from "@/types";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { useToastMessage } from "@/composables";
 import { AuthService } from "@/services/AuthService";
+import Banner from "@/components/generic/Banner.vue";
 
 export default {
-  components: { formio, FullPageContainer },
+  components: { formio, FullPageContainer, Banner },
   props: {
     locationId: {
       type: Number,
