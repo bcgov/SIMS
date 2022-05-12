@@ -34,7 +34,6 @@ export default {
     },
   },
   setup(props: any) {
-    // Hooks
     const initialData = ref({} as InstitutionLocationEdit);
     const toast = useToastMessage();
     const router = useRouter();
