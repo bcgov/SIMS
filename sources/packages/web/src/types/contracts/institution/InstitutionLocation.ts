@@ -1,4 +1,5 @@
-import { Address } from "@/types";
+import { InstitutionLocationFormAPIOutDTO } from "@/services/http/dto";
+import { Address, ClientIdType } from "@/types";
 import { DesignationAgreementStatus } from "../DesignationAgreementContract";
 
 export interface InstitutionPrimaryContact {
@@ -24,4 +25,9 @@ export interface InstitutionLocationsDetails {
   };
   institutionCode: string;
   designationStatus: DesignationAgreementStatus;
+}
+
+export interface InstitutionLocationEdit
+  extends InstitutionLocationFormAPIOutDTO {
+  clientType?: ClientIdType;
 }

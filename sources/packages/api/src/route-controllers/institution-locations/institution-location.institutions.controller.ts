@@ -50,9 +50,10 @@ import BaseController from "../BaseController";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 import {
+  InstitutionLocationPrimaryContactAPIInDTO,
   InstitutionLocationAPIOutDTO,
   InstitutionLocationFormAPIInDTO,
-  InstitutionLocationFormAPIOutDTO,
+  InstitutionLocationDetailsAPIOutDTO,
   ScholasticStandingAPIInDTO,
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
@@ -115,37 +116,15 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * Update an institution location.
    * @param locationId
    * @param payload
-   * @returns number of updated rows.
    */
-  @ApiBadRequestResponse({
-    description: "Invalid request to update the institution location.",
-  })
   @HasLocationAccess("locationId")
   @IsInstitutionAdmin()
   @Patch(":locationId")
   async update(
     @Param("locationId") locationId: number,
-    @Body() payload: InstitutionLocationFormAPIInDTO,
-    @UserToken() userToken: IInstitutionUserToken,
+    @Body() payload: InstitutionLocationPrimaryContactAPIInDTO,
   ): Promise<void> {
-    // Validate the location data that will be saved to SIMS DB.
-    const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      FormNames.InstitutionLocation,
-      payload,
-    );
-
-    if (!dryRunSubmissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to create the institution location due to an invalid request.",
-      );
-    }
-
-    // If the data is valid the location is updated to SIMS DB.
-    await this.locationService.saveLocation(
-      userToken.authorizations.institutionId,
-      dryRunSubmissionResult.data.data,
-      locationId,
-    );
+    this.locationService.updateLocationPrimaryContact(payload, locationId);
   }
 
   /**
@@ -193,21 +172,23 @@ export class InstitutionLocationInstitutionsController extends BaseController {
 
   /**
    * Controller method to retrieve institution location by id.
+   * TODO: updating of API routes will be handled in PART 2 PR
    * @param locationId
    * @param userToken
    * @returns institution location.
    */
   @HasLocationAccess("locationId")
-  @Get(":locationId")
+  @Get(":locationId/getLocation")
+  @ApiNotFoundResponse({ description: "Institution Location not found." })
   async getInstitutionLocation(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<InstitutionLocationFormAPIOutDTO> {
-    // get all institution locations.
+  ): Promise<InstitutionLocationDetailsAPIOutDTO> {
+    // Get particular institution location.
     const institutionLocation =
       await this.locationService.getInstitutionLocation(
-        userToken.authorizations.institutionId,
         locationId,
+        userToken.authorizations.institutionId,
       );
 
     return {

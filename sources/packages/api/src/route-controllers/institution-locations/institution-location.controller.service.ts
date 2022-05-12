@@ -1,17 +1,22 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { LocationWithDesignationStatus } from "../../services/institution-location/institution-location.models";
-import { InstitutionLocationService } from "../../services";
+import { FormService, InstitutionLocationService } from "../../services";
 import {
   DesignationStatus,
   InstitutionLocationAPIOutDTO,
+  InstitutionLocationDetailsAPIOutDTO,
 } from "./models/institution-location.dto";
+import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
 /**
  * Controller service for institution location.
  */
 @Injectable()
 export class InstitutionLocationControllerService {
-  constructor(private readonly locationService: InstitutionLocationService) {}
+  constructor(
+    private readonly locationService: InstitutionLocationService,
+    private readonly formService: FormService,
+  ) {}
 
   /**
    * Retrieve institution locations and
@@ -69,5 +74,37 @@ export class InstitutionLocationControllerService {
     )
       ? DesignationStatus.Designated
       : DesignationStatus.NotDesignated;
+  }
+
+  /**
+   * Get the Institution Location details.
+   * @param institutionId
+   * @param locationId
+   * @returns institution location details.
+   */
+  async getInstitutionLocation(
+    locationId: number,
+    institutionId?: number,
+  ): Promise<InstitutionLocationDetailsAPIOutDTO> {
+    // Get a particular institution location.
+    const institutionLocation =
+      await this.locationService.getInstitutionLocation(
+        locationId,
+        institutionId,
+      );
+    if (!institutionLocation) {
+      throw new NotFoundException("Institution Location was not found.");
+    }
+    return {
+      locationName: institutionLocation.name,
+      institutionCode: institutionLocation.institutionCode,
+      primaryContactFirstName: institutionLocation.primaryContact.firstName,
+      primaryContactLastName: institutionLocation.primaryContact.lastName,
+      primaryContactEmail: institutionLocation.primaryContact.email,
+      primaryContactPhone: institutionLocation.primaryContact.phone,
+      ...transformAddressDetailsForAddressBlockForm(
+        institutionLocation.data.address,
+      ),
+    };
   }
 }

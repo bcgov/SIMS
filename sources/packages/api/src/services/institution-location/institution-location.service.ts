@@ -6,6 +6,7 @@ import { DesignationAgreementLocationService } from "../designation-agreement/de
 import {
   LocationWithDesignationStatus,
   InstitutionLocationModel,
+  InstitutionLocationPrimaryContactModel,
 } from "./institution-location.models";
 import { transformAddressDetails } from "../../utilities";
 @Injectable()
@@ -56,6 +57,57 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     return this.repo.save(saveLocation);
   }
 
+  /**
+   * Updating institution location.
+   * @param institutionLocationData Payload of updated data.
+   * @param locationId Location Id to update.
+   * @returns Updated institution Location.
+   */
+  async updateLocationPrimaryContact(
+    institutionLocationData: InstitutionLocationPrimaryContactModel,
+    locationId: number,
+  ): Promise<InstitutionLocation> {
+    const saveLocation = {
+      primaryContact: {
+        firstName: institutionLocationData.primaryContactFirstName,
+        lastName: institutionLocationData.primaryContactLastName,
+        email: institutionLocationData.primaryContactEmail,
+        phone: institutionLocationData.primaryContactPhone,
+      },
+      id: locationId,
+    };
+
+    return this.repo.save(saveLocation);
+  }
+
+  /**
+   * Updating institution location.
+   * @param institutionLocationData Payload of updated data.
+   * @param locationId Location Id to update.
+   * @returns Updated institution Location.
+   */
+  async updateLocation(
+    institutionLocationData: InstitutionLocationModel,
+    locationId: number,
+  ): Promise<InstitutionLocation> {
+    const saveLocation = {
+      name: institutionLocationData.locationName,
+      data: {
+        address: transformAddressDetails(institutionLocationData),
+      },
+      primaryContact: {
+        firstName: institutionLocationData.primaryContactFirstName,
+        lastName: institutionLocationData.primaryContactLastName,
+        email: institutionLocationData.primaryContactEmail,
+        phone: institutionLocationData.primaryContactPhone,
+      },
+      institutionCode: institutionLocationData.institutionCode,
+      id: locationId,
+    };
+
+    return this.repo.save(saveLocation);
+  }
+
   async getAllInstitutionLocations(
     institutionId: number,
   ): Promise<InstitutionLocation[]> {
@@ -94,25 +146,29 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   }
 
   async getInstitutionLocation(
-    institutionId: number,
     locationId: number,
+    institutionId?: number,
   ): Promise<InstitutionLocation> {
-    return this.repo
-      .createQueryBuilder("institution_location")
+    const query = this.repo
+      .createQueryBuilder("institutionLocation")
       .select([
-        "institution_location.name",
-        "institution_location.data",
-        "institution.institutionPrimaryContact",
-        "institution_location.id",
-        "institution_location.institutionCode",
-        "institution_location.primaryContact",
+        "institutionLocation.name",
+        "institutionLocation.data",
+        "institutionLocation.id",
+        "institutionLocation.institutionCode",
+        "institutionLocation.primaryContact",
       ])
-      .leftJoin("institution_location.institution", "institution")
-      .where("institution.id = :id and institution_Location.id = :locationId", {
-        id: institutionId,
+      .where("institutionLocation.id = :locationId", {
         locationId: locationId,
-      })
-      .getOne();
+      });
+    if (institutionId) {
+      query
+        .innerJoin("institutionLocation.institution", "institution")
+        .andWhere("institution.id = :id", {
+          id: institutionId,
+        });
+    }
+    return query.getOne();
   }
 
   async getMyInstitutionLocations(
