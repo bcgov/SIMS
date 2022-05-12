@@ -80,13 +80,13 @@ export class InstitutionLocationControllerService {
    * Get the Institution Location details.
    * @param institutionId
    * @param locationId
-   * @returns location details as InstitutionLocationFormAPIOutDTO.
+   * @returns institution location details.
    */
   async getInstitutionLocation(
     locationId: number,
     institutionId?: number,
   ): Promise<InstitutionLocationDetailsAPIOutDTO> {
-    // Get all institution locations.
+    // Get a particular institution location.
     const institutionLocation =
       await this.locationService.getInstitutionLocation(
         locationId,

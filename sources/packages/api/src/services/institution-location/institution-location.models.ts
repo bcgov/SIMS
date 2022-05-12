@@ -11,7 +11,7 @@ export interface LocationWithDesignationStatus {
 }
 
 /**
- * Service model for institution location for AEST and create.
+ * Service model for AEST user location update.
  */
 export interface InstitutionLocationModel extends AddressInfo {
   locationName: string;
@@ -23,7 +23,7 @@ export interface InstitutionLocationModel extends AddressInfo {
 }
 
 /**
- * Service model for Institutions Institution location edit.
+ * Service model for Institution user location update.
  */
 export interface InstitutionLocationPrimaryContactModel {
   primaryContactFirstName: string;
