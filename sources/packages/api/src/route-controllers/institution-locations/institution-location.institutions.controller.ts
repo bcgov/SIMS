@@ -58,7 +58,6 @@ import {
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
-import { InstitutionLocation } from "../../database/entities";
 
 /**
  * Institution location controller for institutions Client.
@@ -117,7 +116,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * Update an institution location.
    * @param locationId
    * @param payload
-   * @returns updated institution location.
    */
   @HasLocationAccess("locationId")
   @IsInstitutionAdmin()
@@ -125,11 +123,8 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   async update(
     @Param("locationId") locationId: number,
     @Body() payload: InstitutionLocationPrimaryContactAPIInDTO,
-  ): Promise<InstitutionLocation> {
-    return this.locationService.updateLocationPrimaryContact(
-      payload,
-      locationId,
-    );
+  ): Promise<void> {
+    this.locationService.updateLocationPrimaryContact(payload, locationId);
   }
 
   /**

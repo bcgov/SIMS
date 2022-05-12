@@ -1,4 +1,4 @@
-import { Allow, IsNotEmpty } from "class-validator";
+import { Allow, IsNotEmpty, IsNotEmptyObject } from "class-validator";
 import { InstitutionLocationData } from "../../../database/entities/institution-location.model";
 import {
   AddressAPIOutDTO,

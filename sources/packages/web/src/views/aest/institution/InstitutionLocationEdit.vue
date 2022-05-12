@@ -41,6 +41,7 @@ export default {
     const updateInstitutionLocation = async (
       data: AESTInstitutionLocationAPIInDTO,
     ) => {
+      console.log(data);
       try {
         await InstitutionService.shared.updateInstitutionLocation(
           props.locationId,

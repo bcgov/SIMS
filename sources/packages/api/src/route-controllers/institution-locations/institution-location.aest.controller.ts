@@ -61,13 +61,12 @@ export class InstitutionLocationAESTController extends BaseController {
    * Update an institution location.
    * @param locationId
    * @param payload
-   * @returns institution Location.
    */
   @Patch(":locationId")
   async update(
     @Param("locationId") locationId: number,
     @Body() payload: AESTInstitutionLocationAPIInDTO,
-  ): Promise<InstitutionLocation> {
-    return this.locationService.updateLocation(payload, locationId);
+  ): Promise<void> {
+    this.locationService.updateLocation(payload, locationId);
   }
 }
