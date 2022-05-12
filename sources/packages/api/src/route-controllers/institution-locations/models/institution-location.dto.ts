@@ -1,4 +1,10 @@
-import { Allow, IsNotEmpty, IsNotEmptyObject } from "class-validator";
+import {
+  Allow,
+  IsEmail,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  Length,
+} from "class-validator";
 import { InstitutionLocationData } from "../../../database/entities/institution-location.model";
 import {
   AddressAPIOutDTO,
@@ -37,9 +43,9 @@ export class InstitutionLocationPrimaryContactAPIInDTO {
   primaryContactFirstName: string;
   @IsNotEmpty()
   primaryContactLastName: string;
-  @IsNotEmpty()
+  @IsEmail()
   primaryContactEmail: string;
-  @IsNotEmpty()
+  @Length(10, 20)
   primaryContactPhone: string;
 }
 
@@ -48,9 +54,9 @@ export class AESTInstitutionLocationAPIInDTO extends AddressDetailsAPIInDTO {
   primaryContactFirstName: string;
   @IsNotEmpty()
   primaryContactLastName: string;
-  @IsNotEmpty()
+  @IsEmail()
   primaryContactEmail: string;
-  @IsNotEmpty()
+  @Length(10, 20)
   primaryContactPhone: string;
   @IsNotEmpty()
   locationName: string;

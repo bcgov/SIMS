@@ -21,7 +21,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 import { InstitutionLocationEdit } from "@/types";
-import { AESTInstitutionLocationAPIInDTO } from "@/services/http/dto";
+import { InstitutionLocationAPIInDTO } from "@/services/http/dto";
 import { useToastMessage } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 
@@ -39,7 +39,7 @@ export default {
     const toast = useToastMessage();
     const router = useRouter();
     const updateInstitutionLocation = async (
-      data: AESTInstitutionLocationAPIInDTO,
+      data: InstitutionLocationAPIInDTO,
     ) => {
       console.log(data);
       try {

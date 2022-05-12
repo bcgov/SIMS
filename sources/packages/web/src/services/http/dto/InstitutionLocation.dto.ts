@@ -22,7 +22,7 @@ export interface InstitutionLocationPrimaryContactAPIInDTO {
   primaryContactPhone: string;
 }
 
-export interface AESTInstitutionLocationAPIInDTO
+export interface InstitutionLocationAPIInDTO
   extends AddressDetailsFormAPIDTO,
     InstitutionLocationPrimaryContactAPIInDTO {
   locationName: string;
