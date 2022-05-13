@@ -36,6 +36,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * Retrieves the student restrictions as raw data.
    * It uses group by to get the count of a restriction for a user.
    * This count is to validate against allowed count.
+   * TODO: Removed .having("count(*) > restriction.allowedCount"), which may cause expected result, adjust the logic.
    * @param userId
    * @returns Student restriction raw data.
    */
@@ -57,7 +58,6 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .groupBy("studentRestrictions.student.id")
       .addGroupBy("restrictions.id")
       .addGroupBy("restrictions.restrictionType")
-      .having("count(*) > restrictions.allowedCount")
       .getRawMany();
 
     if (!result || result.length === 0) {
@@ -102,6 +102,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * critical operations, for instance, to have money disbursed.
    * ! This query will assume that a join to 'student.id' is present
    * ! in the master query.
+   * TODO: Removed .having("count(*) > restriction.allowedCount"), which may cause expected result, adjust the logic.
    * @returns 'select' query that could be used in an 'exists' or
    * 'not exists'.
    */
@@ -114,8 +115,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .where("studentRestrictions.isActive = true")
       .andWhere("restrictionStudent.id = student.id")
       .groupBy("studentRestrictions.student.id")
-      .addGroupBy("restrictions.id")
-      .having("count(*) > restrictions.allowedCount");
+      .addGroupBy("restrictions.id");
   }
 
   /**
@@ -221,7 +221,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * @param studentId
    * @param studentRestrictionId
    * @param userId
-   * @param resolveRestrictionDTO
+   * @param updateRestrictionDTO
    * @returns resolved student restriction.
    */
   async resolveProvincialRestriction(
