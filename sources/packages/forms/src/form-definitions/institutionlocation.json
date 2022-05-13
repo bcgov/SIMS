@@ -114,7 +114,7 @@
             },
             "logic": [
                 {
-                    "name": "Client not AEST",
+                    "name": "Disable inputs for Client not AEST",
                     "trigger": {
                         "type": "javascript",
                         "javascript": "result = (data.clientType !== 'aest')"
@@ -226,7 +226,7 @@
                     "displayMask": "",
                     "spellcheck": true,
                     "truncateMultipleSpaces": false,
-                    "id": "eyt0jj9p"
+                    "id": "erk8syk"
                 },
                 {
                     "label": "Institution code",
@@ -306,7 +306,7 @@
                     "displayMask": "",
                     "spellcheck": true,
                     "truncateMultipleSpaces": false,
-                    "id": "ejijqdb"
+                    "id": "egen874"
                 },
                 {
                     "label": "Address 1",
@@ -385,7 +385,7 @@
                     "displayMask": "",
                     "spellcheck": true,
                     "truncateMultipleSpaces": false,
-                    "id": "eat2d7"
+                    "id": "ep18tvs"
                 },
                 {
                     "label": "Address 2",
@@ -464,7 +464,7 @@
                     "displayMask": "",
                     "spellcheck": true,
                     "truncateMultipleSpaces": false,
-                    "id": "eivrh5j"
+                    "id": "euw2kfa"
                 },
                 {
                     "label": "Columns",
@@ -580,7 +580,7 @@
                                     },
                                     "customOptions": {},
                                     "useExactSearch": false,
-                                    "id": "eyfatd4"
+                                    "id": "ef7zw7q"
                                 }
                             ],
                             "width": 6,
@@ -745,7 +745,7 @@
                                     },
                                     "customOptions": {},
                                     "useExactSearch": false,
-                                    "id": "e3jk8e"
+                                    "id": "emqi13"
                                 },
                                 {
                                     "label": "Other country",
@@ -824,7 +824,7 @@
                                     "displayMask": "",
                                     "spellcheck": true,
                                     "truncateMultipleSpaces": false,
-                                    "id": "elqvmiq"
+                                    "id": "eoodg2y"
                                 },
                                 {
                                     "label": "country",
@@ -892,7 +892,7 @@
                                     "allowMultipleMasks": false,
                                     "addons": [],
                                     "inputType": "hidden",
-                                    "id": "e6s0ct7"
+                                    "id": "ewb33ap"
                                 }
                             ],
                             "width": 6,
@@ -967,7 +967,7 @@
                     "tree": false,
                     "lazyLoad": false,
                     "autoAdjust": false,
-                    "id": "eqyy9p"
+                    "id": "eyks79"
                 },
                 {
                     "label": "Columns",
@@ -1052,7 +1052,7 @@
                                     "displayMask": "",
                                     "spellcheck": true,
                                     "truncateMultipleSpaces": false,
-                                    "id": "ezzvblf"
+                                    "id": "eanc4bf"
                                 }
                             ],
                             "width": 6,
@@ -1143,7 +1143,7 @@
                                     "inputFormat": "plain",
                                     "spellcheck": true,
                                     "truncateMultipleSpaces": false,
-                                    "id": "e14iy8j"
+                                    "id": "ec9sqw"
                                 },
                                 {
                                     "label": "Postal/ZIP code ",
@@ -1222,7 +1222,7 @@
                                     "displayMask": "",
                                     "spellcheck": true,
                                     "truncateMultipleSpaces": false,
-                                    "id": "eeuk2tv"
+                                    "id": "e3sngbv"
                                 },
                                 {
                                     "label": "PostalCode",
@@ -1290,7 +1290,7 @@
                                     "allowMultipleMasks": false,
                                     "addons": [],
                                     "inputType": "hidden",
-                                    "id": "euh7z9m"
+                                    "id": "erzu5uq"
                                 }
                             ],
                             "width": 6,
@@ -1365,7 +1365,7 @@
                     "tree": false,
                     "lazyLoad": false,
                     "autoAdjust": false,
-                    "id": "e8m6aug"
+                    "id": "euhex4"
                 }
             ],
             "placeholder": "",
@@ -1406,7 +1406,7 @@
             "addons": [],
             "tree": false,
             "lazyLoad": false,
-            "id": "ehxj6g"
+            "id": "evbredb"
         },
         {
             "label": "HTML",
