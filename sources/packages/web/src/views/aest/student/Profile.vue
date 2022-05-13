@@ -11,10 +11,8 @@
 import { onMounted, ref } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { useFormatters } from "@/composables";
-import formio from "@/components/generic/formio.vue";
 
 export default {
-  components: { formio },
   props: {
     studentId: {
       type: Number,

@@ -14,9 +14,7 @@
 <script lang="ts">
 import { ref } from "vue";
 import { useRoute } from "vue-router";
-import formio from "../../components/generic/formio.vue";
 export default {
-  components: { formio },
   setup() {
     const route = useRoute();
     const query = route.params;

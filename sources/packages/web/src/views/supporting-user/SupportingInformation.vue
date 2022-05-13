@@ -60,7 +60,6 @@
 </template>
 
 <script lang="ts">
-import formio from "@/components/generic/formio.vue";
 import { useRouter } from "vue-router";
 import { useAuthBCSC, useFormatters, useToastMessage } from "@/composables";
 import { SupportingUsersService } from "@/services/SupportingUserService";
@@ -72,15 +71,8 @@ import {
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
 } from "@/types";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 
 export default {
-  components: {
-    formio,
-    FullPageContainer,
-    ContentGroup,
-  },
   props: {
     supportingUserType: {
       type: String,

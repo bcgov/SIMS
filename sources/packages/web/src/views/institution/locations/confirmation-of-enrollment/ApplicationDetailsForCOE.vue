@@ -39,7 +39,6 @@
 import { useRouter } from "vue-router";
 import { onMounted, ref, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import formio from "@/components/generic/formio.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import Menu from "primevue/menu";
 import {
@@ -53,7 +52,6 @@ import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrol
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
 import { useToastMessage, ModalDialog } from "@/composables";
 import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify component is used
@@ -69,13 +67,11 @@ export interface MenuType {
 
 export default {
   components: {
-    formio,
     Menu,
     ConfirmCOE,
     ConfirmCOEEditModal,
     ConfirmCOEDenyModal,
     Information,
-    HeaderNavigator,
   },
   props: {
     disbursementScheduleId: {

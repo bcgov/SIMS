@@ -42,7 +42,6 @@ import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { ApplicationStatus } from "@/types";
 import StudentApplications from "@/components/aest/StudentApplications.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -56,7 +55,6 @@ export default {
     RestrictionBanner,
     StudentApplications,
     CheckValidSINBanner,
-    HeaderNavigator,
     ConfirmEditApplication,
     CancelApplication,
   },

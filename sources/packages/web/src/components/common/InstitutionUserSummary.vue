@@ -150,7 +150,6 @@ import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionU
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
 import { useToast } from "primevue/usetoast";
 import { useAuth } from "@/composables";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
 import {
   InstitutionUserViewModel,
@@ -170,7 +169,6 @@ export default {
   components: {
     AddInstitutionUser,
     EditInstitutionUser,
-    ContentGroup,
     StatusBadge,
     InputSwitch,
   },

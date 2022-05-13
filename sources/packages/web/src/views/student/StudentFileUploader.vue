@@ -18,22 +18,16 @@
 </template>
 
 <script lang="ts">
-import formio from "@/components/generic/formio.vue";
 import { useFormioUtils, useToastMessage } from "@/composables";
 import { StudentFileUploaderForm, StudentFileUploaderDTO } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import StudentDocumentList from "@/components/students/StudentDocumentList.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { ref } from "vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
 export default {
   components: {
-    formio,
     StudentDocumentList,
-    FullPageContainer,
-    HeaderNavigator,
   },
   setup() {
     const reloadDocuments = ref(false);

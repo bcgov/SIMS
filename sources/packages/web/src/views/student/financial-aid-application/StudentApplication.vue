@@ -33,7 +33,6 @@
 <script lang="ts">
 import { ref } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import formio from "../../../components/generic/formio.vue";
 import {
   useFormioDropdownLoader,
   useFormioUtils,
@@ -47,7 +46,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
 
 export default {
-  components: { formio, ModalDialogBase },
+  components: { ModalDialogBase },
   setup() {
     const initialData = ref({});
     const router = useRouter();

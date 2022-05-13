@@ -25,7 +25,6 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import formio from "@/components/generic/formio.vue";
 import { ref } from "vue";
 import {
   useFormioUtils,
@@ -45,10 +44,8 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   OFFERING_INTENSITY_MISMATCH,
 } from "@/constants";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { formio, HeaderNavigator },
   props: {
     locationId: {
       type: Number,

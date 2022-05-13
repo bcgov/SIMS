@@ -22,7 +22,6 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import formio from "@/components/generic/formio.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import {
   InstitutionRoutesConst,
@@ -31,12 +30,10 @@ import {
 import { onMounted, ref, computed } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { useToastMessage } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 
 export default {
-  components: { formio, FullPageContainer },
   props: {
     locationId: {
       type: Number,

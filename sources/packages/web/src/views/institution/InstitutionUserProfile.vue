@@ -19,7 +19,6 @@
 <script lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import formio from "../../components/generic/formio.vue";
 import { UserService } from "../../services/UserService";
 import { useToastMessage } from "@/composables";
 import {
@@ -29,7 +28,6 @@ import {
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 
 export default {
-  components: { formio },
   setup() {
     // Hooks
     const toast = useToastMessage();

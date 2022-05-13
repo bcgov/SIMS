@@ -14,11 +14,9 @@
 </template>
 
 <script lang="ts">
-import formio from "../../components/generic/formio.vue";
 import ApiClient from "../../services/http/ApiClient";
 
 export default {
-  components: { formio },
   setup() {
     const changed = (form: any, event: any) => {
       if (

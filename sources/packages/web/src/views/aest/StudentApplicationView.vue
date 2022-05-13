@@ -31,14 +31,10 @@ import { onMounted, ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { GetApplicationBaseDTO } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
 export default {
   components: {
-    FullPageContainer,
-    HeaderNavigator,
     StudentApplication,
   },
   props: {
