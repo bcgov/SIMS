@@ -36,9 +36,8 @@
 <script lang="ts">
 import COESummaryData from "@/views/institution/locations/confirmation-of-enrollment/COESummaryData.vue";
 import { EnrollmentPeriod } from "@/types";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 export default {
-  components: { COESummaryData, HeaderNavigator },
+  components: { COESummaryData },
   props: {
     locationId: {
       type: Number,

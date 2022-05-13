@@ -30,7 +30,11 @@
               @click="gotToAssessmentsSummary"
               >Cancel</v-btn
             >
-            <v-btn color="primary" class="ml-2" data-cy="completeStudentRequest" @click="submit"
+            <v-btn
+              color="primary"
+              class="ml-2"
+              data-cy="completeStudentRequest"
+              @click="submit"
               >Complete student request</v-btn
             ></v-row
           >
@@ -41,9 +45,6 @@
 </template>
 <script lang="ts">
 import { ref, onMounted, computed } from "vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
-import BodyHeader from "@/components/generic/BodyHeader.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
@@ -60,9 +61,6 @@ import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.d
 
 export default {
   components: {
-    HeaderNavigator,
-    FullPageContainer,
-    BodyHeader,
     AppealRequestsApprovalForm,
     StatusChipRequestedAssessment,
   },

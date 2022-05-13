@@ -3,10 +3,8 @@
 </template>
 <script lang="ts">
 import { SetupContext } from "vue";
-import formio from "@/components/generic/formio.vue";
 
 export default {
-  components: { formio },
   emits: ["appealFormLoaded"],
   props: {
     formName: {

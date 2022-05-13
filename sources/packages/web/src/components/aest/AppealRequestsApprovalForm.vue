@@ -18,7 +18,6 @@
 
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import Formio from "@/components/generic/formio.vue";
 import { SetupContext } from "vue";
 import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
 import { useFormioUtils } from "@/composables";
@@ -27,7 +26,6 @@ import { StudentAppealApproval } from "@/types";
 export default {
   emits: ["submitted"],
   components: {
-    Formio,
     AppealRequestsForm,
   },
   props: {

@@ -29,11 +29,9 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage } from "@/composables";
 import { useStore } from "vuex";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 export default {
-  components: { InstitutionProfileForm, HeaderNavigator, FullPageContainer },
+  components: { InstitutionProfileForm },
   setup() {
     // Hooks
     const store = useStore();

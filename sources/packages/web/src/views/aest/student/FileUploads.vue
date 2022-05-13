@@ -60,16 +60,10 @@ import {
   PAGINATION_LIST,
   StudentUploadFileDTO,
 } from "@/types";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { StudentService } from "@/services/StudentService";
 import { useFormatters, useFileUtils } from "@/composables";
-import BodyHeader from "@/components/generic/BodyHeader.vue";
 
 export default {
-  components: {
-    ContentGroup,
-    BodyHeader,
-  },
   props: {
     studentId: {
       type: Number,

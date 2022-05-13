@@ -107,13 +107,11 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 import { COLOR_BLUE } from "@/constants";
-import BodyHeader from "@/components/generic/BodyHeader.vue";
 export default {
-  components: { ContentGroup, TitleValue, BodyHeader },
+  components: { TitleValue },
   props: {
     institutionId: {
       type: Number,

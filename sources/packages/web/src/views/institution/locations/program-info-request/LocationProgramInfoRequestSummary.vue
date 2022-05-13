@@ -62,10 +62,8 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
 import { PIRSummaryDTO, ProgramInfoStatus } from "@/types";
 import { useFormatters } from "@/composables";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { HeaderNavigator },
   props: {
     locationId: {
       type: Number,

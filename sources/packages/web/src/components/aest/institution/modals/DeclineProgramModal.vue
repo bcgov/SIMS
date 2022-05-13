@@ -25,14 +25,12 @@
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
-import formio from "@/components/generic/formio.vue";
 import { COLOR_BLUE } from "@/constants";
 import { DeclineProgram } from "@/types";
 
 export default {
   components: {
     ModalDialogBase,
-    formio,
   },
   setup() {
     const { showDialog, resolvePromise, showModal } = useModalDialog<

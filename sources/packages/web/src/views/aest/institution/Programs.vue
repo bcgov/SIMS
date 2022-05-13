@@ -97,7 +97,6 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import {
   DataTableSortOrder,
   ProgramSummaryFields,
@@ -111,7 +110,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 
 export default {
-  components: { ContentGroup, ProgramStatusChip },
+  components: { ProgramStatusChip },
   props: {
     institutionId: {
       type: Number,

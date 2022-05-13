@@ -30,12 +30,11 @@
 
 <script lang="ts">
 import { ref } from "vue";
-import formio from "@/components/generic/formio.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { RestrictionType } from "@/types";
 export default {
-  components: { ModalDialogBase, formio },
+  components: { ModalDialogBase },
   props: {
     restrictionData: {
       type: Object,
