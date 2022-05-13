@@ -91,7 +91,6 @@
 </template>
 
 <script lang="ts">
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { useRouter } from "vue-router";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -109,7 +108,7 @@ import { ref, watch, onMounted } from "vue";
 import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 
 export default {
-  components: { HeaderNavigator, ProgramStatusChip },
+  components: { ProgramStatusChip },
   props: {
     locationId: {
       type: Number,

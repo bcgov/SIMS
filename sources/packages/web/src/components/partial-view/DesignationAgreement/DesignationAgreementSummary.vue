@@ -59,7 +59,6 @@ import {
   PAGINATION_LIST,
 } from "@/types";
 import { useFormatters, useInstitutionAuth } from "@/composables";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import ToggleContent from "@/components/generic/ToggleContent.vue";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
 import { SetupContext } from "vue";
@@ -68,7 +67,6 @@ import { COLOR_BLUE } from "@/constants";
 export default {
   emits: ["viewDesignation"],
   components: {
-    ContentGroup,
     ToggleContent,
     StatusChipDesignation,
   },

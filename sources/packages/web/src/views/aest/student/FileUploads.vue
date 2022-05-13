@@ -87,13 +87,11 @@ import {
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import { useFormatters, useFileUtils, ModalDialog } from "@/composables";
-import BodyHeader from "@/components/generic/BodyHeader.vue";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 
 export default {
   components: {
     FormioModalDialog,
-    BodyHeader,
   },
   props: {
     studentId: {

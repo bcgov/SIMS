@@ -22,20 +22,12 @@
 </template>
 
 <script lang="ts">
-import formio from "@/components/generic/formio.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { ref, onMounted } from "vue";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { useFormatters } from "@/composables";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
-  components: {
-    formio,
-    FullPageContainer,
-    HeaderNavigator,
-  },
   props: {
     studentId: {
       type: Number,

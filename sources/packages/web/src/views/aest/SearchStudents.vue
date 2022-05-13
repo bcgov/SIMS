@@ -68,7 +68,10 @@
       </Column>
       <Column>
         <template #body="slotProps">
-          <v-btn variant="outlined" data-cy="viewStudent" @click="goToViewStudent(slotProps.data.id)"
+          <v-btn
+            variant="outlined"
+            data-cy="viewStudent"
+            @click="goToViewStudent(slotProps.data.id)"
             >View</v-btn
           >
         </template>
@@ -83,12 +86,8 @@ import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { SearchStudentResp } from "@/types";
 import { useToastMessage } from "@/composables";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 export default {
-  components: {
-    FullPageContainer,
-  },
   setup() {
     const toast = useToastMessage();
     const router = useRouter();

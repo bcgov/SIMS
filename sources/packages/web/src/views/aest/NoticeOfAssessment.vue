@@ -17,15 +17,11 @@
 </template>
 
 <script lang="ts">
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: {
-    HeaderNavigator,
-    FullPageContainer,
     NoticeOfAssessmentFormView,
   },
   props: {

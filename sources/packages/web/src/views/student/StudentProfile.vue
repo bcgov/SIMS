@@ -29,7 +29,6 @@ import {
   useFormatters,
   useStudentStore,
 } from "@/composables";
-import formio from "@/components/generic/formio.vue";
 import { StudentService } from "../../services/StudentService";
 import {
   StudentInfo,
@@ -40,8 +39,6 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 enum FormModes {
   edit = "edit",
@@ -60,12 +57,9 @@ type StudentFormData = Pick<
 
 export default {
   components: {
-    formio,
     RestrictionBanner,
     CheckValidSINBanner,
     PDStatusApplicationModal,
-    HeaderNavigator,
-    FullPageContainer,
   },
   props: {
     editMode: {

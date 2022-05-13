@@ -3,13 +3,11 @@
 </template>
 
 <script lang="ts">
-import formio from "@/components/generic/formio.vue";
 import { ref, watch } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
 
 export default {
-  components: { formio },
   props: {
     assessmentId: {
       type: Number,

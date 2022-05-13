@@ -39,7 +39,6 @@
 </template>
 
 <script lang="ts">
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { onMounted, reactive, ref, computed } from "vue";
 import {
   useFormatters,
@@ -60,15 +59,12 @@ import {
   DesignationModel,
   DesignationFormViewModes,
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ApproveDenyDesignation from "@/views/aest/institution/ApproveDenyDesignation.vue";
 
 export default {
   components: {
-    HeaderNavigator,
     DesignationAgreementForm,
-    FullPageContainer,
     ApproveDenyDesignation,
   },
   props: {

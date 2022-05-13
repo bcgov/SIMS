@@ -83,12 +83,8 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { SearchInstitutionAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage, useFormatters } from "@/composables";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 export default {
-  components: {
-    FullPageContainer,
-  },
   setup() {
     const toast = useToastMessage();
     const router = useRouter();

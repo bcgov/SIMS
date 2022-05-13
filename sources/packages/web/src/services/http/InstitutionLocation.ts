@@ -10,6 +10,8 @@ import {
   UserActiveStatusAPIInDTO,
   InstitutionUserLocationsAPIOutDTO,
   ScholasticStandingDataAPIInDTO,
+  InstitutionLocationPrimaryContactAPIInDTO,
+  InstitutionLocationAPIInDTO,
 } from "@/services/http/dto";
 
 export class InstitutionLocationApi extends HttpBaseClient {
@@ -24,9 +26,13 @@ export class InstitutionLocationApi extends HttpBaseClient {
 
   public async updateInstitutionLocation(
     locationId: number,
-    updateInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
+    updateInstitutionLocationDto:
+      | InstitutionLocationPrimaryContactAPIInDTO
+      | InstitutionLocationAPIInDTO,
   ): Promise<void> {
-    return this.patchCall<InstitutionLocationFormAPIInDTO>(
+    return this.patchCall<
+      InstitutionLocationPrimaryContactAPIInDTO | InstitutionLocationAPIInDTO
+    >(
       this.addClientRoot(`institution/location/${locationId}`),
       updateInstitutionLocationDto,
     );
@@ -36,7 +42,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
     locationId: number,
   ): Promise<InstitutionLocationFormAPIOutDTO> {
     return this.getCallTyped<InstitutionLocationFormAPIOutDTO>(
-      this.addClientRoot(`institution/location/${locationId}`),
+      this.addClientRoot(`institution/location/${locationId}/getLocation`),
     );
   }
 

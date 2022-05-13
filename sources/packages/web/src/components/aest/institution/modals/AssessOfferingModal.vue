@@ -26,14 +26,13 @@
 </template>
 
 <script lang="ts">
-import formio from "@/components/generic/formio.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { computed } from "vue";
 import { OfferingStatus } from "@/types";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
 export default {
-  components: { ModalDialogBase, formio },
+  components: { ModalDialogBase },
   props: {
     offeringStatus: {
       type: String,
