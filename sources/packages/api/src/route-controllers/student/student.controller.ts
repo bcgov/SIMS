@@ -344,8 +344,9 @@ export class StudentController extends BaseController {
    * @returns created file information.
    */
   @AllowAuthorizedParty(AuthorizedParties.student, AuthorizedParties.aest)
+  // TODO: Centralize the upload
   @Post("files")
-  @UseInterceptors(
+  @UseInterceptors
     FileInterceptor("file", {
       limits: uploadLimits(MAX_UPLOAD_FILES, MAX_UPLOAD_PARTS),
       fileFilter: defaultFileFilter,
@@ -420,8 +421,8 @@ export class StudentController extends BaseController {
       }
 
       studentFile = await this.fileService.getStudentFile(
-        student.id,
         uniqueFileName,
+        student.id,
       );
     }
 

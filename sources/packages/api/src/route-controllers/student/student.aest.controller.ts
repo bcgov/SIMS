@@ -1,4 +1,4 @@
-import { Controller, Get, Injectable, Param } from "@nestjs/common";
+import { Controller, Get, Injectable, Param, Res } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { StudentFileService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
@@ -7,6 +7,8 @@ import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import BaseController from "../BaseController";
 import { AESTStudentFileDTO } from "./models/student.dto";
+import { StudentControllerService } from "..";
+import { Response } from "express";
 
 /**
  * Student controller for AEST Client.
@@ -17,7 +19,10 @@ import { AESTStudentFileDTO } from "./models/student.dto";
 @ApiTags(`${ClientTypeBaseRoute.AEST}-students`)
 @Injectable()
 export class StudentAESTController extends BaseController {
-  constructor(private readonly fileService: StudentFileService) {
+  constructor(
+    private readonly fileService: StudentFileService,
+    private readonly studentControllerService: StudentControllerService,
+  ) {
     super();
   }
 
@@ -41,5 +46,21 @@ export class StudentAESTController extends BaseController {
       groupName: studentDocument.groupName,
       updatedAt: studentDocument.updatedAt,
     }));
+  }
+
+  /**
+   * Gets a student file and writes it to the HTTP response.
+   * @param uniqueFileName unique file name (name+guid).
+   * @param response file content.
+   */
+  @Get("files/:uniqueFileName")
+  async getUploadedFile(
+    @Param("uniqueFileName") uniqueFileName: string,
+    @Res() response: Response,
+  ): Promise<void> {
+    await this.studentControllerService.writeFileToResponse(
+      response,
+      uniqueFileName,
+    );
   }
 }

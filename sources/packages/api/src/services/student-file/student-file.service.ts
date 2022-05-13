@@ -40,15 +40,25 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
 
   /**
    * Gets a student file.
-   * @param studentId student id.
    * @param uniqueFileName unique file name (name+guid).
+   * @param studentId student id.
    * @returns student file.
    */
   async getStudentFile(
-    studentId: number,
     uniqueFileName: string,
+    studentId?: number,
   ): Promise<StudentFile> {
-    return this.repo.findOne({ uniqueFileName, student: { id: studentId } });
+    const query = this.repo
+      .createQueryBuilder("studentFile")
+      .where("studentFile.uniqueFileName = :uniqueFileName", {
+        uniqueFileName,
+      });
+
+    if (studentId) {
+      query.andWhere("studentFile.student.id = :studentId", { studentId });
+    }
+
+    return query.getOne();
   }
 
   /**
