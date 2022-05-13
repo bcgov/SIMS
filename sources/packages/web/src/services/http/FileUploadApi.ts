@@ -28,7 +28,10 @@ export class FileUploadApi extends HttpBaseClient {
         ...this.addAuthHeader(),
         responseType: "blob",
       };
-      const response = await this.apiClient.get(relativeUrl, requestConfig);
+      const response = await this.apiClient.get(
+        this.addClientRoot(relativeUrl),
+        requestConfig,
+      );
       return new Blob([response.data]);
     } catch (error) {
       this.handleRequestError(error);

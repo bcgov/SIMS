@@ -74,6 +74,7 @@ export class StudentAESTController extends BaseController {
    * @param response file content.
    */
   @Get("files/:uniqueFileName")
+  @ApiNotFoundResponse({ description: "Requested file was not found." })
   async getUploadedFile(
     @Param("uniqueFileName") uniqueFileName: string,
     @Res() response: Response,
