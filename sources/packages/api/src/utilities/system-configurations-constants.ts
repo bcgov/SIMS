@@ -79,3 +79,13 @@ export const STUDENT_FILE_UPLOAD_TEMPLATE_ID =
  * is an mandatory field while creating a new user.
  */
 export const SERVICE_ACCOUNT_DEFAULT_USER_EMAIL = "dev_sabc@gov.bc.ca";
+
+/**
+ * For multipart forms, the max number of file fields.
+ */
+export const MAX_UPLOAD_FILES = 1;
+/**
+ * For multipart forms, the max number of parts (fields + files).
+ * 3 means 'the file' + uniqueFileName + group.
+ */
+export const MAX_UPLOAD_PARTS = 3;

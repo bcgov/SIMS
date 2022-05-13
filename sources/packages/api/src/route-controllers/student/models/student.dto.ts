@@ -40,7 +40,7 @@ export interface SaveStudentDto extends AddressDetailsAPIInDTO {
   sinNumber?: string;
 }
 
-export interface FileCreateDto {
+export interface FileCreateAPIOutDTO {
   fileName: string;
   uniqueFileName: string;
   url: string;

@@ -65,6 +65,7 @@
   <formio-modal-dialog
     ref="fileUploadModal"
     title="Upload file"
+    :formData="initialData"
     formName="uploadstudentdocumentsaest"
   >
     <template #actions="{ cancel, submit }">
@@ -105,6 +106,7 @@ export default {
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { dateOnlyLongString } = useFormatters();
     const fileUtils = useFileUtils();
+    const initialData = ref({ studentId: props.studentId });
     const loadStudentFileUploads = async () => {
       studentFileUploads.value =
         await StudentService.shared.getAESTStudentFiles(props.studentId);
@@ -126,6 +128,7 @@ export default {
       dateOnlyLongString,
       uploadFile,
       fileUploadModal,
+      initialData,
     };
   },
 };

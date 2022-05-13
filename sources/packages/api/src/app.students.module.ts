@@ -76,6 +76,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     GCNotifyActionsService,
     AssessmentControllerService,
     StudentControllerService,
+    StudentFileService,
   ],
 })
 export class AppStudentsModule {}

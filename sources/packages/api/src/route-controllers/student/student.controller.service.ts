@@ -1,9 +1,10 @@
-import { NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { Response } from "express";
 import { StudentFileService } from "../../services";
-import { FileCreateDto } from "./models/student.dto";
+import { FileCreateAPIOutDTO } from "./models/student.dto";
 import { Readable } from "stream";
 
+@Injectable()
 export class StudentControllerService {
   constructor(private readonly fileService: StudentFileService) {}
 
@@ -14,6 +15,8 @@ export class StudentControllerService {
    * @param uniqueFileName unique file name (name+guid).
    * @param groupName friendly name to group files. Currently using
    * the value from 'Directory' property from form.IO file component.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    * @returns created file information.
    */
   async uploadFile(
@@ -21,7 +24,8 @@ export class StudentControllerService {
     file: Express.Multer.File,
     uniqueFileName: string,
     groupName: string,
-  ): Promise<FileCreateDto> {
+    auditUserId: number,
+  ): Promise<FileCreateAPIOutDTO> {
     const createdFile = await this.fileService.createFile(
       {
         fileName: file.originalname,
@@ -31,6 +35,7 @@ export class StudentControllerService {
         fileContent: file.buffer,
       },
       studentId,
+      auditUserId,
     );
 
     return {

@@ -27,7 +27,7 @@ import {
   APPLICATION_NOT_FOUND,
 } from "../../services";
 import {
-  FileCreateDto,
+  FileCreateAPIOutDTO,
   GetStudentContactDto,
   StudentEducationProgramDto,
   SearchStudentRespDto,
@@ -334,6 +334,7 @@ export class StudentController extends BaseController {
       }
     }
   }
+
   /**
    * Allow files uploads to a particular student.
    * @param userToken authentication token.
@@ -344,9 +345,8 @@ export class StudentController extends BaseController {
    * @returns created file information.
    */
   @AllowAuthorizedParty(AuthorizedParties.student, AuthorizedParties.aest)
-  // TODO: Centralize the upload
   @Post("files")
-  @UseInterceptors
+  @UseInterceptors(
     FileInterceptor("file", {
       limits: uploadLimits(MAX_UPLOAD_FILES, MAX_UPLOAD_PARTS),
       fileFilter: defaultFileFilter,
@@ -357,7 +357,7 @@ export class StudentController extends BaseController {
     @UploadedFile() file: Express.Multer.File,
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
-  ): Promise<FileCreateDto> {
+  ): Promise<FileCreateAPIOutDTO> {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
@@ -377,6 +377,7 @@ export class StudentController extends BaseController {
         fileContent: file.buffer,
       },
       student.id,
+      userToken.userId,
     );
 
     return {

@@ -3,7 +3,7 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, In, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { StudentFile, Student } from "../../database/entities";
+import { StudentFile, Student, User } from "../../database/entities";
 import { CreateFile } from "./student-file.model";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { StudentFileUploaderForm } from "../../route-controllers/student/models/student.dto";
@@ -20,13 +20,16 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
 
   /**
    * Creates a file and associates it with a student.
-   * @param createFile
-   * @param studentId
-   * @returns file
+   * @param createFile file to be created.
+   * @param studentId student that will have the file associated.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @returns saved student file record.
    */
   async createFile(
     createFile: CreateFile,
     studentId: number,
+    auditUserId: number,
   ): Promise<StudentFile> {
     const newFile = new StudentFile();
     newFile.fileName = createFile.fileName;
@@ -35,6 +38,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     newFile.mimeType = createFile.mimeType;
     newFile.fileContent = createFile.fileContent;
     newFile.student = { id: studentId } as Student;
+    newFile.creator = { id: auditUserId } as User;
     return this.repo.save(newFile);
   }
 
