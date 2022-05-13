@@ -114,7 +114,7 @@
                     "name": "Client not AEST",
                     "trigger": {
                         "type": "javascript",
-                        "javascript": "data.clientType !== 'aest'"
+                        "javascript": "result = (data.clientType !== 'aest')"
                     },
                     "actions": [
                         {
@@ -223,7 +223,7 @@
                     "displayMask": "",
                     "spellcheck": true,
                     "truncateMultipleSpaces": false,
-                    "id": "eufk09q"
+                    "id": "eyt0jj9p"
                 },
                 {
                     "label": "Institution code",
@@ -303,7 +303,7 @@
                     "displayMask": "",
                     "spellcheck": true,
                     "truncateMultipleSpaces": false,
-                    "id": "eaaekn"
+                    "id": "ejijqdb"
                 },
                 {
                     "label": "Address 1",
@@ -382,7 +382,7 @@
                     "displayMask": "",
                     "spellcheck": true,
                     "truncateMultipleSpaces": false,
-                    "id": "e20i88g"
+                    "id": "eat2d7"
                 },
                 {
                     "label": "Address 2",
@@ -461,7 +461,7 @@
                     "displayMask": "",
                     "spellcheck": true,
                     "truncateMultipleSpaces": false,
-                    "id": "ez3r8ii"
+                    "id": "eivrh5j"
                 },
                 {
                     "label": "Columns",
@@ -577,7 +577,7 @@
                                     },
                                     "customOptions": {},
                                     "useExactSearch": false,
-                                    "id": "eptdq6"
+                                    "id": "eyfatd4"
                                 }
                             ],
                             "width": 6,
@@ -742,7 +742,7 @@
                                     },
                                     "customOptions": {},
                                     "useExactSearch": false,
-                                    "id": "efyqkgk"
+                                    "id": "e3jk8e"
                                 },
                                 {
                                     "label": "Other country",
@@ -821,7 +821,7 @@
                                     "displayMask": "",
                                     "spellcheck": true,
                                     "truncateMultipleSpaces": false,
-                                    "id": "eyuw80q"
+                                    "id": "elqvmiq"
                                 },
                                 {
                                     "label": "country",
@@ -889,7 +889,7 @@
                                     "allowMultipleMasks": false,
                                     "addons": [],
                                     "inputType": "hidden",
-                                    "id": "ejmi63l"
+                                    "id": "e6s0ct7"
                                 }
                             ],
                             "width": 6,
@@ -964,7 +964,7 @@
                     "tree": false,
                     "lazyLoad": false,
                     "autoAdjust": false,
-                    "id": "edqz826"
+                    "id": "eqyy9p"
                 },
                 {
                     "label": "Columns",
@@ -1049,7 +1049,7 @@
                                     "displayMask": "",
                                     "spellcheck": true,
                                     "truncateMultipleSpaces": false,
-                                    "id": "ejxltg"
+                                    "id": "ezzvblf"
                                 }
                             ],
                             "width": 6,
@@ -1140,7 +1140,7 @@
                                     "inputFormat": "plain",
                                     "spellcheck": true,
                                     "truncateMultipleSpaces": false,
-                                    "id": "ena34ja"
+                                    "id": "e14iy8j"
                                 },
                                 {
                                     "label": "Postal/ZIP code ",
@@ -1219,7 +1219,7 @@
                                     "displayMask": "",
                                     "spellcheck": true,
                                     "truncateMultipleSpaces": false,
-                                    "id": "eel63b"
+                                    "id": "eeuk2tv"
                                 },
                                 {
                                     "label": "PostalCode",
@@ -1287,7 +1287,7 @@
                                     "allowMultipleMasks": false,
                                     "addons": [],
                                     "inputType": "hidden",
-                                    "id": "eothiz9"
+                                    "id": "euh7z9m"
                                 }
                             ],
                             "width": 6,
@@ -1362,7 +1362,7 @@
                     "tree": false,
                     "lazyLoad": false,
                     "autoAdjust": false,
-                    "id": "es2spz"
+                    "id": "e8m6aug"
                 }
             ],
             "placeholder": "",
@@ -1403,7 +1403,7 @@
             "addons": [],
             "tree": false,
             "lazyLoad": false,
-            "id": "etgchb0s"
+            "id": "ehxj6g"
         },
         {
             "label": "HTML",
@@ -2307,25 +2307,43 @@
         },
         {
             "label": "clientType",
+            "labelWidth": "",
+            "labelMargin": "",
+            "customClass": "",
+            "modalEdit": false,
+            "defaultValue": null,
             "persistent": "client-only",
-            "calculateValue": "value = data.clientType",
+            "protected": false,
+            "dbIndex": false,
+            "encrypted": false,
+            "redrawOn": "data",
+            "customDefaultValue": "",
+            "calculateValue": "value = data.clientType;",
+            "calculateServer": false,
             "key": "clientType",
+            "tags": [],
+            "properties": {},
+            "logic": [],
+            "attributes": {},
+            "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+            },
             "type": "hidden",
             "input": true,
             "tableView": false,
             "placeholder": "",
             "prefix": "",
-            "customClass": "",
             "suffix": "",
             "multiple": false,
-            "defaultValue": null,
-            "protected": false,
             "unique": false,
             "hidden": false,
             "clearOnHide": true,
             "refreshOn": "",
-            "redrawOn": "",
-            "modalEdit": false,
             "dataGridLabel": false,
             "labelPosition": "top",
             "description": "",
@@ -2335,13 +2353,9 @@
             "tabindex": "",
             "disabled": false,
             "autofocus": false,
-            "dbIndex": false,
-            "customDefaultValue": "",
-            "calculateServer": false,
             "widget": {
                 "type": "input"
             },
-            "attributes": {},
             "validateOn": "change",
             "validate": {
                 "required": false,
@@ -2356,22 +2370,13 @@
                 "when": null,
                 "eq": ""
             },
-            "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-            },
             "allowCalculateOverride": false,
-            "encrypted": false,
             "showCharCount": false,
             "showWordCount": false,
-            "properties": {},
             "allowMultipleMasks": false,
             "addons": [],
             "inputType": "hidden",
-            "id": "eqxwft9"
+            "id": "e50i6n"
         },
         {
             "label": "applicationId",
@@ -2526,5 +2531,5 @@
     "path": "institutionlocation",
     "machineName": "institutionlocation",
     "created": "2021-06-28T22:06:38.576Z",
-    "modified": "2022-05-13T16:23:25.762Z"
+    "modified": "2022-05-13T20:51:39.314Z"
 }
