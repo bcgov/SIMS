@@ -11,6 +11,7 @@
   </span>
   <div class="mt-4 mb-2">
     <banner
+      v-if="initialData?.hasOfferings"
       bannerClass="v-banner-success"
       header="Students have applied financial aid for this program"
       summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you’d like to edit the other fields."
@@ -18,8 +19,14 @@
       <template #icon
         ><font-awesome-icon
           :icon="['fas', 'check-circle']"
-          class="mr-2 v-banner-success-icon"
+          class="mr-2"
+          :style="{ color: '#16c92e' }"
         />
+      </template>
+      <template v-slot:actions>
+        <v-btn class="mt-2 v-button-success" @click="createNewProgram()">
+          Create program
+        </v-btn>
       </template>
     </banner>
   </div>
@@ -48,9 +55,15 @@ import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { useToastMessage } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import Banner from "@/components/generic/Banner.vue";
+import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 
 export default {
   components: { formio, FullPageContainer, Banner },
+  data() {
+    return {
+      hasOfferings: false,
+    };
+  },
   props: {
     locationId: {
       type: Number,
@@ -77,11 +90,12 @@ export default {
       return isAESTUser.value;
     });
     // Data-bind
-    const initialData = ref({});
+    const initialData = ref({} as any);
+    const institution = ref({} as InstitutionDetailAPIOutDTO);
 
     const loadFormData = async () => {
       if (isInstitutionUser.value) {
-        const institution = await InstitutionService.shared.getDetail();
+        institution.value = await InstitutionService.shared.getDetail();
         if (props.programId) {
           const program = await EducationProgramService.shared.getProgram(
             props.programId,
@@ -89,11 +103,11 @@ export default {
           );
           initialData.value = {
             ...program,
-            ...{ isBCPrivate: institution.isBCPrivate },
+            ...{ isBCPrivate: institution.value.isBCPrivate },
           };
         } else {
           initialData.value = {
-            isBCPrivate: institution.isBCPrivate,
+            isBCPrivate: institution.value.isBCPrivate,
           };
         }
       }
@@ -148,7 +162,7 @@ export default {
     const submitted = async (data: any) => {
       if (isInstitutionUser.value) {
         try {
-          if (props.programId) {
+          if (initialData.value?.hasOfferings) {
             await EducationProgramService.shared.updateProgram(
               props.programId,
               data,
@@ -173,11 +187,23 @@ export default {
         }
       }
     };
+
+    const createNewProgram = () => {
+      initialData.value = {};
+      initialData.value = {
+        isBCPrivate: institution.value.isBCPrivate,
+        hasOfferings: false,
+      };
+    };
+
     return {
       initialData,
       submitted,
       isReadonly,
       goBack,
+      InstitutionRoutesConst,
+      createNewProgram,
+      institution,
     };
   },
 };

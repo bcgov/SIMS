@@ -220,10 +220,6 @@ ul.no-bullets {
   max-width: none !important;
 }
 
-.v-banner-success-icon {
-  color: $banner-color-success;
-}
-
 .v-banner-success {
   background-color: $banner-background-success !important;
   border-width: 3px !important;
@@ -231,6 +227,10 @@ ul.no-bullets {
   border-radius: 8px !important;
 }
 
-.v-banner-content {
-  display: block !important;
+.v-button-success {
+  background-color: $button-color-success !important;
+  color: $color-white !important;
+  font-weight: $font-weight-bold !important;
+  line-height: $font-size-banner-line-lh !important;
+  font-size: $font-size-banner-button !important;
 }

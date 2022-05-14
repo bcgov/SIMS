@@ -143,8 +143,8 @@ export interface ProgramDto extends EducationProgramBaseDto {
   hasIntlExchange?: string;
   intlExchangeProgramEligibility?: string;
   programDeclaration: boolean;
-  hasOfferings: boolean;
-  locationId: number;
+  hasOfferings?: boolean;
+  locationId?: number;
 }
 
 export interface ProgramDeliveryTypes {
