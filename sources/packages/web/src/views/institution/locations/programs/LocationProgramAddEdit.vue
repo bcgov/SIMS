@@ -11,7 +11,7 @@
   </span>
   <div class="mt-4 mb-2">
     <banner
-      v-if="initialData?.hasOfferings"
+      v-if="initialData.hasOfferings"
       bannerClass="v-banner-success"
       header="Students have applied financial aid for this program"
       summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you’d like to edit the other fields."
@@ -24,7 +24,7 @@
         />
       </template>
       <template v-slot:actions>
-        <v-btn class="mt-2 v-button-success" @click="createNewProgram()">
+        <v-btn class="v-button-success" @click="createNewProgram()">
           Create program
         </v-btn>
       </template>
@@ -59,11 +59,6 @@ import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 
 export default {
   components: { formio, FullPageContainer, Banner },
-  data() {
-    return {
-      hasOfferings: false,
-    };
-  },
   props: {
     locationId: {
       type: Number,

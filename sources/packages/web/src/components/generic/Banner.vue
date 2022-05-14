@@ -7,18 +7,14 @@
       <div>{{ summary }}</div>
     </v-banner-text>
 
-    <slot name="actions"> </slot>
+    <div class="ml-8 mt-2" :style="{ display: 'inline-flex' }">
+      <slot name="actions"> </slot>
+    </div>
   </v-banner>
 </template>
 <script lang="ts">
 export default {
   props: {
-    buttonLabel: {
-      type: String,
-    },
-    buttonClass: {
-      type: String,
-    },
     bannerClass: {
       type: String,
     },
@@ -28,18 +24,6 @@ export default {
     summary: {
       type: String,
     },
-    // routeLocation: {
-    //   type: Object,
-    // },
   },
-
-  // setup(props: any) {
-  //   const router = useRouter();
-
-  //   const navigate = () => {
-  //     router.push(props.routeLocation);
-  //   };
-  //   return { navigate };
-  // },
 };
 </script>
