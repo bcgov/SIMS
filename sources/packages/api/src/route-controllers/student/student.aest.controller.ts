@@ -170,7 +170,7 @@ export class StudentAESTController extends BaseController {
       studentId,
       userToken.userId,
       payload.associatedFiles,
-      FileOriginType.Student,
+      FileOriginType.Ministry,
       "Uploaded by SABC",
       undefined,
       sendFileUploadNotification,
