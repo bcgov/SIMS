@@ -15,7 +15,7 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
  */
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
-@Controller("institution/location")
+@Controller("location")
 @ApiTags(`${ClientTypeBaseRoute.Student}-institution/location`)
 export class InstitutionLocationStudentsController extends BaseController {
   constructor(private readonly locationService: InstitutionLocationService) {

@@ -9,7 +9,6 @@ import BaseController from "../BaseController";
 import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 import {
   AESTInstitutionLocationAPIInDTO,
-  InstitutionLocationAPIOutDTO,
   InstitutionLocationDetailsAPIOutDTO,
 } from "./models/institution-location.dto";
 
@@ -18,7 +17,7 @@ import {
  */
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
-@Controller("institution/location")
+@Controller("location")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-institution/location`)
 export class InstitutionLocationAESTController extends BaseController {
   constructor(
@@ -29,27 +28,12 @@ export class InstitutionLocationAESTController extends BaseController {
   }
 
   /**
-   * Controller method to get institution locations with designation status for the given institution.
-   * @param institutionId
-   * @returns Institution locations form.io for drop down.
-   */
-  @Get(":institutionId")
-  async getAllInstitutionLocations(
-    @Param("institutionId") institutionId: number,
-  ): Promise<InstitutionLocationAPIOutDTO[]> {
-    // get all institution locations with designation statuses.
-    return this.locationControllerService.getInstitutionLocations(
-      institutionId,
-    );
-  }
-
-  /**
    * Controller method to retrieve institution location by id.
    * TODO: updating of API routes will be handled in PART 2 PR
    * @param locationId
    * @returns institution location.
    */
-  @Get(":locationId/getLocation")
+  @Get(":locationId")
   @ApiNotFoundResponse({ description: "Institution Location not found." })
   async getInstitutionLocation(
     @Param("locationId") locationId: number,

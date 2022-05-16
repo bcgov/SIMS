@@ -18,6 +18,7 @@ import {
   InstitutionUserTypeAndRoleAPIOutDTO,
   InstitutionUserDetailAPIOutDTO,
   UserRoleOptionAPIOutDTO,
+  InstitutionLocationAPIOutDTO,
 } from "@/services/http/dto";
 
 export class InstitutionApi extends HttpBaseClient {
@@ -99,13 +100,22 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
+  public async allInstitutionLocations(
+    institutionId?: number,
+  ): Promise<InstitutionLocationAPIOutDTO[]> {
+    const url = institutionId
+      ? `institution/${institutionId}/locations`
+      : "institution/locations";
+    return this.getCallTyped<InstitutionLocationAPIOutDTO[]>(
+      this.addClientRoot(url),
+    );
+  }
+
   public async getActiveApplicationsSummary(
     locationId: number,
   ): Promise<ActiveApplicationSummaryAPIOutDTO[]> {
     return this.getCallTyped<ActiveApplicationSummaryAPIOutDTO[]>(
-      this.addClientRoot(
-        `institution/location/${locationId}/active-applications`,
-      ),
+      this.addClientRoot(`location/${locationId}/active-applications`),
     );
   }
 

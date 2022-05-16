@@ -32,6 +32,7 @@ import {
 } from "../../utilities";
 import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
+import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
 
 /**
  * Institution controller for AEST Client.
@@ -185,5 +186,20 @@ export class InstitutionAESTController extends BaseController {
       operatingName: institutionDetail.operatingName,
       designationStatus: designationStatus,
     };
+  }
+
+  /**
+   * Controller method to get institution locations with designation status for the given institution.
+   * @param institutionId
+   * @returns Institution locations form.io for drop down.
+   */
+  @Get(":institutionId/locations")
+  async getAllInstitutionLocations(
+    @Param("institutionId") institutionId: number,
+  ): Promise<InstitutionLocationAPIOutDTO[]> {
+    // get all institution locations with designation statuses.
+    return this.locationControllerService.getInstitutionLocations(
+      institutionId,
+    );
   }
 }
