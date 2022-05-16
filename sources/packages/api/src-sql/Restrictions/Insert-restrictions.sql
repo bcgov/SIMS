@@ -1196,7 +1196,6 @@ VALUES
     'Error'
   );
 
--- TODO: Description looks like imcomplete, need to confirm.
 INSERT INTO
   sims.restrictions(
     restriction_type,
@@ -1210,7 +1209,7 @@ VALUES
   (
     'Federal',
     'B5',
-    'Reached PD lifetime max and.',
+    'Reached PD lifetime max.',
     'Federal',
     ARRAY ['Stop disbursement'] :: sims.restriction_action_type [],
     'Error'
