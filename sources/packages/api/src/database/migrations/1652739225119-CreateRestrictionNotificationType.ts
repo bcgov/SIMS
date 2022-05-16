@@ -1,15 +1,18 @@
 import { getSQLFileData } from "../../utilities";
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CleanRestrictionsTable1652466821171 implements MigrationInterface {
+export class CreateRestrictionNotificationType1652739225119
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Truncate-restriction.sql", "Restrictions"),
+      getSQLFileData("Create-restriction-notification-type.sql", "Types"),
     );
   }
+
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Rollback-truncate-restriction.sql", "Restrictions"),
+      getSQLFileData("Drop-restriction-notification-type.sql", "Types"),
     );
   }
 }

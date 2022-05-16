@@ -1,3 +1,33 @@
+-- Clean restrictions table.
+-- Clean the tables that has relation with restrictions table.
+-- Clean federal_restrictions.
+TRUNCATE TABLE sims.federal_restrictions RESTART IDENTITY CASCADE;
+
+-- Clean institution_restrictions.
+TRUNCATE TABLE sims.institution_restrictions RESTART IDENTITY CASCADE;
+
+-- Clean student_restrictions.
+TRUNCATE TABLE sims.student_restrictions RESTART IDENTITY CASCADE;
+
+--Clean restrictions.
+TRUNCATE TABLE sims.restrictions RESTART IDENTITY CASCADE;
+
+-- Drop column action_type.
+ALTER TABLE
+  sims.restrictions DROP COLUMN action_type;
+
+-- Drop column notification_type.
+ALTER TABLE
+  sims.restrictions DROP COLUMN notification_type;
+
+-- Add column allowed_count.
+ALTER TABLE
+  sims.restrictions
+ADD
+  COLUMN IF NOT EXISTS allowed_count INT NOT NULL DEFAULT 0;
+
+COMMENT ON COLUMN sims.restrictions.allowed_count IS 'Allowed count defines the maximum number of times a given restriction can be held by any user';
+
 -- Insert old restrictions data to the sims.restrictions table.
 INSERT INTO
   sims.restrictions(

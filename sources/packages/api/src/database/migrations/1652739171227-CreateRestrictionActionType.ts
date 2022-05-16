@@ -1,7 +1,7 @@
 import { getSQLFileData } from "../../utilities";
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateRestrictionActionType1652479719590
+export class CreateRestrictionActionType1652739171227
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {

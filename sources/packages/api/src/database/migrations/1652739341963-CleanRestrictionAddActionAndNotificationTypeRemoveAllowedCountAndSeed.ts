@@ -1,13 +1,13 @@
 import { getSQLFileData } from "../../utilities";
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddRestrictionActionTypeAndNotificationType1652479844077
+export class CleanRestrictionAddActionAndNotificationTypeRemoveAllowedCountAndSeed1652739341963
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Add-col-action-type-and-notification-type.sql",
+        "Clean-restriction-add-action-and-notification-type-remove-allowed-count-and-seed.sql",
         "Restrictions",
       ),
     );
@@ -16,7 +16,7 @@ export class AddRestrictionActionTypeAndNotificationType1652479844077
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Remove-col-action-type-and-notification-type.sql",
+        "Rollback-Clean-restriction-add-action-and-notification-type-remove-allowed-count-and-seed.sql",
         "Restrictions",
       ),
     );

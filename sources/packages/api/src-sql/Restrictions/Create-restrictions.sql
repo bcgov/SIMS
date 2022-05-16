@@ -1,22 +1,20 @@
 -- Create Table sims.restrictions
 CREATE TABLE IF NOT EXISTS sims.restrictions(
   id SERIAL PRIMARY KEY,
-  restriction_type sims.restriction_types NOT NULL,
+  restriction_type sims.restriction_types NOT NULL, 
   restriction_code VARCHAR(10) NOT NULL,
   description VARCHAR(250) NOT NULL,
   allowed_count INT NOT NULL DEFAULT 0,
+
   -- Audit columns
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone NOT NULL DEFAULT now(),
-  creator INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
-  SET
-    NULL,
-    modifier INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
-  SET
-    NULL
+  creator INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE SET NULL,
+  modifier INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE SET NULL
 );
 
 -- Comments for table and column
+
 COMMENT ON TABLE sims.restrictions IS 'Table that holds restriction details';
 
 COMMENT ON COLUMN sims.restrictions.id IS 'Auto-generated sequential primary key column';

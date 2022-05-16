@@ -2,8 +2,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { RestrictionType } from ".";
-import { RestrictionNotificationType } from "./restriction_notification_type";
-import { RestrictionActionType } from "./restriction_action_type";
+import { RestrictionNotificationType } from "./restriction-notification-type.type";
+import { RestrictionActionType } from "./restriction-action-type.type";
 
 /**
  * Entity for restrictions
@@ -50,7 +50,7 @@ export class Restriction extends RecordDataModel {
   description: string;
 
   /**
-   * Action type of the restriction
+   * Actions associated with the restriction, for instance, when a restriction must prevent the student from applying to a Student Application.
    */
   @Column({
     name: "action_type",
@@ -63,7 +63,7 @@ export class Restriction extends RecordDataModel {
   actionType: RestrictionActionType[];
 
   /**
-   * Notification type of the restriction
+   * The type of notification for the restriction.
    */
   @Column({
     name: "notification_type",
