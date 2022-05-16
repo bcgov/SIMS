@@ -8,6 +8,7 @@ export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
 
   static createAuthHeader(token?: string) {
+    console.log(token);
     if (token) {
       const authorization = `Bearer ${token}`;
       return { headers: { Authorization: authorization } };
