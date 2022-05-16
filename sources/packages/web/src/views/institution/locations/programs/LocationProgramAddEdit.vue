@@ -101,9 +101,7 @@ export default {
             ...{ isBCPrivate: institution.value.isBCPrivate },
           };
         } else {
-          initialData.value = {
-            isBCPrivate: institution.value.isBCPrivate,
-          };
+          initNewFormData();
         }
       }
       if (isAESTUser.value) {
@@ -157,7 +155,7 @@ export default {
     const submitted = async (data: any) => {
       if (isInstitutionUser.value) {
         try {
-          if (initialData.value?.hasOfferings) {
+          if (props.programId) {
             await EducationProgramService.shared.updateProgram(
               props.programId,
               data,
@@ -185,6 +183,16 @@ export default {
 
     const createNewProgram = () => {
       initialData.value = {};
+      initNewFormData();
+      router.push({
+        name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
+        params: {
+          locationId: props.locationId,
+        },
+      });
+    };
+
+    const initNewFormData = () => {
       initialData.value = {
         isBCPrivate: institution.value.isBCPrivate,
         hasOfferings: false,
