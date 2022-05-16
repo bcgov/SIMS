@@ -3,9 +3,12 @@ import {
   Controller,
   Get,
   Injectable,
+  NotFoundException,
   Param,
+  Patch,
   Post,
   Res,
+  UnprocessableEntityException,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
@@ -17,13 +20,20 @@ import {
   RequiresStudentAccount,
   UserToken,
 } from "../../auth/decorators";
-import { StudentFileService } from "../../services";
+import {
+  ApplicationService,
+  APPLICATION_NOT_FOUND,
+  GCNotifyActionsService,
+  StudentFileService,
+  StudentService,
+} from "../../services";
 import BaseController from "../BaseController";
 import {
   FileCreateAPIOutDTO,
+  StudentFileUploaderAPIInDTO,
   StudentUploadFileDTO,
 } from "./models/student.dto";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { Response } from "express";
 import { StudentControllerService } from "..";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -33,6 +43,7 @@ import {
   MAX_UPLOAD_PARTS,
   uploadLimits,
 } from "src/utilities";
+import { FileOriginType } from "../../database/entities/student-file.type";
 
 /**
  * Student controller for Student Client.
@@ -46,6 +57,9 @@ export class StudentStudentsController extends BaseController {
   constructor(
     private readonly fileService: StudentFileService,
     private readonly studentControllerService: StudentControllerService,
+    private readonly gcNotifyActionsService: GCNotifyActionsService,
+    private readonly applicationService: ApplicationService,
+    private readonly studentService: StudentService,
   ) {
     super();
   }
@@ -121,6 +135,72 @@ export class StudentStudentsController extends BaseController {
       uniqueFileName,
       groupName,
       userToken.userId,
+    );
+  }
+
+  /**
+   * Saves the student files submitted via student uploader form.
+   *  All the file uploaded are first saved as temporary
+   * file in the db.when this controller/api is called
+   * during form submission, the temporary files
+   * (saved during the upload) are update to its proper
+   * group,file_origin and add the metadata (if available).
+   * @Body payload
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Patch("save-uploaded-files")
+  async saveStudentUploadedFiles(
+    @UserToken() userToken: StudentUserToken,
+    @Body() payload: StudentFileUploaderAPIInDTO,
+  ): Promise<void> {
+    if (payload.submittedForm.applicationNumber) {
+      // Here we are checking the existence of an application irrespective of its status
+      const validApplication =
+        await this.applicationService.doesApplicationExist(
+          payload.submittedForm.applicationNumber,
+          userToken.studentId,
+        );
+
+      if (!validApplication) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(
+            "Application number not found",
+            APPLICATION_NOT_FOUND,
+          ),
+        );
+      }
+    }
+
+    const student = await this.studentService.getStudentById(
+      userToken.studentId,
+    );
+
+    // This method will be executed alongside with the transaction during the
+    // execution of the method updateStudentFiles.
+    const sendFileUploadNotification = () =>
+      this.gcNotifyActionsService.sendFileUploadNotification({
+        firstName: student.user.firstName,
+        lastName: student.user.lastName,
+        birthDate: student.birthDate,
+        documentPurpose: payload.submittedForm.documentPurpose,
+        applicationNumber: payload.submittedForm.applicationNumber,
+      });
+
+    const fileMetadata = payload.submittedForm.applicationNumber
+      ? { applicationNumber: payload.submittedForm.applicationNumber }
+      : null;
+    // All the file uploaded are first saved as temporary file in the db.
+    // when this controller/api is called during form submission, the temporary
+    // files (saved during the upload) are update to its proper group,file_origin
+    //  and add the metadata (if available)
+    await this.fileService.updateStudentFiles(
+      userToken.studentId,
+      userToken.userId,
+      payload.associatedFiles,
+      FileOriginType.Student,
+      payload.submittedForm.documentPurpose,
+      fileMetadata,
+      sendFileUploadNotification,
     );
   }
 }

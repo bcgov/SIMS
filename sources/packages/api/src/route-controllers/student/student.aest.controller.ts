@@ -5,19 +5,28 @@ import {
   Injectable,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Res,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { StudentFileService, StudentService } from "../../services";
+import {
+  GCNotifyActionsService,
+  StudentFileService,
+  StudentService,
+} from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import BaseController from "../BaseController";
-import { AESTStudentFileDTO, FileCreateAPIOutDTO } from "./models/student.dto";
+import {
+  AESTFileUploadToStudentAPIInDTO,
+  AESTStudentFileDTO,
+  FileCreateAPIOutDTO,
+} from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
@@ -28,6 +37,7 @@ import {
 } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
+import { FileOriginType } from "src/database/entities/student-file.type";
 
 /**
  * Student controller for AEST Client.
@@ -42,6 +52,7 @@ export class StudentAESTController extends BaseController {
     private readonly fileService: StudentFileService,
     private readonly studentService: StudentService,
     private readonly studentControllerService: StudentControllerService,
+    private readonly gcNotifyActionsService: GCNotifyActionsService,
   ) {
     super();
   }
@@ -121,6 +132,48 @@ export class StudentAESTController extends BaseController {
       uniqueFileName,
       groupName,
       userToken.userId,
+    );
+  }
+
+  /**
+   * Saves the files submitted by the Ministry to the student.
+   * All the file uploaded are first saved as temporary file in
+   * the DB. When this endpoint is called, the temporary
+   * files (saved during the upload) are update to its proper
+   * group and file origin.
+   * @param userToken user authentication.
+   * @param studentId student to have the file saved.
+   * @param payload list of files to be saved.
+   */
+  @Patch(":studentId/save-uploaded-files")
+  @ApiNotFoundResponse({ description: "Student not found." })
+  async saveStudentUploadedFiles(
+    @UserToken() userToken: IUserToken,
+    @Param("studentId") studentId: number,
+    @Body() payload: AESTFileUploadToStudentAPIInDTO,
+  ): Promise<void> {
+    const student = await this.studentService.getStudentById(studentId);
+    if (!studentId) {
+      throw new NotFoundException("Student not found.");
+    }
+
+    // This method will be executed alongside with the transaction during the
+    // execution of the method updateStudentFiles.
+    const sendFileUploadNotification = () =>
+      this.gcNotifyActionsService.sendMinistryFileUploadNotification({
+        firstName: student.user.firstName,
+        lastName: student.user.lastName,
+        toAddress: student.user.email,
+      });
+    // Updates the preciously temporary uploaded files.
+    await this.fileService.updateStudentFiles(
+      studentId,
+      userToken.userId,
+      payload.associatedFiles,
+      FileOriginType.Student,
+      "Uploaded by SABC",
+      undefined,
+      sendFileUploadNotification,
     );
   }
 }

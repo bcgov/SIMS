@@ -66,7 +66,7 @@
     ref="fileUploadModal"
     title="Upload file"
     :formData="initialData"
-    formName="uploadstudentdocumentsaest"
+    formName="uploadStudentDocumentsAEST"
   >
     <template #actions="{ cancel, submit }">
       <v-btn color="primary" variant="outlined" @click="cancel">Cancel</v-btn>
@@ -80,13 +80,20 @@
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import {
+  AESTFileUploadToStudentAPIInDTO,
   DEFAULT_PAGE_LIMIT,
   FormIOForm,
   PAGINATION_LIST,
   StudentUploadFileDTO,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters, useFileUtils, ModalDialog } from "@/composables";
+import {
+  useFormatters,
+  useFileUtils,
+  ModalDialog,
+  useFormioUtils,
+  useToastMessage,
+} from "@/composables";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 
 export default {
@@ -103,7 +110,9 @@ export default {
     const studentFileUploads = ref([] as StudentUploadFileDTO[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { dateOnlyLongString } = useFormatters();
+    const toast = useToastMessage();
     const fileUtils = useFileUtils();
+    const formioUtils = useFormioUtils();
     const initialData = ref({ studentId: props.studentId });
     const loadStudentFileUploads = async () => {
       studentFileUploads.value =
@@ -115,7 +124,27 @@ export default {
     });
 
     const uploadFile = async () => {
-      await fileUploadModal.value.showModal();
+      const modalResult = await fileUploadModal.value.showModal();
+      if (!modalResult) {
+        return;
+      }
+
+      try {
+        const associatedFiles = formioUtils.getAssociatedFiles(modalResult);
+        const payload: AESTFileUploadToStudentAPIInDTO = {
+          associatedFiles,
+        };
+        await StudentService.shared.saveMinistryUploadedFilesToStudent(
+          props.studentId,
+          payload,
+        );
+        toast.success(
+          "Documents submitted",
+          "The documents were submitted and a notification was sent to the student.",
+        );
+      } catch {
+        toast.error("Unexpected error", "An unexpected error happened.");
+      }
     };
 
     return {

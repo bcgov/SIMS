@@ -5,16 +5,15 @@ import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import { StudentFile, Student, User } from "../../database/entities";
 import { CreateFile } from "./student-file.model";
-import { FileOriginType } from "../../database/entities/student-file.type";
-import { StudentFileUploaderForm } from "../../route-controllers/student/models/student.dto";
-import { GCNotifyActionsService } from "../notification/gc-notify-actions.service";
+import {
+  FileOriginType,
+  StudentFileMetadata,
+} from "../../database/entities/student-file.type";
+import { GCNotifyResult } from "../notification/gc-notify.model";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
-  constructor(
-    private readonly connection: Connection,
-    private readonly gcNotifyActionsService: GCNotifyActionsService,
-  ) {
+  constructor(private readonly connection: Connection) {
     super(connection.getRepository(StudentFile));
   }
 
@@ -102,13 +101,23 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   /**
    * Update the files submitted by the student
    * with proper data.
-   * @param studentId student id.
+   * @param studentId student.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    * @param uniqueFileNames list of unique file names.
+   * @param fileOrigin origin of the file being save.
+   * @param groupName group name of the file being save.
+   * @param metadata optional metadata of the file being save.
+   * @param sendNotification optional notification message to be sent.
    */
   async updateStudentFiles(
-    student: Student,
+    studentId: number,
+    auditUserId: number,
     uniqueFileNames: string[],
-    submittedData: StudentFileUploaderForm,
+    fileOrigin: FileOriginType,
+    groupName: string,
+    metadata?: StudentFileMetadata,
+    sendNotification?: () => Promise<GCNotifyResult>,
   ): Promise<UpdateResult> {
     let updateResult: UpdateResult;
     await this.connection.transaction(async (transactionalEntityManager) => {
@@ -116,22 +125,21 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         .getRepository(StudentFile)
         .update(
           {
-            student,
+            student: { id: studentId } as Student,
             uniqueFileName: In(uniqueFileNames),
           },
           {
-            groupName: submittedData.documentPurpose,
-            fileOrigin: FileOriginType.Student,
-            metadata: submittedData.applicationNumber
-              ? { applicationNumber: submittedData.applicationNumber }
-              : null,
+            groupName,
+            fileOrigin,
+            metadata,
+            modifier: { id: auditUserId } as User,
           },
         );
-      await this.gcNotifyActionsService.sendFileUploadNotification(
-        student,
-        submittedData.documentPurpose,
-        submittedData.applicationNumber,
-      );
+      // Executes the send notification inside the transaction to allow the rollback
+      // of the DB updates in the case of the notification failure.
+      if (sendNotification) {
+        await sendNotification();
+      }
     });
     return updateResult;
   }

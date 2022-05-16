@@ -1,31 +1,21 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "..";
 import axios from "axios";
-import {
-  GCNotifyResult,
-  RequestPayload,
-  StudentFileUploadPersonalisation,
-} from "./gc-notify.model";
+import { AxiosError } from "axios";
+import { GCNotifyResult, RequestPayload } from "./gc-notify.model";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
+import { GCNotify } from "../../types";
 
 @Injectable()
 export class GCNotifyService {
-  private readonly gcNotifyConfig;
+  private readonly gcNotifyConfig: GCNotify;
   constructor(private readonly configService: ConfigService) {
     this.gcNotifyConfig = this.configService.getConfig().gcNotify;
   }
 
-  gcNotifyUrl() {
-    return this.gcNotifyConfig.url;
-  }
-
-  gcNotifyToAddress() {
+  ministryToAddress() {
     return this.gcNotifyConfig.toAddress;
-  }
-
-  gcNotifyApiKey() {
-    return this.gcNotifyConfig.apiKey;
   }
 
   /**
@@ -33,18 +23,30 @@ export class GCNotifyService {
    * @param payload
    * @returns GC Notify API call response.
    */
-  async sendEmailNotification(
-    payload: RequestPayload<StudentFileUploadPersonalisation>,
+  async sendEmailNotification<T>(
+    payload: RequestPayload<T>,
   ): Promise<GCNotifyResult> {
     try {
-      const response = await axios.post(this.gcNotifyUrl(), payload, {
+      const response = await axios.post(this.gcNotifyConfig.url, payload, {
         headers: {
-          Authorization: `ApiKey-v1 ${this.gcNotifyApiKey()}`,
+          Authorization: `ApiKey-v1 ${this.gcNotifyConfig.apiKey}`,
         },
       });
       return response.data as GCNotifyResult;
-    } catch (error) {
-      this.logger.error(`Error while sending email notification: ${error}`);
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError;
+      if (axiosError.isAxiosError && axiosError.response?.data) {
+        this.logger.error(
+          `Error while sending email notification:  ${JSON.stringify(
+            axiosError.response.data,
+          )}`,
+        );
+      } else {
+        this.logger.error(
+          `Error while sending email notification:  ${error}),
+          )}`,
+        );
+      }
       throw error;
     }
   }

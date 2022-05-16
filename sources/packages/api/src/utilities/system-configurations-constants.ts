@@ -72,6 +72,11 @@ export const ECERT_PART_TIME_FEEDBACK_FILE_CODE = "EDU.PBC.ECERTSFB.PT.*";
  */
 export const STUDENT_FILE_UPLOAD_TEMPLATE_ID =
   "3b37994f-464f-4eb0-ad30-84739fa82377";
+/**
+ * Email template used to notify the student when the Ministry uploads a file to his account.
+ */
+export const MINISTRY_FILE_UPLOAD_TEMPLATE_ID =
+  "0b1abf34-d607-4f5c-8669-71fd4a2e57fe";
 
 /**
  * Email used during service account creation. It is the same across all the

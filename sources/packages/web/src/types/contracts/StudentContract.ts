@@ -110,6 +110,10 @@ export interface StudentFileUploaderDTO {
   associatedFiles: string[];
 }
 
+export interface AESTFileUploadToStudentAPIInDTO {
+  associatedFiles: string[];
+}
+
 /**
  *  Student uploaded documents (i.e, FileOriginType.Student documents).
  */

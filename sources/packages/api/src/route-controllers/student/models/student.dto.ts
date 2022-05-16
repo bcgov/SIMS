@@ -1,3 +1,4 @@
+import { Type } from "class-transformer";
 import {
   ArrayMinSize,
   IsDefined,
@@ -91,7 +92,7 @@ export class StudentDetailAPIOutDTO {
 /**
  *  Student uploader interface
  */
-export class StudentFileUploaderForm {
+export class StudentFileUploaderInfoAPIInDTO {
   @IsNotEmpty()
   documentPurpose: string;
   @IsOptional()
@@ -101,9 +102,10 @@ export class StudentFileUploaderForm {
 /**
  *  Student uploader interface
  */
-export class StudentFileUploaderDTO {
+export class StudentFileUploaderAPIInDTO {
   @IsDefined()
-  submittedForm: StudentFileUploaderForm;
+  @Type(() => StudentFileUploaderInfoAPIInDTO)
+  submittedForm: StudentFileUploaderInfoAPIInDTO;
   @ArrayMinSize(1)
   associatedFiles: string[];
 }
@@ -141,4 +143,9 @@ export class StudentInfo {
   pdSentDate?: Date;
   pdUpdatedDate?: Date;
   pdStatus: StudentPDStatus;
+}
+
+export class AESTFileUploadToStudentAPIInDTO {
+  @ArrayMinSize(1)
+  associatedFiles: string[];
 }
