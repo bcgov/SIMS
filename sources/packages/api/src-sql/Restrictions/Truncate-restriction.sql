@@ -1,4 +1,4 @@
--- * This script is used by up of CleanRestrictionsTable1652466821171 and down of InsertRestrictions1652480204380 files.
+-- * This script is used by 'up' of CleanRestrictionsTable1652466821171 and 'down' of InsertRestrictions1652480204380 files.
 -- Clean restrictions table.
 -- Clean the tables that has relation with restrictions table.
 -- Clean federal_restrictions.
