@@ -25,13 +25,13 @@ import 'cypress-mochawesome-reporter/register';
 Cypress.Server.defaults({
     delay: 500,
     force404: false,
-    ignore: (xhr) => {
+    ignore: (_xhr) => {
         // handle custom logic for whitelisting
         return true;
     }
 })
 
-Cypress.on('uncaught:exception', (err, runnable) => {
+Cypress.on('uncaught:exception', (_err, _runnable) => {
     // returning false here prevents Cypress from
     // failing the test
     return false

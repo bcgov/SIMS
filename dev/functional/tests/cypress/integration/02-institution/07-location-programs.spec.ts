@@ -121,14 +121,12 @@ describe("Location Program", () => {
   });
 
   it("Verify that user able to edit created program", () => {
-    cy.fixture("institutionProgramData").then((testData) => {
-      cy.intercept("GET", "**/location/**").as("location");
-      dashboardInstitutionObject.dashboardButton().click();
-      dashboardInstitutionObject.programsButton().eq(0).click();
-      cy.url().should("contain", "/location-programs");
-      cy.wait("@location");
-      locationProgramObject.firstRowEditButton().click();
-    });
+    cy.intercept("GET", "**/location/**").as("location");
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.programsButton().eq(0).click();
+    cy.url().should("contain", "/location-programs");
+    cy.wait("@location");
+    locationProgramObject.firstRowEditButton().click();
   });
 
   it("Verify that user able to add study period", () => {

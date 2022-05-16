@@ -1,6 +1,6 @@
 export default class ApplicationObject {
   clickOnDraftStatus() {
-    cy.get("//tbody/tr/td[5]").each(($el, index, $list) => {
+    cy.get("//tbody/tr/td[5]").each(($el) => {
       if ($el.text() === "Draft") {
         $el.click();
       }

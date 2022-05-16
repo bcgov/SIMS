@@ -118,7 +118,6 @@ describe("Ministry User View Student Page", () => {
     ministryUserViewsStudent.programSectionButton().click();
     ministryUserViewsStudent.personalInformationSectionButton().click();
     ministryUserViewsStudent.familyInformationSectionButton().click();
-    //ministryUserViewsStudent.parentInformationSectionButton().click();
     ministryUserViewsStudent.financialInformationSectionButton().click();
     ministryUserViewsStudent.confirmSubmissionSectionButton().click();
     cy.go("back");

@@ -49,8 +49,6 @@ describe("Dashboard Page", () => {
     { retries: 4 },
     () => {
       cy.intercept("GET", "**/protocol/&&").as("protocol");
-
-      //cy.wait("@protocol");
       dashboardMinistryObject.dashboardText().should("be.visible");
     }
   );
