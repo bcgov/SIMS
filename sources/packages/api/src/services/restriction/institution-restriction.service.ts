@@ -170,7 +170,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
 
   /**
    * Service method to find if Institution has any restriction institution.
-   * TODO: Removed .having("count(*) > restriction.allowedCount"), which may cause expected result, adjust the logic.
+   * TODO: Removed .having("count(*) > restriction.allowedCount"), which may cause unexpected results, need to adjust the logic.
    * @param institutionId
    * @returns Institution restriction.
    */
