@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
 } from "class-validator";
+import { FileOriginType } from "../../../database/entities/student-file.type";
 import {
   AddressAPIOutDTO,
   AddressDetailsAPIInDTO,
@@ -39,14 +40,6 @@ export interface SaveStudentDto extends AddressDetailsAPIInDTO {
    * SIN is optional during update.
    */
   sinNumber?: string;
-}
-
-export interface FileCreateAPIOutDTO {
-  fileName: string;
-  uniqueFileName: string;
-  url: string;
-  size: number;
-  mimetype: string;
 }
 
 export interface StudentEducationProgramDto {
@@ -113,21 +106,22 @@ export class StudentFileUploaderAPIInDTO {
 /**
  *  Student uploaded documents (i.e, FileOriginType.Student documents).
  */
-export class StudentUploadFileDTO {
+export class StudentUploadFileAPIOutDTO {
   fileName: string;
   uniqueFileName: string;
+  fileOrigin: FileOriginType;
 }
 
 /**
  *  AEST user to view student uploaded documents.
  */
-export class AESTStudentFileDTO extends StudentUploadFileDTO {
-  metadata: StudentFileMetadataDTO;
+export class AESTStudentFileAPIOutDTO extends StudentUploadFileAPIOutDTO {
+  metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
   updatedAt: Date;
 }
 
-export class StudentFileMetadataDTO {
+export class StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
 }
 

@@ -145,25 +145,26 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   /**
-   * Gets a list of student files uploaded via student Uploader
-   * (i.e, fileOrigin is FileOriginType.Student).
+   * Gets a list of student files from the student account
+   * (i.e, fileOrigin is FileOriginType.Student or FileOriginType.Ministry).
    * @param studentId student id.
-   * @returns student files
+   * @returns student files from the student account.
    */
   async getStudentUploadedFiles(studentId: number): Promise<StudentFile[]> {
     return this.repo
       .createQueryBuilder("studentFile")
-      .where("studentFile.student.id = :studentId", { studentId })
-      .andWhere("studentFile.fileOrigin = :fileOrigin", {
-        fileOrigin: FileOriginType.Student,
-      })
       .select([
         "studentFile.uniqueFileName",
         "studentFile.fileName",
         "studentFile.metadata",
         "studentFile.groupName",
         "studentFile.updatedAt",
+        "studentFile.fileOrigin",
       ])
+      .where("studentFile.student.id = :studentId", { studentId })
+      .andWhere("studentFile.fileOrigin IN (:...fileOrigin)", {
+        fileOrigin: [FileOriginType.Student, FileOriginType.Ministry],
+      })
       .getMany();
   }
   @InjectLogger()

@@ -84,7 +84,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   FormIOForm,
   PAGINATION_LIST,
-  StudentUploadFileDTO,
+  StudentUploadFileAPIOutDTO,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import {
@@ -107,7 +107,7 @@ export default {
     },
   },
   setup(props: any) {
-    const studentFileUploads = ref([] as StudentUploadFileDTO[]);
+    const studentFileUploads = ref([] as StudentUploadFileAPIOutDTO[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { dateOnlyLongString } = useFormatters();
     const toast = useToastMessage();

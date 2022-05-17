@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Response } from "express";
 import { StudentFileService } from "../../services";
-import { FileCreateAPIOutDTO } from "./models/student.dto";
 import { Readable } from "stream";
+import { FileCreateAPIOutDTO } from "../models/common.dto";
 
 @Injectable()
 export class StudentControllerService {

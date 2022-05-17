@@ -24,8 +24,7 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import BaseController from "../BaseController";
 import {
   AESTFileUploadToStudentAPIInDTO,
-  AESTStudentFileDTO,
-  FileCreateAPIOutDTO,
+  AESTStudentFileAPIOutDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -38,6 +37,7 @@ import {
 import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
 import { FileOriginType } from "src/database/entities/student-file.type";
+import { FileCreateAPIOutDTO } from "../models/common.dto";
 
 /**
  * Student controller for AEST Client.
@@ -61,12 +61,12 @@ export class StudentAESTController extends BaseController {
    * This controller returns all student documents uploaded
    * by student uploader.
    * @param studentId
-   * @returns list of student documents as AESTStudentFileDTO.
+   * @returns list of student documents.
    */
   @Get(":studentId/documents")
   async getAESTStudentFiles(
     @Param("studentId") studentId: number,
-  ): Promise<AESTStudentFileDTO[]> {
+  ): Promise<AESTStudentFileAPIOutDTO[]> {
     const studentDocuments = await this.fileService.getStudentUploadedFiles(
       studentId,
     );
@@ -76,6 +76,7 @@ export class StudentAESTController extends BaseController {
       metadata: studentDocument.metadata,
       groupName: studentDocument.groupName,
       updatedAt: studentDocument.updatedAt,
+      fileOrigin: studentDocument.fileOrigin,
     }));
   }
 

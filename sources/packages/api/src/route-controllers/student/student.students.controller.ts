@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Injectable,
-  NotFoundException,
   Param,
   Patch,
   Post,
@@ -29,9 +28,8 @@ import {
 } from "../../services";
 import BaseController from "../BaseController";
 import {
-  FileCreateAPIOutDTO,
   StudentFileUploaderAPIInDTO,
-  StudentUploadFileDTO,
+  StudentUploadFileAPIOutDTO,
 } from "./models/student.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { Response } from "express";
@@ -44,6 +42,7 @@ import {
   uploadLimits,
 } from "src/utilities";
 import { FileOriginType } from "../../database/entities/student-file.type";
+import { FileCreateAPIOutDTO } from "../models/common.dto";
 
 /**
  * Student controller for Student Client.
@@ -65,23 +64,20 @@ export class StudentStudentsController extends BaseController {
   }
 
   /**
-   * This controller returns all student documents uploaded
-   * by student uploader.
+   * Gets all student documents uploaded to the student account.
    * @returns list of student documents.
    */
   @Get("documents")
-  @ApiNotFoundResponse({
-    description: "The user does not have a student account associated with.",
-  })
   async getStudentFiles(
     @UserToken() userToken: StudentUserToken,
-  ): Promise<StudentUploadFileDTO[]> {
+  ): Promise<StudentUploadFileAPIOutDTO[]> {
     const studentDocuments = await this.fileService.getStudentUploadedFiles(
       userToken.studentId,
     );
     return studentDocuments.map((studentDocument) => ({
       fileName: studentDocument.fileName,
       uniqueFileName: studentDocument.uniqueFileName,
+      fileOrigin: studentDocument.fileOrigin,
     }));
   }
 

@@ -1,4 +1,4 @@
-import { FileCreateDto } from "@/types";
+import { FileCreateAPIOutDTO } from "@/services/http/dto";
 import { AxiosRequestConfig } from "axios";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -7,7 +7,7 @@ export class FileUploadApi extends HttpBaseClient {
     relativeUrl: string,
     data: FormData,
     config: AxiosRequestConfig,
-  ): Promise<FileCreateDto> {
+  ): Promise<FileCreateAPIOutDTO> {
     try {
       const mergedConfig = { ...this.addAuthHeader(), ...config };
       const response = await this.apiClient.post(
