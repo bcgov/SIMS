@@ -1,5 +1,5 @@
 <template>
-  <v-alert :type="bannerClass" variant="outlined">
+  <v-alert :type="color" variant="outlined">
     <v-row>
       <v-col cols="10">
         <div class="label-bold-normal">{{ header }}</div>
@@ -14,7 +14,7 @@
 <script lang="ts">
 export default {
   props: {
-    bannerClass: {
+    color: {
       type: String,
     },
     header: {
