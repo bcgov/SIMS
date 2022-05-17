@@ -19,3 +19,7 @@ testing/functional/tests/cypress/screenshots/
 testing/functional/tests/cypress/videos/
 testing/functional/tests/cypress/reports/
 testing/functional/tests/cypress/report/
+dev/functional/tests/cypress/screenshots/
+dev/functional/tests/cypress/videos/
+dev/functional/tests/cypress/reports/
+dev/functional/tests/cypress/report/
