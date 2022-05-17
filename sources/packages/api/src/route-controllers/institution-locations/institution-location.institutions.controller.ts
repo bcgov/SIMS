@@ -62,7 +62,7 @@ import { transformAddressDetailsForAddressBlockForm } from "../utils/address-uti
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
-@ApiTags(`${ClientTypeBaseRoute.Institution}-institution/location`)
+@ApiTags(`${ClientTypeBaseRoute.Institution}-location`)
 export class InstitutionLocationInstitutionsController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,

@@ -18,7 +18,7 @@ import {
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("location")
-@ApiTags(`${ClientTypeBaseRoute.AEST}-institution/location`)
+@ApiTags(`${ClientTypeBaseRoute.AEST}-location`)
 export class InstitutionLocationAESTController extends BaseController {
   constructor(
     private readonly locationControllerService: InstitutionLocationControllerService,
