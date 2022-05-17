@@ -123,7 +123,7 @@ export class InstitutionService {
   public async getAllInstitutionLocations(
     institutionId?: number,
   ): Promise<InstitutionLocationAPIOutDTO[]> {
-    return ApiClient.InstitutionLocation.allInstitutionLocations(institutionId);
+    return ApiClient.Institution.allInstitutionLocations(institutionId);
   }
 
   mapUserRolesAndLocation(
