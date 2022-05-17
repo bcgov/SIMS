@@ -12,7 +12,6 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import {
-  StudentFileService,
   StudentService,
   UserService,
   ATBCService,

@@ -56,7 +56,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns the student found or null.
    */
   async getStudentById(studentId: number): Promise<Student> {
-    return await this.repo
+    return this.repo
       .createQueryBuilder("student")
       .select([
         "student.id",
