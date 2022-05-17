@@ -12,19 +12,12 @@
   <div class="mt-4 mb-2">
     <banner
       v-if="initialData.hasOfferings"
-      bannerClass="v-banner-success"
+      bannerClass="success"
       header="Students have applied financial aid for this program"
       summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you’d like to edit the other fields."
     >
-      <template #icon
-        ><font-awesome-icon
-          :icon="['fas', 'check-circle']"
-          class="mr-2"
-          :style="{ color: '#16c92e' }"
-        />
-      </template>
       <template v-slot:actions>
-        <v-btn class="v-button-success" @click="createNewProgram()">
+        <v-btn color="success" @click="createNewProgram()">
           Create program
         </v-btn>
       </template>
