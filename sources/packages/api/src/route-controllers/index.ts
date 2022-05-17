@@ -40,3 +40,4 @@ export * from "./institution-locations/institution-location.students.controller"
 export * from "./institution-locations/institution-location.aest.controller";
 export * from "./assessment/assessment.students.controller";
 export * from "./education-program-offering/education-program-offering.aest.controller";
+export * from "./report/report.aest.controller";
