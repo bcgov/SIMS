@@ -153,7 +153,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
 
   /**
    * Controller method to retrieve institution location by id.
-   * TODO: updating of API routes will be handled in PART 2 PR
    * @param locationId
    * @param userToken
    * @returns institution location.
