@@ -32,6 +32,7 @@ import {
   defaultFileFilter,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
+  MINISTRY_FILE_UPLOAD_GROUP_NAME,
   uploadLimits,
 } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -138,9 +139,9 @@ export class StudentAESTController extends BaseController {
 
   /**
    * Saves the files submitted by the Ministry to the student.
-   * All the file uploaded are first saved as temporary file in
+   * All the files uploaded are first saved as temporary file in
    * the DB. When this endpoint is called, the temporary
-   * files (saved during the upload) are update to its proper
+   * files (saved during the upload) are updated to its proper
    * group and file origin.
    * @param userToken user authentication.
    * @param studentId student to have the file saved.
@@ -166,13 +167,13 @@ export class StudentAESTController extends BaseController {
         lastName: student.user.lastName,
         toAddress: student.user.email,
       });
-    // Updates the preciously temporary uploaded files.
+    // Updates the previously temporary uploaded files.
     await this.fileService.updateStudentFiles(
       studentId,
       userToken.userId,
       payload.associatedFiles,
       FileOriginType.Ministry,
-      "Uploaded by SABC",
+      MINISTRY_FILE_UPLOAD_GROUP_NAME,
       undefined,
       sendFileUploadNotification,
     );

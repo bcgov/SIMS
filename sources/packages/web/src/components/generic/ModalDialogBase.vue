@@ -1,12 +1,12 @@
 <template>
   <v-dialog v-model="showHideDialog" persistent :no-click-animation="true">
-    <v-card elevation="10">
+    <v-card elevation="10" :max-width="maxWidth">
       <v-card-header>
         <v-card-title>
           <slot name="header">
-            <h5 v-if="title" class="category-header-large primary-color">
+            <h2 v-if="title" class="category-header-large primary-color">
               {{ title }}
-            </h5>
+            </h2>
           </slot>
         </v-card-title>
       </v-card-header>
@@ -14,10 +14,10 @@
       <v-card-text class="pt-0">
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
-      <v-divider class="mx-6 mt-1"></v-divider>
+      <v-divider class="mx-6 mt-1 mb-0"></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <div class="mx-3">
+        <div class="mx-4 mb-2">
           <slot name="footer"></slot>
         </div>
       </v-card-actions>
@@ -50,6 +50,10 @@ export default {
     title: {
       type: String,
       required: true,
+    },
+    maxWidth: {
+      type: Number,
+      required: false,
     },
   },
   emits: [dialogClosedEvent],

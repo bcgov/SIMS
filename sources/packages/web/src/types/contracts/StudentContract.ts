@@ -97,7 +97,7 @@ export interface StudentDetail {
 /**
  *  Student uploader interface
  */
-export interface StudentFileUploaderForm {
+export interface StudentFileUploaderInfoAPIInDTO {
   documentPurpose: string;
   applicationNumber?: string;
 }
@@ -105,8 +105,8 @@ export interface StudentFileUploaderForm {
 /**
  *  Student uploader interface
  */
-export interface StudentFileUploaderDTO {
-  submittedForm: StudentFileUploaderForm;
+export interface StudentFileUploaderAPIInDTO {
+  submittedForm: StudentFileUploaderInfoAPIInDTO;
   associatedFiles: string[];
 }
 

@@ -6,7 +6,7 @@ import {
   StudentRestrictionStatus,
   SearchStudentResp,
   StudentDetail,
-  StudentFileUploaderDTO,
+  StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
   AESTStudentFileAPIOutDTO,
   AESTFileUploadToStudentAPIInDTO,
@@ -159,9 +159,9 @@ export class StudentApi extends HttpBaseClient {
    * @param studentFilesPayload
    */
   async saveStudentFiles(
-    studentFilesPayload: StudentFileUploaderDTO,
+    studentFilesPayload: StudentFileUploaderAPIInDTO,
   ): Promise<void> {
-    await this.patchCall<StudentFileUploaderDTO>(
+    await this.patchCall<StudentFileUploaderAPIInDTO>(
       this.addClientRoot("students/save-uploaded-files"),
       studentFilesPayload,
     );
@@ -169,9 +169,9 @@ export class StudentApi extends HttpBaseClient {
 
   /**
    * Saves the files submitted by the Ministry to the student.
-   * All the file uploaded are first saved as temporary file in
+   * All the files uploaded are first saved as temporary file in
    * the DB. When this endpoint is called, the temporary
-   * files (saved during the upload) are update to its proper
+   * files (saved during the upload) are updated to its proper
    * group and file origin.
    * @param studentId student to have the file saved.
    * @param payload list of files to be saved.

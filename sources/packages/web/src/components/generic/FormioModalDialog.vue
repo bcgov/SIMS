@@ -1,5 +1,5 @@
 <template>
-  <ModalDialogBase :title="title" :showDialog="showDialog">
+  <ModalDialogBase :title="title" :showDialog="showDialog" :maxWidth="maxWidth">
     <template v-slot:content>
       <formio
         :formName="formName"
@@ -28,6 +28,7 @@ export default {
     title: { type: String, required: true },
     formName: { type: String, required: true },
     formData: { type: Object, required: false },
+    maxWidth: { type: Number, required: false },
   },
   setup() {
     const { checkFormioValidity } = useFormioUtils();

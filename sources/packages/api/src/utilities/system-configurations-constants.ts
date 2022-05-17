@@ -94,3 +94,9 @@ export const MAX_UPLOAD_FILES = 1;
  * 3 means 'the file' + uniqueFileName + group.
  */
 export const MAX_UPLOAD_PARTS = 3;
+
+/**
+ * Group name associated with the files uploaded by the Ministry
+ * to the student account.
+ */
+export const MINISTRY_FILE_UPLOAD_GROUP_NAME = "Ministry communications";

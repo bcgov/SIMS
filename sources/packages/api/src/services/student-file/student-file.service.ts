@@ -53,6 +53,12 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   ): Promise<StudentFile> {
     const query = this.repo
       .createQueryBuilder("studentFile")
+      .select([
+        "studentFile.id",
+        "studentFile.fileName",
+        "studentFile.mimeType",
+        "studentFile.fileContent",
+      ])
       .where("studentFile.uniqueFileName = :uniqueFileName", {
         uniqueFileName,
       });
@@ -165,6 +171,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       .andWhere("studentFile.fileOrigin IN (:...fileOrigin)", {
         fileOrigin: [FileOriginType.Student, FileOriginType.Ministry],
       })
+      .orderBy("studentFile.createdAt", "DESC")
       .getMany();
   }
   @InjectLogger()

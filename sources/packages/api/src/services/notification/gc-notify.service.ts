@@ -36,13 +36,13 @@ export class GCNotifyService {
       const axiosError = error as AxiosError;
       if (axiosError.isAxiosError && axiosError.response?.data) {
         this.logger.error(
-          `Error while sending email notification:  ${JSON.stringify(
+          `Error while sending email notification: ${JSON.stringify(
             axiosError.response.data,
           )}`,
         );
       } else {
         this.logger.error(
-          `Error while sending email notification:  ${error}),
+          `Error while sending email notification: ${error}),
           )}`,
         );
       }

@@ -12,7 +12,7 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  StudentFileUploaderDTO,
+  StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
   AESTStudentFileAPIOutDTO,
   AESTFileUploadToStudentAPIInDTO,
@@ -128,16 +128,16 @@ export class StudentService {
    * @param studentFilesPayload
    */
   async saveStudentFiles(
-    studentFilesPayload: StudentFileUploaderDTO,
+    studentFilesPayload: StudentFileUploaderAPIInDTO,
   ): Promise<void> {
     await ApiClient.Students.saveStudentFiles(studentFilesPayload);
   }
 
   /**
    * Saves the files submitted by the Ministry to the student.
-   * All the file uploaded are first saved as temporary file in
+   * All the files uploaded are first saved as temporary file in
    * the DB. When this endpoint is called, the temporary
-   * files (saved during the upload) are update to its proper
+   * files (saved during the upload) are updated to its proper
    * group and file origin.
    * @param studentId student to have the file saved.
    * @param payload list of files to be saved.

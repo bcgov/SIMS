@@ -136,7 +136,7 @@ export class StudentStudentsController extends BaseController {
 
   /**
    * Saves the student files submitted via student uploader form.
-   *  All the file uploaded are first saved as temporary
+   *  All the files uploaded are first saved as temporary
    * file in the db.when this controller/api is called
    * during form submission, the temporary files
    * (saved during the upload) are update to its proper
@@ -185,9 +185,9 @@ export class StudentStudentsController extends BaseController {
     const fileMetadata = payload.submittedForm.applicationNumber
       ? { applicationNumber: payload.submittedForm.applicationNumber }
       : null;
-    // All the file uploaded are first saved as temporary file in the db.
+    // All the files uploaded are first saved as temporary file in the db.
     // when this controller/api is called during form submission, the temporary
-    // files (saved during the upload) are update to its proper group,file_origin
+    // files (saved during the upload) are updated to its proper group,file_origin
     //  and add the metadata (if available)
     await this.fileService.updateStudentFiles(
       userToken.studentId,
