@@ -16,7 +16,6 @@
 </template>
 
 <script lang="ts">
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { onMounted, reactive } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
@@ -37,7 +36,7 @@ import { SubmitDesignationAgreementDto } from "@/types/contracts/DesignationAgre
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
-  components: { FullPageContainer, DesignationAgreementForm },
+  components: { DesignationAgreementForm },
   setup() {
     const router = useRouter();
     const toastMessage = useToastMessage();

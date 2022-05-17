@@ -25,16 +25,12 @@
 </template>
 
 <script lang="ts">
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { onMounted, ref, watch } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { StudentUploadFileDTO } from "@/types";
 import { useFileUtils } from "@/composables";
 
 export default {
-  components: {
-    FullPageContainer,
-  },
   props: {
     reload: {
       type: Boolean,

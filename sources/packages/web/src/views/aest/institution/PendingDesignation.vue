@@ -16,7 +16,10 @@
           data-cy="searchCriteria"
           @keyup.enter="searchDesignations"
         />
-        <v-btn class="ml-2 primary-btn-background" data-cy="searchCriteriaButton" @click="searchDesignations"
+        <v-btn
+          class="ml-2 primary-btn-background"
+          data-cy="searchCriteriaButton"
+          @click="searchDesignations"
           ><font-awesome-icon :icon="['fas', 'search']" class="mr-2"
         /></v-btn>
       </template>
@@ -88,17 +91,11 @@ import {
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
 import { COLOR_BLUE } from "@/constants";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
-import BodyHeader from "@/components/generic/BodyHeader.vue";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import ToggleContent from "@/components/generic/ToggleContent.vue";
 export default {
   components: {
-    HeaderNavigator,
     StatusChipDesignation,
-    BodyHeader,
-    ContentGroup,
     ToggleContent,
   },
 

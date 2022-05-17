@@ -88,7 +88,6 @@ import { ref, onMounted, computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionLocationsDetails } from "@/types";
 import { AuthService } from "@/services/AuthService";
@@ -99,7 +98,6 @@ import { useFormatters } from "@/composables";
 export default {
   emits: ["editLocation"],
   components: {
-    ContentGroup,
     TitleValue,
     StatusChipDesignationAgreement,
   },

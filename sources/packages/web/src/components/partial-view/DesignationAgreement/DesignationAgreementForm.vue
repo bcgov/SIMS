@@ -9,7 +9,6 @@
 </template>
 
 <script lang="ts">
-import formio from "@/components/generic/formio.vue";
 import { SetupContext, computed } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -21,7 +20,6 @@ import {
 
 export default {
   emits: ["submitDesignation"],
-  components: { formio },
   props: {
     model: {
       type: Object,

@@ -61,10 +61,6 @@ import { computed, ref } from "vue";
 import { StudentAppealRequest } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentAppealService } from "@/services/StudentAppealService";
-import formio from "@/components/generic/formio.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
-import BodyHeader from "@/components/generic/BodyHeader.vue";
 import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
 import { useToastMessage } from "@/composables";
 const INVALID_APPLICATION_NUMBER = "INVALID_APPLICATION_NUMBER";
@@ -77,10 +73,6 @@ interface StudentRequestSelectedForms {
 
 export default {
   components: {
-    HeaderNavigator,
-    FullPageContainer,
-    formio,
-    BodyHeader,
     AppealRequestsForm,
   },
   setup() {

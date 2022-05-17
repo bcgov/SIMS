@@ -15,15 +15,11 @@
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
-import formio from "../../components/generic/formio.vue";
 import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 export default {
-  components: { formio, HeaderNavigator, FullPageContainer },
   props: {
     createMode: {
       type: Boolean,
@@ -65,5 +61,3 @@ export default {
   },
 };
 </script>
-
-<style></style>

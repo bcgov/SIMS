@@ -24,10 +24,9 @@ import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAn
 import { ref, onMounted } from "vue";
 import { EducationProgramData } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { ManageProgramAndOfferingSummary, HeaderNavigator },
+  components: { ManageProgramAndOfferingSummary },
   props: {
     programId: {
       type: Number,

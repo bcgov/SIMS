@@ -89,12 +89,10 @@ import {
 import { useFormatters } from "@/composables";
 import { COLOR_BLUE } from "@/constants";
 import COEStatusBadge from "@/components/generic/COEStatusBadge.vue";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
-import BodyHeader from "@/components/generic/BodyHeader.vue";
 const DEFAULT_SORT_FIELD = "coeStatus";
 
 export default {
-  components: { COEStatusBadge, ContentGroup, BodyHeader },
+  components: { COEStatusBadge },
   props: {
     locationId: {
       type: Number,

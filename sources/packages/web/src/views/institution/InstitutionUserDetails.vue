@@ -11,11 +11,9 @@
 
 <script lang="ts">
 import InstitutionUserSummary from "@/components/common/InstitutionUserSummary.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
   components: {
-    HeaderNavigator,
     InstitutionUserSummary,
   },
 };

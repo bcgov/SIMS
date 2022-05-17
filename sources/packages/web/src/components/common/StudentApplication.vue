@@ -28,7 +28,6 @@
 </template>
 
 <script lang="ts">
-import formio from "@/components/generic/formio.vue";
 import {
   OfferingIntensity,
   WizardNavigationEvent,
@@ -48,9 +47,6 @@ export default {
     "customEventCallback",
     "pageChanged",
   ],
-  components: {
-    formio,
-  },
   props: {
     initialData: {
       type: Object,
