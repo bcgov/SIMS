@@ -63,10 +63,8 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { ApplicationStatus } from "@/types";
 import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { HeaderNavigator },
   props: {
     locationId: {
       type: Number,

@@ -47,7 +47,6 @@ import {
   ProgramStatus,
 } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { COLOR_BLUE } from "@/constants";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
 import { ModalDialog, useToastMessage } from "@/composables";
@@ -56,7 +55,6 @@ import DeclineProgramModal from "@/components/aest/institution/modals/DeclinePro
 export default {
   components: {
     ManageProgramAndOfferingSummary,
-    HeaderNavigator,
     ApproveProgramModal,
     DeclineProgramModal,
   },

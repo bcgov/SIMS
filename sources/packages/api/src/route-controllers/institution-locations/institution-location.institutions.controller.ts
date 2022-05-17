@@ -48,11 +48,10 @@ import {
 } from "./models/application.dto";
 import BaseController from "../BaseController";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 import {
-  InstitutionLocationAPIOutDTO,
+  InstitutionLocationPrimaryContactAPIInDTO,
   InstitutionLocationFormAPIInDTO,
-  InstitutionLocationFormAPIOutDTO,
+  InstitutionLocationDetailsAPIOutDTO,
   ScholasticStandingAPIInDTO,
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
@@ -62,11 +61,10 @@ import { transformAddressDetailsForAddressBlockForm } from "../utils/address-uti
  * Institution location controller for institutions Client.
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@Controller("institution/location")
-@ApiTags(`${ClientTypeBaseRoute.Institution}-institution/location`)
+@Controller("location")
+@ApiTags(`${ClientTypeBaseRoute.Institution}-location`)
 export class InstitutionLocationInstitutionsController extends BaseController {
   constructor(
-    private readonly locationControllerService: InstitutionLocationControllerService,
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
@@ -115,53 +113,15 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * Update an institution location.
    * @param locationId
    * @param payload
-   * @returns number of updated rows.
    */
-  @ApiBadRequestResponse({
-    description: "Invalid request to update the institution location.",
-  })
   @HasLocationAccess("locationId")
   @IsInstitutionAdmin()
   @Patch(":locationId")
   async update(
     @Param("locationId") locationId: number,
-    @Body() payload: InstitutionLocationFormAPIInDTO,
-    @UserToken() userToken: IInstitutionUserToken,
+    @Body() payload: InstitutionLocationPrimaryContactAPIInDTO,
   ): Promise<void> {
-    // Validate the location data that will be saved to SIMS DB.
-    const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      FormNames.InstitutionLocation,
-      payload,
-    );
-
-    if (!dryRunSubmissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to create the institution location due to an invalid request.",
-      );
-    }
-
-    // If the data is valid the location is updated to SIMS DB.
-    await this.locationService.saveLocation(
-      userToken.authorizations.institutionId,
-      dryRunSubmissionResult.data.data,
-      locationId,
-    );
-  }
-
-  /**
-   * Controller method to get institution locations with designation status for the given institution.
-   * @param userToken
-   * @returns Details of all locations of an institution.
-   */
-  @IsInstitutionAdmin()
-  @Get()
-  async getAllInstitutionLocations(
-    @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<InstitutionLocationAPIOutDTO[]> {
-    // get all institution locations with designation statuses.
-    return this.locationControllerService.getInstitutionLocations(
-      userToken.authorizations.institutionId,
-    );
+    this.locationService.updateLocationPrimaryContact(payload, locationId);
   }
 
   /**
@@ -199,15 +159,16 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    */
   @HasLocationAccess("locationId")
   @Get(":locationId")
+  @ApiNotFoundResponse({ description: "Institution Location not found." })
   async getInstitutionLocation(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<InstitutionLocationFormAPIOutDTO> {
-    // get all institution locations.
+  ): Promise<InstitutionLocationDetailsAPIOutDTO> {
+    // Get particular institution location.
     const institutionLocation =
       await this.locationService.getInstitutionLocation(
-        userToken.authorizations.institutionId,
         locationId,
+        userToken.authorizations.institutionId,
       );
 
     return {

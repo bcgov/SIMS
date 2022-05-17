@@ -27,14 +27,10 @@
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
 import { useToastMessage } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: {
-    FullPageContainer,
-    HeaderNavigator,
     NoticeOfAssessmentFormView,
   },
   props: {

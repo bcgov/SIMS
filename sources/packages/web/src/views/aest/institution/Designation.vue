@@ -21,9 +21,8 @@ import { GetDesignationAgreementsDto } from "@/types/contracts/DesignationAgreem
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
-import BodyHeader from "@/components/generic/BodyHeader.vue";
 export default {
-  components: { DesignationAgreementSummary, BodyHeader },
+  components: { DesignationAgreementSummary },
   props: {
     institutionId: {
       type: Number,

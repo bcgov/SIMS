@@ -16,7 +16,6 @@
 <script lang="ts">
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { ref, onMounted, computed } from "vue";
-import formio from "@/components/generic/formio.vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
   ApiProcessError,
@@ -24,8 +23,6 @@ import {
   FormIOCustomEventTypes,
 } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
 import {
   APPLICATION_NOT_FOUND,
@@ -36,11 +33,6 @@ import { useToastMessage } from "@/composables";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
 
 export default {
-  components: {
-    formio,
-    HeaderNavigator,
-    FullPageContainer,
-  },
   props: {
     applicationId: {
       type: Number,

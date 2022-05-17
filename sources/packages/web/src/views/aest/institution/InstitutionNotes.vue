@@ -40,14 +40,13 @@
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
 import { useFormatters, useToastMessage } from "@/composables";
 import { InstitutionNoteType, NoteBaseDTO, NoteEntityType } from "@/types";
 
 export default {
-  components: { ContentGroup, Notes },
+  components: { Notes },
   props: {
     institutionId: {
       type: Number,

@@ -26,7 +26,6 @@
 
 <script lang="ts">
 import { ref } from "vue";
-import formio from "@/components/generic/formio.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { RestrictionService } from "@/services/RestrictionService";
 import {
@@ -37,7 +36,7 @@ import {
 import { AssignRestrictionDTO, RestrictionEntityType } from "@/types";
 export const CATEGORY_KEY = "category";
 export default {
-  components: { ModalDialogBase, formio },
+  components: { ModalDialogBase },
   emits: ["submitRestrictionData"],
   props: {
     entityType: {

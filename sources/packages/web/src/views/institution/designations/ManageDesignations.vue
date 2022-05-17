@@ -34,8 +34,6 @@
 </template>
 
 <script lang="ts">
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import BodyHeader from "@/components/generic/BodyHeader.vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { onMounted, ref } from "vue";
@@ -46,14 +44,10 @@ import {
 } from "@/types/contracts/DesignationAgreementContract";
 import { useInstitutionAuth, useToastMessage } from "@/composables";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
   components: {
-    FullPageContainer,
     DesignationAgreementSummary,
-    BodyHeader,
-    HeaderNavigator,
   },
   setup() {
     const router = useRouter();

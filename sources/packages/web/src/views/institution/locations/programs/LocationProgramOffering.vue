@@ -47,11 +47,9 @@
 
 <script lang="ts">
 import { useRouter, RouteLocationRaw } from "vue-router";
-import formio from "@/components/generic/formio.vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import {
   ClientIdType,
   OfferingFormModel,
@@ -65,15 +63,11 @@ import {
 import { useToastMessage, useOffering, ModalDialog } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import AssessOfferingModal from "@/components/aest/institution/modals/AssessOfferingModal.vue";
 
 export default {
   components: {
-    formio,
-    FullPageContainer,
-    HeaderNavigator,
     ProgramOfferingDetailHeader,
     AssessOfferingModal,
   },

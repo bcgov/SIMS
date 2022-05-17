@@ -16,15 +16,14 @@
 
 <script lang="ts">
 import { RouteLocationRaw, useRouter } from "vue-router";
-import { useStore } from "vuex";
-import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 import { computed, onMounted, ref } from "vue";
-import { InstitutionLocationPrimaryContactAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { AuthService } from "@/services/AuthService";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 import { InstitutionLocationEdit } from "@/types";
+import { InstitutionLocationAPIInDTO } from "@/services/http/dto";
 import { useToastMessage } from "@/composables";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: { LocationEditForm },
@@ -35,13 +34,11 @@ export default {
     },
   },
   setup(props: any) {
-    // Hooks
-    const store = useStore();
     const initialData = ref({} as InstitutionLocationEdit);
     const toast = useToastMessage();
     const router = useRouter();
     const updateInstitutionLocation = async (
-      data: InstitutionLocationPrimaryContactAPIInDTO,
+      data: InstitutionLocationAPIInDTO,
     ) => {
       try {
         await InstitutionService.shared.updateInstitutionLocation(
@@ -49,9 +46,8 @@ export default {
           data,
         );
         router.push(goBackRouteParams.value);
-        store.dispatch("institution/getUserInstitutionLocationDetails");
         toast.success(
-          "Your location information have been updated",
+          `Your location information for ${data.locationName} have been updated`,
           "Location Details have been updated!",
         );
       } catch (excp) {
@@ -71,7 +67,7 @@ export default {
     const goBackRouteParams = computed(
       () =>
         ({
-          name: InstitutionRoutesConst.MANAGE_LOCATIONS,
+          name: AESTRoutesConst.INSTITUTION_LOCATIONS,
           params: {
             locationId: props.locationId,
           },
