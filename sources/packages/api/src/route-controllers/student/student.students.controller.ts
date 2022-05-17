@@ -40,7 +40,7 @@ import {
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
   uploadLimits,
-} from "src/utilities";
+} from "../../utilities";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 

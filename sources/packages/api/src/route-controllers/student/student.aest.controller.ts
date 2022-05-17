@@ -36,7 +36,7 @@ import {
 } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
-import { FileOriginType } from "src/database/entities/student-file.type";
+import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 
 /**
