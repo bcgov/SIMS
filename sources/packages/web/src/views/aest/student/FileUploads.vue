@@ -143,6 +143,7 @@ export default {
           "Documents submitted",
           "The documents were submitted and a notification was sent to the student.",
         );
+        await loadStudentFileUploads();
       } catch {
         toast.error("Unexpected error", "An unexpected error happened.");
       }
