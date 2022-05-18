@@ -31,6 +31,10 @@ export default {
       switch (props.color) {
         case StatusChipTypes.Success:
           return "v-alert-background-success";
+        case StatusChipTypes.Warning:
+          return "v-alert-background-warning";
+        case StatusChipTypes.Error:
+          return "v-alert-background-error";
         default:
           return "";
       }
