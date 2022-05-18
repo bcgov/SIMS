@@ -333,7 +333,7 @@ VALUES
     'TD',
     'Death.',
     'Federal',
-    ARRAY ['Stop part time apply','Stop full time apply', 'Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time apply', 'Stop full time apply', 'Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -732,7 +732,7 @@ VALUES
     'W',
     'Borrower missed one or more months of affordable RAP payments and has not made up the payment within 30 days.',
     'Federal',
-    ARRAY ['Stop part time apply','Stop full time apply','Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time apply', 'Stop full time apply', 'Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'No effect'
   );
 
@@ -827,7 +827,7 @@ VALUES
     'Z3',
     'Borrower on RAP.',
     'Federal',
-    ARRAY ['Stop part time apply','Stop full time apply','Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time apply', 'Stop full time apply', 'Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -846,7 +846,7 @@ VALUES
     'ZR',
     'Borrower has received RAP Stage 2.',
     'Federal',
-    ARRAY ['Stop part time apply','Stop full time apply','Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time apply', 'Stop full time apply', 'Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
