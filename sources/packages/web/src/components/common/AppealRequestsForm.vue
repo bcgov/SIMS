@@ -18,18 +18,12 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import Formio from "@/components/generic/formio.vue";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { SetupContext } from "vue";
 import { useFormioUtils } from "@/composables";
 import { StudentAppealRequest } from "@/types";
 
 export default {
   emits: ["submitted"],
-  components: {
-    Formio,
-    ContentGroup,
-  },
   props: {
     studentAppealRequests: {
       type: Object,

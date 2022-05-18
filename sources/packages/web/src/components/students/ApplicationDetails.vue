@@ -21,7 +21,6 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
-import formio from "@/components/generic/formio.vue";
 import ApplicationProgressBar from "@/components/students/progressBar/ApplicationProgressBar.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import {
@@ -35,7 +34,6 @@ import {
 
 export default {
   components: {
-    formio,
     ApplicationProgressBar,
   },
   props: {

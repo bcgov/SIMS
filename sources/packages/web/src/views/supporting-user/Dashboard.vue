@@ -8,16 +8,10 @@
 </template>
 
 <script lang="ts">
-import formio from "@/components/generic/formio.vue";
 import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { useRouter } from "vue-router";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 export default {
-  components: {
-    formio,
-    FullPageContainer,
-  },
   setup() {
     const router = useRouter();
     const customEventCallback = async (

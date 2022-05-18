@@ -19,7 +19,6 @@
 </template>
 
 <script lang="ts">
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { onMounted, reactive, ref } from "vue";
 import { useFormatters, useDesignationAgreement } from "@/composables";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
@@ -28,11 +27,10 @@ import {
   DesignationFormViewModes,
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
-import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
-  components: { FullPageContainer, DesignationAgreementForm, HeaderNavigator },
+  components: { DesignationAgreementForm },
   props: {
     designationAgreementId: {
       type: Number,

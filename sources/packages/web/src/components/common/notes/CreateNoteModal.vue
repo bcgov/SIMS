@@ -22,7 +22,6 @@
 
 <script lang="ts">
 import { ref } from "vue";
-import formio from "@/components/generic/formio.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useFormioUtils } from "@/composables";
 import {
@@ -32,7 +31,7 @@ import {
   NoteEntityType,
 } from "@/types";
 export default {
-  components: { ModalDialogBase, formio },
+  components: { ModalDialogBase },
   props: {
     entityType: {
       type: String,

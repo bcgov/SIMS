@@ -88,7 +88,6 @@
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
 import AddInstitutionRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
@@ -106,7 +105,6 @@ import StatusBadge from "@/components/generic/StatusBadge.vue";
 
 export default {
   components: {
-    ContentGroup,
     StatusBadge,
     ViewRestrictionModal,
     AddInstitutionRestrictionModal,

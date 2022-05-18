@@ -71,7 +71,6 @@ import {
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { PIR_OR_DATE_OVERLAP_ERROR } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
@@ -80,7 +79,6 @@ export default {
     StudentApplication,
     ConfirmEditApplication,
     RestrictionBanner,
-    FullPageContainer,
   },
   props: {
     id: {

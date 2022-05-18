@@ -17,14 +17,12 @@ import { computed, onMounted, ref } from "vue";
 
 import { useStore } from "vuex";
 import { StudentService } from "@/services/StudentService";
-import formio from "@/components/generic/formio.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import { useRouter } from "vue-router";
 
 export default {
   components: {
-    formio,
     RestrictionBanner,
     CheckValidSINBanner,
   },

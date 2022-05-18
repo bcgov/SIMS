@@ -74,10 +74,10 @@
     </div>
   </v-card>
   <ViewRestrictionModal
-    ref="viewRestriction" 
+    ref="viewRestriction"
     :restrictionData="studentRestriction"
     @submitResolutionData="resolveRestriction"
-  /> 
+  />
   <AddStudentRestrictionModal
     ref="addRestriction"
     :entityType="RestrictionEntityType.Student"
@@ -87,7 +87,6 @@
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
 import AddStudentRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
@@ -105,7 +104,6 @@ import StatusBadge from "@/components/generic/StatusBadge.vue";
 
 export default {
   components: {
-    ContentGroup,
     StatusBadge,
     ViewRestrictionModal,
     AddStudentRestrictionModal,

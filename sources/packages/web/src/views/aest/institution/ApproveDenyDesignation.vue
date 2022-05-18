@@ -30,7 +30,6 @@
 </template>
 
 <script lang="ts">
-import formio from "@/components/generic/formio.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import {
   UpdateDesignationDto,
@@ -39,7 +38,7 @@ import {
 import { useModalDialog } from "@/composables";
 import { computed } from "vue";
 export default {
-  components: { ModalDialogBase, formio },
+  components: { ModalDialogBase },
   props: {
     designation: {
       type: Object,

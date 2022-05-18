@@ -7,6 +7,7 @@ import {
   ConfigService,
   InstitutionLocationService,
   DesignationAgreementLocationService,
+  FormService,
 } from "../../services";
 import { InstitutionInstitutionsController } from "./institution.institutions.controller";
 import { DatabaseModule } from "../../database/database.module";
@@ -14,9 +15,13 @@ import {
   InstitutionLocationControllerService,
   InstitutionControllerService,
 } from "../../route-controllers";
+import { JwtService } from "@nestjs/jwt";
 
 describe("InstitutionController", () => {
   let controller: InstitutionInstitutionsController;
+  const jwtService = new JwtService({
+    secretOrPrivateKey: "Secret key",
+  });
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,10 +31,15 @@ describe("InstitutionController", () => {
         UserService,
         BCeIDService,
         ConfigService,
+        FormService,
         InstitutionLocationService,
         DesignationAgreementLocationService,
         InstitutionLocationControllerService,
         InstitutionControllerService,
+        {
+          provide: JwtService,
+          useValue: jwtService,
+        },
       ],
       controllers: [InstitutionInstitutionsController],
     }).compile();

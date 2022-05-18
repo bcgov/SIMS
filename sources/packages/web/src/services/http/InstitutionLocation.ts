@@ -2,7 +2,6 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import {
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
-  InstitutionLocationAPIOutDTO,
   ActiveApplicationDataAPIOutDTO,
   OptionItemAPIOutDTO,
   InstitutionUserAPIOutDTO,
@@ -10,6 +9,8 @@ import {
   UserActiveStatusAPIInDTO,
   InstitutionUserLocationsAPIOutDTO,
   ScholasticStandingDataAPIInDTO,
+  InstitutionLocationPrimaryContactAPIInDTO,
+  InstitutionLocationAPIInDTO,
 } from "@/services/http/dto";
 
 export class InstitutionLocationApi extends HttpBaseClient {
@@ -17,17 +18,21 @@ export class InstitutionLocationApi extends HttpBaseClient {
     createInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
   ): Promise<void> {
     return this.postCall<InstitutionLocationFormAPIInDTO>(
-      this.addClientRoot("institution/location"),
+      this.addClientRoot("location"),
       createInstitutionLocationDto,
     );
   }
 
   public async updateInstitutionLocation(
     locationId: number,
-    updateInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
+    updateInstitutionLocationDto:
+      | InstitutionLocationPrimaryContactAPIInDTO
+      | InstitutionLocationAPIInDTO,
   ): Promise<void> {
-    return this.patchCall<InstitutionLocationFormAPIInDTO>(
-      this.addClientRoot(`institution/location/${locationId}`),
+    return this.patchCall<
+      InstitutionLocationPrimaryContactAPIInDTO | InstitutionLocationAPIInDTO
+    >(
+      this.addClientRoot(`location/${locationId}`),
       updateInstitutionLocationDto,
     );
   }
@@ -36,20 +41,10 @@ export class InstitutionLocationApi extends HttpBaseClient {
     locationId: number,
   ): Promise<InstitutionLocationFormAPIOutDTO> {
     return this.getCallTyped<InstitutionLocationFormAPIOutDTO>(
-      this.addClientRoot(`institution/location/${locationId}`),
+      this.addClientRoot(`location/${locationId}`),
     );
   }
 
-  public async allInstitutionLocations(
-    institutionId?: number,
-  ): Promise<InstitutionLocationAPIOutDTO[]> {
-    const url = institutionId
-      ? `institution/location/${institutionId}`
-      : "institution/location";
-    return this.getCallTyped<InstitutionLocationAPIOutDTO[]>(
-      this.addClientRoot(url),
-    );
-  }
   /**
    * This client expects custom error message in one or more
    * scenarios and hence trying to parse and throw the message
@@ -112,7 +107,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
 
   public async getOptionsList(): Promise<OptionItemAPIOutDTO[]> {
     return this.getCallTyped<OptionItemAPIOutDTO[]>(
-      this.addClientRoot("institution/location/options-list"),
+      this.addClientRoot("location/options-list"),
     );
   }
 
@@ -122,7 +117,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
   ): Promise<ActiveApplicationDataAPIOutDTO> {
     return this.getCallTyped<ActiveApplicationDataAPIOutDTO>(
       this.addClientRoot(
-        `institution/location/${locationId}/active-application/${applicationId}`,
+        `location/${locationId}/active-application/${applicationId}`,
       ),
     );
   }
@@ -141,7 +136,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
     try {
       await this.postCall(
         this.addClientRoot(
-          `institution/location/${locationId}/application/${applicationId}/scholastic-standing`,
+          `location/${locationId}/application/${applicationId}/scholastic-standing`,
         ),
         { data: payload },
       );

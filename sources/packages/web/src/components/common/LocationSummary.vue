@@ -24,15 +24,19 @@
     class="ma-2"
   >
     <v-row>
-      <v-col cols="10">
+      <v-col cols="11">
         <span>
           <font-awesome-icon :icon="['fas', 'map-pin']" />
           <span class="category-header-medium mx-2">{{ item.name }}</span>
           <status-chip-designation-agreement :status="item.designationStatus" />
         </span>
       </v-col>
-      <v-col cols="2" v-if="clientType === ClientIdType.Institution">
-        <v-btn variant="plain" @click="getLocation(item.id)">
+      <v-col cols="1">
+        <v-btn
+          color="primary"
+          variant="text"
+          @click="$emit('editLocation', item.id)"
+        >
           <font-awesome-icon :icon="['fas', 'cog']" class="mr-2" />
           Edit
         </v-btn>
@@ -84,7 +88,6 @@ import { ref, onMounted, computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionLocationsDetails } from "@/types";
 import { AuthService } from "@/services/AuthService";
@@ -93,8 +96,8 @@ import { InstitutionLocationAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
 
 export default {
+  emits: ["editLocation"],
   components: {
-    ContentGroup,
     TitleValue,
     StatusChipDesignationAgreement,
   },
@@ -108,17 +111,8 @@ export default {
     const formatter = useFormatters();
     const router = useRouter();
     const clientType = computed(() => AuthService.shared.authClientType);
-
     const goToAddNewLocation = () => {
       router.push({ name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION });
-    };
-    const getLocation = async (locationId: number) => {
-      router.push({
-        name: InstitutionRoutesConst.EDIT_INSTITUTION_LOCATION,
-        params: {
-          locationId: locationId,
-        },
-      });
     };
     const institutionLocationList = ref([] as InstitutionLocationAPIOutDTO[]);
 
@@ -153,7 +147,6 @@ export default {
 
     return {
       goToAddNewLocation,
-      getLocation,
       getInstitutionLocationList,
       institutionLocationList,
       ClientIdType,

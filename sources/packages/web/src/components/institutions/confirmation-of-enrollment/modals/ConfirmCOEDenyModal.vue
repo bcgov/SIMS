@@ -35,7 +35,6 @@
 import { ref } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useFormioUtils } from "@/composables";
-import formio from "@/components/generic/formio.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import { DenyConfirmationOfEnrollment } from "@/types";
 
@@ -44,7 +43,6 @@ const COE_DENIAL_REASON_RADIO = "coeDenyReasonId";
 export default {
   components: {
     ModalDialogBase,
-    formio,
   },
   emits: ["submitData"],
   setup(props: any, context: any) {
