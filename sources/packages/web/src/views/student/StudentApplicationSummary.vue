@@ -14,16 +14,7 @@
       />
       <CheckValidSINBanner />
     </template>
-    <body-header
-      title="Applications"
-      class="m-1"
-      subTitle="A list of your applications for funding, grants, and bursaries."
-    >
-    </body-header>
     <v-row>
-      <v-col cols="12">
-        <span class="float-right"></span>
-      </v-col>
       <v-col cols="12">
         <StudentApplications
           :hasRestriction="hasRestriction"
