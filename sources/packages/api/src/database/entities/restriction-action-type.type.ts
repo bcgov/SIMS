@@ -19,11 +19,11 @@ export enum RestrictionActionType {
    */
   StopFullTimeApply = "Stop full time apply",
   /**
-   * Stop all part time disbursement of the student.
+   * Stop all part time disbursements of the student.
    */
   StopPartTimeDisbursement = "Stop part time disbursement",
   /**
-   * Stop all full time disbursement of the student.
+   * Stop all full time disbursements of the student.
    */
   StopFullTimeDisbursement = "Stop full time disbursement",
 }
