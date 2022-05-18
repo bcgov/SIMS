@@ -1,14 +1,16 @@
 <template>
-  <header-navigator
-    title="Back to student applications"
-    :routeLocation="{
-      name: AESTRoutesConst.STUDENT_APPLICATIONS,
-      params: { studentId },
-    }"
-    subTitle="Financial Aid Application"
-  >
-  </header-navigator>
   <full-page-container v-if="applicationDetail.data" class="my-2">
+    <template #header>
+      <header-navigator
+        title="Back to student applications"
+        :routeLocation="{
+          name: AESTRoutesConst.STUDENT_APPLICATIONS,
+          params: { studentId },
+        }"
+        subTitle="Financial Aid Application"
+      >
+      </header-navigator>
+    </template>
     <h2 class="color-blue pb-4">
       Student Application Details
       {{
