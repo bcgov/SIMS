@@ -20,7 +20,7 @@
         </slot>
       </span>
       <span class="float-left">
-        <slot name="subTitleDetails"></slot>
+        <slot name="sub-title-details"></slot>
       </span>
     </v-col>
     <v-col>

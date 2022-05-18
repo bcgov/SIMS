@@ -1,9 +1,9 @@
 <template>
-  <full-page-container>
+  <full-page-container layout-template="Centered">
     <template #header>
       <header-navigator
         title="Student Details"
-        :subTitle="studentDetails.firstName"
+        :subTitle="studentDetails.fullName"
       >
         <template #sub-title-details>
           <designation-and-restriction-status-badge

@@ -58,6 +58,7 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
+  getUserFullName,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
@@ -565,6 +566,7 @@ export class StudentController extends BaseController {
     return {
       firstName: student.user.firstName,
       lastName: student.user.lastName,
+      fullName: getUserFullName(student.user),
       email: student.user.email,
       gender: student.gender,
       dateOfBirth: student.birthDate,

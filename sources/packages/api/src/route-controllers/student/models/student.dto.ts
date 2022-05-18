@@ -80,6 +80,7 @@ export interface StudentRestrictionDTO {
 export class StudentDetailAPIOutDTO {
   firstName: string;
   lastName: string;
+  fullName: string;
   email: string;
   gender: string;
   dateOfBirth: Date;
