@@ -12,11 +12,16 @@
   </slot>
   <v-row>
     <v-col>
-      <slot name="subTitle">
-        <div class="header-sub-title">
-          {{ subTitle }}
-        </div>
-      </slot>
+      <span class="float-left">
+        <slot name="subTitle">
+          <div class="header-sub-title">
+            {{ subTitle }}
+          </div>
+        </slot>
+      </span>
+      <span class="float-left">
+        <slot name="subTitleDetails"></slot>
+      </span>
     </v-col>
     <v-col>
       <div class="float-right ml-2 header-button">
