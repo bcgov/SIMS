@@ -72,18 +72,18 @@ export default {
     });
     // Data-bind
     const initialData = ref({} as any);
-    const institution = ref({} as InstitutionDetailAPIOutDTO);
+    let institution = {} as InstitutionDetailAPIOutDTO;
 
     const loadFormData = async () => {
       if (isInstitutionUser.value) {
-        institution.value = await InstitutionService.shared.getDetail();
+        institution = await InstitutionService.shared.getDetail();
         if (props.programId) {
           const program = await EducationProgramService.shared.getProgram(
             props.programId,
           );
           initialData.value = {
             ...program,
-            ...{ isBCPrivate: institution.value.isBCPrivate },
+            ...{ isBCPrivate: institution.isBCPrivate },
           };
         } else {
           initNewFormData();
@@ -220,7 +220,7 @@ export default {
 
     const initNewFormData = () => {
       initialData.value = {
-        isBCPrivate: institution.value.isBCPrivate,
+        isBCPrivate: institution.isBCPrivate,
         hasOfferings: false,
       };
     };
