@@ -66,7 +66,6 @@ import {
   faBell,
   faFileAlt as faFileAltSolid,
   faHandPaper as faHandPaperSolid,
-  faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faFileAlt,
@@ -100,7 +99,6 @@ library.add(
   faFileAltSolid,
   faHandPaper,
   faHandPaperSolid,
-  faCheckCircle,
 );
 
 // Configure the UI validations rules globally available.
