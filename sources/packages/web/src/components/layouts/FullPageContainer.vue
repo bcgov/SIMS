@@ -25,8 +25,8 @@
 import { computed } from "vue";
 
 enum LayoutTemplates {
-  Centered = "Centered",
-  CenteredCard = "CenteredCard",
+  Centered = "centered",
+  CenteredCard = "centered-card",
 }
 
 export default {

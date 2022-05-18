@@ -1,5 +1,5 @@
 <template>
-  <full-page-container layout-template="Centered">
+  <full-page-container layout-template="centered">
     <template #header>
       <header-navigator
         title="Student Details"

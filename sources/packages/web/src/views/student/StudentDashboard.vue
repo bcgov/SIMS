@@ -1,5 +1,5 @@
 <template>
-  <full-page-container layout-template="Centered">
+  <full-page-container layout-template="centered">
     <template #alerts>
       <RestrictionBanner
         v-if="hasRestriction"
