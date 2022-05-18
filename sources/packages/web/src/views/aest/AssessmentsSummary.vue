@@ -1,5 +1,5 @@
 <template>
-  <full-page-container layout-type="card">
+  <full-page-container layout-template="Centered">
     <template #header>
       <header-navigator
         title="Student applications"

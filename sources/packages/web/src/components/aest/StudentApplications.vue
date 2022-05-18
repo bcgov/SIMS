@@ -1,6 +1,5 @@
 <template>
   <!-- This component is shared between ministry and student users -->
-  <p class="category-header-large color-blue">Applications</p>
   <DataTable
     :value="applicationAndCount.applications"
     :lazy="true"

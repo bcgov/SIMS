@@ -1,15 +1,17 @@
 <template>
-  <v-container>
-    <RestrictionBanner
-      v-if="hasRestriction"
-      :restrictionMessage="restrictionMessage"
-    />
-    <CheckValidSINBanner />
+  <full-page-container layout-template="Centered">
+    <template #alerts>
+      <RestrictionBanner
+        v-if="hasRestriction"
+        :restrictionMessage="restrictionMessage"
+      />
+      <CheckValidSINBanner />
+    </template>
     <formio
       formName="studentwelcomepage"
       @customEvent="goToStudentApplication"
     ></formio>
-  </v-container>
+  </full-page-container>
 </template>
 <script lang="ts">
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";

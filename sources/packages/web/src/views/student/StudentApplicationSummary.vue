@@ -1,19 +1,28 @@
 <template>
-  <div class="p-m-4">
-    <RestrictionBanner
-      v-if="hasRestriction"
-      :restrictionMessage="restrictionMessage"
-    />
-    <CheckValidSINBanner />
-    <HeaderNavigator subTitle="My Applications" />
+  <full-page-container :full-width="true">
+    <template #header>
+      <header-navigator title="Applications" subTitle="My Applications">
+        <template #buttons>
+          <StartApplication :hasRestriction="hasRestriction" />
+        </template>
+      </header-navigator>
+    </template>
+    <template #alerts>
+      <RestrictionBanner
+        v-if="hasRestriction"
+        :restrictionMessage="restrictionMessage"
+      />
+      <CheckValidSINBanner />
+    </template>
+    <body-header
+      title="Applications"
+      class="m-1"
+      subTitle="A list of your applications for funding, grants, and bursaries."
+    >
+    </body-header>
     <v-row>
-      <span class="p-m-4"
-        >A list of your applications for funding, grants, and busaries.</span
-      >
       <v-col cols="12">
-        <span class="float-right"
-          ><StartApplication :hasRestriction="hasRestriction"
-        /></span>
+        <span class="float-right"></span>
       </v-col>
       <v-col cols="12">
         <StudentApplications
@@ -25,7 +34,7 @@
         />
       </v-col>
     </v-row>
-  </div>
+  </full-page-container>
   <ConfirmEditApplication ref="editApplicationModal" />
   <CancelApplication
     :showModal="showModal"

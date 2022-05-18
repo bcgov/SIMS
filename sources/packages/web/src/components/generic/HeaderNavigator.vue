@@ -1,17 +1,17 @@
 <template>
-  <slot name="title">
-    <div v-if="routeLocation" class="header-title">
-      <a @click="goBack()">
-        <font-awesome-icon :icon="['fas', 'arrow-left']" class="mr-2" />
-        {{ title }}</a
-      >
-    </div>
-    <div v-else class="header-title">
-      {{ title }}
-    </div>
-  </slot>
-  <v-row>
+  <v-row align="end" class="mb-8">
     <v-col>
+      <slot name="title">
+        <div v-if="routeLocation" class="header-title">
+          <a @click="goBack()">
+            <font-awesome-icon :icon="['fas', 'arrow-left']" class="mr-2" />
+            {{ title }}</a
+          >
+        </div>
+        <div v-else class="header-title">
+          {{ title }}
+        </div>
+      </slot>
       <span class="float-left">
         <slot name="subTitle">
           <div class="header-sub-title">
@@ -24,7 +24,7 @@
       </span>
     </v-col>
     <v-col>
-      <div class="float-right ml-2 header-button">
+      <div class="float-right header-button">
         <slot name="buttons"> </slot>
       </div>
     </v-col>
