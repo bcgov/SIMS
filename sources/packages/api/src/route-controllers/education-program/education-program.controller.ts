@@ -170,7 +170,6 @@ export class EducationProgramController extends BaseController {
       institutionId: userToken.authorizations.institutionId,
       id: programId,
       userId: userToken.userId,
-      locationId: payload.locationId,
     };
     return this.programService.saveEducationProgram(saveProgramPaylod);
   }
@@ -273,7 +272,6 @@ export class EducationProgramController extends BaseController {
    * Get program details for an program id.
    * @param userToken User token from request.
    * @param id program id
-   * @query locationId location id
    * @returns programs DTO.
    * ! This dynamic router will conflict with its similar patter router,
    * ! eg, @Get("programs-list"). so, always move @Get(":id") below all
@@ -286,19 +284,18 @@ export class EducationProgramController extends BaseController {
   @Get(":id")
   async getProgram(
     @Param("id") id: number,
-    @Query("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramDto> {
-    const program = this.programService.getInstitutionProgram(
+    const programRequest = this.programService.getInstitutionProgram(
       id,
       userToken.authorizations.institutionId,
     );
 
     const hasOfferings =
-      this.educationProgramOfferingService.hasExistingOffering(id, locationId);
+      this.educationProgramOfferingService.hasExistingOffering(id);
 
-    const [programResponse, hasOfferingsResponse] = await Promise.all([
-      program,
+    const [program, hasOfferingsResponse] = await Promise.all([
+      programRequest,
       hasOfferings,
     ]);
 
@@ -307,49 +304,46 @@ export class EducationProgramController extends BaseController {
     }
 
     return {
-      name: programResponse.name,
-      description: programResponse.description,
-      credentialType: programResponse.credentialType,
-      cipCode: programResponse.cipCode,
-      nocCode: programResponse.nocCode,
-      sabcCode: programResponse.sabcCode,
-      regulatoryBody: programResponse.regulatoryBody,
+      name: program.name,
+      description: program.description,
+      credentialType: program.credentialType,
+      cipCode: program.cipCode,
+      nocCode: program.nocCode,
+      sabcCode: program.sabcCode,
+      regulatoryBody: program.regulatoryBody,
       programDeliveryTypes: {
-        deliveredOnSite: programResponse.deliveredOnSite,
-        deliveredOnline: programResponse.deliveredOnline,
+        deliveredOnSite: program.deliveredOnSite,
+        deliveredOnline: program.deliveredOnline,
       },
-      deliveredOnlineAlsoOnsite: programResponse.deliveredOnlineAlsoOnsite,
-      sameOnlineCreditsEarned: programResponse.sameOnlineCreditsEarned,
+      deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
+      sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
       earnAcademicCreditsOtherInstitution:
-        programResponse.earnAcademicCreditsOtherInstitution,
-      courseLoadCalculation: programResponse.courseLoadCalculation,
-      completionYears: programResponse.completionYears,
-      eslEligibility: programResponse.eslEligibility,
-      hasJointInstitution: programResponse.hasJointInstitution,
-      hasJointDesignatedInstitution:
-        programResponse.hasJointDesignatedInstitution,
-      programIntensity: programResponse.programIntensity,
-      institutionProgramCode: programResponse.institutionProgramCode,
-      minHoursWeek: programResponse.minHoursWeek,
-      isAviationProgram: programResponse.isAviationProgram,
-      minHoursWeekAvi: programResponse.minHoursWeekAvi,
+        program.earnAcademicCreditsOtherInstitution,
+      courseLoadCalculation: program.courseLoadCalculation,
+      completionYears: program.completionYears,
+      eslEligibility: program.eslEligibility,
+      hasJointInstitution: program.hasJointInstitution,
+      hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
+      programIntensity: program.programIntensity,
+      institutionProgramCode: program.institutionProgramCode,
+      minHoursWeek: program.minHoursWeek,
+      isAviationProgram: program.isAviationProgram,
+      minHoursWeekAvi: program.minHoursWeekAvi,
       entranceRequirements: {
-        hasMinimumAge: programResponse.hasMinimumAge,
-        minHighSchool: programResponse.minHighSchool,
-        requirementsByInstitution: programResponse.requirementsByInstitution,
-        requirementsByBCITA: programResponse.requirementsByBCITA,
+        hasMinimumAge: program.hasMinimumAge,
+        minHighSchool: program.minHighSchool,
+        requirementsByInstitution: program.requirementsByInstitution,
+        requirementsByBCITA: program.requirementsByBCITA,
       },
-      hasWILComponent: programResponse.hasWILComponent,
-      isWILApproved: programResponse.isWILApproved,
-      wilProgramEligibility: programResponse.wilProgramEligibility,
-      hasTravel: programResponse.hasTravel,
-      travelProgramEligibility: programResponse.travelProgramEligibility,
-      hasIntlExchange: programResponse.hasIntlExchange,
-      intlExchangeProgramEligibility:
-        programResponse.intlExchangeProgramEligibility,
-      programDeclaration: programResponse.programDeclaration,
+      hasWILComponent: program.hasWILComponent,
+      isWILApproved: program.isWILApproved,
+      wilProgramEligibility: program.wilProgramEligibility,
+      hasTravel: program.hasTravel,
+      travelProgramEligibility: program.travelProgramEligibility,
+      hasIntlExchange: program.hasIntlExchange,
+      intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
+      programDeclaration: program.programDeclaration,
       hasOfferings: hasOfferingsResponse,
-      locationId: locationId,
     };
   }
 

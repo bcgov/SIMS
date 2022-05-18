@@ -108,7 +108,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     const hasExistingOffering =
       await this.educationProgramOfferingService.hasExistingOffering(
         educationProgram.id,
-        educationProgram.locationId,
       );
 
     // Assign attributes for update from payload only if existing program has no offering(s).
@@ -168,6 +167,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     if (!educationProgram.id) {
       program.submittedBy = { id: educationProgram.userId } as User;
     }
+    program.creator = { id: educationProgram.userId } as User;
+    program.modifier = { id: educationProgram.userId } as User;
     return this.repo.save(program);
   }
 

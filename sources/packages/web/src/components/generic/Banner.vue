@@ -6,7 +6,7 @@
         <div class="label-value-normal">{{ summary }}</div>
       </v-col>
       <v-col cols="2">
-        <div class="pt-4 pl-8"><slot name="actions"> </slot></div>
+        <div class="pt-4 pl-2"><slot name="actions"> </slot></div>
       </v-col>
     </v-row>
   </v-alert>

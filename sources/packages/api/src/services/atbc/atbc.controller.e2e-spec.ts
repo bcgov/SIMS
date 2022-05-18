@@ -22,6 +22,7 @@ import {
   SFASPartTimeApplicationsService,
   GCNotifyService,
   GCNotifyActionsService,
+  EducationProgramOfferingService,
 } from "..";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
@@ -78,6 +79,7 @@ describe("Test ATBC Controller", () => {
         SFASPartTimeApplicationsService,
         GCNotifyService,
         GCNotifyActionsService,
+        EducationProgramOfferingService,
       ],
     }).compile();
     userService = await moduleFixture.get(UserService);

@@ -131,7 +131,6 @@ export default {
       if (isInstitutionUser.value) {
         const programDetails = await EducationProgramService.shared.getProgram(
           props.programId,
-          props.locationId,
         );
         const programValidationDetails = {
           programIntensity: programDetails.programIntensity,

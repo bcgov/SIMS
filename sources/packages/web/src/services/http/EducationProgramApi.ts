@@ -15,10 +15,12 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import { addSortOptions } from "@/helpers";
 
 export class EducationProgramApi extends HttpBaseClient {
-  public async getProgram(programId: number, locationId: number): Promise<any> {
+  public async getProgram(programId: number): Promise<any> {
     try {
-      const url = `institution/education-program/${programId}?locationId=${locationId}`;
-      const response = await this.apiClient.get(url, this.addAuthHeader());
+      const response = await this.apiClient.get(
+        `institution/education-program/${programId}`,
+        this.addAuthHeader(),
+      );
       return response.data;
     } catch (error) {
       this.handleRequestError(error);

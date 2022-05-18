@@ -13,11 +13,7 @@
       summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you’d like to edit the other fields."
     >
       <template v-slot:actions>
-        <v-btn
-          color="success"
-          variant="contained-flat"
-          @click="createNewProgram()"
-        >
+        <v-btn color="success" @click="createNewProgram()">
           Create program
         </v-btn>
       </template>
@@ -84,7 +80,6 @@ export default {
         if (props.programId) {
           const program = await EducationProgramService.shared.getProgram(
             props.programId,
-            props.locationId,
           );
           initialData.value = {
             ...program,
