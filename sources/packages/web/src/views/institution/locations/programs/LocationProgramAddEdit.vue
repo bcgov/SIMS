@@ -1,14 +1,10 @@
 <template>
-  <p class="muted-heading-text">
-    <a @click="goBack()">
-      <v-icon left> mdi-arrow-left </v-icon> Program detail</a
-    >
-  </p>
-  <span class="heading-x-large">
-    <span v-if="isReadonly">View Program</span>
-    <span v-if="programId && !isReadonly">Edit Program</span>
-    <span v-if="!programId">Create New Program</span>
-  </span>
+  <header-navigator
+    title="Program detail"
+    :routeLocation="getRouteLocation()"
+    :subTitle="getSubtitle()"
+  >
+  </header-navigator>
   <div class="mt-4 mb-2">
     <banner
       v-if="initialData.hasOfferings"
@@ -49,11 +45,10 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types";
 import { useToastMessage } from "@/composables";
 import { AuthService } from "@/services/AuthService";
-import Banner from "@/components/generic/Banner.vue";
+
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 
 export default {
-  components: { Banner },
   props: {
     locationId: {
       type: Number,
@@ -147,6 +142,47 @@ export default {
       }
     };
 
+    const getRouteLocation = () => {
+      if (isInstitutionUser.value && props.programId) {
+        // in edit program mode
+        return {
+          name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+          params: {
+            programId: props.programId,
+            locationId: props.locationId,
+          },
+        };
+      } else if (isInstitutionUser.value && !props.programId) {
+        // in create program mode
+        return {
+          name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+          params: {
+            locationId: props.locationId,
+          },
+        };
+      } else if (isAESTUser.value) {
+        // in view program mode
+        return {
+          name: AESTRoutesConst.PROGRAM_DETAILS,
+          params: {
+            programId: props.programId,
+            institutionId: institutionId.value,
+            locationId: props.locationId,
+          },
+        };
+      }
+    };
+
+    const getSubtitle = () => {
+      if (isReadonly.value) {
+        return "View Program";
+      } else if (props.programId && !isReadonly.value) {
+        return "Edit Program";
+      } else if (!props?.programId) {
+        return "Create New Program";
+      }
+    };
+
     const submitted = async (data: any) => {
       if (isInstitutionUser.value) {
         try {
@@ -202,6 +238,8 @@ export default {
       InstitutionRoutesConst,
       createNewProgram,
       institution,
+      getRouteLocation,
+      getSubtitle,
     };
   },
 };

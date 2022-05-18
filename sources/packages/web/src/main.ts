@@ -42,6 +42,7 @@ import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import Banner from "@/components/generic/Banner.vue";
 import formio from "@/components/generic/formio.vue";
 
 import {
@@ -137,6 +138,7 @@ AppConfigService.shared.init().then(() => {
     .component("ContentGroup", ContentGroup)
     .component("FullPageContainer", FullPageContainer)
     .component("HeaderNavigator", HeaderNavigator)
+    .component("Banner", Banner)
     .component("formio", formio)
     .directive("tooltip", Tooltip)
     .mount("#app");
