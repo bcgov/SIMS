@@ -35,7 +35,7 @@ export class GCNotifyActionsService {
         dob: getExtendedDateFormat(notification.birthDate),
         applicationNumber: notification.applicationNumber,
         documentPurpose: notification.documentPurpose,
-        date: this.getDateTimeOnBCTimeZone(),
+        date: this.getDateTimeOnPSTTimeZone(),
       },
     };
     return this.gcNotifyService.sendEmailNotification<StudentFileUploadPersonalisation>(
@@ -57,7 +57,7 @@ export class GCNotifyActionsService {
       personalisation: {
         givenNames: notification.firstName ?? "",
         lastName: notification.lastName,
-        date: this.getDateTimeOnBCTimeZone(),
+        date: this.getDateTimeOnPSTTimeZone(),
       },
     };
     return this.gcNotifyService.sendEmailNotification<MinistryStudentFileUploadPersonalisation>(
@@ -66,12 +66,12 @@ export class GCNotifyActionsService {
   }
 
   /**
-   * Get the date and time converted to BC time-zone format
+   * Get the date and time converted to BC time-zone (PST) format
    * to be displayed in the messages.
    * @param date date to be formatted.
    * @returns Date and time as it should be displayed in the messages.
    */
-  private getDateTimeOnBCTimeZone(date = new Date()): string {
+  private getDateTimeOnPSTTimeZone(date = new Date()): string {
     return `${getPSTPDTDateTime(date)} PST/PDT`;
   }
 }

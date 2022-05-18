@@ -51,7 +51,7 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Gets the student by his id.
+   * Gets the student by id.
    * @param studentId student id.
    * @returns the student found or null.
    */

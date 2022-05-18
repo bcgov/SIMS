@@ -111,7 +111,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param uniqueFileNames list of unique file names.
-   * @param fileOrigin origin of the file being save.
+   * @param fileOrigin origin of the file being saved.
    * @param groupName group name of the file being save.
    * @param metadata optional metadata of the file being save.
    * @param sendNotification optional notification message to be sent.
