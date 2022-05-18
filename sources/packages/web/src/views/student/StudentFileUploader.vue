@@ -19,7 +19,10 @@
 
 <script lang="ts">
 import { useFormioUtils, useToastMessage } from "@/composables";
-import { StudentFileUploaderForm, StudentFileUploaderDTO } from "@/types";
+import {
+  StudentFileUploaderInfoAPIInDTO,
+  StudentFileUploaderAPIInDTO,
+} from "@/types";
 import { StudentService } from "@/services/StudentService";
 import StudentDocumentList from "@/components/students/StudentDocumentList.vue";
 import { ref } from "vue";
@@ -34,12 +37,12 @@ export default {
     const formioUtils = useFormioUtils();
     const toast = useToastMessage();
     const submitForm = async (
-      submittedForm: StudentFileUploaderForm,
+      submittedForm: StudentFileUploaderInfoAPIInDTO,
       form: any,
     ) => {
       try {
         const associatedFiles = formioUtils.getAssociatedFiles(form);
-        const payload: StudentFileUploaderDTO = {
+        const payload: StudentFileUploaderAPIInDTO = {
           submittedForm,
           associatedFiles,
         };

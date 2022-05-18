@@ -1,4 +1,18 @@
 /**
+ * FormIO form. Methods available can be checked on
+ * https://help.form.io/developers/form-renderer.
+ */
+export interface FormIOForm {
+  data: any;
+  checkValidity: (
+    data: any,
+    dirty: boolean,
+    row: any,
+    silent: boolean,
+  ) => boolean;
+}
+
+/**
  * Event args when a Form.IO navigation happen
  * in a Wizard form and the event prevPage
  * and nextPage are triggered.

@@ -1,15 +1,17 @@
 import { StudentService } from "@/services/StudentService";
-import { StudentUploadFileDTO } from "@/types";
+import { StudentUploadFileAPIOutDTO } from "@/types";
 
 /**
  * File helper methods.
  */
 export function useFileUtils() {
   /**
-   * Used to download the document or file uploaded, which has the StudentUploadFileDTO structure.
+   * Used to download the document or file uploaded.
    * @param studentDocument
    */
-  const downloadDocument = async (studentDocument: StudentUploadFileDTO) => {
+  const downloadDocument = async (
+    studentDocument: StudentUploadFileAPIOutDTO,
+  ) => {
     const fileURL = await StudentService.shared.downloadStudentFile(
       studentDocument.uniqueFileName,
     );

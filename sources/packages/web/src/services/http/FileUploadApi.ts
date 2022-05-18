@@ -1,4 +1,4 @@
-import { FileCreateDto } from "@/types";
+import { FileCreateAPIOutDTO } from "@/services/http/dto";
 import { AxiosRequestConfig } from "axios";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -7,11 +7,11 @@ export class FileUploadApi extends HttpBaseClient {
     relativeUrl: string,
     data: FormData,
     config: AxiosRequestConfig,
-  ): Promise<FileCreateDto> {
+  ): Promise<FileCreateAPIOutDTO> {
     try {
       const mergedConfig = { ...this.addAuthHeader(), ...config };
       const response = await this.apiClient.post(
-        relativeUrl,
+        this.addClientRoot(relativeUrl),
         data,
         mergedConfig,
       );
@@ -28,7 +28,10 @@ export class FileUploadApi extends HttpBaseClient {
         ...this.addAuthHeader(),
         responseType: "blob",
       };
-      const response = await this.apiClient.get(relativeUrl, requestConfig);
+      const response = await this.apiClient.get(
+        this.addClientRoot(relativeUrl),
+        requestConfig,
+      );
       return new Blob([response.data]);
     } catch (error) {
       this.handleRequestError(error);

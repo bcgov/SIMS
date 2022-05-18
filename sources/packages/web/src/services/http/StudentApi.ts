@@ -6,9 +6,10 @@ import {
   StudentRestrictionStatus,
   SearchStudentResp,
   StudentDetail,
-  StudentFileUploaderDTO,
-  StudentUploadFileDTO,
-  AESTStudentFileDTO,
+  StudentFileUploaderAPIInDTO,
+  StudentUploadFileAPIOutDTO,
+  AESTStudentFileAPIOutDTO,
+  AESTFileUploadToStudentAPIInDTO,
 } from "@/types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
@@ -158,30 +159,51 @@ export class StudentApi extends HttpBaseClient {
    * @param studentFilesPayload
    */
   async saveStudentFiles(
-    studentFilesPayload: StudentFileUploaderDTO,
+    studentFilesPayload: StudentFileUploaderAPIInDTO,
   ): Promise<void> {
-    await this.patchCall<StudentFileUploaderDTO>(
-      "students/upload-files",
+    await this.patchCall<StudentFileUploaderAPIInDTO>(
+      this.addClientRoot("students/save-uploaded-files"),
       studentFilesPayload,
     );
   }
 
   /**
-   * Get all student documents uploaded by student uploader.
-   * @return StudentUploadFileDTO[] list of student documents
+   * Saves the files submitted by the Ministry to the student.
+   * All the files uploaded are first saved as temporary file in
+   * the DB. When this endpoint is called, the temporary
+   * files (saved during the upload) are updated to its proper
+   * group and file origin.
+   * @param studentId student to have the file saved.
+   * @param payload list of files to be saved.
    */
-  async getStudentFiles(): Promise<StudentUploadFileDTO[]> {
-    return this.getCallTyped<StudentUploadFileDTO[]>(
+  async saveMinistryUploadedFilesToStudent(
+    studentId: number,
+    payload: AESTFileUploadToStudentAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall<AESTFileUploadToStudentAPIInDTO>(
+      this.addClientRoot(`students/${studentId}/save-uploaded-files`),
+      payload,
+    );
+  }
+
+  /**
+   * Get all student documents uploaded by student uploader.
+   * @return list of student documents.
+   */
+  async getStudentFiles(): Promise<StudentUploadFileAPIOutDTO[]> {
+    return this.getCallTyped<StudentUploadFileAPIOutDTO[]>(
       this.addClientRoot("students/documents"),
     );
   }
 
   /**
    * Get all student documents uploaded by student uploader.
-   * @return AESTStudentFileDTO[] list of student documents
+   * @return list of student documents.
    */
-  async getAESTStudentFiles(studentId: number): Promise<AESTStudentFileDTO[]> {
-    return this.getCallTyped<AESTStudentFileDTO[]>(
+  async getAESTStudentFiles(
+    studentId: number,
+  ): Promise<AESTStudentFileAPIOutDTO[]> {
+    return this.getCallTyped<AESTStudentFileAPIOutDTO[]>(
       this.addClientRoot(`students/${studentId}/documents`),
     );
   }

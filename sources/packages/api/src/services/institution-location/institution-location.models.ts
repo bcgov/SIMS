@@ -1,4 +1,4 @@
-import { PrimaryContact } from "src/database/entities/primary-contact.type";
+import { PrimaryContact } from "../../database/entities/primary-contact.type";
 import { AddressInfo, InstitutionLocationData } from "../../database/entities";
 
 export interface LocationWithDesignationStatus {

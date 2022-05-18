@@ -12,9 +12,10 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  StudentFileUploaderDTO,
-  StudentUploadFileDTO,
-  AESTStudentFileDTO,
+  StudentFileUploaderAPIInDTO,
+  StudentUploadFileAPIOutDTO,
+  AESTStudentFileAPIOutDTO,
+  AESTFileUploadToStudentAPIInDTO,
 } from "@/types";
 
 export class StudentService {
@@ -127,24 +128,45 @@ export class StudentService {
    * @param studentFilesPayload
    */
   async saveStudentFiles(
-    studentFilesPayload: StudentFileUploaderDTO,
+    studentFilesPayload: StudentFileUploaderAPIInDTO,
   ): Promise<void> {
     await ApiClient.Students.saveStudentFiles(studentFilesPayload);
   }
 
   /**
-   * Get all student documents uploaded by student uploader.
-   * @return StudentUploadFileDTO[] list of student documents
+   * Saves the files submitted by the Ministry to the student.
+   * All the files uploaded are first saved as temporary file in
+   * the DB. When this endpoint is called, the temporary
+   * files (saved during the upload) are updated to its proper
+   * group and file origin.
+   * @param studentId student to have the file saved.
+   * @param payload list of files to be saved.
    */
-  async getStudentFiles(): Promise<StudentUploadFileDTO[]> {
+  async saveMinistryUploadedFilesToStudent(
+    studentId: number,
+    payload: AESTFileUploadToStudentAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Students.saveMinistryUploadedFilesToStudent(
+      studentId,
+      payload,
+    );
+  }
+
+  /**
+   * Get all student documents uploaded by student uploader.
+   * @return list of student documents.
+   */
+  async getStudentFiles(): Promise<StudentUploadFileAPIOutDTO[]> {
     return ApiClient.Students.getStudentFiles();
   }
 
   /**
    * Get all student documents for AEST user.
-   * @return AESTStudentFileDTO[] list of student documents
+   * @return list of student documents.
    */
-  async getAESTStudentFiles(studentId: number): Promise<AESTStudentFileDTO[]> {
+  async getAESTStudentFiles(
+    studentId: number,
+  ): Promise<AESTStudentFileAPIOutDTO[]> {
     return ApiClient.Students.getAESTStudentFiles(studentId);
   }
 

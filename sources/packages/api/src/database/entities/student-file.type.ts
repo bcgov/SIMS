@@ -20,7 +20,12 @@ export enum FileOriginType {
    * File submitted from student uploader form.
    */
   Student = "Student",
+  /**
+   * File submitted from the Ministry to the student account.
+   */
+  Ministry = "Ministry",
 }
+
 export interface StudentFileMetadata {
   applicationNumber?: string;
 }

@@ -27,6 +27,8 @@ import {
   SFASPartTimeApplicationsService,
   GCNotifyService,
   GCNotifyActionsService,
+  StudentService,
+  SFASIndividualService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -42,6 +44,7 @@ import {
   InstitutionLocationControllerService,
   AssessmentControllerService,
   EducationProgramOfferingAESTController,
+  StudentControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -92,6 +95,9 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     GCNotifyService,
     GCNotifyActionsService,
     AssessmentControllerService,
+    StudentControllerService,
+    StudentService,
+    SFASIndividualService,
   ],
 })
 export class AppAESTModule {}

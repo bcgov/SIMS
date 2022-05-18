@@ -27,7 +27,7 @@ import * as dayjs from "dayjs";
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
-    private readonly connection: Connection,
+    connection: Connection,
     private readonly sfasIndividualService: SFASIndividualService,
   ) {
     super(connection.getRepository(Student));
@@ -48,6 +48,40 @@ export class StudentService extends RecordDataModelService<Student> {
       .where("user.userName = :userNameParam", { userNameParam: userName })
       .getOne();
     return student;
+  }
+
+  /**
+   * Gets the student by id.
+   * @param studentId student id.
+   * @returns the student found or null.
+   */
+  async getStudentById(studentId: number): Promise<Student> {
+    return this.repo
+      .createQueryBuilder("student")
+      .select([
+        "student.id",
+        "student.birthDate",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+      ])
+      .innerJoin("student.user", "user")
+      .where("student.id = :studentId", { studentId })
+      .getOne();
+  }
+
+  /**
+   * Check if the student id exists on DB.
+   * @param studentId student to be verified.
+   * @returns true if the student was found, otherwise false.
+   */
+  async studentExists(studentId: number): Promise<boolean> {
+    const studentFound = this.repo.findOne({
+      select: ["id"],
+      where: { id: studentId },
+    });
+    return !!studentFound;
   }
 
   async getStudentByUserId(userId: number): Promise<Student> {

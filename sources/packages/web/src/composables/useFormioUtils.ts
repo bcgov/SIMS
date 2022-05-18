@@ -1,3 +1,4 @@
+import { FormIOForm } from "@/types";
 import { Utils } from "formiojs";
 
 /**
@@ -149,7 +150,7 @@ export function useFormioUtils() {
    * @param forms forms to have the validation executed.
    * @returns false if any form is not valid.
    */
-  const checkFormioValidity = (forms: any[]) => {
+  const checkFormioValidity = (forms: any[] | FormIOForm[]) => {
     let isValid = true;
     forms.forEach((form: any) => {
       if (!form.checkValidity(undefined, true, undefined, false)) {
