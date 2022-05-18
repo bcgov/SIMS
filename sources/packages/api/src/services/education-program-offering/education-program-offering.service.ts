@@ -456,13 +456,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @returns true, if a program has existing offering.
    */
   async hasExistingOffering(programId: number): Promise<boolean> {
-    const found = await this.repo
+    const offeringExists = await this.repo
       .createQueryBuilder("offerings")
       .select("1")
       .innerJoin("offerings.educationProgram", "educationProgram")
       .where("offerings.educationProgram.id = :programId", { programId })
       .limit(1)
       .getRawOne();
-    return !!found;
+    return !!offeringExists;
   }
 }

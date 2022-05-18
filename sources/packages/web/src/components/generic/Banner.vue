@@ -1,5 +1,5 @@
 <template>
-  <v-alert :type="color" variant="outlined">
+  <v-alert :class="getBackgroundClass()" :type="color" variant="outlined">
     <v-row>
       <v-col cols="10">
         <div class="label-bold-normal">{{ header }}</div>
@@ -12,6 +12,8 @@
   </v-alert>
 </template>
 <script lang="ts">
+import { StatusChipTypes } from "@/components/generic/StatusChip.models";
+
 export default {
   props: {
     color: {
@@ -23,6 +25,17 @@ export default {
     summary: {
       type: String,
     },
+  },
+  setup(props: any) {
+    const getBackgroundClass = () => {
+      switch (props.color) {
+        case StatusChipTypes.Success:
+          return "v-alert-background-success";
+        default:
+          return "";
+      }
+    };
+    return { getBackgroundClass };
   },
 };
 </script>

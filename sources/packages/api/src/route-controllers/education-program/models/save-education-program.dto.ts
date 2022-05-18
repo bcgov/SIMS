@@ -8,9 +8,15 @@ import {
   getISODateOnlyString,
   getUserFullName,
 } from "../../../utilities";
+
 /**
- * Dto that represents education programs form object.
+ * Dto that represents education program with offering form object.
  */
+export interface EducationProgramWithOfferingsAPIOutDTO
+  extends EducationProgramDto {
+  hasOfferings: boolean;
+}
+
 export interface EducationProgramDto {
   name: string;
   description?: string;
@@ -42,8 +48,6 @@ export interface EducationProgramDto {
   hasIntlExchange?: string;
   intlExchangeProgramEligibility?: string;
   programDeclaration: boolean;
-  hasOfferings?: boolean;
-  locationId?: number;
 }
 
 export interface EducationProgramDataDto extends EducationProgramDto {
