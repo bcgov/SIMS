@@ -84,6 +84,7 @@ export interface SearchStudentResp {
 export interface StudentDetail {
   firstName: string;
   lastName: string;
+  fullName: string;
   gender: string;
   email: string;
   dateOfBirth: Date;
