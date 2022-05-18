@@ -599,7 +599,7 @@ VALUES
     'PTSSR',
     'Not eligible for part time funding due to scholastic standing must self fund or appeal.',
     'Academic',
-    ARRAY ['Stop part time apply'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time apply', 'Stop part time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -618,7 +618,7 @@ VALUES
     'SSR',
     'Not eligible for full time funding due to scholastic standing must self fund or appeal.',
     'Academic',
-    ARRAY ['Stop full time apply'] :: sims.restriction_action_types [],
+    ARRAY ['Stop full time apply', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
