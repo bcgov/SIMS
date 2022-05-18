@@ -61,7 +61,7 @@ export class StudentAESTController extends BaseController {
   /**
    * This controller returns all student documents uploaded
    * by student uploader.
-   * @param studentId
+   * @param studentId student id.
    * @returns list of student documents.
    */
   @Get(":studentId/documents")
@@ -174,7 +174,6 @@ export class StudentAESTController extends BaseController {
       payload.associatedFiles,
       FileOriginType.Ministry,
       MINISTRY_FILE_UPLOAD_GROUP_NAME,
-      undefined,
       sendFileUploadNotification,
     );
   }

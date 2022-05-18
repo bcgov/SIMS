@@ -136,14 +136,14 @@ export class StudentStudentsController extends BaseController {
 
   /**
    * Saves the student files submitted via student uploader form.
-   *  All the files uploaded are first saved as temporary
+   * All the files uploaded are first saved as temporary
    * file in the db.when this controller/api is called
    * during form submission, the temporary files
    * (saved during the upload) are update to its proper
    * group,file_origin and add the metadata (if available).
-   * @Body payload
+   * @param userToken authentication token.
+   * @Body list of files to be be saved.
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch("save-uploaded-files")
   async saveStudentUploadedFiles(
     @UserToken() userToken: StudentUserToken,
@@ -195,8 +195,8 @@ export class StudentStudentsController extends BaseController {
       payload.associatedFiles,
       FileOriginType.Student,
       payload.submittedForm.documentPurpose,
-      fileMetadata,
       sendFileUploadNotification,
+      fileMetadata,
     );
   }
 }

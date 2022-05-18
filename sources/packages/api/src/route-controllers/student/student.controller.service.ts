@@ -49,7 +49,7 @@ export class StudentControllerService {
 
   /**
    * Get a student file and write it to the HTTP response.
-   * @response represents the response object that will be returned from
+   * @param response represents the response object that will be returned from
    * the API and the one that will be changed to allow the file download,
    * adding the necessary headers and writing the file content to its stream.
    * @param uniqueFileName unique file name (name+guid).

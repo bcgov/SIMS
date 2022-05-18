@@ -113,8 +113,8 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * @param uniqueFileNames list of unique file names.
    * @param fileOrigin origin of the file being saved.
    * @param groupName group name of the file being save.
-   * @param metadata optional metadata of the file being save.
    * @param sendNotification optional notification message to be sent.
+   * @param metadata optional metadata of the file being save.
    */
   async updateStudentFiles(
     studentId: number,
@@ -122,8 +122,8 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     uniqueFileNames: string[],
     fileOrigin: FileOriginType,
     groupName: string,
-    metadata?: StudentFileMetadata,
     sendNotification?: () => Promise<GCNotifyResult>,
+    metadata?: StudentFileMetadata,
   ): Promise<UpdateResult> {
     let updateResult: UpdateResult;
     await this.connection.transaction(async (transactionalEntityManager) => {
