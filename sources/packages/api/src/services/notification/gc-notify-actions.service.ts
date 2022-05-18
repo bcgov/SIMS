@@ -68,6 +68,7 @@ export class GCNotifyActionsService {
   /**
    * Get the date and time converted to BC time-zone format
    * to be displayed in the messages.
+   * @param date date to be formatted.
    * @returns Date and time as it should be displayed in the messages.
    */
   private getDateTimeOnBCTimeZone(date = new Date()): string {

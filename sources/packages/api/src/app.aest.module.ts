@@ -96,7 +96,6 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     GCNotifyActionsService,
     AssessmentControllerService,
     StudentControllerService,
-    StudentFileService,
     StudentService,
     SFASIndividualService,
   ],

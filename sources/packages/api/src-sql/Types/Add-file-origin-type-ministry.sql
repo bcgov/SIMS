@@ -1,3 +1,3 @@
 ALTER TYPE sims.file_origin_type
 ADD
-    VALUE 'Ministry'
+    VALUE 'Ministry';
