@@ -67,7 +67,7 @@ VALUES
     '5',
     'Student has been funded for 520 weeks and has reached the lifetime maximum.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -105,7 +105,7 @@ VALUES
     '7',
     'Student has been funded for 340 weeks and has reached the lifetime maximum.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -143,7 +143,7 @@ VALUES
     '9',
     'Student has been funded for 400 weeks and has reached the lifetime maximum.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -162,7 +162,7 @@ VALUES
     '12',
     'Student on scholastic standing denial due to multiple withdrawals or unsuccessful terms.',
     'Academic',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -181,7 +181,7 @@ VALUES
     'APPC',
     'Hold placed on file by Ministry user.',
     'Academic',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'No effect'
   );
 
@@ -200,7 +200,7 @@ VALUES
     'AV',
     'Student has reached 17 week maximum for aviation program.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -219,7 +219,7 @@ VALUES
     'B3D',
     'BC portion of loan in default. Not eligible for BCSL. Eligible for CSL.',
     'BCSL Delinquency',
-    ARRAY ['Stop BC funding'] :: sims.restriction_action_types [],
+    ARRAY ['Stop full time BC funding'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -238,7 +238,7 @@ VALUES
     'B6',
     'Bankruptcy restriction on file prevent CSL/BCSL disbursements.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -257,7 +257,7 @@ VALUES
     'B6A',
     'For reinstatment of your BCSL eligibility please complete an appeal.',
     'Other',
-    ARRAY ['Stop BC funding'] :: sims.restriction_action_types [],
+    ARRAY ['Stop full time BC funding'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -314,7 +314,7 @@ VALUES
     'C',
     'Federal restriction on file. No BCSL/CSL funding.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -333,7 +333,7 @@ VALUES
     'TD',
     'Death.',
     'Federal',
-    ARRAY ['Stop apply', 'Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time apply','Stop full time apply', 'Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -352,7 +352,7 @@ VALUES
     'E2',
     'Student has declared bankruptcy on their application.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -371,7 +371,7 @@ VALUES
     'ECRS',
     'School reported early completion of studies.',
     'Academic',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -390,7 +390,7 @@ VALUES
     'FC',
     'Student failed credit check resulting in denial.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -466,7 +466,7 @@ VALUES
     'O',
     'Please see overaward page for more info.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -504,7 +504,7 @@ VALUES
     'P',
     'Convicted of an Offense related to Canada Student Loans.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -523,7 +523,7 @@ VALUES
     'R',
     'Signifies that a Financial Institution (FI) has sent back a risk-shared loan to the federal government for further collection.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -542,7 +542,7 @@ VALUES
     'RB',
     'Bankruptcy has been filed and there is a hold on federal and BC funding.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -561,7 +561,7 @@ VALUES
     'RJ',
     'A judgement has been registered by CSFAP and student is not eligible for student loans.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -580,29 +580,48 @@ VALUES
     'RP',
     'Student has been convicted of an offense and is not eligible for student loans.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
--- TODO: Action type enum does not have 'Stop full time', need to confirm.
--- INSERT INTO
---   sims.restrictions(
---     restriction_type,
---     restriction_code,
---     description,
---     restriction_category,
---     action_type,
---     notification_type
---   )
--- VALUES
---   (
---     'Provincial',
---     'SSR',
---     'Not eligible for full time funding due to scholastic standing must self fund or appeal.',
---     'Academic',
---     ARRAY ['Stop full time'] :: sims.restriction_action_types [],
---     'Error'
---   );
+INSERT INTO
+  sims.restrictions(
+    restriction_type,
+    restriction_code,
+    description,
+    restriction_category,
+    action_type,
+    notification_type
+  )
+VALUES
+  (
+    'Provincial',
+    'PTSSR',
+    'Not eligible for part time funding due to scholastic standing must self fund or appeal.',
+    'Academic',
+    ARRAY ['Stop part time apply'] :: sims.restriction_action_types [],
+    'Error'
+  );
+
+INSERT INTO
+  sims.restrictions(
+    restriction_type,
+    restriction_code,
+    description,
+    restriction_category,
+    action_type,
+    notification_type
+  )
+VALUES
+  (
+    'Provincial',
+    'SSR',
+    'Not eligible for full time funding due to scholastic standing must self fund or appeal.',
+    'Academic',
+    ARRAY ['Stop full time apply'] :: sims.restriction_action_types [],
+    'Error'
+  );
+
 INSERT INTO
   sims.restrictions(
     restriction_type,
@@ -618,7 +637,7 @@ VALUES
     'STRS',
     'Appendix 5 - Transfer pending ministry user review.',
     'Change',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -637,7 +656,7 @@ VALUES
     'T',
     'CSLP has received a claim for loss request from a Financial institution but it has not yet been or is in the process of being audited/assessed.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -656,7 +675,7 @@ VALUES
     'UNCF',
     '52 weeks max funding for unclassified on submitted future app.',
     'Academic',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -675,7 +694,7 @@ VALUES
     'UNCL',
     '52 weeks maximum for unclassified studies reached. Denial of funding.',
     'Academic',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -694,7 +713,7 @@ VALUES
     'V',
     'Verification restriction on file. Set up call back for Student case review verification team.',
     'Verification',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'No effect'
   );
 
@@ -713,7 +732,7 @@ VALUES
     'W',
     'Borrower missed one or more months of affordable RAP payments and has not made up the payment within 30 days.',
     'Federal',
-    ARRAY ['Stop apply','Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time apply','Stop full time apply','Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'No effect'
   );
 
@@ -751,7 +770,7 @@ VALUES
     'PTWTHD',
     'Student withdrew or was unsuccesful from Part Time studies.',
     'Academic',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -770,7 +789,7 @@ VALUES
     'X',
     'Risk shared or direct loan is 90 days or more in arrears.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -789,7 +808,7 @@ VALUES
     'APLE',
     'Appeals hold placed on the account.',
     'Other',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -808,7 +827,7 @@ VALUES
     'Z3',
     'Borrower on RAP.',
     'Federal',
-    ARRAY ['Stop apply','Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time apply','Stop full time apply','Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -827,7 +846,7 @@ VALUES
     'ZR',
     'Borrower has received RAP Stage 2.',
     'Federal',
-    ARRAY ['Stop apply','Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time apply','Stop full time apply','Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -846,7 +865,7 @@ VALUES
     'AF',
     'False/Misleading Information.',
     'Verification',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'No effect'
   );
 
@@ -865,7 +884,7 @@ VALUES
     'AF4',
     'Dual Funding.',
     'Verification',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'No effect'
   );
 
@@ -884,7 +903,7 @@ VALUES
     'B2D',
     'BC portion of loan in delinquency. Not eligible for BCSL. Eligible for CSL.',
     'BCSL Delinquency',
-    ARRAY ['Stop BC funding'] :: sims.restriction_action_types [],
+    ARRAY ['Stop full time BC funding'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -922,7 +941,7 @@ VALUES
     'B7',
     'Student has been funded for 520 weeks and has reached the lifetime maximum.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -960,7 +979,7 @@ VALUES
     'RD',
     'Active (Death).',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -998,7 +1017,7 @@ VALUES
     'XB',
     'Altered Date.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1017,7 +1036,7 @@ VALUES
     'XD',
     'Altered Date - Direct Lend.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1036,7 +1055,7 @@ VALUES
     'XJ',
     'Judgement registered, input CSLP/Lender.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1055,7 +1074,7 @@ VALUES
     'XP',
     'Convicted of offense re CSL, CSLP/Lender.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1074,7 +1093,7 @@ VALUES
     'SA',
     'Stop All Assessment-See user for details.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1093,7 +1112,7 @@ VALUES
     'SO',
     'SOG Restriction - stop docs producing.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1150,7 +1169,7 @@ VALUES
     'IS',
     'ICP file - to Appeals for review.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1169,7 +1188,7 @@ VALUES
     'F3',
     'F1-5 restriction period varies from 1 - 5 years based on severity of the fraud.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1188,7 +1207,7 @@ VALUES
     'F4',
     'F1-5 restriction period varies from 1 - 5 years based on severity of the fraud.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1207,7 +1226,7 @@ VALUES
     'F5',
     'F1-5 restriction period varies from 1 - 5 years based on severity of the fraud.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1226,7 +1245,7 @@ VALUES
     'DR',
     'Document/Grant Cancel Received.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1245,7 +1264,7 @@ VALUES
     'B5',
     'Reached PD lifetime max.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1283,7 +1302,7 @@ VALUES
     'Z1',
     'Grant Overaward.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1302,7 +1321,7 @@ VALUES
     'Z2',
     'Grant/CMS Write-off.',
     'Federal',
-    ARRAY ['Stop disbursement'] :: sims.restriction_action_types [],
+    ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error'
   );
 
@@ -1321,6 +1340,6 @@ VALUES
     'B2',
     'BC portion of loan in default. Not eligible for BCSL. Eligible for CSL.',
     'BCSL Delinquency',
-    ARRAY ['Stop BC funding'] :: sims.restriction_action_types [],
+    ARRAY ['Stop full time BC funding'] :: sims.restriction_action_types [],
     'Error'
   );

@@ -7,15 +7,23 @@ export enum RestrictionActionType {
    */
   NoEffect = "No effect",
   /**
-   * Stop all BC funding.
+   * Stop full time BC funding.
    */
-  StopBCFunding = "Stop BC funding",
+  StopFullTimeBCFunding = "Stop full time BC funding",
   /**
-   * Stop student from applying applications.
+   * Stop student from applying part time applications.
    */
-  StopApply = "Stop apply",
+  StopPartTimeApply = "Stop part time apply",
   /**
-   * Stop all disbursement of the student.
+   * Stop student from applying full time applications.
    */
-  StopDisbursement = "Stop disbursement",
+  StopFullTimeApply = "Stop full time apply",
+  /**
+   * Stop all part time disbursement of the student.
+   */
+  StopPartTimeDisbursement = "Stop part time disbursement",
+  /**
+   * Stop all full time disbursement of the student.
+   */
+  StopFullTimeDisbursement = "Stop full time disbursement",
 }
