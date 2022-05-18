@@ -187,8 +187,8 @@ export class StudentStudentsController extends BaseController {
       : null;
     // All the files uploaded are first saved as temporary file in the db.
     // when this controller/api is called during form submission, the temporary
-    // files (saved during the upload) are updated to its proper group,file_origin
-    //  and add the metadata (if available)
+    // files (saved during the upload) are updated to its proper group, file origin
+    // and add the metadata (if available).
     await this.fileService.updateStudentFiles(
       userToken.studentId,
       userToken.userId,
