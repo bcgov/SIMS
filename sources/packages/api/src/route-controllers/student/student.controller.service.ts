@@ -1,12 +1,23 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Response } from "express";
-import { StudentFileService } from "../../services";
+import { StudentFileService, StudentService } from "../../services";
 import { Readable } from "stream";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
+import {
+  determinePDStatus,
+  getISODateOnlyString,
+  getUserFullName,
+} from "../../utilities";
+import { AddressInfo } from "src/database/entities";
+import { StudentProfileAPIOutDTO } from "./models/student.dto";
+import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
 @Injectable()
 export class StudentControllerService {
-  constructor(private readonly fileService: StudentFileService) {}
+  constructor(
+    private readonly fileService: StudentFileService,
+    private readonly studentService: StudentService,
+  ) {}
 
   /**
    * Allow files uploads to a particular student.
@@ -83,5 +94,32 @@ export class StudentControllerService {
     stream.push(null);
 
     stream.pipe(response);
+  }
+
+  /**
+   * Get the student information that represents the profile.
+   * @param studentId student id to retrieve the data.
+   * @returns student profile information or null case not found.
+   */
+  async getStudentProfile(studentId: number): Promise<StudentProfileAPIOutDTO> {
+    const student = await this.studentService.getStudentById(studentId);
+    if (!student) {
+      return;
+    }
+    const address = student.contactInfo.address ?? ({} as AddressInfo);
+    return {
+      firstName: student.user.firstName,
+      lastName: student.user.lastName,
+      fullName: getUserFullName(student.user),
+      email: student.user.email,
+      gender: student.gender,
+      dateOfBirth: getISODateOnlyString(student.birthDate),
+      contact: {
+        address: transformAddressDetailsForAddressBlockForm(address),
+        phone: student.contactInfo.phone,
+      },
+      pdStatus: determinePDStatus(student),
+      validSin: student.sinValidation.isValidSIN,
+    };
   }
 }

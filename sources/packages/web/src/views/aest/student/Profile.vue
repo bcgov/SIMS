@@ -23,7 +23,7 @@ export default {
     const initialData = ref();
     const { dateOnlyLongString } = useFormatters();
     onMounted(async () => {
-      const studentDetail = await StudentService.shared.getStudentDetail(
+      const studentDetail = await StudentService.shared.getAESTStudentProfile(
         props.studentId,
       );
       const address = studentDetail.contact.address;

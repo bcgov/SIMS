@@ -133,7 +133,7 @@ export default {
         const payload: AESTFileUploadToStudentAPIInDTO = {
           associatedFiles,
         };
-        await StudentService.shared.saveMinistryUploadedFilesToStudent(
+        await StudentService.shared.saveAESTUploadedFilesToStudent(
           props.studentId,
           payload,
         );

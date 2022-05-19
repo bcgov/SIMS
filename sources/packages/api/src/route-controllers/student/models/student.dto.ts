@@ -68,20 +68,7 @@ export interface StudentRestrictionDTO {
   hasProvincialRestriction: boolean;
   restrictionMessage: string;
 }
-/**
- * DTO object for student details.
- */
-export class StudentDetailAPIOutDTO {
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  email: string;
-  gender: string;
-  dateOfBirth: string;
-  contact: ContactInformationAPIOutDTO;
-  pdVerified: boolean;
-  pdStatus: StudentPDStatus;
-}
+
 /**
  *  Student uploader interface
  */
@@ -128,14 +115,12 @@ export class StudentFileMetadataAPIOutDTO {
 export class StudentProfileAPIOutDTO {
   firstName: string;
   lastName: string;
+  fullName: string;
   email: string;
   gender: string;
   dateOfBirth: string;
   contact: ContactInformationAPIOutDTO;
-  pdVerified: boolean;
   validSin: boolean;
-  pdSentDate?: Date;
-  pdUpdatedDate?: Date;
   pdStatus: StudentPDStatus;
 }
 

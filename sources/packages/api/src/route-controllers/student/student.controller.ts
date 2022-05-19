@@ -26,7 +26,6 @@ import {
   SearchStudentRespDto,
   SaveStudentDto,
   StudentRestrictionDTO,
-  StudentDetailAPIOutDTO,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -36,7 +35,6 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { StudentApplicationAndCount } from "../application/models/application.model";
 import { Student, Application, AddressInfo } from "../../database/entities";
 import {
-  determinePDStatus,
   deliveryMethod,
   dateString,
   credentialTypeToDisplay,
@@ -44,13 +42,11 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
-  getUserFullName,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
 import { FormNames } from "../../services/form/constants";
 import { ApiTags } from "@nestjs/swagger";
-import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { ATBCCreateClientPayload } from "../../types";
 
 @Controller("students")

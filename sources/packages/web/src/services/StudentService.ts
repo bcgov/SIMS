@@ -6,7 +6,6 @@ import {
   StudentApplicationAndCount,
   StudentRestrictionStatus,
   SearchStudentResp,
-  StudentDetail,
   DataTableSortOrder,
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
@@ -17,6 +16,7 @@ import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
   StudentFileUploaderAPIInDTO,
+  StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
 } from "./http/dto/Student.dto";
 
@@ -119,8 +119,10 @@ export class StudentService {
    * @param studentId
    * @returns StudentDetail
    */
-  async getStudentDetail(studentId: number): Promise<StudentDetail> {
-    return ApiClient.Students.getStudentDetail(studentId);
+  async getAESTStudentProfile(
+    studentId: number,
+  ): Promise<StudentProfileAPIOutDTO> {
+    return ApiClient.Students.getAESTStudentProfile(studentId);
   }
 
   /**
@@ -142,14 +144,11 @@ export class StudentService {
    * @param studentId student to have the file saved.
    * @param payload list of files to be saved.
    */
-  async saveMinistryUploadedFilesToStudent(
+  async saveAESTUploadedFilesToStudent(
     studentId: number,
     payload: AESTFileUploadToStudentAPIInDTO,
   ): Promise<void> {
-    await ApiClient.Students.saveMinistryUploadedFilesToStudent(
-      studentId,
-      payload,
-    );
+    await ApiClient.Students.saveAESTUploadedFilesToStudent(studentId, payload);
   }
 
   /**

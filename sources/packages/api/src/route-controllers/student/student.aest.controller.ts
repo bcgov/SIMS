@@ -25,15 +25,12 @@ import BaseController from "../BaseController";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
-  StudentDetailAPIOutDTO,
+  StudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
   defaultFileFilter,
-  determinePDStatus,
-  getISODateOnlyString,
-  getUserFullName,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
   MINISTRY_FILE_UPLOAD_GROUP_NAME,
@@ -43,7 +40,6 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
-import { AddressInfo } from "../../database/entities";
 
 /**
  * Student controller for AEST Client.
@@ -184,37 +180,21 @@ export class StudentAESTController extends BaseController {
   }
 
   /**
-   * API to fetch student details by studentId.
-   * This API will be used by ministry users.
-   * @param studentId
-   * @returns Student Details
+   * Get the student information that represents the profile.
+   * @param studentId student id to retrieve the data.
+   * @returns student profile details.
    */
   @Get(":studentId")
-  async getStudentDetails(
+  @ApiNotFoundResponse({ description: "Not able to find the student." })
+  async getStudentProfile(
     @Param("studentId") studentId: number,
-  ): Promise<StudentDetailAPIOutDTO> {
-    const student = await this.studentService.getStudentById(studentId);
-    const address = student.contactInfo.address ?? ({} as AddressInfo);
-    return {
-      firstName: student.user.firstName,
-      lastName: student.user.lastName,
-      fullName: getUserFullName(student.user),
-      email: student.user.email,
-      gender: student.gender,
-      dateOfBirth: getISODateOnlyString(student.birthDate),
-      contact: {
-        address: {
-          addressLine1: address.addressLine1,
-          addressLine2: address.addressLine2,
-          city: address.city,
-          provinceState: address.provinceState,
-          country: address.country,
-          postalCode: address.postalCode,
-        },
-        phone: student.contactInfo.phone,
-      },
-      pdStatus: determinePDStatus(student),
-      pdVerified: student.studentPDVerified,
-    };
+  ): Promise<StudentProfileAPIOutDTO> {
+    const student = await this.studentControllerService.getStudentProfile(
+      studentId,
+    );
+    if (!student) {
+      throw new NotFoundException("Not able to find the student.");
+    }
+    return student;
   }
 }

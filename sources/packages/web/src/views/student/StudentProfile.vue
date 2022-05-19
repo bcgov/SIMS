@@ -33,6 +33,7 @@ import { StudentService } from "../../services/StudentService";
 import {
   StudentContact,
   StudentFormInfo,
+  StudentPDStatus,
 } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
@@ -91,10 +92,7 @@ export default {
     };
 
     const showPendingStatus = computed(
-      () =>
-        studentAllInfo.value.pdSentDate &&
-        studentAllInfo.value.pdUpdatedDate === null &&
-        studentAllInfo.value.pdVerified === null,
+      () => studentAllInfo.value.pdStatus === StudentPDStatus.Pending,
     );
 
     const getStudentDetails = async () => {
