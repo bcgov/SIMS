@@ -62,7 +62,7 @@ export class StudentApi extends HttpBaseClient {
   async getAESTStudentProfile(
     studentId: number,
   ): Promise<StudentProfileAPIOutDTO> {
-    return await this.getCallTyped<StudentProfileAPIOutDTO>(
+    return this.getCallTyped<StudentProfileAPIOutDTO>(
       this.addClientRoot(`students/${studentId}`),
     );
   }

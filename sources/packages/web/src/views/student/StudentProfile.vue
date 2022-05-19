@@ -1,21 +1,23 @@
 <template>
-  <v-container>
-    <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
-    <PDStatusApplicationModal ref="pdStatusApplicationModal" />
-    <RestrictionBanner
-      v-if="hasRestriction"
-      :restrictionMessage="restrictionMessage"
-    />
-    <CheckValidSINBanner />
-    <full-page-container>
-      <formio
-        formName="studentinformation"
-        :data="initialData"
-        @submitted="submitted"
-        @customEvent="showPDApplicationModal"
-      ></formio>
-    </full-page-container>
-  </v-container>
+  <full-page-container>
+    <template #header>
+      <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
+    </template>
+    <template #alerts>
+      <PDStatusApplicationModal ref="pdStatusApplicationModal" />
+      <RestrictionBanner
+        v-if="hasRestriction"
+        :restrictionMessage="restrictionMessage"
+      />
+      <CheckValidSINBanner />
+    </template>
+    <formio
+      formName="studentinformation"
+      :data="initialData"
+      @submitted="submitted"
+      @customEvent="showPDApplicationModal"
+    ></formio>
+  </full-page-container>
 </template>
 
 <script lang="ts">
