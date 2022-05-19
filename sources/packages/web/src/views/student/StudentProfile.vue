@@ -33,12 +33,12 @@ import { StudentService } from "../../services/StudentService";
 import {
   StudentContact,
   StudentFormInfo,
-  StudentProfileAPIOutDTO,
 } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
+import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 enum FormModes {
   edit = "edit",

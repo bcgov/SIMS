@@ -19,13 +19,13 @@
 
 <script lang="ts">
 import { useFormioUtils, useToastMessage } from "@/composables";
-import {
-  StudentFileUploaderInfoAPIInDTO,
-  StudentFileUploaderAPIInDTO,
-} from "@/types";
 import { StudentService } from "@/services/StudentService";
 import StudentDocumentList from "@/components/students/StudentDocumentList.vue";
 import { ref } from "vue";
+import {
+  StudentFileUploaderAPIInDTO,
+  StudentFileUploaderInfoAPIInDTO,
+} from "@/services/http/dto/Student.dto";
 
 const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
 export default {

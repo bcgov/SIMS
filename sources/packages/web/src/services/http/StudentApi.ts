@@ -5,12 +5,14 @@ import {
   StudentRestrictionStatus,
   SearchStudentResp,
   StudentDetail,
-  StudentFileUploaderAPIInDTO,
-  StudentUploadFileAPIOutDTO,
-  AESTStudentFileAPIOutDTO,
-  AESTFileUploadToStudentAPIInDTO,
-  StudentProfileAPIOutDTO,
 } from "@/types/contracts/StudentContract";
+import {
+  AESTFileUploadToStudentAPIInDTO,
+  AESTStudentFileAPIOutDTO,
+  StudentFileUploaderAPIInDTO,
+  StudentProfileAPIOutDTO,
+  StudentUploadFileAPIOutDTO,
+} from "./dto/Student.dto";
 
 export class StudentApi extends HttpBaseClient {
   public async createStudent(studentProfile: CreateStudent): Promise<void> {

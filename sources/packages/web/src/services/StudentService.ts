@@ -11,12 +11,14 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  StudentFileUploaderAPIInDTO,
-  StudentUploadFileAPIOutDTO,
-  AESTStudentFileAPIOutDTO,
-  AESTFileUploadToStudentAPIInDTO,
 } from "@/types";
 import { useFormatters } from "@/composables";
+import {
+  AESTFileUploadToStudentAPIInDTO,
+  AESTStudentFileAPIOutDTO,
+  StudentFileUploaderAPIInDTO,
+  StudentUploadFileAPIOutDTO,
+} from "./http/dto/Student.dto";
 
 export class StudentService {
   // Share Instance
@@ -50,7 +52,7 @@ export class StudentService {
   }
 
   /**
-   * Client method to call inorder to update the student
+   * Client method to call in order to update the student
    * information using the user information.
    */
   async synchronizeFromUserInfo(): Promise<void> {

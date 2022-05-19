@@ -80,13 +80,7 @@
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
-import {
-  AESTFileUploadToStudentAPIInDTO,
-  DEFAULT_PAGE_LIMIT,
-  FormIOForm,
-  PAGINATION_LIST,
-  StudentUploadFileAPIOutDTO,
-} from "@/types";
+import { DEFAULT_PAGE_LIMIT, FormIOForm, PAGINATION_LIST } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import {
   useFormatters,
@@ -96,6 +90,10 @@ import {
   useToastMessage,
 } from "@/composables";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
+import {
+  AESTFileUploadToStudentAPIInDTO,
+  StudentUploadFileAPIOutDTO,
+} from "@/services/http/dto/Student.dto";
 
 export default {
   components: {
