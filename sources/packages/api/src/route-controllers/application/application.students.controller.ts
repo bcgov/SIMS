@@ -41,7 +41,6 @@ import {
 import {
   AllowAuthorizedParty,
   UserToken,
-  CheckRestrictions,
   CheckSinValidation,
   RequiresStudentAccount,
 } from "../../auth/decorators";
@@ -146,36 +145,34 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId") applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
+    let isRestrictionAction = false;
+
     if (
       payload.data.howWillYouBeAttendingTheProgram ===
       OfferingIntensity.fullTime
     ) {
-      const isRestrictionAction =
+      isRestrictionAction =
         await this.studentRestrictionService.isRestrictionAction(
           studentToken.studentId,
           RestrictionActionType.StopFullTimeApply,
         );
-      if (isRestrictionAction) {
-        throw new ForbiddenException(
-          "Student has a restriction which blocks student from submitting the application.",
-        );
-      }
     }
     if (
       payload.data.howWillYouBeAttendingTheProgram ===
       OfferingIntensity.partTime
     ) {
-      const isRestrictionAction =
+      isRestrictionAction =
         await this.studentRestrictionService.isRestrictionAction(
           studentToken.studentId,
           RestrictionActionType.StopPartTimeApply,
         );
-      if (isRestrictionAction) {
-        throw new ForbiddenException(
-          "Student has a restriction which blocks student from submitting the application.",
-        );
-      }
     }
+    if (isRestrictionAction) {
+      throw new ForbiddenException(
+        "Student has a restriction which blocks student from submitting the application.",
+      );
+    }
+
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
