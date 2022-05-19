@@ -1,6 +1,6 @@
 import { Allow } from "class-validator";
 
-export class reportFilterParam {
+export class ReportFilterParam {
   [columnName: string]: any;
 }
 /**
@@ -11,5 +11,5 @@ export class ReportsFilterAPIInDTO {
   @Allow()
   reportName: string;
   @Allow()
-  params: reportFilterParam;
+  params: ReportFilterParam;
 }

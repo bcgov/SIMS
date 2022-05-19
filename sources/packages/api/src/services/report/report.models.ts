@@ -1,7 +1,7 @@
-export interface reportFilterParam {
+export interface ReportFilterParam {
   [columnName: string]: any;
 }
 export interface ReportsFilterModel {
   reportName: string;
-  params: reportFilterParam;
+  params: ReportFilterParam;
 }

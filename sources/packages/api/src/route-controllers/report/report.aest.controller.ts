@@ -31,6 +31,7 @@ export class ReportAESTController extends BaseController {
   async exportFinancialReport(
     @Body() payload: ReportsFilterAPIInDTO,
   ): Promise<any[]> {
-    return await this.reportService.exportFinancialReport(payload);
+    const result = await this.reportService.exportFinancialReport(payload);
+    return result;
   }
 }
