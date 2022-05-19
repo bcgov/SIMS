@@ -12,7 +12,7 @@ import {
 /**
  * Dto that represents education program with offering form object.
  */
-export class EducationProgramWithOfferingsAPIOutDTO {
+export class EducationProgramAPIOutDTO {
   name: string;
   description?: string;
   credentialType: string;

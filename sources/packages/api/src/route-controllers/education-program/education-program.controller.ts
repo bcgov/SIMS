@@ -28,7 +28,7 @@ import {
   ProgramsSummary,
   DeclineProgram,
   ApproveProgram,
-  EducationProgramWithOfferingsAPIOutDTO,
+  EducationProgramAPIOutDTO,
 } from "./models/save-education-program.dto";
 import {
   EducationProgramOfferingService,
@@ -286,7 +286,7 @@ export class EducationProgramController extends BaseController {
   async getProgram(
     @Param("id") id: number,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<EducationProgramWithOfferingsAPIOutDTO> {
+  ): Promise<EducationProgramAPIOutDTO> {
     const programRequest = this.programService.getInstitutionProgram(
       id,
       userToken.authorizations.institutionId,
