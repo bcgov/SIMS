@@ -10,6 +10,7 @@ import {
   Patch,
   UnprocessableEntityException,
   Query,
+  ForbiddenException,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -26,8 +27,9 @@ import {
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  StudentRestrictionService,
 } from "../../services";
-import { IUserToken } from "../../auth/userToken.interface";
+import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
   SaveApplicationDto,
@@ -45,17 +47,19 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { ApplicationStatus } from "../../database/entities";
+import { ApplicationStatus, OfferingIntensity } from "../../database/entities";
 import { PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import { INVALID_APPLICATION_NUMBER } from "../../constants";
 import {
   ApiBadRequestResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { ApplicationControllerService } from "./application.controller.service";
+import { RestrictionActionType } from "src/database/entities/restriction-action-type.type";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -72,6 +76,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly assessmentService: StudentAssessmentService,
     private readonly applicationControllerService: ApplicationControllerService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super();
   }
@@ -121,10 +126,9 @@ export class ApplicationStudentsController extends BaseController {
    * submitted status in any scenario.
    * @param payload payload to create the draft application.
    * @param applicationId application id to be changed to submitted.
-   * @param userToken token from the authenticated student.
+   * @param studentToken token from the authenticated student.
    */
   @CheckSinValidation()
-  @CheckRestrictions()
   @Patch(":applicationId/submit")
   @ApiOkResponse({ description: "Application submitted." })
   @ApiUnprocessableEntityResponse({
@@ -133,11 +137,45 @@ export class ApplicationStudentsController extends BaseController {
   })
   @ApiBadRequestResponse({ description: "Form validation failed." })
   @ApiNotFoundResponse({ description: "Application not found." })
+  @ApiForbiddenResponse({
+    description:
+      "Student has a restriction which blocks student from submitting the application.",
+  })
   async submitApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
-    @UserToken() userToken: IUserToken,
+    @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
+    if (
+      payload.data.howWillYouBeAttendingTheProgram ===
+      OfferingIntensity.fullTime
+    ) {
+      const isRestrictionAction =
+        await this.studentRestrictionService.isRestrictionAction(
+          studentToken.studentId,
+          RestrictionActionType.StopFullTimeApply,
+        );
+      if (isRestrictionAction) {
+        throw new ForbiddenException(
+          "Student has a restriction which blocks student from submitting the application.",
+        );
+      }
+    }
+    if (
+      payload.data.howWillYouBeAttendingTheProgram ===
+      OfferingIntensity.partTime
+    ) {
+      const isRestrictionAction =
+        await this.studentRestrictionService.isRestrictionAction(
+          studentToken.studentId,
+          RestrictionActionType.StopPartTimeApply,
+        );
+      if (isRestrictionAction) {
+        throw new ForbiddenException(
+          "Student has a restriction which blocks student from submitting the application.",
+        );
+      }
+    }
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
@@ -171,14 +209,14 @@ export class ApplicationStudentsController extends BaseController {
     }
 
     const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
+      studentToken.studentId,
     );
 
     try {
       await this.applicationService.validateOverlappingDatesAndPIR(
         applicationId,
         student.user.lastName,
-        userToken.userId,
+        studentToken.studentId,
         student.sin,
         student.birthDate,
         studyStartDate,
@@ -187,7 +225,7 @@ export class ApplicationStudentsController extends BaseController {
       const { createdAssessment } =
         await this.applicationService.submitApplication(
           applicationId,
-          userToken.userId,
+          studentToken.studentId,
           student.id,
           programYear.id,
           submissionResult.data.data,
@@ -221,12 +259,11 @@ export class ApplicationStudentsController extends BaseController {
    * this method will create the draft or throw an exception in case
    * of the draft already exists.
    * @param payload payload to create the draft application.
-   * @param userToken token from the authenticated student.
+   * @param studentToken token from the authenticated student.
    * @returns the application id of the created draft or an
    * HTTP exception if it is not possible to create it.
    */
   @CheckSinValidation()
-  @CheckRestrictions()
   @ApiOkResponse({ description: "Draft application created." })
   @ApiUnprocessableEntityResponse({
     description:
@@ -235,7 +272,7 @@ export class ApplicationStudentsController extends BaseController {
   @Post("draft")
   async createDraftApplication(
     @Body() payload: SaveApplicationDto,
-    @UserToken() userToken: IUserToken,
+    @UserToken() studentToken: StudentUserToken,
   ): Promise<number> {
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
@@ -248,7 +285,7 @@ export class ApplicationStudentsController extends BaseController {
     }
 
     const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
+      studentToken.studentId,
     );
 
     try {
@@ -276,25 +313,26 @@ export class ApplicationStudentsController extends BaseController {
    * Updates an existing application draft
    * @param payload payload to update the draft application.
    * @param applicationId draft application id.
-   * @param userToken token from the authenticated student.
+   * @param studentToken token from the authenticated student.
    */
   @CheckSinValidation()
-  @CheckRestrictions()
   @Patch(":applicationId/draft")
   @ApiOkResponse({ description: "Draft application updated." })
   @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
   async updateDraftApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
-    @UserToken() userToken: IUserToken,
+    @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-
+    const isRestrictionAction =
+      await this.studentRestrictionService.isRestrictionAction(
+        studentToken.studentId,
+        RestrictionActionType.StopPartTimeDisbursement,
+      );
+    console.log(isRestrictionAction);
     try {
       await this.applicationService.saveDraftApplication(
-        student.id,
+        studentToken.studentId,
         payload.programYearId,
         payload.data,
         payload.associatedFiles,

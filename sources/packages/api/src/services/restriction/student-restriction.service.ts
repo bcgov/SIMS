@@ -20,6 +20,7 @@ import {
 } from "./constants";
 import { Connection, SelectQueryBuilder } from "typeorm";
 import { CustomNamedError } from "../../utilities";
+import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -267,5 +268,32 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       } as User,
     } as Note;
     return this.repo.save(studentRestrictionEntity);
+  }
+  /**
+   * The service function checks if the requested student has
+   * the restricted restriction.
+   * @param studentId student Id
+   * @param restrictionActions list of restriction actions
+   * @returns boolean, true if the restriction action is present
+   * for the student, else false.
+   */
+  async isRestrictionAction(
+    studentId: number,
+    restrictionActions: RestrictionActionType,
+  ): Promise<boolean> {
+    const query = await this.repo
+      .createQueryBuilder("studentRestrictions")
+      .select("1")
+      .innerJoin("studentRestrictions.restriction", "restrictions")
+      .innerJoin("studentRestrictions.student", "student")
+      .where("studentRestrictions.isActive = true")
+      .andWhere("student.id= :studentId", {
+        studentId,
+      })
+      .andWhere(":restrictionActions = ANY(restrictions.actionType)", {
+        restrictionActions: restrictionActions,
+      })
+      .getRawOne();
+    return !!query;
   }
 }
