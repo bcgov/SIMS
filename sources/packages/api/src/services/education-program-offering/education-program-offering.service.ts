@@ -459,7 +459,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const offeringExists = await this.repo
       .createQueryBuilder("offerings")
       .select("1")
-      .innerJoin("offerings.educationProgram", "educationProgram")
       .where("offerings.educationProgram.id = :programId", { programId })
       .limit(1)
       .getRawOne();

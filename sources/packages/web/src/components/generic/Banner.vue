@@ -1,18 +1,17 @@
 <template>
-  <v-alert :class="getBackgroundClass()" :type="color" variant="outlined">
-    <v-row>
-      <v-col cols="10">
-        <div class="label-bold-normal">{{ header }}</div>
-        <div class="label-value-normal">{{ summary }}</div>
-      </v-col>
-      <v-col cols="2">
-        <div class="pt-4 pl-2"><slot name="actions"> </slot></div>
-      </v-col>
-    </v-row>
+  <v-alert :class="getBackgroundClass" :type="color" variant="outlined">
+    <template v-slot:title>
+      <div class="label-bold-normal">{{ header }}</div>
+    </template>
+    <div class="label-value-normal w-75">{{ summary }}</div>
+    <div class="float-right mt-n12">
+      <slot name="actions"> </slot>
+    </div>
   </v-alert>
 </template>
 <script lang="ts">
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
+import { computed } from "vue";
 
 export default {
   props: {
@@ -27,7 +26,7 @@ export default {
     },
   },
   setup(props: any) {
-    const getBackgroundClass = () => {
+    const getBackgroundClass = computed(() => {
       switch (props.color) {
         case StatusChipTypes.Success:
           return "v-alert-background-success";
@@ -38,7 +37,8 @@ export default {
         default:
           return "";
       }
-    };
+    });
+
     return { getBackgroundClass };
   },
 };

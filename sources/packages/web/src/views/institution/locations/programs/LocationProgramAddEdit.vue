@@ -1,8 +1,8 @@
 <template>
   <header-navigator
     title="Program detail"
-    :routeLocation="getRouteLocation()"
-    :subTitle="getSubtitle()"
+    :routeLocation="getRouteLocation"
+    :subTitle="getSubtitle"
   >
   </header-navigator>
   <div class="mt-4 mb-2">
@@ -12,7 +12,7 @@
       header="Students have applied financial aid for this program"
       summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you’d like to edit the other fields."
     >
-      <template v-slot:actions>
+      <template #actions>
         <v-btn color="success" @click="createNewProgram()">
           Create program
         </v-btn>
@@ -137,7 +137,7 @@ export default {
       }
     };
 
-    const getRouteLocation = () => {
+    const getRouteLocation = computed(() => {
       if (isInstitutionUser.value && props.programId) {
         // in edit program mode
         return {
@@ -166,9 +166,10 @@ export default {
           },
         };
       }
-    };
+      return {};
+    });
 
-    const getSubtitle = () => {
+    const getSubtitle = computed(() => {
       if (isReadonly.value) {
         return "View Program";
       } else if (props.programId && !isReadonly.value) {
@@ -176,7 +177,8 @@ export default {
       } else if (!props?.programId) {
         return "Create New Program";
       }
-    };
+      return "";
+    });
 
     const submitted = async (data: any) => {
       if (isInstitutionUser.value) {

@@ -167,8 +167,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     if (!educationProgram.id) {
       program.submittedBy = { id: educationProgram.userId } as User;
       program.creator = { id: educationProgram.userId } as User;
+    } else {
+      program.modifier = { id: educationProgram.userId } as User;
     }
-    program.modifier = { id: educationProgram.userId } as User;
     return this.repo.save(program);
   }
 
