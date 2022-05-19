@@ -117,7 +117,7 @@ export enum ProgramStatus {
 /**
  * DTO object which represent the eduction program form object.
  */
-export interface ProgramDto extends EducationProgramBaseDto {
+export interface EducationProgramAPIDTO extends EducationProgramBaseDto {
   institutionId: number;
   regulatoryBody: string;
   programDeliveryTypes: ProgramDeliveryTypes;

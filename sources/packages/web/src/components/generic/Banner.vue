@@ -1,9 +1,5 @@
 <template>
-  <v-alert
-    class="v-alert--variant-contained-text"
-    :type="color"
-    variant="outlined"
-  >
+  <v-alert :type="color" variant="contained-text">
     <template v-slot:title>
       <div class="label-bold-normal">{{ header }}</div>
     </template>
