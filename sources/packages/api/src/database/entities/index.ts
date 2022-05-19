@@ -59,3 +59,4 @@ export * from "./assessment-trigger.type";
 export * from "./program-status.type";
 export * from "./offering-status.type";
 export * from "./address.type";
+export * from "./reports-config.model";

@@ -1,39 +1,35 @@
 import { Injectable } from "@nestjs/common";
+import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
 import { ReportsFilterModel } from "./report.models";
+import { ReportConfig } from "../../database/entities";
 
 /**
  * Service layer for reports.
  */
 @Injectable()
-export class ReportService {
-  constructor(private readonly connection: Connection) {}
+export class ReportService extends RecordDataModelService<ReportConfig> {
+  constructor(private readonly connection: Connection) {
+    super(connection.getRepository(ReportConfig));
+  }
 
   async exportFinancialReport(filter: ReportsFilterModel): Promise<any[]> {
     const parameters = [];
     const filterParams = filter.params;
-
-    let reportQuery =
-      "select ds.disbursement_date, dv.value_code, sum(dv.value_amount), count(ap.id)  from sims.disbursement_schedules ds " +
-      "inner join sims.student_assessments sa on ds.student_assessment_id = sa.id " +
-      "inner join sims.applications ap on sa.id = ap.current_assessment_id " +
-      "inner join sims.education_programs_offerings epo on sa.offering_id = epo.id " +
-      "inner join sims.disbursement_values dv on dv.disbursement_schedule_id = ds.id " +
-      "where epo.offering_intensity = ANY(:offeringIntensity) " +
-      "and ds.disbursement_date between :startDate and :endDate " +
-      "group by ds.disbursement_date, dv.value_code order by ds.disbursement_date";
+    const config = await this.getConfig(filter.reportName);
+    let reportQuery = config.reportSQL;
 
     Object.keys(filterParams).forEach((key, index) => {
       const doesParamExist = reportQuery.includes(`:${key}`);
       if (doesParamExist) {
         reportQuery = reportQuery.replace(`:${key}`, `$${index + 1}`);
-        parameters.push(this.extractFilterParamValue(filterParams[key]));
+        parameters.push(this.convertJSONToArray(filterParams[key]));
       }
     });
     return this.connection.query(reportQuery, parameters);
   }
 
-  private extractFilterParamValue(filterParam: any): string | string[] {
+  private convertJSONToArray(filterParam: any): string | string[] {
     if (Array.isArray(filterParam) || typeof filterParam !== "object") {
       return filterParam;
     }
@@ -45,5 +41,9 @@ export class ReportService {
       }
     });
     return paramValue;
+  }
+
+  private async getConfig(reportName: string): Promise<ReportConfig> {
+    return this.repo.findOne({ reportName: reportName });
   }
 }
