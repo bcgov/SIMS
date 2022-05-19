@@ -9,7 +9,7 @@ export interface StudentContact extends AddressDetailsFormAPIDTO {
 export interface CreateStudent extends StudentContact {
   sinNumber?: string;
 }
-export interface StudentInfo {
+export interface StudentProfileAPIOutDTO {
   firstName: string;
   lastName: string;
   gender: string;
@@ -24,9 +24,8 @@ export interface StudentInfo {
   pdStatus: string;
 }
 
-export interface StudentFormInfo extends StudentInfo {
+export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;
-  birthDateFormatted2: string;
 }
 
 export interface StudentApplication {
@@ -92,7 +91,6 @@ export interface StudentDetail {
   pdVerified: boolean;
   validSin: boolean;
   pdStatus: string;
-  hasRestriction: boolean;
 }
 
 /**

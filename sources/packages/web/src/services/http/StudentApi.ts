@@ -1,6 +1,5 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
-  StudentInfo,
   StudentContact,
   CreateStudent,
   StudentRestrictionStatus,
@@ -10,6 +9,7 @@ import {
   StudentUploadFileAPIOutDTO,
   AESTStudentFileAPIOutDTO,
   AESTFileUploadToStudentAPIInDTO,
+  StudentProfileAPIOutDTO,
 } from "@/types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
@@ -54,11 +54,10 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  //Api call to get Student Data
-  public async getStudentInfo(): Promise<StudentInfo> {
-    const response = await this.getCall("students/studentInfo");
-    const studentInfo = response.data as StudentInfo;
-    return studentInfo;
+  public async getStudentProfile(): Promise<StudentProfileAPIOutDTO> {
+    return this.getCallTyped<StudentProfileAPIOutDTO>(
+      this.addClientRoot("students"),
+    );
   }
 
   public async synchronizeFromUserInfo(): Promise<void> {
@@ -144,11 +143,6 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  /**
-   * API Client for student detail.
-   * @param studentId
-   * @returns
-   */
   public async getStudentDetail(studentId: number): Promise<StudentDetail> {
     const response = await this.getCall(`students/${studentId}/aest`);
     return response.data as StudentDetail;

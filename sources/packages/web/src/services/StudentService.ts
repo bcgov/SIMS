@@ -1,5 +1,4 @@
 import ApiClient from "@/services/http/ApiClient";
-import Helper from "@/helpers/utilfunctions";
 import {
   StudentContact,
   CreateStudent,
@@ -17,6 +16,7 @@ import {
   AESTStudentFileAPIOutDTO,
   AESTFileUploadToStudentAPIInDTO,
 } from "@/types";
+import { useFormatters } from "@/composables";
 
 export class StudentService {
   // Share Instance
@@ -39,14 +39,12 @@ export class StudentService {
     return studentContact;
   }
 
-  async getStudentInfo(): Promise<StudentFormInfo> {
-    const studentInfo = await ApiClient.Students.getStudentInfo();
+  async getStudentProfile(): Promise<StudentFormInfo> {
+    const { dateOnlyLongString } = useFormatters();
+    const studentProfile = await ApiClient.Students.getStudentProfile();
     const studentInfoAll = {
-      ...studentInfo,
-      //Formatting date received from api from 1998-03-24T00:00:00.000Z to March 24, 1998
-      birthDateFormatted: Helper.formatDate(studentInfo.dateOfBirth),
-      //Formatting date received from api from 1998-03-24T00:00:00.000Z to "1998-03-24"
-      birthDateFormatted2: Helper.formatDate2(studentInfo.dateOfBirth),
+      ...studentProfile,
+      birthDateFormatted: dateOnlyLongString(studentProfile.dateOfBirth),
     };
     return studentInfoAll;
   }

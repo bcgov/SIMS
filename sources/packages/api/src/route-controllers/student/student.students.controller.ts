@@ -29,6 +29,7 @@ import {
 import BaseController from "../BaseController";
 import {
   StudentFileUploaderAPIInDTO,
+  StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
 } from "./models/student.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
@@ -37,12 +38,16 @@ import { StudentControllerService } from "..";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
   defaultFileFilter,
+  determinePDStatus,
+  getISODateOnlyString,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
   uploadLimits,
 } from "../../utilities";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
+import { AddressInfo } from "src/database/entities";
+import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
 /**
  * Student controller for Student Client.
@@ -198,5 +203,35 @@ export class StudentStudentsController extends BaseController {
       sendFileUploadNotification,
       fileMetadata,
     );
+  }
+
+  /**
+   * Get the student information that represents his profile.
+   * @returns student profile information.
+   */
+  @Get()
+  async getStudentProfile(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<StudentProfileAPIOutDTO> {
+    const student = await this.studentService.getStudentById(
+      userToken.studentId,
+    );
+    const address = student.contactInfo.address ?? ({} as AddressInfo);
+    return {
+      firstName: student.user.firstName,
+      lastName: student.user.lastName,
+      email: student.user.email,
+      gender: student.gender,
+      dateOfBirth: getISODateOnlyString(student.birthDate),
+      contact: {
+        address: transformAddressDetailsForAddressBlockForm(address),
+        phone: student.contactInfo.phone,
+      },
+      pdVerified: student.studentPDVerified,
+      validSin: student.sinValidation.isValidSIN,
+      pdSentDate: student.studentPDSentAt,
+      pdUpdatedDate: student.studentPDUpdateAt,
+      pdStatus: determinePDStatus(student),
+    };
   }
 }

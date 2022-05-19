@@ -77,11 +77,10 @@ export class StudentDetailAPIOutDTO {
   fullName: string;
   email: string;
   gender: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   contact: ContactInformationAPIOutDTO;
   pdVerified: boolean;
   pdStatus: StudentPDStatus;
-  hasRestriction: boolean;
 }
 /**
  *  Student uploader interface
@@ -126,12 +125,12 @@ export class StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
 }
 
-export class StudentInfo {
+export class StudentProfileAPIOutDTO {
   firstName: string;
   lastName: string;
   email: string;
   gender: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   contact: ContactInformationAPIOutDTO;
   pdVerified: boolean;
   validSin: boolean;

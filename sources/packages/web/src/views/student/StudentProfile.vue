@@ -31,9 +31,9 @@ import {
 } from "@/composables";
 import { StudentService } from "../../services/StudentService";
 import {
-  StudentInfo,
   StudentContact,
   StudentFormInfo,
+  StudentProfileAPIOutDTO,
 } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
@@ -46,7 +46,7 @@ enum FormModes {
 }
 
 type StudentFormData = Pick<
-  StudentInfo,
+  StudentProfileAPIOutDTO,
   "firstName" | "lastName" | "gender" | "email"
 > &
   StudentContact & {
@@ -86,7 +86,7 @@ export default {
       if (hasStudentAccount) {
         // Avoid calling the API to get the student information if the
         // account is not created yet.
-        studentAllInfo.value = await StudentService.shared.getStudentInfo();
+        studentAllInfo.value = await StudentService.shared.getStudentProfile();
       }
     };
 
