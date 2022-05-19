@@ -33,24 +33,20 @@ describe("Ministry User View Institution Page", () => {
     ministryUserViewsInstitution.noInstitutionsFound().should("be.visible");
   });
 
-  it(
-    "Check that when searched using alphabets on Legal Name or Operating Name records should be displayed.",
-    { retries: { runMode: 2, openMode: 1 } },
-    () => {
-      ministryCustomCommand.loginMinistry();
-      dashboardMinistryObject.dashboardText().should("be.visible");
-      dashboardMinistryObject.searchInstitutionsText().click();
-      ministryUserViewsInstitution.legalNameInputText().type("e");
-      ministryUserViewsInstitution.searchButton().click();
-      ministryUserViewsInstitution.legalNameVerifyColumn().should("be.visible");
-      ministryUserViewsInstitution.legalNameInputText().clear();
-      ministryUserViewsInstitution.operatingNameInputText().type("e");
-      ministryUserViewsInstitution.searchButton().click();
-      ministryUserViewsInstitution
-        .operatingNameVerifyColumn()
-        .should("be.visible");
-    }
-  );
+  it("Check that when searched using alphabets on Legal Name or Operating Name records should be displayed.", () => {
+    ministryCustomCommand.loginMinistry();
+    dashboardMinistryObject.dashboardText().should("be.visible");
+    dashboardMinistryObject.searchInstitutionsText().click();
+    ministryUserViewsInstitution.legalNameInputText().type("e");
+    ministryUserViewsInstitution.searchButton().click();
+    ministryUserViewsInstitution.legalNameVerifyColumn().should("be.visible");
+    ministryUserViewsInstitution.legalNameInputText().clear();
+    ministryUserViewsInstitution.operatingNameInputText().type("e");
+    ministryUserViewsInstitution.searchButton().click();
+    ministryUserViewsInstitution
+      .operatingNameVerifyColumn()
+      .should("be.visible");
+  });
 
   it("Verify that clicking the View button redirects to the institution's profile page.", () => {
     ministryCustomCommand.loginMinistry();
@@ -75,7 +71,6 @@ describe("Ministry User View Institution Page", () => {
     ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.viewProgramButton().click();
-    ministryUserViewsInstitution.createNewProgramText().should("be.visible");
     ministryUserViewsInstitution.submitButtonProgram().should("be.disabled");
     ministryUserViewsInstitution.backButtonViewProgram().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
@@ -137,7 +132,6 @@ describe("Ministry User View Institution Page", () => {
     ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.viewProgramButton().click();
-    ministryUserViewsInstitution.createNewProgramText().should("be.visible");
     ministryUserViewsInstitution.submitButtonProgram().should("be.disabled");
     ministryUserViewsInstitution.backButtonViewProgram().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
@@ -162,7 +156,6 @@ describe("Ministry User View Institution Page", () => {
     ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.viewProgramButton().click();
-    ministryUserViewsInstitution.createNewProgramText().should("be.visible");
     ministryUserViewsInstitution.submitButtonProgram().should("be.disabled");
     ministryUserViewsInstitution.backButtonViewProgram().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
@@ -183,7 +176,6 @@ describe("Ministry User View Institution Page", () => {
     ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.viewProgramButton().click();
-    ministryUserViewsInstitution.createNewProgramText().should("be.visible");
     ministryUserViewsInstitution.submitButtonProgram().should("be.disabled");
     ministryUserViewsInstitution.backButtonViewProgram().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
