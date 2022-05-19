@@ -10,7 +10,7 @@ import {
 } from "../../../utilities";
 
 /**
- * Dto that represents education program with offering form object.
+ * Dto that represents education program form object.
  */
 export class EducationProgramAPIOutDTO {
   name: string;
