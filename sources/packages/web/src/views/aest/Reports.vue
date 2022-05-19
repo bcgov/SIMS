@@ -1,17 +1,23 @@
 <template>
   <v-container>
     <div class="mb-4">
-      <header-navigator title="Assessment" subTitle="Notice of Assessment" />
+      <header-navigator title="Ministry" subTitle="Reports" />
     </div>
   </v-container>
   <full-page-container>
-    <formio formName="exportfinancialreports"></formio>
+    <body-header title="Export financial reports" />
+    <formio
+      formName="exportfinancialreports"
+      @loaded="formLoaded"
+      @submitted="exportCSVReport"
+    ></formio>
+    <v-row class="justify-center m-4"
+      ><v-btn color="primary" @click="submitForm">Export CSV file</v-btn></v-row
+    >
   </full-page-container>
 </template>
 
 <script lang="ts">
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-
 export default {
   props: {
     studentId: {
@@ -28,7 +34,20 @@ export default {
     },
   },
   setup() {
-    return { AESTRoutesConst };
+    let formData: any = undefined;
+
+    const formLoaded = (form: any) => {
+      formData = form;
+    };
+
+    const submitForm = () => {
+      return formData.submit();
+    };
+
+    const exportCSVReport = async (data: any) => {
+      console.log(data);
+    };
+    return { exportCSVReport, formLoaded, submitForm };
   },
 };
 </script>

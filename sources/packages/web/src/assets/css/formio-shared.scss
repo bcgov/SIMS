@@ -432,3 +432,9 @@
 .ff-form-container .formio-datagrid-unset .table th {
   padding: 0;
 }
+
+//CSS for panel component border to match Figma.
+.formio-component-panel .border {
+  border: 1px solid #e8e8e8 !important;
+  border-radius: 8px !important;
+}

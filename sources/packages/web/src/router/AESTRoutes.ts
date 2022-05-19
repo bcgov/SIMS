@@ -24,6 +24,7 @@ import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
 import StudentNotes from "@/views/aest/student/StudentNotes.vue";
 import StudentRestrictions from "@/views/aest/student/StudentRestrictions.vue";
 import InstitutionLocationEdit from "@/views/aest/institution/InstitutionLocationEdit.vue";
+import Reports from "@/views/aest/Reports.vue";
 import {
   AESTRoutesConst,
   SharedRouteConst,
@@ -369,6 +370,14 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.INSTITUTION_PROFILE_EDIT,
         props: true,
         component: ProfileEdit,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.Reports,
+        name: AESTRoutesConst.REPORTS,
+        component: Reports,
         meta: {
           clientType: ClientIdType.AEST,
         },

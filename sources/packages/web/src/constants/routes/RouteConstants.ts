@@ -98,6 +98,7 @@ export const AESTRoutesConst = {
   DESIGNATION_VIEW: Symbol(),
   STUDENT_APPEAL_REQUESTS_APPROVAL: Symbol(),
   NOTICE_OF_ASSESSMENT_VIEW: Symbol(),
+  REPORTS: Symbol(),
 };
 
 /**
