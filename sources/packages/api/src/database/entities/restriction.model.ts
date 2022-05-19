@@ -2,6 +2,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { RestrictionType } from ".";
+import { RestrictionNotificationType } from "./restriction-notification-type.type";
+import { RestrictionActionType } from "./restriction-action-type.type";
 
 /**
  * Entity for restrictions
@@ -46,12 +48,29 @@ export class Restriction extends RecordDataModel {
     nullable: false,
   })
   description: string;
+
   /**
-   * Maximum number of times the given restriction can be ignored
+   * Actions associated with the restriction, for instance, when a restriction must prevent the student from applying to a Student Application.
    */
   @Column({
-    name: "allowed_count",
+    name: "action_type",
     nullable: false,
+    type: "enum",
+    enum: RestrictionActionType,
+    enumName: "RestrictionActionType",
+    array: true,
   })
-  allowedCount: number;
+  actionType: RestrictionActionType[];
+
+  /**
+   * The type of notification for the restriction.
+   */
+  @Column({
+    name: "notification_type",
+    nullable: false,
+    type: "enum",
+    enum: RestrictionNotificationType,
+    enumName: "RestrictionNotificationType",
+  })
+  notificationType: RestrictionNotificationType;
 }

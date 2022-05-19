@@ -48,10 +48,8 @@ import {
 } from "./models/application.dto";
 import BaseController from "../BaseController";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 import {
   InstitutionLocationPrimaryContactAPIInDTO,
-  InstitutionLocationAPIOutDTO,
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationDetailsAPIOutDTO,
   ScholasticStandingAPIInDTO,
@@ -63,11 +61,10 @@ import { transformAddressDetailsForAddressBlockForm } from "../utils/address-uti
  * Institution location controller for institutions Client.
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@Controller("institution/location")
-@ApiTags(`${ClientTypeBaseRoute.Institution}-institution/location`)
+@Controller("location")
+@ApiTags(`${ClientTypeBaseRoute.Institution}-location`)
 export class InstitutionLocationInstitutionsController extends BaseController {
   constructor(
-    private readonly locationControllerService: InstitutionLocationControllerService,
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
@@ -128,22 +125,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   }
 
   /**
-   * Controller method to get institution locations with designation status for the given institution.
-   * @param userToken
-   * @returns Details of all locations of an institution.
-   */
-  @IsInstitutionAdmin()
-  @Get()
-  async getAllInstitutionLocations(
-    @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<InstitutionLocationAPIOutDTO[]> {
-    // get all institution locations with designation statuses.
-    return this.locationControllerService.getInstitutionLocations(
-      userToken.authorizations.institutionId,
-    );
-  }
-
-  /**
    * Get all active application of a location in an institution
    * with application_status is completed.
    * @param locationId location id.
@@ -172,13 +153,12 @@ export class InstitutionLocationInstitutionsController extends BaseController {
 
   /**
    * Controller method to retrieve institution location by id.
-   * TODO: updating of API routes will be handled in PART 2 PR
    * @param locationId
    * @param userToken
    * @returns institution location.
    */
   @HasLocationAccess("locationId")
-  @Get(":locationId/getLocation")
+  @Get(":locationId")
   @ApiNotFoundResponse({ description: "Institution Location not found." })
   async getInstitutionLocation(
     @Param("locationId") locationId: number,

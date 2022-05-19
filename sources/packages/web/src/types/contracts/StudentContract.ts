@@ -84,6 +84,7 @@ export interface SearchStudentResp {
 export interface StudentDetail {
   firstName: string;
   lastName: string;
+  fullName: string;
   gender: string;
   email: string;
   dateOfBirth: Date;
@@ -97,7 +98,7 @@ export interface StudentDetail {
 /**
  *  Student uploader interface
  */
-export interface StudentFileUploaderForm {
+export interface StudentFileUploaderInfoAPIInDTO {
   documentPurpose: string;
   applicationNumber?: string;
 }
@@ -105,28 +106,40 @@ export interface StudentFileUploaderForm {
 /**
  *  Student uploader interface
  */
-export interface StudentFileUploaderDTO {
-  submittedForm: StudentFileUploaderForm;
+export interface StudentFileUploaderAPIInDTO {
+  submittedForm: StudentFileUploaderInfoAPIInDTO;
+  associatedFiles: string[];
+}
+
+export interface AESTFileUploadToStudentAPIInDTO {
   associatedFiles: string[];
 }
 
 /**
  *  Student uploaded documents (i.e, FileOriginType.Student documents).
  */
-export interface StudentUploadFileDTO {
+export interface StudentUploadFileAPIOutDTO {
   fileName: string;
   uniqueFileName: string;
+  fileOrigin: FileOriginType;
 }
 
 /**
  *  AEST user to view student uploaded documents.
  */
-export interface AESTStudentFileDTO extends StudentUploadFileDTO {
-  metadata: StudentFileMetadataDTO;
+export interface AESTStudentFileAPIOutDTO extends StudentUploadFileAPIOutDTO {
+  metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
   updatedAt: Date;
 }
 
-export interface StudentFileMetadataDTO {
+export interface StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
+}
+
+export enum FileOriginType {
+  Temporary = "Temporary",
+  Application = "Application",
+  Student = "Student",
+  Ministry = "Ministry",
 }

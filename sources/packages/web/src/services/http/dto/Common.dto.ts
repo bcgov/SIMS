@@ -28,3 +28,15 @@ export interface AddressDetailsFormAPIDTO {
   selectedCountry?: string;
   otherCountry?: string;
 }
+
+/**
+ * Common interface to be returned when an endpoint
+ * processed a file uploaded from the form.io form.
+ */
+export interface FileCreateAPIOutDTO {
+  fileName: string;
+  uniqueFileName: string;
+  url: string;
+  size: number;
+  mimetype: string;
+}

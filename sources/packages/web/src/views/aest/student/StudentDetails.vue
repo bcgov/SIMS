@@ -1,21 +1,26 @@
 <template>
-  <div class="mb-2">
-    <div class="muted-heading-text">Student Details</div>
-    <span class="heading-x-large mb-2">
-      {{ studentDetails.firstName }} {{ studentDetails.lastName }}
-      <designation-and-restriction-status-badge
-        class="mb-4 ml-4"
-        :status="
-          studentDetails.hasRestriction
-            ? DesignationAndRestrictionStatus.restriction
-            : DesignationAndRestrictionStatus.noRestriction
-        "
-      />
-    </span>
-  </div>
-  <!-- TODO:replace prime tabMenu with vuetify3-->
-  <TabMenu :model="items" />
-  <router-view />
+  <full-page-container layout-template="centered">
+    <template #header>
+      <header-navigator
+        title="Student Details"
+        :subTitle="studentDetails.fullName"
+      >
+        <template #sub-title-details>
+          <designation-and-restriction-status-badge
+            class="mb-4 ml-4 mt-4"
+            :status="
+              studentDetails.hasRestriction
+                ? DesignationAndRestrictionStatus.restriction
+                : DesignationAndRestrictionStatus.noRestriction
+            "
+          />
+        </template>
+      </header-navigator>
+    </template>
+    <!-- TODO:replace prime tabMenu with vuetify3-->
+    <TabMenu :model="items" />
+    <router-view />
+  </full-page-container>
 </template>
 
 <script lang="ts">

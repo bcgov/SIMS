@@ -33,6 +33,7 @@ import {
   InstitutionLocationStudentsController,
   AssessmentStudentsController,
   AssessmentControllerService,
+  StudentControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -74,6 +75,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     GCNotifyService,
     GCNotifyActionsService,
     AssessmentControllerService,
+    StudentControllerService,
   ],
 })
 export class AppStudentsModule {}

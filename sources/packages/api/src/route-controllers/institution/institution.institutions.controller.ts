@@ -62,6 +62,8 @@ import {
   getUserFullName,
 } from "../../utilities";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
+import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
+import { InstitutionLocationControllerService } from "../institution-locations/institution-location.controller.service";
 
 /**
  * Institution controller for institutions Client.
@@ -76,6 +78,7 @@ export class InstitutionInstitutionsController extends BaseController {
     private readonly userService: UserService,
     private readonly bceidAccountService: BCeIDService,
     private readonly locationService: InstitutionLocationService,
+    private readonly locationControllerService: InstitutionLocationControllerService,
   ) {
     super();
   }
@@ -526,5 +529,21 @@ export class InstitutionInstitutionsController extends BaseController {
   @Patch("sync")
   async sync(@UserToken() token: IInstitutionUserToken) {
     await this.institutionService.syncInstitution(token);
+  }
+
+  /**
+   * Controller method to get institution locations with designation status for the given institution.
+   * @param userToken
+   * @returns Details of all locations of an institution.
+   */
+  @IsInstitutionAdmin()
+  @Get("locations")
+  async getAllInstitutionLocations(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<InstitutionLocationAPIOutDTO[]> {
+    // get all institution locations with designation statuses.
+    return this.locationControllerService.getInstitutionLocations(
+      userToken.authorizations.institutionId,
+    );
   }
 }

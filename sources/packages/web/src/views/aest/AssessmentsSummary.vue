@@ -1,22 +1,27 @@
 <template>
-  <header-navigator
-    title="Student applications"
-    :routeLocation="{
-      name: AESTRoutesConst.STUDENT_APPLICATIONS,
-      params: { studentId },
-    }"
-    subTitle="Assessment"
-  />
-  <RequestAssessment
-    :applicationId="applicationId"
-    @viewStudentAppeal="goToStudentAppeal"
-  />
-  <HistoryAssessment
-    :applicationId="applicationId"
-    @viewStudentAppeal="goToStudentAppeal"
-    @viewAssessment="gotToViewAssessment"
-  />
+  <full-page-container layout-template="centered">
+    <template #header>
+      <header-navigator
+        title="Student applications"
+        :routeLocation="{
+          name: AESTRoutesConst.STUDENT_APPLICATIONS,
+          params: { studentId },
+        }"
+        subTitle="Assessment"
+      />
+    </template>
+    <RequestAssessment
+      :applicationId="applicationId"
+      @viewStudentAppeal="goToStudentAppeal"
+    />
+    <HistoryAssessment
+      :applicationId="applicationId"
+      @viewStudentAppeal="goToStudentAppeal"
+      @viewAssessment="gotToViewAssessment"
+    />
+  </full-page-container>
 </template>
+
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";

@@ -28,6 +28,8 @@ import {
   GCNotifyService,
   GCNotifyActionsService,
   ReportService,
+  StudentService,
+  SFASIndividualService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -44,6 +46,7 @@ import {
   AssessmentControllerService,
   EducationProgramOfferingAESTController,
   ReportAESTController,
+  StudentControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -96,6 +99,9 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     GCNotifyActionsService,
     AssessmentControllerService,
     ReportService,
+    StudentControllerService,
+    StudentService,
+    SFASIndividualService,
   ],
 })
 export class AppAESTModule {}

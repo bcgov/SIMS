@@ -1,9 +1,11 @@
+import { Type } from "class-transformer";
 import {
   ArrayMinSize,
   IsDefined,
   IsNotEmpty,
   IsOptional,
 } from "class-validator";
+import { FileOriginType } from "../../../database/entities/student-file.type";
 import {
   AddressAPIOutDTO,
   AddressDetailsAPIInDTO,
@@ -40,14 +42,6 @@ export interface SaveStudentDto extends AddressDetailsAPIInDTO {
   sinNumber?: string;
 }
 
-export interface FileCreateDto {
-  fileName: string;
-  uniqueFileName: string;
-  url: string;
-  size: number;
-  mimetype: string;
-}
-
 export interface StudentEducationProgramDto {
   id: number;
   name: string;
@@ -80,6 +74,7 @@ export interface StudentRestrictionDTO {
 export class StudentDetailAPIOutDTO {
   firstName: string;
   lastName: string;
+  fullName: string;
   email: string;
   gender: string;
   dateOfBirth: Date;
@@ -91,7 +86,7 @@ export class StudentDetailAPIOutDTO {
 /**
  *  Student uploader interface
  */
-export class StudentFileUploaderForm {
+export class StudentFileUploaderInfoAPIInDTO {
   @IsNotEmpty()
   documentPurpose: string;
   @IsOptional()
@@ -101,9 +96,10 @@ export class StudentFileUploaderForm {
 /**
  *  Student uploader interface
  */
-export class StudentFileUploaderDTO {
+export class StudentFileUploaderAPIInDTO {
   @IsDefined()
-  submittedForm: StudentFileUploaderForm;
+  @Type(() => StudentFileUploaderInfoAPIInDTO)
+  submittedForm: StudentFileUploaderInfoAPIInDTO;
   @ArrayMinSize(1)
   associatedFiles: string[];
 }
@@ -111,21 +107,22 @@ export class StudentFileUploaderDTO {
 /**
  *  Student uploaded documents (i.e, FileOriginType.Student documents).
  */
-export class StudentUploadFileDTO {
+export class StudentUploadFileAPIOutDTO {
   fileName: string;
   uniqueFileName: string;
+  fileOrigin: FileOriginType;
 }
 
 /**
  *  AEST user to view student uploaded documents.
  */
-export class AESTStudentFileDTO extends StudentUploadFileDTO {
-  metadata: StudentFileMetadataDTO;
+export class AESTStudentFileAPIOutDTO extends StudentUploadFileAPIOutDTO {
+  metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
   updatedAt: Date;
 }
 
-export class StudentFileMetadataDTO {
+export class StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
 }
 
@@ -141,4 +138,9 @@ export class StudentInfo {
   pdSentDate?: Date;
   pdUpdatedDate?: Date;
   pdStatus: StudentPDStatus;
+}
+
+export class AESTFileUploadToStudentAPIInDTO {
+  @ArrayMinSize(1)
+  associatedFiles: string[];
 }

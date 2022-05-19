@@ -3,30 +3,32 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, In, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { StudentFile, Student } from "../../database/entities";
+import { StudentFile, Student, User } from "../../database/entities";
 import { CreateFile } from "./student-file.model";
-import { FileOriginType } from "../../database/entities/student-file.type";
-import { StudentFileUploaderForm } from "../../route-controllers/student/models/student.dto";
-import { GCNotifyActionsService } from "../notification/gc-notify-actions.service";
+import {
+  FileOriginType,
+  StudentFileMetadata,
+} from "../../database/entities/student-file.type";
+import { GCNotifyResult } from "../notification/gc-notify.model";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
-  constructor(
-    private readonly connection: Connection,
-    private readonly gcNotifyActionsService: GCNotifyActionsService,
-  ) {
+  constructor(private readonly connection: Connection) {
     super(connection.getRepository(StudentFile));
   }
 
   /**
    * Creates a file and associates it with a student.
-   * @param createFile
-   * @param studentId
-   * @returns file
+   * @param createFile file to be created.
+   * @param studentId student that will have the file associated.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @returns saved student file record.
    */
   async createFile(
     createFile: CreateFile,
     studentId: number,
+    auditUserId: number,
   ): Promise<StudentFile> {
     const newFile = new StudentFile();
     newFile.fileName = createFile.fileName;
@@ -35,20 +37,37 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     newFile.mimeType = createFile.mimeType;
     newFile.fileContent = createFile.fileContent;
     newFile.student = { id: studentId } as Student;
+    newFile.creator = { id: auditUserId } as User;
     return this.repo.save(newFile);
   }
 
   /**
    * Gets a student file.
-   * @param studentId student id.
    * @param uniqueFileName unique file name (name+guid).
+   * @param studentId student id.
    * @returns student file.
    */
   async getStudentFile(
-    studentId: number,
     uniqueFileName: string,
+    studentId?: number,
   ): Promise<StudentFile> {
-    return this.repo.findOne({ uniqueFileName, student: { id: studentId } });
+    const query = this.repo
+      .createQueryBuilder("studentFile")
+      .select([
+        "studentFile.id",
+        "studentFile.fileName",
+        "studentFile.mimeType",
+        "studentFile.fileContent",
+      ])
+      .where("studentFile.uniqueFileName = :uniqueFileName", {
+        uniqueFileName,
+      });
+
+    if (studentId) {
+      query.andWhere("studentFile.student.id = :studentId", { studentId });
+    }
+
+    return query.getOne();
   }
 
   /**
@@ -88,13 +107,23 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   /**
    * Update the files submitted by the student
    * with proper data.
-   * @param studentId student id.
+   * @param studentId student.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    * @param uniqueFileNames list of unique file names.
+   * @param fileOrigin origin of the file being saved.
+   * @param groupName group name of the file being save.
+   * @param sendNotification optional notification message to be sent.
+   * @param metadata optional metadata of the file being save.
    */
   async updateStudentFiles(
-    student: Student,
+    studentId: number,
+    auditUserId: number,
     uniqueFileNames: string[],
-    submittedData: StudentFileUploaderForm,
+    fileOrigin: FileOriginType,
+    groupName: string,
+    sendNotification?: () => Promise<GCNotifyResult>,
+    metadata?: StudentFileMetadata,
   ): Promise<UpdateResult> {
     let updateResult: UpdateResult;
     await this.connection.transaction(async (transactionalEntityManager) => {
@@ -102,46 +131,47 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         .getRepository(StudentFile)
         .update(
           {
-            student,
+            student: { id: studentId } as Student,
             uniqueFileName: In(uniqueFileNames),
           },
           {
-            groupName: submittedData.documentPurpose,
-            fileOrigin: FileOriginType.Student,
-            metadata: submittedData.applicationNumber
-              ? { applicationNumber: submittedData.applicationNumber }
-              : null,
+            groupName,
+            fileOrigin,
+            metadata,
+            modifier: { id: auditUserId } as User,
           },
         );
-      await this.gcNotifyActionsService.sendFileUploadNotification(
-        student,
-        submittedData.documentPurpose,
-        submittedData.applicationNumber,
-      );
+      // Executes the send notification inside the transaction to allow the rollback
+      // of the DB updates in the case of the notification failure.
+      if (sendNotification) {
+        await sendNotification();
+      }
     });
     return updateResult;
   }
 
   /**
-   * Gets a list of student files uploaded via student Uploader
-   * (i.e, fileOrigin is FileOriginType.Student).
+   * Gets a list of student files from the student account
+   * (i.e, fileOrigin is FileOriginType.Student or FileOriginType.Ministry).
    * @param studentId student id.
-   * @returns student files
+   * @returns student files from the student account.
    */
   async getStudentUploadedFiles(studentId: number): Promise<StudentFile[]> {
     return this.repo
       .createQueryBuilder("studentFile")
-      .where("studentFile.student.id = :studentId", { studentId })
-      .andWhere("studentFile.fileOrigin = :fileOrigin", {
-        fileOrigin: FileOriginType.Student,
-      })
       .select([
         "studentFile.uniqueFileName",
         "studentFile.fileName",
         "studentFile.metadata",
         "studentFile.groupName",
         "studentFile.updatedAt",
+        "studentFile.fileOrigin",
       ])
+      .where("studentFile.student.id = :studentId", { studentId })
+      .andWhere("studentFile.fileOrigin IN (:...fileOrigin)", {
+        fileOrigin: [FileOriginType.Student, FileOriginType.Ministry],
+      })
+      .orderBy("studentFile.createdAt", "DESC")
       .getMany();
   }
   @InjectLogger()

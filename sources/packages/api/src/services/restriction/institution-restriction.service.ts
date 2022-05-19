@@ -170,6 +170,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
 
   /**
    * Service method to find if Institution has any restriction institution.
+   * TODO: Removed .having("count(*) > restriction.allowedCount"), which may cause unexpected results, need to adjust the logic.
    * @param institutionId
    * @returns Institution restriction.
    */
@@ -186,7 +187,6 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       .andWhere("institutionRestrictions.isActive = true")
       .groupBy("institutionRestrictions.institution.id")
       .addGroupBy("restriction.id")
-      .having("count(*) > restriction.allowedCount")
       .getRawMany();
   }
 }
