@@ -105,7 +105,7 @@ export default {
     };
 
     onMounted(async () => {
-      studentDetails.value = await StudentService.shared.getAESTStudentProfile(
+      studentDetails.value = await StudentService.shared.getStudentProfile(
         props.studentId,
       );
     });

@@ -53,17 +53,17 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  async getStudentProfile(): Promise<StudentProfileAPIOutDTO> {
-    return this.getCallTyped<StudentProfileAPIOutDTO>(
-      this.addClientRoot("students"),
-    );
-  }
-
-  async getAESTStudentProfile(
-    studentId: number,
+  /**
+   * Get the student information that represents the profile.
+   * @param studentId student id to retrieve the data. Required
+   * only when not logged as a student.
+   * @returns student profile details.
+   */
+  async getStudentProfile(
+    studentId?: number,
   ): Promise<StudentProfileAPIOutDTO> {
     return this.getCallTyped<StudentProfileAPIOutDTO>(
-      this.addClientRoot(`students/${studentId}`),
+      this.addClientRoot(`students/${studentId ?? ""}`),
     );
   }
 

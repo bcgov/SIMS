@@ -16,7 +16,6 @@ import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
   StudentFileUploaderAPIInDTO,
-  StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
 } from "./http/dto/Student.dto";
 
@@ -41,9 +40,17 @@ export class StudentService {
     return studentContact;
   }
 
-  async getStudentProfile(): Promise<StudentFormInfo> {
+  /**
+   * Get the student information that represents the profile.
+   * @param studentId student id to retrieve the data. Required
+   * only when not logged as a student.
+   * @returns student profile details.
+   */
+  async getStudentProfile(studentId?: number): Promise<StudentFormInfo> {
     const { dateOnlyLongString } = useFormatters();
-    const studentProfile = await ApiClient.Students.getStudentProfile();
+    const studentProfile = await ApiClient.Students.getStudentProfile(
+      studentId,
+    );
     const studentInfoAll = {
       ...studentProfile,
       birthDateFormatted: dateOnlyLongString(studentProfile.dateOfBirth),
@@ -112,17 +119,6 @@ export class StudentService {
     lastName: string,
   ): Promise<SearchStudentResp[]> {
     return ApiClient.Students.searchStudents(appNumber, firstName, lastName);
-  }
-
-  /**
-   * Get student details of given student.
-   * @param studentId
-   * @returns StudentDetail
-   */
-  async getAESTStudentProfile(
-    studentId: number,
-  ): Promise<StudentProfileAPIOutDTO> {
-    return ApiClient.Students.getAESTStudentProfile(studentId);
   }
 
   /**

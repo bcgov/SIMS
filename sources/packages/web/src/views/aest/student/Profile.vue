@@ -10,7 +10,6 @@
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters } from "@/composables";
 
 export default {
   props: {
@@ -21,9 +20,8 @@ export default {
   },
   setup(props: any) {
     const initialData = ref();
-    const { dateOnlyLongString } = useFormatters();
     onMounted(async () => {
-      const studentDetail = await StudentService.shared.getAESTStudentProfile(
+      const studentDetail = await StudentService.shared.getStudentProfile(
         props.studentId,
       );
       const address = studentDetail.contact.address;
@@ -32,7 +30,7 @@ export default {
         lastName: studentDetail.lastName,
         gender: studentDetail.gender,
         email: studentDetail.email,
-        dateOfBirth: dateOnlyLongString(studentDetail.dateOfBirth),
+        dateOfBirth: studentDetail.birthDateFormatted,
         phone: studentDetail.contact.phone,
         addressLine1: address.addressLine1,
         addressLine2: address.addressLine2,
