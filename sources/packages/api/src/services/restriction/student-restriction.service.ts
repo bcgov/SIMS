@@ -34,80 +34,20 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   }
 
   /**
-   * Retrieves the student restrictions as raw data.
-   * It uses group by to get the count of a restriction for a user.
-   * This count is to validate against allowed count.
-   * TODO: Removed .having("count(*) > restriction.allowedCount"), which may cause unexpected results, need to adjust the logic.
-   * @param userId
-   * @returns Student restriction raw data.
-   */
-  async getStudentRestrictionsByUserId(
-    userId: number,
-  ): Promise<StudentRestrictionStatus> {
-    const result = await this.repo
-      .createQueryBuilder("studentRestrictions")
-      .select("restrictions.id", "restrictionId")
-      .addSelect("restrictions.restrictionType", "restrictionType")
-      .addSelect("count(*)", "restrictionCount")
-      .innerJoin("studentRestrictions.restriction", "restrictions")
-      .innerJoin("studentRestrictions.student", "student")
-      .innerJoin("student.user", "user")
-      .where("studentRestrictions.isActive = true")
-      .andWhere("user.id= :userId", {
-        userId,
-      })
-      .groupBy("studentRestrictions.student.id")
-      .addGroupBy("restrictions.id")
-      .addGroupBy("restrictions.restrictionType")
-      .getRawMany();
-
-    if (!result || result.length === 0) {
-      return {
-        hasRestriction: false,
-        hasFederalRestriction: false,
-        hasProvincialRestriction: false,
-        restrictionMessage: null,
-      } as StudentRestrictionStatus;
-    }
-    let restrictionMessage: string = null;
-    const hasFederalRestriction = result.some(
-      (item) => item.restrictionType === RestrictionType.Federal.toString(),
-    );
-
-    const hasProvincialRestriction = result.some(
-      (item) => item.restrictionType === RestrictionType.Provincial.toString(),
-    );
-
-    if (hasFederalRestriction) {
-      restrictionMessage = RESTRICTION_FEDERAL_MESSAGE;
-    }
-
-    if (hasProvincialRestriction) {
-      restrictionMessage = restrictionMessage
-        ? restrictionMessage + " " + RESTRICTION_PROVINCIAL_MESSAGE
-        : RESTRICTION_PROVINCIAL_MESSAGE;
-    }
-
-    return {
-      hasRestriction: true,
-      hasFederalRestriction: hasFederalRestriction,
-      hasProvincialRestriction: hasProvincialRestriction,
-      restrictionMessage: restrictionMessage,
-    } as StudentRestrictionStatus;
-  }
-
-  /**
    * Creates a 'select' query that could be used in an 'exists' or
    * 'not exists' where clause to define if the student has some
    * active restrictions that must prevent him for certain
    * critical operations, for instance, to have money disbursed.
    * ! This query will assume that a join to 'student.id' is present
    * ! in the master query.
-   * TODO: Removed .having("count(*) > restriction.allowedCount"), which may cause unexpected results, need to adjust the logic.
+   * @param restrictionAction restriction action type that needed to be checked.
    * @returns 'select' query that could be used in an 'exists' or
    * 'not exists'.
+   * TODO: TEST ECERT FILE ANN
    */
-  getExistsBlockRestrictionQuery(): SelectQueryBuilder<StudentRestriction> {
+  getExistsBlockRestrictionQuery(
+    restrictionAction: RestrictionActionType,
+  ): SelectQueryBuilder<StudentRestriction> {
     return this.repo
       .createQueryBuilder("studentRestrictions")
       .select("1")
@@ -115,6 +55,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .innerJoin("studentRestrictions.student", "restrictionStudent")
       .where("studentRestrictions.isActive = true")
       .andWhere("restrictionStudent.id = student.id")
+      .andWhere(":restrictionAction = ANY(restrictions.actionType)", {
+        restrictionAction,
+      })
       .groupBy("studentRestrictions.student.id")
       .addGroupBy("restrictions.id");
   }
@@ -148,15 +91,15 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
 
   /**
    * Get student restriction detail.
-   * @param studentId
-   * @param restrictionId
-   * @returns
+   * @param studentId student id.
+   * @param studentRestrictionId is optional.
+   * @returns Student Restriction details.
    */
   async getStudentRestrictionDetailsById(
     studentId: number,
-    studentRestrictionId: number,
+    studentRestrictionId?: number,
   ): Promise<StudentRestriction> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("studentRestrictions")
       .select([
         "studentRestrictions.id",
@@ -173,6 +116,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "restriction.restrictionCode",
         "restrictionNote.description",
         "resolutionNote.description",
+        "restriction.notificationType",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
       .leftJoin("studentRestrictions.creator", "creator")
@@ -180,18 +124,20 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .innerJoin("studentRestrictions.student", "student")
       .leftJoin("studentRestrictions.restrictionNote", "restrictionNote")
       .leftJoin("studentRestrictions.resolutionNote", "resolutionNote")
-      .where("student.id = :studentId", { studentId })
-      .andWhere("studentRestrictions.id = :studentRestrictionId", {
+      .where("student.id = :studentId", { studentId });
+    if (studentRestrictionId) {
+      query.andWhere("studentRestrictions.id = :studentRestrictionId", {
         studentRestrictionId,
-      })
-      .getOne();
+      });
+    }
+    return query.getOne();
   }
 
   /**
    * Add provincial restriction to student.
    * @param studentId
    * @param userId
-   * @param assignRestrictionDTO
+   * @param addStudentRestrictionDTO
    * @returns persisted student restriction.
    */
   async addProvincialRestriction(
@@ -270,18 +216,23 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     return this.repo.save(studentRestrictionEntity);
   }
   /**
+   * todo: ann update the code,  studentRestrictions can have multiple rows. use rawMany
    * The service function checks if the requested student has
    * the restricted restriction.
    * @param studentId student Id
    * @param restrictionActions list of restriction actions
+   * @param checkAll,is by default false, this decides if the all the
+   * elements in the restrictionActions should be checked (i.e checkAll = true)
+   * or any one of the element is to be checked (i.e checkAll = false).
    * @returns boolean, true if the restriction action is present
    * for the student, else false.
    */
-  async isRestrictionAction(
+  async isRestrictionActionExists(
     studentId: number,
-    restrictionActions: RestrictionActionType,
+    restrictionActions: RestrictionActionType[],
+    checkAll = false,
   ): Promise<boolean> {
-    const query = await this.repo
+    const query = this.repo
       .createQueryBuilder("studentRestrictions")
       .select("1")
       .innerJoin("studentRestrictions.restriction", "restrictions")
@@ -289,11 +240,16 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .where("studentRestrictions.isActive = true")
       .andWhere("student.id= :studentId", {
         studentId,
-      })
-      .andWhere(":restrictionActions = ANY(restrictions.actionType)", {
-        restrictionActions: restrictionActions,
-      })
-      .getRawOne();
-    return !!query;
+      });
+    if (checkAll) {
+      query.andWhere("restrictions.actionType @> :restrictionActions", {
+        restrictionActions,
+      });
+    } else {
+      query.andWhere("restrictions.actionType && :restrictionActions", {
+        restrictionActions,
+      });
+    }
+    return (await query.getRawMany()).length > 0;
   }
 }

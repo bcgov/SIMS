@@ -100,8 +100,10 @@ export default {
     const getStudentDetails = async () => {
       const studentRestriction =
         await StudentService.shared.getStudentRestriction();
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
+        
+      // TODO: BANNER RESTRICTION ANN
+      // hasRestriction.value = studentRestriction.hasRestriction;
+      // restrictionMessage.value = studentRestriction.restrictionMessage;
       if (props.editMode) {
         await getStudentInfo();
         const data: StudentFormData = {

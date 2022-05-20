@@ -223,8 +223,9 @@ export default {
     onMounted(async () => {
       const studentRestriction =
         await StudentService.shared.getStudentRestriction();
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
+      // TODO: BANNER RESTRICTION ANN
+      // hasRestriction.value = studentRestriction.hasRestriction;
+      // restrictionMessage.value = studentRestriction.restrictionMessage;
       await getApplicationDetails(props.id);
     });
 

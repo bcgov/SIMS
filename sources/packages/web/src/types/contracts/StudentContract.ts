@@ -2,6 +2,7 @@ import {
   AddressDetailsFormAPIDTO,
   ContactInformationAPIOutDTO,
 } from "@/services/http/dto";
+import { RestrictionNotificationType } from "./RestrictionContracts";
 
 export interface StudentContact extends AddressDetailsFormAPIDTO {
   phone: string;
@@ -40,13 +41,10 @@ export interface StudentApplication {
 }
 
 /**
- * DTO object which is returned by student restriction API.
+ * Student restriction notification type DTO.
  */
-export interface StudentRestrictionStatus {
-  hasRestriction: boolean;
-  hasFederalRestriction: boolean;
-  hasProvincialRestriction: boolean;
-  restrictionMessage: string;
+export interface StudentRestrictionNotificationTypeAPIOutDTO {
+  notificationType: RestrictionNotificationType;
 }
 
 /**

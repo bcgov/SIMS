@@ -25,12 +25,12 @@ import {
   StudentEducationProgramDto,
   SearchStudentRespDto,
   SaveStudentDto,
-  StudentRestrictionDTO,
   StudentDetailAPIOutDTO,
   StudentInfo,
+  StudentRestrictionNotificationTypeAPIOutDTO,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
-import { IUserToken } from "../../auth/userToken.interface";
+import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -397,25 +397,23 @@ export class StudentController extends BaseController {
   }
   /**
    * GET API which returns student restriction details.
-   * @param userToken
-   * @returns Student Restriction
+   * @param studentToken student token.
+   * @returns Student restriction notification type, if any.
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("restriction")
   async getStudentRestrictions(
-    @UserToken() userToken: IUserToken,
-  ): Promise<StudentRestrictionDTO> {
-    const studentRestrictionStatus =
-      await this.studentRestrictionService.getStudentRestrictionsByUserId(
-        userToken.userId,
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<StudentRestrictionNotificationTypeAPIOutDTO> {
+    // todo: ann  add new logic that will return array of error and code
+    //todo:  something like, [{'DE':'error}, {'DEE1: 'warning'}]
+    const studentRestriction =
+      await this.studentRestrictionService.getStudentRestrictionDetailsById(
+        studentToken.studentId,
       );
     return {
-      hasRestriction: studentRestrictionStatus.hasRestriction,
-      hasFederalRestriction: studentRestrictionStatus.hasFederalRestriction,
-      hasProvincialRestriction:
-        studentRestrictionStatus.hasProvincialRestriction,
-      restrictionMessage: studentRestrictionStatus.restrictionMessage,
-    } as StudentRestrictionDTO;
+      notificationType: studentRestriction?.restriction.notificationType,
+    };
   }
 
   /**
@@ -431,10 +429,11 @@ export class StudentController extends BaseController {
     @Param("studentId") studentId: number,
   ): Promise<StudentDetailAPIOutDTO> {
     const student = await this.studentService.findById(studentId);
-    const studentRestrictionStatus =
-      await this.studentRestrictionService.getStudentRestrictionsByUserId(
-        student.user.id,
-      );
+    // TODO:check there is alleast one restriction for a student, if orange banner. if not green.
+    // const studentRestrictionStatus =
+    //   await this.studentRestrictionService.getStudentRestrictionsByUserId(
+    //     student.user.id,
+    //   );
     const address = student.contactInfo.address ?? ({} as AddressInfo);
     return {
       firstName: student.user.firstName,
@@ -455,7 +454,8 @@ export class StudentController extends BaseController {
         phone: student.contactInfo.phone,
       },
       pdStatus: determinePDStatus(student),
-      hasRestriction: studentRestrictionStatus.hasRestriction,
+      // TODO: ASK ANDREW ABOUT THE AEST VIEW, WHEN NOTIFICATION TYPE IS ERROR, WARNING AND NO EFFECT.
+      hasRestriction: true,
     } as StudentDetailAPIOutDTO;
   }
 }

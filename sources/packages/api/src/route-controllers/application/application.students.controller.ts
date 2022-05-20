@@ -59,6 +59,7 @@ import {
 } from "@nestjs/swagger";
 import { ApplicationControllerService } from "./application.controller.service";
 import { RestrictionActionType } from "src/database/entities/restriction-action-type.type";
+const ACTIVE_STUDENT_RESTRICTION = "ACTIVE_STUDENT_RESTRICTION";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -137,39 +138,41 @@ export class ApplicationStudentsController extends BaseController {
   @ApiBadRequestResponse({ description: "Form validation failed." })
   @ApiNotFoundResponse({ description: "Application not found." })
   @ApiForbiddenResponse({
-    description:
-      "Student has a restriction which blocks student from submitting the application.",
+    description: "You have a restriction on your account.",
   })
   async submitApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    let isRestrictionAction = false;
+    let isRestrictionActionExists = false;
 
     if (
       payload.data.howWillYouBeAttendingTheProgram ===
       OfferingIntensity.fullTime
     ) {
-      isRestrictionAction =
-        await this.studentRestrictionService.isRestrictionAction(
+      isRestrictionActionExists =
+        await this.studentRestrictionService.isRestrictionActionExists(
           studentToken.studentId,
-          RestrictionActionType.StopFullTimeApply,
+          [RestrictionActionType.StopFullTimeApply],
         );
     }
     if (
       payload.data.howWillYouBeAttendingTheProgram ===
       OfferingIntensity.partTime
     ) {
-      isRestrictionAction =
-        await this.studentRestrictionService.isRestrictionAction(
+      isRestrictionActionExists =
+        await this.studentRestrictionService.isRestrictionActionExists(
           studentToken.studentId,
-          RestrictionActionType.StopPartTimeApply,
+          [RestrictionActionType.StopPartTimeApply],
         );
     }
-    if (isRestrictionAction) {
+    if (isRestrictionActionExists) {
       throw new ForbiddenException(
-        "Student has a restriction which blocks student from submitting the application.",
+        new ApiProcessError(
+          "You have a restriction on your account.",
+          ACTIVE_STUDENT_RESTRICTION,
+        ),
       );
     }
 
@@ -321,12 +324,15 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId") applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    const isRestrictionAction =
-      await this.studentRestrictionService.isRestrictionAction(
+    // todo: remove this code - only for testing
+    const isRestrictionActionExists =
+      await this.studentRestrictionService.isRestrictionActionExists(
         studentToken.studentId,
-        RestrictionActionType.StopPartTimeDisbursement,
+        [RestrictionActionType.StopPartTimeDisbursement],
+        true,
       );
-    console.log(isRestrictionAction);
+    console.log(isRestrictionActionExists);
+
     try {
       await this.applicationService.saveDraftApplication(
         studentToken.studentId,

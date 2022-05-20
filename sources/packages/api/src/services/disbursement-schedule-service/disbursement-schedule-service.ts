@@ -35,6 +35,7 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "../student-assessment/student-assessment.constants";
+import { RestrictionActionType } from "src/database/entities/restriction-action-type.type";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -168,6 +169,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   async getECertInformationToBeSent(
     offeringIntensity: OfferingIntensity,
   ): Promise<DisbursementSchedule[]> {
+    let possibleRestrictionAction =
+      RestrictionActionType.StopPartTimeDisbursement;
+    if (offeringIntensity === OfferingIntensity.fullTime) {
+      possibleRestrictionAction =
+        RestrictionActionType.StopFullTimeDisbursement;
+    }
     // Define the minimum date to send a disbursement.
     const disbursementMinDate = dayjs()
       .add(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS, "days")
@@ -233,7 +240,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       })
       .andWhere(
         `NOT EXISTS(${this.studentRestrictionService
-          .getExistsBlockRestrictionQuery()
+          .getExistsBlockRestrictionQuery(possibleRestrictionAction)
           .getSql()})`,
       )
       .andWhere("disbursement.coeStatus = :coeStatus", {

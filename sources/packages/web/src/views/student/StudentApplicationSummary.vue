@@ -131,8 +131,10 @@ export default {
 
     onMounted(async () => {
       const restrictions = await StudentService.shared.getStudentRestriction();
-      hasRestriction.value = restrictions.hasRestriction;
-      restrictionMessage.value = restrictions.restrictionMessage;
+      
+      // TODO: BANNER RESTRICTION ANN
+      // hasRestriction.value = restrictions.hasRestriction;
+      // restrictionMessage.value = restrictions.restrictionMessage;
     });
 
     return {

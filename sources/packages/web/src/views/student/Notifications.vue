@@ -16,16 +16,17 @@ import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 export default {
   components: { RestrictionBanner, CheckValidSINBanner },
   setup() {
-    const hasRestriction = ref(false);
+    // const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     onMounted(async () => {
       const studentRestriction =
         await StudentService.shared.getStudentRestriction();
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
+      // TODO: BANNER RESTRICTION ANN
+      // hasRestriction.value = studentRestriction.hasRestriction;
+      // restrictionMessage.value = studentRestriction.restrictionMessage;
     });
     return {
-      hasRestriction,
+      // hasRestriction,
       restrictionMessage,
     };
   },

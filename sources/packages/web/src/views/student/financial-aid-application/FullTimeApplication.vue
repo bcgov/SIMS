@@ -9,7 +9,7 @@
         <v-btn
           color="primary"
           class="mr-5"
-          v-if="!notDraft && !hasRestriction"
+          v-if="!notDraft"
           v-show="!isFirstPage && !submittingApplication"
           text
           :loading="savingDraft"
@@ -19,7 +19,7 @@
           >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
         >
         <v-btn
-          v-if="!isReadOnly && !hasRestriction"
+          v-if="!isReadOnly"
           :disabled="!isLastPage || submittingApplication"
           v-show="!isFirstPage"
           color="primary"
@@ -52,7 +52,7 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { ApplicationService } from "@/services/ApplicationService";
 import {
@@ -71,7 +71,10 @@ import {
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
-import { PIR_OR_DATE_OVERLAP_ERROR } from "@/constants";
+import {
+  PIR_OR_DATE_OVERLAP_ERROR,
+  ACTIVE_STUDENT_RESTRICTION,
+} from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
 export default {
@@ -110,7 +113,6 @@ export default {
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
     const notDraft = ref(false);
-    const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
@@ -128,6 +130,7 @@ export default {
         );
       }
     };
+
     onMounted(async () => {
       await checkProgramYear();
       //Get the student information, application information and student restriction.
@@ -137,8 +140,9 @@ export default {
           ApplicationService.shared.getApplicationData(props.id),
           StudentService.shared.getStudentRestriction(),
         ]);
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
+      // TODO: BANNER RESTRICTION ANN
+      // hasRestriction.value = studentRestriction.hasRestriction;
+      // restrictionMessage.value = studentRestriction.restrictionMessage;
       // Adjust the spaces when optional fields are not present.
       isReadOnly.value =
         [
@@ -221,6 +225,10 @@ export default {
             errorLabel = "Invalid submission";
             errorMsg = error.message;
           }
+          if (error.errorType === ACTIVE_STUDENT_RESTRICTION) {
+            errorLabel = "Active restriction!";
+            errorMsg = error.message;
+          }
         }
 
         toast.error(errorLabel, errorMsg);
@@ -283,7 +291,7 @@ export default {
       confirmEditApplication,
       editApplication,
       editApplicationModal,
-      hasRestriction,
+      // hasRestriction,
       restrictionMessage,
       pageChanged,
       isFirstPage,
