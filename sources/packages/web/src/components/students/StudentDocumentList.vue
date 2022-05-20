@@ -51,8 +51,9 @@
 <script lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { StudentService } from "@/services/StudentService";
-import { FileOriginType, StudentUploadFileAPIOutDTO } from "@/types";
+import { FileOriginType } from "@/types";
 import { useFileUtils } from "@/composables";
+import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default {
   props: {

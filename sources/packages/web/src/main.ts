@@ -34,7 +34,6 @@ import TabMenu from "primevue/tabmenu";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
 import { AppConfigService } from "./services/AppConfigService";
-import configValidationRules from "./validators/ValidatorConfigUI";
 import Timeline from "primevue/timeline";
 import Tooltip from "primevue/tooltip";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -102,9 +101,6 @@ library.add(
   faHandPaperSolid,
   faPlusCircleSolid,
 );
-
-// Configure the UI validations rules globally available.
-configValidationRules();
 
 AppConfigService.shared.init().then(() => {
   createApp(App)

@@ -1,5 +1,4 @@
 import ApiClient from "@/services/http/ApiClient";
-import Helper from "@/helpers/utilfunctions";
 import {
   StudentContact,
   CreateStudent,
@@ -7,16 +6,18 @@ import {
   StudentApplicationAndCount,
   StudentRestrictionStatus,
   SearchStudentResp,
-  StudentDetail,
   DataTableSortOrder,
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
+} from "@/types";
+import { useFormatters } from "@/composables";
+import {
+  AESTFileUploadToStudentAPIInDTO,
+  AESTStudentFileAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
-  AESTStudentFileAPIOutDTO,
-  AESTFileUploadToStudentAPIInDTO,
-} from "@/types";
+} from "./http/dto/Student.dto";
 
 export class StudentService {
   // Share Instance
@@ -39,20 +40,26 @@ export class StudentService {
     return studentContact;
   }
 
-  async getStudentInfo(): Promise<StudentFormInfo> {
-    const studentInfo = await ApiClient.Students.getStudentInfo();
+  /**
+   * Get the student information that represents the profile.
+   * @param studentId student id to retrieve the data. Required
+   * only when not logged as a student.
+   * @returns student profile details.
+   */
+  async getStudentProfile(studentId?: number): Promise<StudentFormInfo> {
+    const { dateOnlyLongString } = useFormatters();
+    const studentProfile = await ApiClient.Students.getStudentProfile(
+      studentId,
+    );
     const studentInfoAll = {
-      ...studentInfo,
-      //Formatting date received from api from 1998-03-24T00:00:00.000Z to March 24, 1998
-      birthDateFormatted: Helper.formatDate(studentInfo.dateOfBirth),
-      //Formatting date received from api from 1998-03-24T00:00:00.000Z to "1998-03-24"
-      birthDateFormatted2: Helper.formatDate2(studentInfo.dateOfBirth),
+      ...studentProfile,
+      birthDateFormatted: dateOnlyLongString(studentProfile.dateOfBirth),
     };
     return studentInfoAll;
   }
 
   /**
-   * Client method to call inorder to update the student
+   * Client method to call in order to update the student
    * information using the user information.
    */
   async synchronizeFromUserInfo(): Promise<void> {
@@ -115,15 +122,6 @@ export class StudentService {
   }
 
   /**
-   * Get student details of given student.
-   * @param studentId
-   * @returns StudentDetail
-   */
-  async getStudentDetail(studentId: number): Promise<StudentDetail> {
-    return ApiClient.Students.getStudentDetail(studentId);
-  }
-
-  /**
    * save student files from student form uploader.
    * @param studentFilesPayload
    */
@@ -142,14 +140,11 @@ export class StudentService {
    * @param studentId student to have the file saved.
    * @param payload list of files to be saved.
    */
-  async saveMinistryUploadedFilesToStudent(
+  async saveAESTUploadedFilesToStudent(
     studentId: number,
     payload: AESTFileUploadToStudentAPIInDTO,
   ): Promise<void> {
-    await ApiClient.Students.saveMinistryUploadedFilesToStudent(
-      studentId,
-      payload,
-    );
+    await ApiClient.Students.saveAESTUploadedFilesToStudent(studentId, payload);
   }
 
   /**

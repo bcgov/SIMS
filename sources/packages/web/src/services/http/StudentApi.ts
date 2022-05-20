@@ -1,19 +1,20 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
-  StudentInfo,
   StudentContact,
   CreateStudent,
   StudentRestrictionStatus,
   SearchStudentResp,
-  StudentDetail,
-  StudentFileUploaderAPIInDTO,
-  StudentUploadFileAPIOutDTO,
-  AESTStudentFileAPIOutDTO,
-  AESTFileUploadToStudentAPIInDTO,
 } from "@/types/contracts/StudentContract";
+import {
+  AESTFileUploadToStudentAPIInDTO,
+  AESTStudentFileAPIOutDTO,
+  StudentFileUploaderAPIInDTO,
+  StudentProfileAPIOutDTO,
+  StudentUploadFileAPIOutDTO,
+} from "./dto/Student.dto";
 
 export class StudentApi extends HttpBaseClient {
-  public async createStudent(studentProfile: CreateStudent): Promise<void> {
+  async createStudent(studentProfile: CreateStudent): Promise<void> {
     try {
       await this.apiClient.post(
         "students",
@@ -26,9 +27,7 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  public async updateStudentContact(
-    studentContact: StudentContact,
-  ): Promise<void> {
+  async updateStudentContact(studentContact: StudentContact): Promise<void> {
     try {
       await this.apiClient.patch(
         "students/contact",
@@ -41,7 +40,7 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  public async getContact(): Promise<StudentContact> {
+  async getContact(): Promise<StudentContact> {
     try {
       const studentContact = await this.apiClient.get(
         "students/contact",
@@ -54,14 +53,21 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  //Api call to get Student Data
-  public async getStudentInfo(): Promise<StudentInfo> {
-    const response = await this.getCall("students/studentInfo");
-    const studentInfo = response.data as StudentInfo;
-    return studentInfo;
+  /**
+   * Get the student information that represents the profile.
+   * @param studentId student id to retrieve the data. Required
+   * only when not logged as a student.
+   * @returns student profile details.
+   */
+  async getStudentProfile(
+    studentId?: number,
+  ): Promise<StudentProfileAPIOutDTO> {
+    return this.getCallTyped<StudentProfileAPIOutDTO>(
+      this.addClientRoot(`students/${studentId ?? ""}`),
+    );
   }
 
-  public async synchronizeFromUserInfo(): Promise<void> {
+  async synchronizeFromUserInfo(): Promise<void> {
     try {
       await this.apiClient.patch("students/sync", null, this.addAuthHeader());
     } catch (error) {
@@ -70,7 +76,7 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  public async applyForPDStatus(): Promise<void> {
+  async applyForPDStatus(): Promise<void> {
     try {
       return await this.apiClient.patch(
         "students/apply-pd-status",
@@ -83,7 +89,7 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  public async checkStudent(): Promise<boolean> {
+  async checkStudent(): Promise<boolean> {
     try {
       const result = await this.apiClient.get(
         "students/check-student",
@@ -100,7 +106,7 @@ export class StudentApi extends HttpBaseClient {
    * API client to call the student restriction rest API.
    * @returns student restriction(wrapped by promise)
    */
-  public async getStudentRestriction(): Promise<StudentRestrictionStatus> {
+  async getStudentRestriction(): Promise<StudentRestrictionStatus> {
     try {
       const response = await this.getCall("students/restriction");
       return response.data as StudentRestrictionStatus;
@@ -117,7 +123,7 @@ export class StudentApi extends HttpBaseClient {
    * @param lastName
    * @returns
    */
-  public async searchStudents(
+  async searchStudents(
     appNumber: string,
     firstName: string,
     lastName: string,
@@ -145,16 +151,6 @@ export class StudentApi extends HttpBaseClient {
   }
 
   /**
-   * API Client for student detail.
-   * @param studentId
-   * @returns
-   */
-  public async getStudentDetail(studentId: number): Promise<StudentDetail> {
-    const response = await this.getCall(`students/${studentId}/aest`);
-    return response.data as StudentDetail;
-  }
-
-  /**
    * save student files from student form uploader.
    * @param studentFilesPayload
    */
@@ -176,7 +172,7 @@ export class StudentApi extends HttpBaseClient {
    * @param studentId student to have the file saved.
    * @param payload list of files to be saved.
    */
-  async saveMinistryUploadedFilesToStudent(
+  async saveAESTUploadedFilesToStudent(
     studentId: number,
     payload: AESTFileUploadToStudentAPIInDTO,
   ): Promise<void> {

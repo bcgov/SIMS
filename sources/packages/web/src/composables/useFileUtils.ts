@@ -1,5 +1,5 @@
+import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 import { StudentService } from "@/services/StudentService";
-import { StudentUploadFileAPIOutDTO } from "@/types";
 
 /**
  * File helper methods.

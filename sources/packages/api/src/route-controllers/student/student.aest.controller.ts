@@ -25,6 +25,7 @@ import BaseController from "../BaseController";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
+  StudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -176,5 +177,24 @@ export class StudentAESTController extends BaseController {
       MINISTRY_FILE_UPLOAD_GROUP_NAME,
       sendFileUploadNotification,
     );
+  }
+
+  /**
+   * Get the student information that represents the profile.
+   * @param studentId student id to retrieve the data.
+   * @returns student profile details.
+   */
+  @Get(":studentId")
+  @ApiNotFoundResponse({ description: "Not able to find the student." })
+  async getStudentProfile(
+    @Param("studentId") studentId: number,
+  ): Promise<StudentProfileAPIOutDTO> {
+    const student = await this.studentControllerService.getStudentProfile(
+      studentId,
+    );
+    if (!student) {
+      throw new NotFoundException("Not able to find the student.");
+    }
+    return student;
   }
 }

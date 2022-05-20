@@ -1,21 +1,23 @@
 <template>
-  <v-container>
-    <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
-    <PDStatusApplicationModal ref="pdStatusApplicationModal" />
-    <RestrictionBanner
-      v-if="hasRestriction"
-      :restrictionMessage="restrictionMessage"
-    />
-    <CheckValidSINBanner />
-    <full-page-container>
-      <formio
-        formName="studentinformation"
-        :data="initialData"
-        @submitted="submitted"
-        @customEvent="showPDApplicationModal"
-      ></formio>
-    </full-page-container>
-  </v-container>
+  <full-page-container>
+    <template #header>
+      <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
+    </template>
+    <template #alerts>
+      <PDStatusApplicationModal ref="pdStatusApplicationModal" />
+      <RestrictionBanner
+        v-if="hasRestriction"
+        :restrictionMessage="restrictionMessage"
+      />
+      <CheckValidSINBanner />
+    </template>
+    <formio
+      formName="studentinformation"
+      :data="initialData"
+      @submitted="submitted"
+      @customEvent="showPDApplicationModal"
+    ></formio>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -31,14 +33,15 @@ import {
 } from "@/composables";
 import { StudentService } from "../../services/StudentService";
 import {
-  StudentInfo,
   StudentContact,
   StudentFormInfo,
+  StudentPDStatus,
 } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
+import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 enum FormModes {
   edit = "edit",
@@ -46,7 +49,7 @@ enum FormModes {
 }
 
 type StudentFormData = Pick<
-  StudentInfo,
+  StudentProfileAPIOutDTO,
   "firstName" | "lastName" | "gender" | "email"
 > &
   StudentContact & {
@@ -86,15 +89,12 @@ export default {
       if (hasStudentAccount) {
         // Avoid calling the API to get the student information if the
         // account is not created yet.
-        studentAllInfo.value = await StudentService.shared.getStudentInfo();
+        studentAllInfo.value = await StudentService.shared.getStudentProfile();
       }
     };
 
     const showPendingStatus = computed(
-      () =>
-        studentAllInfo.value.pdSentDate &&
-        studentAllInfo.value.pdUpdatedDate === null &&
-        studentAllInfo.value.pdVerified === null,
+      () => studentAllInfo.value.pdStatus === StudentPDStatus.Pending,
     );
 
     const getStudentDetails = async () => {
