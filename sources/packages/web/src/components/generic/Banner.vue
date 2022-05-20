@@ -5,12 +5,9 @@
     </template>
     <v-row>
       <v-col cols="10"
-        ><div class="float-left label-value-normal">{{ summary }}</div></v-col
+        ><div class="label-value-normal">{{ summary }}</div></v-col
       >
-      <v-col cols="2"
-        ><div class="pl-8">
-          <slot name="actions"></slot></div
-      ></v-col>
+      <v-col cols="2"><slot name="actions"></slot></v-col>
     </v-row>
   </v-alert>
 </template>
