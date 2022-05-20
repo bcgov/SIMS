@@ -63,53 +63,33 @@ export default abstract class HttpBaseClient {
   }
 
   /**
-   * Http post call to download a file as response from API.
-   * @param url
-   * @param payload
-   * @param fileMetaData
+   * Http call to download a file as response from API.
+   ** When payload is passed, the file is downloaded on post call
+   ** otherwise it is downloaded as get call.
+   * @param url url of the API.
+   * @param payload payload passed for post call.
    */
-  protected async downloadFileOnPost<T>(
-    url: string,
-    payload: T,
-    fileName: string,
-  ): Promise<void> {
+  protected async downloadFile<T>(url: string, payload?: T): Promise<void> {
     try {
       const requestConfig: AxiosRequestConfig = {
         ...this.addAuthHeader(),
         responseType: "blob",
       };
-      const response = await this.apiClient.post(
-        this.addClientRoot(url),
-        payload,
-        requestConfig,
-      );
-      this.downloadFile(response, fileName);
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  /**
-   * Http get call to download a file as response from API.
-   * @param url
-   * @param payload
-   * @param fileMetaData
-   */
-  protected async downloadFileOnGet(
-    url: string,
-    fileName: string,
-  ): Promise<void> {
-    try {
-      const requestConfig: AxiosRequestConfig = {
-        ...this.addAuthHeader(),
-        responseType: "blob",
-      };
-      const response = await this.apiClient.post(
-        this.addClientRoot(url),
-        requestConfig,
-      );
-      this.downloadFile(response, fileName);
+      let response = {} as AxiosResponse<any>;
+      if (payload) {
+        response = await this.apiClient.post(
+          this.addClientRoot(url),
+          payload,
+          requestConfig,
+        );
+      } else {
+        response = await this.apiClient.get(
+          this.addClientRoot(url),
+          requestConfig,
+        );
+      }
+      console.log(response.headers);
+      this.downloadAsBlob(response);
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -169,13 +149,11 @@ export default abstract class HttpBaseClient {
     }
   }
 
-  private downloadFile(response: AxiosResponse<any>, fileName: string) {
-    const linkURL = window.URL.createObjectURL(
-      new Blob([response.data], {
-        type: "text/csv",
-      }),
-    );
+  private downloadAsBlob(response: AxiosResponse<any>) {
+    const linkURL = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
+    const fileName =
+      response.headers["content-disposition"].split("filename=")[1];
     link.href = linkURL;
     link.setAttribute("download", fileName);
     document.body.appendChild(link);

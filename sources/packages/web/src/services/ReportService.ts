@@ -12,10 +12,7 @@ export class ReportService {
     return this.instance || (this.instance = new this());
   }
 
-  async exportReport(
-    payload: ReportsFilterAPIInDTO,
-    fileName: string,
-  ): Promise<void> {
-    await ApiClient.ReportApi.exportReport(payload, fileName);
+  async exportReport(payload: ReportsFilterAPIInDTO): Promise<void> {
+    await ApiClient.ReportApi.exportReport(payload);
   }
 }

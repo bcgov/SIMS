@@ -49,7 +49,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
 
   // TODO: Configure CORS to be as much restrictive as possible.
-  app.enableCors();
+  app.enableCors({ exposedHeaders: "Content-Disposition" });
 
   // Setting express middleware for req
   app.use(LoggerService.apiLogger);

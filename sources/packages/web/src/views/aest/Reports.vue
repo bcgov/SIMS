@@ -1,13 +1,13 @@
 <template>
   <full-page-container>
-    <template v-slot:header>
+    <template #header>
       <header-navigator title="Ministry" subTitle="Reports" />
     </template>
     <body-header title="Export financial reports" />
     <formio
       formName="exportfinancialreports"
       @loaded="formLoaded"
-      @submitted="exportCSVReport"
+      @submitted="exportReport"
     ></formio>
     <v-row class="justify-center m-4"
       ><v-btn color="primary" @click="submitForm">Export CSV file</v-btn></v-row
@@ -30,10 +30,10 @@ export default {
       return formData.submit();
     };
 
-    const exportCSVReport = async (data: ReportsFilterAPIInDTO) => {
-      await ReportService.shared.exportReport(data, data.reportName);
+    const exportReport = async (data: ReportsFilterAPIInDTO) => {
+      await ReportService.shared.exportReport(data);
     };
-    return { exportCSVReport, formLoaded, submitForm };
+    return { exportReport, formLoaded, submitForm };
   },
 };
 </script>
