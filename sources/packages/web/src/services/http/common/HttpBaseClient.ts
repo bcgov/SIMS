@@ -1,5 +1,5 @@
 import { AuthService } from "@/services/AuthService";
-import { AxiosError, AxiosRequestConfig } from "axios";
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import HttpClient from "./HttpClient";
 import { MINIMUM_TOKEN_VALIDITY } from "@/constants/system-constants";
 import { ApiProcessError, ClientIdType, ClientTypeBaseRoute } from "@/types";
@@ -62,6 +62,60 @@ export default abstract class HttpBaseClient {
     }
   }
 
+  /**
+   * Http post call to download a file as response from API.
+   * @param url
+   * @param payload
+   * @param fileMetaData
+   */
+  protected async downloadFileOnPost<T>(
+    url: string,
+    payload: T,
+    fileName: string,
+  ): Promise<void> {
+    try {
+      const requestConfig: AxiosRequestConfig = {
+        ...this.addAuthHeader(),
+        responseType: "blob",
+      };
+      const response = await this.apiClient.post(
+        this.addClientRoot(url),
+        payload,
+        requestConfig,
+      );
+      this.downloadFile(response, fileName);
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Http get call to download a file as response from API.
+   * @param url
+   * @param payload
+   * @param fileMetaData
+   */
+  protected async downloadFileOnGet(
+    url: string,
+    fileName: string,
+  ): Promise<void> {
+    try {
+      const requestConfig: AxiosRequestConfig = {
+        ...this.addAuthHeader(),
+        responseType: "blob",
+      };
+      const response = await this.apiClient.post(
+        this.addClientRoot(url),
+        requestConfig,
+      );
+      this.downloadFile(response, fileName);
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
   protected async patchCall<T>(url: string, payload: T): Promise<void> {
     try {
       await this.apiClient.patch(url, payload, this.addAuthHeader());
@@ -113,5 +167,18 @@ export default abstract class HttpBaseClient {
       default:
         return url;
     }
+  }
+
+  private downloadFile(response: AxiosResponse<any>, fileName: string) {
+    const linkURL = window.URL.createObjectURL(
+      new Blob([response.data], {
+        type: "text/csv",
+      }),
+    );
+    const link = document.createElement("a");
+    link.href = linkURL;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
   }
 }

@@ -18,21 +18,9 @@
 </template>
 
 <script lang="ts">
+import { ReportService } from "@/services/ReportService";
+import { ReportsFilterAPIInDTO } from "@/services/http/dto";
 export default {
-  props: {
-    studentId: {
-      type: Number,
-      required: true,
-    },
-    applicationId: {
-      type: Number,
-      required: true,
-    },
-    assessmentId: {
-      type: Number,
-      required: true,
-    },
-  },
   setup() {
     let formData: any = undefined;
 
@@ -44,8 +32,8 @@ export default {
       return formData.submit();
     };
 
-    const exportCSVReport = async (data: any) => {
-      console.log(data);
+    const exportCSVReport = async (data: ReportsFilterAPIInDTO) => {
+      await ReportService.shared.exportReport(data, data.reportName);
     };
     return { exportCSVReport, formLoaded, submitForm };
   },

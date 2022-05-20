@@ -13,7 +13,7 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
     super(connection.getRepository(ReportConfig));
   }
 
-  async exportFinancialReport(filter: ReportsFilterModel): Promise<any[]> {
+  async exportReport(filter: ReportsFilterModel): Promise<any[]> {
     const parameters = [];
     const filterParams = filter.params;
     const config = await this.getConfig(filter.reportName);

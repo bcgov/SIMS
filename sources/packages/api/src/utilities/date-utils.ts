@@ -15,6 +15,7 @@ dayjs.extend(dayOfYear);
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "YYYY MMM DD";
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
+export const DATE_TIME_CONTINUOUS_FORMAT = "YYYYMMDDHHmmss";
 
 /**
  * get utc date time now
@@ -199,3 +200,7 @@ export function getDateDifferenceInMonth(
 export const addDays = (date: Date | string, daysToAdd: number): Date => {
   return dayjs(date).add(daysToAdd, "day").toDate();
 };
+
+export function getDateTimeInContinuousFormat(date: Date): string {
+  return dayjs(date).format(DATE_TIME_CONTINUOUS_FORMAT);
+}

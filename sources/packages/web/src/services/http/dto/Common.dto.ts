@@ -40,3 +40,8 @@ export interface FileCreateAPIOutDTO {
   size: number;
   mimetype: string;
 }
+
+export interface FileDownloadDTO {
+  fileName: string;
+  mimeType: string;
+}

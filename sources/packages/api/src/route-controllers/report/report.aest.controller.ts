@@ -1,12 +1,20 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Res } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Response } from "express";
+import { Readable } from "stream";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ReportService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
-import { ReportsFilterAPIInDTO } from "./models/report.dto";
+import { StringBuilder } from "../../utilities/string-builder";
+import {
+  getDateOnlyFormat,
+  getDateTimeInContinuousFormat,
+} from "../../utilities";
 import BaseController from "../BaseController";
+import { ReportsFilterAPIInDTO } from "./models/report.dto";
+
 /**
  * Controller for Reports for AEST Client.
  * This consists of all Rest APIs for notes.
@@ -22,16 +30,43 @@ export class ReportAESTController extends BaseController {
 
   /**
    * Rest API to financial reports in csv format.
-   * @param studentId
-   * @param noteType Note type(General|Restriction|System Actions|Program) which is passed to filter the notes.
-   * @returns Student Notes.
+   * @param payload report filter payload.
+   * @param response
    */
 
   @Post()
-  async exportFinancialReport(
+  async exportReport(
     @Body() payload: ReportsFilterAPIInDTO,
-  ): Promise<any[]> {
-    const result = await this.reportService.exportFinancialReport(payload);
-    return result;
+    @Res() response: Response,
+  ): Promise<void> {
+    const reportData = await this.reportService.exportReport(payload);
+    const reportCSVContent = new StringBuilder();
+    const reportHeaders = Object.keys(reportData[0]);
+    reportCSVContent.appendLine(reportHeaders.join(","));
+
+    reportData.forEach((reportDataItem) => {
+      let dataItem = "";
+      reportHeaders.forEach((header, index) => {
+        const data =
+          reportDataItem[header] instanceof Date
+            ? getDateOnlyFormat(reportDataItem[header])
+            : reportDataItem[header];
+        dataItem += index ? `,${data}` : data;
+      });
+      reportCSVContent.appendLine(dataItem);
+    });
+    const timestamp = getDateTimeInContinuousFormat(new Date());
+    const filename = `${payload.reportName}${timestamp}.csv`;
+    response.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${filename}`,
+    );
+    response.setHeader("Content-Type", "text/csv");
+    response.setHeader("Content-Length", reportCSVContent.toString().length);
+
+    const stream = new Readable();
+    stream.push(reportCSVContent.toString());
+    stream.push(null);
+    stream.pipe(response);
   }
 }
