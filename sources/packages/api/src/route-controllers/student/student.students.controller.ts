@@ -64,6 +64,17 @@ export class StudentStudentsController extends BaseController {
   }
 
   /**
+   * Use the information available in the authentication token to update
+   * the user and student data currently on DB.
+   */
+  @Patch("/sync")
+  async synchronizeFromUserToken(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<void> {
+    await this.studentService.synchronizeFromUserToken(userToken);
+  }
+
+  /**
    * Gets all student documents uploaded to the student account.
    * @returns list of student documents.
    */

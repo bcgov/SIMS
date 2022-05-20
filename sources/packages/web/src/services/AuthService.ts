@@ -101,16 +101,15 @@ export class AuthService {
               "student/setStudentProfileData",
               this.keycloak,
             );
+
+            // If the student is present, just update the user data.
             const hasStudentAccount =
-              await StudentService.shared.checkStudent();
+              await StudentService.shared.synchronizeFromUserToken();
             await store.dispatch(
               "student/setHasStudentAccount",
               hasStudentAccount,
             );
-            if (hasStudentAccount) {
-              // If the student is present, just update the user data.
-              await StudentService.shared.synchronizeFromUserInfo();
-            } else {
+            if (!hasStudentAccount) {
               // If the student is not present, redirect to student profile
               // for account creation.
               this.priorityRedirect = {

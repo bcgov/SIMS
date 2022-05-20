@@ -114,26 +114,6 @@ export class StudentController extends BaseController {
     return studentInfo;
   }
 
-  /**
-   * Quick check to verify is there is an user
-   * and student associated with the token information.
-   * @param userToken authenticated user information.
-   * @returns true if the student exists, otherwise false.
-   */
-  @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("check-student")
-  async checkStudentExists(
-    @UserToken() userToken: IUserToken,
-  ): Promise<boolean> {
-    if (!userToken.userId) {
-      return false;
-    }
-    const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-    return !!student;
-  }
-
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("contact")
   async getContactInfo(
@@ -259,14 +239,6 @@ export class StudentController extends BaseController {
       ...submissionResult.data.data,
       sinNumber: payload.sinNumber,
     });
-  }
-
-  @AllowAuthorizedParty(AuthorizedParties.student)
-  @Patch("/sync")
-  async synchronizeFromUserInfo(
-    @UserToken() userToken: IUserToken,
-  ): Promise<void> {
-    await this.studentService.synchronizeFromUserInfo(userToken);
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)
