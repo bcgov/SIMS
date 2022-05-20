@@ -2,31 +2,18 @@ import {
   AddressDetailsFormAPIDTO,
   ContactInformationAPIOutDTO,
 } from "@/services/http/dto";
+import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export interface StudentContact extends AddressDetailsFormAPIDTO {
   phone: string;
 }
+
 export interface CreateStudent extends StudentContact {
   sinNumber?: string;
 }
-export interface StudentInfo {
-  firstName: string;
-  lastName: string;
-  gender: string;
-  email: string;
-  dateOfBirth: Date;
-  contact: ContactInformationAPIOutDTO;
-  pdVerified: boolean;
-  validSin: boolean;
-  sin: string;
-  pdSentDate: string;
-  pdUpdatedDate: string;
-  pdStatus: string;
-}
 
-export interface StudentFormInfo extends StudentInfo {
+export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;
-  birthDateFormatted2: string;
 }
 
 export interface StudentApplication {
@@ -92,49 +79,6 @@ export interface StudentDetail {
   pdVerified: boolean;
   validSin: boolean;
   pdStatus: string;
-  hasRestriction: boolean;
-}
-
-/**
- *  Student uploader interface
- */
-export interface StudentFileUploaderInfoAPIInDTO {
-  documentPurpose: string;
-  applicationNumber?: string;
-}
-
-/**
- *  Student uploader interface
- */
-export interface StudentFileUploaderAPIInDTO {
-  submittedForm: StudentFileUploaderInfoAPIInDTO;
-  associatedFiles: string[];
-}
-
-export interface AESTFileUploadToStudentAPIInDTO {
-  associatedFiles: string[];
-}
-
-/**
- *  Student uploaded documents (i.e, FileOriginType.Student documents).
- */
-export interface StudentUploadFileAPIOutDTO {
-  fileName: string;
-  uniqueFileName: string;
-  fileOrigin: FileOriginType;
-}
-
-/**
- *  AEST user to view student uploaded documents.
- */
-export interface AESTStudentFileAPIOutDTO extends StudentUploadFileAPIOutDTO {
-  metadata: StudentFileMetadataAPIOutDTO;
-  groupName: string;
-  updatedAt: Date;
-}
-
-export interface StudentFileMetadataAPIOutDTO {
-  applicationNumber?: string;
 }
 
 export enum FileOriginType {

@@ -29,7 +29,8 @@ import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
-import { StudentDetail, DesignationAndRestrictionStatus } from "@/types";
+import { DesignationAndRestrictionStatus } from "@/types";
+import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default {
   components: { DesignationAndRestrictionStatusBadge },
@@ -41,7 +42,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const studentDetails = ref({} as StudentDetail);
+    const studentDetails = ref({} as StudentProfileAPIOutDTO);
     // TODO: replace all fa icons with fas as per figma with replace with vuetify3
     const items = ref([
       {
@@ -104,7 +105,7 @@ export default {
     };
 
     onMounted(async () => {
-      studentDetails.value = await StudentService.shared.getStudentDetail(
+      studentDetails.value = await StudentService.shared.getStudentProfile(
         props.studentId,
       );
     });

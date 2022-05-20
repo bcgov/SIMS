@@ -16,6 +16,7 @@ export const COUNTRY_CANADA = "canada";
 export function transformAddressDetailsForAddressBlockForm(
   addressDetails: AddressInfo,
 ): AddressDetailsAPIOutDTO {
+  const selectedCountry = addressDetails.selectedCountry.toLowerCase();
   return {
     addressLine1: addressDetails.addressLine1,
     addressLine2: addressDetails.addressLine2,
@@ -24,17 +25,11 @@ export function transformAddressDetailsForAddressBlockForm(
     city: addressDetails.city,
     postalCode: addressDetails.postalCode,
     canadaPostalCode:
-      addressDetails.selectedCountry !== OTHER_COUNTRY
-        ? addressDetails.postalCode
-        : undefined,
+      selectedCountry !== OTHER_COUNTRY ? addressDetails.postalCode : undefined,
     otherPostalCode:
-      addressDetails.selectedCountry === OTHER_COUNTRY
-        ? addressDetails.postalCode
-        : undefined,
+      selectedCountry === OTHER_COUNTRY ? addressDetails.postalCode : undefined,
     selectedCountry: addressDetails.selectedCountry,
     otherCountry:
-      addressDetails.selectedCountry === OTHER_COUNTRY
-        ? addressDetails.country
-        : undefined,
+      selectedCountry === OTHER_COUNTRY ? addressDetails.country : undefined,
   };
 }

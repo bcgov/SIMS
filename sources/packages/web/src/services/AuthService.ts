@@ -117,7 +117,8 @@ export class AuthService {
               };
             } else {
               // Get the student info only if the student account is present.
-              const studentInfo = await StudentService.shared.getStudentInfo();
+              const studentInfo =
+                await StudentService.shared.getStudentProfile();
               await store.dispatch(
                 "student/setHasValidSIN",
                 useFormatters().parseSINValidStatus(studentInfo.validSin),

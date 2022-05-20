@@ -61,12 +61,20 @@ export class StudentService extends RecordDataModelService<Student> {
       .select([
         "student.id",
         "student.birthDate",
+        "student.gender",
+        "student.contactInfo",
+        "student.studentPDVerified",
+        "student.studentPDSentAt",
+        "student.studentPDUpdateAt",
+        "sinValidation.id",
+        "sinValidation.isValidSIN",
         "user.id",
         "user.firstName",
         "user.lastName",
         "user.email",
       ])
       .innerJoin("student.user", "user")
+      .leftJoin("student.sinValidation", "sinValidation")
       .where("student.id = :studentId", { studentId })
       .getOne();
   }

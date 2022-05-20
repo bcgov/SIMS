@@ -34,7 +34,6 @@ import TabMenu from "primevue/tabmenu";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
 import { AppConfigService } from "./services/AppConfigService";
-import configValidationRules from "./validators/ValidatorConfigUI";
 import Timeline from "primevue/timeline";
 import Tooltip from "primevue/tooltip";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -42,6 +41,7 @@ import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import Banner from "@/components/generic/Banner.vue";
 import formio from "@/components/generic/formio.vue";
 
 import {
@@ -102,9 +102,6 @@ library.add(
   faPlusCircleSolid,
 );
 
-// Configure the UI validations rules globally available.
-configValidationRules();
-
 AppConfigService.shared.init().then(() => {
   createApp(App)
     .use(vuetify)
@@ -137,6 +134,7 @@ AppConfigService.shared.init().then(() => {
     .component("ContentGroup", ContentGroup)
     .component("FullPageContainer", FullPageContainer)
     .component("HeaderNavigator", HeaderNavigator)
+    .component("Banner", Banner)
     .component("formio", formio)
     .directive("tooltip", Tooltip)
     .mount("#app");
