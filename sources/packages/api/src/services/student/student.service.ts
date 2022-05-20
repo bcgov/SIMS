@@ -169,11 +169,9 @@ export class StudentService extends RecordDataModelService<Student> {
   async synchronizeFromUserToken(
     studentToken: StudentUserToken,
   ): Promise<Student> {
-    const studentToSync = {
-      id: studentToken.studentId,
-      user: { id: studentToken.userId },
-    } as Student;
-
+    const studentToSync = await this.getStudentByUserName(
+      studentToken.userName,
+    );
     let mustSave = false;
     if (studentToken.givenNames === undefined) {
       studentToken.givenNames = null;

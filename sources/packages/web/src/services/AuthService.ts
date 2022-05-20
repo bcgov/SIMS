@@ -115,12 +115,14 @@ export class AuthService {
               this.priorityRedirect = {
                 name: StudentRoutesConst.STUDENT_PROFILE,
               };
+            } else {
+              // Get the student info only if the student account is present.
+              const studentInfo = await StudentService.shared.getStudentInfo();
+              await store.dispatch(
+                "student/setHasValidSIN",
+                useFormatters().parseSINValidStatus(studentInfo.validSin),
+              );
             }
-            const studentInfo = await StudentService.shared.getStudentInfo();
-            await store.dispatch(
-              "student/setHasValidSIN",
-              useFormatters().parseSINValidStatus(studentInfo.validSin),
-            );
             break;
           }
           case ClientIdType.Institution: {
