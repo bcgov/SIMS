@@ -377,7 +377,10 @@ export const aestRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.Reports,
         name: AESTRoutesConst.REPORTS,
-        component: Reports,
+        components: {
+          default: Reports,
+          sidebar: AESTHomeSideBar,
+        },
         meta: {
           clientType: ClientIdType.AEST,
         },

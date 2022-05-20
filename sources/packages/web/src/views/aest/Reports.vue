@@ -1,9 +1,7 @@
 <template>
-  <v-container>
-    <div class="mb-4">
-      <header-navigator title="Ministry" subTitle="Reports" />
-    </div>
-  </v-container>
+  <div>
+    <header-navigator title="Ministry" subTitle="Reports" />
+  </div>
   <full-page-container>
     <body-header title="Export financial reports" />
     <formio
