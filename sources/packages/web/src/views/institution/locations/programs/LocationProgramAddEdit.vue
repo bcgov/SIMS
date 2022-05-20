@@ -1,15 +1,24 @@
 <template>
-  <p class="muted-heading-text">
-    <a @click="goBack()">
-      <v-icon left> mdi-arrow-left </v-icon> Program detail</a
+  <header-navigator
+    title="Program detail"
+    :routeLocation="getRouteLocation"
+    :subTitle="getSubtitle"
+  >
+  </header-navigator>
+  <div class="mt-4 mb-2">
+    <banner
+      v-if="initialData.hasOfferings"
+      color="success"
+      header="Students have applied financial aid for this program"
+      summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you’d like to edit the other fields."
     >
-  </p>
-
-  <span class="heading-x-large">
-    <span v-if="isReadonly">View Program</span>
-    <span v-if="programId && !isReadonly">Edit Program</span>
-    <span v-if="!programId">Create New Program</span>
-  </span>
+      <template #actions>
+        <v-btn color="success" @click="createNewProgram()">
+          Create program
+        </v-btn>
+      </template>
+    </banner>
+  </div>
   <full-page-container class="mt-2">
     <formio
       formName="educationprogram"
@@ -32,6 +41,8 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types";
 import { useToastMessage } from "@/composables";
 import { AuthService } from "@/services/AuthService";
+
+import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 
 export default {
   props: {
@@ -60,11 +71,12 @@ export default {
       return isAESTUser.value;
     });
     // Data-bind
-    const initialData = ref({});
+    const initialData = ref({} as any);
+    let institution = {} as InstitutionDetailAPIOutDTO;
 
     const loadFormData = async () => {
       if (isInstitutionUser.value) {
-        const institution = await InstitutionService.shared.getDetail();
+        institution = await InstitutionService.shared.getDetail();
         if (props.programId) {
           const program = await EducationProgramService.shared.getProgram(
             props.programId,
@@ -74,9 +86,7 @@ export default {
             ...{ isBCPrivate: institution.isBCPrivate },
           };
         } else {
-          initialData.value = {
-            isBCPrivate: institution.isBCPrivate,
-          };
+          initNewFormData();
         }
       }
       if (isAESTUser.value) {
@@ -127,6 +137,49 @@ export default {
       }
     };
 
+    const getRouteLocation = computed(() => {
+      if (isInstitutionUser.value && props.programId) {
+        // in edit program mode
+        return {
+          name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+          params: {
+            programId: props.programId,
+            locationId: props.locationId,
+          },
+        };
+      } else if (isInstitutionUser.value && !props.programId) {
+        // in create program mode
+        return {
+          name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+          params: {
+            locationId: props.locationId,
+          },
+        };
+      } else if (isAESTUser.value) {
+        // in view program mode
+        return {
+          name: AESTRoutesConst.PROGRAM_DETAILS,
+          params: {
+            programId: props.programId,
+            institutionId: institutionId.value,
+            locationId: props.locationId,
+          },
+        };
+      }
+      return {};
+    });
+
+    const getSubtitle = computed(() => {
+      if (isReadonly.value) {
+        return "View Program";
+      } else if (props.programId && !isReadonly.value) {
+        return "Edit Program";
+      } else if (!props?.programId) {
+        return "Create New Program";
+      }
+      return "";
+    });
+
     const submitted = async (data: any) => {
       if (isInstitutionUser.value) {
         try {
@@ -155,11 +208,35 @@ export default {
         }
       }
     };
+
+    const createNewProgram = () => {
+      initialData.value = {};
+      initNewFormData();
+      router.push({
+        name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
+        params: {
+          locationId: props.locationId,
+        },
+      });
+    };
+
+    const initNewFormData = () => {
+      initialData.value = {
+        isBCPrivate: institution.isBCPrivate,
+        hasOfferings: false,
+      };
+    };
+
     return {
       initialData,
       submitted,
       isReadonly,
       goBack,
+      InstitutionRoutesConst,
+      createNewProgram,
+      institution,
+      getRouteLocation,
+      getSubtitle,
     };
   },
 };

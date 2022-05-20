@@ -28,8 +28,13 @@ import {
   ProgramsSummary,
   DeclineProgram,
   ApproveProgram,
+  EducationProgramAPIOutDTO,
 } from "./models/save-education-program.dto";
-import { EducationProgramService, FormService } from "../../services";
+import {
+  EducationProgramOfferingService,
+  EducationProgramService,
+  FormService,
+} from "../../services";
 import { FormNames } from "../../services/form/constants";
 import {
   SaveEducationProgram,
@@ -57,6 +62,7 @@ export class EducationProgramController extends BaseController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
+    private readonly educationProgramOfferingService: EducationProgramOfferingService,
   ) {
     super();
   }
@@ -126,7 +132,6 @@ export class EducationProgramController extends BaseController {
       id,
       userToken.authorizations.institutionId,
     );
-
     if (!program) {
       throw new NotFoundException("Not able to find the requested program.");
     }
@@ -281,11 +286,19 @@ export class EducationProgramController extends BaseController {
   async getProgram(
     @Param("id") id: number,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<EducationProgramDto> {
-    const program = await this.programService.getInstitutionProgram(
+  ): Promise<EducationProgramAPIOutDTO> {
+    const programRequest = this.programService.getInstitutionProgram(
       id,
       userToken.authorizations.institutionId,
     );
+
+    const hasOfferings =
+      this.educationProgramOfferingService.hasExistingOffering(id);
+
+    const [program, hasOfferingsResponse] = await Promise.all([
+      programRequest,
+      hasOfferings,
+    ]);
 
     if (!program) {
       throw new NotFoundException("Not able to find the requested program.");
@@ -331,6 +344,7 @@ export class EducationProgramController extends BaseController {
       hasIntlExchange: program.hasIntlExchange,
       intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
       programDeclaration: program.programDeclaration,
+      hasOfferings: hasOfferingsResponse,
     };
   }
 
