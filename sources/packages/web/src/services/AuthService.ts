@@ -13,8 +13,9 @@ import {
   StudentRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
-import { StudentService } from "./StudentService";
-import { useFormatters } from "@/composables";
+import { StudentService } from "@/services/StudentService";
+import { useStudentStore } from "@/composables";
+
 /**
  * Manages the KeyCloak initialization and authentication methods.
  */
@@ -97,32 +98,18 @@ export class AuthService {
         );
         switch (clientType) {
           case ClientIdType.Student: {
-            await store.dispatch(
-              "student/setStudentProfileData",
-              this.keycloak,
-            );
-
-            // If the student is present, just update the user data.
+            const studentStore = useStudentStore(store);
             const hasStudentAccount =
               await StudentService.shared.synchronizeFromUserToken();
-            await store.dispatch(
-              "student/setHasStudentAccount",
-              hasStudentAccount,
-            );
-            if (!hasStudentAccount) {
+            studentStore.setHasStudentAccount(hasStudentAccount);
+            if (hasStudentAccount) {
+              await studentStore.updateProfileData();
+            } else {
               // If the student is not present, redirect to student profile
               // for account creation.
               this.priorityRedirect = {
                 name: StudentRoutesConst.STUDENT_PROFILE,
               };
-            } else {
-              // Get the student info only if the student account is present.
-              const studentInfo =
-                await StudentService.shared.getStudentProfile();
-              await store.dispatch(
-                "student/setHasValidSIN",
-                useFormatters().parseSINValidStatus(studentInfo.validSin),
-              );
             }
             break;
           }

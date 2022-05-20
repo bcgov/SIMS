@@ -1,39 +1,15 @@
 import { MutationTree } from "vuex";
+import { StudentFormInfo } from "@/types";
+import { StudentState } from "./student";
+import { useFormatters } from "@/composables";
 
-import {
-  InstitutionLocationState,
-  AuthorizationsForStore,
-  LocationStateForStore,
-  UserStateForStore,
-  InstitutionStateForStore,
-} from "@/types";
-
-export const mutations: MutationTree<InstitutionLocationState> = {
-  setInstitutionDetails(
-    state: InstitutionLocationState,
-    institutionState: InstitutionStateForStore,
-  ) {
-    state.institutionState = institutionState;
+export const mutations: MutationTree<StudentState> = {
+  updateProfileData(state: StudentState, student: StudentFormInfo) {
+    const formatters = useFormatters();
+    state.sinValidStatus = formatters.parseSINValidStatus(student.validSin);
   },
 
-  setMyDetailsState(
-    state: InstitutionLocationState,
-    userState: UserStateForStore,
-  ) {
-    state.userState = userState;
-  },
-
-  setMyAuthorizationState(
-    state: InstitutionLocationState,
-    authorizationsState: AuthorizationsForStore,
-  ) {
-    state.authorizationsState = authorizationsState;
-  },
-
-  setMyInstitutionLocationsDetailsState(
-    state: InstitutionLocationState,
-    locationState: LocationStateForStore[],
-  ) {
-    state.locationState = locationState;
+  setHasStudentAccount(state: StudentState, hasStudentAccount: boolean) {
+    state.hasStudentAccount = hasStudentAccount;
   },
 };

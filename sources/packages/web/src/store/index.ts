@@ -1,6 +1,6 @@
 import { createStore, StoreOptions } from "vuex";
-import { student } from "./modules/student/student";
-import { institution } from "./modules/institution/institution";
+import { student } from "@/store/modules/student/student";
+import { institution } from "@/store/modules/institution/institution";
 
 export interface RootState {
   version: string;

@@ -12,16 +12,14 @@ import {
   DEFAULT_PAGE_NUMBER,
 } from "@/types";
 import { useFormatters } from "@/composables";
+import { ApiProcessError } from "@/types";
+import { MISSING_STUDENT_ACCOUNT } from "./http/StudentApi";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
-  AESTStudentFileAPIOutDTO,
-  AESTFileUploadToStudentAPIInDTO,
-  ApiProcessError,
-} from "@/types";
-import { MISSING_STUDENT_ACCOUNT } from "./http/StudentApi";
+} from "./http/dto/Student.dto";
 
 export class StudentService {
   // Share Instance
