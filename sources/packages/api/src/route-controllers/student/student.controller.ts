@@ -454,8 +454,8 @@ export class StudentController extends BaseController {
         phone: student.contactInfo.phone,
       },
       pdStatus: determinePDStatus(student),
-      // TODO: ASK ANDREW ABOUT THE AEST VIEW, WHEN NOTIFICATION TYPE IS ERROR, WARNING AND NO EFFECT.
-      hasRestriction: true,
+      // TODO:check there is alleast one restriction for a student, if orange banner. if not green.
+      // hasRestriction: true,
     } as StudentDetailAPIOutDTO;
   }
 }
