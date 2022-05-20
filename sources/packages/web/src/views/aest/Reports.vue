@@ -18,8 +18,10 @@
 <script lang="ts">
 import { ReportService } from "@/services/ReportService";
 import { ReportsFilterAPIInDTO } from "@/services/http/dto";
+import { useToastMessage } from "@/composables";
 export default {
   setup() {
+    const toast = useToastMessage();
     let formData: any = undefined;
 
     const formLoaded = (form: any) => {
@@ -31,7 +33,14 @@ export default {
     };
 
     const exportReport = async (data: ReportsFilterAPIInDTO) => {
-      await ReportService.shared.exportReport(data);
+      try {
+        await ReportService.shared.exportReport(data);
+      } catch (error: unknown) {
+        toast.error(
+          "Unexpected error",
+          "Unexpected error while downloading the report.",
+        );
+      }
     };
     return { exportReport, formLoaded, submitForm };
   },

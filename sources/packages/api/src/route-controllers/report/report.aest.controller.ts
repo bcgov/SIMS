@@ -22,6 +22,7 @@ import { StringBuilder } from "../../utilities/string-builder";
 import {
   getDateOnlyFormat,
   getDateTimeInContinuousFormat,
+  CustomNamedError,
 } from "../../utilities";
 import BaseController from "../BaseController";
 import { ReportsFilterAPIInDTO } from "./models/report.dto";
@@ -30,7 +31,6 @@ import {
   REPORT_CONFIG_NOT_FOUND,
   FILTER_PARAMS_MISMATCH,
 } from "../../services/report/constants";
-import { CustomNamedError } from "../../utilities";
 
 /**
  * Controller for Reports for AEST Client.
