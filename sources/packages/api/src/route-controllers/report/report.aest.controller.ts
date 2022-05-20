@@ -20,8 +20,8 @@ import { ReportService, FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { StringBuilder } from "../../utilities/string-builder";
 import {
-  getDateOnlyFormat,
-  getDateTimeInContinuousFormat,
+  getDateOnlyFormatAsString,
+  getFileNameTimestamp,
   CustomNamedError,
 } from "../../utilities";
 import BaseController from "../BaseController";
@@ -107,7 +107,7 @@ export class ReportAESTController extends BaseController {
       reportHeaders.forEach((header, index) => {
         const data =
           reportDataItem[header] instanceof Date
-            ? getDateOnlyFormat(reportDataItem[header])
+            ? getDateOnlyFormatAsString(reportDataItem[header])
             : reportDataItem[header];
         dataItem += index ? `,${data}` : data;
       });
@@ -116,13 +116,19 @@ export class ReportAESTController extends BaseController {
     this.streamFile(response, payload.reportName, reportCSVContent.toString());
   }
 
+  /**
+   * Stream file as downloadable response.
+   * @param response
+   * @param reportName report name.
+   * @param fileContent content of the file.
+   */
   private streamFile(
     response: Response,
     reportName: string,
     fileContent: string,
   ) {
-    const timestamp = getDateTimeInContinuousFormat(new Date());
-    const filename = `${reportName}${timestamp}.csv`;
+    const timestamp = getFileNameTimestamp();
+    const filename = `${reportName}_${timestamp}.csv`;
     response.setHeader(
       "Content-Disposition",
       `attachment; filename=${filename}`,

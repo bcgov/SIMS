@@ -14,6 +14,12 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
     super(connection.getRepository(ReportConfig));
   }
 
+  /**
+   * Extract the raw data through the dynamic query retrieved from reports config
+   * and translate the dynamic query with arguments built using filter param payload.
+   * @param filter
+   * @returns report raw data.
+   */
   async exportReport(filter: ReportsFilterModel): Promise<any[]> {
     const parameters = [];
     const filterParams = filter.params;

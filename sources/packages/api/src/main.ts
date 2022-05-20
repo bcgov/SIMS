@@ -49,6 +49,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
 
   // TODO: Configure CORS to be as much restrictive as possible.
+  //TODO: Check for potential security threats in exposing the content-disposition header.
   app.enableCors({ exposedHeaders: "Content-Disposition" });
 
   // Setting express middleware for req
