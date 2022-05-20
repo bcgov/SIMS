@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <header-navigator title="Ministry" subTitle="Reports" />
-  </div>
   <full-page-container>
+    <template v-slot:header>
+      <header-navigator title="Ministry" subTitle="Reports" />
+    </template>
     <body-header title="Export financial reports" />
     <formio
       formName="exportfinancialreports"
