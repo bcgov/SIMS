@@ -16,7 +16,7 @@ export const COUNTRY_CANADA = "canada";
 export function transformAddressDetailsForAddressBlockForm(
   addressDetails: AddressInfo,
 ): AddressDetailsAPIOutDTO {
-  const selectedCountry = addressDetails.selectedCountry.toLowerCase();
+  const selectedCountry = addressDetails.selectedCountry?.toLowerCase();
   return {
     addressLine1: addressDetails.addressLine1,
     addressLine2: addressDetails.addressLine2,
