@@ -4,7 +4,6 @@ import {
   ProgramIntensity,
   ProgramDeliveryTypes,
 } from "@/types";
-import { number } from "yup";
 
 /**
  * Valid Intensity of the Offerings.
