@@ -62,11 +62,23 @@ export default abstract class HttpBaseClient {
     }
   }
 
-  protected async patchCall<T>(url: string, payload: T): Promise<void> {
+  /**
+   * Executes a HTTP request using a PATCH verb including the authentication token.
+   * @param url API endpoint URI.
+   * @param payload data to be sent.
+   * @param suppressErrorHandler optionally skip the global error handling.
+   */
+  protected async patchCall<T>(
+    url: string,
+    payload: T,
+    suppressErrorHandler = false,
+  ): Promise<void> {
     try {
       await this.apiClient.patch(url, payload, this.addAuthHeader());
     } catch (error) {
-      this.handleRequestError(error);
+      if (!suppressErrorHandler) {
+        this.handleRequestError(error);
+      }
       throw error;
     }
   }

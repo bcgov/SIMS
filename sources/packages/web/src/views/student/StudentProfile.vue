@@ -4,7 +4,6 @@
       <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
     </template>
     <template #alerts>
-      <PDStatusApplicationModal ref="pdStatusApplicationModal" />
       <RestrictionBanner
         v-if="hasRestriction"
         :restrictionMessage="restrictionMessage"
@@ -18,12 +17,12 @@
       @customEvent="showPDApplicationModal"
     ></formio>
   </full-page-container>
+  <PDStatusApplicationModal max-width="600" ref="pdStatusApplicationModal" />
 </template>
 
 <script lang="ts">
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 import {
   ModalDialog,
   useToastMessage,
@@ -31,7 +30,6 @@ import {
   useFormatters,
   useStudentStore,
 } from "@/composables";
-import { StudentService } from "../../services/StudentService";
 import {
   StudentContact,
   StudentFormInfo,
@@ -41,6 +39,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
+import { StudentService } from "@/services/StudentService";
 import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 enum FormModes {
@@ -72,7 +71,6 @@ export default {
     },
   },
   setup(props: any) {
-    const store = useStore();
     const router = useRouter();
     const toast = useToastMessage();
     const showApplyPDButton = ref();
@@ -80,13 +78,13 @@ export default {
     const studentAllInfo = ref({} as StudentFormInfo);
     const { bcscParsedToken } = useAuthBCSC();
     const { dateOnlyLongString } = useFormatters();
-    const { hasStudentAccount } = useStudentStore();
+    const studentStore = useStudentStore();
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
 
     const getStudentInfo = async () => {
-      if (hasStudentAccount) {
+      if (studentStore.hasStudentAccount.value) {
         // Avoid calling the API to get the student information if the
         // account is not created yet.
         studentAllInfo.value = await StudentService.shared.getStudentProfile();
@@ -160,7 +158,8 @@ export default {
           );
         } else {
           await StudentService.shared.createStudent(args);
-          await store.dispatch("student/setHasStudentAccount", true);
+          await studentStore.setHasStudentAccount(true);
+          await studentStore.updateProfileData();
           toast.success("Student created", "Student was successfully created!");
         }
         router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
