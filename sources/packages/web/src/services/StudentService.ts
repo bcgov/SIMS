@@ -13,7 +13,7 @@ import {
   ApiProcessError,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { MISSING_STUDENT_ACCOUNT } from "./http/StudentApi";
+import { MISSING_STUDENT_ACCOUNT } from "@/services/http/StudentApi";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,

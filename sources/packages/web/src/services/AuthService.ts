@@ -101,7 +101,7 @@ export class AuthService {
             const studentStore = useStudentStore(store);
             const hasStudentAccount =
               await StudentService.shared.synchronizeFromUserToken();
-            studentStore.setHasStudentAccount(hasStudentAccount);
+            await studentStore.setHasStudentAccount(hasStudentAccount);
             if (hasStudentAccount) {
               await studentStore.updateProfileData();
             } else {

@@ -172,7 +172,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * Use the information available in the authentication token to update
    * the user and student data currently on DB.
    * @param studentToken student authentication token.
-   * @returns updated student, if something data was changed.
+   * @returns updated student, if some data was changed.
    */
   async synchronizeFromUserToken(
     studentToken: StudentUserToken,
