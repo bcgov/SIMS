@@ -168,49 +168,6 @@ export class StudentController extends BaseController {
     };
   }
 
-  /**
-   * Creates the student checking for an existing user to be used or
-   * creating a new one in case the user id is not provided.
-   * The user could be already available in the case of the same user
-   * was authenticated previously on another portal (e.g. parent/partner).
-   * @param payload information needed to create/update the user.
-   * @param userToken authenticated user information.
-   */
-  @AllowAuthorizedParty(AuthorizedParties.student)
-  @Post()
-  async create(
-    @UserToken() userToken: IUserToken,
-    @Body() payload: SaveStudentDto,
-  ): Promise<void> {
-    if (userToken.userId) {
-      // If the user already exists, verify if there is already a student
-      // associated with the existing user.
-      const existingStudent = await this.studentService.getStudentByUserId(
-        userToken.userId,
-      );
-      if (existingStudent) {
-        throw new UnprocessableEntityException(
-          "There is already a student associated with the user.",
-        );
-      }
-    }
-
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentInformation,
-      payload,
-    );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to create a student due to an invalid request.",
-      );
-    }
-
-    await this.studentService.createStudent(userToken, {
-      ...submissionResult.data.data,
-      sinNumber: payload.sinNumber,
-    });
-  }
-
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch("/sync")
   async synchronizeFromUserInfo(

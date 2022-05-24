@@ -12,7 +12,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { StudentUserToken } from "../../auth/userToken.interface";
+import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -22,12 +22,14 @@ import {
 import {
   ApplicationService,
   APPLICATION_NOT_FOUND,
+  FormService,
   GCNotifyActionsService,
   StudentFileService,
   StudentService,
 } from "../../services";
 import BaseController from "../BaseController";
 import {
+  CreateStudentAPIInDTO,
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
@@ -44,6 +46,7 @@ import {
 } from "../../utilities";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
+import { FormNames } from "../../services/form/constants";
 
 /**
  * Student controller for Student Client.
@@ -60,8 +63,52 @@ export class StudentStudentsController extends BaseController {
     private readonly gcNotifyActionsService: GCNotifyActionsService,
     private readonly applicationService: ApplicationService,
     private readonly studentService: StudentService,
+    private readonly formService: FormService,
   ) {
     super();
+  }
+
+  /**
+   * Creates the student checking for an existing user to be used or
+   * creating a new one in case the user id is not provided.
+   * The user could be already available in the case of the same user
+   * was authenticated previously on another portal (e.g. parent/partner).
+   * @param payload information needed to create/update the user.
+   * @param userToken authenticated user information.
+   */
+  @Post()
+  @RequiresStudentAccount(false)
+  async create(
+    @UserToken() userToken: IUserToken,
+    @Body() payload: CreateStudentAPIInDTO,
+  ): Promise<void> {
+    if (userToken.userId) {
+      // If the user already exists, verify if there is already a student
+      // associated with the existing user.
+      const existingStudent = await this.studentService.getStudentByUserId(
+        userToken.userId,
+      );
+      if (existingStudent) {
+        throw new UnprocessableEntityException(
+          "There is already a student associated with the user.",
+        );
+      }
+    }
+
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.StudentInformation,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to create a student due to an invalid request.",
+      );
+    }
+
+    await this.studentService.createStudent(userToken, {
+      ...submissionResult.data.data,
+      sinNumber: payload.sinNumber,
+    });
   }
 
   /**

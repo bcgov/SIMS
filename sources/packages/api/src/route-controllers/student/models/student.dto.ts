@@ -34,7 +34,7 @@ export class GetStudentContactDto {
  * they are going to be handled by the
  * Form.IO dryRun validation.
  */
-export interface SaveStudentDto extends AddressDetailsAPIInDTO {
+export interface CreateStudentAPIInDTO extends AddressDetailsAPIInDTO {
   phone: string;
   /**
    * SIN is optional during update.
