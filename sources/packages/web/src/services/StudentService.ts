@@ -10,9 +10,9 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
+  ApiProcessError,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { ApiProcessError } from "@/types";
 import { MISSING_STUDENT_ACCOUNT } from "./http/StudentApi";
 import {
   AESTFileUploadToStudentAPIInDTO,

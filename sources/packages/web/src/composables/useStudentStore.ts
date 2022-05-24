@@ -16,8 +16,8 @@ export function useStudentStore(rootStore?: Store<any>) {
     await store.dispatch("student/updateProfileData");
   };
 
-  const setHasStudentAccount = async (hasStudentAccount: boolean) => {
-    await store.dispatch("student/setHasStudentAccount", hasStudentAccount);
+  const setHasStudentAccount = async (hasAccount: boolean) => {
+    await store.dispatch("student/setHasStudentAccount", hasAccount);
   };
 
   return {
