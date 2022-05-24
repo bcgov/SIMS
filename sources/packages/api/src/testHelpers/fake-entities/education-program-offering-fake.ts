@@ -21,15 +21,14 @@ export function createFakeEducationProgramOffering(
   offering.exceptionalExpenses = faker.random.number(1000);
   offering.tuitionRemittanceRequestedAmount = faker.random.number(1000);
   offering.offeringDelivered = "offeringDelivered";
-  offering.lacksStudyDates = true;
   offering.lacksStudyBreaks = true;
-  offering.lacksFixedCosts = true;
   offering.tuitionRemittanceRequested = "tuitionRemittanceRequested";
   offering.educationProgram = program ?? createFakeEducationProgram();
   offering.institutionLocation = institutionLocation ?? createFakeLocation();
   offering.offeringIntensity = OfferingIntensity.fullTime;
   offering.offeringType = OfferingTypes.Public;
   offering.yearOfStudy = 1;
+  offering.courseLoad = 45;
   offering.hasOfferingWILComponent = "no";
   offering.offeringDeclaration = true;
   return offering;
