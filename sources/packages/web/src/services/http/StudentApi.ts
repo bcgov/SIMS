@@ -13,6 +13,8 @@ import {
   StudentUploadFileAPIOutDTO,
 } from "./dto/Student.dto";
 
+export const MISSING_STUDENT_ACCOUNT = "MISSING_STUDENT_ACCOUNT";
+
 export class StudentApi extends HttpBaseClient {
   async createStudent(studentProfile: CreateStudent): Promise<void> {
     try {
@@ -67,12 +69,17 @@ export class StudentApi extends HttpBaseClient {
     );
   }
 
-  async synchronizeFromUserInfo(): Promise<void> {
+  /**
+   * Use the information available in the authentication token to update
+   * the user and student data currently on DB.
+   * If the user account does not exists an API custom error will be returned
+   * from the API with the error code MISSING_STUDENT_ACCOUNT.
+   */
+  public async synchronizeFromUserToken(): Promise<void> {
     try {
-      await this.apiClient.patch("students/sync", null, this.addAuthHeader());
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
+      await this.patchCall(this.addClientRoot("students/sync"), null, true);
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
     }
   }
 
@@ -83,19 +90,6 @@ export class StudentApi extends HttpBaseClient {
         null,
         this.addAuthHeader(),
       );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  async checkStudent(): Promise<boolean> {
-    try {
-      const result = await this.apiClient.get(
-        "students/check-student",
-        this.addAuthHeader(),
-      );
-      return result?.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
