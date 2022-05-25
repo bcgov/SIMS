@@ -257,7 +257,7 @@ export class EducationProgramOffering extends RecordDataModel {
     name: "course_load",
     nullable: true,
   })
-  courseLoad: number;
+  courseLoad?: number;
 }
 
 /**
