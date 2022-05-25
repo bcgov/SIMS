@@ -85,9 +85,8 @@ export default abstract class HttpBaseClient {
           payload,
           requestConfig,
         );
-      } else {
-        return this.apiClient.get(this.addClientRoot(url), requestConfig);
       }
+      return this.apiClient.get(this.addClientRoot(url), requestConfig);
     } catch (error) {
       this.handleRequestError(error);
       throw error;

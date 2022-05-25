@@ -92,7 +92,7 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
     if (!reportData || reportData.length === 0) {
       return "No data found.";
     }
-    //The report data as array of dynamic json object is transformed into CSV string content to
+    //The report data as array of dynamic object is transformed into CSV string content to
     //to be streamed as CSV file. Keys of first array item used to form the header line of CSV string.
     const reportCSVContent = new StringBuilder();
     const reportHeaders = Object.keys(reportData[0]);
