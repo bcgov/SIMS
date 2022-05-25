@@ -40,7 +40,7 @@ export interface SaveOfferingModel {
   submittedDate?: Date;
   offeringStatus: OfferingStatus;
   offeringType: OfferingTypes;
-  courseLoad: number;
+  courseLoad?: number;
 }
 
 /**

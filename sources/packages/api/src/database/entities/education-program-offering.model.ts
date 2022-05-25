@@ -255,6 +255,7 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "course_load",
+    type: "smallint",
     nullable: true,
   })
   courseLoad?: number;

@@ -7,7 +7,7 @@ export class CleanEducationProgramsOfferingAddRemoveCol1653426773707
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Clean-education-programs-offering.sql",
+        "Add-course-load-and-cleanup.sql",
         "EducationProgramsOfferings",
       ),
     );
@@ -16,7 +16,7 @@ export class CleanEducationProgramsOfferingAddRemoveCol1653426773707
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-clean-education-programs-offering.sql",
+        "Rollback-add-course-load-and-cleanup.sql",
         "EducationProgramsOfferings",
       ),
     );

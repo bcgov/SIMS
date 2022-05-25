@@ -10,6 +10,6 @@ ALTER TABLE
 ALTER TABLE
     sims.education_programs_offerings
 ADD
-    COLUMN IF NOT EXISTS course_load INT;
+    COLUMN IF NOT EXISTS course_load SMALLINT;
 
 COMMENT ON COLUMN sims.education_programs_offerings.course_load IS 'Course Load for Part Time intensity program, range between 20 - 59.';
