@@ -15,8 +15,7 @@ dayjs.extend(dayOfYear);
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "YYYY MMM DD";
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
-export const TIMESTAMP_CONTINUOUS_FORMAT = "YYYYMMDD-HHmmss";
-export const DATE_ONLY_DISPLAY_FORMAT = "MMM DD YYYY";
+export const TIMESTAMP_CONTINUOUS_FORMAT = "YYYY-MM-DD-HH.mm.ss";
 
 /**
  * get utc date time now
@@ -205,21 +204,10 @@ export const addDays = (date: Date | string, daysToAdd: number): Date => {
 /**
  * Return a PST timestamp with date and time in continuous format
  * mainly used to append in filename.
- * @param date
  * @returns timestamp.
  */
 export function getFileNameTimestamp(): string {
   return dayjs(new Date())
     .tz("America/Vancouver")
     .format(TIMESTAMP_CONTINUOUS_FORMAT);
-}
-
-/**
- * Returns date-only string to be displayed at client
- * in MMM DD YYYY format.
- * @param date
- * @returns date string.
- */
-export function getDateOnlyFormatAsString(date: Date): string {
-  return dayjs(date).format(DATE_ONLY_DISPLAY_FORMAT);
 }

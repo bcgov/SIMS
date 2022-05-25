@@ -1,2 +1,2 @@
--- Drop table sims.reports_config
-DROP TABLE IF EXISTS sims.reports_config;
+-- Drop table sims.report_configs
+DROP TABLE IF EXISTS sims.report_configs;

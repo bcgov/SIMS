@@ -19,11 +19,7 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { ReportService, FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { StringBuilder } from "../../utilities/string-builder";
-import {
-  getDateOnlyFormatAsString,
-  getFileNameTimestamp,
-  CustomNamedError,
-} from "../../utilities";
+import { getFileNameTimestamp, CustomNamedError } from "../../utilities";
 import BaseController from "../BaseController";
 import { ReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
@@ -34,7 +30,7 @@ import {
 
 /**
  * Controller for Reports for AEST Client.
- * This consists of all Rest APIs for notes.
+ * This consists of all Rest APIs for reports.
  */
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -49,9 +45,9 @@ export class ReportAESTController extends BaseController {
   }
 
   /**
-   * Rest API to financial reports in csv format.
+   * Rest API to export reports in csv format.
    * @param payload report filter payload.
-   * @param response
+   * @param response http response as file.
    */
   @ApiBadRequestResponse({
     description: "Not able to export report due to an invalid request.",
@@ -79,7 +75,9 @@ export class ReportAESTController extends BaseController {
     let reportData = [];
 
     try {
-      reportData = await this.reportService.exportReport(payload);
+      reportData = await this.reportService.getReportData(
+        submissionResult.data.data,
+      );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
@@ -97,19 +95,17 @@ export class ReportAESTController extends BaseController {
       this.streamFile(response, payload.reportName, "No data found.");
       return;
     }
-
+    //The report data as array of dynamic json object is transformed into CSV string content to
+    //to be streamed as CSV file. Keys of first array item used to form the header line of CSV string.
     const reportCSVContent = new StringBuilder();
     const reportHeaders = Object.keys(reportData[0]);
     reportCSVContent.appendLine(reportHeaders.join(","));
-
     reportData.forEach((reportDataItem) => {
       let dataItem = "";
       reportHeaders.forEach((header, index) => {
-        const data =
-          reportDataItem[header] instanceof Date
-            ? getDateOnlyFormatAsString(reportDataItem[header])
-            : reportDataItem[header];
-        dataItem += index ? `,${data}` : data;
+        dataItem += index
+          ? `,${reportDataItem[header]}`
+          : reportDataItem[header];
       });
       reportCSVContent.appendLine(dataItem);
     });
@@ -118,7 +114,7 @@ export class ReportAESTController extends BaseController {
 
   /**
    * Stream file as downloadable response.
-   * @param response
+   * @param response http response as file.
    * @param reportName report name.
    * @param fileContent content of the file.
    */

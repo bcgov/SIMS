@@ -19,12 +19,13 @@
 import { ReportService } from "@/services/ReportService";
 import { ReportsFilterAPIInDTO } from "@/services/http/dto";
 import { useToastMessage } from "@/composables";
+import { FormIOForm } from "@/types";
 export default {
   setup() {
     const toast = useToastMessage();
     let formData: any = undefined;
 
-    const formLoaded = (form: any) => {
+    const formLoaded = (form: FormIOForm) => {
       formData = form;
     };
 

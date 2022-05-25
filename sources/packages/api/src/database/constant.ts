@@ -45,5 +45,5 @@ export const TableNames = {
   StudentAppealRequests: "student_appeal_requests",
   StudentScholasticStandings: "student_scholastic_standings",
   StudentAssessments: "student_assessments",
-  ReportsConfig: "reports_config",
+  ReportsConfig: "report_configs",
 };

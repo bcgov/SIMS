@@ -1,7 +1,7 @@
 /**
  * Filter param dynamic json.
  */
-export class ReportFilterParamAPIInDTO {
+export interface ReportFilterParamAPIInDTO {
   [propertyName: string]: any;
 }
 /**

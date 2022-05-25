@@ -40,7 +40,7 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
-    <template v-slot:append>
+    <template #append>
       <v-list dense nav>
         <v-list-item @click="reports.command">
           <v-list-item-icon>

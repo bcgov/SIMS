@@ -17,10 +17,10 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
   /**
    * Extract the raw data through the dynamic query retrieved from reports config
    * and translate the dynamic query with arguments built using filter param payload.
-   * @param filter
+   * @param filter filter data for report from payload.
    * @returns report raw data.
    */
-  async exportReport(filter: ReportsFilterModel): Promise<any[]> {
+  async getReportData(filter: ReportsFilterModel): Promise<any[]> {
     const parameters = [];
     const filterParams = filter.params;
     const config = await this.getConfig(filter.reportName);
@@ -49,10 +49,11 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
   }
 
   /**
-   * If a json object is return by form.io by select boxes
+   * If a json object is returned by form.io by select boxes
    * then convert the json object to an array.
    * Otherwise return the object.
-   * @param filterParam
+   * @param filterParam the param of payload which is converted to
+   * query argument.
    * @returns filter param value for query.
    */
   private convertJSONToArray(filterParam: any): string | string[] {
@@ -68,6 +69,11 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
     return paramValue;
   }
 
+  /**
+   * Retrieve the report config of a given report.
+   * @param reportName name of the report.
+   * @returns report config.
+   */
   private async getConfig(reportName: string): Promise<ReportConfig> {
     return this.repo.findOne({ reportName: reportName });
   }

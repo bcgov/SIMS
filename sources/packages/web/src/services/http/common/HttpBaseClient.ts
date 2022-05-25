@@ -75,7 +75,7 @@ export default abstract class HttpBaseClient {
         ...this.addAuthHeader(),
         responseType: "blob",
       };
-      let response;
+      let response: AxiosResponse<any>;
       if (payload) {
         response = await this.apiClient.post(
           this.addClientRoot(url),
@@ -150,7 +150,7 @@ export default abstract class HttpBaseClient {
 
   /**
    * Download file as blob using Axios http response.
-   * @param response
+   * @param response axios response object from http response.
    */
   private downloadAsBlob(response: AxiosResponse<any>) {
     const linkURL = window.URL.createObjectURL(new Blob([response.data]));
