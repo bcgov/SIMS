@@ -6,10 +6,10 @@ CREATE TABLE IF NOT EXISTS sims.report_configs(
     -- Audit columns
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
-    creator INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
+    creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
     SET
         NULL,
-        modifier INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
+        modifier INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
     SET
         NULL
 );

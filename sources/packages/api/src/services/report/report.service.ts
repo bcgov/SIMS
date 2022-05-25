@@ -4,6 +4,7 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { ReportConfig } from "../../database/entities";
 import { CustomNamedError } from "../../utilities";
 import { ReportsFilterModel } from "./report.models";
+import { StringBuilder } from "../../utilities/string-builder";
 import { REPORT_CONFIG_NOT_FOUND, FILTER_PARAMS_MISMATCH } from "./constants";
 /**
  * Service layer for reports.
@@ -17,10 +18,11 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
   /**
    * Extract the raw data through the dynamic query retrieved from reports config
    * and translate the dynamic query with arguments built using filter param payload.
+   * Build the CSV String with the raw data returned.
    * @param filter filter data for report from payload.
    * @returns report raw data.
    */
-  async getReportData(filter: ReportsFilterModel): Promise<any[]> {
+  async getReportDataAsCSV(filter: ReportsFilterModel): Promise<string> {
     const parameters = [];
     const filterParams = filter.params;
     const config = await this.getConfig(filter.reportName);
@@ -47,7 +49,8 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
         parameters.push(this.convertFilterDataAsParameter(filterParams[key]));
       }
     });
-    return this.connection.query(reportQuery, parameters);
+    const reportData = await this.connection.query(reportQuery, parameters);
+    return this.buildCSVString(reportData);
   }
 
   /**
@@ -78,5 +81,31 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
    */
   private async getConfig(reportName: string): Promise<ReportConfig> {
     return this.repo.findOne({ reportName: reportName });
+  }
+
+  /**
+   * Build CSV string from a dynamic JSON object.
+   * @param reportData
+   * @returns CSV string.
+   */
+  private buildCSVString(reportData: any[]): string {
+    if (!reportData || reportData.length === 0) {
+      return "No data found.";
+    }
+    //The report data as array of dynamic json object is transformed into CSV string content to
+    //to be streamed as CSV file. Keys of first array item used to form the header line of CSV string.
+    const reportCSVContent = new StringBuilder();
+    const reportHeaders = Object.keys(reportData[0]);
+    reportCSVContent.appendLine(reportHeaders.join(","));
+    reportData.forEach((reportDataItem) => {
+      let dataItem = "";
+      reportHeaders.forEach((header, index) => {
+        dataItem += index
+          ? `,${reportDataItem[header]}`
+          : reportDataItem[header];
+      });
+      reportCSVContent.appendLine(dataItem);
+    });
+    return reportCSVContent.toString();
   }
 }

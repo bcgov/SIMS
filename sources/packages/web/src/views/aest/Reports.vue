@@ -23,7 +23,7 @@ export default {
   setup() {
     const toast = useToastMessage();
     const fileUtils = useFileUtils();
-    let formData: any = undefined;
+    let formData: FormIOForm;
 
     const formLoaded = (form: FormIOForm) => {
       formData = form;
@@ -35,7 +35,7 @@ export default {
 
     const exportReport = async (data: ReportsFilterAPIInDTO) => {
       try {
-        fileUtils.downloadReports(data);
+        await fileUtils.downloadReports(data);
       } catch {
         toast.error(
           "Unexpected error",

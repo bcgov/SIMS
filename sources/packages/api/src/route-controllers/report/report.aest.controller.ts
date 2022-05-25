@@ -18,7 +18,6 @@ import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ReportService, FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
-import { StringBuilder } from "../../utilities/string-builder";
 import {
   getFileNameAsCurrentTimestamp,
   CustomNamedError,
@@ -75,12 +74,11 @@ export class ReportAESTController extends BaseController {
       );
     }
 
-    let reportData = [];
-
     try {
-      reportData = await this.reportService.getReportData(
+      const reportData = await this.reportService.getReportDataAsCSV(
         submissionResult.data.data,
       );
+      this.streamFile(response, payload.reportName, reportData);
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
@@ -93,26 +91,6 @@ export class ReportAESTController extends BaseController {
       }
       throw error;
     }
-
-    if (!reportData || reportData.length === 0) {
-      this.streamFile(response, payload.reportName, "No data found.");
-      return;
-    }
-    //The report data as array of dynamic json object is transformed into CSV string content to
-    //to be streamed as CSV file. Keys of first array item used to form the header line of CSV string.
-    const reportCSVContent = new StringBuilder();
-    const reportHeaders = Object.keys(reportData[0]);
-    reportCSVContent.appendLine(reportHeaders.join(","));
-    reportData.forEach((reportDataItem) => {
-      let dataItem = "";
-      reportHeaders.forEach((header, index) => {
-        dataItem += index
-          ? `,${reportDataItem[header]}`
-          : reportDataItem[header];
-      });
-      reportCSVContent.appendLine(dataItem);
-    });
-    this.streamFile(response, payload.reportName, reportCSVContent.toString());
   }
 
   /**
