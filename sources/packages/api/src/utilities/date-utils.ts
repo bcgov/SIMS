@@ -15,6 +15,8 @@ dayjs.extend(dayOfYear);
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "YYYY MMM DD";
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
+export const TIMESTAMP_CONTINUOUS_FORMAT = "YYYY-MM-DD_HH.mm.ss";
+export const PST_TIMEZONE = "America/Vancouver";
 
 /**
  * get utc date time now
@@ -74,7 +76,7 @@ export const dateDifference = (
  * @returns date in  PST/PDT(PST: UTC−08:00, PDT: UTC−07:00).
  */
 export const getPSTPDTDate = (date: string | Date, local = false): string => {
-  return dayjs(new Date(date)).tz("America/Vancouver", local).format();
+  return dayjs(new Date(date)).tz(PST_TIMEZONE, local).format();
 };
 
 /**
@@ -91,9 +93,7 @@ export const getPSTPDTDateTime = (
   date: string | Date,
   local = false,
 ): string => {
-  return dayjs(new Date(date))
-    .tz("America/Vancouver", local)
-    .format(DATE_TIME_FORMAT);
+  return dayjs(new Date(date)).tz(PST_TIMEZONE, local).format(DATE_TIME_FORMAT);
 };
 
 /**
@@ -111,7 +111,7 @@ export const setToStartOfTheDayInPSTPDT = (
   date: string | Date,
   local = false,
 ): string => {
-  return dayjs(date).tz("America/Vancouver", local).startOf("day").format();
+  return dayjs(date).tz(PST_TIMEZONE, local).startOf("day").format();
 };
 
 /***
@@ -199,3 +199,12 @@ export function getDateDifferenceInMonth(
 export const addDays = (date: Date | string, daysToAdd: number): Date => {
   return dayjs(date).add(daysToAdd, "day").toDate();
 };
+
+/**
+ * Return a PST timestamp with date and time in continuous format
+ * mainly used to append in filename.
+ * @returns timestamp.
+ */
+export function getFileNameAsCurrentTimestamp(): string {
+  return dayjs(new Date()).tz(PST_TIMEZONE).format(TIMESTAMP_CONTINUOUS_FORMAT);
+}

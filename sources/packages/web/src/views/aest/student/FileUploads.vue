@@ -49,7 +49,7 @@
             <template #body="slotProps">
               <div
                 class="file-label"
-                @click="fileUtils.downloadDocument(slotProps.data)"
+                @click="fileUtils.downloadStudentDocument(slotProps.data)"
               >
                 <span class="mr-4">
                   <font-awesome-icon :icon="['far', 'file-alt']"

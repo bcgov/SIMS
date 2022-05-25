@@ -1,5 +1,5 @@
 import { AuthService } from "@/services/AuthService";
-import { AxiosError, AxiosRequestConfig } from "axios";
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import HttpClient from "./HttpClient";
 import { MINIMUM_TOKEN_VALIDITY } from "@/constants/system-constants";
 import { ApiProcessError, ClientIdType, ClientTypeBaseRoute } from "@/types";
@@ -56,6 +56,37 @@ export default abstract class HttpBaseClient {
   protected async postCall<T>(url: string, payload: T): Promise<void> {
     try {
       await this.apiClient.post(url, payload, this.addAuthHeader());
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Http call to download a file as response from API.
+   ** When payload is passed, the file is downloaded on post call
+   ** otherwise it is downloaded as get call.
+   * @param url url of the API.
+   * @param payload payload passed for post call.
+   * @returns axios response object from http response.
+   */
+  protected async downloadFile<T>(
+    url: string,
+    payload?: T,
+  ): Promise<AxiosResponse<any>> {
+    try {
+      const requestConfig: AxiosRequestConfig = {
+        ...this.addAuthHeader(),
+        responseType: "blob",
+      };
+      if (payload) {
+        return this.apiClient.post(
+          this.addClientRoot(url),
+          payload,
+          requestConfig,
+        );
+      }
+      return this.apiClient.get(this.addClientRoot(url), requestConfig);
     } catch (error) {
       this.handleRequestError(error);
       throw error;

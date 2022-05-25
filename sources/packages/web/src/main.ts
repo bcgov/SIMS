@@ -72,6 +72,7 @@ import {
   faUser as farUsers,
   faCheckSquare,
   faHandPaper,
+  faCopy as farCopy,
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
@@ -100,6 +101,7 @@ library.add(
   faHandPaper,
   faHandPaperSolid,
   faPlusCircleSolid,
+  farCopy,
 );
 
 AppConfigService.shared.init().then(() => {

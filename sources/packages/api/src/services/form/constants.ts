@@ -9,4 +9,5 @@ export const FormNames = {
   ReportScholasticStandingChange: "reportscholasticstandingchange",
   InstitutionLocation: "institutionlocation",
   InstitutionProfileCreation: "institutionprofilecreation",
+  ExportFinancialReports: "exportfinancialreports",
 };

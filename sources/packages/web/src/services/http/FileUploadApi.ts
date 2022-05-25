@@ -1,5 +1,5 @@
 import { FileCreateAPIOutDTO } from "@/services/http/dto";
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class FileUploadApi extends HttpBaseClient {
@@ -22,20 +22,7 @@ export class FileUploadApi extends HttpBaseClient {
     }
   }
 
-  public async download(relativeUrl: string): Promise<Blob> {
-    try {
-      const requestConfig: AxiosRequestConfig = {
-        ...this.addAuthHeader(),
-        responseType: "blob",
-      };
-      const response = await this.apiClient.get(
-        this.addClientRoot(relativeUrl),
-        requestConfig,
-      );
-      return new Blob([response.data]);
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  public async download(relativeUrl: string): Promise<AxiosResponse<any>> {
+    return this.downloadFile(relativeUrl);
   }
 }
