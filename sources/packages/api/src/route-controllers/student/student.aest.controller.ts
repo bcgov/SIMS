@@ -185,21 +185,16 @@ export class StudentAESTController extends BaseController {
   }
 
   /**
-   * Search the student based on the search criteria.
+   * Search students based on the search criteria.
    * @param searchCriteria criteria to be used in the search.
    * @returns searched student details.
    */
-  @Groups(UserGroups.AESTUser)
   @Get("search")
   async searchStudents(
     @Query() searchCriteria: AESTStudentSearchAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
     const searchStudentApplications =
-      await this.studentService.searchStudentApplication(
-        searchCriteria.firstName,
-        searchCriteria.lastName,
-        searchCriteria.appNumber,
-      );
+      await this.studentService.searchStudentApplication(searchCriteria);
     return searchStudentApplications.map((eachStudent: Student) => ({
       id: eachStudent.id,
       firstName: eachStudent.user.firstName,

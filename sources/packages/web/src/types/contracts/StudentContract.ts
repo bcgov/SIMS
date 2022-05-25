@@ -56,16 +56,6 @@ export enum SINStatusEnum {
 }
 
 /**
- * Interface for student search API response
- */
-export interface SearchStudentResp {
-  id: number;
-  firstName: string;
-  lastName: string;
-  birthDate: string;
-}
-
-/**
  * Interface for student detail API response
  */
 export interface StudentDetail {

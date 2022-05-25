@@ -33,7 +33,7 @@ import {
 import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
-import { ClientTypeBaseRoute } from "src/types";
+import { ClientTypeBaseRoute } from "../../types";
 
 /**
  * Institution controller for AEST Client.

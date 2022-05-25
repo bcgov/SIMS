@@ -5,7 +5,6 @@ import {
   StudentFormInfo,
   StudentApplicationAndCount,
   StudentRestrictionStatus,
-  SearchStudentResp,
   DataTableSortOrder,
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
@@ -17,9 +16,10 @@ import { MISSING_STUDENT_ACCOUNT } from "@/services/http/StudentApi";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
+  SearchStudentAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
-} from "./http/dto/Student.dto";
+} from "./http/dto";
 
 export class StudentService {
   // Share Instance
@@ -124,13 +124,13 @@ export class StudentService {
    * @param appNumber
    * @param firstName
    * @param lastName
-   * @returns SearchStudentResp[]
+   * @returns student search results.
    */
   async searchStudents(
     appNumber: string,
     firstName: string,
     lastName: string,
-  ): Promise<SearchStudentResp[]> {
+  ): Promise<SearchStudentAPIOutDTO[]> {
     return ApiClient.Students.searchStudents(appNumber, firstName, lastName);
   }
 

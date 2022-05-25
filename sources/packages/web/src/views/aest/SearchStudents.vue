@@ -84,7 +84,7 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { SearchStudentResp } from "@/types";
+import { SearchStudentAPIOutDTO } from "@/services/http/dto";
 import { useToastMessage } from "@/composables";
 
 export default {
@@ -94,7 +94,7 @@ export default {
     const appNumber = ref("");
     const firstName = ref("");
     const lastName = ref("");
-    const students = ref([] as SearchStudentResp[]);
+    const students = ref([] as SearchStudentAPIOutDTO[]);
     const goToViewStudent = (studentId: number) => {
       router.push({
         name: AESTRoutesConst.STUDENT_PROFILE,

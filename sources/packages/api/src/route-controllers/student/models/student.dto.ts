@@ -44,7 +44,7 @@ export class CreateStudentAPIInDTO extends AddressDetailsAPIInDTO {
 
 /**
  * Updates the student information that the student is allowed to change
- * in the solution. Other data must be edited outside (e.g. BCSC).
+ * in the solution. Other data must be edited externally (e.g. BCSC).
  */
 export class UpdateStudentAPIInDTO extends AddressDetailsAPIInDTO {
   @Length(10, 20)
@@ -60,6 +60,9 @@ export interface StudentEducationProgramDto {
   deliveryMethod: string;
 }
 
+/**
+ * Student AEST search parameters.
+ */
 export class AESTStudentSearchAPIInDTO {
   @ValidateIf((input) => !input.lastName && !input.appNumber)
   @IsNotEmpty()

@@ -3,15 +3,15 @@ import {
   StudentContact,
   CreateStudent,
   StudentRestrictionStatus,
-  SearchStudentResp,
 } from "@/types/contracts/StudentContract";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
+  SearchStudentAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
-} from "./dto/Student.dto";
+} from "./dto";
 
 export const MISSING_STUDENT_ACCOUNT = "MISSING_STUDENT_ACCOUNT";
 
@@ -103,17 +103,17 @@ export class StudentApi extends HttpBaseClient {
   }
 
   /**
-   * API client for student search.
-   * @param appNumber
-   * @param firstName
-   * @param lastName
-   * @returns
+   * Search students based on the search criteria.
+   * @param appNumber application number.
+   * @param firstName students first name (given names).
+   * @param lastName student last name
+   * @returns searched student details.
    */
   async searchStudents(
     appNumber: string,
     firstName: string,
     lastName: string,
-  ): Promise<SearchStudentResp[]> {
+  ): Promise<SearchStudentAPIOutDTO[]> {
     let queryString = "";
     if (appNumber) {
       queryString += `appNumber=${appNumber}&`;
@@ -127,7 +127,7 @@ export class StudentApi extends HttpBaseClient {
     const url = this.addClientRoot(
       `students/search?${queryString.slice(0, -1)}`,
     );
-    return await this.getCallTyped<SearchStudentResp[]>(
+    return await this.getCallTyped<SearchStudentAPIOutDTO[]>(
       url,
       this.addAuthHeader(),
     );

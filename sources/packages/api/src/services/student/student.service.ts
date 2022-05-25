@@ -303,17 +303,16 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Search the student based on the search criteria.
-   * @param firstName firsName of the student.
-   * @param lastName lastName of the student.
-   * @param appNumber application number of the student.
-   * @returns Searched student details.
+   * Search students based on the search criteria.
+   * @param searchCriteria options to search by firstName,
+   * lastName or appNumber.
+   * @returns searched student details.
    */
-  async searchStudentApplication(
-    firstName: string,
-    lastName: string,
-    appNumber: string,
-  ): Promise<Student[]> {
+  async searchStudentApplication(searchCriteria: {
+    firstName?: string;
+    lastName?: string;
+    appNumber?: string;
+  }): Promise<Student[]> {
     const searchQuery = this.repo
       .createQueryBuilder("student")
       .leftJoin(
@@ -329,22 +328,22 @@ export class StudentService extends RecordDataModelService<Student> {
       ])
       .innerJoin("student.user", "user")
       .where("user.isActive = true");
-    if (firstName) {
+    if (searchCriteria.firstName) {
       searchQuery.andWhere("user.firstName Ilike :firstName", {
-        firstName: `%${firstName}%`,
+        firstName: `%${searchCriteria.firstName}%`,
       });
     }
-    if (lastName) {
+    if (searchCriteria.lastName) {
       searchQuery.andWhere("user.lastName Ilike :lastName", {
-        lastName: `%${lastName}%`,
+        lastName: `%${searchCriteria.lastName}%`,
       });
     }
-    if (appNumber) {
+    if (searchCriteria.appNumber) {
       searchQuery
         .andWhere("application.applicationNumber Ilike :appNumber")
         .andWhere("application.applicationStatus != :overwrittenStatus")
         .setParameters({
-          appNumber: `%${appNumber}%`,
+          appNumber: `%${searchCriteria.appNumber}%`,
           overwrittenStatus: ApplicationStatus.overwritten,
         });
     }

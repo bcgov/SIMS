@@ -73,3 +73,13 @@ export interface AESTStudentFileAPIOutDTO extends StudentUploadFileAPIOutDTO {
 export interface StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
 }
+
+/**
+ * Interface for student search API response
+ */
+export interface SearchStudentAPIOutDTO {
+  id: number;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+}
