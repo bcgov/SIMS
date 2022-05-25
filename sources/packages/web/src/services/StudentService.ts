@@ -92,6 +92,7 @@ export class StudentService {
   }
 
   /**
+   * TODO: This service is called to restriction update states, in future restriction UI ticket
    * API client to call the student restriction rest API.
    * @returns student restriction(wrapped by promise)
    */

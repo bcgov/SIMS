@@ -116,6 +116,8 @@ export default {
     const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
+    // TODO: update this in restriction UI ticket
+    const hasRestriction = ref(false);
 
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a toast
@@ -133,17 +135,12 @@ export default {
 
     onMounted(async () => {
       await checkProgramYear();
-      //Get the student information, application information and student restriction.
-      const [studentInfo, applicationData, studentRestriction] =
-        await Promise.all([
-          StudentService.shared.getStudentInfo(),
-          ApplicationService.shared.getApplicationData(props.id),
-          StudentService.shared.getStudentRestriction(),
-        ]);
-      // TODO:  BANNER FOR RESTRICTION - PART OF UI TICKET
-      // hasRestriction.value = studentRestriction.hasRestriction;
-      // restrictionMessage.value = studentRestriction.restrictionMessage;
-      // Adjust the spaces when optional fields are not present.
+      // Get the student information, application information.
+      const [studentInfo, applicationData] = await Promise.all([
+        StudentService.shared.getStudentInfo(),
+        ApplicationService.shared.getApplicationData(props.id),
+      ]);
+
       isReadOnly.value =
         [
           ApplicationStatus.completed,
@@ -291,7 +288,7 @@ export default {
       confirmEditApplication,
       editApplication,
       editApplicationModal,
-      // hasRestriction,
+      hasRestriction,
       restrictionMessage,
       pageChanged,
       isFirstPage,

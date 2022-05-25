@@ -46,13 +46,15 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * or any one of the element is to be checked (i.e checkAll = false).
    * @returns 'select' query that could be used in an 'exists' or
    * 'not exists'.
-   * TODO: TEST ECERT FILE ANN
    */
   getExistsBlockRestrictionQuery(
     restrictionActions: RestrictionActionType[],
     checkAll = false,
   ): SelectQueryBuilder<StudentRestriction> {
-    console.log("++++++++++++", restrictionActions);
+    const formatArrayForQuery = JSON.stringify(restrictionActions).replace(
+      /"/g,
+      "'",
+    );
     const query = this.repo
       .createQueryBuilder("studentRestrictions")
       .select("1")
@@ -62,18 +64,13 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .andWhere("restrictionStudent.id = student.id");
     if (checkAll) {
       query.andWhere(
-        `restrictions.actionType @> ARRAY ${JSON.stringify(restrictionActions)
-          .replace('"', "'")
-          .replace('"', "'")} :: sims.restriction_action_types []`,
+        `restrictions.actionType @> ARRAY ${formatArrayForQuery} :: sims.restriction_action_types []`,
       );
     } else {
       query.andWhere(
-        `restrictions.actionType && ARRAY ${JSON.stringify(restrictionActions)
-          .replace('"', "'")
-          .replace('"', "'")} :: sims.restriction_action_types []`,
+        `restrictions.actionType && ARRAY ${formatArrayForQuery} :: sims.restriction_action_types []`,
       );
     }
-    console.log(query, "++++++++++++query", restrictionActions);
     return query
       .groupBy("studentRestrictions.student.id")
       .addGroupBy("restrictions.id");
@@ -267,7 +264,6 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         restrictionActions,
       });
     }
-    console.log(query.getQueryAndParameters());
     return (await query.getRawMany()).length > 0;
   }
 }

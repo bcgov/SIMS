@@ -396,6 +396,7 @@ export class StudentController extends BaseController {
     }));
   }
   /**
+   * TODO: This api will be called by UI and update states, in future restriction UI ticket
    * GET API which returns student restriction details.
    * @param studentToken student token.
    * @returns Student restriction code and notification type as key value pair, if any.

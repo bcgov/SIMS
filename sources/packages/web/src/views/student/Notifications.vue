@@ -9,24 +9,19 @@
   </div>
 </template>
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 // import { StudentService } from "@/services/StudentService";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 export default {
   components: { RestrictionBanner, CheckValidSINBanner },
   setup() {
-    // const hasRestriction = ref(false);
+    // TODO: update this in restriction UI ticket
+    const hasRestriction = ref(false);
     const restrictionMessage = ref("");
-    onMounted(async () => {
-      // const studentRestriction =
-      //   await StudentService.shared.getStudentRestriction();
-      // TODO: BANNER FOR RESTRICTION - PART OF UI TICKET
-      // hasRestriction.value = studentRestriction.hasRestriction;
-      // restrictionMessage.value = studentRestriction.restrictionMessage;
-    });
+
     return {
-      // hasRestriction,
+      hasRestriction,
       restrictionMessage,
     };
   },

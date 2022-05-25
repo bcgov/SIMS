@@ -78,6 +78,7 @@ export default {
     const { bcscParsedToken } = useAuthBCSC();
     const { dateOnlyLongString } = useFormatters();
     const { hasStudentAccount } = useStudentStore();
+    // TODO: update this in restriction UI ticket
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
@@ -98,12 +99,6 @@ export default {
     );
 
     const getStudentDetails = async () => {
-      // const studentRestriction =
-      //   await StudentService.shared.getStudentRestriction();
-
-      // TODO:  BANNER FOR RESTRICTION - PART OF UI TICKET
-      // hasRestriction.value = studentRestriction.hasRestriction;
-      // restrictionMessage.value = studentRestriction.restrictionMessage;
       if (props.editMode) {
         await getStudentInfo();
         const data: StudentFormData = {

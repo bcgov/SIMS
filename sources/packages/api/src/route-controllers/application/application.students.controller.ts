@@ -324,15 +324,6 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId") applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    // todo: remove this code - only for testing
-    const isRestrictionActionExists =
-      await this.studentRestrictionService.isRestrictionActionExists(
-        studentToken.studentId,
-        [RestrictionActionType.StopPartTimeDisbursement],
-        true,
-      );
-    console.log(isRestrictionActionExists);
-
     try {
       await this.applicationService.saveDraftApplication(
         studentToken.studentId,
