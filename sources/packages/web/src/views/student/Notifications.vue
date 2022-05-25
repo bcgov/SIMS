@@ -10,7 +10,7 @@
 </template>
 <script lang="ts">
 import { onMounted, ref } from "vue";
-import { StudentService } from "@/services/StudentService";
+// import { StudentService } from "@/services/StudentService";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 export default {
@@ -19,9 +19,9 @@ export default {
     // const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     onMounted(async () => {
-      const studentRestriction =
-        await StudentService.shared.getStudentRestriction();
-      // TODO: BANNER RESTRICTION ANN
+      // const studentRestriction =
+      //   await StudentService.shared.getStudentRestriction();
+      // TODO: BANNER FOR RESTRICTION - PART OF UI TICKET
       // hasRestriction.value = studentRestriction.hasRestriction;
       // restrictionMessage.value = studentRestriction.restrictionMessage;
     });

@@ -18,7 +18,7 @@ import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { computed, onMounted, ref } from "vue";
 
 import { useStore } from "vuex";
-import { StudentService } from "@/services/StudentService";
+// import { StudentService } from "@/services/StudentService";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import { useRouter } from "vue-router";
@@ -42,9 +42,9 @@ export default {
     };
 
     onMounted(async () => {
-      const studentRestriction =
-        await StudentService.shared.getStudentRestriction();
-      // TODO: BANNER RESTRICTION ANN
+      // const studentRestriction =
+      //   await StudentService.shared.getStudentRestriction();
+      // TODO:  BANNER FOR RESTRICTION - PART OF UI TICKET
       // hasRestriction.value = studentRestriction.hasRestriction;
       // restrictionMessage.value = studentRestriction.restrictionMessage;
     });

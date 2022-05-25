@@ -169,11 +169,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   async getECertInformationToBeSent(
     offeringIntensity: OfferingIntensity,
   ): Promise<DisbursementSchedule[]> {
-    let possibleRestrictionAction =
-      RestrictionActionType.StopPartTimeDisbursement;
+    let possibleRestrictionActions = [
+      RestrictionActionType.StopPartTimeDisbursement,
+    ];
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      possibleRestrictionAction =
-        RestrictionActionType.StopFullTimeDisbursement;
+      possibleRestrictionActions = [
+        RestrictionActionType.StopFullTimeDisbursement,
+      ];
     }
     // Define the minimum date to send a disbursement.
     const disbursementMinDate = dayjs()
@@ -240,7 +242,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       })
       .andWhere(
         `NOT EXISTS(${this.studentRestrictionService
-          .getExistsBlockRestrictionQuery(possibleRestrictionAction)
+          .getExistsBlockRestrictionQuery(possibleRestrictionActions)
           .getSql()})`,
       )
       .andWhere("disbursement.coeStatus = :coeStatus", {

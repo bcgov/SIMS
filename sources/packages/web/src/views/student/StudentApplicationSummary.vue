@@ -36,7 +36,7 @@
 </template>
 <script lang="ts">
 import { onMounted, ref } from "vue";
-import { StudentService } from "@/services/StudentService";
+// import { StudentService } from "@/services/StudentService";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { ApplicationStatus } from "@/types";
@@ -130,9 +130,8 @@ export default {
     };
 
     onMounted(async () => {
-      const restrictions = await StudentService.shared.getStudentRestriction();
-      
-      // TODO: BANNER RESTRICTION ANN
+      // const restrictions = await StudentService.shared.getStudentRestriction();
+      // TODO:  BANNER FOR RESTRICTION - PART OF UI TICKET
       // hasRestriction.value = restrictions.hasRestriction;
       // restrictionMessage.value = restrictions.restrictionMessage;
     });

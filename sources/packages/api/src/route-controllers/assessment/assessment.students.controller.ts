@@ -66,7 +66,6 @@ export class AssessmentStudentsController extends BaseController {
    * Confirm assessment of a Student.
    * @param assessmentId assessment id to be confirmed.
    */
-  // TODO: CHECK THIS CONTROLLER - > REMOVED CHECKRESTRICTION DECORATOR
   @ApiNotFoundResponse({
     description: "Not able to find the assessment for the student.",
   })

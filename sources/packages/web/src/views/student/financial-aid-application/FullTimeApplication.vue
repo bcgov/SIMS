@@ -52,7 +52,7 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { ApplicationService } from "@/services/ApplicationService";
 import {
@@ -140,7 +140,7 @@ export default {
           ApplicationService.shared.getApplicationData(props.id),
           StudentService.shared.getStudentRestriction(),
         ]);
-      // TODO: BANNER RESTRICTION ANN
+      // TODO:  BANNER FOR RESTRICTION - PART OF UI TICKET
       // hasRestriction.value = studentRestriction.hasRestriction;
       // restrictionMessage.value = studentRestriction.restrictionMessage;
       // Adjust the spaces when optional fields are not present.

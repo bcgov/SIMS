@@ -3,7 +3,7 @@ import {
   StudentInfo,
   StudentContact,
   CreateStudent,
-  StudentRestrictionNotificationTypeAPIOutDTO,
+  StudentRestrictionAPIOutDTO,
   SearchStudentResp,
   StudentDetail,
   StudentFileUploaderAPIInDTO,
@@ -100,10 +100,10 @@ export class StudentApi extends HttpBaseClient {
    * API client to call the student restriction rest API.
    * @returns student restriction(wrapped by promise)
    */
-  public async getStudentRestriction(): Promise<StudentRestrictionNotificationTypeAPIOutDTO> {
+  public async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
     try {
       const response = await this.getCall("students/restriction");
-      return response.data as StudentRestrictionNotificationTypeAPIOutDTO;
+      return response.data as StudentRestrictionAPIOutDTO[];
     } catch (error) {
       this.handleRequestError(error);
       throw error;

@@ -41,10 +41,13 @@ export interface StudentApplication {
 }
 
 /**
- * Student restriction notification type DTO.
+ * Student restriction DTO.
+ * This object is returned by controller.
+ * Here the key is the restrictionCode and value
+ * is the respective notificationType.
  */
-export interface StudentRestrictionNotificationTypeAPIOutDTO {
-  notificationType: RestrictionNotificationType;
+export class StudentRestrictionAPIOutDTO {
+  [key: string]: RestrictionNotificationType;
 }
 
 /**

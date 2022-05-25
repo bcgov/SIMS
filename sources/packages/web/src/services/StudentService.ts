@@ -15,7 +15,7 @@ import {
   StudentUploadFileAPIOutDTO,
   AESTStudentFileAPIOutDTO,
   AESTFileUploadToStudentAPIInDTO,
-  StudentRestrictionNotificationTypeAPIOutDTO,
+  StudentRestrictionAPIOutDTO,
 } from "@/types";
 
 export class StudentService {
@@ -95,7 +95,7 @@ export class StudentService {
    * API client to call the student restriction rest API.
    * @returns student restriction(wrapped by promise)
    */
-  async getStudentRestriction(): Promise<StudentRestrictionNotificationTypeAPIOutDTO> {
+  async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
     return ApiClient.Students.getStudentRestriction();
   }
 

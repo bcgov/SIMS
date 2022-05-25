@@ -27,7 +27,7 @@ import {
   SaveStudentDto,
   StudentDetailAPIOutDTO,
   StudentInfo,
-  StudentRestrictionNotificationTypeAPIOutDTO,
+  StudentRestrictionAPIOutDTO,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
@@ -398,22 +398,28 @@ export class StudentController extends BaseController {
   /**
    * GET API which returns student restriction details.
    * @param studentToken student token.
-   * @returns Student restriction notification type, if any.
+   * @returns Student restriction code and notification type as key value pair, if any.
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("restriction")
   async getStudentRestrictions(
     @UserToken() studentToken: StudentUserToken,
-  ): Promise<StudentRestrictionNotificationTypeAPIOutDTO> {
-    // todo: ann  add new logic that will return array of error and code
-    //todo:  something like, [{'DE':'error}, {'DEE1: 'warning'}]
+  ): Promise<StudentRestrictionAPIOutDTO[]> {
+    const result = [];
     const studentRestriction =
-      await this.studentRestrictionService.getStudentRestrictionDetailsById(
+      await this.studentRestrictionService.getStudentRestrictionsById(
         studentToken.studentId,
       );
-    return {
-      notificationType: studentRestriction?.restriction.notificationType,
-    };
+    if (!studentRestriction) {
+      return result;
+    }
+    studentRestriction.forEach((studentRestriction) => {
+      const eachRestriction = new StudentRestrictionAPIOutDTO();
+      eachRestriction[studentRestriction.restriction.restrictionCode] =
+        studentRestriction.restriction.notificationType;
+      result.push(eachRestriction);
+    });
+    return result;
   }
 
   /**
@@ -429,11 +435,11 @@ export class StudentController extends BaseController {
     @Param("studentId") studentId: number,
   ): Promise<StudentDetailAPIOutDTO> {
     const student = await this.studentService.findById(studentId);
-    // TODO:check there is alleast one restriction for a student, if orange banner. if not green.
-    // const studentRestrictionStatus =
-    //   await this.studentRestrictionService.getStudentRestrictionsByUserId(
-    //     student.user.id,
-    //   );
+    // Check the student has any restriction.
+    const hasAnyRestriction =
+      await this.studentRestrictionService.getStudentRestrictionsById(
+        studentId,
+      );
     const address = student.contactInfo.address ?? ({} as AddressInfo);
     return {
       firstName: student.user.firstName,
@@ -454,8 +460,7 @@ export class StudentController extends BaseController {
         phone: student.contactInfo.phone,
       },
       pdStatus: determinePDStatus(student),
-      // TODO:check there is alleast one restriction for a student, if orange banner. if not green.
-      // hasRestriction: true,
+      hasRestriction: !!hasAnyRestriction.length,
     } as StudentDetailAPIOutDTO;
   }
 }

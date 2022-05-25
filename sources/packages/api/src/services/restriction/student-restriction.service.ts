@@ -40,24 +40,41 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * critical operations, for instance, to have money disbursed.
    * ! This query will assume that a join to 'student.id' is present
    * ! in the master query.
-   * @param restrictionAction restriction action type that needed to be checked.
+   * @param restrictionActions list of restriction actions that needed to be checked.
+   * @param checkAll, is by default false, checkAll decides if the all the
+   * elements in the restrictionActions should be checked (i.e checkAll = true)
+   * or any one of the element is to be checked (i.e checkAll = false).
    * @returns 'select' query that could be used in an 'exists' or
    * 'not exists'.
    * TODO: TEST ECERT FILE ANN
    */
   getExistsBlockRestrictionQuery(
-    restrictionAction: RestrictionActionType,
+    restrictionActions: RestrictionActionType[],
+    checkAll = false,
   ): SelectQueryBuilder<StudentRestriction> {
-    return this.repo
+    console.log("++++++++++++", restrictionActions);
+    const query = this.repo
       .createQueryBuilder("studentRestrictions")
       .select("1")
       .innerJoin("studentRestrictions.restriction", "restrictions")
       .innerJoin("studentRestrictions.student", "restrictionStudent")
       .where("studentRestrictions.isActive = true")
-      .andWhere("restrictionStudent.id = student.id")
-      .andWhere(":restrictionAction = ANY(restrictions.actionType)", {
-        restrictionAction,
-      })
+      .andWhere("restrictionStudent.id = student.id");
+    if (checkAll) {
+      query.andWhere(
+        `restrictions.actionType @> ARRAY ${JSON.stringify(restrictionActions)
+          .replace('"', "'")
+          .replace('"', "'")} :: sims.restriction_action_types []`,
+      );
+    } else {
+      query.andWhere(
+        `restrictions.actionType && ARRAY ${JSON.stringify(restrictionActions)
+          .replace('"', "'")
+          .replace('"', "'")} :: sims.restriction_action_types []`,
+      );
+    }
+    console.log(query, "++++++++++++query", restrictionActions);
+    return query
       .groupBy("studentRestrictions.student.id")
       .addGroupBy("restrictions.id");
   }
@@ -81,6 +98,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "restriction.restrictionCategory",
         "restriction.restrictionCode",
         "restriction.description",
+        "restriction.notificationType",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
@@ -216,12 +234,11 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     return this.repo.save(studentRestrictionEntity);
   }
   /**
-   * todo: ann update the code,  studentRestrictions can have multiple rows. use rawMany
    * The service function checks if the requested student has
    * the restricted restriction.
    * @param studentId student Id
    * @param restrictionActions list of restriction actions
-   * @param checkAll,is by default false, this decides if the all the
+   * @param checkAll,is by default false, checkAll decides if the all the
    * elements in the restrictionActions should be checked (i.e checkAll = true)
    * or any one of the element is to be checked (i.e checkAll = false).
    * @returns boolean, true if the restriction action is present
@@ -250,6 +267,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         restrictionActions,
       });
     }
+    console.log(query.getQueryAndParameters());
     return (await query.getRawMany()).length > 0;
   }
 }

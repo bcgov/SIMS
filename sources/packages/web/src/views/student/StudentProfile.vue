@@ -98,10 +98,10 @@ export default {
     );
 
     const getStudentDetails = async () => {
-      const studentRestriction =
-        await StudentService.shared.getStudentRestriction();
-        
-      // TODO: BANNER RESTRICTION ANN
+      // const studentRestriction =
+      //   await StudentService.shared.getStudentRestriction();
+
+      // TODO:  BANNER FOR RESTRICTION - PART OF UI TICKET
       // hasRestriction.value = studentRestriction.hasRestriction;
       // restrictionMessage.value = studentRestriction.restrictionMessage;
       if (props.editMode) {

@@ -4,8 +4,7 @@ import { StudentService } from "../../services";
 import { CHECK_SIN_VALIDATION_KEY } from "../decorators/check-sin-status.decorator";
 import { IUserToken } from "../userToken.interface";
 /**
- * TODO: CHECK WITH DEV
- * This guard validates an API for Valid SIN if it is decorated with @CheckRestriction.
+ * This guard validates an API for Valid SIN if it is decorated with @checkSinValidation.
  */
 @Injectable()
 export class SINValidationGuard implements CanActivate {

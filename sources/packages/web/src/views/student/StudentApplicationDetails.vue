@@ -63,7 +63,7 @@ import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
 import { GetApplicationDataDto, ApplicationStatus } from "@/types";
-import { StudentService } from "@/services/StudentService";
+// import { StudentService } from "@/services/StudentService";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 
@@ -221,9 +221,9 @@ export default {
     );
 
     onMounted(async () => {
-      const studentRestriction =
-        await StudentService.shared.getStudentRestriction();
-      // TODO: BANNER RESTRICTION ANN
+      // const studentRestriction =
+      //   await StudentService.shared.getStudentRestriction();
+      // TODO:  BANNER FOR RESTRICTION - PART OF UI TICKET
       // hasRestriction.value = studentRestriction.hasRestriction;
       // restrictionMessage.value = studentRestriction.restrictionMessage;
       await getApplicationDetails(props.id);
