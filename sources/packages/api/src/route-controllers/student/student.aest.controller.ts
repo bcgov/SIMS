@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Res,
   UploadedFile,
   UseInterceptors,
@@ -25,12 +26,15 @@ import BaseController from "../BaseController";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
+  AESTStudentSearchAPIInDTO,
+  SearchStudentAPIOutDTO,
   StudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
   defaultFileFilter,
+  getISODateOnlyString,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
   MINISTRY_FILE_UPLOAD_GROUP_NAME,
@@ -40,6 +44,7 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
+import { Student } from "../../database/entities";
 
 /**
  * Student controller for AEST Client.
@@ -177,6 +182,30 @@ export class StudentAESTController extends BaseController {
       MINISTRY_FILE_UPLOAD_GROUP_NAME,
       sendFileUploadNotification,
     );
+  }
+
+  /**
+   * Search the student based on the search criteria.
+   * @param searchCriteria criteria to be used in the search.
+   * @returns searched student details.
+   */
+  @Groups(UserGroups.AESTUser)
+  @Get("search")
+  async searchStudents(
+    @Query() searchCriteria: AESTStudentSearchAPIInDTO,
+  ): Promise<SearchStudentAPIOutDTO[]> {
+    const searchStudentApplications =
+      await this.studentService.searchStudentApplication(
+        searchCriteria.firstName,
+        searchCriteria.lastName,
+        searchCriteria.appNumber,
+      );
+    return searchStudentApplications.map((eachStudent: Student) => ({
+      id: eachStudent.id,
+      firstName: eachStudent.user.firstName,
+      lastName: eachStudent.user.lastName,
+      birthDate: getISODateOnlyString(eachStudent.birthDate),
+    }));
   }
 
   /**

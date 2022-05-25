@@ -25,6 +25,7 @@ import {
   StudentAppealRequestsService,
   GCNotifyService,
   GCNotifyActionsService,
+  ATBCService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -76,6 +77,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     GCNotifyActionsService,
     AssessmentControllerService,
     StudentControllerService,
+    ATBCService,
   ],
 })
 export class AppStudentsModule {}

@@ -97,11 +97,11 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   Creates the student checking for an existing user to be used or
-   creating a new one in case the user id is not provided.
+   * Creates the student checking for an existing user to be used or
+   * creating a new one in case the user id is not provided.
    * The user could be already available in the case of the same user
    * was authenticated previously on another portal (e.g. parent/partner).
-   * @param userInfo information needed to create/update the user.
+   * @param userInfo information needed to create the user.
    * @param otherInfo information received to create the student.
    * @returns created student.
    */
@@ -149,17 +149,17 @@ export class StudentService extends RecordDataModelService<Student> {
     return this.save(student);
   }
 
-  async updateStudentContactByUserName(
-    userName: string,
+  /**
+   * Updates the student contact information.
+   * @param studentId student to be updated.
+   * @param contact contact information to be updated.
+   * @returns updated student.
+   */
+  async updateStudentContactByStudentId(
+    studentId: number,
     contact: StudentInfo,
   ): Promise<Student> {
-    const student = await this.getStudentByUserName(userName);
-    if (!student) {
-      throw new Error(
-        `Not able to find a student using the user name ${userName}`,
-      );
-    }
-
+    const student = { id: studentId } as Student;
     student.contactInfo = {
       address: transformAddressDetails(contact),
       phone: contact.phone,

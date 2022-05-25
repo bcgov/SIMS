@@ -29,17 +29,13 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * Updates the student information that the student is allowed to change
+   * in the solution. Other data must be edited outside (e.g. BCSC).
+   * @param studentContact information to be updated.
+   */
   async updateStudentContact(studentContact: StudentContact): Promise<void> {
-    try {
-      await this.apiClient.patch(
-        "students/contact",
-        studentContact,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.apiClient.patch(this.addClientRoot("students"), studentContact);
   }
 
   async getContact(): Promise<StudentContact> {
@@ -83,17 +79,13 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * Creates the request for ATBC PD evaluation.
+   * Student should only be allowed to check the PD status once and the
+   * SIN validation must be already done with a successful result.
+   */
   async applyForPDStatus(): Promise<void> {
-    try {
-      return await this.apiClient.patch(
-        "students/apply-pd-status",
-        null,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.patchCall(this.addClientRoot("students/apply-pd-status"), null);
   }
 
   /**
@@ -122,26 +114,23 @@ export class StudentApi extends HttpBaseClient {
     firstName: string,
     lastName: string,
   ): Promise<SearchStudentResp[]> {
-    try {
-      let queryString = "";
-      if (appNumber) {
-        queryString += `appNumber=${appNumber}&`;
-      }
-      if (firstName) {
-        queryString += `firstName=${firstName}&`;
-      }
-      if (lastName) {
-        queryString += `lastName=${lastName}&`;
-      }
-      const student = await this.apiClient.get(
-        `students/search?${queryString.slice(0, -1)}`,
-        this.addAuthHeader(),
-      );
-      return student.data as SearchStudentResp[];
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
+    let queryString = "";
+    if (appNumber) {
+      queryString += `appNumber=${appNumber}&`;
     }
+    if (firstName) {
+      queryString += `firstName=${firstName}&`;
+    }
+    if (lastName) {
+      queryString += `lastName=${lastName}&`;
+    }
+    const url = this.addClientRoot(
+      `students/search?${queryString.slice(0, -1)}`,
+    );
+    return await this.getCallTyped<SearchStudentResp[]>(
+      url,
+      this.addAuthHeader(),
+    );
   }
 
   /**

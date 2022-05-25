@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -11,8 +12,13 @@ import {
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
+import { StudentUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -22,6 +28,7 @@ import {
 import {
   ApplicationService,
   APPLICATION_NOT_FOUND,
+  ATBCService,
   FormService,
   GCNotifyActionsService,
   StudentFileService,
@@ -30,11 +37,17 @@ import {
 import BaseController from "../BaseController";
 import {
   CreateStudentAPIInDTO,
+  StudentContactAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
+  UpdateStudentAPIInDTO,
 } from "./models/student.dto";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import {
+  ApiProcessError,
+  ATBCCreateClientPayload,
+  ClientTypeBaseRoute,
+} from "../../types";
 import { Response } from "express";
 import { StudentControllerService } from "..";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -47,6 +60,8 @@ import {
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import { FormNames } from "../../services/form/constants";
+import { StudentInfo } from "../../services/student/student.service.models";
+import { AddressInfo } from "../../database/entities";
 
 /**
  * Student controller for Student Client.
@@ -64,6 +79,7 @@ export class StudentStudentsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly studentService: StudentService,
     private readonly formService: FormService,
+    private readonly atbcService: ATBCService,
   ) {
     super();
   }
@@ -73,22 +89,21 @@ export class StudentStudentsController extends BaseController {
    * creating a new one in case the user id is not provided.
    * The user could be already available in the case of the same user
    * was authenticated previously on another portal (e.g. parent/partner).
-   * @param payload information needed to create/update the user.
-   * @param userToken authenticated user information.
+   * @param payload information needed to create the user.
    */
   @Post()
+  @ApiUnprocessableEntityResponse({
+    description:
+      "There is already a student associated with the user or the request is invalid.",
+  })
   @RequiresStudentAccount(false)
   async create(
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: StudentUserToken,
     @Body() payload: CreateStudentAPIInDTO,
   ): Promise<void> {
     if (userToken.userId) {
-      // If the user already exists, verify if there is already a student
-      // associated with the existing user.
-      const existingStudent = await this.studentService.getStudentByUserId(
-        userToken.userId,
-      );
-      if (existingStudent) {
+      // Checks if a student account already exists associated with the current user.
+      if (userToken.studentId) {
         throw new UnprocessableEntityException(
           "There is already a student associated with the user.",
         );
@@ -100,15 +115,108 @@ export class StudentStudentsController extends BaseController {
       payload,
     );
     if (!submissionResult.valid) {
-      throw new BadRequestException(
+      throw new UnprocessableEntityException(
         "Not able to create a student due to an invalid request.",
       );
     }
 
-    await this.studentService.createStudent(userToken, {
-      ...submissionResult.data.data,
-      sinNumber: payload.sinNumber,
-    });
+    const studentInfo = submissionResult.data.data as StudentInfo;
+    await this.studentService.createStudent(userToken, studentInfo);
+  }
+
+  /**
+   * Updates the student information that the student is allowed to change
+   * in the solution. Other data must be edited outside (e.g. BCSC).
+   * @param payload information to be updated.
+   */
+  @Patch()
+  @ApiBadRequestResponse({
+    description: "Not able to update a student due to an invalid request.",
+  })
+  async update(
+    @UserToken() userToken: StudentUserToken,
+    @Body() payload: UpdateStudentAPIInDTO,
+  ): Promise<void> {
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.StudentInformation,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to update a student due to an invalid request.",
+      );
+    }
+    await this.studentService.updateStudentContactByStudentId(
+      userToken.studentId,
+      submissionResult.data.data,
+    );
+  }
+
+  @Get("contact")
+  async getContactInfo(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<StudentContactAPIOutDTO> {
+    const student = await this.studentService.getStudentById(
+      userToken.studentId,
+    );
+    const address = student.contactInfo.address ?? ({} as AddressInfo);
+    return {
+      phone: student.contactInfo.phone,
+      addressLine1: address.addressLine1,
+      addressLine2: address.addressLine2,
+      city: address.city,
+      provinceState: address.provinceState,
+      country: address.country,
+      postalCode: address.postalCode,
+    };
+  }
+
+  /**
+   * Creates the request for ATBC PD evaluation.
+   * Student should only be allowed to check the PD status once and the
+   * SIN validation must be already done with a successful result.
+   */
+  @Patch("apply-pd-status")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Either the client does not have a validated SIN or the request was already sent to ATBC.",
+  })
+  async applyForPDStatus(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<void> {
+    // Get student details
+    const student = await this.studentService.getStudentById(
+      userToken.studentId,
+    );
+    // Check the PD status in DB. Student should only be allowed to check the PD status once.
+    // studentPDSentAt is set when student apply for PD status for the first.
+    // studentPDVerified is null before PD scheduled job update status.
+    // studentPDVerified is true if PD confirmed by ATBC or is true from sfas_individual table.
+    // studentPDVerified is false if PD denied by ATBC.
+    if (
+      !student.sinValidation.isValidSIN ||
+      !!student.studentPDSentAt ||
+      student.studentPDVerified !== null
+    ) {
+      throw new UnprocessableEntityException(
+        "Either the client does not have a validated SIN or the request was already sent to ATBC.",
+      );
+    }
+
+    // Create client payload.
+    const payload: ATBCCreateClientPayload = {
+      SIN: student.sin,
+      firstName: student.user.firstName,
+      lastName: student.user.lastName,
+      email: student.user.email,
+      birthDate: student.birthDate,
+    };
+    // API to create student profile in ATBC.
+    const response = await this.atbcService.ATBCCreateClient(payload);
+    if (response) {
+      // Update PD Sent Date.
+      await this.studentService.updatePDSentDate(student.id);
+    }
   }
 
   /**

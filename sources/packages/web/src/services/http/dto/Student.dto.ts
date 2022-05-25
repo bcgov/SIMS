@@ -1,5 +1,24 @@
 import { FileOriginType, StudentPDStatus } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
+import { AddressDetailsFormAPIDTO } from "./Common.dto";
+
+/**
+ * Data saved while creating the student profile.
+ * SIN validation not added to DTO because it is going
+ * to be handled by the Form.IO dryRun validation.
+ */
+export interface CreateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
+  phone: string;
+  sinNumber: string;
+}
+
+/**
+ * Updates the student information that the student is allowed to change
+ * in the solution. Other data must be edited outside (e.g. BCSC).
+ */
+export interface UpdateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
+  phone: string;
+}
 
 export interface StudentProfileAPIOutDTO {
   firstName: string;

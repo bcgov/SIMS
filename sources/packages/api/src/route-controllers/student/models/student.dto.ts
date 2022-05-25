@@ -1,9 +1,12 @@
 import { Type } from "class-transformer";
 import {
+  Allow,
   ArrayMinSize,
   IsDefined,
   IsNotEmpty,
   IsOptional,
+  Length,
+  ValidateIf,
 } from "class-validator";
 import { FileOriginType } from "../../../database/entities/student-file.type";
 import {
@@ -17,7 +20,7 @@ export class ContactInformationAPIOutDTO {
   phone: string;
 }
 
-export class GetStudentContactDto {
+export class StudentContactAPIOutDTO {
   phone: string;
   addressLine1: string;
   addressLine2: string;
@@ -28,18 +31,24 @@ export class GetStudentContactDto {
 }
 
 /**
- * Common data saved while creating
- * or updating the student profile.
- * Validations not added to DTO because
- * they are going to be handled by the
- * Form.IO dryRun validation.
+ * Data saved while creating the student profile.
+ * SIN validation not added to DTO because it is going
+ * to be handled by the Form.IO dryRun validation.
  */
-export interface CreateStudentAPIInDTO extends AddressDetailsAPIInDTO {
+export class CreateStudentAPIInDTO extends AddressDetailsAPIInDTO {
+  @Length(10, 20)
   phone: string;
-  /**
-   * SIN is optional during update.
-   */
-  sinNumber?: string;
+  @Allow()
+  sinNumber: string;
+}
+
+/**
+ * Updates the student information that the student is allowed to change
+ * in the solution. Other data must be edited outside (e.g. BCSC).
+ */
+export class UpdateStudentAPIInDTO extends AddressDetailsAPIInDTO {
+  @Length(10, 20)
+  phone: string;
 }
 
 export interface StudentEducationProgramDto {
@@ -51,7 +60,19 @@ export interface StudentEducationProgramDto {
   deliveryMethod: string;
 }
 
-export interface SearchStudentRespDto {
+export class AESTStudentSearchAPIInDTO {
+  @ValidateIf((input) => !input.lastName && !input.appNumber)
+  @IsNotEmpty()
+  firstName: string;
+  @ValidateIf((input) => !input.firstName && !input.appNumber)
+  @IsNotEmpty()
+  lastName: string;
+  @ValidateIf((input) => !input.firstName && !input.lastName)
+  @IsNotEmpty()
+  appNumber: string;
+}
+
+export class SearchStudentAPIOutDTO {
   id: number;
   firstName: string;
   lastName: string;
