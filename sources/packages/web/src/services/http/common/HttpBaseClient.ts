@@ -68,8 +68,12 @@ export default abstract class HttpBaseClient {
    ** otherwise it is downloaded as get call.
    * @param url url of the API.
    * @param payload payload passed for post call.
+   * @returns axios response object from http response.
    */
-  protected async downloadFile<T>(url: string, payload?: T): Promise<void> {
+  protected async downloadFile<T>(
+    url: string,
+    payload?: T,
+  ): Promise<AxiosResponse<any>> {
     try {
       const requestConfig: AxiosRequestConfig = {
         ...this.addAuthHeader(),
@@ -88,7 +92,7 @@ export default abstract class HttpBaseClient {
           requestConfig,
         );
       }
-      this.downloadAsBlob(response);
+      return response;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

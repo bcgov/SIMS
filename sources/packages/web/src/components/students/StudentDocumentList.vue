@@ -9,7 +9,7 @@
       >
         <div
           class="file-label"
-          @click="fileUtils.downloadDocument(ministryDocument)"
+          @click="fileUtils.downloadStudentDocument(ministryDocument)"
         >
           <span class="mr-4">
             <font-awesome-icon :icon="['far', 'file-alt']"
@@ -33,7 +33,7 @@
       >
         <div
           class="file-label"
-          @click="fileUtils.downloadDocument(studentDocument)"
+          @click="fileUtils.downloadStudentDocument(studentDocument)"
         >
           <span class="mr-4">
             <font-awesome-icon :icon="['far', 'file-alt']"

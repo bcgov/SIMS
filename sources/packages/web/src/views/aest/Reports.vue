@@ -16,13 +16,13 @@
 </template>
 
 <script lang="ts">
-import { ReportService } from "@/services/ReportService";
 import { ReportsFilterAPIInDTO } from "@/services/http/dto";
-import { useToastMessage } from "@/composables";
+import { useToastMessage, useFileUtils } from "@/composables";
 import { FormIOForm } from "@/types";
 export default {
   setup() {
     const toast = useToastMessage();
+    const fileUtils = useFileUtils();
     let formData: any = undefined;
 
     const formLoaded = (form: FormIOForm) => {
@@ -35,7 +35,7 @@ export default {
 
     const exportReport = async (data: ReportsFilterAPIInDTO) => {
       try {
-        await ReportService.shared.exportReport(data);
+        fileUtils.downloadReports(data);
       } catch {
         toast.error(
           "Unexpected error",
