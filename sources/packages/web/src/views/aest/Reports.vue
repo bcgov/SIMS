@@ -36,7 +36,7 @@ export default {
     const exportReport = async (data: ReportsFilterAPIInDTO) => {
       try {
         await ReportService.shared.exportReport(data);
-      } catch (error: unknown) {
+      } catch {
         toast.error(
           "Unexpected error",
           "Unexpected error while downloading the report.",

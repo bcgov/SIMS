@@ -5,7 +5,7 @@ VALUES
     (
         'Disbursement_Forecast_Report',
         'select
-            to_char(ds.disbursement_date, ''Mon DD YYYY'') as "Disbursement Date",
+            to_char(ds.disbursement_date, ''YYYY-MM-DD'') as "Disbursement Date",
             dv.value_code as "Funding Type",
             sum(dv.value_amount) as "Amount",
             count(ap.id) as "Count"

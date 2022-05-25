@@ -32,6 +32,8 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
     }
     let reportQuery = config.reportSQL;
 
+    //Search for params sent from payload in the query. They must be available in the query in :<param_name> pattern.
+    //If a param is not found throw error as filter params payload is expected to match the query.
     Object.keys(filterParams).forEach((key, index) => {
       const doesParamExist = reportQuery.includes(`:${key}`);
       if (!doesParamExist) {
@@ -42,21 +44,21 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
       }
       if (doesParamExist) {
         reportQuery = reportQuery.replace(`:${key}`, `$${index + 1}`);
-        parameters.push(this.convertJSONToArray(filterParams[key]));
+        parameters.push(this.convertFilterDataAsParameter(filterParams[key]));
       }
     });
     return this.connection.query(reportQuery, parameters);
   }
 
   /**
-   * If a json object is returned by form.io by select boxes
-   * then convert the json object to an array.
-   * Otherwise return the object.
+   * When a filter param value is of type object
+   * then convert the object to string array to be able to pass as query argument.
+   * Otherwise return the value.
    * @param filterParam the param of payload which is converted to
    * query argument.
    * @returns filter param value for query.
    */
-  private convertJSONToArray(filterParam: any): string | string[] {
+  private convertFilterDataAsParameter(filterParam: any): string | string[] {
     if (Array.isArray(filterParam) || typeof filterParam !== "object") {
       return filterParam;
     }

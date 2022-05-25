@@ -19,7 +19,10 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { ReportService, FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { StringBuilder } from "../../utilities/string-builder";
-import { getFileNameTimestamp, CustomNamedError } from "../../utilities";
+import {
+  getFileNameAsCurrentTimestamp,
+  CustomNamedError,
+} from "../../utilities";
 import BaseController from "../BaseController";
 import { ReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
@@ -123,7 +126,7 @@ export class ReportAESTController extends BaseController {
     reportName: string,
     fileContent: string,
   ) {
-    const timestamp = getFileNameTimestamp();
+    const timestamp = getFileNameAsCurrentTimestamp();
     const filename = `${reportName}_${timestamp}.csv`;
     response.setHeader(
       "Content-Disposition",
