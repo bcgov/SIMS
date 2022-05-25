@@ -163,19 +163,4 @@ export default abstract class HttpBaseClient {
         return url;
     }
   }
-
-  /**
-   * Download file as blob using Axios http response.
-   * @param response axios response object from http response.
-   */
-  private downloadAsBlob(response: AxiosResponse<any>) {
-    const linkURL = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement("a");
-    const fileName =
-      response.headers["content-disposition"].split("filename=")[1];
-    link.href = linkURL;
-    link.setAttribute("download", fileName);
-    document.body.appendChild(link);
-    link.click();
-  }
 }
