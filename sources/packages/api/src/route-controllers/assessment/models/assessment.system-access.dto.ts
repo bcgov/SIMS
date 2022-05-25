@@ -40,6 +40,7 @@ export class ApplicationOfferingAPIOutDTO {
   tuitionRemittanceRequestedAmount: number;
   offeringDelivered: string;
   offeringIntensity: string;
+  courseLoad?: number;
 }
 
 export class ApplicationProgramAPIOutDTO {

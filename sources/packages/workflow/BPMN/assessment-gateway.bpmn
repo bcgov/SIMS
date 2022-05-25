@@ -639,6 +639,7 @@ ${workflowIdErrorMsg}</camunda:inputParameter>
               <camunda:value>appeals.studentIncomeAppeal.submittedData</camunda:value>
               <camunda:value>appeals.partnerIncomeAppeal.submittedData</camunda:value>
               <camunda:value>applicationId</camunda:value>
+              <camunda:value>offering.courseLoad</camunda:value>
             </camunda:list>
           </camunda:inputParameter>
           <camunda:inputParameter name="errorCodeName">SIMS-GET-ASSESSMENT-FULL-DATA-ERROR</camunda:inputParameter>
@@ -721,6 +722,7 @@ ${workflowIdErrorMsg}</camunda:inputParameter>
           <camunda:outputParameter name="studentIncomeAppealData">${appeals_studentIncomeAppeal_submittedData}</camunda:outputParameter>
           <camunda:outputParameter name="partnerIncomeAppealData">${appeals_partnerIncomeAppeal_submittedData}</camunda:outputParameter>
           <camunda:outputParameter name="applicationId">${applicationId}</camunda:outputParameter>
+          <camunda:outputParameter name="courseLoad">${offering_courseLoad}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0t5tfgt</bpmn:incoming>
@@ -1165,8 +1167,7 @@ JSON.stringify({ data: assessmentJson });
         <camunda:out source="totalAcademicExpenses" target="totalAcademicExpenses" />
         <camunda:in source="isProgramOnline" target="isProgramOnline" />
         <camunda:executionListener event="start">
-          <camunda:script scriptFormat="javascript">execution.setVariable("courseLoad", 50);
-var isProgramOnline = false;
+          <camunda:script scriptFormat="javascript">var isProgramOnline = false;
 if(execution.getVariable("offeringDelivered") == "online"){
   isProgramOnline = true;
 }
@@ -1775,9 +1776,56 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <dc:Bounds x="580" y="80" width="2036" height="1280" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0xdedyz_di" bpmnElement="TextAnnotation_0xdedyz">
-        <dc:Bounds x="1900" y="2442" width="130" height="70" />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1e0klas_di" bpmnElement="Flow_1e0klas">
+        <di:waypoint x="2015" y="2690" />
+        <di:waypoint x="2180" y="2690" />
+        <di:waypoint x="2180" y="2645" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hiahuz_di" bpmnElement="Flow_1hiahuz">
+        <di:waypoint x="1508" y="2645" />
+        <di:waypoint x="1508" y="2690" />
+        <di:waypoint x="1915" y="2690" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1513" y="2673" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vtc1sq_di" bpmnElement="Flow_1vtc1sq">
+        <di:waypoint x="1508" y="2595" />
+        <di:waypoint x="1508" y="2560" />
+        <di:waypoint x="1627" y="2560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1510" y="2543" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19yc6c3_di" bpmnElement="Flow_19yc6c3">
+        <di:waypoint x="1727" y="2560" />
+        <di:waypoint x="1777" y="2560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xtxfdc_di" bpmnElement="Flow_0xtxfdc">
+        <di:waypoint x="1877" y="2560" />
+        <di:waypoint x="1920" y="2560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i1dgfc_di" bpmnElement="Flow_1i1dgfc">
+        <di:waypoint x="2107" y="2560" />
+        <di:waypoint x="2180" y="2560" />
+        <di:waypoint x="2180" y="2595" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1udpycx_di" bpmnElement="Flow_1udpycx">
+        <di:waypoint x="2020" y="2560" />
+        <di:waypoint x="2071" y="2560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09z4e25_di" bpmnElement="Flow_09z4e25">
+        <di:waypoint x="2205" y="2620" />
+        <di:waypoint x="2240" y="2620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gq6278_di" bpmnElement="Flow_1gq6278">
+        <di:waypoint x="2340" y="2620" />
+        <di:waypoint x="2392" y="2620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05qdqhf_di" bpmnElement="Flow_05qdqhf">
+        <di:waypoint x="1427" y="2620" />
+        <di:waypoint x="1483" y="2620" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1795ldb_di" bpmnElement="Flow_1795ldb">
         <di:waypoint x="2150" y="1706" />
         <di:waypoint x="2222" y="1706" />
@@ -2219,56 +2267,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
           <dc:Bounds x="678" y="532" width="68" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_05qdqhf_di" bpmnElement="Flow_05qdqhf">
-        <di:waypoint x="1427" y="2620" />
-        <di:waypoint x="1483" y="2620" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1gq6278_di" bpmnElement="Flow_1gq6278">
-        <di:waypoint x="2340" y="2620" />
-        <di:waypoint x="2392" y="2620" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_09z4e25_di" bpmnElement="Flow_09z4e25">
-        <di:waypoint x="2205" y="2620" />
-        <di:waypoint x="2240" y="2620" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1udpycx_di" bpmnElement="Flow_1udpycx">
-        <di:waypoint x="2020" y="2560" />
-        <di:waypoint x="2071" y="2560" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1i1dgfc_di" bpmnElement="Flow_1i1dgfc">
-        <di:waypoint x="2107" y="2560" />
-        <di:waypoint x="2180" y="2560" />
-        <di:waypoint x="2180" y="2595" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0xtxfdc_di" bpmnElement="Flow_0xtxfdc">
-        <di:waypoint x="1877" y="2560" />
-        <di:waypoint x="1920" y="2560" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_19yc6c3_di" bpmnElement="Flow_19yc6c3">
-        <di:waypoint x="1727" y="2560" />
-        <di:waypoint x="1777" y="2560" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1vtc1sq_di" bpmnElement="Flow_1vtc1sq">
-        <di:waypoint x="1508" y="2595" />
-        <di:waypoint x="1508" y="2560" />
-        <di:waypoint x="1627" y="2560" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1510" y="2543" width="60" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1hiahuz_di" bpmnElement="Flow_1hiahuz">
-        <di:waypoint x="1508" y="2645" />
-        <di:waypoint x="1508" y="2690" />
-        <di:waypoint x="1915" y="2690" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1513" y="2673" width="74" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1e0klas_di" bpmnElement="Flow_1e0klas">
-        <di:waypoint x="2015" y="2690" />
-        <di:waypoint x="2180" y="2690" />
-        <di:waypoint x="2180" y="2645" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1y0ilvy_di" bpmnElement="Event_0a53uvu">
         <dc:Bounds x="2522" y="542" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -2507,6 +2505,16 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmndi:BPMNShape id="BPMNShape_0l9udpn" bpmnElement="Activity_1sfa3ki">
         <dc:Bounds x="1360" y="1714" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03z8wvb_di" bpmnElement="Activity_0fcbd0j">
+        <dc:Bounds x="2050" y="1666" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_01rgs2a" bpmnElement="Event_0a5b9bd">
+        <dc:Bounds x="2222" y="1688" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2214" y="1731" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0wu28r4_di" bpmnElement="Event_0wu28r4">
         <dc:Bounds x="2392" y="2602" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -2538,16 +2546,6 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <dc:Bounds x="1915" y="2650" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_03z8wvb_di" bpmnElement="Activity_0fcbd0j">
-        <dc:Bounds x="2050" y="1666" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_01rgs2a" bpmnElement="Event_0a5b9bd">
-        <dc:Bounds x="2222" y="1688" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2214" y="1731" width="60" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0lx2onb_di" bpmnElement="TextAnnotation_0lx2onb">
         <dc:Bounds x="1212" y="2480" width="100" height="55" />
       </bpmndi:BPMNShape>
@@ -2572,10 +2570,9 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
         <dc:Bounds x="1291" y="438" width="170" height="41" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_036j07s_di" bpmnElement="Association_036j07s">
-        <di:waypoint x="1913" y="2512" />
-        <di:waypoint x="1877" y="2540" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0xdedyz_di" bpmnElement="TextAnnotation_0xdedyz">
+        <dc:Bounds x="1900" y="2442" width="130" height="70" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1eqxjsa_di" bpmnElement="Event_1eqxjsa">
         <dc:Bounds x="1034" y="500" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -2609,6 +2606,10 @@ execution.setVariable("partnerCalculatedTotalIncome", appealData.prop("partnerNe
       <bpmndi:BPMNEdge id="Association_0b1d0j7_di" bpmnElement="Association_0b1d0j7">
         <di:waypoint x="1376" y="479" />
         <di:waypoint x="1376" y="518" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_036j07s_di" bpmnElement="Association_036j07s">
+        <di:waypoint x="1913" y="2512" />
+        <di:waypoint x="1877" y="2540" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_16iez0e_di" bpmnElement="Group_16iez0e">
         <dc:Bounds x="873" y="2550" width="270" height="140" />

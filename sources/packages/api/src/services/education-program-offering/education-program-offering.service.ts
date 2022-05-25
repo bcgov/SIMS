@@ -161,9 +161,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.exceptionalExpenses",
         "offerings.tuitionRemittanceRequestedAmount",
         "offerings.offeringDelivered",
-        "offerings.lacksStudyDates",
         "offerings.lacksStudyBreaks",
-        "offerings.lacksFixedCosts",
         "offerings.tuitionRemittanceRequested",
         "offerings.offeringIntensity",
         "offerings.yearOfStudy",
@@ -176,6 +174,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.assessedDate",
         "offerings.submittedDate",
         "offerings.offeringStatus",
+        "offerings.courseLoad",
         "assessedBy.firstName",
         "assessedBy.lastName",
         "institutionLocation.name",
@@ -239,10 +238,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       educationProgramOffering.tuitionRemittanceRequestedAmount;
     programOffering.offeringDelivered =
       educationProgramOffering.offeringDelivered;
-    programOffering.lacksStudyDates = educationProgramOffering.lacksStudyDates;
     programOffering.lacksStudyBreaks =
       educationProgramOffering.lacksStudyBreaks;
-    programOffering.lacksFixedCosts = educationProgramOffering.lacksFixedCosts;
     programOffering.tuitionRemittanceRequested =
       educationProgramOffering.tuitionRemittanceRequested;
     programOffering.offeringType =
@@ -262,6 +259,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.offeringDeclaration =
       educationProgramOffering.offeringDeclaration;
     programOffering.offeringType = educationProgramOffering.offeringType;
+    programOffering.courseLoad = educationProgramOffering.courseLoad;
     programOffering.offeringStatus = educationProgramOffering.offeringStatus;
     return programOffering;
   }
@@ -368,9 +366,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.exceptionalExpenses",
         "offering.tuitionRemittanceRequestedAmount",
         "offering.offeringDelivered",
-        "offering.lacksStudyDates",
         "offering.lacksStudyBreaks",
-        "offering.lacksFixedCosts",
         "offering.tuitionRemittanceRequested",
         "offering.offeringIntensity",
         "offering.yearOfStudy",
@@ -382,6 +378,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.offeringType",
         "offering.assessedDate",
         "offering.submittedDate",
+        "offering.courseLoad",
         "offering.offeringStatus",
         "assessedBy.firstName",
         "assessedBy.lastName",
