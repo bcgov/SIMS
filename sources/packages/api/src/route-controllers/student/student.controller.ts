@@ -26,8 +26,6 @@ import {
   SearchStudentRespDto,
   SaveStudentDto,
   StudentRestrictionDTO,
-  StudentDetailAPIOutDTO,
-  StudentInfo,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -37,7 +35,6 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { StudentApplicationAndCount } from "../application/models/application.model";
 import { Student, Application, AddressInfo } from "../../database/entities";
 import {
-  determinePDStatus,
   deliveryMethod,
   dateString,
   credentialTypeToDisplay,
@@ -45,13 +42,11 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
-  getUserFullName,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
 import { FormNames } from "../../services/form/constants";
 import { ApiTags } from "@nestjs/swagger";
-import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { ATBCCreateClientPayload } from "../../types";
 
 @Controller("students")
@@ -67,71 +62,6 @@ export class StudentController extends BaseController {
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super();
-  }
-
-  @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("studentInfo")
-  async getStudentInfo(
-    @UserToken() userToken: IUserToken,
-  ): Promise<StudentInfo> {
-    const existingStudent = await this.studentService.getStudentByUserName(
-      userToken.userName,
-    );
-
-    if (!existingStudent) {
-      throw new NotFoundException(
-        `No student was found with the student name ${userToken.userName}`,
-      );
-    }
-
-    // Check user exists or not
-    const existingUser = await this.userService.getActiveUser(
-      userToken.userName,
-    );
-    if (!existingUser) {
-      throw new NotFoundException(
-        `No user record was found with for student ${userToken.userName}`,
-      );
-    }
-    const address = existingStudent.contactInfo.address ?? ({} as AddressInfo);
-
-    const studentInfo: StudentInfo = {
-      firstName: existingUser.firstName,
-      lastName: existingUser.lastName,
-      email: existingUser.email,
-      gender: existingStudent.gender,
-      dateOfBirth: existingStudent.birthDate,
-      contact: {
-        address: transformAddressDetailsForAddressBlockForm(address),
-        phone: existingStudent.contactInfo.phone,
-      },
-      pdVerified: existingStudent.studentPDVerified,
-      validSin: existingStudent.sinValidation.isValidSIN,
-      pdSentDate: existingStudent.studentPDSentAt,
-      pdUpdatedDate: existingStudent.studentPDUpdateAt,
-      pdStatus: determinePDStatus(existingStudent),
-    };
-    return studentInfo;
-  }
-
-  /**
-   * Quick check to verify is there is an user
-   * and student associated with the token information.
-   * @param userToken authenticated user information.
-   * @returns true if the student exists, otherwise false.
-   */
-  @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("check-student")
-  async checkStudentExists(
-    @UserToken() userToken: IUserToken,
-  ): Promise<boolean> {
-    if (!userToken.userId) {
-      return false;
-    }
-    const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-    return !!student;
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)
@@ -259,14 +189,6 @@ export class StudentController extends BaseController {
       ...submissionResult.data.data,
       sinNumber: payload.sinNumber,
     });
-  }
-
-  @AllowAuthorizedParty(AuthorizedParties.student)
-  @Patch("/sync")
-  async synchronizeFromUserInfo(
-    @UserToken() userToken: IUserToken,
-  ): Promise<void> {
-    await this.studentService.synchronizeFromUserInfo(userToken);
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)
@@ -416,46 +338,5 @@ export class StudentController extends BaseController {
         studentRestrictionStatus.hasProvincialRestriction,
       restrictionMessage: studentRestrictionStatus.restrictionMessage,
     } as StudentRestrictionDTO;
-  }
-
-  /**
-   * API to fetch student details by studentId.
-   * This API will be used by ministry users.
-   * @param studentId
-   * @returns Student Details
-   */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get(":studentId/aest")
-  async getStudentDetails(
-    @Param("studentId") studentId: number,
-  ): Promise<StudentDetailAPIOutDTO> {
-    const student = await this.studentService.findById(studentId);
-    const studentRestrictionStatus =
-      await this.studentRestrictionService.getStudentRestrictionsByUserId(
-        student.user.id,
-      );
-    const address = student.contactInfo.address ?? ({} as AddressInfo);
-    return {
-      firstName: student.user.firstName,
-      lastName: student.user.lastName,
-      fullName: getUserFullName(student.user),
-      email: student.user.email,
-      gender: student.gender,
-      dateOfBirth: student.birthDate,
-      contact: {
-        address: {
-          addressLine1: address.addressLine1,
-          addressLine2: address.addressLine2,
-          city: address.city,
-          provinceState: address.provinceState,
-          country: address.country,
-          postalCode: address.postalCode,
-        },
-        phone: student.contactInfo.phone,
-      },
-      pdStatus: determinePDStatus(student),
-      hasRestriction: studentRestrictionStatus.hasRestriction,
-    } as StudentDetailAPIOutDTO;
   }
 }

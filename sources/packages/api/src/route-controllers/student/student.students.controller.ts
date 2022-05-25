@@ -29,6 +29,7 @@ import {
 import BaseController from "../BaseController";
 import {
   StudentFileUploaderAPIInDTO,
+  StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
 } from "./models/student.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
@@ -61,6 +62,17 @@ export class StudentStudentsController extends BaseController {
     private readonly studentService: StudentService,
   ) {
     super();
+  }
+
+  /**
+   * Use the information available in the authentication token to update
+   * the user and student data currently on DB.
+   */
+  @Patch("/sync")
+  async synchronizeFromUserToken(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<void> {
+    await this.studentService.synchronizeFromUserToken(userToken);
   }
 
   /**
@@ -198,5 +210,16 @@ export class StudentStudentsController extends BaseController {
       sendFileUploadNotification,
       fileMetadata,
     );
+  }
+
+  /**
+   * Get the student information that represents the profile.
+   * @returns student profile information.
+   */
+  @Get()
+  async getStudentProfile(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<StudentProfileAPIOutDTO> {
+    return this.studentControllerService.getStudentProfile(userToken.studentId);
   }
 }

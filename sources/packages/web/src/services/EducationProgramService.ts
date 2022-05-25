@@ -2,7 +2,7 @@ import {
   SummaryEducationProgramDto,
   OptionItemDto,
   StudentEducationProgramDto,
-  ProgramDto,
+  EducationProgramAPIDTO,
   EducationProgramData,
   DataTableSortOrder,
   ProgramSummaryFields,
@@ -23,17 +23,17 @@ export class EducationProgramService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getProgram(programId: number): Promise<ProgramDto> {
+  public async getProgram(programId: number): Promise<EducationProgramAPIDTO> {
     return ApiClient.EducationProgram.getProgram(programId);
   }
 
-  public async createProgram(data: ProgramDto): Promise<void> {
+  public async createProgram(data: EducationProgramAPIDTO): Promise<void> {
     await ApiClient.EducationProgram.createProgram(data);
   }
 
   public async updateProgram(
     programId: number,
-    data: ProgramDto,
+    data: EducationProgramAPIDTO,
   ): Promise<void> {
     await ApiClient.EducationProgram.updateProgram(programId, data);
   }

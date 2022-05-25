@@ -133,7 +133,7 @@ export default {
       //Get the student information, application information and student restriction.
       const [studentInfo, applicationData, studentRestriction] =
         await Promise.all([
-          StudentService.shared.getStudentInfo(),
+          StudentService.shared.getStudentProfile(),
           ApplicationService.shared.getApplicationData(props.id),
           StudentService.shared.getStudentRestriction(),
         ]);
