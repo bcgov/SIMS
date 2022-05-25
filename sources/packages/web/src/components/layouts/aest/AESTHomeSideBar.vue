@@ -40,6 +40,18 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
+    <template #append>
+      <v-list dense nav>
+        <v-list-item @click="reports.command">
+          <v-list-item-icon>
+            <font-awesome-icon :icon="reports.icon" class="mr-2" />
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>{{ reports.label }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </template>
   </v-navigation-drawer>
 </template>
 <script lang="ts">
@@ -95,9 +107,20 @@ export default {
       },
     } as MenuModel);
 
+    const reports = ref({
+      label: "Reports",
+      icon: ["far", "copy"],
+      command: () => {
+        router.push({
+          name: AESTRoutesConst.REPORTS,
+        });
+      },
+    } as MenuModel);
+
     return {
       items,
       pendingDesignationItem,
+      reports,
     };
   },
 };

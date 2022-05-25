@@ -10,6 +10,7 @@ export interface FormIOForm {
     row: any,
     silent: boolean,
   ) => boolean;
+  submit: () => any;
 }
 
 /**
