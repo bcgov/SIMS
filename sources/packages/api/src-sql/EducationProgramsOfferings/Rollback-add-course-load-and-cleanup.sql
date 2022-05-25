@@ -2,7 +2,7 @@
 ALTER TABLE
     sims.education_programs_offerings
 ADD
-    COLUMN IF NOT EXISTS lacks_study_dates BOOLEAN NOT NULL;
+    COLUMN IF NOT EXISTS lacks_study_dates BOOLEAN NOT NULL DEFAULT FALSE;
 
 COMMENT ON COLUMN sims.education_programs_offerings.lacks_study_dates IS 'Offering does not have Program Dates?';
 
@@ -10,7 +10,7 @@ COMMENT ON COLUMN sims.education_programs_offerings.lacks_study_dates IS 'Offeri
 ALTER TABLE
     sims.education_programs_offerings
 ADD
-    COLUMN IF NOT EXISTS lacks_fixed_costs BOOLEAN NOT NULL;
+    COLUMN IF NOT EXISTS lacks_fixed_costs BOOLEAN NOT NULL DEFAULT FALSE;
 
 COMMENT ON COLUMN sims.education_programs_offerings.lacks_fixed_costs IS 'Offering does not have Fixed Costs?';
 
