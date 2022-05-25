@@ -31,10 +31,14 @@ import {
   PaginatedResults,
   SortPriority,
 } from "../../utilities";
+import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
-  constructor(private readonly connection: Connection) {
+  constructor(
+    private readonly connection: Connection,
+    private readonly educationProgramOfferingService: EducationProgramOfferingService,
+  ) {
     super(connection.getRepository(EducationProgram));
     this.offeringsRepo = connection.getRepository(EducationProgramOffering);
   }
@@ -96,55 +100,75 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     educationProgram: SaveEducationProgram,
   ): Promise<EducationProgram> {
     const program = new EducationProgram();
+
+    /** Check if education program has offering(s). This check is required to
+     *  prevent a user from updating fields that are not supposed
+     *  to be updated if the education program has 1 or more offerings.
+     */
+    const hasExistingOffering =
+      await this.educationProgramOfferingService.hasExistingOffering(
+        educationProgram.id,
+      );
+
+    // Assign attributes for update from payload only if existing program has no offering(s).
+    if (!hasExistingOffering) {
+      program.credentialType = educationProgram.credentialType;
+      program.cipCode = educationProgram.cipCode;
+      program.nocCode = educationProgram.nocCode;
+      program.sabcCode = educationProgram.sabcCode;
+      program.regulatoryBody = educationProgram.regulatoryBody;
+      program.deliveredOnSite =
+        educationProgram.programDeliveryTypes.deliveredOnSite ?? false;
+      program.deliveredOnline =
+        educationProgram.programDeliveryTypes.deliveredOnline ?? false;
+      program.deliveredOnlineAlsoOnsite =
+        educationProgram.deliveredOnlineAlsoOnsite;
+      program.sameOnlineCreditsEarned =
+        educationProgram.sameOnlineCreditsEarned;
+      program.earnAcademicCreditsOtherInstitution =
+        educationProgram.earnAcademicCreditsOtherInstitution;
+      program.courseLoadCalculation = educationProgram.courseLoadCalculation;
+      program.completionYears = educationProgram.completionYears;
+      program.hasMinimumAge =
+        educationProgram.entranceRequirements.hasMinimumAge;
+      program.eslEligibility = educationProgram.eslEligibility;
+      program.hasJointInstitution = educationProgram.hasJointInstitution;
+      program.hasJointDesignatedInstitution =
+        educationProgram.hasJointDesignatedInstitution;
+      program.programStatus = educationProgram.programStatus;
+      program.institution = {
+        id: educationProgram.institutionId,
+      } as Institution;
+      program.programIntensity = educationProgram.programIntensity;
+      program.institutionProgramCode = educationProgram.institutionProgramCode;
+      program.minHoursWeek = educationProgram.minHoursWeek;
+      program.isAviationProgram = educationProgram.isAviationProgram;
+      program.minHoursWeekAvi = educationProgram.minHoursWeekAvi;
+      program.minHighSchool =
+        educationProgram.entranceRequirements.minHighSchool;
+      program.requirementsByInstitution =
+        educationProgram.entranceRequirements.requirementsByInstitution;
+      program.requirementsByBCITA =
+        educationProgram.entranceRequirements.requirementsByBCITA;
+      program.hasWILComponent = educationProgram.hasWILComponent;
+      program.isWILApproved = educationProgram.isWILApproved;
+      program.wilProgramEligibility = educationProgram.wilProgramEligibility;
+      program.hasTravel = educationProgram.hasTravel;
+      program.travelProgramEligibility =
+        educationProgram.travelProgramEligibility;
+      program.hasIntlExchange = educationProgram.hasIntlExchange;
+      program.intlExchangeProgramEligibility =
+        educationProgram.intlExchangeProgramEligibility;
+      program.programDeclaration = educationProgram.programDeclaration;
+    }
     program.id = educationProgram.id;
     program.name = educationProgram.name;
     program.description = educationProgram.description;
-    program.credentialType = educationProgram.credentialType;
-    program.cipCode = educationProgram.cipCode;
-    program.nocCode = educationProgram.nocCode;
-    program.sabcCode = educationProgram.sabcCode;
-    program.regulatoryBody = educationProgram.regulatoryBody;
-    program.deliveredOnSite =
-      educationProgram.programDeliveryTypes.deliveredOnSite ?? false;
-    program.deliveredOnline =
-      educationProgram.programDeliveryTypes.deliveredOnline ?? false;
-    program.deliveredOnlineAlsoOnsite =
-      educationProgram.deliveredOnlineAlsoOnsite;
-    program.sameOnlineCreditsEarned = educationProgram.sameOnlineCreditsEarned;
-    program.earnAcademicCreditsOtherInstitution =
-      educationProgram.earnAcademicCreditsOtherInstitution;
-    program.courseLoadCalculation = educationProgram.courseLoadCalculation;
-    program.completionYears = educationProgram.completionYears;
-    program.hasMinimumAge = educationProgram.entranceRequirements.hasMinimumAge;
-    program.eslEligibility = educationProgram.eslEligibility;
-    program.hasJointInstitution = educationProgram.hasJointInstitution;
-    program.hasJointDesignatedInstitution =
-      educationProgram.hasJointDesignatedInstitution;
-    program.programStatus = educationProgram.programStatus;
-    program.institution = { id: educationProgram.institutionId } as Institution;
-    program.programIntensity = educationProgram.programIntensity;
-    program.institutionProgramCode = educationProgram.institutionProgramCode;
-    program.minHoursWeek = educationProgram.minHoursWeek;
-    program.isAviationProgram = educationProgram.isAviationProgram;
-    program.minHoursWeekAvi = educationProgram.minHoursWeekAvi;
-    program.minHighSchool = educationProgram.entranceRequirements.minHighSchool;
-    program.requirementsByInstitution =
-      educationProgram.entranceRequirements.requirementsByInstitution;
-    program.requirementsByBCITA =
-      educationProgram.entranceRequirements.requirementsByBCITA;
-    program.hasWILComponent = educationProgram.hasWILComponent;
-    program.isWILApproved = educationProgram.isWILApproved;
-    program.wilProgramEligibility = educationProgram.wilProgramEligibility;
-    program.hasTravel = educationProgram.hasTravel;
-    program.travelProgramEligibility =
-      educationProgram.travelProgramEligibility;
-    program.hasIntlExchange = educationProgram.hasIntlExchange;
-    program.intlExchangeProgramEligibility =
-      educationProgram.intlExchangeProgramEligibility;
-    program.programDeclaration = educationProgram.programDeclaration;
-    program.assessedBy = { id: educationProgram.userId } as User;
     if (!educationProgram.id) {
       program.submittedBy = { id: educationProgram.userId } as User;
+      program.creator = { id: educationProgram.userId } as User;
+    } else {
+      program.modifier = { id: educationProgram.userId } as User;
     }
     return this.repo.save(program);
   }

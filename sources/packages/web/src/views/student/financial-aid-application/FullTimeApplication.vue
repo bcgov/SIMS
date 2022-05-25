@@ -135,12 +135,13 @@ export default {
 
     onMounted(async () => {
       await checkProgramYear();
-      // Get the student information, application information.
+      //Get the student information, application information and student restriction.
       const [studentInfo, applicationData] = await Promise.all([
-        StudentService.shared.getStudentInfo(),
+        StudentService.shared.getStudentProfile(),
         ApplicationService.shared.getApplicationData(props.id),
       ]);
 
+      // Adjust the spaces when optional fields are not present.
       isReadOnly.value =
         [
           ApplicationStatus.completed,

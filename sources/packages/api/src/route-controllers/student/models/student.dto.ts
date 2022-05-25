@@ -68,21 +68,7 @@ export interface SearchStudentRespDto {
 export class StudentRestrictionAPIOutDTO {
   [key: string]: RestrictionNotificationType;
 }
-/**
- * DTO object for student details.
- */
-export class StudentDetailAPIOutDTO {
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  email: string;
-  gender: string;
-  dateOfBirth: Date;
-  contact: ContactInformationAPIOutDTO;
-  pdVerified: boolean;
-  pdStatus: StudentPDStatus;
-  hasRestriction: boolean;
-}
+
 /**
  *  Student uploader interface
  */
@@ -126,17 +112,15 @@ export class StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
 }
 
-export class StudentInfo {
+export class StudentProfileAPIOutDTO {
   firstName: string;
   lastName: string;
+  fullName: string;
   email: string;
   gender: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   contact: ContactInformationAPIOutDTO;
-  pdVerified: boolean;
   validSin: boolean;
-  pdSentDate?: Date;
-  pdUpdatedDate?: Date;
   pdStatus: StudentPDStatus;
 }
 

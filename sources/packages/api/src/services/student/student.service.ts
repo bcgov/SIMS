@@ -11,7 +11,7 @@ import {
 } from "../../database/entities";
 import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
-import { IUserToken } from "../../auth/userToken.interface";
+import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -61,12 +61,20 @@ export class StudentService extends RecordDataModelService<Student> {
       .select([
         "student.id",
         "student.birthDate",
+        "student.gender",
+        "student.contactInfo",
+        "student.studentPDVerified",
+        "student.studentPDSentAt",
+        "student.studentPDUpdateAt",
+        "sinValidation.id",
+        "sinValidation.isValidSIN",
         "user.id",
         "user.firstName",
         "user.lastName",
         "user.email",
       ])
       .innerJoin("student.user", "user")
+      .leftJoin("student.sinValidation", "sinValidation")
       .where("student.id = :studentId", { studentId })
       .getOne();
   }
@@ -160,45 +168,51 @@ export class StudentService extends RecordDataModelService<Student> {
     return this.save(student);
   }
 
-  async synchronizeFromUserInfo(userToken: IUserToken): Promise<Student> {
-    const studentToSync = await this.getStudentByUserName(userToken.userName);
-    if (!studentToSync) {
-      throw new Error(
-        "Not able to find a student using the username (bcsc name)",
-      );
-    }
+  /**
+   * Use the information available in the authentication token to update
+   * the user and student data currently on DB.
+   * @param studentToken student authentication token.
+   * @returns updated student, if some data was changed.
+   */
+  async synchronizeFromUserToken(
+    studentToken: StudentUserToken,
+  ): Promise<Student> {
+    const studentToSync = await this.getStudentByUserName(
+      studentToken.userName,
+    );
     let mustSave = false;
-    if (userToken.givenNames === undefined) {
-      userToken.givenNames = null;
+    if (studentToken.givenNames === undefined) {
+      studentToken.givenNames = null;
     }
     if (
-      !dayjs(userToken.birthdate).isSame(studentToSync.birthDate) ||
-      userToken.lastName !== studentToSync.user.lastName ||
-      userToken.givenNames !== studentToSync.user.firstName
+      !dayjs(studentToken.birthdate).isSame(studentToSync.birthDate) ||
+      studentToken.lastName !== studentToSync.user.lastName ||
+      studentToken.givenNames !== studentToSync.user.firstName
     ) {
       const sinValidation = new SINValidation();
-      studentToSync.birthDate = getDateOnly(userToken.birthdate);
-      studentToSync.user.lastName = userToken.lastName;
-      studentToSync.user.firstName = userToken.givenNames;
+      studentToSync.birthDate = getDateOnly(studentToken.birthdate);
+      studentToSync.user.lastName = studentToken.lastName;
+      studentToSync.user.firstName = studentToken.givenNames;
       sinValidation.user = studentToSync.user;
       studentToSync.sinValidation = sinValidation;
       mustSave = true;
     }
     // This condition is not added above, as email and gender does not trigger SIN validation request.
     if (
-      userToken.email !== studentToSync.user.email ||
-      userToken.gender !== studentToSync.gender
+      studentToken.email !== studentToSync.user.email ||
+      studentToken.gender !== studentToSync.gender
     ) {
-      studentToSync.user.email = userToken.email;
-      studentToSync.gender = userToken.gender;
+      studentToSync.user.email = studentToken.email;
+      studentToSync.gender = studentToken.gender;
       mustSave = true;
     }
 
     if (mustSave) {
+      studentToSync.modifier = { id: studentToken.userId } as User;
       return await this.save(studentToSync);
     }
 
-    // If information between token and SABC db is same, then just returning without the database call
+    // If information between token and SABC DB is same, then just returning without the database call.
     return studentToSync;
   }
 

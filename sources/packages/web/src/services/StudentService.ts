@@ -1,22 +1,26 @@
 import ApiClient from "@/services/http/ApiClient";
-import Helper from "@/helpers/utilfunctions";
 import {
   StudentContact,
   CreateStudent,
   StudentFormInfo,
   StudentApplicationAndCount,
   SearchStudentResp,
-  StudentDetail,
   DataTableSortOrder,
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
+  ApiProcessError,
+} from "@/types";
+import { useFormatters } from "@/composables";
+import { MISSING_STUDENT_ACCOUNT } from "@/services/http/StudentApi";
+import { StudentRestrictionAPIOutDTO } from "@/types";
+import { AxiosResponse } from "axios";
+import {
+  AESTFileUploadToStudentAPIInDTO,
+  AESTStudentFileAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
-  AESTStudentFileAPIOutDTO,
-  AESTFileUploadToStudentAPIInDTO,
-  StudentRestrictionAPIOutDTO,
-} from "@/types";
+} from "./http/dto/Student.dto";
 
 export class StudentService {
   // Share Instance
@@ -39,24 +43,45 @@ export class StudentService {
     return studentContact;
   }
 
-  async getStudentInfo(): Promise<StudentFormInfo> {
-    const studentInfo = await ApiClient.Students.getStudentInfo();
+  /**
+   * Get the student information that represents the profile.
+   * @param studentId student id to retrieve the data. Required
+   * only when not logged as a student.
+   * @returns student profile details.
+   */
+  async getStudentProfile(studentId?: number): Promise<StudentFormInfo> {
+    const { dateOnlyLongString } = useFormatters();
+    const studentProfile = await ApiClient.Students.getStudentProfile(
+      studentId,
+    );
     const studentInfoAll = {
-      ...studentInfo,
-      //Formatting date received from api from 1998-03-24T00:00:00.000Z to March 24, 1998
-      birthDateFormatted: Helper.formatDate(studentInfo.dateOfBirth),
-      //Formatting date received from api from 1998-03-24T00:00:00.000Z to "1998-03-24"
-      birthDateFormatted2: Helper.formatDate2(studentInfo.dateOfBirth),
+      ...studentProfile,
+      birthDateFormatted: dateOnlyLongString(studentProfile.dateOfBirth),
     };
     return studentInfoAll;
   }
 
   /**
-   * Client method to call inorder to update the student
-   * information using the user information.
+   * Use the information available in the authentication token to update
+   * the user and student data currently on DB.
+   * If the user account does not exists an API custom error will be returned
+   * from the API with the error code MISSING_STUDENT_ACCOUNT.
+   * @returns true if the student account was found and updated, otherwise false
+   * if the student account is missing.
    */
-  async synchronizeFromUserInfo(): Promise<void> {
-    return await ApiClient.Students.synchronizeFromUserInfo();
+  async synchronizeFromUserToken(): Promise<boolean> {
+    try {
+      await ApiClient.Students.synchronizeFromUserToken();
+      return true;
+    } catch (error: unknown) {
+      if (
+        error instanceof ApiProcessError &&
+        error.errorType === MISSING_STUDENT_ACCOUNT
+      ) {
+        return false;
+      }
+      throw error;
+    }
   }
 
   async applyForPDStatus(): Promise<void> {
@@ -87,10 +112,6 @@ export class StudentService {
     );
   }
 
-  public async checkStudent(): Promise<boolean> {
-    return ApiClient.Students.checkStudent();
-  }
-
   /**
    * TODO: This service is called to restriction update states, in future restriction UI ticket
    * API client to call the student restriction rest API.
@@ -116,15 +137,6 @@ export class StudentService {
   }
 
   /**
-   * Get student details of given student.
-   * @param studentId
-   * @returns StudentDetail
-   */
-  async getStudentDetail(studentId: number): Promise<StudentDetail> {
-    return ApiClient.Students.getStudentDetail(studentId);
-  }
-
-  /**
    * save student files from student form uploader.
    * @param studentFilesPayload
    */
@@ -143,14 +155,11 @@ export class StudentService {
    * @param studentId student to have the file saved.
    * @param payload list of files to be saved.
    */
-  async saveMinistryUploadedFilesToStudent(
+  async saveAESTUploadedFilesToStudent(
     studentId: number,
     payload: AESTFileUploadToStudentAPIInDTO,
   ): Promise<void> {
-    await ApiClient.Students.saveMinistryUploadedFilesToStudent(
-      studentId,
-      payload,
-    );
+    await ApiClient.Students.saveAESTUploadedFilesToStudent(studentId, payload);
   }
 
   /**
@@ -178,13 +187,12 @@ export class StudentService {
    * and with blob object, blob url is created for the href,
    * and its is returned
    * @param uniqueFileName uniqueFileName
-   * @return blob url for href (DOMString containing a URL
-   * representing the object given in the parameter)
+   * @return axios response object from http response.
    */
-  async downloadStudentFile(uniqueFileName: string): Promise<string> {
-    const blobObject = await ApiClient.FileUpload.download(
-      `students/files/${uniqueFileName}`,
-    );
-    return window.URL.createObjectURL(blobObject);
+  async downloadStudentFile(
+    uniqueFileName: string,
+  ): Promise<AxiosResponse<any>> {
+    return ApiClient.FileUpload.download(`students/files/${uniqueFileName}`);
   }
 }
+ git add sources/packages/api/src/route-controllers/student/student.controller.ts sources/packages/web/src/services/StudentService.ts sources/packages/web/src/services/http/StudentApi.ts sources/packages/web/src/types/contracts/StudentContract.ts sources/packages/web/src/views/student/StudentProfile.vue sources/packages/web/src/views/student/financial-aid-application/FullTimeApplication.vue

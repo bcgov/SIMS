@@ -9,7 +9,7 @@
       >
         <div
           class="file-label"
-          @click="fileUtils.downloadDocument(ministryDocument)"
+          @click="fileUtils.downloadStudentDocument(ministryDocument)"
         >
           <span class="mr-4">
             <font-awesome-icon :icon="['far', 'file-alt']"
@@ -33,7 +33,7 @@
       >
         <div
           class="file-label"
-          @click="fileUtils.downloadDocument(studentDocument)"
+          @click="fileUtils.downloadStudentDocument(studentDocument)"
         >
           <span class="mr-4">
             <font-awesome-icon :icon="['far', 'file-alt']"
@@ -51,8 +51,9 @@
 <script lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { StudentService } from "@/services/StudentService";
-import { FileOriginType, StudentUploadFileAPIOutDTO } from "@/types";
+import { FileOriginType } from "@/types";
 import { useFileUtils } from "@/composables";
+import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default {
   props: {

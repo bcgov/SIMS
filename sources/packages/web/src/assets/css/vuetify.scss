@@ -1,3 +1,20 @@
+@import "./global-style-variables.scss";
+
 .v-btn {
-    text-transform: none !important;
+  text-transform: none !important;
+}
+
+.v-alert.text-success {
+  background-color: $banner-background-success;
+  border: 3px solid $banner-color-success;
+}
+
+.v-alert.text-warning {
+  background-color: $banner-background-warning;
+  border: 3px solid $banner-color-warning;
+}
+
+.v-alert.text-error {
+  background-color: $banner-background-error;
+  border: 3px solid $banner-color-error;
 }
