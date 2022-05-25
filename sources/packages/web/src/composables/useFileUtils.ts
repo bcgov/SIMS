@@ -43,6 +43,8 @@ export function useFileUtils() {
     link.setAttribute("download", fileName);
     document.body.appendChild(link);
     link.click();
+    // After download, remove the element
+    link.remove();
   };
 
   return {

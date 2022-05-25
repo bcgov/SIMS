@@ -84,7 +84,7 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
   }
 
   /**
-   * Build CSV string from a dynamic JSON object.
+   * Build CSV string from a dynamic object array.
    * @param reportData
    * @returns CSV string.
    */

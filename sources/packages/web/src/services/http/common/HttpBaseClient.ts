@@ -79,20 +79,15 @@ export default abstract class HttpBaseClient {
         ...this.addAuthHeader(),
         responseType: "blob",
       };
-      let response: AxiosResponse<any>;
       if (payload) {
-        response = await this.apiClient.post(
+        return this.apiClient.post(
           this.addClientRoot(url),
           payload,
           requestConfig,
         );
       } else {
-        response = await this.apiClient.get(
-          this.addClientRoot(url),
-          requestConfig,
-        );
+        return this.apiClient.get(this.addClientRoot(url), requestConfig);
       }
-      return response;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
