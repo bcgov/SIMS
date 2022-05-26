@@ -27,6 +27,7 @@ import {
   SFASPartTimeApplicationsService,
   GCNotifyService,
   GCNotifyActionsService,
+  ReportService,
   StudentService,
   SFASIndividualService,
 } from "./services";
@@ -44,6 +45,7 @@ import {
   InstitutionLocationControllerService,
   AssessmentControllerService,
   EducationProgramOfferingAESTController,
+  ReportAESTController,
   StudentControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -62,6 +64,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     StudentAppealAESTController,
     InstitutionLocationAESTController,
     EducationProgramOfferingAESTController,
+    ReportAESTController,
   ],
   providers: [
     SupportingUserService,
@@ -95,6 +98,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     GCNotifyService,
     GCNotifyActionsService,
     AssessmentControllerService,
+    ReportService,
     StudentControllerService,
     StudentService,
     SFASIndividualService,

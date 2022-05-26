@@ -26,9 +26,7 @@ export interface SaveOfferingModel {
   exceptionalExpenses: number;
   tuitionRemittanceRequestedAmount: number;
   offeringDelivered: string;
-  lacksStudyDates: boolean;
   lacksStudyBreaks: boolean;
-  lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;
@@ -42,6 +40,7 @@ export interface SaveOfferingModel {
   submittedDate?: Date;
   offeringStatus: OfferingStatus;
   offeringType: OfferingTypes;
+  courseLoad?: number;
 }
 
 /**

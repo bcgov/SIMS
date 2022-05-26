@@ -93,6 +93,7 @@ export class AssessmentSystemAccessController extends BaseController {
           assessment.offering?.tuitionRemittanceRequestedAmount,
         offeringDelivered: assessment.offering?.offeringDelivered,
         offeringIntensity: assessment.offering?.offeringIntensity,
+        courseLoad: assessment.offering?.courseLoad,
       },
       program: {
         programCredentialType:
@@ -104,7 +105,7 @@ export class AssessmentSystemAccessController extends BaseController {
       },
       location: {
         institutionLocationProvince:
-          application.location?.data.address.provinceState,
+          assessment.offering?.institutionLocation.data.address.provinceState,
       },
       student: {
         studentPDStatus: application.student.studentPDVerified,

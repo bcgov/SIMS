@@ -32,9 +32,7 @@ export interface OfferingDTO {
   exceptionalExpenses?: number;
   tuitionRemittanceRequestedAmount?: number;
   offeringDelivered?: string;
-  lacksStudyDates: boolean;
   lacksStudyBreaks: boolean;
-  lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;
@@ -46,6 +44,7 @@ export interface OfferingDTO {
   offeringStatus: OfferingStatus;
   assessedBy?: string;
   assessedDate?: Date;
+  courseLoad?: number;
 }
 
 /**
@@ -63,9 +62,7 @@ export interface OfferingFormModel {
   exceptionalExpenses?: number;
   tuitionRemittanceRequestedAmount?: number;
   offeringDelivered?: string;
-  lacksStudyDates: boolean;
   lacksStudyBreaks: boolean;
-  lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;

@@ -11,6 +11,7 @@ import {
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { MISSING_STUDENT_ACCOUNT } from "@/services/http/StudentApi";
+import { AxiosResponse } from "axios";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
@@ -192,13 +193,11 @@ export class StudentService {
    * and with blob object, blob url is created for the href,
    * and its is returned
    * @param uniqueFileName uniqueFileName
-   * @return blob url for href (DOMString containing a URL
-   * representing the object given in the parameter)
+   * @return axios response object from http response.
    */
-  async downloadStudentFile(uniqueFileName: string): Promise<string> {
-    const blobObject = await ApiClient.FileUpload.download(
-      `students/files/${uniqueFileName}`,
-    );
-    return window.URL.createObjectURL(blobObject);
+  async downloadStudentFile(
+    uniqueFileName: string,
+  ): Promise<AxiosResponse<any>> {
+    return ApiClient.FileUpload.download(`students/files/${uniqueFileName}`);
   }
 }
