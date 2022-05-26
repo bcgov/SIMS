@@ -112,7 +112,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * Get the assessment data to load the NOA (Notice of Assessment)
    * for a student application.
    * @param assessmentId assessment id to be retrieved.
-   * @param studentId user associated to the application. Provided
+   * @param studentId student associated to the application. Provided
    * when an authorization check is needed.
    * @returns assessment NOA data.
    */
