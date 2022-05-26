@@ -9,7 +9,7 @@
         <v-btn
           color="primary"
           class="mr-5"
-          v-if="!notDraft"
+          v-if="!notDraft && !hasRestrictio"
           v-show="!isFirstPage && !submittingApplication"
           text
           :loading="savingDraft"
@@ -19,7 +19,7 @@
           >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
         >
         <v-btn
-          v-if="!isReadOnly"
+          v-if="!isReadOnly && !hasRestriction"
           :disabled="!isLastPage || submittingApplication"
           v-show="!isFirstPage"
           color="primary"
@@ -113,11 +113,11 @@ export default {
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
     const notDraft = ref(false);
+    // TODO: update this in restriction UI ticket
+    const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
-    // TODO: update this in restriction UI ticket
-    const hasRestriction = ref(false);
 
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a toast

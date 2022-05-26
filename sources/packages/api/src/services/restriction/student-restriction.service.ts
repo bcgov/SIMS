@@ -9,15 +9,10 @@ import {
   Restriction,
   Student,
 } from "../../database/entities";
-import { StudentRestrictionStatus } from "./models/student-restriction.model";
 import {
   AssignRestrictionDTO,
   ResolveRestrictionDTO,
 } from "../../route-controllers/restriction/models/restriction.dto";
-import {
-  RESTRICTION_FEDERAL_MESSAGE,
-  RESTRICTION_PROVINCIAL_MESSAGE,
-} from "./constants";
 import { Connection, SelectQueryBuilder } from "typeorm";
 import { CustomNamedError } from "../../utilities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
@@ -107,14 +102,14 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   /**
    * Get student restriction detail.
    * @param studentId student id.
-   * @param studentRestrictionId is optional.
+   * @param studentRestrictionId student restriction id.
    * @returns Student Restriction details.
    */
   async getStudentRestrictionDetailsById(
     studentId: number,
-    studentRestrictionId?: number,
+    studentRestrictionId: number,
   ): Promise<StudentRestriction> {
-    const query = this.repo
+    return this.repo
       .createQueryBuilder("studentRestrictions")
       .select([
         "studentRestrictions.id",
@@ -139,13 +134,11 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .innerJoin("studentRestrictions.student", "student")
       .leftJoin("studentRestrictions.restrictionNote", "restrictionNote")
       .leftJoin("studentRestrictions.resolutionNote", "resolutionNote")
-      .where("student.id = :studentId", { studentId });
-    if (studentRestrictionId) {
-      query.andWhere("studentRestrictions.id = :studentRestrictionId", {
+      .where("student.id = :studentId", { studentId })
+      .andWhere("studentRestrictions.id = :studentRestrictionId", {
         studentRestrictionId,
-      });
-    }
-    return query.getOne();
+      })
+      .getOne();
   }
 
   /**

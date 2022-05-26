@@ -58,7 +58,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { ApplicationControllerService } from "./application.controller.service";
-import { RestrictionActionType } from "src/database/entities/restriction-action-type.type";
+import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 const ACTIVE_STUDENT_RESTRICTION = "ACTIVE_STUDENT_RESTRICTION";
 
 @AllowAuthorizedParty(AuthorizedParties.student)

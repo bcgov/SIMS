@@ -14,13 +14,13 @@ import {
 import { useFormatters } from "@/composables";
 import { MISSING_STUDENT_ACCOUNT } from "@/services/http/StudentApi";
 import { StudentRestrictionAPIOutDTO } from "@/types";
-import { AxiosResponse } from "axios";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
 } from "./http/dto/Student.dto";
+import { AxiosResponse } from "axios";
 
 export class StudentService {
   // Share Instance
@@ -195,4 +195,3 @@ export class StudentService {
     return ApiClient.FileUpload.download(`students/files/${uniqueFileName}`);
   }
 }
- git add sources/packages/api/src/route-controllers/student/student.controller.ts sources/packages/web/src/services/StudentService.ts sources/packages/web/src/services/http/StudentApi.ts sources/packages/web/src/types/contracts/StudentContract.ts sources/packages/web/src/views/student/StudentProfile.vue sources/packages/web/src/views/student/financial-aid-application/FullTimeApplication.vue

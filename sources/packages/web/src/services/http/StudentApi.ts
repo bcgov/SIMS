@@ -100,7 +100,7 @@ export class StudentApi extends HttpBaseClient {
    * API client to call the student restriction rest API.
    * @returns student restriction(wrapped by promise)
    */
-  public async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
+  async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
     try {
       const response = await this.getCall("students/restriction");
       return response.data as StudentRestrictionAPIOutDTO[];

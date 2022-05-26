@@ -329,14 +329,14 @@ export class StudentController extends BaseController {
     @UserToken() studentToken: StudentUserToken,
   ): Promise<StudentRestrictionAPIOutDTO[]> {
     const result = [];
-    const studentRestriction =
+    const studentRestrictions =
       await this.studentRestrictionService.getStudentRestrictionsById(
         studentToken.studentId,
       );
-    if (!studentRestriction) {
+    if (!studentRestrictions) {
       return result;
     }
-    studentRestriction.forEach((studentRestriction) => {
+    studentRestrictions.forEach((studentRestriction) => {
       const eachRestriction = new StudentRestrictionAPIOutDTO();
       eachRestriction[studentRestriction.restriction.restrictionCode] =
         studentRestriction.restriction.notificationType;

@@ -10,7 +10,6 @@
 </template>
 <script lang="ts">
 import { ref } from "vue";
-// import { StudentService } from "@/services/StudentService";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 export default {

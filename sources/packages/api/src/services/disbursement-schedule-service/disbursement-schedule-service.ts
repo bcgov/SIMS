@@ -35,7 +35,7 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "../student-assessment/student-assessment.constants";
-import { RestrictionActionType } from "src/database/entities/restriction-action-type.type";
+import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
