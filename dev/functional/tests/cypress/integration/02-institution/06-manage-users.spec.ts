@@ -14,17 +14,13 @@ describe("Manage Users", () => {
     institutionCustomCommand.loginInstitution();
   });
 
-  it(
-    "Verify that user redirect to institution manage user summary page",
-    { retries: 4 },
-    () => {
-      dashboardInstitutionObject.dashboardButton().click();
-      dashboardInstitutionObject.manageInstitutionButton().click();
-      dashboardInstitutionObject.locationVerifyText().should("be.visible");
-      manageUsersObject.manageUsersButton().click();
-      manageUsersObject.userSummaryMessage().should("be.visible");
-    }
-  );
+  it("Verify that user redirect to institution manage user summary page", () => {
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.manageInstitutionButton().click();
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
+    manageUsersObject.manageUsersButton().click();
+    manageUsersObject.userSummaryMessage().should("be.visible");
+  });
 
   it("Verify that user redirect to correct url of institution manage user", () => {
     dashboardInstitutionObject.dashboardButton().click();

@@ -16,5 +16,13 @@
   "howWillYouAttendProgram2": "Full Time",
   "programIWillBeAttendingDropdown2": "Testing 101B",
   "programOffering": "Fall semester - year 1 - online - no break (Tue Sep 06 2022 - Fri Dec 09 2022) - Year 1",
-  "studentNumber2": "3243244"
+  "studentNumber2": "3243244",
+
+  "currentYearIncome": "32000",
+  "totalIncome": "4500",
+  "childDaycare": "3450",
+  "classHours": "200",
+  "govtFunding": "2500",
+  "meritBased": "150",
+  "oneReturnTrip": "70"
 }

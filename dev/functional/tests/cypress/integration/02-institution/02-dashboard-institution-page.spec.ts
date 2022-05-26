@@ -12,7 +12,7 @@ describe("Dashboard Page", () => {
     institutionCustomCommand.loginInstitution();
   });
 
-  it("Verify that user redirect to dashboard page", { retries: 4 }, () => {
+  it("Verify that user redirect to dashboard page", () => {
     cy.url().should("include", "/dashboard");
   });
 

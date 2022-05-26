@@ -252,75 +252,65 @@ describe("Ministry User Enters Student Note & Restrictions", () => {
     });
   });
 
-  it(
-    "Verify that user can't resolve restrictions without a resolution note in Student Restriction section.",
-    { retries: 4 },
-    () => {
-      cy.fixture("ministryAddNewRestrictionsInStudent").then((testData) => {
-        cy.intercept("GET", "**/options-list").as("options-list");
-        cy.intercept("GET", "**/Verification").as("Verification");
-        cy.intercept("GET", "**/student/**").as("student");
-        cy.intercept("GET", "**/studentRestriction/**").as(
-          "studentRestriction"
-        );
-        ministryCustomCommand.loginMinistry();
-        dashboardMinistryObject.dashboardText().should("be.visible");
-        dashboardMinistryObject.searchStudentsText().click();
-        ministryUserViewsStudent.givenNames().type("a");
-        ministryUserViewsStudent.searchButton().eq(1).click();
-        ministryUserViewsStudent.firstNameText().should("be.visible");
-        ministryUserViewsStudent.viewButtonFirstRow().click();
-        ministryUserViewsStudent.studentDetailsText().should("be.visible");
-        ministryUserViewsStudent.studentProfileText().should("be.visible");
-        ministryUserViewsStudent.applicationsSectionsButton().click();
-        ministryUserViewsStudent
-          .applicationSectionVerify()
-          .should("be.visible");
-        ministryUserViewsStudent.restrictionsSectionButton().click();
-        ministryUserViewsStudent
-          .restrictionsSectionVerify()
-          .should("be.visible");
-        studentNoteRestrictionsObject
-          .addRestrictionsButton()
-          .should("be.visible")
-          .click();
-        cy.wait("@options-list");
-        studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
-        studentNoteRestrictionsObject
-          .restrictionsValue()
-          .eq(1)
-          .type(testData.category)
-          .type("{enter}");
-        cy.wait("@Verification");
-        studentNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
-        studentNoteRestrictionsObject
-          .restrictionsValue()
-          .eq(3)
-          .type(testData.reason)
-          .type("{enter}");
-        studentNoteRestrictionsObject.notesInputText().type(testData.notes);
-        studentNoteRestrictionsObject.addRestrictionButtonDialogBox().click();
-        studentNoteRestrictionsObject
-          .restrictionsAddedText()
-          .should("be.visible");
-        studentNoteRestrictionsObject.categoryButton().click();
-        studentNoteRestrictionsObject.categoryButton().click();
-        cy.wait("@student");
-        studentNoteRestrictionsObject.firstRowButtonRestrictions().click();
-        cy.wait("@studentRestriction");
-        studentNoteRestrictionsObject
-          .categoryAssertion(testData.category)
-          .should("be.visible");
-        studentNoteRestrictionsObject
-          .reasonAssertion(testData.reason)
-          .should("be.visible");
-        studentNoteRestrictionsObject.resolveRestrictionsButton().click();
-        studentNoteRestrictionsObject
-          .resolutionNoteRequired()
-          .should("be.visible");
-      });
-    }
-  );
+  it("Verify that user can't resolve restrictions without a resolution note in Student Restriction section.", () => {
+    cy.fixture("ministryAddNewRestrictionsInStudent").then((testData) => {
+      cy.intercept("GET", "**/options-list").as("options-list");
+      cy.intercept("GET", "**/Verification").as("Verification");
+      cy.intercept("GET", "**/student/**").as("student");
+      cy.intercept("GET", "**/studentRestriction/**").as("studentRestriction");
+      ministryCustomCommand.loginMinistry();
+      dashboardMinistryObject.dashboardText().should("be.visible");
+      dashboardMinistryObject.searchStudentsText().click();
+      ministryUserViewsStudent.givenNames().type("a");
+      ministryUserViewsStudent.searchButton().eq(1).click();
+      ministryUserViewsStudent.firstNameText().should("be.visible");
+      ministryUserViewsStudent.viewButtonFirstRow().click();
+      ministryUserViewsStudent.studentDetailsText().should("be.visible");
+      ministryUserViewsStudent.studentProfileText().should("be.visible");
+      ministryUserViewsStudent.applicationsSectionsButton().click();
+      ministryUserViewsStudent.applicationSectionVerify().should("be.visible");
+      ministryUserViewsStudent.restrictionsSectionButton().click();
+      ministryUserViewsStudent.restrictionsSectionVerify().should("be.visible");
+      studentNoteRestrictionsObject
+        .addRestrictionsButton()
+        .should("be.visible")
+        .click();
+      cy.wait("@options-list");
+      studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
+      studentNoteRestrictionsObject
+        .restrictionsValue()
+        .eq(1)
+        .type(testData.category)
+        .type("{enter}");
+      cy.wait("@Verification");
+      studentNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
+      studentNoteRestrictionsObject
+        .restrictionsValue()
+        .eq(3)
+        .type(testData.reason)
+        .type("{enter}");
+      studentNoteRestrictionsObject.notesInputText().type(testData.notes);
+      studentNoteRestrictionsObject.addRestrictionButtonDialogBox().click();
+      studentNoteRestrictionsObject
+        .restrictionsAddedText()
+        .should("be.visible");
+      studentNoteRestrictionsObject.categoryButton().click();
+      studentNoteRestrictionsObject.categoryButton().click();
+      cy.wait("@student");
+      studentNoteRestrictionsObject.firstRowButtonRestrictions().click();
+      cy.wait("@studentRestriction");
+      studentNoteRestrictionsObject
+        .categoryAssertion(testData.category)
+        .should("be.visible");
+      studentNoteRestrictionsObject
+        .reasonAssertion(testData.reason)
+        .should("be.visible");
+      studentNoteRestrictionsObject.resolveRestrictionsButton().click();
+      studentNoteRestrictionsObject
+        .resolutionNoteRequired()
+        .should("be.visible");
+    });
+  });
 
   it("Verify that ministry users can resolve restrictions by entering resolution note in Student Restriction section.", () => {
     cy.fixture("ministryAddNewRestrictionsInStudent").then((testData) => {

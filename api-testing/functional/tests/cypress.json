@@ -17,5 +17,9 @@
   "video": false,
   "chromeWebSecurity": false,
   "defaultCommandTimeout": 10000,
-  "numTestsKeptInMemory": 0
+  "numTestsKeptInMemory": 0,
+  "env": {
+    "patch": "PATCH",
+    "update_institution_url": "/api/institutions/institution"
+  }
 }

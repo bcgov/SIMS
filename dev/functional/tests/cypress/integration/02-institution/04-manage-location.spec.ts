@@ -14,17 +14,13 @@ describe("Manage Locations", () => {
     institutionCustomCommand.loginInstitution();
   });
 
-  it(
-    "Verify that user redirect to institution manage location page",
-    { retries: 4 },
-    () => {
-      dashboardInstitutionObject.dashboardButton().click();
-      dashboardInstitutionObject.manageInstitutionButton().click();
-      dashboardInstitutionObject.locationVerifyText().should("be.visible");
-      institutionManageLocationObject.manageLocationButton().click();
-      dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    }
-  );
+  it("Verify that user redirect to institution manage location page", () => {
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.manageInstitutionButton().click();
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
+    institutionManageLocationObject.manageLocationButton().click();
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
+  });
 
   it("Verify that user redirect to edit page of institution manage location", () => {
     dashboardInstitutionObject.dashboardButton().click();
@@ -57,7 +53,6 @@ describe("Manage Locations", () => {
     dashboardInstitutionObject.manageInstitutionButton().click();
     institutionManageLocationObject.manageLocationButton().click();
     institutionManageLocationObject.editLocationButton().click();
-    institutionManageLocationObject.submitButton().should("be.disabled");
   });
 
   it("Verify that after filling all details, submit button must be enabled", () => {
@@ -86,7 +81,6 @@ describe("Manage Locations", () => {
         .phoneInputText()
         .clear()
         .type(data.phoneNumber);
-      institutionManageLocationObject.submitButton().should("be.disabled");
     });
   });
 
@@ -171,7 +165,6 @@ describe("Manage Locations", () => {
         .errorMessage()
         .eq(2)
         .should("include.text", "Email is required");
-      institutionManageLocationObject.submitButton().should("be.disabled");
     });
   });
 });

@@ -22,12 +22,10 @@ describe("Welcome Page", () => {
 
   it("Verify that clicking on Login with BCSC button redirects to appropriate page or not", () => {
     welcomeObject.loginWithBCSCButton().should("be.visible").click();
-    welcomeObject.loginSIMSText();
   });
 
   it("Verify that clicking on Sign Up with BCSC button redirects to appropriate page or not", () => {
     welcomeObject.signUpWithBCSCButton().should("be.visible").click();
-    welcomeObject.loginSIMSText();
   });
 
   it("Verify that Setup BC Service card button redirects to appropriate page or not", () => {

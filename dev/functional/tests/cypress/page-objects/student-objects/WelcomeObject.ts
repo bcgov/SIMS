@@ -17,10 +17,6 @@ export default class WelcomeObject {
     return cy.contains("Sign Up with BCSC");
   }
 
-  loginSIMSText() {
-    cy.contains("Log in to: SIMS - Dev");
-  }
-
   getSetupButton() {
     return cy.get("#cardtap-get-setup-btn");
   }

@@ -52,7 +52,7 @@ export default class ManageLocationObject {
   }
 
   addressSecond() {
-    return cy.get("[name='data[addressLine2]']");
+    return cy.get("[data-cy='addressLine2']");
   }
 
   cityInputText() {
@@ -64,7 +64,7 @@ export default class ManageLocationObject {
   }
 
   postalCode() {
-    return cy.get("[name='data[postalCode]']");
+    return cy.get("[data-cy='canadaPostalCode']");
   }
 
   postalErrorMessage() {

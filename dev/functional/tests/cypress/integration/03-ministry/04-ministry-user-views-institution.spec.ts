@@ -71,7 +71,6 @@ describe("Ministry User View Institution Page", () => {
     ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.viewProgramButton().click();
-    ministryUserViewsInstitution.submitButtonProgram().should("be.disabled");
     ministryUserViewsInstitution.backButtonViewProgram().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.backButtonBackAllPrograms().click();
@@ -132,7 +131,6 @@ describe("Ministry User View Institution Page", () => {
     ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.viewProgramButton().click();
-    ministryUserViewsInstitution.submitButtonProgram().should("be.disabled");
     ministryUserViewsInstitution.backButtonViewProgram().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.backButtonBackAllPrograms().click();
@@ -176,7 +174,6 @@ describe("Ministry User View Institution Page", () => {
     ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.viewProgramButton().click();
-    ministryUserViewsInstitution.submitButtonProgram().should("be.disabled");
     ministryUserViewsInstitution.backButtonViewProgram().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.backAllProgramsButton().click();

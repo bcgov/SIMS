@@ -20,7 +20,7 @@ export default class InstitutionProfileObject {
   }
 
   submitButton() {
-    return cy.contains("Submit");
+    return cy.get("[data-cy='submit']]");
   }
 
   unexpectedErrorMessage() {
@@ -32,7 +32,7 @@ export default class InstitutionProfileObject {
   }
 
   institutionWebsiteInputText() {
-    return cy.get("[name='data[website]']");
+    return cy.get("[data-cy='website']");
   }
 
   institutionRegulationBodyDropdown() {
@@ -64,19 +64,19 @@ export default class InstitutionProfileObject {
   }
 
   firstNameAuthorizedInputText() {
-    return cy.get("[name='data[legalAuthorityFirstName]']");
+    return cy.get("[data-cy='primaryContactFirstName']");
   }
 
   lastNameAuthorizedInputText() {
-    return cy.get("[name='data[legalAuthorityLastName]']");
+    return cy.get("[data-cy='primaryContactLastName]");
   }
 
   emailAuthorizedInputText() {
-    return cy.get("[name='data[legalAuthorityEmail]']");
+    return cy.get("[data-cy='primaryContactEmail']");
   }
 
   phoneNumberAuthorizedInputText() {
-    return cy.get("[name='data[legalAuthorityPhone]']");
+    return cy.get("[data-cy='primaryContactPhone]");
   }
 
   addressInstitutionInputText() {

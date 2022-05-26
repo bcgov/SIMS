@@ -36,8 +36,6 @@ describe("Institution Profile", () => {
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
     institutionObject.institutionDetailsButton().click();
     institutionObject.primaryEmailInputText().should("be.visible");
-    cy.wait("@institution");
-    institutionObject.submitButton().should("be.disabled");
   });
 
   it("Check that when user enter data only in non mandatory field and click on next section.", () => {
@@ -46,8 +44,6 @@ describe("Institution Profile", () => {
     dashboardInstitutionObject.manageInstitutionButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
     institutionObject.institutionDetailsButton().click();
-    cy.wait("@institution");
-    institutionObject.submitButton().should("be.disabled");
   });
 
   it("Make sure enable fields are editable and disable fields are not.", () => {

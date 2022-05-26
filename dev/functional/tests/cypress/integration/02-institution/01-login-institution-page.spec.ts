@@ -11,16 +11,12 @@ describe("Login Page", () => {
     cy.visit(url);
   });
 
-  it("Verify login case in institution.", { retries: 4 }, () => {
+  it("Verify login case in institution.", () => {
     institutionCustomCommand.loginInstitution();
   });
 
-  it(
-    "Verify that clicking on the Log Off then it must be log out.",
-    { retries: 4 },
-    () => {
-      dashboardInstitutionObject.profileIconButton().click();
-      dashboardInstitutionObject.logOffButton().click();
-    }
-  );
+  it("Verify that clicking on the Log Off then it must be log out.", () => {
+    dashboardInstitutionObject.profileIconButton().click();
+    dashboardInstitutionObject.logOffButton().click();
+  });
 });

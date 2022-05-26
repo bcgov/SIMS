@@ -44,7 +44,7 @@ export default class ManageUsersObject {
   }
 
   searchButton() {
-    return cy.get('[tile=""]');
+    return cy.get(".v-btn.v-btn--elevated").first();
   }
 
   noRecordsFoundMessage() {

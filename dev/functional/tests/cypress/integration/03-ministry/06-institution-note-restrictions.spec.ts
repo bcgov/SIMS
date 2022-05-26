@@ -246,69 +246,61 @@ describe("Ministry User Enters Institution Note & Restrictions", () => {
     });
   });
 
-  it(
-    "Verify that user can't resolve restrictions without a resolution note in Institution Restriction section.",
-    { retries: 4 },
-    () => {
-      cy.fixture("ministryAddNewRestrictionsInInstitution").then((testData) => {
-        cy.intercept("GET", "**/options-list").as("options-list");
-        cy.intercept("GET", "**/Designation").as("Designation");
-        cy.intercept("GET", "**/institution/**").as("institution");
-        cy.intercept("GET", "**/institutionRestriction/**").as(
-          "institutionRestriction"
-        );
-        ministryCustomCommand.loginMinistry();
-        dashboardMinistryObject.dashboardText().should("be.visible");
-        dashboardMinistryObject.searchInstitutionsText().click();
-        ministryUserViewsInstitution.operatingNameInputText().type("e");
-        ministryUserViewsStudent.searchButton().eq(1).click();
-        ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
-        ministryUserViewsStudent.restrictionsSectionButton().click();
-        ministryUserViewsStudent
-          .restrictionsSectionVerify()
-          .should("be.visible");
-        ministryUserViewsStudent.restrictionsSectionButton().click();
-        ministryUserViewsStudent
-          .restrictionsSectionVerify()
-          .should("be.visible");
-        studentNoteRestrictionsObject
-          .addRestrictionsButton()
-          .should("be.visible")
-          .click();
-        studentNoteRestrictionsObject
-          .addNewRestrictionsText()
-          .should("be.visible");
-        cy.wait("@options-list");
-        studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
-        studentNoteRestrictionsObject
-          .restrictionsValue()
-          .eq(1)
-          .type(testData.category)
-          .type("{enter}");
-        cy.wait("@Designation");
-        studentNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
-        studentNoteRestrictionsObject
-          .restrictionsValue()
-          .eq(3)
-          .type(testData.reason)
-          .type("{enter}");
-        studentNoteRestrictionsObject.notesInputText().type(testData.notes);
-        studentNoteRestrictionsObject.addRestrictionButtonDialogBox().click();
-        studentNoteRestrictionsObject
-          .restrictionsAddedText()
-          .should("be.visible");
-        studentNoteRestrictionsObject.categoryButton().click();
-        studentNoteRestrictionsObject.categoryButton().click();
-        cy.wait("@institution");
-        studentNoteRestrictionsObject.firstRowButtonRestrictions().click();
-        cy.wait("@institutionRestriction");
-        studentNoteRestrictionsObject.resolveRestrictionsButton().click();
-        studentNoteRestrictionsObject
-          .resolutionNoteRequired()
-          .should("be.visible");
-      });
-    }
-  );
+  it("Verify that user can't resolve restrictions without a resolution note in Institution Restriction section.", () => {
+    cy.fixture("ministryAddNewRestrictionsInInstitution").then((testData) => {
+      cy.intercept("GET", "**/options-list").as("options-list");
+      cy.intercept("GET", "**/Designation").as("Designation");
+      cy.intercept("GET", "**/institution/**").as("institution");
+      cy.intercept("GET", "**/institutionRestriction/**").as(
+        "institutionRestriction"
+      );
+      ministryCustomCommand.loginMinistry();
+      dashboardMinistryObject.dashboardText().should("be.visible");
+      dashboardMinistryObject.searchInstitutionsText().click();
+      ministryUserViewsInstitution.operatingNameInputText().type("e");
+      ministryUserViewsStudent.searchButton().eq(1).click();
+      ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
+      ministryUserViewsStudent.restrictionsSectionButton().click();
+      ministryUserViewsStudent.restrictionsSectionVerify().should("be.visible");
+      ministryUserViewsStudent.restrictionsSectionButton().click();
+      ministryUserViewsStudent.restrictionsSectionVerify().should("be.visible");
+      studentNoteRestrictionsObject
+        .addRestrictionsButton()
+        .should("be.visible")
+        .click();
+      studentNoteRestrictionsObject
+        .addNewRestrictionsText()
+        .should("be.visible");
+      cy.wait("@options-list");
+      studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
+      studentNoteRestrictionsObject
+        .restrictionsValue()
+        .eq(1)
+        .type(testData.category)
+        .type("{enter}");
+      cy.wait("@Designation");
+      studentNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
+      studentNoteRestrictionsObject
+        .restrictionsValue()
+        .eq(3)
+        .type(testData.reason)
+        .type("{enter}");
+      studentNoteRestrictionsObject.notesInputText().type(testData.notes);
+      studentNoteRestrictionsObject.addRestrictionButtonDialogBox().click();
+      studentNoteRestrictionsObject
+        .restrictionsAddedText()
+        .should("be.visible");
+      studentNoteRestrictionsObject.categoryButton().click();
+      studentNoteRestrictionsObject.categoryButton().click();
+      cy.wait("@institution");
+      studentNoteRestrictionsObject.firstRowButtonRestrictions().click();
+      cy.wait("@institutionRestriction");
+      studentNoteRestrictionsObject.resolveRestrictionsButton().click();
+      studentNoteRestrictionsObject
+        .resolutionNoteRequired()
+        .should("be.visible");
+    });
+  });
 
   it("Verify that ministry users can resolve restrictions by entering resolution note in Institution Restriction section.", () => {
     cy.fixture("ministryAddNewRestrictionsInInstitution").then((testData) => {

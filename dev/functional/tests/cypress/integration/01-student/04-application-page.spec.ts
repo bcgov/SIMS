@@ -330,7 +330,7 @@ describe("Application Page", () => {
     applicationObject.personalInformationButton().click({ force: true });
     applicationObject.iConfirmMyStudentAidCheckbox().click({ force: true });
     applicationObject.citizenStatusRadioButton().click();
-    applicationObject.residentOfBCRadioButton().click();
+    applicationObject.residentOfBCRadioButton().click({ force: true });
     applicationObject.residenceNoneOfTheAboveRadioButton().click();
     applicationObject
       .explainSituationInputField()
@@ -524,52 +524,58 @@ describe("Application Page", () => {
   });
 
   it("Verify that all mandatory fields in the Financial information page have error messages displayed if they are not filled out.", () => {
-    cy.intercept("GET", "**/program-year").as("programYear");
-    applicationObject.applicationButton().should("be.visible").click();
-    cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
-    applicationObject.draftApplication().click();
-    applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.nextSectionButton().click();
-    applicationObject.schoolIWillBeAttendingDropdown2();
-    applicationObject.howWillYouAttendProgramDropdown2();
-    applicationObject.myStudyPeriodIsNotListedCheckbox();
-    applicationObject.applicationButton().should("be.visible").click();
-    cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
-    applicationObject.draftApplication().click();
-    applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.nextSectionButton().click();
-    cy.wait("@programYear");
-    applicationObject.waitForSecond();
-    applicationObject.financialInformationButton().click({ force: true });
-    applicationObject.financialInformationButton().click({ force: true });
-    applicationObject.totalIncomeInputText().type("4500");
+    cy.fixture("draftApplicationData").then((testData) => {
+      cy.intercept("GET", "**/program-year").as("programYear");
+      applicationObject.applicationButton().should("be.visible").click();
+      cy.wait("@applicationSummary");
+      applicationObject.waitForSecond().click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      applicationObject.schoolIWillBeAttendingDropdown2();
+      applicationObject.howWillYouAttendProgramDropdown2();
+      applicationObject.myStudyPeriodIsNotListedCheckbox();
+      applicationObject.applicationButton().should("be.visible").click();
+      cy.wait("@applicationSummary");
+      applicationObject.waitForSecond().click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait("@programYear");
+      applicationObject.waitForSecond();
+      applicationObject.financialInformationButton().click({ force: true });
+      applicationObject.financialInformationButton().click({ force: true });
+      applicationObject.totalIncomeInputText().type(testData.totalIncome);
 
-    applicationObject.iGiveCanadianRevenueCheckbox().click();
-    applicationObject.yearEstimatedIncomeRadioButton().click();
-    applicationObject.currentYearIncomeInputText().type("32000");
-    applicationObject.reasonForDecreaseIncomeRadioButton().click();
-    applicationObject.exceptionalExpensesRadioButton().click();
-    applicationObject.childDaycareRadioButton().click();
-    applicationObject.childDaycareInputText().type("3450");
-    applicationObject.classHoursDisabledRadioButton().click();
-    applicationObject.classHoursDisabledInputText().type("200");
-    applicationObject.payingChildSupportRadioButton().click();
-    applicationObject.meritBasedRadioButtonRadioButton().click();
-    applicationObject.meritBasedInputText().type("150");
-    applicationObject.receiveVoluntaryRadioButton().click();
-    applicationObject.govtFundingRadioButton().click();
-    applicationObject.govtFundingInputText().type("2500");
-    applicationObject.nonGovtFundingRadioButton().click();
-    applicationObject.bcIncomeAssistanceRadioButton().click();
-    applicationObject.homePaidByOurParentsRadioButton().click();
-    applicationObject.relocateToDifferentCityRadioButton().click();
-    applicationObject.oneReturnTripInputText().type("70");
-    applicationObject.additionalTransportationCostsRadioButton().click();
-    applicationObject.describeSituationRadioButton().click();
-    applicationObject.weeklyTransportationCostsInputText().type("200");
-    applicationObject.nextSectionButton().click();
+      applicationObject.iGiveCanadianRevenueCheckbox().click();
+      applicationObject.yearEstimatedIncomeRadioButton().click();
+      applicationObject
+        .currentYearIncomeInputText()
+        .type(testData.currentYearIncome);
+      applicationObject.reasonForDecreaseIncomeRadioButton().click();
+      applicationObject.exceptionalExpensesRadioButton().click();
+      applicationObject.childDaycareRadioButton().click();
+      applicationObject.childDaycareInputText().type(testData.childDaycare);
+      applicationObject.classHoursDisabledRadioButton().click();
+      applicationObject.classHoursDisabledInputText().type(testData.classHours);
+      applicationObject.payingChildSupportRadioButton().click();
+      applicationObject.meritBasedRadioButtonRadioButton().click();
+      applicationObject.meritBasedInputText().type(testData.meritBased);
+      applicationObject.receiveVoluntaryRadioButton().click();
+      applicationObject.govtFundingRadioButton().click();
+      applicationObject.govtFundingInputText().type(testData.govtFunding);
+      applicationObject.nonGovtFundingRadioButton().click();
+      applicationObject.bcIncomeAssistanceRadioButton().click();
+      applicationObject.homePaidByOurParentsRadioButton().click();
+      applicationObject.relocateToDifferentCityRadioButton().click();
+      applicationObject.oneReturnTripInputText().type(testData.oneReturnTrip);
+      applicationObject.additionalTransportationCostsRadioButton().click();
+      applicationObject.describeSituationRadioButton().click();
+      applicationObject
+        .weeklyTransportationCostsInputText()
+        .type(testData.classHours);
+      applicationObject.nextSectionButton().click();
+    });
   });
 
   it("Verify that without filling declaration form click on Submit application button & page have error messages displayed.", () => {
@@ -586,53 +592,59 @@ describe("Application Page", () => {
   });
 
   it("Verify that user is able to complete all forms in the application & submit it successfully", () => {
-    cy.intercept("GET", "**/program-year").as("programYear");
-    applicationObject.applicationButton().should("be.visible").click();
-    cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
-    applicationObject.draftApplication().click();
-    applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.nextSectionButton().click();
-    applicationObject.schoolIWillBeAttendingDropdown2();
-    applicationObject.howWillYouAttendProgramDropdown2();
-    applicationObject.myStudyPeriodIsNotListedCheckbox();
-    applicationObject.applicationButton().should("be.visible").click();
-    cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
-    applicationObject.draftApplication().click();
-    applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.nextSectionButton().click();
-    cy.wait("@programYear");
-    applicationObject.waitForSecond();
-    applicationObject.financialInformationButton().click({ force: true });
-    applicationObject.financialInformationButton().click({ force: true });
-    applicationObject.totalIncomeInputText().type("4500");
+    cy.fixture("draftApplicationData").then((testData) => {
+      cy.intercept("GET", "**/program-year").as("programYear");
+      applicationObject.applicationButton().should("be.visible").click();
+      cy.wait("@applicationSummary");
+      applicationObject.waitForSecond().click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      applicationObject.schoolIWillBeAttendingDropdown2();
+      applicationObject.howWillYouAttendProgramDropdown2();
+      applicationObject.myStudyPeriodIsNotListedCheckbox();
+      applicationObject.applicationButton().should("be.visible").click();
+      cy.wait("@applicationSummary");
+      applicationObject.waitForSecond().click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait("@programYear");
+      applicationObject.waitForSecond();
+      applicationObject.financialInformationButton().click({ force: true });
+      applicationObject.financialInformationButton().click({ force: true });
+      applicationObject.totalIncomeInputText().type(testData.totalIncome);
 
-    applicationObject.iGiveCanadianRevenueCheckbox().click();
-    applicationObject.yearEstimatedIncomeRadioButton().click();
-    applicationObject.currentYearIncomeInputText().type("32000");
-    applicationObject.reasonForDecreaseIncomeRadioButton().click();
-    applicationObject.exceptionalExpensesRadioButton().click();
-    applicationObject.childDaycareRadioButton().click();
-    applicationObject.childDaycareInputText().type("3450");
-    applicationObject.classHoursDisabledRadioButton().click();
-    applicationObject.classHoursDisabledInputText().type("200");
-    applicationObject.payingChildSupportRadioButton().click();
-    applicationObject.meritBasedRadioButtonRadioButton().click();
-    applicationObject.meritBasedInputText().type("150");
-    applicationObject.receiveVoluntaryRadioButton().click();
-    applicationObject.govtFundingRadioButton().click();
-    applicationObject.govtFundingInputText().type("2500");
-    applicationObject.nonGovtFundingRadioButton().click();
-    applicationObject.bcIncomeAssistanceRadioButton().click();
-    applicationObject.homePaidByOurParentsRadioButton().click();
-    applicationObject.relocateToDifferentCityRadioButton().click();
-    applicationObject.oneReturnTripInputText().type("70");
-    applicationObject.additionalTransportationCostsRadioButton().click();
-    applicationObject.describeSituationRadioButton().click();
-    applicationObject.weeklyTransportationCostsInputText().type("200");
-    applicationObject.nextSectionButton().click();
-    applicationObject.declarationFormCheckbox().click();
+      applicationObject.iGiveCanadianRevenueCheckbox().click();
+      applicationObject.yearEstimatedIncomeRadioButton().click();
+      applicationObject
+        .currentYearIncomeInputText()
+        .type(testData.currentYearIncome);
+      applicationObject.reasonForDecreaseIncomeRadioButton().click();
+      applicationObject.exceptionalExpensesRadioButton().click();
+      applicationObject.childDaycareRadioButton().click();
+      applicationObject.childDaycareInputText().type(testData.childDaycare);
+      applicationObject.classHoursDisabledRadioButton().click();
+      applicationObject.classHoursDisabledInputText().type(testData.classHours);
+      applicationObject.payingChildSupportRadioButton().click();
+      applicationObject.meritBasedRadioButtonRadioButton().click();
+      applicationObject.meritBasedInputText().type(testData.meritBased);
+      applicationObject.receiveVoluntaryRadioButton().click();
+      applicationObject.govtFundingRadioButton().click();
+      applicationObject.govtFundingInputText().type(testData.govtFunding);
+      applicationObject.nonGovtFundingRadioButton().click();
+      applicationObject.bcIncomeAssistanceRadioButton().click();
+      applicationObject.homePaidByOurParentsRadioButton().click();
+      applicationObject.relocateToDifferentCityRadioButton().click();
+      applicationObject.oneReturnTripInputText().type(testData.oneReturnTrip);
+      applicationObject.additionalTransportationCostsRadioButton().click();
+      applicationObject.describeSituationRadioButton().click();
+      applicationObject
+        .weeklyTransportationCostsInputText()
+        .type(testData.classHours);
+      applicationObject.nextSectionButton().click();
+      applicationObject.declarationFormCheckbox().click();
+    });
   });
 
   it("Check Draft status form is being created.", () => {
