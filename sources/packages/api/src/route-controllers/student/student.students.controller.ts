@@ -37,7 +37,6 @@ import {
 import BaseController from "../BaseController";
 import {
   CreateStudentAPIInDTO,
-  StudentContactAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
@@ -101,13 +100,11 @@ export class StudentStudentsController extends BaseController {
     @UserToken() userToken: StudentUserToken,
     @Body() payload: CreateStudentAPIInDTO,
   ): Promise<void> {
-    if (userToken.userId) {
-      // Checks if a student account already exists associated with the current user.
-      if (userToken.studentId) {
-        throw new UnprocessableEntityException(
-          "There is already a student associated with the user.",
-        );
-      }
+    // Checks if a student account is already associated with the current user.
+    if (userToken.studentId) {
+      throw new UnprocessableEntityException(
+        "There is already a student associated with the user.",
+      );
     }
 
     const submissionResult = await this.formService.dryRunSubmission(
@@ -126,7 +123,7 @@ export class StudentStudentsController extends BaseController {
 
   /**
    * Updates the student information that the student is allowed to change
-   * in the solution. Other data must be edited outside (e.g. BCSC).
+   * in the solution. Other data must be edited externally (e.g. BCSC).
    * @param payload information to be updated.
    */
   @Patch()
@@ -150,25 +147,6 @@ export class StudentStudentsController extends BaseController {
       userToken.studentId,
       submissionResult.data.data,
     );
-  }
-
-  @Get("contact")
-  async getContactInfo(
-    @UserToken() userToken: StudentUserToken,
-  ): Promise<StudentContactAPIOutDTO> {
-    const student = await this.studentService.getStudentById(
-      userToken.studentId,
-    );
-    const address = student.contactInfo.address ?? ({} as AddressInfo);
-    return {
-      phone: student.contactInfo.phone,
-      addressLine1: address.addressLine1,
-      addressLine2: address.addressLine2,
-      city: address.city,
-      provinceState: address.provinceState,
-      country: address.country,
-      postalCode: address.postalCode,
-    };
   }
 
   /**

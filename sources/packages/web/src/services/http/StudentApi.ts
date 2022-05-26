@@ -1,22 +1,27 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import {
-  StudentContact,
-  CreateStudent,
-  StudentRestrictionStatus,
-} from "@/types/contracts/StudentContract";
+import { StudentRestrictionStatus } from "@/types/contracts/StudentContract";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
+  CreateStudentAPIInDTO,
   SearchStudentAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
+  UpdateStudentAPIInDTO,
 } from "./dto";
 
 export const MISSING_STUDENT_ACCOUNT = "MISSING_STUDENT_ACCOUNT";
 
 export class StudentApi extends HttpBaseClient {
-  async createStudent(studentProfile: CreateStudent): Promise<void> {
+  /**
+   * Creates the student checking for an existing user to be used or
+   * creating a new one in case the user id is not provided.
+   * The user could be already available in the case of the same user
+   * was authenticated previously on another portal (e.g. parent/partner).
+   * @param studentProfile information needed to create the user.
+   */
+  async createStudent(studentProfile: CreateStudentAPIInDTO): Promise<void> {
     try {
       await this.apiClient.post(
         "students",
@@ -31,24 +36,13 @@ export class StudentApi extends HttpBaseClient {
 
   /**
    * Updates the student information that the student is allowed to change
-   * in the solution. Other data must be edited outside (e.g. BCSC).
+   * in the solution. Other data must be edited externally (e.g. BCSC).
    * @param studentContact information to be updated.
    */
-  async updateStudentContact(studentContact: StudentContact): Promise<void> {
+  async updateStudentContact(
+    studentContact: UpdateStudentAPIInDTO,
+  ): Promise<void> {
     await this.apiClient.patch(this.addClientRoot("students"), studentContact);
-  }
-
-  async getContact(): Promise<StudentContact> {
-    try {
-      const studentContact = await this.apiClient.get(
-        "students/contact",
-        this.addAuthHeader(),
-      );
-      return studentContact.data as StudentContact;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
   }
 
   /**
@@ -127,10 +121,7 @@ export class StudentApi extends HttpBaseClient {
     const url = this.addClientRoot(
       `students/search?${queryString.slice(0, -1)}`,
     );
-    return await this.getCallTyped<SearchStudentAPIOutDTO[]>(
-      url,
-      this.addAuthHeader(),
-    );
+    return this.getCallTyped<SearchStudentAPIOutDTO[]>(url);
   }
 
   /**

@@ -1,7 +1,5 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
-  StudentContact,
-  CreateStudent,
   StudentFormInfo,
   StudentApplicationAndCount,
   StudentRestrictionStatus,
@@ -16,9 +14,11 @@ import { MISSING_STUDENT_ACCOUNT } from "@/services/http/StudentApi";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
+  CreateStudentAPIInDTO,
   SearchStudentAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
+  UpdateStudentAPIInDTO,
 } from "./http/dto";
 
 export class StudentService {
@@ -29,17 +29,24 @@ export class StudentService {
     return this.instance || (this.instance = new this());
   }
 
-  async createStudent(student: CreateStudent): Promise<void> {
+  /**
+   * Creates the student checking for an existing user to be used or
+   * creating a new one in case the user id is not provided.
+   * The user could be already available in the case of the same user
+   * was authenticated previously on another portal (e.g. parent/partner).
+   * @param student information needed to create the user.
+   */
+  async createStudent(student: CreateStudentAPIInDTO): Promise<void> {
     await ApiClient.Students.createStudent(student);
   }
 
-  async updateStudent(contact: StudentContact): Promise<void> {
+  /**
+   * Updates the student information that the student is allowed to change
+   * in the solution. Other data must be edited externally (e.g. BCSC).
+   * @param contact information to be updated.
+   */
+  async updateStudent(contact: UpdateStudentAPIInDTO): Promise<void> {
     await ApiClient.Students.updateStudentContact(contact);
-  }
-
-  public async getContact(): Promise<StudentContact> {
-    const studentContact = await ApiClient.Students.getContact();
-    return studentContact;
   }
 
   /**

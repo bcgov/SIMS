@@ -1,16 +1,5 @@
-import {
-  AddressDetailsFormAPIDTO,
-  ContactInformationAPIOutDTO,
-} from "@/services/http/dto";
+import { ContactInformationAPIOutDTO } from "@/services/http/dto";
 import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
-
-export interface StudentContact extends AddressDetailsFormAPIDTO {
-  phone: string;
-}
-
-export interface CreateStudent extends StudentContact {
-  sinNumber?: string;
-}
 
 export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;

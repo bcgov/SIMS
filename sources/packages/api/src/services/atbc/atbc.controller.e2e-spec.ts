@@ -94,11 +94,11 @@ describe("Test ATBC Controller", () => {
 
   it("should return an HTTP 200 status when applying for PD and student is valid", async () => {
     // Create fake student in SIMS DB
-    const fakestudent = new Student();
-    fakestudent.sin = "123456789";
-    fakestudent.birthDate = faker.date.past(18);
-    fakestudent.gender = "F";
-    fakestudent.contactInfo = {
+    const fakeStudent = new Student();
+    fakeStudent.sin = "123456789";
+    fakeStudent.birthDate = faker.date.past(18);
+    fakeStudent.gender = "F";
+    fakeStudent.contactInfo = {
       address: {
         addressLine1: faker.address.streetAddress(),
         city: faker.address.city(),
@@ -114,14 +114,14 @@ describe("Test ATBC Controller", () => {
     simsUser.email = faker.internet.email();
     simsUser.firstName = faker.name.firstName();
     simsUser.lastName = faker.name.lastName();
-    fakestudent.user = simsUser;
+    fakeStudent.user = simsUser;
     const sinValidation = new SINValidation();
     sinValidation.user = simsUser;
     sinValidation.isValidSIN = true;
-    fakestudent.sinValidation = sinValidation;
+    fakeStudent.sinValidation = sinValidation;
 
     // Save the student in SIMS
-    await studentService.save(fakestudent);
+    await studentService.save(fakeStudent);
 
     // creating mockup for ATBCCreateClient, this function actually calls the ATBC server to create the student profile
     jest.spyOn(atbcService, "ATBCCreateClient").mockImplementation(async () => {
@@ -131,11 +131,11 @@ describe("Test ATBC Controller", () => {
     try {
       // call to the controller, to apply for the PD
       await request(app.getHttpServer())
-        .patch("/students/apply-pd-status")
+        .patch("students/students/apply-pd-status")
         .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK);
     } finally {
-      await studentService.remove(fakestudent);
+      await studentService.remove(fakeStudent);
       await userService.remove(simsUser);
     }
   });

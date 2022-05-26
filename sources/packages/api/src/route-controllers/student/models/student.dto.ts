@@ -20,16 +20,6 @@ export class ContactInformationAPIOutDTO {
   phone: string;
 }
 
-export class StudentContactAPIOutDTO {
-  phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState?: string;
-  country: string;
-  postalCode: string;
-}
-
 /**
  * Data saved while creating the student profile.
  * SIN validation not added to DTO because it is going
