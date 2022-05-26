@@ -10,10 +10,9 @@ import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   ApiProcessError,
+  StudentRestrictionAPIOutDTO,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { MISSING_STUDENT_ACCOUNT } from "@/services/http/StudentApi";
-import { StudentRestrictionAPIOutDTO } from "@/types";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
@@ -74,9 +73,10 @@ export class StudentService {
       await ApiClient.Students.synchronizeFromUserToken();
       return true;
     } catch (error: unknown) {
+      // TODO: Get MISSING_STUDENT_ACCOUNT /services/http/StudentApi.ts, It was remove for now as it was throwing "Super expression must either be null or a function, not undefined" error
       if (
         error instanceof ApiProcessError &&
-        error.errorType === MISSING_STUDENT_ACCOUNT
+        error.errorType === "MISSING_STUDENT_ACCOUNT"
       ) {
         return false;
       }

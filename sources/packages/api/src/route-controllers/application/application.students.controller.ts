@@ -208,15 +208,14 @@ export class ApplicationStudentsController extends BaseController {
       studyEndDate = offering.studyEndDate;
     }
 
-    const student = await this.studentService.getStudentByUserId(
+    const student = await this.studentService.getStudentById(
       studentToken.studentId,
     );
-
     try {
       await this.applicationService.validateOverlappingDatesAndPIR(
         applicationId,
         student.user.lastName,
-        studentToken.studentId,
+        student.user.id,
         student.sin,
         student.birthDate,
         studyStartDate,
@@ -225,7 +224,7 @@ export class ApplicationStudentsController extends BaseController {
       const { createdAssessment } =
         await this.applicationService.submitApplication(
           applicationId,
-          studentToken.studentId,
+          student.user.id,
           student.id,
           programYear.id,
           submissionResult.data.data,
@@ -284,14 +283,10 @@ export class ApplicationStudentsController extends BaseController {
       );
     }
 
-    const student = await this.studentService.getStudentByUserId(
-      studentToken.studentId,
-    );
-
     try {
       const draftApplication =
         await this.applicationService.saveDraftApplication(
-          student.id,
+          studentToken.studentId,
           payload.programYearId,
           payload.data,
           payload.associatedFiles,
