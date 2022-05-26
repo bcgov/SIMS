@@ -60,7 +60,6 @@ import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import { FormNames } from "../../services/form/constants";
 import { StudentInfo } from "../../services/student/student.service.models";
-import { AddressInfo } from "../../database/entities";
 
 /**
  * Student controller for Student Client.
@@ -119,34 +118,6 @@ export class StudentStudentsController extends BaseController {
 
     const studentInfo = submissionResult.data.data as StudentInfo;
     await this.studentService.createStudent(userToken, studentInfo);
-  }
-
-  /**
-   * Updates the student information that the student is allowed to change
-   * in the solution. Other data must be edited externally (e.g. BCSC).
-   * @param payload information to be updated.
-   */
-  @Patch()
-  @ApiBadRequestResponse({
-    description: "Not able to update a student due to an invalid request.",
-  })
-  async update(
-    @UserToken() userToken: StudentUserToken,
-    @Body() payload: UpdateStudentAPIInDTO,
-  ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentInformation,
-      payload,
-    );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to update a student due to an invalid request.",
-      );
-    }
-    await this.studentService.updateStudentContactByStudentId(
-      userToken.studentId,
-      submissionResult.data.data,
-    );
   }
 
   /**
@@ -331,6 +302,34 @@ export class StudentStudentsController extends BaseController {
       payload.submittedForm.documentPurpose,
       sendFileUploadNotification,
       fileMetadata,
+    );
+  }
+
+  /**
+   * Updates the student information that the student is allowed to change
+   * in the solution. Other data must be edited externally (e.g. BCSC).
+   * @param payload information to be updated.
+   */
+  @Patch()
+  @ApiBadRequestResponse({
+    description: "Not able to update a student due to an invalid request.",
+  })
+  async update(
+    @UserToken() userToken: StudentUserToken,
+    @Body() payload: UpdateStudentAPIInDTO,
+  ): Promise<void> {
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.StudentInformation,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to update a student due to an invalid request.",
+      );
+    }
+    await this.studentService.updateStudentContactByStudentId(
+      userToken.studentId,
+      submissionResult.data.data,
     );
   }
 
