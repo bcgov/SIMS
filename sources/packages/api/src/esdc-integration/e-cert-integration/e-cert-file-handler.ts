@@ -222,7 +222,7 @@ export class ECertFileHandler extends ESDCFileHandler {
 
     return {
       sin: application.student.sin,
-      courseLoad: 50, // TODO change this value when we are updating the workflow course load.
+      courseLoad: offering.courseLoad,
       applicationNumber: application.applicationNumber,
       documentNumber: disbursement.documentNumber,
       disbursementDate: disbursement.disbursementDate,

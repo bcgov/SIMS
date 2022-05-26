@@ -17,9 +17,7 @@ export interface SaveOfferingDTO {
   exceptionalExpenses: number;
   tuitionRemittanceRequestedAmount: number;
   offeringDelivered: string;
-  lacksStudyDates: boolean;
   lacksStudyBreaks: boolean;
-  lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;
@@ -32,6 +30,7 @@ export interface SaveOfferingDTO {
   assessedDate?: Date;
   offeringStatus: OfferingStatus;
   offeringType: OfferingTypes;
+  courseLoad?: number;
 }
 
 /**
@@ -59,9 +58,7 @@ export interface ProgramOfferingDto {
   exceptionalExpenses: number;
   tuitionRemittanceRequestedAmount: number;
   offeringDelivered: string;
-  lacksStudyDates: boolean;
   lacksStudyBreaks: boolean;
-  lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;
@@ -77,6 +74,7 @@ export interface ProgramOfferingDto {
   offeringType: OfferingTypes;
   locationName: string;
   institutionName: string;
+  courseLoad?: number;
 }
 
 export interface ProgramOfferingDetailsDto {
@@ -102,9 +100,7 @@ export const transformToProgramOfferingDto = (
     exceptionalExpenses: offering.exceptionalExpenses,
     tuitionRemittanceRequestedAmount: offering.tuitionRemittanceRequestedAmount,
     offeringDelivered: offering.offeringDelivered,
-    lacksStudyDates: offering.lacksStudyDates,
     lacksStudyBreaks: offering.lacksStudyBreaks,
-    lacksFixedCosts: offering.lacksFixedCosts,
     tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
     offeringIntensity: offering.offeringIntensity,
     yearOfStudy: offering.yearOfStudy,
@@ -120,6 +116,7 @@ export const transformToProgramOfferingDto = (
     institutionName: offering.institutionLocation.institution.operatingName,
     assessedBy: getUserFullName(offering.assessedBy),
     assessedDate: offering.assessedDate,
+    courseLoad: offering.courseLoad,
   };
 };
 

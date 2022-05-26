@@ -64,12 +64,12 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "offering.tuitionRemittanceRequestedAmount",
         "offering.offeringDelivered",
         "offering.offeringIntensity",
+        "offering.courseLoad",
         "educationProgram.id",
         "educationProgram.credentialType",
         "educationProgram.completionYears",
         "institution.id",
         "institutionType.name",
-        "location.data",
         "student.id",
         "student.studentPDVerified",
         "supportingUser.id",
@@ -81,6 +81,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "craIncomeVerification.supportingUser.id",
         "studentAppeal.id",
         "appealRequest.id",
+        "institutionLocation.data",
         "appealRequest.submittedFormName",
         "appealRequest.submittedData",
       ])
@@ -88,9 +89,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.student", "student")
       .leftJoin("assessment.offering", "offering")
+      .leftJoin("offering.institutionLocation", "institutionLocation")
       .leftJoin("offering.educationProgram", "educationProgram")
-      .leftJoin("application.location", "location")
-      .leftJoin("location.institution", "institution")
+      .leftJoin("institutionLocation.institution", "institution")
       .leftJoin("institution.institutionType", "institutionType")
       .leftJoin("application.supportingUsers", "supportingUser")
       .leftJoin("assessment.studentAppeal", "studentAppeal")
