@@ -60,10 +60,8 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { FileOriginType } from "../../database/entities/student-file.type";
-import {
-  FileCreateAPIOutDTO,
-  PaginationOptionsAPIInDTO,
-} from "../models/common.dto";
+import { FileCreateAPIOutDTO } from "../models/common.dto";
+import { PaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { FormNames } from "../../services/form/constants";
 import { StudentInfo } from "../../services/student/student.service.models";
 
@@ -172,6 +170,17 @@ export class StudentStudentsController extends BaseController {
       // Update PD Sent Date.
       await this.studentService.updatePDSentDate(student.id);
     }
+  }
+
+  /**
+   * Use the information available in the authentication token to update
+   * the user and student data currently on DB.
+   */
+  @Patch("/sync")
+  async synchronizeFromUserToken(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<void> {
+    await this.studentService.synchronizeFromUserToken(userToken);
   }
 
   /**

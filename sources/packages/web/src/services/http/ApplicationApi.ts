@@ -5,17 +5,19 @@ import {
   ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
   GetApplicationBaseDTO,
-  StudentApplicationAndCount,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
   DataTableSortOrder,
   ApplicationIdentifiersDTO,
+  ClientIdType,
 } from "@/types";
+import { AuthService } from "../AuthService";
 import HttpBaseClient from "./common/HttpBaseClient";
+import { ApplicationSummaryAPIOutDTO, PaginatedResultsAPIOutDTO } from "./dto";
 
 export class ApplicationApi extends HttpBaseClient {
-  public async getApplicationData(applicationId: number): Promise<any> {
+  async getApplicationData(applicationId: number): Promise<any> {
     try {
       const response = await this.apiClient.get(
         this.addClientRoot(`application/${applicationId}`),
@@ -28,7 +30,7 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async updateStudentApplicationStatus(
+  async updateStudentApplicationStatus(
     applicationId: number,
     payload: ApplicationStatusToBeUpdatedDto,
   ): Promise<void> {
@@ -44,7 +46,7 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async createApplicationDraft(
+  async createApplicationDraft(
     payload: SaveStudentApplicationDto,
   ): Promise<number> {
     try {
@@ -65,7 +67,7 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async saveApplicationDraft(
+  async saveApplicationDraft(
     applicationId: number,
     payload: SaveStudentApplicationDto,
   ): Promise<number> {
@@ -82,7 +84,7 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async submitApplication(
+  async submitApplication(
     applicationId: number,
     payload: SaveStudentApplicationDto,
   ): Promise<void> {
@@ -96,7 +98,7 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async getApplicationWithPY(
+  async getApplicationWithPY(
     applicationId: number,
     includeInActivePY?: boolean,
   ): Promise<ApplicationWithProgramYearDto> {
@@ -118,7 +120,7 @@ export class ApplicationApi extends HttpBaseClient {
    * @param applicationId
    * @returns
    */
-  public async getApplicationDetails(
+  async getApplicationDetails(
     applicationId: number,
   ): Promise<GetApplicationBaseDTO> {
     const response = await this.getCall(
@@ -128,58 +130,37 @@ export class ApplicationApi extends HttpBaseClient {
   }
 
   /**
-   * API Client to get student applications.
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns StudentApplicationAndCount
+   * Get the list of application that belongs to a student on a summary view format.
+   * @param page page number.
+   * @param pageCount limit of the page.
+   * @param sortField field to be sorted.
+   * @param sortOrder order to be sorted.
+   * @param studentId student id. Used only for for AEST.
+   * @returns student application list with total count.
    */
-  public async getAllApplicationAndCountForStudent(
+  async getStudentApplicationSummary(
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
     sortField?: StudentApplicationFields,
     sortOrder?: DataTableSortOrder,
-  ): Promise<StudentApplicationAndCount> {
-    let url = "students/application-summary";
+    studentId?: number,
+  ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
+    let url: string;
+    if (AuthService.shared.authClientType === ClientIdType.AEST) {
+      url = `students/${studentId}/application-summary`;
+    } else {
+      url = `students/application-summary`;
+    }
     // Adding pagination params. There is always a default page and pageCount for paginated APIs.
     url = addPaginationOptions(url, page, pageCount, "?");
     //Adding Sort params. There is always a default sortField and sortOrder for COE.
     url = addSortOptions(url, sortField, sortOrder);
-    return this.getCallTyped<StudentApplicationAndCount>(url);
+    return this.getCallTyped<
+      PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>
+    >(this.addClientRoot(url));
   }
 
-  /**
-   * API Client to get student applications for AEST.
-   * @param studentId student id
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageCount, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns StudentApplicationAndCount
-   */
-  public async getAllApplicationAndCountForAEST(
-    studentId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    sortField?: StudentApplicationFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<StudentApplicationAndCount> {
-    let url = `application/student/${studentId}`;
-    // Adding pagination params. There is always a default page and pageCount for paginated APIs.
-    url = addPaginationOptions(url, page, pageCount, "?");
-    //Adding Sort params. There is always a default sortField and sortOrder for COE.
-    url = addSortOptions(url, sortField, sortOrder);
-    return this.getCallTyped<StudentApplicationAndCount>(
-      this.addClientRoot(url),
-    );
-  }
-
-  public async getApplicationForRequestChange(
+  async getApplicationForRequestChange(
     applicationNumber: string,
   ): Promise<ApplicationIdentifiersDTO> {
     return this.getCallTyped<ApplicationIdentifiersDTO>(

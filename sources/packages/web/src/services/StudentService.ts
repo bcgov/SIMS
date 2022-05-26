@@ -1,12 +1,7 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   StudentFormInfo,
-  StudentApplicationAndCount,
   StudentRestrictionStatus,
-  DataTableSortOrder,
-  StudentApplicationFields,
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
   ApiProcessError,
 } from "@/types";
 import { useFormatters } from "@/composables";
@@ -93,30 +88,6 @@ export class StudentService {
 
   async applyForPDStatus(): Promise<void> {
     return ApiClient.Students.applyForPDStatus();
-  }
-
-  /**
-   * Get all the applications for a student
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageCount, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns StudentApplicationAndCount
-   */
-  async getAllStudentApplications(
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    sortField?: StudentApplicationFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<StudentApplicationAndCount> {
-    return ApiClient.Application.getAllApplicationAndCountForStudent(
-      page,
-      pageCount,
-      sortField,
-      sortOrder,
-    );
   }
 
   /**

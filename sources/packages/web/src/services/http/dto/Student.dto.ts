@@ -83,3 +83,13 @@ export interface SearchStudentAPIOutDTO {
   lastName: string;
   birthDate: string;
 }
+
+export interface ApplicationSummaryAPIOutDTO {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  id: number;
+  applicationName: string;
+  submitted?: Date;
+  status: string;
+}

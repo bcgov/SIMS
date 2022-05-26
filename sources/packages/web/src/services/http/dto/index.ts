@@ -7,3 +7,4 @@ export * from "@/services/http/dto/EducationProgramOffering.dto";
 export * from "@/services/http/dto/Address.dto";
 export * from "@/services/http/dto/Student.dto";
 export * from "@/services/http/dto/Report.dto";
+export * from "@/services/http/dto/Pagination.dto";

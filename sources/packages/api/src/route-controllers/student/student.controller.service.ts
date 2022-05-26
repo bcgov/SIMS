@@ -6,15 +6,15 @@ import {
   StudentService,
 } from "../../services";
 import { Readable } from "stream";
+import { FileCreateAPIOutDTO } from "../models/common.dto";
 import {
-  FileCreateAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
   PaginationOptionsAPIInDTO,
-} from "../models/common.dto";
+} from "../models/pagination.dto";
 import {
   determinePDStatus,
   getISODateOnlyString,
   getUserFullName,
-  PaginatedResults,
 } from "../../utilities";
 import { AddressInfo, Application } from "src/database/entities";
 import {
@@ -144,7 +144,7 @@ export class StudentControllerService {
   async getStudentApplicationSummary(
     studentId: number,
     pagination: PaginationOptionsAPIInDTO,
-  ): Promise<PaginatedResults<ApplicationSummaryAPIOutDTO>> {
+  ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
     const [applications, count] =
       await this.applicationService.getAllStudentApplications(
         studentId,

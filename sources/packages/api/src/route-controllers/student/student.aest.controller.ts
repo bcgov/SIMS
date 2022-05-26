@@ -39,16 +39,16 @@ import {
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
   MINISTRY_FILE_UPLOAD_GROUP_NAME,
-  PaginatedResults,
   uploadLimits,
 } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
 import { FileOriginType } from "../../database/entities/student-file.type";
+import { FileCreateAPIOutDTO } from "../models/common.dto";
 import {
-  FileCreateAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
   PaginationOptionsAPIInDTO,
-} from "../models/common.dto";
+} from "../models/pagination.dto";
 import { Student } from "../../database/entities";
 
 /**
@@ -237,7 +237,7 @@ export class StudentAESTController extends BaseController {
   async getStudentApplicationSummary(
     @Param("studentId") studentId: number,
     @Query() pagination: PaginationOptionsAPIInDTO,
-  ): Promise<PaginatedResults<ApplicationSummaryAPIOutDTO>> {
+  ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
     const studentExists = await this.studentService.studentExists(studentId);
     if (!studentExists) {
       throw new NotFoundException("Student does not exists.");

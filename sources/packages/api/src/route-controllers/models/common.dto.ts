@@ -115,31 +115,3 @@ export class FileCreateAPIOutDTO {
   size: number;
   mimetype: string;
 }
-
-export class PaginationOptionsAPIInDTO {
-  /**
-   * Field to be sorted.
-   */
-  @IsOptional()
-  sortField?: string;
-  /**
-   * Order to be sorted.
-   */
-  @IsEnum(FieldSortOrder)
-  sortOrder = FieldSortOrder.ASC;
-  /**
-   * Page number.
-   */
-  @Min(0)
-  page = DEFAULT_PAGE_NUMBER;
-  /**
-   * Page size or records per page.
-   */
-  @IsPositive()
-  pageLimit = DEFAULT_PAGE_LIMIT;
-  @IsOptional()
-  /**
-   * Criteria to be used to filter the records.
-   */
-  searchCriteria?: string;
-}
