@@ -35,6 +35,7 @@ import {
   AssessmentStudentsController,
   AssessmentControllerService,
   StudentControllerService,
+  EducationProgramStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -48,6 +49,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     StudentAppealStudentsController,
     InstitutionLocationStudentsController,
     AssessmentStudentsController,
+    EducationProgramStudentsController,
   ],
   providers: [
     ApplicationService,

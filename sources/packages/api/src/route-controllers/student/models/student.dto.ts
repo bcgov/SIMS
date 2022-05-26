@@ -41,15 +41,6 @@ export class UpdateStudentAPIInDTO extends AddressDetailsAPIInDTO {
   phone: string;
 }
 
-export interface StudentEducationProgramDto {
-  id: number;
-  name: string;
-  description: string;
-  credentialType: string;
-  credentialTypeToDisplay: string;
-  deliveryMethod: string;
-}
-
 /**
  * Student AEST search parameters.
  */
