@@ -102,11 +102,11 @@ export class AssessmentSystemAccessController extends BaseController {
         programLength: offering?.educationProgram?.completionYears,
       },
       institution: {
-        institutionType: institutionLocation.institution.institutionType.name,
+        institutionType: institutionLocation?.institution.institutionType.name,
       },
       location: {
         institutionLocationProvince:
-          institutionLocation.data.address.provinceState,
+          institutionLocation?.data.address.provinceState,
       },
       student: {
         studentPDStatus: application.student.studentPDVerified,
