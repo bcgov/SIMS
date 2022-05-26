@@ -169,12 +169,15 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   async getECertInformationToBeSent(
     offeringIntensity: OfferingIntensity,
   ): Promise<DisbursementSchedule[]> {
-    let possibleRestrictionActions = [
-      RestrictionActionType.StopPartTimeDisbursement,
-    ];
+    let possibleRestrictionActions: RestrictionActionType[];
     if (offeringIntensity === OfferingIntensity.fullTime) {
       possibleRestrictionActions = [
         RestrictionActionType.StopFullTimeDisbursement,
+      ];
+    }
+    if (offeringIntensity === OfferingIntensity.partTime) {
+      possibleRestrictionActions = [
+        RestrictionActionType.StopPartTimeDisbursement,
       ];
     }
     // Define the minimum date to send a disbursement.
