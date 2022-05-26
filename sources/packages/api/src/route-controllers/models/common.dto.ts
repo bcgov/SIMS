@@ -1,4 +1,16 @@
-import { IsNotEmpty, IsOptional, ValidateIf } from "class-validator";
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  Min,
+  ValidateIf,
+} from "class-validator";
+import {
+  DEFAULT_PAGE_LIMIT,
+  DEFAULT_PAGE_NUMBER,
+  FieldSortOrder,
+} from "../../utilities";
 import { COUNTRY_CANADA, OTHER_COUNTRY } from "../utils/address-utils";
 
 /**
@@ -102,4 +114,32 @@ export class FileCreateAPIOutDTO {
   url: string;
   size: number;
   mimetype: string;
+}
+
+export class PaginationOptionsAPIInDTO {
+  /**
+   * Field to be sorted.
+   */
+  @IsOptional()
+  sortField?: string;
+  /**
+   * Order to be sorted.
+   */
+  @IsEnum(FieldSortOrder)
+  sortOrder = FieldSortOrder.ASC;
+  /**
+   * Page number.
+   */
+  @Min(0)
+  page = DEFAULT_PAGE_NUMBER;
+  /**
+   * Page size or records per page.
+   */
+  @IsPositive()
+  pageLimit = DEFAULT_PAGE_LIMIT;
+  @IsOptional()
+  /**
+   * Criteria to be used to filter the records.
+   */
+  searchCriteria?: string;
 }

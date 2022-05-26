@@ -142,3 +142,16 @@ export class AESTFileUploadToStudentAPIInDTO {
   @ArrayMinSize(1)
   associatedFiles: string[];
 }
+
+/**
+ * DTO object application summary info.
+ */
+export class ApplicationSummaryAPIOutDTO {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  id: number;
+  applicationName: string;
+  submitted?: Date;
+  status: string;
+}

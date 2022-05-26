@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Res,
   UnprocessableEntityException,
   UploadedFile,
@@ -36,6 +37,7 @@ import {
 } from "../../services";
 import BaseController from "../BaseController";
 import {
+  ApplicationSummaryAPIOutDTO,
   CreateStudentAPIInDTO,
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
@@ -54,10 +56,14 @@ import {
   defaultFileFilter,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
+  PaginatedResults,
   uploadLimits,
 } from "../../utilities";
 import { FileOriginType } from "../../database/entities/student-file.type";
-import { FileCreateAPIOutDTO } from "../models/common.dto";
+import {
+  FileCreateAPIOutDTO,
+  PaginationOptionsAPIInDTO,
+} from "../models/common.dto";
 import { FormNames } from "../../services/form/constants";
 import { StudentInfo } from "../../services/student/student.service.models";
 
@@ -342,5 +348,21 @@ export class StudentStudentsController extends BaseController {
     @UserToken() userToken: StudentUserToken,
   ): Promise<StudentProfileAPIOutDTO> {
     return this.studentControllerService.getStudentProfile(userToken.studentId);
+  }
+
+  /**
+   * Get the list of application that belongs to a student on a summary view format.
+   * @param pagination options to execute the pagination.
+   * @returns student application list with total count.
+   */
+  @Get("application-summary")
+  async getStudentApplicationSummary(
+    @Query() pagination: PaginationOptionsAPIInDTO,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<PaginatedResults<ApplicationSummaryAPIOutDTO>> {
+    return this.studentControllerService.getStudentApplicationSummary(
+      userToken.studentId,
+      pagination,
+    );
   }
 }

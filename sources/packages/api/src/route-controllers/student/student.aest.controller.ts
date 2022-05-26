@@ -27,6 +27,7 @@ import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
   AESTStudentSearchAPIInDTO,
+  ApplicationSummaryAPIOutDTO,
   SearchStudentAPIOutDTO,
   StudentProfileAPIOutDTO,
 } from "./models/student.dto";
@@ -38,12 +39,16 @@ import {
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
   MINISTRY_FILE_UPLOAD_GROUP_NAME,
+  PaginatedResults,
   uploadLimits,
 } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
 import { FileOriginType } from "../../database/entities/student-file.type";
-import { FileCreateAPIOutDTO } from "../models/common.dto";
+import {
+  FileCreateAPIOutDTO,
+  PaginationOptionsAPIInDTO,
+} from "../models/common.dto";
 import { Student } from "../../database/entities";
 
 /**
@@ -220,5 +225,26 @@ export class StudentAESTController extends BaseController {
       throw new NotFoundException("Not able to find the student.");
     }
     return student;
+  }
+
+  /**
+   * Get the list of application that belongs to a student on a summary view format.
+   * @param pagination options to execute the pagination.
+   * @returns student application list with total count.
+   */
+  @Get(":studentId/application-summary")
+  @ApiNotFoundResponse({ description: "Student does not exists." })
+  async getStudentApplicationSummary(
+    @Param("studentId") studentId: number,
+    @Query() pagination: PaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResults<ApplicationSummaryAPIOutDTO>> {
+    const studentExists = await this.studentService.studentExists(studentId);
+    if (!studentExists) {
+      throw new NotFoundException("Student does not exists.");
+    }
+    return this.studentControllerService.getStudentApplicationSummary(
+      studentId,
+      pagination,
+    );
   }
 }
