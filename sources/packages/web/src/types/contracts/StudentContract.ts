@@ -1,18 +1,7 @@
-import { ContactInformationAPIOutDTO } from "@/services/http/dto";
 import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;
-}
-
-export interface StudentApplication {
-  applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  id: number;
-  applicationName: string;
-  award: string;
-  status: string;
 }
 
 /**
@@ -42,22 +31,6 @@ export enum SINStatusEnum {
   VALID = 1,
   PENDING = 2,
   INVALID = 3,
-}
-
-/**
- * Interface for student detail API response
- */
-export interface StudentDetail {
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  gender: string;
-  email: string;
-  dateOfBirth: Date;
-  contact: ContactInformationAPIOutDTO;
-  pdVerified: boolean;
-  validSin: boolean;
-  pdStatus: string;
 }
 
 export enum FileOriginType {
