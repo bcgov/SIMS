@@ -63,7 +63,6 @@ import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import { PaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { FormNames } from "../../services/form/constants";
-import { StudentInfo } from "../../services/student/student.service.models";
 
 /**
  * Student controller for Student Client.
