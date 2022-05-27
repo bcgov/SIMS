@@ -10,7 +10,6 @@ import {
   Patch,
   UnprocessableEntityException,
   Query,
-  ForbiddenException,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -47,7 +46,7 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { ApplicationStatus } from "../../database/entities";
-import { CustomNamedError, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
+import { PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import { INVALID_APPLICATION_NUMBER } from "../../constants";
 import {
   ApiBadRequestResponse,
@@ -57,10 +56,7 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
-import {
-  ACTIVE_STUDENT_RESTRICTION,
-  ApplicationControllerService,
-} from "./application.controller.service";
+import { ApplicationControllerService } from "./application.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
