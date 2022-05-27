@@ -16,7 +16,7 @@ import ApiClient from "../services/http/ApiClient";
 import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
-} from "./http/dto";
+} from "@/services/http/dto";
 
 export class ApplicationService {
   // Share Instance

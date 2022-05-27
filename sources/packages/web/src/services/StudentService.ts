@@ -10,7 +10,7 @@ import {
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
   StudentRestrictionAPIOutDTO,
-} from "./http/dto";
+} from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 import { MISSING_STUDENT_ACCOUNT } from "@/constants";
 

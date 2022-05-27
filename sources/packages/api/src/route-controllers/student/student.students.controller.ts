@@ -65,6 +65,7 @@ import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { FormNames } from "../../services/form/constants";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /**
  * Student controller for Student Client.
@@ -104,7 +105,7 @@ export class StudentStudentsController extends BaseController {
   async create(
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: CreateStudentAPIInDTO,
-  ): Promise<void> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Checks if a student account is already associated with the current user.
     if (studentUserToken.studentId) {
       throw new UnprocessableEntityException(
@@ -122,10 +123,12 @@ export class StudentStudentsController extends BaseController {
       );
     }
 
-    await this.studentService.createStudent(
+    const createdStudent = await this.studentService.createStudent(
       studentUserToken,
       submissionResult.data.data,
     );
+
+    return { id: createdStudent.id };
   }
 
   /**
