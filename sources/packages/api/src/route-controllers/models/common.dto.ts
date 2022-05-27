@@ -1,16 +1,4 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsPositive,
-  Min,
-  ValidateIf,
-} from "class-validator";
-import {
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  FieldSortOrder,
-} from "../../utilities";
+import { IsNotEmpty, IsOptional, ValidateIf } from "class-validator";
 import { COUNTRY_CANADA, OTHER_COUNTRY } from "../utils/address-utils";
 
 /**
