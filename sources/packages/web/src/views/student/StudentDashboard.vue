@@ -15,10 +15,8 @@
 </template>
 <script lang="ts">
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
-import { computed, onMounted, ref } from "vue";
-
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
-import { StudentService } from "@/services/StudentService";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import { useRouter } from "vue-router";
@@ -32,6 +30,7 @@ export default {
     const store = useStore();
     const router = useRouter();
     const user = computed(() => store.state.student.profile);
+    // TODO: update this in restriction UI ticket
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
 
@@ -41,12 +40,6 @@ export default {
       });
     };
 
-    onMounted(async () => {
-      const studentRestriction =
-        await StudentService.shared.getStudentRestriction();
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
-    });
     return {
       StudentRoutesConst,
       user,

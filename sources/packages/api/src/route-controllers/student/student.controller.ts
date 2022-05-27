@@ -25,10 +25,10 @@ import {
   StudentEducationProgramDto,
   SearchStudentRespDto,
   SaveStudentDto,
-  StudentRestrictionDTO,
+  StudentRestrictionAPIOutDTO,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
-import { IUserToken } from "../../auth/userToken.interface";
+import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -318,25 +318,24 @@ export class StudentController extends BaseController {
     }));
   }
   /**
+   * TODO: This api will be called by UI and update states, in future restriction UI ticket
    * GET API which returns student restriction details.
-   * @param userToken
-   * @returns Student Restriction
+   * @param studentToken student token.
+   * @returns Student restriction code and notification type, if any.
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("restriction")
   async getStudentRestrictions(
-    @UserToken() userToken: IUserToken,
-  ): Promise<StudentRestrictionDTO> {
-    const studentRestrictionStatus =
-      await this.studentRestrictionService.getStudentRestrictionsByUserId(
-        userToken.userId,
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<StudentRestrictionAPIOutDTO[]> {
+    const studentRestrictions =
+      await this.studentRestrictionService.getStudentRestrictionsById(
+        studentToken.studentId,
       );
-    return {
-      hasRestriction: studentRestrictionStatus.hasRestriction,
-      hasFederalRestriction: studentRestrictionStatus.hasFederalRestriction,
-      hasProvincialRestriction:
-        studentRestrictionStatus.hasProvincialRestriction,
-      restrictionMessage: studentRestrictionStatus.restrictionMessage,
-    } as StudentRestrictionDTO;
+
+    return studentRestrictions?.map((studentRestriction) => ({
+      code: studentRestriction.restriction.restrictionCode,
+      type: studentRestriction.restriction.notificationType,
+    }));
   }
 }

@@ -9,17 +9,13 @@ import {
   Restriction,
   Student,
 } from "../../database/entities";
-import { StudentRestrictionStatus } from "./models/student-restriction.model";
 import {
   AssignRestrictionDTO,
   ResolveRestrictionDTO,
 } from "../../route-controllers/restriction/models/restriction.dto";
-import {
-  RESTRICTION_FEDERAL_MESSAGE,
-  RESTRICTION_PROVINCIAL_MESSAGE,
-} from "./constants";
 import { Connection, SelectQueryBuilder } from "typeorm";
 import { CustomNamedError } from "../../utilities";
+import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -33,89 +29,45 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   }
 
   /**
-   * Retrieves the student restrictions as raw data.
-   * It uses group by to get the count of a restriction for a user.
-   * This count is to validate against allowed count.
-   * TODO: Removed .having("count(*) > restriction.allowedCount"), which may cause unexpected results, need to adjust the logic.
-   * @param userId
-   * @returns Student restriction raw data.
-   */
-  async getStudentRestrictionsByUserId(
-    userId: number,
-  ): Promise<StudentRestrictionStatus> {
-    const result = await this.repo
-      .createQueryBuilder("studentRestrictions")
-      .select("restrictions.id", "restrictionId")
-      .addSelect("restrictions.restrictionType", "restrictionType")
-      .addSelect("count(*)", "restrictionCount")
-      .innerJoin("studentRestrictions.restriction", "restrictions")
-      .innerJoin("studentRestrictions.student", "student")
-      .innerJoin("student.user", "user")
-      .where("studentRestrictions.isActive = true")
-      .andWhere("user.id= :userId", {
-        userId,
-      })
-      .groupBy("studentRestrictions.student.id")
-      .addGroupBy("restrictions.id")
-      .addGroupBy("restrictions.restrictionType")
-      .getRawMany();
-
-    if (!result || result.length === 0) {
-      return {
-        hasRestriction: false,
-        hasFederalRestriction: false,
-        hasProvincialRestriction: false,
-        restrictionMessage: null,
-      } as StudentRestrictionStatus;
-    }
-    let restrictionMessage: string = null;
-    const hasFederalRestriction = result.some(
-      (item) => item.restrictionType === RestrictionType.Federal.toString(),
-    );
-
-    const hasProvincialRestriction = result.some(
-      (item) => item.restrictionType === RestrictionType.Provincial.toString(),
-    );
-
-    if (hasFederalRestriction) {
-      restrictionMessage = RESTRICTION_FEDERAL_MESSAGE;
-    }
-
-    if (hasProvincialRestriction) {
-      restrictionMessage = restrictionMessage
-        ? restrictionMessage + " " + RESTRICTION_PROVINCIAL_MESSAGE
-        : RESTRICTION_PROVINCIAL_MESSAGE;
-    }
-
-    return {
-      hasRestriction: true,
-      hasFederalRestriction: hasFederalRestriction,
-      hasProvincialRestriction: hasProvincialRestriction,
-      restrictionMessage: restrictionMessage,
-    } as StudentRestrictionStatus;
-  }
-
-  /**
    * Creates a 'select' query that could be used in an 'exists' or
    * 'not exists' where clause to define if the student has some
    * active restrictions that must prevent him for certain
    * critical operations, for instance, to have money disbursed.
    * ! This query will assume that a join to 'student.id' is present
    * ! in the master query.
-   * TODO: Removed .having("count(*) > restriction.allowedCount"), which may cause unexpected results, need to adjust the logic.
+   * ! This query is expecting the consumer function to set restrictionActions
+   * ! parameter.
+   * @param checkAll is by default false, checkAll decides if all the
+   * elements in the restrictionActions should be checked (i.e checkAll = true)
+   * or any one of the elements is to be checked (i.e checkAll = false).
+   * @param isStudentId is flag that will allow consumer function to set
+   * student id as parameter, by default its false.
    * @returns 'select' query that could be used in an 'exists' or
    * 'not exists'.
    */
-  getExistsBlockRestrictionQuery(): SelectQueryBuilder<StudentRestriction> {
-    return this.repo
+  getExistsBlockRestrictionQuery(
+    checkAll = false,
+    isStudentId = false,
+  ): SelectQueryBuilder<StudentRestriction> {
+    const query = this.repo
       .createQueryBuilder("studentRestrictions")
       .select("1")
       .innerJoin("studentRestrictions.restriction", "restrictions")
       .innerJoin("studentRestrictions.student", "restrictionStudent")
-      .where("studentRestrictions.isActive = true")
-      .andWhere("restrictionStudent.id = student.id")
-      .groupBy("studentRestrictions.student.id")
-      .addGroupBy("restrictions.id");
+      .where("studentRestrictions.isActive = true");
+    if (isStudentId) {
+      query.andWhere("restrictionStudent.id = :studentId");
+    } else {
+      query.andWhere("restrictionStudent.id = student.id");
+    }
+
+    if (checkAll) {
+      query.andWhere("restrictions.actionType @> :restrictionActions");
+    } else {
+      query.andWhere("restrictions.actionType && :restrictionActions");
+    }
+    query.limit(1);
+    return query;
   }
 
   /**
@@ -137,6 +89,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "restriction.restrictionCategory",
         "restriction.restrictionCode",
         "restriction.description",
+        "restriction.notificationType",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
@@ -147,9 +100,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
 
   /**
    * Get student restriction detail.
-   * @param studentId
-   * @param restrictionId
-   * @returns
+   * @param studentId student id.
+   * @param studentRestrictionId student restriction id.
+   * @returns Student Restriction details.
    */
   async getStudentRestrictionDetailsById(
     studentId: number,
@@ -190,7 +143,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * Add provincial restriction to student.
    * @param studentId
    * @param userId
-   * @param assignRestrictionDTO
+   * @param addStudentRestrictionDTO
    * @returns persisted student restriction.
    */
   async addProvincialRestriction(
@@ -267,5 +220,31 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       } as User,
     } as Note;
     return this.repo.save(studentRestrictionEntity);
+  }
+
+  /**
+   * The service function checks if the requested student has
+   * any or all requested restriction actions.
+   * @param studentId student Id
+   * @param restrictionActions list of restriction actions
+   * @param checkAll is by default false, checkAll decides if the all the
+   * elements in the restrictionActions should be checked (i.e checkAll = true)
+   * or any one of the elements is to be checked (i.e checkAll = false).
+   * @returns boolean, true if the restriction action is present
+   * for the student, else false.
+   */
+  async hasRestrictionAction(
+    studentId: number,
+    restrictionActions: RestrictionActionType[],
+    checkAll = false,
+  ): Promise<boolean> {
+    const query = this.getExistsBlockRestrictionQuery(
+      checkAll,
+      true,
+    ).setParameters({
+      studentId,
+      restrictionActions,
+    });
+    return !!(await query.getRawOne());
   }
 }

@@ -9,7 +9,6 @@ import {
 import BaseController from "../BaseController";
 import {
   AllowAuthorizedParty,
-  CheckRestrictions,
   RequiresStudentAccount,
   UserToken,
 } from "../../auth/decorators";
@@ -67,7 +66,6 @@ export class AssessmentStudentsController extends BaseController {
    * Confirm assessment of a Student.
    * @param assessmentId assessment id to be confirmed.
    */
-  @CheckRestrictions()
   @ApiNotFoundResponse({
     description: "Not able to find the assessment for the student.",
   })

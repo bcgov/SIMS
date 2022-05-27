@@ -30,6 +30,7 @@ import {
   ReportService,
   StudentService,
   SFASIndividualService,
+  StudentRestrictionService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -102,6 +103,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     StudentControllerService,
     StudentService,
     SFASIndividualService,
+    StudentRestrictionService,
   ],
 })
 export class AppAESTModule {}
