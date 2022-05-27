@@ -14,7 +14,7 @@ export class StringBuilder {
    */
   public append(s: string, maxLength?: number) {
     if (maxLength && s.length > maxLength) {
-      s = s.substr(0, maxLength);
+      s = s.substring(0, maxLength);
     }
     this.contents.push(s);
   }

@@ -1,40 +1,40 @@
 <template>
-  <Message
-    v-if="sinValidity.sinStatus !== SINStatusEnum.VALID"
-    :severity="sinValidity.severity"
+  <banner
+    class="mb-6"
+    v-if="showBanner"
+    :color="bannerColor"
+    :summary="sinValidStatus.message"
   >
-    {{ sinValidity?.message }}
-  </Message>
+  </banner>
 </template>
 
 <script lang="ts">
-import { useStore } from "vuex";
-
+import { computed } from "vue";
+import { useStudentStore } from "@/composables";
 import { SINStatusEnum } from "@/types";
-
 export default {
-  props: {
-    message: {
-      type: String,
-    },
-    severity: {
-      type: String,
-    },
-  },
-  computed: {
-    sinValidity() {
-      const store = useStore();
-      return {
-        sinStatus: store.state.student.sinValidStatus.sinStatus,
-        severity: store.state.student.sinValidStatus.severity,
-        message: store.state.student.sinValidStatus.message,
-      };
-    },
-  },
   setup() {
-    return {
-      SINStatusEnum,
-    };
+    const { sinValidStatus, hasStudentAccount } = useStudentStore();
+
+    const showBanner = computed(() => {
+      return (
+        hasStudentAccount.value &&
+        sinValidStatus.value.sinStatus !== SINStatusEnum.VALID
+      );
+    });
+
+    const bannerColor = computed(() => {
+      switch (sinValidStatus.value.sinStatus) {
+        case SINStatusEnum.PENDING:
+          return "warning";
+        case SINStatusEnum.INVALID:
+          return "error";
+        default:
+          return "";
+      }
+    });
+
+    return { showBanner, sinValidStatus, bannerColor };
   },
 };
 </script>

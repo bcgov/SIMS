@@ -100,26 +100,12 @@ export class EducationProgramOffering extends RecordDataModel {
   })
   offeringDelivered: string;
   /**
-   * Offering does not have Study Dates?
-   */
-  @Column({
-    name: "lacks_study_dates",
-  })
-  lacksStudyDates: boolean;
-  /**
    * Offering does not have Study Breaks?
    */
   @Column({
     name: "lacks_study_breaks",
   })
   lacksStudyBreaks: boolean;
-  /**
-   * Offering does not have Fixed Costs?
-   */
-  @Column({
-    name: "lacks_fixed_costs",
-  })
-  lacksFixedCosts: boolean;
   /**
    * Offering Tuition Remittance Requested like Yes, No
    */
@@ -264,6 +250,15 @@ export class EducationProgramOffering extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   offeringNote?: Note;
+  /**
+   * Course Load for Part Time offering intensity.
+   */
+  @Column({
+    name: "course_load",
+    type: "smallint",
+    nullable: true,
+  })
+  courseLoad?: number;
 }
 
 /**

@@ -46,7 +46,7 @@ export interface ECertRecord {
   maritalStatus: RelationshipStatus;
   studentNumber: string;
   awards: Award[];
-  courseLoad: number;
+  courseLoad?: number;
 }
 
 export type Award = Pick<

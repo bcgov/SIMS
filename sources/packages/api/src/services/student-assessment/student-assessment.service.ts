@@ -64,12 +64,12 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "offering.tuitionRemittanceRequestedAmount",
         "offering.offeringDelivered",
         "offering.offeringIntensity",
+        "offering.courseLoad",
         "educationProgram.id",
         "educationProgram.credentialType",
         "educationProgram.completionYears",
         "institution.id",
         "institutionType.name",
-        "location.data",
         "student.id",
         "student.studentPDVerified",
         "supportingUser.id",
@@ -81,6 +81,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "craIncomeVerification.supportingUser.id",
         "studentAppeal.id",
         "appealRequest.id",
+        "institutionLocation.data",
         "appealRequest.submittedFormName",
         "appealRequest.submittedData",
       ])
@@ -88,9 +89,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.student", "student")
       .leftJoin("assessment.offering", "offering")
+      .leftJoin("offering.institutionLocation", "institutionLocation")
       .leftJoin("offering.educationProgram", "educationProgram")
-      .leftJoin("application.location", "location")
-      .leftJoin("location.institution", "institution")
+      .leftJoin("institutionLocation.institution", "institution")
       .leftJoin("institution.institutionType", "institutionType")
       .leftJoin("application.supportingUsers", "supportingUser")
       .leftJoin("assessment.studentAppeal", "studentAppeal")
@@ -111,13 +112,13 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * Get the assessment data to load the NOA (Notice of Assessment)
    * for a student application.
    * @param assessmentId assessment id to be retrieved.
-   * @param userId user associated to the application. Provided
+   * @param studentId student associated to the application. Provided
    * when an authorization check is needed.
    * @returns assessment NOA data.
    */
   async getAssessmentForNOA(
     assessmentId: number,
-    userId?: number,
+    studentId?: number,
   ): Promise<StudentAssessment> {
     const query = this.repo
       .createQueryBuilder("assessment")
@@ -150,8 +151,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .where("assessment.id = :assessmentId", { assessmentId })
       .orderBy("disbursementSchedule.disbursementDate");
 
-    if (userId) {
-      query.andWhere("student.user.id = :userId", { userId });
+    if (studentId) {
+      query.andWhere("student.id = :studentId", { studentId });
     }
     return query.getOne();
   }

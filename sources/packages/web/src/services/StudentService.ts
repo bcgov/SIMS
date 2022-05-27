@@ -10,14 +10,17 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
+  ApiProcessError,
 } from "@/types";
 import { useFormatters } from "@/composables";
+import { MISSING_STUDENT_ACCOUNT } from "@/services/http/StudentApi";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
 } from "./http/dto/Student.dto";
+import { AxiosResponse } from "axios";
 
 export class StudentService {
   // Share Instance
@@ -59,11 +62,26 @@ export class StudentService {
   }
 
   /**
-   * Client method to call in order to update the student
-   * information using the user information.
+   * Use the information available in the authentication token to update
+   * the user and student data currently on DB.
+   * If the user account does not exists an API custom error will be returned
+   * from the API with the error code MISSING_STUDENT_ACCOUNT.
+   * @returns true if the student account was found and updated, otherwise false
+   * if the student account is missing.
    */
-  async synchronizeFromUserInfo(): Promise<void> {
-    return await ApiClient.Students.synchronizeFromUserInfo();
+  async synchronizeFromUserToken(): Promise<boolean> {
+    try {
+      await ApiClient.Students.synchronizeFromUserToken();
+      return true;
+    } catch (error: unknown) {
+      if (
+        error instanceof ApiProcessError &&
+        error.errorType === MISSING_STUDENT_ACCOUNT
+      ) {
+        return false;
+      }
+      throw error;
+    }
   }
 
   async applyForPDStatus(): Promise<void> {
@@ -92,10 +110,6 @@ export class StudentService {
       sortField,
       sortOrder,
     );
-  }
-
-  public async checkStudent(): Promise<boolean> {
-    return ApiClient.Students.checkStudent();
   }
 
   /**
@@ -172,13 +186,11 @@ export class StudentService {
    * and with blob object, blob url is created for the href,
    * and its is returned
    * @param uniqueFileName uniqueFileName
-   * @return blob url for href (DOMString containing a URL
-   * representing the object given in the parameter)
+   * @return axios response object from http response.
    */
-  async downloadStudentFile(uniqueFileName: string): Promise<string> {
-    const blobObject = await ApiClient.FileUpload.download(
-      `students/files/${uniqueFileName}`,
-    );
-    return window.URL.createObjectURL(blobObject);
+  async downloadStudentFile(
+    uniqueFileName: string,
+  ): Promise<AxiosResponse<any>> {
+    return ApiClient.FileUpload.download(`students/files/${uniqueFileName}`);
   }
 }

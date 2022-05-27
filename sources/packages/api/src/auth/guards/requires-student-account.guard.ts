@@ -7,6 +7,9 @@ import {
 import { Reflector } from "@nestjs/core";
 import { StudentUserToken } from "../userToken.interface";
 import { REQUIRES_STUDENT_ACCOUNT_KEY } from "../decorators";
+import { ApiProcessError } from "../../types";
+
+const MISSING_STUDENT_ACCOUNT = "MISSING_STUDENT_ACCOUNT";
 
 /**
  * Specifies when a student account must be already created in order to access a route.
@@ -31,7 +34,10 @@ export class RequiresStudentAccountGuard implements CanActivate {
 
     if (!userToken?.studentId) {
       throw new UnauthorizedException(
-        "The user does not have a student account associated.",
+        new ApiProcessError(
+          "The user does not have a student account associated.",
+          MISSING_STUDENT_ACCOUNT,
+        ),
       );
     }
 
