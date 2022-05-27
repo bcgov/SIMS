@@ -1,30 +1,49 @@
+let identity: any;
 describe("Institution api", () => {
-  it("PATCH - Update institution details", () => {
-    cy.fixture("token").then((data) => {
+  it("POST - Token", () => {
+    cy.fixture("authData").then((auth) => {
       cy.request({
-        method: Cypress.env("patch"),
-        url: Cypress.env("update_institution_url"),
-        auth: { bearer: data.access_token },
+        method: "POST",
+        url: Cypress.env("token_url"),
+        form: true,
         body: {
-          primaryContactEmail: "ryan@gov.bc.ca",
-          primaryContactFirstName: "Ryan",
-          primaryContactLastName: "Gosling",
-          primaryContactPhone: "2382973645",
+          grant_type: auth.grantType,
+          client_id: auth.clientId,
+          username: auth.userName,
+          password: auth.password,
+        },
+      }).then((response) => {
+        identity = response;
+        window.localStorage.setItem("identity", JSON.stringify(identity));
+      });
+    });
+  });
+
+  it("PATCH - Update institution details", () => {
+    cy.fixture("bodyData").then((data) => {
+      cy.request({
+        method: "PATCH",
+        url: Cypress.env("update_institution_url"),
+        auth: { bearer: identity.body.access_token },
+        body: {
+          primaryContactEmail: data.email,
+          primaryContactFirstName: data.firstName,
+          primaryContactLastName: data.lastName,
+          primaryContactPhone: data.contactPhone,
           mailingAddress: {
-            addressLine1: "2285 Blind Bay Road",
-            addressLine2: "Chesley",
-            city: "Mica Creek",
-            country: "Canada",
-            postalCode: "V0E 2L0",
-            provinceState: "British Columbia",
-            canadaPostalCode: "N0G 4K9",
-            otherPostalCode: "P2R 3M2",
-            selectedCountry: "Canada",
+            addressLine1: data.address1,
+            addressLine2: data.address2,
+            city: data.cityName,
+            country: data.countryName,
+            postalCode: data.postalCodeNumber,
+            provinceState: data.provinceStateName,
+            canadaPostalCode: data.canadaPostal,
+            otherPostalCode: data.otherPostal,
+            selectedCountry: data.selectedCountryName,
             otherCountry: "",
           },
         },
       }).then((response) => {
-        expect(response.isOkStatusCode).to.be.true;
         expect(response.status).to.be.equal(200);
       });
     });
