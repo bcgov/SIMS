@@ -96,7 +96,7 @@ export class ApplicationService {
   }
 
   /**
-   * Get the list of application that belongs to a student on a summary view format.
+   * Get the list of applications that belongs to a student on a summary view format.
    * @param page page number.
    * @param pageCount limit of the page.
    * @param sortField field to be sorted.

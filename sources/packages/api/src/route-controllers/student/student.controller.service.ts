@@ -137,7 +137,7 @@ export class StudentControllerService {
   }
 
   /**
-   * API to fetch all the applications that belong to student.
+   * Get all the applications that belong to student.
    * This API will be used by students.
    * @param studentId student id to retrieve the application summary.
    * @param pagination options to execute the pagination.
@@ -162,7 +162,7 @@ export class StudentControllerService {
   }
 
   /**
-   * Util to transform application entity model to ApplicationSummaryDTO.
+   * Util to transform application entity model to the expected DTO.
    * @param application application to be converted to a DTO.
    * @returns application DTO in a summary format.
    */

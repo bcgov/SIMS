@@ -353,7 +353,7 @@ export class StudentStudentsController extends BaseController {
   }
 
   /**
-   * Get the list of application that belongs to a student on a summary view format.
+   * Get the list of applications that belongs to a student on a summary view format.
    * @param pagination options to execute the pagination.
    * @returns student application list with total count.
    */
