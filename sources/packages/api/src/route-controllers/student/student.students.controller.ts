@@ -61,7 +61,7 @@ import {
 } from "../../utilities";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
-import { PaginationOptionsAPIInDTO } from "../models/pagination.dto";
+import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { FormNames } from "../../services/form/constants";
 
 /**
@@ -369,7 +369,7 @@ export class StudentStudentsController extends BaseController {
    */
   @Get("application-summary")
   async getStudentApplicationSummary(
-    @Query() pagination: PaginationOptionsAPIInDTO,
+    @Query() pagination: ApplicationPaginationOptionsAPIInDTO,
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<PaginatedResults<ApplicationSummaryAPIOutDTO>> {
     return this.studentControllerService.getStudentApplicationSummary(

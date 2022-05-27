@@ -8,8 +8,8 @@ import {
 import { Readable } from "stream";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import {
+  ApplicationPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
-  PaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import {
   determinePDStatus,
@@ -143,7 +143,7 @@ export class StudentControllerService {
    */
   async getStudentApplicationSummary(
     studentId: number,
-    pagination: PaginationOptionsAPIInDTO,
+    pagination: ApplicationPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
     const [applications, count] =
       await this.applicationService.getAllStudentApplications(

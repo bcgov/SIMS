@@ -46,8 +46,8 @@ import { StudentControllerService } from "..";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import {
+  ApplicationPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
-  PaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { Student } from "../../database/entities";
 
@@ -236,7 +236,7 @@ export class StudentAESTController extends BaseController {
   @ApiNotFoundResponse({ description: "Student does not exists." })
   async getStudentApplicationSummary(
     @Param("studentId") studentId: number,
-    @Query() pagination: PaginationOptionsAPIInDTO,
+    @Query() pagination: ApplicationPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
     const studentExists = await this.studentService.studentExists(studentId);
     if (!studentExists) {

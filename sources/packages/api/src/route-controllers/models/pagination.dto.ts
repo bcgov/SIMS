@@ -1,21 +1,20 @@
-import { IsEnum, IsOptional, IsPositive, Min } from "class-validator";
+import { IsEnum, IsIn, IsOptional, Max, Min } from "class-validator";
 import { FieldSortOrder } from "../../utilities";
 
 /**
  * Common parameters used when an API result
  * must enable pagination and search options.
  */
-export class PaginationOptionsAPIInDTO {
+abstract class PaginationOptionsAPIInDTO {
   /**
    * Field to be sorted.
    */
-  @IsOptional()
-  sortField?: string;
+  abstract sortField?: string;
   /**
    * Order to be sorted.
    */
   @IsEnum(FieldSortOrder)
-  sortOrder? = FieldSortOrder.ASC;
+  sortOrder: FieldSortOrder;
   /**
    * Page number.
    */
@@ -24,13 +23,19 @@ export class PaginationOptionsAPIInDTO {
   /**
    * Page size or records per page.
    */
-  @IsPositive()
+  @Min(1)
+  @Max(50)
   pageLimit: number;
-  @IsOptional()
   /**
    * Criteria to be used to filter the records.
    */
+  @IsOptional()
   searchCriteria?: string;
+}
+
+export class ApplicationPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsIn(["status", "applicationNumber"])
+  sortField?: string;
 }
 
 /**
