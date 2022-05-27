@@ -332,10 +332,8 @@ export class StudentController extends BaseController {
       await this.studentRestrictionService.getStudentRestrictionsById(
         studentToken.studentId,
       );
-    if (!studentRestrictions) {
-      return [];
-    }
-    return studentRestrictions.map((studentRestriction) => ({
+
+    return studentRestrictions?.map((studentRestriction) => ({
       code: studentRestriction.restriction.restrictionCode,
       type: studentRestriction.restriction.notificationType,
     }));

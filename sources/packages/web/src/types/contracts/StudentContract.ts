@@ -32,9 +32,13 @@ export interface StudentApplication {
  * This object is returned by controller.
  */
 export interface StudentRestrictionAPIOutDTO {
-  //  code, is the restriction code.
+  /**
+   * code is the restriction code.
+   */
   code: string;
-  //  type, is the notification type.
+  /**
+   * type is the notification type.
+   */
   type: RestrictionNotificationType;
 }
 
