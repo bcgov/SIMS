@@ -20,6 +20,7 @@ import {
   StudentUploadFileAPIOutDTO,
 } from "./http/dto/Student.dto";
 import { AxiosResponse } from "axios";
+export const MISSING_STUDENT_ACCOUNT = "MISSING_STUDENT_ACCOUNT";
 
 export class StudentService {
   // Share Instance
@@ -73,10 +74,9 @@ export class StudentService {
       await ApiClient.Students.synchronizeFromUserToken();
       return true;
     } catch (error: unknown) {
-      // TODO: Get MISSING_STUDENT_ACCOUNT /services/http/StudentApi.ts, It was remove for now as it was throwing "Super expression must either be null or a function, not undefined" error
       if (
         error instanceof ApiProcessError &&
-        error.errorType === "MISSING_STUDENT_ACCOUNT"
+        error.errorType === MISSING_STUDENT_ACCOUNT
       ) {
         return false;
       }

@@ -13,8 +13,6 @@ import {
   StudentUploadFileAPIOutDTO,
 } from "./dto/Student.dto";
 
-export const MISSING_STUDENT_ACCOUNT = "MISSING_STUDENT_ACCOUNT";
-
 export class StudentApi extends HttpBaseClient {
   async createStudent(studentProfile: CreateStudent): Promise<void> {
     try {
