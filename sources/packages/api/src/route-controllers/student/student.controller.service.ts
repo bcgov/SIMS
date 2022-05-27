@@ -138,6 +138,7 @@ export class StudentControllerService {
   /**
    * API to fetch all the applications that belong to student.
    * This API will be used by students.
+   * @param studentId student id to retrieve the application summary.
    * @param pagination options to execute the pagination.
    * @returns student application list with total count.
    */
@@ -152,9 +153,9 @@ export class StudentControllerService {
       );
 
     return {
-      results: applications.map((application: Application) => {
-        return this.transformToApplicationSummaryDTO(application);
-      }),
+      results: applications.map((application: Application) =>
+        this.transformToApplicationSummaryDTO(application),
+      ),
       count,
     };
   }

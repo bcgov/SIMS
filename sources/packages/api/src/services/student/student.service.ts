@@ -306,7 +306,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * Search students based on the search criteria.
    * @param searchCriteria options to search by firstName,
    * lastName or appNumber.
-   * @returns searched student details.
+   * @returns list of students.
    */
   async searchStudentApplication(searchCriteria: {
     firstName?: string;
@@ -315,17 +315,17 @@ export class StudentService extends RecordDataModelService<Student> {
   }): Promise<Student[]> {
     const searchQuery = this.repo
       .createQueryBuilder("student")
-      .leftJoin(
-        Application,
-        "application",
-        "application.student.id = student.id",
-      )
       .select([
         "student.id",
         "student.birthDate",
         "user.firstName",
         "user.lastName",
       ])
+      .leftJoin(
+        Application,
+        "application",
+        "application.student.id = student.id",
+      )
       .innerJoin("student.user", "user")
       .where("user.isActive = true");
     if (searchCriteria.firstName) {

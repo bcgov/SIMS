@@ -8,7 +8,7 @@ import {
   Length,
   ValidateIf,
 } from "class-validator";
-import { FileOriginType } from "../../../database/entities/student-file.type";
+import { ApplicationStatus, FileOriginType } from "../../../database/entities";
 import {
   AddressAPIOutDTO,
   AddressDetailsAPIInDTO,
@@ -144,5 +144,5 @@ export class ApplicationSummaryAPIOutDTO {
   id: number;
   applicationName: string;
   submitted?: Date;
-  status: string;
+  status: ApplicationStatus;
 }
