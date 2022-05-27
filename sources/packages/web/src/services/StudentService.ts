@@ -20,7 +20,7 @@ import {
   StudentUploadFileAPIOutDTO,
 } from "./http/dto/Student.dto";
 import { AxiosResponse } from "axios";
-export const MISSING_STUDENT_ACCOUNT = "MISSING_STUDENT_ACCOUNT";
+import { MISSING_STUDENT_ACCOUNT } from "@/constants";
 
 export class StudentService {
   // Share Instance
