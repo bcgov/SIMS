@@ -146,21 +146,10 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId") applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    try {
-      await this.applicationControllerService.offeringIntensityRestrictionCheck(
-        studentToken.studentId,
-        payload.data.howWillYouBeAttendingTheProgram,
-      );
-    } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        if (error.name === ACTIVE_STUDENT_RESTRICTION) {
-          throw new ForbiddenException(
-            new ApiProcessError(error.message, error.name),
-          );
-        }
-      }
-      throw error;
-    }
+    await this.applicationControllerService.offeringIntensityRestrictionCheck(
+      studentToken.studentId,
+      payload.data.howWillYouBeAttendingTheProgram,
+    );
 
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,

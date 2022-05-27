@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import {
   EducationProgramOfferingService,
   InstitutionLocationService,
@@ -12,7 +12,6 @@ import {
 } from "./models/application.model";
 import {
   credentialTypeToDisplay,
-  CustomNamedError,
   dateString,
   deliveryMethod,
   getCOEDeniedReason,
@@ -27,6 +26,7 @@ import {
   ProgramStatus,
 } from "../../database/entities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
+import { ApiProcessError } from "../../types";
 export const ACTIVE_STUDENT_RESTRICTION = "ACTIVE_STUDENT_RESTRICTION";
 
 /**
@@ -171,8 +171,9 @@ export class ApplicationControllerService {
   }
 
   /**
-   * This method checks if the student has any apply restriction on
-   * the offering intensity they selected in there application.
+   * This method checks if the student has any apply (i.e Stop full time or
+   * Stop part time) restriction on the offering intensity they selected
+   * in there application.
    * @param studentId student id.
    * @param offeringIntensity offering intensity selected by the student.
    */
@@ -194,9 +195,11 @@ export class ApplicationControllerService {
         ]);
     }
     if (hasRestrictionAction) {
-      throw new CustomNamedError(
-        "You have a restriction on your account.",
-        ACTIVE_STUDENT_RESTRICTION,
+      throw new ForbiddenException(
+        new ApiProcessError(
+          "You have a restriction on your account.",
+          ACTIVE_STUDENT_RESTRICTION,
+        ),
       );
     }
   }

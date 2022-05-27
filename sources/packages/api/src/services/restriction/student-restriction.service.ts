@@ -37,27 +37,36 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * ! in the master query.
    * ! This query is expecting the consumer function to set restrictionActions
    * ! parameter.
-   * @param checkAll, is by default false, checkAll decides if all the
+   * @param checkAll is by default false, checkAll decides if all the
    * elements in the restrictionActions should be checked (i.e checkAll = true)
    * or any one of the elements is to be checked (i.e checkAll = false).
+   * @param isStudentId is flag that will allow consumer function to set
+   * student id as parameter, by default its false.
    * @returns 'select' query that could be used in an 'exists' or
    * 'not exists'.
    */
   getExistsBlockRestrictionQuery(
     checkAll = false,
+    isStudentId = false,
   ): SelectQueryBuilder<StudentRestriction> {
     const query = this.repo
       .createQueryBuilder("studentRestrictions")
       .select("1")
       .innerJoin("studentRestrictions.restriction", "restrictions")
       .innerJoin("studentRestrictions.student", "restrictionStudent")
-      .where("studentRestrictions.isActive = true")
-      .andWhere("restrictionStudent.id = student.id");
+      .where("studentRestrictions.isActive = true");
+    if (isStudentId) {
+      query.andWhere("restrictionStudent.id = :studentId");
+    } else {
+      query.andWhere("restrictionStudent.id = student.id");
+    }
+
     if (checkAll) {
       query.andWhere("restrictions.actionType @> :restrictionActions");
     } else {
       query.andWhere("restrictions.actionType && :restrictionActions");
     }
+    query.limit(1);
     return query;
   }
 
@@ -215,10 +224,10 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
 
   /**
    * The service function checks if the requested student has
-   * the restricted restriction.
+   * any or all requested restriction actions.
    * @param studentId student Id
    * @param restrictionActions list of restriction actions
-   * @param checkAll,is by default false, checkAll decides if the all the
+   * @param checkAll is by default false, checkAll decides if the all the
    * elements in the restrictionActions should be checked (i.e checkAll = true)
    * or any one of the elements is to be checked (i.e checkAll = false).
    * @returns boolean, true if the restriction action is present
@@ -229,25 +238,13 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     restrictionActions: RestrictionActionType[],
     checkAll = false,
   ): Promise<boolean> {
-    const query = this.repo
-      .createQueryBuilder("studentRestrictions")
-      .select("1")
-      .innerJoin("studentRestrictions.restriction", "restrictions")
-      .innerJoin("studentRestrictions.student", "student")
-      .where("studentRestrictions.isActive = true")
-      .andWhere("student.id= :studentId", {
-        studentId,
-      });
-    if (checkAll) {
-      query.andWhere("restrictions.actionType @> :restrictionActions", {
-        restrictionActions,
-      });
-    } else {
-      query.andWhere("restrictions.actionType && :restrictionActions", {
-        restrictionActions,
-      });
-    }
-    query.limit(1);
+    const query = this.getExistsBlockRestrictionQuery(
+      checkAll,
+      true,
+    ).setParameters({
+      studentId,
+      restrictionActions,
+    });
     return !!(await query.getRawOne());
   }
 }
