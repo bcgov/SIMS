@@ -1,21 +1,19 @@
 let identity: any;
 describe("Institution api", () => {
   it("POST - Token", () => {
-    cy.fixture("authData").then((auth) => {
-      cy.request({
-        method: "POST",
-        url: Cypress.env("token_url"),
-        form: true,
-        body: {
-          grant_type: auth.grantType,
-          client_id: auth.clientId,
-          username: auth.userName,
-          password: auth.password,
-        },
-      }).then((response) => {
-        identity = response;
-        window.localStorage.setItem("identity", JSON.stringify(identity));
-      });
+    cy.request({
+      method: "POST",
+      url: Cypress.env("token_url"),
+      form: true,
+      body: {
+        grant_type: Cypress.env("grantType"),
+        client_id: Cypress.env("clientId"),
+        username: Cypress.env("userName"),
+        password: Cypress.env("password"),
+      },
+    }).then((response) => {
+      identity = response;
+      window.localStorage.setItem("identity", JSON.stringify(identity));
     });
   });
 
