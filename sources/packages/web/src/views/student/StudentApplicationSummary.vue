@@ -35,8 +35,7 @@
   />
 </template>
 <script lang="ts">
-import { onMounted, ref } from "vue";
-import { StudentService } from "@/services/StudentService";
+import { ref } from "vue";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { ApplicationStatus } from "@/types";
@@ -59,6 +58,7 @@ export default {
     CancelApplication,
   },
   setup() {
+    // TODO: update this in restriction UI ticket
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     const router = useRouter();
@@ -128,12 +128,6 @@ export default {
         },
       });
     };
-
-    onMounted(async () => {
-      const restrictions = await StudentService.shared.getStudentRestriction();
-      hasRestriction.value = restrictions.hasRestriction;
-      restrictionMessage.value = restrictions.restrictionMessage;
-    });
 
     return {
       ApplicationStatus,

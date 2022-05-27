@@ -4,16 +4,15 @@ import {
   CreateStudent,
   StudentFormInfo,
   StudentApplicationAndCount,
-  StudentRestrictionStatus,
   SearchStudentResp,
   DataTableSortOrder,
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   ApiProcessError,
+  StudentRestrictionAPIOutDTO,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { MISSING_STUDENT_ACCOUNT } from "@/services/http/StudentApi";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
@@ -21,6 +20,7 @@ import {
   StudentUploadFileAPIOutDTO,
 } from "./http/dto/Student.dto";
 import { AxiosResponse } from "axios";
+import { MISSING_STUDENT_ACCOUNT } from "@/constants";
 
 export class StudentService {
   // Share Instance
@@ -113,10 +113,11 @@ export class StudentService {
   }
 
   /**
+   * TODO: This service is called to update restriction states, in future restriction UI ticket
    * API client to call the student restriction rest API.
    * @returns student restriction(wrapped by promise)
    */
-  async getStudentRestriction(): Promise<StudentRestrictionStatus> {
+  async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
     return ApiClient.Students.getStudentRestriction();
   }
 

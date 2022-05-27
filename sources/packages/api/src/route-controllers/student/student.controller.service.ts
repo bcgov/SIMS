@@ -106,6 +106,7 @@ export class StudentControllerService {
     if (!student) {
       return;
     }
+
     const address = student.contactInfo.address ?? ({} as AddressInfo);
     return {
       firstName: student.user.firstName,

@@ -6,6 +6,5 @@ export * from "./roles.decorator";
 export * from "./userToken.decorator";
 export * from "./allow-inactive-user.decorator";
 export * from "./groups.decorator";
-export * from "./check-restrictions.decorator";
 export * from "./check-sin-status.decorator";
 export * from "./requires-student-account.decorator";

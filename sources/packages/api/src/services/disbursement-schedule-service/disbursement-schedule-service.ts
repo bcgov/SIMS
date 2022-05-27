@@ -35,6 +35,7 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "../student-assessment/student-assessment.constants";
+import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -168,79 +169,88 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   async getECertInformationToBeSent(
     offeringIntensity: OfferingIntensity,
   ): Promise<DisbursementSchedule[]> {
+    const possibleRestrictionActions: RestrictionActionType[] =
+      offeringIntensity === OfferingIntensity.fullTime
+        ? [RestrictionActionType.StopFullTimeDisbursement]
+        : [RestrictionActionType.StopPartTimeDisbursement];
+
     // Define the minimum date to send a disbursement.
     const disbursementMinDate = dayjs()
       .add(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS, "days")
       .toDate();
 
-    return this.repo
-      .createQueryBuilder("disbursement")
-      .select([
-        "disbursement.id",
-        "disbursement.documentNumber",
-        "disbursement.negotiatedExpiryDate",
-        "disbursement.disbursementDate",
-        "application.applicationNumber",
-        "application.data",
-        "application.relationshipStatus",
-        "application.studentNumber",
-        "currentAssessment.id",
-        "currentAssessment.assessmentData",
-        "offering.id",
-        "offering.courseLoad",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "offering.tuitionRemittanceRequestedAmount",
-        "offering.yearOfStudy",
-        "educationProgram.cipCode",
-        "educationProgram.completionYears",
-        "user.firstName",
-        "user.lastName",
-        "user.email",
-        "student.sin",
-        "student.birthDate",
-        "student.gender",
-        "student.contactInfo",
-        "institutionLocation.id",
-        "institutionLocation.institutionCode",
-        "disbursementValue.valueType",
-        "disbursementValue.valueCode",
-        "disbursementValue.valueAmount",
-        "disbursement.coeUpdatedAt",
-        "studentAssessment.id",
-      ])
-      .innerJoin("disbursement.studentAssessment", "studentAssessment")
-      .innerJoin("studentAssessment.application", "application")
-      .innerJoin("application.currentAssessment", "currentAssessment") // * This is to fetch the current assessment of the application, even though we have multiple reassessments
-      .innerJoin("currentAssessment.offering", "offering")
-      .innerJoin("offering.institutionLocation", "institutionLocation")
-      .innerJoin("offering.educationProgram", "educationProgram")
-      .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
-      .innerJoin("student.user", "user")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .innerJoin("application.msfaaNumber", "msfaaNumber")
-      .innerJoin("disbursement.disbursementValues", "disbursementValue")
-      .where("disbursement.dateSent is null")
-      .andWhere("disbursement.disbursementDate <= :disbursementMinDate", {
-        disbursementMinDate,
-      })
-      .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.completed,
-      })
-      .andWhere("msfaaNumber.dateSigned is not null")
-      .andWhere("sinValidation.isValidSIN = true")
-      .andWhere("offering.offeringIntensity = :offeringIntensity", {
-        offeringIntensity,
-      })
-      .andWhere(
-        `NOT EXISTS(${this.studentRestrictionService
-          .getExistsBlockRestrictionQuery()
-          .getSql()})`,
-      )
-      .andWhere("disbursement.coeStatus = :coeStatus", {
-        coeStatus: COEStatus.completed,
-      })
-      .getMany();
+    return (
+      this.repo
+        .createQueryBuilder("disbursement")
+        .select([
+          "disbursement.id",
+          "disbursement.documentNumber",
+          "disbursement.negotiatedExpiryDate",
+          "disbursement.disbursementDate",
+          "application.applicationNumber",
+          "application.data",
+          "application.relationshipStatus",
+          "application.studentNumber",
+          "currentAssessment.id",
+          "currentAssessment.assessmentData",
+          "offering.id",
+          "offering.courseLoad",
+          "offering.studyStartDate",
+          "offering.studyEndDate",
+          "offering.tuitionRemittanceRequestedAmount",
+          "offering.yearOfStudy",
+          "educationProgram.cipCode",
+          "educationProgram.completionYears",
+          "user.firstName",
+          "user.lastName",
+          "user.email",
+          "student.sin",
+          "student.birthDate",
+          "student.gender",
+          "student.contactInfo",
+          "institutionLocation.id",
+          "institutionLocation.institutionCode",
+          "disbursementValue.valueType",
+          "disbursementValue.valueCode",
+          "disbursementValue.valueAmount",
+          "disbursement.coeUpdatedAt",
+          "studentAssessment.id",
+        ])
+        .innerJoin("disbursement.studentAssessment", "studentAssessment")
+        .innerJoin("studentAssessment.application", "application")
+        .innerJoin("application.currentAssessment", "currentAssessment") // * This is to fetch the current assessment of the application, even though we have multiple reassessments
+        .innerJoin("currentAssessment.offering", "offering")
+        .innerJoin("offering.institutionLocation", "institutionLocation")
+        .innerJoin("offering.educationProgram", "educationProgram")
+        .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
+        .innerJoin("student.user", "user")
+        .innerJoin("student.sinValidation", "sinValidation")
+        .innerJoin("application.msfaaNumber", "msfaaNumber")
+        .innerJoin("disbursement.disbursementValues", "disbursementValue")
+        .where("disbursement.dateSent is null")
+        .andWhere("disbursement.disbursementDate <= :disbursementMinDate", {
+          disbursementMinDate,
+        })
+        .andWhere("application.applicationStatus = :applicationStatus", {
+          applicationStatus: ApplicationStatus.completed,
+        })
+        .andWhere("msfaaNumber.dateSigned is not null")
+        .andWhere("sinValidation.isValidSIN = true")
+        .andWhere("offering.offeringIntensity = :offeringIntensity", {
+          offeringIntensity,
+        })
+        .andWhere(
+          `NOT EXISTS(${this.studentRestrictionService
+            .getExistsBlockRestrictionQuery()
+            .getSql()})`,
+        )
+        .andWhere("disbursement.coeStatus = :coeStatus", {
+          coeStatus: COEStatus.completed,
+        })
+        // 'restrictionActions' parameter used inside sub-query.
+        .setParameter("restrictionActions", possibleRestrictionActions)
+        .getMany()
+    );
   }
 
   /**

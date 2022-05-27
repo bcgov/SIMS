@@ -2,7 +2,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   StudentContact,
   CreateStudent,
-  StudentRestrictionStatus,
+  StudentRestrictionAPIOutDTO,
   SearchStudentResp,
 } from "@/types/contracts/StudentContract";
 import {
@@ -12,8 +12,6 @@ import {
   StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
 } from "./dto/Student.dto";
-
-export const MISSING_STUDENT_ACCOUNT = "MISSING_STUDENT_ACCOUNT";
 
 export class StudentApi extends HttpBaseClient {
   async createStudent(studentProfile: CreateStudent): Promise<void> {
@@ -100,10 +98,10 @@ export class StudentApi extends HttpBaseClient {
    * API client to call the student restriction rest API.
    * @returns student restriction(wrapped by promise)
    */
-  async getStudentRestriction(): Promise<StudentRestrictionStatus> {
+  async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
     try {
       const response = await this.getCall("students/restriction");
-      return response.data as StudentRestrictionStatus;
+      return response.data as StudentRestrictionAPIOutDTO[];
     } catch (error) {
       this.handleRequestError(error);
       throw error;
