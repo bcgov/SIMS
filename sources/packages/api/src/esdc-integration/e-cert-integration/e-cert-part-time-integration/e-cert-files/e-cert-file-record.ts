@@ -196,7 +196,7 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
       return record.toString();
     } catch (error: unknown) {
       throw new Error(
-        `Error while creating record: ${this.certNumber}. Error ${error}`,
+        `Error while creating record with document number: ${this.certNumber}. Error ${error}`,
       );
     }
   }
