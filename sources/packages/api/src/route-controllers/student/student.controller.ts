@@ -328,7 +328,7 @@ export class StudentController extends BaseController {
   async getStudentRestrictions(
     @UserToken() studentToken: StudentUserToken,
   ): Promise<StudentRestrictionAPIOutDTO[]> {
-    const result = [];
+    const result: StudentRestrictionAPIOutDTO[] = [];
     const studentRestrictions =
       await this.studentRestrictionService.getStudentRestrictionsById(
         studentToken.studentId,
@@ -337,10 +337,10 @@ export class StudentController extends BaseController {
       return result;
     }
     studentRestrictions.forEach((studentRestriction) => {
-      const eachRestriction = new StudentRestrictionAPIOutDTO();
-      eachRestriction[studentRestriction.restriction.restrictionCode] =
-        studentRestriction.restriction.notificationType;
-      result.push(eachRestriction);
+      result.push({
+        code: studentRestriction.restriction.restrictionCode,
+        type: studentRestriction.restriction.notificationType,
+      });
     });
     return result;
   }

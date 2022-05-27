@@ -9,7 +9,7 @@
         <v-btn
           color="primary"
           class="mr-5"
-          v-if="!notDraft && !hasRestrictio"
+          v-if="!notDraft && !hasRestriction"
           v-show="!isFirstPage && !submittingApplication"
           text
           :loading="savingDraft"

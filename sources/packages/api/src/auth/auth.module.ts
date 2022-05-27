@@ -76,7 +76,6 @@ const jwtModule = JwtModule.register({
       provide: APP_GUARD,
       useClass: InstitutionLocationGuard,
     },
-
     {
       provide: APP_GUARD,
       useClass: RequiresStudentAccountGuard,

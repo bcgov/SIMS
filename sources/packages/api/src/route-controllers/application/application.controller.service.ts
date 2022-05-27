@@ -3,6 +3,7 @@ import {
   EducationProgramOfferingService,
   InstitutionLocationService,
   EducationProgramService,
+  StudentRestrictionService,
 } from "../../services";
 import {
   ApplicationFormData,
@@ -11,6 +12,7 @@ import {
 } from "./models/application.model";
 import {
   credentialTypeToDisplay,
+  CustomNamedError,
   dateString,
   deliveryMethod,
   getCOEDeniedReason,
@@ -21,8 +23,11 @@ import {
   Application,
   ApplicationData,
   DisbursementSchedule,
+  OfferingIntensity,
   ProgramStatus,
 } from "../../database/entities";
+import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
+export const ACTIVE_STUDENT_RESTRICTION = "ACTIVE_STUDENT_RESTRICTION";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
@@ -35,6 +40,7 @@ export class ApplicationControllerService {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly locationService: InstitutionLocationService,
     private readonly programService: EducationProgramService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {}
 
   /**
@@ -162,5 +168,37 @@ export class ApplicationControllerService {
         ? getCOEDeniedReason(disbursement)
         : undefined,
     };
+  }
+
+  /**
+   * This method checks if the student has any apply restriction on
+   * the offering intensity they selected in there application.
+   * @param studentId student id.
+   * @param studentIntensity offering intensity selected by the student.
+   */
+  async offeringIntensityRestrictionCheck(
+    studentId: number,
+    studentIntensity: OfferingIntensity,
+  ): Promise<void> {
+    let hasRestrictionAction = false;
+
+    if (studentIntensity === OfferingIntensity.fullTime) {
+      hasRestrictionAction =
+        await this.studentRestrictionService.hasRestrictionAction(studentId, [
+          RestrictionActionType.StopFullTimeApply,
+        ]);
+    }
+    if (studentIntensity === OfferingIntensity.partTime) {
+      hasRestrictionAction =
+        await this.studentRestrictionService.hasRestrictionAction(studentId, [
+          RestrictionActionType.StopPartTimeApply,
+        ]);
+    }
+    if (hasRestrictionAction) {
+      throw new CustomNamedError(
+        "You have a restriction on your account.",
+        ACTIVE_STUDENT_RESTRICTION,
+      );
+    }
   }
 }

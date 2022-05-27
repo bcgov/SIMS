@@ -46,7 +46,7 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { ApplicationStatus, OfferingIntensity } from "../../database/entities";
+import { ApplicationStatus } from "../../database/entities";
 import { PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import { INVALID_APPLICATION_NUMBER } from "../../constants";
 import {
@@ -57,9 +57,10 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
-import { ApplicationControllerService } from "./application.controller.service";
-import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
-const ACTIVE_STUDENT_RESTRICTION = "ACTIVE_STUDENT_RESTRICTION";
+import {
+  ACTIVE_STUDENT_RESTRICTION,
+  ApplicationControllerService,
+} from "./application.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -145,35 +146,17 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId") applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    let isRestrictionActionExists = false;
-
-    if (
-      payload.data.howWillYouBeAttendingTheProgram ===
-      OfferingIntensity.fullTime
-    ) {
-      isRestrictionActionExists =
-        await this.studentRestrictionService.isRestrictionActionExists(
-          studentToken.studentId,
-          [RestrictionActionType.StopFullTimeApply],
-        );
-    }
-    if (
-      payload.data.howWillYouBeAttendingTheProgram ===
-      OfferingIntensity.partTime
-    ) {
-      isRestrictionActionExists =
-        await this.studentRestrictionService.isRestrictionActionExists(
-          studentToken.studentId,
-          [RestrictionActionType.StopPartTimeApply],
-        );
-    }
-    if (isRestrictionActionExists) {
-      throw new ForbiddenException(
-        new ApiProcessError(
-          "You have a restriction on your account.",
-          ACTIVE_STUDENT_RESTRICTION,
-        ),
+    try {
+      await this.applicationControllerService.offeringIntensityRestrictionCheck(
+        studentToken.studentId,
+        payload.data.howWillYouBeAttendingTheProgram,
       );
+    } catch (error) {
+      if (error.name === ACTIVE_STUDENT_RESTRICTION) {
+        throw new ForbiddenException(
+          new ApiProcessError(error.message, error.name),
+        );
+      }
     }
 
     const programYear = await this.programYearService.getActiveProgramYear(
@@ -215,7 +198,7 @@ export class ApplicationStudentsController extends BaseController {
       await this.applicationService.validateOverlappingDatesAndPIR(
         applicationId,
         student.user.lastName,
-        student.user.id,
+        studentToken.userId,
         student.sin,
         student.birthDate,
         studyStartDate,
@@ -224,7 +207,7 @@ export class ApplicationStudentsController extends BaseController {
       const { createdAssessment } =
         await this.applicationService.submitApplication(
           applicationId,
-          student.user.id,
+          studentToken.userId,
           student.id,
           programYear.id,
           submissionResult.data.data,
@@ -319,6 +302,18 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId") applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
+    try {
+      await this.applicationControllerService.offeringIntensityRestrictionCheck(
+        studentToken.studentId,
+        payload.data.howWillYouBeAttendingTheProgram,
+      );
+    } catch (error) {
+      if (error.name === ACTIVE_STUDENT_RESTRICTION) {
+        throw new ForbiddenException(
+          new ApiProcessError(error.message, error.name),
+        );
+      }
+    }
     try {
       await this.applicationService.saveDraftApplication(
         studentToken.studentId,
