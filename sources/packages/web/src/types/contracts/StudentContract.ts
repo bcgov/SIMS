@@ -1,3 +1,4 @@
+import { RestrictionNotificationType } from "./RestrictionContracts";
 import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export interface StudentFormInfo extends StudentProfileAPIOutDTO {
@@ -5,13 +6,18 @@ export interface StudentFormInfo extends StudentProfileAPIOutDTO {
 }
 
 /**
- * DTO object which is returned by student restriction API.
+ * Student restriction DTO.
+ * This object is returned by controller.
  */
-export interface StudentRestrictionStatus {
-  hasRestriction: boolean;
-  hasFederalRestriction: boolean;
-  hasProvincialRestriction: boolean;
-  restrictionMessage: string;
+export interface StudentRestrictionAPIOutDTO {
+  /**
+   * code is the restriction code.
+   */
+  code: string;
+  /**
+   * type is the notification type.
+   */
+  type: RestrictionNotificationType;
 }
 
 /**

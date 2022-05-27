@@ -72,6 +72,8 @@ export class AssessmentSystemAccessController extends BaseController {
     const [studentCRAIncome] = application.craIncomeVerifications?.filter(
       (verification) => verification.supportingUserId === null,
     );
+    const offering = assessment.offering;
+    const institutionLocation = offering?.institutionLocation;
     return {
       applicationId: application.id,
       triggerType: assessment.triggerType,
@@ -82,30 +84,29 @@ export class AssessmentSystemAccessController extends BaseController {
         endDate: application.programYear.endDate,
       },
       offering: {
-        id: assessment.offering?.id,
-        studyStartDate: assessment.offering?.studyStartDate,
-        studyEndDate: assessment.offering?.studyEndDate,
-        actualTuitionCosts: assessment.offering?.actualTuitionCosts,
-        programRelatedCosts: assessment.offering?.programRelatedCosts,
-        mandatoryFees: assessment.offering?.mandatoryFees,
-        exceptionalExpenses: assessment.offering?.exceptionalExpenses,
+        id: offering?.id,
+        studyStartDate: offering?.studyStartDate,
+        studyEndDate: offering?.studyEndDate,
+        actualTuitionCosts: offering?.actualTuitionCosts,
+        programRelatedCosts: offering?.programRelatedCosts,
+        mandatoryFees: offering?.mandatoryFees,
+        exceptionalExpenses: offering?.exceptionalExpenses,
         tuitionRemittanceRequestedAmount:
-          assessment.offering?.tuitionRemittanceRequestedAmount,
-        offeringDelivered: assessment.offering?.offeringDelivered,
-        offeringIntensity: assessment.offering?.offeringIntensity,
-        courseLoad: assessment.offering?.courseLoad,
+          offering?.tuitionRemittanceRequestedAmount,
+        offeringDelivered: offering?.offeringDelivered,
+        offeringIntensity: offering?.offeringIntensity,
+        courseLoad: offering?.courseLoad,
       },
       program: {
-        programCredentialType:
-          assessment.offering?.educationProgram?.credentialType,
-        programLength: assessment.offering?.educationProgram?.completionYears,
+        programCredentialType: offering?.educationProgram?.credentialType,
+        programLength: offering?.educationProgram?.completionYears,
       },
       institution: {
-        institutionType: application.location?.institution.institutionType.name,
+        institutionType: institutionLocation?.institution.institutionType.name,
       },
       location: {
         institutionLocationProvince:
-          assessment.offering?.institutionLocation.data.address.provinceState,
+          institutionLocation?.data.address.provinceState,
       },
       student: {
         studentPDStatus: application.student.studentPDVerified,

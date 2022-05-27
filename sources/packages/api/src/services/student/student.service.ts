@@ -72,6 +72,7 @@ export class StudentService extends RecordDataModelService<Student> {
         "user.firstName",
         "user.lastName",
         "user.email",
+        "student.sin",
       ])
       .innerJoin("student.user", "user")
       .leftJoin("student.sinValidation", "sinValidation")

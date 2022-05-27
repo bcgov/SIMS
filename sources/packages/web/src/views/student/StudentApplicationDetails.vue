@@ -63,7 +63,6 @@ import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
 import { GetApplicationDataDto, ApplicationStatus } from "@/types";
-import { StudentService } from "@/services/StudentService";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 
@@ -100,6 +99,7 @@ export default {
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
+    // TODO: update this in restriction UI ticket
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     const toast = useToastMessage();
@@ -221,10 +221,6 @@ export default {
     );
 
     onMounted(async () => {
-      const studentRestriction =
-        await StudentService.shared.getStudentRestriction();
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
       await getApplicationDetails(props.id);
     });
 
