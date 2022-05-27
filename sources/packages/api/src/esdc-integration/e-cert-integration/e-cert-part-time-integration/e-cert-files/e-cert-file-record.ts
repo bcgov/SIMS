@@ -132,66 +132,72 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
 
   public getFixedFormat(): string {
     const record = new StringBuilder();
-    record.append(this.recordType);
-    record.appendWithEndFiller(this.lastName, 25, SPACE_FILLER);
-    record.appendWithEndFiller(this.firstName ?? "", 15, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 3); // Initials, optional, not provided.
-    record.append(this.sin, 9);
-    record.append(this.gender, 1);
-    record.appendDate(this.dateOfBirth, DATE_FORMAT);
-    record.appendWithEndFiller(this.maritalStatus, 4, SPACE_FILLER);
-    record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);
-    record.appendWithEndFiller(this.addressLine2 ?? "", 40, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 40); // AddressLine 3, optional, not provided.
-    record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
-    record.appendWithEndFiller("BC", 4, SPACE_FILLER); //TODO Province, is hardcoded to "BC  ".
-    record.appendWithEndFiller("CAN", 4, SPACE_FILLER); // TODO Country, is hardcoded to "CAN ".
-    record.repeatAppend(SPACE_FILLER, 16); //TODO Postal code, Filled with space as not provided.
-    record.repeatAppend(SPACE_FILLER, 16); // Telephone, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 1, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 2, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 3, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 25); // Alternate City, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 4); // Alternate Province, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 4); // Alternate Country, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 16); // Alternate Postal Code, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 16); // Alternate Telephone, optional, not provided.
-    record.appendWithEndFiller(this.studentNumber ?? "", 12, SPACE_FILLER);
-    record.appendDate(this.disbursementDate, DATE_FORMAT);
-    record.appendWithStartFiller(this.disbursementAmount, 9, NUMBER_FILLER);
-    record.appendWithStartFiller(this.certNumber, 7, NUMBER_FILLER);
-    record.appendDate(this.educationalStartDate, DATE_FORMAT);
-    record.appendDate(this.educationalEndDate, DATE_FORMAT);
-    record.appendWithEndFiller(this.federalInstitutionCode, 4, SPACE_FILLER);
-    record.appendWithStartFiller(this.fieldOfStudy, 4, NUMBER_FILLER);
-    record.append(this.yearOfStudy.toString(), 1);
-    record.appendWithStartFiller(this.weeksOfStudy, 3, NUMBER_FILLER);
-    record.appendDate(this.documentProducedDate, DATE_FORMAT);
-    record.repeatAppend(SPACE_FILLER, 8); // TODO Cancel Date, E-cert cancellation date.
-    record.repeatAppend(SPACE_FILLER, 9); //CAG PD Amt, No longer used.
-    record.repeatAppend(SPACE_FILLER, 9); //CAG LI Amt, No longer used.
-    record.appendWithStartFiller(this.totalGrantAmount, 5, NUMBER_FILLER);
-    record.appendWithStartFiller(this.totalCSGPPTAmount, 5, NUMBER_FILLER);
-    record.repeatAppend(NUMBER_FILLER, 5); // CSGP NBD MI Amt, No longer used.
-    record.appendWithStartFiller(this.totalCSGPPDAmount, 5, NUMBER_FILLER);
-    record.appendWithStartFiller(this.totalCSGPPTDEPAmount, 5, NUMBER_FILLER);
-    record.repeatAppend(NUMBER_FILLER, 5); // Amount of Grant for Services and Equipment for Students with Permanent Disabilities (CSGP-PDSE) at the study start, No longer used.
-    record.appendWithStartFiller(this.totalBCSGAmount, 5, NUMBER_FILLER);
-    record.repeatAppend(NUMBER_FILLER, 5); // BC Part-time grant amount 2 - Reserved for future use
-    record.repeatAppend(SPACE_FILLER, 10); // Space Filler.
-    record.repeatAppend(SPACE_FILLER, 8); // CSGP MP Date, No longer used.
-    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PT Amt, No longer used.
-    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP MI Amt, No longer used.
-    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PD Amt, No longer used.
-    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PTDEP Amt, No longer used.
-    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PDSE Amt, No longer used.
-    record.repeatAppend(SPACE_FILLER, 20); // Space Filler.
-    record.appendWithEndFiller(this.emailAddress, 75, SPACE_FILLER);
-    record.append("P"); // 'P' for part-time. Full time is done by another integration to another system.
-    record.appendDate(this.enrollmentConfirmationDate, DATE_FORMAT);
-    record.repeatAppend(SPACE_FILLER, 7); // EI Remittance Amt, optional, not provided.
-    record.appendWithStartFiller(this.courseLoad, 2, NUMBER_FILLER);
-    record.repeatAppend(SPACE_FILLER, 25); // Space Filler.
-    return record.toString();
+    try {
+      record.append(this.recordType);
+      record.appendWithEndFiller(this.lastName, 25, SPACE_FILLER);
+      record.appendWithEndFiller(this.firstName ?? "", 15, SPACE_FILLER);
+      record.repeatAppend(SPACE_FILLER, 3); // Initials, optional, not provided.
+      record.append(this.sin, 9);
+      record.append(this.gender, 1);
+      record.appendDate(this.dateOfBirth, DATE_FORMAT);
+      record.appendWithEndFiller(this.maritalStatus, 4, SPACE_FILLER);
+      record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);
+      record.appendWithEndFiller(this.addressLine2 ?? "", 40, SPACE_FILLER);
+      record.repeatAppend(SPACE_FILLER, 40); // AddressLine 3, optional, not provided.
+      record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
+      record.appendWithEndFiller("BC", 4, SPACE_FILLER); //TODO Province, is hardcoded to "BC  ".
+      record.appendWithEndFiller("CAN", 4, SPACE_FILLER); // TODO Country, is hardcoded to "CAN ".
+      record.repeatAppend(SPACE_FILLER, 16); //TODO Postal code, Filled with space as not provided.
+      record.repeatAppend(SPACE_FILLER, 16); // Telephone, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 1, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 2, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 3, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 25); // Alternate City, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 4); // Alternate Province, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 4); // Alternate Country, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 16); // Alternate Postal Code, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 16); // Alternate Telephone, optional, not provided.
+      record.appendWithEndFiller(this.studentNumber ?? "", 12, SPACE_FILLER);
+      record.appendDate(this.disbursementDate, DATE_FORMAT);
+      record.appendWithStartFiller(this.disbursementAmount, 9, NUMBER_FILLER);
+      record.appendWithStartFiller(this.certNumber, 7, NUMBER_FILLER);
+      record.appendDate(this.educationalStartDate, DATE_FORMAT);
+      record.appendDate(this.educationalEndDate, DATE_FORMAT);
+      record.appendWithEndFiller(this.federalInstitutionCode, 4, SPACE_FILLER);
+      record.appendWithStartFiller(this.fieldOfStudy, 4, NUMBER_FILLER);
+      record.append(this.yearOfStudy.toString(), 1);
+      record.appendWithStartFiller(this.weeksOfStudy, 3, NUMBER_FILLER);
+      record.appendDate(this.documentProducedDate, DATE_FORMAT);
+      record.repeatAppend(SPACE_FILLER, 8); // TODO Cancel Date, E-cert cancellation date.
+      record.repeatAppend(SPACE_FILLER, 9); //CAG PD Amt, No longer used.
+      record.repeatAppend(SPACE_FILLER, 9); //CAG LI Amt, No longer used.
+      record.appendWithStartFiller(this.totalGrantAmount, 5, NUMBER_FILLER);
+      record.appendWithStartFiller(this.totalCSGPPTAmount, 5, NUMBER_FILLER);
+      record.repeatAppend(NUMBER_FILLER, 5); // CSGP NBD MI Amt, No longer used.
+      record.appendWithStartFiller(this.totalCSGPPDAmount, 5, NUMBER_FILLER);
+      record.appendWithStartFiller(this.totalCSGPPTDEPAmount, 5, NUMBER_FILLER);
+      record.repeatAppend(NUMBER_FILLER, 5); // Amount of Grant for Services and Equipment for Students with Permanent Disabilities (CSGP-PDSE) at the study start, No longer used.
+      record.appendWithStartFiller(this.totalBCSGAmount, 5, NUMBER_FILLER);
+      record.repeatAppend(NUMBER_FILLER, 5); // BC Part-time grant amount 2 - Reserved for future use
+      record.repeatAppend(SPACE_FILLER, 10); // Space Filler.
+      record.repeatAppend(SPACE_FILLER, 8); // CSGP MP Date, No longer used.
+      record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PT Amt, No longer used.
+      record.repeatAppend(SPACE_FILLER, 5); // CSGP MP MI Amt, No longer used.
+      record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PD Amt, No longer used.
+      record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PTDEP Amt, No longer used.
+      record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PDSE Amt, No longer used.
+      record.repeatAppend(SPACE_FILLER, 20); // Space Filler.
+      record.appendWithEndFiller(this.emailAddress, 75, SPACE_FILLER);
+      record.append("P"); // 'P' for part-time. Full time is done by another integration to another system.
+      record.appendDate(this.enrollmentConfirmationDate, DATE_FORMAT);
+      record.repeatAppend(SPACE_FILLER, 7); // EI Remittance Amt, optional, not provided.
+      record.appendWithStartFiller(this.courseLoad, 2, NUMBER_FILLER);
+      record.repeatAppend(SPACE_FILLER, 25); // Space Filler.
+      return record.toString();
+    } catch (error: unknown) {
+      throw new Error(
+        `Error while creating record with document number: ${this.certNumber}. Error ${error}`,
+      );
+    }
   }
 }
