@@ -47,7 +47,7 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { ApplicationStatus } from "../../database/entities";
-import { PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
+import { CustomNamedError, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import { INVALID_APPLICATION_NUMBER } from "../../constants";
 import {
   ApiBadRequestResponse,
@@ -151,12 +151,15 @@ export class ApplicationStudentsController extends BaseController {
         studentToken.studentId,
         payload.data.howWillYouBeAttendingTheProgram,
       );
-    } catch (error) {
-      if (error.name === ACTIVE_STUDENT_RESTRICTION) {
-        throw new ForbiddenException(
-          new ApiProcessError(error.message, error.name),
-        );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        if (error.name === ACTIVE_STUDENT_RESTRICTION) {
+          throw new ForbiddenException(
+            new ApiProcessError(error.message, error.name),
+          );
+        }
       }
+      throw error;
     }
 
     const programYear = await this.programYearService.getActiveProgramYear(

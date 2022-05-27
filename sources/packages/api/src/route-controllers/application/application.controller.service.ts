@@ -174,21 +174,20 @@ export class ApplicationControllerService {
    * This method checks if the student has any apply restriction on
    * the offering intensity they selected in there application.
    * @param studentId student id.
-   * @param studentIntensity offering intensity selected by the student.
+   * @param offeringIntensity offering intensity selected by the student.
    */
   async offeringIntensityRestrictionCheck(
     studentId: number,
-    studentIntensity: OfferingIntensity,
+    offeringIntensity: OfferingIntensity,
   ): Promise<void> {
     let hasRestrictionAction = false;
 
-    if (studentIntensity === OfferingIntensity.fullTime) {
+    if (offeringIntensity === OfferingIntensity.fullTime) {
       hasRestrictionAction =
         await this.studentRestrictionService.hasRestrictionAction(studentId, [
           RestrictionActionType.StopFullTimeApply,
         ]);
-    }
-    if (studentIntensity === OfferingIntensity.partTime) {
+    } else if (offeringIntensity === OfferingIntensity.partTime) {
       hasRestrictionAction =
         await this.studentRestrictionService.hasRestrictionAction(studentId, [
           RestrictionActionType.StopPartTimeApply,
