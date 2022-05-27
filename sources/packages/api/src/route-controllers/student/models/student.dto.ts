@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
 } from "class-validator";
+import { RestrictionNotificationType } from "../../../database/entities/restriction-notification-type.type";
 import { FileOriginType } from "../../../database/entities/student-file.type";
 import {
   AddressAPIOutDTO,
@@ -59,14 +60,18 @@ export interface SearchStudentRespDto {
 }
 
 /**
- * DTO Object for student restriction.
+ * DTO for student restriction.
  * This object is returned by controller.
  */
-export interface StudentRestrictionDTO {
-  hasRestriction: boolean;
-  hasFederalRestriction: boolean;
-  hasProvincialRestriction: boolean;
-  restrictionMessage: string;
+export class StudentRestrictionAPIOutDTO {
+  /**
+   * code is the restriction code.
+   */
+  code: string;
+  /**
+   * type is the notification type.
+   */
+  type: RestrictionNotificationType;
 }
 
 /**

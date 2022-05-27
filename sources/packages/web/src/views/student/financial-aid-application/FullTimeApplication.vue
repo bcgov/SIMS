@@ -71,7 +71,10 @@ import {
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
-import { PIR_OR_DATE_OVERLAP_ERROR } from "@/constants";
+import {
+  PIR_OR_DATE_OVERLAP_ERROR,
+  ACTIVE_STUDENT_RESTRICTION,
+} from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
 export default {
@@ -110,6 +113,7 @@ export default {
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
     const notDraft = ref(false);
+    // TODO: update this in restriction UI ticket
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
@@ -128,17 +132,15 @@ export default {
         );
       }
     };
+
     onMounted(async () => {
       await checkProgramYear();
       //Get the student information, application information and student restriction.
-      const [studentInfo, applicationData, studentRestriction] =
-        await Promise.all([
-          StudentService.shared.getStudentProfile(),
-          ApplicationService.shared.getApplicationData(props.id),
-          StudentService.shared.getStudentRestriction(),
-        ]);
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
+      const [studentInfo, applicationData] = await Promise.all([
+        StudentService.shared.getStudentProfile(),
+        ApplicationService.shared.getApplicationData(props.id),
+      ]);
+
       // Adjust the spaces when optional fields are not present.
       isReadOnly.value =
         [
@@ -217,9 +219,15 @@ export default {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An unexpected error happen.";
         if (error instanceof ApiProcessError) {
-          if (error.errorType === PIR_OR_DATE_OVERLAP_ERROR) {
-            errorLabel = "Invalid submission";
-            errorMsg = error.message;
+          switch (error.errorType) {
+            case PIR_OR_DATE_OVERLAP_ERROR:
+              errorLabel = "Invalid submission";
+              errorMsg = error.message;
+              break;
+            case ACTIVE_STUDENT_RESTRICTION:
+              errorLabel = "Active restriction!";
+              errorMsg = error.message;
+              break;
           }
         }
 

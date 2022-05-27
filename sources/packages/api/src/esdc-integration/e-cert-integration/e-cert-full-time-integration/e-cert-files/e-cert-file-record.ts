@@ -167,73 +167,79 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
   grantAwards: Award[];
 
   public getFixedFormat(): string {
-    const record = new StringBuilder();
-    record.append(this.recordType);
-    record.append(this.sin, 9);
-    record.appendWithStartFiller(this.applicationNumber, 19, NUMBER_FILLER);
-    record.appendWithStartFiller(this.documentNumber, 8, NUMBER_FILLER);
-    record.appendDate(this.disbursementDate, DATE_FORMAT);
-    record.appendDate(this.documentProducedDate, DATE_FORMAT);
-    record.appendDate(this.negotiatedExpiryDate, DATE_FORMAT);
-    record.appendWithStartFiller(this.disbursementAmount, 6, NUMBER_FILLER);
-    record.appendWithStartFiller(this.studentAmount, 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.schoolAmount, 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.cslAwardAmount, 6, NUMBER_FILLER);
-    record.appendWithStartFiller(this.bcslAwardAmount, 6, NUMBER_FILLER);
-    record.appendDate(this.educationalStartDate, DATE_FORMAT);
-    record.appendDate(this.educationalEndDate, DATE_FORMAT);
-    record.appendWithEndFiller(this.federalInstitutionCode, 4, SPACE_FILLER);
-    record.appendWithStartFiller(this.weeksOfStudy, 2, NUMBER_FILLER);
-    record.appendWithStartFiller(this.fieldOfStudy, 2, NUMBER_FILLER);
-    record.append(this.yearOfStudy.toString(), 1);
-    record.append(this.totalYearsOfStudy.toString(), 1);
-    record.repeatAppend(NUMBER_FILLER, DATE_FORMAT.length); // Cancel Date, optional, not provided.
-    record.append("F"); // 'F' for full-time. Part time is done by another integration to another system.
-    record.repeatAppend(SPACE_FILLER, 2); // Provincial field of study code, optional, not provided.
-    record.appendDate(this.enrollmentConfirmationDate, DATE_FORMAT);
-    // The below information indicates if e-cert or paper certificate is sent (E=E-cert; P=Paper).
-    // Paper is no longer used, the data options existed in the past to support a transition period
-    // and has not been removed from the files. We only send electronic files now.
-    record.append("E"); // Indicates if e-cert or paper certificate E=E-cert; P=Paper.
-    record.appendDate(this.dateOfBirth, DATE_FORMAT);
-    record.appendWithEndFiller(this.lastName, 25, SPACE_FILLER);
-    record.appendWithEndFiller(this.firstName ?? "", 15, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 3); // Initials, optional, not provided.
-    record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);
-    record.appendWithEndFiller(this.addressLine2 ?? "", 40, SPACE_FILLER);
-    record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
-    record.appendWithEndFiller(this.provinceState ?? "", 4, SPACE_FILLER);
-    record.appendWithEndFiller(this.postalCode ?? "", 16, SPACE_FILLER);
-    record.appendWithEndFiller(this.country, 20, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 20); // Phone Number, optional, not provided.
-    record.appendWithEndFiller(this.emailAddress, 70, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address Line 1, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address Line 2, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 25); // Alternate City, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 4); // Alternate Province, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 16); // Alternate Postal Code, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 20); // Alternate Country Name, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 20); // Alternate Phone Number, optional, not provided.
-    record.append(this.gender, 1);
-    record.append(this.maritalStatus, 1);
-    record.appendWithEndFiller(this.studentNumber ?? "", 12, SPACE_FILLER);
-    record.append("E"); // Student’s language preference E= English, F= French.
-    record.appendWithStartFiller(this.totalGrantAmount, 6, NUMBER_FILLER);
-    // Add the list of awards codes and values that always fill the same amount
-    // of slots defined on GRANT_AWARD_SLOTS. When there values available
-    for (let i = 0; i < AWARD_SLOTS; i++) {
-      const award = this.grantAwards.shift();
-      if (award) {
-        record.appendWithEndFiller(award.valueCode, 4, SPACE_FILLER);
-        record.appendWithStartFiller(award.valueAmount, 6, NUMBER_FILLER);
-      } else {
-        record.repeatAppend(SPACE_FILLER, 10); // Empty data for code(length=4)+amount(length=6) = 10 empty spaces.
+    try {
+      const record = new StringBuilder();
+      record.append(this.recordType);
+      record.append(this.sin, 9);
+      record.appendWithStartFiller(this.applicationNumber, 19, NUMBER_FILLER);
+      record.appendWithStartFiller(this.documentNumber, 8, NUMBER_FILLER);
+      record.appendDate(this.disbursementDate, DATE_FORMAT);
+      record.appendDate(this.documentProducedDate, DATE_FORMAT);
+      record.appendDate(this.negotiatedExpiryDate, DATE_FORMAT);
+      record.appendWithStartFiller(this.disbursementAmount, 6, NUMBER_FILLER);
+      record.appendWithStartFiller(this.studentAmount, 8, NUMBER_FILLER);
+      record.appendWithStartFiller(this.schoolAmount, 8, NUMBER_FILLER);
+      record.appendWithStartFiller(this.cslAwardAmount, 6, NUMBER_FILLER);
+      record.appendWithStartFiller(this.bcslAwardAmount, 6, NUMBER_FILLER);
+      record.appendDate(this.educationalStartDate, DATE_FORMAT);
+      record.appendDate(this.educationalEndDate, DATE_FORMAT);
+      record.appendWithEndFiller(this.federalInstitutionCode, 4, SPACE_FILLER);
+      record.appendWithStartFiller(this.weeksOfStudy, 2, NUMBER_FILLER);
+      record.appendWithStartFiller(this.fieldOfStudy, 2, NUMBER_FILLER);
+      record.append(this.yearOfStudy.toString(), 1);
+      record.append(this.totalYearsOfStudy.toString(), 1);
+      record.repeatAppend(NUMBER_FILLER, DATE_FORMAT.length); // Cancel Date, optional, not provided.
+      record.append("F"); // 'F' for full-time. Part time is done by another integration to another system.
+      record.repeatAppend(SPACE_FILLER, 2); // Provincial field of study code, optional, not provided.
+      record.appendDate(this.enrollmentConfirmationDate, DATE_FORMAT);
+      // The below information indicates if e-cert or paper certificate is sent (E=E-cert; P=Paper).
+      // Paper is no longer used, the data options existed in the past to support a transition period
+      // and has not been removed from the files. We only send electronic files now.
+      record.append("E"); // Indicates if e-cert or paper certificate E=E-cert; P=Paper.
+      record.appendDate(this.dateOfBirth, DATE_FORMAT);
+      record.appendWithEndFiller(this.lastName, 25, SPACE_FILLER);
+      record.appendWithEndFiller(this.firstName ?? "", 15, SPACE_FILLER);
+      record.repeatAppend(SPACE_FILLER, 3); // Initials, optional, not provided.
+      record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);
+      record.appendWithEndFiller(this.addressLine2 ?? "", 40, SPACE_FILLER);
+      record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
+      record.appendWithEndFiller(this.provinceState ?? "", 4, SPACE_FILLER);
+      record.appendWithEndFiller(this.postalCode ?? "", 16, SPACE_FILLER);
+      record.appendWithEndFiller(this.country, 20, SPACE_FILLER);
+      record.repeatAppend(SPACE_FILLER, 20); // Phone Number, optional, not provided.
+      record.appendWithEndFiller(this.emailAddress, 70, SPACE_FILLER);
+      record.repeatAppend(SPACE_FILLER, 40); // Alternate Address Line 1, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 40); // Alternate Address Line 2, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 25); // Alternate City, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 4); // Alternate Province, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 16); // Alternate Postal Code, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 20); // Alternate Country Name, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 20); // Alternate Phone Number, optional, not provided.
+      record.append(this.gender, 1);
+      record.append(this.maritalStatus, 1);
+      record.appendWithEndFiller(this.studentNumber ?? "", 12, SPACE_FILLER);
+      record.append("E"); // Student’s language preference E= English, F= French.
+      record.appendWithStartFiller(this.totalGrantAmount, 6, NUMBER_FILLER);
+      // Add the list of awards codes and values that always fill the same amount
+      // of slots defined on GRANT_AWARD_SLOTS. When there values available
+      for (let i = 0; i < AWARD_SLOTS; i++) {
+        const award = this.grantAwards.shift();
+        if (award) {
+          record.appendWithEndFiller(award.valueCode, 4, SPACE_FILLER);
+          record.appendWithStartFiller(award.valueAmount, 6, NUMBER_FILLER);
+        } else {
+          record.repeatAppend(SPACE_FILLER, 10); // Empty data for code(length=4)+amount(length=6) = 10 empty spaces.
+        }
       }
-    }
 
-    record.repeatAppend(SPACE_FILLER, DATE_FORMAT.length); // Borrower Address Last Update Date, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, DATE_FORMAT.length); // Borrower Alternate Address Last Update, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 69); // Trailing space
-    return record.toString();
+      record.repeatAppend(SPACE_FILLER, DATE_FORMAT.length); // Borrower Address Last Update Date, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, DATE_FORMAT.length); // Borrower Alternate Address Last Update, optional, not provided.
+      record.repeatAppend(SPACE_FILLER, 69); // Trailing space
+      return record.toString();
+    } catch (error: unknown) {
+      throw new Error(
+        `Error while creating record with document number: ${this.documentNumber}. Error ${error}`,
+      );
+    }
   }
 }
