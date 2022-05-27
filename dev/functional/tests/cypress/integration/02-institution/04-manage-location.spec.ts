@@ -135,10 +135,10 @@ describe("Manage Locations", () => {
       institutionManageLocationObject.editLocationButton().click();
       cy.wait("@location");
       institutionManageLocationObject.institutionCode().should("be.disabled");
-      institutionManageLocationObject.locationName().should("be.disabled");
       institutionManageLocationObject.addressFirst().should("be.disabled");
       institutionManageLocationObject.cityInputText().should("be.disabled");
       institutionManageLocationObject.countryInputText().should("be.disabled");
+      institutionManageLocationObject.locationName().should("be.disabled");
       institutionManageLocationObject
         .firstNameInputText()
         .type(data.firstName)
