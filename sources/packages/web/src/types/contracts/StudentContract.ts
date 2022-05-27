@@ -30,7 +30,7 @@ export interface StudentApplication {
 /**
  * Student restriction DTO.
  * This object is returned by controller.
- * code, is the error code.
+ * code, is the restriction code.
  * type, is the notification type.
  */
 export interface StudentRestrictionAPIOutDTO {

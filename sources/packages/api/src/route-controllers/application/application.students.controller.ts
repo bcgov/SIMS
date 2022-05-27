@@ -303,18 +303,6 @@ export class ApplicationStudentsController extends BaseController {
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
     try {
-      await this.applicationControllerService.offeringIntensityRestrictionCheck(
-        studentToken.studentId,
-        payload.data.howWillYouBeAttendingTheProgram,
-      );
-    } catch (error) {
-      if (error.name === ACTIVE_STUDENT_RESTRICTION) {
-        throw new ForbiddenException(
-          new ApiProcessError(error.message, error.name),
-        );
-      }
-    }
-    try {
       await this.applicationService.saveDraftApplication(
         studentToken.studentId,
         payload.programYearId,

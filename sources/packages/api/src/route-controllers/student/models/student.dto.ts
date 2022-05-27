@@ -62,7 +62,7 @@ export interface SearchStudentRespDto {
 /**
  * DTO for student restriction.
  * This object is returned by controller.
- * code, is the error code.
+ * code, is the restriction code.
  * type, is the notification type.
  */
 export class StudentRestrictionAPIOutDTO {

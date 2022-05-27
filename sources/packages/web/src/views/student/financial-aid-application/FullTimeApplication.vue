@@ -219,13 +219,15 @@ export default {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An unexpected error happen.";
         if (error instanceof ApiProcessError) {
-          if (error.errorType === PIR_OR_DATE_OVERLAP_ERROR) {
-            errorLabel = "Invalid submission";
-            errorMsg = error.message;
-          }
-          if (error.errorType === ACTIVE_STUDENT_RESTRICTION) {
-            errorLabel = "Active restriction!";
-            errorMsg = error.message;
+          switch (error.errorType) {
+            case PIR_OR_DATE_OVERLAP_ERROR:
+              errorLabel = "Invalid submission";
+              errorMsg = error.message;
+              break;
+            case ACTIVE_STUDENT_RESTRICTION:
+              errorLabel = "Active restriction!";
+              errorMsg = error.message;
+              break;
           }
         }
 
