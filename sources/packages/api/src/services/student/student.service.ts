@@ -110,12 +110,11 @@ export class StudentService extends RecordDataModelService<Student> {
     userInfo: UserInfo,
     otherInfo: StudentInfo,
   ): Promise<Student> {
-    let user: User;
+    const user = new User();
     if (userInfo.userId) {
-      user = { id: userInfo.userId } as User;
-    } else {
-      user = new User();
+      user.id = userInfo.userId;
     }
+
     const sinValidation = new SINValidation();
     sinValidation.user = user;
     user.userName = userInfo.userName;
@@ -160,7 +159,8 @@ export class StudentService extends RecordDataModelService<Student> {
     studentId: number,
     contact: StudentInfo,
   ): Promise<Student> {
-    const student = { id: studentId } as Student;
+    const student = new Student();
+    student.id = studentId;
     student.contactInfo = {
       address: transformAddressDetails(contact),
       phone: contact.phone,

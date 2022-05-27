@@ -31,6 +31,14 @@ export class CreateStudentAPIInDTO extends AddressDetailsAPIInDTO {
   phone: string;
   @Allow()
   sinNumber: string;
+  /**
+   * This is used to allow the UI to display or not the SIN during
+   * student profile creation. If not present here it will be removed
+   * by Nestjs and the Form.io dry run will also remove it from it
+   * output considering that the form is not in creation mode.
+   */
+  @Allow()
+  mode: string;
 }
 
 /**

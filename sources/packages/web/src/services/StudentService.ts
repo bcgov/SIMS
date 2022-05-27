@@ -1,9 +1,5 @@
 import ApiClient from "@/services/http/ApiClient";
-import {
-  StudentFormInfo,
-  ApiProcessError,
-  StudentRestrictionAPIOutDTO,
-} from "@/types";
+import { StudentFormInfo, ApiProcessError } from "@/types";
 import { useFormatters } from "@/composables";
 import {
   AESTFileUploadToStudentAPIInDTO,
@@ -13,6 +9,7 @@ import {
   StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
+  StudentRestrictionAPIOutDTO,
 } from "./http/dto";
 import { AxiosResponse } from "axios";
 import { MISSING_STUDENT_ACCOUNT } from "@/constants";
@@ -91,9 +88,8 @@ export class StudentService {
   }
 
   /**
-   * TODO: This service is called to update restriction states, in future restriction UI ticket
    * API client to call the student restriction rest API.
-   * @returns student restriction(wrapped by promise)
+   * @returns student restriction(wrapped by promise).
    */
   async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
     return ApiClient.Students.getStudentRestriction();

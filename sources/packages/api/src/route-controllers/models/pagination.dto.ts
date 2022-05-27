@@ -13,8 +13,9 @@ abstract class PaginationOptionsAPIInDTO {
   /**
    * Order to be sorted.
    */
+  @IsOptional()
   @IsEnum(FieldSortOrder)
-  sortOrder: FieldSortOrder;
+  sortOrder?: FieldSortOrder;
   /**
    * Page number.
    */

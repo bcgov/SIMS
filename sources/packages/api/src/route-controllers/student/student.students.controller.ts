@@ -33,6 +33,7 @@ import {
   FormService,
   GCNotifyActionsService,
   StudentFileService,
+  StudentRestrictionService,
   StudentService,
 } from "../../services";
 import BaseController from "../BaseController";
@@ -41,6 +42,7 @@ import {
   CreateStudentAPIInDTO,
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
+  StudentRestrictionAPIOutDTO,
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
 } from "./models/student.dto";
@@ -81,6 +83,7 @@ export class StudentStudentsController extends BaseController {
     private readonly studentService: StudentService,
     private readonly formService: FormService,
     private readonly atbcService: ATBCService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super();
   }
@@ -350,19 +353,6 @@ export class StudentStudentsController extends BaseController {
   }
 
   /**
-   * Get the student information that represents the profile.
-   * @returns student profile information.
-   */
-  @Get()
-  async getStudentProfile(
-    @UserToken() studentUserToken: StudentUserToken,
-  ): Promise<StudentProfileAPIOutDTO> {
-    return this.studentControllerService.getStudentProfile(
-      studentUserToken.studentId,
-    );
-  }
-
-  /**
    * Get the list of application that belongs to a student on a summary view format.
    * @param pagination options to execute the pagination.
    * @returns student application list with total count.
@@ -375,6 +365,39 @@ export class StudentStudentsController extends BaseController {
     return this.studentControllerService.getStudentApplicationSummary(
       studentUserToken.studentId,
       pagination,
+    );
+  }
+
+  /**
+   * GET API which returns student restriction details.
+   * @param studentToken student token.
+   * @returns Student restriction code and notification type, if any.
+   */
+  @Get("restriction")
+  async getStudentRestrictions(
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<StudentRestrictionAPIOutDTO[]> {
+    const studentRestrictions =
+      await this.studentRestrictionService.getStudentRestrictionsById(
+        studentToken.studentId,
+      );
+
+    return studentRestrictions?.map((studentRestriction) => ({
+      code: studentRestriction.restriction.restrictionCode,
+      type: studentRestriction.restriction.notificationType,
+    }));
+  }
+
+  /**
+   * Get the student information that represents the profile.
+   * @returns student profile information.
+   */
+  @Get()
+  async getStudentProfile(
+    @UserToken() studentUserToken: StudentUserToken,
+  ): Promise<StudentProfileAPIOutDTO> {
+    return this.studentControllerService.getStudentProfile(
+      studentUserToken.studentId,
     );
   }
 }

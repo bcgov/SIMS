@@ -1,5 +1,4 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { StudentRestrictionAPIOutDTO } from "@/types/contracts/StudentContract";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
@@ -9,6 +8,7 @@ import {
   StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
+  StudentRestrictionAPIOutDTO,
 } from "./dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -73,16 +73,12 @@ export class StudentApi extends HttpBaseClient {
 
   /**
    * API client to call the student restriction rest API.
-   * @returns student restriction(wrapped by promise)
+   * @returns student restriction(wrapped by promise).
    */
   async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
-    try {
-      const response = await this.getCall("students/restriction");
-      return response.data as StudentRestrictionAPIOutDTO[];
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCallTyped<StudentRestrictionAPIOutDTO[]>(
+      this.addClientRoot("students/restriction"),
+    );
   }
 
   /**
