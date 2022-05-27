@@ -180,6 +180,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         id: scholasticStanding.studentAssessment.id,
       } as StudentAssessment;
 
+      // Set archive to true
+      application.isArchived = true;
+
       await transactionalEntityManager
         .getRepository(Application)
         .save(application);
