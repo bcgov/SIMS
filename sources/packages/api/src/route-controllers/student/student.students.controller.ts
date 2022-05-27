@@ -100,11 +100,11 @@ export class StudentStudentsController extends BaseController {
   })
   @RequiresStudentAccount(false)
   async create(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: CreateStudentAPIInDTO,
   ): Promise<void> {
     // Checks if a student account is already associated with the current user.
-    if (userToken.studentId) {
+    if (studentUserToken.studentId) {
       throw new UnprocessableEntityException(
         "There is already a student associated with the user.",
       );
@@ -120,8 +120,10 @@ export class StudentStudentsController extends BaseController {
       );
     }
 
-    const studentInfo = submissionResult.data.data as StudentInfo;
-    await this.studentService.createStudent(userToken, studentInfo);
+    await this.studentService.createStudent(
+      studentUserToken,
+      submissionResult.data.data,
+    );
   }
 
   /**
@@ -135,11 +137,11 @@ export class StudentStudentsController extends BaseController {
       "Either the client does not have a validated SIN or the request was already sent to ATBC.",
   })
   async applyForPDStatus(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
     // Get student details
     const student = await this.studentService.getStudentById(
-      userToken.studentId,
+      studentUserToken.studentId,
     );
     // Check the PD status in DB. Student should only be allowed to check the PD status once.
     // studentPDSentAt is set when student apply for PD status for the first.
@@ -178,9 +180,9 @@ export class StudentStudentsController extends BaseController {
    */
   @Patch("/sync")
   async synchronizeFromUserToken(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
-    await this.studentService.synchronizeFromUserToken(userToken);
+    await this.studentService.synchronizeFromUserToken(studentUserToken);
   }
 
   /**
@@ -189,10 +191,10 @@ export class StudentStudentsController extends BaseController {
    */
   @Get("documents")
   async getStudentFiles(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
   ): Promise<StudentUploadFileAPIOutDTO[]> {
     const studentDocuments = await this.fileService.getStudentUploadedFiles(
-      userToken.studentId,
+      studentUserToken.studentId,
     );
     return studentDocuments.map((studentDocument) => ({
       fileName: studentDocument.fileName,
@@ -212,14 +214,14 @@ export class StudentStudentsController extends BaseController {
       "Requested file was not found or the user does not have access to it.",
   })
   async getUploadedFile(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
     @Param("uniqueFileName") uniqueFileName: string,
     @Res() response: Response,
   ): Promise<void> {
     await this.studentControllerService.writeFileToResponse(
       response,
       uniqueFileName,
-      userToken.studentId,
+      studentUserToken.studentId,
     );
   }
 
@@ -240,17 +242,17 @@ export class StudentStudentsController extends BaseController {
     }),
   )
   async uploadFile(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
     @UploadedFile() file: Express.Multer.File,
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
   ): Promise<FileCreateAPIOutDTO> {
     return this.studentControllerService.uploadFile(
-      userToken.studentId,
+      studentUserToken.studentId,
       file,
       uniqueFileName,
       groupName,
-      userToken.userId,
+      studentUserToken.userId,
     );
   }
 
@@ -266,7 +268,7 @@ export class StudentStudentsController extends BaseController {
    */
   @Patch("save-uploaded-files")
   async saveStudentUploadedFiles(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: StudentFileUploaderAPIInDTO,
   ): Promise<void> {
     if (payload.submittedForm.applicationNumber) {
@@ -274,7 +276,7 @@ export class StudentStudentsController extends BaseController {
       const validApplication =
         await this.applicationService.doesApplicationExist(
           payload.submittedForm.applicationNumber,
-          userToken.studentId,
+          studentUserToken.studentId,
         );
 
       if (!validApplication) {
@@ -288,7 +290,7 @@ export class StudentStudentsController extends BaseController {
     }
 
     const student = await this.studentService.getStudentById(
-      userToken.studentId,
+      studentUserToken.studentId,
     );
 
     // This method will be executed alongside with the transaction during the
@@ -310,8 +312,8 @@ export class StudentStudentsController extends BaseController {
     // files (saved during the upload) are updated to its proper group, file origin
     // and add the metadata (if available).
     await this.fileService.updateStudentFiles(
-      userToken.studentId,
-      userToken.userId,
+      studentUserToken.studentId,
+      studentUserToken.userId,
       payload.associatedFiles,
       FileOriginType.Student,
       payload.submittedForm.documentPurpose,
@@ -330,7 +332,7 @@ export class StudentStudentsController extends BaseController {
     description: "Not able to update a student due to an invalid request.",
   })
   async update(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: UpdateStudentAPIInDTO,
   ): Promise<void> {
     const submissionResult = await this.formService.dryRunSubmission(
@@ -343,7 +345,7 @@ export class StudentStudentsController extends BaseController {
       );
     }
     await this.studentService.updateStudentContactByStudentId(
-      userToken.studentId,
+      studentUserToken.studentId,
       submissionResult.data.data,
     );
   }
@@ -354,9 +356,11 @@ export class StudentStudentsController extends BaseController {
    */
   @Get()
   async getStudentProfile(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
   ): Promise<StudentProfileAPIOutDTO> {
-    return this.studentControllerService.getStudentProfile(userToken.studentId);
+    return this.studentControllerService.getStudentProfile(
+      studentUserToken.studentId,
+    );
   }
 
   /**
@@ -367,10 +371,10 @@ export class StudentStudentsController extends BaseController {
   @Get("application-summary")
   async getStudentApplicationSummary(
     @Query() pagination: PaginationOptionsAPIInDTO,
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
   ): Promise<PaginatedResults<ApplicationSummaryAPIOutDTO>> {
     return this.studentControllerService.getStudentApplicationSummary(
-      userToken.studentId,
+      studentUserToken.studentId,
       pagination,
     );
   }

@@ -22,16 +22,7 @@ export class StudentApi extends HttpBaseClient {
    * @param studentProfile information needed to create the user.
    */
   async createStudent(studentProfile: CreateStudentAPIInDTO): Promise<void> {
-    try {
-      await this.apiClient.post(
-        "students",
-        studentProfile,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.postCall(this.addClientRoot("students"), studentProfile);
   }
 
   /**
@@ -42,7 +33,7 @@ export class StudentApi extends HttpBaseClient {
   async updateStudentContact(
     studentContact: UpdateStudentAPIInDTO,
   ): Promise<void> {
-    await this.apiClient.patch(this.addClientRoot("students"), studentContact);
+    await this.patchCall(this.addClientRoot("students"), studentContact);
   }
 
   /**

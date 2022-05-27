@@ -135,7 +135,7 @@ export class ApplicationApi extends HttpBaseClient {
    * @param pageCount limit of the page.
    * @param sortField field to be sorted.
    * @param sortOrder order to be sorted.
-   * @param studentId student id. Used only for for AEST.
+   * @param studentId student id. Used only for AEST.
    * @returns student application list with total count.
    */
   async getStudentApplicationSummary(
@@ -145,12 +145,10 @@ export class ApplicationApi extends HttpBaseClient {
     sortOrder?: DataTableSortOrder,
     studentId?: number,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
-    let url: string;
-    if (AuthService.shared.authClientType === ClientIdType.AEST) {
-      url = `students/${studentId}/application-summary`;
-    } else {
-      url = `students/application-summary`;
-    }
+    let url =
+      AuthService.shared.authClientType === ClientIdType.AEST
+        ? `students/${studentId}/application-summary`
+        : `students/application-summary`;
     // Adding pagination params. There is always a default page and pageCount for paginated APIs.
     url = addPaginationOptions(url, page, pageCount, "?");
     //Adding Sort params. There is always a default sortField and sortOrder for COE.

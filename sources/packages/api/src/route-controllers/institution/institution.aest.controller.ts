@@ -41,7 +41,6 @@ import { ClientTypeBaseRoute } from "../../types";
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("institution")
-@ApiTags("institution")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-institution`)
 export class InstitutionAESTController extends BaseController {
   constructor(

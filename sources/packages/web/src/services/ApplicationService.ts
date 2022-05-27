@@ -101,7 +101,7 @@ export class ApplicationService {
    * @param pageCount limit of the page.
    * @param sortField field to be sorted.
    * @param sortOrder order to be sorted.
-   * @param studentId student id. Used only for for AEST.
+   * @param studentId student id. Used only for AEST.
    * @returns student application list with total count.
    */
   async getStudentApplicationSummary(
