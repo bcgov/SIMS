@@ -1,7 +1,6 @@
 import {
   SummaryEducationProgramDto,
   OptionItemDto,
-  StudentEducationProgramDto,
   EducationProgramData,
   DataTableSortOrder,
   ProgramSummaryFields,
@@ -10,6 +9,7 @@ import {
   PaginatedResults,
   ApproveProgram,
   DeclineProgram,
+  StudentEducationProgramAPIOutDTO,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { addSortOptions } from "@/helpers";
@@ -107,19 +107,17 @@ export class EducationProgramApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * Returns the education program for a student.
+   * @param programId program id to be returned.
+   * @returns education program for a student.
+   */
   public async getStudentEducationProgram(
     programId: number,
-  ): Promise<StudentEducationProgramDto> {
-    try {
-      const response = await this.apiClient.get(
-        `students/education-program/${programId}`,
-        this.addAuthHeader(),
-      );
-      return response.data as StudentEducationProgramDto;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  ): Promise<StudentEducationProgramAPIOutDTO> {
+    return this.getCallTyped(
+      this.addClientRoot(`education-program/${programId}`),
+    );
   }
 
   /**

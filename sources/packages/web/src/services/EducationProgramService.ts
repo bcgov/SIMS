@@ -1,7 +1,6 @@
 import {
   SummaryEducationProgramDto,
   OptionItemDto,
-  StudentEducationProgramDto,
   EducationProgramAPIDTO,
   EducationProgramData,
   DataTableSortOrder,
@@ -11,6 +10,7 @@ import {
   PaginatedResults,
   ApproveProgram,
   DeclineProgram,
+  StudentEducationProgramAPIOutDTO,
 } from "@/types";
 
 import ApiClient from "./http/ApiClient";
@@ -75,9 +75,14 @@ export class EducationProgramService {
     return ApiClient.EducationProgram.getEducationProgram(programId);
   }
 
+  /**
+   * Returns the education program for a student.
+   * @param programId program id to be returned.
+   * @returns education program for a student.
+   */
   public async getStudentEducationProgram(
     programId: number,
-  ): Promise<StudentEducationProgramDto> {
+  ): Promise<StudentEducationProgramAPIOutDTO> {
     return ApiClient.EducationProgram.getStudentEducationProgram(programId);
   }
 

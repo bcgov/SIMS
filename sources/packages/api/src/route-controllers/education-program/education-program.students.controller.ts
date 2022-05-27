@@ -5,7 +5,7 @@ import {
   RequiresStudentAccount,
 } from "../../auth/decorators";
 import { EducationProgramService } from "../../services";
-import { StudentEducationProgramAPIOutDTO } from "./models/summary-education-program.dto";
+import { StudentEducationProgramAPIOutDTO } from "./models/education-program.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import { credentialTypeToDisplay, deliveryMethod } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
@@ -23,7 +23,7 @@ export class EducationProgramStudentsController extends BaseController {
   /**
    * Returns the education program for a student.
    * @param programId program id to be returned.
-   * @returns StudentEducationProgramDto
+   * @returns education program for a student.
    */
   @Get(":programId")
   async getStudentEducationProgram(
