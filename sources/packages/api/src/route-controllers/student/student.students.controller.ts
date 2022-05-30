@@ -383,6 +383,7 @@ export class StudentStudentsController extends BaseController {
     const studentRestrictions =
       await this.studentRestrictionService.getStudentRestrictionsById(
         studentToken.studentId,
+        true,
       );
 
     return studentRestrictions?.map((studentRestriction) => ({

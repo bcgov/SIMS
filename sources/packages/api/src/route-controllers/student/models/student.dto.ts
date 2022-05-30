@@ -141,6 +141,9 @@ export class StudentProfileAPIOutDTO {
   validSin: boolean;
   pdStatus: StudentPDStatus;
 }
+export class AESTStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
+  hasRestriction: boolean;
+}
 
 export class AESTFileUploadToStudentAPIInDTO {
   @ArrayMinSize(1)

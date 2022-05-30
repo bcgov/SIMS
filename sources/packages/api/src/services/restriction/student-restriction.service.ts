@@ -73,12 +73,15 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   /**
    * Service method to get all restrictions as a summary for a student.
    * @param studentId
+   * @param onlyActive is a flag, which decide to to select all
+   * restrictions (i.e false) or only active restrictions (i.e true).
    * @returns Student restrictions.
    */
   async getStudentRestrictionsById(
     studentId: number,
+    onlyActive = false,
   ): Promise<StudentRestriction[]> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("studentRestrictions")
       .select([
         "studentRestrictions.id",
@@ -93,9 +96,11 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
-      .where("student.id = :studentId", { studentId })
-      .orderBy("studentRestrictions.isActive", "DESC")
-      .getMany();
+      .where("student.id = :studentId", { studentId });
+    if (onlyActive) {
+      query.andWhere("studentRestrictions.isActive = true");
+    }
+    return query.orderBy("studentRestrictions.isActive", "DESC").getMany();
   }
 
   /**

@@ -3,6 +3,9 @@ import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;
 }
+export interface StudentFormWithRestrictionInfo extends StudentFormInfo {
+  hasRestriction: boolean;
+}
 
 /**
  * Enumeration for student permanent disability status.
