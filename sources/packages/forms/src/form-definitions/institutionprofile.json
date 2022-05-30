@@ -2201,7 +2201,7 @@
                         "values": [
                           {
                             "label": "Canada",
-                            "value": "canada"
+                            "value": "Canada"
                           },
                           {
                             "label": "Other",
@@ -2436,8 +2436,8 @@
                       "properties": {},
                       "conditional": {
                         "show": true,
-                        "when": "country",
-                        "eq": "canada",
+                        "when": "mailingAddress.selectedCountry",
+                        "eq": "Canada",
                         "json": ""
                       },
                       "customConditional": "",
@@ -2478,7 +2478,7 @@
                         "include": "score",
                         "threshold": 0.3
                       },
-                      "id": "efb6vbf",
+                      "id": "etbe9cx",
                       "defaultValue": ""
                     },
                     {
@@ -2887,7 +2887,7 @@
                       "conditional": {
                         "show": true,
                         "when": "selectedCountry",
-                        "eq": "canada",
+                        "eq": "Canada",
                         "json": ""
                       },
                       "customConditional": "",
@@ -3309,7 +3309,7 @@
       "tooltip": "",
       "customClass": "text-center",
       "tabindex": "",
-      "disableOnInvalid": true,
+      "disableOnInvalid": false,
       "hidden": false,
       "autofocus": false,
       "disabled": false,
@@ -3377,7 +3377,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "e4yukxg"
+      "id": "eiywxr9j"
     },
     {
       "label": "applicationId",
