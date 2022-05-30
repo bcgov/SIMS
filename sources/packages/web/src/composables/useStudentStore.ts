@@ -20,10 +20,25 @@ export function useStudentStore(rootStore?: Store<any>) {
     await store.dispatch("student/setHasStudentAccount", hasAccount);
   };
 
+  const updateRestrictions = async () => {
+    await store.dispatch("student/updateStudentRestrictions");
+  };
+
+  const hasRestriction = (): boolean => {
+    return store.getters["student/hasRestriction"];
+  };
+
+  const hasWarning = (): boolean => {
+    return store.getters["student/hasWarning"];
+  };
+
   return {
     updateProfileData,
     sinValidStatus,
     setHasStudentAccount,
     hasStudentAccount,
+    updateRestrictions,
+    hasRestriction,
+    hasWarning,
   };
 }

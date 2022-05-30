@@ -4,10 +4,7 @@
       <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
     </template>
     <template #alerts>
-      <RestrictionBanner
-        v-if="hasRestriction"
-        :restrictionMessage="restrictionMessage"
-      />
+      <restriction-banner />
       <CheckValidSINBanner />
     </template>
     <formio
@@ -79,9 +76,6 @@ export default {
     const { bcscParsedToken } = useAuthBCSC();
     const { dateOnlyLongString } = useFormatters();
     const studentStore = useStudentStore();
-    // TODO: update this in restriction UI ticket
-    const hasRestriction = ref(false);
-    const restrictionMessage = ref("");
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
 
     const getStudentInfo = async () => {
@@ -176,8 +170,6 @@ export default {
       showApplyPDButton,
       studentAllInfo,
       showPendingStatus,
-      hasRestriction,
-      restrictionMessage,
       pdStatusApplicationModal,
       showPDApplicationModal,
     };

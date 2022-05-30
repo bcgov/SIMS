@@ -73,9 +73,7 @@
               "
             >
               <v-btn
-                :disabled="
-                  hasRestriction || sinValidStatus !== SINStatusEnum.VALID
-                "
+                :disabled="sinValidStatus !== SINStatusEnum.VALID"
                 variant="plain"
               >
                 <font-awesome-icon
@@ -92,9 +90,7 @@
                 />
               </v-btn>
               <v-btn
-                :disabled="
-                  hasRestriction || sinValidStatus !== SINStatusEnum.VALID
-                "
+                :disabled="sinValidStatus !== SINStatusEnum.VALID"
                 variant="plain"
               >
                 <font-awesome-icon
@@ -145,11 +141,6 @@ export default {
     studentId: {
       type: Number,
       required: false,
-    },
-    hasRestriction: {
-      type: Boolean,
-      required: false,
-      default: false,
     },
     reloadData: {
       type: Boolean,

@@ -1,9 +1,6 @@
 <template>
   <div class="p-m-4">
-    <RestrictionBanner
-      v-if="hasRestriction"
-      :restrictionMessage="restrictionMessage"
-    />
+    <restriction-banner />
     <HeaderNavigator
       title="Back to Applications"
       :routeLocation="{
@@ -99,9 +96,6 @@ export default {
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
-    // TODO: update this in restriction UI ticket
-    const hasRestriction = ref(false);
-    const restrictionMessage = ref("");
     const toast = useToastMessage();
 
     const showHideCancelApplication = () => {
@@ -165,8 +159,7 @@ export default {
         applicationDetails.value.applicationStatus !==
           ApplicationStatus.cancelled &&
         applicationDetails.value.applicationStatus !==
-          ApplicationStatus.completed &&
-        !hasRestriction.value
+          ApplicationStatus.completed
       ) {
         items.value.push(
           {
@@ -190,8 +183,7 @@ export default {
         applicationDetails.value.applicationStatus !==
           ApplicationStatus.cancelled &&
         applicationDetails.value.applicationStatus !==
-          ApplicationStatus.completed &&
-        !hasRestriction.value
+          ApplicationStatus.completed
       ) {
         items.value.push(
           { separator: true },
@@ -243,8 +235,6 @@ export default {
       editApplicationModal,
       editApplication,
       viewApplication,
-      hasRestriction,
-      restrictionMessage,
     };
   },
 };

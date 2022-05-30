@@ -1,15 +1,12 @@
 <template>
-  <RestrictionBanner
-    v-if="hasRestriction"
-    :restrictionMessage="restrictionMessage"
-  />
+  <restriction-banner />
   <full-page-container>
     <v-row class="center-container application-container mb-5 text-right">
       <v-col md="12" class="ml-auto">
         <v-btn
           color="primary"
           class="mr-5"
-          v-if="!notDraft && !hasRestriction"
+          v-if="!notDraft"
           v-show="!isFirstPage && !submittingApplication"
           text
           :loading="savingDraft"
@@ -19,7 +16,7 @@
           >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
         >
         <v-btn
-          v-if="!isReadOnly && !hasRestriction"
+          v-if="!isReadOnly"
           :disabled="!isLastPage || submittingApplication"
           v-show="!isFirstPage"
           color="primary"
@@ -113,9 +110,6 @@ export default {
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
     const notDraft = ref(false);
-    // TODO: update this in restriction UI ticket
-    const hasRestriction = ref(false);
-    const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
 
@@ -291,8 +285,6 @@ export default {
       confirmEditApplication,
       editApplication,
       editApplicationModal,
-      hasRestriction,
-      restrictionMessage,
       pageChanged,
       isFirstPage,
       isLastPage,

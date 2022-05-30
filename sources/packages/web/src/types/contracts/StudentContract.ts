@@ -93,3 +93,17 @@ export enum FileOriginType {
   Student = "Student",
   Ministry = "Ministry",
 }
+
+/**
+ * Contract for student restriction.
+ */
+export interface StudentRestriction {
+  /**
+   * code is the restriction code.
+   */
+  code: string;
+  /**
+   * type is the notification type.
+   */
+  type: RestrictionNotificationType;
+}

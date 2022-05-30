@@ -3,21 +3,17 @@
     <template #header>
       <header-navigator title="Applications" subTitle="My Applications">
         <template #buttons>
-          <StartApplication :hasRestriction="hasRestriction" />
+          <StartApplication />
         </template>
       </header-navigator>
     </template>
     <template #alerts>
-      <RestrictionBanner
-        v-if="hasRestriction"
-        :restrictionMessage="restrictionMessage"
-      />
+      <restriction-banner />
       <CheckValidSINBanner />
     </template>
     <v-row>
       <v-col cols="12">
         <StudentApplications
-          :hasRestriction="hasRestriction"
           :reloadData="reloadData"
           @editApplicationAction="editApplicationAction"
           @openConfirmCancel="openConfirmCancel"
@@ -58,9 +54,6 @@ export default {
     CancelApplication,
   },
   setup() {
-    // TODO: update this in restriction UI ticket
-    const hasRestriction = ref(false);
-    const restrictionMessage = ref("");
     const router = useRouter();
     const toast = useToastMessage();
     const editApplicationModal = ref({} as ModalDialog<boolean>);
@@ -131,8 +124,6 @@ export default {
 
     return {
       ApplicationStatus,
-      hasRestriction,
-      restrictionMessage,
       editApplicationAction,
       editApplicationModal,
       openConfirmCancel,

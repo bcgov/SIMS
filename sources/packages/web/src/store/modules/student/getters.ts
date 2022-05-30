@@ -1,7 +1,16 @@
 import { GetterTree } from "vuex";
-import { RootState } from "@/types";
+import { RootState, RestrictionNotificationType } from "@/types";
 import { StudentState } from "./student";
 
 export const getters: GetterTree<StudentState, RootState> = {
-  // To be implemented if needed.
+  hasRestriction(state: StudentState): boolean {
+    return state.restrictions?.some(
+      (restriction) => restriction.type === RestrictionNotificationType.Error,
+    );
+  },
+  hasWarning(state: StudentState): boolean {
+    return state.restrictions?.some(
+      (restriction) => restriction.type === RestrictionNotificationType.Warning,
+    );
+  },
 };

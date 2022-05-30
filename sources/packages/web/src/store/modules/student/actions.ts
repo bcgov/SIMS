@@ -17,4 +17,11 @@ export const actions: ActionTree<StudentState, RootState> = {
   ) {
     context.commit("setHasStudentAccount", hasStudentAccount);
   },
+
+  async updateStudentRestrictions(
+    context: ActionContext<StudentState, RootState>,
+  ) {
+    const restrictions = await StudentService.shared.getStudentRestriction();
+    context.commit("updateStudentRestrictions", restrictions);
+  },
 };

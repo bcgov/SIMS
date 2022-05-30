@@ -3,7 +3,10 @@ import { RootState } from "@/types";
 import { actions } from "./actions";
 import { getters } from "./getters";
 import { mutations } from "./mutations";
-import { SINStatusEnum } from "@/types/contracts/StudentContract";
+import {
+  SINStatusEnum,
+  StudentRestriction,
+} from "@/types/contracts/StudentContract";
 
 export class SINValidStatus {
   sinStatus?: SINStatusEnum;
@@ -14,11 +17,13 @@ export class SINValidStatus {
 export class StudentState {
   hasStudentAccount = false;
   sinValidStatus: SINValidStatus = new SINValidStatus();
+  restrictions: StudentRestriction[] = [];
 }
 
 const state: StudentState = {
   hasStudentAccount: false,
   sinValidStatus: new SINValidStatus(),
+  restrictions: [],
 };
 
 const namespaced = true;
