@@ -18,10 +18,6 @@ export const getters: GetterTree<StudentState, RootState> = {
     );
   },
   getRestrictions(state: StudentState): StudentRestriction[] {
-    return state.restrictions?.filter(
-      (restriction) =>
-        restriction.type === RestrictionNotificationType.Warning ||
-        restriction.type === RestrictionNotificationType.Error,
-    );
+    return state.restrictions;
   },
 };
