@@ -1,15 +1,26 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Response } from "express";
-import { StudentFileService, StudentService } from "../../services";
+import {
+  ApplicationService,
+  StudentFileService,
+  StudentService,
+} from "../../services";
 import { Readable } from "stream";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
+import {
+  ApplicationPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
 import {
   determinePDStatus,
   getISODateOnlyString,
   getUserFullName,
 } from "../../utilities";
-import { AddressInfo } from "src/database/entities";
-import { StudentProfileAPIOutDTO } from "./models/student.dto";
+import { AddressInfo, Application } from "src/database/entities";
+import {
+  ApplicationSummaryAPIOutDTO,
+  StudentProfileAPIOutDTO,
+} from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 
 @Injectable()
@@ -17,6 +28,7 @@ export class StudentControllerService {
   constructor(
     private readonly fileService: StudentFileService,
     private readonly studentService: StudentService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   /**
@@ -123,4 +135,50 @@ export class StudentControllerService {
       validSin: student.sinValidation.isValidSIN,
     };
   }
+
+  /**
+   * Get all the applications that belong to student.
+   * This API will be used by students.
+   * @param studentId student id to retrieve the application summary.
+   * @param pagination options to execute the pagination.
+   * @returns student application list with total count.
+   */
+  async getStudentApplicationSummary(
+    studentId: number,
+    pagination: ApplicationPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
+    const [applications, count] =
+      await this.applicationService.getAllStudentApplications(
+        studentId,
+        pagination,
+      );
+
+    return {
+      results: applications.map((application: Application) =>
+        this.transformToApplicationSummaryDTO(application),
+      ),
+      count,
+    };
+  }
+
+  /**
+   * Util to transform application entity model to the expected DTO.
+   * @param application application to be converted to a DTO.
+   * @returns application DTO in a summary format.
+   */
+  private transformToApplicationSummaryDTO = (
+    application: Application,
+  ): ApplicationSummaryAPIOutDTO => {
+    const offering = application.currentAssessment?.offering;
+    return {
+      id: application.id,
+      applicationNumber: application.applicationNumber,
+      studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
+      studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
+      // TODO: when application name is captured, update the below line
+      applicationName: "Financial Aid Application",
+      submitted: application.currentAssessment?.submittedDate,
+      status: application.applicationStatus,
+    };
+  };
 }

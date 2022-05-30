@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -6,12 +7,18 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Res,
   UnprocessableEntityException,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -22,17 +29,28 @@ import {
 import {
   ApplicationService,
   APPLICATION_NOT_FOUND,
+  ATBCService,
+  FormService,
   GCNotifyActionsService,
   StudentFileService,
+  StudentRestrictionService,
   StudentService,
 } from "../../services";
 import BaseController from "../BaseController";
 import {
+  ApplicationSummaryAPIOutDTO,
+  CreateStudentAPIInDTO,
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
+  StudentRestrictionAPIOutDTO,
   StudentUploadFileAPIOutDTO,
+  UpdateStudentAPIInDTO,
 } from "./models/student.dto";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import {
+  ApiProcessError,
+  ATBCCreateClientPayload,
+  ClientTypeBaseRoute,
+} from "../../types";
 import { Response } from "express";
 import { StudentControllerService } from "..";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -40,10 +58,14 @@ import {
   defaultFileFilter,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
+  PaginatedResults,
   uploadLimits,
 } from "../../utilities";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
+import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
+import { FormNames } from "../../services/form/constants";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /**
  * Student controller for Student Client.
@@ -60,8 +82,101 @@ export class StudentStudentsController extends BaseController {
     private readonly gcNotifyActionsService: GCNotifyActionsService,
     private readonly applicationService: ApplicationService,
     private readonly studentService: StudentService,
+    private readonly formService: FormService,
+    private readonly atbcService: ATBCService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super();
+  }
+
+  /**
+   * Creates the student checking for an existing user to be used or
+   * creating a new one in case the user id is not provided.
+   * The user could be already available in the case of the same user
+   * was authenticated previously on another portal (e.g. parent/partner).
+   * @param payload information needed to create the user.
+   */
+  @Post()
+  @ApiUnprocessableEntityResponse({
+    description:
+      "There is already a student associated with the user or the request is invalid.",
+  })
+  @RequiresStudentAccount(false)
+  async create(
+    @UserToken() studentUserToken: StudentUserToken,
+    @Body() payload: CreateStudentAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    // Checks if a student account is already associated with the current user.
+    if (studentUserToken.studentId) {
+      throw new UnprocessableEntityException(
+        "There is already a student associated with the user.",
+      );
+    }
+
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.StudentInformation,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new UnprocessableEntityException(
+        "Not able to create a student due to an invalid request.",
+      );
+    }
+
+    const createdStudent = await this.studentService.createStudent(
+      studentUserToken,
+      submissionResult.data.data,
+    );
+
+    return { id: createdStudent.id };
+  }
+
+  /**
+   * Creates the request for ATBC PD evaluation.
+   * Student should only be allowed to check the PD status once and the
+   * SIN validation must be already done with a successful result.
+   */
+  @Patch("apply-pd-status")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Either the client does not have a validated SIN or the request was already sent to ATBC.",
+  })
+  async applyForPDStatus(
+    @UserToken() studentUserToken: StudentUserToken,
+  ): Promise<void> {
+    // Get student details
+    const student = await this.studentService.getStudentById(
+      studentUserToken.studentId,
+    );
+    // Check the PD status in DB. Student should only be allowed to check the PD status once.
+    // studentPDSentAt is set when student apply for PD status for the first.
+    // studentPDVerified is null before PD scheduled job update status.
+    // studentPDVerified is true if PD confirmed by ATBC or is true from sfas_individual table.
+    // studentPDVerified is false if PD denied by ATBC.
+    if (
+      !student.sinValidation.isValidSIN ||
+      !!student.studentPDSentAt ||
+      student.studentPDVerified !== null
+    ) {
+      throw new UnprocessableEntityException(
+        "Either the client does not have a validated SIN or the request was already sent to ATBC.",
+      );
+    }
+
+    // Create client payload.
+    const payload: ATBCCreateClientPayload = {
+      SIN: student.sin,
+      firstName: student.user.firstName,
+      lastName: student.user.lastName,
+      email: student.user.email,
+      birthDate: student.birthDate,
+    };
+    // API to create student profile in ATBC.
+    const response = await this.atbcService.ATBCCreateClient(payload);
+    if (response) {
+      // Update PD Sent Date.
+      await this.studentService.updatePDSentDate(student.id);
+    }
   }
 
   /**
@@ -70,9 +185,9 @@ export class StudentStudentsController extends BaseController {
    */
   @Patch("/sync")
   async synchronizeFromUserToken(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
-    await this.studentService.synchronizeFromUserToken(userToken);
+    await this.studentService.synchronizeFromUserToken(studentUserToken);
   }
 
   /**
@@ -81,10 +196,10 @@ export class StudentStudentsController extends BaseController {
    */
   @Get("documents")
   async getStudentFiles(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
   ): Promise<StudentUploadFileAPIOutDTO[]> {
     const studentDocuments = await this.fileService.getStudentUploadedFiles(
-      userToken.studentId,
+      studentUserToken.studentId,
     );
     return studentDocuments.map((studentDocument) => ({
       fileName: studentDocument.fileName,
@@ -104,14 +219,14 @@ export class StudentStudentsController extends BaseController {
       "Requested file was not found or the user does not have access to it.",
   })
   async getUploadedFile(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
     @Param("uniqueFileName") uniqueFileName: string,
     @Res() response: Response,
   ): Promise<void> {
     await this.studentControllerService.writeFileToResponse(
       response,
       uniqueFileName,
-      userToken.studentId,
+      studentUserToken.studentId,
     );
   }
 
@@ -132,17 +247,17 @@ export class StudentStudentsController extends BaseController {
     }),
   )
   async uploadFile(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
     @UploadedFile() file: Express.Multer.File,
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
   ): Promise<FileCreateAPIOutDTO> {
     return this.studentControllerService.uploadFile(
-      userToken.studentId,
+      studentUserToken.studentId,
       file,
       uniqueFileName,
       groupName,
-      userToken.userId,
+      studentUserToken.userId,
     );
   }
 
@@ -158,7 +273,7 @@ export class StudentStudentsController extends BaseController {
    */
   @Patch("save-uploaded-files")
   async saveStudentUploadedFiles(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: StudentFileUploaderAPIInDTO,
   ): Promise<void> {
     if (payload.submittedForm.applicationNumber) {
@@ -166,7 +281,7 @@ export class StudentStudentsController extends BaseController {
       const validApplication =
         await this.applicationService.doesApplicationExist(
           payload.submittedForm.applicationNumber,
-          userToken.studentId,
+          studentUserToken.studentId,
         );
 
       if (!validApplication) {
@@ -180,7 +295,7 @@ export class StudentStudentsController extends BaseController {
     }
 
     const student = await this.studentService.getStudentById(
-      userToken.studentId,
+      studentUserToken.studentId,
     );
 
     // This method will be executed alongside with the transaction during the
@@ -202,8 +317,8 @@ export class StudentStudentsController extends BaseController {
     // files (saved during the upload) are updated to its proper group, file origin
     // and add the metadata (if available).
     await this.fileService.updateStudentFiles(
-      userToken.studentId,
-      userToken.userId,
+      studentUserToken.studentId,
+      studentUserToken.userId,
       payload.associatedFiles,
       FileOriginType.Student,
       payload.submittedForm.documentPurpose,
@@ -213,13 +328,79 @@ export class StudentStudentsController extends BaseController {
   }
 
   /**
+   * Updates the student information that the student is allowed to change
+   * in the solution. Other data must be edited externally (e.g. BCSC).
+   * @param payload information to be updated.
+   */
+  @Patch()
+  @ApiBadRequestResponse({
+    description: "Not able to update a student due to an invalid request.",
+  })
+  async update(
+    @UserToken() studentUserToken: StudentUserToken,
+    @Body() payload: UpdateStudentAPIInDTO,
+  ): Promise<void> {
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.StudentInformation,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to update a student due to an invalid request.",
+      );
+    }
+    await this.studentService.updateStudentContactByStudentId(
+      studentUserToken.studentId,
+      submissionResult.data.data,
+    );
+  }
+
+  /**
+   * Get the list of applications that belongs to a student on a summary view format.
+   * @param pagination options to execute the pagination.
+   * @returns student application list with total count.
+   */
+  @Get("application-summary")
+  async getStudentApplicationSummary(
+    @Query() pagination: ApplicationPaginationOptionsAPIInDTO,
+    @UserToken() studentUserToken: StudentUserToken,
+  ): Promise<PaginatedResults<ApplicationSummaryAPIOutDTO>> {
+    return this.studentControllerService.getStudentApplicationSummary(
+      studentUserToken.studentId,
+      pagination,
+    );
+  }
+
+  /**
+   * GET API which returns student restriction details.
+   * @param studentToken student token.
+   * @returns Student restriction code and notification type, if any.
+   */
+  @Get("restriction")
+  async getStudentRestrictions(
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<StudentRestrictionAPIOutDTO[]> {
+    const studentRestrictions =
+      await this.studentRestrictionService.getStudentRestrictionsById(
+        studentToken.studentId,
+      );
+
+    return studentRestrictions?.map((studentRestriction) => ({
+      code: studentRestriction.restriction.restrictionCode,
+      type: studentRestriction.restriction.notificationType,
+    }));
+  }
+
+  /**
    * Get the student information that represents the profile.
    * @returns student profile information.
    */
   @Get()
   async getStudentProfile(
-    @UserToken() userToken: StudentUserToken,
+    @UserToken() studentUserToken: StudentUserToken,
   ): Promise<StudentProfileAPIOutDTO> {
-    return this.studentControllerService.getStudentProfile(userToken.studentId);
+    return this.studentControllerService.getStudentProfile(
+      studentUserToken.studentId,
+    );
   }
 }

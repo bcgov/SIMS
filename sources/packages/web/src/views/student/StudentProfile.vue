@@ -31,7 +31,6 @@ import {
   useStudentStore,
 } from "@/composables";
 import {
-  StudentContact,
   StudentFormInfo,
   StudentPDStatus,
 } from "@/types/contracts/StudentContract";
@@ -40,7 +39,12 @@ import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
 import { StudentService } from "@/services/StudentService";
-import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
+import {
+  CreateStudentAPIInDTO,
+  StudentProfileAPIOutDTO,
+  UpdateStudentAPIInDTO,
+} from "@/services/http/dto/Student.dto";
+import { AddressDetailsFormAPIDTO } from "@/services/http/dto";
 
 enum FormModes {
   edit = "edit",
@@ -51,8 +55,9 @@ type StudentFormData = Pick<
   StudentProfileAPIOutDTO,
   "firstName" | "lastName" | "gender" | "email"
 > &
-  StudentContact & {
+  AddressDetailsFormAPIDTO & {
     givenNames: string;
+    phone: string;
     dateOfBirth: string;
     mode: FormModes;
   };
@@ -104,7 +109,7 @@ export default {
           ...studentAllInfo.value.contact.address,
           phone: studentAllInfo.value.contact.phone,
           givenNames: studentAllInfo.value.firstName,
-          dateOfBirth: dateOnlyLongString(studentAllInfo.value.dateOfBirth),
+          dateOfBirth: studentAllInfo.value.birthDateFormatted,
           mode: FormModes.edit,
         };
         initialData.value = data;
@@ -145,18 +150,24 @@ export default {
       }
     };
 
-    const submitted = async (args: StudentContact & { sinNumber?: string }) => {
+    const submitted = async (
+      formData: UpdateStudentAPIInDTO | CreateStudentAPIInDTO,
+    ) => {
       try {
         if (props.editMode) {
-          await StudentService.shared.updateStudent(args);
+          await StudentService.shared.updateStudent(formData);
           toast.success(
             "Student Updated",
             "Student contact information updated!",
           );
         } else {
-          await StudentService.shared.createStudent(args);
-          await studentStore.setHasStudentAccount(true);
-          await studentStore.updateProfileData();
+          await StudentService.shared.createStudent(
+            formData as CreateStudentAPIInDTO,
+          );
+          await Promise.all([
+            studentStore.setHasStudentAccount(true),
+            studentStore.updateProfileData(),
+          ]);
           toast.success("Student created", "Student was successfully created!");
         }
         router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });

@@ -1,24 +1,16 @@
 import ApiClient from "@/services/http/ApiClient";
-import {
-  StudentContact,
-  CreateStudent,
-  StudentFormInfo,
-  StudentApplicationAndCount,
-  SearchStudentResp,
-  DataTableSortOrder,
-  StudentApplicationFields,
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  ApiProcessError,
-  StudentRestrictionAPIOutDTO,
-} from "@/types";
+import { StudentFormInfo, ApiProcessError } from "@/types";
 import { useFormatters } from "@/composables";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
+  CreateStudentAPIInDTO,
+  SearchStudentAPIOutDTO,
   StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
-} from "./http/dto/Student.dto";
+  UpdateStudentAPIInDTO,
+  StudentRestrictionAPIOutDTO,
+} from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 import { MISSING_STUDENT_ACCOUNT } from "@/constants";
 
@@ -30,17 +22,24 @@ export class StudentService {
     return this.instance || (this.instance = new this());
   }
 
-  async createStudent(student: CreateStudent): Promise<void> {
+  /**
+   * Creates the student checking for an existing user to be used or
+   * creating a new one in case the user id is not provided.
+   * The user could be already available in the case of the same user
+   * was authenticated previously on another portal (e.g. parent/partner).
+   * @param student information needed to create the user.
+   */
+  async createStudent(student: CreateStudentAPIInDTO): Promise<void> {
     await ApiClient.Students.createStudent(student);
   }
 
-  async updateStudent(contact: StudentContact): Promise<void> {
+  /**
+   * Updates the student information that the student is allowed to change
+   * in the solution. Other data must be edited externally (e.g. BCSC).
+   * @param contact information to be updated.
+   */
+  async updateStudent(contact: UpdateStudentAPIInDTO): Promise<void> {
     await ApiClient.Students.updateStudentContact(contact);
-  }
-
-  public async getContact(): Promise<StudentContact> {
-    const studentContact = await ApiClient.Students.getContact();
-    return studentContact;
   }
 
   /**
@@ -89,33 +88,8 @@ export class StudentService {
   }
 
   /**
-   * Get all the applications for a student
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageCount, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns StudentApplicationAndCount
-   */
-  async getAllStudentApplications(
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    sortField?: StudentApplicationFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<StudentApplicationAndCount> {
-    return ApiClient.Application.getAllApplicationAndCountForStudent(
-      page,
-      pageCount,
-      sortField,
-      sortOrder,
-    );
-  }
-
-  /**
-   * TODO: This service is called to update restriction states, in future restriction UI ticket
    * API client to call the student restriction rest API.
-   * @returns student restriction(wrapped by promise)
+   * @returns student restriction(wrapped by promise).
    */
   async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
     return ApiClient.Students.getStudentRestriction();
@@ -126,13 +100,13 @@ export class StudentService {
    * @param appNumber
    * @param firstName
    * @param lastName
-   * @returns SearchStudentResp[]
+   * @returns student search results.
    */
   async searchStudents(
     appNumber: string,
     firstName: string,
     lastName: string,
-  ): Promise<SearchStudentResp[]> {
+  ): Promise<SearchStudentAPIOutDTO[]> {
     return ApiClient.Students.searchStudents(appNumber, firstName, lastName);
   }
 

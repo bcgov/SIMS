@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Res,
   UploadedFile,
   UseInterceptors,
@@ -25,12 +26,16 @@ import BaseController from "../BaseController";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
+  AESTStudentSearchAPIInDTO,
+  ApplicationSummaryAPIOutDTO,
+  SearchStudentAPIOutDTO,
   StudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
   defaultFileFilter,
+  getISODateOnlyString,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
   MINISTRY_FILE_UPLOAD_GROUP_NAME,
@@ -40,6 +45,11 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
 import { FileOriginType } from "../../database/entities/student-file.type";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
+import {
+  ApplicationPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
+import { Student } from "../../database/entities";
 
 /**
  * Student controller for AEST Client.
@@ -180,6 +190,25 @@ export class StudentAESTController extends BaseController {
   }
 
   /**
+   * Search students based on the search criteria.
+   * @param searchCriteria criteria to be used in the search.
+   * @returns searched student details.
+   */
+  @Get("search")
+  async searchStudents(
+    @Query() searchCriteria: AESTStudentSearchAPIInDTO,
+  ): Promise<SearchStudentAPIOutDTO[]> {
+    const searchStudentApplications =
+      await this.studentService.searchStudentApplication(searchCriteria);
+    return searchStudentApplications.map((eachStudent: Student) => ({
+      id: eachStudent.id,
+      firstName: eachStudent.user.firstName,
+      lastName: eachStudent.user.lastName,
+      birthDate: getISODateOnlyString(eachStudent.birthDate),
+    }));
+  }
+
+  /**
    * Get the student information that represents the profile.
    * @param studentId student id to retrieve the data.
    * @returns student profile details.
@@ -196,5 +225,27 @@ export class StudentAESTController extends BaseController {
       throw new NotFoundException("Not able to find the student.");
     }
     return student;
+  }
+
+  /**
+   * Get the list of applications that belongs to a student on a summary view format.
+   * @param studentId student id to retrieve the application summary.
+   * @param pagination options to execute the pagination.
+   * @returns student application list with total count.
+   */
+  @Get(":studentId/application-summary")
+  @ApiNotFoundResponse({ description: "Student does not exists." })
+  async getStudentApplicationSummary(
+    @Param("studentId") studentId: number,
+    @Query() pagination: ApplicationPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
+    const studentExists = await this.studentService.studentExists(studentId);
+    if (!studentExists) {
+      throw new NotFoundException("Student does not exists.");
+    }
+    return this.studentControllerService.getStudentApplicationSummary(
+      studentId,
+      pagination,
+    );
   }
 }

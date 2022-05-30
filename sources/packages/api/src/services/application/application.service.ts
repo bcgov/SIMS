@@ -38,12 +38,10 @@ import {
   setToStartOfTheDayInPSTPDT,
   COE_WINDOW,
   PIR_DENIED_REASON_OTHER_ID,
-  FieldSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
   sortApplicationsColumnMap,
   PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
   PIR_OR_DATE_OVERLAP_ERROR,
+  PaginationOptions,
 } from "../../utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
@@ -512,22 +510,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * get all student applications.
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
+   * Get all student applications.
    * @param studentId student id .
    * @returns student Application list.
    */
   async getAllStudentApplications(
-    sortField: string,
     studentId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageLimit = DEFAULT_PAGE_LIMIT,
-    sortOrder = FieldSortOrder.ASC,
+    pagination: PaginationOptions,
   ): Promise<[Application[], number]> {
     const applicationQuery = this.repo
       .createQueryBuilder("application")
@@ -548,11 +537,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     // sorting
     if (
-      sortField &&
-      sortField !== "status" &&
-      sortApplicationsColumnMap(sortField)
+      pagination.sortField &&
+      pagination.sortField !== "status" &&
+      sortApplicationsColumnMap(pagination.sortField)
     ) {
-      applicationQuery.orderBy(sortApplicationsColumnMap(sortField), sortOrder);
+      applicationQuery.orderBy(
+        sortApplicationsColumnMap(pagination.sortField),
+        pagination.sortOrder,
+      );
     } else {
       applicationQuery.orderBy(
         `CASE application.applicationStatus
@@ -565,12 +557,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
               WHEN '${ApplicationStatus.cancelled}' THEN 7
               ELSE 8
             END`,
-        sortOrder,
+        pagination.sortOrder,
       );
     }
 
     // pagination
-    applicationQuery.limit(pageLimit).offset(page * pageLimit);
+    applicationQuery
+      .limit(pagination.pageLimit)
+      .offset(pagination.page * pagination.pageLimit);
 
     // result
     return applicationQuery.getManyAndCount();

@@ -60,3 +60,4 @@ export * from "./program-status.type";
 export * from "./offering-status.type";
 export * from "./address.type";
 export * from "./reports-config.model";
+export * from "./student-file.type";

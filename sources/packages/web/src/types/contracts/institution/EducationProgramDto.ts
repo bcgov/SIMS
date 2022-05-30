@@ -90,7 +90,7 @@ export interface EducationProgramData extends EducationProgramDetails {
   effectiveEndDate: Date;
 }
 
-export interface StudentEducationProgramDto {
+export interface StudentEducationProgramAPIOutDTO {
   id: number;
   name: string;
   description: string;

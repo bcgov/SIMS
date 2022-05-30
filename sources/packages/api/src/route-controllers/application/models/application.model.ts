@@ -197,21 +197,3 @@ export interface ApplicationWithProgramYearDto {
   programYearId: number;
   active: boolean;
 }
-
-/**
- * DTO object application summary info.
- */
-export interface ApplicationSummaryDTO {
-  applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  id: number;
-  applicationName: string;
-  submitted?: Date;
-  status: string;
-}
-
-export interface StudentApplicationAndCount {
-  applications: ApplicationSummaryDTO[];
-  totalApplications: number;
-}
