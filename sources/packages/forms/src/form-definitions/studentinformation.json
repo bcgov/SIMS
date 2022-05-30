@@ -4,9 +4,7 @@
   "type": "form",
   "name": "studentInformation",
   "path": "studentinformation",
-  "tags": [
-    "common"
-  ],
+  "tags": ["common"],
   "components": [
     {
       "label": "HTML",

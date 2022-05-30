@@ -4,9 +4,7 @@
   "type": "form",
   "name": "institutionprofile",
   "path": "institutionprofile",
-  "tags": [
-    "common"
-  ],
+  "tags": ["common"],
   "components": [
     {
       "label": "HTML",
