@@ -25,6 +25,7 @@ import {
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
 import {
+  APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ScholasticStandingDataAPIInDTO,
@@ -99,6 +100,7 @@ export default {
               APPLICATION_NOT_FOUND,
               INVALID_OPERATION_IN_THE_CURRENT_STATUS,
               ASSESSMENT_ALREADY_IN_PROGRESS,
+              APPLICATION_CHANGE_NOT_ELIGIBLE,
             ].includes(error.errorType)
           ) {
             toast.warn("Not able to submit", error.message);

@@ -14,6 +14,7 @@ import {
 } from "../../database/entities";
 import { CustomNamedError } from "../../utilities";
 import {
+  APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../application/application.service";
@@ -90,6 +91,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       throw new CustomNamedError(
         "Application Not found or invalid current assessment or offering.",
         APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (application.isArchived) {
+      throw new CustomNamedError(
+        "This application is no longer eligible to request changes.",
+        APPLICATION_CHANGE_NOT_ELIGIBLE,
       );
     }
 

@@ -25,6 +25,7 @@ import {
 } from "../../auth/decorators";
 import {
   ApplicationService,
+  APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_NOT_FOUND,
   ASSESSMENT_ALREADY_IN_PROGRESS,
   FormService,
@@ -289,6 +290,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
           case APPLICATION_NOT_FOUND:
           case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
           case ASSESSMENT_ALREADY_IN_PROGRESS:
+          case APPLICATION_CHANGE_NOT_ELIGIBLE:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
