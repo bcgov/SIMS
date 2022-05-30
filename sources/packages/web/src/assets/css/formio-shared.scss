@@ -438,3 +438,17 @@
   border: 1px solid $common-border-color !important;
   border-radius: 8px !important;
 }
+
+//Style added hide the header of data grid for student activity page.
+.student-activity-grid th {
+  border: none !important;
+  display: none;
+}
+
+//Style added hide the border and adjust padding of data grid for student activity page.
+.student-activity-grid .table-bordered,
+.student-activity-grid .table-bordered td {
+  border: none !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}

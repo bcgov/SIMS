@@ -1,5 +1,5 @@
 import { FileOriginType, StudentPDStatus } from "@/types";
-import { RestrictionNotificationType } from "@/types/contracts/RestrictionContracts";
+import { RestrictionNotificationType } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { AddressDetailsFormAPIDTO } from "./Common.dto";
 

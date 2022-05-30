@@ -1,5 +1,9 @@
 import { GetterTree } from "vuex";
-import { RootState, RestrictionNotificationType } from "@/types";
+import {
+  RootState,
+  RestrictionNotificationType,
+  StudentRestriction,
+} from "@/types";
 import { StudentState } from "./student";
 
 export const getters: GetterTree<StudentState, RootState> = {
@@ -12,5 +16,8 @@ export const getters: GetterTree<StudentState, RootState> = {
     return state.restrictions?.some(
       (restriction) => restriction.type === RestrictionNotificationType.Warning,
     );
+  },
+  getRestrictions(state: StudentState): StudentRestriction[] {
+    return state.restrictions;
   },
 };

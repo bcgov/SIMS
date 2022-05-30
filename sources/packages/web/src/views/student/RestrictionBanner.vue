@@ -36,20 +36,23 @@ export default {
     const router = useRouter();
     const { updateRestrictions, hasRestriction, hasWarning } =
       useStudentStore();
+
     const restriction = computed(() => {
-      return hasRestriction();
+      return hasRestriction.value;
     });
 
     const warning = computed(() => {
-      return hasWarning();
+      return hasWarning.value;
     });
 
     const viewStudentAccountActivity = () => {
       router.push({ name: StudentRoutesConst.STUDENT_ACCOUNT_ACTIVITY });
     };
+
     onMounted(async () => {
       await updateRestrictions();
     });
+
     return { BannerTypes, restriction, warning, viewStudentAccountActivity };
   },
 };
