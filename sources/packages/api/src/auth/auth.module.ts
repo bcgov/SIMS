@@ -24,7 +24,6 @@ import {
   InstitutionAdminGuard,
   ActiveUserGuard,
   GroupsGuard,
-  RestrictionsGuard,
   SINValidationGuard,
   RequiresStudentAccountGuard,
 } from "./guards";
@@ -76,10 +75,6 @@ const jwtModule = JwtModule.register({
     {
       provide: APP_GUARD,
       useClass: InstitutionLocationGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RestrictionsGuard,
     },
     {
       provide: APP_GUARD,

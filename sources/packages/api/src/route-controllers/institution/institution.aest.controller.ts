@@ -33,6 +33,7 @@ import {
 import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
+import { ClientTypeBaseRoute } from "../../types";
 
 /**
  * Institution controller for AEST Client.
@@ -40,7 +41,7 @@ import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/in
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("institution")
-@ApiTags("institution")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-institution`)
 export class InstitutionAESTController extends BaseController {
   constructor(
     private readonly institutionService: InstitutionService,

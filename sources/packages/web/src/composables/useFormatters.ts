@@ -33,7 +33,7 @@ export function useFormatters() {
    */
   const dateOnlyLongString = (date?: string | Date): string => {
     if (date) {
-      return dayjs(date).format("MMM D, YYYY");
+      return dayjs(date).format("MMM D YYYY");
     }
     return "";
   };

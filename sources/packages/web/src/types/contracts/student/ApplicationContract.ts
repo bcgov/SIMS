@@ -191,8 +191,3 @@ export interface PartTimeAssessment extends BaseAssessment {
  * assessment payload created by camunda workflow.
  */
 export type Assessment = FullTimeAssessment | PartTimeAssessment;
-
-export interface StudentApplicationAndCount {
-  applications: ApplicationSummaryDTO[];
-  totalApplications: number;
-}

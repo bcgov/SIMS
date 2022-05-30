@@ -2,39 +2,16 @@ require("../../../env_setup");
 import { closeDB } from "../../testHelpers";
 import * as faker from "faker";
 import { SINValidation, Student, User } from "../../database/entities";
-import {
-  StudentService,
-  ATBCService,
-  UserService,
-  StudentFileService,
-  ApplicationService,
-  SequenceControlService,
-  WorkflowActionsService,
-  WorkflowService,
-  TokensService,
-  MSFAANumberService,
-  EducationProgramService,
-  StudentRestrictionService,
-  FormService,
-  SFASIndividualService,
-  SINValidationService,
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
-  GCNotifyService,
-  GCNotifyActionsService,
-  EducationProgramOfferingService,
-} from "..";
+import { StudentService, ATBCService, UserService } from "../../services";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
-import { KeycloakService } from "../auth/keycloak/keycloak.service";
-import { ConfigService } from "../config/config.service";
+import { KeycloakService } from "../../services/auth/keycloak/keycloak.service";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
 import { ATBCCreateClientResponse } from "../../types";
-import { StudentController } from "../../route-controllers";
 import { DatabaseModule } from "../../database/database.module";
 import { AuthModule } from "../../auth/auth.module";
-import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
+import { AppStudentsModule } from "../../app.students.module";
 
 describe("Test ATBC Controller", () => {
   const clientId = "student";
@@ -53,34 +30,7 @@ describe("Test ATBC Controller", () => {
     );
     accesstoken = token.access_token;
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule, AuthModule],
-      controllers: [StudentController],
-      providers: [
-        ConfigService,
-        UserService,
-        ATBCService,
-        StudentFileService,
-        StudentService,
-        ApplicationService,
-        SequenceControlService,
-        WorkflowActionsService,
-        WorkflowService,
-        KeycloakService,
-        ConfigService,
-        TokensService,
-        MSFAANumberService,
-        EducationProgramService,
-        createMockedJwtService(),
-        FormService,
-        StudentRestrictionService,
-        SFASIndividualService,
-        SINValidationService,
-        SFASApplicationService,
-        SFASPartTimeApplicationsService,
-        GCNotifyService,
-        GCNotifyActionsService,
-        EducationProgramOfferingService,
-      ],
+      imports: [DatabaseModule, AuthModule, AppStudentsModule],
     }).compile();
     userService = await moduleFixture.get(UserService);
     atbcService = await moduleFixture.get(ATBCService);
@@ -94,11 +44,11 @@ describe("Test ATBC Controller", () => {
 
   it("should return an HTTP 200 status when applying for PD and student is valid", async () => {
     // Create fake student in SIMS DB
-    const fakestudent = new Student();
-    fakestudent.sin = "123456789";
-    fakestudent.birthDate = faker.date.past(18);
-    fakestudent.gender = "F";
-    fakestudent.contactInfo = {
+    const fakeStudent = new Student();
+    fakeStudent.sin = "123456789";
+    fakeStudent.birthDate = faker.date.past(18);
+    fakeStudent.gender = "F";
+    fakeStudent.contactInfo = {
       address: {
         addressLine1: faker.address.streetAddress(),
         city: faker.address.city(),
@@ -106,7 +56,6 @@ describe("Test ATBC Controller", () => {
         provinceState: "ON",
         postalCode: faker.address.zipCode(),
       },
-
       phone: faker.phone.phoneNumber(),
     };
     const simsUser = new User();
@@ -114,14 +63,14 @@ describe("Test ATBC Controller", () => {
     simsUser.email = faker.internet.email();
     simsUser.firstName = faker.name.firstName();
     simsUser.lastName = faker.name.lastName();
-    fakestudent.user = simsUser;
+    fakeStudent.user = simsUser;
     const sinValidation = new SINValidation();
     sinValidation.user = simsUser;
     sinValidation.isValidSIN = true;
-    fakestudent.sinValidation = sinValidation;
+    fakeStudent.sinValidation = sinValidation;
 
     // Save the student in SIMS
-    await studentService.save(fakestudent);
+    await studentService.save(fakeStudent);
 
     // creating mockup for ATBCCreateClient, this function actually calls the ATBC server to create the student profile
     jest.spyOn(atbcService, "ATBCCreateClient").mockImplementation(async () => {
@@ -135,7 +84,7 @@ describe("Test ATBC Controller", () => {
         .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK);
     } finally {
-      await studentService.remove(fakestudent);
+      await studentService.remove(fakeStudent);
       await userService.remove(simsUser);
     }
   });

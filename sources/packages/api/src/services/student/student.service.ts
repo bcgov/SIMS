@@ -72,6 +72,7 @@ export class StudentService extends RecordDataModelService<Student> {
         "user.firstName",
         "user.lastName",
         "user.email",
+        "student.sin",
       ])
       .innerJoin("student.user", "user")
       .leftJoin("student.sinValidation", "sinValidation")
@@ -97,11 +98,11 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   Creates the student checking for an existing user to be used or
-   creating a new one in case the user id is not provided.
+   * Creates the student checking for an existing user to be used or
+   * creating a new one in case the user id is not provided.
    * The user could be already available in the case of the same user
    * was authenticated previously on another portal (e.g. parent/partner).
-   * @param userInfo information needed to create/update the user.
+   * @param userInfo information needed to create the user.
    * @param otherInfo information received to create the student.
    * @returns created student.
    */
@@ -109,12 +110,11 @@ export class StudentService extends RecordDataModelService<Student> {
     userInfo: UserInfo,
     otherInfo: StudentInfo,
   ): Promise<Student> {
-    let user: User;
+    const user = new User();
     if (userInfo.userId) {
-      user = { id: userInfo.userId } as User;
-    } else {
-      user = new User();
+      user.id = userInfo.userId;
     }
+
     const sinValidation = new SINValidation();
     sinValidation.user = user;
     user.userName = userInfo.userName;
@@ -149,17 +149,18 @@ export class StudentService extends RecordDataModelService<Student> {
     return this.save(student);
   }
 
-  async updateStudentContactByUserName(
-    userName: string,
+  /**
+   * Updates the student contact information.
+   * @param studentId student to be updated.
+   * @param contact contact information to be updated.
+   * @returns updated student.
+   */
+  async updateStudentContactByStudentId(
+    studentId: number,
     contact: StudentInfo,
   ): Promise<Student> {
-    const student = await this.getStudentByUserName(userName);
-    if (!student) {
-      throw new Error(
-        `Not able to find a student using the user name ${userName}`,
-      );
-    }
-
+    const student = new Student();
+    student.id = studentId;
     student.contactInfo = {
       address: transformAddressDetails(contact),
       phone: contact.phone,
@@ -303,48 +304,47 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Search the student based on the search criteria.
-   * @param firstName firsName of the student.
-   * @param lastName lastName of the student.
-   * @param appNumber application number of the student.
-   * @returns Searched student details.
+   * Search students based on the search criteria.
+   * @param searchCriteria options to search by firstName,
+   * lastName or appNumber.
+   * @returns list of students.
    */
-  async searchStudentApplication(
-    firstName: string,
-    lastName: string,
-    appNumber: string,
-  ): Promise<Student[]> {
+  async searchStudentApplication(searchCriteria: {
+    firstName?: string;
+    lastName?: string;
+    appNumber?: string;
+  }): Promise<Student[]> {
     const searchQuery = this.repo
       .createQueryBuilder("student")
-      .leftJoin(
-        Application,
-        "application",
-        "application.student.id = student.id",
-      )
       .select([
         "student.id",
         "student.birthDate",
         "user.firstName",
         "user.lastName",
       ])
+      .leftJoin(
+        Application,
+        "application",
+        "application.student.id = student.id",
+      )
       .innerJoin("student.user", "user")
       .where("user.isActive = true");
-    if (firstName) {
+    if (searchCriteria.firstName) {
       searchQuery.andWhere("user.firstName Ilike :firstName", {
-        firstName: `%${firstName}%`,
+        firstName: `%${searchCriteria.firstName}%`,
       });
     }
-    if (lastName) {
+    if (searchCriteria.lastName) {
       searchQuery.andWhere("user.lastName Ilike :lastName", {
-        lastName: `%${lastName}%`,
+        lastName: `%${searchCriteria.lastName}%`,
       });
     }
-    if (appNumber) {
+    if (searchCriteria.appNumber) {
       searchQuery
         .andWhere("application.applicationNumber Ilike :appNumber")
         .andWhere("application.applicationStatus != :overwrittenStatus")
         .setParameters({
-          appNumber: `%${appNumber}%`,
+          appNumber: `%${searchCriteria.appNumber}%`,
           overwrittenStatus: ApplicationStatus.overwritten,
         });
     }

@@ -40,7 +40,7 @@ import {
   SaveEducationProgram,
   EducationProgramsSummary,
 } from "../../services/education-program/education-program.service.models";
-import { SubsetEducationProgramDto } from "./models/summary-education-program.dto";
+import { SubsetEducationProgramDto } from "./models/education-program.dto";
 import { EducationProgram, OfferingTypes } from "../../database/entities";
 import { OptionItem } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";

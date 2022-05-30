@@ -1,5 +1,25 @@
 import { FileOriginType, StudentPDStatus } from "@/types";
+import { RestrictionNotificationType } from "@/types/contracts/RestrictionContracts";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
+import { AddressDetailsFormAPIDTO } from "./Common.dto";
+
+/**
+ * Data saved while creating the student profile.
+ * SIN validation not added to DTO because it is going
+ * to be handled by the Form.IO dryRun validation.
+ */
+export interface CreateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
+  phone: string;
+  sinNumber: string;
+}
+
+/**
+ * Updates the student information that the student is allowed to change
+ * in the solution. Other data must be edited externally (e.g. BCSC).
+ */
+export interface UpdateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
+  phone: string;
+}
 
 export interface StudentProfileAPIOutDTO {
   firstName: string;
@@ -53,4 +73,39 @@ export interface AESTStudentFileAPIOutDTO extends StudentUploadFileAPIOutDTO {
 
 export interface StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
+}
+
+/**
+ * Interface for student search API response
+ */
+export interface SearchStudentAPIOutDTO {
+  id: number;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+}
+
+export interface ApplicationSummaryAPIOutDTO {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  id: number;
+  applicationName: string;
+  submitted?: Date;
+  status: string;
+}
+
+/**
+ * Student restriction DTO.
+ * This object is returned by controller.
+ */
+export interface StudentRestrictionAPIOutDTO {
+  /**
+   * code is the restriction code.
+   */
+  code: string;
+  /**
+   * type is the notification type.
+   */
+  type: RestrictionNotificationType;
 }

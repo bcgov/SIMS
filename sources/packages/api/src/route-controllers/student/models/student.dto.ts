@@ -1,11 +1,15 @@
 import { Type } from "class-transformer";
 import {
+  Allow,
   ArrayMinSize,
   IsDefined,
   IsNotEmpty,
   IsOptional,
+  Length,
+  ValidateIf,
 } from "class-validator";
-import { FileOriginType } from "../../../database/entities/student-file.type";
+import { ApplicationStatus, FileOriginType } from "../../../database/entities";
+import { RestrictionNotificationType } from "../../../database/entities/restriction-notification-type.type";
 import {
   AddressAPIOutDTO,
   AddressDetailsAPIInDTO,
@@ -17,41 +21,51 @@ export class ContactInformationAPIOutDTO {
   phone: string;
 }
 
-export class GetStudentContactDto {
+/**
+ * Data saved while creating the student profile.
+ * SIN validation not added to DTO because it is going
+ * to be handled by the Form.IO dryRun validation.
+ */
+export class CreateStudentAPIInDTO extends AddressDetailsAPIInDTO {
+  @Length(10, 20)
   phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState?: string;
-  country: string;
-  postalCode: string;
+  @Allow()
+  sinNumber: string;
+  /**
+   * This is used to allow the UI to display or not the SIN during
+   * student profile creation. If not present here it will be removed
+   * by Nestjs and the Form.io dry run will also remove it from it
+   * output considering that the form is not in creation mode.
+   */
+  @Allow()
+  mode: string;
 }
 
 /**
- * Common data saved while creating
- * or updating the student profile.
- * Validations not added to DTO because
- * they are going to be handled by the
- * Form.IO dryRun validation.
+ * Updates the student information that the student is allowed to change
+ * in the solution. Other data must be edited externally (e.g. BCSC).
  */
-export interface SaveStudentDto extends AddressDetailsAPIInDTO {
+export class UpdateStudentAPIInDTO extends AddressDetailsAPIInDTO {
+  @Length(10, 20)
   phone: string;
-  /**
-   * SIN is optional during update.
-   */
-  sinNumber?: string;
 }
 
-export interface StudentEducationProgramDto {
-  id: number;
-  name: string;
-  description: string;
-  credentialType: string;
-  credentialTypeToDisplay: string;
-  deliveryMethod: string;
+/**
+ * Student AEST search parameters.
+ */
+export class AESTStudentSearchAPIInDTO {
+  @ValidateIf((input) => !input.lastName && !input.appNumber)
+  @IsNotEmpty()
+  firstName: string;
+  @ValidateIf((input) => !input.firstName && !input.appNumber)
+  @IsNotEmpty()
+  lastName: string;
+  @ValidateIf((input) => !input.firstName && !input.lastName)
+  @IsNotEmpty()
+  appNumber: string;
 }
 
-export interface SearchStudentRespDto {
+export class SearchStudentAPIOutDTO {
   id: number;
   firstName: string;
   lastName: string;
@@ -59,14 +73,18 @@ export interface SearchStudentRespDto {
 }
 
 /**
- * DTO Object for student restriction.
+ * DTO for student restriction.
  * This object is returned by controller.
  */
-export interface StudentRestrictionDTO {
-  hasRestriction: boolean;
-  hasFederalRestriction: boolean;
-  hasProvincialRestriction: boolean;
-  restrictionMessage: string;
+export class StudentRestrictionAPIOutDTO {
+  /**
+   * code is the restriction code.
+   */
+  code: string;
+  /**
+   * type is the notification type.
+   */
+  type: RestrictionNotificationType;
 }
 
 /**
@@ -127,4 +145,17 @@ export class StudentProfileAPIOutDTO {
 export class AESTFileUploadToStudentAPIInDTO {
   @ArrayMinSize(1)
   associatedFiles: string[];
+}
+
+/**
+ * DTO object application summary info.
+ */
+export class ApplicationSummaryAPIOutDTO {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  id: number;
+  applicationName: string;
+  submitted?: Date;
+  status: ApplicationStatus;
 }

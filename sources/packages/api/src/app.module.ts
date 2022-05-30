@@ -43,7 +43,6 @@ import {
 } from "./services";
 import {
   UserController,
-  StudentController,
   ProgramYearController,
   ConfigController,
   DynamicFormController,
@@ -118,7 +117,6 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
   controllers: [
     AppController,
     UserController,
-    StudentController,
     ProgramYearController,
     ConfigController,
     DynamicFormController,
