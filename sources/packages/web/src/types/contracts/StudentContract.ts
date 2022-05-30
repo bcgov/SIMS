@@ -3,7 +3,8 @@ import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;
 }
-export interface StudentFormWithRestrictionInfo extends StudentFormInfo {
+
+export interface AESTStudentForm extends StudentFormInfo {
   hasRestriction: boolean;
 }
 

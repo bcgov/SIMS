@@ -32,6 +32,7 @@ export interface StudentProfileAPIOutDTO {
   validSin: boolean;
   pdStatus: StudentPDStatus;
 }
+
 export interface AESTStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
   hasRestriction: boolean;
 }

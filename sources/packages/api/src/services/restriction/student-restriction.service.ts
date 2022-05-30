@@ -73,7 +73,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   /**
    * Service method to get all restrictions as a summary for a student.
    * @param studentId
-   * @param onlyActive is a flag, which decide whether to select all
+   * @param onlyActive is a flag, which decides whether to select all
    * restrictions (i.e false) or to select only active restrictions (i.e true).
    * @returns Student restrictions.
    */
@@ -100,7 +100,10 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     if (onlyActive) {
       query.andWhere("studentRestrictions.isActive = true");
     }
-    return query.orderBy("studentRestrictions.isActive", "DESC").getMany();
+    return query
+      .orderBy("studentRestrictions.isActive", "DESC")
+      .addOrderBy("studentRestrictions.createdAt", "DESC")
+      .getMany();
   }
 
   /**

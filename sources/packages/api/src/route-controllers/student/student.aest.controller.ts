@@ -220,17 +220,17 @@ export class StudentAESTController extends BaseController {
   async getStudentProfile(
     @Param("studentId") studentId: number,
   ): Promise<AESTStudentProfileAPIOutDTO> {
-    const student = await this.studentControllerService.getStudentProfile(
-      studentId,
-    );
+    const [student, studentRestrictions] = await Promise.all([
+      this.studentControllerService.getStudentProfile(studentId),
+      this.studentRestrictionService.getStudentRestrictionsById(
+        studentId,
+        true,
+      ),
+    ]);
+
     if (!student) {
       throw new NotFoundException("Not able to find the student.");
     }
-    const studentRestrictions =
-      await this.studentRestrictionService.getStudentRestrictionsById(
-        studentId,
-        true,
-      );
     return { ...student, hasRestriction: !!studentRestrictions.length };
   }
 
