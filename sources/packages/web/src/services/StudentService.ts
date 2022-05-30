@@ -1,5 +1,5 @@
 import ApiClient from "@/services/http/ApiClient";
-import { StudentFormInfo, ApiProcessError } from "@/types";
+import { StudentFormInfo, ApiProcessError, AESTStudentForm } from "@/types";
 import { useFormatters } from "@/composables";
 import {
   AESTFileUploadToStudentAPIInDTO,
@@ -48,7 +48,9 @@ export class StudentService {
    * only when not logged as a student.
    * @returns student profile details.
    */
-  async getStudentProfile(studentId?: number): Promise<StudentFormInfo> {
+  async getStudentProfile(
+    studentId?: number,
+  ): Promise<StudentFormInfo | AESTStudentForm> {
     const { dateOnlyLongString } = useFormatters();
     const studentProfile = await ApiClient.Students.getStudentProfile(
       studentId,

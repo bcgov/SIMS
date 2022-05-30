@@ -33,6 +33,10 @@ export interface StudentProfileAPIOutDTO {
   pdStatus: StudentPDStatus;
 }
 
+export interface AESTStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
+  hasRestriction: boolean;
+}
+
 /**
  *  Student uploader interface
  */
