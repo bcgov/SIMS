@@ -1,35 +1,29 @@
 <template>
-  <v-container :fluid="fullWidth">
-    <header class="mb-2">
+  <full-page-container
+    :layout-template="layoutTemplate"
+    :full-width="fullWidth"
+  >
+    <template #header>
       <slot name="header"></slot>
-    </header>
-    <slot name="alerts"></slot>
-    <template v-if="layoutTemplate === LayoutTemplates.CenteredCard">
-      <v-row justify="center">
-        <v-card class="mt-4 p-4 w-100" :class="widthClass">
-          <slot></slot>
-        </v-card>
-      </v-row>
     </template>
-    <template v-else-if="layoutTemplate === LayoutTemplates.Centered">
-      <v-row justify="center">
-        <div class="mt-4 w-100" :class="widthClass">
-          <slot></slot>
-        </div>
-      </v-row>
+    <template #alerts>
+      <restriction-banner />
+      <CheckValidSINBanner />
     </template>
-  </v-container>
+    <slot name="content"></slot>
+  </full-page-container>
 </template>
-
 <script lang="ts">
 import { computed } from "vue";
-
+import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
+import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 enum LayoutTemplates {
   Centered = "centered",
   CenteredCard = "centered-card",
 }
 
 export default {
+  components: { RestrictionBanner, CheckValidSINBanner },
   props: {
     layoutTemplate: {
       type: String,

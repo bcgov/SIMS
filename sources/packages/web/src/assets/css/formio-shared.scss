@@ -445,10 +445,8 @@
   display: none;
 }
 
-//Style added hide the border and adjust padding of data grid for student activity page.
+//Style added hide the border and adjust of data grid for student activity page.
 .student-activity-grid .table-bordered,
-.student-activity-grid .table-bordered td {
-  border: none !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+.formio-datagrid-unset.student-activity-grid .table-bordered td {
+  padding-left: 20px;
 }

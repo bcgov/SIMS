@@ -1,5 +1,5 @@
 <template>
-  <full-page-container :full-width="true">
+  <student-page-container :full-width="true">
     <template #header>
       <header-navigator title="Applications" subTitle="My Applications">
         <template #buttons>
@@ -7,21 +7,19 @@
         </template>
       </header-navigator>
     </template>
-    <template #alerts>
-      <restriction-banner />
-      <CheckValidSINBanner />
+    <template #content>
+      <v-row>
+        <v-col cols="12">
+          <StudentApplications
+            :reloadData="reloadData"
+            @editApplicationAction="editApplicationAction"
+            @openConfirmCancel="openConfirmCancel"
+            @goToApplication="goToApplication"
+          />
+        </v-col>
+      </v-row>
     </template>
-    <v-row>
-      <v-col cols="12">
-        <StudentApplications
-          :reloadData="reloadData"
-          @editApplicationAction="editApplicationAction"
-          @openConfirmCancel="openConfirmCancel"
-          @goToApplication="goToApplication"
-        />
-      </v-col>
-    </v-row>
-  </full-page-container>
+  </student-page-container>
   <ConfirmEditApplication ref="editApplicationModal" />
   <CancelApplication
     :showModal="showModal"
@@ -33,25 +31,23 @@
 <script lang="ts">
 import { ref } from "vue";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
-import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { ApplicationStatus } from "@/types";
 import StudentApplications from "@/components/aest/StudentApplications.vue";
-import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage, ModalDialog } from "@/composables";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
+import StudentPageContainer from "@/components/layouts/student/StudentPageContainer.vue";
 
 export default {
   components: {
     StartApplication,
-    RestrictionBanner,
     StudentApplications,
-    CheckValidSINBanner,
     ConfirmEditApplication,
     CancelApplication,
+    StudentPageContainer,
   },
   setup() {
     const router = useRouter();
