@@ -73,8 +73,8 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   /**
    * Service method to get all restrictions as a summary for a student.
    * @param studentId
-   * @param onlyActive is a flag, which decide to to select all
-   * restrictions (i.e false) or only active restrictions (i.e true).
+   * @param onlyActive is a flag, which decide whether to select all
+   * restrictions (i.e false) or to select only active restrictions (i.e true).
    * @returns Student restrictions.
    */
   async getStudentRestrictionsById(
