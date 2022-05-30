@@ -2,7 +2,7 @@ import {
   AddressDetailsFormAPIDTO,
   ContactInformationAPIOutDTO,
 } from "@/services/http/dto";
-import { RestrictionNotificationType } from "./RestrictionContracts";
+import { RestrictionNotificationType } from "@/types";
 import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export interface StudentContact extends AddressDetailsFormAPIDTO {
