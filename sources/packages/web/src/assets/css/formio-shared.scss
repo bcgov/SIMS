@@ -439,14 +439,7 @@
   border-radius: 8px !important;
 }
 
-//Style added hide the header of data grid for student activity page.
-.student-activity-grid th {
-  border: none !important;
-  display: none;
-}
-
-//Style added hide the border and adjust of data grid for student activity page.
-.student-activity-grid .table-bordered,
+//Style to add padding to the bullet item.
 .formio-datagrid-unset.student-activity-grid .table-bordered td {
   padding-left: 20px;
 }
