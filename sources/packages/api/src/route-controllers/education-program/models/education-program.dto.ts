@@ -19,3 +19,12 @@ export interface SubsetEducationProgramDto {
   effectiveEndDate: string;
   institutionName: string;
 }
+
+export class StudentEducationProgramAPIOutDTO {
+  id: number;
+  name: string;
+  description: string;
+  credentialType: string;
+  credentialTypeToDisplay: string;
+  deliveryMethod: string;
+}

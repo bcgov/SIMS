@@ -1,14 +1,18 @@
 <template>
   <!-- This component is shared between ministry and student users -->
-  <body-header title="Applications" class="m-1"> </body-header>
+  <body-header
+    title="Applications"
+    class="m-1"
+    :recordsCount="applicationsAndCount.count"
+  ></body-header>
   <content-group>
     <DataTable
-      :value="applicationAndCount.applications"
+      :value="applicationsAndCount.results"
       :lazy="true"
       :paginator="true"
       :rows="DEFAULT_PAGE_LIMIT"
       :rowsPerPageOptions="PAGINATION_LIST"
-      :totalRecords="applicationAndCount.totalApplications"
+      :totalRecords="applicationsAndCount.count"
       @page="paginationAndSortEvent($event)"
       @sort="paginationAndSortEvent($event)"
       :loading="loading"
@@ -118,7 +122,6 @@
 import { onMounted, ref, computed, watch } from "vue";
 import {
   ApplicationStatus,
-  StudentApplicationAndCount,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   DataTableSortOrder,
@@ -128,11 +131,14 @@ import {
   SINStatusEnum,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
-import { StudentService } from "@/services/StudentService";
 import { useFormatters } from "@/composables";
 import Status from "@/views/student/ApplicationStatus.vue";
 import { useStore } from "vuex";
 import { AuthService } from "@/services/AuthService";
+import {
+  ApplicationSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
 
 export default {
   components: { Status },
@@ -149,7 +155,9 @@ export default {
   },
   setup(props: any) {
     const loading = ref(false);
-    const applicationAndCount = ref({} as StudentApplicationAndCount);
+    const applicationsAndCount = ref(
+      {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
+    );
     const defaultSortOrder = -1;
     const currentPage = ref();
     const currentPageLimit = ref();
@@ -175,27 +183,14 @@ export default {
       sortField = StudentApplicationFields.Status,
       sortOrder = DataTableSortOrder.ASC,
     ) => {
-      switch (clientType.value) {
-        case ClientIdType.Student:
-          applicationAndCount.value =
-            await StudentService.shared.getAllStudentApplications(
-              page,
-              pageCount,
-              sortField,
-              sortOrder,
-            );
-          break;
-        case ClientIdType.AEST:
-          applicationAndCount.value =
-            await ApplicationService.shared.getAllApplicationAndCount(
-              props.studentId,
-              page,
-              pageCount,
-              sortField,
-              sortOrder,
-            );
-          break;
-      }
+      applicationsAndCount.value =
+        await ApplicationService.shared.getStudentApplicationSummary(
+          page,
+          pageCount,
+          sortField,
+          sortOrder,
+          props.studentId,
+        );
     };
 
     const reloadApplication = async () => {
@@ -230,7 +225,7 @@ export default {
     return {
       dateString,
       ApplicationStatus,
-      applicationAndCount,
+      applicationsAndCount,
       DEFAULT_PAGE_LIMIT,
       DEFAULT_PAGE_NUMBER,
       DataTableSortOrder,

@@ -62,7 +62,7 @@
       <Column field="birthDate" header="Date of Birth">
         <template #body="slotProps">
           <div class="p-text-capitalize">
-            {{ slotProps.data.birthDate }}
+            {{ dateOnlyLongString(slotProps.data.birthDate) }}
           </div>
         </template>
       </Column>
@@ -84,17 +84,18 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { SearchStudentResp } from "@/types";
-import { useToastMessage } from "@/composables";
+import { SearchStudentAPIOutDTO } from "@/services/http/dto";
+import { useFormatters, useToastMessage } from "@/composables";
 
 export default {
   setup() {
     const toast = useToastMessage();
+    const { dateOnlyLongString } = useFormatters();
     const router = useRouter();
     const appNumber = ref("");
     const firstName = ref("");
     const lastName = ref("");
-    const students = ref([] as SearchStudentResp[]);
+    const students = ref([] as SearchStudentAPIOutDTO[]);
     const goToViewStudent = (studentId: number) => {
       router.push({
         name: AESTRoutesConst.STUDENT_PROFILE,
@@ -125,6 +126,7 @@ export default {
       searchStudents,
       students,
       goToViewStudent,
+      dateOnlyLongString,
     };
   },
 };

@@ -9,11 +9,14 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  StudentApplicationAndCount,
   ApplicationIdentifiersDTO,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
+import {
+  ApplicationSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
 
 export class ApplicationService {
   // Share Instance
@@ -93,29 +96,27 @@ export class ApplicationService {
   }
 
   /**
-   * Get all the applications for a student
-   * @param studentId student id
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageCount, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns StudentApplicationAndCount
+   * Get the list of applications that belongs to a student on a summary view format.
+   * @param page page number.
+   * @param pageCount limit of the page.
+   * @param sortField field to be sorted.
+   * @param sortOrder order to be sorted.
+   * @param studentId student id. Used only for AEST.
+   * @returns student application list with total count.
    */
-  async getAllApplicationAndCount(
-    studentId: number,
+  async getStudentApplicationSummary(
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
     sortField?: StudentApplicationFields,
     sortOrder?: DataTableSortOrder,
-  ): Promise<StudentApplicationAndCount> {
-    return ApiClient.Application.getAllApplicationAndCountForAEST(
-      studentId,
+    studentId?: number,
+  ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
+    return ApiClient.Application.getStudentApplicationSummary(
       page,
       pageCount,
       sortField,
       sortOrder,
+      studentId,
     );
   }
 
