@@ -118,6 +118,15 @@ export default {
             });
           },
         });
+
+        menuItems.push({
+          label: "Account Activity",
+          command: () => {
+            router.push({
+              name: StudentRoutesConst.STUDENT_ACCOUNT_ACTIVITY,
+            });
+          },
+        });
       }
 
       menuItems.push({
