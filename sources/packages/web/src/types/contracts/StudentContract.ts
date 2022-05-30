@@ -5,6 +5,10 @@ export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;
 }
 
+export interface AESTStudentForm extends StudentFormInfo {
+  hasRestriction: boolean;
+}
+
 /**
  * Enumeration for student permanent disability status.
  */

@@ -16,6 +16,7 @@ import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import {
   GCNotifyActionsService,
   StudentFileService,
+  StudentRestrictionService,
   StudentService,
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
@@ -26,10 +27,10 @@ import BaseController from "../BaseController";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentFileAPIOutDTO,
+  AESTStudentProfileAPIOutDTO,
   AESTStudentSearchAPIInDTO,
   ApplicationSummaryAPIOutDTO,
   SearchStudentAPIOutDTO,
-  StudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -65,6 +66,7 @@ export class StudentAESTController extends BaseController {
     private readonly studentService: StudentService,
     private readonly studentControllerService: StudentControllerService,
     private readonly gcNotifyActionsService: GCNotifyActionsService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super();
   }
@@ -217,14 +219,19 @@ export class StudentAESTController extends BaseController {
   @ApiNotFoundResponse({ description: "Not able to find the student." })
   async getStudentProfile(
     @Param("studentId") studentId: number,
-  ): Promise<StudentProfileAPIOutDTO> {
-    const student = await this.studentControllerService.getStudentProfile(
-      studentId,
-    );
+  ): Promise<AESTStudentProfileAPIOutDTO> {
+    const [student, studentRestrictions] = await Promise.all([
+      this.studentControllerService.getStudentProfile(studentId),
+      this.studentRestrictionService.getStudentRestrictionsById(
+        studentId,
+        true,
+      ),
+    ]);
+
     if (!student) {
       throw new NotFoundException("Not able to find the student.");
     }
-    return student;
+    return { ...student, hasRestriction: !!studentRestrictions.length };
   }
 
   /**

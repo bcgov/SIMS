@@ -9,6 +9,7 @@ import {
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
   StudentRestrictionAPIOutDTO,
+  AESTStudentProfileAPIOutDTO,
 } from "./dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -43,9 +44,9 @@ export class StudentApi extends HttpBaseClient {
   async getStudentProfile(
     studentId?: number,
   ): Promise<StudentProfileAPIOutDTO> {
-    return this.getCallTyped<StudentProfileAPIOutDTO>(
-      this.addClientRoot(`students/${studentId ?? ""}`),
-    );
+    return this.getCallTyped<
+      StudentProfileAPIOutDTO | AESTStudentProfileAPIOutDTO
+    >(this.addClientRoot(`students/${studentId ?? ""}`));
   }
 
   /**
