@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <div class="mb-4">
+  <student-page-container>
+    <template #header>
       <header-navigator
         title="Application details"
         subTitle="Notice of Assessment"
@@ -11,16 +11,14 @@
           },
         }"
       />
-    </div>
-  </v-container>
-  <full-page-container>
+    </template>
     <notice-of-assessment-form-view :assessmentId="assessmentId" />
     <v-row class="justify-center mt-4">
       <v-btn color="primary" @click="confirmAssessment()">
         Confirmation of assessment
       </v-btn>
     </v-row>
-  </full-page-container>
+  </student-page-container>
 </template>
 
 <script lang="ts">

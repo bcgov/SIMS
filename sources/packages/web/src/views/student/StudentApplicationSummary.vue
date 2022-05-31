@@ -7,18 +7,17 @@
         </template>
       </header-navigator>
     </template>
-    <template #content>
-      <v-row>
-        <v-col cols="12">
-          <StudentApplications
-            :reloadData="reloadData"
-            @editApplicationAction="editApplicationAction"
-            @openConfirmCancel="openConfirmCancel"
-            @goToApplication="goToApplication"
-          />
-        </v-col>
-      </v-row>
-    </template>
+
+    <v-row>
+      <v-col cols="12">
+        <StudentApplications
+          :reloadData="reloadData"
+          @editApplicationAction="editApplicationAction"
+          @openConfirmCancel="openConfirmCancel"
+          @goToApplication="goToApplication"
+        />
+      </v-col>
+    </v-row>
   </student-page-container>
   <ConfirmEditApplication ref="editApplicationModal" />
   <CancelApplication

@@ -1,11 +1,7 @@
 <template>
-  <full-page-container>
+  <student-page-container>
     <template #header>
       <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
-    </template>
-    <template #alerts>
-      <restriction-banner />
-      <CheckValidSINBanner />
     </template>
     <formio
       formName="studentinformation"
@@ -13,7 +9,7 @@
       @submitted="submitted"
       @customEvent="showPDApplicationModal"
     ></formio>
-  </full-page-container>
+  </student-page-container>
   <PDStatusApplicationModal max-width="600" ref="pdStatusApplicationModal" />
 </template>
 
@@ -32,8 +28,6 @@ import {
   StudentPDStatus,
 } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
-import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
 import { StudentService } from "@/services/StudentService";
 import {
@@ -61,8 +55,6 @@ type StudentFormData = Pick<
 
 export default {
   components: {
-    RestrictionBanner,
-    CheckValidSINBanner,
     PDStatusApplicationModal,
   },
   props: {

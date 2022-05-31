@@ -1,19 +1,21 @@
 <template>
-  <div class="p-m-4">
-    <restriction-banner />
-    <HeaderNavigator
-      title="Back to Applications"
-      :routeLocation="{
-        name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
-      }"
-      subTitle="Financial aid application"
-      ><template #buttons>
-        <v-btn color="primary" @click="toggle"
-          ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
-          Options
-        </v-btn>
-      </template>
-    </HeaderNavigator>
+  <student-page-container :full-width="true" layout-template="centered">
+    <template #header>
+      <header-navigator
+        title="Back to Applications"
+        :routeLocation="{
+          name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+        }"
+        subTitle="Financial aid application"
+        ><template #buttons>
+          <v-btn color="primary" @click="toggle"
+            ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
+            Options
+          </v-btn>
+        </template>
+      </header-navigator>
+    </template>
+
     <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
     <CancelApplication
       :showModal="showModal"
@@ -21,7 +23,6 @@
       @showHideCancelApplication="showHideCancelApplication"
       @reloadData="getApplicationDetails"
     />
-
     <v-container class="pt-12">
       <div
         class="bg-white application-info-border"
@@ -45,9 +46,9 @@
         v-if="applicationDetails?.applicationStatus"
         :applicationDetails="applicationDetails"
       />
-      <ConfirmEditApplication ref="editApplicationModal" />
     </v-container>
-  </div>
+  </student-page-container>
+  <ConfirmEditApplication ref="editApplicationModal" />
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
@@ -55,7 +56,6 @@ import Menu from "primevue/menu";
 import { onMounted, ref, watch, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
-import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
@@ -80,7 +80,6 @@ export default {
     CancelApplication,
     ApplicationDetails,
     ConfirmEditApplication,
-    RestrictionBanner,
   },
   props: {
     id: {

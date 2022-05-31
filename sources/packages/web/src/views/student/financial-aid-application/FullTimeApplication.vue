@@ -1,6 +1,5 @@
 <template>
-  <restriction-banner />
-  <full-page-container>
+  <student-page-container>
     <v-row class="center-container application-container mb-5 text-right">
       <v-col md="12" class="ml-auto">
         <v-btn
@@ -40,7 +39,7 @@
       @customEventCallback="customEventCallback"
       @pageChanged="pageChanged"
     />
-  </full-page-container>
+  </student-page-container>
   <ConfirmEditApplication
     ref="editApplicationModal"
     @confirmEditApplication="editApplication"
@@ -67,7 +66,6 @@ import {
 } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
-import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
 import {
   PIR_OR_DATE_OVERLAP_ERROR,
   ACTIVE_STUDENT_RESTRICTION,
@@ -78,7 +76,6 @@ export default {
   components: {
     StudentApplication,
     ConfirmEditApplication,
-    RestrictionBanner,
   },
   props: {
     id: {

@@ -1,11 +1,9 @@
 <template>
   <student-page-container layout-template="centered">
-    <template #content>
-      <formio
-        formName="studentwelcomepage"
-        @customEvent="goToStudentApplication"
-      ></formio>
-    </template>
+    <formio
+      formName="studentwelcomepage"
+      @customEvent="goToStudentApplication"
+    ></formio>
   </student-page-container>
 </template>
 <script lang="ts">
