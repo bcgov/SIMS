@@ -32,7 +32,7 @@ import {
   StudentPDStatus,
 } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
+import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
 import { StudentService } from "@/services/StudentService";

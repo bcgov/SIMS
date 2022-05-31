@@ -28,7 +28,7 @@
               "key": "panel1",
               "tags": [],
               "properties": {},
-              "customConditional": "show = !!(data.restrictions && data.restrictions.length);",
+              "customConditional": "",
               "conditional": {
                 "json": "",
                 "show": true,
@@ -54,55 +54,29 @@
               "components": [
                 {
                   "label": "HTML",
-                  "labelWidth": "",
-                  "labelMargin": "",
                   "tag": "h2",
                   "className": "category-header-large primary-color",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
+                  "attrs": [{ "attr": "", "value": "" }],
                   "content": "Your account",
                   "refreshOnChange": true,
-                  "customClass": "",
-                  "hidden": false,
-                  "modalEdit": false,
                   "key": "html4",
-                  "tags": [],
-                  "properties": {},
-                  "conditional": {
-                    "show": "",
-                    "when": "",
-                    "eq": "",
-                    "json": ""
-                  },
-                  "customConditional": "",
-                  "logic": [],
-                  "attributes": {},
-                  "overlay": {
-                    "style": "",
-                    "page": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
                   "type": "htmlelement",
                   "input": false,
                   "tableView": false,
                   "placeholder": "",
                   "prefix": "",
+                  "customClass": "",
                   "suffix": "",
                   "multiple": false,
                   "defaultValue": null,
                   "protected": false,
                   "unique": false,
                   "persistent": false,
+                  "hidden": false,
                   "clearOnHide": true,
                   "refreshOn": "",
                   "redrawOn": "",
+                  "modalEdit": false,
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
@@ -117,6 +91,7 @@
                   "calculateValue": "",
                   "calculateServer": false,
                   "widget": null,
+                  "attributes": {},
                   "validateOn": "change",
                   "validate": {
                     "required": false,
@@ -126,22 +101,26 @@
                     "multiple": false,
                     "unique": false
                   },
+                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "overlay": {
+                    "style": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
                   "allowCalculateOverride": false,
                   "encrypted": false,
                   "showCharCount": false,
                   "showWordCount": false,
+                  "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ey7niqj"
+                  "id": "eg335pn"
                 },
                 {
                   "label": "HTML",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
+                  "attrs": [{ "attr": "", "value": "" }],
                   "content": "<strong>Please resolve the items below soon</strong> to minimize the disruption and impact",
                   "refreshOnChange": false,
                   "key": "html5",
@@ -186,11 +165,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
+                  "conditional": { "show": null, "when": null, "eq": "" },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -206,132 +181,50 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "exx8mcu"
+                  "id": "e27k9lr"
                 },
                 {
                   "label": "Active restriction codes",
-                  "labelPosition": "top",
-                  "labelWidth": "",
-                  "labelMargin": "",
-                  "description": "",
-                  "tooltip": "",
                   "disableAddingRemovingRows": true,
-                  "conditionalAddButton": "",
                   "reorder": false,
-                  "addAnother": "",
                   "addAnotherPosition": "bottom",
                   "layoutFixed": false,
                   "enableRowGroups": false,
                   "initEmpty": false,
                   "customClass": "formio-datagrid-unset student-activity-grid mt-n2",
-                  "tabindex": "",
-                  "hidden": false,
                   "hideLabel": true,
-                  "autofocus": false,
                   "disabled": true,
                   "tableView": false,
-                  "modalEdit": false,
                   "defaultValue": [{}],
-                  "persistent": true,
-                  "protected": false,
-                  "dbIndex": false,
-                  "encrypted": false,
-                  "redrawOn": "",
-                  "clearOnHide": true,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "allowCalculateOverride": false,
-                  "validateOn": "change",
-                  "validate": {
-                    "required": false,
-                    "minLength": "",
-                    "maxLength": "",
-                    "customMessage": "",
-                    "custom": "",
-                    "customPrivate": false,
-                    "json": "",
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false
-                  },
-                  "errorLabel": "",
-                  "errors": "",
                   "key": "restrictions",
-                  "tags": [],
-                  "properties": {},
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": "",
-                    "json": ""
-                  },
-                  "customConditional": "",
-                  "logic": [],
-                  "attributes": {},
-                  "overlay": {
-                    "style": "",
-                    "page": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
                   "type": "datagrid",
                   "input": true,
                   "components": [
                     {
                       "label": "Active restriction codes",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "tag": "p",
-                      "className": "",
-                      "attrs": [
-                        {
-                          "attr": "",
-                          "value": ""
-                        }
-                      ],
+                      "attrs": [{ "attr": "", "value": "" }],
                       "content": "<li>Code {{row.code}}</li>",
                       "refreshOnChange": true,
-                      "customClass": "",
-                      "hidden": false,
-                      "dataGridLabel": false,
-                      "modalEdit": false,
                       "key": "html",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
+                      "id": "ev9cym",
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": false,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
+                      "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
                       "errorLabel": "",
@@ -345,6 +238,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -354,30 +248,80 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eyl12tb0"
+                      "tag": "p"
                     }
                   ],
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
                   "multiple": false,
+                  "protected": false,
                   "unique": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
                   "refreshOn": "",
+                  "redrawOn": "",
+                  "modalEdit": false,
                   "dataGridLabel": false,
+                  "labelPosition": "top",
+                  "description": "",
+                  "errorLabel": "",
+                  "tooltip": "",
+                  "tabindex": "",
+                  "autofocus": false,
+                  "dbIndex": false,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
                   "widget": null,
+                  "attributes": {},
+                  "validateOn": "change",
+                  "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false,
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "overlay": {
+                    "style": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "allowCalculateOverride": false,
+                  "encrypted": false,
                   "showCharCount": false,
                   "showWordCount": false,
+                  "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tree": true,
                   "lazyLoad": false,
-                  "id": "e167zet"
+                  "id": "e39y0je"
                 }
               ],
               "placeholder": "",
@@ -418,7 +362,7 @@
               "addons": [],
               "tree": false,
               "lazyLoad": false,
-              "id": "envfp0k"
+              "id": "erc0g5o"
             },
             {
               "title": "Panel",
@@ -463,12 +407,7 @@
                   "label": "HTML",
                   "tag": "h2",
                   "className": "category-header-large primary-color",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
+                  "attrs": [{ "attr": "", "value": "" }],
                   "content": "Your account",
                   "refreshOnChange": false,
                   "key": "html2",
@@ -513,11 +452,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
+                  "conditional": { "show": null, "when": null, "eq": "" },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -536,12 +471,7 @@
                 },
                 {
                   "label": "HTML",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
+                  "attrs": [{ "attr": "", "value": "" }],
                   "refreshOnChange": false,
                   "key": "html3",
                   "type": "htmlelement",
@@ -585,11 +515,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
+                  "conditional": { "show": null, "when": null, "eq": "" },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -694,12 +620,7 @@
                   "labelMargin": "",
                   "tag": "h2",
                   "className": "category-header-large primary-color",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
+                  "attrs": [{ "attr": "", "value": "" }],
                   "content": "Need help?",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -776,12 +697,7 @@
                   "labelMargin": "",
                   "tag": "p",
                   "className": "",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
+                  "attrs": [{ "attr": "", "value": "" }],
                   "content": "For StudentAid BC restrictions, please refer to the <a href=\"https://studentaidbc.ca/help-centre\" target=\"_blank\" rel=\"noopener noreferrer\">StudentAid BC Help Centre.</a>",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -858,12 +774,7 @@
                   "labelMargin": "",
                   "tag": "p",
                   "className": "",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
+                  "attrs": [{ "attr": "", "value": "" }],
                   "content": "For National Student Loans Centre restrictions, please refer to the <a href=\"https://www.csnpe-nslsc.canada.ca\" target=\"_blank\" rel=\"noopener noreferrer\">National Student Loan Service Centre.</a>",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -979,11 +890,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
+                  "conditional": { "show": null, "when": null, "eq": "" },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -1135,12 +1042,7 @@
                   "labelMargin": "",
                   "tag": "h2",
                   "className": "category-header-large primary-color",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
+                  "attrs": [{ "attr": "", "value": "" }],
                   "content": "All restrictions",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -1217,12 +1119,7 @@
                   "labelMargin": "",
                   "tag": "p",
                   "className": "",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
+                  "attrs": [{ "attr": "", "value": "" }],
                   "content": "Read about the restrictions and how you can resolve them.",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -1341,9 +1238,7 @@
                   "tabindex": "",
                   "disabled": false,
                   "autofocus": false,
-                  "widget": {
-                    "type": "input"
-                  },
+                  "widget": { "type": "input" },
                   "validateOn": "change",
                   "validate": {
                     "required": false,
@@ -1353,11 +1248,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
+                  "conditional": { "show": null, "when": null, "eq": "" },
                   "allowCalculateOverride": false,
                   "showCharCount": false,
                   "showWordCount": false,
@@ -1372,12 +1263,7 @@
                   "labelMargin": "",
                   "tag": "h3",
                   "className": "category-header-medium primary-color mt-5",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
+                  "attrs": [{ "attr": "", "value": "" }],
                   "content": "StudentAid BC Restrictions",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -3103,12 +2989,7 @@
                   "labelMargin": "",
                   "tag": "h3",
                   "className": "category-header-medium primary-color mt-5",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
+                  "attrs": [{ "attr": "", "value": "" }],
                   "content": "National Student Load Service Centre Restrictions",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -3189,7 +3070,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre. </p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -3302,11 +3183,7 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
+                  "conditional": { "show": null, "when": null, "eq": "" },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -3987,7 +3864,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You have reached your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. For more information, contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>You have reached your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. For more information, contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content7",
@@ -4445,7 +4322,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your account is under a hold due to risk guaranteed portfolio being frozen. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>Please note that your account is under a hold due to risk guaranteed portfolio being frozen. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content10",
@@ -4593,7 +4470,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note the Canada Student Financial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>Please note the Canada Student Financial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -5368,7 +5245,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -5864,7 +5741,7 @@
                   "lazyLoad": false,
                   "components": [
                     {
-                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -6284,7 +6161,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The&nbsp;Canada Student Financial Assistance Program (CSFA Program) has reported that they have received a claim for loss request but it has not yet been or is in the process of being audited/assessed. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported that they have received a claim for loss request but it has not yet been or is in the process of being audited/assessed. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -6439,7 +6316,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The&nbsp;Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content24",
@@ -6735,7 +6612,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The&nbsp;Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -6890,7 +6767,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -7355,7 +7232,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content29",
@@ -7503,7 +7380,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -7658,7 +7535,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content31",
@@ -7806,7 +7683,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content32",
@@ -7954,7 +7831,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre. &nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre. </p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content33",
@@ -8102,7 +7979,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content34",
@@ -8250,7 +8127,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content35",
@@ -8398,7 +8275,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content36",
@@ -8546,7 +8423,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content37",
@@ -8842,7 +8719,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -8997,7 +8874,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content40",
@@ -9145,7 +9022,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content41",
@@ -9293,7 +9170,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content42",
@@ -9441,7 +9318,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content43",
@@ -9744,7 +9621,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content45",
@@ -9872,12 +9749,7 @@
       "key": "columns",
       "tags": [],
       "properties": {},
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
-        "json": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -9979,9 +9851,7 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
+      "widget": { "type": "input" },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -9991,11 +9861,7 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "" },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -10052,9 +9918,7 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
+      "widget": { "type": "input" },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -10064,11 +9928,7 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "" },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,

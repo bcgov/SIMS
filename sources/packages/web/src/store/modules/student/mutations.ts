@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
-import { StudentFormInfo, StudentRestriction } from "@/types";
-import { StudentState } from "./student";
+import { StudentFormInfo } from "@/types";
+import { StudentState, StudentRestriction } from "./student";
 import { useFormatters } from "@/composables";
 
 export const mutations: MutationTree<StudentState> = {

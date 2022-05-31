@@ -14,7 +14,7 @@
   </full-page-container>
 </template>
 <script lang="ts">
-import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
+import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import { LayoutTemplates } from "@/types";
 

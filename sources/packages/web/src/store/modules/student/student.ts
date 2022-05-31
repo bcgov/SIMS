@@ -1,12 +1,9 @@
 import { Module } from "vuex";
-import { RootState } from "@/types";
+import { RootState, RestrictionNotificationType } from "@/types";
 import { actions } from "./actions";
 import { getters } from "./getters";
 import { mutations } from "./mutations";
-import {
-  SINStatusEnum,
-  StudentRestriction,
-} from "@/types/contracts/StudentContract";
+import { SINStatusEnum } from "@/types/contracts/StudentContract";
 
 export class SINValidStatus {
   sinStatus?: SINStatusEnum;
@@ -35,3 +32,17 @@ export const student: Module<StudentState, RootState> = {
   actions,
   mutations,
 };
+
+/**
+ * Contract for student restriction.
+ */
+export interface StudentRestriction {
+  /**
+   * code is the restriction code.
+   */
+  code: string;
+  /**
+   * type is the notification type.
+   */
+  type: RestrictionNotificationType;
+}

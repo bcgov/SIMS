@@ -55,7 +55,7 @@ import Menu from "primevue/menu";
 import { onMounted, ref, watch, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
-import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
+import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import { useFormatters, ModalDialog, useToastMessage } from "@/composables";

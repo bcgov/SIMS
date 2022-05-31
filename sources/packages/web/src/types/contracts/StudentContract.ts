@@ -1,5 +1,4 @@
 import { StudentProfileAPIOutDTO } from "@/services/http/dto";
-import { RestrictionNotificationType } from "@/types";
 
 export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;
@@ -33,18 +32,4 @@ export enum FileOriginType {
   Application = "Application",
   Student = "Student",
   Ministry = "Ministry",
-}
-
-/**
- * Contract for student restriction.
- */
-export interface StudentRestriction {
-  /**
-   * code is the restriction code.
-   */
-  code: string;
-  /**
-   * type is the notification type.
-   */
-  type: RestrictionNotificationType;
 }

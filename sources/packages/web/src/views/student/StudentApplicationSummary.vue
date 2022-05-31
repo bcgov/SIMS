@@ -39,7 +39,6 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage, ModalDialog } from "@/composables";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
-import StudentPageContainer from "@/components/layouts/student/StudentPageContainer.vue";
 
 export default {
   components: {
@@ -47,7 +46,6 @@ export default {
     StudentApplications,
     ConfirmEditApplication,
     CancelApplication,
-    StudentPageContainer,
   },
   setup() {
     const router = useRouter();

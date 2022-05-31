@@ -1,7 +1,9 @@
 import { computed } from "vue";
 import { Store, useStore } from "vuex";
-import { SINValidStatus } from "@/store/modules/student/student";
-import { StudentRestriction } from "@/types";
+import {
+  SINValidStatus,
+  StudentRestriction,
+} from "@/store/modules/student/student";
 
 export function useStudentStore(rootStore?: Store<any>) {
   const store = rootStore ?? useStore();

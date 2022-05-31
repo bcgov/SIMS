@@ -18,21 +18,20 @@
 <script lang="ts">
 import { computed, onMounted } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { StudentAccountActivityFormModel } from "@/views/student/StudentAccountActivityFormModel";
+import { StudentRestriction } from "@/store/modules/student/student";
 import { useStudentStore } from "@/composables";
-import { RestrictionNotificationType } from "@/types";
+
+interface StudentAccountActivityFormModel {
+  restrictions: StudentRestriction[];
+}
 
 export default {
   setup() {
     const { activeRestrictions, updateRestrictions } = useStudentStore();
-    //Student activity page must show restriction codes with notification type of warning or error.
+
     const initialData = computed<StudentAccountActivityFormModel>(() => {
       return {
-        restrictions: activeRestrictions.value.filter(
-          (restriction) =>
-            restriction.type === RestrictionNotificationType.Warning ||
-            restriction.type === RestrictionNotificationType.Error,
-        ),
+        restrictions: activeRestrictions.value,
       };
     });
     onMounted(async () => {

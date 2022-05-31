@@ -67,7 +67,7 @@ import {
 } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
-import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
+import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
 import {
   PIR_OR_DATE_OVERLAP_ERROR,
   ACTIVE_STUDENT_RESTRICTION,
