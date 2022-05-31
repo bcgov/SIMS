@@ -1,4 +1,4 @@
-import { StudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
+import { StudentProfileAPIOutDTO } from "@/services/http/dto";
 
 export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;

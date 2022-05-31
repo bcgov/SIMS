@@ -4,10 +4,7 @@
       <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
     </template>
     <template #alerts>
-      <RestrictionBanner
-        v-if="hasRestriction"
-        :restrictionMessage="restrictionMessage"
-      />
+      <restriction-banner />
       <CheckValidSINBanner />
     </template>
     <formio
@@ -35,7 +32,7 @@ import {
   StudentPDStatus,
 } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
+import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
 import { StudentService } from "@/services/StudentService";
@@ -84,9 +81,6 @@ export default {
     const { bcscParsedToken } = useAuthBCSC();
     const { dateOnlyLongString } = useFormatters();
     const studentStore = useStudentStore();
-    // TODO: update this in restriction UI ticket
-    const hasRestriction = ref(false);
-    const restrictionMessage = ref("");
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
 
     const getStudentInfo = async () => {
@@ -187,8 +181,6 @@ export default {
       showApplyPDButton,
       studentAllInfo,
       showPendingStatus,
-      hasRestriction,
-      restrictionMessage,
       pdStatusApplicationModal,
       showPDApplicationModal,
     };

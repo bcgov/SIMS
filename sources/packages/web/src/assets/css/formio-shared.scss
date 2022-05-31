@@ -438,3 +438,8 @@
   border: 1px solid $common-border-color !important;
   border-radius: 8px !important;
 }
+
+//Style to add padding to the bullet item.
+.align-bullet-item li {
+  padding-left: 20px;
+}
