@@ -7,14 +7,13 @@
       <slot name="header"></slot>
     </template>
     <template #alerts>
-      <restriction-banner />
+      <restriction-banner v-if="!hideRestriction" />
       <CheckValidSINBanner />
     </template>
     <slot name="content"></slot>
   </full-page-container>
 </template>
 <script lang="ts">
-import { computed } from "vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 enum LayoutTemplates {
@@ -36,12 +35,11 @@ export default {
       required: false,
       default: false,
     },
-  },
-  setup(props: any) {
-    const widthClass = computed(() => {
-      return props.fullWidth ? "" : "full-page-container-size";
-    });
-    return { LayoutTemplates, widthClass };
+    hideRestriction: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 };
 </script>
