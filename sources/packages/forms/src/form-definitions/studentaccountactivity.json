@@ -191,7 +191,7 @@
                   "layoutFixed": false,
                   "enableRowGroups": false,
                   "initEmpty": false,
-                  "customClass": "formio-datagrid-unset student-activity-grid mt-n2",
+                  "customClass": "formio-datagrid-unset align-bullet-item mt-n2",
                   "hideLabel": true,
                   "disabled": true,
                   "tableView": false,
