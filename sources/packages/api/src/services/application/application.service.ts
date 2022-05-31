@@ -1269,7 +1269,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<Application> {
     const applicationQuery = this.repo
       .createQueryBuilder("application")
-      .select(["application.id", "application.applicationNumber"])
+      .select([
+        "application.id",
+        "application.applicationNumber",
+        "application.isArchived",
+      ])
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .where("user.id = :userId", { userId })

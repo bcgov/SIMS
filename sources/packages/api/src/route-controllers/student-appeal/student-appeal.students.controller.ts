@@ -10,6 +10,7 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
+  APPLICATION_CHANGE_NOT_ELIGIBLE,
   FormService,
   StudentAppealService,
 } from "../../services";
@@ -72,16 +73,26 @@ export class StudentAppealStudentsController extends BaseController {
     @Body() payload: StudentAppealAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const application = this.applicationService.getApplicationToRequestAppeal(
-      userToken.userId,
-      undefined,
-      applicationId,
-    );
+    const application =
+      await this.applicationService.getApplicationToRequestAppeal(
+        userToken.userId,
+        undefined,
+        applicationId,
+      );
     if (!application) {
       throw new NotFoundException(
         new ApiProcessError(
           "Given application either does not exist or is not complete to request change.",
           INVALID_APPLICATION_NUMBER,
+        ),
+      );
+    }
+
+    if (application.isArchived) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "This application is no longer eligible to request changes.",
+          APPLICATION_CHANGE_NOT_ELIGIBLE,
         ),
       );
     }
