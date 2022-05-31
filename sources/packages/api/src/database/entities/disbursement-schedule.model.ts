@@ -145,12 +145,4 @@ export class DisbursementSchedule extends RecordDataModel {
     nullable: false,
   })
   tuitionRemittanceRequestedAmount: number;
-  /**
-   * Tuition Remittance Requested like yes, no
-   */
-  @Column({
-    name: "tuition_remittance_requested",
-    nullable: false,
-  })
-  tuitionRemittanceRequested: string;
 }

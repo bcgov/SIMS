@@ -15,10 +15,8 @@ export interface SaveOfferingDTO {
   programRelatedCosts: number;
   mandatoryFees: number;
   exceptionalExpenses: number;
-  tuitionRemittanceRequestedAmount: number;
   offeringDelivered: string;
   lacksStudyBreaks: boolean;
-  tuitionRemittanceRequested: string;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;
   showYearOfStudy?: boolean;
@@ -56,10 +54,8 @@ export interface ProgramOfferingDto {
   programRelatedCosts: number;
   mandatoryFees: number;
   exceptionalExpenses: number;
-  tuitionRemittanceRequestedAmount: number;
   offeringDelivered: string;
   lacksStudyBreaks: boolean;
-  tuitionRemittanceRequested: string;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;
   showYearOfStudy?: boolean;
@@ -98,10 +94,8 @@ export const transformToProgramOfferingDto = (
     programRelatedCosts: offering.programRelatedCosts,
     mandatoryFees: offering.mandatoryFees,
     exceptionalExpenses: offering.exceptionalExpenses,
-    tuitionRemittanceRequestedAmount: offering.tuitionRemittanceRequestedAmount,
     offeringDelivered: offering.offeringDelivered,
     lacksStudyBreaks: offering.lacksStudyBreaks,
-    tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
     offeringIntensity: offering.offeringIntensity,
     yearOfStudy: offering.yearOfStudy,
     showYearOfStudy: offering.showYearOfStudy,

@@ -242,10 +242,6 @@ export class ConfirmationOfEnrollmentController extends BaseController {
       applicationOfferingProgramRelatedCost: offering.programRelatedCosts,
       applicationOfferingMandatoryCost: offering.mandatoryFees,
       applicationOfferingExceptionalExpenses: offering.exceptionalExpenses,
-      applicationOfferingHasTuitionRemittanceRequested:
-        offering.tuitionRemittanceRequested,
-      applicationOfferingTuitionRemittanceAmount:
-        offering.tuitionRemittanceRequestedAmount,
       applicationOfferingStudyDelivered: offering.offeringDelivered,
       applicationStudentName: getUserFullName(
         disbursementSchedule.studentAssessment.application.student.user,
