@@ -48,10 +48,9 @@ import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
-import StudentPageContainer from "@/components/layouts/student/StudentPageContainer.vue";
 
 export default {
-  components: { ModalDialogBase, StudentPageContainer },
+  components: { ModalDialogBase },
   setup() {
     const initialData = ref({});
     const router = useRouter();
