@@ -85,14 +85,6 @@ export class EducationProgramOffering extends RecordDataModel {
   })
   exceptionalExpenses: number;
   /**
-   * Offering Tuition Remittance Amount Requested
-   */
-  @Column({
-    name: "tuition_remittance_requested_amount",
-    nullable: true,
-  })
-  tuitionRemittanceRequestedAmount: number;
-  /**
    * How Offering is Delivered like Onsite, Online, Blended
    */
   @Column({
@@ -106,13 +98,6 @@ export class EducationProgramOffering extends RecordDataModel {
     name: "lacks_study_breaks",
   })
   lacksStudyBreaks: boolean;
-  /**
-   * Offering Tuition Remittance Requested like Yes, No
-   */
-  @Column({
-    name: "tuition_remittance_requested",
-  })
-  tuitionRemittanceRequested: string;
   /**
    * Related program.
    */

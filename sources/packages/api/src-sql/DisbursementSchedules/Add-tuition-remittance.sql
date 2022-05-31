@@ -12,4 +12,4 @@ ALTER TABLE
 ADD
     COLUMN IF NOT EXISTS tuition_remittance_requested VARCHAR(50) NOT NULL DEFAULT 'no';
 
-COMMENT ON COLUMN sims.disbursement_schedules.tuition_remittance_requested IS 'Offering Tuition Remittance Requested like yes, no';
+COMMENT ON COLUMN sims.disbursement_schedules.tuition_remittance_requested IS 'Tuition Remittance Requested like yes, no';
