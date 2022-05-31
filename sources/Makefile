@@ -30,6 +30,7 @@ export FILE_UPLOAD_ALLOWED_EXTENSIONS := $(or $(FILE_UPLOAD_ALLOWED_EXTENSIONS),
 #SFAS Integration
 export SFAS_RECEIVE_FOLDER := $(or $(SFAS_RECEIVE_FOLDER), SFAS-Receive)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
+export NUMBER_OF_DAYS_PASSED := $(or ${NUMBER_OF_DAYS_PASSED}, 43)
 
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
