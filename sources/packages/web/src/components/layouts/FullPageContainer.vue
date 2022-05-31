@@ -23,11 +23,7 @@
 
 <script lang="ts">
 import { computed } from "vue";
-
-enum LayoutTemplates {
-  Centered = "centered",
-  CenteredCard = "centered-card",
-}
+import { LayoutTemplates } from "@/types";
 
 export default {
   props: {

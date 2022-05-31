@@ -1,32 +1,32 @@
 <template>
   <banner
     class="mb-2"
-    v-if="restriction"
+    v-if="hasRestrictionError"
     :type="BannerTypes.Error"
     header="Your account has a restriction"
     summary="You have a restriction on your account that must be resolved to continue with your student financial aid. Please view the message and resolve the items to minimize disruption and impact."
   >
     <template #actions>
-      <v-btn :color="BannerTypes.Error" @click="viewStudentAccountActivity">
+      <v-btn color="error" @click="viewStudentAccountActivity">
         View activity
       </v-btn>
     </template></banner
   >
   <banner
     class="mb-2"
-    v-if="warning"
+    v-if="hasRestrictionWarning"
     :type="BannerTypes.Warning"
     header="Your account has a warning"
     summary="You should resolve this as soon as possible to minimize impact to your funding. Please view the message and resolve the items to minimize disruption and impact."
     ><template #actions>
-      <v-btn :color="BannerTypes.Warning" @click="viewStudentAccountActivity">
+      <v-btn color="warning" @click="viewStudentAccountActivity">
         View activity
       </v-btn>
     </template></banner
   >
 </template>
 <script lang="ts">
-import { computed, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStudentStore } from "@/composables";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -34,16 +34,8 @@ import { BannerTypes } from "@/components/generic/Banner.models";
 export default {
   setup() {
     const router = useRouter();
-    const { updateRestrictions, hasRestriction, hasWarning } =
+    const { updateRestrictions, hasRestrictionError, hasRestrictionWarning } =
       useStudentStore();
-
-    const restriction = computed(() => {
-      return hasRestriction.value;
-    });
-
-    const warning = computed(() => {
-      return hasWarning.value;
-    });
 
     const viewStudentAccountActivity = () => {
       router.push({ name: StudentRoutesConst.STUDENT_ACCOUNT_ACTIVITY });
@@ -53,7 +45,12 @@ export default {
       await updateRestrictions();
     });
 
-    return { BannerTypes, restriction, warning, viewStudentAccountActivity };
+    return {
+      BannerTypes,
+      hasRestrictionError,
+      hasRestrictionWarning,
+      viewStudentAccountActivity,
+    };
   },
 };
 </script>

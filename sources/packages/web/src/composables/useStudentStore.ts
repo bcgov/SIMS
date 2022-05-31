@@ -25,17 +25,13 @@ export function useStudentStore(rootStore?: Store<any>) {
     await store.dispatch("student/updateStudentRestrictions");
   };
 
-  const hasRestriction = computed<boolean>(() => {
-    return store.getters["student/hasRestriction"];
+  const hasRestrictionError = computed<boolean>(() => {
+    return store.getters["student/hasRestrictionError"];
   });
 
-  const hasWarning = computed<boolean>(() => {
-    return store.getters["student/hasWarning"];
+  const hasRestrictionWarning = computed<boolean>(() => {
+    return store.getters["student/hasRestrictionWarning"];
   });
-
-  const getRestrictions = (): StudentRestriction[] => {
-    return store.getters["student/getRestrictions"];
-  };
 
   const activeRestrictions = computed<StudentRestriction[]>(() => {
     return store.getters["student/getRestrictions"];
@@ -47,9 +43,8 @@ export function useStudentStore(rootStore?: Store<any>) {
     setHasStudentAccount,
     hasStudentAccount,
     updateRestrictions,
-    hasRestriction,
-    hasWarning,
-    getRestrictions,
+    hasRestrictionError,
+    hasRestrictionWarning,
     activeRestrictions,
   };
 }

@@ -7,13 +7,13 @@ import {
 import { StudentState } from "./student";
 
 export const getters: GetterTree<StudentState, RootState> = {
-  hasRestriction(state: StudentState): boolean {
-    return state.restrictions?.some(
+  hasRestrictionError(state: StudentState): boolean {
+    return state.restrictions.some(
       (restriction) => restriction.type === RestrictionNotificationType.Error,
     );
   },
-  hasWarning(state: StudentState): boolean {
-    return state.restrictions?.some(
+  hasRestrictionWarning(state: StudentState): boolean {
+    return state.restrictions.some(
       (restriction) => restriction.type === RestrictionNotificationType.Warning,
     );
   },

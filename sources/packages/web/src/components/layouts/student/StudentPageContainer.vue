@@ -16,10 +16,7 @@
 <script lang="ts">
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
-enum LayoutTemplates {
-  Centered = "centered",
-  CenteredCard = "centered-card",
-}
+import { LayoutTemplates } from "@/types";
 
 export default {
   components: { RestrictionBanner, CheckValidSINBanner },

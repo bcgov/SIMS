@@ -28,7 +28,7 @@ export default {
     //Student activity page must show restriction codes with notification type of warning or error.
     const initialData = computed<StudentAccountActivityFormModel>(() => {
       return {
-        restrictions: activeRestrictions.value?.filter(
+        restrictions: activeRestrictions.value.filter(
           (restriction) =>
             restriction.type === RestrictionNotificationType.Warning ||
             restriction.type === RestrictionNotificationType.Error,
@@ -40,7 +40,6 @@ export default {
     });
     return {
       StudentRoutesConst,
-      activeRestrictions,
       initialData,
     };
   },

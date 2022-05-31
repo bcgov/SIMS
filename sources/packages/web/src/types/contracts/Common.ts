@@ -26,3 +26,11 @@ export interface AddressInfo {
   postalCode: string;
   selectedCountry?: string;
 }
+
+/**
+ * Layout template types for page container components.
+ */
+export enum LayoutTemplates {
+  Centered = "centered",
+  CenteredCard = "centered-card",
+}

@@ -12,10 +12,12 @@
   </v-alert>
 </template>
 <script lang="ts">
+import { BannerTypes } from "@/components/generic/Banner.models";
 export default {
   props: {
     type: {
       type: String,
+      validator: (val: string) => val in BannerTypes,
     },
     header: {
       type: String,
