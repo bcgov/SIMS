@@ -20,18 +20,16 @@
     </template>
   </ModalDialogBase>
   <student-page-container>
-    <template #content>
-      <v-sheet elevation="1" class="mx-auto">
-        <v-container>
-          <formio
-            formName="studentapplication"
-            :data="initialData"
-            @loaded="formLoaded"
-            @customEvent="customEventCallback"
-          ></formio>
-        </v-container>
-      </v-sheet>
-    </template>
+    <v-sheet elevation="1" class="mx-auto">
+      <v-container>
+        <formio
+          formName="studentapplication"
+          :data="initialData"
+          @loaded="formLoaded"
+          @customEvent="customEventCallback"
+        ></formio>
+      </v-container>
+    </v-sheet>
   </student-page-container>
 </template>
 <script lang="ts">

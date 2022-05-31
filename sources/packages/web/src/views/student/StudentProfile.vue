@@ -3,14 +3,12 @@
     <template #header>
       <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
     </template>
-    <template #content>
-      <formio
-        formName="studentinformation"
-        :data="initialData"
-        @submitted="submitted"
-        @customEvent="showPDApplicationModal"
-      ></formio>
-    </template>
+    <formio
+      formName="studentinformation"
+      :data="initialData"
+      @submitted="submitted"
+      @customEvent="showPDApplicationModal"
+    ></formio>
   </student-page-container>
   <PDStatusApplicationModal max-width="600" ref="pdStatusApplicationModal" />
 </template>

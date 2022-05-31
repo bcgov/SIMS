@@ -10,9 +10,7 @@
         :routeLocation="{ name: StudentRoutesConst.STUDENT_DASHBOARD }"
       />
     </template>
-    <template #content
-      ><formio formName="studentaccountactivity" :data="initialData"></formio
-    ></template>
+    <formio formName="studentaccountactivity" :data="initialData"></formio>
   </student-page-container>
 </template>
 <script lang="ts">

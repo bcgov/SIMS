@@ -12,14 +12,12 @@
         }"
       />
     </template>
-    <template #content>
-      <notice-of-assessment-form-view :assessmentId="assessmentId" />
-      <v-row class="justify-center mt-4">
-        <v-btn color="primary" @click="confirmAssessment()">
-          Confirmation of assessment
-        </v-btn>
-      </v-row>
-    </template>
+    <notice-of-assessment-form-view :assessmentId="assessmentId" />
+    <v-row class="justify-center mt-4">
+      <v-btn color="primary" @click="confirmAssessment()">
+        Confirmation of assessment
+      </v-btn>
+    </v-row>
   </student-page-container>
 </template>
 

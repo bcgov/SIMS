@@ -15,39 +15,38 @@
         </template>
       </header-navigator>
     </template>
-    <template #content>
-      <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
-      <CancelApplication
-        :showModal="showModal"
-        :applicationId="id"
-        @showHideCancelApplication="showHideCancelApplication"
-        @reloadData="getApplicationDetails"
+
+    <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
+    <CancelApplication
+      :showModal="showModal"
+      :applicationId="id"
+      @showHideCancelApplication="showHideCancelApplication"
+      @reloadData="getApplicationDetails"
+    />
+    <v-container class="pt-12">
+      <div
+        class="bg-white application-info-border"
+        v-if="
+          applicationDetails.applicationStatus === ApplicationStatus.cancelled
+        "
+      >
+        <p>
+          <v-icon color="primary">mdi-information </v-icon
+          ><span class="pl-2 font-weight-bold">For your information</span>
+        </p>
+        <span class="mt-4"
+          >This application was cancelled on
+          {{ dateString(applicationDetails.applicationStatusUpdatedOn) }}.
+          <a class="text-primary" @click="viewApplication">
+            View application
+          </a>
+        </span>
+      </div>
+      <ApplicationDetails
+        v-if="applicationDetails?.applicationStatus"
+        :applicationDetails="applicationDetails"
       />
-      <v-container class="pt-12">
-        <div
-          class="bg-white application-info-border"
-          v-if="
-            applicationDetails.applicationStatus === ApplicationStatus.cancelled
-          "
-        >
-          <p>
-            <v-icon color="primary">mdi-information </v-icon
-            ><span class="pl-2 font-weight-bold">For your information</span>
-          </p>
-          <span class="mt-4"
-            >This application was cancelled on
-            {{ dateString(applicationDetails.applicationStatusUpdatedOn) }}.
-            <a class="text-primary" @click="viewApplication">
-              View application
-            </a>
-          </span>
-        </div>
-        <ApplicationDetails
-          v-if="applicationDetails?.applicationStatus"
-          :applicationDetails="applicationDetails"
-        />
-      </v-container>
-    </template>
+    </v-container>
   </student-page-container>
   <ConfirmEditApplication ref="editApplicationModal" />
 </template>

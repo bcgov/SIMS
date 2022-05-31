@@ -10,7 +10,7 @@
       <restriction-banner v-if="!hideRestriction" />
       <CheckValidSINBanner />
     </template>
-    <slot name="content"></slot>
+    <slot></slot>
   </full-page-container>
 </template>
 <script lang="ts">
