@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <div class="mb-4">
+  <student-page-container>
+    <template #header>
       <header-navigator
         title="Application details"
         subTitle="Notice of Assessment"
@@ -11,16 +11,16 @@
           },
         }"
       />
-    </div>
-  </v-container>
-  <full-page-container>
-    <notice-of-assessment-form-view :assessmentId="assessmentId" />
-    <v-row class="justify-center mt-4">
-      <v-btn color="primary" @click="confirmAssessment()">
-        Confirmation of assessment
-      </v-btn>
-    </v-row>
-  </full-page-container>
+    </template>
+    <template #content>
+      <notice-of-assessment-form-view :assessmentId="assessmentId" />
+      <v-row class="justify-center mt-4">
+        <v-btn color="primary" @click="confirmAssessment()">
+          Confirmation of assessment
+        </v-btn>
+      </v-row>
+    </template>
+  </student-page-container>
 </template>
 
 <script lang="ts">
@@ -28,10 +28,12 @@ import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFo
 import { useToastMessage } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import StudentPageContainer from "@/components/layouts/student/StudentPageContainer.vue";
 
 export default {
   components: {
     NoticeOfAssessmentFormView,
+    StudentPageContainer,
   },
   props: {
     applicationId: {

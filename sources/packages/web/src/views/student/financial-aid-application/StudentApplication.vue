@@ -19,16 +19,20 @@
       </v-btn>
     </template>
   </ModalDialogBase>
-  <v-sheet elevation="1" class="mx-auto">
-    <v-container>
-      <formio
-        formName="studentapplication"
-        :data="initialData"
-        @loaded="formLoaded"
-        @customEvent="customEventCallback"
-      ></formio>
-    </v-container>
-  </v-sheet>
+  <student-page-container>
+    <template #content>
+      <v-sheet elevation="1" class="mx-auto">
+        <v-container>
+          <formio
+            formName="studentapplication"
+            :data="initialData"
+            @loaded="formLoaded"
+            @customEvent="customEventCallback"
+          ></formio>
+        </v-container>
+      </v-sheet>
+    </template>
+  </student-page-container>
 </template>
 <script lang="ts">
 import { ref } from "vue";
@@ -44,9 +48,10 @@ import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
+import StudentPageContainer from "@/components/layouts/student/StudentPageContainer.vue";
 
 export default {
-  components: { ModalDialogBase },
+  components: { ModalDialogBase, StudentPageContainer },
   setup() {
     const initialData = ref({});
     const router = useRouter();

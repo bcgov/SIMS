@@ -1,53 +1,55 @@
 <template>
-  <div class="p-m-4">
-    <restriction-banner />
-    <HeaderNavigator
-      title="Back to Applications"
-      :routeLocation="{
-        name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
-      }"
-      subTitle="Financial aid application"
-      ><template #buttons>
-        <v-btn color="primary" @click="toggle"
-          ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
-          Options
-        </v-btn>
-      </template>
-    </HeaderNavigator>
-    <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
-    <CancelApplication
-      :showModal="showModal"
-      :applicationId="id"
-      @showHideCancelApplication="showHideCancelApplication"
-      @reloadData="getApplicationDetails"
-    />
-
-    <v-container class="pt-12">
-      <div
-        class="bg-white application-info-border"
-        v-if="
-          applicationDetails.applicationStatus === ApplicationStatus.cancelled
-        "
-      >
-        <p>
-          <v-icon color="primary">mdi-information </v-icon
-          ><span class="pl-2 font-weight-bold">For your information</span>
-        </p>
-        <span class="mt-4"
-          >This application was cancelled on
-          {{ dateString(applicationDetails.applicationStatusUpdatedOn) }}.
-          <a class="text-primary" @click="viewApplication">
-            View application
-          </a>
-        </span>
-      </div>
-      <ApplicationDetails
-        v-if="applicationDetails?.applicationStatus"
-        :applicationDetails="applicationDetails"
+  <student-page-container :full-width="true" layout-template="centered">
+    <template #header>
+      <header-navigator
+        title="Back to Applications"
+        :routeLocation="{
+          name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+        }"
+        subTitle="Financial aid application"
+        ><template #buttons>
+          <v-btn color="primary" @click="toggle"
+            ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
+            Options
+          </v-btn>
+        </template>
+      </header-navigator>
+    </template>
+    <template #content>
+      <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
+      <CancelApplication
+        :showModal="showModal"
+        :applicationId="id"
+        @showHideCancelApplication="showHideCancelApplication"
+        @reloadData="getApplicationDetails"
       />
-      <ConfirmEditApplication ref="editApplicationModal" />
-    </v-container>
-  </div>
+      <v-container class="pt-12">
+        <div
+          class="bg-white application-info-border"
+          v-if="
+            applicationDetails.applicationStatus === ApplicationStatus.cancelled
+          "
+        >
+          <p>
+            <v-icon color="primary">mdi-information </v-icon
+            ><span class="pl-2 font-weight-bold">For your information</span>
+          </p>
+          <span class="mt-4"
+            >This application was cancelled on
+            {{ dateString(applicationDetails.applicationStatusUpdatedOn) }}.
+            <a class="text-primary" @click="viewApplication">
+              View application
+            </a>
+          </span>
+        </div>
+        <ApplicationDetails
+          v-if="applicationDetails?.applicationStatus"
+          :applicationDetails="applicationDetails"
+        />
+      </v-container>
+    </template>
+  </student-page-container>
+  <ConfirmEditApplication ref="editApplicationModal" />
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
@@ -55,13 +57,13 @@ import Menu from "primevue/menu";
 import { onMounted, ref, watch, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
-import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
 import { GetApplicationDataDto, ApplicationStatus } from "@/types";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 /**
  * added MenuType interface for prime vue component menu,
@@ -80,7 +82,7 @@ export default {
     CancelApplication,
     ApplicationDetails,
     ConfirmEditApplication,
-    RestrictionBanner,
+    HeaderNavigator,
   },
   props: {
     id: {

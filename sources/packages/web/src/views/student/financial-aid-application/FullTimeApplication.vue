@@ -1,46 +1,49 @@
 <template>
-  <restriction-banner />
-  <full-page-container>
-    <v-row class="center-container application-container mb-5 text-right">
-      <v-col md="12" class="ml-auto">
-        <v-btn
-          color="primary"
-          class="mr-5"
-          v-if="!notDraft"
-          v-show="!isFirstPage && !submittingApplication"
-          text
-          :loading="savingDraft"
-          @click="saveDraft()"
-        >
-          <v-icon left :size="25"> mdi-pencil </v-icon
-          >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
-        >
-        <v-btn
-          v-if="!isReadOnly"
-          :disabled="!isLastPage || submittingApplication"
-          v-show="!isFirstPage"
-          color="primary"
-          @click="wizardSubmit()"
-          >{{ submittingApplication ? "Submitting..." : "Submit application" }}
-          <span v-if="submittingApplication">
-            &nbsp;&nbsp;
-            <ProgressSpinner
-              style="width: 30px; height: 25px"
-              strokeWidth="10" /></span
-        ></v-btn>
-      </v-col>
-    </v-row>
-    <StudentApplication
-      :selectedForm="selectedForm"
-      :initialData="initialData"
-      :isReadOnly="isReadOnly"
-      :programYearId="programYearId"
-      @formLoadedCallback="loadForm"
-      @submitApplication="submitApplication"
-      @customEventCallback="customEventCallback"
-      @pageChanged="pageChanged"
-    />
-  </full-page-container>
+  <student-page-container>
+    <template #content>
+      <v-row class="center-container application-container mb-5 text-right">
+        <v-col md="12" class="ml-auto">
+          <v-btn
+            color="primary"
+            class="mr-5"
+            v-if="!notDraft"
+            v-show="!isFirstPage && !submittingApplication"
+            text
+            :loading="savingDraft"
+            @click="saveDraft()"
+          >
+            <v-icon left :size="25"> mdi-pencil </v-icon
+            >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
+          >
+          <v-btn
+            v-if="!isReadOnly"
+            :disabled="!isLastPage || submittingApplication"
+            v-show="!isFirstPage"
+            color="primary"
+            @click="wizardSubmit()"
+            >{{
+              submittingApplication ? "Submitting..." : "Submit application"
+            }}
+            <span v-if="submittingApplication">
+              &nbsp;&nbsp;
+              <ProgressSpinner
+                style="width: 30px; height: 25px"
+                strokeWidth="10" /></span
+          ></v-btn>
+        </v-col>
+      </v-row>
+      <StudentApplication
+        :selectedForm="selectedForm"
+        :initialData="initialData"
+        :isReadOnly="isReadOnly"
+        :programYearId="programYearId"
+        @formLoadedCallback="loadForm"
+        @submitApplication="submitApplication"
+        @customEventCallback="customEventCallback"
+        @pageChanged="pageChanged"
+      />
+    </template>
+  </student-page-container>
   <ConfirmEditApplication
     ref="editApplicationModal"
     @confirmEditApplication="editApplication"
@@ -67,7 +70,6 @@ import {
 } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
-import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
 import {
   PIR_OR_DATE_OVERLAP_ERROR,
   ACTIVE_STUDENT_RESTRICTION,
@@ -78,7 +80,6 @@ export default {
   components: {
     StudentApplication,
     ConfirmEditApplication,
-    RestrictionBanner,
   },
   props: {
     id: {

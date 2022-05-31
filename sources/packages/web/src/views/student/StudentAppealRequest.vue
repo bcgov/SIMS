@@ -1,12 +1,10 @@
 <template>
-  <v-container>
-    <!-- header area -->
-    <div class="mb-4">
+  <student-page-container>
+    <template #header>
       <header-navigator title="Student" subTitle="Request a Change" />
-    </div>
-    <!-- Request change view-->
-    <div v-if="showRequestForAppeal">
-      <full-page-container>
+    </template>
+    <template #content>
+      <div v-if="showRequestForAppeal">
         <!-- content area -->
         <div>
           <formio
@@ -24,11 +22,8 @@
             >Next</v-btn
           >
         </div>
-      </full-page-container>
-    </div>
-    <!-- Appeal view-->
-    <div v-else>
-      <full-page-container>
+      </div>
+      <div v-else>
         <body-header
           title="Fill in the field(s) below"
           subTitle="StudentAid BC will review your application change after you submit the fields below."
@@ -52,9 +47,9 @@
             >
           </template>
         </appeal-requests-form>
-      </full-page-container>
-    </div>
-  </v-container>
+      </div>
+    </template>
+  </student-page-container>
 </template>
 <script lang="ts">
 import { computed, ref } from "vue";
