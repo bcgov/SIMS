@@ -26,12 +26,10 @@ import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFo
 import { useToastMessage } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import StudentPageContainer from "@/components/layouts/student/StudentPageContainer.vue";
 
 export default {
   components: {
     NoticeOfAssessmentFormView,
-    StudentPageContainer,
   },
   props: {
     applicationId: {
