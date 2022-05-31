@@ -140,6 +140,15 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           );
         }),
       )
+      .orderBy(
+        `CASE 
+          WHEN EXISTS(${this.studentAppealRequestsService
+            .appealsByStatusQueryObject(StudentAppealStatus.Pending)
+            .getSql()}) THEN 1
+              ELSE 2
+            END`,
+      )
+      .addOrderBy("studentAppeal.submittedDate", "DESC")
       .getRawMany();
   }
 

@@ -3,18 +3,7 @@
  */
 export enum ScholasticStandingStatus {
   /**
-   * A scholastic standing change request was requested by
-   * the Institution and not yet approved by the Ministry.
-   */
-  Pending = "Pending",
-  /**
-   * A scholastic standing change request was approved
-   * by the Ministry.
+   * A scholastic standing will be always in approved state.
    */
   Approved = "Approved",
-  /**
-   * A scholastic standing change request was declined
-   * by the Ministry.
-   */
-  Declined = "Declined",
 }

@@ -38,30 +38,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * Get all pending and declined scholastic standings
-   * for an application.
-   * @param applicationId application id.
-   * @returns StudentScholasticStanding list.
-   */
-  getPendingAndDeniedScholasticStanding(
-    applicationId: number,
-  ): Promise<StudentScholasticStanding[]> {
-    return this.repo
-      .createQueryBuilder("scholasticStanding")
-      .select([
-        "scholasticStanding.id",
-        "scholasticStanding.scholasticStandingStatus",
-        "scholasticStanding.submittedDate",
-      ])
-      .innerJoin("scholasticStanding.application", "application")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("scholasticStanding.scholasticStandingStatus != :status", {
-        status: ScholasticStandingStatus.Approved,
-      })
-      .getMany();
-  }
-
-  /**
    * Save scholastic standing and create new assessment
    * for an application.
    * @param locationId location id.

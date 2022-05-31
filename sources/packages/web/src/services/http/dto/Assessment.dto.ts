@@ -2,7 +2,6 @@ import {
   Assessment,
   AssessmentTriggerType,
   OfferingIntensity,
-  ScholasticStandingStatus,
   StudentAppealStatus,
   StudentAssessmentStatus,
 } from "@/types";
@@ -12,7 +11,7 @@ export const ASSESSMENT_ALREADY_IN_PROGRESS = "ASSESSMENT_ALREADY_IN_PROGRESS";
 export interface RequestAssessmentSummaryAPIOutDTO {
   id: number;
   submittedDate: Date;
-  status: StudentAppealStatus | ScholasticStandingStatus;
+  status: StudentAppealStatus;
   triggerType: AssessmentTriggerType;
 }
 
