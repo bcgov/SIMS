@@ -7,7 +7,14 @@ CREATE TYPE sims.scholastic_standing_status_rollback AS ENUM ('Approved');
 ALTER TABLE
   sims.student_scholastic_standings
 ALTER COLUMN
-  scholastic_standing_status TYPE sims.scholastic_standing_status_rollback USING scholastic_standing_status :: text :: sims.scholastic_standing_status_rollback;
+  scholastic_standing_status TYPE sims.scholastic_standing_status_rollback USING (
+    CASE
+      scholastic_standing_status :: text
+      WHEN 'Pending' THEN 'Approved'
+      WHEN 'Declined' THEN 'Approved'
+      ELSE scholastic_standing_status :: text
+    END
+  ) :: sims.scholastic_standing_status_rollback;
 
 -- Remove the entire enum that is no longer being used.
 DROP TYPE sims.scholastic_standing_status;
