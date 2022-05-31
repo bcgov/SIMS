@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
   NotFoundException,
   Param,
   Patch,
@@ -225,5 +226,21 @@ export class ApplicationSystemController extends BaseController {
     }
 
     return { supportingData: supportingUser.supportingData };
+  }
+
+  /**
+   * Archives one or more applications when 43 days
+   * have passed the end of the study period.
+   */
+  @ApiOkResponse({
+    description: "All application(s) were successfully archived.",
+  })
+  @Patch("archive")
+  async archiveApplication(): Promise<void> {
+    try {
+      await this.applicationService.archiveApplication();
+    } catch (error) {
+      throw new InternalServerErrorException("Internal server error");
+    }
   }
 }

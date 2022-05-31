@@ -1362,4 +1362,32 @@ export class ApplicationService extends RecordDataModelService<Application> {
       }
     }
   }
+
+  /**
+   * Archives one or more applications when 43 days
+   * have passed the end of the study period.
+   */
+  async archiveApplication(): Promise<void> {
+    const applicationsToUpdate: Application[] = await this.repo
+      .createQueryBuilder("application")
+      .select("application")
+      .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
+      .where("application.applicationStatus = :completed", {
+        completed: ApplicationStatus.completed,
+      })
+      .andWhere(
+        "(CURRENT_DATE - offering.studyEndDate) > :numberOfDaysPassed",
+        {
+          numberOfDaysPassed: this.config.numberOfDaysPassed,
+        },
+      )
+      .andWhere("application.isArchived <> :isArchived", { isArchived: true })
+      .getMany();
+
+    applicationsToUpdate.forEach((data: Application) => {
+      data.isArchived = true;
+    });
+    await this.repo.save(applicationsToUpdate);
+  }
 }
