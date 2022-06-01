@@ -1368,7 +1368,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * have passed the end of the study period.
    */
   async archiveApplication(): Promise<void> {
-    const applicationsToUpdate: Application[] = await this.repo
+    const applicationsToArchive: Application[] = await this.repo
       .createQueryBuilder("application")
       .select("application")
       .leftJoin("application.currentAssessment", "currentAssessment")
@@ -1385,9 +1385,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.isArchived <> :isArchived", { isArchived: true })
       .getMany();
 
-    applicationsToUpdate.forEach((data: Application) => {
+    applicationsToArchive.forEach((data: Application) => {
       data.isArchived = true;
     });
-    await this.repo.save(applicationsToUpdate);
+    await this.repo.save(applicationsToArchive);
   }
 }
