@@ -6,7 +6,7 @@
     <template #header>
       <header-navigator
         title="Home"
-        subTitle="AccountActivity"
+        subTitle="Account Activity"
         :routeLocation="{ name: StudentRoutesConst.STUDENT_DASHBOARD }"
       />
     </template>
