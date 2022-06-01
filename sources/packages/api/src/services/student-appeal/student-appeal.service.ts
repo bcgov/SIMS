@@ -20,7 +20,11 @@ import {
   StudentAppealWithStatus,
 } from "./student-appeal.model";
 import { StudentAppealRequestsService } from "../student-appeal-request/student-appeal-request.service";
-import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
+import {
+  CustomNamedError,
+  mapFromRawAndEntities,
+  SortPriority,
+} from "../../utilities";
 import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,
@@ -144,8 +148,8 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         `CASE 
           WHEN EXISTS(${this.studentAppealRequestsService
             .appealsByStatusQueryObject(StudentAppealStatus.Pending)
-            .getSql()}) THEN 1
-              ELSE 2
+            .getSql()}) THEN ${SortPriority.Priority1}
+              ELSE ${SortPriority.Priority2}
             END`,
       )
       .addOrderBy("studentAppeal.submittedDate", "DESC")

@@ -8,7 +8,6 @@ import {
   AssessmentTriggerType,
   EducationProgramOffering,
   OfferingTypes,
-  ScholasticStandingStatus,
   StudentAssessment,
   User,
 } from "../../database/entities";
@@ -132,8 +131,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       scholasticStanding.application = { id: applicationId } as Application;
       scholasticStanding.submittedData = scholasticStandingData;
       scholasticStanding.submittedDate = now;
-      scholasticStanding.scholasticStandingStatus =
-        ScholasticStandingStatus.Approved;
       scholasticStanding.submittedBy = auditUser;
       scholasticStanding.creator = auditUser;
 
