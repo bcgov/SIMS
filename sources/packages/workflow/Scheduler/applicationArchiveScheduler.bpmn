@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
-  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
-  xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0henw76" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0henw76" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0">
   <bpmn:process id="application-archive-scheduler" name="Application Archive Scheduler" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="Run Every Day at 23PM-PST / 7AM-UTC">
       <bpmn:outgoing>Flow_13cbskt</bpmn:outgoing>
@@ -12,7 +7,7 @@
         <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">0 52 1 ? * * *</bpmn:timeCycle>
       </bpmn:timerEventDefinition>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_13cbskt" name="Apply Settings" sourceRef="StartEvent_1" targetRef="Activity_0s2rq16">
+    <bpmn:sequenceFlow id="Flow_13cbskt" name="Apply Settings" sourceRef="StartEvent_1" targetRef="ApplicationArchiveGetToken">
       <bpmn:extensionElements>
         <camunda:executionListener event="take">
           <camunda:script scriptFormat="javascript">var system = java.lang.System;
@@ -27,7 +22,7 @@ execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
         </camunda:executionListener>
       </bpmn:extensionElements>
     </bpmn:sequenceFlow>
-    <bpmn:serviceTask id="Activity_0s2rq16" name="Get Token">
+    <bpmn:serviceTask id="ApplicationArchiveGetToken" name="Get Token">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
@@ -51,8 +46,8 @@ execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
       <bpmn:incoming>Flow_13cbskt</bpmn:incoming>
       <bpmn:outgoing>Flow_1l3e4fc</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1l3e4fc" sourceRef="Activity_0s2rq16" targetRef="Activity_1a5hafq" />
-    <bpmn:serviceTask id="Activity_1a5hafq" name="Call API to archive applications">
+    <bpmn:sequenceFlow id="Flow_1l3e4fc" sourceRef="ApplicationArchiveGetToken" targetRef="ApplicationArchiveApiCall" />
+    <bpmn:serviceTask id="ApplicationArchiveApiCall" name="Call API to archive applications">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
@@ -62,7 +57,7 @@ execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
                 <camunda:entry key="Authorization">Bearer ${accessToken}</camunda:entry>
               </camunda:map>
             </camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
             <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/archive</camunda:inputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
@@ -74,7 +69,7 @@ execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
     <bpmn:endEvent id="Event_0743mx9">
       <bpmn:incoming>Flow_1gu217v</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1gu217v" sourceRef="Activity_1a5hafq" targetRef="Event_0743mx9" />
+    <bpmn:sequenceFlow id="Flow_1gu217v" sourceRef="ApplicationArchiveApiCall" targetRef="Event_0743mx9" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="application-archive-scheduler">
@@ -99,10 +94,10 @@ execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
           <dc:Bounds x="168" y="142" width="75" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_04fpzzu_di" bpmnElement="Activity_0s2rq16">
+      <bpmndi:BPMNShape id="Activity_04fpzzu_di" bpmnElement="ApplicationArchiveGetToken">
         <dc:Bounds x="320" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ftn58e_di" bpmnElement="Activity_1a5hafq">
+      <bpmndi:BPMNShape id="Activity_0ftn58e_di" bpmnElement="ApplicationArchiveApiCall">
         <dc:Bounds x="480" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0743mx9_di" bpmnElement="Event_0743mx9">
