@@ -1377,9 +1377,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         completed: ApplicationStatus.completed,
       })
       .andWhere(
-        "(CURRENT_DATE - offering.studyEndDate) > :numberOfDaysPassed",
+        "(CURRENT_DATE - offering.studyEndDate) > :applicationArchiveDays",
         {
-          numberOfDaysPassed: this.config.numberOfDaysPassed,
+          applicationArchiveDays: this.config.applicationArchiveDays,
         },
       )
       .andWhere("application.isArchived <> :isArchived", { isArchived: true })

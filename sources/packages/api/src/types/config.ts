@@ -32,7 +32,7 @@ export interface IConfig {
    *  when the difference between the current date and of study end date is greater than the assigned
    *  value.
    * */
-  numberOfDaysPassed: number;
+  applicationArchiveDays: number;
 }
 
 export interface IAuthConfig {

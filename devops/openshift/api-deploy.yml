@@ -230,8 +230,8 @@ objects:
                   value: ${BYPASS_APPLICATION_SUBMIT_VALIDATIONS}
                 - name: SWAGGER_ENABLED
                   value: ${SWAGGER_ENABLED}
-                - name: NUMBER_OF_DAYS_PASSED
-                  value: ${NUMBER_OF_DAYS_PASSED}
+                - name: APPLICATION_ARCHIVE_DAYS
+                  value: ${APPLICATION_ARCHIVE_DAYS}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -455,5 +455,5 @@ parameters:
     value: gc-notify-to-address
   - name: SWAGGER_ENABLED
     value: "true"
-  - name: NUMBER_OF_DAYS_PASSED
+  - name: APPLICATION_ARCHIVE_DAYS
     value: "43"
