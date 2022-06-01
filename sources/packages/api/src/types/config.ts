@@ -28,7 +28,7 @@ export interface IConfig {
    * TODO: Once the dev data cleanup is done, remove this environment variable from deployment config.
    * */
   bypassApplicationSubmitValidations: boolean;
-  /** This is a flag to set the number of days passed which will be used to archive an application
+  /** This is an attribute to set the number of days passed which will be used to archive an application
    *  when the difference between the current date and of study end date is greater than the assigned
    *  value.
    * */
