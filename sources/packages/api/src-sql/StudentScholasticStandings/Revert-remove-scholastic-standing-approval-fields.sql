@@ -1,4 +1,10 @@
 -- Revert scholastic standing approval fields.
+-- Add scholastic_standing_status column for sims.student_scholastic_standings and set type to scholastic_standing_status.
+ALTER TABLE
+  sims.student_scholastic_standings
+ADD
+  COLUMN IF NOT EXISTS scholastic_standing_status sims.scholastic_standing_status NOT NULL DEFAULT 'Approved';
+
 -- Create approved_data.
 ALTER TABLE
   sims.student_scholastic_standings
@@ -11,7 +17,9 @@ COMMENT ON COLUMN sims.student_scholastic_standings.approved_data IS 'Dynamic fo
 ALTER TABLE
   sims.student_scholastic_standings
 ADD
-  COLUMN IF NOT EXISTS assessed_by INT REFERENCES sims.users(id) ON DELETE CASCADE;
+  COLUMN IF NOT EXISTS assessed_by INT REFERENCES sims.users(id) ON DELETE
+SET
+  NULL;
 
 COMMENT ON COLUMN sims.student_scholastic_standings.assessed_by IS 'Ministry user that approved or denied the appeal.';
 

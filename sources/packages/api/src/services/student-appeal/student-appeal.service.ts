@@ -116,10 +116,9 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   async getPendingAndDeniedAppeals(
     applicationId: number,
   ): Promise<PendingAndDeniedAppeals[]> {
-    return this.repo
+    const query = await this.repo
       .createQueryBuilder("studentAppeal")
-      .select("studentAppeal.id", "id")
-      .addSelect("studentAppeal.submittedDate", "submittedDate")
+      .select(["studentAppeal.id", "studentAppeal.submittedDate"])
       .addSelect(
         `CASE
             WHEN EXISTS(${this.studentAppealRequestsService
@@ -153,7 +152,8 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
             END`,
       )
       .addOrderBy("studentAppeal.submittedDate", "DESC")
-      .getRawMany();
+      .getRawAndEntities();
+    return mapFromRawAndEntities<PendingAndDeniedAppeals>(query, "status");
   }
 
   /**

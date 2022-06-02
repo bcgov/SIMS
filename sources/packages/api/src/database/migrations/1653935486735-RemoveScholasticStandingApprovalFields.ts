@@ -12,19 +12,13 @@ export class RemoveScholasticStandingApprovalFields1653935486735
       ),
     );
     await queryRunner.query(
-      getSQLFileData(
-        "Remove-scholastic-standing-status-enum-and-col.sql",
-        "Types",
-      ),
+      getSQLFileData("Remove-scholastic-standing-status-enum.sql", "Types"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData(
-        "Revert-scholastic-standing-status-enum-and-col.sql",
-        "Types",
-      ),
+      getSQLFileData("Revert-scholastic-standing-status-enum.sql", "Types"),
     );
     await queryRunner.query(
       getSQLFileData(
