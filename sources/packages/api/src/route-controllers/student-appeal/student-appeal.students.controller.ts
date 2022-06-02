@@ -62,7 +62,8 @@ export class StudentAppealStudentsController extends BaseController {
       "Application either not found or not eligible to request an appeal.",
   })
   @ApiUnprocessableEntityResponse({
-    description: "There is an existing appeal for this student.",
+    description:
+      "There is either an existing appeal for this student or this application is no longer eligible to request changes.",
   })
   @ApiBadRequestResponse({
     description: "Not able to submit student appeal due to invalid request.",

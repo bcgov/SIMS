@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  InternalServerErrorException,
   NotFoundException,
   Param,
   Patch,
@@ -17,7 +16,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   SupportingUserService,
 } from "../../services";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   UpdateApplicationStatusDto,
@@ -34,6 +33,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { IUserToken } from "../../auth/userToken.interface";
 
 /**
  * Allow system access to the application data.
@@ -232,15 +232,8 @@ export class ApplicationSystemController extends BaseController {
    * Archives one or more applications when 43 days
    * have passed the end of the study period.
    */
-  @ApiOkResponse({
-    description: "All application(s) were successfully archived.",
-  })
   @Patch("archive")
-  async archiveApplication(): Promise<void> {
-    try {
-      await this.applicationService.archiveApplication();
-    } catch (error) {
-      throw new InternalServerErrorException("Internal server error");
-    }
+  async archiveApplications(@UserToken() userToken: IUserToken): Promise<void> {
+    await this.applicationService.archiveApplications(userToken.userId);
   }
 }

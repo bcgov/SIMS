@@ -1366,28 +1366,32 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Archives one or more applications when 43 days
    * have passed the end of the study period.
+   * @param auditUserId user making changes to table.
    */
-  async archiveApplication(): Promise<void> {
-    const applicationsToArchive: Application[] = await this.repo
+  async archiveApplications(auditUserId: number): Promise<void> {
+    const auditUser = { id: auditUserId } as User;
+
+    // Build sql statement to get all application ids to archive
+    const applicationsToArchive = this.repo
       .createQueryBuilder("application")
-      .select("application")
+      .select("application.id")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
-      .where("application.applicationStatus = :completed", {
-        completed: ApplicationStatus.completed,
-      })
+      .where("application.applicationStatus = :completed")
       .andWhere(
         "(CURRENT_DATE - offering.studyEndDate) > :applicationArchiveDays",
-        {
-          applicationArchiveDays: this.config.applicationArchiveDays,
-        },
       )
-      .andWhere("application.isArchived <> :isArchived", { isArchived: true })
-      .getMany();
+      .andWhere("application.isArchived <> :isApplicationArchived")
+      .getSql();
 
-    applicationsToArchive.forEach((data: Application) => {
-      data.isArchived = true;
-    });
-    await this.repo.save(applicationsToArchive);
+    this.repo
+      .createQueryBuilder()
+      .update(Application)
+      .set({ isArchived: true, modifier: auditUser })
+      .where(`applications.id IN (${applicationsToArchive})`)
+      .setParameter("completed", ApplicationStatus.completed)
+      .setParameter("applicationArchiveDays", 43)
+      .setParameter("isApplicationArchived", true)
+      .execute();
   }
 }

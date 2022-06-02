@@ -295,11 +295,11 @@ export class Application extends RecordDataModel {
   craIncomeVerifications?: CRAIncomeVerification[];
 
   /**
-   * Flag to represent when an application is archived
+   * Flag to represent when an application is archived.
    */
   @Column({
     name: "is_archived",
-    nullable: true,
+    nullable: false,
   })
   isArchived: boolean;
 }
