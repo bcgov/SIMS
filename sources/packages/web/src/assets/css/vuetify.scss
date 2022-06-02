@@ -4,17 +4,24 @@
   text-transform: none !important;
 }
 
+.alert_banner_radius {
+  border-radius: 8px;
+}
+
 .v-alert.text-success {
+  @extend .alert_banner_radius;
   background-color: $banner-background-success;
   border: 3px solid $banner-color-success;
 }
 
 .v-alert.text-warning {
+  @extend .alert_banner_radius;
   background-color: $banner-background-warning;
   border: 3px solid $banner-color-warning;
 }
 
 .v-alert.text-error {
+  @extend .alert_banner_radius;
   background-color: $banner-background-error;
   border: 3px solid $banner-color-error;
 }

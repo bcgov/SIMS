@@ -2,7 +2,7 @@
   <banner
     class="mb-6"
     v-if="showBanner"
-    :color="bannerColor"
+    :type="bannerType"
     :summary="sinValidStatus.message"
   >
   </banner>
@@ -12,6 +12,7 @@
 import { computed } from "vue";
 import { useStudentStore } from "@/composables";
 import { SINStatusEnum } from "@/types";
+import { BannerTypes } from "@/components/generic/Banner.models";
 export default {
   setup() {
     const { sinValidStatus, hasStudentAccount } = useStudentStore();
@@ -23,18 +24,18 @@ export default {
       );
     });
 
-    const bannerColor = computed(() => {
+    const bannerType = computed(() => {
       switch (sinValidStatus.value.sinStatus) {
         case SINStatusEnum.PENDING:
-          return "warning";
+          return BannerTypes.Warning;
         case SINStatusEnum.INVALID:
-          return "error";
+          return BannerTypes.Error;
         default:
           return "";
       }
     });
 
-    return { showBanner, sinValidStatus, bannerColor };
+    return { showBanner, sinValidStatus, bannerType };
   },
 };
 </script>

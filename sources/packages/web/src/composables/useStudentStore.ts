@@ -1,6 +1,9 @@
-import { SINValidStatus } from "@/store/modules/student/student";
 import { computed } from "vue";
 import { Store, useStore } from "vuex";
+import {
+  SINValidStatus,
+  StudentRestriction,
+} from "@/store/modules/student/student";
 
 export function useStudentStore(rootStore?: Store<any>) {
   const store = rootStore ?? useStore();
@@ -20,10 +23,30 @@ export function useStudentStore(rootStore?: Store<any>) {
     await store.dispatch("student/setHasStudentAccount", hasAccount);
   };
 
+  const updateRestrictions = async () => {
+    await store.dispatch("student/updateStudentRestrictions");
+  };
+
+  const hasRestrictionError = computed<boolean>(() => {
+    return store.getters["student/hasRestrictionError"];
+  });
+
+  const hasRestrictionWarning = computed<boolean>(() => {
+    return store.getters["student/hasRestrictionWarning"];
+  });
+
+  const activeRestrictions = computed<StudentRestriction[]>(() => {
+    return store.getters["student/getRestrictions"];
+  });
+
   return {
     updateProfileData,
     sinValidStatus,
     setHasStudentAccount,
     hasStudentAccount,
+    updateRestrictions,
+    hasRestrictionError,
+    hasRestrictionWarning,
+    activeRestrictions,
   };
 }

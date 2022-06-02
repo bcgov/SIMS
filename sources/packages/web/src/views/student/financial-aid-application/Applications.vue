@@ -3,7 +3,7 @@
     <v-btn
       color="primary"
       class="p-button-raised float-right"
-      :disabled="hasRestriction || sinValidStatus !== SINStatusEnum.VALID"
+      :disabled="sinValidStatus !== SINStatusEnum.VALID"
       @click="goToStudentApplication()"
     >
       <v-icon size="25">mdi-text-box-plus</v-icon>
@@ -20,11 +20,6 @@ import { SINStatusEnum } from "@/types";
 import { computed } from "vue";
 
 export default {
-  props: {
-    hasRestriction: {
-      type: Boolean,
-    },
-  },
   setup() {
     const router = useRouter();
     const toast = useToastMessage();

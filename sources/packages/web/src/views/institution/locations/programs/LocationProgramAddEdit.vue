@@ -8,12 +8,12 @@
   <div class="mt-4 mb-2">
     <banner
       v-if="initialData.hasOfferings"
-      color="success"
+      :type="BannerTypes.Success"
       header="Students have applied financial aid for this program"
-      summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you’d like to edit the other fields."
+      summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you'd like to edit the other fields."
     >
       <template #actions>
-        <v-btn color="success" @click="createNewProgram()">
+        <v-btn color="success" @click="createNewProgram">
           Create program
         </v-btn>
       </template>
@@ -41,7 +41,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types";
 import { useToastMessage } from "@/composables";
 import { AuthService } from "@/services/AuthService";
-
+import { BannerTypes } from "@/components/generic/Banner.models";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 
 export default {
@@ -237,6 +237,7 @@ export default {
       institution,
       getRouteLocation,
       getSubtitle,
+      BannerTypes,
     };
   },
 };

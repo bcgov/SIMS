@@ -1,60 +1,51 @@
 <template>
-  <v-container>
-    <!-- header area -->
-    <div class="mb-4">
+  <student-page-container>
+    <template #header>
       <header-navigator title="Student" subTitle="Request a Change" />
-    </div>
-    <!-- Request change view-->
+    </template>
+
     <div v-if="showRequestForAppeal">
-      <full-page-container>
-        <!-- content area -->
-        <div>
-          <formio
-            formName="studentrequestchange"
-            @loaded="formLoaded"
-            @submitted="submitRequest"
-          ></formio>
-        </div>
-        <!-- action area -->
-        <div class="mt-4">
-          <v-btn
-            @click="submitStudentRequest"
-            color="primary"
-            class="float-right"
-            >Next</v-btn
-          >
-        </div>
-      </full-page-container>
-    </div>
-    <!-- Appeal view-->
-    <div v-else>
-      <full-page-container>
-        <body-header
-          title="Fill in the field(s) below"
-          subTitle="StudentAid BC will review your application change after you submit the fields below."
-        ></body-header>
-        <appeal-requests-form
-          :studentAppealRequests="appealRequestsForms"
-          @submitted="submitAppeal"
+      <!-- content area -->
+      <div>
+        <formio
+          formName="studentrequestchange"
+          @loaded="formLoaded"
+          @submitted="submitRequest"
+        ></formio>
+      </div>
+      <!-- action area -->
+      <div class="mt-4">
+        <v-btn @click="submitStudentRequest" color="primary" class="float-right"
+          >Next</v-btn
         >
-          <template #actions="{ submit }">
-            <v-row justify="center" class="m-2">
-              <v-btn
-                color="primary"
-                variant="outlined"
-                class="mr-2"
-                @click="backToRequestForm"
-                >Cancel</v-btn
-              >
-              <v-btn color="primary" class="ml-2" @click="submit"
-                >Submit</v-btn
-              ></v-row
-            >
-          </template>
-        </appeal-requests-form>
-      </full-page-container>
+      </div>
     </div>
-  </v-container>
+    <div v-else>
+      <body-header
+        title="Fill in the field(s) below"
+        subTitle="StudentAid BC will review your application change after you submit the fields below."
+      ></body-header>
+      <appeal-requests-form
+        :studentAppealRequests="appealRequestsForms"
+        @submitted="submitAppeal"
+      >
+        <template #actions="{ submit }">
+          <v-row justify="center" class="m-2">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              class="mr-2"
+              @click="backToRequestForm"
+              >Cancel</v-btn
+            >
+            <v-btn color="primary" class="ml-2" @click="submit"
+              >Submit</v-btn
+            ></v-row
+          >
+        </template>
+      </appeal-requests-form>
+    </div>
+  </student-page-container>
 </template>
 <script lang="ts">
 import { computed, ref } from "vue";
