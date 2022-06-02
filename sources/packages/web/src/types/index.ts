@@ -31,7 +31,6 @@ export * from "@/types/contracts/RestrictionContract";
 export * from "@/types/contracts/PaginationDto";
 export * from "@/types/contracts/AssessmentStatus";
 export * from "@/types/contracts/DesignationAgreementStatus";
-export * from "@/types/contracts/ScholasticStandingStatus";
 export * from "@/types/contracts/StudentAppealStatus";
 export * from "@/types/contracts/StudentAppealContract";
 export * from "@/types/contracts/AssessmentTrigger";

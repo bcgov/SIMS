@@ -4,16 +4,8 @@ import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
-import {
-  StudentAppealService,
-  StudentAssessmentService,
-  StudentScholasticStandingsService,
-} from "../../services";
-import {
-  AssessmentTriggerType,
-  ScholasticStandingStatus,
-  StudentAppealStatus,
-} from "../../database/entities";
+import { StudentAppealService, StudentAssessmentService } from "../../services";
+import { AssessmentTriggerType } from "../../database/entities";
 import {
   AssessmentHistorySummaryAPIOutDTO,
   AssessmentNOAAPIOutDTO,
@@ -33,7 +25,6 @@ import { AssessmentControllerService } from "./assessment.controller.service";
 export class AssessmentAESTController extends BaseController {
   constructor(
     private readonly studentAppealService: StudentAppealService,
-    private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly assessmentControllerService: AssessmentControllerService,
   ) {
@@ -42,9 +33,8 @@ export class AssessmentAESTController extends BaseController {
 
   /**
    * Method to get all requested assessments for a student
-   * application, i.e, this will fetch the combination of
-   * pending and denied student appeal and scholastic
-   * standings for an application.
+   * application, i.e, this will fetch all pending and denied
+   * student appeal for an application.
    * @param applicationId, application number.
    * @returns assessment requests for a student application.
    */
@@ -52,46 +42,14 @@ export class AssessmentAESTController extends BaseController {
   async getRequestedAssessmentSummary(
     @Param("applicationId") applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    const [studentAppeal, studentScholasticStandings] = await Promise.all([
-      this.studentAppealService.getPendingAndDeniedAppeals(applicationId),
-      this.studentScholasticStandingsService.getPendingAndDeniedScholasticStanding(
-        applicationId,
-      ),
-    ]);
-
-    const requestedAssessments = [
-      ...studentAppeal.map((appeals) => ({
-        id: appeals.id,
-        submittedDate: appeals.submittedDate,
-        status: appeals.status,
-        triggerType: AssessmentTriggerType.StudentAppeal,
-      })),
-      ...studentScholasticStandings.map((scholasticStanding) => ({
-        id: scholasticStanding.id,
-        submittedDate: scholasticStanding.submittedDate,
-        status: scholasticStanding.scholasticStandingStatus,
-        triggerType: AssessmentTriggerType.ScholasticStandingChange,
-      })),
-    ];
-
-    // status and submitted date sorting
-    return requestedAssessments.sort((first, second) => {
-      if (
-        first.status === second.status &&
-        first.submittedDate > second.submittedDate
-      ) {
-        return -1;
-      }
-      if (
-        (first.status === StudentAppealStatus.Pending &&
-          second.status === StudentAppealStatus.Declined) ||
-        (first.status === ScholasticStandingStatus.Pending &&
-          second.status === ScholasticStandingStatus.Declined)
-      ) {
-        return -1;
-      }
-      return 1;
-    });
+    const studentAppeal =
+      await this.studentAppealService.getPendingAndDeniedAppeals(applicationId);
+    return studentAppeal.map((appeals) => ({
+      id: appeals.id,
+      submittedDate: appeals.submittedDate,
+      status: appeals.status,
+      triggerType: AssessmentTriggerType.StudentAppeal,
+    }));
   }
 
   /**
