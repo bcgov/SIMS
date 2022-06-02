@@ -1,6 +1,9 @@
 <template>
-  <v-container>
-    <header-navigator title="Student" subTitle="File uploader" />
+  <student-page-container>
+    <template #header>
+      <header-navigator title="Student" subTitle="File uploader" />
+    </template>
+
     <div class="row">
       <div class="col-xs-6 col-md-7">
         <full-page-container>
@@ -14,7 +17,7 @@
         <StudentDocumentList :reload="reloadDocuments" />
       </div>
     </div>
-  </v-container>
+  </student-page-container>
 </template>
 
 <script lang="ts">

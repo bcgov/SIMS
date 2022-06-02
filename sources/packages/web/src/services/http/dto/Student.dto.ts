@@ -1,5 +1,8 @@
-import { FileOriginType, StudentPDStatus } from "@/types";
-import { RestrictionNotificationType } from "@/types/contracts/RestrictionContracts";
+import {
+  FileOriginType,
+  StudentPDStatus,
+  RestrictionNotificationType,
+} from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { AddressDetailsFormAPIDTO } from "./Common.dto";
 
@@ -31,6 +34,10 @@ export interface StudentProfileAPIOutDTO {
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
   pdStatus: StudentPDStatus;
+}
+
+export interface AESTStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
+  hasRestriction: boolean;
 }
 
 /**

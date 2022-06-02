@@ -1,14 +1,7 @@
 <template>
-  <full-page-container>
+  <student-page-container>
     <template #header>
       <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
-    </template>
-    <template #alerts>
-      <RestrictionBanner
-        v-if="hasRestriction"
-        :restrictionMessage="restrictionMessage"
-      />
-      <CheckValidSINBanner />
     </template>
     <formio
       formName="studentinformation"
@@ -16,7 +9,7 @@
       @submitted="submitted"
       @customEvent="showPDApplicationModal"
     ></formio>
-  </full-page-container>
+  </student-page-container>
   <PDStatusApplicationModal max-width="600" ref="pdStatusApplicationModal" />
 </template>
 
@@ -35,8 +28,6 @@ import {
   StudentPDStatus,
 } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
-import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
 import { StudentService } from "@/services/StudentService";
 import {
@@ -64,8 +55,6 @@ type StudentFormData = Pick<
 
 export default {
   components: {
-    RestrictionBanner,
-    CheckValidSINBanner,
     PDStatusApplicationModal,
   },
   props: {
@@ -84,9 +73,6 @@ export default {
     const { bcscParsedToken } = useAuthBCSC();
     const { dateOnlyLongString } = useFormatters();
     const studentStore = useStudentStore();
-    // TODO: update this in restriction UI ticket
-    const hasRestriction = ref(false);
-    const restrictionMessage = ref("");
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
 
     const getStudentInfo = async () => {
@@ -187,8 +173,6 @@ export default {
       showApplyPDButton,
       studentAllInfo,
       showPendingStatus,
-      hasRestriction,
-      restrictionMessage,
       pdStatusApplicationModal,
       showPDApplicationModal,
     };

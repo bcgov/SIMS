@@ -12,6 +12,7 @@ import NotificationsSettings from "@/views/student/NotificationsSettings.vue";
 import StudentApplicationSummary from "@/views/student/StudentApplicationSummary.vue";
 import StudentApplicationDetails from "@/views/student/StudentApplicationDetails.vue";
 import StudentAppealRequest from "@/views/student/StudentAppealRequest.vue";
+import StudentAccountActivity from "@/views/student/StudentAccountActivity.vue";
 
 import {
   StudentRoutesConst,
@@ -142,6 +143,14 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.RequestChange,
         name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
         component: StudentAppealRequest,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentAccountActivity,
+        name: StudentRoutesConst.STUDENT_ACCOUNT_ACTIVITY,
+        component: StudentAccountActivity,
         meta: {
           clientType: ClientIdType.Student,
         },

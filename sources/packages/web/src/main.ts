@@ -40,6 +40,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import StudentPageContainer from "@/components/layouts/student/StudentPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import Banner from "@/components/generic/Banner.vue";
 import formio from "@/components/generic/formio.vue";
@@ -135,6 +136,7 @@ AppConfigService.shared.init().then(() => {
     .component("BodyHeader", BodyHeader)
     .component("ContentGroup", ContentGroup)
     .component("FullPageContainer", FullPageContainer)
+    .component("StudentPageContainer", StudentPageContainer)
     .component("HeaderNavigator", HeaderNavigator)
     .component("Banner", Banner)
     .component("formio", formio)

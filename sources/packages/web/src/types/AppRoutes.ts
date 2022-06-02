@@ -10,6 +10,7 @@ export enum AppRoutes {
   StudentApplicationDetails = "application/:id",
   Assessment = "application/:applicationId/assessment/:assessmentId",
   RequestChange = "request-change",
+  StudentAccountActivity = "student-account-activity",
   // Institution
   InstitutionRoot = "/institution",
   InstitutionDashboard = "dashboard",

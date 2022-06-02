@@ -1,19 +1,19 @@
 <template>
   <v-container :fluid="fullWidth">
-    <header class="mb-4">
+    <header class="mb-2">
       <slot name="header"></slot>
     </header>
     <slot name="alerts"></slot>
     <template v-if="layoutTemplate === LayoutTemplates.CenteredCard">
       <v-row justify="center">
-        <v-card class="p-4 w-100" :class="widthClass">
+        <v-card class="mt-4 p-4 w-100" :class="widthClass">
           <slot></slot>
         </v-card>
       </v-row>
     </template>
     <template v-else-if="layoutTemplate === LayoutTemplates.Centered">
       <v-row justify="center">
-        <div class="w-100" :class="widthClass">
+        <div class="mt-4 w-100" :class="widthClass">
           <slot></slot>
         </div>
       </v-row>
@@ -23,11 +23,7 @@
 
 <script lang="ts">
 import { computed } from "vue";
-
-enum LayoutTemplates {
-  Centered = "centered",
-  CenteredCard = "centered-card",
-}
+import { LayoutTemplates } from "@/types";
 
 export default {
   props: {
