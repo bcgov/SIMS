@@ -14,12 +14,12 @@ import {
 } from "../../database/entities";
 import { CustomNamedError } from "../../utilities";
 import {
-  APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../application/application.service";
 import { ScholasticStanding } from "./student-scholastic-standings.model";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 
 /**
  * Manages the student scholastic standings related operations.

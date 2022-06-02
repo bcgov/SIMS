@@ -25,7 +25,6 @@ import {
 } from "../../auth/decorators";
 import {
   ApplicationService,
-  APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_NOT_FOUND,
   ASSESSMENT_ALREADY_IN_PROGRESS,
   FormService,
@@ -57,6 +56,7 @@ import {
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 
 /**
  * Institution location controller for institutions Client.

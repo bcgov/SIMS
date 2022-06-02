@@ -66,7 +66,7 @@ import { useToastMessage } from "@/composables";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   INVALID_APPLICATION_NUMBER,
-} from "@/services/http/dto";
+} from "@/constants";
 
 // Model for student request change form.
 interface StudentRequestSelectedForms {

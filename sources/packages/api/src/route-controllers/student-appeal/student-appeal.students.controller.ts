@@ -10,7 +10,6 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
-  APPLICATION_CHANGE_NOT_ELIGIBLE,
   FormService,
   StudentAppealService,
 } from "../../services";
@@ -35,7 +34,10 @@ import {
   ApiProcessError,
   DryRunSubmissionResult,
 } from "../../types";
-import { INVALID_APPLICATION_NUMBER } from "../../constants";
+import {
+  APPLICATION_CHANGE_NOT_ELIGIBLE,
+  INVALID_APPLICATION_NUMBER,
+} from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 
 @AllowAuthorizedParty(AuthorizedParties.student)

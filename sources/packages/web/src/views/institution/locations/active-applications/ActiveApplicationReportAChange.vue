@@ -25,13 +25,13 @@ import {
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
 import {
-  APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ScholasticStandingDataAPIInDTO,
 } from "@/services/http/dto/ScholasticStanding.dto";
 import { useToastMessage } from "@/composables";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
 
 export default {
   props: {
