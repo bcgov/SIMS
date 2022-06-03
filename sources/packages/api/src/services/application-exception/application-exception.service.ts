@@ -11,7 +11,7 @@ import {
   Student,
   User,
 } from "../../database/entities";
-import { CustomNamedError } from "src/utilities";
+import { CustomNamedError } from "../../utilities";
 import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
