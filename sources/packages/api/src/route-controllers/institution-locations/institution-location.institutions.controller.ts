@@ -56,6 +56,7 @@ import {
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 
 /**
  * Institution location controller for institutions Client.
@@ -289,6 +290,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
           case APPLICATION_NOT_FOUND:
           case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
           case ASSESSMENT_ALREADY_IN_PROGRESS:
+          case APPLICATION_CHANGE_NOT_ELIGIBLE:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );

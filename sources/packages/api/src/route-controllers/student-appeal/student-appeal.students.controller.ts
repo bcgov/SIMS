@@ -34,7 +34,10 @@ import {
   ApiProcessError,
   DryRunSubmissionResult,
 } from "../../types";
-import { INVALID_APPLICATION_NUMBER } from "../../constants";
+import {
+  APPLICATION_CHANGE_NOT_ELIGIBLE,
+  INVALID_APPLICATION_NUMBER,
+} from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -61,7 +64,8 @@ export class StudentAppealStudentsController extends BaseController {
       "Application either not found or not eligible to request an appeal.",
   })
   @ApiUnprocessableEntityResponse({
-    description: "There is an existing appeal for this student.",
+    description:
+      "There is either an existing appeal for this student or this application is no longer eligible to request changes.",
   })
   @ApiBadRequestResponse({
     description: "Not able to submit student appeal due to invalid request.",
@@ -72,16 +76,26 @@ export class StudentAppealStudentsController extends BaseController {
     @Body() payload: StudentAppealAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const application = this.applicationService.getApplicationToRequestAppeal(
-      userToken.userId,
-      undefined,
-      applicationId,
-    );
+    const application =
+      await this.applicationService.getApplicationToRequestAppeal(
+        userToken.userId,
+        undefined,
+        applicationId,
+      );
     if (!application) {
       throw new NotFoundException(
         new ApiProcessError(
           "Given application either does not exist or is not complete to request change.",
           INVALID_APPLICATION_NUMBER,
+        ),
+      );
+    }
+
+    if (application.isArchived) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "This application is no longer eligible to request changes.",
+          APPLICATION_CHANGE_NOT_ELIGIBLE,
         ),
       );
     }
