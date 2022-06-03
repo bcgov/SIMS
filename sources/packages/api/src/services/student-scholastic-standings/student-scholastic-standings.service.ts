@@ -8,7 +8,6 @@ import {
   AssessmentTriggerType,
   EducationProgramOffering,
   OfferingTypes,
-  ScholasticStandingStatus,
   StudentAssessment,
   User,
 } from "../../database/entities";
@@ -19,6 +18,7 @@ import {
 } from "../application/application.service";
 import { ScholasticStanding } from "./student-scholastic-standings.model";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 
 /**
  * Manages the student scholastic standings related operations.
@@ -35,30 +35,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     super(connection.getRepository(StudentScholasticStanding));
     this.applicationRepo = connection.getRepository(Application);
     this.offeringRepo = connection.getRepository(EducationProgramOffering);
-  }
-
-  /**
-   * Get all pending and declined scholastic standings
-   * for an application.
-   * @param applicationId application id.
-   * @returns StudentScholasticStanding list.
-   */
-  getPendingAndDeniedScholasticStanding(
-    applicationId: number,
-  ): Promise<StudentScholasticStanding[]> {
-    return this.repo
-      .createQueryBuilder("scholasticStanding")
-      .select([
-        "scholasticStanding.id",
-        "scholasticStanding.scholasticStandingStatus",
-        "scholasticStanding.submittedDate",
-      ])
-      .innerJoin("scholasticStanding.application", "application")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("scholasticStanding.scholasticStandingStatus != :status", {
-        status: ScholasticStandingStatus.Approved,
-      })
-      .getMany();
   }
 
   /**
@@ -90,6 +66,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       throw new CustomNamedError(
         "Application Not found or invalid current assessment or offering.",
         APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (application.isArchived) {
+      throw new CustomNamedError(
+        "This application is no longer eligible to request changes.",
+        APPLICATION_CHANGE_NOT_ELIGIBLE,
       );
     }
 
@@ -156,8 +139,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       scholasticStanding.application = { id: applicationId } as Application;
       scholasticStanding.submittedData = scholasticStandingData;
       scholasticStanding.submittedDate = now;
-      scholasticStanding.scholasticStandingStatus =
-        ScholasticStandingStatus.Approved;
       scholasticStanding.submittedBy = auditUser;
       scholasticStanding.creator = auditUser;
 
@@ -179,6 +160,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       application.currentAssessment = {
         id: scholasticStanding.studentAssessment.id,
       } as StudentAssessment;
+
+      // Set archive to true
+      application.isArchived = true;
 
       await transactionalEntityManager
         .getRepository(Application)

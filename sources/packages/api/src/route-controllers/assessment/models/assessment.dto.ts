@@ -3,7 +3,6 @@ import {
   Assessment,
   AssessmentTriggerType,
   OfferingIntensity,
-  ScholasticStandingStatus,
   StudentAppealStatus,
 } from "../../../database/entities";
 import { ApiProperty } from "@nestjs/swagger";
@@ -11,7 +10,7 @@ import { ApiProperty } from "@nestjs/swagger";
 export class RequestAssessmentSummaryAPIOutDTO {
   id: number;
   submittedDate: Date;
-  status: StudentAppealStatus | ScholasticStandingStatus;
+  status: StudentAppealStatus;
   triggerType: AssessmentTriggerType;
 }
 

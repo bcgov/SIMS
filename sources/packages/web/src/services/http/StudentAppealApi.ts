@@ -14,10 +14,14 @@ export class StudentAppealApi extends HttpBaseClient {
     applicationId: number,
     studentAppeal: StudentAppealAPIInDTO,
   ): Promise<void> {
-    await this.postCall<StudentAppealAPIInDTO>(
-      this.addClientRoot(`appeal/application/${applicationId}`),
-      studentAppeal,
-    );
+    try {
+      await this.postCall<StudentAppealAPIInDTO>(
+        this.addClientRoot(`appeal/application/${applicationId}`),
+        studentAppeal,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   async getStudentAppealWithRequests(

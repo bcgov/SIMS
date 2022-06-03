@@ -7,13 +7,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import {
-  Application,
-  Note,
-  ScholasticStandingStatus,
-  StudentAssessment,
-  User,
-} from ".";
+import { Application, Note, StudentAssessment, User } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 
@@ -83,17 +77,6 @@ export class StudentScholasticStanding extends RecordDataModel {
     nullable: true,
   })
   approvedData?: any;
-  /**
-   * Status of the current request [Pending, Approved, Denied].
-   */
-  @Column({
-    name: "scholastic_standing_status",
-    type: "enum",
-    enum: ScholasticStandingStatus,
-    enumName: "ScholasticStandingStatus",
-    nullable: false,
-  })
-  scholasticStandingStatus: ScholasticStandingStatus;
   /**
    * Date that the Ministry approved or denied the scholastic standing.
    */

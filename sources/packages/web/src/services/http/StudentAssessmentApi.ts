@@ -14,7 +14,7 @@ export class StudentAssessmentApi extends HttpBaseClient {
    * i.e, this will fetch the combination of pending and denied
    * student appeal and scholastic standings for an application.
    * @param applicationId, application number.
-   * @returns RequestAssessmentSummaryDTO list.
+   * @returns Request assessment summary list.
    */
   public async getAssessmentRequest(
     applicationId: number,

@@ -20,7 +20,11 @@ import {
   StudentAppealWithStatus,
 } from "./student-appeal.model";
 import { StudentAppealRequestsService } from "../student-appeal-request/student-appeal-request.service";
-import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
+import {
+  CustomNamedError,
+  mapFromRawAndEntities,
+  SortPriority,
+} from "../../utilities";
 import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,
@@ -112,10 +116,9 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   async getPendingAndDeniedAppeals(
     applicationId: number,
   ): Promise<PendingAndDeniedAppeals[]> {
-    return this.repo
+    const query = await this.repo
       .createQueryBuilder("studentAppeal")
-      .select("studentAppeal.id", "id")
-      .addSelect("studentAppeal.submittedDate", "submittedDate")
+      .select(["studentAppeal.id", "studentAppeal.submittedDate"])
       .addSelect(
         `CASE
             WHEN EXISTS(${this.studentAppealRequestsService
@@ -140,7 +143,17 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           );
         }),
       )
-      .getRawMany();
+      .orderBy(
+        `CASE 
+          WHEN EXISTS(${this.studentAppealRequestsService
+            .appealsByStatusQueryObject(StudentAppealStatus.Pending)
+            .getSql()}) THEN ${SortPriority.Priority1}
+              ELSE ${SortPriority.Priority2}
+            END`,
+      )
+      .addOrderBy("studentAppeal.submittedDate", "DESC")
+      .getRawAndEntities();
+    return mapFromRawAndEntities<PendingAndDeniedAppeals>(query, "status");
   }
 
   /**
