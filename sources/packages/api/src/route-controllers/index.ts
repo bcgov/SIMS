@@ -43,3 +43,4 @@ export * from "./education-program-offering/education-program-offering.aest.cont
 export * from "./report/report.aest.controller";
 export * from "./education-program/education-program.students.controller";
 export * from "./application-exception/application-exception.system-access.controller";
+export * from "./application-exception/application-exception.aest.controller";

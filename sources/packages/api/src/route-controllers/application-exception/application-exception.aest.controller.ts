@@ -9,7 +9,7 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { ApplicationExceptionService } from "../../services";
-import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
@@ -24,10 +24,12 @@ import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
 } from "../../constants";
+import { UserGroups } from "../../auth/user-groups.enum";
 
-@AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
+@AllowAuthorizedParty(AuthorizedParties.aest)
+@Groups(UserGroups.AESTUser)
 @Controller("application-exception")
-@ApiTags(`${ClientTypeBaseRoute.SystemAccess}-application-exception`)
+@ApiTags(`${ClientTypeBaseRoute.AEST}-application-exception`)
 export class ApplicationExceptionAESTController extends BaseController {
   constructor(
     private readonly applicationExceptionService: ApplicationExceptionService,
@@ -49,6 +51,7 @@ export class ApplicationExceptionAESTController extends BaseController {
     }
     return {
       exceptionStatus: applicationException.exceptionStatus,
+      noteDescription: applicationException.exceptionNote.description,
       exceptionRequests: applicationException.exceptionRequests.map(
         (request) => ({
           exceptionName: request.exceptionName,

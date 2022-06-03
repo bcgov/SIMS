@@ -70,7 +70,7 @@ export class ApplicationException extends RecordDataModel {
     name: "note_id",
     referencedColumnName: ColumnNames.ID,
   })
-  restrictionNote?: Note;
+  exceptionNote?: Note;
   /**
    * List of all exceptions detected on a submitted student application.
    */

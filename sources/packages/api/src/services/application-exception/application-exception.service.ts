@@ -56,9 +56,11 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       .select([
         "exception.id",
         "exception.exceptionStatus",
+        "exceptionNote.description",
         "exceptionRequest.exceptionName",
       ])
       .innerJoin("exception.exceptionRequests", "exceptionRequest")
+      .innerJoin("exception.exceptionNote", "exceptionNote")
       .where("exception.id = :exceptionId", { exceptionId })
       .getOne();
   }
@@ -119,7 +121,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         .add(savedNote);
       // Update the application exception.
       exceptionToUpdate.exceptionStatus = exceptionStatus;
-      exceptionToUpdate.restrictionNote = savedNote;
+      exceptionToUpdate.exceptionNote = savedNote;
       exceptionToUpdate.assessedBy = auditUser;
       exceptionToUpdate.assessedDate = new Date();
       exceptionToUpdate.modifier = auditUser;

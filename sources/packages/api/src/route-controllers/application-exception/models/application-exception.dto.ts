@@ -41,5 +41,6 @@ export class ApplicationExceptionRequestAPIOutDTO {
 
 export class ApplicationExceptionAPIOutDTO {
   exceptionStatus: ApplicationExceptionStatus;
+  noteDescription: string;
   exceptionRequests: ApplicationExceptionRequestAPIOutDTO[];
 }
