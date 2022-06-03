@@ -2,10 +2,10 @@ import { Body, Controller, Post } from "@nestjs/common";
 import { ApplicationExceptionService } from "../../services";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ClientTypeBaseRoute, IConfig } from "../../types";
+import { ClientTypeBaseRoute } from "../../types";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { CreateApplicationExceptionAPIInDTO } from "./models/application.system-access.dto";
+import { CreateApplicationExceptionAPIInDTO } from "./models/application-exception.dto";
 import { IUserToken } from "../../auth/userToken.interface";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
@@ -20,7 +20,7 @@ export class ApplicationExceptionSystemAccessController extends BaseController {
   }
 
   /**
-   * Creates student application exceptions to be reviewed by the Ministry.
+   * Creates student application exceptions to be assessed by the Ministry.
    * @param payload information to create the exception.
    * @returns newly created application exception id.
    */
