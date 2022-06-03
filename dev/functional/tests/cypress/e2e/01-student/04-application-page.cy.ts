@@ -316,7 +316,7 @@ describe("Application Page", () => {
     });
   });
 
-  it.only("Check that all fields on the Personal Information page are working.", () => {
+  it("Check that all fields on the Personal Information page are working.", () => {
     cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
