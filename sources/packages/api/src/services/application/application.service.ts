@@ -1370,11 +1370,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const auditUser = { id: auditUserId } as User;
 
     // Build sql statement to get all application ids to archive
-    const applicationsToArchive = await this.repo
+    const applicationsToArchive = this.repo
       .createQueryBuilder("application")
       .select("application.id")
-      .leftJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .where("application.applicationStatus = :completed")
       .andWhere(
         "(CURRENT_DATE - offering.studyEndDate) > :applicationArchiveDays",
@@ -1382,7 +1382,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.isArchived <> :isApplicationArchived")
       .getSql();
 
-    this.repo
+    await this.repo
       .createQueryBuilder()
       .update(Application)
       .set({ isArchived: true, modifier: auditUser })
