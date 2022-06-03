@@ -8,7 +8,6 @@ import {
   AssessmentTriggerType,
   EducationProgramOffering,
   OfferingTypes,
-  ScholasticStandingStatus,
   StudentAssessment,
   User,
 } from "../../database/entities";
@@ -35,30 +34,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     super(connection.getRepository(StudentScholasticStanding));
     this.applicationRepo = connection.getRepository(Application);
     this.offeringRepo = connection.getRepository(EducationProgramOffering);
-  }
-
-  /**
-   * Get all pending and declined scholastic standings
-   * for an application.
-   * @param applicationId application id.
-   * @returns StudentScholasticStanding list.
-   */
-  getPendingAndDeniedScholasticStanding(
-    applicationId: number,
-  ): Promise<StudentScholasticStanding[]> {
-    return this.repo
-      .createQueryBuilder("scholasticStanding")
-      .select([
-        "scholasticStanding.id",
-        "scholasticStanding.scholasticStandingStatus",
-        "scholasticStanding.submittedDate",
-      ])
-      .innerJoin("scholasticStanding.application", "application")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("scholasticStanding.scholasticStandingStatus != :status", {
-        status: ScholasticStandingStatus.Approved,
-      })
-      .getMany();
   }
 
   /**
@@ -156,8 +131,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       scholasticStanding.application = { id: applicationId } as Application;
       scholasticStanding.submittedData = scholasticStandingData;
       scholasticStanding.submittedDate = now;
-      scholasticStanding.scholasticStandingStatus =
-        ScholasticStandingStatus.Approved;
       scholasticStanding.submittedBy = auditUser;
       scholasticStanding.creator = auditUser;
 
