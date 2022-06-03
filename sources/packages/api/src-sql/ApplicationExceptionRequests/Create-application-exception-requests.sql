@@ -19,7 +19,7 @@ COMMENT ON TABLE sims.application_exception_requests IS 'Represents the list of 
 
 COMMENT ON COLUMN sims.application_exception_requests.id IS 'Auto-generated sequential primary key column.';
 
-COMMENT ON COLUMN sims.application_exception_requests.application_exception_id IS 'Master record that group all exceptions detected on a submitted student applications.';
+COMMENT ON COLUMN sims.application_exception_requests.application_exception_id IS 'Master record that group all exceptions detected on a submitted student application.';
 
 COMMENT ON COLUMN sims.application_exception_requests.exception_name IS 'Unique identifier name of an application exception.';
 

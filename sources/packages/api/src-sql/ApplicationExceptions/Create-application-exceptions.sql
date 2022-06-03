@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS sims.application_exceptions (
     id SERIAL PRIMARY KEY,
-    application_id INT NOT NULL REFERENCES sims.applications (id) ON DELETE CASCADE,
+    application_id INT NOT NULL UNIQUE REFERENCES sims.applications (id) ON DELETE CASCADE,
     exception_status sims.application_exception_status NOT NULL,
     assessed_date TIMESTAMP WITH TIME ZONE,
     assessed_by INT REFERENCES sims.users (id) ON DELETE
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS sims.application_exceptions (
 );
 
 -- ## Comments
-COMMENT ON TABLE sims.application_exceptions IS 'Represents as set of student applications exceptions present on the application submitted.';
+COMMENT ON TABLE sims.application_exceptions IS 'Represents a set of student applications exceptions present on the application submitted.';
 
 COMMENT ON COLUMN sims.application_exceptions.id IS 'Auto-generated sequential primary key column.';
 
