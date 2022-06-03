@@ -7,11 +7,15 @@ import {
   MaxLength,
   ValidateNested,
 } from "class-validator";
-import { ApplicationExceptionStatus } from "../../../database/entities";
+import {
+  ApplicationExceptionStatus,
+  EXCEPTION_NAME_MAX_LENGTH,
+  NOTE_DESCRIPTION_MAX_LENGTH,
+} from "../../../database/entities";
 
 export class ApplicationExceptionRequestAPIInDTO {
   @IsNotEmpty()
-  @MaxLength(100)
+  @MaxLength(EXCEPTION_NAME_MAX_LENGTH)
   exceptionName: string;
 }
 
@@ -31,7 +35,7 @@ export class UpdateApplicationExceptionAPIInDTO {
   ])
   exceptionStatus: ApplicationExceptionStatus;
   @IsNotEmpty()
-  @MaxLength(1000)
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
 }
 
