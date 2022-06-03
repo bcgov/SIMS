@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS sims.application_exception_requests (
 );
 
 -- ## Comments
-COMMENT ON TABLE sims.application_exception_requests IS 'Represents the list of exceptions detected on a submitted student applications.';
+COMMENT ON TABLE sims.application_exception_requests IS ' Represents the list of exceptions detected on a submitted full-time/part-time student application, for instance, when a document need to be reviewed.';
 
 COMMENT ON COLUMN sims.application_exception_requests.id IS 'Auto-generated sequential primary key column.';
 

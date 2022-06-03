@@ -21,13 +21,13 @@ CREATE TABLE IF NOT EXISTS sims.application_exceptions (
 );
 
 -- ## Comments
-COMMENT ON TABLE sims.application_exceptions IS 'Represents a set of student applications exceptions present on the application submitted.';
+COMMENT ON TABLE sims.application_exceptions IS 'Represents a set of exceptions detected on a submitted full-time/part-time student application, for instance, when a document need to be reviewed.';
 
 COMMENT ON COLUMN sims.application_exceptions.id IS 'Auto-generated sequential primary key column.';
 
 COMMENT ON COLUMN sims.application_exceptions.application_id IS 'Submitted application with exceptions.';
 
-COMMENT ON COLUMN sims.application_exceptions.exception_status IS 'Current status of exceptions (e.g. Pending, Approved, Denied).';
+COMMENT ON COLUMN sims.application_exceptions.exception_status IS 'Current approval status of exceptions (e.g. Pending, Approved, Denied).';
 
 COMMENT ON COLUMN sims.application_exceptions.assessed_date IS 'Date that the Ministry approved or denied the exceptions.';
 

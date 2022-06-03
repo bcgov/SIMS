@@ -18,7 +18,8 @@ import {
 } from "../../constants";
 
 /**
- * Manages student applications exceptions detected upon application submission.
+ * Manages student applications exceptions detected upon full-time/part-time application
+ * submission, usually related to documents uploaded that must be reviewed.
  */
 @Injectable()
 export class ApplicationExceptionService extends RecordDataModelService<ApplicationException> {
@@ -27,7 +28,9 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
   }
 
   /**
-   * Creates the exceptions associated with the application.
+   * Creates student application exceptions to be assessed by the Ministry.
+   * Exceptions are detected during full-time/part-time application submissions
+   * and are usually related to documents uploaded that must be reviewed.
    * @param applicationId application that contains the exceptions.
    * @param exceptionNames unique identifier names for the exceptions.
    * @param auditUserId user that should be considered the one that is
@@ -50,6 +53,12 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     return this.repo.save(newException);
   }
 
+  /**
+   * Get a student application expectation detected after the student application was
+   * submitted, for instance, when there are documents to be reviewed.
+   * @param exceptionId exception to be retrieved.
+   * @returns student application expectation information.
+   */
   async getExceptionById(exceptionId: number): Promise<ApplicationException> {
     return this.repo
       .createQueryBuilder("exception")
@@ -65,6 +74,15 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       .getOne();
   }
 
+  /**
+   * Updates the student application exception approving or denying it.
+   * @param exceptionId exception to be assessed.
+   * @param exceptionStatus status to be updated.
+   * @param noteDescription approval or denial note.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @returns updated student application exception.
+   */
   async approveException(
     exceptionId: number,
     exceptionStatus: ApplicationExceptionStatus,

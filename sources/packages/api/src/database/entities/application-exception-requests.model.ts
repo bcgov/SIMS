@@ -10,7 +10,8 @@ import { RecordDataModel } from "./record.model";
 import { ApplicationException } from "./application-exceptions.model";
 
 /**
- * Represents the list of exceptions detected on a submitted student applications.
+ * Represents the list of exceptions detected on a submitted full-time/part-time student
+ * application, for instance, when a document need to be reviewed.
  */
 @Entity({ name: TableNames.ApplicationExceptionRequests })
 export class ApplicationExceptionRequest extends RecordDataModel {

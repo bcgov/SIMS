@@ -21,6 +21,8 @@ export class ApplicationExceptionSystemAccessController extends BaseController {
 
   /**
    * Creates student application exceptions to be assessed by the Ministry.
+   * Exceptions are detected during full-time/part-time application submissions
+   * and are usually related to documents uploaded that must be reviewed.
    * @param payload information to create the exception.
    * @returns newly created application exception id.
    */

@@ -14,7 +14,8 @@ import { ApplicationExceptionStatus } from "./application-exception-status.type"
 import { ApplicationExceptionRequest } from "./application-exception-requests.model";
 
 /**
- * Represents a set of student applications exceptions present on the application submitted.
+ * Represents a set of exceptions detected on a submitted full-time/part-time student
+ * application, for instance, when a document need to be reviewed.
  */
 @Entity({ name: TableNames.ApplicationExceptions })
 export class ApplicationException extends RecordDataModel {
@@ -34,7 +35,7 @@ export class ApplicationException extends RecordDataModel {
   })
   application: Application;
   /**
-   * Current status of exceptions (e.g. Pending, Approved, Denied).
+   * Current approval status of exceptions (e.g. Pending, Approved, Denied).
    */
   @Column({
     name: "exception_status",

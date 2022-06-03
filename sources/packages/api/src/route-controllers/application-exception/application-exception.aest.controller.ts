@@ -12,7 +12,11 @@ import { ApplicationExceptionService } from "../../services";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import {
   ApplicationExceptionAPIOutDTO,
@@ -25,6 +29,7 @@ import {
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
 } from "../../constants";
 import { UserGroups } from "../../auth/user-groups.enum";
+import { ApplicationExceptionStatus } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -37,6 +42,12 @@ export class ApplicationExceptionAESTController extends BaseController {
     super();
   }
 
+  /**
+   * Get a student application expectation detected after the student application was
+   * submitted, for instance, when there are documents to be reviewed.
+   * @param exceptionId exception to be retrieved.
+   * @returns student application expectation information.
+   */
   @Get(":exceptionId")
   @ApiNotFoundResponse({
     description: "Student application exception not found.",
@@ -60,9 +71,17 @@ export class ApplicationExceptionAESTController extends BaseController {
     };
   }
 
+  /**
+   * Updates the student application exception approving or denying it.
+   * @param exceptionId exception to be approved or denied.
+   * @param payload information to approve or deny the exception.
+   */
   @Patch(":exceptionId")
   @ApiNotFoundResponse({
     description: "Student application exception not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: `Student application exception must be in ${ApplicationExceptionStatus.Pending} state to be assessed.`,
   })
   async approveException(
     @Param("exceptionId", ParseIntPipe) exceptionId: number,
