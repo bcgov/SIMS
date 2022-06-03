@@ -24,13 +24,19 @@
       <Information :data="initialData" />
       <formio formName="confirmsstudentenrollment" :data="initialData"></formio>
     </v-container>
-    <ConfirmCOE
-      :showModal="showModal"
-      :disbursementScheduleId="disbursementScheduleId"
-      :locationId="initialData.applicationLocationId"
-      @showHideConfirmCOE="showHideConfirmCOE"
-      @reloadData="loadInitialData"
-    />
+    <formio-modal-dialog
+      max-width="730"
+      ref="confirmCOEModal"
+      title="Confirm enrolment"
+      formName="confirmcoe"
+    >
+      <template #actions="{ cancel, submit }">
+        <v-btn color="primary" variant="outlined" @click="cancel">Cancel</v-btn>
+        <v-btn class="float-right primary-btn-background" @click="submit"
+          >Continue to confirmation</v-btn
+        >
+      </template>
+    </formio-modal-dialog>
     <ConfirmCOEEditModal ref="editCOEModal" />
     <ConfirmCOEDenyModal ref="denyCOEModal" @submitData="submitCOEDeny" />
   </div>
@@ -39,6 +45,7 @@
 import { useRouter } from "vue-router";
 import { onMounted, ref, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import Menu from "primevue/menu";
 import {
@@ -46,12 +53,17 @@ import {
   ApplicationDetailsForCOEDTO,
   DenyConfirmationOfEnrollment,
   ProgramInfoStatus,
+  FormIOForm,
+  ApiProcessError,
+  ConfirmationOfEnrollment,
 } from "@/types";
-import ConfirmCOE from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEModal.vue";
 import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
-import { useToastMessage, ModalDialog } from "@/composables";
+import { useToastMessage, ModalDialog, useFormioUtils } from "@/composables";
 import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
+export const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
+export const INVALID_TUITION_REMITTANCE_AMOUNT =
+  "INVALID_TUITION_REMITTANCE_AMOUNT";
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify component is used
@@ -68,10 +80,10 @@ export interface MenuType {
 export default {
   components: {
     Menu,
-    ConfirmCOE,
     ConfirmCOEEditModal,
     ConfirmCOEDenyModal,
     Information,
+    FormioModalDialog,
   },
   props: {
     disbursementScheduleId: {
@@ -90,12 +102,11 @@ export default {
     const menu = ref();
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
+    const formioUtils = useFormioUtils();
     const editCOEModal = ref({} as ModalDialog<boolean>);
     const denyCOEModal = ref({} as ModalDialog<void>);
-    const showHideConfirmCOE = () => {
-      showModal.value = !showModal.value;
-    };
-
+    const confirmCOEModal = ref({} as ModalDialog<FormIOForm | boolean>);
+    const TUITION_REMITTANCE_AMOUNT = "tuitionRemittanceAmount";
     const loadInitialData = async () => {
       initialData.value =
         await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
@@ -103,7 +114,43 @@ export default {
           props.locationId,
         );
     };
-
+    const showHideConfirmCOE = async () => {
+      const modalResult = await confirmCOEModal.value.showModal();
+      if (!modalResult) {
+        return;
+      }
+      try {
+        const tuitionRemittanceAmount = formioUtils.getComponentValueByKey(
+          modalResult,
+          TUITION_REMITTANCE_AMOUNT,
+        );
+        const payload: ConfirmationOfEnrollment = {
+          tuitionRemittanceAmount,
+        };
+        await ConfirmationOfEnrollmentService.shared.confirmCOE(
+          props.locationId,
+          props.disbursementScheduleId,
+          payload,
+        );
+        toast.success("Confirmed", "Confirmation of Enrollment Confirmed!");
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          if (error.errorType === FIRST_COE_NOT_COMPLETE) {
+            toast.error("First COE is not completed", error.message);
+            return;
+          }
+          if (error.errorType === INVALID_TUITION_REMITTANCE_AMOUNT) {
+            toast.error("Invalid tuition remittance amount", error.message);
+            return;
+          }
+        } else {
+          toast.error(
+            "Unexpected error",
+            "An error happened while confirming the COE.",
+          );
+        }
+      }
+    };
     const editProgramInformation = async () => {
       if (await editCOEModal.value.showModal()) {
         try {
@@ -222,6 +269,7 @@ export default {
       denyCOEModal,
       submitCOEDeny,
       InstitutionRoutesConst,
+      confirmCOEModal,
     };
   },
 };

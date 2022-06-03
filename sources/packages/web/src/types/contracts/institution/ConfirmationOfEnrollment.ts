@@ -66,6 +66,10 @@ export interface DenyConfirmationOfEnrollment {
   otherReasonDesc?: string;
 }
 
+export interface ConfirmationOfEnrollment {
+  tuitionRemittanceAmount: number;
+}
+
 /**
  * Read only Dto for study break item.
  * This is for COE where study breaks are shown in read only view.

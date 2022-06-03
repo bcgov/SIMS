@@ -6,6 +6,7 @@ import {
   DenyConfirmationOfEnrollment,
   EnrollmentPeriod,
   PaginationOptions,
+  ConfirmationOfEnrollment,
 } from "@/types";
 import ApiClient from "./http/ApiClient";
 
@@ -42,10 +43,12 @@ export class ConfirmationOfEnrollmentService {
   public async confirmCOE(
     locationId: number,
     disbursementScheduleId: number,
+    confirmationData: ConfirmationOfEnrollment,
   ): Promise<void> {
     await ApiClient.ConfirmationOfEnrollment.confirmCOE(
       locationId,
       disbursementScheduleId,
+      confirmationData,
     );
   }
 

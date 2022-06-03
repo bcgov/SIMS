@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsInt, Min, IsOptional } from "class-validator";
+import { Min, IsOptional } from "class-validator";
 import { COEStatus } from "../../../database/entities/coe-status.type";
 import { ProgramInfoStatus } from "../../../database/entities/program-info-status.type";
 
@@ -35,12 +35,15 @@ export interface COEDeniedReasonDto {
 }
 
 export class DenyConfirmationOfEnrollmentDto {
-  @IsNotEmpty()
-  @IsInt()
   @Min(1)
   coeDenyReasonId: number;
   @IsOptional()
   otherReasonDesc?: string;
+}
+
+export class ConfirmationOfEnrollmentDto {
+  @Min(0)
+  tuitionRemittanceAmount: number;
 }
 
 /**

@@ -297,12 +297,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @param userId
    * @param applicationId
    * @param applicationStatus
+   * @param tuitionRemittanceRequestedAmount
    */
   async updateDisbursementAndApplicationCOEApproval(
     disbursementScheduleId: number,
     userId: number,
     applicationId: number,
     applicationStatus: ApplicationStatus,
+    tuitionRemittanceRequestedAmount: number,
   ): Promise<void> {
     const documentNumber = await this.getNextDocumentNumber();
     return this.connection.transaction(async (transactionalEntityManager) => {
@@ -315,6 +317,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           coeStatus: COEStatus.completed,
           coeUpdatedBy: { id: userId },
           coeUpdatedAt: new Date(),
+          tuitionRemittanceRequestedAmount: tuitionRemittanceRequestedAmount,
         })
         .where("id = :disbursementScheduleId", { disbursementScheduleId })
         .execute();
@@ -491,7 +494,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     locationId: number,
     disbursementScheduleId: number,
   ): Promise<DisbursementSchedule> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("disbursementSchedule")
       .select([
         "disbursementSchedule.id",
@@ -500,8 +503,18 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "application.applicationStatus",
         "studentAssessment.id",
         "studentAssessment.assessmentWorkflowId",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
+        "disbursementValues.valueType",
+        "disbursementValues.valueCode",
+        "disbursementValues.valueAmount",
       ])
       .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin(
+        "disbursementSchedule.disbursementValues",
+        "disbursementValues",
+      )
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.location", "location")
       .where("location.id = :locationId", { locationId })
@@ -513,8 +526,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
-      })
-      .getOne();
+      });
+    return query.getOne();
   }
 
   /**

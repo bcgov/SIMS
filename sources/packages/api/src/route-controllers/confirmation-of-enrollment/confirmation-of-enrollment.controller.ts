@@ -29,6 +29,7 @@ import {
   ApplicationStatus,
   DisbursementSchedule,
   COEStatus,
+  DisbursementValueType,
 } from "../../database/entities";
 import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
@@ -45,11 +46,13 @@ import {
   FieldSortOrder,
   PaginatedResults,
   getISODateOnlyString,
+  getTotalDisbursementAmount,
 } from "../../utilities";
 import {
   ApplicationDetailsForCOEDTO,
   DenyConfirmationOfEnrollmentDto,
   COEDeniedReasonDto,
+  ConfirmationOfEnrollmentDto,
 } from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
 import { EnrollmentPeriod } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 import { ApiProcessError } from "../../types";
@@ -61,6 +64,10 @@ const COE_NOT_FOUND_MESSAGE =
 const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
 const FIRST_COE_NOT_COMPLETE_MESSAGE =
   "First disbursement(COE) not complete. Please complete the first disbursement.";
+export const INVALID_TUITION_REMITTANCE_AMOUNT =
+  "INVALID_TUITION_REMITTANCE_AMOUNT";
+const INVALID_TUITION_REMITTANCE_AMOUNT_MESSAGE =
+  "Tuition amount provided should be lesser of EITHER (Actual tuition + Program related costs) OR (Canada grants + Canada Loan + BC Loan).";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -286,6 +293,7 @@ export class ConfirmationOfEnrollmentController extends BaseController {
   async confirmEnrollment(
     @Param("locationId") locationId: number,
     @Param("disbursementScheduleId") disbursementScheduleId: number,
+    @Body() payload: ConfirmationOfEnrollmentDto,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     // Get the disbursement and application summary for COE.
@@ -294,6 +302,15 @@ export class ConfirmationOfEnrollmentController extends BaseController {
         locationId,
         disbursementScheduleId,
       );
+
+    const disbursementAmount = getTotalDisbursementAmount(
+      disbursementSchedule.disbursementValues,
+      [
+        DisbursementValueType.CanadaLoan,
+        DisbursementValueType.BCLoan,
+        DisbursementValueType.CanadaGrant,
+      ],
+    );
 
     if (!disbursementSchedule) {
       throw new NotFoundException(COE_NOT_FOUND_MESSAGE);
@@ -325,11 +342,29 @@ export class ConfirmationOfEnrollmentController extends BaseController {
       );
     }
 
+    /* Enable Institution Users to request tuition remittance at the time 
+    of confirming enrolment, not to exceed the lesser of EITHER 
+    (Actual tuition + Program related costs) OR (Canada grants + Canada Loan + BC Loan). */
+    const offering = disbursementSchedule.studentAssessment.offering;
+    const offeringAmount =
+      offering.actualTuitionCosts + offering.programRelatedCosts;
+    const maxTuitionAllowed = Math.min(offeringAmount, disbursementAmount);
+
+    if (payload.tuitionRemittanceAmount > maxTuitionAllowed) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          INVALID_TUITION_REMITTANCE_AMOUNT_MESSAGE,
+          INVALID_TUITION_REMITTANCE_AMOUNT,
+        ),
+      );
+    }
+
     await this.disbursementScheduleService.updateDisbursementAndApplicationCOEApproval(
       disbursementScheduleId,
       userToken.userId,
       disbursementSchedule.studentAssessment.application.id,
       disbursementSchedule.studentAssessment.application.applicationStatus,
+      payload.tuitionRemittanceAmount,
     );
 
     /** Send COE confirmation message only for first COE.

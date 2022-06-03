@@ -7,6 +7,7 @@ import {
   EnrollmentPeriod,
   PaginationOptions,
   PaginationParams,
+  ConfirmationOfEnrollment,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { addSortOptions, addPaginationOptions } from "@/helpers";
@@ -60,11 +61,16 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   public async confirmCOE(
     locationId: number,
     disbursementScheduleId: number,
+    confirmationData: ConfirmationOfEnrollment,
   ): Promise<void> {
-    await this.patchCall(
-      `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/confirm`,
-      {},
-    );
+    try {
+      await this.patchCall(
+        `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/confirm`,
+        confirmationData,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   public async rollbackCOE(
