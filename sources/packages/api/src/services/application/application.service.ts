@@ -1370,7 +1370,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const auditUser = { id: auditUserId } as User;
 
     // Build sql statement to get all application ids to archive
-    const applicationsToArchive = this.repo
+    const applicationsToArchive = await this.repo
       .createQueryBuilder("application")
       .select("application.id")
       .leftJoin("application.currentAssessment", "currentAssessment")
