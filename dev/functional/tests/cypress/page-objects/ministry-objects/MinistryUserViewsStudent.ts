@@ -1,8 +1,4 @@
 export default class MinistryUserViewsStudent {
-  waitForSec() {
-    return cy.focused();
-  }
-
   welcomeMessage() {
     return cy.contains("Welcome to AEST Portal");
   }

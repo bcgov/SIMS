@@ -1,8 +1,4 @@
 export default class InstitutionProfileObject {
-  waitForSecond() {
-    return cy.focused();
-  }
-
   institutionDetailsButton() {
     return cy.contains("Institution Details");
   }

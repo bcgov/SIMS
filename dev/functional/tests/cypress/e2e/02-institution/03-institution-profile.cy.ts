@@ -73,13 +73,13 @@ describe("Institution Profile", () => {
       institutionObject
         .countrySearchInputText(data.countryInput)
         .type("{enter}");
-      institutionObject.waitForSecond();
+      cy.focused().click();
       institutionObject.provinceInputText().click({ force: true });
       institutionObject
         .provinceSearchInputText(data.provinceState)
         .type("{enter}");
       institutionObject.postalInputText().clear().type(data.postalInput);
-      institutionObject.waitForSecond();
+      cy.focused().click();
     });
   });
 });

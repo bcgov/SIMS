@@ -7,10 +7,6 @@ export default class StudentNoteRestrictionsObject {
     return cy.contains("Add new restriction");
   }
 
-  waitForSec() {
-    return cy.focused();
-  }
-
   emptyDropdownMessage() {
     return cy.contains("No choices to choose from");
   }

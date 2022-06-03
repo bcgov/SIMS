@@ -82,7 +82,7 @@ describe("Application Page", () => {
   it("By clicking on edit button it redirects to Welcome Page in application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
   });
@@ -90,7 +90,7 @@ describe("Application Page", () => {
   it("By clicking on Next Section button from Welcome Page it redirects to Program Page in application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton();
@@ -99,7 +99,7 @@ describe("Application Page", () => {
   it("Check without selecting any mandatory fields in Program section if the user clicks Next Section button then the alert message is displayed or not in application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -111,7 +111,7 @@ describe("Application Page", () => {
   it("Verify that user must be redirect to previous form by clicking on button in application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -123,7 +123,7 @@ describe("Application Page", () => {
   it("Verify that user able to check the checkbox in Program section in application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -134,7 +134,7 @@ describe("Application Page", () => {
   it("Verify that user able to uncheck the checkbox in Program section in application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -146,7 +146,7 @@ describe("Application Page", () => {
   it("Verify that user able to edit all details in Program page in application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -158,7 +158,7 @@ describe("Application Page", () => {
   it("Verify that Student number must have no more than 12 characters in application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -169,7 +169,7 @@ describe("Application Page", () => {
   it("Verify that user enter data in mandatory fields to save program in application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -183,13 +183,13 @@ describe("Application Page", () => {
     cy.fixture("draftApplicationData").then((testData) => {
       applicationObject.applicationButton().should("be.visible").click();
       cy.wait("@applicationSummary");
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.draftApplication().click();
       applicationObject.draftApplicationVerifyText().should("be.visible");
       applicationObject.nextSectionButton().click();
       applicationObject.schoolIWillBeAttendingDropdown2();
       applicationObject.howWillYouAttendProgramDropdown2();
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.myProgramNotListedCheckbox().click({ force: true });
       applicationObject.programName().type(testData.programNameData);
       applicationObject
@@ -206,16 +206,13 @@ describe("Application Page", () => {
     cy.fixture("draftApplicationData").then((testData) => {
       applicationObject.applicationButton().should("be.visible").click();
       cy.wait("@applicationSummary");
-      applicationObject.waitForSecond().click();
-      applicationObject.waitForSecond().click();
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.draftApplication().click();
       applicationObject.draftApplicationVerifyText().should("be.visible");
       applicationObject.nextSectionButton().click();
       applicationObject.schoolIWillBeAttendingDropdown2();
       applicationObject.howWillYouAttendProgramDropdown2();
-      applicationObject.waitForSecond().click();
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.myProgramNotListedCheckbox().click({ force: true });
       applicationObject.programName().type(testData.programNameData);
       applicationObject
@@ -236,13 +233,12 @@ describe("Application Page", () => {
     cy.fixture("draftApplicationData").then((testData) => {
       applicationObject.applicationButton().should("be.visible").click();
       cy.wait("@applicationSummary");
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.draftApplication().click();
       applicationObject.draftApplicationVerifyText().should("be.visible");
       applicationObject.nextSectionButton().click();
       applicationObject.schoolIWillBeAttendingDropdown2();
       applicationObject.howWillYouAttendProgramDropdown2();
-      applicationObject.waitForSecond().click();
       applicationObject.myProgramNotListedCheckbox().click({ force: true });
       applicationObject.programName().type(testData.programNameData);
       applicationObject
@@ -250,6 +246,7 @@ describe("Application Page", () => {
         .type(testData.programDescriptionData);
       applicationObject.studyStartDate();
       applicationObject.studyEndDate();
+      cy.focused().click();
       applicationObject.inputStudentNumber2();
       applicationObject.nextSectionButton().click();
       applicationObject.nextSectionButton().click();
@@ -275,13 +272,13 @@ describe("Application Page", () => {
     cy.fixture("draftApplicationData").then((testDataForInfo) => {
       applicationObject.applicationButton().should("be.visible").click();
       cy.wait("@applicationSummary");
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.draftApplication().click();
       applicationObject.draftApplicationVerifyText().should("be.visible");
       applicationObject.nextSectionButton().click();
       applicationObject.schoolIWillBeAttendingDropdown2();
       applicationObject.howWillYouAttendProgramDropdown2();
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.myProgramNotListedCheckbox().click({ force: true });
       applicationObject.programName().type(testDataForInfo.programNameData);
       applicationObject
@@ -299,13 +296,13 @@ describe("Application Page", () => {
     cy.fixture("draftApplicationData").then((testData) => {
       applicationObject.applicationButton().should("be.visible").click();
       cy.wait("@applicationSummary");
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.draftApplication().click();
       applicationObject.draftApplicationVerifyText().should("be.visible");
       applicationObject.nextSectionButton().click();
       applicationObject.schoolIWillBeAttendingDropdown2();
       applicationObject.howWillYouAttendProgramDropdown2();
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.myProgramNotListedCheckbox().click({ force: true });
       applicationObject.programName().type(testData.programNameData);
       applicationObject
@@ -319,11 +316,11 @@ describe("Application Page", () => {
     });
   });
 
-  it("Check that all fields on the Personal Information page are working.", () => {
+  it.only("Check that all fields on the Personal Information page are working.", () => {
     cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -350,7 +347,7 @@ describe("Application Page", () => {
     cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -388,11 +385,11 @@ describe("Application Page", () => {
     cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    applicationObject.waitForSecond();
+    cy.focused().click();
     applicationObject.personalInformationButton().click({ force: true });
     applicationObject.iConfirmMyStudentAidCheckbox().click({ force: true });
     applicationObject.citizenStatusRadioButton().click();
@@ -430,7 +427,7 @@ describe("Application Page", () => {
     cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -471,7 +468,7 @@ describe("Application Page", () => {
     cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -528,7 +525,7 @@ describe("Application Page", () => {
       cy.intercept("GET", "**/program-year").as("programYear");
       applicationObject.applicationButton().should("be.visible").click();
       cy.wait("@applicationSummary");
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.draftApplication().click();
       applicationObject.draftApplicationVerifyText().should("be.visible");
       applicationObject.nextSectionButton().click();
@@ -537,12 +534,12 @@ describe("Application Page", () => {
       applicationObject.myStudyPeriodIsNotListedCheckbox();
       applicationObject.applicationButton().should("be.visible").click();
       cy.wait("@applicationSummary");
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.draftApplication().click();
       applicationObject.draftApplicationVerifyText().should("be.visible");
       applicationObject.nextSectionButton().click();
       cy.wait("@programYear");
-      applicationObject.waitForSecond();
+      cy.focused().click();
       applicationObject.financialInformationButton().click({ force: true });
       applicationObject.financialInformationButton().click({ force: true });
       applicationObject.totalIncomeInputText().type(testData.totalIncome);
@@ -582,7 +579,7 @@ describe("Application Page", () => {
     cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     cy.wait("@applicationSummary");
-    applicationObject.waitForSecond().click();
+    cy.focused().click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
@@ -596,7 +593,7 @@ describe("Application Page", () => {
       cy.intercept("GET", "**/program-year").as("programYear");
       applicationObject.applicationButton().should("be.visible").click();
       cy.wait("@applicationSummary");
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.draftApplication().click();
       applicationObject.draftApplicationVerifyText().should("be.visible");
       applicationObject.nextSectionButton().click();
@@ -605,12 +602,12 @@ describe("Application Page", () => {
       applicationObject.myStudyPeriodIsNotListedCheckbox();
       applicationObject.applicationButton().should("be.visible").click();
       cy.wait("@applicationSummary");
-      applicationObject.waitForSecond().click();
+      cy.focused().click();
       applicationObject.draftApplication().click();
       applicationObject.draftApplicationVerifyText().should("be.visible");
       applicationObject.nextSectionButton().click();
       cy.wait("@programYear");
-      applicationObject.waitForSecond();
+      cy.focused().click();
       applicationObject.financialInformationButton().click({ force: true });
       applicationObject.financialInformationButton().click({ force: true });
       applicationObject.totalIncomeInputText().type(testData.totalIncome);

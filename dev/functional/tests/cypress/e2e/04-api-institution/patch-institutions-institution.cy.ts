@@ -1,15 +1,15 @@
 let identity: any;
 describe("Institution api", () => {
-  it("POST - Token", () => {
+  beforeEach("POST - Token", () => {
     cy.request({
       method: "POST",
       url: Cypress.env("token_url"),
       form: true,
       body: {
-        grant_type: Cypress.env("grantType"),
-        client_id: Cypress.env("clientId"),
-        username: Cypress.env("userName"),
-        password: Cypress.env("password"),
+        grant_type: Cypress.env("institutionGrantType"),
+        client_id: Cypress.env("institutionClientId"),
+        username: Cypress.env("institutionUserName"),
+        password: Cypress.env("institutionPassword"),
       },
     }).then((response) => {
       identity = response;
@@ -18,7 +18,7 @@ describe("Institution api", () => {
   });
 
   it("PATCH - Update institution details", () => {
-    cy.fixture("bodyData").then((data) => {
+    cy.fixture("institutionUpdateData").then((data) => {
       cy.request({
         method: "PATCH",
         url: Cypress.env("update_institution_url"),

@@ -70,10 +70,6 @@ export default class ApplicationObject {
 
   //<StartRegion--------------------------Draft Status------------------------------------->
 
-  waitForSecond() {
-    return cy.focused();
-  }
-
   draftApplication() {
     return cy.get("[type='button']").eq(8);
   }
@@ -225,7 +221,7 @@ export default class ApplicationObject {
 
   inputStudentNumber2() {
     cy.fixture("draftApplicationData").then((testData) => {
-      cy.get("#ek8w4hn-studentNumber").type(testData.studentNumber2);
+      cy.get("[name='data[studentNumber]']").type(testData.studentNumber2);
     });
   }
 

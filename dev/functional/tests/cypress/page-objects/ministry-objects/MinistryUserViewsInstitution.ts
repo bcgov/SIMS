@@ -1,8 +1,4 @@
 export default class MinistryUserViewsInstitution {
-  waitForSec() {
-    return cy.focused();
-  }
-
   operatingNameVerify() {
     return cy.contains("Operating Name");
   }
