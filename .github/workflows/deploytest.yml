@@ -33,6 +33,7 @@ jobs:
       ATBC_LOGIN_ENDPOINT: "https://auth.at-bc.ca/api/login"
       ATBC_ENDPOINT: "https://sabc.at-bc.ca/api"
       SWAGGER_ENABLED: true
+      APPLICATION_ARCHIVE_DAYS: 43
     steps:
       - name: Print env
         run: |
