@@ -32,6 +32,12 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
    */
   disbursementAmount: number;
   /**
+   * Dollar amount that should be sent to the student. This represents the total
+   * school amount - tuition remittance amount that should go to the student on this document.
+   * ! Must be rounded, only integer, no decimals.
+   */
+  schoolAmount: number;
+  /**
    * Date that studies commence. Generally derived from last application. The first day of classes.
    * Also known as the Period of Study Commencement Date (PSCD).
    */
@@ -190,7 +196,7 @@ export class ECertPartTimeFileRecord extends ECertFileRecord {
       record.appendWithEndFiller(this.emailAddress, 75, SPACE_FILLER);
       record.append("P"); // 'P' for part-time. Full time is done by another integration to another system.
       record.appendDate(this.enrollmentConfirmationDate, DATE_FORMAT);
-      record.repeatAppend(SPACE_FILLER, 7); // EI Remittance Amt, optional, not provided.
+      record.appendWithStartFiller(this.schoolAmount, 7, NUMBER_FILLER); // EI Remittance Amt, optional, not provided.
       record.appendWithStartFiller(this.courseLoad, 2, NUMBER_FILLER);
       record.repeatAppend(SPACE_FILLER, 25); // Space Filler.
       return record.toString();
