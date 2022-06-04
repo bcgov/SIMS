@@ -129,7 +129,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         "status",
       )
       .innerJoin("studentAppeal.application", "application")
-      .where(`application.id = ${applicationId}`)
+      .where("application.id = :applicationId", { applicationId })
       .andWhere(
         new Brackets((qb) => {
           qb.where(

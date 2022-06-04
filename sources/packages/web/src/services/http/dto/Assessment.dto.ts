@@ -1,4 +1,5 @@
 import {
+  ApplicationExceptionStatus,
   Assessment,
   AssessmentTriggerType,
   OfferingIntensity,
@@ -8,11 +9,16 @@ import {
 
 export const ASSESSMENT_ALREADY_IN_PROGRESS = "ASSESSMENT_ALREADY_IN_PROGRESS";
 
+export enum RequestAssessmentTypeAPIOutDTO {
+  StudentException = "Student exceptions",
+  StudentAppeal = "Student appeal",
+}
+
 export interface RequestAssessmentSummaryAPIOutDTO {
   id: number;
   submittedDate: Date;
-  status: StudentAppealStatus;
-  triggerType: AssessmentTriggerType;
+  status: StudentAppealStatus | ApplicationExceptionStatus;
+  requestType: RequestAssessmentTypeAPIOutDTO;
 }
 
 export interface AssessmentHistorySummaryAPIOutDTO {

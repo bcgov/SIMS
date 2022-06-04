@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
+  ApplicationExceptionStatus,
   ApplicationStatus,
   AssessmentStatus,
   AssessmentTriggerType,
@@ -11,7 +12,7 @@ import {
   StudentAppealStatus,
   StudentAssessment,
 } from "../../database/entities";
-import { Connection, IsNull, UpdateResult } from "typeorm";
+import { Brackets, Connection, IsNull, UpdateResult } from "typeorm";
 import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
 import { WorkflowActionsService } from "..";
 import {
@@ -379,7 +380,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Get all assessments history summary.
+   * Get all assessments history summary but avoid returning it if
+   * there is a declined or pending exception.
    * Here we have added different when statement
    * in CASE to fetch the status of the assessment.
    * * WHEN 1: if assessmentWorkflowId is null,
@@ -433,7 +435,20 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "assessment.studentScholasticStanding",
         "studentScholasticStanding",
       )
+      .leftJoin("application.applicationException", "applicationException")
       .where("application.id = :applicationId", { applicationId })
+      .andWhere(
+        new Brackets((qb) =>
+          qb
+            .where("applicationException.id IS NULL")
+            .orWhere(
+              "applicationException.exceptionStatus = :exceptionStatus",
+              {
+                exceptionStatus: ApplicationExceptionStatus.Approved,
+              },
+            ),
+        ),
+      )
       .orderBy("status", "DESC")
       .addOrderBy("assessment.submittedDate", "DESC")
       .getRawAndEntities();

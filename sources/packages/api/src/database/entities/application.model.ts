@@ -26,6 +26,7 @@ import { RecordDataModel } from "./record.model";
 import { Student } from "./student.model";
 import { ProgramYear } from "./program-year.model";
 import { StudentAssessment } from "./student-assessment.model";
+import { ApplicationException } from "./application-exceptions.model";
 
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {
@@ -293,7 +294,6 @@ export class Application extends RecordDataModel {
     { eager: false, cascade: false, nullable: true },
   )
   craIncomeVerifications?: CRAIncomeVerification[];
-
   /**
    * Flag to represent when an application is archived.
    */
@@ -302,6 +302,24 @@ export class Application extends RecordDataModel {
     nullable: false,
   })
   isArchived: boolean;
+  /**
+   * Possible application exception associated with this application,
+   * for instance, when a file uploaded must be reviewed.
+   */
+  @OneToMany(
+    () => ApplicationException,
+    (applicationException) => applicationException.application,
+    {
+      eager: false,
+      cascade: false,
+      nullable: true,
+    },
+  )
+  @JoinColumn({
+    name: "application_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  applicationException: ApplicationException;
 }
 
 /**

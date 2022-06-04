@@ -75,6 +75,31 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
   }
 
   /**
+   * Get a student application expectation detected after the student application was
+   * submitted, for instance, when there are documents to be reviewed.
+   * @param applicationId application associated with the exception.
+   * @returns student application expectation information.
+   */
+  async getExceptionsByApplicationId(
+    applicationId: number,
+    ...status: ApplicationExceptionStatus[]
+  ): Promise<ApplicationException[]> {
+    const query = this.repo
+      .createQueryBuilder("exception")
+      .select([
+        "exception.id",
+        "exception.exceptionStatus",
+        "exception.createdAt",
+      ])
+      .innerJoin("exception.application", "application")
+      .where("application.Id = :applicationId", { applicationId });
+    if (status) {
+      query.andWhere("exception.exceptionStatus IN (:...status)", { status });
+    }
+    return query.getMany();
+  }
+
+  /**
    * Updates the student application exception approving or denying it.
    * @param exceptionId exception to be assessed.
    * @param exceptionStatus status to be updated.
