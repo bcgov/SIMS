@@ -1,20 +1,25 @@
 import { defineConfig } from "cypress";
 
 export default defineConfig({
-  projectId: 'bebu4p',
+  projectId: "bebu4p",
   viewportWidth: 1280,
   viewportHeight: 720,
   retries: {
     runMode: 1,
     openMode: 1,
   },
-  reporter: "cypress-mochawesome-reporter",
+  reporter: "cypress-multi-reporters",
   screenshotOnRunFailure: true,
   reporterOptions: {
-    reportDir: "cypress/report",
-    charts: true,
-    reportPageTitle: "British Columbia Report",
-    embeddedScreenshots: true,
+    reporterEnabled: "mochawesome",
+    mochawesomeReporterOptions: {
+      reportDir: "cypress/reports/mocha",
+      quite: true,
+      overwrite: false,
+      html: false,
+      json: true,
+      embeddedScreenshots: true,
+    },
   },
   video: false,
   chromeWebSecurity: false,

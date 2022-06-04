@@ -15,10 +15,7 @@ cypress/screenshots/
 
 #from cypress json
 cypress.env.json
-testing/functional/tests/cypress/screenshots/
-testing/functional/tests/cypress/videos/
-testing/functional/tests/cypress/reports/
-testing/functional/tests/cypress/report/
-
-dev/functional/tests/cypress/report
-dev/functional/tests/cypress/screenshots
+testing/dev/functional/tests/cypress/screenshots/
+testing/dev/functional/tests/cypress/videos/
+testing/dev/functional/tests/cypress/reports/
+testing/dev/functional/tests/cypress/report/
