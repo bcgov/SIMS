@@ -407,6 +407,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "assessment.assessmentDate",
         "studentAppeal.id",
         "studentScholasticStanding.id",
+        "application.id",
+        "applicationException.id",
       ])
       .addSelect(
         `CASE

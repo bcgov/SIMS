@@ -306,7 +306,7 @@ export class Application extends RecordDataModel {
    * Possible application exception associated with this application,
    * for instance, when a file uploaded must be reviewed.
    */
-  @OneToMany(
+  @ManyToOne(
     () => ApplicationException,
     (applicationException) => applicationException.application,
     {
@@ -316,10 +316,10 @@ export class Application extends RecordDataModel {
     },
   )
   @JoinColumn({
-    name: "application_id",
+    name: "application_exception_id",
     referencedColumnName: ColumnNames.ID,
   })
-  applicationException: ApplicationException;
+  applicationException?: ApplicationException;
 }
 
 /**

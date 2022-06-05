@@ -219,3 +219,8 @@ ul.no-bullets {
   max-height: none !important;
   max-width: none !important;
 }
+
+.muted-content-strong {
+  color: $color-muted;
+  font-weight: 700;
+}

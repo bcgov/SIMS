@@ -24,15 +24,15 @@ export class ApplicationException extends RecordDataModel {
   /**
    * Submitted application with exceptions.
    */
-  @OneToOne(() => Application, {
-    eager: false,
-    cascade: false,
-    nullable: false,
-  })
-  @JoinColumn({
-    name: "application_id",
-    referencedColumnName: ColumnNames.ID,
-  })
+  @OneToMany(
+    () => Application,
+    (application) => application.applicationException,
+    {
+      eager: false,
+      cascade: false,
+      nullable: false,
+    },
+  )
   application: Application;
   /**
    * Current approval status of exceptions (e.g. Pending, Approved, Denied).

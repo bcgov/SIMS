@@ -21,7 +21,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AssessmentControllerService } from "./assessment.controller.service";
-import { ApplicationExceptionStatus } from "src/database/entities";
+import { ApplicationExceptionStatus } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -55,6 +55,7 @@ export class AssessmentAESTController extends BaseController {
       await this.applicationExceptionService.getExceptionsByApplicationId(
         applicationId,
         ApplicationExceptionStatus.Pending,
+        ApplicationExceptionStatus.Declined,
       );
     if (applicationExceptions?.length) {
       return applicationExceptions.map((applicationException) => ({
@@ -100,6 +101,7 @@ export class AssessmentAESTController extends BaseController {
       assessmentDate: assessment.assessmentDate,
       status: assessment.status,
       studentAppealId: assessment.studentAppeal?.id,
+      applicationExceptionId: assessment.application.applicationException?.id,
       studentScholasticStandingId: assessment.studentScholasticStanding?.id,
     }));
   }

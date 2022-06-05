@@ -27,6 +27,7 @@ export class AssessmentHistorySummaryAPIOutDTO {
   assessmentDate: Date;
   status: StudentAssessmentStatus;
   studentAppealId?: number;
+  applicationExceptionId?: number;
   studentScholasticStandingId?: number;
 }
 
