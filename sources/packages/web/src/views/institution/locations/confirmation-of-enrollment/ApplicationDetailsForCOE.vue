@@ -120,6 +120,7 @@ export default {
       }
       try {
         const payload = modalResult.data as ConfirmationOfEnrollmentAPIInDTO;
+        payload.tuitionRemittanceAmount = payload.tuitionRemittanceAmount ?? 0;
         await ConfirmationOfEnrollmentService.shared.confirmCOE(
           props.locationId,
           props.disbursementScheduleId,
