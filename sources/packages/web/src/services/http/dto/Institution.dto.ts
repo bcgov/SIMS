@@ -173,3 +173,7 @@ export interface UserRoleOptionAPIOutDTO {
   code: string;
   id?: number;
 }
+
+export interface ConfirmationOfEnrollmentAPIInDTO {
+  tuitionRemittanceAmount: number;
+}

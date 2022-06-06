@@ -138,7 +138,7 @@ export class DisbursementSchedule extends RecordDataModel {
   })
   studentAssessment: StudentAssessment;
   /**
-   * Tuition Remittance Amount Requested
+   * Tuition remittance amount requested by the institution for disbursement.
    */
   @Column({
     name: "tuition_remittance_requested_amount",

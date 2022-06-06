@@ -293,11 +293,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * On COE Approval, update disbursement schedule with document number and
    * COE related columns. Update the Application status to completed, if it is first COE.
    * The update to Application and Disbursement schedule happens in single transaction.
-   * @param disbursementScheduleId
-   * @param userId
-   * @param applicationId
-   * @param applicationStatus
-   * @param tuitionRemittanceRequestedAmount
+   * @param disbursementScheduleId disbursement schedule Id.
+   * @param userId User updating the confirmation of enrollment.
+   * @param applicationId application Id.
+   * @param applicationStatus application status of the disbursed application.
+   * @param tuitionRemittanceRequestedAmount tuition remittance amount requested by the institution.
    */
   async updateDisbursementAndApplicationCOEApproval(
     disbursementScheduleId: number,
@@ -494,7 +494,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     locationId: number,
     disbursementScheduleId: number,
   ): Promise<DisbursementSchedule> {
-    const query = this.repo
+    return this.repo
       .createQueryBuilder("disbursementSchedule")
       .select([
         "disbursementSchedule.id",
@@ -526,8 +526,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
-      });
-    return query.getOne();
+      })
+      .getOne();
   }
 
   /**

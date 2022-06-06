@@ -41,7 +41,7 @@ export class DenyConfirmationOfEnrollmentDto {
   otherReasonDesc?: string;
 }
 
-export class ConfirmationOfEnrollmentDto {
+export class ConfirmationOfEnrollmentAPIInDTO {
   @Min(0)
   tuitionRemittanceAmount: number;
 }

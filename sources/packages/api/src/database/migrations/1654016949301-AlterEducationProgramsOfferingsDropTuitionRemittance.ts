@@ -16,7 +16,7 @@ export class AlterEducationProgramsOfferingsDropTuitionRemittance1654016949301
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Add-tuition-remittance.sql",
+        "Rollback-drop-tuition-remittance.sql",
         "EducationProgramsOfferings",
       ),
     );

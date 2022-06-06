@@ -7,10 +7,10 @@ import {
   EnrollmentPeriod,
   PaginationOptions,
   PaginationParams,
-  ConfirmationOfEnrollment,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { addSortOptions, addPaginationOptions } from "@/helpers";
+import { ConfirmationOfEnrollmentAPIInDTO } from "./dto";
 
 export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   public async getCOESummary(
@@ -61,7 +61,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   public async confirmCOE(
     locationId: number,
     disbursementScheduleId: number,
-    confirmationData: ConfirmationOfEnrollment,
+    confirmationData: ConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
     try {
       await this.patchCall(

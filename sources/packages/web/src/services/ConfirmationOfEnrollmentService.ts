@@ -6,9 +6,9 @@ import {
   DenyConfirmationOfEnrollment,
   EnrollmentPeriod,
   PaginationOptions,
-  ConfirmationOfEnrollment,
 } from "@/types";
 import ApiClient from "./http/ApiClient";
+import { ConfirmationOfEnrollmentAPIInDTO } from "./http/dto";
 
 export class ConfirmationOfEnrollmentService {
   // Share Instance
@@ -43,7 +43,7 @@ export class ConfirmationOfEnrollmentService {
   public async confirmCOE(
     locationId: number,
     disbursementScheduleId: number,
-    confirmationData: ConfirmationOfEnrollment,
+    confirmationData: ConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
     await ApiClient.ConfirmationOfEnrollment.confirmCOE(
       locationId,

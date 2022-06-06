@@ -50,7 +50,8 @@ export class ECertFullTimeFileRecord extends ECertFileRecord {
   disbursementAmount: number;
   /**
    * Dollar amount that should be sent to the student. This represents the total
-   * disbursement amount minus school amount that should go to the student on this document.
+   * disbursement amount minus the school amount (a.k.a. tuition remittance) that
+   * should go to the student on this document.
    * ! Must be rounded, only integer, no decimals.
    */
   studentAmount: number;

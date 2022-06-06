@@ -55,15 +55,16 @@ import {
   ProgramInfoStatus,
   FormIOForm,
   ApiProcessError,
-  ConfirmationOfEnrollment,
 } from "@/types";
 import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
 import { useToastMessage, ModalDialog, useFormioUtils } from "@/composables";
 import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
-export const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
-export const INVALID_TUITION_REMITTANCE_AMOUNT =
-  "INVALID_TUITION_REMITTANCE_AMOUNT";
+import {
+  FIRST_COE_NOT_COMPLETE,
+  INVALID_TUITION_REMITTANCE_AMOUNT,
+} from "@/constants";
+import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto";
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify component is used
@@ -124,7 +125,7 @@ export default {
           modalResult,
           TUITION_REMITTANCE_AMOUNT,
         );
-        const payload: ConfirmationOfEnrollment = {
+        const payload: ConfirmationOfEnrollmentAPIInDTO = {
           tuitionRemittanceAmount,
         };
         await ConfirmationOfEnrollmentService.shared.confirmCOE(
@@ -134,21 +135,21 @@ export default {
         );
         toast.success("Confirmed", "Confirmation of Enrollment Confirmed!");
       } catch (error: unknown) {
+        let errorLabel = "Unexpected error!";
+        let errorMsg = "An error happened while confirming the COE.";
         if (error instanceof ApiProcessError) {
-          if (error.errorType === FIRST_COE_NOT_COMPLETE) {
-            toast.error("First COE is not completed", error.message);
-            return;
+          switch (error.errorType) {
+            case FIRST_COE_NOT_COMPLETE:
+              errorLabel = "First COE is not completed.";
+              errorMsg = error.message;
+              break;
+            case INVALID_TUITION_REMITTANCE_AMOUNT:
+              errorLabel = "Invalid tuition remittance amount.";
+              errorMsg = error.message;
+              break;
           }
-          if (error.errorType === INVALID_TUITION_REMITTANCE_AMOUNT) {
-            toast.error("Invalid tuition remittance amount", error.message);
-            return;
-          }
-        } else {
-          toast.error(
-            "Unexpected error",
-            "An error happened while confirming the COE.",
-          );
         }
+        toast.error(errorLabel, errorMsg);
       }
     };
     const editProgramInformation = async () => {
