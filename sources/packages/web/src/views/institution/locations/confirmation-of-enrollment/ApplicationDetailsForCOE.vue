@@ -53,6 +53,7 @@ import {
   ApplicationDetailsForCOEDTO,
   DenyConfirmationOfEnrollment,
   ProgramInfoStatus,
+  FormIOForm,
   ApiProcessError,
 } from "@/types";
 import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
@@ -104,9 +105,7 @@ export default {
     const showModal = ref(false);
     const editCOEModal = ref({} as ModalDialog<boolean>);
     const denyCOEModal = ref({} as ModalDialog<void>);
-    const confirmCOEModal = ref(
-      {} as ModalDialog<ConfirmationOfEnrollmentAPIInDTO | boolean>,
-    );
+    const confirmCOEModal = ref({} as ModalDialog<FormIOForm & boolean>);
     const loadInitialData = async () => {
       initialData.value =
         await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
@@ -120,7 +119,7 @@ export default {
         return;
       }
       try {
-        const payload = modalResult as ConfirmationOfEnrollmentAPIInDTO;
+        const payload = modalResult.data as ConfirmationOfEnrollmentAPIInDTO;
         await ConfirmationOfEnrollmentService.shared.confirmCOE(
           props.locationId,
           props.disbursementScheduleId,
