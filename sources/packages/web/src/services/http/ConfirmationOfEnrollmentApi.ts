@@ -10,7 +10,7 @@ import {
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { addSortOptions, addPaginationOptions } from "@/helpers";
-import { ConfirmationOfEnrollmentAPIInDTO } from "./dto/ConfirmationOfEnrolment.dto";
+import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto/ConfirmationOfEnrolment.dto";
 
 export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   public async getCOESummary(
