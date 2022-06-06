@@ -2,12 +2,31 @@ import MinistryCustomCommand from "../../custom-command/ministry/MinistryCustomC
 import DashboardMinistryObject from "../../page-objects/ministry-objects/DashboardMinistryObject";
 import MinistryUserViewsInstitution from "../../page-objects/ministry-objects/MinistryUserViewsInstitution";
 
-describe("Ministry User View Institution Page", () => {
-  const ministryCustomCommand = new MinistryCustomCommand();
-  const dashboardMinistryObject = new DashboardMinistryObject();
-  const ministryUserViewsInstitution = new MinistryUserViewsInstitution();
-  const url = Cypress.env("ministryURL");
+const ministryCustomCommand = new MinistryCustomCommand();
+const dashboardMinistryObject = new DashboardMinistryObject();
+const ministryUserViewsInstitution = new MinistryUserViewsInstitution();
+const url = Cypress.env("ministryURL");
 
+function searchingOperatingName() {
+  ministryCustomCommand.loginMinistry();
+  dashboardMinistryObject.dashboardText().should("be.visible");
+  dashboardMinistryObject.searchInstitutionsText().click();
+  ministryUserViewsInstitution.operatingNameInputText().type("a");
+  ministryUserViewsInstitution.searchButton().click();
+}
+
+function viewProgram() {
+  searchingOperatingName();
+  ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
+  ministryUserViewsInstitution.profileTextVerify().should("be.visible");
+  ministryUserViewsInstitution.programsSection().click();
+  ministryUserViewsInstitution.programSectionVerifyText().should("be.visible");
+  ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
+  ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
+  ministryUserViewsInstitution.viewProgramButton().click();
+}
+
+describe("Ministry User View Institution Page", () => {
   beforeEach(() => {
     cy.visit(url);
   });
@@ -49,39 +68,18 @@ describe("Ministry User View Institution Page", () => {
   });
 
   it("Verify that clicking the View button redirects to the institution's profile page.", () => {
-    ministryCustomCommand.loginMinistry();
-    dashboardMinistryObject.dashboardText().should("be.visible");
-    dashboardMinistryObject.searchInstitutionsText().click();
-    ministryUserViewsInstitution.operatingNameInputText().type("e");
-    ministryUserViewsInstitution.searchButton().click();
+    searchingOperatingName();
   });
 
   it("Verify that Programs section is working properly in institution Details.", () => {
-    ministryCustomCommand.loginMinistry();
-    dashboardMinistryObject.dashboardText().should("be.visible");
-    dashboardMinistryObject.searchInstitutionsText().click();
-    ministryUserViewsInstitution.operatingNameInputText().type("e");
-    ministryUserViewsInstitution.searchButton().click();
-    ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
-    ministryUserViewsInstitution.profileTextVerify().should("be.visible");
-    ministryUserViewsInstitution.programsSection().click();
-    ministryUserViewsInstitution
-      .programSectionVerifyText()
-      .should("be.visible");
-    ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
-    ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
-    ministryUserViewsInstitution.viewProgramButton().click();
+    viewProgram();
     ministryUserViewsInstitution.backButtonViewProgram().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.backButtonBackAllPrograms().click();
   });
 
   it("Verify that clicking the Location redirects to the Location section page.", () => {
-    ministryCustomCommand.loginMinistry();
-    dashboardMinistryObject.dashboardText().should("be.visible");
-    dashboardMinistryObject.searchInstitutionsText().click();
-    ministryUserViewsInstitution.operatingNameInputText().type("e");
-    ministryUserViewsInstitution.searchButton().click();
+    searchingOperatingName();
     ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
     ministryUserViewsInstitution.profileTextVerify().should("be.visible");
     ministryUserViewsInstitution.locationsSection().click();
@@ -89,11 +87,7 @@ describe("Ministry User View Institution Page", () => {
   });
 
   it("Verify that clicking the Users redirects to the Users section page.", () => {
-    ministryCustomCommand.loginMinistry();
-    dashboardMinistryObject.dashboardText().should("be.visible");
-    dashboardMinistryObject.searchInstitutionsText().click();
-    ministryUserViewsInstitution.operatingNameInputText().type("e");
-    ministryUserViewsInstitution.searchButton().click();
+    searchingOperatingName();
     ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
     ministryUserViewsInstitution.profileTextVerify().should("be.visible");
     ministryUserViewsInstitution.usersSection().click();
@@ -103,34 +97,15 @@ describe("Ministry User View Institution Page", () => {
   });
 
   it("Verify that clicking the Designation redirects to the Designation section page.", () => {
-    ministryCustomCommand.loginMinistry();
-    dashboardMinistryObject.dashboardText().should("be.visible");
-    dashboardMinistryObject.searchInstitutionsText().click();
-    ministryUserViewsInstitution.operatingNameInputText().type("e");
-    ministryUserViewsInstitution.searchButton().click();
+    searchingOperatingName();
     ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
     ministryUserViewsInstitution.profileTextVerify().should("be.visible");
     ministryUserViewsInstitution.designationSection().click();
     ministryUserViewsInstitution.designationAgreements().should("be.visible");
-    ministryUserViewsInstitution.firstRowViewButtonDesignation().click();
-    ministryUserViewsInstitution.designationDetailsText().should("be.visible");
   });
 
   it("Verify that clicking on back button redirects from View Programs to All Programs Profile section.", () => {
-    ministryCustomCommand.loginMinistry();
-    dashboardMinistryObject.dashboardText().should("be.visible");
-    dashboardMinistryObject.searchInstitutionsText().click();
-    ministryUserViewsInstitution.operatingNameInputText().type("e");
-    ministryUserViewsInstitution.searchButton().click();
-    ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
-    ministryUserViewsInstitution.profileTextVerify().should("be.visible");
-    ministryUserViewsInstitution.programsSection().click();
-    ministryUserViewsInstitution
-      .programSectionVerifyText()
-      .should("be.visible");
-    ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
-    ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
-    ministryUserViewsInstitution.viewProgramButton().click();
+    viewProgram();
     ministryUserViewsInstitution.backButtonViewProgram().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.backButtonBackAllPrograms().click();
@@ -140,40 +115,14 @@ describe("Ministry User View Institution Page", () => {
   });
 
   it("Verify that clicking on back button redirects from New Program to Program Detail.", () => {
-    ministryCustomCommand.loginMinistry();
-    dashboardMinistryObject.dashboardText().should("be.visible");
-    dashboardMinistryObject.searchInstitutionsText().click();
-    ministryUserViewsInstitution.operatingNameInputText().type("e");
-    ministryUserViewsInstitution.searchButton().click();
-    ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
-    ministryUserViewsInstitution.profileTextVerify().should("be.visible");
-    ministryUserViewsInstitution.programsSection().click();
-    ministryUserViewsInstitution
-      .programSectionVerifyText()
-      .should("be.visible");
-    ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
-    ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
-    ministryUserViewsInstitution.viewProgramButton().click();
+    viewProgram();
     ministryUserViewsInstitution.submitButtonProgram().should("be.disabled");
     ministryUserViewsInstitution.backButtonViewProgram().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
   });
 
   it.skip("Verify that clicking on back button redirects from Program Detail to Profile section.", () => {
-    ministryCustomCommand.loginMinistry();
-    dashboardMinistryObject.dashboardText().should("be.visible");
-    dashboardMinistryObject.searchInstitutionsText().click();
-    ministryUserViewsInstitution.operatingNameInputText().type("e");
-    ministryUserViewsInstitution.searchButton().click();
-    ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
-    ministryUserViewsInstitution.profileTextVerify().should("be.visible");
-    ministryUserViewsInstitution.programsSection().click();
-    ministryUserViewsInstitution
-      .programSectionVerifyText()
-      .should("be.visible");
-    ministryUserViewsInstitution.viewButtonFirstRowPrograms().click();
-    ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
-    ministryUserViewsInstitution.viewProgramButton().click();
+    viewProgram();
     ministryUserViewsInstitution.backButtonViewProgram().click();
     ministryUserViewsInstitution.studyPeriodOfferings().should("be.visible");
     ministryUserViewsInstitution.backAllProgramsButton().click();
@@ -181,14 +130,11 @@ describe("Ministry User View Institution Page", () => {
   });
 
   it.skip("Verify that clicking on back button redirects from Designation to Profile section.", () => {
-    ministryCustomCommand.loginMinistry();
-    dashboardMinistryObject.dashboardText().should("be.visible");
-    dashboardMinistryObject.searchInstitutionsText().click();
-    ministryUserViewsInstitution.operatingNameInputText().type("e");
-    ministryUserViewsInstitution.searchButton().click();
+    searchingOperatingName();
     ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
     ministryUserViewsInstitution.profileTextVerify().should("be.visible");
     ministryUserViewsInstitution.designationSection().click();
+    cy.focused().click();
     ministryUserViewsInstitution.designationAgreements().should("be.visible");
     ministryUserViewsInstitution.firstRowViewButtonDesignation().click();
     ministryUserViewsInstitution.designationDetailsText().should("be.visible");

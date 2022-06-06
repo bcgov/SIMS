@@ -438,7 +438,7 @@ export default class ApplicationObject {
   }
 
   noSocialInsuranceNumber() {
-    return cy.get("#ef5lhtg-no");
+    return cy.get(":nth-child(2) > .form-check-label > span");
   }
 
   noSocialInsuranceNumberMessage() {
@@ -502,11 +502,11 @@ export default class ApplicationObject {
   }
 
   partnerIncomeInputMessage() {
-    return cy.get("#eakjnu-estimatedSpouseIncome");
+    return cy.get("[name='data[estimatedSpouseIncome]']");
   }
 
   partnerFullTimeRadioButton() {
-    return cy.get("#enf43pg-yes");
+    return cy.get("#et8sctn > .form-radio > :nth-child(1)");
   }
 
   homeCaringRadioButton() {

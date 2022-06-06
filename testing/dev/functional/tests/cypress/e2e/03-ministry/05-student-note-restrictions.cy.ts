@@ -89,6 +89,39 @@ function noteSection() {
   studentNoteRestrictionsObject.createNewNoteButton().should("be.visible");
 }
 
+function addNewRestrictions() {
+  restrictions();
+  studentNoteRestrictionsObject
+    .addRestrictionsButton()
+    .should("be.visible")
+    .click();
+  studentNoteRestrictionsObject.addNewRestrictionsText().should("be.visible");
+}
+
+function createNote(noteType: any, noteBody: any) {
+  searchStudents();
+  ministryUserViewsStudent.firstNameText().should("be.visible");
+  ministryUserViewsStudent.viewButtonFirstRow().click();
+  ministryUserViewsStudent.studentDetailsText().should("be.visible");
+  ministryUserViewsStudent.studentProfileText().should("be.visible");
+  ministryUserViewsStudent.applicationsSectionsButton().click();
+  ministryUserViewsStudent.applicationSectionVerify().should("be.visible");
+  ministryUserViewsStudent.notesSectionButton().click();
+  studentNoteRestrictionsObject
+    .createNewNoteButton()
+    .should("be.visible")
+    .click();
+  studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
+  studentNoteRestrictionsObject
+    .restrictionsValue()
+    .eq(1)
+    .type(noteType)
+    .type("{enter}");
+  studentNoteRestrictionsObject.noteBodyInputText().type(noteBody);
+  studentNoteRestrictionsObject.addNoteButton().click();
+  studentNoteRestrictionsObject.noteAddedSuccessfully().should("be.visible");
+}
+
 describe("Ministry User Enters Student Note & Restrictions", () => {
   beforeEach(() => {
     cy.visit(url);
@@ -108,21 +141,11 @@ describe("Ministry User Enters Student Note & Restrictions", () => {
   });
 
   it("Verify that the ADD RESTRICTIONS button is clickable & that the dialog box opens in Student Restriction section.", () => {
-    restrictions();
-    studentNoteRestrictionsObject
-      .addRestrictionsButton()
-      .should("be.visible")
-      .click();
-    studentNoteRestrictionsObject.addNewRestrictionsText().should("be.visible");
+    addNewRestrictions();
   });
 
   it("Check that error messages are displayed correctly in Student Add new restrictions dialog box.", () => {
-    restrictions();
-    studentNoteRestrictionsObject
-      .addRestrictionsButton()
-      .should("be.visible")
-      .click();
-    studentNoteRestrictionsObject.addNewRestrictionsText().should("be.visible");
+    addNewRestrictions();
     studentNoteRestrictionsObject.addRestrictionsDialogBox().click();
     studentNoteRestrictionsObject.categoryErrorMessage().should("be.visible");
     studentNoteRestrictionsObject.reasonErrorMessage().should("be.visible");
@@ -163,7 +186,10 @@ describe("Ministry User Enters Student Note & Restrictions", () => {
         .eq(3)
         .type(testData.reason)
         .type("{enter}");
-      studentNoteRestrictionsObject.addRestrictionButtonDialogBox().click();
+      studentNoteRestrictionsObject
+        .addRestrictionButtonDialogBox()
+        .should("be.visible")
+        .click();
       studentNoteRestrictionsObject.categoryErrorMessage().should("be.visible");
       studentNoteRestrictionsObject.clearButton().click();
     });
@@ -211,16 +237,14 @@ describe("Ministry User Enters Student Note & Restrictions", () => {
 
   it("Verify that the Create New Note button displays properly in Note in Student Note section.", () => {
     searchStudents();
+    cy.focused().click();
     noteSection();
   });
 
   it("Verify that error messages are displayed properly in the Note in Student Note section.", () => {
     searchStudents();
     noteSection();
-    studentNoteRestrictionsObject
-      .createNewNoteButton()
-      .should("be.visible")
-      .click();
+    studentNoteRestrictionsObject.createNewNoteButton().click();
     studentNoteRestrictionsObject.addNoteButton().click();
     studentNoteRestrictionsObject.noteTypeErrorMessage().should("be.visible");
     studentNoteRestrictionsObject.noteBodyErrorMessage().should("be.visible");
@@ -228,25 +252,7 @@ describe("Ministry User Enters Student Note & Restrictions", () => {
 
   it("Verify that in the General section Created a note with General type, is it displaying correctly or not in Student Note section.", () => {
     cy.fixture("ministryAddNewNotesInStudent").then((testData) => {
-      searchStudents();
-      noteSection();
-      studentNoteRestrictionsObject
-        .createNewNoteButton()
-        .should("be.visible")
-        .click();
-      studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
-      studentNoteRestrictionsObject
-        .restrictionsValue()
-        .eq(1)
-        .type(testData.noteTypeGeneral)
-        .type("{enter}");
-      studentNoteRestrictionsObject
-        .noteBodyInputText()
-        .type(testData.noteBodyGeneral);
-      studentNoteRestrictionsObject.addNoteButton().click();
-      studentNoteRestrictionsObject
-        .noteAddedSuccessfully()
-        .should("be.visible");
+      createNote(testData.noteTypeGeneral, testData.noteBodyGeneral);
       studentNoteRestrictionsObject.noteTypeAssertion(testData.noteTypeGeneral);
       studentNoteRestrictionsObject.noteTypeAssertion(testData.noteBodyGeneral);
       studentNoteRestrictionsObject.generalTabButton().click();
@@ -257,25 +263,7 @@ describe("Ministry User Enters Student Note & Restrictions", () => {
 
   it("Verify that in the Restriction section Created a note with Restriction type, is it displaying correctly or not in Student Note section.", () => {
     cy.fixture("ministryAddNewNotesInStudent").then((testData) => {
-      searchStudents();
-      noteSection();
-      studentNoteRestrictionsObject
-        .createNewNoteButton()
-        .should("be.visible")
-        .click();
-      studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
-      studentNoteRestrictionsObject
-        .restrictionsValue()
-        .eq(1)
-        .type(testData.noteTypeRestriction)
-        .type("{enter}");
-      studentNoteRestrictionsObject
-        .noteBodyInputText()
-        .type(testData.noteBodyRestriction);
-      studentNoteRestrictionsObject.addNoteButton().click();
-      studentNoteRestrictionsObject
-        .noteAddedSuccessfully()
-        .should("be.visible");
+      createNote(testData.noteTypeRestriction, testData.noteBodyRestriction);
       studentNoteRestrictionsObject.noteTypeAssertion(
         testData.noteTypeRestriction
       );
@@ -294,31 +282,7 @@ describe("Ministry User Enters Student Note & Restrictions", () => {
 
   it.skip("Verify that in the System Actions section Created a note with System Actions type, is it displaying correctly or not in Student Note section.", () => {
     cy.fixture("ministryAddNewNotesInStudent").then((testData) => {
-      searchStudents();
-      ministryUserViewsStudent.firstNameText().should("be.visible");
-      ministryUserViewsStudent.viewButtonFirstRow().click();
-      ministryUserViewsStudent.studentDetailsText().should("be.visible");
-      ministryUserViewsStudent.studentProfileText().should("be.visible");
-      ministryUserViewsStudent.applicationsSectionsButton().click();
-      ministryUserViewsStudent.applicationSectionVerify().should("be.visible");
-      ministryUserViewsStudent.notesSectionButton().click();
-      studentNoteRestrictionsObject
-        .createNewNoteButton()
-        .should("be.visible")
-        .click();
-      studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
-      studentNoteRestrictionsObject
-        .restrictionsValue()
-        .eq(1)
-        .type(testData.noteTypeSystem)
-        .type("{enter}");
-      studentNoteRestrictionsObject
-        .noteBodyInputText()
-        .type(testData.noteBodySystem);
-      studentNoteRestrictionsObject.addNoteButton().click();
-      studentNoteRestrictionsObject
-        .noteAddedSuccessfully()
-        .should("be.visible");
+      createNote(testData.noteTypeSystem, testData.noteBodySystem);
       studentNoteRestrictionsObject.noteTypeAssertion(testData.noteTypeSystem);
       studentNoteRestrictionsObject.noteTypeAssertion(testData.noteBodySystem);
       studentNoteRestrictionsObject.systemActionsTabButton().click();

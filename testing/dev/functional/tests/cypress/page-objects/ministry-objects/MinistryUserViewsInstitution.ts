@@ -68,7 +68,7 @@ export default class MinistryUserViewsInstitution {
   }
 
   backButtonViewProgram() {
-    return cy.get(".mdi-arrow-left");
+    return cy.get("a > .svg-inline--fa > path");
   }
 
   backButtonBackAllPrograms() {

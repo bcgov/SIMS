@@ -2,29 +2,52 @@ import DashboardInstitutionObject from "../../page-objects/Institution-objects/D
 import ManageLocationObject from "../../page-objects/Institution-objects/ManageLocationObject";
 import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
 
+const dashboardInstitutionObject = new DashboardInstitutionObject();
+const institutionManageLocationObject = new ManageLocationObject();
+const institutionCustomCommand = new InstitutionCustomCommand();
+const url = Cypress.env("institutionURL");
+
+function manageInstitution() {
+  dashboardInstitutionObject.dashboardButton().click();
+  dashboardInstitutionObject.manageInstitutionButton().click();
+}
+
+function intercept() {
+  cy.intercept("GET", "**/location/**").as("location");
+}
+
+function institutionCode() {
+  intercept();
+  manageInstitution();
+  institutionManageLocationObject.manageLocationButton().click();
+  institutionManageLocationObject.editLocationButton().click();
+  cy.wait("@location");
+  institutionManageLocationObject.institutionCode().should("be.disabled");
+}
+
+function institutionInputText() {
+  institutionCode();
+  institutionManageLocationObject.locationName().should("be.disabled");
+  institutionManageLocationObject.addressFirst().should("be.disabled");
+  institutionManageLocationObject.cityInputText().should("be.disabled");
+  institutionManageLocationObject.countryInputText().should("be.disabled");
+}
+
 describe("Manage Locations", () => {
-  const dashboardInstitutionObject = new DashboardInstitutionObject();
-  const institutionManageLocationObject = new ManageLocationObject();
-  const institutionCustomCommand = new InstitutionCustomCommand();
-
-  const url = Cypress.env("institutionURL");
-
   beforeEach(() => {
     cy.visit(url);
     institutionCustomCommand.loginInstitution();
   });
 
   it("Verify that user redirect to institution manage location page", () => {
-    dashboardInstitutionObject.dashboardButton().click();
-    dashboardInstitutionObject.manageInstitutionButton().click();
+    manageInstitution();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
     institutionManageLocationObject.manageLocationButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
   });
 
   it("Verify that user redirect to edit page of institution manage location", () => {
-    dashboardInstitutionObject.dashboardButton().click();
-    dashboardInstitutionObject.manageInstitutionButton().click();
+    manageInstitution();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
     institutionManageLocationObject.manageLocationButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
@@ -33,41 +56,28 @@ describe("Manage Locations", () => {
   });
 
   it("Verify that edit button is working or not", () => {
-    dashboardInstitutionObject.dashboardButton().click();
-    dashboardInstitutionObject.manageInstitutionButton().click();
+    manageInstitution();
     institutionManageLocationObject.manageLocationButton().click();
     institutionManageLocationObject.editLocationButton().click();
     institutionManageLocationObject.editLocationMessage().should("be.visible");
   });
 
   it("Verify that by clicking on Add New Location button redirects to appropriate page or not", () => {
-    dashboardInstitutionObject.dashboardButton().click();
-    dashboardInstitutionObject.manageInstitutionButton().click();
+    manageInstitution();
     institutionManageLocationObject.manageLocationButton().click();
     institutionManageLocationObject.addNewLocationButton().click();
     institutionManageLocationObject.addLocationMessage().should("be.visible");
   });
 
   it("Verify that without filling mandatory fields, submit button must be disabled", () => {
-    dashboardInstitutionObject.dashboardButton().click();
-    dashboardInstitutionObject.manageInstitutionButton().click();
+    manageInstitution();
     institutionManageLocationObject.manageLocationButton().click();
     institutionManageLocationObject.editLocationButton().click();
   });
 
   it("Verify that after filling all details, submit button must be enabled", () => {
     cy.fixture("institutionManageLocationData").then((data) => {
-      cy.intercept("GET", "**/location/**").as("location");
-      dashboardInstitutionObject.dashboardButton().click();
-      dashboardInstitutionObject.manageInstitutionButton().click();
-      institutionManageLocationObject.manageLocationButton().click();
-      institutionManageLocationObject.editLocationButton().click();
-      cy.wait("@location");
-      institutionManageLocationObject.institutionCode().should("be.disabled");
-      institutionManageLocationObject.locationName().should("be.disabled");
-      institutionManageLocationObject.addressFirst().should("be.disabled");
-      institutionManageLocationObject.cityInputText().should("be.disabled");
-      institutionManageLocationObject.countryInputText().should("be.disabled");
+      institutionInputText();
       institutionManageLocationObject
         .firstNameInputText()
         .clear()
@@ -86,17 +96,7 @@ describe("Manage Locations", () => {
 
   it("Verify that user have proper error messages when mandatory fields are not filled out", () => {
     cy.fixture("institutionManageLocationData").then((data) => {
-      cy.intercept("GET", "**/location/**").as("location");
-      dashboardInstitutionObject.dashboardButton().click();
-      dashboardInstitutionObject.manageInstitutionButton().click();
-      institutionManageLocationObject.manageLocationButton().click();
-      institutionManageLocationObject.editLocationButton().click();
-      cy.wait("@location");
-      institutionManageLocationObject.institutionCode().should("be.disabled");
-      institutionManageLocationObject.locationName().should("be.disabled");
-      institutionManageLocationObject.addressFirst().should("be.disabled");
-      institutionManageLocationObject.cityInputText().should("be.disabled");
-      institutionManageLocationObject.countryInputText().should("be.disabled");
+      institutionInputText();
       institutionManageLocationObject
         .firstNameInputText()
         .type(data.firstName)
@@ -128,17 +128,7 @@ describe("Manage Locations", () => {
 
   it("Verify that submit button must be disabled if any input filled is erased", () => {
     cy.fixture("institutionManageLocationData").then((data) => {
-      cy.intercept("GET", "**/location/**").as("location");
-      dashboardInstitutionObject.dashboardButton().click();
-      dashboardInstitutionObject.manageInstitutionButton().click();
-      institutionManageLocationObject.manageLocationButton().click();
-      institutionManageLocationObject.editLocationButton().click();
-      cy.wait("@location");
-      institutionManageLocationObject.institutionCode().should("be.disabled");
-      institutionManageLocationObject.addressFirst().should("be.disabled");
-      institutionManageLocationObject.cityInputText().should("be.disabled");
-      institutionManageLocationObject.countryInputText().should("be.disabled");
-      institutionManageLocationObject.locationName().should("be.disabled");
+      institutionInputText();
       institutionManageLocationObject
         .firstNameInputText()
         .type(data.firstName)
