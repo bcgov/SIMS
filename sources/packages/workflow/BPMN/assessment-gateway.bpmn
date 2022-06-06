@@ -596,7 +596,6 @@ ${workflowIdErrorMsg}</camunda:inputParameter>
               <camunda:value>offering.studyEndDate</camunda:value>
               <camunda:value>offering.breakStartDate</camunda:value>
               <camunda:value>offering.breakEndDate</camunda:value>
-              <camunda:value>offering.tuitionRemittanceRequestedAmount</camunda:value>
               <camunda:value>offering.offeringDelivered</camunda:value>
               <camunda:value>offering.offeringIntensity</camunda:value>
               <camunda:value>program.programCredentialType</camunda:value>
@@ -678,7 +677,6 @@ ${workflowIdErrorMsg}</camunda:inputParameter>
           <camunda:outputParameter name="programCredentialType">${program_programCredentialType}</camunda:outputParameter>
           <camunda:outputParameter name="offeringIntensity">${offering_offeringIntensity}</camunda:outputParameter>
           <camunda:outputParameter name="offeringDelivered">${offering_offeringDelivered}</camunda:outputParameter>
-          <camunda:outputParameter name="tuitionRemittanceRequestedAmount">${offering_tuitionRemittanceRequestedAmount}</camunda:outputParameter>
           <camunda:outputParameter name="breakEndDate">${offering_breakEndDate}</camunda:outputParameter>
           <camunda:outputParameter name="breakStartDate">${offering_breakStartDate}</camunda:outputParameter>
           <camunda:outputParameter name="studyEndDate">${offering_studyEndDate}</camunda:outputParameter>

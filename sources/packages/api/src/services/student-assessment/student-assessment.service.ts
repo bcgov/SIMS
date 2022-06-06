@@ -61,7 +61,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "offering.programRelatedCosts",
         "offering.mandatoryFees",
         "offering.exceptionalExpenses",
-        "offering.tuitionRemittanceRequestedAmount",
         "offering.offeringDelivered",
         "offering.offeringIntensity",
         "offering.courseLoad",

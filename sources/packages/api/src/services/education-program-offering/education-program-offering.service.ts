@@ -159,10 +159,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.programRelatedCosts",
         "offerings.mandatoryFees",
         "offerings.exceptionalExpenses",
-        "offerings.tuitionRemittanceRequestedAmount",
         "offerings.offeringDelivered",
         "offerings.lacksStudyBreaks",
-        "offerings.tuitionRemittanceRequested",
         "offerings.offeringIntensity",
         "offerings.yearOfStudy",
         "offerings.showYearOfStudy",
@@ -234,14 +232,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.mandatoryFees = educationProgramOffering.mandatoryFees;
     programOffering.exceptionalExpenses =
       educationProgramOffering.exceptionalExpenses;
-    programOffering.tuitionRemittanceRequestedAmount =
-      educationProgramOffering.tuitionRemittanceRequestedAmount;
     programOffering.offeringDelivered =
       educationProgramOffering.offeringDelivered;
     programOffering.lacksStudyBreaks =
       educationProgramOffering.lacksStudyBreaks;
-    programOffering.tuitionRemittanceRequested =
-      educationProgramOffering.tuitionRemittanceRequested;
     programOffering.offeringType =
       educationProgramOffering.offeringType ?? OfferingTypes.Public;
     programOffering.educationProgram = { id: programId } as EducationProgram;
@@ -364,10 +358,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.programRelatedCosts",
         "offering.mandatoryFees",
         "offering.exceptionalExpenses",
-        "offering.tuitionRemittanceRequestedAmount",
         "offering.offeringDelivered",
         "offering.lacksStudyBreaks",
-        "offering.tuitionRemittanceRequested",
         "offering.offeringIntensity",
         "offering.yearOfStudy",
         "offering.showYearOfStudy",

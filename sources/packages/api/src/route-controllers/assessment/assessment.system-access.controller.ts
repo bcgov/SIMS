@@ -91,8 +91,6 @@ export class AssessmentSystemAccessController extends BaseController {
         programRelatedCosts: offering?.programRelatedCosts,
         mandatoryFees: offering?.mandatoryFees,
         exceptionalExpenses: offering?.exceptionalExpenses,
-        tuitionRemittanceRequestedAmount:
-          offering?.tuitionRemittanceRequestedAmount,
         offeringDelivered: offering?.offeringDelivered,
         offeringIntensity: offering?.offeringIntensity,
         courseLoad: offering?.courseLoad,

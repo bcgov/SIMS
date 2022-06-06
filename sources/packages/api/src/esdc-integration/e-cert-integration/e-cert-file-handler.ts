@@ -228,7 +228,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       disbursementDate: disbursement.disbursementDate,
       documentProducedDate: now,
       negotiatedExpiryDate: disbursement.negotiatedExpiryDate,
-      schoolAmount: offering.tuitionRemittanceRequestedAmount,
+      schoolAmount: disbursement.tuitionRemittanceRequestedAmount,
       educationalStartDate: offering.studyStartDate,
       educationalEndDate: offering.studyEndDate,
       federalInstitutionCode: offering.institutionLocation.institutionCode,
