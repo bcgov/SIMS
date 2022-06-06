@@ -87,6 +87,7 @@ describe("Manage Locations", () => {
         .clear()
         .type(data.lastName);
       institutionManageLocationObject.emailInputText().clear().type(data.email);
+      cy.focused();
       institutionManageLocationObject
         .phoneInputText()
         .clear()
@@ -110,39 +111,6 @@ describe("Manage Locations", () => {
         .phoneInputText()
         .type(data.phoneNumber)
         .clear();
-
-      institutionManageLocationObject
-        .errorMessage()
-        .eq(0)
-        .should("include.text", "First name is required");
-      institutionManageLocationObject
-        .errorMessage()
-        .eq(1)
-        .should("include.text", "Last name is required");
-      institutionManageLocationObject
-        .errorMessage()
-        .eq(2)
-        .should("include.text", "Email is required");
-    });
-  });
-
-  it("Verify that submit button must be disabled if any input filled is erased", () => {
-    cy.fixture("institutionManageLocationData").then((data) => {
-      institutionInputText();
-      institutionManageLocationObject
-        .firstNameInputText()
-        .type(data.firstName)
-        .clear();
-      institutionManageLocationObject
-        .lastNameINputText()
-        .type(data.lastName)
-        .clear();
-      institutionManageLocationObject.emailInputText().type(data.email).clear();
-      institutionManageLocationObject
-        .phoneInputText()
-        .type(data.phoneNumber)
-        .clear();
-
       institutionManageLocationObject
         .errorMessage()
         .eq(0)

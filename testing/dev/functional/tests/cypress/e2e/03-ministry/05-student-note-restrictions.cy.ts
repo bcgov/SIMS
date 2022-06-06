@@ -111,6 +111,7 @@ function createNote(noteType: any, noteBody: any) {
     .createNewNoteButton()
     .should("be.visible")
     .click();
+  cy.focused();
   studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
   studentNoteRestrictionsObject
     .restrictionsValue()

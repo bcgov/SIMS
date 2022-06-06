@@ -203,13 +203,9 @@ describe("Ministry User Enters Institution Note & Restrictions", () => {
   });
 
   it.skip("Verify that user can't resolve restrictions without a resolution note in Institution Restriction section.", () => {
-    cy.fixture("ministryAddNewRestrictionsInInstitution").then((testData) => {
-      institutionRestrictions();
-      studentNoteRestrictionsObject.resolveRestrictionsButton().click();
-      studentNoteRestrictionsObject
-        .resolutionNoteRequired()
-        .should("be.visible");
-    });
+    institutionRestrictions();
+    studentNoteRestrictionsObject.resolveRestrictionsButton().click();
+    studentNoteRestrictionsObject.resolutionNoteRequired().should("be.visible");
   });
 
   it.skip("Verify that ministry users can resolve restrictions by entering resolution note in Institution Restriction section.", () => {

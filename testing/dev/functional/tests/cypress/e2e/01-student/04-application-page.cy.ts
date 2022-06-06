@@ -38,14 +38,13 @@ function personalInformationSection() {
   });
 }
 
-function partnerInformationSection() {
+function fieldsForPersonalInformation() {
   cy.intercept("GET", "**/program-year").as("programYear");
   draftApplicationVerify();
-  cy.wait("@programYear");
   applicationObject.personalInformationButton().click({ force: true });
   applicationObject.iConfirmMyStudentAidCheckbox().click({ force: true });
   applicationObject.citizenStatusRadioButton().click();
-  applicationObject.residentOfBCRadioButton().click();
+  applicationObject.residentOfBCRadioButton().click({ force: true });
   applicationObject.residenceNoneOfTheAboveRadioButton().click();
   applicationObject
     .explainSituationInputField()
@@ -59,6 +58,10 @@ function partnerInformationSection() {
   applicationObject.fullTimeLaborForceRadioButton().click();
   applicationObject.allowTrustContactRadioButton().click();
   applicationObject.nextSectionButton().click();
+}
+
+function partnerInformationSection() {
+  fieldsForPersonalInformation();
   applicationObject.marriedRadioButton().click();
   applicationObject.dateOfMarriage().type("2023-12-01");
   applicationObject.dependRadioButton().click();
@@ -289,25 +292,7 @@ describe("Application Page", () => {
   });
 
   it("Check that all fields on the Personal Information page are working.", () => {
-    cy.intercept("GET", "**/program-year").as("programYear");
-    draftApplicationVerify();
-    applicationObject.personalInformationButton().click({ force: true });
-    applicationObject.iConfirmMyStudentAidCheckbox().click({ force: true });
-    applicationObject.citizenStatusRadioButton().click();
-    applicationObject.residentOfBCRadioButton().click({ force: true });
-    applicationObject.residenceNoneOfTheAboveRadioButton().click();
-    applicationObject
-      .explainSituationInputField()
-      .type("I applied but haven't received confirmation yet.");
-    applicationObject.indigenousPersonRadioButton().click();
-    applicationObject.aboriginalRadioButton().click();
-    applicationObject.legalGuardianRadioButton().click();
-    applicationObject.courseStudyStartDateRadioButton().click();
-    applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
-    applicationObject.workingFullTimeRadioButton().click();
-    applicationObject.fullTimeLaborForceRadioButton().click();
-    applicationObject.allowTrustContactRadioButton().click();
-    applicationObject.nextSectionButton().click();
+    fieldsForPersonalInformation();
   });
 
   it("Check that all fields on the Family Information page are working.", () => {
@@ -353,14 +338,6 @@ describe("Application Page", () => {
   it("Verify that user is able to complete all forms in the application & submit it successfully", () => {
     financialInformationSection();
     applicationObject.declarationFormCheckbox().click();
-  });
-
-  it("Check Draft status form is being created.", () => {
-    startNewApplication();
-    applicationObject
-      .startApplicationStudyYearDisableButton()
-      .should("be.visible");
-    applicationObject.selectStudyYearDropdown();
   });
 
   it("Verify that all fields are working in file upload section", () => {
