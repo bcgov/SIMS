@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
 import {
   ArrayMinSize,
+  ArrayUnique,
   IsIn,
   IsNotEmpty,
   IsPositive,
@@ -23,6 +24,7 @@ export class CreateApplicationExceptionAPIInDTO {
   @IsPositive()
   applicationId: number;
   @ArrayMinSize(1)
+  @ArrayUnique((exception) => exception.exceptionName)
   @ValidateNested({ each: true })
   @Type(() => ApplicationExceptionRequestAPIInDTO)
   exceptionRequests: ApplicationExceptionRequestAPIInDTO[];
