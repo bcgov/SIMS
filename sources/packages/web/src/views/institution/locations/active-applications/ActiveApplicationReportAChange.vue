@@ -31,6 +31,7 @@ import {
 } from "@/services/http/dto/ScholasticStanding.dto";
 import { useToastMessage } from "@/composables";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
 
 export default {
   props: {
@@ -99,6 +100,7 @@ export default {
               APPLICATION_NOT_FOUND,
               INVALID_OPERATION_IN_THE_CURRENT_STATUS,
               ASSESSMENT_ALREADY_IN_PROGRESS,
+              APPLICATION_CHANGE_NOT_ELIGIBLE,
             ].includes(error.errorType)
           ) {
             toast.warn("Not able to submit", error.message);

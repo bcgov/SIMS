@@ -82,6 +82,7 @@ export class ConfigService {
       },
       bypassApplicationSubmitValidations:
         process.env.BYPASS_APPLICATION_SUBMIT_VALIDATIONS === "true",
+      applicationArchiveDays: +process.env.APPLICATION_ARCHIVE_DAYS,
     };
   }
 
