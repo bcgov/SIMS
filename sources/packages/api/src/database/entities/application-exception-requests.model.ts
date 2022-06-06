@@ -13,7 +13,7 @@ export const EXCEPTION_NAME_MAX_LENGTH = 100;
 
 /**
  * Represents the list of exceptions detected on a submitted full-time/part-time student
- * application, for instance, when a document need to be reviewed.
+ * application, for instance, when a document needs to be reviewed.
  */
 @Entity({ name: TableNames.ApplicationExceptionRequests })
 export class ApplicationExceptionRequest extends RecordDataModel {

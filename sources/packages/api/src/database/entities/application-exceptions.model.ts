@@ -15,7 +15,7 @@ import { ApplicationExceptionRequest } from "./application-exception-requests.mo
 
 /**
  * Represents a set of exceptions detected on a submitted full-time/part-time student
- * application, for instance, when a document need to be reviewed.
+ * application, for instance, when a document needs to be reviewed.
  */
 @Entity({ name: TableNames.ApplicationExceptions })
 export class ApplicationException extends RecordDataModel {
