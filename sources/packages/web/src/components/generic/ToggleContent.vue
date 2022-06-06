@@ -5,7 +5,7 @@
     </v-row>
     <v-row justify="center m-4">
       <slot name="message">
-        {{ message }}
+        <h5 class="muted-content-strong">{{ message }}</h5>
       </slot>
     </v-row>
   </div>

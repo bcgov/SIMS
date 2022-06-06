@@ -27,7 +27,8 @@
               ><template #body="slotProps">{{
                 dateOnlyLongString(slotProps.data.submittedDate)
               }}</template></Column
-            ><Column field="triggerType" header="Type" sortable="true"></Column>
+            >
+            <Column field="requestType" header="Type" sortable="true"></Column>
             <Column header="Request form" sortable="false"
               ><template #body="{ data }"
                 ><v-btn
