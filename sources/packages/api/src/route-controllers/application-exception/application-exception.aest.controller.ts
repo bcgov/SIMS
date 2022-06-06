@@ -22,7 +22,7 @@ import {
   ApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "./models/application-exception.dto";
-import { IUserToken } from "src/auth/userToken.interface";
+import { IUserToken } from "../../auth/userToken.interface";
 import { CustomNamedError } from "../../utilities";
 import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,

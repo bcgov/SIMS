@@ -35,6 +35,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
    * @param exceptionNames unique identifier names for the exceptions.
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
+   * @returns created exception.
    */
   async createException(
     applicationId: number,
@@ -78,6 +79,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
    * Get a student application expectation detected after the student application was
    * submitted, for instance, when there are documents to be reviewed.
    * @param applicationId application associated with the exception.
+   * @param status statuses to be filtered.
    * @returns student application expectation information.
    */
   async getExceptionsByApplicationId(
