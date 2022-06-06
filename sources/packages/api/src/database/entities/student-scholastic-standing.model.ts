@@ -69,33 +69,6 @@ export class StudentScholasticStanding extends RecordDataModel {
   })
   submittedBy: User;
   /**
-   * Dynamic form data that represents the final data revised by the Ministry.
-   */
-  @Column({
-    name: "approved_data",
-    type: "jsonb",
-    nullable: true,
-  })
-  approvedData?: any;
-  /**
-   * Date that the Ministry approved or denied the scholastic standing.
-   */
-  @Column({
-    name: "assessed_date",
-    type: "timestamptz",
-    nullable: true,
-  })
-  assessedDate?: Date;
-  /**
-   * Ministry user that approved or declined the scholastic standing.
-   */
-  @ManyToOne(() => User, { eager: false, cascade: false, nullable: true })
-  @JoinColumn({
-    name: "assessed_by",
-    referencedColumnName: ColumnNames.ID,
-  })
-  assessedBy?: User;
-  /**
    * Note added by the Ministry while approving or denying the scholastic standing.
    */
   @OneToOne(() => Note, { eager: false, cascade: true, nullable: true })
