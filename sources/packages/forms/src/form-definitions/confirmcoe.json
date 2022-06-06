@@ -240,7 +240,9 @@
           },
           "customConditional": "",
           "logic": [],
-          "attributes": {},
+          "attributes": {
+            "data-cy": "doYouWantToRequestTuitionRemittance"
+          },
           "overlay": {
             "style": "",
             "page": "",
@@ -266,7 +268,7 @@
           "addons": [],
           "inputType": "radio",
           "fieldSet": false,
-          "id": "exfv5w",
+          "id": "e1lfrc",
           "defaultValue": ""
         },
         {
@@ -375,7 +377,7 @@
               },
               "customConditional": "",
               "logic": [],
-              "attributes": {},
+              "attributes": { "data-cy": "tuitionRemittanceAmount" },
               "overlay": {
                 "style": "",
                 "page": "",
@@ -393,7 +395,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "et9rbd"
+              "id": "er6mrma"
             }
           ],
           "placeholder": "",
@@ -479,9 +481,12 @@
     },
     {
       "label": "applicationId",
+      "labelWidth": "",
+      "labelMargin": "",
       "customClass": "",
       "modalEdit": false,
-      "persistent": true,
+      "defaultValue": null,
+      "persistent": "client-only",
       "protected": false,
       "dbIndex": false,
       "encrypted": false,
@@ -504,6 +509,7 @@
       },
       "type": "hidden",
       "input": true,
+      "tableView": false,
       "placeholder": "",
       "prefix": "",
       "suffix": "",
@@ -512,7 +518,7 @@
       "hidden": false,
       "clearOnHide": true,
       "refreshOn": "",
-      "tableView": false,
+      "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
       "errorLabel": "",
@@ -536,18 +542,18 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
+      "addons": [],
       "inputType": "hidden",
-      "id": "em1y8gd",
-      "defaultValue": "",
-      "dataGridLabel": false,
-      "addons": []
+      "id": "e732eta"
     },
     {
       "label": "applicationStatus",
+      "labelWidth": "",
+      "labelMargin": "",
       "customClass": "",
       "modalEdit": false,
       "defaultValue": null,
-      "persistent": true,
+      "persistent": "client-only",
       "protected": false,
       "dbIndex": false,
       "encrypted": false,
@@ -603,9 +609,9 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
+      "addons": [],
       "inputType": "hidden",
-      "id": "e6z1qd9",
-      "addons": []
+      "id": "edmtc2t"
     }
   ]
 }

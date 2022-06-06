@@ -349,9 +349,11 @@ export class ConfirmationOfEnrollmentController extends BaseController {
       ],
     );
 
-    /* Enable Institution Users to request tuition remittance at the time 
-    of confirming enrolment, not to exceed the lesser of EITHER 
-    (Actual tuition + Program related costs) OR (Canada grants + Canada Loan + BC Loan). */
+    /**
+     * Enable Institution Users to request tuition remittance at the time
+     * of confirming enrolment, not to exceed the lesser of EITHER
+     * (Actual tuition + Program related costs) OR (Canada grants + Canada Loan + BC Loan).
+     */
     const offering = disbursementSchedule.studentAssessment.offering;
     const offeringAmount =
       offering.actualTuitionCosts + offering.programRelatedCosts;

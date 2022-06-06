@@ -53,18 +53,17 @@ import {
   ApplicationDetailsForCOEDTO,
   DenyConfirmationOfEnrollment,
   ProgramInfoStatus,
-  FormIOForm,
   ApiProcessError,
 } from "@/types";
 import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
-import { useToastMessage, ModalDialog, useFormioUtils } from "@/composables";
+import { useToastMessage, ModalDialog } from "@/composables";
 import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
 import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "@/constants";
-import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto";
+import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto/ConfirmationOfEnrolment.dto";
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify component is used
@@ -103,11 +102,11 @@ export default {
     const menu = ref();
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
-    const formioUtils = useFormioUtils();
     const editCOEModal = ref({} as ModalDialog<boolean>);
     const denyCOEModal = ref({} as ModalDialog<void>);
-    const confirmCOEModal = ref({} as ModalDialog<FormIOForm | boolean>);
-    const TUITION_REMITTANCE_AMOUNT = "tuitionRemittanceAmount";
+    const confirmCOEModal = ref(
+      {} as ModalDialog<ConfirmationOfEnrollmentAPIInDTO | boolean>,
+    );
     const loadInitialData = async () => {
       initialData.value =
         await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
@@ -121,13 +120,7 @@ export default {
         return;
       }
       try {
-        const tuitionRemittanceAmount = formioUtils.getComponentValueByKey(
-          modalResult,
-          TUITION_REMITTANCE_AMOUNT,
-        );
-        const payload: ConfirmationOfEnrollmentAPIInDTO = {
-          tuitionRemittanceAmount,
-        };
+        const payload = modalResult as ConfirmationOfEnrollmentAPIInDTO;
         await ConfirmationOfEnrollmentService.shared.confirmCOE(
           props.locationId,
           props.disbursementScheduleId,

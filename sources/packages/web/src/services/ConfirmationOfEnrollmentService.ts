@@ -8,7 +8,7 @@ import {
   PaginationOptions,
 } from "@/types";
 import ApiClient from "./http/ApiClient";
-import { ConfirmationOfEnrollmentAPIInDTO } from "./http/dto";
+import { ConfirmationOfEnrollmentAPIInDTO } from "./http/dto/ConfirmationOfEnrolment.dto";
 
 export class ConfirmationOfEnrollmentService {
   // Share Instance
