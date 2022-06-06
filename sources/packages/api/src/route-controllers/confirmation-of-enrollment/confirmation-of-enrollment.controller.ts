@@ -70,7 +70,7 @@ const FIRST_COE_NOT_COMPLETE_MESSAGE =
   "First disbursement(COE) not complete. Please complete the first disbursement.";
 
 const INVALID_TUITION_REMITTANCE_AMOUNT_MESSAGE =
-  "Tuition amount provided should be lesser of EITHER (Actual tuition + Program related costs) OR (Canada grants + Canada Loan + BC Loan).";
+  "Tuition amount provided should be lesser than both (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -291,7 +291,7 @@ export class ConfirmationOfEnrollmentController extends BaseController {
    */
   @ApiUnprocessableEntityResponse({
     description:
-      "Tuition amount provided should be lesser of EITHER (Actual tuition + Program related costs) OR (Canada grants + Canada Loan + BC Loan). OR First disbursement(COE) not complete. Please complete the first disbursement.",
+      "Tuition amount provided should be lesser than both (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan). OR First disbursement(COE) not complete. Please complete the first disbursement.",
   })
   @HasLocationAccess("locationId")
   @Patch(
@@ -351,8 +351,8 @@ export class ConfirmationOfEnrollmentController extends BaseController {
 
     /**
      * Enable Institution Users to request tuition remittance at the time
-     * of confirming enrolment, not to exceed the lesser of EITHER
-     * (Actual tuition + Program related costs) OR (Canada grants + Canada Loan + BC Loan).
+     * of confirming enrolment, not to exceed the lesser than both
+     * (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).
      */
     const offering = disbursementSchedule.studentAssessment.offering;
     const offeringAmount =
