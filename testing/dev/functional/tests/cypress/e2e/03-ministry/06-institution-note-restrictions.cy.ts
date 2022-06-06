@@ -2,13 +2,14 @@ import MinistryCustomCommand from "../../custom-command/ministry/MinistryCustomC
 import DashboardMinistryObject from "../../page-objects/ministry-objects/DashboardMinistryObject";
 import MinistryUserViewsInstitution from "../../page-objects/ministry-objects/MinistryUserViewsInstitution";
 import MinistryUserViewsStudent from "../../page-objects/ministry-objects/MinistryUserViewsStudent";
-import StudentNoteRestrictionsObject from "../../page-objects/ministry-objects/StudentNoteRestrictionsObject";
+import InstitutionNoteRestrictionsObject from "../../page-objects/ministry-objects/InstitutionNoteRestrictionsObject";
 
 const ministryCustomCommand = new MinistryCustomCommand();
 const dashboardMinistryObject = new DashboardMinistryObject();
 const ministryUserViewsStudent = new MinistryUserViewsStudent();
 const ministryUserViewsInstitution = new MinistryUserViewsInstitution();
-const studentNoteRestrictionsObject = new StudentNoteRestrictionsObject();
+const institutionNoteRestrictionsObject =
+  new InstitutionNoteRestrictionsObject();
 const url = Cypress.env("ministryURL");
 
 function intercept() {
@@ -35,11 +36,13 @@ function restrictionSection() {
 
 function addNewRestrictions() {
   restrictionSection();
-  studentNoteRestrictionsObject
+  institutionNoteRestrictionsObject
     .addRestrictionsButton()
     .should("be.visible")
     .click();
-  studentNoteRestrictionsObject.addNewRestrictionsText().should("be.visible");
+  institutionNoteRestrictionsObject
+    .addNewRestrictionsText()
+    .should("be.visible");
 }
 
 function institutionRestrictions() {
@@ -47,33 +50,35 @@ function institutionRestrictions() {
     intercept();
     restrictionSection();
     cy.focused();
-    studentNoteRestrictionsObject
+    institutionNoteRestrictionsObject
       .addRestrictionsButton()
       .should("be.visible")
       .click();
     cy.wait("@options-list");
-    studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
-    studentNoteRestrictionsObject
+    institutionNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
+    institutionNoteRestrictionsObject
       .restrictionsValue()
       .eq(1)
       .type(testData.category)
       .type("{enter}");
     cy.wait("@Designation");
-    studentNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
+    institutionNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
     cy.focused();
-    studentNoteRestrictionsObject
+    institutionNoteRestrictionsObject
       .restrictionsValue()
       .eq(3)
       .type(testData.reason)
       .type("{enter}");
     cy.focused();
-    studentNoteRestrictionsObject.notesInputText().type(testData.notes);
-    studentNoteRestrictionsObject.addRestrictionButtonDialogBox().click();
-    studentNoteRestrictionsObject.restrictionsAddedText().should("be.visible");
-    studentNoteRestrictionsObject.categoryButton().click();
-    studentNoteRestrictionsObject.categoryButton().click();
+    institutionNoteRestrictionsObject.notesInputText().type(testData.notes);
+    institutionNoteRestrictionsObject.addRestrictionButtonDialogBox().click();
+    institutionNoteRestrictionsObject
+      .restrictionsAddedText()
+      .should("be.visible");
+    institutionNoteRestrictionsObject.categoryButton().click();
+    institutionNoteRestrictionsObject.categoryButton().click();
     cy.wait("@institution");
-    studentNoteRestrictionsObject.firstRowButtonRestrictions().click();
+    institutionNoteRestrictionsObject.firstRowButtonRestrictions().click();
     cy.wait("@institutionRestriction");
   });
 }
@@ -86,24 +91,26 @@ function createNewNote() {
   ministryUserViewsStudent.searchButton().eq(1).click();
   ministryUserViewsInstitution.viewButtonFirstRowInstitution().click();
   ministryUserViewsStudent.notesSectionButton().click();
-  studentNoteRestrictionsObject.createNewNoteButton().should("be.visible");
+  institutionNoteRestrictionsObject.createNewNoteButton().should("be.visible");
 }
 
 function noteAdded(noteType: any, noteBody: any) {
   createNewNote();
-  studentNoteRestrictionsObject
+  institutionNoteRestrictionsObject
     .createNewNoteButton()
     .should("be.visible")
     .click();
-  studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
-  studentNoteRestrictionsObject
+  institutionNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
+  institutionNoteRestrictionsObject
     .restrictionsValue()
     .eq(1)
     .type(noteType)
     .type("{enter}");
-  studentNoteRestrictionsObject.noteBodyInputText().type(noteBody);
-  studentNoteRestrictionsObject.addNoteButton().click();
-  studentNoteRestrictionsObject.noteAddedSuccessfully().should("be.visible");
+  institutionNoteRestrictionsObject.noteBodyInputText().type(noteBody);
+  institutionNoteRestrictionsObject.addNoteButton().click();
+  institutionNoteRestrictionsObject
+    .noteAddedSuccessfully()
+    .should("be.visible");
 }
 
 describe("Ministry User Enters Institution Note & Restrictions", () => {
@@ -132,7 +139,9 @@ describe("Ministry User Enters Institution Note & Restrictions", () => {
 
   it("Check that the ADD RESTRICTIONS button is visible in the Restrictions page in Institution Restrictions section.", () => {
     restrictionSection();
-    studentNoteRestrictionsObject.addRestrictionsButton().should("be.visible");
+    institutionNoteRestrictionsObject
+      .addRestrictionsButton()
+      .should("be.visible");
   });
 
   it("Check that the ADD RESTRICTIONS button is visible in the Restrictions page in Institution Restrictions section..", () => {
@@ -141,15 +150,17 @@ describe("Ministry User Enters Institution Note & Restrictions", () => {
 
   it("Check that error messages are displayed correctly in Add new restrictions dialog box in Institution Restrictions section.", () => {
     addNewRestrictions();
-    studentNoteRestrictionsObject.addRestrictionsDialogBox().click();
-    studentNoteRestrictionsObject.categoryErrorMessage().should("be.visible");
-    studentNoteRestrictionsObject.reasonErrorMessage().should("be.visible");
+    institutionNoteRestrictionsObject.addRestrictionsDialogBox().click();
+    institutionNoteRestrictionsObject
+      .categoryErrorMessage()
+      .should("be.visible");
+    institutionNoteRestrictionsObject.reasonErrorMessage().should("be.visible");
   });
 
   it("Check that cancel button closes the dialog box in Institution Restriction section.", () => {
     addNewRestrictions();
-    studentNoteRestrictionsObject.cancelButton().click();
-    studentNoteRestrictionsObject.allRestrictions().should("be.visible");
+    institutionNoteRestrictionsObject.cancelButton().click();
+    institutionNoteRestrictionsObject.allRestrictions().should("be.visible");
   });
 
   it("Check that all mandatory fields have been filled out in Institution Restriction section.", () => {
@@ -157,46 +168,52 @@ describe("Ministry User Enters Institution Note & Restrictions", () => {
       intercept();
       addNewRestrictions();
       cy.wait("@options-list");
-      studentNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
-      studentNoteRestrictionsObject
+      institutionNoteRestrictionsObject.restrictionsDropdown().eq(0).click();
+      institutionNoteRestrictionsObject
         .restrictionsValue()
         .eq(1)
         .type(testData.category)
         .type("{enter}");
       cy.wait("@Designation");
-      studentNoteRestrictionsObject.addRestrictionButtonDialogBox().click();
-      studentNoteRestrictionsObject.reasonErrorMessage().should("be.visible");
-      studentNoteRestrictionsObject.clearButton().click();
-      studentNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
-      studentNoteRestrictionsObject
+      institutionNoteRestrictionsObject.addRestrictionButtonDialogBox().click();
+      institutionNoteRestrictionsObject
+        .reasonErrorMessage()
+        .should("be.visible");
+      institutionNoteRestrictionsObject.clearButton().click();
+      institutionNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
+      institutionNoteRestrictionsObject
         .restrictionsValue()
         .eq(3)
         .type(testData.reason)
         .type("{enter}");
-      studentNoteRestrictionsObject.addRestrictionButtonDialogBox().click();
-      studentNoteRestrictionsObject.categoryErrorMessage().should("be.visible");
+      institutionNoteRestrictionsObject.addRestrictionButtonDialogBox().click();
+      institutionNoteRestrictionsObject
+        .categoryErrorMessage()
+        .should("be.visible");
     });
   });
 
   it("Verify that the Reason dropdown should be empty without filling in the Category in Institution Restriction section.", () => {
     intercept();
     restrictionSection();
-    studentNoteRestrictionsObject
+    institutionNoteRestrictionsObject
       .addRestrictionsButton()
       .should("be.visible")
       .click();
     cy.wait("@options-list");
-    studentNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
-    studentNoteRestrictionsObject.emptyDropdownMessage().should("be.visible");
+    institutionNoteRestrictionsObject.restrictionsDropdown().eq(2).click();
+    institutionNoteRestrictionsObject
+      .emptyDropdownMessage()
+      .should("be.visible");
   });
 
   it.skip("Verify that user able to add restrictions in Institution Restriction section.", () => {
     cy.fixture("ministryAddNewRestrictionsInInstitution").then((testData) => {
       institutionRestrictions();
-      studentNoteRestrictionsObject
+      institutionNoteRestrictionsObject
         .categoryAssertion(testData.category)
         .should("be.visible");
-      studentNoteRestrictionsObject
+      institutionNoteRestrictionsObject
         .reasonAssertion(testData.reason)
         .should("be.visible");
     });
@@ -204,24 +221,26 @@ describe("Ministry User Enters Institution Note & Restrictions", () => {
 
   it.skip("Verify that user can't resolve restrictions without a resolution note in Institution Restriction section.", () => {
     institutionRestrictions();
-    studentNoteRestrictionsObject.resolveRestrictionsButton().click();
-    studentNoteRestrictionsObject.resolutionNoteRequired().should("be.visible");
+    institutionNoteRestrictionsObject.resolveRestrictionsButton().click();
+    institutionNoteRestrictionsObject
+      .resolutionNoteRequired()
+      .should("be.visible");
   });
 
   it.skip("Verify that ministry users can resolve restrictions by entering resolution note in Institution Restriction section.", () => {
     cy.fixture("ministryAddNewRestrictionsInInstitution").then((testData) => {
       institutionRestrictions();
-      studentNoteRestrictionsObject
+      institutionNoteRestrictionsObject
         .categoryAssertion(testData.category)
         .should("be.visible");
-      studentNoteRestrictionsObject
+      institutionNoteRestrictionsObject
         .reasonAssertion(testData.reason)
         .should("be.visible");
-      studentNoteRestrictionsObject
+      institutionNoteRestrictionsObject
         .resolutionNotesInputText()
         .type(testData.resolutionNotes);
-      studentNoteRestrictionsObject.resolveRestrictionsButton().click();
-      studentNoteRestrictionsObject
+      institutionNoteRestrictionsObject.resolveRestrictionsButton().click();
+      institutionNoteRestrictionsObject
         .restrictionsResolvedAssertion()
         .should("be.visible");
     });
@@ -233,40 +252,52 @@ describe("Ministry User Enters Institution Note & Restrictions", () => {
 
   it("Verify that error messages are displayed properly in the Note in Institution Note section.", () => {
     createNewNote();
-    studentNoteRestrictionsObject
+    institutionNoteRestrictionsObject
       .createNewNoteButton()
       .should("be.visible")
       .click();
-    studentNoteRestrictionsObject.addNoteButton().click();
-    studentNoteRestrictionsObject.noteTypeErrorMessage().should("be.visible");
-    studentNoteRestrictionsObject.noteBodyErrorMessage().should("be.visible");
+    institutionNoteRestrictionsObject.addNoteButton().click();
+    institutionNoteRestrictionsObject
+      .noteTypeErrorMessage()
+      .should("be.visible");
+    institutionNoteRestrictionsObject
+      .noteBodyErrorMessage()
+      .should("be.visible");
   });
 
   it("Verify that in the General section Created a note with General type, is it displaying correctly or not in Institution Note section.", () => {
     cy.fixture("ministryAddNewNotesInInstitution").then((testData) => {
       noteAdded(testData.noteTypeGeneral, testData.noteBodyGeneral);
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteTypeGeneral);
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteBodyGeneral);
-      studentNoteRestrictionsObject.generalTabButton().click();
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteTypeGeneral);
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteBodyGeneral);
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteTypeGeneral
+      );
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteBodyGeneral
+      );
+      institutionNoteRestrictionsObject.generalTabButton().click();
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteTypeGeneral
+      );
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteBodyGeneral
+      );
     });
   });
 
   it("Verify that in the Restrictions section Created a note with Restrictions type, is it displaying correctly or not in Institution Note section.", () => {
     cy.fixture("ministryAddNewNotesInInstitution").then((testData) => {
       noteAdded(testData.noteTypeRestriction, testData.noteBodyRestriction);
-      studentNoteRestrictionsObject.noteTypeAssertion(
+      institutionNoteRestrictionsObject.noteTypeAssertion(
         testData.noteTypeRestriction
       );
-      studentNoteRestrictionsObject.noteTypeAssertion(
+      institutionNoteRestrictionsObject.noteTypeAssertion(
         testData.noteBodyRestriction
       );
-      studentNoteRestrictionsObject.generalTabButton().click();
-      studentNoteRestrictionsObject.noteTypeAssertion(
+      institutionNoteRestrictionsObject.generalTabButton().click();
+      institutionNoteRestrictionsObject.noteTypeAssertion(
         testData.noteTypeRestriction
       );
-      studentNoteRestrictionsObject.noteTypeAssertion(
+      institutionNoteRestrictionsObject.noteTypeAssertion(
         testData.noteBodyRestriction
       );
     });
@@ -275,39 +306,55 @@ describe("Ministry User Enters Institution Note & Restrictions", () => {
   it.skip("Verify that in the System Actions section Created a note with System type, is it displaying correctly or not in Institution Note section.", () => {
     cy.fixture("ministryAddNewNotesInInstitution").then((testData) => {
       noteAdded(testData.noteTypeSystem, testData.noteBodySystem);
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteTypeSystem);
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteBodySystem);
-      studentNoteRestrictionsObject.generalTabButton().click();
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteTypeSystem);
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteBodySystem);
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteTypeSystem
+      );
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteBodySystem
+      );
+      institutionNoteRestrictionsObject.generalTabButton().click();
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteTypeSystem
+      );
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteBodySystem
+      );
     });
   });
 
   it("Verify that in the Program section Created a note with Program type, is it displaying correctly or not in Institution Note section.", () => {
     cy.fixture("ministryAddNewNotesInInstitution").then((testData) => {
       noteAdded(testData.noteTypeProgram, testData.noteBodyProgram);
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteTypeProgram);
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteBodyProgram);
-      studentNoteRestrictionsObject.generalTabButton().click();
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteTypeProgram);
-      studentNoteRestrictionsObject.noteTypeAssertion(testData.noteBodyProgram);
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteTypeProgram
+      );
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteBodyProgram
+      );
+      institutionNoteRestrictionsObject.generalTabButton().click();
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteTypeProgram
+      );
+      institutionNoteRestrictionsObject.noteTypeAssertion(
+        testData.noteBodyProgram
+      );
     });
   });
 
   it("Verify that in the Designation section Created a note with Designation type, is it displaying correctly or not in Institution Note section.", () => {
     cy.fixture("ministryAddNewNotesInInstitution").then((testData) => {
       noteAdded(testData.noteTypeDesignation, testData.noteBodyDesignation);
-      studentNoteRestrictionsObject.noteTypeAssertion(
+      institutionNoteRestrictionsObject.noteTypeAssertion(
         testData.noteTypeDesignation
       );
-      studentNoteRestrictionsObject.noteTypeAssertion(
+      institutionNoteRestrictionsObject.noteTypeAssertion(
         testData.noteBodyDesignation
       );
-      studentNoteRestrictionsObject.generalTabButton().click();
-      studentNoteRestrictionsObject.noteTypeAssertion(
+      institutionNoteRestrictionsObject.generalTabButton().click();
+      institutionNoteRestrictionsObject.noteTypeAssertion(
         testData.noteTypeDesignation
       );
-      studentNoteRestrictionsObject.noteTypeAssertion(
+      institutionNoteRestrictionsObject.noteTypeAssertion(
         testData.noteBodyDesignation
       );
     });
