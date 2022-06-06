@@ -37,7 +37,7 @@ export class ApplicationExceptionSystemAccessController extends BaseController {
     const exceptionNames = payload.exceptionRequests.map(
       (exceptionRequest) => exceptionRequest.exceptionName,
     );
-    // Validate for possible duplicate received exception names values.
+    // Validate for possible duplicated received exception names values.
     // The values saved to the DB must be unique.
     const uniqueExceptionNames = [...new Set(exceptionNames)];
     if (exceptionNames.length !== uniqueExceptionNames.length) {
