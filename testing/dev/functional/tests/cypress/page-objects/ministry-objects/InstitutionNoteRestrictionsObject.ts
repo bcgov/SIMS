@@ -1,4 +1,12 @@
 export default class InstitutionNoteRestrictionsObject {
+  categoryErrorMessage() {
+    return cy.contains("Category is required");
+  }
+
+  reasonErrorMessage() {
+    return cy.contains("Reason is required");
+  }
+
   addRestrictionsButton() {
     return cy.contains("Add restriction");
   }
@@ -15,24 +23,20 @@ export default class InstitutionNoteRestrictionsObject {
     return cy.xpath("//button[normalize-space()='Add Restriction']");
   }
 
-  categoryErrorMessage() {
-    return cy.contains("Category is required");
-  }
-
-  reasonErrorMessage() {
-    return cy.contains("Reason is required");
-  }
-
-  cancelButton() {
-    return cy.contains("Cancel");
-  }
-
   allRestrictions() {
     return cy.contains("All Restrictions");
   }
 
   addRestrictionButtonDialogBox() {
     return cy.xpath("//button[normalize-space()='Add Restriction']");
+  }
+
+  cancelButton() {
+    return cy.contains("Cancel");
+  }
+
+  restrictionsAddedText() {
+    return cy.contains("Restriction Added");
   }
 
   restrictionsDropdown() {
@@ -47,24 +51,12 @@ export default class InstitutionNoteRestrictionsObject {
     return cy.get(".choices__button");
   }
 
-  restrictionsAddedText() {
-    return cy.contains("Restriction Added");
-  }
-
-  notesInputText() {
-    return cy.get("textarea[name='data[noteDescription]']");
-  }
-
   categoryButton() {
     return cy.contains("Category");
   }
 
-  firstRowButtonRestrictions() {
-    return cy.xpath("//tbody/tr[1]/td[6]");
-  }
-
-  categoryAssertion(category: string) {
-    return cy.contains(category);
+  notesInputText() {
+    return cy.get("textarea[name='data[noteDescription]']");
   }
 
   reasonAssertion(reason: string) {
@@ -75,12 +67,12 @@ export default class InstitutionNoteRestrictionsObject {
     return cy.contains("Resolve Restriction");
   }
 
-  resolutionNoteRequired() {
-    return cy.contains("Resolution Notes is required");
+  firstRowButtonRestrictions() {
+    return cy.xpath("//tbody/tr[1]/td[6]");
   }
 
-  resolutionNotesInputText() {
-    return cy.get("textarea[name='data[resolutionNote]']");
+  categoryAssertion(category: string) {
+    return cy.contains(category);
   }
 
   restrictionsResolvedAssertion() {
@@ -91,6 +83,18 @@ export default class InstitutionNoteRestrictionsObject {
     return cy.contains("Notes");
   }
 
+  resolutionNoteRequired() {
+    return cy.contains("Resolution Notes is required");
+  }
+
+  resolutionNotesInputText() {
+    return cy.get("textarea[name='data[resolutionNote]']");
+  }
+
+  addNoteButton() {
+    return cy.contains("Add note");
+  }
+
   createNewNoteButton() {
     return cy.contains("Create new note");
   }
@@ -99,39 +103,35 @@ export default class InstitutionNoteRestrictionsObject {
     return cy.get("textarea[name='data[description]']");
   }
 
-  addNoteButton() {
-    return cy.contains("Add note");
+  noteBodyErrorMessage() {
+    return cy.contains("Note Body is required");
   }
 
   noteTypeErrorMessage() {
     return cy.contains("Note Type is required");
   }
 
-  noteBodyErrorMessage() {
-    return cy.contains("Note Body is required");
-  }
-
   noteAddedSuccessfully() {
     return cy.contains("Note added successfully");
-  }
-
-  noteTypeAssertion(type: string) {
-    return cy.contains(type);
   }
 
   noteBodyAssertion(body: string) {
     return cy.contains(body);
   }
 
-  generalTabButton() {
-    return cy.get(".text-center > .float-right > :nth-child(2)");
+  noteTypeAssertion(type: string) {
+    return cy.contains(type);
+  }
+
+  systemActionsTabButton() {
+    return cy.get(".text-center > .float-right > :nth-child(4)");
   }
 
   restrictionsTabButton() {
     return cy.get(".text-center > .float-right > :nth-child(3)");
   }
 
-  systemActionsTabButton() {
-    return cy.get(".text-center > .float-right > :nth-child(4)");
+  generalTabButton() {
+    return cy.get(".text-center > .float-right > :nth-child(2)");
   }
 }
