@@ -456,4 +456,4 @@ parameters:
   - name: SWAGGER_ENABLED
     value: "true"
   - name: APPLICATION_ARCHIVE_DAYS
-    value: 43
+    require: true
