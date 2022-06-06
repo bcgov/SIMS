@@ -70,7 +70,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         "exceptionRequest.exceptionName",
       ])
       .innerJoin("exception.exceptionRequests", "exceptionRequest")
-      .innerJoin("exception.exceptionNote", "exceptionNote")
+      .leftJoin("exception.exceptionNote", "exceptionNote")
       .where("exception.id = :exceptionId", { exceptionId })
       .getOne();
   }
