@@ -1,9 +1,9 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
 import { ApplicationExceptionService } from "../../services";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBadRequestResponse, ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { CreateApplicationExceptionAPIInDTO } from "./models/application-exception.dto";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -27,16 +27,29 @@ export class ApplicationExceptionSystemAccessController extends BaseController {
    * @returns newly created application exception id.
    */
   @Post()
+  @ApiBadRequestResponse({
+    description: "Student application exception names must be unique.",
+  })
   async createException(
     @UserToken() userToken: IUserToken,
     @Body() payload: CreateApplicationExceptionAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const exceptionNames = payload.exceptionRequests.map(
+      (exceptionRequest) => exceptionRequest.exceptionName,
+    );
+    // Validate for possible duplicate received exception names values.
+    // The values saved to the DB must be unique.
+    const uniqueExceptionNames = [...new Set(exceptionNames)];
+    if (exceptionNames.length !== uniqueExceptionNames.length) {
+      throw new BadRequestException(
+        "Student application exception names must be unique.",
+      );
+    }
+
     const createdException =
       await this.applicationExceptionService.createException(
         payload.applicationId,
-        payload.exceptionRequests.map(
-          (exceptionRequest) => exceptionRequest.exceptionName,
-        ),
+        uniqueExceptionNames,
         userToken.userId,
       );
     return { id: createdException.id };

@@ -24,7 +24,7 @@ export class ApplicationException extends RecordDataModel {
   /**
    * Submitted application with exceptions.
    */
-  @OneToMany(
+  @OneToOne(
     () => Application,
     (application) => application.applicationException,
     {
