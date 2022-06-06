@@ -19,10 +19,8 @@ export function createFakeEducationProgramOffering(
   offering.programRelatedCosts = faker.random.number(1000);
   offering.mandatoryFees = faker.random.number(1000);
   offering.exceptionalExpenses = faker.random.number(1000);
-  offering.tuitionRemittanceRequestedAmount = faker.random.number(1000);
   offering.offeringDelivered = "offeringDelivered";
   offering.lacksStudyBreaks = true;
-  offering.tuitionRemittanceRequested = "tuitionRemittanceRequested";
   offering.educationProgram = program ?? createFakeEducationProgram();
   offering.institutionLocation = institutionLocation ?? createFakeLocation();
   offering.offeringIntensity = OfferingIntensity.fullTime;

@@ -1,20 +1,16 @@
 {
+  "title": "Notice of Assessment",
+  "display": "form",
   "type": "form",
-  "tags": [
-    "common"
-  ],
-  "owner": "andrew.schwenker@gov.bc.ca",
+  "name": "noticeofassessment",
+  "path": "noticeofassessment",
+  "tags": ["common"],
   "components": [
     {
       "label": "Notice of Assessment",
       "tag": "p",
       "className": "",
-      "attrs": [
-        {
-          "attr": "",
-          "value": ""
-        }
-      ],
+      "attrs": [{ "attr": "", "value": "" }],
       "content": "Notice of Assessment",
       "refreshOnChange": false,
       "customClass": "header-lg",
@@ -23,12 +19,7 @@
       "key": "noticeOfAssessment",
       "tags": [],
       "properties": {},
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
-        "json": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -131,9 +122,7 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
+      "widget": { "type": "input" },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -143,11 +132,7 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "" },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -202,9 +187,7 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
+      "widget": { "type": "input" },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -214,11 +197,7 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "" },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -231,12 +210,7 @@
       "label": "NOA",
       "tag": "hr",
       "className": "",
-      "attrs": [
-        {
-          "attr": "",
-          "value": ""
-        }
-      ],
+      "attrs": [{ "attr": "", "value": "" }],
       "content": "",
       "refreshOnChange": false,
       "customClass": "",
@@ -245,12 +219,7 @@
       "key": "noa",
       "tags": [],
       "properties": {},
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
-        "json": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -311,12 +280,7 @@
       "label": "Name",
       "tag": "p",
       "className": "",
-      "attrs": [
-        {
-          "attr": "",
-          "value": ""
-        }
-      ],
+      "attrs": [{ "attr": "", "value": "" }],
       "content": "Name",
       "refreshOnChange": false,
       "customClass": "category-header-medium secondary-color",
@@ -325,12 +289,7 @@
       "key": "name",
       "tags": [],
       "properties": {},
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
-        "json": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -391,12 +350,7 @@
       "label": "HTML",
       "tag": "p",
       "className": "",
-      "attrs": [
-        {
-          "attr": "",
-          "value": ""
-        }
-      ],
+      "attrs": [{ "attr": "", "value": "" }],
       "content": "{{ data.fullName }}",
       "refreshOnChange": true,
       "customClass": "",
@@ -405,12 +359,7 @@
       "key": "html50",
       "tags": [],
       "properties": {},
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
-        "json": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -471,12 +420,7 @@
       "label": "Application Number",
       "tag": "p",
       "className": "",
-      "attrs": [
-        {
-          "attr": "",
-          "value": ""
-        }
-      ],
+      "attrs": [{ "attr": "", "value": "" }],
       "content": "Application Number",
       "refreshOnChange": false,
       "customClass": "category-header-medium secondary-color",
@@ -485,12 +429,7 @@
       "key": "applicationNumber",
       "tags": [],
       "properties": {},
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
-        "json": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -551,12 +490,7 @@
       "label": "HTML",
       "tag": "p",
       "className": "",
-      "attrs": [
-        {
-          "attr": "",
-          "value": ""
-        }
-      ],
+      "attrs": [{ "attr": "", "value": "" }],
       "content": "{{ data.applicationNumber }}",
       "refreshOnChange": true,
       "customClass": "",
@@ -565,12 +499,7 @@
       "key": "html51",
       "tags": [],
       "properties": {},
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
-        "json": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -641,12 +570,7 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": {
-        "json": "",
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -668,12 +592,7 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
+          "attrs": [{ "attr": "", "value": "" }],
           "content": "You are eligible for <b>${{data.eligibleAmount}}</b>",
           "refreshOnChange": true,
           "customClass": "",
@@ -748,12 +667,7 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
+          "attrs": [{ "attr": "", "value": "" }],
           "content": "At <b>{{data.locationName}}</b> for <b>{{data.programName}}</b>",
           "refreshOnChange": true,
           "customClass": "",
@@ -828,12 +742,7 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
+          "attrs": [{ "attr": "", "value": "" }],
           "content": "<b>{{data.offeringStudyStartDate}}</b> to <b>{{data.offeringStudyEndDate}} </b>",
           "refreshOnChange": true,
           "customClass": "",
@@ -905,95 +814,10 @@
           "addons": []
         },
         {
-          "label": "Tuition Remittance",
-          "tag": "p",
-          "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
-          "content": "Your institution requested {{ data.tuitionRemittanceAmount }} to be directed to them to cover educational costs",
-          "refreshOnChange": true,
-          "customClass": "",
-          "hidden": false,
-          "modalEdit": false,
-          "key": "tuitionRemittance",
-          "tags": [],
-          "properties": {},
-          "conditional": {
-            "show": null,
-            "when": null,
-            "eq": "",
-            "json": ""
-          },
-          "customConditional": "",
-          "logic": [],
-          "attributes": {},
-          "overlay": {
-            "style": "",
-            "page": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "type": "htmlelement",
-          "input": false,
-          "tableView": false,
-          "placeholder": "",
-          "prefix": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "persistent": false,
-          "clearOnHide": true,
-          "refreshOn": "",
-          "redrawOn": "",
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "tooltip": "",
-          "hideLabel": false,
-          "tabindex": "",
-          "disabled": false,
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "widget": null,
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "allowMultipleMasks": false,
-          "id": "elkl9dc",
-          "addons": []
-        },
-        {
           "label": "instructions",
           "tag": "p",
           "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
+          "attrs": [{ "attr": "", "value": "" }],
           "content": "If you do not wish to proceed or disagree, you can cancel your application",
           "refreshOnChange": false,
           "customClass": "header-md secondary-color",
@@ -1068,12 +892,7 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
+          "attrs": [{ "attr": "", "value": "" }],
           "content": "Offering Intensity: {{ data.offeringIntensity }}",
           "refreshOnChange": true,
           "customClass": "",
@@ -1189,12 +1008,7 @@
       "label": "What you must do",
       "tag": "p",
       "className": "",
-      "attrs": [
-        {
-          "attr": "",
-          "value": ""
-        }
-      ],
+      "attrs": [{ "attr": "", "value": "" }],
       "content": "What you must do",
       "refreshOnChange": false,
       "customClass": "category-header-medium primary-color",
@@ -1203,12 +1017,7 @@
       "key": "whatYouMustDo",
       "tags": [],
       "properties": {},
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
-        "json": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -1279,12 +1088,7 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": {
-        "json": "",
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -1306,12 +1110,7 @@
           "label": "msfaa",
           "tag": "p",
           "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
+          "attrs": [{ "attr": "", "value": "" }],
           "content": "Your 10-digit MSFAA number is {{ data.msfaaNumber }}",
           "refreshOnChange": true,
           "customClass": "header-md secondary-color",
@@ -1458,12 +1257,7 @@
           "label": "Already had a loan",
           "tag": "p",
           "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
+          "attrs": [{ "attr": "", "value": "" }],
           "content": "If you've already had a loan",
           "refreshOnChange": false,
           "customClass": "header-md secondary-color",
@@ -1580,11 +1374,7 @@
             "multiple": false,
             "unique": false
           },
-          "conditional": {
-            "show": null,
-            "when": null,
-            "eq": ""
-          },
+          "conditional": { "show": null, "when": null, "eq": "" },
           "overlay": {
             "style": "",
             "left": "",
@@ -1646,12 +1436,7 @@
       "label": "When you will receive funds",
       "tag": "p",
       "className": "",
-      "attrs": [
-        {
-          "attr": "",
-          "value": ""
-        }
-      ],
+      "attrs": [{ "attr": "", "value": "" }],
       "content": "When you will receive funds",
       "refreshOnChange": false,
       "customClass": "category-header-medium primary-color",
@@ -1660,12 +1445,7 @@
       "key": "whenYouWillReceiveFunds",
       "tags": [],
       "properties": {},
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
-        "json": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -1736,12 +1516,7 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": {
-        "json": "",
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -1763,12 +1538,7 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
+          "attrs": [{ "attr": "", "value": "" }],
           "content": "On or after the following dates: ",
           "refreshOnChange": false,
           "customClass": "header-md secondary-color",
@@ -1923,12 +1693,7 @@
                     "label": "Date 1",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Date 1: The earliest date you will receive funding",
                     "refreshOnChange": false,
                     "customClass": "",
@@ -1996,7 +1761,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e7r8mlo000000",
+                    "id": "e7r8mlo00000000",
                     "addons": []
                   }
                 ]
@@ -2007,12 +1772,7 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1Date ? data.disbursement.disbursement1Date : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -2080,7 +1840,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "exlna8b000000",
+                    "id": "exlna8b00000000",
                     "addons": []
                   }
                 ]
@@ -2093,12 +1853,7 @@
                     "label": "Date2",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Date 2 (If applicable): The earliest date you will receive funding",
                     "refreshOnChange": false,
                     "customClass": "",
@@ -2166,7 +1921,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eeliyod111111",
+                    "id": "eeliyod11111111",
                     "addons": []
                   }
                 ]
@@ -2177,12 +1932,7 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2Date ? data.disbursement.disbursement2Date : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -2250,7 +2000,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ejihdhk111111",
+                    "id": "ejihdhk11111111",
                     "addons": []
                   }
                 ]
@@ -2308,12 +2058,7 @@
       "label": "How your amount was calculated",
       "tag": "p",
       "className": "",
-      "attrs": [
-        {
-          "attr": "",
-          "value": ""
-        }
-      ],
+      "attrs": [{ "attr": "", "value": "" }],
       "content": "How your amount was calculated",
       "refreshOnChange": false,
       "customClass": "category-header-medium primary-color",
@@ -2322,12 +2067,7 @@
       "key": "howYourAmountWasCalculated",
       "tags": [],
       "properties": {},
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
-        "json": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -2398,12 +2138,7 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": {
-        "json": "",
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -2425,12 +2160,7 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
+          "attrs": [{ "attr": "", "value": "" }],
           "content": "You've received the largest amount possible for your school term. The amount may not cover all your costs. You may have to seek funds outside of StudentAid BC.",
           "refreshOnChange": false,
           "customClass": "",
@@ -2505,12 +2235,7 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
+          "attrs": [{ "attr": "", "value": "" }],
           "content": "If you are not receiving funding but are still attending school you may apply for interest-free status",
           "refreshOnChange": false,
           "customClass": "header-md secondary-color",
@@ -2585,12 +2310,7 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
+          "attrs": [{ "attr": "", "value": "" }],
           "content": "<p>Your application was subject to the federal and provincial financial need assessment calculations, based on Canada Student Loan Program and StudentAid BC’s respective policies</p><ul><li>Total family income on the previous year's returns: <b>${{ (data.assessment?.totalFamilyIncome).toFixed(2) }}</b></li><li>This Includes the income of your spouse, parents, stepparents, sponsors, or legal guardians</li><li>Scholarships and bursaries reported</li><li>Voluntary or targeted contributions reported, and</li><li>Assets reported by parents, stepparents, sponsors, or legal guardians (dependent students only)</li></ul>",
           "refreshOnChange": true,
           "customClass": "align-bullets",
@@ -2716,12 +2436,7 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": {
-        "json": "",
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -2783,12 +2498,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Assessed Costs",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium primary-color",
@@ -2833,11 +2543,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -2852,29 +2558,20 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e673hcu0000000000",
+                    "id": "e673hcu000000000000",
                     "addons": []
                   }
                 ]
               },
-              {
-                "components": []
-              },
-              {
-                "components": []
-              }
+              { "components": [] },
+              { "components": [] }
             ],
             [
               {
                 "components": [
                   {
                     "label": "Assessed costs",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Assessed Costs",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -2920,11 +2617,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -2939,7 +2632,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "esv3ty1111111111",
+                    "id": "esv3ty111111111111",
                     "addons": []
                   }
                 ]
@@ -2948,12 +2641,7 @@
                 "components": [
                   {
                     "label": "Federal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Federal",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -2999,11 +2687,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3018,7 +2702,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eqoagng1111111111",
+                    "id": "eqoagng111111111111",
                     "addons": []
                   }
                 ]
@@ -3027,12 +2711,7 @@
                 "components": [
                   {
                     "label": "Provincial",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Provincial",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -3078,11 +2757,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3097,7 +2772,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "egtlsfz1111111111",
+                    "id": "egtlsfz111111111111",
                     "addons": []
                   }
                 ]
@@ -3108,12 +2783,7 @@
                 "components": [
                   {
                     "label": "Tuition and fees",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Tuition and fees",
                     "refreshOnChange": false,
                     "key": "tuitionAndFees",
@@ -3159,11 +2829,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3178,7 +2844,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ejwh7t2222222222",
+                    "id": "ejwh7t222222222222",
                     "addons": []
                   }
                 ]
@@ -3187,12 +2853,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html24",
@@ -3237,11 +2898,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3256,7 +2913,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eudjkpji2222222222",
+                    "id": "eudjkpji222222222222",
                     "addons": []
                   }
                 ]
@@ -3265,12 +2922,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html23",
@@ -3315,11 +2967,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3334,7 +2982,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "elzd2ml2222222222",
+                    "id": "elzd2ml222222222222",
                     "addons": []
                   }
                 ]
@@ -3345,12 +2993,7 @@
                 "components": [
                   {
                     "label": "Books and supplies",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Books and supplies",
                     "refreshOnChange": false,
                     "key": "booksAndSupplies",
@@ -3396,11 +3039,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3415,7 +3054,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "etjk1k93333333333",
+                    "id": "etjk1k9333333333333",
                     "addons": []
                   }
                 ]
@@ -3424,12 +3063,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html18",
@@ -3474,11 +3108,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3493,7 +3123,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e93egep3333333333",
+                    "id": "e93egep333333333333",
                     "addons": []
                   }
                 ]
@@ -3502,12 +3132,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html22",
@@ -3552,11 +3177,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3571,7 +3192,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ew37b63333333333",
+                    "id": "ew37b6333333333333",
                     "addons": []
                   }
                 ]
@@ -3582,12 +3203,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Exceptional Education Costs",
                     "refreshOnChange": false,
                     "key": "html14",
@@ -3632,11 +3248,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3651,7 +3263,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "edhqbsj4444444444",
+                    "id": "edhqbsj444444444444",
                     "addons": []
                   }
                 ]
@@ -3660,12 +3272,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html19",
@@ -3710,11 +3317,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3729,7 +3332,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e5sbyftd4444444444",
+                    "id": "e5sbyftd444444444444",
                     "addons": []
                   }
                 ]
@@ -3738,12 +3341,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html27",
@@ -3788,11 +3386,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3807,7 +3401,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e8p45jv4444444444",
+                    "id": "e8p45jv444444444444",
                     "addons": []
                   }
                 ]
@@ -3818,12 +3412,7 @@
                 "components": [
                   {
                     "label": "Living allowance",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Living allowance",
                     "refreshOnChange": false,
                     "key": "livingAllowance",
@@ -3869,11 +3458,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3888,7 +3473,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e4eszc5555555555",
+                    "id": "e4eszc555555555555",
                     "addons": []
                   }
                 ]
@@ -3897,12 +3482,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html20",
@@ -3947,11 +3527,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3966,7 +3542,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ekva4b0i5555555555",
+                    "id": "ekva4b0i555555555555",
                     "addons": []
                   }
                 ]
@@ -3975,12 +3551,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html29",
@@ -4025,11 +3596,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4044,7 +3611,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ezvrie5555555555",
+                    "id": "ezvrie555555555555",
                     "addons": []
                   }
                 ]
@@ -4055,12 +3622,7 @@
                 "components": [
                   {
                     "label": "Return Transportation Costs",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Return Transportation Costs",
                     "refreshOnChange": false,
                     "key": "returnTransportationCosts",
@@ -4105,11 +3667,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4124,7 +3682,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ez4dc3s6666666666",
+                    "id": "ez4dc3s666666666666",
                     "addons": []
                   }
                 ]
@@ -4133,12 +3691,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html25",
@@ -4183,11 +3736,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4202,7 +3751,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ejpf6dg6666666666",
+                    "id": "ejpf6dg666666666666",
                     "addons": []
                   }
                 ]
@@ -4211,12 +3760,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html21",
@@ -4261,11 +3805,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4280,7 +3820,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ep3ne2k6666666666",
+                    "id": "ep3ne2k666666666666",
                     "addons": []
                   }
                 ]
@@ -4291,12 +3831,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Child Care Costs",
                     "refreshOnChange": false,
                     "key": "html15",
@@ -4341,11 +3876,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4360,7 +3891,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eaidab7777777777",
+                    "id": "eaidab777777777777",
                     "addons": []
                   }
                 ]
@@ -4369,12 +3900,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html26",
@@ -4419,11 +3945,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4438,7 +3960,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e8plbqc7777777777",
+                    "id": "e8plbqc777777777777",
                     "addons": []
                   }
                 ]
@@ -4447,12 +3969,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html30",
@@ -4497,11 +4014,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4516,7 +4029,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e905g787777777777",
+                    "id": "e905g78777777777777",
                     "addons": []
                   }
                 ]
@@ -4527,12 +4040,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Other Allowable Costs",
                     "refreshOnChange": false,
                     "key": "html16",
@@ -4577,11 +4085,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4596,7 +4100,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eos814n8888888888",
+                    "id": "eos814n888888888888",
                     "addons": []
                   }
                 ]
@@ -4605,12 +4109,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html28",
@@ -4655,11 +4154,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4674,7 +4169,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ee1x1k8888888888",
+                    "id": "ee1x1k888888888888",
                     "addons": []
                   }
                 ]
@@ -4683,12 +4178,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html31",
@@ -4733,11 +4223,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4752,7 +4238,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "epmkm5g8888888888",
+                    "id": "epmkm5g888888888888",
                     "addons": []
                   }
                 ]
@@ -4763,12 +4249,7 @@
                 "components": [
                   {
                     "label": "Total assessed costs",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Total assessed costs",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -4814,11 +4295,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4833,7 +4310,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e6gygik9999999999",
+                    "id": "e6gygik999999999999",
                     "addons": []
                   }
                 ]
@@ -4842,12 +4319,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment.totalAssessedCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -4892,11 +4364,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4911,7 +4379,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eqnf4179999999999",
+                    "id": "eqnf417999999999999",
                     "addons": []
                   }
                 ]
@@ -4920,12 +4388,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment.totalAssessedCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -4970,11 +4433,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4989,7 +4448,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ejc81f9999999999",
+                    "id": "ejc81f999999999999",
                     "addons": []
                   }
                 ]
@@ -5000,12 +4459,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Assessed Contributions",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium primary-color",
@@ -5050,11 +4504,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5069,29 +4519,20 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e05pfh10101010101010101010",
+                    "id": "e05pfh101010101010101010101010",
                     "addons": []
                   }
                 ]
               },
-              {
-                "components": []
-              },
-              {
-                "components": []
-              }
+              { "components": [] },
+              { "components": [] }
             ],
             [
               {
                 "components": [
                   {
                     "label": "Student financial contributions",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Student financial contributions",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -5137,11 +4578,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5156,7 +4593,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "emm5cor11111111111111111111",
+                    "id": "emm5cor111111111111111111111111",
                     "addons": []
                   }
                 ]
@@ -5166,12 +4603,7 @@
                   {
                     "label": "Federal",
                     "tag": "o",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Federal",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -5217,11 +4649,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5235,7 +4663,7 @@
                     "showWordCount": false,
                     "properties": {},
                     "allowMultipleMasks": false,
-                    "id": "e3arbzle11111111111111111111",
+                    "id": "e3arbzle111111111111111111111111",
                     "addons": []
                   }
                 ]
@@ -5244,12 +4672,7 @@
                 "components": [
                   {
                     "label": "Provincial",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Provincial",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -5295,11 +4718,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5314,7 +4733,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eos5qa811111111111111111111",
+                    "id": "eos5qa8111111111111111111111111",
                     "addons": []
                   }
                 ]
@@ -5325,12 +4744,7 @@
                 "components": [
                   {
                     "label": "Assessed student contribution",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Assessed student contribution",
                     "refreshOnChange": false,
                     "key": "studentContribution",
@@ -5376,11 +4790,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5395,7 +4805,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ew1uko912121212121212121212",
+                    "id": "ew1uko9121212121212121212121212",
                     "addons": []
                   }
                 ]
@@ -5404,12 +4814,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.studentTotalFederalContribution === 'number' ? '$' + (data.assessment.studentTotalFederalContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html46",
@@ -5455,11 +4860,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5474,7 +4875,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e4181x712121212121212121212",
+                    "id": "e4181x7121212121212121212121212",
                     "addons": []
                   }
                 ]
@@ -5483,12 +4884,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.studentTotalProvincialContribution === 'number' ? '$' + (data.assessment.studentTotalProvincialContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html45",
@@ -5534,11 +4930,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5553,7 +4945,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e8xaf5q12121212121212121212",
+                    "id": "e8xaf5q121212121212121212121212",
                     "addons": []
                   }
                 ]
@@ -5564,12 +4956,7 @@
                 "components": [
                   {
                     "label": "Assessed spouse contribution",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Assessed spouse contribution",
                     "refreshOnChange": false,
                     "key": "assessedSpouseContributions",
@@ -5615,11 +5002,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5634,7 +5017,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "el3k7ow13131313131313131313",
+                    "id": "el3k7ow131313131313131313131313",
                     "addons": []
                   }
                 ]
@@ -5643,12 +5026,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html38",
@@ -5693,11 +5071,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5712,7 +5086,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eh5v82u13131313131313131313",
+                    "id": "eh5v82u131313131313131313131313",
                     "addons": []
                   }
                 ]
@@ -5721,12 +5095,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html39",
@@ -5772,11 +5141,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5791,7 +5156,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eccpsw913131313131313131313",
+                    "id": "eccpsw9131313131313131313131313",
                     "addons": []
                   }
                 ]
@@ -5802,12 +5167,7 @@
                 "components": [
                   {
                     "label": "Assessed parent contribution",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Assessed parent contribution",
                     "refreshOnChange": false,
                     "key": "assessedParentContribution",
@@ -5853,11 +5213,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5872,7 +5228,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ez4gu914141414141414141414",
+                    "id": "ez4gu9141414141414141414141414",
                     "addons": []
                   }
                 ]
@@ -5881,12 +5237,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html44",
@@ -5931,11 +5282,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5950,7 +5297,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e8d998814141414141414141414",
+                    "id": "e8d9988141414141414141414141414",
                     "addons": []
                   }
                 ]
@@ -5959,12 +5306,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html43",
@@ -6009,11 +5351,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6028,7 +5366,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "erfohbe14141414141414141414",
+                    "id": "erfohbe141414141414141414141414",
                     "addons": []
                   }
                 ]
@@ -6039,12 +5377,7 @@
                 "components": [
                   {
                     "label": "Total student contribution",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Total student contribution",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -6090,11 +5423,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6109,7 +5438,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eldeadr15151515151515151515",
+                    "id": "eldeadr151515151515151515151515",
                     "addons": []
                   }
                 ]
@@ -6118,12 +5447,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.totalFederalContribution === 'number' ? '$' + (data.assessment.totalFederalContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -6168,11 +5492,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6187,7 +5507,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ewl5dz15151515151515151515",
+                    "id": "ewl5dz151515151515151515151515",
                     "addons": []
                   }
                 ]
@@ -6196,12 +5516,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.totalProvincialContribution === 'number' ? '$' + (data.assessment.totalProvincialContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -6247,11 +5562,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6266,7 +5577,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "erslp2nf15151515151515151515",
+                    "id": "erslp2nf151515151515151515151515",
                     "addons": []
                   }
                 ]
@@ -6321,11 +5632,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6339,29 +5646,20 @@
                     "showWordCount": false,
                     "properties": {},
                     "allowMultipleMasks": false,
-                    "id": "ensr1ib16161616161616161616",
+                    "id": "ensr1ib161616161616161616161616",
                     "addons": []
                   }
                 ]
               },
-              {
-                "components": []
-              },
-              {
-                "components": []
-              }
+              { "components": [] },
+              { "components": [] }
             ],
             [
               {
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Total Assessed need",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -6407,11 +5705,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6426,7 +5720,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eiv23e17171717171717171717",
+                    "id": "eiv23e171717171717171717171717",
                     "addons": []
                   }
                 ]
@@ -6439,12 +5733,7 @@
                     "labelMargin": "",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.federalAssessmentNeed === 'number' ? '$' + (data.assessment.federalAssessmentNeed).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -6513,7 +5802,7 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "evpbtej17171717"
+                    "id": "evpbtej171717171717"
                   }
                 ]
               },
@@ -6525,12 +5814,7 @@
                     "labelMargin": "",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.provincialAssessmentNeed === 'number' ? '$' + (data.assessment.provincialAssessmentNeed).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -6599,7 +5883,7 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "emouz4o171717"
+                    "id": "emouz4o1717171717"
                   }
                 ]
               }
@@ -6692,12 +5976,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Assessed Costs",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium primary-color",
@@ -6742,11 +6021,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6761,26 +6036,19 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eu26xnw000000",
+                    "id": "eu26xnw00000000",
                     "addons": []
                   }
                 ]
               },
-              {
-                "components": []
-              }
+              { "components": [] }
             ],
             [
               {
                 "components": [
                   {
                     "label": "Tuition and fees",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Tuition and fees",
                     "refreshOnChange": false,
                     "key": "tuitionAndFees1",
@@ -6826,11 +6094,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6845,7 +6109,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "euzo1u9111111",
+                    "id": "euzo1u911111111",
                     "addons": []
                   }
                 ]
@@ -6854,12 +6118,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "tutionCost",
@@ -6904,11 +6163,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6923,7 +6178,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eqxsoc4111111",
+                    "id": "eqxsoc411111111",
                     "addons": []
                   }
                 ]
@@ -6934,12 +6189,7 @@
                 "components": [
                   {
                     "label": "Books and supplies",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Books and supplies",
                     "refreshOnChange": false,
                     "key": "booksAndSupplies1",
@@ -6985,11 +6235,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7004,7 +6250,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "et34ed222222",
+                    "id": "et34ed22222222",
                     "addons": []
                   }
                 ]
@@ -7013,12 +6259,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "booksCost",
@@ -7063,11 +6304,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7082,7 +6319,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eabheip222222",
+                    "id": "eabheip22222222",
                     "addons": []
                   }
                 ]
@@ -7093,12 +6330,7 @@
                 "components": [
                   {
                     "label": "Return Transportation Costs",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Transportation Costs",
                     "refreshOnChange": false,
                     "key": "returnTransportationCosts1",
@@ -7143,11 +6375,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7162,7 +6390,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ee4qr333333",
+                    "id": "ee4qr33333333",
                     "addons": []
                   }
                 ]
@@ -7171,12 +6399,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "transpotationCosts",
@@ -7221,11 +6444,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7240,7 +6459,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "els579p333333",
+                    "id": "els579p33333333",
                     "addons": []
                   }
                 ]
@@ -7251,12 +6470,7 @@
                 "components": [
                   {
                     "label": "Miscellaneous Costs",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Miscellaneous Costs",
                     "refreshOnChange": false,
                     "key": "otherMiscellaneousCosts",
@@ -7302,11 +6516,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7321,7 +6531,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e6o6d4c444444",
+                    "id": "e6o6d4c44444444",
                     "addons": []
                   }
                 ]
@@ -7330,12 +6540,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.miscellaneousCost === 'number' ? '$' + (data.assessment.miscellaneousCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "miscellaneousCost",
@@ -7380,11 +6585,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7399,7 +6600,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "exld64b444444",
+                    "id": "exld64b44444444",
                     "addons": []
                   }
                 ]
@@ -7412,12 +6613,7 @@
                     "label": "Total Academic Expenses",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Total Academic Expenses",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -7486,7 +6682,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e1bv2mc555555",
+                    "id": "e1bv2mc55555555",
                     "addons": []
                   }
                 ]
@@ -7497,12 +6693,7 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{(typeof data.assessment?.totalAcademicExpenses === 'number' ? data.assessment?.totalAcademicExpenses : 0).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -7570,7 +6761,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eu0saor555555",
+                    "id": "eu0saor55555555",
                     "addons": []
                   }
                 ]
@@ -7583,12 +6774,7 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Childcare Costs",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -7656,7 +6842,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "es69g5r666666",
+                    "id": "es69g5r66666666",
                     "addons": []
                   }
                 ]
@@ -7665,12 +6851,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html115",
@@ -7715,11 +6896,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7734,7 +6911,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "elwyjb666666",
+                    "id": "elwyjb66666666",
                     "addons": []
                   }
                 ]
@@ -7747,12 +6924,7 @@
                     "label": "Total assessed costs",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Total assessed costs = Total Academic Expenses + Childcare Costs",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -7821,7 +6993,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eo60mzi777777",
+                    "id": "eo60mzi77777777",
                     "addons": []
                   }
                 ]
@@ -7832,12 +7004,7 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{(typeof data.assessment?.totalAssessmentNeed === 'number' ? data.assessment?.totalAssessmentNeed : 0).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -7905,7 +7072,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e510x3777777",
+                    "id": "e510x377777777",
                     "addons": []
                   }
                 ]
@@ -8013,12 +7180,7 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": {
-        "json": "",
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -8079,12 +7241,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Loan/Grant Type",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -8129,11 +7286,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8148,7 +7301,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eyep1z000000",
+                    "id": "eyep1z00000000",
                     "addons": []
                   }
                 ]
@@ -8157,12 +7310,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Disbursement 1",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -8207,11 +7355,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8226,7 +7370,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "en3zgox000000",
+                    "id": "en3zgox00000000",
                     "addons": []
                   }
                 ]
@@ -8235,12 +7379,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Disbursement 2",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -8285,11 +7424,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8304,7 +7439,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eq1ihj9000000",
+                    "id": "eq1ihj900000000",
                     "addons": []
                   }
                 ]
@@ -8313,12 +7448,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Total",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -8363,11 +7493,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8382,7 +7508,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eg72vot000000",
+                    "id": "eg72vot00000000",
                     "addons": []
                   }
                 ]
@@ -8393,12 +7519,7 @@
                 "components": [
                   {
                     "label": "Canada Student Loan",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Canada Student Loan",
                     "refreshOnChange": false,
                     "key": "canadaStudentLoan",
@@ -8443,11 +7564,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8462,7 +7579,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e6y0ag9111111",
+                    "id": "e6y0ag911111111",
                     "addons": []
                   }
                 ]
@@ -8471,12 +7588,7 @@
                 "components": [
                   {
                     "label": "CSLF1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1cslf ? '$'+ data.disbursement.disbursement1cslf : '-'}}",
                     "refreshOnChange": true,
                     "key": "html2",
@@ -8521,11 +7633,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8540,7 +7648,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "esx4i61111111",
+                    "id": "esx4i6111111111",
                     "addons": []
                   }
                 ]
@@ -8549,12 +7657,7 @@
                 "components": [
                   {
                     "label": "CSLF2",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2cslf ? '$'+ data.disbursement.disbursement2cslf : '-'}}",
                     "refreshOnChange": true,
                     "key": "html58",
@@ -8599,11 +7702,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8618,7 +7717,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eiwhs3111111",
+                    "id": "eiwhs311111111",
                     "addons": []
                   }
                 ]
@@ -8627,12 +7726,7 @@
                 "components": [
                   {
                     "label": "CSLFTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1cslf ? parseFloat(data.disbursement.disbursement1cslf) : 0) + (data.disbursement?.disbursement2cslf ? parseFloat(data.disbursement.disbursement2cslf) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html63",
@@ -8677,11 +7771,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8696,7 +7786,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eo4a08e111111",
+                    "id": "eo4a08e11111111",
                     "addons": []
                   }
                 ]
@@ -8707,12 +7797,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "British Columbia Student Loan",
                     "refreshOnChange": false,
                     "key": "html1",
@@ -8758,11 +7843,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8777,7 +7858,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ezp2gn222222",
+                    "id": "ezp2gn22222222",
                     "addons": []
                   }
                 ]
@@ -8786,12 +7867,7 @@
                 "components": [
                   {
                     "label": "BCSL1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1bcsl ? '$'+ data.disbursement.disbursement1bcsl : '-'}}",
                     "refreshOnChange": true,
                     "key": "html5",
@@ -8837,11 +7913,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8856,7 +7928,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ewiug3l222222",
+                    "id": "ewiug3l22222222",
                     "addons": []
                   }
                 ]
@@ -8865,12 +7937,7 @@
                 "components": [
                   {
                     "label": "BCSL2",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2bcsl ? '$'+ data.disbursement.disbursement2bcsl : '-'}}",
                     "refreshOnChange": true,
                     "key": "html72",
@@ -8915,11 +7982,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8934,7 +7997,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eu63wlt222222",
+                    "id": "eu63wlt22222222",
                     "addons": []
                   }
                 ]
@@ -8943,12 +8006,7 @@
                 "components": [
                   {
                     "label": "BCSLTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1bcsl ? parseFloat(data.disbursement.disbursement1bcsl) : 0) + (data.disbursement?.disbursement2bcsl ? parseFloat(data.disbursement.disbursement2bcsl) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html64",
@@ -8993,11 +8051,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9012,7 +8066,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e7dfdyn222222",
+                    "id": "e7dfdyn22222222",
                     "addons": []
                   }
                 ]
@@ -9023,12 +8077,7 @@
                 "components": [
                   {
                     "label": "CSGP",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "CSGP",
                     "refreshOnChange": false,
                     "key": "csgp",
@@ -9073,11 +8122,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9092,7 +8137,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "etvpvh9333333",
+                    "id": "etvpvh933333333",
                     "addons": []
                   }
                 ]
@@ -9101,12 +8146,7 @@
                 "components": [
                   {
                     "label": "CSGP1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1csgp ? '$'+ data.disbursement.disbursement1csgp : '-'}}",
                     "refreshOnChange": true,
                     "key": "html3",
@@ -9151,11 +8191,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9170,7 +8206,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eoqix4s333333",
+                    "id": "eoqix4s33333333",
                     "addons": []
                   }
                 ]
@@ -9179,12 +8215,7 @@
                 "components": [
                   {
                     "label": "CSGP2",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2csgp ? '$'+ data.disbursement.disbursement2csgp : '-'}}",
                     "refreshOnChange": true,
                     "key": "html73",
@@ -9229,11 +8260,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9248,7 +8275,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eiiyrcw333333",
+                    "id": "eiiyrcw33333333",
                     "addons": []
                   }
                 ]
@@ -9257,12 +8284,7 @@
                 "components": [
                   {
                     "label": "CSGPTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement.disbursement1csgp) : 0) + (data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement.disbursement2csgp) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html65",
@@ -9307,11 +8329,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9326,7 +8344,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "epryhdb333333",
+                    "id": "epryhdb33333333",
                     "addons": []
                   }
                 ]
@@ -9337,12 +8355,7 @@
                 "components": [
                   {
                     "label": "CSGD",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "CSGD",
                     "refreshOnChange": false,
                     "key": "csgd",
@@ -9387,11 +8400,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9406,7 +8415,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eg55l6444444",
+                    "id": "eg55l644444444",
                     "addons": []
                   }
                 ]
@@ -9415,12 +8424,7 @@
                 "components": [
                   {
                     "label": "CSGD1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1csgd ? '$'+ data.disbursement.disbursement1csgd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html4",
@@ -9465,11 +8469,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9484,7 +8484,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e73qjbi444444",
+                    "id": "e73qjbi44444444",
                     "addons": []
                   }
                 ]
@@ -9493,12 +8493,7 @@
                 "components": [
                   {
                     "label": "CSGD2",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2csgd ? '$'+ data.disbursement.disbursement2csgd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html74",
@@ -9543,11 +8538,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9562,7 +8553,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eiy51yt444444",
+                    "id": "eiy51yt44444444",
                     "addons": []
                   }
                 ]
@@ -9571,12 +8562,7 @@
                 "components": [
                   {
                     "label": "CSGDTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement.disbursement1csgd) : 0) + (data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement.disbursement2csgd) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html66",
@@ -9621,11 +8607,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9640,7 +8622,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eb4hf4a444444",
+                    "id": "eb4hf4a44444444",
                     "addons": []
                   }
                 ]
@@ -9651,12 +8633,7 @@
                 "components": [
                   {
                     "label": "CSG-FT",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "CSG-FT",
                     "refreshOnChange": false,
                     "key": "csgFt",
@@ -9701,11 +8678,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9720,7 +8693,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "epduorp7555555",
+                    "id": "epduorp755555555",
                     "addons": []
                   }
                 ]
@@ -9729,12 +8702,7 @@
                 "components": [
                   {
                     "label": "CSGF1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1csgf ? '$'+ data.disbursement.disbursement1csgf : '-'}}",
                     "refreshOnChange": true,
                     "key": "html6",
@@ -9779,11 +8747,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9798,7 +8762,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e1wpock555555",
+                    "id": "e1wpock55555555",
                     "addons": []
                   }
                 ]
@@ -9807,12 +8771,7 @@
                 "components": [
                   {
                     "label": "CSGF2",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2csgf ? '$'+ data.disbursement.disbursement2csgf : '-'}}",
                     "refreshOnChange": true,
                     "key": "html75",
@@ -9857,11 +8816,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9876,7 +8831,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "et101w555555",
+                    "id": "et101w55555555",
                     "addons": []
                   }
                 ]
@@ -9885,12 +8840,7 @@
                 "components": [
                   {
                     "label": "CSGFTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1csgf ? parseFloat(data.disbursement.disbursement1csgf) : 0) + (data.disbursement?.disbursement2csgf ? parseFloat(data.disbursement.disbursement2csgf) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html67",
@@ -9935,11 +8885,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9954,7 +8900,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e3ivii555555",
+                    "id": "e3ivii55555555",
                     "addons": []
                   }
                 ]
@@ -9965,12 +8911,7 @@
                 "components": [
                   {
                     "label": "CSG-TU",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "CSG-TU",
                     "refreshOnChange": false,
                     "key": "csgTu",
@@ -10016,11 +8957,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10035,7 +8972,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e8c8udm666666",
+                    "id": "e8c8udm66666666",
                     "addons": []
                   }
                 ]
@@ -10044,12 +8981,7 @@
                 "components": [
                   {
                     "label": "CSGT1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1csgt ? '$'+ data.disbursement.disbursement1csgt : '-'}}",
                     "refreshOnChange": true,
                     "key": "html8",
@@ -10094,11 +9026,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10113,7 +9041,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "egocy0c666666",
+                    "id": "egocy0c66666666",
                     "addons": []
                   }
                 ]
@@ -10122,12 +9050,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2csgt ? '$'+ data.disbursement.disbursement2csgt : '-'}}",
                     "refreshOnChange": true,
                     "key": "html76",
@@ -10172,11 +9095,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10191,7 +9110,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "erlphy6666666",
+                    "id": "erlphy666666666",
                     "addons": []
                   }
                 ]
@@ -10200,12 +9119,7 @@
                 "components": [
                   {
                     "label": "CSGTTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1csgt ? parseFloat(data.disbursement.disbursement1csgt) : 0) + (data.disbursement?.disbursement2csgt ? parseFloat(data.disbursement.disbursement2csgt) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html68",
@@ -10250,11 +9164,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10269,7 +9179,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eq63n1666666",
+                    "id": "eq63n166666666",
                     "addons": []
                   }
                 ]
@@ -10280,12 +9190,7 @@
                 "components": [
                   {
                     "label": "BCAG",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "BCAG",
                     "refreshOnChange": false,
                     "key": "bcag",
@@ -10331,11 +9236,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10350,7 +9251,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e489mdn777777",
+                    "id": "e489mdn77777777",
                     "addons": []
                   }
                 ]
@@ -10359,12 +9260,7 @@
                 "components": [
                   {
                     "label": "BCAG1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1bcag ? '$'+ data.disbursement.disbursement1bcag : '-'}}",
                     "refreshOnChange": true,
                     "key": "html9",
@@ -10409,11 +9305,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10428,7 +9320,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "etwq777777",
+                    "id": "etwq77777777",
                     "addons": []
                   }
                 ]
@@ -10437,12 +9329,7 @@
                 "components": [
                   {
                     "label": "BCAG2",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2bcag ? '$'+ data.disbursement.disbursement2bcag : '-'}}",
                     "refreshOnChange": true,
                     "key": "html77",
@@ -10487,11 +9374,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10506,7 +9389,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e1frcjl777777",
+                    "id": "e1frcjl77777777",
                     "addons": []
                   }
                 ]
@@ -10515,12 +9398,7 @@
                 "components": [
                   {
                     "label": "BCAGTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement.disbursement1bcag) : 0) + (data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement.disbursement2bcag) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html69",
@@ -10565,11 +9443,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10584,7 +9458,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e9m9gpa777777",
+                    "id": "e9m9gpa77777777",
                     "addons": []
                   }
                 ]
@@ -10595,12 +9469,7 @@
                 "components": [
                   {
                     "label": "SBSD",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "SBSD",
                     "refreshOnChange": false,
                     "key": "sbsd",
@@ -10646,11 +9515,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10665,7 +9530,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e2fr629888888",
+                    "id": "e2fr62988888888",
                     "addons": []
                   }
                 ]
@@ -10674,12 +9539,7 @@
                 "components": [
                   {
                     "label": "SBSD1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1sbsd ? '$'+ data.disbursement.disbursement1sbsd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html11",
@@ -10725,11 +9585,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10744,7 +9600,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ez66eu888888",
+                    "id": "ez66eu88888888",
                     "addons": []
                   }
                 ]
@@ -10753,12 +9609,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2sbsd ? '$'+ data.disbursement.disbursement2sbsd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html78",
@@ -10803,11 +9654,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10822,7 +9669,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ev02gsj888888",
+                    "id": "ev02gsj88888888",
                     "addons": []
                   }
                 ]
@@ -10831,12 +9678,7 @@
                 "components": [
                   {
                     "label": "SBSDTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement.disbursement1sbsd) : 0) + (data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement.disbursement2sbsd) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html70",
@@ -10881,11 +9723,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10900,7 +9738,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e6ebz5888888",
+                    "id": "e6ebz588888888",
                     "addons": []
                   }
                 ]
@@ -10911,12 +9749,7 @@
                 "components": [
                   {
                     "label": "BGPD",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "BGPD",
                     "refreshOnChange": false,
                     "key": "bgpd",
@@ -10962,11 +9795,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10981,7 +9810,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eec1z2h999999",
+                    "id": "eec1z2h99999999",
                     "addons": []
                   }
                 ]
@@ -10990,12 +9819,7 @@
                 "components": [
                   {
                     "label": "BGPD1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1bgpd ? '$'+ data.disbursement.disbursement1bgpd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html10",
@@ -11041,11 +9865,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11060,7 +9880,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e5p8ute999999",
+                    "id": "e5p8ute99999999",
                     "addons": []
                   }
                 ]
@@ -11069,12 +9889,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2bgpd ? '$'+ data.disbursement.disbursement2bgpd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html79",
@@ -11119,11 +9934,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11138,7 +9949,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ecy1hcp999999",
+                    "id": "ecy1hcp99999999",
                     "addons": []
                   }
                 ]
@@ -11147,12 +9958,7 @@
                 "components": [
                   {
                     "label": "BGPDTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1bgpd ? parseFloat(data.disbursement.disbursement1bgpd) : 0) + (data.disbursement?.disbursement2bgpd ? parseFloat(data.disbursement.disbursement2bgpd) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html71",
@@ -11197,11 +10003,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11216,7 +10018,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ea8v2gf999999",
+                    "id": "ea8v2gf99999999",
                     "addons": []
                   }
                 ]
@@ -11227,12 +10029,7 @@
                 "components": [
                   {
                     "label": "BCSG",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "BCSG",
                     "refreshOnChange": false,
                     "key": "bcsg",
@@ -11277,11 +10074,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11296,7 +10089,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ecwgfk9101010101010",
+                    "id": "ecwgfk91010101010101010",
                     "addons": []
                   }
                 ]
@@ -11305,12 +10098,7 @@
                 "components": [
                   {
                     "label": "BCSG1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1bcsg ? '$'+ data.disbursement.disbursement1bcsg : '-'}}",
                     "refreshOnChange": true,
                     "key": "html80",
@@ -11355,11 +10143,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11374,7 +10158,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "es2wju101010101010",
+                    "id": "es2wju1010101010101010",
                     "addons": []
                   }
                 ]
@@ -11383,12 +10167,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2bcsg ? '$'+ data.disbursement.disbursement2bcsg : '-'}}",
                     "refreshOnChange": true,
                     "key": "html81",
@@ -11433,11 +10212,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11452,7 +10227,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "euveg1101010101010",
+                    "id": "euveg11010101010101010",
                     "addons": []
                   }
                 ]
@@ -11461,12 +10236,7 @@
                 "components": [
                   {
                     "label": "BCSGTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1bcsg ? parseFloat(data.disbursement.disbursement1bcsg) : 0) + (data.disbursement?.disbursement2bcsg ? parseFloat(data.disbursement.disbursement2bcsg) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html82",
@@ -11511,11 +10281,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11530,7 +10296,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eva70so101010101010",
+                    "id": "eva70so1010101010101010",
                     "addons": []
                   }
                 ]
@@ -11624,12 +10390,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Loan/Grant Type",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -11674,11 +10435,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11693,7 +10450,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e7vcvsr000000000",
+                    "id": "e7vcvsr00000000000",
                     "addons": []
                   }
                 ]
@@ -11702,12 +10459,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Disbursement 1",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -11752,11 +10504,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11771,7 +10519,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e4qause000000000",
+                    "id": "e4qause00000000000",
                     "addons": []
                   }
                 ]
@@ -11780,12 +10528,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Disbursement 2",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -11830,11 +10573,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11849,7 +10588,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "ejqk0f000000000",
+                    "id": "ejqk0f00000000000",
                     "addons": []
                   }
                 ]
@@ -11858,12 +10597,7 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Total",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -11908,11 +10642,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11927,7 +10657,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e3994g000000000",
+                    "id": "e3994g00000000000",
                     "addons": []
                   }
                 ]
@@ -11938,12 +10668,7 @@
                 "components": [
                   {
                     "label": "Canada Student Loan",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "Canada Student Loan",
                     "refreshOnChange": false,
                     "key": "canadaStudentLoan1",
@@ -11988,11 +10713,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -12007,7 +10728,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "et3sus7111111111",
+                    "id": "et3sus711111111111",
                     "addons": []
                   }
                 ]
@@ -12018,12 +10739,7 @@
                     "label": "CSLP1",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1cslp ? '$'+ data.disbursement.disbursement1cslp : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12091,7 +10807,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ee3t16b111111111",
+                    "id": "ee3t16b11111111111",
                     "addons": []
                   }
                 ]
@@ -12102,12 +10818,7 @@
                     "label": "CSLP2",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2cslp ? '$'+ data.disbursement.disbursement2cslp : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12175,7 +10886,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "esmbnmo111111111",
+                    "id": "esmbnmo11111111111",
                     "addons": []
                   }
                 ]
@@ -12186,12 +10897,7 @@
                     "label": "CSLPTotal",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1cslp ? parseFloat(data.disbursement.disbursement1cslp) : 0) + (data.disbursement?.disbursement2cslp ? parseFloat(data.disbursement.disbursement2cslp) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12259,7 +10965,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eym9myn111111111",
+                    "id": "eym9myn11111111111",
                     "addons": []
                   }
                 ]
@@ -12272,12 +10978,7 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "BCAG",
                     "refreshOnChange": false,
                     "customClass": "",
@@ -12346,7 +11047,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ep04ct222222222",
+                    "id": "ep04ct22222222222",
                     "addons": []
                   }
                 ]
@@ -12357,12 +11058,7 @@
                     "label": "BCAG1",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1bcag ? '$'+ data.disbursement.disbursement1bcag : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12431,7 +11127,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "egn9ir8222222222",
+                    "id": "egn9ir822222222222",
                     "addons": []
                   }
                 ]
@@ -12442,12 +11138,7 @@
                     "label": "BCAG2",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2bcag ? '$'+ data.disbursement.disbursement2bcag : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12515,7 +11206,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ev9h6ek222222222",
+                    "id": "ev9h6ek22222222222",
                     "addons": []
                   }
                 ]
@@ -12526,12 +11217,7 @@
                     "label": "BCAGTotal",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement.disbursement1bcag) : 0) + (data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement.disbursement2bcag) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12599,7 +11285,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "emsdqls222222222",
+                    "id": "emsdqls22222222222",
                     "addons": []
                   }
                 ]
@@ -12610,12 +11296,7 @@
                 "components": [
                   {
                     "label": "CSGP",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "CSGP",
                     "refreshOnChange": false,
                     "key": "csgp1",
@@ -12660,11 +11341,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -12679,7 +11356,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "edeojm333333333",
+                    "id": "edeojm33333333333",
                     "addons": []
                   }
                 ]
@@ -12688,12 +11365,7 @@
                 "components": [
                   {
                     "label": "CSGP1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1csgp ? '$'+ data.disbursement.disbursement1csgp : '-'}}",
                     "refreshOnChange": true,
                     "key": "html41",
@@ -12738,11 +11410,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -12757,7 +11425,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e0mquvu333333333",
+                    "id": "e0mquvu33333333333",
                     "addons": []
                   }
                 ]
@@ -12766,12 +11434,7 @@
                 "components": [
                   {
                     "label": "CSGP2",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2csgp ? '$'+ data.disbursement.disbursement2csgp : '-'}}",
                     "refreshOnChange": true,
                     "key": "html91",
@@ -12816,11 +11479,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -12835,7 +11494,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eiwhe6m333333333",
+                    "id": "eiwhe6m33333333333",
                     "addons": []
                   }
                 ]
@@ -12844,12 +11503,7 @@
                 "components": [
                   {
                     "label": "CSGPTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement.disbursement1csgp) : 0) + (data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement.disbursement2csgp) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html92",
@@ -12894,11 +11548,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -12913,7 +11563,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "es10hns333333333",
+                    "id": "es10hns33333333333",
                     "addons": []
                   }
                 ]
@@ -12924,12 +11574,7 @@
                 "components": [
                   {
                     "label": "CSGD",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "CSGD",
                     "refreshOnChange": false,
                     "key": "csgd1",
@@ -12974,11 +11619,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -12993,7 +11634,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "efhnp0l444444444",
+                    "id": "efhnp0l44444444444",
                     "addons": []
                   }
                 ]
@@ -13002,12 +11643,7 @@
                 "components": [
                   {
                     "label": "CSGD1",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1csgd ? '$'+ data.disbursement.disbursement1csgd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html42",
@@ -13052,11 +11688,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -13071,7 +11703,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eh3kxqk444444444",
+                    "id": "eh3kxqk44444444444",
                     "addons": []
                   }
                 ]
@@ -13080,12 +11712,7 @@
                 "components": [
                   {
                     "label": "CSGD2",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2csgd ? '$'+ data.disbursement.disbursement2csgd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html93",
@@ -13130,11 +11757,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -13149,7 +11772,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "eld8si444444444",
+                    "id": "eld8si44444444444",
                     "addons": []
                   }
                 ]
@@ -13158,12 +11781,7 @@
                 "components": [
                   {
                     "label": "CSGDTotal",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement.disbursement1csgd) : 0) + (data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement.disbursement2csgd) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html94",
@@ -13208,11 +11826,7 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
+                    "conditional": { "show": null, "when": null, "eq": "" },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -13227,7 +11841,7 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "tag": "p",
-                    "id": "e2cvl9444444444",
+                    "id": "e2cvl944444444444",
                     "addons": []
                   }
                 ]
@@ -13240,12 +11854,7 @@
                     "label": "CSPT",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "CSPT",
                     "refreshOnChange": false,
                     "customClass": "",
@@ -13313,7 +11922,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eo14is0o555555555",
+                    "id": "eo14is0o55555555555",
                     "addons": []
                   }
                 ]
@@ -13326,12 +11935,7 @@
                     "labelMargin": "",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1csgpt ? '$'+ data.disbursement.disbursement1csgpt : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -13400,7 +12004,7 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "enw2kni555"
+                    "id": "enw2kni55555"
                   }
                 ]
               },
@@ -13412,12 +12016,7 @@
                     "labelMargin": "",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2csgpt ? '$'+ data.disbursement.disbursement2csgpt : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -13486,7 +12085,7 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "e2gmzmc55"
+                    "id": "e2gmzmc5555"
                   }
                 ]
               },
@@ -13498,12 +12097,7 @@
                     "labelMargin": "",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1csgpt ? parseFloat(data.disbursement.disbursement1csgpt) : 0) + (data.disbursement?.disbursement2csgpt ? parseFloat(data.disbursement.disbursement2csgpt) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -13572,7 +12166,7 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "eq9w25r5"
+                    "id": "eq9w25r555"
                   }
                 ]
               }
@@ -13584,12 +12178,7 @@
                     "label": "SBSD",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "SBSD",
                     "refreshOnChange": false,
                     "customClass": "",
@@ -13658,7 +12247,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e0z3tmn666666666",
+                    "id": "e0z3tmn66666666666",
                     "addons": []
                   }
                 ]
@@ -13669,12 +12258,7 @@
                     "label": "SBSD1",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement1sbsd ? '$'+ data.disbursement.disbursement1sbsd : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -13742,7 +12326,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "emmgvc5666666666",
+                    "id": "emmgvc566666666666",
                     "addons": []
                   }
                 ]
@@ -13753,12 +12337,7 @@
                     "label": "SBSD2",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "{{data.disbursement?.disbursement2sbsd ? '$'+ data.disbursement.disbursement2sbsd : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -13826,7 +12405,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e9jpvn6666666666",
+                    "id": "e9jpvn666666666666",
                     "addons": []
                   }
                 ]
@@ -13837,12 +12416,7 @@
                     "label": "SBSDTotal",
                     "tag": "p",
                     "className": "",
-                    "attrs": [
-                      {
-                        "attr": "",
-                        "value": ""
-                      }
-                    ],
+                    "attrs": [{ "attr": "", "value": "" }],
                     "content": "${{((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement.disbursement1sbsd) : 0) + (data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement.disbursement2sbsd) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -13910,7 +12484,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e6vwxq9666666666",
+                    "id": "e6vwxq966666666666",
                     "addons": []
                   }
                 ]
@@ -14049,9 +12623,7 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
+      "widget": { "type": "input" },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -14061,11 +12633,7 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "" },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -14122,9 +12690,7 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
+      "widget": { "type": "input" },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -14134,11 +12700,7 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "" },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -14147,12 +12709,5 @@
       "id": "e6z1qd9",
       "addons": []
     }
-  ],
-  "display": "form",
-  "title": "Notice of Assessment",
-  "name": "noticeofassessment",
-  "path": "noticeofassessment",
-  "created": "2021-07-14T17:56:22.162Z",
-  "modified": "2022-04-11T17:54:13.094Z",
-  "machineName": "noticeOfAssessment"
+  ]
 }

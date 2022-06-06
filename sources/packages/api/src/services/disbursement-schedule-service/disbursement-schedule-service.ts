@@ -187,6 +187,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           "disbursement.documentNumber",
           "disbursement.negotiatedExpiryDate",
           "disbursement.disbursementDate",
+          "disbursement.tuitionRemittanceRequestedAmount",
           "application.applicationNumber",
           "application.data",
           "application.relationshipStatus",
@@ -197,7 +198,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           "offering.courseLoad",
           "offering.studyStartDate",
           "offering.studyEndDate",
-          "offering.tuitionRemittanceRequestedAmount",
           "offering.yearOfStudy",
           "educationProgram.cipCode",
           "educationProgram.completionYears",
@@ -293,16 +293,18 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * On COE Approval, update disbursement schedule with document number and
    * COE related columns. Update the Application status to completed, if it is first COE.
    * The update to Application and Disbursement schedule happens in single transaction.
-   * @param disbursementScheduleId
-   * @param userId
-   * @param applicationId
-   * @param applicationStatus
+   * @param disbursementScheduleId disbursement schedule Id.
+   * @param userId User updating the confirmation of enrollment.
+   * @param applicationId application Id.
+   * @param applicationStatus application status of the disbursed application.
+   * @param tuitionRemittanceRequestedAmount tuition remittance amount requested by the institution.
    */
   async updateDisbursementAndApplicationCOEApproval(
     disbursementScheduleId: number,
     userId: number,
     applicationId: number,
     applicationStatus: ApplicationStatus,
+    tuitionRemittanceRequestedAmount: number,
   ): Promise<void> {
     const documentNumber = await this.getNextDocumentNumber();
     return this.connection.transaction(async (transactionalEntityManager) => {
@@ -315,6 +317,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           coeStatus: COEStatus.completed,
           coeUpdatedBy: { id: userId },
           coeUpdatedAt: new Date(),
+          tuitionRemittanceRequestedAmount: tuitionRemittanceRequestedAmount,
         })
         .where("id = :disbursementScheduleId", { disbursementScheduleId })
         .execute();
@@ -456,8 +459,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "offering.programRelatedCosts",
         "offering.mandatoryFees",
         "offering.exceptionalExpenses",
-        "offering.tuitionRemittanceRequested",
-        "offering.tuitionRemittanceRequestedAmount",
         "offering.offeringDelivered",
         "offering.studyBreaks",
         "program.name",
@@ -502,8 +503,18 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "application.applicationStatus",
         "studentAssessment.id",
         "studentAssessment.assessmentWorkflowId",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
+        "disbursementValues.valueType",
+        "disbursementValues.valueCode",
+        "disbursementValues.valueAmount",
       ])
       .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin(
+        "disbursementSchedule.disbursementValues",
+        "disbursementValues",
+      )
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.location", "location")
       .where("location.id = :locationId", { locationId })

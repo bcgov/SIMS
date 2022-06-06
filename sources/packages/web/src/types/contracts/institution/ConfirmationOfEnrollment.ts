@@ -23,8 +23,6 @@ export interface ApplicationDetailsForCOEDTO {
   applicationOfferingProgramRelatedCost: number;
   applicationOfferingMandatoryCost: number;
   applicationOfferingExceptionalExpenses: number;
-  applicationOfferingHasTuitionRemittanceRequested: string;
-  applicationOfferingTuitionRemittanceAmount: number;
   applicationOfferingStudyDelivered: string;
   applicationStudentName: string;
   applicationNumber: string;

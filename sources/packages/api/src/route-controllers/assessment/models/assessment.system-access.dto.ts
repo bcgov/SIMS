@@ -37,7 +37,6 @@ export class ApplicationOfferingAPIOutDTO {
   programRelatedCosts: number;
   mandatoryFees: number;
   exceptionalExpenses: number;
-  tuitionRemittanceRequestedAmount: number;
   offeringDelivered: string;
   offeringIntensity: string;
   courseLoad?: number;
