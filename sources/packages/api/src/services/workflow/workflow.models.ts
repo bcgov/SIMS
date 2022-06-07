@@ -8,6 +8,21 @@ export interface WorkflowStartResult {
   tenantId: string;
 }
 
+/**
+ * Variable value to be assigned to a message payload.
+ */
+export interface ProcessVariableValue {
+  value: string;
+  type: "string" | "integer";
+}
+
+/**
+ * variable to be send with a message payload.
+ */
+export interface ProcessVariable {
+  [k: string]: ProcessVariableValue;
+}
+
 export interface SendMessagePayload {
   /**
    * The name of the message to deliver.
@@ -28,4 +43,8 @@ export interface SendMessagePayload {
    * instance with the given id.
    */
   processInstanceId?: string;
+  /**
+   * Optional variables to be send alongside the message payload.
+   */
+  processVariables?: ProcessVariable;
 }

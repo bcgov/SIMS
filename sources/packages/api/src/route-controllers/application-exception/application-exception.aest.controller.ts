@@ -8,7 +8,10 @@ import {
   Patch,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApplicationExceptionService } from "../../services";
+import {
+  ApplicationExceptionService,
+  WorkflowActionsService,
+} from "../../services";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
@@ -38,6 +41,7 @@ import { ApplicationExceptionStatus } from "../../database/entities";
 export class ApplicationExceptionAESTController extends BaseController {
   constructor(
     private readonly applicationExceptionService: ApplicationExceptionService,
+    private readonly workflowActionsService: WorkflowActionsService,
   ) {
     super();
   }
@@ -89,11 +93,16 @@ export class ApplicationExceptionAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      await this.applicationExceptionService.approveException(
-        exceptionId,
-        payload.exceptionStatus,
-        payload.noteDescription,
-        userToken.userId,
+      const updatedException =
+        await this.applicationExceptionService.approveException(
+          exceptionId,
+          payload.exceptionStatus,
+          payload.noteDescription,
+          userToken.userId,
+        );
+      await this.workflowActionsService.sendApplicationExceptionApproval(
+        updatedException.id,
+        updatedException.exceptionStatus,
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {

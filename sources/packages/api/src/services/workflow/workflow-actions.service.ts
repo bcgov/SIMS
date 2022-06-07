@@ -3,6 +3,7 @@ import { WorkflowService } from "..";
 import { WorkflowStartResult } from "./workflow.models";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
+import { ApplicationExceptionStatus } from "../../database/entities";
 
 @Injectable()
 export class WorkflowActionsService {
@@ -11,7 +12,6 @@ export class WorkflowActionsService {
   /**
    * Starts application assessment.
    * @param workflowName workflow to be started.
-   * @param applicationId application id to be processed.
    * @param assessmentId student assessment that need to be processed.
    * @returns result of the application start.
    */
@@ -28,7 +28,7 @@ export class WorkflowActionsService {
           },
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
         `Error while starting application assessment workflow: ${workflowName}`,
       );
@@ -54,7 +54,7 @@ export class WorkflowActionsService {
         processInstanceId,
         all: false, // false means that the message is correlated to exactly one entity.
       });
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
         `Error while sending Program Info completed message to instance id: ${processInstanceId}`,
       );
@@ -81,7 +81,7 @@ export class WorkflowActionsService {
         all: false, // false means that the message is correlated to exactly one entity.
       });
       return true;
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
         `Error while sending CRA income verification completed message using incomeVerificationId: ${incomeVerificationId}`,
       );
@@ -101,7 +101,7 @@ export class WorkflowActionsService {
   ): Promise<void> {
     try {
       await this.workflowService.delete(assessmentWorkflowId);
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
         `Error while deleting application assessment workflow: ${assessmentWorkflowId}, error: ${error}`,
       );
@@ -124,7 +124,7 @@ export class WorkflowActionsService {
         processInstanceId,
         all: false, // false means that the message is correlated to exactly one entity.
       });
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
         `Error while sending Confirm Confirmation of Enrollment (COE) message to instance id: ${processInstanceId}`,
       );
@@ -150,9 +150,40 @@ export class WorkflowActionsService {
         messageName: `sims-supporting-user-complete-${supportingUserId}`,
         all: false, // false means that the message is correlated to exactly one entity.
       });
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
         `Error while sending supporting users completed message using supportingUserId: ${supportingUserId}`,
+      );
+      this.logger.error(error);
+      // The error is not thrown here, as we are failing silently.
+    }
+  }
+
+  /**
+   * When an exception is detected in the student application dynamic data, for instance,
+   * when some document was uploaded and need to be reviewed, the workflow will stop till
+   * this message is received with the approval or denial from the Ministry user.
+   * @param applicationExceptionId exception id to send the message.
+   * @param status approval or denial status.
+   */
+  async sendApplicationExceptionApproval(
+    applicationExceptionId: number,
+    status: ApplicationExceptionStatus,
+  ): Promise<void> {
+    try {
+      await this.workflowService.sendMessage({
+        messageName: `sims-application-exception-approval-${applicationExceptionId}`,
+        all: false, // false means that the message is correlated to exactly one entity.
+        processVariables: {
+          exceptionsApprovalStatus: {
+            value: status,
+            type: "string",
+          },
+        },
+      });
+    } catch (error: unknown) {
+      this.logger.error(
+        `Error while sending supporting users completed message using supportingUserId: ${applicationExceptionId}.`,
       );
       this.logger.error(error);
       // The error is not thrown here, as we are failing silently.
