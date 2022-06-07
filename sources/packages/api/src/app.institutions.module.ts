@@ -21,6 +21,8 @@ import {
   StudentAssessmentService,
   GCNotifyService,
   GCNotifyActionsService,
+  StudentRestrictionService,
+  RestrictionService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -64,6 +66,8 @@ import { LoggerModule } from "./logger/logger.module";
     StudentAssessmentService,
     GCNotifyService,
     GCNotifyActionsService,
+    StudentRestrictionService,
+    RestrictionService,
   ],
 })
 export class AppInstitutionsModule {}

@@ -8,6 +8,7 @@ import {
   User,
   Restriction,
   Student,
+  Application,
 } from "../../database/entities";
 import {
   AssignRestrictionDTO,
@@ -16,6 +17,8 @@ import {
 import { Connection, SelectQueryBuilder } from "typeorm";
 import { CustomNamedError } from "../../utilities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
+import { RestrictionCode } from "./constants";
+import { RestrictionService } from "./restriction.service";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -24,7 +27,10 @@ export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
  */
 @Injectable()
 export class StudentRestrictionService extends RecordDataModelService<StudentRestriction> {
-  constructor(connection: Connection) {
+  constructor(
+    connection: Connection,
+    private readonly restrictionService: RestrictionService,
+  ) {
     super(connection.getRepository(StudentRestriction));
   }
 
@@ -254,5 +260,52 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       restrictionActions,
     });
     return !!(await query.getRawOne());
+  }
+  /**
+   * The service checks if the students has the requested restriction or not.
+   * @param studentId student id.
+   * @param restrictionCode restriction code.
+   * @returns Student restrictions.
+   */
+  async isRestrictionExistsForStudent(
+    studentId: number,
+    restrictionCode: string,
+  ): Promise<boolean> {
+    return !!(await this.repo
+      .createQueryBuilder("studentRestrictions")
+      .select("studentRestrictions.id")
+      .innerJoin("studentRestrictions.restriction", "restriction")
+      .innerJoin("studentRestrictions.student", "student")
+      .where("student.id = :studentId", { studentId })
+      .andWhere("studentRestrictions.isActive = true")
+      .andWhere("restriction.restrictionCode = :restrictionCode", {
+        restrictionCode,
+      })
+      .getOne());
+  }
+  /**
+   * The service add new student restrictions.
+   * @param studentId student id.
+   * @param restrictionCode restriction code.
+   * @param applicationId application id.
+   * @param auditUserId audit user id
+   */
+  async saveNewStudentRestriction(
+    studentId: number,
+    restrictionCode: RestrictionCode,
+    applicationId: number,
+    auditUserId: number,
+  ): Promise<StudentRestriction> {
+    const restriction = await this.restrictionService.getRestrictionByCode(
+      restrictionCode,
+    );
+    const studentRestriction = new StudentRestriction();
+    studentRestriction.restriction = {
+      id: restriction.id,
+    } as Restriction;
+    studentRestriction.student = { id: studentId } as Student;
+    studentRestriction.application = { id: applicationId } as Application;
+    studentRestriction.creator = { id: auditUserId } as User;
+    return studentRestriction;
   }
 }

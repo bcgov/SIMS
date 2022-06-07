@@ -7,7 +7,13 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { Application, Note, StudentAssessment, User } from ".";
+import {
+  Application,
+  EducationProgramOffering,
+  Note,
+  StudentAssessment,
+  User,
+} from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 
@@ -69,33 +75,6 @@ export class StudentScholasticStanding extends RecordDataModel {
   })
   submittedBy: User;
   /**
-   * Dynamic form data that represents the final data revised by the Ministry.
-   */
-  @Column({
-    name: "approved_data",
-    type: "jsonb",
-    nullable: true,
-  })
-  approvedData?: any;
-  /**
-   * Date that the Ministry approved or denied the scholastic standing.
-   */
-  @Column({
-    name: "assessed_date",
-    type: "timestamptz",
-    nullable: true,
-  })
-  assessedDate?: Date;
-  /**
-   * Ministry user that approved or declined the scholastic standing.
-   */
-  @ManyToOne(() => User, { eager: false, cascade: false, nullable: true })
-  @JoinColumn({
-    name: "assessed_by",
-    referencedColumnName: ColumnNames.ID,
-  })
-  assessedBy?: User;
-  /**
    * Note added by the Ministry while approving or denying the scholastic standing.
    */
   @OneToOne(() => Note, { eager: false, cascade: true, nullable: true })
@@ -117,4 +96,36 @@ export class StudentScholasticStanding extends RecordDataModel {
     },
   )
   studentAssessment?: StudentAssessment;
+  /**
+   * reference offering id is the offering id of the student application at the
+   * time of scholastic standings submission.
+   */
+  @RelationId(
+    (studentScholasticStanding: StudentScholasticStanding) =>
+      studentScholasticStanding.referenceOffering,
+  )
+  referenceOfferingId?: number;
+  /**
+   * The offering id for the application at the time of scholastic standing submission.
+   * Once the scholastic standing is submitted, if there is a reassessment then the current offering id will be different.
+   */
+  @ManyToOne(() => EducationProgramOffering, {
+    eager: false,
+    cascade: false,
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "reference_offering_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  referenceOffering?: EducationProgramOffering;
+  /**
+   * The number of unsuccessful weeks for a fulltime application that have a scholastic
+   * standings. If the sum of fulltime unsuccessful weeks hits 68, then SSR restriction is added for that student.
+   */
+  @Column({
+    name: "unsuccessful_weeks",
+    nullable: true,
+  })
+  unsuccessfulWeeks?: number;
 }

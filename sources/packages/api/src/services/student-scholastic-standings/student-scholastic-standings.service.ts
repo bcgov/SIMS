@@ -7,8 +7,10 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   EducationProgramOffering,
+  OfferingIntensity,
   OfferingTypes,
   StudentAssessment,
+  StudentRestriction,
   User,
 } from "../../database/entities";
 import { CustomNamedError } from "../../utilities";
@@ -18,6 +20,14 @@ import {
 } from "../application/application.service";
 import { ScholasticStanding } from "./student-scholastic-standings.model";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
+import { StudentRestrictionService } from "../restriction/student-restriction.service";
+import { RestrictionCode } from "../restriction/constants";
+// When student select "Student did not complete program", then "scholasticStanding" value is
+const SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM =
+  "studentDidNotCompleteProgram";
+// When student select "Student withdrew from program", then "scholasticStanding" value is
+const SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM =
+  "studentWithdrewFromProgram";
 
 /**
  * Manages the student scholastic standings related operations.
@@ -30,6 +40,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   constructor(
     private readonly connection: Connection,
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super(connection.getRepository(StudentScholasticStanding));
     this.applicationRepo = connection.getRepository(Application);
@@ -94,16 +105,28 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         .innerJoin("offering.institutionLocation", "institutionLocation")
         .getOne();
 
+      //TODO: Check for restrictions and apply if any.
+      const studentRestriction = await this.studentRestrictionIfExist(
+        scholasticStandingData,
+        existingOffering.offeringIntensity,
+        application.studentId,
+        auditUserId,
+        applicationId,
+      );
+      await transactionalEntityManager
+        .getRepository(StudentRestriction)
+        .save(studentRestriction);
+
       // Cloning existing offering.
       const offering: EducationProgramOffering = { ...existingOffering };
 
       // Assigning id as undefined, so that when its saved its considered as a new EducationProgramOffering object.
       offering.id = undefined;
-
+      // todo: UnsuccessfulWeeks does not need reassessment
       const newStudyEndDate =
         scholasticStandingData.dateOfChange ??
         scholasticStandingData.dateOfCompletion ??
-        scholasticStandingData.dateOfIncompletion ??
+        // scholasticStandingData.dateOfIncompletion ??
         scholasticStandingData.dateOfWithdrawal;
 
       offering.studyEndDate = new Date(newStudyEndDate);
@@ -134,6 +157,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       scholasticStanding.submittedBy = auditUser;
       scholasticStanding.creator = auditUser;
 
+      // Reference offering id.
+      scholasticStanding.referenceOffering = existingOffering;
+
       // Create the new assessment to be processed.
       scholasticStanding.studentAssessment = {
         application: { id: applicationId } as Application,
@@ -159,5 +185,56 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
 
       return studentScholasticStanding;
     });
+  }
+  // todo add comments
+  async studentRestrictionIfExist(
+    scholasticStandingData: ScholasticStanding,
+    offeringIntensity: OfferingIntensity,
+    studentId: number,
+    auditUserId: number,
+    applicationId: number,
+  ): Promise<StudentRestriction> {
+    console.log(scholasticStandingData, offeringIntensity, studentId);
+    if (offeringIntensity === OfferingIntensity.fullTime) {
+      // TODO: CHECK THE INCOMPLETION AND UNSUCCESSFUL FORM FIELDS
+      if (
+        scholasticStandingData.scholasticStanding ===
+        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM
+      ) {
+      } else if (
+        scholasticStandingData.scholasticStanding ===
+        SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
+      ) {
+        // Check if "WTHD" restriction is already present for the student,
+        // if not add "WTHD" restriction else add "SSR" restriction.
+        const isWTHDExists =
+          await this.studentRestrictionService.isRestrictionExistsForStudent(
+            studentId,
+            RestrictionCode.WTHD,
+          );
+        if (isWTHDExists) {
+          return this.studentRestrictionService.saveNewStudentRestriction(
+            studentId,
+            RestrictionCode.SSR,
+            auditUserId,
+            applicationId,
+          );
+        }
+        return this.studentRestrictionService.saveNewStudentRestriction(
+          studentId,
+          RestrictionCode.WTHD,
+          auditUserId,
+          applicationId,
+        );
+      }
+    } else {
+      // todo: RECHECK/TEST THE LOGIC
+      return this.studentRestrictionService.saveNewStudentRestriction(
+        studentId,
+        RestrictionCode.PTSSD,
+        auditUserId,
+        applicationId,
+      );
+    }
   }
 }
