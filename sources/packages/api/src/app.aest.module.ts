@@ -31,6 +31,7 @@ import {
   SFASIndividualService,
   StudentRestrictionService,
   RestrictionService,
+  ApplicationExceptionService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -48,6 +49,7 @@ import {
   EducationProgramOfferingAESTController,
   ReportAESTController,
   StudentControllerService,
+  ApplicationExceptionAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -66,6 +68,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     InstitutionLocationAESTController,
     EducationProgramOfferingAESTController,
     ReportAESTController,
+    ApplicationExceptionAESTController,
   ],
   providers: [
     SupportingUserService,
@@ -104,6 +107,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     SFASIndividualService,
     StudentRestrictionService,
     RestrictionService,
+    ApplicationExceptionService,
   ],
 })
 export class AppAESTModule {}

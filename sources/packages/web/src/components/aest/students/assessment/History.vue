@@ -5,71 +5,87 @@
         <body-header
           title="History"
           class="m-1"
-          subTitle="A history of assessments"
+          subTitle="A history of applications"
           :recordsCount="assessmentHistory.length"
         >
         </body-header>
         <content-group class="mt-4">
-          <DataTable
-            :value="assessmentHistory"
-            :paginator="true"
-            :rows="DEFAULT_PAGE_LIMIT"
-            :rowsPerPageOptions="PAGINATION_LIST"
-            :totalRecords="assessmentHistory.length"
+          <toggle-content
+            :toggled="!assessmentHistory.length"
+            message="There's nothing here yet"
           >
-            <template #empty>
-              <p class="text-center font-weight-bold">No records found.</p>
-            </template>
-            <Column
-              field="submittedDate"
-              header="Submitted date"
-              sortable="true"
-              ><template #body="slotProps">{{
-                dateOnlyLongString(slotProps.data.submittedDate)
-              }}</template></Column
-            ><Column field="triggerType" header="Type" sortable="true"></Column
-            ><Column header="Request form">
-              <template #body="{ data }">
-                <template v-if="canShowViewRequest(data.triggerType)">
+            <DataTable
+              :value="assessmentHistory"
+              :paginator="true"
+              :rows="DEFAULT_PAGE_LIMIT"
+              :rowsPerPageOptions="PAGINATION_LIST"
+              :totalRecords="assessmentHistory.length"
+            >
+              <template #empty>
+                <p class="text-center font-weight-bold">No records found.</p>
+              </template>
+              <Column
+                field="submittedDate"
+                header="Submitted date"
+                sortable="true"
+                ><template #body="slotProps">{{
+                  dateOnlyLongString(slotProps.data.submittedDate)
+                }}</template></Column
+              ><Column
+                field="triggerType"
+                header="Type"
+                sortable="true"
+              ></Column
+              ><Column header="Request form">
+                <template #body="{ data }">
+                  <template v-if="canShowViewRequest(data)">
+                    <v-btn
+                      @click="viewRequest(data)"
+                      color="primary"
+                      variant="text"
+                      class="text-decoration-underline"
+                    >
+                      <font-awesome-icon
+                        :icon="['far', 'file-alt']"
+                        class="mr-2"
+                      />
+                      {{ getViewRequestLabel(data) }}</v-btn
+                    >
+                  </template>
+                </template></Column
+              ><Column field="status" header="Status" sortable="true"
+                ><template #body="slotProps"
+                  ><status-chip-assessment-history
+                    :status="slotProps.data.status" /></template></Column
+              ><Column
+                field="assessmentDate"
+                header="Assessment date"
+                sortable="true"
+                ><template #body="slotProps">
+                  <span v-if="slotProps.data.assessmentDate">{{
+                    dateOnlyLongString(slotProps.data.assessmentDate)
+                  }}</span
+                  ><span v-else>-</span></template
+                ></Column
+              ><Column header="Assessment">
+                <template #body="{ data }">
                   <v-btn
-                    @click="viewRequest(data)"
+                    @click="$emit('viewAssessment', data.assessmentId)"
                     color="primary"
-                    variant="text"
-                    class="text-decoration-underline"
                   >
-                    <font-awesome-icon
-                      :icon="['far', 'file-alt']"
-                      class="mr-2"
-                    />
-                    View request</v-btn
+                    View assessment</v-btn
                   >
                 </template>
-              </template></Column
-            ><Column field="status" header="Status" sortable="true"
-              ><template #body="slotProps"
-                ><status-chip-assessment-history
-                  :status="slotProps.data.status" /></template></Column
-            ><Column
-              field="assessmentDate"
-              header="Assessment date"
-              sortable="true"
-              ><template #body="slotProps">
-                <span v-if="slotProps.data.assessmentDate">{{
-                  dateOnlyLongString(slotProps.data.assessmentDate)
-                }}</span
-                ><span v-else>-</span></template
-              ></Column
-            ><Column header="Assessment">
-              <template #body="{ data }">
-                <v-btn
-                  @click="$emit('viewAssessment', data.assessmentId)"
-                  color="primary"
-                >
-                  View assessment</v-btn
-                >
-              </template>
-            </Column>
-          </DataTable>
+              </Column>
+            </DataTable>
+            <template #image>
+              <v-img
+                height="200"
+                alt="There's nothing here yet"
+                src="@/assets/images/playful-cat.svg"
+              />
+            </template>
+          </toggle-content>
         </content-group>
       </v-container>
     </v-card>
@@ -86,15 +102,18 @@ import { StudentAssessmentsService } from "@/services/StudentAssessmentsService"
 import { useFormatters } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
+import ToggleContent from "@/components/generic/ToggleContent.vue";
 
 export default {
   emits: [
     "viewStudentAppeal",
     "viewScholasticStandingChange",
+    "viewApplicationException",
     "viewAssessment",
   ],
   components: {
     StatusChipAssessmentHistory,
+    ToggleContent,
   },
   props: {
     applicationId: {
@@ -123,14 +142,39 @@ export default {
             data.studentScholasticStandingId,
           );
           break;
+        case AssessmentTriggerType.OriginalAssessment:
+          if (data.applicationExceptionId) {
+            context.emit(
+              "viewApplicationException",
+              data.applicationExceptionId,
+            );
+          }
+          break;
       }
     };
 
-    const canShowViewRequest = (triggerType: AssessmentTriggerType) =>
-      [
-        AssessmentTriggerType.StudentAppeal,
-        AssessmentTriggerType.ScholasticStandingChange,
-      ].includes(triggerType);
+    const canShowViewRequest = (
+      data: AssessmentHistorySummaryAPIOutDTO,
+    ): boolean => {
+      switch (data.triggerType) {
+        case AssessmentTriggerType.StudentAppeal:
+        case AssessmentTriggerType.ScholasticStandingChange:
+          return true;
+        case AssessmentTriggerType.OriginalAssessment:
+          return !!data.applicationExceptionId;
+        default:
+          return false;
+      }
+    };
+
+    const getViewRequestLabel = (
+      data: AssessmentHistorySummaryAPIOutDTO,
+    ): string => {
+      if (data.triggerType === AssessmentTriggerType.OriginalAssessment) {
+        return "View exception";
+      }
+      return "View request";
+    };
 
     return {
       DEFAULT_PAGE_LIMIT,
@@ -139,6 +183,7 @@ export default {
       dateOnlyLongString,
       viewRequest,
       canShowViewRequest,
+      getViewRequestLabel,
     };
   },
 };

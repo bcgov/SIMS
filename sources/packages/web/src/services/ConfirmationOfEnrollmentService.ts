@@ -8,6 +8,7 @@ import {
   PaginationOptions,
 } from "@/types";
 import ApiClient from "./http/ApiClient";
+import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto/ConfirmationOfEnrolment.dto";
 
 export class ConfirmationOfEnrollmentService {
   // Share Instance
@@ -42,10 +43,12 @@ export class ConfirmationOfEnrollmentService {
   public async confirmCOE(
     locationId: number,
     disbursementScheduleId: number,
+    confirmationData: ConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
     await ApiClient.ConfirmationOfEnrollment.confirmCOE(
       locationId,
       disbursementScheduleId,
+      confirmationData,
     );
   }
 

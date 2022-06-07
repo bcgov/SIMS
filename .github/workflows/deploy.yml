@@ -76,6 +76,7 @@ jobs:
       BYPASS_CRA_INCOME_VERIFICATION: true
       BYPASS_APPLICATION_SUBMIT_VALIDATIONS: true
       SWAGGER_ENABLED: true
+      APPLICATION_ARCHIVE_DAYS: 43
     needs:
       - build
     steps:

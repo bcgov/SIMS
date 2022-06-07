@@ -137,4 +137,12 @@ export class DisbursementSchedule extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   studentAssessment: StudentAssessment;
+  /**
+   * Tuition remittance amount requested by the institution for disbursement.
+   */
+  @Column({
+    name: "tuition_remittance_requested_amount",
+    nullable: false,
+  })
+  tuitionRemittanceRequestedAmount: number;
 }

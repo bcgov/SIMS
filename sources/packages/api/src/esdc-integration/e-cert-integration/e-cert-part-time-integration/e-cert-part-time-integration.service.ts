@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService, SshService } from "../../../services";
 import {
+  combineDecimalPlaces,
   getDisbursementAmountByValueCode,
   getGenderCode,
   getPartTimeMaritalStatusCode,
@@ -100,6 +101,7 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       record.disbursementDate = ecertRecord.disbursementDate;
       record.documentProducedDate = ecertRecord.documentProducedDate;
       record.disbursementAmount = disbursementAmount;
+      record.schoolAmount = combineDecimalPlaces(ecertRecord.schoolAmount);
       record.educationalStartDate = ecertRecord.educationalStartDate;
       record.educationalEndDate = ecertRecord.educationalEndDate;
       record.federalInstitutionCode = ecertRecord.federalInstitutionCode;

@@ -3,6 +3,8 @@ import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { NoteType } from ".";
 
+export const NOTE_DESCRIPTION_MAX_LENGTH = 1000;
+
 /**
  * Entity for notes.
  */
@@ -27,6 +29,7 @@ export class Note extends RecordDataModel {
   @Column({
     name: "description",
     nullable: false,
+    length: NOTE_DESCRIPTION_MAX_LENGTH,
   })
   description: string;
 }

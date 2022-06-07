@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { DatabaseModule } from "./database/database.module";
 import {
+  ApplicationExceptionService,
   ConfigService,
   DisbursementScheduleService,
   EducationProgramOfferingService,
@@ -12,6 +13,7 @@ import {
   RestrictionService,
 } from "./services";
 import {
+  ApplicationExceptionSystemAccessController,
   AssessmentControllerService,
   AssessmentSystemAccessController,
 } from "./route-controllers";
@@ -20,7 +22,10 @@ import { LoggerModule } from "./logger/logger.module";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
-  controllers: [AssessmentSystemAccessController],
+  controllers: [
+    AssessmentSystemAccessController,
+    ApplicationExceptionSystemAccessController,
+  ],
   providers: [
     ConfigService,
     WorkflowActionsService,
@@ -32,6 +37,7 @@ import { LoggerModule } from "./logger/logger.module";
     StudentRestrictionService,
     AssessmentControllerService,
     RestrictionService,
+    ApplicationExceptionService,
   ],
 })
 export class AppSystemAccessModule {}

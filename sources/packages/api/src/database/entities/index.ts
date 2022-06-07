@@ -60,3 +60,6 @@ export * from "./offering-status.type";
 export * from "./address.type";
 export * from "./reports-config.model";
 export * from "./student-file.type";
+export * from "./application-exception-status.type";
+export * from "./application-exception-requests.model";
+export * from "./application-exceptions.model";

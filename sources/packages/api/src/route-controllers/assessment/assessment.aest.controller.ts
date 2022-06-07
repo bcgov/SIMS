@@ -4,12 +4,16 @@ import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { StudentAppealService, StudentAssessmentService } from "../../services";
-import { AssessmentTriggerType } from "../../database/entities";
+import {
+  ApplicationExceptionService,
+  StudentAppealService,
+  StudentAssessmentService,
+} from "../../services";
 import {
   AssessmentHistorySummaryAPIOutDTO,
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
+  RequestAssessmentTypeAPIOutDTO,
 } from "./models/assessment.dto";
 import {
   ApiNotFoundResponse,
@@ -17,6 +21,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AssessmentControllerService } from "./assessment.controller.service";
+import { ApplicationExceptionStatus } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -27,28 +32,47 @@ export class AssessmentAESTController extends BaseController {
     private readonly studentAppealService: StudentAppealService,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly assessmentControllerService: AssessmentControllerService,
+    private readonly applicationExceptionService: ApplicationExceptionService,
   ) {
     super();
   }
 
   /**
-   * Method to get all requested assessments for a student
+   * Get all requests related to an assessments for a student
    * application, i.e, this will fetch all pending and denied
-   * student appeal for an application.
-   * @param applicationId, application number.
-   * @returns assessment requests for a student application.
+   * student appeals for an application or possible application
+   * exceptions that will prevent the assessment to proceed till
+   * they are approved, for instance, when a document is uploaded
+   * and need to be reviewed.
+   * @param applicationId application number.
+   * @returns assessment requests or exceptions for a student application.
    */
   @Get("application/:applicationId/requests")
   async getRequestedAssessmentSummary(
     @Param("applicationId") applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
+    const applicationExceptions =
+      await this.applicationExceptionService.getExceptionsByApplicationId(
+        applicationId,
+        ApplicationExceptionStatus.Pending,
+        ApplicationExceptionStatus.Declined,
+      );
+    if (applicationExceptions) {
+      return applicationExceptions.map((applicationException) => ({
+        id: applicationException.id,
+        submittedDate: applicationException.createdAt,
+        status: applicationException.exceptionStatus,
+        requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
+      }));
+    }
+
     const studentAppeal =
       await this.studentAppealService.getPendingAndDeniedAppeals(applicationId);
     return studentAppeal.map((appeals) => ({
       id: appeals.id,
       submittedDate: appeals.submittedDate,
       status: appeals.status,
-      triggerType: AssessmentTriggerType.StudentAppeal,
+      requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
     }));
   }
 
@@ -77,6 +101,7 @@ export class AssessmentAESTController extends BaseController {
       assessmentDate: assessment.assessmentDate,
       status: assessment.status,
       studentAppealId: assessment.studentAppeal?.id,
+      applicationExceptionId: assessment.application.applicationException?.id,
       studentScholasticStandingId: assessment.studentScholasticStanding?.id,
     }));
   }

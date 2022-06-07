@@ -28,6 +28,7 @@ const SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM =
 // When student select "Student withdrew from program", then "scholasticStanding" value is
 const SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM =
   "studentWithdrewFromProgram";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 
 /**
  * Manages the student scholastic standings related operations.
@@ -76,6 +77,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       throw new CustomNamedError(
         "Application Not found or invalid current assessment or offering.",
         APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (application.isArchived) {
+      throw new CustomNamedError(
+        "This application is no longer eligible to request changes.",
+        APPLICATION_CHANGE_NOT_ELIGIBLE,
       );
     }
 
@@ -178,6 +186,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       application.currentAssessment = {
         id: scholasticStanding.studentAssessment.id,
       } as StudentAssessment;
+
+      // Set archive to true
+      application.isArchived = true;
 
       await transactionalEntityManager
         .getRepository(Application)
