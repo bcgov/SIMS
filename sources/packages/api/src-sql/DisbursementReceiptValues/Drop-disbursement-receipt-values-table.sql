@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS sims.disbursement_receipt_values;
