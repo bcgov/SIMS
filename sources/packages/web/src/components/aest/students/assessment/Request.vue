@@ -32,7 +32,7 @@
             <Column header="Request form" sortable="false"
               ><template #body="{ data }"
                 ><v-btn
-                  @click="$emit('viewStudentAppeal', data.id)"
+                  @click="viewRequestForm(data)"
                   color="primary"
                   variant="text"
                   class="text-decoration-underline"
@@ -55,14 +55,17 @@
 </template>
 <script lang="ts">
 import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, SetupContext } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
-import { RequestAssessmentSummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
+import {
+  RequestAssessmentSummaryAPIOutDTO,
+  RequestAssessmentTypeAPIOutDTO,
+} from "@/services/http/dto/Assessment.dto";
 
 export default {
-  emits: ["viewStudentAppeal"],
+  emits: ["viewStudentAppeal", "viewApplicationException"],
   components: {
     StatusChipRequestedAssessment,
   },
@@ -72,7 +75,7 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props: any, context: SetupContext) {
     const { dateOnlyLongString } = useFormatters();
 
     const requestedAssessment = ref([] as RequestAssessmentSummaryAPIOutDTO[]);
@@ -83,11 +86,23 @@ export default {
         );
     });
 
+    const viewRequestForm = (data: RequestAssessmentSummaryAPIOutDTO) => {
+      switch (data.requestType) {
+        case RequestAssessmentTypeAPIOutDTO.StudentAppeal:
+          context.emit("viewStudentAppeal", data.id);
+          break;
+        case RequestAssessmentTypeAPIOutDTO.StudentException:
+          context.emit("viewApplicationException", data.id);
+          break;
+      }
+    };
+
     return {
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       requestedAssessment,
       dateOnlyLongString,
+      viewRequestForm,
     };
   },
 };

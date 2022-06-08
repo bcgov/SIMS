@@ -57,6 +57,7 @@ export enum AppRoutes {
   StudentAppealRequestsApproval = "request-changes/:appealId",
   NoticeOfAssessmentView = "notice-of-assessment/:assessmentId",
   Reports = "reports",
+  ApplicationExceptionsApproval = "application-exceptions/:exceptionId",
   // program
   Programs = "programs",
   ViewProgram = "institution/:institutionId/location/:locationId/program/:programId",
