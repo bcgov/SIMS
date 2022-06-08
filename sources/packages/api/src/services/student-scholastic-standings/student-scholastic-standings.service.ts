@@ -163,8 +163,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // If not unsuccessful weeks, then clone new offering and create re-assessment.
       const notUnsuccessfulWeeksScholasticStanding =
         scholasticStandingData.scholasticStanding !==
-          SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM &&
-        !scholasticStandingData.numberOfUnsuccessfulWeeks;
+        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM;
 
       if (notUnsuccessfulWeeksScholasticStanding) {
         // Cloning existing offering.
@@ -291,6 +290,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * is reported, re add the above restrictions.
    * If a ministry user resolves the SSR restriction, and new unsuccessful completion
    * is reported, add the restriction (minimum is still at least 68).
+   * * If an active SSR restriction already exists for the student and the
+   * * student withdrawal again or unsuccessful weeks hits minimum 68 again,
+   * * then add another SSR restriction.
    * @param scholasticStandingData scholastic standing data.
    * @param studentId student id.
    * @param auditUserId user that should be considered the one that is
@@ -359,6 +361,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * add PTSSR restriction to student.
    * If a ministry user resolves the PTSSR restriction, and new withdrawal/unsuccessful
    * is reported, re add the above restrictions.
+   * * If an active PTSSR restriction exists already for the student and the student withdrawal
+   * * again or or unsuccessful weeks is reported again, then add another PTSSR restriction.
    * @param scholasticStandingData scholastic standing data.
    * @param studentId student id.
    * @param auditUserId user that should be considered the one that is
