@@ -142,11 +142,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       scholasticStanding.referenceOffering = existingOffering;
 
       // If not unsuccessful weeks, then clone new offering and create re-assessment.
-      if (
+      const UsuccessfulWeeksScholasticStanding =
         scholasticStandingData.scholasticStanding !==
           SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM &&
-        !scholasticStandingData.numberOfUnsuccessfulWeeks
-      ) {
+        !scholasticStandingData.numberOfUnsuccessfulWeeks;
+
+      if (UsuccessfulWeeksScholasticStanding) {
         // Cloning existing offering.
         const offering: EducationProgramOffering = { ...existingOffering };
 
