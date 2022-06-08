@@ -288,7 +288,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   }
 
   /**
-   * return a new student restriction object.
+   * Create a new student restriction object.
    * @param studentId student id.
    * @param restrictionCode restriction code.
    * @param applicationId application id.

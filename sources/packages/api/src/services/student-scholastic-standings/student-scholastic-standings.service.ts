@@ -136,14 +136,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         .getOne();
 
       // Check for restrictions and apply if any.
-      const studentRestriction = await this.getStudentRestrictions(
+      const studentRestriction = await this.getScholasticStandingRestrictions(
         scholasticStandingData,
         existingOffering.offeringIntensity,
         application.studentId,
         auditUserId,
         application.id,
       );
-
       if (studentRestriction) {
         await transactionalEntityManager
           .getRepository(StudentRestriction)
@@ -246,10 +245,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   /**
    * Process the payload data and checks for certain restriction,
    * and add new restrictions, if required.
-   * When institution report Withdrawal OR unsuccessful for a PT course application,
-   * add PTSSR restriction to student.
-   * If a ministry user resolves the SSR or PTSSR or WTHD restriction, and new withdrawal
-   * is reported, re add the above restrictions.
    * @param scholasticStandingData scholastic standing data.
    * @param offeringIntensity offering intensity.
    * @param studentId student id.
@@ -258,13 +253,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param applicationId application id.
    * @returns a new student restriction object, that need to be saved.
    */
-  async getStudentRestrictions(
+  async getScholasticStandingRestrictions(
     scholasticStandingData: ScholasticStanding,
     offeringIntensity: OfferingIntensity,
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction> {
+  ): Promise<StudentRestriction | undefined> {
     if (offeringIntensity === OfferingIntensity.fullTime) {
       return this.getFullTimeStudentRestrictions(
         scholasticStandingData,
@@ -274,19 +269,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       );
     }
     if (offeringIntensity === OfferingIntensity.partTime) {
-      if (
-        scholasticStandingData.scholasticStanding ===
-          SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM ||
-        scholasticStandingData.scholasticStanding ===
-          SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
-      ) {
-        return this.studentRestrictionService.createRestrictionToSave(
-          studentId,
-          RestrictionCode.PTSSR,
-          auditUserId,
-          applicationId,
-        );
-      }
+      return this.getPartTimeStudentRestrictions(
+        scholasticStandingData,
+        studentId,
+        auditUserId,
+        applicationId,
+      );
     }
   }
 
@@ -315,21 +303,21 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction> {
+  ): Promise<StudentRestriction | undefined> {
     if (
       scholasticStandingData.scholasticStanding ===
       SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM
     ) {
       if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
-        throw new Error(`number of unsuccessful weeks is empty.`);
+        throw new Error(`Number of unsuccessful weeks is empty.`);
       }
       const totalExistingUnsuccessfulWeeks =
         await this.getTotalFullTimeUnsuccessfulWeeks(studentId);
 
       // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
       if (
-        +totalExistingUnsuccessfulWeeks +
-          +scholasticStandingData.numberOfUnsuccessfulWeeks >=
+        totalExistingUnsuccessfulWeeks +
+          scholasticStandingData.numberOfUnsuccessfulWeeks >=
         MINIMUM_UNSUCCESSFUL_WEEKS
       ) {
         return this.studentRestrictionService.createRestrictionToSave(
@@ -351,23 +339,52 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           studentId,
           RestrictionCode.WTHD,
         );
-      if (isWTHDAlreadyExists) {
-        return this.studentRestrictionService.createRestrictionToSave(
-          studentId,
-          RestrictionCode.SSR,
-          auditUserId,
-          applicationId,
-        );
-      }
+
+      const restrictionCode = isWTHDAlreadyExists
+        ? RestrictionCode.SSR
+        : RestrictionCode.WTHD;
+
       return this.studentRestrictionService.createRestrictionToSave(
         studentId,
-        RestrictionCode.WTHD,
+        restrictionCode,
         auditUserId,
         applicationId,
       );
     }
   }
-
+  /**
+   * Get part time related restrictions for scholastic standing.
+   * When institution report Withdrawal OR unsuccessful for a PT course application,
+   * add PTSSR restriction to student.
+   * If a ministry user resolves the PTSSR restriction, and new withdrawal/unsuccessful
+   * is reported, re add the above restrictions.
+   * @param scholasticStandingData scholastic standing data.
+   * @param studentId student id.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @param applicationId application id.
+   * @returns a new student restriction object, that need to be saved.
+   */
+  async getPartTimeStudentRestrictions(
+    scholasticStandingData: ScholasticStanding,
+    studentId: number,
+    auditUserId: number,
+    applicationId: number,
+  ): Promise<StudentRestriction | undefined> {
+    if (
+      scholasticStandingData.scholasticStanding ===
+        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM ||
+      scholasticStandingData.scholasticStanding ===
+        SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
+    ) {
+      return this.studentRestrictionService.createRestrictionToSave(
+        studentId,
+        RestrictionCode.PTSSR,
+        auditUserId,
+        applicationId,
+      );
+    }
+  }
   /**
    * Get the sum of unsuccessfulWeeks for all existing scholastic standing for the
    * requested student.
@@ -387,6 +404,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         offeringIntensity: OfferingIntensity.fullTime,
       })
       .getRawOne();
-    return query?.sum ?? 0;
+    return +(query?.sum ?? 0);
   }
 }
