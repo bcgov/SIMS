@@ -7,7 +7,7 @@ ADD
 COMMENT ON COLUMN sims.student_scholastic_standings.unsuccessful_weeks IS 'The number of unsuccessful weeks for a fulltime application that have a scholastic standings. If the sum of fulltime unsuccessful weeks hits 68, then SSR restriction is added for that student.';
 
 -- Add reference_offering_id column for sims.student_scholastic_standings.
--- Reference Columns
+-- Reference Column.
 ALTER TABLE
   sims.student_scholastic_standings
 ADD

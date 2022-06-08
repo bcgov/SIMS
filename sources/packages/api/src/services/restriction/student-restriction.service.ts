@@ -262,7 +262,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     return !!(await query.getRawOne());
   }
   /**
-   * The service checks if the students has the requested restriction or not.
+   * Service checks if the student has an active requested restriction.
    * @param studentId student id.
    * @param restrictionCode restriction code.
    * @returns Student restrictions.
@@ -284,7 +284,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .getOne());
   }
   /**
-   * The service add new student restrictions.
+   * Service to add a new student restriction.
    * @param studentId student id.
    * @param restrictionCode restriction code.
    * @param applicationId application id.

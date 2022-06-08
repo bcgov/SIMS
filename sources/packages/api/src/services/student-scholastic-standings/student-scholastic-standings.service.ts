@@ -115,8 +115,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         .innerJoin("offering.institutionLocation", "institutionLocation")
         .getOne();
 
-      //Check for restrictions and apply if any.
-      const studentRestriction = await this.studentRestrictionIfExists(
+      // Check for restrictions and apply if any.
+      const studentRestriction = await this.manageStudentRestrictions(
         scholasticStandingData,
         existingOffering.offeringIntensity,
         application.studentId,
@@ -139,8 +139,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       scholasticStanding.creator = auditUser;
 
       // Reference offering id.
-      // todo: confirm this - > is this application offering id or current assessment offering id
       scholasticStanding.referenceOffering = existingOffering;
+
       // If not unsuccessful weeks, then clone new offering and create re-assessment.
       if (
         scholasticStandingData.scholasticStanding !==
@@ -150,8 +150,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         // Cloning existing offering.
         const offering: EducationProgramOffering = { ...existingOffering };
 
-        // Assigning id as undefined, so that when its saved its considered as a new EducationProgramOffering object.
+        // Assigning id and audit fields as undefined, so that when its saved its considered as a new EducationProgramOffering object.
         offering.id = undefined;
+        offering.createdAt = undefined;
+        offering.updatedAt = undefined;
+        offering.creator = auditUser;
+        offering.modifier = auditUser;
+
         const newStudyEndDate =
           scholasticStandingData.dateOfChange ??
           scholasticStandingData.dateOfCompletion ??
@@ -187,11 +192,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           submittedDate: now,
           offering: { id: savedOffering.id } as EducationProgramOffering,
         } as StudentAssessment;
-
-        // Save current application.
-        application.currentAssessment = {
-          id: scholasticStanding.studentAssessment.id,
-        } as StudentAssessment;
       } else {
         // If unsuccessful weeks, then add to the column.
         // * No cloning of offering and re-assessment is required in this scenario.
@@ -203,9 +203,17 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         .getRepository(StudentScholasticStanding)
         .save(scholasticStanding);
 
+      if (scholasticStanding.studentAssessment) {
+        // Save current assessment to application, if any.
+        application.currentAssessment = {
+          id: scholasticStanding.studentAssessment.id,
+        } as StudentAssessment;
+      }
+
       // Set archive to true
       application.isArchived = true;
 
+      // Save current application.
       await transactionalEntityManager
         .getRepository(Application)
         .save(application);
@@ -238,78 +246,77 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param applicationId application id.
    * @returns a new student restriction object, that need to be saved.
    */
-  async studentRestrictionIfExists(
+  async manageStudentRestrictions(
     scholasticStandingData: ScholasticStanding,
     offeringIntensity: OfferingIntensity,
     studentId: number,
     auditUserId: number,
     applicationId: number,
   ): Promise<StudentRestriction> {
-    if (offeringIntensity === OfferingIntensity.fullTime) {
-      if (
-        scholasticStandingData.scholasticStanding ===
-          SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM &&
-        !!scholasticStandingData.numberOfUnsuccessfulWeeks
-      ) {
-        const totalExistingUnsuccessfulWeeks =
-          await this.totalExistingFTUnsuccessfulWeeks(studentId);
+    if (
+      offeringIntensity === OfferingIntensity.fullTime &&
+      scholasticStandingData.scholasticStanding ===
+        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM &&
+      !!scholasticStandingData.numberOfUnsuccessfulWeeks
+    ) {
+      const totalExistingUnsuccessfulWeeks =
+        await this.totalExistingFTUnsuccessfulWeeks(studentId);
 
-        // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
-        if (
-          +(totalExistingUnsuccessfulWeeks ?? 0) +
-            +(scholasticStandingData.numberOfUnsuccessfulWeeks ?? 0) >=
-          MINIMUM_UNSUCCESSFUL_WEEKS
-        ) {
-          return this.studentRestrictionService.saveNewStudentRestriction(
-            studentId,
-            RestrictionCode.SSR,
-            auditUserId,
-            applicationId,
-          );
-        }
-      } else if (
-        scholasticStandingData.scholasticStanding ===
-          SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM &&
-        !!scholasticStandingData.dateOfWithdrawal
+      // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
+      if (
+        +(totalExistingUnsuccessfulWeeks ?? 0) +
+          +(scholasticStandingData.numberOfUnsuccessfulWeeks ?? 0) >=
+        MINIMUM_UNSUCCESSFUL_WEEKS
       ) {
-        // Check if "WTHD" restriction is already present for the student,
-        // if not add "WTHD" restriction else add "SSR" restriction.
-        const isWTHDAlreadyExists =
-          await this.studentRestrictionService.isRestrictionExistsForStudent(
-            studentId,
-            RestrictionCode.WTHD,
-          );
-        if (isWTHDAlreadyExists) {
-          return this.studentRestrictionService.saveNewStudentRestriction(
-            studentId,
-            RestrictionCode.SSR,
-            auditUserId,
-            applicationId,
-          );
-        }
         return this.studentRestrictionService.saveNewStudentRestriction(
+          studentId,
+          RestrictionCode.SSR,
+          auditUserId,
+          applicationId,
+        );
+      }
+    } else if (
+      offeringIntensity === OfferingIntensity.fullTime &&
+      scholasticStandingData.scholasticStanding ===
+        SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM &&
+      !!scholasticStandingData.dateOfWithdrawal
+    ) {
+      // Check if "WTHD" restriction is already present for the student,
+      // if not add "WTHD" restriction else add "SSR" restriction.
+      const isWTHDAlreadyExists =
+        await this.studentRestrictionService.isRestrictionExistsForStudent(
           studentId,
           RestrictionCode.WTHD,
-          auditUserId,
-          applicationId,
         );
-      }
-    } else {
-      if (
-        (scholasticStandingData.scholasticStanding ===
-          SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM &&
-          !!scholasticStandingData.numberOfUnsuccessfulWeeks) ||
-        (scholasticStandingData.scholasticStanding ===
-          SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM &&
-          !!scholasticStandingData.dateOfWithdrawal)
-      ) {
+      if (isWTHDAlreadyExists) {
         return this.studentRestrictionService.saveNewStudentRestriction(
           studentId,
-          RestrictionCode.PTSSR,
+          RestrictionCode.SSR,
           auditUserId,
           applicationId,
         );
       }
+      return this.studentRestrictionService.saveNewStudentRestriction(
+        studentId,
+        RestrictionCode.WTHD,
+        auditUserId,
+        applicationId,
+      );
+    } else if (
+      offeringIntensity === OfferingIntensity.partTime &&
+      ((scholasticStandingData.scholasticStanding ===
+        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM &&
+        !!scholasticStandingData.numberOfUnsuccessfulWeeks) ||
+        (scholasticStandingData.scholasticStanding ===
+          SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM &&
+          !!scholasticStandingData.dateOfWithdrawal))
+    ) {
+      return this.studentRestrictionService.saveNewStudentRestriction(
+        studentId,
+        RestrictionCode.PTSSR,
+        auditUserId,
+        applicationId,
+      );
     }
   }
 

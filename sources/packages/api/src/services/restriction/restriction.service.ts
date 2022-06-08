@@ -145,9 +145,9 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
       );
     }
     return restrictionQuery.getOne();
-  }
+  }v
   /**
-   * Returns a restriction by its restriction code.
+   * Service to fetch the restriction with requested restriction code.
    * @param restrictionCode restriction code.
    * @returns restriction.
    */
@@ -156,7 +156,7 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
   ): Promise<Restriction> {
     return this.repo
       .createQueryBuilder("restriction")
-      .select(["restriction.id"])
+      .select("restriction.id")
       .where("restriction.restrictionCode = :restrictionCode", {
         restrictionCode,
       })
