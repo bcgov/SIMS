@@ -1,5 +1,3 @@
-import { Restriction } from "src/database/entities";
-
 /**
  * Restriction message for federal type
  */
@@ -27,8 +25,8 @@ export enum RestrictionCode {
   // When institution report withdrawal for a FT course on a
   // student WITH a "WTHD" restriction , then "SSR" restriction
   // is added to the student account.
-  SSR = "SSR ",
+  SSR = "SSR",
   // when institution report withdrawal or unsuccessful weeks
-  // for a PT course application, "PTSSD" restriction is added to the student account.
-  PTSSD = "PTSSD ",
+  // for a PT course application, "PTSSR" restriction is added to the student account.
+  PTSSR = "PTSSR",
 }

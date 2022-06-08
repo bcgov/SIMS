@@ -293,12 +293,17 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   async saveNewStudentRestriction(
     studentId: number,
     restrictionCode: RestrictionCode,
-    applicationId: number,
     auditUserId: number,
+    applicationId: number,
   ): Promise<StudentRestriction> {
     const restriction = await this.restrictionService.getRestrictionByCode(
       restrictionCode,
     );
+    if (!restriction) {
+      throw new Error(
+        `Requested restriction code ${restrictionCode} not found.`,
+      );
+    }
     const studentRestriction = new StudentRestriction();
     studentRestriction.restriction = {
       id: restriction.id,

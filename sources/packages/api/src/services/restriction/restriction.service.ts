@@ -160,7 +160,6 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
       .where("restriction.restrictionCode = :restrictionCode", {
         restrictionCode,
       })
-      .andWhere("restriction.restrictionType = 'Provincial'")
       .getOne();
   }
 }
