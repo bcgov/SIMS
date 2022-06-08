@@ -16,7 +16,7 @@ export class CreateDisbursementReceiptValues1654635872232
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Create-disbursement-receipt-values-table.sql",
+        "Drop-disbursement-receipt-values-table.sql",
         "DisbursementReceiptValues",
       ),
     );
