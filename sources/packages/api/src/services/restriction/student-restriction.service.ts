@@ -293,9 +293,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * @param restrictionCode restriction code.
    * @param applicationId application id.
    * @param auditUserId audit user id
-   * @returns a new student restriction object
+   * @returns a new student restriction object.
    */
-  async createNewStudentRestriction(
+  async createRestrictionToSave(
     studentId: number,
     restrictionCode: RestrictionCode,
     auditUserId: number,

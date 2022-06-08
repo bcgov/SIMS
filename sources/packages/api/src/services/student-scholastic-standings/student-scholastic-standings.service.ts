@@ -246,19 +246,10 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   /**
    * Process the payload data and checks for certain restriction,
    * and add new restrictions, if required.
-   * When institution report withdrawal for a FT course application,
-   * add WTHD restriction to student.
-   * When institution report Withdrawal for a FT course on a student WITH a WTHD
-   * restriction add SSR restriction.
-   * When institution reports a change related to a FT application for unsuccessful
-   * completion and the total number of unsuccessful weeks hits minimum 68, add SSR
-   * restriction.
    * When institution report Withdrawal OR unsuccessful for a PT course application,
    * add PTSSR restriction to student.
    * If a ministry user resolves the SSR or PTSSR or WTHD restriction, and new withdrawal
    * is reported, re add the above restrictions.
-   * If a ministry user resolves the SSR restriction, and new unsuccessful completion
-   * is reported, add the restriction (minimum is still at least 68).
    * @param scholasticStandingData scholastic standing data.
    * @param offeringIntensity offering intensity.
    * @param studentId student id.
@@ -289,7 +280,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         scholasticStandingData.scholasticStanding ===
           SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
       ) {
-        return this.studentRestrictionService.createNewStudentRestriction(
+        return this.studentRestrictionService.createRestrictionToSave(
           studentId,
           RestrictionCode.PTSSR,
           auditUserId,
@@ -341,7 +332,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           +scholasticStandingData.numberOfUnsuccessfulWeeks >=
         MINIMUM_UNSUCCESSFUL_WEEKS
       ) {
-        return this.studentRestrictionService.createNewStudentRestriction(
+        return this.studentRestrictionService.createRestrictionToSave(
           studentId,
           RestrictionCode.SSR,
           auditUserId,
@@ -361,14 +352,14 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           RestrictionCode.WTHD,
         );
       if (isWTHDAlreadyExists) {
-        return this.studentRestrictionService.createNewStudentRestriction(
+        return this.studentRestrictionService.createRestrictionToSave(
           studentId,
           RestrictionCode.SSR,
           auditUserId,
           applicationId,
         );
       }
-      return this.studentRestrictionService.createNewStudentRestriction(
+      return this.studentRestrictionService.createRestrictionToSave(
         studentId,
         RestrictionCode.WTHD,
         auditUserId,
