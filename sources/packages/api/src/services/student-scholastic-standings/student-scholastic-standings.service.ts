@@ -58,8 +58,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param scholasticStandingData scholastic standing data to be saved.
+   * @returns Student scholastic standing.
    */
-  async saveScholasticStandingCreateReassessment(
+  async processScholasticStanding(
     locationId: number,
     applicationId: number,
     auditUserId: number,
@@ -100,6 +101,28 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       application.id,
     );
 
+    // Save scholastic standing and create reassessment.
+    return this.saveScholasticStandingCreateReassessment(
+      auditUserId,
+      application,
+      scholasticStandingData,
+    );
+  }
+
+  /**
+   * Save scholastic standing and create new assessment
+   * for an application.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @param application application object.
+   * @param scholasticStandingData scholastic standing data to be saved.
+   * @returns Student scholastic standing.
+   */
+  async saveScholasticStandingCreateReassessment(
+    auditUserId: number,
+    application: Application,
+    scholasticStandingData: ScholasticStanding,
+  ): Promise<StudentScholasticStanding> {
     return this.connection.transaction(async (transactionalEntityManager) => {
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
@@ -121,7 +144,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         existingOffering.offeringIntensity,
         application.studentId,
         auditUserId,
-        applicationId,
+        application.id,
       );
 
       if (studentRestriction) {
@@ -132,7 +155,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
 
       // Create StudentScholasticStanding.
       const scholasticStanding = new StudentScholasticStanding();
-      scholasticStanding.application = { id: applicationId } as Application;
+      scholasticStanding.application = { id: application.id } as Application;
       scholasticStanding.submittedData = scholasticStandingData;
       scholasticStanding.submittedDate = now;
       scholasticStanding.submittedBy = auditUser;
@@ -142,12 +165,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       scholasticStanding.referenceOffering = existingOffering;
 
       // If not unsuccessful weeks, then clone new offering and create re-assessment.
-      const UsuccessfulWeeksScholasticStanding =
+      const notUnsuccessfulWeeksScholasticStanding =
         scholasticStandingData.scholasticStanding !==
           SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM &&
         !scholasticStandingData.numberOfUnsuccessfulWeeks;
 
-      if (UsuccessfulWeeksScholasticStanding) {
+      if (notUnsuccessfulWeeksScholasticStanding) {
         // Cloning existing offering.
         const offering: EducationProgramOffering = { ...existingOffering };
 
@@ -186,7 +209,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
 
         // Create the new assessment to be processed.
         scholasticStanding.studentAssessment = {
-          application: { id: applicationId } as Application,
+          application: { id: application.id } as Application,
           triggerType: AssessmentTriggerType.ScholasticStandingChange,
           creator: auditUser,
           submittedBy: auditUser,

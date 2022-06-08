@@ -271,7 +271,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
         throw new BadRequestException("Invalid submission.");
       }
       const scholasticStanding =
-        await this.studentScholasticStandingsService.saveScholasticStandingCreateReassessment(
+        await this.studentScholasticStandingsService.processScholasticStanding(
           locationId,
           applicationId,
           userToken.userId,
