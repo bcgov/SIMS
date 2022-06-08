@@ -33,6 +33,8 @@ COMMENT ON COLUMN sims.disbursement_receipts.id IS 'Auto-generated sequential pr
 
 COMMENT ON COLUMN sims.disbursement_receipts.batch_run_date IS 'Effective date of data on the disbursement receipt file';
 
+COMMENT ON COLUMN sims.disbursement_receipts.disbursement_schedule_id IS 'Disbursement id to which the document number from the file belongs to.';
+
 COMMENT ON COLUMN sims.disbursement_receipts.student_sin IS 'SIN number of the student who received the disbursement.';
 
 COMMENT ON COLUMN sims.disbursement_receipts.funding_type IS 'Indicates the funding type of the disbursement receipt item. Values can have FE(Federal) or BC(Provincial).';
