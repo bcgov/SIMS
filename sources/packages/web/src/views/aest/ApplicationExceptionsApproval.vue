@@ -10,7 +10,7 @@
     <formio
       formName="studentExceptions"
       :readOnly="readOnly"
-      :data="approvalData"
+      :data="applicationExceptions"
     ></formio>
   </full-page-container>
 </template>
@@ -19,7 +19,19 @@ import { ref, onMounted, computed } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
-import { StudentAppealRequest, ApplicationExceptionStatus } from "@/types";
+import { ApplicationExceptionStatus } from "@/types";
+import { ApplicationExceptionAPIOutDTO } from "@/services/http/dto";
+import { useAssessment, useFormatters } from "@/composables";
+
+type ApplicationExceptionFormModel = Omit<
+  ApplicationExceptionAPIOutDTO,
+  "assessedDate"
+> & {
+  showAudit: boolean;
+  assessedDate: string;
+  exceptionStatusClass: string;
+  exceptionNames: string[];
+};
 
 export default {
   props: {
@@ -39,11 +51,13 @@ export default {
   setup(props: any) {
     const router = useRouter();
     //const toast = useToastMessage();
-    const studentAppealRequests = ref([] as StudentAppealRequest[]);
-    const applicationExceptionStatus = ref(ApplicationExceptionStatus.Pending);
+    const { dateOnlyLongString } = useFormatters();
+    const { mapRequestAssessmentChipStatus } = useAssessment();
+    const applicationExceptions = ref({} as ApplicationExceptionFormModel);
     const readOnly = computed(
       () =>
-        applicationExceptionStatus.value !== ApplicationExceptionStatus.Pending,
+        applicationExceptions.value.exceptionStatus !==
+        ApplicationExceptionStatus.Pending,
     );
 
     onMounted(async () => {
@@ -51,7 +65,19 @@ export default {
         await ApplicationExceptionService.shared.getExceptionById(
           props.exceptionId,
         );
-      applicationExceptionStatus.value = applicationException.exceptionStatus;
+      applicationExceptions.value = {
+        ...applicationException,
+        assessedDate: dateOnlyLongString(applicationException.assessedDate),
+        exceptionStatusClass: mapRequestAssessmentChipStatus(
+          applicationException.exceptionStatus,
+        ),
+        showAudit:
+          applicationException.exceptionStatus !==
+          ApplicationExceptionStatus.Pending,
+        exceptionNames: applicationException.exceptionRequests.map(
+          (exception) => exception.exceptionName,
+        ),
+      };
     });
 
     const assessmentsSummaryRoute = {
@@ -95,7 +121,7 @@ export default {
     return {
       gotToAssessmentsSummary,
       assessmentsSummaryRoute,
-      studentAppealRequests,
+      applicationExceptions,
       submitted,
       readOnly,
     };

@@ -26,7 +26,7 @@ import {
   UpdateApplicationExceptionAPIInDTO,
 } from "./models/application-exception.dto";
 import { IUserToken } from "../../auth/userToken.interface";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError, getUserFullName } from "../../utilities";
 import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
@@ -66,7 +66,9 @@ export class ApplicationExceptionAESTController extends BaseController {
     }
     return {
       exceptionStatus: applicationException.exceptionStatus,
-      noteDescription: applicationException.exceptionNote.description,
+      noteDescription: applicationException.exceptionNote?.description,
+      assessedByUserName: getUserFullName(applicationException.assessedBy),
+      assessedDate: applicationException.assessedDate,
       exceptionRequests: applicationException.exceptionRequests.map(
         (request) => ({
           exceptionName: request.exceptionName,
