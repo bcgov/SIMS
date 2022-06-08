@@ -275,56 +275,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     applicationId: number,
   ): Promise<StudentRestriction> {
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      if (
-        scholasticStandingData.scholasticStanding ===
-        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM
-      ) {
-        if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
-          throw new Error(`number of unsuccessful weeks is empty.`);
-        }
-        const totalExistingUnsuccessfulWeeks =
-          await this.getTotalFullTimeUnsuccessfulWeeks(studentId);
-
-        // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
-        if (
-          +totalExistingUnsuccessfulWeeks +
-            +scholasticStandingData.numberOfUnsuccessfulWeeks >=
-          MINIMUM_UNSUCCESSFUL_WEEKS
-        ) {
-          return this.studentRestrictionService.createNewStudentRestriction(
-            studentId,
-            RestrictionCode.SSR,
-            auditUserId,
-            applicationId,
-          );
-        }
-      }
-      if (
-        scholasticStandingData.scholasticStanding ===
-        SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
-      ) {
-        // Check if "WTHD" restriction is already present for the student,
-        // if not add "WTHD" restriction else add "SSR" restriction.
-        const isWTHDAlreadyExists =
-          await this.studentRestrictionService.studentHasRestriction(
-            studentId,
-            RestrictionCode.WTHD,
-          );
-        if (isWTHDAlreadyExists) {
-          return this.studentRestrictionService.createNewStudentRestriction(
-            studentId,
-            RestrictionCode.SSR,
-            auditUserId,
-            applicationId,
-          );
-        }
-        return this.studentRestrictionService.createNewStudentRestriction(
-          studentId,
-          RestrictionCode.WTHD,
-          auditUserId,
-          applicationId,
-        );
-      }
+      return this.getFullTimeStudentRestrictions(
+        scholasticStandingData,
+        studentId,
+        auditUserId,
+        applicationId,
+      );
     }
     if (offeringIntensity === OfferingIntensity.partTime) {
       if (
@@ -340,6 +296,84 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           applicationId,
         );
       }
+    }
+  }
+
+  /**
+   * Get full time related restrictions for scholastic standing.
+   * When institution report withdrawal for a FT course application,
+   * add WTHD restriction to student.
+   * When institution report Withdrawal for a FT course on a student WITH a WTHD
+   * restriction add SSR restriction.
+   * When institution reports a change related to a FT application for unsuccessful
+   * completion and the total number of unsuccessful weeks hits minimum 68, add SSR
+   * restriction.
+   * If a ministry user resolves the SSR or WTHD restriction, and new withdrawal
+   * is reported, re add the above restrictions.
+   * If a ministry user resolves the SSR restriction, and new unsuccessful completion
+   * is reported, add the restriction (minimum is still at least 68).
+   * @param scholasticStandingData scholastic standing data.
+   * @param studentId student id.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @param applicationId application id.
+   * @returns a new student restriction object, that need to be saved.
+   */
+  async getFullTimeStudentRestrictions(
+    scholasticStandingData: ScholasticStanding,
+    studentId: number,
+    auditUserId: number,
+    applicationId: number,
+  ): Promise<StudentRestriction> {
+    if (
+      scholasticStandingData.scholasticStanding ===
+      SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM
+    ) {
+      if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
+        throw new Error(`number of unsuccessful weeks is empty.`);
+      }
+      const totalExistingUnsuccessfulWeeks =
+        await this.getTotalFullTimeUnsuccessfulWeeks(studentId);
+
+      // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
+      if (
+        +totalExistingUnsuccessfulWeeks +
+          +scholasticStandingData.numberOfUnsuccessfulWeeks >=
+        MINIMUM_UNSUCCESSFUL_WEEKS
+      ) {
+        return this.studentRestrictionService.createNewStudentRestriction(
+          studentId,
+          RestrictionCode.SSR,
+          auditUserId,
+          applicationId,
+        );
+      }
+    }
+    if (
+      scholasticStandingData.scholasticStanding ===
+      SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
+    ) {
+      // Check if "WTHD" restriction is already present for the student,
+      // if not add "WTHD" restriction else add "SSR" restriction.
+      const isWTHDAlreadyExists =
+        await this.studentRestrictionService.studentHasRestriction(
+          studentId,
+          RestrictionCode.WTHD,
+        );
+      if (isWTHDAlreadyExists) {
+        return this.studentRestrictionService.createNewStudentRestriction(
+          studentId,
+          RestrictionCode.SSR,
+          auditUserId,
+          applicationId,
+        );
+      }
+      return this.studentRestrictionService.createNewStudentRestriction(
+        studentId,
+        RestrictionCode.WTHD,
+        auditUserId,
+        applicationId,
+      );
     }
   }
 
