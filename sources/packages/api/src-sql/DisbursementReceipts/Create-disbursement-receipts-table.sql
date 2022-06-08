@@ -55,9 +55,9 @@ COMMENT ON COLUMN sims.disbursement_receipts.disburse_method_student IS 'Method 
 
 COMMENT ON COLUMN sims.disbursement_receipts.study_period_end_date IS 'Study period end date.';
 
-COMMENT ON COLUMN sims.disbursement_receipts.created_at IS 'Record creation timestamp';
+COMMENT ON COLUMN sims.disbursement_receipts.created_at IS 'Record creation timestamp.';
 
-COMMENT ON COLUMN sims.disbursement_receipts.updated_at IS 'Record update timestamp';
+COMMENT ON COLUMN sims.disbursement_receipts.updated_at IS 'Record update timestamp.';
 
 COMMENT ON COLUMN sims.disbursement_receipts.creator IS 'Creator of the record.';
 
