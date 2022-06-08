@@ -352,6 +352,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       );
     }
   }
+
   /**
    * Get part time related restrictions for scholastic standing.
    * When institution report Withdrawal OR unsuccessful for a PT course application,
@@ -385,6 +386,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       );
     }
   }
+
   /**
    * Get the sum of unsuccessfulWeeks for all existing scholastic standing for the
    * requested student.
