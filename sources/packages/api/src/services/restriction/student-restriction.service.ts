@@ -17,8 +17,8 @@ import {
 import { Connection, SelectQueryBuilder } from "typeorm";
 import { CustomNamedError } from "../../utilities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
-import { RestrictionCode } from "./constants";
 import { RestrictionService } from "./restriction.service";
+import { RestrictionCode } from "./models/restriction.model";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -237,7 +237,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   }
 
   /**
-   * The service function checks if the requested student has
+   * Checks if the requested student has
    * any or all requested restriction actions.
    * @param studentId student Id
    * @param restrictionActions list of restriction actions
@@ -261,13 +261,15 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     });
     return !!(await query.getRawOne());
   }
+
   /**
-   * Service checks if the student has an active requested restriction.
+   * Checks if the student has an active requested restriction.
    * @param studentId student id.
    * @param restrictionCode restriction code.
-   * @returns Student restrictions.
+   * @returns true, if the student has the requested active
+   * restriction code else false.
    */
-  async isRestrictionExistsForStudent(
+  async studentHasRestriction(
     studentId: number,
     restrictionCode: string,
   ): Promise<boolean> {
@@ -281,16 +283,19 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .andWhere("restriction.restrictionCode = :restrictionCode", {
         restrictionCode,
       })
+      .limit(1)
       .getOne());
   }
+
   /**
-   * Service to add a new student restriction.
+   * return a new student restriction object.
    * @param studentId student id.
    * @param restrictionCode restriction code.
    * @param applicationId application id.
    * @param auditUserId audit user id
+   * @returns a new student restriction object
    */
-  async saveNewStudentRestriction(
+  async createNewStudentRestriction(
     studentId: number,
     restrictionCode: RestrictionCode,
     auditUserId: number,

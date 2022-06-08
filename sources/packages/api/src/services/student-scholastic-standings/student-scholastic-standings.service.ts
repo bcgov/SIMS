@@ -21,17 +21,14 @@ import {
 import { ScholasticStanding } from "./student-scholastic-standings.model";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
-import { RestrictionCode } from "../restriction/constants";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
+import { RestrictionCode } from "../restriction/models/restriction.model";
+import {
+  MINIMUM_UNSUCCESSFUL_WEEKS,
+  SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM,
+  SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM,
+} from "./constants";
 
-// When student select "Student did not complete program", then "scholasticStanding" value is
-const SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM =
-  "studentDidNotCompleteProgram";
-// When student select "Student withdrew from program", then "scholasticStanding" value is
-const SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM =
-  "studentWithdrewFromProgram";
-// Minium unsuccessful weeks.
-const MINIMUM_UNSUCCESSFUL_WEEKS = 68;
 /**
  * Manages the student scholastic standings related operations.
  */
@@ -139,7 +136,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         .getOne();
 
       // Check for restrictions and apply if any.
-      const studentRestriction = await this.manageStudentRestrictions(
+      const studentRestriction = await this.getStudentRestrictions(
         scholasticStandingData,
         existingOffering.offeringIntensity,
         application.studentId,
@@ -247,7 +244,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * The service process the payload data and checks for certain restriction,
+   * Process the payload data and checks for certain restriction,
    * and add new restrictions, if required.
    * When institution report withdrawal for a FT course application,
    * add WTHD restriction to student.
@@ -270,88 +267,90 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param applicationId application id.
    * @returns a new student restriction object, that need to be saved.
    */
-  async manageStudentRestrictions(
+  async getStudentRestrictions(
     scholasticStandingData: ScholasticStanding,
     offeringIntensity: OfferingIntensity,
     studentId: number,
     auditUserId: number,
     applicationId: number,
   ): Promise<StudentRestriction> {
-    if (
-      offeringIntensity === OfferingIntensity.fullTime &&
-      scholasticStandingData.scholasticStanding ===
-        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM &&
-      !!scholasticStandingData.numberOfUnsuccessfulWeeks
-    ) {
-      const totalExistingUnsuccessfulWeeks =
-        await this.totalExistingFTUnsuccessfulWeeks(studentId);
-
-      // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
+    if (offeringIntensity === OfferingIntensity.fullTime) {
       if (
-        +(totalExistingUnsuccessfulWeeks ?? 0) +
-          +(scholasticStandingData.numberOfUnsuccessfulWeeks ?? 0) >=
-        MINIMUM_UNSUCCESSFUL_WEEKS
+        scholasticStandingData.scholasticStanding ===
+        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM
       ) {
-        return this.studentRestrictionService.saveNewStudentRestriction(
-          studentId,
-          RestrictionCode.SSR,
-          auditUserId,
-          applicationId,
-        );
+        if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
+          throw new Error(`number of unsuccessful weeks is empty.`);
+        }
+        const totalExistingUnsuccessfulWeeks =
+          await this.getTotalFullTimeUnsuccessfulWeeks(studentId);
+
+        // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
+        if (
+          +totalExistingUnsuccessfulWeeks +
+            +scholasticStandingData.numberOfUnsuccessfulWeeks >=
+          MINIMUM_UNSUCCESSFUL_WEEKS
+        ) {
+          return this.studentRestrictionService.createNewStudentRestriction(
+            studentId,
+            RestrictionCode.SSR,
+            auditUserId,
+            applicationId,
+          );
+        }
       }
-    } else if (
-      offeringIntensity === OfferingIntensity.fullTime &&
-      scholasticStandingData.scholasticStanding ===
-        SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM &&
-      !!scholasticStandingData.dateOfWithdrawal
-    ) {
-      // Check if "WTHD" restriction is already present for the student,
-      // if not add "WTHD" restriction else add "SSR" restriction.
-      const isWTHDAlreadyExists =
-        await this.studentRestrictionService.isRestrictionExistsForStudent(
+      if (
+        scholasticStandingData.scholasticStanding ===
+        SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
+      ) {
+        // Check if "WTHD" restriction is already present for the student,
+        // if not add "WTHD" restriction else add "SSR" restriction.
+        const isWTHDAlreadyExists =
+          await this.studentRestrictionService.studentHasRestriction(
+            studentId,
+            RestrictionCode.WTHD,
+          );
+        if (isWTHDAlreadyExists) {
+          return this.studentRestrictionService.createNewStudentRestriction(
+            studentId,
+            RestrictionCode.SSR,
+            auditUserId,
+            applicationId,
+          );
+        }
+        return this.studentRestrictionService.createNewStudentRestriction(
           studentId,
           RestrictionCode.WTHD,
-        );
-      if (isWTHDAlreadyExists) {
-        return this.studentRestrictionService.saveNewStudentRestriction(
-          studentId,
-          RestrictionCode.SSR,
           auditUserId,
           applicationId,
         );
       }
-      return this.studentRestrictionService.saveNewStudentRestriction(
-        studentId,
-        RestrictionCode.WTHD,
-        auditUserId,
-        applicationId,
-      );
-    } else if (
-      offeringIntensity === OfferingIntensity.partTime &&
-      ((scholasticStandingData.scholasticStanding ===
-        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM &&
-        !!scholasticStandingData.numberOfUnsuccessfulWeeks) ||
-        (scholasticStandingData.scholasticStanding ===
-          SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM &&
-          !!scholasticStandingData.dateOfWithdrawal))
-    ) {
-      return this.studentRestrictionService.saveNewStudentRestriction(
-        studentId,
-        RestrictionCode.PTSSR,
-        auditUserId,
-        applicationId,
-      );
+    }
+    if (offeringIntensity === OfferingIntensity.partTime) {
+      if (
+        scholasticStandingData.scholasticStanding ===
+          SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM ||
+        scholasticStandingData.scholasticStanding ===
+          SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
+      ) {
+        return this.studentRestrictionService.createNewStudentRestriction(
+          studentId,
+          RestrictionCode.PTSSR,
+          auditUserId,
+          applicationId,
+        );
+      }
     }
   }
 
   /**
-   * The service gets sum of unsuccessfulWeeks for all existing scholastic standing for the
+   * Get the sum of unsuccessfulWeeks for all existing scholastic standing for the
    * requested student.
    * @param studentId student id.
    * @returns sum of unsuccessfulWeeks for all existing scholastic standing for the
    * requested student.
    */
-  async totalExistingFTUnsuccessfulWeeks(studentId: number): Promise<number> {
+  async getTotalFullTimeUnsuccessfulWeeks(studentId: number): Promise<number> {
     const query = await this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select("SUM(studentScholasticStanding.unsuccessfulWeeks)")
@@ -363,6 +362,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         offeringIntensity: OfferingIntensity.fullTime,
       })
       .getRawOne();
-    return query?.sum;
+    return query?.sum ?? 0;
   }
 }

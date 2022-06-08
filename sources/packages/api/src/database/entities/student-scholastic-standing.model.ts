@@ -97,7 +97,7 @@ export class StudentScholasticStanding extends RecordDataModel {
   )
   studentAssessment?: StudentAssessment;
   /**
-   * reference offering id is the offering id of the student application at the
+   * Reference offering id is the offering id of the student application at the
    * time of scholastic standings submission.
    */
   @RelationId(
@@ -106,7 +106,7 @@ export class StudentScholasticStanding extends RecordDataModel {
   )
   referenceOfferingId?: number;
   /**
-   * The offering id for the application at the time of scholastic standing submission.
+   * The offering for the application at the time of scholastic standing submission.
    * Once the scholastic standing is submitted, if there is a reassessment then the current offering id will be different.
    */
   @ManyToOne(() => EducationProgramOffering, {
@@ -121,7 +121,7 @@ export class StudentScholasticStanding extends RecordDataModel {
   referenceOffering?: EducationProgramOffering;
   /**
    * The number of unsuccessful weeks for a fulltime application that have a scholastic
-   * standings. If the sum of fulltime unsuccessful weeks hits 68, then SSR restriction is added for that student.
+   * standing. If the sum of fulltime unsuccessful weeks hits 68, then SSR restriction is added for that student.
    */
   @Column({
     name: "unsuccessful_weeks",

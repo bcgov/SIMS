@@ -4,7 +4,7 @@ import { Restriction, RestrictionType } from "../../database/entities";
 import { Connection, Repository } from "typeorm";
 import { FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION } from "../../utilities";
 import { EnsureFederalRestrictionResult } from "./models/federal-restriction.model";
-import { RestrictionCode } from "./constants";
+import { RestrictionCode } from "./models/restriction.model";
 
 /**
  * Service layer for restrictions.
@@ -145,9 +145,10 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
       );
     }
     return restrictionQuery.getOne();
-  }v
+  }
+
   /**
-   * Service to fetch the restriction with requested restriction code.
+   * Fetch the restriction with requested restriction code.
    * @param restrictionCode restriction code.
    * @returns restriction.
    */
