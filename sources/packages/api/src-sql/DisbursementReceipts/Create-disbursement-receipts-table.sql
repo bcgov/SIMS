@@ -1,3 +1,4 @@
+--Create table sims.disbursement_receipts.
 CREATE TABLE IF NOT EXISTS sims.disbursement_receipts(
     id SERIAL PRIMARY KEY,
     batch_run_date DATE NOT NULL,

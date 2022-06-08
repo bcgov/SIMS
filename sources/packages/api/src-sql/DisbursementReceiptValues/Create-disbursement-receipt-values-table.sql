@@ -1,3 +1,4 @@
+--Create table sims.disbursement_receipt_values.
 CREATE TABLE IF NOT EXISTS sims.disbursement_receipt_values(
     id SERIAL PRIMARY KEY,
     disbursement_receipt_id INT NOT NULL REFERENCES sims.disbursement_receipts(id),
