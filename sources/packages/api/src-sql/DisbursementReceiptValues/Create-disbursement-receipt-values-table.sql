@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS sims.disbursement_receipt_values(
     id SERIAL PRIMARY KEY,
     disbursement_receipt_id INT NOT NULL REFERENCES sims.disbursement_receipts(id),
     grant_type VARCHAR(6) NOT NULL,
-    grant_amount NUMERIC(5) NOT NULL,
+    grant_amount NUMERIC(7, 2) NOT NULL,
     -- Audit columns
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
