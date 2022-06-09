@@ -221,7 +221,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     for (const disbursementValue of disbursement.disbursementValues) {
       if (
         disbursement.stopFullTimeBCFundingStatus &&
-        OfferingIntensity.partTime === offeringIntensity
+        OfferingIntensity.fullTime === offeringIntensity
       ) {
         if (disbursementValue.valueType === DisbursementValueType.BCLoan) {
           disbursementValue.valueAmount = STRING_ZERO;
