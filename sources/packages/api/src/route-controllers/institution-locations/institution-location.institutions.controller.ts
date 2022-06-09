@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
@@ -41,6 +42,12 @@ import {
   credentialTypeToDisplay,
   getUserFullName,
   CustomNamedError,
+  PaginationParams,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  FieldSortOrder,
+  PaginationOptions,
+  PaginatedResults,
 } from "../../utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
@@ -129,27 +136,49 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * Get all active application of a location in an institution
    * with application_status is completed.
    * @param locationId location id.
+   * @param searchCriteria Search text to search active applications.
+   * @param sortField Field to sort active applications.
+   * @param page Current page of paginated result.
+   * @param pageLimit Records per page in a paginated result.
+   * @param sortOrder sort order of active applications.
    * @returns Student active application list of an institution location.
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/active-applications")
   async getActiveApplications(
     @Param("locationId") locationId: number,
-  ): Promise<ActiveApplicationSummaryAPIOutDTO[]> {
+    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
+    @Query(PaginationParams.SortField) sortField: string,
+    @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
+    @Query(PaginationParams.PageLimit) pageLimit = DEFAULT_PAGE_LIMIT,
+    @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
+  ): Promise<PaginatedResults<ActiveApplicationSummaryAPIOutDTO>> {
+    const paginationOptions = {
+      page: page,
+      pageLimit: pageLimit,
+      sortField: sortField,
+      sortOrder: sortOrder,
+      searchCriteria: searchCriteria,
+    } as PaginationOptions;
     const applications = await this.applicationService.getActiveApplications(
       locationId,
+      paginationOptions,
     );
-    return applications.map((eachApplication) => {
-      const offering = eachApplication.currentAssessment?.offering;
-      return {
-        applicationNumber: eachApplication.applicationNumber,
-        applicationId: eachApplication.id,
-        studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
-        studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
-        applicationStatus: eachApplication.applicationStatus,
-        fullName: getUserFullName(eachApplication.student.user),
-      };
-    });
+
+    return {
+      results: applications.results.map((eachApplication) => {
+        const offering = eachApplication.currentAssessment?.offering;
+        return {
+          applicationNumber: eachApplication.applicationNumber,
+          applicationId: eachApplication.id,
+          studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
+          studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
+          applicationStatus: eachApplication.applicationStatus,
+          fullName: getUserFullName(eachApplication.student.user),
+        };
+      }) as ActiveApplicationSummaryAPIOutDTO[],
+      count: applications.count,
+    };
   }
 
   /**

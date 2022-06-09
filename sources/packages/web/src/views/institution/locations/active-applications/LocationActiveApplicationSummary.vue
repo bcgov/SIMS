@@ -1,7 +1,32 @@
 <template>
   <div class="p-m-4">
     <HeaderNavigator :title="locationName" subTitle="Report a Change" />
-    <v-container>
+
+    <TabView lazy class="mt-4">
+      <TabPanel>
+        <template #header>
+          <span class="ml-2">Available to report</span>
+        </template>
+        <!-- <COESummaryData
+          :locationId="locationId"
+          :enrollmentPeriod="EnrollmentPeriod.Current"
+          header="Available to report"
+          subTitle="Confirm enrolment so that funding can be dispersed."
+        /> -->
+      </TabPanel>
+      <TabPanel>
+        <template #header>
+          <span class="ml-2">Unavailable to report</span>
+        </template>
+        <!-- <COESummaryData
+          :locationId="locationId"
+          :enrollmentPeriod="EnrollmentPeriod.Upcoming"
+          header="Upcoming enrollment"
+          subTitle="These applications are still outside of the 21 days of the study start date."
+        /> -->
+      </TabPanel>
+    </TabView>
+    <!-- <v-container>
       <v-sheet elevation="1" class="mx-auto mt-2">
         <v-container>
           <DataTable
@@ -51,7 +76,7 @@
           </DataTable>
         </v-container>
       </v-sheet>
-    </v-container>
+    </v-container> -->
   </div>
 </template>
 

@@ -1,6 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, In, Not, UpdateResult, Brackets } from "typeorm";
+import {
+  Connection,
+  In,
+  Not,
+  UpdateResult,
+  Brackets,
+  OrderByCondition,
+} from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -42,6 +49,8 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
   PIR_OR_DATE_OVERLAP_ERROR,
   PaginationOptions,
+  PaginatedResults,
+  FieldSortOrder,
 } from "../../utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
@@ -677,11 +686,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Get all active applications of an institution location
    * with application_status is completed
    * @param locationId location id .
+   * @param paginationOptions
    * @returns Student Active Application list.
    */
-  async getActiveApplications(locationId: number): Promise<Application[]> {
+  async getActiveApplications(
+    locationId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<Application>> {
     // TODO: there are two similar methods to get one and many records for the same list/details getActiveApplication and getActiveApplications. Can we use only one?
-    return this.repo
+    const activeApplicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
         "application.applicationNumber",
@@ -702,8 +715,62 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.completed,
       })
-      .orderBy("application.applicationNumber", "DESC")
-      .getMany();
+      .orderBy("application.applicationNumber", "DESC");
+    if (paginationOptions.searchCriteria) {
+      activeApplicationQuery
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where(
+              "CONCAT(user.firstName,' ', user.lastName) Ilike :searchCriteria",
+            ).orWhere("application.applicationNumber Ilike :searchCriteria");
+          }),
+        )
+        .setParameter(
+          "searchCriteria",
+          `%${paginationOptions.searchCriteria.trim()}%`,
+        );
+    }
+    activeApplicationQuery
+      .orderBy(
+        this.transformToEntitySortField(
+          paginationOptions.sortField,
+          paginationOptions.sortOrder,
+        ),
+      )
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
+    const [result, count] = await activeApplicationQuery.getManyAndCount();
+    return {
+      results: result,
+      count: count,
+    };
+  }
+
+  /**
+   **Transformation to convert the data table column name to database column name
+   **Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
+   * @param sortField
+   * @param sortOrder
+   * @returns OrderByCondition
+   */
+  private transformToEntitySortField(
+    sortField: string,
+    sortOrder: FieldSortOrder,
+  ): OrderByCondition {
+    const orderByCondition = {};
+    if (sortField === "fullName") {
+      orderByCondition["user.firstName"] = sortOrder;
+      orderByCondition["user.lastName"] = sortOrder;
+      return orderByCondition;
+    }
+
+    const fieldSortOptions = {
+      applicationNumber: "application.applicationNumber",
+    };
+    const dbColumnName =
+      fieldSortOptions[sortField] || "application.applicationStatus";
+    orderByCondition[dbColumnName] = sortOrder;
+    return orderByCondition;
   }
 
   /**
