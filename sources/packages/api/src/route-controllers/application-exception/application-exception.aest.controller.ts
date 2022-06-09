@@ -47,10 +47,10 @@ export class ApplicationExceptionAESTController extends BaseController {
   }
 
   /**
-   * Get a student application expectation detected after the student application was
+   * Get a student application exception detected after the student application was
    * submitted, for instance, when there are documents to be reviewed.
    * @param exceptionId exception to be retrieved.
-   * @returns student application expectation information.
+   * @returns student application exception information.
    */
   @Get(":exceptionId")
   @ApiNotFoundResponse({
