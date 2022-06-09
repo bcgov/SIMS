@@ -10,44 +10,50 @@
         >
         </body-header>
         <content-group class="mt-4">
-          <DataTable
-            :value="requestedAssessment"
-            :paginator="true"
-            :rows="DEFAULT_PAGE_LIMIT"
-            :rowsPerPageOptions="PAGINATION_LIST"
-            :totalRecords="requestedAssessment.length"
-          >
-            <template #empty>
-              <p class="text-center font-weight-bold">No records found.</p>
-            </template>
-            <Column
-              field="submittedDate"
-              header="Submitted date"
-              sortable="true"
-              ><template #body="slotProps">{{
-                dateOnlyLongString(slotProps.data.submittedDate)
-              }}</template></Column
+          <toggle-content :toggled="!requestedAssessment.length">
+            <DataTable
+              :value="requestedAssessment"
+              :paginator="true"
+              :rows="DEFAULT_PAGE_LIMIT"
+              :rowsPerPageOptions="PAGINATION_LIST"
+              :totalRecords="requestedAssessment.length"
             >
-            <Column field="requestType" header="Type" sortable="true"></Column>
-            <Column header="Request form" sortable="false"
-              ><template #body="{ data }"
-                ><v-btn
-                  @click="$emit('viewStudentAppeal', data.id)"
-                  color="primary"
-                  variant="text"
-                  class="text-decoration-underline"
-                >
-                  <font-awesome-icon :icon="['far', 'file-alt']" class="mr-2" />
-                  View request</v-btn
-                ></template
-              ></Column
-            >
-            <Column field="status" header="Status" sortable="true">
-              <template #body="slotProps"
-                ><status-chip-requested-assessment
-                  :status="slotProps.data.status" /></template
-            ></Column>
-          </DataTable>
+              <Column
+                field="submittedDate"
+                header="Submitted date"
+                sortable="true"
+                ><template #body="slotProps">{{
+                  dateOnlyLongString(slotProps.data.submittedDate)
+                }}</template></Column
+              >
+              <Column
+                field="requestType"
+                header="Type"
+                sortable="true"
+              ></Column>
+              <Column header="Request form" sortable="false"
+                ><template #body="{ data }"
+                  ><v-btn
+                    @click="viewRequestForm(data)"
+                    color="primary"
+                    variant="text"
+                    class="text-decoration-underline"
+                  >
+                    <font-awesome-icon
+                      :icon="['far', 'file-alt']"
+                      class="mr-2"
+                    />
+                    View request</v-btn
+                  ></template
+                ></Column
+              >
+              <Column field="status" header="Status" sortable="true">
+                <template #body="slotProps"
+                  ><status-chip-requested-assessment
+                    :status="slotProps.data.status" /></template
+              ></Column>
+            </DataTable>
+          </toggle-content>
         </content-group>
       </v-container>
     </v-card>
@@ -55,14 +61,17 @@
 </template>
 <script lang="ts">
 import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, SetupContext } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
-import { RequestAssessmentSummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
+import {
+  RequestAssessmentSummaryAPIOutDTO,
+  RequestAssessmentTypeAPIOutDTO,
+} from "@/services/http/dto/Assessment.dto";
 
 export default {
-  emits: ["viewStudentAppeal"],
+  emits: ["viewStudentAppeal", "viewApplicationException"],
   components: {
     StatusChipRequestedAssessment,
   },
@@ -72,7 +81,7 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props: any, context: SetupContext) {
     const { dateOnlyLongString } = useFormatters();
 
     const requestedAssessment = ref([] as RequestAssessmentSummaryAPIOutDTO[]);
@@ -83,11 +92,23 @@ export default {
         );
     });
 
+    const viewRequestForm = (data: RequestAssessmentSummaryAPIOutDTO) => {
+      switch (data.requestType) {
+        case RequestAssessmentTypeAPIOutDTO.StudentAppeal:
+          context.emit("viewStudentAppeal", data.id);
+          break;
+        case RequestAssessmentTypeAPIOutDTO.StudentException:
+          context.emit("viewApplicationException", data.id);
+          break;
+      }
+    };
+
     return {
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       requestedAssessment,
       dateOnlyLongString,
+      viewRequestForm,
     };
   },
 };

@@ -133,8 +133,9 @@ export class ScholasticStandingDataAPIInDTO {
   exceptionalCosts?: number;
   mandatoryFees?: number;
   tuition?: number;
-  dateOfIncompletion?: string;
+  numberOfUnsuccessfulWeeks?: number;
   dateOfWithdrawal?: string;
+  scholasticStanding: string;
 }
 
 // This DTO must/will be validated using the dryRun.

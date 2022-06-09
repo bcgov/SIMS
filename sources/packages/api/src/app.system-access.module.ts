@@ -10,6 +10,7 @@ import {
   StudentRestrictionService,
   WorkflowActionsService,
   WorkflowService,
+  RestrictionService,
 } from "./services";
 import {
   ApplicationExceptionSystemAccessController,
@@ -35,6 +36,7 @@ import { LoggerModule } from "./logger/logger.module";
     SequenceControlService,
     StudentRestrictionService,
     AssessmentControllerService,
+    RestrictionService,
     ApplicationExceptionService,
   ],
 })

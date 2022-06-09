@@ -13,11 +13,13 @@
     <RequestAssessment
       :applicationId="applicationId"
       @viewStudentAppeal="goToStudentAppeal"
+      @viewApplicationException="goToApplicationException"
     />
     <HistoryAssessment
       :applicationId="applicationId"
       @viewStudentAppeal="goToStudentAppeal"
       @viewAssessment="gotToViewAssessment"
+      @viewApplicationException="goToApplicationException"
     />
   </full-page-container>
 </template>
@@ -57,6 +59,17 @@ export default {
       });
     };
 
+    const goToApplicationException = (exceptionId: number) => {
+      router.push({
+        name: AESTRoutesConst.APPLICATION_EXCEPTIONS_APPROVAL,
+        params: {
+          studentId: props.studentId,
+          applicationId: props.applicationId,
+          exceptionId,
+        },
+      });
+    };
+
     const gotToViewAssessment = (assessmentId: number) => {
       router.push({
         name: AESTRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
@@ -72,6 +85,7 @@ export default {
       AESTRoutesConst,
       goToStudentAppeal,
       gotToViewAssessment,
+      goToApplicationException,
     };
   },
 };

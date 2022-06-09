@@ -5,6 +5,7 @@ export interface ScholasticStanding {
   exceptionalCosts?: number;
   mandatoryFees?: number;
   tuition?: number;
-  dateOfIncompletion?: string;
+  numberOfUnsuccessfulWeeks?: number;
   dateOfWithdrawal?: string;
+  scholasticStanding: string;
 }

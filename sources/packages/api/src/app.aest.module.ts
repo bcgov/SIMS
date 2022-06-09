@@ -30,6 +30,7 @@ import {
   StudentService,
   SFASIndividualService,
   StudentRestrictionService,
+  RestrictionService,
   ApplicationExceptionService,
 } from "./services";
 import {
@@ -105,6 +106,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     StudentService,
     SFASIndividualService,
     StudentRestrictionService,
+    RestrictionService,
     ApplicationExceptionService,
   ],
 })

@@ -7,6 +7,7 @@ import {
   SshService,
   StudentRestrictionService,
   DisbursementScheduleErrorsService,
+  RestrictionService,
 } from "../../services";
 import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
@@ -32,6 +33,7 @@ import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/
     ECertFullTimeFileHeader,
     ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
+    RestrictionService,
   ],
   exports: [
     ECertFullTimeIntegrationService,
