@@ -44,6 +44,9 @@ import StudentPageContainer from "@/components/layouts/student/StudentPageContai
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import Banner from "@/components/generic/Banner.vue";
 import formio from "@/components/generic/formio.vue";
+import ToggleContent from "@/components/generic/ToggleContent.vue";
+import FormioContainer from "@/components/generic/FormioContainer.vue";
+import FooterButtons from "@/components/generic/FooterButtons.vue";
 
 import {
   faMapPin,
@@ -140,6 +143,9 @@ AppConfigService.shared.init().then(() => {
     .component("HeaderNavigator", HeaderNavigator)
     .component("Banner", Banner)
     .component("formio", formio)
+    .component("ToggleContent", ToggleContent)
+    .component("FormioContainer", FormioContainer)
+    .component("FooterButtons", FooterButtons)
     .directive("tooltip", Tooltip)
     .mount("#app");
 });

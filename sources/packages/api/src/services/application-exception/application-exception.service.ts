@@ -55,10 +55,10 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
   }
 
   /**
-   * Get a student application expectation detected after the student application was
+   * Get a student application exception detected after the student application was
    * submitted, for instance, when there are documents to be reviewed.
    * @param exceptionId exception to be retrieved.
-   * @returns student application expectation information.
+   * @returns student application exception information.
    */
   async getExceptionById(exceptionId: number): Promise<ApplicationException> {
     return this.repo
@@ -66,21 +66,26 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       .select([
         "exception.id",
         "exception.exceptionStatus",
+        "exception.createdAt",
+        "exception.assessedDate",
         "exceptionNote.description",
         "exceptionRequest.exceptionName",
+        "assessedBy.firstName",
+        "assessedBy.lastName",
       ])
       .innerJoin("exception.exceptionRequests", "exceptionRequest")
       .leftJoin("exception.exceptionNote", "exceptionNote")
+      .leftJoin("exception.assessedBy", "assessedBy")
       .where("exception.id = :exceptionId", { exceptionId })
       .getOne();
   }
 
   /**
-   * Get a student application expectation detected after the student application was
+   * Get a student application exception detected after the student application was
    * submitted, for instance, when there are documents to be reviewed.
    * @param applicationId application associated with the exception.
    * @param status statuses to be filtered.
-   * @returns student application expectation information.
+   * @returns student application exception information.
    */
   async getExceptionsByApplicationId(
     applicationId: number,
