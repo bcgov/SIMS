@@ -66,6 +66,7 @@ export class ApplicationExceptionAESTController extends BaseController {
     }
     return {
       exceptionStatus: applicationException.exceptionStatus,
+      submittedDate: applicationException.createdAt,
       noteDescription: applicationException.exceptionNote?.description,
       assessedByUserName: getUserFullName(applicationException.assessedBy),
       assessedDate: applicationException.assessedDate,

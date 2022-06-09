@@ -183,7 +183,7 @@ export class WorkflowActionsService {
       });
     } catch (error: unknown) {
       this.logger.error(
-        `Error while sending supporting users completed message using supportingUserId: ${applicationExceptionId}.`,
+        `Error while sending application exception approval message applicationExceptionId: ${applicationExceptionId}.`,
       );
       this.logger.error(error);
       // The error is not thrown here, as we are failing silently.

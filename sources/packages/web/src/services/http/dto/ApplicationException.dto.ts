@@ -22,6 +22,7 @@ export interface ApplicationExceptionAPIOutDTO {
   exceptionStatus: ApplicationExceptionStatus;
   noteDescription: string;
   assessedByUserName?: string;
+  submittedDate: Date;
   assessedDate?: Date;
   exceptionRequests: ApplicationExceptionRequestAPIOutDTO[];
 }

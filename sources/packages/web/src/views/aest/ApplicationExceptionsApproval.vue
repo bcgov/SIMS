@@ -7,33 +7,73 @@
         :routeLocation="assessmentsSummaryRoute"
       />
     </template>
-    <formio
+    <template #sub-header>
+      <header-title-value title="Submitted date" :value="submittedDate"
+    /></template>
+    <formio-container
       formName="studentExceptions"
-      :readOnly="readOnly"
-      :data="applicationExceptions"
-    ></formio>
+      :formData="applicationExceptions"
+      @submitted="submitted"
+    >
+      <template #actions="{ submit }" v-if="!readOnly">
+        <footer-buttons
+          :processing="processing"
+          primaryLabel="Complete student request"
+          @primaryClick="submit"
+          @secondaryClick="gotToAssessmentsSummary"
+        />
+      </template>
+    </formio-container>
   </full-page-container>
 </template>
 <script lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
-import { ApplicationExceptionStatus } from "@/types";
-import { ApplicationExceptionAPIOutDTO } from "@/services/http/dto";
-import { useAssessment, useFormatters } from "@/composables";
+import { ApplicationExceptionStatus, FormIOForm } from "@/types";
+import {
+  ApplicationExceptionAPIOutDTO,
+  UpdateApplicationExceptionAPIInDTO,
+} from "@/services/http/dto";
+import { useAssessment, useFormatters, useToastMessage } from "@/composables";
+import FooterButtons from "@/components/generic/FooterButtons.vue";
+import FormioContainer from "@/components/generic/FormioContainer.vue";
+import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 
+/**
+ * Model to be used to populate the form.io.
+ */
 type ApplicationExceptionFormModel = Omit<
   ApplicationExceptionAPIOutDTO,
   "assessedDate"
 > & {
-  showAudit: boolean;
+  /**
+   * Exception status at the moment that the data was loaded.
+   * used manly when the form is being edited and change the
+   * status to approved/declined should not change the status
+   * that the form was originally loaded.
+   */
+  exceptionStatusOnLoad: ApplicationExceptionStatus;
+  /**
+   * Hides the assessedDate defined as a Date property
+   * allowing the conversion to the correct string format
+   * to be displayed in the UI.
+   */
   assessedDate: string;
+  /**
+   * CSS class to be applied to the status chip.
+   */
   exceptionStatusClass: string;
+  /**
+   * Simplification of the property exceptionRequests
+   * for easy consumption inside form.io definition.
+   */
   exceptionNames: string[];
 };
 
 export default {
+  components: { FormioContainer, FooterButtons, HeaderTitleValue },
   props: {
     studentId: {
       type: Number,
@@ -50,15 +90,13 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    //const toast = useToastMessage();
+    const toast = useToastMessage();
     const { dateOnlyLongString } = useFormatters();
     const { mapRequestAssessmentChipStatus } = useAssessment();
     const applicationExceptions = ref({} as ApplicationExceptionFormModel);
-    const readOnly = computed(
-      () =>
-        applicationExceptions.value.exceptionStatus !==
-        ApplicationExceptionStatus.Pending,
-    );
+    const submittedDate = ref("");
+    const processing = ref(false);
+    const readOnly = ref(true);
 
     onMounted(async () => {
       const applicationException =
@@ -71,13 +109,17 @@ export default {
         exceptionStatusClass: mapRequestAssessmentChipStatus(
           applicationException.exceptionStatus,
         ),
-        showAudit:
-          applicationException.exceptionStatus !==
-          ApplicationExceptionStatus.Pending,
+        exceptionStatusOnLoad: applicationException.exceptionStatus,
         exceptionNames: applicationException.exceptionRequests.map(
           (exception) => exception.exceptionName,
         ),
       };
+      submittedDate.value = dateOnlyLongString(
+        applicationException.submittedDate,
+      );
+      readOnly.value =
+        applicationException.exceptionStatus !==
+        ApplicationExceptionStatus.Pending;
     });
 
     const assessmentsSummaryRoute = {
@@ -92,30 +134,28 @@ export default {
       router.push(assessmentsSummaryRoute);
     };
 
-    const submitted = async (approvals: any) => {
-      console.log(approvals);
-      // try {
-      //   await StudentAppealService.shared.approveStudentAppealRequests(
-      //     props.appealId,
-      //     approvals,
-      //   );
-      //   toast.success(
-      //     "Student request completed",
-      //     "The request was completed with success.",
-      //   );
-      //   gotToAssessmentsSummary();
-      // } catch (error: unknown) {
-      //   if (error instanceof ApiProcessError) {
-      //     if (error.errorType === ASSESSMENT_ALREADY_IN_PROGRESS) {
-      //       toast.warn("Not able to submit", error.message);
-      //       return;
-      //     }
-      //   }
-      //   toast.error(
-      //     "Unexpected error",
-      //     "An unexpected error happened during the approval.",
-      //   );
-      // }
+    const submitted = async (form: FormIOForm) => {
+      processing.value = true;
+      try {
+        const approveExceptionPayload =
+          form.data as UpdateApplicationExceptionAPIInDTO;
+        await ApplicationExceptionService.shared.approveException(
+          props.exceptionId,
+          approveExceptionPayload,
+        );
+        toast.success(
+          "Application exception assessed",
+          `Application exception status is now ${approveExceptionPayload.exceptionStatus}.`,
+        );
+        gotToAssessmentsSummary();
+      } catch (error: unknown) {
+        toast.error(
+          "Unexpected error",
+          "An unexpected error happened during the approval.",
+        );
+      } finally {
+        processing.value = false;
+      }
     };
 
     return {
@@ -123,6 +163,8 @@ export default {
       assessmentsSummaryRoute,
       applicationExceptions,
       submitted,
+      submittedDate,
+      processing,
       readOnly,
     };
   },

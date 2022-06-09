@@ -33,6 +33,9 @@ export class ApplicationExceptionApi extends HttpBaseClient {
     exceptionId: number,
     payload: UpdateApplicationExceptionAPIInDTO,
   ): Promise<void> {
-    await this.patchCall(`application-exception/${exceptionId}`, payload);
+    await this.patchCall(
+      this.addClientRoot(`application-exception/${exceptionId}`),
+      payload,
+    );
   }
 }

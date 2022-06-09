@@ -19,6 +19,7 @@
       :applicationId="applicationId"
       @viewStudentAppeal="goToStudentAppeal"
       @viewAssessment="gotToViewAssessment"
+      @viewApplicationException="goToApplicationException"
     />
   </full-page-container>
 </template>
