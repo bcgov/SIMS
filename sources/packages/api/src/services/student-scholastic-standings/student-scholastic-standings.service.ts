@@ -311,7 +311,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM
     ) {
       if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
-        throw new Error(`Number of unsuccessful weeks is empty.`);
+        throw new Error("Number of unsuccessful weeks is empty.");
       }
       const totalExistingUnsuccessfulWeeks =
         await this.getTotalFullTimeUnsuccessfulWeeks(studentId);
