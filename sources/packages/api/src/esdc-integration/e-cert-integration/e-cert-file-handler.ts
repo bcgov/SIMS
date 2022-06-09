@@ -1,6 +1,7 @@
 import { InjectLogger } from "../../common";
 import {
   DisbursementSchedule,
+  DisbursementValueType,
   OfferingIntensity,
 } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
@@ -33,9 +34,11 @@ import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-ce
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ESDCIntegrationConfig } from "../../types";
 import { ESDCFileResponseDTO } from "../../route-controllers/esdc-integration/models/esdc-model";
+import { DisbursementScheduleWithStopFullTimeBCFundingStatus } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
+const STRING_ZERO = "0";
 @Injectable()
 export class ECertFileHandler extends ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
@@ -203,7 +206,9 @@ export class ECertFileHandler extends ESDCFileHandler {
    * generate the record.
    * @returns e-Cert record.
    */
-  private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
+  private createECertRecord(
+    disbursement: DisbursementScheduleWithStopFullTimeBCFundingStatus,
+  ): ECertRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const addressInfo = application.student.contactInfo.address;
@@ -211,14 +216,18 @@ export class ECertFileHandler extends ESDCFileHandler {
     const fieldOfStudy = getFieldOfStudyFromCIPCode(
       offering.educationProgram.cipCode,
     );
-    const awards = disbursement.disbursementValues.map(
-      (disbursementValue) =>
-        ({
-          valueType: disbursementValue.valueType,
-          valueCode: disbursementValue.valueCode,
-          valueAmount: disbursementValue.valueAmount,
-        } as Award),
-    );
+    const awards = disbursement.disbursementValues.map((disbursementValue) => {
+      if (disbursement.stopFullTimeBCFundingStatus) {
+        if (disbursementValue.valueType == DisbursementValueType.BCLoan) {
+          disbursementValue.valueAmount = STRING_ZERO;
+        }
+      }
+      return {
+        valueType: disbursementValue.valueType,
+        valueCode: disbursementValue.valueCode,
+        valueAmount: disbursementValue.valueAmount,
+      } as Award;
+    });
 
     return {
       sin: application.student.sin,
