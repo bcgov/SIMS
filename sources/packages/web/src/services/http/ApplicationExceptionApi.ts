@@ -5,7 +5,7 @@ import {
 } from "@/services/http/dto";
 
 /**
- * Http API client for Student Application Exceptions, for instance, when a
+ * Http API client for the student application exceptions, for instance, when a
  * Student Application is submitted and there are some files that must be
  * reviewed.
  */

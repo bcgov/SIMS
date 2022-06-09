@@ -48,7 +48,7 @@ type ApplicationExceptionFormModel = Omit<
 > & {
   /**
    * Exception status at the moment that the data was loaded.
-   * used manly when the form is being edited and change the
+   * used mainly when the form is being edited and change the
    * status to approved/declined should not change the status
    * that the form was originally loaded.
    */

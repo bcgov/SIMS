@@ -18,9 +18,6 @@
               :rowsPerPageOptions="PAGINATION_LIST"
               :totalRecords="requestedAssessment.length"
             >
-              <template #empty>
-                <p class="text-center font-weight-bold">No records found.</p>
-              </template>
               <Column
                 field="submittedDate"
                 header="Submitted date"

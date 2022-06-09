@@ -17,7 +17,7 @@ export interface ProcessVariableValue {
 }
 
 /**
- * variable to be send with a message payload.
+ * Variable to be send with a message payload.
  */
 export interface ProcessVariable {
   [k: string]: ProcessVariableValue;
