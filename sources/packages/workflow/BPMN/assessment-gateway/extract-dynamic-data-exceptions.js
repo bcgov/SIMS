@@ -4,10 +4,16 @@
 
 var applicationExceptions = [];
 var dynamicData = S(execution.getVariable("applicationData"));
-// Value assigned to a property to determine that it is a application exception.
+// Value assigned to a property to determine that it is an application exception.
 var STUDENT_APPLICATION_EXCEPTION_VALUE_IDENTIFIER =
   "studentApplicationException";
 
+/**
+ * Search entire object properties recursively trying to
+ * find properties with the value defined as "studentApplicationException"
+ * which identifies an application exception to be reviewed.
+ * @param payload object to have the properties checked.
+ */
 function searchExceptions(payload) {
   if (payload.isArray()) {
     var arrayItems = payload.elements();
@@ -17,7 +23,7 @@ function searchExceptions(payload) {
       searchExceptions(arrayItems[i]);
     }
   } else if (payload.isObject()) {
-    // If the object is an object, iterate through its properties
+    // If the payload is an object, iterate through its properties
     // looking for some application exception.
     var objectFieldNames = payload.fieldNames();
     for (var i = 0; i < objectFieldNames.length; i++) {
@@ -28,8 +34,8 @@ function searchExceptions(payload) {
       } else if (
         objectProp.value() === STUDENT_APPLICATION_EXCEPTION_VALUE_IDENTIFIER
       ) {
-        // Adding adding the same exception twice, for instance for the cases that
-        // the exception are added to an array of items like dependents.
+        // Check if the same exception was already added, for instance for the
+        // cases that the exceptions are added to an array of items like dependents.
         if (applicationExceptions.indexOf(fieldName) === -1) {
           applicationExceptions.push({ exceptionName: fieldName });
         }
@@ -38,6 +44,7 @@ function searchExceptions(payload) {
   }
 }
 
+// Execute the code.
 searchExceptions(dynamicData);
 // Prepare the payload that will be used to call the SIMS API
 // and create the application exceptions, if needed.
