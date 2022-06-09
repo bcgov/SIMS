@@ -138,7 +138,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
     );
     const disbursementRecords = disbursements.map((disbursement) => {
-      return this.createECertRecord(disbursement);
+      return this.createECertRecord(disbursement, offeringIntensity);
     });
 
     // Fetches the disbursements ids, for further update in the DB.
@@ -208,6 +208,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    */
   private createECertRecord(
     disbursement: DisbursementScheduleWithStopFullTimeBCFundingStatus,
+    offeringIntensity: OfferingIntensity,
   ): ECertRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
@@ -216,18 +217,24 @@ export class ECertFileHandler extends ESDCFileHandler {
     const fieldOfStudy = getFieldOfStudyFromCIPCode(
       offering.educationProgram.cipCode,
     );
-    const awards = disbursement.disbursementValues.map((disbursementValue) => {
-      if (disbursement.stopFullTimeBCFundingStatus) {
-        if (disbursementValue.valueType == DisbursementValueType.BCLoan) {
+    const awards = [];
+    for (const disbursementValue of disbursement.disbursementValues) {
+      if (
+        disbursement.stopFullTimeBCFundingStatus &&
+        OfferingIntensity.partTime === offeringIntensity
+      ) {
+        if (disbursementValue.valueType === DisbursementValueType.BCLoan) {
           disbursementValue.valueAmount = STRING_ZERO;
         }
+        if (disbursementValue.valueType !== DisbursementValueType.BCGrant) {
+          awards.push({
+            valueType: disbursementValue.valueType,
+            valueCode: disbursementValue.valueCode,
+            valueAmount: disbursementValue.valueAmount,
+          } as Award);
+        }
       }
-      return {
-        valueType: disbursementValue.valueType,
-        valueCode: disbursementValue.valueCode,
-        valueAmount: disbursementValue.valueAmount,
-      } as Award;
-    });
+    }
 
     return {
       sin: application.student.sin,
