@@ -10,10 +10,7 @@
         >
         </body-header>
         <content-group class="mt-4">
-          <toggle-content
-            :toggled="!assessmentHistory.length"
-            message="There's nothing here yet"
-          >
+          <toggle-content :toggled="!assessmentHistory.length">
             <DataTable
               :value="assessmentHistory"
               :paginator="true"
@@ -78,13 +75,6 @@
                 </template>
               </Column>
             </DataTable>
-            <template #image>
-              <v-img
-                height="200"
-                alt="There's nothing here yet"
-                src="@/assets/images/playful-cat.svg"
-              />
-            </template>
           </toggle-content>
         </content-group>
       </v-container>
@@ -102,7 +92,6 @@ import { StudentAssessmentsService } from "@/services/StudentAssessmentsService"
 import { useFormatters } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
-import ToggleContent from "@/components/generic/ToggleContent.vue";
 
 export default {
   emits: [
@@ -113,7 +102,6 @@ export default {
   ],
   components: {
     StatusChipAssessmentHistory,
-    ToggleContent,
   },
   props: {
     applicationId: {

@@ -37,8 +37,6 @@ import {
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
 import { useAssessment, useFormatters, useToastMessage } from "@/composables";
-import FooterButtons from "@/components/generic/FooterButtons.vue";
-import FormioContainer from "@/components/generic/FormioContainer.vue";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 
 /**
@@ -73,7 +71,7 @@ type ApplicationExceptionFormModel = Omit<
 };
 
 export default {
-  components: { FormioContainer, FooterButtons, HeaderTitleValue },
+  components: { HeaderTitleValue },
   props: {
     studentId: {
       type: Number,

@@ -10,44 +10,53 @@
         >
         </body-header>
         <content-group class="mt-4">
-          <DataTable
-            :value="requestedAssessment"
-            :paginator="true"
-            :rows="DEFAULT_PAGE_LIMIT"
-            :rowsPerPageOptions="PAGINATION_LIST"
-            :totalRecords="requestedAssessment.length"
-          >
-            <template #empty>
-              <p class="text-center font-weight-bold">No records found.</p>
-            </template>
-            <Column
-              field="submittedDate"
-              header="Submitted date"
-              sortable="true"
-              ><template #body="slotProps">{{
-                dateOnlyLongString(slotProps.data.submittedDate)
-              }}</template></Column
+          <toggle-content :toggled="!requestedAssessment.length">
+            <DataTable
+              :value="requestedAssessment"
+              :paginator="true"
+              :rows="DEFAULT_PAGE_LIMIT"
+              :rowsPerPageOptions="PAGINATION_LIST"
+              :totalRecords="requestedAssessment.length"
             >
-            <Column field="requestType" header="Type" sortable="true"></Column>
-            <Column header="Request form" sortable="false"
-              ><template #body="{ data }"
-                ><v-btn
-                  @click="viewRequestForm(data)"
-                  color="primary"
-                  variant="text"
-                  class="text-decoration-underline"
-                >
-                  <font-awesome-icon :icon="['far', 'file-alt']" class="mr-2" />
-                  View request</v-btn
-                ></template
-              ></Column
-            >
-            <Column field="status" header="Status" sortable="true">
-              <template #body="slotProps"
-                ><status-chip-requested-assessment
-                  :status="slotProps.data.status" /></template
-            ></Column>
-          </DataTable>
+              <template #empty>
+                <p class="text-center font-weight-bold">No records found.</p>
+              </template>
+              <Column
+                field="submittedDate"
+                header="Submitted date"
+                sortable="true"
+                ><template #body="slotProps">{{
+                  dateOnlyLongString(slotProps.data.submittedDate)
+                }}</template></Column
+              >
+              <Column
+                field="requestType"
+                header="Type"
+                sortable="true"
+              ></Column>
+              <Column header="Request form" sortable="false"
+                ><template #body="{ data }"
+                  ><v-btn
+                    @click="viewRequestForm(data)"
+                    color="primary"
+                    variant="text"
+                    class="text-decoration-underline"
+                  >
+                    <font-awesome-icon
+                      :icon="['far', 'file-alt']"
+                      class="mr-2"
+                    />
+                    View request</v-btn
+                  ></template
+                ></Column
+              >
+              <Column field="status" header="Status" sortable="true">
+                <template #body="slotProps"
+                  ><status-chip-requested-assessment
+                    :status="slotProps.data.status" /></template
+              ></Column>
+            </DataTable>
+          </toggle-content>
         </content-group>
       </v-container>
     </v-card>
