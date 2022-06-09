@@ -16,7 +16,7 @@ export interface ScholasticStandingDataAPIInDTO {
     attendance?: boolean;
     other?: boolean;
   };
-  dateOfIncompletion?: string;
+  numberOfUnsuccessfulWeeks?: number;
   notes?: string;
   dateOfWithdrawal?: string;
 }
