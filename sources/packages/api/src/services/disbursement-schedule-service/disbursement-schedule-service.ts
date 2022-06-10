@@ -33,7 +33,7 @@ import {
 } from "../../database/entities";
 import {
   Disbursement,
-  DisbursementScheduleWithStopFullTimeBCFundingStatus,
+  ECertDisbursementSchedule,
   EnrollmentPeriod,
 } from "./disbursement-schedule.models";
 import * as dayjs from "dayjs";
@@ -174,7 +174,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    */
   async getECertInformationToBeSent(
     offeringIntensity: OfferingIntensity,
-  ): Promise<DisbursementScheduleWithStopFullTimeBCFundingStatus[]> {
+  ): Promise<ECertDisbursementSchedule[]> {
     const possibleRestrictionActions: RestrictionActionType[] =
       offeringIntensity === OfferingIntensity.fullTime
         ? [RestrictionActionType.StopFullTimeDisbursement]
@@ -272,7 +272,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // 'restrictionActions' parameter used inside sub-query.
       .setParameter("restrictionActions", possibleRestrictionActions)
       .getRawAndEntities();
-    return mapFromRawAndEntities<DisbursementScheduleWithStopFullTimeBCFundingStatus>(
+    return mapFromRawAndEntities<ECertDisbursementSchedule>(
       queryResult,
       "stopFullTimeBCFundingStatus",
     );

@@ -34,11 +34,10 @@ import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-ce
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ESDCIntegrationConfig } from "../../types";
 import { ESDCFileResponseDTO } from "../../route-controllers/esdc-integration/models/esdc-model";
-import { DisbursementScheduleWithStopFullTimeBCFundingStatus } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
+import { ECertDisbursementSchedule } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
-const STRING_ZERO = "0";
 @Injectable()
 export class ECertFileHandler extends ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
@@ -207,7 +206,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * @returns e-Cert record.
    */
   private createECertRecord(
-    disbursement: DisbursementScheduleWithStopFullTimeBCFundingStatus,
+    disbursement: ECertDisbursementSchedule,
     offeringIntensity: OfferingIntensity,
   ): ECertRecord {
     const now = new Date();
@@ -220,11 +219,11 @@ export class ECertFileHandler extends ESDCFileHandler {
     const awards = [];
     for (const disbursementValue of disbursement.disbursementValues) {
       if (
-        disbursement.stopFullTimeBCFundingStatus &&
+        disbursement.stopFullTimeBCFunding &&
         OfferingIntensity.fullTime === offeringIntensity
       ) {
         if (disbursementValue.valueType === DisbursementValueType.BCLoan) {
-          disbursementValue.valueAmount = STRING_ZERO;
+          disbursementValue.valueAmount = "0";
         }
         if (disbursementValue.valueType !== DisbursementValueType.BCGrant) {
           awards.push({

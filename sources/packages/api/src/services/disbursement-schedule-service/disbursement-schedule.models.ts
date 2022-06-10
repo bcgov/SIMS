@@ -23,7 +23,6 @@ export enum EnrollmentPeriod {
   Upcoming = "upcoming",
 }
 
-export interface DisbursementScheduleWithStopFullTimeBCFundingStatus
-  extends DisbursementSchedule {
-  stopFullTimeBCFundingStatus: number;
+export interface ECertDisbursementSchedule extends DisbursementSchedule {
+  stopFullTimeBCFunding: boolean;
 }
