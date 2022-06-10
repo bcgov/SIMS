@@ -217,7 +217,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       offering.educationProgram.cipCode,
     );
     const awards = [];
-    for (const disbursementValue of disbursement.disbursementValues) {
+    disbursement.disbursementValues.forEach((disbursementValue) => {
       if (
         disbursement.stopFullTimeBCFunding &&
         OfferingIntensity.fullTime === offeringIntensity
@@ -233,7 +233,7 @@ export class ECertFileHandler extends ESDCFileHandler {
           } as Award);
         }
       }
-    }
+    });
 
     return {
       sin: application.student.sin,
