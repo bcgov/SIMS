@@ -48,13 +48,16 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * or any one of the elements is to be checked (i.e checkAll = false).
    * @param isStudentId is flag that will allow consumer function to set
    * student id as parameter, by default its false.
+   * @param restrictionActionVariable is the parameter name, can be overridden
+   * from default 'restrictionActions' to use another set of restrictions in
+   * same query.
    * @returns 'select' query that could be used in an 'exists' or
    * 'not exists'.
    */
   getExistsBlockRestrictionQuery(
     checkAll = false,
     isStudentId = false,
-    restrictionActionType = false,
+    restrictionActionVariable = "restrictionActions",
   ): SelectQueryBuilder<StudentRestriction> {
     const query = this.repo
       .createQueryBuilder("studentRestrictions")
@@ -68,16 +71,15 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       query.andWhere("restrictionStudent.id = student.id");
     }
 
-    if (restrictionActionType) {
-      query.andWhere("restrictions.actionType && :restrictionActionType");
+    if (checkAll) {
+      query.andWhere(
+        `restrictions.actionType @> :${restrictionActionVariable}`,
+      );
     } else {
-      if (checkAll) {
-        query.andWhere("restrictions.actionType @> :restrictionActions");
-      } else {
-        query.andWhere("restrictions.actionType && :restrictionActions");
-      }
+      query.andWhere(
+        `restrictions.actionType && :${restrictionActionVariable}`,
+      );
     }
-
     query.limit(1);
     return query;
   }

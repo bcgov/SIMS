@@ -226,7 +226,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .addSelect(
         `CASE
             WHEN EXISTS(${this.studentRestrictionService
-              .getExistsBlockRestrictionQuery(false, false, true)
+              .getExistsBlockRestrictionQuery(
+                false,
+                false,
+                "restrictionActionType",
+              )
               .getSql()}) THEN true
             ELSE false
         END`,
