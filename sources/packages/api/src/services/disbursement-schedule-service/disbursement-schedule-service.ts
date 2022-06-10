@@ -29,7 +29,6 @@ import {
   DisbursementValue,
   OfferingIntensity,
   StudentAssessment,
-  StudentRestriction,
 } from "../../database/entities";
 import {
   Disbursement,

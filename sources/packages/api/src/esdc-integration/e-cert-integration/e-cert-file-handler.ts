@@ -1,7 +1,6 @@
 import { InjectLogger } from "../../common";
 import {
   DisbursementSchedule,
-  DisbursementValueType,
   OfferingIntensity,
 } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
@@ -16,16 +15,11 @@ import {
   ECERT_PART_TIME_FILE_CODE,
   ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
   ECERT_PART_TIME_FEEDBACK_FILE_CODE,
-  getFieldOfStudyFromCIPCode,
   getISODateOnlyString,
 } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
-import {
-  Award,
-  ECertRecord,
-  ECertUploadResult,
-} from "./models/e-cert-integration-model";
+import { ECertUploadResult } from "./models/e-cert-integration-model";
 import { Injectable } from "@nestjs/common";
 import { ECertIntegrationService } from "./e-cert-integration.service";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
@@ -34,7 +28,6 @@ import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-ce
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ESDCIntegrationConfig } from "../../types";
 import { ESDCFileResponseDTO } from "../../route-controllers/esdc-integration/models/esdc-model";
-import { ECertDisbursementSchedule } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
