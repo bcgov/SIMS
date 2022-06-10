@@ -176,7 +176,11 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       OfferingIntensity.fullTime,
     );
   }
-
+  /**
+   * Populate Full-Time awards from the disbursementValues
+   * @param disbursementValues
+   * @returns awards
+   */
   populateAwards(disbursementValues: DisbursementValue[]): Award[] {
     return disbursementValues
       .filter(
