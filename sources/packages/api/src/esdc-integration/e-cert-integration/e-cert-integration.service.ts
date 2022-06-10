@@ -5,13 +5,9 @@ import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import { Award, ECertRecord } from "./models/e-cert-integration-model";
-import {
-  DisbursementSchedule,
-  OfferingIntensity,
-} from "../../database/entities";
+import { DisbursementValue, OfferingIntensity } from "../../database/entities";
 import { ECertPartTimeResponseRecord } from "./e-cert-part-time-integration/e-cert-files/e-cert-response-record";
 import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
-import { getFieldOfStudyFromCIPCode } from "../../utilities";
 
 @Injectable()
 export abstract class ECertIntegrationService extends SFTPIntegrationBase<
@@ -119,21 +115,12 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
   }
 
   /**
-   * Create the e-Cert record with the information needed to generate the
-   * entire record to be sent to ESDC.
-   * @param disbursement disbursement that contains all information to
-   * generate the record.
-   * @returns e-Cert record.
+   * Populate awards from the disbursementValues
+   * @param disbursementValues
+   * @returns awards
    */
-  createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
-    const now = new Date();
-    const application = disbursement.studentAssessment.application;
-    const addressInfo = application.student.contactInfo.address;
-    const offering = application.currentAssessment.offering;
-    const fieldOfStudy = getFieldOfStudyFromCIPCode(
-      offering.educationProgram.cipCode,
-    );
-    const awards = disbursement.disbursementValues.map(
+  populateAwards(disbursementValues: DisbursementValue[]): Award[] {
+    return disbursementValues.map(
       (disbursementValue) =>
         ({
           valueType: disbursementValue.valueType,
@@ -141,38 +128,5 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
           valueAmount: disbursementValue.valueAmount,
         } as Award),
     );
-
-    return {
-      sin: application.student.sin,
-      courseLoad: offering.courseLoad,
-      applicationNumber: application.applicationNumber,
-      documentNumber: disbursement.documentNumber,
-      disbursementDate: disbursement.disbursementDate,
-      documentProducedDate: now,
-      negotiatedExpiryDate: disbursement.negotiatedExpiryDate,
-      schoolAmount: disbursement.tuitionRemittanceRequestedAmount,
-      educationalStartDate: offering.studyStartDate,
-      educationalEndDate: offering.studyEndDate,
-      federalInstitutionCode: offering.institutionLocation.institutionCode,
-      weeksOfStudy: application.currentAssessment.assessmentData.weeks,
-      fieldOfStudy,
-      yearOfStudy: offering.yearOfStudy,
-      completionYears: offering.educationProgram.completionYears,
-      enrollmentConfirmationDate: disbursement.coeUpdatedAt,
-      dateOfBirth: application.student.birthDate,
-      lastName: application.student.user.lastName,
-      firstName: application.student.user.firstName,
-      addressLine1: addressInfo.addressLine1,
-      addressLine2: addressInfo.addressLine2,
-      city: addressInfo.city,
-      country: addressInfo.country,
-      provinceState: addressInfo.provinceState,
-      postalCode: addressInfo.postalCode,
-      email: application.student.user.email,
-      gender: application.student.gender,
-      maritalStatus: application.relationshipStatus,
-      studentNumber: application.studentNumber,
-      awards,
-    } as ECertRecord;
   }
 }

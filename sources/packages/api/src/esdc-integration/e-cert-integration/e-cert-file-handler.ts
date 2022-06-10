@@ -16,10 +16,14 @@ import {
   ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
   ECERT_PART_TIME_FEEDBACK_FILE_CODE,
   getISODateOnlyString,
+  getFieldOfStudyFromCIPCode,
 } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
-import { ECertUploadResult } from "./models/e-cert-integration-model";
+import {
+  ECertRecord,
+  ECertUploadResult,
+} from "./models/e-cert-integration-model";
 import { Injectable } from "@nestjs/common";
 import { ECertIntegrationService } from "./e-cert-integration.service";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
@@ -130,7 +134,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
     );
     const disbursementRecords = disbursements.map((disbursement) => {
-      return eCertIntegrationService.createECertRecord(disbursement);
+      return this.createECertRecord(disbursement, eCertIntegrationService);
     });
 
     // Fetches the disbursements ids, for further update in the DB.
@@ -189,6 +193,62 @@ export class ECertFileHandler extends ESDCFileHandler {
       },
     );
     return uploadResult;
+  }
+
+  /**
+   * Create the e-Cert record with the information needed to generate the
+   * entire record to be sent to ESDC.
+   * @param disbursement disbursement that contains all information to
+   * generate the record.
+   * @returns e-Cert record.
+   */
+  createECertRecord(
+    disbursement: DisbursementSchedule,
+    eCertIntegrationService: ECertIntegrationService,
+  ): ECertRecord {
+    const now = new Date();
+    const application = disbursement.studentAssessment.application;
+    const addressInfo = application.student.contactInfo.address;
+    const offering = application.currentAssessment.offering;
+    const fieldOfStudy = getFieldOfStudyFromCIPCode(
+      offering.educationProgram.cipCode,
+    );
+    const awards = eCertIntegrationService.populateAwards(
+      disbursement.disbursementValues,
+    );
+
+    return {
+      sin: application.student.sin,
+      courseLoad: offering.courseLoad,
+      applicationNumber: application.applicationNumber,
+      documentNumber: disbursement.documentNumber,
+      disbursementDate: disbursement.disbursementDate,
+      documentProducedDate: now,
+      negotiatedExpiryDate: disbursement.negotiatedExpiryDate,
+      schoolAmount: disbursement.tuitionRemittanceRequestedAmount,
+      educationalStartDate: offering.studyStartDate,
+      educationalEndDate: offering.studyEndDate,
+      federalInstitutionCode: offering.institutionLocation.institutionCode,
+      weeksOfStudy: application.currentAssessment.assessmentData.weeks,
+      fieldOfStudy,
+      yearOfStudy: offering.yearOfStudy,
+      completionYears: offering.educationProgram.completionYears,
+      enrollmentConfirmationDate: disbursement.coeUpdatedAt,
+      dateOfBirth: application.student.birthDate,
+      lastName: application.student.user.lastName,
+      firstName: application.student.user.firstName,
+      addressLine1: addressInfo.addressLine1,
+      addressLine2: addressInfo.addressLine2,
+      city: addressInfo.city,
+      country: addressInfo.country,
+      provinceState: addressInfo.provinceState,
+      postalCode: addressInfo.postalCode,
+      email: application.student.user.email,
+      gender: application.student.gender,
+      maritalStatus: application.relationshipStatus,
+      studentNumber: application.studentNumber,
+      awards,
+    } as ECertRecord;
   }
 
   /**
