@@ -193,21 +193,22 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
     const fieldOfStudy = getFieldOfStudyFromCIPCode(
       offering.educationProgram.cipCode,
     );
-    const awards = [];
-    disbursement.disbursementValues.forEach((disbursementValue) => {
-      if (disbursement.stopFullTimeBCFunding) {
-        if (disbursementValue.valueType === DisbursementValueType.BCLoan) {
-          disbursementValue.valueAmount = "0";
-        }
-        if (disbursementValue.valueType !== DisbursementValueType.BCGrant) {
-          awards.push({
+    const awards = disbursement.disbursementValues
+      .filter(
+        (disbursementValue) =>
+          disbursementValue.valueType !== DisbursementValueType.BCGrant,
+      )
+      .map(
+        (disbursementValue) =>
+          ({
             valueType: disbursementValue.valueType,
             valueCode: disbursementValue.valueCode,
-            valueAmount: disbursementValue.valueAmount,
-          } as Award);
-        }
-      }
-    });
+            valueAmount:
+              disbursementValue.valueType === DisbursementValueType.BCLoan
+                ? 0
+                : disbursementValue.valueAmount,
+          } as Award),
+      );
 
     return {
       sin: application.student.sin,
