@@ -37,20 +37,31 @@ function searchExceptions(payload) {
         // Check if the same exception was already added, for instance for the
         // cases that the exceptions are added to an array of items like dependents.
         if (applicationExceptions.indexOf(fieldName) === -1) {
-          applicationExceptions.push({ exceptionName: fieldName });
+          applicationExceptions.push(fieldName);
         }
       }
     }
   }
 }
 
+/**
+ * Converts the array of exceptions to the payload
+ * that must be sent to the API.
+ * @param fieldName field name that identifies the exception.
+ * @returns payload object.
+ */
+function arrayToPayload(fieldName) {
+  return { exceptionName: fieldName };
+}
+
 // Execute the code.
 searchExceptions(dynamicData);
 // Prepare the payload that will be used to call the SIMS API
 // and create the application exceptions, if needed.
+var applicationExceptionsPayload = applicationExceptions.map(arrayToPayload);
 execution.setVariable(
   "applicationExceptions",
-  JSON.stringify(applicationExceptions)
+  JSON.stringify(applicationExceptionsPayload)
 );
 // Set hasApplicationExceptions for easy verification on the workflow decisions.
 execution.setVariable(
