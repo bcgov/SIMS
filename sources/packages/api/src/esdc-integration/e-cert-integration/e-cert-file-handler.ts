@@ -15,13 +15,12 @@ import {
   ECERT_PART_TIME_FILE_CODE,
   ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
   ECERT_PART_TIME_FEEDBACK_FILE_CODE,
-  getFieldOfStudyFromCIPCode,
   getISODateOnlyString,
+  getFieldOfStudyFromCIPCode,
 } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
-  Award,
   ECertRecord,
   ECertUploadResult,
 } from "./models/e-cert-integration-model";
@@ -135,7 +134,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
     );
     const disbursementRecords = disbursements.map((disbursement) => {
-      return this.createECertRecord(disbursement);
+      return this.createECertRecord(disbursement, eCertIntegrationService);
     });
 
     // Fetches the disbursements ids, for further update in the DB.
@@ -203,7 +202,10 @@ export class ECertFileHandler extends ESDCFileHandler {
    * generate the record.
    * @returns e-Cert record.
    */
-  private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
+  createECertRecord(
+    disbursement: DisbursementSchedule,
+    eCertIntegrationService: ECertIntegrationService,
+  ): ECertRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const addressInfo = application.student.contactInfo.address;
@@ -211,13 +213,8 @@ export class ECertFileHandler extends ESDCFileHandler {
     const fieldOfStudy = getFieldOfStudyFromCIPCode(
       offering.educationProgram.cipCode,
     );
-    const awards = disbursement.disbursementValues.map(
-      (disbursementValue) =>
-        ({
-          valueType: disbursementValue.valueType,
-          valueCode: disbursementValue.valueCode,
-          valueAmount: disbursementValue.valueAmount,
-        } as Award),
+    const awards = eCertIntegrationService.populateAwards(
+      disbursement.disbursementValues,
     );
 
     return {
