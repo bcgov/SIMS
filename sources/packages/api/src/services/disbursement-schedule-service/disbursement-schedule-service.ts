@@ -225,18 +225,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "studentAssessment.id",
       ])
       .addSelect(
-        (query) =>
-          query
-            .select("1")
-            .from(StudentRestriction, "studentRestrictions")
-            .innerJoin("studentRestrictions.restriction", "restrictions")
-            .innerJoin("studentRestrictions.student", "restrictionStudent")
-            .where("studentRestrictions.isActive = true")
-            .andWhere("restrictionStudent.id = student.id")
-            .andWhere("restrictions.actionType && :stopFullTimeBCFunding", {
-              stopFullTimeBCFunding,
-            }),
-        "stopFullTimeBCFundingStatus",
+        `CASE
+            WHEN EXISTS(${this.studentRestrictionService
+              .getExistsBlockRestrictionQuery(false, false, true)
+              .getSql()}) THEN true
+            ELSE false
+        END`,
+        "stopFullTimeBCFunding",
       )
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.application", "application")
@@ -269,12 +264,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .andWhere("disbursement.coeStatus = :coeStatus", {
         coeStatus: COEStatus.completed,
       })
+      .setParameter("restrictionActionType", stopFullTimeBCFunding)
       // 'restrictionActions' parameter used inside sub-query.
       .setParameter("restrictionActions", possibleRestrictionActions)
       .getRawAndEntities();
     return mapFromRawAndEntities<ECertDisbursementSchedule>(
       queryResult,
-      "stopFullTimeBCFundingStatus",
+      "stopFullTimeBCFunding",
     );
   }
 

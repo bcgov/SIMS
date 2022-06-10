@@ -137,7 +137,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
     );
     const disbursementRecords = disbursements.map((disbursement) => {
-      return this.createECertRecord(disbursement, offeringIntensity);
+      return eCertIntegrationService.createECertRecord(disbursement);
     });
 
     // Fetches the disbursements ids, for further update in the DB.
@@ -196,77 +196,6 @@ export class ECertFileHandler extends ESDCFileHandler {
       },
     );
     return uploadResult;
-  }
-
-  /**
-   * Create the e-Cert record with the information needed to generate the
-   * entire record to be sent to ESDC.
-   * @param disbursement disbursement that contains all information to
-   * generate the record.
-   * @returns e-Cert record.
-   */
-  private createECertRecord(
-    disbursement: ECertDisbursementSchedule,
-    offeringIntensity: OfferingIntensity,
-  ): ECertRecord {
-    const now = new Date();
-    const application = disbursement.studentAssessment.application;
-    const addressInfo = application.student.contactInfo.address;
-    const offering = application.currentAssessment.offering;
-    const fieldOfStudy = getFieldOfStudyFromCIPCode(
-      offering.educationProgram.cipCode,
-    );
-    const awards = [];
-    disbursement.disbursementValues.forEach((disbursementValue) => {
-      if (
-        disbursement.stopFullTimeBCFunding &&
-        OfferingIntensity.fullTime === offeringIntensity
-      ) {
-        if (disbursementValue.valueType === DisbursementValueType.BCLoan) {
-          disbursementValue.valueAmount = "0";
-        }
-        if (disbursementValue.valueType !== DisbursementValueType.BCGrant) {
-          awards.push({
-            valueType: disbursementValue.valueType,
-            valueCode: disbursementValue.valueCode,
-            valueAmount: disbursementValue.valueAmount,
-          } as Award);
-        }
-      }
-    });
-
-    return {
-      sin: application.student.sin,
-      courseLoad: offering.courseLoad,
-      applicationNumber: application.applicationNumber,
-      documentNumber: disbursement.documentNumber,
-      disbursementDate: disbursement.disbursementDate,
-      documentProducedDate: now,
-      negotiatedExpiryDate: disbursement.negotiatedExpiryDate,
-      schoolAmount: disbursement.tuitionRemittanceRequestedAmount,
-      educationalStartDate: offering.studyStartDate,
-      educationalEndDate: offering.studyEndDate,
-      federalInstitutionCode: offering.institutionLocation.institutionCode,
-      weeksOfStudy: application.currentAssessment.assessmentData.weeks,
-      fieldOfStudy,
-      yearOfStudy: offering.yearOfStudy,
-      completionYears: offering.educationProgram.completionYears,
-      enrollmentConfirmationDate: disbursement.coeUpdatedAt,
-      dateOfBirth: application.student.birthDate,
-      lastName: application.student.user.lastName,
-      firstName: application.student.user.firstName,
-      addressLine1: addressInfo.addressLine1,
-      addressLine2: addressInfo.addressLine2,
-      city: addressInfo.city,
-      country: addressInfo.country,
-      provinceState: addressInfo.provinceState,
-      postalCode: addressInfo.postalCode,
-      email: application.student.user.email,
-      gender: application.student.gender,
-      maritalStatus: application.relationshipStatus,
-      studentNumber: application.studentNumber,
-      awards,
-    } as ECertRecord;
   }
 
   /**

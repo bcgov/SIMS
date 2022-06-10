@@ -54,6 +54,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   getExistsBlockRestrictionQuery(
     checkAll = false,
     isStudentId = false,
+    restrictionActionType = false,
   ): SelectQueryBuilder<StudentRestriction> {
     const query = this.repo
       .createQueryBuilder("studentRestrictions")
@@ -67,11 +68,16 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       query.andWhere("restrictionStudent.id = student.id");
     }
 
-    if (checkAll) {
-      query.andWhere("restrictions.actionType @> :restrictionActions");
+    if (restrictionActionType) {
+      query.andWhere("restrictions.actionType && :restrictionActionType");
     } else {
-      query.andWhere("restrictions.actionType && :restrictionActions");
+      if (checkAll) {
+        query.andWhere("restrictions.actionType @> :restrictionActions");
+      } else {
+        query.andWhere("restrictions.actionType && :restrictionActions");
+      }
     }
+
     query.limit(1);
     return query;
   }

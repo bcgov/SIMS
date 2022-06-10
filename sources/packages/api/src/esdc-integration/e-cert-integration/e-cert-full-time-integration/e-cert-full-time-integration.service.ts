@@ -3,6 +3,7 @@ import { ConfigService, SshService } from "../../../services";
 import {
   combineDecimalPlaces,
   getDisbursementValuesByType,
+  getFieldOfStudyFromCIPCode,
   getGenderCode,
   getMaritalStatusCode,
   getTotalDisbursementAmount,
@@ -24,6 +25,7 @@ import {
 } from "../../../database/entities";
 import { ECertIntegrationService } from "../e-cert-integration.service";
 import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
+import { ECertDisbursementSchedule } from "../../../services/disbursement-schedule-service/disbursement-schedule.models";
 
 /**
  * Manages the file content generation and methods to
@@ -174,5 +176,70 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       this.eCertFullTimeFileFooter,
       OfferingIntensity.fullTime,
     );
+  }
+
+  /**
+   * Create the Full-Time e-Cert record with the information needed to generate the
+   * entire record to be sent to ESDC.
+   * @param disbursement disbursement that contains all information to
+   * generate the record.
+   * @returns e-Cert record.
+   */
+  createECertRecord(disbursement: ECertDisbursementSchedule): ECertRecord {
+    const now = new Date();
+    const application = disbursement.studentAssessment.application;
+    const addressInfo = application.student.contactInfo.address;
+    const offering = application.currentAssessment.offering;
+    const fieldOfStudy = getFieldOfStudyFromCIPCode(
+      offering.educationProgram.cipCode,
+    );
+    const awards = [];
+    disbursement.disbursementValues.forEach((disbursementValue) => {
+      if (disbursement.stopFullTimeBCFunding) {
+        if (disbursementValue.valueType === DisbursementValueType.BCLoan) {
+          disbursementValue.valueAmount = "0";
+        }
+        if (disbursementValue.valueType !== DisbursementValueType.BCGrant) {
+          awards.push({
+            valueType: disbursementValue.valueType,
+            valueCode: disbursementValue.valueCode,
+            valueAmount: disbursementValue.valueAmount,
+          } as Award);
+        }
+      }
+    });
+
+    return {
+      sin: application.student.sin,
+      courseLoad: offering.courseLoad,
+      applicationNumber: application.applicationNumber,
+      documentNumber: disbursement.documentNumber,
+      disbursementDate: disbursement.disbursementDate,
+      documentProducedDate: now,
+      negotiatedExpiryDate: disbursement.negotiatedExpiryDate,
+      schoolAmount: disbursement.tuitionRemittanceRequestedAmount,
+      educationalStartDate: offering.studyStartDate,
+      educationalEndDate: offering.studyEndDate,
+      federalInstitutionCode: offering.institutionLocation.institutionCode,
+      weeksOfStudy: application.currentAssessment.assessmentData.weeks,
+      fieldOfStudy,
+      yearOfStudy: offering.yearOfStudy,
+      completionYears: offering.educationProgram.completionYears,
+      enrollmentConfirmationDate: disbursement.coeUpdatedAt,
+      dateOfBirth: application.student.birthDate,
+      lastName: application.student.user.lastName,
+      firstName: application.student.user.firstName,
+      addressLine1: addressInfo.addressLine1,
+      addressLine2: addressInfo.addressLine2,
+      city: addressInfo.city,
+      country: addressInfo.country,
+      provinceState: addressInfo.provinceState,
+      postalCode: addressInfo.postalCode,
+      email: application.student.user.email,
+      gender: application.student.gender,
+      maritalStatus: application.relationshipStatus,
+      studentNumber: application.studentNumber,
+      awards,
+    } as ECertRecord;
   }
 }
