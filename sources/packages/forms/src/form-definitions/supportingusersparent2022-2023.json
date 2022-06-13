@@ -1,8 +1,6 @@
 {
   "type": "form",
-  "tags": [
-    "common"
-  ],
+  "tags": ["common"],
   "owner": "andrew.signori@gov.bc.ca",
   "components": [
     {
@@ -2143,9 +2141,7 @@
                   "tableView": false,
                   "modalEdit": false,
                   "multiple": false,
-                  "defaultValue": [
-                    null
-                  ],
+                  "defaultValue": [null],
                   "persistent": true,
                   "currency": "CAD",
                   "inputFormat": "plain",

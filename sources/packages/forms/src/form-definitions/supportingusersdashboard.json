@@ -1,8 +1,6 @@
 {
   "type": "form",
-  "tags": [
-    "common"
-  ],
+  "tags": ["common"],
   "owner": "andrew.signori@gov.bc.ca",
   "components": [
     {
