@@ -21,6 +21,7 @@ import {
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
+  Award,
   ECertRecord,
   ECertUploadResult,
 } from "./models/e-cert-integration-model";
@@ -32,6 +33,7 @@ import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-ce
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ESDCIntegrationConfig } from "../../types";
 import { ESDCFileResponseDTO } from "../../route-controllers/esdc-integration/models/esdc-model";
+import { ECertDisbursementSchedule } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
@@ -134,7 +136,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
     );
     const disbursementRecords = disbursements.map((disbursement) => {
-      return this.createECertRecord(disbursement, eCertIntegrationService);
+      return this.createECertRecord(disbursement);
     });
 
     // Fetches the disbursements ids, for further update in the DB.
@@ -202,10 +204,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * generate the record.
    * @returns e-Cert record.
    */
-  createECertRecord(
-    disbursement: DisbursementSchedule,
-    eCertIntegrationService: ECertIntegrationService,
-  ): ECertRecord {
+  createECertRecord(disbursement: ECertDisbursementSchedule): ECertRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const addressInfo = application.student.contactInfo.address;
@@ -213,12 +212,18 @@ export class ECertFileHandler extends ESDCFileHandler {
     const fieldOfStudy = getFieldOfStudyFromCIPCode(
       offering.educationProgram.cipCode,
     );
-    const awards = eCertIntegrationService.populateAwards(
-      disbursement.disbursementValues,
+    const awards = disbursement.disbursementValues.map(
+      (disbursementValue) =>
+        ({
+          valueType: disbursementValue.valueType,
+          valueCode: disbursementValue.valueCode,
+          valueAmount: disbursementValue.valueAmount,
+        } as Award),
     );
 
     return {
       sin: application.student.sin,
+      stopFullTimeBCFunding: disbursement.stopFullTimeBCFunding,
       courseLoad: offering.courseLoad,
       applicationNumber: application.applicationNumber,
       documentNumber: disbursement.documentNumber,

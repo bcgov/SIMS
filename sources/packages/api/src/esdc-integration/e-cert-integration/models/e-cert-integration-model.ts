@@ -46,6 +46,7 @@ export interface ECertRecord {
   maritalStatus: RelationshipStatus;
   studentNumber: string;
   awards: Award[];
+  stopFullTimeBCFunding: boolean;
   courseLoad?: number;
 }
 
