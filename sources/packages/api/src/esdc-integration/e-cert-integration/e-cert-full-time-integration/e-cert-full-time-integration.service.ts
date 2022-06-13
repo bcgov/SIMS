@@ -19,7 +19,6 @@ import { ECertFullTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertFullTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFullTimeFileRecord } from "./e-cert-files/e-cert-file-record";
 import {
-  DisbursementValue,
   DisbursementValueType,
   OfferingIntensity,
 } from "../../../database/entities";
@@ -63,10 +62,20 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
     // Detail records
 
     // Calculated values.
-
+    const bcAwards = [
+      DisbursementValueType.BCTotalGrant,
+      DisbursementValueType.BCLoan,
+    ];
     const fileRecords = ecertRecords.map((ecertRecord) => {
+      let filterAwards = ecertRecord.awards;
+      if (ecertRecord.stopFullTimeBCFunding) {
+        filterAwards = ecertRecord.awards.filter(
+          (disbursementValue) =>
+            !bcAwards.includes(disbursementValue.valueType),
+        );
+      }
       // ! All dollar values must be rounded to the nearest integer (0.5 rounds up)
-      const roundedAwards = ecertRecord.awards.map(
+      const roundedAwards = filterAwards.map(
         (award) =>
           ({
             valueType: award.valueType,
@@ -175,28 +184,5 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
       this.eCertFullTimeFileFooter,
       OfferingIntensity.fullTime,
     );
-  }
-  /**
-   * Populate Full-Time awards from the disbursementValues
-   * @param disbursementValues
-   * @returns awards
-   */
-  populateAwards(disbursementValues: DisbursementValue[]): Award[] {
-    return disbursementValues
-      .filter(
-        (disbursementValue) =>
-          disbursementValue.valueType !== DisbursementValueType.BCGrant,
-      )
-      .map(
-        (disbursementValue) =>
-          ({
-            valueType: disbursementValue.valueType,
-            valueCode: disbursementValue.valueCode,
-            valueAmount:
-              disbursementValue.valueType === DisbursementValueType.BCLoan
-                ? 0
-                : disbursementValue.valueAmount,
-          } as Award),
-      );
   }
 }

@@ -4,8 +4,8 @@ import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
-import { Award, ECertRecord } from "./models/e-cert-integration-model";
-import { DisbursementValue, OfferingIntensity } from "../../database/entities";
+import { ECertRecord } from "./models/e-cert-integration-model";
+import { OfferingIntensity } from "../../database/entities";
 import { ECertPartTimeResponseRecord } from "./e-cert-part-time-integration/e-cert-files/e-cert-response-record";
 import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 
@@ -112,21 +112,5 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
       );
     }
     return feedbackRecords;
-  }
-
-  /**
-   * Populate awards from the disbursementValues
-   * @param disbursementValues
-   * @returns awards
-   */
-  populateAwards(disbursementValues: DisbursementValue[]): Award[] {
-    return disbursementValues.map(
-      (disbursementValue) =>
-        ({
-          valueType: disbursementValue.valueType,
-          valueCode: disbursementValue.valueCode,
-          valueAmount: disbursementValue.valueAmount,
-        } as Award),
-    );
   }
 }
