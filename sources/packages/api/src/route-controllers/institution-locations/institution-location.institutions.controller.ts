@@ -7,13 +7,11 @@ import {
   Param,
   Patch,
   Post,
-  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiTags,
-  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -25,22 +23,16 @@ import {
 } from "../../auth/decorators";
 import {
   ApplicationService,
-  APPLICATION_NOT_FOUND,
-  ASSESSMENT_ALREADY_IN_PROGRESS,
   FormService,
   InstitutionLocationService,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-  StudentAssessmentService,
-  StudentScholasticStandingsService,
 } from "../../services";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import { ClientTypeBaseRoute } from "../../types";
 import {
   dateString,
   getISODateOnlyString,
   deliveryMethod,
   credentialTypeToDisplay,
   getUserFullName,
-  CustomNamedError,
 } from "../../utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
@@ -52,11 +44,9 @@ import {
   InstitutionLocationPrimaryContactAPIInDTO,
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationDetailsAPIOutDTO,
-  ScholasticStandingAPIInDTO,
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
-import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 
 /**
  * Institution location controller for institutions Client.
@@ -69,8 +59,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
-    private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
-    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super();
   }
@@ -238,67 +226,5 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       applicationOfferingMandatoryFess: offering.mandatoryFees,
       applicationOfferingExceptionalExpenses: offering.exceptionalExpenses,
     };
-  }
-
-  /**
-   * Save scholastic standing and create new assessment.
-   * @param locationId location id to check whether the requested user and the requested application has the permission to this location.
-   * @param applicationId application id.
-   * @UserToken institution user token
-   * @param payload Scholastic Standing payload.
-   */
-  @ApiBadRequestResponse({ description: "Invalid form data." })
-  @ApiUnprocessableEntityResponse({
-    description:
-      "Application not found or invalid application or invalid" +
-      " application status or another assessment already in progress.",
-  })
-  @HasLocationAccess("locationId")
-  @Post(":locationId/application/:applicationId/scholastic-standing")
-  async saveScholasticStanding(
-    @Param("locationId") locationId: number,
-    @Param("applicationId") applicationId: number,
-    @Body() payload: ScholasticStandingAPIInDTO,
-    @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<void> {
-    try {
-      const submissionResult = await this.formService.dryRunSubmission(
-        FormNames.ReportScholasticStandingChange,
-        payload.data,
-      );
-
-      if (!submissionResult.valid) {
-        throw new BadRequestException("Invalid submission.");
-      }
-      const scholasticStanding =
-        await this.studentScholasticStandingsService.processScholasticStanding(
-          locationId,
-          applicationId,
-          userToken.userId,
-          submissionResult.data.data,
-        );
-
-      // Start assessment.
-      if (scholasticStanding.studentAssessment) {
-        await this.studentAssessmentService.startAssessment(
-          scholasticStanding.studentAssessment.id,
-        );
-      }
-    } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          case APPLICATION_NOT_FOUND:
-          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-          case ASSESSMENT_ALREADY_IN_PROGRESS:
-          case APPLICATION_CHANGE_NOT_ELIGIBLE:
-            throw new UnprocessableEntityException(
-              new ApiProcessError(error.message, error.name),
-            );
-          default:
-            throw error;
-        }
-      }
-      throw error;
-    }
   }
 }

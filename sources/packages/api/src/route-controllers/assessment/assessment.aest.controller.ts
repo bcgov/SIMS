@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -8,6 +8,7 @@ import {
   ApplicationExceptionService,
   StudentAppealService,
   StudentAssessmentService,
+  StudentScholasticStandingsService,
 } from "../../services";
 import {
   AssessmentHistorySummaryAPIOutDTO,
@@ -21,7 +22,11 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AssessmentControllerService } from "./assessment.controller.service";
-import { ApplicationExceptionStatus } from "../../database/entities";
+import {
+  ApplicationExceptionStatus,
+  AssessmentTriggerType,
+} from "../../database/entities";
+import { StudentAssessmentStatus } from "../../services/student-assessment/student-assessment.models";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -33,6 +38,7 @@ export class AssessmentAESTController extends BaseController {
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly assessmentControllerService: AssessmentControllerService,
     private readonly applicationExceptionService: ApplicationExceptionService,
+    private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
   ) {
     super();
   }
@@ -87,23 +93,40 @@ export class AssessmentAESTController extends BaseController {
    */
   @Get("application/:applicationId/history")
   async getAssessmentHistorySummary(
-    @Param("applicationId") applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
-    const assessments =
-      await this.studentAssessmentService.assessmentHistorySummary(
+    const [assessments, unsuccessfulScholasticStanding] = await Promise.all([
+      this.studentAssessmentService.assessmentHistorySummary(applicationId),
+      this.studentScholasticStandingsService.getUnsuccessfulScholasticStandings(
         applicationId,
-      );
+      ),
+    ]);
+    const history: AssessmentHistorySummaryAPIOutDTO[] = assessments.map(
+      (assessment) => ({
+        assessmentId: assessment.id,
+        submittedDate: assessment.submittedDate,
+        triggerType: assessment.triggerType,
+        assessmentDate: assessment.assessmentDate,
+        status: assessment.status,
+        studentAppealId: assessment.studentAppeal?.id,
+        applicationExceptionId: assessment.application.applicationException?.id,
+        studentScholasticStandingId: assessment.studentScholasticStanding?.id,
+      }),
+    );
+    // Add unsuccessful scholastic standings to the top of the list, if present.
+    // For unsuccessful scholastic standing, status is always "completed" and
+    // "createdAt" is "submittedDate".
+    if (unsuccessfulScholasticStanding) {
+      history.unshift({
+        submittedDate: unsuccessfulScholasticStanding.createdAt,
+        triggerType: AssessmentTriggerType.ScholasticStandingChange,
+        status: StudentAssessmentStatus.Completed,
+        studentScholasticStandingId: unsuccessfulScholasticStanding.id,
+        unsuccessfulWeeks: true,
+      });
+    }
 
-    return assessments.map((assessment) => ({
-      assessmentId: assessment.id,
-      submittedDate: assessment.submittedDate,
-      triggerType: assessment.triggerType,
-      assessmentDate: assessment.assessmentDate,
-      status: assessment.status,
-      studentAppealId: assessment.studentAppeal?.id,
-      applicationExceptionId: assessment.application.applicationException?.id,
-      studentScholasticStandingId: assessment.studentScholasticStanding?.id,
-    }));
+    return history;
   }
 
   /**

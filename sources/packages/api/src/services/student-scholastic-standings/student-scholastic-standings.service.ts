@@ -412,4 +412,71 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .getRawOne();
     return +(query?.sum ?? 0);
   }
+
+  /**
+   * Get unsuccessful scholastic standing of a student application.
+   * @param applicationId application id.
+   * @return student scholastic standing.
+   */
+  async getUnsuccessfulScholasticStandings(
+    applicationId: number,
+  ): Promise<StudentScholasticStanding> {
+    return this.repo
+      .createQueryBuilder("studentScholasticStanding")
+      .select([
+        "studentScholasticStanding.id",
+        "studentScholasticStanding.createdAt",
+      ])
+      .innerJoin("studentScholasticStanding.application", "application")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("studentScholasticStanding.unsuccessfulWeeks IS NOT NULL")
+      .getOne();
+  }
+  /**
+   * Get scholastic standing submission details.
+   * @param scholasticStandingId scholastic standing id.
+   * @return student scholastic standing.
+   */
+  async getScholasticStanding(
+    scholasticStandingId: number,
+  ): Promise<StudentScholasticStanding> {
+    return this.repo
+      .createQueryBuilder("studentScholasticStanding")
+      .select([
+        "studentScholasticStanding.id",
+        "studentScholasticStanding.submittedData",
+        "application.applicationStatus",
+        "application.applicationNumber",
+        "offering.offeringIntensity",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "institutionLocation.name",
+        "student.id",
+        "application.id",
+        "user.firstName",
+        "user.lastName",
+        "offering.name",
+        "educationProgram.description",
+        "educationProgram.name",
+        "educationProgram.credentialType",
+        "educationProgram.deliveredOnline",
+        "educationProgram.deliveredOnSite",
+        "offering.offeringDelivered",
+        "offering.studyBreaks",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
+        "offering.mandatoryFees",
+        "offering.exceptionalExpenses",
+      ])
+      .innerJoin("studentScholasticStanding.referenceOffering", "offering")
+      .innerJoin("offering.institutionLocation", "institutionLocation")
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin("studentScholasticStanding.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("studentScholasticStanding.id = :scholasticStandingId", {
+        scholasticStandingId,
+      })
+      .getOne();
+  }
 }

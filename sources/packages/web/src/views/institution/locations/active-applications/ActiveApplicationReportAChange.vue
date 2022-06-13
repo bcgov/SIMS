@@ -32,6 +32,7 @@ import {
 import { useToastMessage } from "@/composables";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
+import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 
 export default {
   props: {
@@ -86,7 +87,7 @@ export default {
 
     const submit = async (data: ScholasticStandingDataAPIInDTO) => {
       try {
-        await InstitutionService.shared.saveScholasticStanding(
+        await ScholasticStandingService.shared.saveScholasticStanding(
           props.applicationId,
           props.locationId,
           data,

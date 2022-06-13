@@ -21,14 +21,16 @@ export class RequestAssessmentSummaryAPIOutDTO {
 }
 
 export class AssessmentHistorySummaryAPIOutDTO {
-  assessmentId: number;
+  assessmentId?: number;
   submittedDate: Date;
   triggerType: AssessmentTriggerType;
-  assessmentDate: Date;
+  assessmentDate?: Date;
   status: StudentAssessmentStatus;
   studentAppealId?: number;
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;
+  // This flag decides, the row is unsuccessful weeks or not.
+  unsuccessfulWeeks?: boolean;
 }
 
 export class AssessmentNOAAPIOutDTO {
