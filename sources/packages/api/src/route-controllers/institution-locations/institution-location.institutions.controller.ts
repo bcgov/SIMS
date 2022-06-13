@@ -136,6 +136,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * Get all active application of a location in an institution
    * with application_status is completed.
    * @param locationId location id.
+   * @param isArchived filter for archive status of applications.
    * @param searchCriteria Search text to search active applications.
    * @param sortField Field to sort active applications.
    * @param page Current page of paginated result.
@@ -147,6 +148,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @Get(":locationId/active-applications")
   async getActiveApplications(
     @Param("locationId") locationId: number,
+    @Query("isArchived") isArchived: boolean,
     @Query(PaginationParams.SearchCriteria) searchCriteria: string,
     @Query(PaginationParams.SortField) sortField: string,
     @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
@@ -163,6 +165,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     const applications = await this.applicationService.getActiveApplications(
       locationId,
       paginationOptions,
+      isArchived,
     );
 
     return {

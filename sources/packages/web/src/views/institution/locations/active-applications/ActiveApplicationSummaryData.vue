@@ -1,28 +1,71 @@
 <template>
   <body-header
-    :title="header"
-    :subTitle="subTitle"
-    :recordsCount="disbursements.results?.length"
+    title="Applications"
+    :recordsCount="applications.results?.length"
     class="m-1"
   >
     <template #actions>
-      <InputText
-        type="text"
-        placeholder="Search name or application"
-        v-model="searchCriteria"
-        @keyup.enter="searchActiveApplications"
-      />
-      <v-btn
-        class="ml-2 primary-btn-background"
-        @click="searchActiveApplications"
-        ><font-awesome-icon :icon="['fas', 'search']" class="mr-2"
-      /></v-btn>
+      <div class="search-box-display-width">
+        <v-text-field
+          label="Search name or application #"
+          prepend-inner-icon="mdi-magnify"
+          variant="outlined"
+          v-model="searchCriteria"
+          @keyup.enter="searchActiveApplications"
+        ></v-text-field>
+      </div>
     </template>
   </body-header>
+  <br />
+  <content-group>
+    <DataTable
+      :value="applications.results"
+      :lazy="true"
+      class="p-m-4"
+      :paginator="true"
+      :rows="pageLimit"
+      :rowsPerPageOptions="rowsPerPageOptions"
+      :totalRecords="applications.count"
+      @page="pageEvent"
+      @sort="sortEvent"
+    >
+      <template #empty>
+        <p class="text-center font-weight-bold">No records found.</p>
+      </template>
+      <Column field="fullName" header="Name" :sortable="true">
+        <template #body="slotProps">
+          <span>{{ slotProps.data.fullName }}</span>
+        </template>
+      </Column>
+      <Column field="studyStartPeriod" header="Study dates">
+        <template #body="slotProps">
+          <span>
+            {{ dateString(slotProps.data.studyStartPeriod) }} -
+            {{ dateString(slotProps.data.studyEndPeriod) }}
+          </span>
+        </template></Column
+      >
+      <Column field="applicationNumber" header="Application #"></Column>
+      <Column field="applicationStatus" header="Status" :sortable="true">
+        <template #body="slotProps">
+          <COEStatusBadge :status="slotProps.data.applicationStatus" />
+        </template>
+      </Column>
+      <Column field="applicationId" header="Action">
+        <template #body="slotProps">
+          <v-btn
+            class="primary-btn-background"
+            @click="goToViewApplication(slotProps.data.applicationId)"
+            >Report a change</v-btn
+          >
+        </template>
+      </Column>
+    </DataTable>
+  </content-group>
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -33,10 +76,11 @@ import {
   DataTableSortOrder,
   DEFAULT_PAGE_NUMBER,
   PageAndSortEvent,
+  PaginatedResults,
 } from "@/types";
 import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
-const DEFAULT_SORT_FIELD = "coeStatus";
+const DEFAULT_SORT_FIELD = "applicationStatus";
 
 export default {
   props: {
@@ -48,6 +92,10 @@ export default {
       type: String,
       required: true,
     },
+    isArchived: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   setup(props: any) {
@@ -57,9 +105,13 @@ export default {
     const sortField = ref(DEFAULT_SORT_FIELD);
     const sortOrder = ref(DataTableSortOrder.ASC);
     const searchCriteria = ref();
-
     const { dateString } = useFormatters();
-    const applications = ref([] as ActiveApplicationSummaryAPIOutDTO[]);
+    const applications = ref(
+      {} as PaginatedResults<ActiveApplicationSummaryAPIOutDTO>,
+    );
+    const rowsPerPageOptions = computed(() =>
+      applications.value.results?.length > 10 ? PAGINATION_LIST : undefined,
+    );
 
     const goToApplicationView = (applicationId: number) => {
       router.push({
@@ -72,6 +124,14 @@ export default {
       applications.value =
         await InstitutionService.shared.getActiveApplicationsSummary(
           locationId,
+          {
+            page: page.value,
+            pageLimit: pageLimit.value,
+            sortField: sortField.value,
+            sortOrder: sortOrder.value,
+            searchCriteria: searchCriteria.value,
+          },
+          props.isArchived,
         );
     };
 
@@ -121,6 +181,9 @@ export default {
       pageEvent,
       sortEvent,
       searchActiveApplications,
+      pageLimit,
+      rowsPerPageOptions,
+      searchCriteria,
     };
   },
 };

@@ -684,14 +684,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Get all active applications of an institution location
-   * with application_status is completed
+   * with application status completed and respective archive status.
    * @param locationId location id .
    * @param paginationOptions
+   * @param isArchived filter for archive status of applications.
    * @returns Student Active Application list.
    */
   async getActiveApplications(
     locationId: number,
     paginationOptions: PaginationOptions,
+    isArchived: boolean,
   ): Promise<PaginatedResults<Application>> {
     // TODO: there are two similar methods to get one and many records for the same list/details getActiveApplication and getActiveApplications. Can we use only one?
     const activeApplicationQuery = this.repo
@@ -714,6 +716,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.completed,
+      })
+      .andWhere("application.isArchived = :isArchived", {
+        isArchived: isArchived,
       })
       .orderBy("application.applicationNumber", "DESC");
     if (paginationOptions.searchCriteria) {
