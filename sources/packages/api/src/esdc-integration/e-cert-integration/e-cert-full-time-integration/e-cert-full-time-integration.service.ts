@@ -185,7 +185,7 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
     return disbursementValues
       .filter(
         (disbursementValue) =>
-          disbursementValue.valueType !== DisbursementValueType.BCGrant,
+          disbursementValue.valueType !== DisbursementValueType.BCTotalGrant,
       )
       .map(
         (disbursementValue) =>
