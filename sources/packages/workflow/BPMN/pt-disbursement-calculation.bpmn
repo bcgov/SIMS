@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_08hvmk9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_08hvmk9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0">
   <bpmn:process id="pt-disbursement-calculation" name="Part Time Disbursement Calculation" isExecutable="true">
     <bpmn:startEvent id="Event_00zpz0m">
       <bpmn:outgoing>Flow_05xex8s</bpmn:outgoing>
@@ -41,7 +41,7 @@ var CSLPPayload = {
     : 0,
 };
 
-execution.setVariable("CSLPPayload", CSLPPayload);</bpmn:script>
+execution.setVariable("CSLPPayload", JSON.stringify(CSLPPayload));</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="CSGP-PDPayload" name="Prepare CSGP-PD Payload" scriptFormat="javascript">
       <bpmn:incoming>Flow_0hi9h6k</bpmn:incoming>
@@ -61,7 +61,7 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     CSGPPayload["valueAmount"] = parseFloat(csgppdGrant) ? Math.round(parseFloat(csgppdGrant) * 100) / 100 : 0;
   }
 
-execution.setVariable("CSGPPayload", CSGPPayload);</bpmn:script>
+execution.setVariable("CSGPPayload", JSON.stringify(CSGPPayload));</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="CSG-PTDEPPayload" name="Prepare CSG-PTDEP Payload" scriptFormat="javascript">
       <bpmn:incoming>Flow_0xt0x2u</bpmn:incoming>
@@ -81,7 +81,7 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     CSGDPayload["valueAmount"] = parseFloat(csgptdepGrant) ? Math.round(parseFloat(csgptdepGrant) * 100) / 100 : 0;
   }
 
-execution.setVariable("CSGDPayload", CSGDPayload);</bpmn:script>
+execution.setVariable("CSGDPayload", JSON.stringify(CSGDPayload));</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="CSG-PTPayload" name="Prepare CSG-PT Payload" scriptFormat="javascript">
       <bpmn:incoming>Flow_13u518c</bpmn:incoming>
@@ -101,7 +101,7 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     CSPTPayload["valueAmount"] = parseFloat(csgptGrant) ? Math.round(parseFloat(csgptGrant) * 100) / 100 : 0;
   }
 
-execution.setVariable("CSPTPayload", CSPTPayload);</bpmn:script>
+execution.setVariable("CSPTPayload", JSON.stringify(CSPTPayload));</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="BCAG-PTPayload" name="Prepare BCAG-PT Payload" scriptFormat="javascript">
       <bpmn:incoming>Flow_0tdbdhh</bpmn:incoming>
@@ -121,7 +121,7 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     BCAGPayload["valueAmount"] = parseFloat(bcagptGrant) ? Math.round(parseFloat(bcagptGrant) * 100) / 100 : 0;
   }
 
-execution.setVariable("BCAGPayload", BCAGPayload);</bpmn:script>
+execution.setVariable("BCAGPayload", JSON.stringify(BCAGPayload));</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="SBSDPayload" name="Prepare SBSD Payload" scriptFormat="javascript">
       <bpmn:incoming>Flow_0imib5p</bpmn:incoming>
@@ -141,7 +141,7 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     SBSDPayload["valueAmount"] = parseFloat(sbsdGrant) ? Math.round(parseFloat(sbsdGrant) * 100) / 100 : 0;
   }
 
-execution.setVariable("SBSDPayload", SBSDPayload);</bpmn:script>
+execution.setVariable("SBSDPayload", JSON.stringify(SBSDPayload));</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_05xex8s" sourceRef="Event_00zpz0m" targetRef="pt-disbursement-split" />
     <bpmn:sequenceFlow id="Flow_19h2m8h" sourceRef="CSL-PTPayload" targetRef="pt-disbursement-join" />
@@ -176,7 +176,7 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     BCSGPayload["valueAmount"] = parseFloat(sbsdGrant + bcagptGrant) ? Math.round((parseFloat(sbsdGrant + bcagptGrant)) * 100) / 100 : 0;
   }
 
-execution.setVariable("BCSGPayload", BCSGPayload);</bpmn:script>
+execution.setVariable("BCSGPayload", JSON.stringify(BCSGPayload));</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0ba1h8f" sourceRef="pt-disbursement-split" targetRef="Activity_0ye9hqh" />
     <bpmn:sequenceFlow id="Flow_16x3fbf" sourceRef="Activity_0ye9hqh" targetRef="pt-disbursement-join" />
