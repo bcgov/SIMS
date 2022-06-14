@@ -113,7 +113,7 @@ export default {
       applications.value.results?.length > 10 ? PAGINATION_LIST : undefined,
     );
 
-    const goToApplicationView = (applicationId: number) => {
+    const goToViewApplication = (applicationId: number) => {
       router.push({
         name: InstitutionRoutesConst.ACTIVE_APPLICATION_EDIT,
         params: { locationId: props.locationId, applicationId },
@@ -167,17 +167,10 @@ export default {
       await updateSummaryList(props.locationId);
     });
 
-    const getApplicationStatusColorClass = (status: string) => {
-      if (ApplicationStatus.completed === status) {
-        return "bg-success text-white";
-      }
-    };
-
     return {
       applications,
       dateString,
-      goToApplicationView,
-      getApplicationStatusColorClass,
+      goToViewApplication,
       pageEvent,
       sortEvent,
       searchActiveApplications,

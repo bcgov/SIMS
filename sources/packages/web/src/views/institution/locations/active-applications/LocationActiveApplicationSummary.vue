@@ -40,16 +40,5 @@ export default {
       required: true,
     },
   },
-  // setup(props: any) {
-  //   const router = useRouter();
-  //   const { dateString } = useFormatters();
-  //   const applications = ref([] as ActiveApplicationSummaryAPIOutDTO[]);
-  //   const goToApplicationView = (applicationId: number) => {
-  //     router.push({
-  //       name: InstitutionRoutesConst.ACTIVE_APPLICATION_EDIT,
-  //       params: { locationId: props.locationId, applicationId },
-  //     });
-  //   // };
-  // },
 };
 </script>
