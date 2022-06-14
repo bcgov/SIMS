@@ -122,7 +122,7 @@ export class AssessmentAESTController extends BaseController {
         triggerType: AssessmentTriggerType.ScholasticStandingChange,
         status: StudentAssessmentStatus.Completed,
         studentScholasticStandingId: unsuccessfulScholasticStanding.id,
-        unsuccessfulWeeks: true,
+        unsuccessfulWeek: true,
       });
     }
 

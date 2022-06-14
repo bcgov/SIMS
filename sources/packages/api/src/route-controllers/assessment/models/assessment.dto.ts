@@ -30,7 +30,7 @@ export class AssessmentHistorySummaryAPIOutDTO {
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;
   // This flag decides, the row is unsuccessful week or not.
-  unsuccessfulWeeks?: boolean;
+  unsuccessfulWeek?: boolean;
 }
 
 export class AssessmentNOAAPIOutDTO {
