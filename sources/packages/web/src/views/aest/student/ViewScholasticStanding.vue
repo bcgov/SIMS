@@ -10,7 +10,7 @@
 </template>
 <script lang="ts">
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
-import { ScholasticStandingSubmissionAPIOutDTO } from "@/services/http/dto";
+import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
 import { computed, onMounted, ref } from "vue";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -35,7 +35,7 @@ export default {
     },
   },
   setup(props: any) {
-    const initialData = ref({} as ScholasticStandingSubmissionAPIOutDTO);
+    const initialData = ref({} as ScholasticStandingSubmittedDetailsAPIOutDTO);
 
     onMounted(async () => {
       initialData.value =

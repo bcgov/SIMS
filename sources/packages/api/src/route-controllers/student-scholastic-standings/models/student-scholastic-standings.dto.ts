@@ -20,7 +20,7 @@ export class ScholasticStandingAPIInDTO {
   data: ScholasticStandingDataAPIInDTO;
 }
 
-export class ScholasticStandingSubmissionAPIOutDTO extends IntersectionType(
+export class ScholasticStandingSubmittedDetailsAPIOutDTO extends IntersectionType(
   ScholasticStandingDataAPIInDTO,
   ActiveApplicationDataAPIOutDTO,
 ) {}

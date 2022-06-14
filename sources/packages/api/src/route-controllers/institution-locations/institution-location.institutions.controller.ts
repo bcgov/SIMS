@@ -27,13 +27,7 @@ import {
   InstitutionLocationService,
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
-import {
-  dateString,
-  getISODateOnlyString,
-  deliveryMethod,
-  credentialTypeToDisplay,
-  getUserFullName,
-} from "../../utilities";
+import { getISODateOnlyString, getUserFullName } from "../../utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,

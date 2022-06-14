@@ -1,12 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { StudentScholasticStandingsService } from "../../services";
-import { ScholasticStandingSubmissionAPIOutDTO } from "./models/student-scholastic-standings.dto";
-import {
-  credentialTypeToDisplay,
-  dateString,
-  deliveryMethod,
-  getUserFullName,
-} from "../../utilities";
+import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "./models/student-scholastic-standings.dto";
 import { transformToActiveApplicationDataAPIOutDTO } from "../institution-locations/models/application.dto";
 
 /**
@@ -19,13 +13,13 @@ export class ScholasticStandingControllerService {
   ) {}
 
   /**
-   * Get Scholastic Standing submission details.
+   * Get Scholastic Standing submitted details.
    * @param scholasticStandingId scholastic standing id.
    * @returns Scholastic Standing.
    */
   async getScholasticStanding(
     scholasticStandingId: number,
-  ): Promise<ScholasticStandingSubmissionAPIOutDTO> {
+  ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
     const scholasticStanding =
       await this.studentScholasticStandingsService.getScholasticStanding(
         scholasticStandingId,

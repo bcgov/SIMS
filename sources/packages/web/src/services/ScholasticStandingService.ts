@@ -1,7 +1,7 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   ScholasticStandingDataAPIInDTO,
-  ScholasticStandingSubmissionAPIOutDTO,
+  ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "./http/dto";
 
 /**
@@ -16,13 +16,13 @@ export class ScholasticStandingService {
   }
 
   /**
-   * Get Scholastic Standing submission details.
+   * Get Scholastic Standing submitted details.
    * @param scholasticStandingId scholastic standing id.
    * @returns Scholastic Standing.
    */
   async getScholasticStanding(
     scholasticStandingId: number,
-  ): Promise<ScholasticStandingSubmissionAPIOutDTO> {
+  ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
     return ApiClient.ScholasticStandingApi.getScholasticStanding(
       scholasticStandingId,
     );

@@ -1,7 +1,7 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   ScholasticStandingDataAPIInDTO,
-  ScholasticStandingSubmissionAPIOutDTO,
+  ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "./dto";
 
 /**
@@ -9,14 +9,14 @@ import {
  */
 export class ScholasticStandingApi extends HttpBaseClient {
   /**
-   * Get Scholastic Standing submission details.
+   * Get Scholastic Standing submitted details.
    * @param scholasticStandingId scholastic standing id.
    * @returns Scholastic Standing.
    */
   async getScholasticStanding(
     scholasticStandingId: number,
-  ): Promise<ScholasticStandingSubmissionAPIOutDTO> {
-    return this.getCallTyped<ScholasticStandingSubmissionAPIOutDTO>(
+  ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
+    return this.getCallTyped<ScholasticStandingSubmittedDetailsAPIOutDTO>(
       this.addClientRoot(`scholastic-standing/${scholasticStandingId}`),
     );
   }

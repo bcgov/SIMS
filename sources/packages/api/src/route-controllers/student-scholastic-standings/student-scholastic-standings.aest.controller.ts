@@ -5,7 +5,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
-import { ScholasticStandingSubmissionAPIOutDTO } from "./models/student-scholastic-standings.dto";
+import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "./models/student-scholastic-standings.dto";
 
 import { ScholasticStandingControllerService } from "./student-scholastic-standings.controller.service";
 
@@ -24,7 +24,7 @@ export class ScholasticStandingAESTController extends BaseController {
   }
 
   /**
-   * Get Scholastic Standing submission details.
+   * Get Scholastic Standing submitted details.
    * @param scholasticStandingId scholastic standing id.
    * @returns Scholastic Standing.
    */
@@ -34,7 +34,7 @@ export class ScholasticStandingAESTController extends BaseController {
   })
   async getScholasticStanding(
     @Param("scholasticStandingId", ParseIntPipe) scholasticStandingId: number,
-  ): Promise<ScholasticStandingSubmissionAPIOutDTO> {
+  ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
     return this.scholasticStandingControllerService.getScholasticStanding(
       scholasticStandingId,
     );

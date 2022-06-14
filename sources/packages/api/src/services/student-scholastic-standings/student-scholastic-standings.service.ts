@@ -434,7 +434,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * Get scholastic standing submission details.
+   * Get scholastic standing submitted details.
    * @param scholasticStandingId scholastic standing id.
    * @return student scholastic standing.
    */

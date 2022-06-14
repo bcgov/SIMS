@@ -113,7 +113,7 @@ export class AssessmentAESTController extends BaseController {
         studentScholasticStandingId: assessment.studentScholasticStanding?.id,
       }),
     );
-    // Add unsuccessful scholastic standings to the top of the list, if present.
+    // Add unsuccessful scholastic standing to the top of the list, if present.
     // For unsuccessful scholastic standing, status is always "completed" and
     // "createdAt" is "submittedDate".
     if (unsuccessfulScholasticStanding) {

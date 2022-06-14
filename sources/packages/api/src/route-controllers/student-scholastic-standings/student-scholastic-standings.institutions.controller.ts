@@ -48,6 +48,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   ) {
     super();
   }
+
   /**
    * Save scholastic standing and create new assessment.
    * @param locationId location id to check whether the requested user and the requested application has the permission to this location.

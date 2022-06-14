@@ -22,6 +22,7 @@ export interface ScholasticStandingDataAPIInDTO {
   notes?: string;
   dateOfWithdrawal?: string;
 }
-export interface ScholasticStandingSubmissionAPIOutDTO
+
+export interface ScholasticStandingSubmittedDetailsAPIOutDTO
   extends ScholasticStandingDataAPIInDTO,
     ActiveApplicationDataAPIOutDTO {}
