@@ -9,7 +9,7 @@
         </template>
         <ActiveApplicationSummaryData
           :locationId="locationId"
-          :isArchived="true"
+          :isArchived="false"
         />
       </TabPanel>
       <TabPanel>
@@ -18,7 +18,7 @@
         </template>
         <ActiveApplicationSummaryData
           :locationId="locationId"
-          :isArchived="false"
+          :isArchived="true"
         />
       </TabPanel>
     </TabView>

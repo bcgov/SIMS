@@ -70,7 +70,6 @@ import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
-  ApplicationStatus,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
   DataTableSortOrder,
