@@ -7,6 +7,7 @@ import {
   deliveryMethod,
   getUserFullName,
 } from "../../utilities";
+import { transformToActiveApplicationDataAPIOutDTO } from "../institution-locations/models/application.dto";
 
 /**
  * Scholastic standing controller service.
@@ -22,7 +23,6 @@ export class ScholasticStandingControllerService {
    * @param scholasticStandingId scholastic standing id.
    * @returns Scholastic Standing.
    */
-
   async getScholasticStanding(
     scholasticStandingId: number,
   ): Promise<ScholasticStandingSubmissionAPIOutDTO> {
@@ -40,34 +40,7 @@ export class ScholasticStandingControllerService {
 
     return {
       ...scholasticStanding.submittedData,
-      applicationStatus: application.applicationStatus,
-      applicationNumber: application.applicationNumber,
-      applicationOfferingIntensity: offering.offeringIntensity,
-      applicationOfferingStartDate: dateString(offering.studyStartDate),
-      applicationOfferingEndDate: dateString(offering.studyEndDate),
-      applicationLocationName: offering.institutionLocation.name,
-      applicationStudentName: getUserFullName(application.student.user),
-      applicationOfferingName: offering.name,
-      applicationProgramDescription: offering.educationProgram.description,
-      applicationProgramName: offering.educationProgram.name,
-      applicationProgramCredential: credentialTypeToDisplay(
-        offering.educationProgram.credentialType,
-      ),
-      applicationProgramDelivery: deliveryMethod(
-        offering.educationProgram.deliveredOnline,
-        offering.educationProgram.deliveredOnSite,
-      ),
-      applicationOfferingStudyDelivery: offering.offeringDelivered,
-      applicationOfferingStudyBreak: offering.studyBreaks?.map(
-        (studyBreak) => ({
-          breakStartDate: dateString(studyBreak.breakStartDate),
-          breakEndDate: dateString(studyBreak.breakEndDate),
-        }),
-      ),
-      applicationOfferingTuition: offering.actualTuitionCosts,
-      applicationOfferingProgramRelatedCosts: offering.programRelatedCosts,
-      applicationOfferingMandatoryFess: offering.mandatoryFees,
-      applicationOfferingExceptionalExpenses: offering.exceptionalExpenses,
+      ...transformToActiveApplicationDataAPIOutDTO(application, offering),
     };
   }
 }

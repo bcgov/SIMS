@@ -27,6 +27,7 @@ export class ScholasticStandingService {
       scholasticStandingId,
     );
   }
+
   /**
    * Save scholastic standing and create new assessment.
    * @param applicationId application id

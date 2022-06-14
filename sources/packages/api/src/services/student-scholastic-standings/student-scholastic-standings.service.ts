@@ -432,6 +432,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .andWhere("studentScholasticStanding.unsuccessfulWeeks IS NOT NULL")
       .getOne();
   }
+
   /**
    * Get scholastic standing submission details.
    * @param scholasticStandingId scholastic standing id.

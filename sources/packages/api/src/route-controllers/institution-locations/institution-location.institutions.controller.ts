@@ -37,6 +37,7 @@ import {
 import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
+  transformToActiveApplicationDataAPIOutDTO,
 } from "./models/application.dto";
 import BaseController from "../BaseController";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
@@ -196,35 +197,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       );
     }
     const offering = application.currentAssessment.offering;
-    return {
-      applicationStatus: application.applicationStatus,
-      applicationNumber: application.applicationNumber,
-      applicationOfferingIntensity: offering.offeringIntensity,
-      applicationOfferingStartDate: dateString(offering.studyStartDate),
-      applicationOfferingEndDate: dateString(offering.studyEndDate),
-      applicationLocationName: offering.institutionLocation.name,
-      applicationStudentName: getUserFullName(application.student.user),
-      applicationOfferingName: offering.name,
-      applicationProgramDescription: offering.educationProgram.description,
-      applicationProgramName: offering.educationProgram.name,
-      applicationProgramCredential: credentialTypeToDisplay(
-        offering.educationProgram.credentialType,
-      ),
-      applicationProgramDelivery: deliveryMethod(
-        offering.educationProgram.deliveredOnline,
-        offering.educationProgram.deliveredOnSite,
-      ),
-      applicationOfferingStudyDelivery: offering.offeringDelivered,
-      applicationOfferingStudyBreak: offering.studyBreaks?.map(
-        (studyBreak) => ({
-          breakStartDate: dateString(studyBreak.breakStartDate),
-          breakEndDate: dateString(studyBreak.breakEndDate),
-        }),
-      ),
-      applicationOfferingTuition: offering.actualTuitionCosts,
-      applicationOfferingProgramRelatedCosts: offering.programRelatedCosts,
-      applicationOfferingMandatoryFess: offering.mandatoryFees,
-      applicationOfferingExceptionalExpenses: offering.exceptionalExpenses,
-    };
+    return transformToActiveApplicationDataAPIOutDTO(application, offering);
   }
 }

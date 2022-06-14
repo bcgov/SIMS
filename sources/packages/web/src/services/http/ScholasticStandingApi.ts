@@ -20,6 +20,7 @@ export class ScholasticStandingApi extends HttpBaseClient {
       this.addClientRoot(`scholastic-standing/${scholasticStandingId}`),
     );
   }
+
   /**
    * Save scholastic standing and create new assessment.
    * @param applicationId application id

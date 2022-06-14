@@ -28,7 +28,6 @@ export class ScholasticStandingAESTController extends BaseController {
    * @param scholasticStandingId scholastic standing id.
    * @returns Scholastic Standing.
    */
-
   @Get(":scholasticStandingId")
   @ApiNotFoundResponse({
     description: "Scholastic Standing not found.",
