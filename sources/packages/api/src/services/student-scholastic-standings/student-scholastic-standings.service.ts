@@ -480,8 +480,4 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       })
       .getOne();
   }
-
-  getStudentScholasticStanding(applicationId: number) {
-    console.log("test");
-  }
 }

@@ -79,4 +79,5 @@ export interface ActiveApplicationSummaryAPIOutDTO {
   applicationId: number;
   applicationStatus: string;
   fullName: string;
+  scholasticStandingId: number;
 }

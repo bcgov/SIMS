@@ -34,6 +34,7 @@ import LocationEditProgramInfoRequest from "@/views/institution/locations/progra
 import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
+import ViewSubmittedApplicationScholasticStanding from "@/views/institution/locations/active-applications/ViewSubmittedApplicationScholasticStanding.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -450,6 +451,25 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.LocationOfferingsEdit,
         name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
         component: LocationProgramOffering,
+        props: true,
+        meta: {
+          clientType: ClientIdType.Institution,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.admin,
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
+      },
+      {
+        path: AppRoutes.SubmittedApplicationScholasticStandingView,
+        name: InstitutionRoutesConst.SCHOLASTIC_STANDING_VIEW,
+        components: {
+          default: ViewSubmittedApplicationScholasticStanding,
+          sidebar: InstitutionHomeSideBar,
+        },
         props: true,
         meta: {
           clientType: ClientIdType.Institution,

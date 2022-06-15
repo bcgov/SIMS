@@ -39,6 +39,7 @@ export class ActiveApplicationSummaryAPIOutDTO {
   applicationId: number;
   applicationStatus: ApplicationStatus;
   fullName: string;
+  scholasticStandingId: number;
 }
 
 /**

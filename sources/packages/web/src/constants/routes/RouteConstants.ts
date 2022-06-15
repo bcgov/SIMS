@@ -61,6 +61,7 @@ export const InstitutionRoutesConst = {
   LOCATION_USERS: Symbol(),
   DISABLED_LOGIN: Symbol(),
   UNKNOWN_LOGIN: Symbol(),
+  SCHOLASTIC_STANDING_VIEW: Symbol(),
 };
 
 /**

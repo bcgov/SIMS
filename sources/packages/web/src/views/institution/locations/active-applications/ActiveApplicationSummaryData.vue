@@ -57,7 +57,7 @@
           />
         </template>
       </Column>
-      <Column field="applicationId" header="Action">
+      <Column header="Action">
         <template #body="slotProps">
           <v-btn
             v-if="
@@ -69,10 +69,12 @@
           >
           <v-btn
             v-if="
-              slotProps.data.applicationStatus === ApplicationStatus.completed
+              slotProps.data.applicationStatus === ApplicationStatus.unavailable
             "
             class="primary-btn-background"
-            @click="goToViewApplication(slotProps.data.applicationId)"
+            @click="
+              goToViewScholasticStanding(slotProps.data.scholasticStandingId)
+            "
             >View</v-btn
           >
         </template>
@@ -141,6 +143,13 @@ export default {
       });
     };
 
+    const goToViewScholasticStanding = (scholasticStandingId: number) => {
+      router.push({
+        name: InstitutionRoutesConst.SCHOLASTIC_STANDING_VIEW,
+        params: { locationId: props.locationId, scholasticStandingId },
+      });
+    };
+
     const updateSummaryList = async (locationId: number) => {
       applications.value =
         await InstitutionService.shared.getActiveApplicationsSummary(
@@ -199,6 +208,7 @@ export default {
       pageLimit,
       rowsPerPageOptions,
       searchCriteria,
+      goToViewScholasticStanding,
     };
   },
 };
