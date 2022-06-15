@@ -1,44 +1,49 @@
---Insert config for disbursement report.
 INSERT INTO
-    sims.report_configs (report_name, report_sql)
+  sims.report_configs (report_name, report_sql)
 VALUES
-    (
-        'Disbursement_Report',
-        'SELECT "Date of Disbursement",
-            "SIN",
-            "Application Number",
-            "Certificate Number",
-            "Funding Code",
-            "Disbursement amount"
-          FROM
-            (SELECT TO_CHAR(DR.DISBURSE_DATE, ''YYYY-MM-DD'') AS "Date of Disbursement",
-                DR.STUDENT_SIN AS "SIN",
-                SA.APPLICATION_ID AS "Application Number",
-                DS.DOCUMENT_NUMBER AS "Certificate Number",
-                DRV.GRANT_TYPE AS "Funding Code",
-                DRV.GRANT_AMOUNT AS "Disbursement amount",
-                EPO.OFFERING_INTENSITY AS "Offering intensity"
-              FROM SIMS.DISBURSEMENT_RECEIPTS DR
-              INNER JOIN SIMS.DISBURSEMENT_RECEIPT_VALUES DRV ON DRV.DISBURSEMENT_RECEIPT_ID = DR.ID
-              INNER JOIN SIMS.DISBURSEMENT_SCHEDULES DS ON DS.ID = DR.DISBURSEMENT_SCHEDULE_ID
-              INNER JOIN SIMS.STUDENT_ASSESSMENTS SA ON SA.ID = DS.STUDENT_ASSESSMENT_ID
-              INNER JOIN SIMS.EDUCATION_PROGRAMS_OFFERINGS EPO ON EPO.ID = SA.OFFERING_ID
-              UNION ALL SELECT TO_CHAR(DR.DISBURSE_DATE, ''YYYY-MM-DD'') AS "Date of Disbursement",
-                DR.STUDENT_SIN AS "SIN",
-                SA.APPLICATION_ID AS "Application Number",
-                DS.DOCUMENT_NUMBER AS "Certificate Number",
-                CASE
-                        WHEN DR.FUNDING_TYPE = ''BC'' THEN ''BCSL''
-                        WHEN DR.FUNDING_TYPE = ''FE'' THEN ''CSL''
-                END AS "Funding Code",
-                DR.TOTAL_DISBURSED_AMOUNT AS "Disbursement amount",
-                EPO.OFFERING_INTENSITY AS "Offering intensity"
-              FROM SIMS.DISBURSEMENT_RECEIPTS DR
-              INNER JOIN SIMS.DISBURSEMENT_SCHEDULES DS ON DS.ID = DR.DISBURSEMENT_SCHEDULE_ID
-              INNER JOIN SIMS.STUDENT_ASSESSMENTS SA ON SA.ID = DS.STUDENT_ASSESSMENT_ID
-              INNER JOIN SIMS.EDUCATION_PROGRAMS_OFFERINGS EPO ON EPO.ID = SA.OFFERING_ID) AS DATA
-          WHERE "Offering intensity" = ANY(:offeringIntensity)
-            AND "Date of Disbursement" BETWEEN :startDate AND :endDate
-          ORDER BY "Date of Disbursement",
-            "Certificate Number"'
-    );
+  (
+    'Disbursement_Report',
+    '(
+      select
+        to_char(dr.disburse_date, ''YYYY-MM-DD'') as "Date of Disbursement",
+        dr.student_sin as "SIN",
+        sa.application_id as "Application Number",
+        ds.document_number as "Certificate Number",
+        drv.grant_type as "Funding Code",
+        drv.grant_amount as "Disbursement Amount"
+      from
+        sims.disbursement_receipts dr
+        inner join sims.disbursement_receipt_values drv on drv.disbursement_receipt_id = dr.id
+        inner join sims.disbursement_schedules ds on ds.id = dr.disbursement_schedule_id
+        inner join sims.student_assessments sa on sa.id = ds.student_assessment_id
+        inner join sims.education_programs_offerings epo on epo.id = sa.offering_id
+      where
+        epo.offering_intensity = any(:offeringIntensity)
+        and dr.disburse_date between :startDate
+        and :endDate
+      union
+      all
+      select
+        to_char(dr.disburse_date, ''YYYY-MM-DD'') as "Date of Disbursement",
+        dr.student_sin as "SIN",
+        sa.application_id as "Application Number",
+        ds.document_number as "Certificate Number",
+        case
+          when dr.funding_type = ''BC'' then ''BCSL''
+          when dr.funding_type = ''FE'' then ''CSL''
+        end as "Funding Code",
+        dr.total_disbursed_amount as "Disbursement Amount"
+      from
+        sims.disbursement_receipts dr
+        inner join sims.disbursement_schedules ds on ds.id = dr.disbursement_schedule_id
+        inner join sims.student_assessments sa on sa.id = ds.student_assessment_id
+        inner join sims.education_programs_offerings epo on epo.id = sa.offering_id
+      where
+        epo.offering_intensity = any(:offeringIntensity)
+        and dr.disburse_date between :startDate
+        and :endDate
+    )
+    order by
+      "Date of Disbursement",
+      "Certificate Number"'
+  );
