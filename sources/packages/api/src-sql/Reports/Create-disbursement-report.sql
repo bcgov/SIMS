@@ -11,7 +11,7 @@ VALUES
             "Funding Code",
             "Disbursement amount"
           FROM
-            (SELECT DR.DISBURSE_DATE AS "Date of Disbursement",
+            (SELECT TO_CHAR(DR.DISBURSE_DATE, ''YYYY-MM-DD'') AS "Date of Disbursement",
                 DR.STUDENT_SIN AS "SIN",
                 SA.APPLICATION_ID AS "Application Number",
                 DS.DOCUMENT_NUMBER AS "Certificate Number",
@@ -23,7 +23,7 @@ VALUES
               INNER JOIN SIMS.DISBURSEMENT_SCHEDULES DS ON DS.ID = DR.DISBURSEMENT_SCHEDULE_ID
               INNER JOIN SIMS.STUDENT_ASSESSMENTS SA ON SA.ID = DS.STUDENT_ASSESSMENT_ID
               INNER JOIN SIMS.EDUCATION_PROGRAMS_OFFERINGS EPO ON EPO.ID = SA.OFFERING_ID
-              UNION ALL SELECT DR.DISBURSE_DATE AS "Date of Disbursement",
+              UNION ALL SELECT TO_CHAR(DR.DISBURSE_DATE, ''YYYY-MM-DD'') AS "Date of Disbursement",
                 DR.STUDENT_SIN AS "SIN",
                 SA.APPLICATION_ID AS "Application Number",
                 DS.DOCUMENT_NUMBER AS "Certificate Number",
