@@ -20,6 +20,7 @@
       @viewStudentAppeal="goToStudentAppeal"
       @viewAssessment="gotToViewAssessment"
       @viewApplicationException="goToApplicationException"
+      @viewScholasticStandingChange="goToScholasticStanding"
     />
   </full-page-container>
 </template>
@@ -81,11 +82,23 @@ export default {
       });
     };
 
+    const goToScholasticStanding = (scholasticStandingId: number) => {
+      router.push({
+        name: AESTRoutesConst.SCHOLASTIC_STANDING_VIEW,
+        params: {
+          studentId: props.studentId,
+          applicationId: props.applicationId,
+          scholasticStandingId,
+        },
+      });
+    };
+
     return {
       AESTRoutesConst,
       goToStudentAppeal,
       gotToViewAssessment,
       goToApplicationException,
+      goToScholasticStanding,
     };
   },
 };
