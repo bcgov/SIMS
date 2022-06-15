@@ -63,7 +63,6 @@ export default {
             }),
           ),
       };
-      console.log(initialData.value);
     });
     const goBackRouteParams = computed(
       () =>

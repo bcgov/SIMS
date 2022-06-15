@@ -45,7 +45,7 @@ export class ActiveApplicationSummaryAPIOutDTO {
  * Transformation util for Active application.
  * @param application application object.
  * @param offering offering object.
- * @returns active application data dto
+ * @returns active application data dto.
  */
 export const transformToActiveApplicationDataAPIOutDTO = (
   application: Application,

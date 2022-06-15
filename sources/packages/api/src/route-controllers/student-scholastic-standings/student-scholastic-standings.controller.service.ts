@@ -26,7 +26,7 @@ export class ScholasticStandingControllerService {
       );
 
     if (!scholasticStanding) {
-      throw new NotFoundException(`Scholastic Standing not found.`);
+      throw new NotFoundException("Scholastic Standing not found.");
     }
 
     const application = scholasticStanding.application;
