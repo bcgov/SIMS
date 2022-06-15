@@ -768,7 +768,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     };
   }
 
-  parseApplicationStatus(
+  /**
+   * Returns application status with respect to archive status and scholastic standing change.
+   * @param isArchived archive status.
+   * @param studentScholasticStandingId scholastic standing id.
+   * @returns application status.
+   */
+  getApplicationStatus(
     isArchived: boolean,
     studentScholasticStandingId: number,
   ): ApplicationStatus {
