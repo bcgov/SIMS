@@ -67,7 +67,7 @@
               ><Column header="Assessment">
                 <template #body="{ data }">
                   <v-btn
-                    v-if="!data.isUnsuccessfulWeek"
+                    v-if="!data.hasUnsuccessfulWeeks"
                     @click="$emit('viewAssessment', data.assessmentId)"
                     color="primary"
                   >

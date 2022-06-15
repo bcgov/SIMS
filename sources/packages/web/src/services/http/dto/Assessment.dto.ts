@@ -31,7 +31,7 @@ export interface AssessmentHistorySummaryAPIOutDTO {
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;
   // This flag decides, the row is unsuccessful week or not.
-  isUnsuccessfulWeek?: boolean;
+  hasUnsuccessfulWeeks?: boolean;
 }
 
 export interface AssessmentNOAAPIOutDTO {

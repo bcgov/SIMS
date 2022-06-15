@@ -17,7 +17,7 @@ import { ScholasticStandingService } from "@/services/ScholasticStandingService"
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { RouteLocationRaw } from "vue-router";
 import { useFormatters } from "@/composables";
-import { ScholasticStandingSubmittedDetails } from "@/types";
+import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
 
 export default {
   components: {
@@ -38,7 +38,7 @@ export default {
     },
   },
   setup(props: any) {
-    const initialData = ref({} as ScholasticStandingSubmittedDetails);
+    const initialData = ref({} as ScholasticStandingSubmittedDetailsAPIOutDTO);
     const { dateOnlyLongString } = useFormatters();
 
     onMounted(async () => {

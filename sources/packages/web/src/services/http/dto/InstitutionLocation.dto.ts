@@ -54,8 +54,8 @@ export interface InstitutionLocationAPIOutDTO {
  * Interface for study break item.
  */
 export interface StudyBreak {
-  breakStartDate: Date;
-  breakEndDate: Date;
+  breakStartDate: string;
+  breakEndDate: string;
 }
 
 export interface ActiveApplicationDataAPIOutDTO {
@@ -63,8 +63,8 @@ export interface ActiveApplicationDataAPIOutDTO {
   applicationProgramDescription: string;
   applicationOfferingName: string;
   applicationOfferingIntensity: string;
-  applicationOfferingStartDate: Date;
-  applicationOfferingEndDate: Date;
+  applicationOfferingStartDate: string;
+  applicationOfferingEndDate: string;
   applicationStudentName: string;
   applicationNumber: string;
   applicationLocationName: string;

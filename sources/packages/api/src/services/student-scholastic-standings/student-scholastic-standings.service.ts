@@ -14,14 +14,14 @@ import {
   User,
 } from "../../database/entities";
 import { CustomNamedError } from "../../utilities";
-import { INVALID_OPERATION_IN_THE_CURRENT_STATUS } from "../application/application.service";
+import {
+  APPLICATION_NOT_FOUND,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+} from "../application/application.service";
 import { ScholasticStanding } from "./student-scholastic-standings.model";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
-import {
-  APPLICATION_CHANGE_NOT_ELIGIBLE,
-  INVALID_APPLICATION_OR_CURRENT_ASSESSMENT_OR_OFFERING,
-} from "../../constants";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import { RestrictionCode } from "../restriction/models/restriction.model";
 import {
   MINIMUM_UNSUCCESSFUL_WEEKS,
@@ -76,7 +76,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     if (!application) {
       throw new CustomNamedError(
         "Application Not found or invalid current assessment or offering.",
-        INVALID_APPLICATION_OR_CURRENT_ASSESSMENT_OR_OFFERING,
+        APPLICATION_NOT_FOUND,
       );
     }
 

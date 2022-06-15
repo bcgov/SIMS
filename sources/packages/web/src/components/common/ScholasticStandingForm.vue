@@ -4,9 +4,9 @@
 
 <script lang="ts">
 import { ref, watch } from "vue";
-import { ScholasticStandingSubmittedDetails } from "@/types";
+import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
 interface ReadOnlyScholasticStanding
-  extends ScholasticStandingSubmittedDetails {
+  extends ScholasticStandingSubmittedDetailsAPIOutDTO {
   readonly: boolean;
 }
 

@@ -20,6 +20,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import {
+  APPLICATION_NOT_FOUND,
   ASSESSMENT_ALREADY_IN_PROGRESS,
   FormService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
@@ -30,10 +31,7 @@ import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { CustomNamedError } from "../../utilities";
 import BaseController from "../BaseController";
 import { FormNames } from "../../services/form/constants";
-import {
-  APPLICATION_CHANGE_NOT_ELIGIBLE,
-  INVALID_APPLICATION_OR_CURRENT_ASSESSMENT_OR_OFFERING,
-} from "../../constants";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import { ScholasticStandingAPIInDTO } from "./models/student-scholastic-standings.dto";
 
 /**
@@ -98,7 +96,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
-          case INVALID_APPLICATION_OR_CURRENT_ASSESSMENT_OR_OFFERING:
+          case APPLICATION_NOT_FOUND:
           case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
           case ASSESSMENT_ALREADY_IN_PROGRESS:
           case APPLICATION_CHANGE_NOT_ELIGIBLE:
