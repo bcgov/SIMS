@@ -8,16 +8,16 @@ import {
   Application,
   ApplicationStatus,
   EducationProgramOffering,
+  StudyBreak,
 } from "../../../database/entities";
-import { StudyBreak } from "../../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
 
 export class ActiveApplicationDataAPIOutDTO {
   applicationProgramName: string;
   applicationProgramDescription: string;
   applicationOfferingName: string;
   applicationOfferingIntensity: string;
-  applicationOfferingStartDate: string;
-  applicationOfferingEndDate: string;
+  applicationOfferingStartDate: Date;
+  applicationOfferingEndDate: Date;
   applicationStudentName: string;
   applicationNumber: string;
   applicationLocationName: string;
@@ -55,8 +55,8 @@ export const transformToActiveApplicationDataAPIOutDTO = (
     applicationStatus: application.applicationStatus,
     applicationNumber: application.applicationNumber,
     applicationOfferingIntensity: offering.offeringIntensity,
-    applicationOfferingStartDate: dateString(offering.studyStartDate),
-    applicationOfferingEndDate: dateString(offering.studyEndDate),
+    applicationOfferingStartDate: offering.studyStartDate,
+    applicationOfferingEndDate: offering.studyEndDate,
     applicationLocationName: offering.institutionLocation.name,
     applicationStudentName: getUserFullName(application.student.user),
     applicationOfferingName: offering.name,
@@ -71,8 +71,8 @@ export const transformToActiveApplicationDataAPIOutDTO = (
     ),
     applicationOfferingStudyDelivery: offering.offeringDelivered,
     applicationOfferingStudyBreak: offering.studyBreaks?.map((studyBreak) => ({
-      breakStartDate: dateString(studyBreak.breakStartDate),
-      breakEndDate: dateString(studyBreak.breakEndDate),
+      breakStartDate: studyBreak.breakStartDate,
+      breakEndDate: studyBreak.breakEndDate,
     })),
     applicationOfferingTuition: offering.actualTuitionCosts,
     applicationOfferingProgramRelatedCosts: offering.programRelatedCosts,

@@ -2,7 +2,7 @@ import ApiClient from "@/services/http/ApiClient";
 import {
   ScholasticStandingDataAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
-} from "./http/dto";
+} from "@/services/http/dto";
 
 /**
  * Client service layer for Scholastic standing.
@@ -30,9 +30,9 @@ export class ScholasticStandingService {
 
   /**
    * Save scholastic standing and create new assessment.
-   * @param applicationId application id
-   * @param locationId location id
-   * @param payload scholasticStanding payload
+   * @param applicationId application id.
+   * @param locationId location id.
+   * @param payload scholasticStanding payload.
    */
   async saveScholasticStanding(
     applicationId: number,

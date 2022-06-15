@@ -6,7 +6,6 @@ import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "./models/student-scholastic-standings.dto";
-
 import { ScholasticStandingControllerService } from "./student-scholastic-standings.controller.service";
 
 /**

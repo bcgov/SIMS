@@ -2,6 +2,9 @@ import { IntersectionType } from "@nestjs/swagger";
 import { IsNotEmptyObject } from "class-validator";
 import { ActiveApplicationDataAPIOutDTO } from "../../../route-controllers/institution-locations/models/application.dto";
 
+/**
+ * The API will also allow other property that are not added below.
+ */
 export class ScholasticStandingDataAPIInDTO {
   dateOfChange?: string;
   booksAndSupplies?: number;

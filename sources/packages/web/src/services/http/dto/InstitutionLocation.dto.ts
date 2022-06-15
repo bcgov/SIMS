@@ -50,17 +50,26 @@ export interface InstitutionLocationAPIOutDTO {
   designationStatus: DesignationAgreementStatus;
 }
 
+/**
+ * Interface for study break item.
+ */
+export interface StudyBreak {
+  breakStartDate: Date;
+  breakEndDate: Date;
+}
+
 export interface ActiveApplicationDataAPIOutDTO {
   applicationProgramName: string;
   applicationProgramDescription: string;
   applicationOfferingName: string;
   applicationOfferingIntensity: string;
-  applicationOfferingStartDate: string;
-  applicationOfferingEndDate: string;
+  applicationOfferingStartDate: Date;
+  applicationOfferingEndDate: Date;
   applicationStudentName: string;
   applicationNumber: string;
   applicationLocationName: string;
   applicationStatus: string;
+  applicationOfferingStudyBreak: StudyBreak[];
 }
 
 export interface ActiveApplicationSummaryAPIOutDTO {

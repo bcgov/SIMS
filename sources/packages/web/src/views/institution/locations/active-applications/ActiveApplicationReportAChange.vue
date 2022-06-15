@@ -18,20 +18,22 @@ import { RouteLocationRaw, useRouter } from "vue-router";
 import { ref, onMounted, computed } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
+  ActiveApplicationData,
   ApiProcessError,
   FormIOCustomEvent,
   FormIOCustomEventTypes,
 } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
 import {
-  APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ScholasticStandingDataAPIInDTO,
 } from "@/services/http/dto/ScholasticStanding.dto";
-import { useToastMessage } from "@/composables";
+import { useFormatters, useToastMessage } from "@/composables";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
-import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
+import {
+  APPLICATION_CHANGE_NOT_ELIGIBLE,
+  INVALID_APPLICATION_OR_CURRENT_ASSESSMENT_OR_OFFERING,
+} from "@/constants";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 
 export default {
@@ -47,14 +49,32 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const initialData = ref({} as ActiveApplicationDataAPIOutDTO);
+    const { dateOnlyLongString } = useFormatters();
+    const initialData = ref({} as ActiveApplicationData);
     const toast = useToastMessage();
 
     const loadInitialData = async () => {
-      initialData.value = await InstitutionService.shared.getActiveApplication(
-        props.applicationId,
-        props.locationId,
-      );
+      const applicationDetails =
+        await InstitutionService.shared.getActiveApplication(
+          props.applicationId,
+          props.locationId,
+        );
+      initialData.value = {
+        ...applicationDetails,
+        applicationOfferingStartDate: dateOnlyLongString(
+          applicationDetails.applicationOfferingStartDate,
+        ),
+        applicationOfferingEndDate: dateOnlyLongString(
+          applicationDetails.applicationOfferingEndDate,
+        ),
+        applicationOfferingStudyBreak:
+          applicationDetails.applicationOfferingStudyBreak?.map(
+            (studyBreak) => ({
+              breakStartDate: dateOnlyLongString(studyBreak.breakStartDate),
+              breakEndDate: dateOnlyLongString(studyBreak.breakEndDate),
+            }),
+          ),
+      };
     };
 
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
@@ -98,7 +118,7 @@ export default {
         if (error instanceof ApiProcessError) {
           if (
             [
-              APPLICATION_NOT_FOUND,
+              INVALID_APPLICATION_OR_CURRENT_ASSESSMENT_OR_OFFERING,
               INVALID_OPERATION_IN_THE_CURRENT_STATUS,
               ASSESSMENT_ALREADY_IN_PROGRESS,
               APPLICATION_CHANGE_NOT_ELIGIBLE,

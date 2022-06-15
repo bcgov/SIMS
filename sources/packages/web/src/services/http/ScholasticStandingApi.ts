@@ -2,7 +2,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   ScholasticStandingDataAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
-} from "./dto";
+} from "@/services/http/dto";
 
 /**
  * Http API client for Scholastic standing.
@@ -23,9 +23,9 @@ export class ScholasticStandingApi extends HttpBaseClient {
 
   /**
    * Save scholastic standing and create new assessment.
-   * @param applicationId application id
-   * @param locationId location id
-   * @param payload scholasticStanding payload
+   * @param applicationId application id.
+   * @param locationId location id.
+   * @param payload scholasticStanding payload.
    */
   public async saveScholasticStanding(
     applicationId: number,
