@@ -710,17 +710,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.isArchived",
         "studentScholasticStanding.id",
       ])
-      //   .addSelect(
-      //     `CASE
-      //     WHEN application.isArchived = false THEN
-      //     '${ApplicationStatus.available}'
-      //     WHEN application.isArchived = true THEN
-      //     '${ApplicationStatus.unavailable}'
-      //     WHEN currentAssessment.studentScholasticStanding.id IS NOT NULL THEN
-      //     '${ApplicationStatus.completed}'
-      // END`,
-      //     "applicationStatus",
-      //   )
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .leftJoin(
@@ -778,10 +767,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
     isArchived: boolean,
     studentScholasticStandingId: number,
   ): ApplicationStatus {
-    if (!isArchived) {
-      return ApplicationStatus.available;
-    } else if (isArchived) {
+    if (studentScholasticStandingId && isArchived) {
       return ApplicationStatus.unavailable;
+    } else if (studentScholasticStandingId && !isArchived) {
+      return ApplicationStatus.completed;
+    } else if (!studentScholasticStandingId && !isArchived) {
+      return ApplicationStatus.available;
     }
   }
 
