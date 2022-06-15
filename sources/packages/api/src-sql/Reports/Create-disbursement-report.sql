@@ -7,6 +7,7 @@ VALUES
         'SELECT "Date of Disbursement",
             "SIN",
             "Application Number",
+            "Certificate Number",
             "Funding Code",
             "Disbursement amount"
           FROM
