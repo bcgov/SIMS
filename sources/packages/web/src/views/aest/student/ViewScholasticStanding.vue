@@ -1,10 +1,12 @@
 <template>
-  <header-navigator
-    title="Assessments"
-    :routeLocation="goBackRouteParams"
-    subTitle="View Submission"
-  />
   <full-page-container>
+    <template #header>
+      <header-navigator
+        title="Assessments"
+        subTitle="View Submission"
+        :routeLocation="goBackRouteParams"
+      />
+    </template>
     <scholastic-standing-form :initialData="initialData" />
   </full-page-container>
 </template>
