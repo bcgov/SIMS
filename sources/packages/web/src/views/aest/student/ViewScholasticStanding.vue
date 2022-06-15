@@ -7,7 +7,7 @@
         :routeLocation="goBackRouteParams"
       />
     </template>
-    <scholastic-standing-form :initialData="initialData" />
+    <scholastic-standing-form :initialData="initialData" :readOnly="true" />
   </full-page-container>
 </template>
 <script lang="ts">

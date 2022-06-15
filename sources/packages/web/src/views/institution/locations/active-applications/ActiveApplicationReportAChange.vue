@@ -5,12 +5,12 @@
     subTitle="View Application"
   />
   <full-page-container class="p-m-4">
-    <formio
-      formName="reportscholasticstandingchange"
-      :data="initialData"
+    <scholastic-standing-form
+      :initialData="initialData"
+      :readOnly="false"
       @submitted="submit"
       @customEvent="customEventCallback"
-    ></formio>
+    />
   </full-page-container>
 </template>
 <script lang="ts">
@@ -33,8 +33,12 @@ import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.d
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
+import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 
 export default {
+  components: {
+    ScholasticStandingForm,
+  },
   props: {
     applicationId: {
       type: Number,
