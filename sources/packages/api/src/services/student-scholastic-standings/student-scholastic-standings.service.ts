@@ -171,4 +171,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       return studentScholasticStanding;
     });
   }
+
+  getStudentScholasticStanding(applicationId: number) {
+    console.log("test");
+  }
 }

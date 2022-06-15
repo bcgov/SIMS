@@ -702,15 +702,31 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.applicationNumber",
         "application.id",
         "currentAssessment.id",
-        "application.applicationStatus",
         "offering.studyStartDate",
         "offering.studyEndDate",
         "student.id",
         "user.firstName",
         "user.lastName",
+        "application.isArchived",
+        "studentScholasticStanding.id",
       ])
+      //   .addSelect(
+      //     `CASE
+      //     WHEN application.isArchived = false THEN
+      //     '${ApplicationStatus.available}'
+      //     WHEN application.isArchived = true THEN
+      //     '${ApplicationStatus.unavailable}'
+      //     WHEN currentAssessment.studentScholasticStanding.id IS NOT NULL THEN
+      //     '${ApplicationStatus.completed}'
+      // END`,
+      //     "applicationStatus",
+      //   )
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
+      .leftJoin(
+        "currentAssessment.studentScholasticStanding",
+        "studentScholasticStanding",
+      )
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
@@ -721,6 +737,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         isArchived: isArchived,
       })
       .orderBy("application.applicationNumber", "DESC");
+
     if (paginationOptions.searchCriteria) {
       activeApplicationQuery
         .andWhere(
@@ -751,6 +768,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
     };
   }
 
+  parseApplicationStatus(
+    isArchived: boolean,
+    studentScholasticStandingId: number,
+  ): ApplicationStatus {
+    if (!isArchived) {
+      return ApplicationStatus.available;
+    } else if (isArchived) {
+      return ApplicationStatus.unavailable;
+    }
+  }
+
   /**
    **Transformation to convert the data table column name to database column name
    **Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
@@ -772,8 +800,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const fieldSortOptions = {
       applicationNumber: "application.applicationNumber",
     };
-    const dbColumnName =
-      fieldSortOptions[sortField] || "application.applicationStatus";
+    const dbColumnName = fieldSortOptions[sortField];
     orderByCondition[dbColumnName] = sortOrder;
     return orderByCondition;
   }

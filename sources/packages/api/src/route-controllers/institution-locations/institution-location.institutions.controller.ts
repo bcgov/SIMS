@@ -64,6 +64,7 @@ import {
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
+import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 
 /**
  * Institution location controller for institutions Client.
@@ -149,22 +150,11 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   async getActiveApplications(
     @Param("locationId") locationId: number,
     @Query("isArchived") isArchived: boolean,
-    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
-    @Query(PaginationParams.SortField) sortField: string,
-    @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
-    @Query(PaginationParams.PageLimit) pageLimit = DEFAULT_PAGE_LIMIT,
-    @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
+    @Query() pagination: ApplicationPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResults<ActiveApplicationSummaryAPIOutDTO>> {
-    const paginationOptions = {
-      page: page,
-      pageLimit: pageLimit,
-      sortField: sortField,
-      sortOrder: sortOrder,
-      searchCriteria: searchCriteria,
-    } as PaginationOptions;
     const applications = await this.applicationService.getActiveApplications(
       locationId,
-      paginationOptions,
+      pagination,
       isArchived,
     );
 
@@ -176,7 +166,10 @@ export class InstitutionLocationInstitutionsController extends BaseController {
           applicationId: eachApplication.id,
           studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
           studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
-          applicationStatus: eachApplication.applicationStatus,
+          applicationStatus: this.applicationService.parseApplicationStatus(
+            eachApplication.isArchived,
+            eachApplication.currentAssessment.studentScholasticStanding?.id,
+          ),
           fullName: getUserFullName(eachApplication.student.user),
         };
       }) as ActiveApplicationSummaryAPIOutDTO[],

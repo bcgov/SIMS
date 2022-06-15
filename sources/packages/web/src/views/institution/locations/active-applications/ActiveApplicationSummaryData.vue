@@ -45,18 +45,35 @@
           </span>
         </template></Column
       >
-      <Column field="applicationNumber" header="Application #"></Column>
-      <Column field="applicationStatus" header="Status" :sortable="true">
+      <Column
+        field="applicationNumber"
+        header="Application #"
+        :sortable="true"
+      ></Column>
+      <Column field="applicationStatus" header="Status">
         <template #body="slotProps">
-          <COEStatusBadge :status="slotProps.data.applicationStatus" />
+          <StatusChipActiveApplication
+            :status="slotProps.data.applicationStatus"
+          />
         </template>
       </Column>
       <Column field="applicationId" header="Action">
         <template #body="slotProps">
           <v-btn
+            v-if="
+              slotProps.data.applicationStatus === ApplicationStatus.available
+            "
             class="primary-btn-background"
             @click="goToViewApplication(slotProps.data.applicationId)"
             >Report a change</v-btn
+          >
+          <v-btn
+            v-if="
+              slotProps.data.applicationStatus === ApplicationStatus.completed
+            "
+            class="primary-btn-background"
+            @click="goToViewApplication(slotProps.data.applicationId)"
+            >View</v-btn
           >
         </template>
       </Column>
@@ -76,12 +93,17 @@ import {
   DEFAULT_PAGE_NUMBER,
   PageAndSortEvent,
   PaginatedResults,
+  ApplicationStatus,
 } from "@/types";
 import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
-const DEFAULT_SORT_FIELD = "applicationStatus";
+const DEFAULT_SORT_FIELD = "applicationNumber";
+import StatusChipActiveApplication from "@/components/generic/StatusChipActiveApplication.vue";
 
 export default {
+  components: {
+    StatusChipActiveApplication,
+  },
   props: {
     locationId: {
       type: Number,
@@ -167,6 +189,7 @@ export default {
     });
 
     return {
+      ApplicationStatus,
       applications,
       dateString,
       goToViewApplication,

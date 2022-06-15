@@ -43,4 +43,12 @@ export enum ApplicationStatus {
    * place on new record.
    */
   overwritten = "Overwritten",
+  /**
+   * Applications that are completed and not archived.
+   */
+  available = "Available",
+  /**
+   * Applications that are completed and archived.
+   */
+  unavailable = "Unavailable",
 }

@@ -126,6 +126,7 @@ export class InstitutionApi extends HttpBaseClient {
       url,
       paginationOptions.page,
       paginationOptions.pageLimit,
+
       "&",
     );
 
