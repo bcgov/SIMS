@@ -1,4 +1,7 @@
-import { DisbursementValueType } from "../../database/entities";
+import {
+  DisbursementSchedule,
+  DisbursementValueType,
+} from "../../database/entities";
 
 export interface DisbursementValue {
   valueCode: string;
@@ -18,4 +21,8 @@ export interface Disbursement {
 export enum EnrollmentPeriod {
   Current = "current",
   Upcoming = "upcoming",
+}
+
+export interface ECertDisbursementSchedule extends DisbursementSchedule {
+  stopFullTimeBCFunding: boolean;
 }

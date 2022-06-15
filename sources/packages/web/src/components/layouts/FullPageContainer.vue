@@ -2,6 +2,7 @@
   <v-container :fluid="fullWidth">
     <header class="mb-2">
       <slot name="header"></slot>
+      <slot name="sub-header"></slot>
     </header>
     <slot name="alerts"></slot>
     <template v-if="layoutTemplate === LayoutTemplates.CenteredCard">

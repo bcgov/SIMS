@@ -27,7 +27,7 @@ import {
 } from "../../database/entities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 import { ApiProcessError } from "../../types";
-export const ACTIVE_STUDENT_RESTRICTION = "ACTIVE_STUDENT_RESTRICTION";
+import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
 
 /**
  * This service controller is a provider which is created to extract the implementation of

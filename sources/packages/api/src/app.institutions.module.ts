@@ -17,10 +17,12 @@ import {
   WorkflowService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
-  StudentScholasticStandingsService,
-  StudentAssessmentService,
   GCNotifyService,
   GCNotifyActionsService,
+  StudentRestrictionService,
+  RestrictionService,
+  StudentScholasticStandingsService,
+  StudentAssessmentService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -29,6 +31,7 @@ import {
   InstitutionControllerService,
   InstitutionLocationInstitutionsController,
   InstitutionLocationControllerService,
+  ScholasticStandingInstitutionsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -39,6 +42,7 @@ import { LoggerModule } from "./logger/logger.module";
     DesignationAgreementInstitutionsController,
     InstitutionInstitutionsController,
     InstitutionLocationInstitutionsController,
+    ScholasticStandingInstitutionsController,
   ],
   providers: [
     FormService,
@@ -60,10 +64,12 @@ import { LoggerModule } from "./logger/logger.module";
     WorkflowService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
-    StudentScholasticStandingsService,
-    StudentAssessmentService,
     GCNotifyService,
     GCNotifyActionsService,
+    StudentRestrictionService,
+    RestrictionService,
+    StudentScholasticStandingsService,
+    StudentAssessmentService,
   ],
 })
 export class AppInstitutionsModule {}

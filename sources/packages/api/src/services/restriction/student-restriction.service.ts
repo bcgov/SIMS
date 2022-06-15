@@ -8,6 +8,7 @@ import {
   User,
   Restriction,
   Student,
+  Application,
 } from "../../database/entities";
 import {
   AssignRestrictionDTO,
@@ -16,6 +17,8 @@ import {
 import { Connection, SelectQueryBuilder } from "typeorm";
 import { CustomNamedError } from "../../utilities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
+import { RestrictionService } from "./restriction.service";
+import { RestrictionCode } from "./models/restriction.model";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -24,7 +27,10 @@ export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
  */
 @Injectable()
 export class StudentRestrictionService extends RecordDataModelService<StudentRestriction> {
-  constructor(connection: Connection) {
+  constructor(
+    connection: Connection,
+    private readonly restrictionService: RestrictionService,
+  ) {
     super(connection.getRepository(StudentRestriction));
   }
 
@@ -42,12 +48,16 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * or any one of the elements is to be checked (i.e checkAll = false).
    * @param isStudentId is flag that will allow consumer function to set
    * student id as parameter, by default its false.
+   * @param restrictionActionVariable is the parameter name, can be overridden
+   * from default 'restrictionActions' to use another set of restrictions in
+   * same query.
    * @returns 'select' query that could be used in an 'exists' or
    * 'not exists'.
    */
   getExistsBlockRestrictionQuery(
     checkAll = false,
     isStudentId = false,
+    restrictionActionVariable = "restrictionActions",
   ): SelectQueryBuilder<StudentRestriction> {
     const query = this.repo
       .createQueryBuilder("studentRestrictions")
@@ -62,9 +72,13 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     }
 
     if (checkAll) {
-      query.andWhere("restrictions.actionType @> :restrictionActions");
+      query.andWhere(
+        `restrictions.actionType @> :${restrictionActionVariable}`,
+      );
     } else {
-      query.andWhere("restrictions.actionType && :restrictionActions");
+      query.andWhere(
+        `restrictions.actionType && :${restrictionActionVariable}`,
+      );
     }
     query.limit(1);
     return query;
@@ -231,7 +245,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   }
 
   /**
-   * The service function checks if the requested student has
+   * Checks if the requested student has
    * any or all requested restriction actions.
    * @param studentId student Id
    * @param restrictionActions list of restriction actions
@@ -254,5 +268,62 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       restrictionActions,
     });
     return !!(await query.getRawOne());
+  }
+
+  /**
+   * Checks if the student has an active requested restriction.
+   * @param studentId student id.
+   * @param restrictionCode restriction code.
+   * @returns true, if the student has the requested active
+   * restriction code else false.
+   */
+  async studentHasRestriction(
+    studentId: number,
+    restrictionCode: string,
+  ): Promise<boolean> {
+    return !!(await this.repo
+      .createQueryBuilder("studentRestrictions")
+      .select("studentRestrictions.id")
+      .innerJoin("studentRestrictions.restriction", "restriction")
+      .innerJoin("studentRestrictions.student", "student")
+      .where("student.id = :studentId", { studentId })
+      .andWhere("studentRestrictions.isActive = true")
+      .andWhere("restriction.restrictionCode = :restrictionCode", {
+        restrictionCode,
+      })
+      .limit(1)
+      .getOne());
+  }
+
+  /**
+   * Create a new student restriction object.
+   * @param studentId student id.
+   * @param restrictionCode restriction code.
+   * @param applicationId application id.
+   * @param auditUserId audit user id
+   * @returns a new student restriction object.
+   */
+  async createRestrictionToSave(
+    studentId: number,
+    restrictionCode: RestrictionCode,
+    auditUserId: number,
+    applicationId: number,
+  ): Promise<StudentRestriction> {
+    const restriction = await this.restrictionService.getRestrictionByCode(
+      restrictionCode,
+    );
+    if (!restriction) {
+      throw new Error(
+        `Requested restriction code ${restrictionCode} not found.`,
+      );
+    }
+    const studentRestriction = new StudentRestriction();
+    studentRestriction.restriction = {
+      id: restriction.id,
+    } as Restriction;
+    studentRestriction.student = { id: studentId } as Student;
+    studentRestriction.application = { id: applicationId } as Application;
+    studentRestriction.creator = { id: auditUserId } as User;
+    return studentRestriction;
   }
 }

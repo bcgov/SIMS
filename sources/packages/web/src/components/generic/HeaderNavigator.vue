@@ -1,5 +1,5 @@
 <template>
-  <v-row align="end" class="mb-8">
+  <v-row align="end" class="mb-1">
     <v-col>
       <slot name="title">
         <div v-if="routeLocation" class="header-title">

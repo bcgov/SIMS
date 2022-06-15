@@ -1,10 +1,4 @@
-import {
-  Allow,
-  IsEmail,
-  IsNotEmpty,
-  IsNotEmptyObject,
-  Length,
-} from "class-validator";
+import { Allow, IsEmail, IsNotEmpty, Length } from "class-validator";
 import { InstitutionLocationData } from "../../../database/entities/institution-location.model";
 import {
   AddressAPIOutDTO,
@@ -125,20 +119,4 @@ export enum DesignationStatus {
    * The designation agreement status is not designated
    */
   NotDesignated = "Not designated",
-}
-export class ScholasticStandingDataAPIInDTO {
-  dateOfChange?: string;
-  booksAndSupplies?: number;
-  dateOfCompletion?: string;
-  exceptionalCosts?: number;
-  mandatoryFees?: number;
-  tuition?: number;
-  dateOfIncompletion?: string;
-  dateOfWithdrawal?: string;
-}
-
-// This DTO must/will be validated using the dryRun.
-export class ScholasticStandingAPIInDTO {
-  @IsNotEmptyObject()
-  data: ScholasticStandingDataAPIInDTO;
 }

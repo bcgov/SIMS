@@ -1,7 +1,13 @@
 <template>
   <div v-if="toggled">
     <v-row justify="center" class="mt-4">
-      <slot name="image"></slot>
+      <slot name="image">
+        <v-img
+          height="200"
+          alt="There's nothing here yet"
+          src="@/assets/images/playful-cat.svg"
+        />
+      </slot>
     </v-row>
     <v-row justify="center m-4">
       <slot name="message">
@@ -20,8 +26,9 @@ export default {
       required: true,
     },
     message: {
-      type: Boolean,
+      type: String,
       required: true,
+      default: "There's nothing here yet",
     },
   },
 };

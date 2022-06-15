@@ -7,8 +7,10 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   EducationProgramOffering,
+  OfferingIntensity,
   OfferingTypes,
   StudentAssessment,
+  StudentRestriction,
   User,
 } from "../../database/entities";
 import { CustomNamedError } from "../../utilities";
@@ -18,7 +20,14 @@ import {
 } from "../application/application.service";
 import { ScholasticStanding } from "./student-scholastic-standings.model";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
+import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
+import { RestrictionCode } from "../restriction/models/restriction.model";
+import {
+  MINIMUM_UNSUCCESSFUL_WEEKS,
+  SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM,
+  SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM,
+} from "./constants";
 
 /**
  * Manages the student scholastic standings related operations.
@@ -31,6 +40,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   constructor(
     private readonly connection: Connection,
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super(connection.getRepository(StudentScholasticStanding));
     this.applicationRepo = connection.getRepository(Application);
@@ -45,8 +55,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param scholasticStandingData scholastic standing data to be saved.
+   * @returns Student scholastic standing.
    */
-  async saveScholasticStandingCreateReassessment(
+  async processScholasticStanding(
     locationId: number,
     applicationId: number,
     auditUserId: number,
@@ -87,6 +98,28 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       application.id,
     );
 
+    // Save scholastic standing and create reassessment.
+    return this.saveScholasticStandingCreateReassessment(
+      auditUserId,
+      application,
+      scholasticStandingData,
+    );
+  }
+
+  /**
+   * Save scholastic standing and create new assessment
+   * for an application.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @param application application object.
+   * @param scholasticStandingData scholastic standing data to be saved.
+   * @returns Student scholastic standing.
+   */
+  async saveScholasticStandingCreateReassessment(
+    auditUserId: number,
+    application: Application,
+    scholasticStandingData: ScholasticStanding,
+  ): Promise<StudentScholasticStanding> {
     return this.connection.transaction(async (transactionalEntityManager) => {
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
@@ -102,74 +135,350 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         .innerJoin("offering.institutionLocation", "institutionLocation")
         .getOne();
 
-      // Cloning existing offering.
-      const offering: EducationProgramOffering = { ...existingOffering };
-
-      // Assigning id as undefined, so that when its saved its considered as a new EducationProgramOffering object.
-      offering.id = undefined;
-
-      const newStudyEndDate =
-        scholasticStandingData.dateOfChange ??
-        scholasticStandingData.dateOfCompletion ??
-        scholasticStandingData.dateOfIncompletion ??
-        scholasticStandingData.dateOfWithdrawal;
-
-      offering.studyEndDate = new Date(newStudyEndDate);
-
-      offering.actualTuitionCosts =
-        scholasticStandingData.tuition ?? existingOffering.actualTuitionCosts;
-      offering.programRelatedCosts =
-        scholasticStandingData.booksAndSupplies ??
-        existingOffering.programRelatedCosts;
-      offering.mandatoryFees =
-        scholasticStandingData.mandatoryFees ?? existingOffering.mandatoryFees;
-      offering.exceptionalExpenses =
-        scholasticStandingData.exceptionalCosts ??
-        existingOffering.exceptionalExpenses;
-
-      offering.offeringType = OfferingTypes.ScholasticStanding;
-
-      // Save new offering.
-      const savedOffering = await transactionalEntityManager
-        .getRepository(EducationProgramOffering)
-        .save(offering);
+      // Check for restrictions and apply if any.
+      const studentRestriction = await this.getScholasticStandingRestrictions(
+        scholasticStandingData,
+        existingOffering.offeringIntensity,
+        application.studentId,
+        auditUserId,
+        application.id,
+      );
+      if (studentRestriction) {
+        await transactionalEntityManager
+          .getRepository(StudentRestriction)
+          .save(studentRestriction);
+      }
 
       // Create StudentScholasticStanding.
       const scholasticStanding = new StudentScholasticStanding();
-      scholasticStanding.application = { id: applicationId } as Application;
+      scholasticStanding.application = { id: application.id } as Application;
       scholasticStanding.submittedData = scholasticStandingData;
       scholasticStanding.submittedDate = now;
       scholasticStanding.submittedBy = auditUser;
       scholasticStanding.creator = auditUser;
 
-      // Create the new assessment to be processed.
-      scholasticStanding.studentAssessment = {
-        application: { id: applicationId } as Application,
-        triggerType: AssessmentTriggerType.ScholasticStandingChange,
-        creator: auditUser,
-        submittedBy: auditUser,
-        submittedDate: now,
-        offering: { id: savedOffering.id } as EducationProgramOffering,
-      } as StudentAssessment;
+      // Reference offering id.
+      scholasticStanding.referenceOffering = existingOffering;
+
+      // If not unsuccessful weeks, then clone new offering and create re-assessment.
+      const notUnsuccessfulWeeksScholasticStanding =
+        scholasticStandingData.scholasticStanding !==
+        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM;
+
+      if (notUnsuccessfulWeeksScholasticStanding) {
+        // Cloning existing offering.
+        const offering: EducationProgramOffering = { ...existingOffering };
+
+        // Assigning id and audit fields as undefined, so that when its saved its considered as a new EducationProgramOffering object.
+        offering.id = undefined;
+        offering.createdAt = undefined;
+        offering.updatedAt = undefined;
+        offering.creator = auditUser;
+        offering.modifier = auditUser;
+
+        const newStudyEndDate =
+          scholasticStandingData.dateOfChange ??
+          scholasticStandingData.dateOfCompletion ??
+          scholasticStandingData.dateOfWithdrawal;
+
+        offering.studyEndDate = new Date(newStudyEndDate);
+
+        offering.actualTuitionCosts =
+          scholasticStandingData.tuition ?? existingOffering.actualTuitionCosts;
+        offering.programRelatedCosts =
+          scholasticStandingData.booksAndSupplies ??
+          existingOffering.programRelatedCosts;
+        offering.mandatoryFees =
+          scholasticStandingData.mandatoryFees ??
+          existingOffering.mandatoryFees;
+        offering.exceptionalExpenses =
+          scholasticStandingData.exceptionalCosts ??
+          existingOffering.exceptionalExpenses;
+
+        offering.offeringType = OfferingTypes.ScholasticStanding;
+
+        // Save new offering.
+        const savedOffering = await transactionalEntityManager
+          .getRepository(EducationProgramOffering)
+          .save(offering);
+
+        // Create the new assessment to be processed.
+        scholasticStanding.studentAssessment = {
+          application: { id: application.id } as Application,
+          triggerType: AssessmentTriggerType.ScholasticStandingChange,
+          creator: auditUser,
+          submittedBy: auditUser,
+          submittedDate: now,
+          offering: { id: savedOffering.id } as EducationProgramOffering,
+        } as StudentAssessment;
+      } else {
+        // If unsuccessful weeks, then add to the column.
+        // * No cloning of offering and re-assessment is required in this scenario.
+        scholasticStanding.unsuccessfulWeeks =
+          scholasticStandingData.numberOfUnsuccessfulWeeks;
+      }
 
       const studentScholasticStanding = await transactionalEntityManager
         .getRepository(StudentScholasticStanding)
         .save(scholasticStanding);
 
-      // Save current application.
-      application.currentAssessment = {
-        id: scholasticStanding.studentAssessment.id,
-      } as StudentAssessment;
+      if (scholasticStanding.studentAssessment) {
+        // Save current assessment to application, if any.
+        application.currentAssessment = {
+          id: scholasticStanding.studentAssessment.id,
+        } as StudentAssessment;
+      }
 
       // Set archive to true
       application.isArchived = true;
 
+      // Save current application.
       await transactionalEntityManager
         .getRepository(Application)
         .save(application);
 
       return studentScholasticStanding;
     });
+  }
+
+  /**
+   * Process the payload data and checks for certain restriction,
+   * and add new restrictions, if required.
+   * @param scholasticStandingData scholastic standing data.
+   * @param offeringIntensity offering intensity.
+   * @param studentId student id.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @param applicationId application id.
+   * @returns a new student restriction object, that need to be saved.
+   */
+  async getScholasticStandingRestrictions(
+    scholasticStandingData: ScholasticStanding,
+    offeringIntensity: OfferingIntensity,
+    studentId: number,
+    auditUserId: number,
+    applicationId: number,
+  ): Promise<StudentRestriction | undefined> {
+    if (offeringIntensity === OfferingIntensity.fullTime) {
+      return this.getFullTimeStudentRestrictions(
+        scholasticStandingData,
+        studentId,
+        auditUserId,
+        applicationId,
+      );
+    }
+    if (offeringIntensity === OfferingIntensity.partTime) {
+      return this.getPartTimeStudentRestrictions(
+        scholasticStandingData,
+        studentId,
+        auditUserId,
+        applicationId,
+      );
+    }
+  }
+
+  /**
+   * Get full time related restrictions for scholastic standing.
+   * When institution report withdrawal for a FT course application,
+   * add WTHD restriction to student.
+   * When institution report Withdrawal for a FT course on a student WITH a WTHD
+   * restriction add SSR restriction.
+   * When institution reports a change related to a FT application for unsuccessful
+   * completion and the total number of unsuccessful weeks hits minimum 68, add SSR
+   * restriction.
+   * If a ministry user resolves the SSR or WTHD restriction, and new withdrawal
+   * is reported, re add the above restrictions.
+   * If a ministry user resolves the SSR restriction, and new unsuccessful completion
+   * is reported, add the restriction (minimum is still at least 68).
+   * * If an active SSR restriction already exists for the student and the
+   * * student withdrawal again or unsuccessful weeks hits minimum 68 again,
+   * * then add another SSR restriction.
+   * @param scholasticStandingData scholastic standing data.
+   * @param studentId student id.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @param applicationId application id.
+   * @returns a new student restriction object, that need to be saved.
+   */
+  async getFullTimeStudentRestrictions(
+    scholasticStandingData: ScholasticStanding,
+    studentId: number,
+    auditUserId: number,
+    applicationId: number,
+  ): Promise<StudentRestriction | undefined> {
+    if (
+      scholasticStandingData.scholasticStanding ===
+      SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM
+    ) {
+      if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
+        throw new Error("Number of unsuccessful weeks is empty.");
+      }
+      const totalExistingUnsuccessfulWeeks =
+        await this.getTotalFullTimeUnsuccessfulWeeks(studentId);
+
+      // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
+      if (
+        totalExistingUnsuccessfulWeeks +
+          scholasticStandingData.numberOfUnsuccessfulWeeks >=
+        MINIMUM_UNSUCCESSFUL_WEEKS
+      ) {
+        return this.studentRestrictionService.createRestrictionToSave(
+          studentId,
+          RestrictionCode.SSR,
+          auditUserId,
+          applicationId,
+        );
+      }
+    }
+    if (
+      scholasticStandingData.scholasticStanding ===
+      SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
+    ) {
+      // Check if "WTHD" restriction is already present for the student,
+      // if not add "WTHD" restriction else add "SSR" restriction.
+      const isWTHDAlreadyExists =
+        await this.studentRestrictionService.studentHasRestriction(
+          studentId,
+          RestrictionCode.WTHD,
+        );
+
+      const restrictionCode = isWTHDAlreadyExists
+        ? RestrictionCode.SSR
+        : RestrictionCode.WTHD;
+
+      return this.studentRestrictionService.createRestrictionToSave(
+        studentId,
+        restrictionCode,
+        auditUserId,
+        applicationId,
+      );
+    }
+  }
+
+  /**
+   * Get part time related restrictions for scholastic standing.
+   * When institution report Withdrawal OR unsuccessful for a PT course application,
+   * add PTSSR restriction to student.
+   * If a ministry user resolves the PTSSR restriction, and new withdrawal/unsuccessful
+   * is reported, re add the above restrictions.
+   * * If an active PTSSR restriction exists already for the student and the student withdrawal
+   * * again or or unsuccessful weeks is reported again, then add another PTSSR restriction.
+   * @param scholasticStandingData scholastic standing data.
+   * @param studentId student id.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @param applicationId application id.
+   * @returns a new student restriction object, that need to be saved.
+   */
+  async getPartTimeStudentRestrictions(
+    scholasticStandingData: ScholasticStanding,
+    studentId: number,
+    auditUserId: number,
+    applicationId: number,
+  ): Promise<StudentRestriction | undefined> {
+    if (
+      scholasticStandingData.scholasticStanding ===
+        SCHOLASTIC_STANDING_STUDENT_DID_NOT_COMPLETE_PROGRAM ||
+      scholasticStandingData.scholasticStanding ===
+        SCHOLASTIC_STANDING_STUDENT_WITHDREW_FROM_PROGRAM
+    ) {
+      return this.studentRestrictionService.createRestrictionToSave(
+        studentId,
+        RestrictionCode.PTSSR,
+        auditUserId,
+        applicationId,
+      );
+    }
+  }
+
+  /**
+   * Get the sum of unsuccessfulWeeks for all existing scholastic standing for the
+   * requested student.
+   * @param studentId student id.
+   * @returns sum of unsuccessfulWeeks for all existing scholastic standing for the
+   * requested student.
+   */
+  async getTotalFullTimeUnsuccessfulWeeks(studentId: number): Promise<number> {
+    const query = await this.repo
+      .createQueryBuilder("studentScholasticStanding")
+      .select("SUM(studentScholasticStanding.unsuccessfulWeeks)")
+      .innerJoin("studentScholasticStanding.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("studentScholasticStanding.referenceOffering", "offering")
+      .where("student.id = :studentId", { studentId })
+      .andWhere("offering.offeringIntensity = :offeringIntensity", {
+        offeringIntensity: OfferingIntensity.fullTime,
+      })
+      .getRawOne();
+    return +(query?.sum ?? 0);
+  }
+
+  /**
+   * Get unsuccessful scholastic standing of a student application.
+   * @param applicationId application id.
+   * @return student scholastic standing.
+   */
+  async getUnsuccessfulScholasticStandings(
+    applicationId: number,
+  ): Promise<StudentScholasticStanding> {
+    return this.repo
+      .createQueryBuilder("studentScholasticStanding")
+      .select([
+        "studentScholasticStanding.id",
+        "studentScholasticStanding.createdAt",
+      ])
+      .innerJoin("studentScholasticStanding.application", "application")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("studentScholasticStanding.unsuccessfulWeeks IS NOT NULL")
+      .getOne();
+  }
+
+  /**
+   * Get scholastic standing submitted details.
+   * @param scholasticStandingId scholastic standing id.
+   * @return student scholastic standing.
+   */
+  async getScholasticStanding(
+    scholasticStandingId: number,
+  ): Promise<StudentScholasticStanding> {
+    return this.repo
+      .createQueryBuilder("studentScholasticStanding")
+      .select([
+        "studentScholasticStanding.id",
+        "studentScholasticStanding.submittedData",
+        "application.applicationStatus",
+        "application.applicationNumber",
+        "offering.offeringIntensity",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "institutionLocation.name",
+        "student.id",
+        "application.id",
+        "user.firstName",
+        "user.lastName",
+        "offering.name",
+        "educationProgram.description",
+        "educationProgram.name",
+        "educationProgram.credentialType",
+        "educationProgram.deliveredOnline",
+        "educationProgram.deliveredOnSite",
+        "offering.offeringDelivered",
+        "offering.studyBreaks",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
+        "offering.mandatoryFees",
+        "offering.exceptionalExpenses",
+      ])
+      .innerJoin("studentScholasticStanding.referenceOffering", "offering")
+      .innerJoin("offering.institutionLocation", "institutionLocation")
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin("studentScholasticStanding.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("studentScholasticStanding.id = :scholasticStandingId", {
+        scholasticStandingId,
+      })
+      .getOne();
   }
 
   getStudentScholasticStanding(applicationId: number) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0cjijbh" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0cjijbh" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
   <bpmn:process id="disbursement-schedule-gateway" name="Disbursement Schedule Gateway" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_1bh2hll</bpmn:outgoing>
@@ -18,10 +18,10 @@
 
 execution.setVariable(
   "schedulesJsonString",
-  JSON.stringify(disbursementSchedulesPayload)
+  disbursementSchedulesPayload
 );
 
-JSON.stringify(disbursementSchedulesPayload);</camunda:script>
+disbursementSchedulesPayload;</camunda:script>
             </camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -123,18 +123,18 @@ if (weeks &gt;= 17) {
       <bpmn:script>var firstDisbursementDate = execution.getVariable("firstDisbursementDate");
 var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
 
-var CSPTPayload = execution.getVariable("CSPTPayload");
-var CSGPPayload = execution.getVariable("CSGPPayload");
-var CSGDPayload = execution.getVariable("CSGDPayload");
-var CSGFPayload = execution.getVariable("CSGFPayload");
-var CSGTPayload = execution.getVariable("CSGTPayload");
-var SBSDPayload = execution.getVariable("SBSDPayload");
-var BGPDPayload = execution.getVariable("BGPDPayload");
-var BCAGPayload = execution.getVariable("BCAGPayload");
-var BCSGPayload = execution.getVariable("BCSGPayload");
-var BCSLPayload = execution.getVariable("BCSLPayload");
-var CSLPayload = execution.getVariable("CSLPayload");
-var CSLPPayload = execution.getVariable("CSLPPayload");
+var CSPTPayload = JSON.parse(execution.getVariable("CSPTPayload") || null);
+var CSGPPayload = JSON.parse(execution.getVariable("CSGPPayload") || null);
+var CSGDPayload = JSON.parse(execution.getVariable("CSGDPayload") || null);
+var CSGFPayload = JSON.parse(execution.getVariable("CSGFPayload") || null);
+var CSGTPayload = JSON.parse(execution.getVariable("CSGTPayload") || null);
+var SBSDPayload = JSON.parse(execution.getVariable("SBSDPayload") || null);
+var BGPDPayload = JSON.parse(execution.getVariable("BGPDPayload") || null);
+var BCAGPayload = JSON.parse(execution.getVariable("BCAGPayload") || null);
+var BCSGPayload = JSON.parse(execution.getVariable("BCSGPayload") || null);
+var BCSLPayload = JSON.parse(execution.getVariable("BCSLPayload") || null);
+var CSLPayload = JSON.parse(execution.getVariable("CSLPayload") || null);
+var CSLPPayload = JSON.parse(execution.getVariable("CSLPPayload") || null);
 
 var schedulesJson = {};
 var disbursements = [];
@@ -288,7 +288,11 @@ if (firstDisbursementDate &amp;&amp; secondDisbursementDate) {
     };
   }
 }
-execution.setVariable("disbursementSchedulesPayload", schedulesJson);</bpmn:script>
+execution.setVariable(
+  "disbursementSchedulesPayload",
+  JSON.stringify(schedulesJson)
+);
+</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="Gateway_1tnmx63">
       <bpmn:incoming>Flow_1pzqmu4</bpmn:incoming>

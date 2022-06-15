@@ -433,13 +433,24 @@
   padding: 0;
 }
 
-//CSS for panel component border to match Figma.
+// CSS for panel component border to match Figma.
 .formio-component-panel .border {
   border: 1px solid $common-border-color !important;
   border-radius: 8px !important;
 }
 
-//Style to add padding to the bullet item.
+// Style to add padding to the bullet item.
 .align-bullet-item li {
   padding-left: 20px;
+}
+
+// Creates a panel that will not affect the layout. Used mainly
+// for grouping when the Container component is not applicable
+// because there is no need of a schema change.
+.formio-component-panel.formio-panel-unset .border {
+  border-style: none !important;
+}
+
+.formio-component-panel.formio-panel-unset .card-body {
+  padding: 0px;
 }

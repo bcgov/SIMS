@@ -42,6 +42,8 @@ import DesignationAESTView from "@/views/aest/institution/DesignationAESTView.vu
 import AssessmentsSummary from "@/views/aest/AssessmentsSummary.vue";
 import StudentAppealRequestsApproval from "@/views/aest/StudentAppealRequestsApproval.vue";
 import NoticeOfAssessment from "@/views/aest/NoticeOfAssessment.vue";
+import ApplicationExceptionsApproval from "@/views/aest/ApplicationExceptionsApproval.vue";
+import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -179,6 +181,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
+            path: AppRoutes.ScholasticStandingView,
+            name: AESTRoutesConst.SCHOLASTIC_STANDING_VIEW,
+            props: true,
+            component: ViewScholasticStanding,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
             path: AppRoutes.StudentAppealRequestsApproval,
             name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
             props: true,
@@ -192,6 +203,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
             props: true,
             component: NoticeOfAssessment,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.ApplicationExceptionsApproval,
+            name: AESTRoutesConst.APPLICATION_EXCEPTIONS_APPROVAL,
+            props: true,
+            component: ApplicationExceptionsApproval,
             meta: {
               clientType: ClientIdType.AEST,
             },

@@ -15,8 +15,8 @@ import {
   ECERT_PART_TIME_FILE_CODE,
   ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
   ECERT_PART_TIME_FEEDBACK_FILE_CODE,
-  getFieldOfStudyFromCIPCode,
   getISODateOnlyString,
+  getFieldOfStudyFromCIPCode,
 } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
@@ -33,6 +33,7 @@ import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-ce
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ESDCIntegrationConfig } from "../../types";
 import { ESDCFileResponseDTO } from "../../route-controllers/esdc-integration/models/esdc-model";
+import { ECertDisbursementSchedule } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
@@ -203,7 +204,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * generate the record.
    * @returns e-Cert record.
    */
-  private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
+  createECertRecord(disbursement: ECertDisbursementSchedule): ECertRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const addressInfo = application.student.contactInfo.address;
@@ -222,6 +223,7 @@ export class ECertFileHandler extends ESDCFileHandler {
 
     return {
       sin: application.student.sin,
+      stopFullTimeBCFunding: disbursement.stopFullTimeBCFunding,
       courseLoad: offering.courseLoad,
       applicationNumber: application.applicationNumber,
       documentNumber: disbursement.documentNumber,

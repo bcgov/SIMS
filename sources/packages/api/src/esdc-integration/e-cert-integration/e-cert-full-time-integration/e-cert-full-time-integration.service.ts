@@ -62,10 +62,20 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
     // Detail records
 
     // Calculated values.
-
+    const bcAwards = [
+      DisbursementValueType.BCTotalGrant,
+      DisbursementValueType.BCLoan,
+    ];
     const fileRecords = ecertRecords.map((ecertRecord) => {
+      let filterAwards = ecertRecord.awards;
+      if (ecertRecord.stopFullTimeBCFunding) {
+        filterAwards = ecertRecord.awards.filter(
+          (disbursementValue) =>
+            !bcAwards.includes(disbursementValue.valueType),
+        );
+      }
       // ! All dollar values must be rounded to the nearest integer (0.5 rounds up)
-      const roundedAwards = ecertRecord.awards.map(
+      const roundedAwards = filterAwards.map(
         (award) =>
           ({
             valueType: award.valueType,

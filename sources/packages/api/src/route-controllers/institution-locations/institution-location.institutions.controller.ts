@@ -8,13 +8,11 @@ import {
   Patch,
   Post,
   Query,
-  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiTags,
-  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -26,32 +24,21 @@ import {
 } from "../../auth/decorators";
 import {
   ApplicationService,
-  APPLICATION_NOT_FOUND,
-  ASSESSMENT_ALREADY_IN_PROGRESS,
   FormService,
   InstitutionLocationService,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-  StudentAssessmentService,
-  StudentScholasticStandingsService,
 } from "../../services";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import {
-  dateString,
-  getISODateOnlyString,
-  deliveryMethod,
-  credentialTypeToDisplay,
-  getUserFullName,
-  CustomNamedError,
+import { ClientTypeBaseRoute } from "../../types";
+import { getISODateOnlyString, getUserFullName } from "../../utilities";
   PaginationParams,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   FieldSortOrder,
   PaginationOptions,
   PaginatedResults,
-} from "../../utilities";
 import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
+  transformToActiveApplicationDataAPIOutDTO,
 } from "./models/application.dto";
 import BaseController from "../BaseController";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
@@ -59,11 +46,9 @@ import {
   InstitutionLocationPrimaryContactAPIInDTO,
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationDetailsAPIOutDTO,
-  ScholasticStandingAPIInDTO,
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
-import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
 import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 
 /**
@@ -77,8 +62,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
-    private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
-    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super();
   }
@@ -233,97 +216,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       );
     }
     const offering = application.currentAssessment.offering;
-    return {
-      applicationStatus: application.applicationStatus,
-      applicationNumber: application.applicationNumber,
-      applicationOfferingIntensity: offering.offeringIntensity,
-      applicationOfferingStartDate: dateString(offering.studyStartDate),
-      applicationOfferingEndDate: dateString(offering.studyEndDate),
-      applicationLocationName: offering.institutionLocation.name,
-      applicationStudentName: getUserFullName(application.student.user),
-      applicationOfferingName: offering.name,
-      applicationProgramDescription: offering.educationProgram.description,
-      applicationProgramName: offering.educationProgram.name,
-      applicationProgramCredential: credentialTypeToDisplay(
-        offering.educationProgram.credentialType,
-      ),
-      applicationProgramDelivery: deliveryMethod(
-        offering.educationProgram.deliveredOnline,
-        offering.educationProgram.deliveredOnSite,
-      ),
-      applicationOfferingStudyDelivery: offering.offeringDelivered,
-      applicationOfferingStudyBreak: offering.studyBreaks?.map(
-        (studyBreak) => ({
-          breakStartDate: dateString(studyBreak.breakStartDate),
-          breakEndDate: dateString(studyBreak.breakEndDate),
-        }),
-      ),
-      applicationOfferingTuition: offering.actualTuitionCosts,
-      applicationOfferingProgramRelatedCosts: offering.programRelatedCosts,
-      applicationOfferingMandatoryFess: offering.mandatoryFees,
-      applicationOfferingExceptionalExpenses: offering.exceptionalExpenses,
-    };
-  }
-
-  /**
-   * Save scholastic standing and create new assessment.
-   * @param locationId location id to check whether the requested user and the requested application has the permission to this location.
-   * @param applicationId application id.
-   * @UserToken institution user token
-   * @param payload Scholastic Standing payload.
-   */
-  @ApiBadRequestResponse({ description: "Invalid form data." })
-  @ApiUnprocessableEntityResponse({
-    description:
-      "Application not found or invalid application or invalid" +
-      " application status or another assessment already in progress.",
-  })
-  @HasLocationAccess("locationId")
-  @Post(":locationId/application/:applicationId/scholastic-standing")
-  async saveScholasticStanding(
-    @Param("locationId") locationId: number,
-    @Param("applicationId") applicationId: number,
-    @Body() payload: ScholasticStandingAPIInDTO,
-    @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<void> {
-    try {
-      const submissionResult = await this.formService.dryRunSubmission(
-        FormNames.ReportScholasticStandingChange,
-        payload.data,
-      );
-
-      if (!submissionResult.valid) {
-        throw new BadRequestException("Invalid submission.");
-      }
-      const scholasticStanding =
-        await this.studentScholasticStandingsService.saveScholasticStandingCreateReassessment(
-          locationId,
-          applicationId,
-          userToken.userId,
-          submissionResult.data.data,
-        );
-
-      // Start assessment.
-      if (scholasticStanding.studentAssessment) {
-        await this.studentAssessmentService.startAssessment(
-          scholasticStanding.studentAssessment.id,
-        );
-      }
-    } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          case APPLICATION_NOT_FOUND:
-          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-          case ASSESSMENT_ALREADY_IN_PROGRESS:
-          case APPLICATION_CHANGE_NOT_ELIGIBLE:
-            throw new UnprocessableEntityException(
-              new ApiProcessError(error.message, error.name),
-            );
-          default:
-            throw error;
-        }
-      }
-      throw error;
-    }
+    return transformToActiveApplicationDataAPIOutDTO(application, offering);
   }
 }
