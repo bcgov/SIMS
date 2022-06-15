@@ -447,10 +447,10 @@
 // Creates a panel that will not affect the layout. Used mainly
 // for grouping when the Container component is not applicable
 // because there is no need of a schema change.
-.formio-component-panel .formio-panel-unset .border {
+.formio-component-panel.formio-panel-unset .border {
   border-style: none !important;
 }
 
-.formio-component-panel .formio-panel-unset .card-body {
+.formio-component-panel.formio-panel-unset .card-body {
   padding: 0px;
 }

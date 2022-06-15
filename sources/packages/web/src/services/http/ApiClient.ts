@@ -20,6 +20,7 @@ import { StudentAppealApi } from "./StudentAppealApi";
 import { StudentAssessmentApi } from "./StudentAssessmentApi";
 import { ReportApi } from "./ReportApi";
 import { ApplicationExceptionApi } from "./ApplicationExceptionApi";
+import { ScholasticStandingApi } from "./ScholasticStandingApi";
 
 const ApiClient = {
   Configs: new ConfigApi(),
@@ -44,6 +45,7 @@ const ApiClient = {
   StudentAssessmentApi: new StudentAssessmentApi(),
   ReportApi: new ReportApi(),
   ApplicationExceptionApi: new ApplicationExceptionApi(),
+  ScholasticStandingApi: new ScholasticStandingApi(),
 };
 
 export default ApiClient;
