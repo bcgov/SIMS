@@ -45,7 +45,8 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
         );
       }
       if (doesParamExist) {
-        reportQuery = reportQuery.replace(`:${key}`, `$${index + 1}`);
+        const regExp = new RegExp(`:${key}`, "g");
+        reportQuery = reportQuery.replace(regExp, `$${index + 1}`);
         parameters.push(this.convertFilterDataAsParameter(filterParams[key]));
       }
     });
