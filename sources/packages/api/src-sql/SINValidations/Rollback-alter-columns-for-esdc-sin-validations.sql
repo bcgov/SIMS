@@ -1,6 +1,6 @@
 -- Remove columns from ESDC SIN validation schema.
 ALTER TABLE
-  sims.sin_validations DROP COLUMN sin_status,
+  sims.sin_validations DROP COLUMN IF EXISTS sin_status,
   DROP COLUMN IF EXISTS valid_sin,
   DROP COLUMN IF EXISTS valid_birthdate,
   DROP COLUMN IF EXISTS valid_first_name,
@@ -8,7 +8,15 @@ ALTER TABLE
   DROP COLUMN IF EXISTS valid_gender_name,
   DROP COLUMN IF EXISTS manual_edited_by,
   DROP COLUMN IF EXISTS manual_edited_date,
-  DROP COLUMN IF EXISTS manual_edited_note_id;
+  DROP COLUMN IF EXISTS manual_edited_note_id,
+  DROP COLUMN IF EXISTS sin_expire_date,
+  DROP COLUMN IF EXISTS temporary_sin,
+  DROP COLUMN IF EXISTS sin_edited_by,
+  DROP COLUMN IF EXISTS sin_edited_date,
+  DROP COLUMN IF EXISTS sin_edited_note_id,
+  DROP COLUMN IF EXISTS expired_date_edited_by,
+  DROP COLUMN IF EXISTS expired_date_edited_date,
+  DROP COLUMN IF EXISTS expired_date_edited_note_id;
 
 -- Add columns for the CRA SIN validation.
 ALTER TABLE
