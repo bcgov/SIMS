@@ -32,6 +32,7 @@ import {
   InstitutionLocationInstitutionsController,
   InstitutionLocationControllerService,
   ScholasticStandingInstitutionsController,
+  ScholasticStandingControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -70,6 +71,7 @@ import { LoggerModule } from "./logger/logger.module";
     RestrictionService,
     StudentScholasticStandingsService,
     StudentAssessmentService,
+    ScholasticStandingControllerService,
   ],
 })
 export class AppInstitutionsModule {}

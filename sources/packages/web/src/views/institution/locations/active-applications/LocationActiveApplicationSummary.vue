@@ -9,7 +9,7 @@
         </template>
         <ActiveApplicationSummaryData
           :locationId="locationId"
-          :isArchived="false"
+          applicationStatus="Available"
         />
       </TabPanel>
       <TabPanel>
@@ -18,7 +18,7 @@
         </template>
         <ActiveApplicationSummaryData
           :locationId="locationId"
-          :isArchived="true"
+          applicationStatus="Unavailable"
         />
       </TabPanel>
     </TabView>
@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import ActiveApplicationSummaryData from "@/views/institution/locations/active-applications/ActiveApplicationSummaryData.vue";
-
+import { ApplicationStatus } from "@/types";
 export default {
   components: { ActiveApplicationSummaryData },
   props: {

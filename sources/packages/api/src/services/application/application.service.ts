@@ -687,13 +687,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * with application status completed and respective archive status.
    * @param locationId location id .
    * @param paginationOptions
-   * @param isArchived filter for archive status of applications.
+   * @param applicationStatus View status of applications requested by user.
    * @returns Student Active Application list.
    */
   async getActiveApplications(
     locationId: number,
     paginationOptions: PaginationOptions,
-    isArchived: boolean,
+    applicationStatus: ApplicationStatus,
   ): Promise<PaginatedResults<Application>> {
     // TODO: there are two similar methods to get one and many records for the same list/details getActiveApplication and getActiveApplications. Can we use only one?
     const activeApplicationQuery = this.repo
@@ -721,11 +721,40 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.completed,
-      })
-      .andWhere("application.isArchived = :isArchived", {
-        isArchived: isArchived,
-      })
-      .orderBy("application.applicationNumber", "DESC");
+      });
+    if (applicationStatus === ApplicationStatus.available) {
+      activeApplicationQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where("studentScholasticStanding.id IS NULL").andWhere(
+            "application.isArchived = :isArchived",
+            {
+              isArchived: false,
+            },
+          );
+        }),
+      );
+    }
+
+    if (applicationStatus === ApplicationStatus.unavailable) {
+      activeApplicationQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where("studentScholasticStanding.id IS NOT NULL").andWhere(
+            "application.isArchived = :isNotArchived",
+            {
+              isNotArchived: false,
+            },
+          );
+        }),
+      );
+      activeApplicationQuery.orWhere(
+        new Brackets((qb) => {
+          qb.where("application.isArchived = :isArchived", {
+            isArchived: true,
+          });
+        }),
+      );
+    }
+    activeApplicationQuery.orderBy("application.applicationNumber", "DESC");
 
     if (paginationOptions.searchCriteria) {
       activeApplicationQuery
@@ -767,7 +796,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     isArchived: boolean,
     studentScholasticStandingId: number,
   ): ApplicationStatus {
-    if (studentScholasticStandingId && isArchived) {
+    if (isArchived) {
       return ApplicationStatus.unavailable;
     } else if (studentScholasticStandingId && !isArchived) {
       return ApplicationStatus.completed;

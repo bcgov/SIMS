@@ -69,7 +69,7 @@
           >
           <v-btn
             v-if="
-              slotProps.data.applicationStatus === ApplicationStatus.unavailable
+              slotProps.data.applicationStatus === ApplicationStatus.completed
             "
             class="primary-btn-background"
             @click="
@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch, computed } from "vue";
+import { onMounted, ref, watch, computed, PropType } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -115,8 +115,8 @@ export default {
       type: String,
       required: true,
     },
-    isArchived: {
-      type: Boolean,
+    applicationStatus: {
+      type: String,
       required: true,
     },
   },
@@ -161,7 +161,7 @@ export default {
             sortOrder: sortOrder.value,
             searchCriteria: searchCriteria.value,
           },
-          props.isArchived,
+          props.applicationStatus,
         );
     };
 

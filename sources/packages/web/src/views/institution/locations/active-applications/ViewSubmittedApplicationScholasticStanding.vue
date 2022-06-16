@@ -24,14 +24,6 @@ export default {
     ScholasticStandingForm,
   },
   props: {
-    studentId: {
-      type: Number,
-      required: true,
-    },
-    applicationId: {
-      type: Number,
-      required: true,
-    },
     scholasticStandingId: {
       type: Number,
       required: true,

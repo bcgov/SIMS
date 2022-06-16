@@ -2,6 +2,7 @@ import {
   Institute,
   AESTInstitutionProgramsSummaryDto,
   PaginationParams,
+  ApplicationStatus,
 } from "@/types";
 import {
   EducationProgram,
@@ -334,12 +335,12 @@ export class InstitutionService {
   public async getActiveApplicationsSummary(
     locationId: number,
     paginationOptions: PaginationOptions,
-    isArchived: boolean,
+    applicationStatus: ApplicationStatus,
   ): Promise<PaginatedResults<ActiveApplicationSummaryAPIOutDTO>> {
     return ApiClient.Institution.getActiveApplicationsSummary(
       locationId,
       paginationOptions,
-      isArchived,
+      applicationStatus,
     );
   }
 
