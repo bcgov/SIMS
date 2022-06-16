@@ -22,12 +22,7 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": {
-        "json": "",
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -115,6 +110,10 @@
                       {
                         "label": "Forecast disbursements",
                         "value": "Disbursement_Forecast_Report"
+                      },
+                      {
+                        "label": "Disbursements",
+                        "value": "Disbursement_Report"
                       }
                     ],
                     "resource": "",
@@ -180,9 +179,7 @@
                     "height": ""
                   },
                   "type": "select",
-                  "indexeddb": {
-                    "filter": {}
-                  },
+                  "indexeddb": { "filter": {} },
                   "selectFields": "",
                   "searchField": "",
                   "searchDebounce": 0.3,
@@ -200,11 +197,8 @@
                   "lazyLoad": true,
                   "authenticate": false,
                   "ignoreCache": false,
-                  "fuseOptions": {
-                    "include": "score",
-                    "threshold": 0.3
-                  },
-                  "id": "ef1cza",
+                  "fuseOptions": { "include": "score", "threshold": 0.3 },
+                  "id": "epfngcm",
                   "defaultValue": ""
                 }
               ],
@@ -412,9 +406,7 @@
                       "multiple": false,
                       "defaultValue": "",
                       "defaultDate": "",
-                      "customOptions": {
-                        "dateFormat": "yyyy-MM-dd"
-                      },
+                      "customOptions": { "dateFormat": "yyyy-MM-dd" },
                       "persistent": true,
                       "protected": false,
                       "dbIndex": false,
@@ -555,9 +547,7 @@
                       "multiple": false,
                       "defaultValue": "",
                       "defaultDate": "",
-                      "customOptions": {
-                        "dateFormat": "yyyy-MM-dd"
-                      },
+                      "customOptions": { "dateFormat": "yyyy-MM-dd" },
                       "persistent": true,
                       "protected": false,
                       "dbIndex": false,
@@ -734,10 +724,7 @@
               "disabled": false,
               "tableView": false,
               "modalEdit": false,
-              "defaultValue": {
-                "Full Time": false,
-                "Part Time": false
-              },
+              "defaultValue": { "Full Time": false, "Part Time": false },
               "values": [
                 {
                   "label": "Full-time",
@@ -888,9 +875,7 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
+      "widget": { "type": "input" },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -900,11 +885,7 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "" },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -961,9 +942,7 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": {
-        "type": "input"
-      },
+      "widget": { "type": "input" },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -973,11 +952,7 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
+      "conditional": { "show": null, "when": null, "eq": "" },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,

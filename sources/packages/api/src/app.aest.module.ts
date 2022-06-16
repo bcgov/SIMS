@@ -32,6 +32,7 @@ import {
   StudentRestrictionService,
   RestrictionService,
   ApplicationExceptionService,
+  StudentScholasticStandingsService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -50,6 +51,8 @@ import {
   ReportAESTController,
   StudentControllerService,
   ApplicationExceptionAESTController,
+  ScholasticStandingAESTController,
+  ScholasticStandingControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -69,6 +72,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     EducationProgramOfferingAESTController,
     ReportAESTController,
     ApplicationExceptionAESTController,
+    ScholasticStandingAESTController,
   ],
   providers: [
     SupportingUserService,
@@ -108,6 +112,8 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     StudentRestrictionService,
     RestrictionService,
     ApplicationExceptionService,
+    StudentScholasticStandingsService,
+    ScholasticStandingControllerService,
   ],
 })
 export class AppAESTModule {}
