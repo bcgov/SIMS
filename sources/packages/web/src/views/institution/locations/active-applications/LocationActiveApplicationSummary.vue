@@ -9,7 +9,7 @@
         </template>
         <ActiveApplicationSummaryData
           :locationId="locationId"
-          applicationStatus="Available"
+          :applicationStatus="ApplicationStatus.available"
         />
       </TabPanel>
       <TabPanel>
@@ -18,7 +18,7 @@
         </template>
         <ActiveApplicationSummaryData
           :locationId="locationId"
-          applicationStatus="Unavailable"
+          :applicationStatus="ApplicationStatus.unavailable"
         />
       </TabPanel>
     </TabView>
@@ -39,6 +39,11 @@ export default {
       type: String,
       required: true,
     },
+  },
+  setup(_props: any) {
+    return {
+      ApplicationStatus,
+    };
   },
 };
 </script>

@@ -28,6 +28,10 @@ export default {
       type: Number,
       required: true,
     },
+    locationId: {
+      type: Number,
+      required: true,
+    },
   },
   setup(props: any) {
     const initialData = ref({} as ScholasticStandingSubmittedDetailsAPIOutDTO);
