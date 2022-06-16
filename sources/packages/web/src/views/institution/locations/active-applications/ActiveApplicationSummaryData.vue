@@ -32,12 +32,21 @@
       <template #empty>
         <p class="text-center font-weight-bold">No records found.</p>
       </template>
-      <Column field="fullName" header="Name" :sortable="true">
+      <Column
+        field="fullName"
+        header="Name"
+        :sortable="true"
+        headerStyle="width: 20%"
+      >
         <template #body="slotProps">
           <span>{{ slotProps.data.fullName }}</span>
         </template>
       </Column>
-      <Column field="studyStartPeriod" header="Study dates">
+      <Column
+        field="studyStartPeriod"
+        header="Study dates"
+        headerStyle="width: 20%"
+      >
         <template #body="slotProps">
           <span>
             {{ dateString(slotProps.data.studyStartPeriod) }} -
@@ -46,18 +55,23 @@
         </template></Column
       >
       <Column
+        headerStyle="width: 20%"
         field="applicationNumber"
         header="Application #"
         :sortable="true"
       ></Column>
-      <Column field="applicationStatus" header="Status">
+      <Column
+        field="applicationStatus"
+        header="Status"
+        headerStyle="width: 20%"
+      >
         <template #body="slotProps">
           <StatusChipActiveApplication
             :status="slotProps.data.applicationStatus"
           />
         </template>
       </Column>
-      <Column header="Action">
+      <Column header="Action" headerStyle="width: 20%">
         <template #body="slotProps">
           <v-btn
             v-if="
@@ -84,7 +98,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch, computed, PropType } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
