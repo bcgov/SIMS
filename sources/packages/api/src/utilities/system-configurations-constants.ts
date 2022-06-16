@@ -61,6 +61,12 @@ export const MSFAA_FULL_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.";
 export const MSFAA_PART_TIME_FILE_CODE = "PBC.EDU.MSFA.SENT.PT.";
 
 /**
+ * Group name used in the sequence control table to identify the ESDC
+ * SIN validation generated files.
+ */
+export const ESDC_SIN_VALIDATION_SEQUENCE_GROUP_NAME = "ESDC_SIN_VALIDATION";
+
+/**
  * These constants are used to specify the filename code
  * created for Full-Time/ Part-Time feedback file.
  */

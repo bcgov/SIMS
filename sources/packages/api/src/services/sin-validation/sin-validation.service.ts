@@ -10,6 +10,7 @@ import { SINValidation } from "../../database/entities";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { CRAResponseStatusRecord } from "../../cra-integration/cra-files/cra-response-status-record";
+import { SINValidationRecord } from "../../esdc-integration/sin-validation/models/sin-validation-models";
 
 /**
  * Service layer for SIN Validations.
@@ -44,6 +45,14 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         } as SINValidation),
     );
     return this.repo.save(sinValidationsToBeUpdated);
+  }
+
+  async updateSentRecords(
+    craPersonRecords: SINValidationRecord[],
+    fileSent: string,
+  ): Promise<SINValidation[]> {
+    // TODO: To be implemented.
+    throw new Error("Not implemented yet!");
   }
 
   /**

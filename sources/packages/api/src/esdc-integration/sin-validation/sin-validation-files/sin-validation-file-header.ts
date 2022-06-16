@@ -1,22 +1,49 @@
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
-import { RecordTypeCodes } from "../models/sin-validation-model";
+import { RecordTypeCodes } from "../models/sin-validation-models";
+import {
+  DATE_FORMAT,
+  NUMBER_FILLER,
+  SPACE_FILLER,
+} from "../../../esdc-integration/models/esdc-integration.model";
+import { getDateOnlyFromFormat, StringBuilder } from "../../..//utilities";
 
 /**
  * Header of an ESDC SIN validation file.
+ * Shared between the file send and received.
  * The documentation about it is available on the document 'SIN Check File Layouts 2019.docx'
  */
-export abstract class SINValidationFileHeader implements FixedFormatFileLine {
+export class SINValidationFileHeader implements FixedFormatFileLine {
+  /**
+   * File record type.
+   */
   recordTypeCode: RecordTypeCodes;
+  /**
+   * File sequential number.
+   */
+  batchNumber: number;
+  /**
+   * File creation time.
+   */
   processDate: Date;
-  sequence: number;
 
   getFixedFormat(): string {
-    // TODO: TO be implemented.
-    return "";
+    const record = new StringBuilder();
+    record.append(this.recordTypeCode);
+    record.appendWithStartFiller(this.batchNumber, 8, NUMBER_FILLER);
+    record.appendDate(this.processDate, DATE_FORMAT);
+    record.append("BC");
+    record.repeatAppend(SPACE_FILLER, 71);
+    return record.toString();
   }
 
-  createFromLine(line: string): SINValidationFileHeader {
-    // TODO: TO be implemented.
-    return null;
+  static createFromFile(line?: string): SINValidationFileHeader {
+    const header = new SINValidationFileHeader();
+    header.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
+    header.batchNumber = +line.substring(3, 9);
+    header.processDate = getDateOnlyFromFormat(
+      line.substring(9, 17),
+      DATE_FORMAT,
+    );
+    return header;
   }
 }
