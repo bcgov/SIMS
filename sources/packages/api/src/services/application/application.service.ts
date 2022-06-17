@@ -722,6 +722,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.completed,
       });
+
+    // Available applications are records that have no scholastic standing reported and not 'archived'.
     if (applicationStatus === ApplicationStatus.available) {
       activeApplicationQuery.andWhere(
         new Brackets((qb) => {
@@ -735,6 +737,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
+    // Unavailable applications are records that are either 'completed (scholastic standing reported but not yet archived)' or 'archived'.
     if (applicationStatus === ApplicationStatus.unavailable) {
       activeApplicationQuery.andWhere(
         new Brackets((qb) => {
