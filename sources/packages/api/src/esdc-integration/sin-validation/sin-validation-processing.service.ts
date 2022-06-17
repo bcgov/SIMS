@@ -12,12 +12,13 @@ import { SINValidationIntegrationService } from "./sin-validation-integration.se
 import { SINValidation, Student } from "../../database/entities";
 import { ESDC_SIN_VALIDATION_SEQUENCE_GROUP_NAME } from "../../utilities";
 import {
+  SINCheckStatus,
   SINValidationRecord,
   SINValidationResponseResult,
   SINValidationUploadResult,
 } from "./models/sin-validation-models";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
-import path from "path";
+import * as path from "path";
 import { EntityManager } from "typeorm";
 
 /**
@@ -40,9 +41,13 @@ export class SINValidationProcessingService {
   /**
    * Identifies all the students that still do not have their SIN
    * validated and create the validation request for ESDC processing.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    * @returns result of the upload operation.
    */
-  async uploadSINValidationRequests(): Promise<SINValidationUploadResult> {
+  async uploadSINValidationRequests(
+    auditUserId: number,
+  ): Promise<SINValidationUploadResult> {
     this.logger.log("Retrieving students with pending SIN validation...");
     const students =
       await this.studentService.getStudentsPendingSinValidation();
@@ -82,6 +87,7 @@ export class SINValidationProcessingService {
           await this.sinValidationService.updateSentRecords(
             sinValidationRecords,
             fileInfo.fileName,
+            auditUserId,
             sinValidationRepo,
           );
           this.logger.log("SIN Validation table updated.");
@@ -128,10 +134,14 @@ export class SINValidationProcessingService {
   }
 
   /**
-   * Download all files ESDC response folder on SFTP and process them all.
+   * Download all SIN validation files from ESDC response folder on SFTP and process them all.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    * @returns summary with what was processed and the list of all errors, if any.
    */
-  async processResponses(): Promise<ProcessSFTPResponseResult[]> {
+  async processResponses(
+    auditUserId: number,
+  ): Promise<ProcessSFTPResponseResult[]> {
     const remoteFilePaths =
       await this.sinValidationIntegrationService.getResponseFilesFullPath(
         this.esdcConfig.ftpResponseFolder,
@@ -142,18 +152,21 @@ export class SINValidationProcessingService {
       );
     const processFiles: ProcessSFTPResponseResult[] = [];
     for (const remoteFilePath of remoteFilePaths) {
-      processFiles.push(await this.processFile(remoteFilePath));
+      processFiles.push(await this.processFile(remoteFilePath, auditUserId));
     }
     return processFiles;
   }
 
   /**
-   * Process each individual ESDC sin validation response file from the SFTP.
-   * @param remoteFilePath ESDC sin validation response file to be processed.
+   * Process each individual ESDC SIN validation response file from the SFTP.
+   * @param remoteFilePath ESDC SIN validation response file to be processed.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    * @returns process summary and errors summary.
    */
   private async processFile(
     remoteFilePath: string,
+    auditUserId: number,
   ): Promise<ProcessSFTPResponseResult> {
     const result = new ProcessSFTPResponseResult();
     result.processSummary.push(`Processing file ${remoteFilePath}.`);
@@ -183,11 +196,14 @@ export class SINValidationProcessingService {
     const fileName = path.basename(remoteFilePath);
     for (const sinValidationRecord of responseResult.records) {
       try {
+        const hasValidSIN =
+          sinValidationRecord.sinCheckStatus === SINCheckStatus.Passed;
         await this.sinValidationService.updateSINValidationFromESDCResponse(
           sinValidationRecord,
-          true,
+          hasValidSIN,
           fileName,
           responseResult.header.processDate,
+          auditUserId,
         );
         result.processSummary.push(
           `Processed SIN validation record from line ${sinValidationRecord.lineNumber}.`,

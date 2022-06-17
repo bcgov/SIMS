@@ -394,16 +394,29 @@ export class StudentService extends RecordDataModelService<Student> {
     await this.repo.save(student);
   }
 
+  /**
+   * Uses the user id to identify a student that must have his
+   * SIN validation active record updated.
+   * @param userId user id related to the student.
+   * @param sinValidation SIN validation record to have the
+   * relationship created with the student.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @returns updated student.
+   */
   async updateSINValidationByUserId(
     userId: number,
     sinValidation: SINValidation,
-  ): Promise<UpdateResult> {
-    return this.repo
-      .createQueryBuilder()
-      .update(Student)
-      .set({ sinValidation })
+    auditUserId: number,
+  ): Promise<Student> {
+    const studentToUpdate = await this.repo
+      .createQueryBuilder("student")
+      .select("student.id")
       .where("student.user.id = :userId", { userId })
-      .execute();
+      .getOne();
+    studentToUpdate.modifier = { id: auditUserId } as User;
+    studentToUpdate.sinValidation = sinValidation;
+    return this.repo.save(studentToUpdate);
   }
 
   @InjectLogger()

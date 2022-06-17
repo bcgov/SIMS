@@ -41,25 +41,25 @@ export class SINValidationFileResponse {
    * when the SIN validation request was created(REFERENCE_IDX).
    */
   get referenceIndex(): number {
-    return +this.line.substring(3, 13);
-  }
-  /**
-   * Social insurance number. Used for hash calculation on the received file.
-   */
-  get sin(): string {
-    return this.line.substring(14, 23);
+    return +this.line.substring(3, 12);
   }
   /**
    * Define the SIN validation status(SIN_CHECK_STATUS).
    */
   get sinCheckStatus(): SINCheckStatus {
-    return +this.line.substring(12, 13);
+    return this.line.substring(12, 13) as SINCheckStatus;
   }
   /**
    * SIN status in the overall validation(SIN_OKAY_FLG).
    */
   get sinOkayFlag(): OkayFlag {
     return this.line.substring(13, 14) as OkayFlag;
+  }
+  /**
+   * Social insurance number. Used for hash calculation on the received file.
+   */
+  get sin(): string {
+    return this.line.substring(14, 23);
   }
   /**
    * Date of birth status in the overall validation(DOB_OKAY_FLG).

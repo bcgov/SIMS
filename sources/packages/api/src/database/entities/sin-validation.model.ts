@@ -102,42 +102,42 @@ export class SINValidation extends RecordDataModel {
    * Individual status of the SIN validation (Y/N) returned on the ESDC response.
    */
   @Column({
-    name: "valid_sin",
+    name: "valid_sin_check",
     nullable: true,
   })
-  validSIN?: string;
+  validSINCheck?: string;
   /**
    * Individual status of birthdate validation (Y/N) returned on the ESDC response.
    */
   @Column({
-    name: "valid_birthdate",
+    name: "valid_birthdate_check",
     nullable: true,
   })
-  validBirthdate?: string;
+  validBirthdateCheck?: string;
   /**
    * Individual status of the first name validation (Y/N) returned on the ESDC response.
    */
   @Column({
-    name: "valid_first_name",
+    name: "valid_first_name_check",
     nullable: true,
   })
-  validFirstName?: string;
+  validFirstNameCheck?: string;
   /**
    * Individual status of the last name validation (Y/N) returned on the ESDC response.
    */
   @Column({
-    name: "valid_last_name",
+    name: "valid_last_name_check",
     nullable: true,
   })
-  validLastName?: string;
+  validLastNameCheck?: string;
   /**
    * Individual status of the gender validation (Y/N) returned on the ESDC response.
    */
   @Column({
-    name: "valid_gender",
+    name: "valid_gender_check",
     nullable: true,
   })
-  validGender?: string;
+  validGenderCheck?: string;
   /**
    * Defines if the SIN is temporary.
    */

@@ -7,21 +7,27 @@ ALTER TABLE
   DROP COLUMN IF EXISTS given_name_match_status_code,
   DROP COLUMN IF EXISTS dob_match_status_code;
 
+-- Adding a missing column for history, first name, last name and others are already present.
+ALTER TABLE
+  sims.sin_validations
+ADD
+  COLUMN IF NOT EXISTS gender_sent VARCHAR(10);
+
 -- New columns added based on the new ESDC schema.
 ALTER TABLE
   sims.sin_validations
 ADD
   COLUMN IF NOT EXISTS sin_status CHAR(1),
 ADD
-  COLUMN IF NOT EXISTS valid_sin CHAR(1),
+  COLUMN IF NOT EXISTS valid_sin_check CHAR(1),
 ADD
-  COLUMN IF NOT EXISTS valid_birthdate CHAR(1),
+  COLUMN IF NOT EXISTS valid_birthdate_check CHAR(1),
 ADD
-  COLUMN IF NOT EXISTS valid_first_name CHAR(1),
+  COLUMN IF NOT EXISTS valid_first_name_check CHAR(1),
 ADD
-  COLUMN IF NOT EXISTS valid_last_name CHAR(1),
+  COLUMN IF NOT EXISTS valid_last_name_check CHAR(1),
 ADD
-  COLUMN IF NOT EXISTS valid_gender CHAR(1),
+  COLUMN IF NOT EXISTS valid_gender_check CHAR(1),
 ADD
   COLUMN IF NOT EXISTS sin_expire_date DATE,
 ADD
@@ -52,17 +58,19 @@ SET
   NULL;
 
 -- ## Comments
+COMMENT ON COLUMN sims.sin_validations.gender_sent IS 'The user gender to match with the SIN record.';
+
 COMMENT ON COLUMN sims.sin_validations.sin_status IS 'Overall SIN validation status (e.g. 1-Passed, 2-Under Review, etc.) returned on the ESDC response.';
 
-COMMENT ON COLUMN sims.sin_validations.valid_sin IS 'Individual status of the SIN validation (Y/N) returned on the ESDC response.';
+COMMENT ON COLUMN sims.sin_validations.valid_sin_check IS 'Individual status of the SIN validation (Y/N) returned on the ESDC response.';
 
-COMMENT ON COLUMN sims.sin_validations.valid_birthdate IS 'Individual status of birthdate validation (Y/N) returned on the ESDC response.';
+COMMENT ON COLUMN sims.sin_validations.valid_birthdate_check IS 'Individual status of birthdate validation (Y/N) returned on the ESDC response.';
 
-COMMENT ON COLUMN sims.sin_validations.valid_first_name IS 'Individual status of the first name validation (Y/N) returned on the ESDC response.';
+COMMENT ON COLUMN sims.sin_validations.valid_first_name_check IS 'Individual status of the first name validation (Y/N) returned on the ESDC response.';
 
-COMMENT ON COLUMN sims.sin_validations.valid_last_name IS 'Individual status of the last name validation (Y/N) returned on the ESDC response.';
+COMMENT ON COLUMN sims.sin_validations.valid_last_name_check IS 'Individual status of the last name validation (Y/N) returned on the ESDC response.';
 
-COMMENT ON COLUMN sims.sin_validations.valid_gender IS 'Individual status of the gender validation (Y/N) returned on the ESDC response.';
+COMMENT ON COLUMN sims.sin_validations.valid_gender_check IS 'Individual status of the gender validation (Y/N) returned on the ESDC response.';
 
 COMMENT ON COLUMN sims.sin_validations.sin_expire_date IS 'Expiration date for a temporary SIN.';
 
