@@ -5,7 +5,6 @@ import { InjectLogger } from "../common";
 import { LoggerService } from "../logger/logger.service";
 import {
   CRAIntegrationService,
-  StudentService,
   SequenceControlService,
   ConfigService,
   CRAIncomeVerificationService,
@@ -23,14 +22,12 @@ import {
 } from "./cra-integration.models";
 import { getUTCNow } from "../utilities";
 import * as path from "path";
-import { SINValidationService } from "../services/sin-validation/sin-validation.service";
 
-const SIN_VALIDATION_TAG = "SIN_VALIDATION";
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
 
 /**
  * Manages the retrieval of students or parents or another
- * individual that needs to have his data verified
+ * individual that needs to have their data verified
  * by the Canada Revenue Agency (CRA).
  */
 @Injectable()
@@ -39,84 +36,14 @@ export class CRAPersonalVerificationService {
 
   constructor(
     private readonly craService: CRAIntegrationService,
-    private readonly studentService: StudentService,
     private readonly configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly incomeVerificationService: CRAIncomeVerificationService,
     private readonly workflowService: WorkflowActionsService,
-    private readonly sinValidationService: SINValidationService,
     config: ConfigService,
   ) {
     this.ftpResponseFolder =
       config.getConfig().CRAIntegration.ftpResponseFolder;
-  }
-
-  /**
-   * Identifies all the students that still do not have their SIN
-   * validated and create the validation request for CRA processing.
-   * In the future more personal verification for others type of
-   * individuals (e.g. parents) should be added and they will probably
-   * be send as one single batch for CRA processing.
-   * @returns SIN validation request.
-   */
-  async createSinValidationRequest(): Promise<CRAUploadResult> {
-    this.logger.log("Retrieving students with pending SIN validation...");
-    const students =
-      await this.studentService.getStudentsPendingSinValidation();
-    if (!students.length) {
-      return {
-        generatedFile: "none",
-        uploadedRecords: 0,
-      };
-    }
-
-    this.logger.log(`Found ${students.length} student(s).`);
-    const craRecords = students.map((student) => {
-      return this.createCRARecordFromStudent(
-        student,
-        this.createFreeProjectArea(
-          SIN_VALIDATION_TAG,
-          student.sinValidation.id,
-        ),
-      );
-    });
-
-    let uploadResult: CRAUploadResult;
-    await this.sequenceService.consumeNextSequence(
-      this.getCRAFileSequenceName(),
-      async (nextSequenceNumber: number) => {
-        try {
-          this.logger.log("Creating matching run content...");
-          const fileContent = this.craService.createMatchingRunContent(
-            craRecords,
-            nextSequenceNumber,
-          );
-          const fileInfo =
-            this.craService.createRequestFileName(nextSequenceNumber);
-          this.logger.log("Uploading content...");
-          await this.craService.uploadContent(fileContent, fileInfo.filePath);
-
-          uploadResult = {
-            generatedFile: fileInfo.filePath,
-            uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
-          };
-          // Updates the records in SIN Validation table for the particular user
-          this.logger.log("Updating the records in SIN Validation table");
-          this.sinValidationService.updateRecordsInSentFile(
-            craRecords,
-            fileInfo.fileName,
-          );
-          this.logger.log("SIN Validation table Updated");
-        } catch (error) {
-          this.logger.error(
-            `Error while uploading content for SIN verification: ${error}`,
-          );
-          throw error;
-        }
-      },
-    );
-
-    return uploadResult;
   }
 
   /**
@@ -320,15 +247,8 @@ export class CRAPersonalVerificationService {
     const fileName = path.basename(remoteFilePath);
     for (const statusRecord of responseFile.statusRecords) {
       try {
-        // 0022 could be present in a SIN validation response or income verification response.
-        // We use the tag SIN_VALIDATION_TAG to process 0022 records only when the
-        // request was made specifically for SIN validation.
-        if (statusRecord.freeProjectArea.includes(SIN_VALIDATION_TAG)) {
-          await this.processSINStatus(statusRecord, remoteFilePath);
-          result.processSummary.push(
-            `Processed SIN validation for record line ${statusRecord.lineNumber}.`,
-          );
-        }
+        // Use the tag 'VERIFICATION_ID' to ensure that the record is related to a previously requested
+        // income verification. The same file can contain SIN validation records and income validation as well.
         if (statusRecord.freeProjectArea.includes(INCOME_VERIFICATION_TAG)) {
           // Find the 'Total Income' record associated with the status record.
           // This record may not be present if there is no data for the tax year, for instance.
@@ -368,32 +288,6 @@ export class CRAPersonalVerificationService {
     }
 
     return result;
-  }
-
-  /**
-   * Process a 0022 record to update the SIN status.
-   * @param craRecord CRA status record to be processed.
-   */
-  private async processSINStatus(
-    craRecord: CRAResponseStatusRecord,
-    fileReceived: string,
-  ): Promise<void> {
-    // The id to be used to find and update the SIN validation record
-    // must be on the 'freeProjectArea' (e.g. SIN_VALIDATION:12345) that was
-    // generated during the file creation to execute the request to CRA.
-    const verificationId = this.getIdFromFreeProjectArea(
-      craRecord.freeProjectArea,
-    );
-    if (!verificationId) {
-      throw new Error(
-        `Not able to extract the CRA SIN verification id from the freeProjectArea ${craRecord.freeProjectArea}`,
-      );
-    }
-    await this.sinValidationService.updatePendingSinValidation(
-      verificationId,
-      craRecord,
-      fileReceived,
-    );
   }
 
   /**

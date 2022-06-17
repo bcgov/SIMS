@@ -18,23 +18,6 @@ export class CRAIntegrationController extends BaseController {
   }
 
   /**
-   * Identifies all the students that still do not have their SIN
-   * validated and create the validation request file
-   * to be processed by CRA.
-   * @returns Processing result log.
-   */
-  @Post("process-sin-validation")
-  async processSinValidation(): Promise<CRAValidationResultDto> {
-    this.logger.log("Executing SIN validation...");
-    const uploadResult = await this.cra.createSinValidationRequest();
-    this.logger.log("SIN validation executed.");
-    return {
-      generatedFile: uploadResult.generatedFile,
-      uploadedRecords: uploadResult.uploadedRecords,
-    };
-  }
-
-  /**
    * Identifies all the student applications that have a pending
    * income verification and generate the request file to be
    * processed by CRA.

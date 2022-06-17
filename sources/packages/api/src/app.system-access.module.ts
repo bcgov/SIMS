@@ -19,12 +19,15 @@ import {
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
+import { SINValidationModule } from "./esdc-integration/sin-validation/sin-validation.module";
+import { SINValidationSystemAccessController } from "./route-controllers/esdc-integration/sin-validation.system-access.controller";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule],
+  imports: [LoggerModule, DatabaseModule, AuthModule, SINValidationModule],
   controllers: [
     AssessmentSystemAccessController,
     ApplicationExceptionSystemAccessController,
+    SINValidationSystemAccessController,
   ],
   providers: [
     ConfigService,

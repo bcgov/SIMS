@@ -22,12 +22,6 @@ ALTER TABLE
 ALTER TABLE
   sims.sin_validations
 ADD
-  COLUMN IF NOT EXISTS given_name_sent VARCHAR(50),
-ADD
-  COLUMN IF NOT EXISTS surname_sent VARCHAR(50),
-ADD
-  COLUMN IF NOT EXISTS dob_sent Date,
-ADD
   COLUMN IF NOT EXISTS request_status_code CHAR(2),
 ADD
   COLUMN IF NOT EXISTS match_status_code CHAR(2),
@@ -41,12 +35,6 @@ ADD
   COLUMN IF NOT EXISTS dob_match_status_code CHAR(2);
 
 -- ## Comments
-COMMENT ON COLUMN sims.sin_validations.given_name_sent IS 'The user given name to match with the SIN record.';
-
-COMMENT ON COLUMN sims.sin_validations.surname_sent IS 'The user surname to match with the SIN record.';
-
-COMMENT ON COLUMN sims.sin_validations.dob_sent IS 'The user Date of birth to match with the SIN record.';
-
 COMMENT ON COLUMN sims.sin_validations.request_status_code IS 'This code indicates if the request has been processed successfully.';
 
 COMMENT ON COLUMN sims.sin_validations.match_status_code IS 'This code indicates if the match is successful.';

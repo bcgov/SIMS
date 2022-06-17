@@ -1,9 +1,20 @@
+import { SINValidationFileHeader } from "../sin-validation-files/sin-validation-file-header";
+import { SINValidationFileResponse } from "../sin-validation-files/sin-validation-file-response";
+
 /**
  * Result of a file uploaded to SFTP on ZONE B network.
  */
 export interface SINValidationUploadResult {
   generatedFile: string;
   uploadedRecords: number;
+}
+
+/**
+ * Result of a file uploaded to SFTP on ZONE B network.
+ */
+export interface SINValidationResponseResult {
+  header: SINValidationFileHeader;
+  records: SINValidationFileResponse[];
 }
 
 /**
@@ -20,11 +31,11 @@ export enum RecordTypeCodes {
  * ESDC SIN validation be processed.
  */
 export interface SINValidationRecord {
+  sinValidationId: number;
   sin: string;
   firstName: string;
   lastName: string;
   birthDate: Date;
-  sinValidationId: number;
   gender: string;
 }
 

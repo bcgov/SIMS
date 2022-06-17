@@ -9,7 +9,7 @@ import {
   NoteType,
   SINValidation,
 } from "../../database/entities";
-import { Connection } from "typeorm";
+import { Connection, UpdateResult } from "typeorm";
 import { UserInfo } from "../../types";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
@@ -228,6 +228,7 @@ export class StudentService extends RecordDataModelService<Student> {
         "student.id",
         "student.sin",
         "student.birthDate",
+        "student.gender",
         "user.firstName",
         "user.lastName",
         "user.id",
@@ -391,6 +392,18 @@ export class StudentService extends RecordDataModelService<Student> {
     });
     student.notes.push(note);
     await this.repo.save(student);
+  }
+
+  async updateSINValidationByUserId(
+    userId: number,
+    sinValidation: SINValidation,
+  ): Promise<UpdateResult> {
+    return this.repo
+      .createQueryBuilder()
+      .update(Student)
+      .set({ sinValidation })
+      .where("student.user.id = :userId", { userId })
+      .execute();
   }
 
   @InjectLogger()

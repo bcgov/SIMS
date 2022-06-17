@@ -64,7 +64,7 @@ export class SINValidationFileResponse {
   /**
    * Date of birth status in the overall validation(DOB_OKAY_FLG).
    */
-  get dateOfBirthOkayFlag(): OkayFlag {
+  get birthDateOkayFlag(): OkayFlag {
     return this.line.substring(23, 24) as OkayFlag;
   }
   /**

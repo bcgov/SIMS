@@ -42,7 +42,7 @@ export class SINValidationFileRequest implements FixedFormatFileLine {
     record.append(RecordTypeCodes.Record);
     record.appendWithStartFiller(this.referenceIndex, 9, NUMBER_FILLER); // The documentation shows 10, but PROD records shows that it is 9.
     record.append(this.sin, 9);
-    record.appendWithEndFiller(this.firstName, 30, SPACE_FILLER);
+    record.appendWithEndFiller(this.firstName ?? "", 30, SPACE_FILLER); // First name can be null due to the mononymous name support.
     record.appendWithEndFiller(this.lastName, 30, SPACE_FILLER);
     record.append(this.gender, 1);
     record.appendDate(this.birthDate, DATE_FORMAT);

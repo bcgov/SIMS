@@ -9,9 +9,10 @@ import { SINValidationFileHeader } from "./sin-validation-files/sin-validation-f
 import {
   RecordTypeCodes,
   SINValidationRecord,
+  SINValidationResponseResult,
 } from "./models/sin-validation-models";
 import { SINValidationFileFooter } from "./sin-validation-files/sin-validation-file-footer";
-import { StringBuilder } from "../../utilities";
+import { getGenderCode, StringBuilder } from "../../utilities";
 import {
   CreateRequestFileNameResult,
   NUMBER_FILLER,
@@ -21,9 +22,7 @@ import { SINValidationFileRequest } from "./sin-validation-files/sin-validation-
 import { ESDCIntegrationConfig } from "../../types";
 
 @Injectable()
-export class SINValidationIntegrationService extends SFTPIntegrationBase<
-  SINValidationFileResponse[]
-> {
+export class SINValidationIntegrationService extends SFTPIntegrationBase<SINValidationResponseResult> {
   private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(config: ConfigService, sshService: SshService) {
     super(config.getConfig().zoneBSFTP, sshService);
@@ -58,6 +57,7 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<
       sinRecord.sin = record.sin;
       sinRecord.birthDate = record.birthDate;
       sinRecord.referenceIndex = record.sinValidationId;
+      sinRecord.gender = getGenderCode(record.gender);
       return sinRecord;
     });
     fileLines.push(...fileRecords);
@@ -83,6 +83,7 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<
    */
   createRequestFileName(sequenceNumber: number): CreateRequestFileNameResult {
     const fileNameBuilder = new StringBuilder();
+    fileNameBuilder.append(this.esdcConfig.environmentCode);
     fileNameBuilder.append("BC");
     fileNameBuilder.appendWithStartFiller(sequenceNumber, 4, NUMBER_FILLER);
     fileNameBuilder.append(".OS");
@@ -101,7 +102,7 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<
    */
   async downloadResponseFile(
     remoteFilePath: string,
-  ): Promise<SINValidationFileResponse[]> {
+  ): Promise<SINValidationResponseResult> {
     const fileLines = await this.downloadResponseFileLines(remoteFilePath);
     // Read the first line to check if the header code is the expected one.
     const header = SINValidationFileHeader.createFromFile(fileLines.shift()); // Read and remove header.
@@ -139,7 +140,7 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<
       throw new Error("SIN hash does not match with the expected on footer.");
     }
 
-    return records;
+    return { header, records };
   }
 
   @InjectLogger()
