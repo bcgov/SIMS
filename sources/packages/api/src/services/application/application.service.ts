@@ -723,7 +723,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: ApplicationStatus.completed,
       });
 
-    // Available applications are records that have no scholastic standing reported and not 'archived'.
+    // Available applications are records that have no 'scholastic standing reported' and are not 'archived'.
     if (applicationStatus === ApplicationStatus.available) {
       activeApplicationQuery.andWhere(
         new Brackets((qb) => {
