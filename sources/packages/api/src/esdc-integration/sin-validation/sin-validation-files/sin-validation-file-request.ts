@@ -37,6 +37,11 @@ export class SINValidationFileRequest implements FixedFormatFileLine {
    */
   birthDate: Date;
 
+  /**
+   * Get the information as a fixed line format to be
+   * added to the file uploaded to the SFTP.
+   * @returns fixed line formatted.
+   */
   getFixedFormat(): string {
     const record = new StringBuilder();
     record.append(RecordTypeCodes.Record);

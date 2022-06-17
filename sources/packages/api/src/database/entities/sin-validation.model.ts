@@ -82,6 +82,14 @@ export class SINValidation extends RecordDataModel {
   })
   dobSent?: Date;
   /**
+   * Gender sent in the file sent for SIN validation.
+   */
+  @Column({
+    name: "gender_sent",
+    nullable: true,
+  })
+  genderSent?: string;
+  /**
    * SIN is validated or not(e.g. null - SIN record is not sent for validation, true - SIN valid, false - SIN not valid).
    */
   @Column({
@@ -143,7 +151,7 @@ export class SINValidation extends RecordDataModel {
    */
   @Column({
     name: "temporary_sin",
-    nullable: true,
+    nullable: false,
   })
   temporarySIN: boolean;
   /**

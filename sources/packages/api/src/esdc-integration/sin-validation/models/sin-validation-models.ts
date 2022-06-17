@@ -2,7 +2,7 @@ import { SINValidationFileHeader } from "../sin-validation-files/sin-validation-
 import { SINValidationFileResponse } from "../sin-validation-files/sin-validation-file-response";
 
 /**
- * Result of a file uploaded to SFTP on ZONE B network.
+ * Result of a file uploaded to the SFTP.
  */
 export interface SINValidationUploadResult {
   generatedFile: string;
@@ -10,7 +10,7 @@ export interface SINValidationUploadResult {
 }
 
 /**
- * Result of a file uploaded to SFTP on ZONE B network.
+ * Result of a file downloaded from the SFTP.
  */
 export interface SINValidationResponseResult {
   header: SINValidationFileHeader;
@@ -57,7 +57,7 @@ export enum SINCheckStatus {
    */
   RejectedBecauseHasInvalidSIN = "3",
   /**
-   * Rejected because SIN and associated data (Name, birthdate, gender) are not an
+   * Rejected because SIN and associated data (name, birthdate, gender) are not an
    * exact match. One or all of the associated data items is sufficiently different
    * from what is on the SIN Registry to put the validity in question.
    */
@@ -69,6 +69,10 @@ export enum SINCheckStatus {
   Fraud = "5",
 }
 
+/**
+ * Flag returned from ESDC to indicate the status
+ * of certain data that was sent (name, birthdate, gender).
+ */
 export enum OkayFlag {
   Yes = "Y",
   No = "N",

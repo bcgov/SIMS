@@ -50,9 +50,11 @@ export class SINValidationSystemAccessController extends BaseController {
   async processResponses(
     @UserToken() userToken: IUserToken,
   ): Promise<ProcessResponseResDto[]> {
+    this.logger.log("Processing ESDC SIN validation response files.");
     const results = await this.sinValidationProcessingService.processResponses(
       userToken.userId,
     );
+    this.logger.log("ESDC SIN validation response files processed.");
     return results.map((result) => {
       return {
         processSummary: result.processSummary,

@@ -12,9 +12,6 @@ import { RecordTypeCodes } from "../models/sin-validation-models";
  * The documentation about it is available on the document 'SIN Check File Layouts 2019.docx'
  */
 export class SINValidationFileFooter implements FixedFormatFileLine {
-  constructor() {
-    this.recordTypeCode = RecordTypeCodes.Footer;
-  }
   /**
    * File record type.
    */
@@ -28,6 +25,11 @@ export class SINValidationFileFooter implements FixedFormatFileLine {
    */
   totalSINHash: number;
 
+  /**
+   * Get the information as a fixed line format to be
+   * added to the file uploaded to the SFTP.
+   * @returns fixed line formatted.
+   */
   getFixedFormat(): string {
     const record = new StringBuilder();
     record.append(this.recordTypeCode);
@@ -37,6 +39,11 @@ export class SINValidationFileFooter implements FixedFormatFileLine {
     return record.toString();
   }
 
+  /**
+   * Reads a fixed line format to convert the data.
+   * @param line fixed line formatted.
+   * @returns file footer.
+   */
   static createFromLine(line: string): SINValidationFileFooter {
     const footer = new SINValidationFileFooter();
     footer.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;

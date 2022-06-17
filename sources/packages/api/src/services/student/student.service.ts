@@ -9,7 +9,7 @@ import {
   NoteType,
   SINValidation,
 } from "../../database/entities";
-import { Connection, UpdateResult } from "typeorm";
+import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";

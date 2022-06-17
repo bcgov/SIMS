@@ -79,7 +79,7 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<SINVali
    * validation request file.
    * @param sequenceNumber sequence number of the file.
    * @returns file name and location in the SFTP to upload the ESDC SIN
-   * validation request file
+   * validation request file.
    */
   createRequestFileName(sequenceNumber: number): CreateRequestFileNameResult {
     const fileNameBuilder = new StringBuilder();

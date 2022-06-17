@@ -26,6 +26,11 @@ export class SINValidationFileHeader implements FixedFormatFileLine {
    */
   processDate: Date;
 
+  /**
+   * Get the information as a fixed line format to be
+   * added to the file uploaded to the SFTP.
+   * @returns fixed line formatted.
+   */
   getFixedFormat(): string {
     const record = new StringBuilder();
     record.append(this.recordTypeCode);
@@ -36,6 +41,11 @@ export class SINValidationFileHeader implements FixedFormatFileLine {
     return record.toString();
   }
 
+  /**
+   * Reads a fixed line format to convert the data.
+   * @param line fixed line formatted.
+   * @returns file header.
+   */
   static createFromFile(line?: string): SINValidationFileHeader {
     const header = new SINValidationFileHeader();
     header.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;

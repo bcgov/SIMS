@@ -50,6 +50,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       sinValidation.givenNameSent = record.firstName;
       sinValidation.surnameSent = record.lastName;
       sinValidation.dobSent = record.birthDate;
+      sinValidation.genderSent = record.gender;
       sinValidation.modifier = auditUser;
       return sinValidation;
     });
@@ -77,6 +78,9 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
     processDate: Date,
     auditUserId: number,
   ): Promise<SINValidation> {
+    // If the list of the selected columns must be changed please keep in mind that
+    // these fields are also the ones used later to "clone" the record if needed,
+    // as explained further along the method.
     const existingValidation = await this.repo
       .createQueryBuilder("sinValidation")
       .select([
@@ -109,7 +113,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
     const sinStatusChanged =
       existingValidation.sinStatus !== validationResponse.sinCheckStatus;
 
-    // Values t be updated from the ESDC response.
+    // Values to be updated from the ESDC response.
     existingValidation.dateReceived = processDate;
     existingValidation.fileReceived = receivedFileName;
     existingValidation.isValidSIN = isValidSIN;
