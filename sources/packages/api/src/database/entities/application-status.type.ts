@@ -44,11 +44,11 @@ export enum ApplicationStatus {
    */
   overwritten = "Overwritten",
   /**
-   * Applications that are completed and not archived.
+   * Applications that are available.
    */
   available = "Available",
   /**
-   * Applications that are completed and archived.
+   * Applications that are unavailable.
    */
   unavailable = "Unavailable",
 }
