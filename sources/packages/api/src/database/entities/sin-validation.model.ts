@@ -156,10 +156,14 @@ export class SINValidation extends RecordDataModel {
   validGenderCheck?: string;
   /**
    * Defines if the SIN is temporary.
+   * This column is automatically calculated on DB during
+   * insert or update operations.
    */
   @Column({
     name: "temporary_sin",
     nullable: false,
+    update: false,
+    insert: false,
   })
   temporarySIN: boolean;
   /**
