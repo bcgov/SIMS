@@ -67,6 +67,7 @@ describe("Test ATBC Controller", () => {
     sinValidation.user = simsUser;
     sinValidation.isValidSIN = true;
     fakeStudent.sinValidation = sinValidation;
+    sinValidation.sin = "706941291";
 
     // Save the student in SIMS
     await studentService.save(fakeStudent);
