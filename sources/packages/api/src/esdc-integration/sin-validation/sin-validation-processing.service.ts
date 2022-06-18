@@ -124,7 +124,7 @@ export class SINValidationProcessingService {
     student: Student,
   ): SINValidationRecord {
     return {
-      sin: student.sin,
+      sin: student.sinValidation.sin,
       firstName: student.user.firstName,
       lastName: student.user.lastName,
       birthDate: student.birthDate,

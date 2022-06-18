@@ -141,7 +141,7 @@ export class CRAPersonalVerificationService {
     freeProjectArea: string,
   ): CRAPersonRecord {
     return {
-      sin: student.sin,
+      sin: student.sinValidation.sin,
       surname: student.user.lastName,
       givenName: student.user.firstName,
       birthDate: student.birthDate,

@@ -73,7 +73,8 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
         "incomeVerification.taxYear",
         "application.id",
         "student.birthDate",
-        "student.sin",
+        "sinValidation.id",
+        "sinValidation.sin",
         "studentUser.firstName",
         "studentUser.lastName",
         "supportingUser.birthDate",
@@ -83,6 +84,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
       ])
       .innerJoin("incomeVerification.application", "application")
       .innerJoin("application.student", "student")
+      .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("student.user", "studentUser")
       .leftJoin("incomeVerification.supportingUser", "supportingUser")
       .leftJoin("supportingUser.user", "supportingUserUser")

@@ -1,6 +1,7 @@
 -- Remove columns from ESDC SIN validation schema.
 ALTER TABLE
-  sims.sin_validations DROP COLUMN IF EXISTS gender_sent,
+  sims.sin_validations DROP COLUMN IF EXISTS sin,
+  DROP COLUMN IF EXISTS gender_sent,
   DROP COLUMN IF EXISTS sin_status,
   DROP COLUMN IF EXISTS valid_sin_check,
   DROP COLUMN IF EXISTS valid_birthdate_check,

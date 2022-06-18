@@ -7,7 +7,15 @@ ALTER TABLE
   DROP COLUMN IF EXISTS given_name_match_status_code,
   DROP COLUMN IF EXISTS dob_match_status_code;
 
--- Adding a missing column for history, first name, last name and others are already present.
+-- Adding SIN column, previously it was just on the student table and from now on
+-- it will be the only this the sims.sin_validations.
+ALTER TABLE
+  sims.sin_validations
+ADD
+  -- this will be changed to NOT NULL in the end of the script.
+  COLUMN IF NOT EXISTS sin VARCHAR(9);
+
+-- Adding a missing column for history (first name, last name and others are already present).
 ALTER TABLE
   sims.sin_validations
 ADD
@@ -57,7 +65,33 @@ ADD
 SET
   NULL;
 
+-- Copy SIN from student to the new sin column on sims.sin_validations.
+UPDATE
+  sims.sin_validations
+SET
+  sin = CAST(sims.students.sin AS VARCHAR(9))
+FROM
+  sims.students
+WHERE
+  students.user_id = sims.sin_validations.user_id;
+
+-- Remove sin_validations that were not update from students.
+DELETE FROM
+  sims.sin_validations
+WHERE
+  sin IS NULL;
+
+-- Adjust new sin column to be NOT NULL.
+ALTER TABLE
+  sims.sin_validations
+ALTER COLUMN
+  sin
+SET
+  NOT NULL;
+
 -- ## Comments
+COMMENT ON COLUMN sims.sin_validations.sin IS 'Social insurance number.';
+
 COMMENT ON COLUMN sims.sin_validations.gender_sent IS 'The user gender to match with the SIN record.';
 
 COMMENT ON COLUMN sims.sin_validations.sin_status IS 'Overall SIN validation status (e.g. 1-Passed, 2-Under Review, etc.) returned on the ESDC response.';

@@ -222,7 +222,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     );
 
     return {
-      sin: application.student.sin,
+      sin: application.student.sinValidation.sin,
       stopFullTimeBCFunding: disbursement.stopFullTimeBCFunding,
       courseLoad: offering.courseLoad,
       applicationNumber: application.applicationNumber,

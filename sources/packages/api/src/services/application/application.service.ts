@@ -494,12 +494,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .select([
         "application.data",
-        "student.sin",
         "student.birthDate",
+        "sinValidation.id",
+        "sinValidation.sin",
         "user.id",
         "user.lastName",
       ])
       .innerJoin("application.student", "student")
+      .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("student.user", "user")
       .andWhere("application.id = :applicationId", {
         applicationId,

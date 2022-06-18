@@ -13,12 +13,20 @@ import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
- * SIN Validations that must be performed with CRA.
+ * SIN Validations that must be performed with ESDC.
  */
 @Entity({ name: TableNames.SINValidations })
 export class SINValidation extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
+  /**
+   * Social insurance number.
+   */
+  @Column({
+    name: "sin",
+    nullable: false,
+  })
+  sin: string;
   /**
    * Date and time that the SIN validation file was generated
    * and sent.

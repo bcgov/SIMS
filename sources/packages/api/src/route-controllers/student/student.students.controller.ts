@@ -165,7 +165,7 @@ export class StudentStudentsController extends BaseController {
 
     // Create client payload.
     const payload: ATBCCreateClientPayload = {
-      SIN: student.sin,
+      SIN: student.sinValidation.sin,
       firstName: student.user.firstName,
       lastName: student.user.lastName,
       email: student.user.email,

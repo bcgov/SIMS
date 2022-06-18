@@ -187,7 +187,7 @@ export class ApplicationStudentsController extends BaseController {
         applicationId,
         student.user.lastName,
         studentToken.userId,
-        student.sin,
+        student.sinValidation.sin,
         student.birthDate,
         studyStartDate,
         studyEndDate,
