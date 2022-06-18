@@ -39,7 +39,12 @@ ADD
 ADD
   COLUMN IF NOT EXISTS sin_expire_date DATE,
 ADD
-  COLUMN IF NOT EXISTS temporary_sin BOOLEAN NOT NULL DEFAULT false;
+  COLUMN IF NOT EXISTS temporary_sin BOOLEAN NOT NULL GENERATED ALWAYS AS (
+    CASE
+      WHEN sin LIKE '9%' THEN TRUE
+      ELSE false
+    END
+  ) STORED;
 
 -- New columns added to allow audit of manual SIN manipulation.
 ALTER TABLE
