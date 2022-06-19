@@ -85,6 +85,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       .createQueryBuilder("sinValidation")
       .select([
         "sinValidation.id",
+        "sinValidation.sin",
         "sinValidation.sinStatus",
         "sinValidation.dateReceived",
         "sinValidation.validSINCheck",
@@ -93,6 +94,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         "sinValidation.givenNameSent",
         "sinValidation.surnameSent",
         "sinValidation.dobSent",
+        "sinValidation.genderSent",
         "sinValidation.temporarySIN",
         "sinValidation.sinExpireDate",
         "user.id",

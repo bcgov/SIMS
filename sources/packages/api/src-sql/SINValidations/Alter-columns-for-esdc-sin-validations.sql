@@ -12,8 +12,15 @@ ALTER TABLE
 ALTER TABLE
   sims.sin_validations
 ADD
-  -- this will be changed to NOT NULL in the end of the script.
-  COLUMN IF NOT EXISTS sin VARCHAR(9);
+  -- This will be changed to NOT NULL in the end of the script.
+  COLUMN IF NOT EXISTS sin VARCHAR(9),
+ADD
+  COLUMN IF NOT EXISTS temporary_sin BOOLEAN NOT NULL GENERATED ALWAYS AS (
+    CASE
+      WHEN sin LIKE '9%' THEN TRUE
+      ELSE false
+    END
+  ) STORED;
 
 -- Adding a missing column for history (first name, last name and others are already present).
 ALTER TABLE
@@ -37,14 +44,7 @@ ADD
 ADD
   COLUMN IF NOT EXISTS valid_gender_check CHAR(1),
 ADD
-  COLUMN IF NOT EXISTS sin_expire_date DATE,
-ADD
-  COLUMN IF NOT EXISTS temporary_sin BOOLEAN NOT NULL GENERATED ALWAYS AS (
-    CASE
-      WHEN sin LIKE '9%' THEN TRUE
-      ELSE false
-    END
-  ) STORED;
+  COLUMN IF NOT EXISTS sin_expire_date DATE;
 
 -- New columns added to allow audit of manual SIN manipulation.
 ALTER TABLE
