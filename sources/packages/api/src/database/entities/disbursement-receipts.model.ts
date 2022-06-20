@@ -1,3 +1,4 @@
+import { IsDate, Length } from "class-validator";
 import {
   Column,
   Entity,
@@ -28,6 +29,7 @@ export class DisbursementReceipt extends RecordDataModel {
     transformer: dateOnlyTransformer,
     nullable: false,
   })
+  @IsDate()
   batchRunDate: Date;
 
   /**
@@ -37,6 +39,7 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "student_sin",
     nullable: false,
   })
+  @Length(9)
   studentSIN: string;
 
   /**
@@ -65,6 +68,7 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "funding_type",
     nullable: false,
   })
+  @Length(2)
   fundingType: string;
 
   /**
@@ -96,6 +100,7 @@ export class DisbursementReceipt extends RecordDataModel {
     transformer: dateOnlyTransformer,
     nullable: false,
   })
+  @IsDate()
   disburseDate: Date;
 
   /**
@@ -127,6 +132,7 @@ export class DisbursementReceipt extends RecordDataModel {
     transformer: dateOnlyTransformer,
     nullable: false,
   })
+  @IsDate()
   dateSignedInstitution: Date;
 
   /**
@@ -170,5 +176,6 @@ export class DisbursementReceipt extends RecordDataModel {
     transformer: dateOnlyTransformer,
     nullable: false,
   })
+  @IsDate()
   studyPeriodEndDate: Date;
 }

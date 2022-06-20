@@ -654,12 +654,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     return orderByCondition;
   }
 
-  async getDisbursementsByDocumentNumber(
+  async getDisbursementsByDocumentNumbers(
     documentNumbers: number[],
-    externalRepo?: Repository<DisbursementSchedule>,
   ): Promise<DisbursementSchedule[]> {
-    const repo = externalRepo ?? this.repo;
-    return repo
+    return this.repo
       .createQueryBuilder("disbursementSchedule")
       .select([
         "disbursementSchedule.id",

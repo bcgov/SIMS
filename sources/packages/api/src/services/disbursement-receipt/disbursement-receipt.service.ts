@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Connection, Repository } from "typeorm";
+import { Connection } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { DisbursementReceipt } from "../../database/entities";
 
@@ -12,23 +12,17 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     super(connection.getRepository(DisbursementReceipt));
   }
 
-  async getDisbursementReceiptsByDisbursementScheduleId(
-    disbursementScheduleIds: number[],
-    externalRepo?: Repository<DisbursementReceipt>,
-  ): Promise<DisbursementReceipt[]> {
-    const repo = externalRepo ?? this.repo;
-    return repo
-      .createQueryBuilder("disbursementReceipt")
-      .select([
-        "disbursementReceipt.id",
-        "disbursementReceipt.disbursementScheduleId",
-      ])
-      .where(
-        "disbursementReceipt.disbursementScheduleId IN (:...disbursementScheduleIds)",
-        {
-          disbursementScheduleIds,
-        },
+  async insertDisbursementReceipt(
+    disbursementReceipt: DisbursementReceipt,
+  ): Promise<void> {
+    await this.repo
+      .createQueryBuilder()
+      .insert()
+      .into(DisbursementReceipt)
+      .values(disbursementReceipt)
+      .orIgnore(
+        "ON CONSTRAINT disbursement_schedule_id_funding_type_unique DO NOTHING",
       )
-      .getMany();
+      .execute();
   }
 }

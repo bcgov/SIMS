@@ -9,6 +9,7 @@ import {
 import { User, COEStatus, COEDeniedReason } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
+import { DisbursementReceipt } from "./disbursement-receipts.model";
 import { DisbursementValue } from "./disbursement-values.model";
 import { RecordDataModel } from "./record.model";
 import { StudentAssessment } from "./student-assessment.model";
@@ -145,4 +146,18 @@ export class DisbursementSchedule extends RecordDataModel {
     nullable: false,
   })
   tuitionRemittanceRequestedAmount: number;
+
+  /**
+   * disbursement receipts for the disbursement.
+   */
+  @OneToMany(
+    () => DisbursementReceipt,
+    (disbursementReceipt) => disbursementReceipt.disbursementSchedule,
+    {
+      eager: false,
+      cascade: false,
+      nullable: true,
+    },
+  )
+  disbursementReceipts?: DisbursementReceipt[];
 }

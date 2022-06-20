@@ -4,11 +4,11 @@ import { SshService } from "../../services/ssh/ssh.service";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import {
   DisbursementReceiptDownloadResponse,
-  DisbursementReceiptDetail,
-  DisbursementReceiptHeader,
   DisbursementReceiptRecordType,
-  DisbursementReceiptFooter,
 } from "./models/disbursement-receipt-integration.model";
+import { DisbursementReceiptHeader } from "./disbursement-receipt-files/disbursement-receipt-file-header";
+import { DisbursementReceiptFooter } from "./disbursement-receipt-files/disbursement-receipt-file-footer";
+import { DisbursementReceiptDetail } from "./disbursement-receipt-files/disbursement-receipt-file-detail";
 
 @Injectable()
 export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<DisbursementReceiptDownloadResponse> {
@@ -25,18 +25,7 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
   async downloadResponseFile(
     remoteFilePath: string,
   ): Promise<DisbursementReceiptDownloadResponse> {
-    const fileLines: string[] = [];
-    fileLines.push("BC22267890F027772022051620220512");
-    fileLines.push(
-      "BC22267890DDIS165760208FE10000309    027300{027300{20220512027300{000000{20220502AUAFE20220731022500{022500{022500{000000{FT    022500{      000000{      000000{      000000{      000000{      000000{      000000{      000000{      000000{      000000{                                                ",
-    );
-    fileLines.push(
-      "BC22267890DDIS362701658FE10000306    000000{000000{20220512000000{000000{20220502AJBHE20220831124350{124350{124350{000000{FT    029420{TU    007850{PD    040000{FTDEP 047080{      000000{      000000{      000000{      000000{      000000{      000000{                                                ",
-    );
-    fileLines.push(
-      "BC22267890TDIS000001600000080000168300{0000293540{00000080000115850{0000088450{000006381527834",
-    );
-    //const fileLines = await this.downloadResponseFileLines(remoteFilePath);
+    const fileLines = await this.downloadResponseFileLines(remoteFilePath);
     // Read the first line to check if the header code is the expected one.
     const header = new DisbursementReceiptHeader(fileLines.shift()); // Read and remove header.
     if (header.recordType !== DisbursementReceiptRecordType.Header) {

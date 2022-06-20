@@ -52,3 +52,4 @@ export * from "./notification/gc-notify.service";
 export * from "./notification/gc-notify-actions.service";
 export * from "./report/report.service";
 export * from "./application-exception/application-exception.service";
+export * from "./disbursement-receipt/disbursement-receipt.service";
