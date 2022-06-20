@@ -45,7 +45,6 @@ export default {
       const applicationDetails =
         await ScholasticStandingService.shared.getScholasticStanding(
           props.scholasticStandingId,
-          undefined,
         );
 
       initialData.value = {
