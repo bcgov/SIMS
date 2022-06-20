@@ -105,7 +105,7 @@ export interface EntranceRequirements {
 }
 /**
  * Transformation util for Program.
- * @param EducationProgram
+ * @param program
  * @returns Application DTO
  */
 export const transformToEducationProgramData = (

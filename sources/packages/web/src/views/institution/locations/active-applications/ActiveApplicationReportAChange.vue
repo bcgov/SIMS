@@ -5,12 +5,12 @@
     subTitle="View Application"
   />
   <full-page-container class="p-m-4">
-    <formio
-      formName="reportscholasticstandingchange"
-      :data="initialData"
+    <scholastic-standing-form
+      :initialData="initialData"
+      :readOnly="false"
       @submitted="submit"
       @customEvent="customEventCallback"
-    ></formio>
+    />
   </full-page-container>
 </template>
 <script lang="ts">
@@ -23,17 +23,22 @@ import {
   FormIOCustomEventTypes,
 } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
 import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ScholasticStandingDataAPIInDTO,
 } from "@/services/http/dto/ScholasticStanding.dto";
-import { useToastMessage } from "@/composables";
+import { useFormatters, useToastMessage } from "@/composables";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
+import { ScholasticStandingService } from "@/services/ScholasticStandingService";
+import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
+import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 
 export default {
+  components: {
+    ScholasticStandingForm,
+  },
   props: {
     applicationId: {
       type: Number,
@@ -46,14 +51,32 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+    const { dateOnlyLongString } = useFormatters();
     const initialData = ref({} as ActiveApplicationDataAPIOutDTO);
     const toast = useToastMessage();
 
     const loadInitialData = async () => {
-      initialData.value = await InstitutionService.shared.getActiveApplication(
-        props.applicationId,
-        props.locationId,
-      );
+      const applicationDetails =
+        await InstitutionService.shared.getActiveApplication(
+          props.applicationId,
+          props.locationId,
+        );
+      initialData.value = {
+        ...applicationDetails,
+        applicationOfferingStartDate: dateOnlyLongString(
+          applicationDetails.applicationOfferingStartDate,
+        ),
+        applicationOfferingEndDate: dateOnlyLongString(
+          applicationDetails.applicationOfferingEndDate,
+        ),
+        applicationOfferingStudyBreak:
+          applicationDetails.applicationOfferingStudyBreak?.map(
+            (studyBreak) => ({
+              breakStartDate: dateOnlyLongString(studyBreak.breakStartDate),
+              breakEndDate: dateOnlyLongString(studyBreak.breakEndDate),
+            }),
+          ),
+      };
     };
 
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
@@ -86,7 +109,7 @@ export default {
 
     const submit = async (data: ScholasticStandingDataAPIInDTO) => {
       try {
-        await InstitutionService.shared.saveScholasticStanding(
+        await ScholasticStandingService.shared.saveScholasticStanding(
           props.applicationId,
           props.locationId,
           data,

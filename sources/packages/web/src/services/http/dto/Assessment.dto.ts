@@ -22,14 +22,16 @@ export interface RequestAssessmentSummaryAPIOutDTO {
 }
 
 export interface AssessmentHistorySummaryAPIOutDTO {
-  assessmentId: number;
+  assessmentId?: number;
   submittedDate: Date;
   triggerType: AssessmentTriggerType;
-  assessmentDate: Date;
+  assessmentDate?: Date;
   status: StudentAssessmentStatus;
   studentAppealId?: number;
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;
+  // This flag decides, the row is unsuccessful week or not.
+  hasUnsuccessfulWeeks?: boolean;
 }
 
 export interface AssessmentNOAAPIOutDTO {

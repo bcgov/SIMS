@@ -9,13 +9,9 @@ dist/
 .vscode/
 *.log
 
-#from reports
-cypress/report/
-cypress/screenshots/
-
-#from cypress json
+#cypress
+reports/
+screenshots/
+videos/
+report/
 cypress.env.json
-testing/dev/functional/tests/cypress/screenshots/
-testing/dev/functional/tests/cypress/videos/
-testing/dev/functional/tests/cypress/reports/
-testing/dev/functional/tests/cypress/report/
