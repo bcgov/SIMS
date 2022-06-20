@@ -9,32 +9,16 @@ import {
  * The documentation about it is available on the document 'SIN Check File Layouts 2019.docx'
  */
 export class SINValidationFileResponse {
-  private _line: string;
-  private _lineNumber: number;
-
-  constructor(line: string, lineNumber: number) {
-    this._line = line;
-    this._lineNumber = lineNumber;
-  }
+  constructor(
+    public readonly line: string,
+    public readonly lineNumber: number,
+  ) {}
 
   /**
    * Record type code of the line.
    */
   get recordTypeCode(): RecordTypeCodes {
-    return this._line.substring(0, 3) as RecordTypeCodes;
-  }
-  /**
-   * Original line read from the SIN validation response file.
-   */
-  get line(): string {
-    return this._line;
-  }
-  /**
-   * Original line number where this record was present
-   * in the SIN validation response file. Useful for log.
-   */
-  get lineNumber(): number {
-    return this._lineNumber;
+    return this.line.substring(0, 3) as RecordTypeCodes;
   }
   /**
    * Reference id (from sims.sin_validations) sent to the ESDC
