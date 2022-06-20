@@ -155,7 +155,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
           scholasticStandingId:
             eachApplication.currentAssessment?.studentScholasticStanding?.id,
         };
-      }) as ActiveApplicationSummaryAPIOutDTO[],
+      }),
       count: applications.count,
     };
   }

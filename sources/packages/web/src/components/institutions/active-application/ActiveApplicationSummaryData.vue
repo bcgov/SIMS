@@ -12,7 +12,11 @@
           variant="outlined"
           v-model="searchCriteria"
           @keyup.enter="searchActiveApplications"
-        ></v-text-field>
+        >
+          <template v-slot:prependInner>
+            <font-awesome-icon :icon="['fa', 'search']" />
+          </template>
+        </v-text-field>
       </div>
     </template>
   </body-header>
@@ -32,13 +36,7 @@
         <template #empty>
           <p class="text-center font-weight-bold">No records found.</p>
         </template>
-        <Column
-          field="fullName"
-          header="Name"
-          :sortable="true"
-          headerStyle="width: 20%"
-        >
-        </Column>
+        <Column field="fullName" header="Name" :sortable="true"> </Column>
         <Column field="studyStartPeriod" header="Study dates">
           <template #body="slotProps">
             <span>
@@ -48,16 +46,12 @@
           </template>
         </Column>
         <Column
-          headerStyle="width: 20%"
           field="applicationNumber"
           header="Application #"
           :sortable="true"
-        ></Column>
-        <Column
-          field="applicationStatus"
-          header="Status"
           headerStyle="width: 20%"
-        >
+        ></Column>
+        <Column field="applicationStatus" header="Status">
           <template #body="slotProps">
             <StatusChipActiveApplication
               :status="slotProps.data.applicationSholasticStandingStatus"
