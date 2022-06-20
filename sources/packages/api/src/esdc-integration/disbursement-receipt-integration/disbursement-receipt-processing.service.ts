@@ -137,7 +137,6 @@ export class DisbursementReceiptProcessingService {
             return disbursementReceiptValue;
           },
         );
-
         try {
           const validationErrors = await validate(disbursementReceipt);
           if (validationErrors.length > 0) {

@@ -19,10 +19,10 @@ export class DisbursementReceiptRecord {
   protected convertToAmountString(amountText: string) {
     const amountWholeValue = amountText.substring(0, 5);
     const amountDecimalValue = amountText.substring(5, 7);
-
+    const wholeValue = isNaN(+amountWholeValue) ? "0" : amountWholeValue;
     const amount = isNaN(+amountDecimalValue)
-      ? `${amountWholeValue}.00`
-      : `${amountWholeValue}.${amountDecimalValue}`;
+      ? `${wholeValue}.00`
+      : `${wholeValue}.${amountDecimalValue}`;
     return parseFloat(amount).toFixed(2);
   }
 }

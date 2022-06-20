@@ -8,21 +8,35 @@ import { DisbursementReceipt } from "../../database/entities";
  */
 @Injectable()
 export class DisbursementReceiptService extends RecordDataModelService<DisbursementReceipt> {
-  constructor(connection: Connection) {
+  constructor(private readonly connection: Connection) {
     super(connection.getRepository(DisbursementReceipt));
   }
 
   async insertDisbursementReceipt(
     disbursementReceipt: DisbursementReceipt,
   ): Promise<void> {
-    await this.repo
-      .createQueryBuilder()
-      .insert()
-      .into(DisbursementReceipt)
-      .values(disbursementReceipt)
-      .orIgnore(
-        "ON CONSTRAINT disbursement_schedule_id_funding_type_unique DO NOTHING",
-      )
-      .execute();
+    await this.connection.transaction(async (transactionalEntityManager) => {
+      const result = await transactionalEntityManager
+        .createQueryBuilder()
+        .insert()
+        .into(DisbursementReceipt)
+        .values(disbursementReceipt)
+        .orIgnore(
+          "ON CONSTRAINT disbursement_schedule_id_funding_type_unique DO NOTHING",
+        )
+        .execute();
+      if (
+        result.identifiers[0] &&
+        disbursementReceipt.disbursementReceiptValues
+      ) {
+        await transactionalEntityManager
+          .getRepository(DisbursementReceipt)
+          .save({
+            id: result.identifiers[0].id,
+            disbursementReceiptValues:
+              disbursementReceipt.disbursementReceiptValues,
+          });
+      }
+    });
   }
 }
