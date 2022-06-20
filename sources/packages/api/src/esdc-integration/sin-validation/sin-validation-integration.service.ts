@@ -7,6 +7,7 @@ import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { SINValidationFileResponse } from "./sin-validation-files/sin-validation-file-response";
 import { SINValidationFileHeader } from "./sin-validation-files/sin-validation-file-header";
 import {
+  PROVINCE_CODE,
   RecordTypeCodes,
   SINValidationRecord,
   SINValidationResponseResult,
@@ -84,7 +85,7 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<SINVali
   createRequestFileName(sequenceNumber: number): CreateRequestFileNameResult {
     const fileNameBuilder = new StringBuilder();
     fileNameBuilder.append(this.esdcConfig.environmentCode);
-    fileNameBuilder.append("BC");
+    fileNameBuilder.append(PROVINCE_CODE);
     fileNameBuilder.appendWithStartFiller(sequenceNumber, 4, NUMBER_FILLER);
     fileNameBuilder.append(".OS");
 

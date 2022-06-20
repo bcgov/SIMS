@@ -1,5 +1,8 @@
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
-import { RecordTypeCodes } from "../models/sin-validation-models";
+import {
+  PROVINCE_CODE,
+  RecordTypeCodes,
+} from "../models/sin-validation-models";
 import {
   DATE_FORMAT,
   NUMBER_FILLER,
@@ -36,7 +39,7 @@ export class SINValidationFileHeader implements FixedFormatFileLine {
     record.append(this.recordTypeCode);
     record.appendWithStartFiller(this.batchNumber, 8, NUMBER_FILLER);
     record.appendDate(this.processDate, DATE_FORMAT);
-    record.append("BC");
+    record.append(PROVINCE_CODE);
     record.repeatAppend(SPACE_FILLER, 71);
     return record.toString();
   }

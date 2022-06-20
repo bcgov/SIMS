@@ -3,6 +3,11 @@ import { SINValidationFileHeader } from "../sin-validation-files/sin-validation-
 import { SINValidationFileResponse } from "../sin-validation-files/sin-validation-file-response";
 
 /**
+ * Province code used for ESDC SIN validation.
+ */
+export const PROVINCE_CODE = "BC";
+
+/**
  * Result of a file uploaded to the SFTP.
  */
 export interface SINValidationUploadResult {
