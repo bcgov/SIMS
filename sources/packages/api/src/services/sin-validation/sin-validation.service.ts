@@ -179,18 +179,16 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       }
       operationDescription =
         "No SIN validation was updated because the record id is already present and this is not the most updated.";
-      const clonedRecord = await this.repo.save(existingValidation);
       return {
         operationDescription,
-        record: clonedRecord,
+        record: existingValidation,
       };
     }
     operationDescription =
       "SIN validation skipped because it is already processed and updated.";
-    const clonedRecord = await this.repo.save(existingValidation);
     return {
       operationDescription,
-      record: clonedRecord,
+      record: existingValidation,
     };
   }
 
