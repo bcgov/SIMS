@@ -1,11 +1,3 @@
-import { Type } from "class-transformer";
-import {
-  ArrayMinSize,
-  IsDate,
-  IsNotEmpty,
-  Length,
-  ValidateNested,
-} from "class-validator";
 import {
   Column,
   Entity,
@@ -36,7 +28,6 @@ export class DisbursementReceipt extends RecordDataModel {
     transformer: dateOnlyTransformer,
     nullable: false,
   })
-  @IsDate()
   batchRunDate: Date;
 
   /**
@@ -46,7 +37,6 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "student_sin",
     nullable: false,
   })
-  @Length(9)
   studentSIN: string;
 
   /**
@@ -75,7 +65,6 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "funding_type",
     nullable: false,
   })
-  @Length(2)
   fundingType: string;
 
   /**
@@ -86,7 +75,6 @@ export class DisbursementReceipt extends RecordDataModel {
     type: "numeric",
     nullable: false,
   })
-  @IsNotEmpty()
   totalEntitledDisbursedAmount: string;
 
   /**
@@ -97,7 +85,6 @@ export class DisbursementReceipt extends RecordDataModel {
     type: "numeric",
     nullable: false,
   })
-  @IsNotEmpty()
   totalDisbursedAmount: string;
 
   /**
@@ -109,7 +96,6 @@ export class DisbursementReceipt extends RecordDataModel {
     transformer: dateOnlyTransformer,
     nullable: false,
   })
-  @IsDate()
   disburseDate: Date;
 
   /**
@@ -120,7 +106,6 @@ export class DisbursementReceipt extends RecordDataModel {
     type: "numeric",
     nullable: false,
   })
-  @IsNotEmpty()
   disburseAmountStudent: string;
 
   /**
@@ -131,7 +116,6 @@ export class DisbursementReceipt extends RecordDataModel {
     type: "numeric",
     nullable: false,
   })
-  @IsNotEmpty()
   disburseAmountInstitution: string;
 
   /**
@@ -143,7 +127,6 @@ export class DisbursementReceipt extends RecordDataModel {
     transformer: dateOnlyTransformer,
     nullable: false,
   })
-  @IsDate()
   dateSignedInstitution: Date;
 
   /**
@@ -153,7 +136,6 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "institution_code",
     nullable: false,
   })
-  @Length(4)
   institutionCode: string;
 
   /**
@@ -163,7 +145,6 @@ export class DisbursementReceipt extends RecordDataModel {
     name: "disburse_method_student",
     nullable: false,
   })
-  @Length(1)
   disburseMethodStudent: string;
 
   /**
@@ -174,7 +155,6 @@ export class DisbursementReceipt extends RecordDataModel {
     type: "numeric",
     nullable: false,
   })
-  @IsNotEmpty()
   totalEntitledGrantAmount: string;
 
   /**
@@ -185,7 +165,6 @@ export class DisbursementReceipt extends RecordDataModel {
     type: "numeric",
     nullable: false,
   })
-  @IsNotEmpty()
   totalDisbursedGrantAmount: string;
 
   /**
@@ -196,7 +175,6 @@ export class DisbursementReceipt extends RecordDataModel {
     type: "numeric",
     nullable: false,
   })
-  @IsNotEmpty()
   totalDisbursedGrantAmountStudent: string;
 
   /**
@@ -207,7 +185,6 @@ export class DisbursementReceipt extends RecordDataModel {
     type: "numeric",
     nullable: false,
   })
-  @IsNotEmpty()
   totalDisbursedGrantAmountInstitution: string;
 
   /**
@@ -222,9 +199,6 @@ export class DisbursementReceipt extends RecordDataModel {
       nullable: true,
     },
   )
-  @ArrayMinSize(0)
-  @ValidateNested({ each: true })
-  @Type(() => DisbursementReceiptValue)
   disbursementReceiptValues?: DisbursementReceiptValue[];
 
   /**
@@ -236,6 +210,5 @@ export class DisbursementReceipt extends RecordDataModel {
     transformer: dateOnlyTransformer,
     nullable: false,
   })
-  @IsDate()
   studyPeriodEndDate: Date;
 }

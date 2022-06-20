@@ -1,11 +1,26 @@
 import { DisbursementReceiptRecord } from "./disbursement-receipt-file-record";
-import { DisbursementReceiptGrant } from "../models/disbursement-receipt-integration.model";
 
+/**
+ * Model to parse the grant field of disbursement file detail record.
+ */
+export class DisbursementReceiptGrant {
+  constructor(
+    public readonly grantType: string,
+    public readonly grantAmount: string,
+  ) {}
+}
+
+/**
+ * Disbursement receipt detail record which has the receipt details for disbursements sent.
+ * The document number which is present in each of the receipt detail record connects the
+ * disbursement sent with the receipt received.
+ */
 export class DisbursementReceiptDetail extends DisbursementReceiptRecord {
   constructor(line: string, lineNumber: number) {
     super(line, lineNumber);
   }
 
+  //Number of occurrences of the grant field.
   private GRANT_OCCURRENCE = 10;
 
   public get studentSIN() {
@@ -89,5 +104,20 @@ export class DisbursementReceiptDetail extends DisbursementReceiptRecord {
       }
     }
     return grants;
+  }
+
+  /**
+   * Validate the record detail data.
+   * @returns validation error message if validation fails.
+   */
+  public getInvalidDataMessage(): string | null {
+    const errors: string[] = [];
+    if (isNaN(+this.studentSIN)) {
+      errors.push("invalid student SIN");
+    }
+    if (isNaN(this.documentNumber)) {
+      errors.push("invalid document number");
+    }
+    return errors.join(", ");
   }
 }

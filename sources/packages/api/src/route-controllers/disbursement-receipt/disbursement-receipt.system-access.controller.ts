@@ -18,6 +18,11 @@ export class DisbursementReceiptSystemAccessController extends BaseController {
     super();
   }
 
+  /**
+   * Process all the disbursement receipt files from remote sftp location.
+   * @param userToken
+   * @returns Summary details of processing.
+   */
   @Post("process")
   async processDisbursementReceipts(
     @UserToken() userToken: IUserToken,

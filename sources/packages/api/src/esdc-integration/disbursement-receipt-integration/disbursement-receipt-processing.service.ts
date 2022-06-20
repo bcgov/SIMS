@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { validate } from "class-validator";
 import {
   DisbursementReceipt,
   DisbursementReceiptValue,
@@ -19,10 +18,8 @@ import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { DisbursementReceiptDownloadResponse } from "./models/disbursement-receipt-integration.model";
 
 /**
- * Manages the process to import the entire snapshot of federal
- * restrictions, that is received daily, and update the students
- * restrictions, adding and deactivating accordingly.
- * * This process does not affect provincial restrictions.
+ * Manages the process to import disbursement receipt files which are
+ * downloaded from SFTP location.
  */
 @Injectable()
 export class DisbursementReceiptProcessingService {
@@ -36,6 +33,12 @@ export class DisbursementReceiptProcessingService {
     this.esdcConfig = config.getConfig().ESDCIntegration;
   }
 
+  /**
+   * Process all the available disbursement receipt files in SFTP location.
+   * Once the file is processed, it gets deleted.
+   * @param auditUserId
+   * @returns Summary details of the processing.
+   */
   async process(auditUserId: number): Promise<ProcessSFTPResponseResult> {
     const result = new ProcessSFTPResponseResult();
 
@@ -56,15 +59,30 @@ export class DisbursementReceiptProcessingService {
     }
     for (const filePath of filePaths) {
       await this.processAllReceiptsInFile(filePath, auditUserId, result);
+
+      try {
+        //Deleting the file once it has been processed.
+        await this.integrationService.deleteFile(filePath);
+      } catch (error) {
+        result.errorsSummary.push(
+          `Error while deleting disbursement receipt file: ${filePath}`,
+        );
+        result.errorsSummary.push(error);
+      }
     }
     return result;
   }
-
+  /**
+   *
+   * @param remoteFilePath file which is to be processed.
+   * @param auditUserId user id of API user.
+   * @param result processing summary.
+   */
   private async processAllReceiptsInFile(
     remoteFilePath: string,
     auditUserId: number,
     result: ProcessSFTPResponseResult,
-  ) {
+  ): Promise<void> {
     result.processSummary.push(`Processing file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     let responseData: DisbursementReceiptDownloadResponse;
@@ -146,13 +164,9 @@ export class DisbursementReceiptProcessingService {
           },
         );
         try {
-          const validationErrors = await validate(disbursementReceipt);
-          if (validationErrors.length > 0) {
-            const errorDescription = validationErrors
-              .map((error) => error.property)
-              .join(", ");
-            const errorMessage = `Found record with invalid data for the properties ${errorDescription}`;
-            throw new Error(errorMessage);
+          const invalidDataMessage = response.getInvalidDataMessage();
+          if (invalidDataMessage) {
+            throw new Error(invalidDataMessage);
           }
           await this.disbursementReceiptService.insertDisbursementReceipt(
             disbursementReceipt,

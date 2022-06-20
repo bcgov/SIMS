@@ -12,10 +12,19 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     super(connection.getRepository(DisbursementReceipt));
   }
 
+  /**
+   * Insert disbursement receipt record.
+   ** On insertion ignore duplicate records(identified by constraint disbursement_schedule_id_funding_type_unique).
+   * @param disbursementReceipt
+   */
   async insertDisbursementReceipt(
     disbursementReceipt: DisbursementReceipt,
   ): Promise<void> {
     await this.connection.transaction(async (transactionalEntityManager) => {
+      //Query builder inserts does not cascade insert with relationships.
+      //Cascaded insert can be achieved only through repository.save().
+      //Hence inside a transaction we are using save to persist relations.
+
       const result = await transactionalEntityManager
         .createQueryBuilder()
         .insert()

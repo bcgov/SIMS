@@ -654,6 +654,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     return orderByCondition;
   }
 
+  /**
+   * Get disbursement schedules by document numbers.
+   * @param documentNumbers
+   * @returns disbursement schedules.
+   */
   async getDisbursementsByDocumentNumbers(
     documentNumbers: number[],
   ): Promise<DisbursementSchedule[]> {

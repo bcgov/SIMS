@@ -1,4 +1,3 @@
-import { IsNotEmpty } from "class-validator";
 import {
   Column,
   Entity,
@@ -35,7 +34,6 @@ export class DisbursementReceiptValue extends RecordDataModel {
     name: "grant_type",
     nullable: false,
   })
-  @IsNotEmpty()
   grantType: string;
   /**
    * Grant amount.
@@ -46,6 +44,5 @@ export class DisbursementReceiptValue extends RecordDataModel {
     type: "numeric",
     nullable: false,
   })
-  @IsNotEmpty()
   grantAmount: string;
 }
