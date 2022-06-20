@@ -724,10 +724,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: ApplicationStatus.completed,
       });
 
-    activeApplicationQuery.andWhere("application.isArchived = :isArchived", {
-      isArchived: archived,
-    });
-
     if (archived) {
       activeApplicationQuery.orWhere(
         new Brackets((qb) => {
@@ -736,7 +732,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    activeApplicationQuery.orderBy("application.applicationNumber", "DESC");
+    activeApplicationQuery.andWhere("application.isArchived = :isArchived", {
+      isArchived: archived,
+    });
+
+    activeApplicationQuery.addOrderBy("application.applicationNumber", "DESC");
 
     if (paginationOptions.searchCriteria) {
       activeApplicationQuery

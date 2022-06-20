@@ -30,7 +30,7 @@ export class ScholasticStandingService {
         scholasticStandingId,
       );
 
-    const applicationDetailsInfo = {
+    return {
       ...applicationDetails,
       applicationOfferingStartDate: dateOnlyLongString(
         applicationDetails.applicationOfferingStartDate,
@@ -44,7 +44,6 @@ export class ScholasticStandingService {
           breakEndDate: dateOnlyLongString(studyBreak.breakEndDate),
         })),
     };
-    return applicationDetailsInfo;
   }
 
   /**
