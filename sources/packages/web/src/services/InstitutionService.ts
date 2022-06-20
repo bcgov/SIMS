@@ -335,12 +335,12 @@ export class InstitutionService {
   public async getActiveApplicationsSummary(
     locationId: number,
     paginationOptions: PaginationOptions,
-    applicationStatus: ApplicationStatus,
+    archived: boolean,
   ): Promise<PaginatedResults<ActiveApplicationSummaryAPIOutDTO>> {
     return ApiClient.Institution.getActiveApplicationsSummary(
       locationId,
       paginationOptions,
-      applicationStatus,
+      archived,
     );
   }
 

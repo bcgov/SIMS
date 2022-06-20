@@ -7,7 +7,6 @@ import {
   PaginatedResults,
   PaginationOptions,
   PaginationParams,
-  ApplicationStatus,
 } from "@/types";
 import {
   ActiveApplicationSummaryAPIOutDTO,
@@ -22,6 +21,7 @@ import {
   InstitutionUserDetailAPIOutDTO,
   UserRoleOptionAPIOutDTO,
   InstitutionLocationAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -118,9 +118,9 @@ export class InstitutionApi extends HttpBaseClient {
   public async getActiveApplicationsSummary(
     locationId: number,
     paginationOptions: PaginationOptions,
-    applicationStatus: ApplicationStatus,
-  ): Promise<PaginatedResults<ActiveApplicationSummaryAPIOutDTO>> {
-    let url = `location/${locationId}/active-applications?applicationStatus=${applicationStatus}`;
+    archived: boolean,
+  ): Promise<PaginatedResultsAPIOutDTO<ActiveApplicationSummaryAPIOutDTO>> {
+    let url = `location/${locationId}/active-applications?archived=${archived}`;
 
     // Adding pagination params. There is always a default page and pageLimit for paginated APIs.
     url = addPaginationOptions(

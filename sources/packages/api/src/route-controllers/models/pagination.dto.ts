@@ -36,7 +36,13 @@ abstract class PaginationOptionsAPIInDTO {
 
 export class ApplicationPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn(["status", "applicationNumber", "fullName"])
+  @IsIn(["status", "applicationNumber"])
+  sortField?: string;
+}
+
+export class ApplicationStatusPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["applicationNumber", "fullName"])
   sortField?: string;
 }
 

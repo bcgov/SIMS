@@ -1,15 +1,15 @@
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { ApplicationStatus } from "@/types";
+import { ApplicationSholasticStandingStatus } from "@/types";
 
 export function useActiveApplication() {
   const mapActiveApplicationChipStatus = (
-    status: ApplicationStatus,
+    status: ApplicationSholasticStandingStatus,
   ): StatusChipTypes => {
     switch (status) {
-      case ApplicationStatus.completed:
-      case ApplicationStatus.available:
+      case ApplicationSholasticStandingStatus.Completed:
+      case ApplicationSholasticStandingStatus.Available:
         return StatusChipTypes.Success;
-      case ApplicationStatus.unavailable:
+      case ApplicationSholasticStandingStatus.Unavailable:
         return StatusChipTypes.Inactive;
       default:
         return StatusChipTypes.Inactive;

@@ -5,6 +5,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseBoolPipe,
   Patch,
   Post,
   Query,
@@ -28,11 +29,7 @@ import {
   InstitutionLocationService,
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
-import {
-  getISODateOnlyString,
-  getUserFullName,
-  PaginatedResults,
-} from "../../utilities";
+import { getISODateOnlyString, getUserFullName } from "../../utilities";
 
 import {
   ActiveApplicationDataAPIOutDTO,
@@ -48,8 +45,10 @@ import {
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
-import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
-import { ApplicationStatus } from "../../database/entities";
+import {
+  ApplicationStatusPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
 
 /**
  * Institution location controller for institutions Client.
@@ -120,25 +119,22 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * Get all active application of a location in an institution
    * with application_status is completed.
    * @param locationId location id.
-   * @param searchCriteria Search text to search active applications.
-   * @param sortField Field to sort active applications.
-   * @param page Current page of paginated result.
-   * @param pageLimit Records per page in a paginated result.
-   * @param sortOrder Sort order of active applications.
-   * @param applicationStatus View status of applications requested by user.
+   * @param pagination options to execute the pagination.
+   * @param archived archive value of applications requested by user.
    * @returns Student active application list of an institution location.
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/active-applications")
   async getActiveApplications(
     @Param("locationId") locationId: number,
-    @Query() pagination: ApplicationPaginationOptionsAPIInDTO,
-    @Query("applicationStatus") applicationStatus: ApplicationStatus,
-  ): Promise<PaginatedResults<ActiveApplicationSummaryAPIOutDTO>> {
+    @Query() pagination: ApplicationStatusPaginationOptionsAPIInDTO,
+    @Query("archived", ParseBoolPipe)
+    archived: boolean,
+  ): Promise<PaginatedResultsAPIOutDTO<ActiveApplicationSummaryAPIOutDTO>> {
     const applications = await this.applicationService.getActiveApplications(
       locationId,
       pagination,
-      applicationStatus,
+      archived,
     );
 
     return {
@@ -149,10 +145,12 @@ export class InstitutionLocationInstitutionsController extends BaseController {
           applicationId: eachApplication.id,
           studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
           studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
-          applicationStatus: this.applicationService.getApplicationStatus(
-            eachApplication.isArchived,
-            eachApplication.currentAssessment?.studentScholasticStanding?.id,
-          ),
+          applicationStatus: eachApplication.applicationStatus,
+          applicationSholasticStandingStatus:
+            this.applicationService.getApplicationSholasticStandingStatus(
+              eachApplication.isArchived,
+              eachApplication.currentAssessment?.studentScholasticStanding?.id,
+            ),
           fullName: getUserFullName(eachApplication.student.user),
           scholasticStandingId:
             eachApplication.currentAssessment?.studentScholasticStanding?.id,

@@ -39,7 +39,7 @@ export enum AppRoutes {
   DesignationRequest = "manage-designation/request",
   DesignationView = "manage-designation/view/:designationAgreementId",
   InstitutionManageUsers = "manage-users",
-  SubmittedApplicationScholasticStandingView = "submitted-application/scholastic-standing/:scholasticStandingId",
+  ActiveApplicationScholasticStandingView = "active-application/scholastic-standing/:scholasticStandingId",
   // AEST
   AESTRoot = "/aest",
   AESTDashboard = "dashboard",

@@ -33,6 +33,7 @@ import { SequenceControlService } from "../../services/sequence-control/sequence
 import { StudentFileService } from "../student-file/student-file.service";
 import {
   ApplicationOverriddenResult,
+  ApplicationSholasticStandingStatus,
   ApplicationSubmissionResult,
 } from "./application.models";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
@@ -686,14 +687,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Get all active applications of an institution location
    * with application status completed and respective archive status.
    * @param locationId location id .
-   * @param paginationOptions
+   * @param paginationOptions options to execute the pagination.
    * @param applicationStatus View status of applications requested by user.
    * @returns Student Active Application list.
    */
   async getActiveApplications(
     locationId: number,
     paginationOptions: PaginationOptions,
-    applicationStatus: ApplicationStatus,
+    archived: boolean,
   ): Promise<PaginatedResults<Application>> {
     // TODO: there are two similar methods to get one and many records for the same list/details getActiveApplication and getActiveApplications. Can we use only one?
     const activeApplicationQuery = this.repo
@@ -723,40 +724,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: ApplicationStatus.completed,
       });
 
-    // Available applications are records that have no 'scholastic standing reported' and are not 'archived'.
-    if (applicationStatus === ApplicationStatus.available) {
-      activeApplicationQuery.andWhere(
+    activeApplicationQuery.andWhere("application.isArchived = :isArchived", {
+      isArchived: archived,
+    });
+
+    if (archived) {
+      activeApplicationQuery.orWhere(
         new Brackets((qb) => {
-          qb.where("studentScholasticStanding.id IS NULL").andWhere(
-            "application.isArchived = :isArchived",
-            {
-              isArchived: false,
-            },
-          );
+          qb.where("studentScholasticStanding.id IS NOT NULL");
         }),
       );
     }
 
-    // Unavailable applications are records that are either 'completed (scholastic standing reported but not yet archived)' or 'archived'.
-    if (applicationStatus === ApplicationStatus.unavailable) {
-      activeApplicationQuery.andWhere(
-        new Brackets((qb) => {
-          qb.where("studentScholasticStanding.id IS NOT NULL").andWhere(
-            "application.isArchived = :isNotArchived",
-            {
-              isNotArchived: false,
-            },
-          );
-        }),
-      );
-      activeApplicationQuery.orWhere(
-        new Brackets((qb) => {
-          qb.where("application.isArchived = :isArchived", {
-            isArchived: true,
-          });
-        }),
-      );
-    }
     activeApplicationQuery.orderBy("application.applicationNumber", "DESC");
 
     if (paginationOptions.searchCriteria) {
@@ -782,6 +761,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .offset(paginationOptions.page * paginationOptions.pageLimit)
       .limit(paginationOptions.pageLimit);
+
     const [result, count] = await activeApplicationQuery.getManyAndCount();
     return {
       results: result,
@@ -793,26 +773,26 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Returns application status with respect to archive status and scholastic standing change.
    * @param isArchived archive status.
    * @param studentScholasticStandingId scholastic standing id.
-   * @returns application status.
+   * @returns application scholastic standing status.
    */
-  getApplicationStatus(
+  getApplicationSholasticStandingStatus(
     isArchived: boolean,
-    studentScholasticStandingId: number,
-  ): ApplicationStatus {
+    studentScholasticStandingId?: number,
+  ): ApplicationSholasticStandingStatus {
     if (isArchived) {
-      return ApplicationStatus.unavailable;
-    } else if (studentScholasticStandingId && !isArchived) {
-      return ApplicationStatus.completed;
-    } else if (!studentScholasticStandingId && !isArchived) {
-      return ApplicationStatus.available;
+      return ApplicationSholasticStandingStatus.Unavailable;
     }
+    if (studentScholasticStandingId) {
+      return ApplicationSholasticStandingStatus.Completed;
+    }
+    return ApplicationSholasticStandingStatus.Available;
   }
 
   /**
-   **Transformation to convert the data table column name to database column name
-   **Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
-   * @param sortField
-   * @param sortOrder
+   * Transformation to convert the data table column name to database column name.
+   * Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
+   * @param sortField database fields to be sorted.
+   * @param sortOrder sort order of fields (Ascending or Descending order).
    * @returns OrderByCondition
    */
   private transformToEntitySortField(

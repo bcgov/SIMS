@@ -2,7 +2,7 @@
   <body-header
     title="Applications"
     :recordsCount="applications.results?.length"
-    class="m-1"
+    class="m-1 mb-12"
   >
     <template #actions>
       <div class="search-box-display-width">
@@ -16,84 +16,83 @@
       </div>
     </template>
   </body-header>
-  <br />
   <content-group>
-    <DataTable
-      :value="applications.results"
-      :lazy="true"
-      class="p-m-4"
-      :paginator="true"
-      :rows="pageLimit"
-      :rowsPerPageOptions="rowsPerPageOptions"
-      :totalRecords="applications.count"
-      @page="pageEvent"
-      @sort="sortEvent"
-    >
-      <template #empty>
-        <p class="text-center font-weight-bold">No records found.</p>
-      </template>
-      <Column
-        field="fullName"
-        header="Name"
-        :sortable="true"
-        headerStyle="width: 20%"
+    <toggle-content :toggled="!applications.results?.length">
+      <DataTable
+        :value="applications.results"
+        :lazy="true"
+        class="p-m-4"
+        :paginator="true"
+        :rows="pageLimit"
+        :rowsPerPageOptions="rowsPerPageOptions"
+        :totalRecords="applications.count"
+        @page="pageEvent"
+        @sort="sortEvent"
       >
-        <template #body="slotProps">
-          <span>{{ slotProps.data.fullName }}</span>
+        <template #empty>
+          <p class="text-center font-weight-bold">No records found.</p>
         </template>
-      </Column>
-      <Column
-        field="studyStartPeriod"
-        header="Study dates"
-        headerStyle="width: 20%"
-      >
-        <template #body="slotProps">
+        <Column
+          field="fullName"
+          header="Name"
+          :sortable="true"
+          headerStyle="width: 20%"
+        >
+          <span>{{ data.fullName }}</span>
+        </Column>
+        <Column
+          field="studyStartPeriod"
+          header="Study dates"
+          headerStyle="width: 20%"
+        >
           <span>
-            {{ dateString(slotProps.data.studyStartPeriod) }} -
-            {{ dateString(slotProps.data.studyEndPeriod) }}
+            {{ dateString(data.studyStartPeriod) }} -
+            {{ dateString(data.studyEndPeriod) }}
           </span>
-        </template></Column
-      >
-      <Column
-        headerStyle="width: 20%"
-        field="applicationNumber"
-        header="Application #"
-        :sortable="true"
-      ></Column>
-      <Column
-        field="applicationStatus"
-        header="Status"
-        headerStyle="width: 20%"
-      >
-        <template #body="slotProps">
-          <StatusChipActiveApplication
-            :status="slotProps.data.applicationStatus"
-          />
-        </template>
-      </Column>
-      <Column header="Action" headerStyle="width: 20%">
-        <template #body="slotProps">
-          <v-btn
-            v-if="
-              slotProps.data.applicationStatus === ApplicationStatus.available
-            "
-            class="primary-btn-background"
-            @click="goToViewApplication(slotProps.data.applicationId)"
-            >Report a change</v-btn
-          >
-          <v-btn
-            v-if="
-              slotProps.data.applicationStatus === ApplicationStatus.completed
-            "
-            class="primary-btn-background"
-            @click="
-              goToViewScholasticStanding(slotProps.data.scholasticStandingId)
-            "
-            >View</v-btn
-          >
-        </template>
-      </Column>
-    </DataTable>
+        </Column>
+        <Column
+          headerStyle="width: 20%"
+          field="applicationNumber"
+          header="Application #"
+          :sortable="true"
+        ></Column>
+        <Column
+          field="applicationStatus"
+          header="Status"
+          headerStyle="width: 20%"
+        >
+          <template #body="slotProps">
+            <StatusChipActiveApplication
+              :status="slotProps.data.applicationSholasticStandingStatus"
+            />
+          </template>
+        </Column>
+        <Column header="Action" headerStyle="width: 20%">
+          <template #body="slotProps">
+            <v-btn
+              v-if="
+                slotProps.data.applicationSholasticStandingStatus ===
+                ApplicationSholasticStandingStatus.Available
+              "
+              class="primary-btn-background"
+              @click="goToViewApplication(slotProps.data.applicationId)"
+              >Report a change</v-btn
+            >
+            <v-btn
+              v-if="
+                slotProps.data.applicationSholasticStandingStatus ===
+                ApplicationSholasticStandingStatus.Completed
+              "
+              class="primary-btn-background"
+              @click="
+                goToViewScholasticStanding(slotProps.data.scholasticStandingId)
+              "
+              >View</v-btn
+            >
+          </template>
+        </Column>
+      </DataTable>
+    </toggle-content>
   </content-group>
 </template>
 
@@ -109,12 +108,12 @@ import {
   DEFAULT_PAGE_NUMBER,
   PageAndSortEvent,
   PaginatedResults,
-  ApplicationStatus,
+  ApplicationSholasticStandingStatus,
 } from "@/types";
 import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
-const DEFAULT_SORT_FIELD = "applicationNumber";
 import StatusChipActiveApplication from "@/components/generic/StatusChipActiveApplication.vue";
+const DEFAULT_SORT_FIELD = "applicationNumber";
 
 export default {
   components: {
@@ -129,8 +128,8 @@ export default {
       type: String,
       required: true,
     },
-    applicationStatus: {
-      type: String,
+    archived: {
+      type: Boolean,
       required: true,
     },
   },
@@ -164,7 +163,7 @@ export default {
       });
     };
 
-    const updateSummaryList = async (locationId: number) => {
+    const getSummaryList = async (locationId: number) => {
       applications.value =
         await InstitutionService.shared.getActiveApplicationsSummary(
           locationId,
@@ -175,14 +174,14 @@ export default {
             sortOrder: sortOrder.value,
             searchCriteria: searchCriteria.value,
           },
-          props.applicationStatus,
+          props.archived,
         );
     };
 
     const pageEvent = async (event: PageAndSortEvent) => {
       page.value = event?.page;
       pageLimit.value = event?.rows;
-      await updateSummaryList(props.locationId);
+      await getSummaryList(props.locationId);
     };
 
     const sortEvent = async (event: PageAndSortEvent) => {
@@ -190,29 +189,29 @@ export default {
       pageLimit.value = DEFAULT_PAGE_LIMIT;
       sortField.value = event.sortField;
       sortOrder.value = event.sortOrder;
-      await updateSummaryList(props.locationId);
+      await getSummaryList(props.locationId);
     };
 
     const searchActiveApplications = async () => {
       page.value = DEFAULT_PAGE_NUMBER;
       pageLimit.value = DEFAULT_PAGE_LIMIT;
-      await updateSummaryList(props.locationId);
+      await getSummaryList(props.locationId);
     };
 
     watch(
       () => props.locationId,
       async (currValue) => {
         //update the list
-        await updateSummaryList(currValue);
+        await getSummaryList(currValue);
       },
     );
 
     onMounted(async () => {
-      await updateSummaryList(props.locationId);
+      await getSummaryList(props.locationId);
     });
 
     return {
-      ApplicationStatus,
+      ApplicationSholasticStandingStatus,
       applications,
       dateString,
       goToViewApplication,

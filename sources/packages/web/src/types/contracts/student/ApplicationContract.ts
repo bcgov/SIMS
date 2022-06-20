@@ -66,14 +66,24 @@ export enum ApplicationStatus {
    * place on new record.
    */
   overwritten = "Overwritten",
+}
+
+/**
+ * Possible status of application scholastic standing.
+ */
+export enum ApplicationSholasticStandingStatus {
   /**
-   * Applications that are completed and not archived.
+   * The application has been confirmed by the institution.
    */
-  available = "Available",
+  Completed = "Completed",
   /**
-   * Applications that are completed and archived.
+   * Applications that are available.
    */
-  unavailable = "Unavailable",
+  Available = "Available",
+  /**
+   * Applications that are unavailable.
+   */
+  Unavailable = "Unavailable",
 }
 
 export interface ApplicationStatusToBeUpdatedDto {

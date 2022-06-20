@@ -464,7 +464,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.SubmittedApplicationScholasticStandingView,
+        path: AppRoutes.ActiveApplicationScholasticStandingView,
         name: InstitutionRoutesConst.SCHOLASTIC_STANDING_VIEW,
         components: {
           default: ViewSubmittedApplicationScholasticStanding,
