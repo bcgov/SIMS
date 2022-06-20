@@ -9,10 +9,7 @@ import {
  * The documentation about it is available on the document 'SIN Check File Layouts 2019.docx'
  */
 export class SINValidationFileResponse {
-  constructor(
-    public readonly line: string,
-    public readonly lineNumber: number,
-  ) {}
+  constructor(public readonly line: string, public readonly lineNumber = 0) {}
 
   /**
    * Record type code of the line.
