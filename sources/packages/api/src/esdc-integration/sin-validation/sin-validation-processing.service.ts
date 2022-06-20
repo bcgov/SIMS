@@ -213,7 +213,7 @@ export class SINValidationProcessingService {
         // Log the error but allow the process to continue.
         const errorDescription = `Error processing record line number ${sinValidationRecord.lineNumber} from file ${fileName}`;
         result.errorsSummary.push(errorDescription);
-        this.logger.error(`${errorDescription}. Error: ${error}`);
+        this.logger.error(`${errorDescription}. ${error}`);
       }
     }
 
