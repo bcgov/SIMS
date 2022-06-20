@@ -9,8 +9,12 @@ import { DisbursementReceiptRecordType } from "../models/disbursement-receipt-in
 export class DisbursementReceiptRecord {
   constructor(
     protected readonly line: string,
-    public readonly lineNumber = 0,
+    protected readonly _lineNumber = 0,
   ) {}
+
+  public get lineNumber(): number {
+    return this._lineNumber;
+  }
 
   public get recordType(): DisbursementReceiptRecordType {
     return this.line.substring(10, 11) as DisbursementReceiptRecordType;
