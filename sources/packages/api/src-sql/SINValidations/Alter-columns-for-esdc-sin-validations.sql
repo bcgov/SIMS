@@ -78,7 +78,7 @@ SET
 FROM
   sims.students
 WHERE
-  students.user_id = sims.sin_validations.user_id;
+  students.sin_validation_id = sims.sin_validations.id;
 
 -- Remove sin_validations that were not update from students.
 DELETE FROM
