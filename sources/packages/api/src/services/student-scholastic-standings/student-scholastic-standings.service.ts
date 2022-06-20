@@ -440,8 +440,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    */
   async getScholasticStanding(
     scholasticStandingId: number,
+    locationId: number,
   ): Promise<StudentScholasticStanding> {
-    return this.repo
+    const studentScholasticStanding = this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select([
         "studentScholasticStanding.id",
@@ -477,7 +478,15 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .innerJoin("student.user", "user")
       .where("studentScholasticStanding.id = :scholasticStandingId", {
         scholasticStandingId,
-      })
-      .getOne();
+      });
+    if (locationId) {
+      studentScholasticStanding.andWhere(
+        "institutionLocation.id = :locationId",
+        {
+          locationId,
+        },
+      );
+    }
+    return studentScholasticStanding.getOne();
   }
 }

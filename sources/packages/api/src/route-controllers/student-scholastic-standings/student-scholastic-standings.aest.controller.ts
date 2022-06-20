@@ -36,6 +36,7 @@ export class ScholasticStandingAESTController extends BaseController {
   ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
     return this.scholasticStandingControllerService.getScholasticStanding(
       scholasticStandingId,
+      undefined,
     );
   }
 }

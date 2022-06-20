@@ -19,10 +19,12 @@ export class ScholasticStandingControllerService {
    */
   async getScholasticStanding(
     scholasticStandingId: number,
+    locationId: number,
   ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
     const scholasticStanding =
       await this.studentScholasticStandingsService.getScholasticStanding(
         scholasticStandingId,
+        locationId,
       );
 
     if (!scholasticStanding) {

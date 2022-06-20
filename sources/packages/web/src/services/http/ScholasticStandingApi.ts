@@ -15,9 +15,14 @@ export class ScholasticStandingApi extends HttpBaseClient {
    */
   async getScholasticStanding(
     scholasticStandingId: number,
+    locationId?: number,
   ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
+    let url = `scholastic-standing/${scholasticStandingId}`;
+    if (locationId) {
+      url = `${url}/location/${locationId}`;
+    }
     return this.getCallTyped<ScholasticStandingSubmittedDetailsAPIOutDTO>(
-      this.addClientRoot(`scholastic-standing/${scholasticStandingId}`),
+      this.addClientRoot(url),
     );
   }
 

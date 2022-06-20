@@ -39,6 +39,7 @@ export default {
       initialData.value =
         await ScholasticStandingService.shared.getScholasticStanding(
           props.scholasticStandingId,
+          props.locationId,
         );
     });
 

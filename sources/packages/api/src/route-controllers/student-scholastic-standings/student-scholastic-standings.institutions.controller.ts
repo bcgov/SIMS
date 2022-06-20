@@ -120,18 +120,22 @@ export class ScholasticStandingInstitutionsController extends BaseController {
 
   /**
    * Get Scholastic Standing submitted details.
+   * @param locationId location id to check whether the requested user and the requested application has the permission to this location.
    * @param scholasticStandingId scholastic standing id.
    * @returns Scholastic Standing.
    */
-  @Get(":scholasticStandingId")
+  @HasLocationAccess("locationId")
+  @Get(":scholasticStandingId/location/:locationId")
   @ApiNotFoundResponse({
     description: "Scholastic Standing not found.",
   })
   async getScholasticStanding(
     @Param("scholasticStandingId", ParseIntPipe) scholasticStandingId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
   ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
     return this.scholasticStandingControllerService.getScholasticStanding(
       scholasticStandingId,
+      locationId,
     );
   }
 }
