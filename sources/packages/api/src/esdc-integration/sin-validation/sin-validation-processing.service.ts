@@ -198,15 +198,16 @@ export class SINValidationProcessingService {
       try {
         const hasValidSIN =
           sinValidationRecord.sinCheckStatus === SINCheckStatus.Passed;
-        await this.sinValidationService.updateSINValidationFromESDCResponse(
-          sinValidationRecord,
-          hasValidSIN,
-          fileName,
-          responseResult.header.processDate,
-          auditUserId,
-        );
+        const updatedResult =
+          await this.sinValidationService.updateSINValidationFromESDCResponse(
+            sinValidationRecord,
+            hasValidSIN,
+            fileName,
+            responseResult.header.processDate,
+            auditUserId,
+          );
         result.processSummary.push(
-          `Processed SIN validation record from line ${sinValidationRecord.lineNumber}.`,
+          `Processed SIN validation record from line ${sinValidationRecord.lineNumber}: ${updatedResult.operationDescription}`,
         );
       } catch (error) {
         // Log the error but allow the process to continue.

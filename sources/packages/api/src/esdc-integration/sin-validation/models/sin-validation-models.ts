@@ -1,3 +1,4 @@
+import { SINValidation } from "../../../database/entities";
 import { SINValidationFileHeader } from "../sin-validation-files/sin-validation-file-header";
 import { SINValidationFileResponse } from "../sin-validation-files/sin-validation-file-response";
 
@@ -76,4 +77,16 @@ export enum SINCheckStatus {
 export enum OkayFlag {
   Yes = "Y",
   No = "N",
+}
+
+/**
+ * When a SIN validation record is updated the
+ * result should contains more information for
+ * log purposes, this object allow the return
+ * of the updated/created record with additional
+ * description of the operation executed.
+ */
+export interface SINValidationUpdateResult {
+  record: SINValidation;
+  operationDescription: string;
 }

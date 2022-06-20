@@ -4,7 +4,10 @@ import { Connection, Repository } from "typeorm";
 import { SINValidation, User } from "../../database/entities";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
-import { SINValidationRecord } from "../../esdc-integration/sin-validation/models/sin-validation-models";
+import {
+  SINValidationRecord,
+  SINValidationUpdateResult,
+} from "../../esdc-integration/sin-validation/models/sin-validation-models";
 import { SINValidationFileResponse } from "../../esdc-integration/sin-validation/sin-validation-files/sin-validation-file-response";
 import { StudentService } from "../student/student.service";
 
@@ -69,7 +72,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
    * a processed date to be update in the DB as received date.
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
-   * @returns updated SIN validation record.
+   * @returns updated SIN validation record with operation description.
    */
   async updateSINValidationFromESDCResponse(
     validationResponse: SINValidationFileResponse,
@@ -77,7 +80,8 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
     receivedFileName: string,
     processDate: Date,
     auditUserId: number,
-  ): Promise<SINValidation> {
+  ): Promise<SINValidationUpdateResult> {
+    let operationDescription: string;
     // If the list of the selected columns must be changed please keep in mind that
     // these fields are also the ones used later to "clone" the record if needed,
     // as explained further along the method.
@@ -133,7 +137,12 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       // The SIN validation record was never updated before,
       // update it with the information received from ESDC.
       // This will be most common scenario.
-      return this.repo.save(existingValidation);
+      operationDescription = "SIN validation record updated.";
+      const updatedRecord = await this.repo.save(existingValidation);
+      return {
+        operationDescription,
+        record: updatedRecord,
+      };
     }
 
     if (sinStatusChanged) {
@@ -161,9 +170,28 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
           existingValidation,
           auditUserId,
         );
-        return existingValidation;
+        operationDescription = `Created a new SIN validation because the record id is already present and updated.`;
+        const clonedRecord = await this.repo.save(existingValidation);
+        return {
+          operationDescription,
+          record: clonedRecord,
+        };
       }
+      operationDescription =
+        "No SIN validation was updated because the record id is already present and this is not the most updated.";
+      const clonedRecord = await this.repo.save(existingValidation);
+      return {
+        operationDescription,
+        record: clonedRecord,
+      };
     }
+    operationDescription =
+      "SIN validation skipped because it is already processed and updated.";
+    const clonedRecord = await this.repo.save(existingValidation);
+    return {
+      operationDescription,
+      record: clonedRecord,
+    };
   }
 
   @InjectLogger()
