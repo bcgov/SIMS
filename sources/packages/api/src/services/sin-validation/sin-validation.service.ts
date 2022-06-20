@@ -8,8 +8,8 @@ import {
   SINValidationRecord,
   SINValidationUpdateResult,
 } from "../../esdc-integration/sin-validation/models/sin-validation-models";
-import { SINValidationFileResponse } from "../../esdc-integration/sin-validation/sin-validation-files/sin-validation-file-response";
 import { StudentService } from "../student/student.service";
+import { SINValidationFileResponse } from "./sin-validation.service.models";
 
 /**
  * Service layer for SIN Validations.
