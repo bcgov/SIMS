@@ -2,7 +2,6 @@ import {
   Institute,
   AESTInstitutionProgramsSummaryDto,
   PaginationParams,
-  ApplicationStatus,
 } from "@/types";
 import {
   EducationProgram,

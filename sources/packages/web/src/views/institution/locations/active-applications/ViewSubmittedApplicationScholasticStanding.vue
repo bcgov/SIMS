@@ -16,7 +16,6 @@ import { computed, onMounted, ref } from "vue";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { RouteLocationRaw } from "vue-router";
-import { useFormatters } from "@/composables";
 import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
 
 export default {
@@ -35,30 +34,12 @@ export default {
   },
   setup(props: any) {
     const initialData = ref({} as ScholasticStandingSubmittedDetailsAPIOutDTO);
-    const { dateOnlyLongString } = useFormatters();
 
     onMounted(async () => {
-      const applicationDetails =
+      initialData.value =
         await ScholasticStandingService.shared.getScholasticStanding(
           props.scholasticStandingId,
         );
-
-      initialData.value = {
-        ...applicationDetails,
-        applicationOfferingStartDate: dateOnlyLongString(
-          applicationDetails.applicationOfferingStartDate,
-        ),
-        applicationOfferingEndDate: dateOnlyLongString(
-          applicationDetails.applicationOfferingEndDate,
-        ),
-        applicationOfferingStudyBreak:
-          applicationDetails.applicationOfferingStudyBreak?.map(
-            (studyBreak) => ({
-              breakStartDate: dateOnlyLongString(studyBreak.breakStartDate),
-              breakEndDate: dateOnlyLongString(studyBreak.breakEndDate),
-            }),
-          ),
-      };
     });
 
     const goBackRouteParams = computed(

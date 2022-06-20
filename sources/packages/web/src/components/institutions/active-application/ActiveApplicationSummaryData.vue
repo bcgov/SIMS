@@ -24,7 +24,7 @@
         class="p-m-4"
         :paginator="true"
         :rows="pageLimit"
-        :rowsPerPageOptions="rowsPerPageOptions"
+        :rowsPerPageOptions="PAGINATION_LIST"
         :totalRecords="applications.count"
         @page="pageEvent"
         @sort="sortEvent"
@@ -38,17 +38,18 @@
           :sortable="true"
           headerStyle="width: 20%"
         >
-          <span>{{ data.fullName }}</span>
         </Column>
         <Column
           field="studyStartPeriod"
           header="Study dates"
           headerStyle="width: 20%"
         >
-          <span>
-            {{ dateString(data.studyStartPeriod) }} -
-            {{ dateString(data.studyEndPeriod) }}
-          </span>
+          <template #body="slotProps">
+            <span>
+              {{ dateString(slotProps.data.studyStartPeriod) }} -
+              {{ dateString(slotProps.data.studyEndPeriod) }}
+            </span>
+          </template>
         </Column>
         <Column
           headerStyle="width: 20%"
@@ -97,7 +98,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -144,9 +145,6 @@ export default {
     const { dateString } = useFormatters();
     const applications = ref(
       {} as PaginatedResults<ActiveApplicationSummaryAPIOutDTO>,
-    );
-    const rowsPerPageOptions = computed(() =>
-      applications.value.results?.length > 10 ? PAGINATION_LIST : undefined,
     );
 
     const goToViewApplication = (applicationId: number) => {
@@ -206,9 +204,13 @@ export default {
       },
     );
 
-    onMounted(async () => {
-      await getSummaryList(props.locationId);
-    });
+    watch(
+      () => props.assessmentId,
+      async () => {
+        await getSummaryList(props.locationId);
+      },
+      { immediate: true },
+    );
 
     return {
       ApplicationSholasticStandingStatus,
@@ -219,9 +221,9 @@ export default {
       sortEvent,
       searchActiveApplications,
       pageLimit,
-      rowsPerPageOptions,
       searchCriteria,
       goToViewScholasticStanding,
+      PAGINATION_LIST,
     };
   },
 };

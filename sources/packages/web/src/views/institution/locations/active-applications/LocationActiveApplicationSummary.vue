@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import ActiveApplicationSummaryData from "@/views/institution/locations/active-applications/ActiveApplicationSummaryData.vue";
+import ActiveApplicationSummaryData from "@/components/institutions/active-application/ActiveApplicationSummaryData.vue";
 
 export default {
   components: { ActiveApplicationSummaryData },
