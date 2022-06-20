@@ -18,7 +18,7 @@ export class DisbursementReceiptSystemAccessController extends BaseController {
     super();
   }
 
-  @Post()
+  @Post("process")
   async processDisbursementReceipts(
     @UserToken() userToken: IUserToken,
   ): Promise<ESDCFileResponseAPIOutDTO> {
