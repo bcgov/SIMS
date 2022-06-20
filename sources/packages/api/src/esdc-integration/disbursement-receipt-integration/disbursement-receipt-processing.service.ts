@@ -125,6 +125,14 @@ export class DisbursementReceiptProcessingService {
         disbursementReceipt.disburseMethodStudent =
           response.disburseMethodStudent;
         disbursementReceipt.studyPeriodEndDate = response.studyPeriodEndDate;
+        disbursementReceipt.totalEntitledGrantAmount =
+          response.totalEntitledGrantAmount;
+        disbursementReceipt.totalDisbursedGrantAmount =
+          response.totalDisbursedGrantAmount;
+        disbursementReceipt.totalDisbursedGrantAmountStudent =
+          response.totalDisbursedGrantAmountStudent;
+        disbursementReceipt.totalDisbursedGrantAmountInstitution =
+          response.totalDisbursedGrantAmountInstitution;
         disbursementReceipt.creator = { id: auditUserId } as User;
         disbursementReceipt.createdAt = createdAt;
         disbursementReceipt.disbursementReceiptValues = response.grants.map(

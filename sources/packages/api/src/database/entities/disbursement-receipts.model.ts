@@ -167,6 +167,50 @@ export class DisbursementReceipt extends RecordDataModel {
   disburseMethodStudent: string;
 
   /**
+   * Total Federal or BC grant entitled amount.
+   */
+  @Column({
+    name: "total_entitled_grant_amount",
+    type: "numeric",
+    nullable: false,
+  })
+  @IsNotEmpty()
+  totalEntitledGrantAmount: string;
+
+  /**
+   * Total Federal or BC grant disbursed amount.
+   */
+  @Column({
+    name: "total_disbursed_grant_amount",
+    type: "numeric",
+    nullable: false,
+  })
+  @IsNotEmpty()
+  totalDisbursedGrantAmount: string;
+
+  /**
+   * Total Federal or BC grant disbursed amount to student.
+   */
+  @Column({
+    name: "total_disbursed_grant_amount_student",
+    type: "numeric",
+    nullable: false,
+  })
+  @IsNotEmpty()
+  totalDisbursedGrantAmountStudent: string;
+
+  /**
+   * Total Federal or BC grant disbursed amount to institution.
+   */
+  @Column({
+    name: "total_disbursed_grant_amount_institution",
+    type: "numeric",
+    nullable: false,
+  })
+  @IsNotEmpty()
+  totalDisbursedGrantAmountInstitution: string;
+
+  /**
    * Values for this disbursement.
    */
   @OneToMany(

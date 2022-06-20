@@ -56,6 +56,22 @@ export class DisbursementReceiptDetail extends DisbursementReceiptRecord {
     return this.convertToDateRecord(this.line.substring(86, 94));
   }
 
+  public get totalEntitledGrantAmount() {
+    return this.convertToAmountString(this.line.substring(94, 101));
+  }
+
+  public get totalDisbursedGrantAmount() {
+    return this.convertToAmountString(this.line.substring(101, 108));
+  }
+
+  public get totalDisbursedGrantAmountStudent() {
+    return this.convertToAmountString(this.line.substring(108, 115));
+  }
+
+  public get totalDisbursedGrantAmountInstitution() {
+    return this.convertToAmountString(this.line.substring(115, 122));
+  }
+
   public get grants() {
     const grants: DisbursementReceiptGrant[] = [];
     let grantIndex = 122;

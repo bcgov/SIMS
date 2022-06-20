@@ -27,7 +27,7 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
         .execute();
       if (
         result.identifiers[0] &&
-        disbursementReceipt.disbursementReceiptValues
+        disbursementReceipt.disbursementReceiptValues?.length > 0
       ) {
         await transactionalEntityManager
           .getRepository(DisbursementReceipt)
