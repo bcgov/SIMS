@@ -8,7 +8,7 @@
       <div class="search-box-display-width">
         <v-text-field
           label="Search name or application #"
-          prepend-inner-icon="mdi-magnify"
+          prepend-inner-icon="fa fa-search"
           variant="outlined"
           v-model="searchCriteria"
           @keyup.enter="searchActiveApplications"
@@ -39,11 +39,7 @@
           headerStyle="width: 20%"
         >
         </Column>
-        <Column
-          field="studyStartPeriod"
-          header="Study dates"
-          headerStyle="width: 20%"
-        >
+        <Column field="studyStartPeriod" header="Study dates">
           <template #body="slotProps">
             <span>
               {{ dateString(slotProps.data.studyStartPeriod) }} -
