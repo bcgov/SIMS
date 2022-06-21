@@ -32,9 +32,6 @@
         @page="pageEvent"
         @sort="sortEvent"
       >
-        <template #empty>
-          <p class="text-center font-weight-bold">No records found.</p>
-        </template>
         <Column field="fullName" header="Name" :sortable="true"> </Column>
         <Column field="studyStartPeriod" header="Study dates">
           <template #body="slotProps">
