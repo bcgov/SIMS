@@ -22,6 +22,10 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
    * Insert disbursement receipt record.
    ** On insertion ignore duplicate records(identified by constraint disbursement_schedule_id_funding_type_unique).
    * @param disbursementReceipt
+   * @param batchRunDate batch run date of the disbursement file.
+   * @param disbursementScheduleId disbursement schedule id of corresponding document number.
+   * @param auditUserId
+   * @param createdAt supplied from consumer as to keep the value consistent.
    */
   async insertDisbursementReceipt(
     disbursementReceipt: DisbursementReceiptModel,

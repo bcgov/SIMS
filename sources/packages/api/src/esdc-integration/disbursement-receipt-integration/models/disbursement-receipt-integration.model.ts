@@ -7,7 +7,7 @@ import { DisbursementReceiptHeader } from "../disbursement-receipt-files/disburs
 export enum DisbursementReceiptRecordType {
   Header = "F",
   Detail = "D",
-  Trailer = "T",
+  Footer = "T",
 }
 
 /**

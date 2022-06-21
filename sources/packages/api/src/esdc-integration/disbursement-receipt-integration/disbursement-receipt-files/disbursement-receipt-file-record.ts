@@ -6,7 +6,7 @@ import { DisbursementReceiptRecordType } from "../models/disbursement-receipt-in
  * Base class for disbursement receipt record.
  * All the records of disbursement receipt must be a sub class of this.
  */
-export class DisbursementReceiptRecord {
+export abstract class DisbursementReceiptRecord {
   constructor(
     protected readonly line: string,
     protected readonly _lineNumber = 0,

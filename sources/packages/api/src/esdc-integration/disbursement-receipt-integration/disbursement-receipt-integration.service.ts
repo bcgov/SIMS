@@ -35,14 +35,14 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
       // If the header is not the expected one, throw an error.
       throw new Error("Invalid file header.");
     }
-    //Read the last line to check if the trailer record type is the expected one and fetch the SIN Hash total.
-    const trailer = new DisbursementReceiptFooter(fileLines.pop());
-    if (trailer.recordType !== DisbursementReceiptRecordType.Trailer) {
+    //Read the last line to check if the footer record type is the expected one and fetch the SIN Hash total.
+    const footer = new DisbursementReceiptFooter(fileLines.pop());
+    if (footer.recordType !== DisbursementReceiptRecordType.Footer) {
       this.logger.error(
-        `The Disbursement receipt file ${remoteFilePath} has an invalid transaction code on trailer: ${trailer.recordType}`,
+        `The Disbursement receipt file ${remoteFilePath} has an invalid transaction code on footer: ${footer.recordType}`,
       );
-      // If the trailer is not the expected one.
-      throw new Error("Invalid file trailer.");
+      // If the footer is not the expected one.
+      throw new Error("Invalid file footer.");
     }
     let totalSINHashCalculated = 0;
     const records: DisbursementReceiptDetail[] = [];
@@ -51,7 +51,7 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
       totalSINHashCalculated += +record.studentSIN;
       records.push(record);
     });
-    if (totalSINHashCalculated !== trailer.sinHashTotal) {
+    if (totalSINHashCalculated !== footer.sinHashTotal) {
       this.logger.error(
         `The Disbursement receipt file ${remoteFilePath} has SIN Hash total that is inconsistent with total sum of SIN in the records.`,
       );
