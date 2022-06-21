@@ -7,14 +7,15 @@
     <template #actions>
       <div class="search-box-display-width">
         <v-text-field
+          class="shrink"
+          density="compact"
           label="Search name or application #"
-          prepend-inner-icon="fa fa-search"
           variant="outlined"
           v-model="searchCriteria"
           @keyup.enter="searchActiveApplications"
         >
           <template v-slot:prependInner>
-            <font-awesome-icon :icon="['fa', 'search']" />
+            <font-awesome-icon :icon="['fas', 'search']" class="m" />
           </template>
         </v-text-field>
       </div>

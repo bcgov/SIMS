@@ -1,12 +1,12 @@
 <template>
   <div class="p-m-4">
     <HeaderNavigator :title="locationName" subTitle="Report a Change" />
-
     <TabView lazy class="mt-4">
       <TabPanel>
         <template #header>
           <span class="ml-2">Available to report</span>
         </template>
+
         <ActiveApplicationSummaryData
           :locationId="locationId"
           :archived="false"
@@ -16,6 +16,7 @@
         <template #header>
           <span class="ml-2">Unavailable to report</span>
         </template>
+
         <ActiveApplicationSummaryData
           :locationId="locationId"
           :archived="true"
