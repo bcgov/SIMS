@@ -122,11 +122,11 @@ export class DisbursementReceiptProcessingService {
             );
           if (generatedIdentifier) {
             result.processSummary.push(
-              `Record with document ${response.documentNumber} number at line${response.lineNumber} inserted successfully.`,
+              `Record with document number ${response.documentNumber} at line ${response.lineNumber} inserted successfully.`,
             );
           } else {
             result.processSummary.push(
-              `Record with document ${response.documentNumber} number at line${response.lineNumber} has been ignored as the receipt already exist.`,
+              `Record with document number ${response.documentNumber} at line ${response.lineNumber} has been ignored as the receipt already exist.`,
             );
           }
         } else {
