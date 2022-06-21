@@ -112,13 +112,23 @@ export class DisbursementReceiptProcessingService {
         const disbursementScheduleId =
           disbursementScheduleMap[response.documentNumber];
         if (disbursementScheduleId) {
-          await this.disbursementReceiptService.insertDisbursementReceipt(
-            response,
-            responseData.header.batchRunDate,
-            disbursementScheduleId,
-            auditUserId,
-            createdAt,
-          );
+          const generatedIdentifier =
+            await this.disbursementReceiptService.insertDisbursementReceipt(
+              response,
+              responseData.header.batchRunDate,
+              disbursementScheduleId,
+              auditUserId,
+              createdAt,
+            );
+          if (generatedIdentifier) {
+            result.processSummary.push(
+              `Record with document ${response.documentNumber} number at line${response.lineNumber} inserted successfully.`,
+            );
+          } else {
+            result.processSummary.push(
+              `Record with document ${response.documentNumber} number at line${response.lineNumber} has been ignored as the receipt already exist.`,
+            );
+          }
         } else {
           result.processSummary.push(
             `Document number ${response.documentNumber} at line ${response.lineNumber} not found in SIMS.`,

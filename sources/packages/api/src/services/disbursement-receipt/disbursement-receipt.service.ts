@@ -26,6 +26,7 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
    * @param disbursementScheduleId disbursement schedule id of corresponding document number.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param createdAt supplied from consumer as to keep the value consistent.
+   * @returns generated identifier if the disbursement receipt is inserted successfully.
    */
   async insertDisbursementReceipt(
     disbursementReceipt: DisbursementReceiptModel,
@@ -33,7 +34,8 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     disbursementScheduleId: number,
     auditUserId: number,
     createdAt: Date,
-  ): Promise<void> {
+  ): Promise<number> {
+    let generatedId: number;
     const creator = { id: auditUserId } as User;
     const disbursementReceiptEntity = new DisbursementReceipt();
     disbursementReceiptEntity.batchRunDate = batchRunDate;
@@ -93,8 +95,9 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
         )
         .execute();
       const [identifier] = result.identifiers;
+      generatedId = identifier?.id;
       if (
-        identifier &&
+        generatedId &&
         disbursementReceiptEntity.disbursementReceiptValues?.length > 0
       ) {
         await transactionalEntityManager
@@ -106,5 +109,6 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
           });
       }
     });
+    return generatedId;
   }
 }
