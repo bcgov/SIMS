@@ -688,7 +688,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * with application status completed and respective archive status.
    * @param locationId location id .
    * @param paginationOptions options to execute the pagination.
-   * @param applicationStatus View status of applications requested by user.
+   * @param archived archive status of applications requested by user.
    * @returns Student Active Application list.
    */
   async getActiveApplications(
