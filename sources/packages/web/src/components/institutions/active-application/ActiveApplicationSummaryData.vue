@@ -2,23 +2,21 @@
   <body-header
     title="Applications"
     :recordsCount="applications.results?.length"
-    class="m-1 mb-12"
+    class="m-1 mb-8"
   >
     <template #actions>
-      <div class="search-box-display-width">
-        <v-text-field
-          class="shrink"
-          density="compact"
-          label="Search name or application #"
-          variant="outlined"
-          v-model="searchCriteria"
-          @keyup.enter="searchActiveApplications"
-        >
-          <template v-slot:prependInner>
-            <font-awesome-icon :icon="['fas', 'search']" class="m" />
-          </template>
-        </v-text-field>
-      </div>
+      <v-text-field
+        class="v-text-field-search-width"
+        density="compact"
+        label="Search name or application #"
+        variant="outlined"
+        v-model="searchCriteria"
+        @keyup.enter="searchActiveApplications"
+      >
+        <template v-slot:prependInner>
+          <font-awesome-icon :icon="['fas', 'search']" class="m" />
+        </template>
+      </v-text-field>
     </template>
   </body-header>
   <content-group>

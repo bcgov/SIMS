@@ -33,7 +33,7 @@ import { SequenceControlService } from "../../services/sequence-control/sequence
 import { StudentFileService } from "../student-file/student-file.service";
 import {
   ApplicationOverriddenResult,
-  ApplicationSholasticStandingStatus,
+  ApplicationSholasticStandingStatus as ApplicationScholasticStandingStatus,
   ApplicationSubmissionResult,
 } from "./application.models";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
@@ -728,14 +728,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       isArchived: archived,
     });
 
-    if (archived) {
-      activeApplicationQuery.orWhere(
-        new Brackets((qb) => {
-          qb.where("studentScholasticStanding.id IS NOT NULL");
-        }),
-      );
-    }
-
     if (paginationOptions.searchCriteria) {
       activeApplicationQuery
         .andWhere(
@@ -774,17 +766,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param studentScholasticStandingId scholastic standing id.
    * @returns application scholastic standing status.
    */
-  getApplicationSholasticStandingStatus(
+  getApplicationScholasticStandingStatus(
     isArchived: boolean,
     studentScholasticStandingId?: number,
-  ): ApplicationSholasticStandingStatus {
-    if (isArchived) {
-      return ApplicationSholasticStandingStatus.Unavailable;
-    }
+  ): ApplicationScholasticStandingStatus {
     if (studentScholasticStandingId) {
-      return ApplicationSholasticStandingStatus.Completed;
+      return ApplicationScholasticStandingStatus.Completed;
     }
-    return ApplicationSholasticStandingStatus.Available;
+    if (isArchived) {
+      return ApplicationScholasticStandingStatus.Unavailable;
+    }
+    return ApplicationScholasticStandingStatus.Available;
   }
 
   /**

@@ -147,7 +147,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
           studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
           applicationStatus: eachApplication.applicationStatus,
           applicationSholasticStandingStatus:
-            this.applicationService.getApplicationSholasticStandingStatus(
+            this.applicationService.getApplicationScholasticStandingStatus(
               eachApplication.isArchived,
               eachApplication.currentAssessment?.studentScholasticStanding?.id,
             ),
