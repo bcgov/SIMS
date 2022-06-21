@@ -2,7 +2,7 @@
   <body-header
     title="Applications"
     :recordsCount="applications.results?.length"
-    class="m-1 mb-8"
+    class="m-1"
   >
     <template #actions>
       <v-text-field
@@ -53,7 +53,7 @@
         <Column field="applicationStatus" header="Status">
           <template #body="slotProps">
             <StatusChipActiveApplication
-              :status="slotProps.data.applicationSholasticStandingStatus"
+              :status="slotProps.data.applicationScholasticStandingStatus"
             />
           </template>
         </Column>
@@ -61,8 +61,8 @@
           <template #body="slotProps">
             <v-btn
               v-if="
-                slotProps.data.applicationSholasticStandingStatus ===
-                ApplicationSholasticStandingStatus.Available
+                slotProps.data.applicationScholasticStandingStatus ===
+                ApplicationScholasticStandingStatus.Available
               "
               class="primary-btn-background"
               @click="goToViewApplication(slotProps.data.applicationId)"
@@ -70,8 +70,8 @@
             >
             <v-btn
               v-if="
-                slotProps.data.applicationSholasticStandingStatus ===
-                ApplicationSholasticStandingStatus.Completed
+                slotProps.data.applicationScholasticStandingStatus ===
+                ApplicationScholasticStandingStatus.Completed
               "
               class="primary-btn-background"
               @click="
@@ -98,7 +98,7 @@ import {
   DEFAULT_PAGE_NUMBER,
   PageAndSortEvent,
   PaginatedResults,
-  ApplicationSholasticStandingStatus,
+  ApplicationScholasticStandingStatus,
 } from "@/types";
 import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
@@ -112,10 +112,6 @@ export default {
   props: {
     locationId: {
       type: Number,
-      required: true,
-    },
-    locationName: {
-      type: String,
       required: true,
     },
     archived: {
@@ -202,7 +198,7 @@ export default {
     );
 
     return {
-      ApplicationSholasticStandingStatus,
+      ApplicationScholasticStandingStatus,
       applications,
       dateString,
       goToViewApplication,

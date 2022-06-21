@@ -15,16 +15,17 @@ export class ScholasticStandingControllerService {
   /**
    * Get Scholastic Standing submitted details.
    * @param scholasticStandingId scholastic standing id.
+   * @param locationIds array of institution location ids.
    * @returns Scholastic Standing.
    */
   async getScholasticStanding(
     scholasticStandingId: number,
-    locationId: number,
+    locationIds?: number[],
   ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
     const scholasticStanding =
       await this.studentScholasticStandingsService.getScholasticStanding(
         scholasticStandingId,
-        locationId,
+        locationIds,
       );
 
     if (!scholasticStanding) {

@@ -1,15 +1,15 @@
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { ApplicationSholasticStandingStatus } from "@/types";
+import { ApplicationScholasticStandingStatus } from "@/types";
 
 export function useActiveApplication() {
   const mapActiveApplicationChipStatus = (
-    status: ApplicationSholasticStandingStatus,
+    status: ApplicationScholasticStandingStatus,
   ): StatusChipTypes => {
     switch (status) {
-      case ApplicationSholasticStandingStatus.Completed:
-      case ApplicationSholasticStandingStatus.Available:
+      case ApplicationScholasticStandingStatus.Completed:
+      case ApplicationScholasticStandingStatus.Available:
         return StatusChipTypes.Success;
-      case ApplicationSholasticStandingStatus.Unavailable:
+      case ApplicationScholasticStandingStatus.Unavailable:
         return StatusChipTypes.Inactive;
       default:
         return StatusChipTypes.Inactive;

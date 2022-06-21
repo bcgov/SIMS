@@ -128,8 +128,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   async getActiveApplications(
     @Param("locationId") locationId: number,
     @Query() pagination: ApplicationStatusPaginationOptionsAPIInDTO,
-    @Query("archived", ParseBoolPipe)
-    archived: boolean,
+    @Query("archived", ParseBoolPipe) archived: boolean,
   ): Promise<PaginatedResultsAPIOutDTO<ActiveApplicationSummaryAPIOutDTO>> {
     const applications = await this.applicationService.getActiveApplications(
       locationId,
@@ -146,7 +145,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
           studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
           studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
           applicationStatus: eachApplication.applicationStatus,
-          applicationSholasticStandingStatus:
+          applicationScholasticStandingStatus:
             this.applicationService.getApplicationScholasticStandingStatus(
               eachApplication.isArchived,
               eachApplication.currentAssessment?.studentScholasticStanding?.id,

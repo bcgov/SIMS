@@ -33,7 +33,7 @@ import { SequenceControlService } from "../../services/sequence-control/sequence
 import { StudentFileService } from "../student-file/student-file.service";
 import {
   ApplicationOverriddenResult,
-  ApplicationSholasticStandingStatus as ApplicationScholasticStandingStatus,
+  ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
   ApplicationSubmissionResult,
 } from "./application.models";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";

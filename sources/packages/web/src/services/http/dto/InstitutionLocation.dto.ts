@@ -1,5 +1,5 @@
 import {
-  ApplicationSholasticStandingStatus,
+  ApplicationScholasticStandingStatus,
   DesignationAgreementStatus,
 } from "@/types";
 import {
@@ -83,5 +83,5 @@ export interface ActiveApplicationSummaryAPIOutDTO {
   applicationStatus: string;
   fullName: string;
   scholasticStandingId?: number;
-  applicationSholasticStandingStatus: ApplicationSholasticStandingStatus;
+  applicationScholasticStandingStatus: ApplicationScholasticStandingStatus;
 }

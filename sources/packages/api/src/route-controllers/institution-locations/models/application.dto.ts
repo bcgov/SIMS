@@ -10,7 +10,7 @@ import {
   EducationProgramOffering,
 } from "../../../database/entities";
 import { StudyBreak } from "../../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
-import { ApplicationSholasticStandingStatus } from "../../../services/application/application.models";
+import { ApplicationScholasticStandingStatus } from "../../../services/application/application.models";
 
 export class ActiveApplicationDataAPIOutDTO {
   applicationProgramName: string;
@@ -41,7 +41,7 @@ export class ActiveApplicationSummaryAPIOutDTO {
   applicationStatus: ApplicationStatus;
   fullName: string;
   scholasticStandingId?: number;
-  applicationSholasticStandingStatus: ApplicationSholasticStandingStatus;
+  applicationScholasticStandingStatus: ApplicationScholasticStandingStatus;
 }
 
 /**

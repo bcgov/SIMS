@@ -11,17 +11,17 @@ export interface ApplicationSubmissionResult {
   createdAssessment: StudentAssessment;
 }
 
-export enum ApplicationSholasticStandingStatus {
+export enum ApplicationScholasticStandingStatus {
   /**
-   * The application has been confirmed by the institution.
+   * Applications that are archived and have a scholastic standing associated with.
    */
   Completed = "Completed",
   /**
-   * Applications that are available.
+   * Applications that are not archived yet and are available to have a change reported (scholastic standing).
    */
   Available = "Available",
   /**
-   * Applications that are unavailable.
+   * Applications that are archived and no longer can have a change reported (scholastic standing).
    */
   Unavailable = "Unavailable",
 }

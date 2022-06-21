@@ -23,13 +23,11 @@ export class ScholasticStandingService {
    */
   async getScholasticStanding(
     scholasticStandingId: number,
-    locationId?: number,
   ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
     const { dateOnlyLongString } = useFormatters();
     const applicationDetails =
       await ApiClient.ScholasticStandingApi.getScholasticStanding(
         scholasticStandingId,
-        locationId,
       );
 
     return {
