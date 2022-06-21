@@ -48,7 +48,6 @@
           field="applicationNumber"
           header="Application #"
           :sortable="true"
-          headerStyle="width: 20%"
         ></Column>
         <Column field="applicationStatus" header="Status">
           <template #body="slotProps">
@@ -57,7 +56,7 @@
             />
           </template>
         </Column>
-        <Column header="Action" headerStyle="width: 20%">
+        <Column header="Action">
           <template #body="slotProps">
             <v-btn
               v-if="
@@ -186,13 +185,6 @@ export default {
       async (currValue) => {
         //update the list
         await getSummaryList(currValue);
-      },
-    );
-
-    watch(
-      () => props.assessmentId,
-      async () => {
-        await getSummaryList(props.locationId);
       },
       { immediate: true },
     );

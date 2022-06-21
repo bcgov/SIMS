@@ -741,7 +741,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           `%${paginationOptions.searchCriteria.trim()}%`,
         );
     }
-    activeApplicationQuery.addOrderBy("application.applicationNumber", "DESC");
+
     activeApplicationQuery
       .orderBy(
         this.transformToEntitySortField(
