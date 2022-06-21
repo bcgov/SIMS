@@ -441,7 +441,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    */
   async getScholasticStanding(
     scholasticStandingId: number,
-    locationIds: number[],
+    locationIds?: number[],
   ): Promise<StudentScholasticStanding> {
     const studentScholasticStanding = this.repo
       .createQueryBuilder("studentScholasticStanding")
