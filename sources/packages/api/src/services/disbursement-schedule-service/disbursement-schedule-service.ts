@@ -653,4 +653,24 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     orderByCondition[dbColumnName] = sortOrder;
     return orderByCondition;
   }
+
+  /**
+   * Get disbursement schedules by document numbers.
+   * @param documentNumbers document numbers of disbursements.
+   * @returns disbursement schedules.
+   */
+  async getDisbursementsByDocumentNumbers(
+    documentNumbers: number[],
+  ): Promise<DisbursementSchedule[]> {
+    return this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .select([
+        "disbursementSchedule.id",
+        "disbursementSchedule.documentNumber",
+      ])
+      .where("disbursementSchedule.documentNumber IN (:...documentNumbers)", {
+        documentNumbers,
+      })
+      .getMany();
+  }
 }

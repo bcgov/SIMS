@@ -1,8 +1,10 @@
 import { Controller, Post } from "@nestjs/common";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import { IUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { DisbursementReceiptProcessingService } from "../../esdc-integration/disbursement-receipt-integration/disbursement-receipt-processing.service";
 import { ECertFileHandler } from "../../esdc-integration/e-cert-integration/e-cert-file-handler";
 import { ESDCFileResponseDTO, ESDCFileResultDTO } from "./models/esdc-model";
 import { ApiTags } from "@nestjs/swagger";
@@ -11,7 +13,10 @@ import BaseController from "../BaseController";
 @Controller("system-access/e-cert")
 @ApiTags("system-access")
 export class ECertIntegrationController extends BaseController {
-  constructor(private readonly eCertFileHandler: ECertFileHandler) {
+  constructor(
+    private readonly eCertFileHandler: ECertFileHandler,
+    private readonly disbursementReceiptProcessingService: DisbursementReceiptProcessingService,
+  ) {
     super();
   }
 
@@ -76,6 +81,22 @@ export class ECertIntegrationController extends BaseController {
     return partTimeResults.map((partTimeResult) => ({
       processSummary: partTimeResult.processSummary,
       errorsSummary: partTimeResult.errorsSummary,
+    }));
+  }
+
+  /**
+   * Process all the disbursement receipt files from remote sftp location.
+   * @returns Summary details of processing.
+   */
+  @Post("process-disbursement-receipts")
+  async processDisbursementReceipts(
+    @UserToken() userToken: IUserToken,
+  ): Promise<ESDCFileResponseDTO[]> {
+    const processResponse =
+      await this.disbursementReceiptProcessingService.process(userToken.userId);
+    return processResponse.map((response) => ({
+      processSummary: response.processSummary,
+      errorsSummary: response.errorsSummary,
     }));
   }
 

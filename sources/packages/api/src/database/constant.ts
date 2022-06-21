@@ -48,4 +48,6 @@ export const TableNames = {
   ReportsConfig: "report_configs",
   ApplicationExceptions: "application_exceptions",
   ApplicationExceptionRequests: "application_exception_requests",
+  DisbursementReceipts: "disbursement_receipts",
+  DisbursementReceiptValues: "disbursement_receipt_values",
 };
