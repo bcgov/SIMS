@@ -13,7 +13,7 @@ ALTER TABLE
   sims.sin_validations
 ADD
   -- This will be changed to NOT NULL in the end of the script.
-  COLUMN IF NOT EXISTS sin VARCHAR(9),
+  COLUMN IF NOT EXISTS sin CHAR(9),
 ADD
   COLUMN IF NOT EXISTS temporary_sin BOOLEAN NOT NULL GENERATED ALWAYS AS (
     CASE
