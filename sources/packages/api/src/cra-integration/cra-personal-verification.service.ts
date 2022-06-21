@@ -27,7 +27,7 @@ const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
 
 /**
  * Manages the retrieval of students or parents or another
- * individual that needs to have their data verified
+ * individual that needs to have his data verified
  * by the Canada Revenue Agency (CRA).
  */
 @Injectable()
