@@ -722,11 +722,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.completed,
+      })
+      .andWhere("application.isArchived = :isArchived", {
+        isArchived: archived,
       });
-
-    activeApplicationQuery.andWhere("application.isArchived = :isArchived", {
-      isArchived: archived,
-    });
 
     if (paginationOptions.searchCriteria) {
       activeApplicationQuery
