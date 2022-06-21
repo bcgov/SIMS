@@ -37,7 +37,7 @@ export class DisbursementReceiptProcessingService {
   /**
    * Process all the available disbursement receipt files in SFTP location.
    * Once the file is processed, it gets deleted.
-   * @param auditUserId user id of API user.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns Summary details of the processing.
    */
   async process(auditUserId: number): Promise<ProcessSFTPResponseResult[]> {
@@ -56,11 +56,12 @@ export class DisbursementReceiptProcessingService {
     }
     return result;
   }
+
   /**
    * Process a given disbursement receipt file and
    * insert the records to database.
    * @param remoteFilePath file which is to be processed.
-   * @param auditUserId user id of API user.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns result processing summary.
    */
   private async processAllReceiptsInFile(

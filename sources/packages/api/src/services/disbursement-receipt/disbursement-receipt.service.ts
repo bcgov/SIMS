@@ -24,7 +24,7 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
    * @param disbursementReceipt
    * @param batchRunDate batch run date of the disbursement file.
    * @param disbursementScheduleId disbursement schedule id of corresponding document number.
-   * @param auditUserId
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @param createdAt supplied from consumer as to keep the value consistent.
    */
   async insertDisbursementReceipt(
@@ -100,7 +100,7 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
         await transactionalEntityManager
           .getRepository(DisbursementReceipt)
           .save({
-            id: result.identifiers[0].id,
+            id: identifier.id,
             disbursementReceiptValues:
               disbursementReceiptEntity.disbursementReceiptValues,
           });

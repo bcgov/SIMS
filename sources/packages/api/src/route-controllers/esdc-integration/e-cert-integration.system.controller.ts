@@ -86,7 +86,6 @@ export class ECertIntegrationController extends BaseController {
 
   /**
    * Process all the disbursement receipt files from remote sftp location.
-   * @param userToken
    * @returns Summary details of processing.
    */
   @Post("process-disbursement-receipts")

@@ -1,6 +1,21 @@
 import { DisbursementReceiptRecord } from "./disbursement-receipt-file-record";
 
 /**
+ * Number of occurrences of the grant field.
+ */
+const GRANT_OCCURRENCE = 10;
+
+/**
+ * Length of a grant type field.
+ */
+const GRANT_TYPE_LENGTH = 6;
+
+/**
+ * Length of a grant amount field.
+ */
+const GRANT_AMOUNT_LENGTH = 7;
+
+/**
  * Model to parse the grant field of disbursement file detail record.
  */
 export class DisbursementReceiptGrant {
@@ -19,21 +34,6 @@ export class DisbursementReceiptDetail extends DisbursementReceiptRecord {
   constructor(line: string, lineNumber: number) {
     super(line, lineNumber);
   }
-
-  /**
-   * Number of occurrences of the grant field.
-   */
-  private GRANT_OCCURRENCE = 10;
-
-  /**
-   * Length of a grant type field.
-   */
-  private GRANT_TYPE_LENGTH = 6;
-
-  /**
-   * Length of a grant amount field.
-   */
-  private GRANT_AMOUNT_LENGTH = 7;
 
   get studentSIN() {
     return this.line.substring(14, 23);
@@ -102,17 +102,17 @@ export class DisbursementReceiptDetail extends DisbursementReceiptRecord {
   get grants() {
     const grants: DisbursementReceiptGrant[] = [];
     let grantIndex = 122;
-    for (let i = 1; i <= this.GRANT_OCCURRENCE; i++) {
+    for (let i = 1; i <= GRANT_OCCURRENCE; i++) {
       const grantType = this.line
-        .substring(grantIndex, grantIndex + this.GRANT_TYPE_LENGTH)
+        .substring(grantIndex, grantIndex + GRANT_TYPE_LENGTH)
         .trim();
-      grantIndex += this.GRANT_TYPE_LENGTH;
+      grantIndex += GRANT_TYPE_LENGTH;
 
       const grantAmountText = this.line.substring(
         grantIndex,
-        grantIndex + this.GRANT_AMOUNT_LENGTH,
+        grantIndex + GRANT_AMOUNT_LENGTH,
       );
-      grantIndex += this.GRANT_AMOUNT_LENGTH;
+      grantIndex += GRANT_AMOUNT_LENGTH;
 
       const grantAmount = this.convertToAmountString(grantAmountText);
 

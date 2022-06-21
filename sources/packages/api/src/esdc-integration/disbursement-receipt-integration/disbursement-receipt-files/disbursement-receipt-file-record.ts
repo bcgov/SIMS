@@ -22,7 +22,7 @@ export abstract class DisbursementReceiptRecord {
 
   /**
    * Any date record as string is parsed to date object.
-   * @param dateText
+   * @param dateText date field string parsed from file.
    * @returns Date object.
    */
   protected convertToDateRecord(dateText: string) {
@@ -32,11 +32,10 @@ export abstract class DisbursementReceiptRecord {
   /**
    * Parses any amount field to numeric string.
    ** parseInt is used to convert string like 00520 to 520.
-   * @param amountText
+   * @param amountText the amount field string parsed from file.
    * @returns amount value as numeric string.
    */
   protected convertToAmountString(amountText: string) {
-    const amountWholeValue = amountText.substring(0, 5);
-    return parseInt(amountWholeValue).toString();
+    return (+amountText.substring(0, 5)).toString();
   }
 }
