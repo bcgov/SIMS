@@ -40,7 +40,7 @@ export class DisbursementReceipt extends RecordDataModel {
   studentSIN: string;
 
   /**
-   * Disbursement id to which the document number from the file belongs to..
+   * Disbursement id to which the document number from the file belongs to.
    */
   @ManyToOne(() => DisbursementSchedule, { eager: false, nullable: false })
   @JoinColumn({
@@ -50,7 +50,7 @@ export class DisbursementReceipt extends RecordDataModel {
   disbursementSchedule: DisbursementSchedule;
 
   /**
-   * disbursement schedule id.
+   * Disbursement schedule id.
    */
   @RelationId(
     (disbursementReceipt: DisbursementReceipt) =>
@@ -59,7 +59,7 @@ export class DisbursementReceipt extends RecordDataModel {
   disbursementScheduleId: number;
 
   /**
-   * Indicates the funding type of the disbursement receipt item. Values can have FE(Federal) or BC(Provincial)..
+   * Indicates the funding type of the disbursement receipt item. Values can have FE(Federal) or BC(Provincial).
    */
   @Column({
     name: "funding_type",
@@ -68,7 +68,7 @@ export class DisbursementReceipt extends RecordDataModel {
   fundingType: string;
 
   /**
-   * Total entitled disbursed amount for either FE(Federal) or BC(Provincial)..
+   * Total entitled disbursed amount for either FE(Federal) or BC(Provincial).
    */
   @Column({
     name: "total_entitled_disbursed_amount",
@@ -78,7 +78,7 @@ export class DisbursementReceipt extends RecordDataModel {
   totalEntitledDisbursedAmount: string;
 
   /**
-   * Total disbursed amount for either FE(Federal) or BC(Provincial)..
+   * Total disbursed amount for either FE(Federal) or BC(Provincial).
    */
   @Column({
     name: "total_disbursed_amount",
@@ -194,8 +194,8 @@ export class DisbursementReceipt extends RecordDataModel {
     () => DisbursementReceiptValue,
     (disbursementReceiptValue) => disbursementReceiptValue.disbursementReceipt,
     {
-      eager: true,
-      cascade: true,
+      eager: false,
+      cascade: ["insert"],
       nullable: true,
     },
   )

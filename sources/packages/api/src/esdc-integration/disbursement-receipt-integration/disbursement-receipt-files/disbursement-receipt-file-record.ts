@@ -12,11 +12,11 @@ export class DisbursementReceiptRecord {
     protected readonly _lineNumber = 0,
   ) {}
 
-  public get lineNumber(): number {
+  get lineNumber(): number {
     return this._lineNumber;
   }
 
-  public get recordType(): DisbursementReceiptRecordType {
+  get recordType(): DisbursementReceiptRecordType {
     return this.line.substring(10, 11) as DisbursementReceiptRecordType;
   }
 
@@ -30,18 +30,13 @@ export class DisbursementReceiptRecord {
   }
 
   /**
-   * Parses any amount field to numeric string by ignoring any junk character is present in data.
-   ** parseFloat is used to convert string like 00520.00 to 520.00.
+   * Parses any amount field to numeric string.
+   ** parseInt is used to convert string like 00520 to 520.
    * @param amountText
    * @returns amount value as numeric string.
    */
   protected convertToAmountString(amountText: string) {
     const amountWholeValue = amountText.substring(0, 5);
-    const amountDecimalValue = amountText.substring(5, 7);
-    const wholeValue = isNaN(+amountWholeValue) ? "0" : amountWholeValue;
-    const amount = isNaN(+amountDecimalValue)
-      ? `${wholeValue}.00`
-      : `${wholeValue}.${amountDecimalValue}`;
-    return parseFloat(amount).toFixed(2);
+    return parseInt(amountWholeValue).toString();
   }
 }

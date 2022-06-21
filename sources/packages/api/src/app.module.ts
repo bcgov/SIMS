@@ -69,6 +69,7 @@ import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msf
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
 import { ECertIntegrationModule } from "./esdc-integration/e-cert-integration/e-cert-integration.module";
 import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
+import { DisbursementReceiptIntegrationModule } from "./esdc-integration/disbursement-receipt-integration/disbursement-receipt-integration.module";
 import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
@@ -86,6 +87,7 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     SFASIntegrationModule,
     ECertIntegrationModule,
     FedRestrictionIntegrationModule,
+    DisbursementReceiptIntegrationModule,
     AppAESTModule,
     AppInstitutionsModule,
     AppStudentsModule,

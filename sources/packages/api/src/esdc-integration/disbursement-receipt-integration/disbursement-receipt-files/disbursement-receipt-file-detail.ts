@@ -20,82 +20,99 @@ export class DisbursementReceiptDetail extends DisbursementReceiptRecord {
     super(line, lineNumber);
   }
 
-  //Number of occurrences of the grant field.
+  /**
+   * Number of occurrences of the grant field.
+   */
   private GRANT_OCCURRENCE = 10;
 
-  public get studentSIN() {
+  /**
+   * Length of a grant type field.
+   */
+  private GRANT_TYPE_LENGTH = 6;
+
+  /**
+   * Length of a grant amount field.
+   */
+  private GRANT_AMOUNT_LENGTH = 7;
+
+  get studentSIN() {
     return this.line.substring(14, 23);
   }
 
-  public get fundingType() {
+  get fundingType() {
     return this.line.substring(23, 25);
   }
 
-  public get documentNumber() {
+  get documentNumber() {
     return parseInt(this.line.substring(25, 37));
   }
 
-  public get totalEntitledDisbursedAmount() {
+  get totalEntitledDisbursedAmount() {
     return this.convertToAmountString(this.line.substring(37, 44));
   }
 
-  public get totalDisbursedAmount() {
+  get totalDisbursedAmount() {
     return this.convertToAmountString(this.line.substring(44, 51));
   }
 
-  public get disburseDate() {
+  get disburseDate() {
     return this.convertToDateRecord(this.line.substring(51, 59));
   }
 
-  public get disburseAmountStudent() {
+  get disburseAmountStudent() {
     return this.convertToAmountString(this.line.substring(59, 66));
   }
 
-  public get disburseAmountInstitution() {
+  get disburseAmountInstitution() {
     return this.convertToAmountString(this.line.substring(66, 73));
   }
 
-  public get dateSignedInstitution() {
+  get dateSignedInstitution() {
     return this.convertToDateRecord(this.line.substring(73, 81));
   }
 
-  public get institutionCode() {
+  get institutionCode() {
     return this.line.substring(81, 85);
   }
 
-  public get disburseMethodStudent() {
+  get disburseMethodStudent() {
     return this.line.substring(85, 86);
   }
 
-  public get studyPeriodEndDate() {
+  get studyPeriodEndDate() {
     return this.convertToDateRecord(this.line.substring(86, 94));
   }
 
-  public get totalEntitledGrantAmount() {
+  get totalEntitledGrantAmount() {
     return this.convertToAmountString(this.line.substring(94, 101));
   }
 
-  public get totalDisbursedGrantAmount() {
+  get totalDisbursedGrantAmount() {
     return this.convertToAmountString(this.line.substring(101, 108));
   }
 
-  public get totalDisbursedGrantAmountStudent() {
+  get totalDisbursedGrantAmountStudent() {
     return this.convertToAmountString(this.line.substring(108, 115));
   }
 
-  public get totalDisbursedGrantAmountInstitution() {
+  get totalDisbursedGrantAmountInstitution() {
     return this.convertToAmountString(this.line.substring(115, 122));
   }
 
-  public get grants() {
+  get grants() {
     const grants: DisbursementReceiptGrant[] = [];
     let grantIndex = 122;
     for (let i = 1; i <= this.GRANT_OCCURRENCE; i++) {
-      const grantType = this.line.substring(grantIndex, grantIndex + 6).trim();
-      grantIndex = grantIndex + 6;
+      const grantType = this.line
+        .substring(grantIndex, grantIndex + this.GRANT_TYPE_LENGTH)
+        .trim();
+      grantIndex += this.GRANT_TYPE_LENGTH;
 
-      const grantAmountText = this.line.substring(grantIndex, grantIndex + 7);
-      grantIndex = grantIndex + 7;
+      const grantAmountText = this.line.substring(
+        grantIndex,
+        grantIndex + this.GRANT_AMOUNT_LENGTH,
+      );
+      grantIndex += this.GRANT_AMOUNT_LENGTH;
 
       const grantAmount = this.convertToAmountString(grantAmountText);
 
@@ -110,7 +127,7 @@ export class DisbursementReceiptDetail extends DisbursementReceiptRecord {
    * Validate the record detail data.
    * @returns validation error message if validation fails.
    */
-  public getInvalidDataMessage(): string | null {
+  getInvalidDataMessage(): string | null {
     const errors: string[] = [];
     if (isNaN(+this.studentSIN)) {
       errors.push("invalid student SIN");

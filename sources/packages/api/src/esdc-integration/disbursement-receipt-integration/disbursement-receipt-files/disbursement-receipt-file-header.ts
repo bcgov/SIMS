@@ -9,7 +9,7 @@ export class DisbursementReceiptHeader extends DisbursementReceiptRecord {
     super(line);
   }
 
-  public get batchRunDate() {
+  get batchRunDate() {
     return this.convertToDateRecord(this.line.substring(24, 32));
   }
 }

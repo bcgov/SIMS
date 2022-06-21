@@ -42,7 +42,7 @@
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">${simsApiUrl}/system-access/disbursement-receipt/process</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/e-cert/process-disbursement-receipts</camunda:inputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>

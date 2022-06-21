@@ -35,6 +35,7 @@ export class DisbursementReceiptValue extends RecordDataModel {
     nullable: false,
   })
   grantType: string;
+
   /**
    * Grant amount.
    * !Decimal values are retrieved by Typeorm as string from Postgres.

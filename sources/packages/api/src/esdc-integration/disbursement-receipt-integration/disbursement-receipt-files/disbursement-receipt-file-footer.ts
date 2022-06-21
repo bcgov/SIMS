@@ -9,7 +9,7 @@ export class DisbursementReceiptFooter extends DisbursementReceiptRecord {
     super(line);
   }
 
-  public get sinHashTotal() {
+  get sinHashTotal() {
     return parseInt(this.line.substring(79, 94));
   }
 }

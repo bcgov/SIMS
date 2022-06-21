@@ -48,7 +48,7 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
     const records: DisbursementReceiptDetail[] = [];
     fileLines.forEach((line, index) => {
       const record = new DisbursementReceiptDetail(line, index + 1);
-      totalSINHashCalculated += parseInt(record.studentSIN);
+      totalSINHashCalculated += +record.studentSIN;
       records.push(record);
     });
     if (totalSINHashCalculated !== trailer.sinHashTotal) {
