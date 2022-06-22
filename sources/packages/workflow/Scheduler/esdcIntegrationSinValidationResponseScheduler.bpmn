@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0henw76" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0">
-  <bpmn:process id="cra-integration-sin-validation-scheduler" name="CRA Integration SIN Validation Scheduler" isExecutable="true">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0henw76" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0">
+  <bpmn:process id="esdc-integration-sin-validation-scheduler-responses" name="ESDC Integration SIN Validation Scheduler - Responses" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="Run Every 1 Hour">
       <bpmn:outgoing>Flow_13cbskt</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_01md2hl">
@@ -47,7 +47,7 @@ execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
       <bpmn:outgoing>Flow_1l3e4fc</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1l3e4fc" sourceRef="Activity_0s2rq16" targetRef="Activity_1a5hafq" />
-    <bpmn:serviceTask id="Activity_1a5hafq" name="Call API process-sin-validation">
+    <bpmn:serviceTask id="Activity_1a5hafq" name="Call API to process SIN responses">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
@@ -58,7 +58,7 @@ execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">${simsApiUrl}/system-access/cra-integration/process-sin-validation</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/sin-validation/process-responses</camunda:inputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>
@@ -72,7 +72,7 @@ execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
     <bpmn:sequenceFlow id="Flow_1gu217v" sourceRef="Activity_1a5hafq" targetRef="Event_0743mx9" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="cra-integration-sin-validation-scheduler">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="esdc-integration-sin-validation-scheduler-responses">
       <bpmndi:BPMNEdge id="Flow_1gu217v_di" bpmnElement="Flow_1gu217v">
         <di:waypoint x="580" y="117" />
         <di:waypoint x="642" y="117" />
@@ -99,6 +99,7 @@ execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ftn58e_di" bpmnElement="Activity_1a5hafq">
         <dc:Bounds x="480" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0743mx9_di" bpmnElement="Event_0743mx9">
         <dc:Bounds x="642" y="99" width="36" height="36" />
