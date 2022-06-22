@@ -3,21 +3,30 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { User } from ".";
+import { Note, User } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
- * SIN Validations that must be performed with CRA.
+ * SIN Validations that must be performed with ESDC.
  */
 @Entity({ name: TableNames.SINValidations })
 export class SINValidation extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
+  /**
+   * Social insurance number.
+   */
+  @Column({
+    name: "sin",
+    nullable: false,
+  })
+  sin: string;
   /**
    * Date and time that the SIN validation file was generated
    * and sent.
@@ -71,7 +80,7 @@ export class SINValidation extends RecordDataModel {
   })
   surnameSent?: string;
   /**
-   * DOB Name sent in the file sent for SIN validation.
+   * Date of birth sent in the file sent for SIN validation.
    */
   @Column({
     name: "dob_sent",
@@ -81,6 +90,14 @@ export class SINValidation extends RecordDataModel {
   })
   dobSent?: Date;
   /**
+   * Gender sent in the file sent for SIN validation.
+   */
+  @Column({
+    name: "gender_sent",
+    nullable: true,
+  })
+  genderSent?: string;
+  /**
    * SIN is validated or not(e.g. null - SIN record is not sent for validation, true - SIN valid, false - SIN not valid).
    */
   @Column({
@@ -89,53 +106,76 @@ export class SINValidation extends RecordDataModel {
   })
   isValidSIN?: boolean;
   /**
-   * Request status code (e.g. 01 - SUCCESSFUL-REQUEST).
+   * Overall SIN validation status (e.g. 1-Passed, 2-Under Review, etc.)
+   * returned on the ESDC response.
    */
   @Column({
-    name: "request_status_code",
+    name: "sin_status",
     nullable: true,
   })
-  requestStatusCode?: string;
+  sinStatus?: string;
   /**
-   * Match status code (e.g. 01 - SUCCESSFUL-MATCH).
+   * Individual status of the SIN validation (Y/N) returned on the ESDC response.
    */
   @Column({
-    name: "match_status_code",
+    name: "valid_sin_check",
     nullable: true,
   })
-  matchStatusCode?: string;
+  validSINCheck?: string;
   /**
-   * SIN Match status code (e.g. 01 - SUCCESSFUL-MATCH).
+   * Individual status of birthdate validation (Y/N) returned on the ESDC response.
    */
   @Column({
-    name: "sin_match_status_code",
+    name: "valid_birthdate_check",
     nullable: true,
   })
-  sinMatchStatusCode?: string;
+  validBirthdateCheck?: string;
   /**
-   * Surname Match status code (e.g. 01 - SUCCESSFUL-MATCH).
+   * Individual status of the first name validation (Y/N) returned on the ESDC response.
    */
   @Column({
-    name: "surname_match_status_code",
+    name: "valid_first_name_check",
     nullable: true,
   })
-  surnameMatchStatusCode?: string;
+  validFirstNameCheck?: string;
   /**
-   * Given Name Match status code (e.g. 01 - SUCCESSFUL-MATCH).
+   * Individual status of the last name validation (Y/N) returned on the ESDC response.
    */
   @Column({
-    name: "given_name_match_status_code",
+    name: "valid_last_name_check",
     nullable: true,
   })
-  givenNameMatchStatusCode?: string;
+  validLastNameCheck?: string;
   /**
-   * Dob Match status code (e.g. 01 - SUCCESSFUL-MATCH).
+   * Individual status of the gender validation (Y/N) returned on the ESDC response.
    */
   @Column({
-    name: "dob_match_status_code",
+    name: "valid_gender_check",
     nullable: true,
   })
-  birthDateMatchStatusCode?: string;
+  validGenderCheck?: string;
+  /**
+   * Defines if the SIN is temporary.
+   * This column is automatically calculated on DB during
+   * insert or update operations.
+   */
+  @Column({
+    name: "temporary_sin",
+    nullable: false,
+    update: false,
+    insert: false,
+  })
+  temporarySIN: boolean;
+  /**
+   * Expiration date for a temporary SIN.
+   */
+  @Column({
+    name: "sin_expire_date",
+    type: "date",
+    transformer: dateOnlyTransformer,
+    nullable: true,
+  })
+  sinExpireDate?: Date;
   /**
    * User id that requires a SIN validation.
    */
@@ -150,4 +190,58 @@ export class SINValidation extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   user: User;
+  /**
+   * User that manually edited the SIN.
+   */
+  @ManyToOne(() => User, { eager: false, cascade: false, nullable: true })
+  @JoinColumn({
+    name: "sin_edited_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  sinEditedBy?: User;
+  /**
+   * Date and time that a user manually edited the SIN.
+   */
+  @Column({
+    name: "sin_edited_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  sinEditedDate?: Date;
+  /**
+   * Note that explains why the SIN was manually edited.
+   */
+  @OneToOne(() => Note, { eager: false, cascade: false, nullable: true })
+  @JoinColumn({
+    name: "sin_edited_note_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  sinEditedNote?: Note;
+  /**
+   * User that manually edited the SIN expiry date.
+   */
+  @ManyToOne(() => User, { eager: false, cascade: false, nullable: true })
+  @JoinColumn({
+    name: "expired_date_edited_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  expiredDateEditedBy?: User;
+  /**
+   * Date and time that a user manually edited the SIN expiry date.
+   */
+  @Column({
+    name: "expired_date_edited_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  expiredDateEditedDate?: Date;
+  /**
+   * Note that explains why the SIN expiry date was manually edited.
+   */
+  @OneToOne(() => Note, { eager: false, cascade: false, nullable: true })
+  @JoinColumn({
+    name: "expired_date_edited_note_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  expiredDateEditedNote?: Note;
 }

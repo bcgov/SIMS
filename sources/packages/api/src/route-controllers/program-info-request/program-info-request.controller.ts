@@ -244,7 +244,7 @@ export class ProgramInfoRequestController extends BaseController {
         applicationId,
         application.student.user.lastName,
         application.student.user.id,
-        application.student.sin,
+        application.student.sinValidation.sin,
         application.student.birthDate,
         studyStartDate,
         studyEndDate,

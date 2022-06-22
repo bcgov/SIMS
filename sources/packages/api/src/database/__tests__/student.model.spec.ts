@@ -21,7 +21,6 @@ describe("Test student model", () => {
     const sfasIndividualService = new SFASIndividualService(connection);
     const controller = new StudentService(connection, sfasIndividualService);
     const sub = new Student();
-    sub.sin = "9999999999";
     sub.birthDate = faker.date.past(18);
     sub.gender = "X";
     sub.contactInfo = {
@@ -42,6 +41,7 @@ describe("Test student model", () => {
     sub.user = user;
     const sinValidation = new SINValidation();
     sinValidation.user = user;
+    sinValidation.sin = "964652218";
     sub.sinValidation = sinValidation;
 
     // Save

@@ -67,12 +67,12 @@ export class StudentService extends RecordDataModelService<Student> {
         "student.studentPDSentAt",
         "student.studentPDUpdateAt",
         "sinValidation.id",
+        "sinValidation.sin",
         "sinValidation.isValidSIN",
         "user.id",
         "user.firstName",
         "user.lastName",
         "user.email",
-        "student.sin",
       ])
       .innerJoin("student.user", "user")
       .leftJoin("student.sinValidation", "sinValidation")
@@ -115,7 +115,9 @@ export class StudentService extends RecordDataModelService<Student> {
       user.id = userInfo.userId;
     }
 
+    const studentSIN = removeWhiteSpaces(otherInfo.sinNumber);
     const sinValidation = new SINValidation();
+    sinValidation.sin = studentSIN;
     sinValidation.user = user;
     user.userName = userInfo.userName;
     user.email = userInfo.email;
@@ -126,7 +128,6 @@ export class StudentService extends RecordDataModelService<Student> {
     student.user = user;
     student.birthDate = getDateOnly(userInfo.birthdate);
     student.gender = userInfo.gender;
-    student.sin = removeWhiteSpaces(otherInfo.sinNumber);
     student.contactInfo = {
       address: transformAddressDetails(otherInfo),
       phone: otherInfo.phone,
@@ -139,7 +140,7 @@ export class StudentService extends RecordDataModelService<Student> {
       student.studentPDVerified = await this.sfasIndividualService.getPDStatus(
         user.lastName,
         student.birthDate,
-        student.sin,
+        studentSIN,
       );
     } catch (error) {
       this.logger.error("Unable to get SFAS information of student.");
@@ -226,18 +227,18 @@ export class StudentService extends RecordDataModelService<Student> {
       .createQueryBuilder("student")
       .select([
         "student.id",
-        "student.sin",
         "student.birthDate",
+        "student.gender",
         "user.firstName",
         "user.lastName",
         "user.id",
         "sinValidation.id",
+        "sinValidation.sin",
       ])
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
       .where("sinValidation.isValidSIN is null")
       .andWhere("sinValidation.dateSent is null")
-      .andWhere("sinValidation.dateReceived is null")
       .getMany();
   }
 
@@ -297,6 +298,8 @@ export class StudentService extends RecordDataModelService<Student> {
   async getStudentsAppliedForPD(): Promise<Student[]> {
     return this.repo
       .createQueryBuilder("student")
+      .select(["student.id", "sinValidation.id", "sinValidation.sin"])
+      .innerJoin("student.sinValidation", "sinValidation")
       .where("student.studentPDSentAt is not null")
       .andWhere("student.studentPDUpdateAt is null")
       .andWhere("student.studentPDVerified is null")
@@ -392,6 +395,31 @@ export class StudentService extends RecordDataModelService<Student> {
     });
     student.notes.push(note);
     await this.repo.save(student);
+  }
+
+  /**
+   * Uses the user id to identify a student that must have his
+   * SIN validation active record updated.
+   * @param userId user id related to the student.
+   * @param sinValidation SIN validation record to have the
+   * relationship created with the student.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   * @returns updated student.
+   */
+  async updateSINValidationByUserId(
+    userId: number,
+    sinValidation: SINValidation,
+    auditUserId: number,
+  ): Promise<Student> {
+    const studentToUpdate = await this.repo
+      .createQueryBuilder("student")
+      .select("student.id")
+      .where("student.user.id = :userId", { userId })
+      .getOne();
+    studentToUpdate.modifier = { id: auditUserId } as User;
+    studentToUpdate.sinValidation = sinValidation;
+    return this.repo.save(studentToUpdate);
   }
 
   @InjectLogger()

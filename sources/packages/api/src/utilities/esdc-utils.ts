@@ -25,7 +25,7 @@ export function getPartTimeMaritalStatusCode(
 }
 
 /**
- * Gets the gender code conversion for the MSFAA request file
+ * Gets the gender code conversion for the ESDC request files.
  */
 export function getGenderCode(gender: string): string {
   if (gender === "male") {

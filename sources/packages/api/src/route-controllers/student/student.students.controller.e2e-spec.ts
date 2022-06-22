@@ -45,7 +45,6 @@ describe("Test ATBC Controller", () => {
   it("should return an HTTP 200 status when applying for PD and student is valid", async () => {
     // Create fake student in SIMS DB
     const fakeStudent = new Student();
-    fakeStudent.sin = "123456789";
     fakeStudent.birthDate = faker.date.past(18);
     fakeStudent.gender = "F";
     fakeStudent.contactInfo = {
@@ -68,6 +67,7 @@ describe("Test ATBC Controller", () => {
     sinValidation.user = simsUser;
     sinValidation.isValidSIN = true;
     fakeStudent.sinValidation = sinValidation;
+    sinValidation.sin = "706941291";
 
     // Save the student in SIMS
     await studentService.save(fakeStudent);

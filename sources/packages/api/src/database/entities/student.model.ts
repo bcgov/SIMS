@@ -27,11 +27,6 @@ export class Student extends RecordDataModel {
   contactInfo: ContactInfo;
 
   @Column({
-    name: "sin",
-  })
-  sin: string;
-
-  @Column({
     name: "birth_date",
     type: "date",
     transformer: dateOnlyTransformer,

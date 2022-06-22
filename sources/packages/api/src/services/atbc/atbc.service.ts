@@ -129,7 +129,7 @@ export class ATBCService {
       this.logger.log(`Creating Payload for student id ${eachStudent.id}`);
       // create PD checker payload
       const payload: ATBCPDCheckerPayload = {
-        id: eachStudent.sin,
+        id: eachStudent.sinValidation.sin,
       };
       // api to check the student PD status in ATBC
       this.logger.log(

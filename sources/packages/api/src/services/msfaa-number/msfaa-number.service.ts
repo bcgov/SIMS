@@ -144,7 +144,8 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         "students.id",
         "referenceApplication.id",
         "msfaaNumber.msfaaNumber",
-        "students.sin",
+        "sinValidation.id",
+        "sinValidation.sin",
         "institutionLocation.institutionCode",
         "students.birthDate",
         "referenceApplication.relationshipStatus",
@@ -157,6 +158,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         "offering.offeringIntensity",
       ])
       .innerJoin("msfaaNumber.student", "students")
+      .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("students.user", "users")
       .innerJoin("msfaaNumber.referenceApplication", "referenceApplication")
       .innerJoin("referenceApplication.currentAssessment", "currentAssessment")

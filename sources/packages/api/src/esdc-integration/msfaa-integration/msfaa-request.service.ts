@@ -69,7 +69,7 @@ export class MSFAARequestService extends ESDCFileHandler {
     //Total hash of the Student's SIN, its used in the footer content.
     const totalSINHash = pendingMSFAARequests.reduce(
       (accumulator, pendingMSFAARequest) =>
-        accumulator + parseInt(pendingMSFAARequest.student.sin),
+        accumulator + parseInt(pendingMSFAARequest.student.sinValidation.sin),
       0,
     );
 
@@ -138,7 +138,7 @@ export class MSFAARequestService extends ESDCFileHandler {
     return {
       id: pendingMSFAARecords.id,
       msfaaNumber: pendingMSFAARecords.msfaaNumber,
-      sin: pendingMSFAARecords.student.sin,
+      sin: pendingMSFAARecords.student.sinValidation.sin,
       institutionCode:
         pendingMSFAARecords.referenceApplication.currentAssessment.offering
           .institutionLocation.institutionCode,

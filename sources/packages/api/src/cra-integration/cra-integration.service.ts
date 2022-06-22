@@ -35,27 +35,6 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRASFTPResponseFi
   }
 
   /**
-   * Creates a matching run request used, for instance, to validate
-   * the SIN information.
-   * @param records personal/individual records to be processed.
-   * @param sequence file request sequence number that is required
-   * by CRA server processing.
-   * @returns Matching run content.
-   */
-  createMatchingRunContent(
-    records: CRAPersonRecord[],
-    sequence: number,
-  ): FixedFormatFileLine[] {
-    return this.createCRARequestFile(
-      records,
-      sequence,
-      TransactionCodes.MatchingRunHeader,
-      TransactionCodes.MatchingRunRecord,
-      TransactionCodes.MatchingRunFooter,
-    );
-  }
-
-  /**
    * Creates an income validation request.
    * @param records personal/individual records to be processed.
    * @param sequence file request sequence number that is required
