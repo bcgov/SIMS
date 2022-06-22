@@ -786,7 +786,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @returns OrderByCondition
    */
   private transformToEntitySortField(
-    sortField = "application.applicationNumber",
+    sortField = "applicationNumber",
     sortOrder = FieldSortOrder.ASC,
   ): OrderByCondition {
     const orderByCondition = {};
