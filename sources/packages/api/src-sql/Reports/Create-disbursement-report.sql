@@ -7,7 +7,7 @@ VALUES
       select
         to_char(dr.disburse_date, ''YYYY-MM-DD'') as "Date of Disbursement",
         dr.student_sin as "SIN",
-        sa.application_id as "Application Number",
+        app.application_number as "Application Number",
         ds.document_number as "Certificate Number",
         drv.grant_type as "Funding Code",
         drv.grant_amount as "Disbursement Amount"
@@ -16,6 +16,7 @@ VALUES
         inner join sims.disbursement_receipt_values drv on drv.disbursement_receipt_id = dr.id
         inner join sims.disbursement_schedules ds on ds.id = dr.disbursement_schedule_id
         inner join sims.student_assessments sa on sa.id = ds.student_assessment_id
+        inner join sims.applications app on app.id = sa.application_id
         inner join sims.education_programs_offerings epo on epo.id = sa.offering_id
       where
         epo.offering_intensity = any(:offeringIntensity)
@@ -26,7 +27,7 @@ VALUES
       select
         to_char(dr.disburse_date, ''YYYY-MM-DD'') as "Date of Disbursement",
         dr.student_sin as "SIN",
-        sa.application_id as "Application Number",
+        app.application_number as "Application Number",
         ds.document_number as "Certificate Number",
         case
           when dr.funding_type = ''BC'' then ''BCSL''
@@ -37,6 +38,7 @@ VALUES
         sims.disbursement_receipts dr
         inner join sims.disbursement_schedules ds on ds.id = dr.disbursement_schedule_id
         inner join sims.student_assessments sa on sa.id = ds.student_assessment_id
+        inner join sims.applications app on app.id = sa.application_id
         inner join sims.education_programs_offerings epo on epo.id = sa.offering_id
       where
         epo.offering_intensity = any(:offeringIntensity)
