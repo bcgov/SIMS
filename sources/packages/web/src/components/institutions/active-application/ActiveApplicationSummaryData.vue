@@ -36,8 +36,8 @@
         <Column field="studyStartPeriod" header="Study dates">
           <template #body="slotProps">
             <span>
-              {{ dateString(slotProps.data.studyStartPeriod) }} -
-              {{ dateString(slotProps.data.studyEndPeriod) }}
+              {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
+              {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
             </span>
           </template>
         </Column>
@@ -123,7 +123,7 @@ export default {
     const sortField = ref(DEFAULT_SORT_FIELD);
     const sortOrder = ref(DataTableSortOrder.ASC);
     const searchCriteria = ref();
-    const { dateString } = useFormatters();
+    const { dateOnlyLongString } = useFormatters();
     const applications = ref(
       {} as PaginatedResults<ActiveApplicationSummaryAPIOutDTO>,
     );
@@ -189,7 +189,7 @@ export default {
     return {
       ApplicationScholasticStandingStatus,
       applications,
-      dateString,
+      dateOnlyLongString,
       goToViewApplication,
       pageEvent,
       sortEvent,
