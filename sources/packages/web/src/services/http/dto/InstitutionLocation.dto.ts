@@ -1,4 +1,7 @@
-import { DesignationAgreementStatus } from "@/types";
+import {
+  ApplicationScholasticStandingStatus,
+  DesignationAgreementStatus,
+} from "@/types";
 import {
   InstitutionPrimaryContactAPIOutDTO,
   AddressDetailsFormAPIDTO,
@@ -79,4 +82,6 @@ export interface ActiveApplicationSummaryAPIOutDTO {
   applicationId: number;
   applicationStatus: string;
   fullName: string;
+  scholasticStandingId?: number;
+  applicationScholasticStandingStatus: ApplicationScholasticStandingStatus;
 }

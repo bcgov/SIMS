@@ -436,12 +436,14 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   /**
    * Get scholastic standing submitted details.
    * @param scholasticStandingId scholastic standing id.
+   * @param locationIds array of institution location ids.
    * @return student scholastic standing.
    */
   async getScholasticStanding(
     scholasticStandingId: number,
+    locationIds?: number[],
   ): Promise<StudentScholasticStanding> {
-    return this.repo
+    const studentScholasticStanding = this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select([
         "studentScholasticStanding.id",
@@ -477,7 +479,15 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .innerJoin("student.user", "user")
       .where("studentScholasticStanding.id = :scholasticStandingId", {
         scholasticStandingId,
-      })
-      .getOne();
+      });
+    if (locationIds && locationIds.length > 0) {
+      studentScholasticStanding.andWhere(
+        "institutionLocation.id IN (:...locationIds)",
+        {
+          locationIds,
+        },
+      );
+    }
+    return studentScholasticStanding.getOne();
   }
 }

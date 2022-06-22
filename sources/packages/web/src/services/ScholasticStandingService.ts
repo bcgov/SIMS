@@ -1,3 +1,4 @@
+import { useFormatters } from "@/composables";
 import ApiClient from "@/services/http/ApiClient";
 import {
   ScholasticStandingDataAPIInDTO,
@@ -23,9 +24,26 @@ export class ScholasticStandingService {
   async getScholasticStanding(
     scholasticStandingId: number,
   ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
-    return ApiClient.ScholasticStandingApi.getScholasticStanding(
-      scholasticStandingId,
-    );
+    const { dateOnlyLongString } = useFormatters();
+    const applicationDetails =
+      await ApiClient.ScholasticStandingApi.getScholasticStanding(
+        scholasticStandingId,
+      );
+
+    return {
+      ...applicationDetails,
+      applicationOfferingStartDate: dateOnlyLongString(
+        applicationDetails.applicationOfferingStartDate,
+      ),
+      applicationOfferingEndDate: dateOnlyLongString(
+        applicationDetails.applicationOfferingEndDate,
+      ),
+      applicationOfferingStudyBreak:
+        applicationDetails.applicationOfferingStudyBreak?.map((studyBreak) => ({
+          breakStartDate: dateOnlyLongString(studyBreak.breakStartDate),
+          breakEndDate: dateOnlyLongString(studyBreak.breakEndDate),
+        })),
+    };
   }
 
   /**

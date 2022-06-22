@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Param,
   ParseIntPipe,
   Post,
@@ -9,6 +10,7 @@ import {
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
+  ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
@@ -32,7 +34,11 @@ import { CustomNamedError } from "../../utilities";
 import BaseController from "../BaseController";
 import { FormNames } from "../../services/form/constants";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";
-import { ScholasticStandingAPIInDTO } from "./models/student-scholastic-standings.dto";
+import {
+  ScholasticStandingAPIInDTO,
+  ScholasticStandingSubmittedDetailsAPIOutDTO,
+} from "./models/student-scholastic-standings.dto";
+import { ScholasticStandingControllerService } from "./student-scholastic-standings.controller.service";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -45,6 +51,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     private readonly formService: FormService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
   ) {
     super();
   }
@@ -109,5 +116,25 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       }
       throw error;
     }
+  }
+
+  /**
+   * Get Scholastic Standing submitted details.
+   * @UserToken institution user token
+   * @param scholasticStandingId scholastic standing id.
+   * @returns Scholastic Standing.
+   */
+  @Get(":scholasticStandingId")
+  @ApiNotFoundResponse({
+    description: "Scholastic Standing not found.",
+  })
+  async getScholasticStanding(
+    @Param("scholasticStandingId", ParseIntPipe) scholasticStandingId: number,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
+    return this.scholasticStandingControllerService.getScholasticStanding(
+      scholasticStandingId,
+      userToken.authorizations.getLocationsIds(),
+    );
   }
 }

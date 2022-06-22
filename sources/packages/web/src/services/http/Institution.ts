@@ -5,6 +5,8 @@ import {
   FieldSortOrder,
   AESTInstitutionProgramsSummaryDto,
   PaginatedResults,
+  PaginationOptions,
+  PaginationParams,
 } from "@/types";
 import {
   ActiveApplicationSummaryAPIOutDTO,
@@ -19,7 +21,9 @@ import {
   InstitutionUserDetailAPIOutDTO,
   UserRoleOptionAPIOutDTO,
   InstitutionLocationAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
+import { addPaginationOptions, addSortOptions } from "@/helpers";
 
 export class InstitutionApi extends HttpBaseClient {
   public async createInstitution(
@@ -113,10 +117,34 @@ export class InstitutionApi extends HttpBaseClient {
 
   public async getActiveApplicationsSummary(
     locationId: number,
-  ): Promise<ActiveApplicationSummaryAPIOutDTO[]> {
-    return this.getCallTyped<ActiveApplicationSummaryAPIOutDTO[]>(
-      this.addClientRoot(`location/${locationId}/active-applications`),
+    paginationOptions: PaginationOptions,
+    archived: boolean,
+  ): Promise<PaginatedResultsAPIOutDTO<ActiveApplicationSummaryAPIOutDTO>> {
+    let url = `location/${locationId}/active-applications?archived=${archived}`;
+
+    // Adding pagination params. There is always a default page and pageLimit for paginated APIs.
+    url = addPaginationOptions(
+      url,
+      paginationOptions.page,
+      paginationOptions.pageLimit,
+      "&",
     );
+
+    //Adding Sort params. There is always a default sortField and sortOrder for Active Applications.
+    url = addSortOptions(
+      url,
+      paginationOptions.sortField,
+      paginationOptions.sortOrder,
+    );
+
+    // Search criteria is populated only when search box has search text in it.
+    if (paginationOptions.searchCriteria) {
+      url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
+    }
+
+    return this.getCallTyped<
+      PaginatedResults<ActiveApplicationSummaryAPIOutDTO>
+    >(this.addClientRoot(url));
   }
 
   public async searchInstitutions(

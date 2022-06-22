@@ -5,8 +5,10 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseBoolPipe,
   Patch,
   Post,
+  Query,
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
@@ -28,6 +30,7 @@ import {
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { getISODateOnlyString, getUserFullName } from "../../utilities";
+
 import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
@@ -42,6 +45,10 @@ import {
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
+import {
+  ApplicationStatusPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
 
 /**
  * Institution location controller for institutions Client.
@@ -112,27 +119,44 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * Get all active application of a location in an institution
    * with application_status is completed.
    * @param locationId location id.
+   * @param pagination options to execute the pagination.
+   * @param archived archive value of applications requested by user.
    * @returns Student active application list of an institution location.
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/active-applications")
   async getActiveApplications(
     @Param("locationId") locationId: number,
-  ): Promise<ActiveApplicationSummaryAPIOutDTO[]> {
+    @Query() pagination: ApplicationStatusPaginationOptionsAPIInDTO,
+    @Query("archived", ParseBoolPipe) archived: boolean,
+  ): Promise<PaginatedResultsAPIOutDTO<ActiveApplicationSummaryAPIOutDTO>> {
     const applications = await this.applicationService.getActiveApplications(
       locationId,
+      pagination,
+      archived,
     );
-    return applications.map((eachApplication) => {
-      const offering = eachApplication.currentAssessment?.offering;
-      return {
-        applicationNumber: eachApplication.applicationNumber,
-        applicationId: eachApplication.id,
-        studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
-        studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
-        applicationStatus: eachApplication.applicationStatus,
-        fullName: getUserFullName(eachApplication.student.user),
-      };
-    });
+
+    return {
+      results: applications.results.map((eachApplication) => {
+        const offering = eachApplication.currentAssessment?.offering;
+        return {
+          applicationNumber: eachApplication.applicationNumber,
+          applicationId: eachApplication.id,
+          studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
+          studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
+          applicationStatus: eachApplication.applicationStatus,
+          applicationScholasticStandingStatus:
+            this.applicationService.getApplicationScholasticStandingStatus(
+              eachApplication.isArchived,
+              eachApplication.currentAssessment?.studentScholasticStanding?.id,
+            ),
+          fullName: getUserFullName(eachApplication.student.user),
+          scholasticStandingId:
+            eachApplication.currentAssessment?.studentScholasticStanding?.id,
+        };
+      }),
+      count: applications.count,
+    };
   }
 
   /**

@@ -333,8 +333,14 @@ export class InstitutionService {
 
   public async getActiveApplicationsSummary(
     locationId: number,
-  ): Promise<ActiveApplicationSummaryAPIOutDTO[]> {
-    return ApiClient.Institution.getActiveApplicationsSummary(locationId);
+    paginationOptions: PaginationOptions,
+    archived: boolean,
+  ): Promise<PaginatedResults<ActiveApplicationSummaryAPIOutDTO>> {
+    return ApiClient.Institution.getActiveApplicationsSummary(
+      locationId,
+      paginationOptions,
+      archived,
+    );
   }
 
   public async getActiveApplication(
