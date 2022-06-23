@@ -1,22 +1,22 @@
 <template>
   <v-card class="mt-4">
     <div class="mx-5 py-4">
+      <body-header
+        title="Social Insurance Number"
+        subTitle="The first row will always be the student's current active SIN."
+        :recordsCount="studentSINValidations?.length"
+        class="m-1"
+      >
+        <template #actions>
+          <v-btn color="primary" data-cy="addNewSINButton" @click="addNewSIN"
+            ><font-awesome-icon
+              :icon="['fas', 'plus-circle']"
+              class="mr-2"
+            />Add new SIN</v-btn
+          >
+        </template>
+      </body-header>
       <content-group>
-        <body-header
-          title="Social Insurance Number"
-          subTitle="The first row will always be the student's current active SIN."
-          :recordsCount="studentSINValidations?.length"
-          class="m-1"
-        >
-          <template #actions>
-            <v-btn color="primary" data-cy="addNewSINButton" @click="addNewSIN"
-              ><font-awesome-icon
-                :icon="['fas', 'plus-circle']"
-                class="mr-2"
-              />Add new SIN</v-btn
-            >
-          </template>
-        </body-header>
         <toggle-content :toggled="!studentSINValidations?.length">
           <DataTable
             :value="studentSINValidations"
