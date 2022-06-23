@@ -128,7 +128,7 @@
         "maxWords": "",
         "pattern": "",
         "customMessage": "Invalid Social Insurance Number",
-        "custom": "valid = false;\r\nif (input) {\r\n  input = input.replace(/\\s/g, \"\");\r\n  if (input.length === 9) {\r\n    var checksum = 0;\r\n    for (var i = 0; i < input.length; i++) {\r\n      const currentDigit = parseInt(input.charAt(i));\r\n      if ((i + 1) % 2 === 0) {\r\n        const digitTimes2 = currentDigit * 2;\r\n        checksum += digitTimes2 < 10 ? digitTimes2 : digitTimes2 - 9;\r\n      } else {\r\n        checksum += parseInt(input.charAt(i));\r\n      }\r\n    } \r\n    if (checksum % 10 === 0) {\r\n      valid = true;\r\n    }\r\n  }\r\n}",
+        "custom": "// Common SIN validation algorithm (Luhn algorithm).\r\nvalid = false;\r\nif (input) {\r\n  input = input.replace(/\\s/g, \"\");\r\n  if (input.length === 9) {\r\n    var checksum = 0;\r\n    for (var i = 0; i < input.length; i++) {\r\n      const currentDigit = parseInt(input.charAt(i));\r\n      if ((i + 1) % 2 === 0) {\r\n        const digitTimes2 = currentDigit * 2;\r\n        checksum += digitTimes2 < 10 ? digitTimes2 : digitTimes2 - 9;\r\n      } else {\r\n        checksum += parseInt(input.charAt(i));\r\n      }\r\n    } \r\n    if (checksum % 10 === 0) {\r\n      valid = true;\r\n    }\r\n  }\r\n}",
         "customPrivate": false,
         "json": "",
         "strictDateValidation": false,
@@ -160,7 +160,7 @@
       "dataGridLabel": false,
       "addons": [],
       "inputType": "text",
-      "id": "eq419cg",
+      "id": "evhe7n",
       "defaultValue": ""
     },
     {

@@ -8,7 +8,7 @@
       ></formio>
     </template>
     <template v-slot:footer>
-      <div class="mr-3">
+      <div class="mx-3">
         <slot name="actions" :cancel="cancel" :submit="submit"></slot>
       </div>
     </template>
