@@ -15,6 +15,7 @@ import {
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import {
   GCNotifyActionsService,
+  SINValidationService,
   StudentFileService,
   StudentRestrictionService,
   StudentService,
@@ -31,6 +32,7 @@ import {
   AESTStudentSearchAPIInDTO,
   ApplicationSummaryAPIOutDTO,
   SearchStudentAPIOutDTO,
+  SINValidationsAPIOutDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -67,6 +69,7 @@ export class StudentAESTController extends BaseController {
     private readonly studentControllerService: StudentControllerService,
     private readonly gcNotifyActionsService: GCNotifyActionsService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly sinValidationService: SINValidationService,
   ) {
     super();
   }
@@ -254,5 +257,38 @@ export class StudentAESTController extends BaseController {
       studentId,
       pagination,
     );
+  }
+
+  /**
+   * Get the SIN validations associated with the student user.
+   * @param studentId student to retrieve the SIN validations.
+   * @returns the history of SIN validations associated with the student user.
+   */
+  @Get(":studentId/sin-validations")
+  @ApiNotFoundResponse({ description: "Student does not exists." })
+  async getStudentSINValidations(
+    @Param("studentId") studentId: number,
+  ): Promise<SINValidationsAPIOutDTO[]> {
+    const student = await this.studentService.getStudentById(studentId);
+    if (!student) {
+      throw new NotFoundException("Student does not exists.");
+    }
+    const sinValidations =
+      await this.sinValidationService.getSINValidationByUserId(student.user.id);
+
+    return sinValidations?.map((sinValidation) => ({
+      id: sinValidation.id,
+      sin: sinValidation.sin,
+      createdAt: sinValidation.createdAt,
+      isValidSIN: sinValidation.isValidSIN,
+      sinStatus: sinValidation.sinStatus,
+      validSINCheck: sinValidation.validSINCheck,
+      validBirthdateCheck: sinValidation.validBirthdateCheck,
+      validFirstNameCheck: sinValidation.validFirstNameCheck,
+      validLastNameCheck: sinValidation.validLastNameCheck,
+      validGenderCheck: sinValidation.validGenderCheck,
+      temporarySIN: sinValidation.temporarySIN,
+      sinExpireDate: getISODateOnlyString(sinValidation.sinExpireDate),
+    }));
   }
 }

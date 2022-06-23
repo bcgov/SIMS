@@ -10,6 +10,7 @@ import {
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
   StudentRestrictionAPIOutDTO,
+  SINValidationsAPIOutDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 import { MISSING_STUDENT_ACCOUNT } from "@/constants";
@@ -169,5 +170,16 @@ export class StudentService {
     uniqueFileName: string,
   ): Promise<AxiosResponse<any>> {
     return ApiClient.FileUpload.download(`students/files/${uniqueFileName}`);
+  }
+
+  /**
+   * Get the SIN validations associated with the student user.
+   * @param studentId student to retrieve the SIN validations.
+   * @returns the history of SIN validations associated with the student user.
+   */
+  async getStudentSINValidations(
+    studentId: number,
+  ): Promise<SINValidationsAPIOutDTO[]> {
+    return ApiClient.Students.getStudentSINValidations(studentId);
   }
 }

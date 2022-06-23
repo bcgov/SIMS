@@ -70,6 +70,7 @@ import {
   faFileAlt as faFileAltSolid,
   faHandPaper as faHandPaperSolid,
   faPlusCircle as faPlusCircleSolid,
+  faExclamationCircle as faExclamationCircleSolid,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faFileAlt,
@@ -77,6 +78,7 @@ import {
   faCheckSquare,
   faHandPaper,
   faCopy as farCopy,
+  faStickyNote,
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
@@ -106,6 +108,8 @@ library.add(
   faHandPaperSolid,
   faPlusCircleSolid,
   farCopy,
+  faStickyNote,
+  faExclamationCircleSolid,
 );
 
 AppConfigService.shared.init().then(() => {
