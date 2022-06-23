@@ -40,6 +40,11 @@
               header="Date of birth"
             />
             <Column field="validGenderCheckFormatted" header="Gender" />
+            <Column
+              field="sinExpiryDateFormatted"
+              header="Expiry date"
+              bodyClass="text-nowrap"
+            />
             <Column header="Action">
               <template #body="slotProps">
                 <v-btn
@@ -89,11 +94,15 @@
 
 <script lang="ts">
 import { ref, watch } from "vue";
-import { DEFAULT_PAGE_LIMIT, FormIOForm, PAGINATION_LIST } from "@/types";
+import {
+  DEFAULT_PAGE_LIMIT,
+  FormIOForm,
+  PAGINATION_LIST,
+  SINValidations,
+} from "@/types";
 import { StudentService } from "@/services/StudentService";
 import { useFileUtils, ModalDialog, useToastMessage } from "@/composables";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
-import { SINValidationsAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default {
   components: {
@@ -106,7 +115,7 @@ export default {
     },
   },
   setup(props: any) {
-    const studentSINValidations = ref([] as SINValidationsAPIOutDTO[]);
+    const studentSINValidations = ref([] as SINValidations[]);
     const addNewSINModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const addExpiryDateModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const toast = useToastMessage();

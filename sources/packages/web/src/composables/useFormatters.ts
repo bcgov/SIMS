@@ -131,14 +131,8 @@ export function useFormatters() {
     if (!yesNoFlag) {
       return DEFAULT_EMPTY_VALUE;
     }
-    const yesNoFlagLower = yesNoFlag?.toLowerCase();
-    if (yesNoFlagLower === "y") {
-      return "Yes";
-    }
-    if (yesNoFlagLower === "n") {
-      return "No";
-    }
-    return DEFAULT_EMPTY_VALUE;
+    const flagMapper = { y: "Yes", n: "No" };
+    return flagMapper[yesNoFlag.toLowerCase()] || DEFAULT_EMPTY_VALUE;
   };
 
   /**
