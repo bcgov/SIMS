@@ -163,3 +163,21 @@ export class ApplicationSummaryAPIOutDTO {
   submitted?: Date;
   status: ApplicationStatus;
 }
+
+/**
+ * History of SIN validations associated with a user.
+ */
+export class SINValidationsAPIOutDTO {
+  id: number;
+  sin: string;
+  createdAt: Date;
+  isValidSIN?: boolean;
+  sinStatus?: string;
+  validSINCheck?: string;
+  validBirthdateCheck?: string;
+  validFirstNameCheck?: string;
+  validLastNameCheck?: string;
+  validGenderCheck?: string;
+  temporarySIN: boolean;
+  sinExpiryDate?: string;
+}

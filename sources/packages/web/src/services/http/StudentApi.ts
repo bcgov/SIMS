@@ -10,7 +10,8 @@ import {
   UpdateStudentAPIInDTO,
   StudentRestrictionAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
-} from "./dto";
+  SINValidationsAPIOutDTO,
+} from "@/services/http/dto";
 
 export class StudentApi extends HttpBaseClient {
   /**
@@ -161,6 +162,19 @@ export class StudentApi extends HttpBaseClient {
   ): Promise<AESTStudentFileAPIOutDTO[]> {
     return this.getCallTyped<AESTStudentFileAPIOutDTO[]>(
       this.addClientRoot(`students/${studentId}/documents`),
+    );
+  }
+
+  /**
+   * Get the SIN validations associated with the student user.
+   * @param studentId student to retrieve the SIN validations.
+   * @returns the history of SIN validations associated with the student user.
+   */
+  async getStudentSINValidations(
+    studentId: number,
+  ): Promise<SINValidationsAPIOutDTO[]> {
+    return this.getCallTyped<SINValidationsAPIOutDTO[]>(
+      this.addClientRoot(`students/${studentId}/sin-validations`),
     );
   }
 }

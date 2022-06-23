@@ -44,7 +44,7 @@ ADD
 ADD
   COLUMN IF NOT EXISTS valid_gender_check CHAR(1),
 ADD
-  COLUMN IF NOT EXISTS sin_expire_date DATE;
+  COLUMN IF NOT EXISTS sin_expiry_date DATE;
 
 -- New columns added to allow audit of manual SIN manipulation.
 ALTER TABLE
@@ -111,7 +111,7 @@ COMMENT ON COLUMN sims.sin_validations.valid_last_name_check IS 'Individual stat
 
 COMMENT ON COLUMN sims.sin_validations.valid_gender_check IS 'Individual status of the gender validation (Y/N) returned on the ESDC response.';
 
-COMMENT ON COLUMN sims.sin_validations.sin_expire_date IS 'Expiration date for a temporary SIN.';
+COMMENT ON COLUMN sims.sin_validations.sin_expiry_date IS 'Expiration date for a temporary SIN.';
 
 COMMENT ON COLUMN sims.sin_validations.temporary_sin IS 'Defines if the SIN is temporary.';
 

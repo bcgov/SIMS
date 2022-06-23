@@ -24,6 +24,33 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   }
 
   /**
+   * Get the history of the SIN validations associated with a user.
+   * @param userId user id to be verified.
+   * @returns SIN validations history.
+   */
+  async getSINValidationsByUserId(userId: number): Promise<SINValidation[]> {
+    return this.repo
+      .createQueryBuilder("sinValidation")
+      .select([
+        "sinValidation.id",
+        "sinValidation.sin",
+        "sinValidation.createdAt",
+        "sinValidation.isValidSIN",
+        "sinValidation.sinStatus",
+        "sinValidation.validSINCheck",
+        "sinValidation.validBirthdateCheck",
+        "sinValidation.validFirstNameCheck",
+        "sinValidation.validLastNameCheck",
+        "sinValidation.validGenderCheck",
+        "sinValidation.temporarySIN",
+        "sinValidation.sinExpiryDate",
+      ])
+      .where("sinValidation.user.id = :userId", { userId })
+      .orderBy("sinValidation.createdAt", "DESC")
+      .getMany();
+  }
+
+  /**
    * Once the SIN Validation request file is created, updates the
    * data that the file was uploaded.
    * @param sinValidationRecords records that are part of the generated
@@ -100,7 +127,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         "sinValidation.dobSent",
         "sinValidation.genderSent",
         "sinValidation.temporarySIN",
-        "sinValidation.sinExpireDate",
+        "sinValidation.sinExpiryDate",
         "user.id",
       ])
       .innerJoin("sinValidation.user", "user")

@@ -1,5 +1,5 @@
 <template>
-  <v-row justify="center" class="mt-4">
+  <v-row :justify="justify" class="mt-2 mb-1">
     <v-btn
       :disabled="processing"
       color="primary"
@@ -11,8 +11,7 @@
     >
     <v-btn
       :disabled="processing"
-      color="primary"
-      class="ml-2"
+      class="primary-btn-background ml-2"
       data-cy="primaryFooterButton"
       @click="$emit('primaryClick')"
     >
@@ -42,6 +41,11 @@ export default {
       type: Boolean,
       required: true,
       default: false,
+    },
+    justify: {
+      type: String,
+      required: true,
+      default: "center",
     },
   },
 };

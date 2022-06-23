@@ -8,7 +8,7 @@ ALTER TABLE
   DROP COLUMN IF EXISTS valid_first_name_check,
   DROP COLUMN IF EXISTS valid_last_name_check,
   DROP COLUMN IF EXISTS valid_gender_check,
-  DROP COLUMN IF EXISTS sin_expire_date,
+  DROP COLUMN IF EXISTS sin_expiry_date,
   DROP COLUMN IF EXISTS temporary_sin,
   DROP COLUMN IF EXISTS sin_edited_by,
   DROP COLUMN IF EXISTS sin_edited_date,

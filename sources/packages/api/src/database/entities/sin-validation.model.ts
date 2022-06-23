@@ -170,12 +170,12 @@ export class SINValidation extends RecordDataModel {
    * Expiration date for a temporary SIN.
    */
   @Column({
-    name: "sin_expire_date",
+    name: "sin_expiry_date",
     type: "date",
     transformer: dateOnlyTransformer,
     nullable: true,
   })
-  sinExpireDate?: Date;
+  sinExpiryDate?: Date;
   /**
    * User id that requires a SIN validation.
    */
