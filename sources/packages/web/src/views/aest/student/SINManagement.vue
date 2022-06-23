@@ -130,7 +130,6 @@ export default {
     };
 
     const addExpireDate = async (sinValidationId: number) => {
-      //const modalResult = await addExpireDateModal.value.showModal();
       await addExpireDateModal.value.showModal();
       // TODO: Update add the expiry date.
       toast.success("addExpireDate", "sinValidationId: " + sinValidationId);
