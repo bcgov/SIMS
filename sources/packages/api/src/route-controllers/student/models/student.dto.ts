@@ -167,7 +167,7 @@ export class ApplicationSummaryAPIOutDTO {
 /**
  * History of SIN validations associated with a user.
  */
-export interface SINValidationsAPIOutDTO {
+export class SINValidationsAPIOutDTO {
   id: number;
   sin: string;
   createdAt: Date;

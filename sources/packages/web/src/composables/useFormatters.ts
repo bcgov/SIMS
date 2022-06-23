@@ -158,7 +158,7 @@ export function useFormatters() {
 
   /**
    * Converts a SIN to the format 999 999 999.
-   * @param sin value to be converted to Yes/No.
+   * @param sin value to be converted to be displayed.
    * @returns SIN formatted as 999 999 999.
    */
   const sinDisplayFormat = (sin: string): string | undefined => {

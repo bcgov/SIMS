@@ -4,6 +4,7 @@
       <content-group>
         <body-header
           title="Social Insurance Number"
+          subTitle="The first row will always be the student's current active SIN."
           :recordsCount="studentSINValidations?.length"
           class="m-1"
         >
@@ -124,30 +125,15 @@ export default {
       if (!modalResult) {
         return;
       }
-      toast.success("Success", "Success");
-      // try {
-      //   const associatedFiles = formioUtils.getAssociatedFiles(modalResult);
-      //   const payload: AESTFileUploadToStudentAPIInDTO = {
-      //     associatedFiles,
-      //   };
-      //   await StudentService.shared.saveAESTUploadedFilesToStudent(
-      //     props.studentId,
-      //     payload,
-      //   );
-      //   toast.success(
-      //     "Documents submitted",
-      //     "The documents were submitted and a notification was sent to the student.",
-      //   );
-      //   await loadStudentFileUploads();
-      // } catch {
-      //   toast.error("Unexpected error", "An unexpected error happened.");
-      // }
+      // TODO: Update to create the new SIN.
+      toast.success("addNewSIN", "addNewSIN");
     };
 
     const addExpireDate = async (sinValidationId: number) => {
       //const modalResult = await addExpireDateModal.value.showModal();
       await addExpireDateModal.value.showModal();
-      console.log(sinValidationId);
+      // TODO: Update add the expiry date.
+      toast.success("addExpireDate", "sinValidationId: " + sinValidationId);
     };
 
     return {

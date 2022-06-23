@@ -24,11 +24,11 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   }
 
   /**
-   * Get the history of all the SIN validations associated with a user.
+   * Get the history of the SIN validations associated with a user.
    * @param userId user id to be verified.
    * @returns SIN validations history.
    */
-  async getSINValidationByUserId(userId: number): Promise<SINValidation[]> {
+  async getSINValidationsByUserId(userId: number): Promise<SINValidation[]> {
     return this.repo
       .createQueryBuilder("sinValidation")
       .select([
@@ -46,6 +46,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         "sinValidation.sinExpireDate",
       ])
       .where("sinValidation.user.id = :userId", { userId })
+      .orderBy("sinValidation.createdAt", "DESC")
       .getMany();
   }
 
