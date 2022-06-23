@@ -46,7 +46,7 @@
                   color="primary"
                   :disabled="!slotProps.data.temporarySIN"
                   @click="addExpireDate(slotProps.data.id)"
-                  >Add expire date</v-btn
+                  >Add expiry date</v-btn
                 >
               </template></Column
             >
@@ -73,13 +73,13 @@
   <formio-modal-dialog
     max-width="730"
     ref="addExpireDateModal"
-    title="Add expire date"
+    title="Add expiry date"
     formName="aestAddSINExpiryDate"
   >
     <template #actions="{ cancel, submit }">
       <footer-buttons
         justify="end"
-        primaryLabel="Add expire date now"
+        primaryLabel="Add expiry date now"
         @secondaryClick="cancel"
         @primaryClick="submit"
       />
