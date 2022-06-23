@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -267,7 +268,7 @@ export class StudentAESTController extends BaseController {
   @Get(":studentId/sin-validations")
   @ApiNotFoundResponse({ description: "Student does not exists." })
   async getStudentSINValidations(
-    @Param("studentId") studentId: number,
+    @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<SINValidationsAPIOutDTO[]> {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
@@ -290,7 +291,7 @@ export class StudentAESTController extends BaseController {
       validLastNameCheck: sinValidation.validLastNameCheck,
       validGenderCheck: sinValidation.validGenderCheck,
       temporarySIN: sinValidation.temporarySIN,
-      sinExpireDate: getISODateOnlyString(sinValidation.sinExpireDate),
+      sinExpiryDate: getISODateOnlyString(sinValidation.sinExpiryDate),
     }));
   }
 }

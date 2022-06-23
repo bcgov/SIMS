@@ -132,5 +132,5 @@ export interface SINValidationsAPIOutDTO {
   validLastNameCheck?: string;
   validGenderCheck?: string;
   temporarySIN: boolean;
-  sinExpireDate?: string;
+  sinExpiryDate?: string;
 }

@@ -209,7 +209,7 @@ export class StudentService {
       validGenderCheckFormatted: yesNoFlagDescription(
         sinValidation.validGenderCheck,
       ),
-      sinExpireDateFormatted: dateOnlyLongString(sinValidation.sinExpireDate),
+      sinExpiryDateFormatted: dateOnlyLongString(sinValidation.sinExpiryDate),
     }));
   }
 }

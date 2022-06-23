@@ -46,5 +46,5 @@ export interface SINValidations extends SINValidationsAPIOutDTO {
   validFirstNameCheckFormatted?: string;
   validLastNameCheckFormatted?: string;
   validGenderCheckFormatted?: string;
-  sinExpireDateFormatted?: string;
+  sinExpiryDateFormatted?: string;
 }

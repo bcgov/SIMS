@@ -43,7 +43,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         "sinValidation.validLastNameCheck",
         "sinValidation.validGenderCheck",
         "sinValidation.temporarySIN",
-        "sinValidation.sinExpireDate",
+        "sinValidation.sinExpiryDate",
       ])
       .where("sinValidation.user.id = :userId", { userId })
       .orderBy("sinValidation.createdAt", "DESC")
@@ -127,7 +127,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         "sinValidation.dobSent",
         "sinValidation.genderSent",
         "sinValidation.temporarySIN",
-        "sinValidation.sinExpireDate",
+        "sinValidation.sinExpiryDate",
         "user.id",
       ])
       .innerJoin("sinValidation.user", "user")

@@ -45,7 +45,7 @@
                 <v-btn
                   color="primary"
                   :disabled="!slotProps.data.temporarySIN"
-                  @click="addExpireDate(slotProps.data.id)"
+                  @click="addExpiryDate(slotProps.data.id)"
                   >Add expiry date</v-btn
                 >
               </template></Column
@@ -72,7 +72,7 @@
   </formio-modal-dialog>
   <formio-modal-dialog
     max-width="730"
-    ref="addExpireDateModal"
+    ref="addExpiryDateModal"
     title="Add expiry date"
     formName="aestAddSINExpiryDate"
   >
@@ -108,7 +108,7 @@ export default {
   setup(props: any) {
     const studentSINValidations = ref([] as SINValidationsAPIOutDTO[]);
     const addNewSINModal = ref({} as ModalDialog<FormIOForm | boolean>);
-    const addExpireDateModal = ref({} as ModalDialog<FormIOForm | boolean>);
+    const addExpiryDateModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const toast = useToastMessage();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
@@ -129,10 +129,10 @@ export default {
       toast.success("addNewSIN", "addNewSIN");
     };
 
-    const addExpireDate = async (sinValidationId: number) => {
-      await addExpireDateModal.value.showModal();
+    const addExpiryDate = async (sinValidationId: number) => {
+      await addExpiryDateModal.value.showModal();
       // TODO: Update add the expiry date.
-      toast.success("addExpireDate", "sinValidationId: " + sinValidationId);
+      toast.success("addExpiryDate", "sinValidationId: " + sinValidationId);
     };
 
     return {
@@ -142,9 +142,9 @@ export default {
       PAGINATION_LIST,
       addNewSIN,
       addNewSINModal,
-      addExpireDateModal,
+      addExpiryDateModal,
       initialData,
-      addExpireDate,
+      addExpiryDate,
     };
   },
 };
