@@ -8,7 +8,9 @@
       ></formio>
     </template>
     <template v-slot:footer>
-      <slot name="actions" :cancel="cancel" :submit="submit"></slot>
+      <div class="mr-3">
+        <slot name="actions" :cancel="cancel" :submit="submit"></slot>
+      </div>
     </template>
   </ModalDialogBase>
 </template>

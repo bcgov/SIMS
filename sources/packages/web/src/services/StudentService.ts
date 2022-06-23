@@ -1,5 +1,10 @@
 import ApiClient from "@/services/http/ApiClient";
-import { StudentFormInfo, ApiProcessError, AESTStudentForm } from "@/types";
+import {
+  StudentFormInfo,
+  ApiProcessError,
+  AESTStudentForm,
+  SINValidations,
+} from "@/types";
 import { useFormatters } from "@/composables";
 import {
   AESTFileUploadToStudentAPIInDTO,
@@ -10,7 +15,6 @@ import {
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
   StudentRestrictionAPIOutDTO,
-  SINValidationsAPIOutDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 import { MISSING_STUDENT_ACCOUNT } from "@/constants";
@@ -177,9 +181,35 @@ export class StudentService {
    * @param studentId student to retrieve the SIN validations.
    * @returns the history of SIN validations associated with the student user.
    */
-  async getStudentSINValidations(
-    studentId: number,
-  ): Promise<SINValidationsAPIOutDTO[]> {
-    return ApiClient.Students.getStudentSINValidations(studentId);
+  async getStudentSINValidations(studentId: number): Promise<SINValidations[]> {
+    const {
+      dateOnlyLongString,
+      yesNoFlagDescription,
+      booleanToYesNo,
+      sinDisplayFormat,
+    } = useFormatters();
+    const sinValidations = await ApiClient.Students.getStudentSINValidations(
+      studentId,
+    );
+    return sinValidations?.map((sinValidation) => ({
+      ...sinValidation,
+      sinFormatted: sinDisplayFormat(sinValidation.sin),
+      createdAtFormatted: dateOnlyLongString(sinValidation.createdAt),
+      isValidSINFormatted: booleanToYesNo(sinValidation.isValidSIN),
+      validSINCheckFormatted: yesNoFlagDescription(sinValidation.validSINCheck),
+      validBirthdateCheckFormatted: yesNoFlagDescription(
+        sinValidation.validBirthdateCheck,
+      ),
+      validFirstNameCheckFormatted: yesNoFlagDescription(
+        sinValidation.validFirstNameCheck,
+      ),
+      validLastNameCheckFormatted: yesNoFlagDescription(
+        sinValidation.validLastNameCheck,
+      ),
+      validGenderCheckFormatted: yesNoFlagDescription(
+        sinValidation.validGenderCheck,
+      ),
+      sinExpireDateFormatted: dateOnlyLongString(sinValidation.sinExpireDate),
+    }));
   }
 }

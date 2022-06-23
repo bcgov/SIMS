@@ -147,10 +147,13 @@ export function useFormatters() {
    * @returns Yes, No or a default empty value case not a expected flag value as Y or N.
    */
   const booleanToYesNo = (boolValue?: boolean): string => {
-    if (!boolValue) {
-      return DEFAULT_EMPTY_VALUE;
+    if (boolValue === true) {
+      return "Yes";
     }
-    return boolValue ? "Yes" : "No";
+    if (boolValue === false) {
+      return "No";
+    }
+    return DEFAULT_EMPTY_VALUE;
   };
 
   /**
@@ -158,7 +161,10 @@ export function useFormatters() {
    * @param sin value to be converted to Yes/No.
    * @returns SIN formatted as 999 999 999.
    */
-  const sinDisplayFormat = (sin?: string): string | undefined => {
+  const sinDisplayFormat = (sin: string): string | undefined => {
+    if (!sin) {
+      return DEFAULT_EMPTY_VALUE;
+    }
     // 9 is the expected length for a SIN.
     if (sin?.length !== 9) {
       return sin;
