@@ -11,6 +11,8 @@ import {
   StudentRestrictionAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
   SINValidationsAPIOutDTO,
+  CreateSINValidationAPIInDTO,
+  UpdateSINValidationAPIInDTO,
 } from "@/services/http/dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -175,6 +177,42 @@ export class StudentApi extends HttpBaseClient {
   ): Promise<SINValidationsAPIOutDTO[]> {
     return this.getCallTyped<SINValidationsAPIOutDTO[]>(
       this.addClientRoot(`students/${studentId}/sin-validations`),
+    );
+  }
+
+  /**
+   * Creates a new SIN validation entry associated with the student user.
+   * This entry will be updated in the student record as the one that represents
+   * the current state of the SIN validation.
+   * @param studentId student to have the SIN validation created.
+   * @returns newly created record id.
+   */
+  async createStudentSINValidation(
+    studentId: number,
+    payload: CreateSINValidationAPIInDTO,
+  ): Promise<void> {
+    await this.postCall(
+      this.addClientRoot(`students/${studentId}/sin-validations`),
+      payload,
+    );
+  }
+
+  /**
+   * Updates the SIN validation expiry date for temporary SIN.
+   * @param studentId student to have the SIN validation updated.
+   * @param sinValidationId SIN validation record to be updated.
+   * @param payload data to be updated.
+   */
+  async updateStudentSINValidation(
+    studentId: number,
+    sinValidationId: number,
+    payload: UpdateSINValidationAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(
+        `students/${studentId}/sin-validations/${sinValidationId}`,
+      ),
+      payload,
     );
   }
 }

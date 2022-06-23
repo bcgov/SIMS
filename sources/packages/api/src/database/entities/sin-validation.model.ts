@@ -12,6 +12,8 @@ import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
 
+export const SIN_MAX_LENGTH = 9;
+
 /**
  * SIN Validations that must be performed with ESDC.
  */
@@ -25,6 +27,7 @@ export class SINValidation extends RecordDataModel {
   @Column({
     name: "sin",
     nullable: false,
+    length: SIN_MAX_LENGTH,
   })
   sin: string;
   /**

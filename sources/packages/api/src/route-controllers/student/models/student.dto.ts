@@ -2,13 +2,20 @@ import { Type } from "class-transformer";
 import {
   Allow,
   ArrayMinSize,
+  IsDateString,
   IsDefined,
   IsNotEmpty,
   IsOptional,
   Length,
+  MaxLength,
   ValidateIf,
 } from "class-validator";
-import { ApplicationStatus, FileOriginType } from "../../../database/entities";
+import { IsValidSIN } from "src/route-controllers/utils/sin-validator";
+import {
+  ApplicationStatus,
+  FileOriginType,
+  NOTE_DESCRIPTION_MAX_LENGTH,
+} from "../../../database/entities";
 import { RestrictionNotificationType } from "../../../database/entities/restriction-notification-type.type";
 import {
   AddressAPIOutDTO,
@@ -180,4 +187,30 @@ export class SINValidationsAPIOutDTO {
   validGenderCheck?: string;
   temporarySIN: boolean;
   sinExpiryDate?: string;
+}
+
+/**
+ * DTO to allow manually creation of SIN validations.
+ */
+export class CreateSINValidationAPIInDTO {
+  @IsValidSIN()
+  sin: string;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
+}
+
+/**
+ * Updates a SIN validation record expiry date.
+ */
+export class UpdateSINValidationAPIInDTO {
+  /**
+   * Expire date is a date-only value.
+   ** Please ensure that the time is not sent to the API.
+   */
+  @IsDateString()
+  expiryDate: string;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
 }
