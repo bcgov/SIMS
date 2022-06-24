@@ -416,7 +416,7 @@ export class StudentService extends RecordDataModelService<Student> {
     entityManager: EntityManager,
   ): Promise<Note> {
     const auditUser = { id: auditUserId } as User;
-    // Create the note to be associated with the creation.
+    // Create the note to be associated with the student.
     const newNote = new Note();
     newNote.description = noteDescription;
     newNote.noteType = noteType;

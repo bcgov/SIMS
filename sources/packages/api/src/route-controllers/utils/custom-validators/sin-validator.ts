@@ -11,7 +11,7 @@ import { SIN_MAX_LENGTH } from "../../../database/entities";
  * SIN validation algorithm (Luhn algorithm).
  * ! This logic is also present on form.io client side validations.
  */
-@ValidatorConstraint({ async: true })
+@ValidatorConstraint()
 export class IsValidSINConstraint implements ValidatorConstraintInterface {
   validate(sin: string): boolean {
     let valid = false;

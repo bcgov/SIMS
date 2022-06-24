@@ -15,8 +15,8 @@ export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 
 export function useFormatters() {
   /**
-   * Get the date only part of a date/time or string object.
-   * @param date date/time to have the date extracted.
+   * Get the date only part of a date/time or string.
+   * @param date date/time or string to have the date extracted.
    * @returns date only string in ISO format YYYY-MM-DD.
    */
   const getISODateOnlyString = (date: Date | string): string => {

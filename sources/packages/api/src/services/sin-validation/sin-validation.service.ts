@@ -114,8 +114,8 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   }
 
   /**
-   * Updates the SIN validation record adding a expire date.
-   * Only temporary SIN can be updated.
+   * Updates the SIN validation record adding an expire date.
+   * Only a temporary SIN can be updated.
    * @param sinValidationId SIN validation record id to be updated.
    * @param studentId student to receive the note.
    * @param expiryDate expiry date to be set.

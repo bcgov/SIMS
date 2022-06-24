@@ -196,7 +196,7 @@ export default {
       } catch {
         toast.error(
           "Unexpected error",
-          "Unexpected error while creating a new SIN record.",
+          "Unexpected error while updating the expiry date.",
         );
       } finally {
         processingEditExpiryDate.value = false;
