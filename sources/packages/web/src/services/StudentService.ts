@@ -15,6 +15,8 @@ import {
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
   StudentRestrictionAPIOutDTO,
+  CreateSINValidationAPIInDTO,
+  UpdateSINValidationAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 import { MISSING_STUDENT_ACCOUNT } from "@/constants";
@@ -211,5 +213,37 @@ export class StudentService {
       ),
       sinExpiryDateFormatted: dateOnlyLongString(sinValidation.sinExpiryDate),
     }));
+  }
+
+  /**
+   * Creates a new SIN validation entry associated with the student user.
+   * This entry will be updated in the student record as the one that represents
+   * the current state of the SIN validation.
+   * @param studentId student to have the SIN validation created.
+   * @returns newly created record id.
+   */
+  async createStudentSINValidation(
+    studentId: number,
+    payload: CreateSINValidationAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Students.createStudentSINValidation(studentId, payload);
+  }
+
+  /**
+   * Updates the SIN validation expiry date for temporary SIN.
+   * @param studentId student to have the SIN validation updated.
+   * @param sinValidationId SIN validation record to be updated.
+   * @param payload data to be updated.
+   */
+  async updateStudentSINValidation(
+    studentId: number,
+    sinValidationId: number,
+    payload: UpdateSINValidationAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Students.updateStudentSINValidation(
+      studentId,
+      sinValidationId,
+      payload,
+    );
   }
 }

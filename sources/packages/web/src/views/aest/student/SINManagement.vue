@@ -8,7 +8,11 @@
         class="m-1"
       >
         <template #actions>
-          <v-btn color="primary" data-cy="addNewSINButton" @click="addNewSIN"
+          <v-btn
+            color="primary"
+            data-cy="addNewSINButton"
+            :disabled="processingNewSIN"
+            @click="addNewSIN"
             ><font-awesome-icon
               :icon="['fas', 'plus-circle']"
               class="mr-2"
@@ -24,11 +28,7 @@
             :rows="DEFAULT_PAGE_LIMIT"
             :rowsPerPageOptions="PAGINATION_LIST"
           >
-            <Column
-              field="createdAtFormatted"
-              header="Date created"
-              bodyClass="text-nowrap"
-            />
+            <Column field="createdAtFormatted" header="Date created" />
             <Column field="sinFormatted" header="SIN" bodyClass="text-nowrap" />
             <Column field="isValidSINFormatted" header="SIN validated" />
             <Column field="sinStatus" header="Response code"></Column>
@@ -40,16 +40,16 @@
               header="Date of birth"
             />
             <Column field="validGenderCheckFormatted" header="Gender" />
-            <Column
-              field="sinExpiryDateFormatted"
-              header="Expiry date"
-              bodyClass="text-nowrap"
-            />
+            <Column field="sinExpiryDateFormatted" header="Expiry date" />
             <Column header="Action">
               <template #body="slotProps">
                 <v-btn
                   color="primary"
-                  :disabled="!slotProps.data.temporarySIN"
+                  :disabled="
+                    !slotProps.data.temporarySIN ||
+                    !!slotProps.data.sinExpiryDate ||
+                    processingEditExpiryDate
+                  "
                   @click="addExpiryDate(slotProps.data.id)"
                   >Add expiry date</v-btn
                 >
@@ -101,8 +101,17 @@ import {
   SINValidations,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
-import { useFileUtils, ModalDialog, useToastMessage } from "@/composables";
+import {
+  useFileUtils,
+  ModalDialog,
+  useToastMessage,
+  useFormatters,
+} from "@/composables";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
+import {
+  CreateSINValidationAPIInDTO,
+  UpdateSINValidationAPIInDTO,
+} from "@/services/http/dto";
 
 export default {
   components: {
@@ -116,11 +125,18 @@ export default {
   },
   setup(props: any) {
     const studentSINValidations = ref([] as SINValidations[]);
-    const addNewSINModal = ref({} as ModalDialog<FormIOForm | boolean>);
-    const addExpiryDateModal = ref({} as ModalDialog<FormIOForm | boolean>);
+    const addNewSINModal = ref(
+      {} as ModalDialog<FormIOForm<CreateSINValidationAPIInDTO> | boolean>,
+    );
+    const addExpiryDateModal = ref(
+      {} as ModalDialog<FormIOForm<UpdateSINValidationAPIInDTO> | boolean>,
+    );
+    const { getISODateOnlyString } = useFormatters();
     const toast = useToastMessage();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
+    const processingNewSIN = ref(false);
+    const processingEditExpiryDate = ref(false);
 
     const loadSINValidations = async () => {
       studentSINValidations.value =
@@ -134,14 +150,61 @@ export default {
       if (!modalResult) {
         return;
       }
-      // TODO: Update to create the new SIN.
-      toast.success("addNewSIN", "addNewSIN");
+
+      try {
+        processingNewSIN.value = true;
+        const formioForm =
+          modalResult as FormIOForm<CreateSINValidationAPIInDTO>;
+        await StudentService.shared.createStudentSINValidation(
+          props.studentId,
+          formioForm.data,
+        );
+        toast.success(
+          "New SIN created",
+          "New SIN record created and associated to the student.",
+        );
+        await loadSINValidations();
+      } catch {
+        toast.error(
+          "Unexpected error",
+          "Unexpected error while creating a new SIN record.",
+        );
+      } finally {
+        processingNewSIN.value = false;
+      }
     };
 
     const addExpiryDate = async (sinValidationId: number) => {
-      await addExpiryDateModal.value.showModal();
-      // TODO: Update add the expiry date.
-      toast.success("addExpiryDate", "sinValidationId: " + sinValidationId);
+      const modalResult = await addExpiryDateModal.value.showModal();
+      if (!modalResult) {
+        return;
+      }
+
+      try {
+        processingEditExpiryDate.value = true;
+        const formioForm =
+          modalResult as FormIOForm<UpdateSINValidationAPIInDTO>;
+        formioForm.data.expiryDate = getISODateOnlyString(
+          formioForm.data.expiryDate,
+        );
+        await StudentService.shared.updateStudentSINValidation(
+          props.studentId,
+          sinValidationId,
+          formioForm.data,
+        );
+        toast.success(
+          "Expiry date updated",
+          "Temporary SIN expiry date updated.",
+        );
+        await loadSINValidations();
+      } catch {
+        toast.error(
+          "Unexpected error",
+          "Unexpected error while updating the expiry date.",
+        );
+      } finally {
+        processingEditExpiryDate.value = false;
+      }
     };
 
     return {
@@ -154,6 +217,8 @@ export default {
       addExpiryDateModal,
       initialData,
       addExpiryDate,
+      processingNewSIN,
+      processingEditExpiryDate,
     };
   },
 };

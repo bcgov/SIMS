@@ -13,9 +13,9 @@ ALTER TABLE
   DROP COLUMN IF EXISTS sin_edited_by,
   DROP COLUMN IF EXISTS sin_edited_date,
   DROP COLUMN IF EXISTS sin_edited_note_id,
-  DROP COLUMN IF EXISTS expired_date_edited_by,
-  DROP COLUMN IF EXISTS expired_date_edited_date,
-  DROP COLUMN IF EXISTS expired_date_edited_note_id;
+  DROP COLUMN IF EXISTS expiry_date_edited_by,
+  DROP COLUMN IF EXISTS expiry_date_edited_date,
+  DROP COLUMN IF EXISTS expiry_date_edited_note_id;
 
 -- Add columns for the CRA SIN validation.
 ALTER TABLE
