@@ -176,6 +176,10 @@ export default {
 
     const addExpiryDate = async (sinValidationId: number) => {
       const modalResult = await addExpiryDateModal.value.showModal();
+      if (!modalResult) {
+        return;
+      }
+
       try {
         processingEditExpiryDate.value = true;
         const formioForm =
