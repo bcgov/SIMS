@@ -11,10 +11,11 @@ import {
   ProgramInfoStatus,
   StudentAppealStatus,
   StudentAssessment,
+  User,
 } from "../../database/entities";
 import { Brackets, Connection, IsNull, UpdateResult } from "typeorm";
 import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
-import { WorkflowActionsService } from "..";
+import { StudentRestrictionService, WorkflowActionsService } from "..";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -31,8 +32,9 @@ import {
 @Injectable()
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
   constructor(
-    connection: Connection,
+    private readonly connection: Connection,
     private readonly workflow: WorkflowActionsService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super(connection.getRepository(StudentAssessment));
   }
@@ -184,6 +186,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param assessmentId assessment id to be updated.
    * @param locationId location id related to the offering.
    * @param status status of the program information request.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    * @param programId program id related to the application.
    * When the application do not have an offering, this is used
    * to determine the associated program.
@@ -195,31 +199,52 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessmentId: number,
     locationId: number,
     status: ProgramInfoStatus,
+    auditUserId: number,
     programId?: number,
     offeringId?: number,
   ): Promise<StudentAssessment> {
-    const assessment = await this.repo
-      .createQueryBuilder("assessment")
-      .select(["assessment.id", "application.id"])
-      .innerJoin("assessment.application", "application")
-      .where("assessment.id = :assessmentId", { assessmentId })
-      .getOne();
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      const assessmentRepo =
+        transactionalEntityManager.getRepository(StudentAssessment);
+      const assessment = await assessmentRepo
+        .createQueryBuilder("assessment")
+        .select(["assessment.id", "application.id", "student.id"])
+        .innerJoin("assessment.application", "application")
+        .innerJoin("application.student", "student")
+        .where("assessment.id = :assessmentId", { assessmentId })
+        .getOne();
 
-    if (!assessment) {
-      throw new CustomNamedError(
-        `Not able to find the assessment id ${assessmentId}`,
-        ASSESSMENT_NOT_FOUND,
-      );
-    }
+      if (!assessment) {
+        throw new CustomNamedError(
+          `Not able to find the assessment id ${assessmentId}`,
+          ASSESSMENT_NOT_FOUND,
+        );
+      }
 
-    assessment.application.location = { id: locationId } as InstitutionLocation;
-    assessment.application.pirProgram = { id: programId } as EducationProgram;
-    assessment.application.pirStatus = status;
-    assessment.offering = {
-      id: offeringId,
-    } as EducationProgramOffering;
+      const auditUser = { id: auditUserId } as User;
+      assessment.application.location = {
+        id: locationId,
+      } as InstitutionLocation;
+      assessment.application.pirProgram = { id: programId } as EducationProgram;
+      assessment.application.pirStatus = status;
+      assessment.application.modifier = auditUser;
+      assessment.modifier = auditUser;
+      assessment.offering = {
+        id: offeringId,
+      } as EducationProgramOffering;
 
-    return this.repo.save(assessment);
+      // If the offering will be set in the assessment check for possible SIN restrictions.
+      if (offeringId) {
+        await this.studentRestrictionService.assessSINRestrictionForOfferingId(
+          assessment.application.student.id,
+          offeringId,
+          assessment.application.id,
+          auditUserId,
+          transactionalEntityManager,
+        );
+      }
+      return assessmentRepo.save(assessment);
+    });
   }
 
   /**

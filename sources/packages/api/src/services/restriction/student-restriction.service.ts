@@ -9,12 +9,13 @@ import {
   Restriction,
   Student,
   Application,
+  EducationProgramOffering,
 } from "../../database/entities";
 import {
   AssignRestrictionDTO,
   ResolveRestrictionDTO,
 } from "../../route-controllers/restriction/models/restriction.dto";
-import { Connection, SelectQueryBuilder } from "typeorm";
+import { Connection, EntityManager, SelectQueryBuilder } from "typeorm";
 import { CustomNamedError } from "../../utilities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 import { RestrictionService } from "./restriction.service";
@@ -325,5 +326,68 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     studentRestriction.application = { id: applicationId } as Application;
     studentRestriction.creator = { id: auditUserId } as User;
     return studentRestriction;
+  }
+
+  /**
+   * Verify if the student has a valid SIN to apply to the particular offering.
+   * The SIN number must be a permanent one or a temporary with expiry date later
+   * then the end date of the offering.
+   * Case the SIN is not valid the student can still apply to the offering but a
+   * restriction will be created to stop findings to be disbursed till the a valid
+   * SIN is provided.
+   * @param studentId student to be validate.
+   * @param offeringId offering to be verified.
+   * @param applicationId related application. Used as additional information case
+   * a student restriction will be created.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager manages the transaction where this operation must be executed.
+   */
+  async assessSINRestrictionForOfferingId(
+    studentId: number,
+    offeringId: number,
+    applicationId: number,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const student = await entityManager
+      .getRepository(Student)
+      .createQueryBuilder("student")
+      .select([
+        "student.id",
+        "sinValidation.id",
+        "sinValidation.isValidSIN",
+        "sinValidation.temporarySIN",
+        "sinValidation.sinExpiryDate",
+      ])
+      .innerJoin("student.sinValidation", "sinValidation")
+      .where("student.id = :studentId", { studentId })
+      .getOne();
+
+    if (!student.sinValidation.temporarySIN) {
+      // SIN is not temporary so no restriction should be created.
+      return;
+    }
+    // By default assume that the temporary SIN does not have an expiry
+    // date defined and the restriction must be created.
+    let mustCreateSINException = true;
+    if (student.sinValidation.sinExpiryDate) {
+      // Temporary SIN has an expiry date and it must be validated with the end date of the offering.
+      const offering = await entityManager
+        .getRepository(EducationProgramOffering)
+        .findOne(offeringId, { select: ["studyEndDate"] });
+      // Check if the SIN expiry date is later than the offering end date.
+      mustCreateSINException =
+        offering.studyEndDate > student.sinValidation.sinExpiryDate;
+    }
+
+    if (mustCreateSINException) {
+      const restriction = await this.createRestrictionToSave(
+        studentId,
+        RestrictionCode.SINF,
+        applicationId,
+        auditUserId,
+      );
+      entityManager.getRepository(StudentRestriction).save(restriction);
+    }
   }
 }

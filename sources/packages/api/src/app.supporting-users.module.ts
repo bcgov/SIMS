@@ -15,6 +15,8 @@ import {
   WorkflowService,
   GCNotifyService,
   GCNotifyActionsService,
+  StudentRestrictionService,
+  RestrictionService,
 } from "./services";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -39,6 +41,8 @@ import { LoggerModule } from "./logger/logger.module";
     SFASPartTimeApplicationsService,
     GCNotifyService,
     GCNotifyActionsService,
+    RestrictionService,
+    StudentRestrictionService,
   ],
 })
 export class AppSupportingUsersModule {}
