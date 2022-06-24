@@ -12,7 +12,7 @@ import { SIN_MAX_LENGTH } from "../../../database/entities";
  * ! This logic is also present on form.io client side validations.
  */
 @ValidatorConstraint()
-export class IsValidSINConstraint implements ValidatorConstraintInterface {
+class IsValidSINConstraint implements ValidatorConstraintInterface {
   validate(sin: string): boolean {
     let valid = false;
     if (sin) {
