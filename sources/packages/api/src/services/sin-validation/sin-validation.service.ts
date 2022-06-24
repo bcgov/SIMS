@@ -175,9 +175,9 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       );
       // Update the SIN validation record.
       sinToBeUpdated.sinExpiryDate = expiryDate;
-      sinToBeUpdated.expiredDateEditedBy = auditUser;
-      sinToBeUpdated.expiredDateEditedDate = new Date();
-      sinToBeUpdated.expiredDateEditedNote = savedNote;
+      sinToBeUpdated.expiryDateEditedBy = auditUser;
+      sinToBeUpdated.expiryDateEditedDate = new Date();
+      sinToBeUpdated.expiryDateEditedNote = savedNote;
       sinToBeUpdated.modifier = auditUser;
       return sinValidationRepo.save(sinToBeUpdated);
     });

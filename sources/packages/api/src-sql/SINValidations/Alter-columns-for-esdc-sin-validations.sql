@@ -60,13 +60,13 @@ ADD
 SET
   NULL,
 ADD
-  COLUMN IF NOT EXISTS expired_date_edited_by INT REFERENCES sims.users (id) ON DELETE
+  COLUMN IF NOT EXISTS expiry_date_edited_by INT REFERENCES sims.users (id) ON DELETE
 SET
   NULL,
 ADD
-  COLUMN IF NOT EXISTS expired_date_edited_date TIMESTAMP WITH TIME ZONE,
+  COLUMN IF NOT EXISTS expiry_date_edited_date TIMESTAMP WITH TIME ZONE,
 ADD
-  COLUMN IF NOT EXISTS expired_date_edited_note_id INT REFERENCES sims.notes (id) ON DELETE
+  COLUMN IF NOT EXISTS expiry_date_edited_note_id INT REFERENCES sims.notes (id) ON DELETE
 SET
   NULL;
 
@@ -121,8 +121,8 @@ COMMENT ON COLUMN sims.sin_validations.sin_edited_date IS 'Date and time that a 
 
 COMMENT ON COLUMN sims.sin_validations.sin_edited_note_id IS 'Note that explains why the SIN was manually edited.';
 
-COMMENT ON COLUMN sims.sin_validations.expired_date_edited_by IS 'User that manually edited the SIN expiry date.';
+COMMENT ON COLUMN sims.sin_validations.expiry_date_edited_by IS 'User that manually edited the SIN expiry date.';
 
-COMMENT ON COLUMN sims.sin_validations.expired_date_edited_date IS 'Date and time that a user manually edited the SIN expiry date.';
+COMMENT ON COLUMN sims.sin_validations.expiry_date_edited_date IS 'Date and time that a user manually edited the SIN expiry date.';
 
-COMMENT ON COLUMN sims.sin_validations.expired_date_edited_note_id IS 'Note that explains why the SIN expiry date was manually edited.';
+COMMENT ON COLUMN sims.sin_validations.expiry_date_edited_note_id IS 'Note that explains why the SIN expiry date was manually edited.';

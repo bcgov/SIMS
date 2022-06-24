@@ -225,26 +225,26 @@ export class SINValidation extends RecordDataModel {
    */
   @ManyToOne(() => User, { eager: false, cascade: false, nullable: true })
   @JoinColumn({
-    name: "expired_date_edited_by",
+    name: "expiry_date_edited_by",
     referencedColumnName: ColumnNames.ID,
   })
-  expiredDateEditedBy?: User;
+  expiryDateEditedBy?: User;
   /**
    * Date and time that a user manually edited the SIN expiry date.
    */
   @Column({
-    name: "expired_date_edited_date",
+    name: "expiry_date_edited_date",
     type: "timestamptz",
     nullable: true,
   })
-  expiredDateEditedDate?: Date;
+  expiryDateEditedDate?: Date;
   /**
    * Note that explains why the SIN expiry date was manually edited.
    */
   @OneToOne(() => Note, { eager: false, cascade: false, nullable: true })
   @JoinColumn({
-    name: "expired_date_edited_note_id",
+    name: "expiry_date_edited_note_id",
     referencedColumnName: ColumnNames.ID,
   })
-  expiredDateEditedNote?: Note;
+  expiryDateEditedNote?: Note;
 }
