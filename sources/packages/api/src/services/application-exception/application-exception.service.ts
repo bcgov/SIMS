@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
+import { Brackets, Connection, OrderByCondition } from "typeorm";
 import {
   Application,
   ApplicationException,
@@ -11,7 +11,12 @@ import {
   Student,
   User,
 } from "../../database/entities";
-import { CustomNamedError } from "../../utilities";
+import {
+  CustomNamedError,
+  FieldSortOrder,
+  PaginatedResults,
+  PaginationOptions,
+} from "../../utilities";
 import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
@@ -177,5 +182,85 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       exceptionToUpdate.modifier = auditUser;
       return applicationExceptionRepo.save(exceptionToUpdate);
     });
+  }
+
+  /**
+   * Gets all students application exceptions.
+   * @param paginationOptions options to execute the pagination.
+   * @returns list of student application exceptions.
+   */
+  async getApplicationExceptions(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<ApplicationException>> {
+    const applicationExceptionsQuery = this.repo
+      .createQueryBuilder("exception")
+      .select([
+        "exception.id",
+        "exception.createdAt",
+        "application.applicationNumber",
+        "user.firstName",
+        "user.lastName",
+        "student.id",
+      ])
+      .innerJoin("exception.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user");
+
+    if (paginationOptions.searchCriteria) {
+      applicationExceptionsQuery
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where(
+              "CONCAT(user.firstName,' ', user.lastName) Ilike :searchCriteria",
+            ).orWhere("application.applicationNumber Ilike :searchCriteria");
+          }),
+        )
+        .setParameter(
+          "searchCriteria",
+          `%${paginationOptions.searchCriteria.trim()}%`,
+        );
+    }
+
+    applicationExceptionsQuery
+      .orderBy(
+        this.transformToEntitySortField(
+          paginationOptions.sortField,
+          paginationOptions.sortOrder,
+        ),
+      )
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
+
+    const [result, count] = await applicationExceptionsQuery.getManyAndCount();
+    return {
+      results: result,
+      count: count,
+    };
+  }
+
+  /**
+   * Transformation to convert the data table column name to database column name.
+   * Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
+   * @param sortField database fields to be sorted.
+   * @param sortOrder sort order of fields (Ascending or Descending order).
+   * @returns OrderByCondition
+   */
+  private transformToEntitySortField(
+    sortField = "applicationNumber",
+    sortOrder = FieldSortOrder.ASC,
+  ): OrderByCondition {
+    const orderByCondition = {};
+    if (sortField === "fullName") {
+      orderByCondition["user.firstName"] = sortOrder;
+      orderByCondition["user.lastName"] = sortOrder;
+      return orderByCondition;
+    }
+
+    const fieldSortOptions = {
+      applicationNumber: "application.applicationNumber",
+    };
+    const dbColumnName = fieldSortOptions[sortField];
+    orderByCondition[dbColumnName] = sortOrder;
+    return orderByCondition;
   }
 }

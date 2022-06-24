@@ -44,6 +44,7 @@ import StudentAppealRequestsApproval from "@/views/aest/StudentAppealRequestsApp
 import NoticeOfAssessment from "@/views/aest/NoticeOfAssessment.vue";
 import ApplicationExceptionsApproval from "@/views/aest/ApplicationExceptionsApproval.vue";
 import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
+import StudentApplicationExceptions from "@/views/aest/institution/StudentApplicationExceptions.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -399,6 +400,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.REPORTS,
         components: {
           default: Reports,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.Exceptions,
+        name: AESTRoutesConst.EXCEPTIONS,
+        components: {
+          default: StudentApplicationExceptions,
           sidebar: AESTHomeSideBar,
         },
         meta: {

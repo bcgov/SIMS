@@ -15,7 +15,17 @@
       </v-list-item>
     </v-list>
     <v-list dense nav>
-      <v-list-item-title class="text-muted ml-4">STUDENTS</v-list-item-title>
+      <v-list-item-title class="text-muted ml-4"
+        >Student requests</v-list-item-title
+      >
+      <v-list-item @click="exceptionsItem.command">
+        <v-list-item-icon>
+          <font-awesome-icon :icon="exceptionsItem.icon" class="mr-2" />
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ exceptionsItem.label }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
       <v-list-item>
         <v-list-item-icon>
           <font-awesome-icon :icon="['fas', 'folder-open']" class="mr-2" />
@@ -27,7 +37,7 @@
     </v-list>
     <v-list dense nav>
       <v-list-item-title class="text-muted ml-4"
-        >INSTITUTIONS</v-list-item-title
+        >Institution requests</v-list-item-title
       >
       <v-list-item @click="pendingDesignationItem.command">
         <v-list-item-icon>
@@ -117,9 +127,20 @@ export default {
       },
     } as MenuModel);
 
+    const exceptionsItem = ref({
+      label: "Exceptions",
+      icon: ["fas", "check-circle"],
+      command: () => {
+        router.push({
+          name: AESTRoutesConst.EXCEPTIONS,
+        });
+      },
+    } as MenuModel);
+
     return {
       items,
       pendingDesignationItem,
+      exceptionsItem,
       reports,
     };
   },
