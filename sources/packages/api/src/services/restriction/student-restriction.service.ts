@@ -300,8 +300,8 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * Create a new student restriction object.
    * @param studentId student id.
    * @param restrictionCode restriction code.
-   * @param applicationId application id.
    * @param auditUserId audit user id
+   * @param applicationId application id.
    * @returns a new student restriction object.
    */
   async createRestrictionToSave(
@@ -384,10 +384,10 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       const restriction = await this.createRestrictionToSave(
         studentId,
         RestrictionCode.SINF,
-        applicationId,
         auditUserId,
+        applicationId,
       );
-      entityManager.getRepository(StudentRestriction).save(restriction);
+      await entityManager.getRepository(StudentRestriction).save(restriction);
     }
   }
 }
