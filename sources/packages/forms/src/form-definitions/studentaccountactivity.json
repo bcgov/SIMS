@@ -56,7 +56,12 @@
                   "label": "HTML",
                   "tag": "h2",
                   "className": "category-header-large primary-color",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "Your account",
                   "refreshOnChange": true,
                   "key": "html4",
@@ -101,7 +106,11 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -124,7 +133,12 @@
                   "labelMargin": "",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "<strong>Please resolve the items below soon</strong> to minimize the disruption and impact.",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -269,14 +283,19 @@
                   "components": [
                     {
                       "label": "Active restriction codes",
-                      "attrs": [{ "attr": "", "value": "" }],
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
                       "content": "<li>Code {{row.code}}</li>",
                       "refreshOnChange": true,
                       "key": "html",
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
-                      "id": "e7d7d4b00000",
+                      "id": "e7d7d4b000000000",
                       "placeholder": "",
                       "prefix": "",
                       "customClass": "",
@@ -437,7 +456,12 @@
                   "label": "HTML",
                   "tag": "h2",
                   "className": "category-header-large primary-color",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "Your account",
                   "refreshOnChange": false,
                   "key": "html2",
@@ -482,7 +506,11 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -501,7 +529,12 @@
                 },
                 {
                   "label": "HTML",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "There are no items to resolve.",
                   "refreshOnChange": false,
                   "key": "html3",
@@ -546,7 +579,11 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -650,7 +687,12 @@
                   "labelMargin": "",
                   "tag": "h2",
                   "className": "category-header-large primary-color",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "Need help?",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -727,7 +769,12 @@
                   "labelMargin": "",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "For StudentAid BC restrictions, please refer to the <a href=\"https://studentaidbc.ca/help-centre\" target=\"_blank\" rel=\"noopener noreferrer\">StudentAid BC Help Centre.</a>",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -804,7 +851,12 @@
                   "labelMargin": "",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "For National Student Loans Centre restrictions, please refer to the <a href=\"https://www.csnpe-nslsc.canada.ca\" target=\"_blank\" rel=\"noopener noreferrer\">National Student Loan Service Centre.</a>",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -920,7 +972,11 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -1072,7 +1128,12 @@
                   "labelMargin": "",
                   "tag": "h2",
                   "className": "category-header-large primary-color",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "All restrictions",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -1149,7 +1210,12 @@
                   "labelMargin": "",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "Read about the restrictions and how you can resolve them.",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -1268,7 +1334,9 @@
                   "tabindex": "",
                   "disabled": false,
                   "autofocus": false,
-                  "widget": { "type": "input" },
+                  "widget": {
+                    "type": "input"
+                  },
                   "validateOn": "change",
                   "validate": {
                     "required": false,
@@ -1278,7 +1346,11 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
                   "allowCalculateOverride": false,
                   "showCharCount": false,
                   "showWordCount": false,
@@ -1293,7 +1365,12 @@
                   "labelMargin": "",
                   "tag": "h3",
                   "className": "category-header-medium primary-color mt-5",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "StudentAid BC Restrictions",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -3014,12 +3091,172 @@
                   "id": "e6kt1jn"
                 },
                 {
+                  "title": "Code SINF - Temporary Social Insurance Number (SIN) expiration",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "theme": "default",
+                  "tooltip": "",
+                  "customClass": "",
+                  "collapsible": true,
+                  "hidden": false,
+                  "hideLabel": false,
+                  "disabled": false,
+                  "modalEdit": false,
+                  "key": "b6BBankruptcy1",
+                  "tags": [],
+                  "properties": {},
+                  "customConditional": "",
+                  "conditional": {
+                    "json": "",
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "type": "panel",
+                  "label": "Panel",
+                  "breadcrumb": "default",
+                  "tabindex": "",
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "html": "<p>Your SIN number is currently expired for your application or we are missing the expiry date of your SIN number. Your application will not be disbursed until this is resolved. You may upload the appropriate documentation using the \"file uploader\" located in the top right of your account and we will work to resolve your issue. For more information please contact StudentAid BC.</p>",
+                      "label": "Content",
+                      "labelWidth": "",
+                      "labelMargin": "",
+                      "customClass": "",
+                      "refreshOnChange": false,
+                      "hidden": false,
+                      "modalEdit": false,
+                      "key": "content56",
+                      "tags": [],
+                      "properties": {},
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": "",
+                        "json": ""
+                      },
+                      "customConditional": "",
+                      "logic": [],
+                      "attributes": {},
+                      "overlay": {
+                        "style": "",
+                        "page": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "type": "content",
+                      "input": false,
+                      "tableView": false,
+                      "placeholder": "",
+                      "prefix": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": true,
+                      "clearOnHide": true,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "hideLabel": false,
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "validateOn": "change",
+                      "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "id": "e9meixh"
+                    }
+                  ],
+                  "collapsed": true,
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "multiple": false,
+                  "defaultValue": null,
+                  "protected": false,
+                  "unique": false,
+                  "persistent": false,
+                  "clearOnHide": false,
+                  "refreshOn": "",
+                  "redrawOn": "",
+                  "dataGridLabel": false,
+                  "labelPosition": "top",
+                  "description": "",
+                  "errorLabel": "",
+                  "autofocus": false,
+                  "dbIndex": false,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
+                  "widget": null,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false,
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "allowCalculateOverride": false,
+                  "encrypted": false,
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "tree": false,
+                  "lazyLoad": false,
+                  "id": "eqtpt6"
+                },
+                {
                   "label": "HTML",
                   "labelWidth": "",
                   "labelMargin": "",
                   "tag": "h3",
                   "className": "category-header-medium primary-color mt-5",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "National Student Load Service Centre Restrictions",
                   "refreshOnChange": false,
                   "customClass": "",
@@ -3213,7 +3450,11 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -4655,7 +4896,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note the Canada Student Finanacial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note the Canada Student Financial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -6346,7 +6587,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>TheCanada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content24",
@@ -6642,7 +6883,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>TheCanada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",
@@ -9779,7 +10020,12 @@
       "key": "columns",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -9881,7 +10127,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -9891,7 +10139,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -9948,7 +10200,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -9958,7 +10212,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
