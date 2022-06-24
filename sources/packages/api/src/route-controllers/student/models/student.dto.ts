@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 import {
   Allow,
   ArrayMinSize,
+  IsBoolean,
   IsDateString,
   IsDefined,
   IsNotEmpty,
@@ -10,7 +11,7 @@ import {
   MaxLength,
   ValidateIf,
 } from "class-validator";
-import { IsValidSIN } from "src/route-controllers/utils/sin-validator";
+import { IsValidSIN } from "src/route-controllers/utils/custom-validators/sin-validator";
 import {
   ApplicationStatus,
   FileOriginType,
@@ -195,6 +196,8 @@ export class SINValidationsAPIOutDTO {
 export class CreateSINValidationAPIInDTO {
   @IsValidSIN()
   sin: string;
+  @IsBoolean()
+  skipValidations: boolean;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;

@@ -330,6 +330,7 @@ export class StudentAESTController extends BaseController {
       await this.sinValidationService.createSINValidation(
         studentId,
         payload.sin,
+        payload.skipValidations,
         payload.noteDescription,
         userToken.userId,
       );

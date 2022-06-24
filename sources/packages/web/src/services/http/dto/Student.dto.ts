@@ -140,6 +140,7 @@ export interface SINValidationsAPIOutDTO {
  */
 export interface CreateSINValidationAPIInDTO {
   sin: string;
+  skipValidations: boolean;
   noteDescription: string;
 }
 

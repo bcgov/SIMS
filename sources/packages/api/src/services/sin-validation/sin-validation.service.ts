@@ -66,6 +66,8 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
    * the current state of the SIN validation.
    * @param studentId student id to create the SIN validation record.
    * @param sin student SIN.
+   * @param skipValidations defines if the ESDC SIN validation must be skipped and the SIN
+   * should be considered valid.
    * @param noteDescription note description for the SIN creation.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns newly created SIN record.
@@ -73,10 +75,12 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   async createSINValidation(
     studentId: number,
     sin: string,
+    skipValidations: boolean,
     noteDescription: string,
     auditUserId: number,
   ): Promise<SINValidation> {
     return this.connection.transaction(async (transactionalEntityManager) => {
+      const student = await this.studentService.getStudentById(studentId);
       const auditUser = { id: auditUserId } as User;
       const savedNote = await this.studentService.createStudentNote(
         studentId,
@@ -85,13 +89,19 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         auditUserId,
         transactionalEntityManager,
       );
+      const now = new Date();
       // Create the new SIN validation record.
       const newSINValidation = new SINValidation();
       newSINValidation.sin = removeWhiteSpaces(sin);
       newSINValidation.sinEditedBy = auditUser;
-      newSINValidation.sinEditedDate = new Date();
+      newSINValidation.sinEditedDate = now;
       newSINValidation.sinEditedNote = savedNote;
       newSINValidation.creator = auditUser;
+      newSINValidation.user = student.user;
+      if (skipValidations) {
+        newSINValidation.isValidSIN = true;
+        newSINValidation.dateReceived = now;
+      }
       const createdSINValidation = await transactionalEntityManager
         .getRepository(SINValidation)
         .save(newSINValidation);
@@ -134,7 +144,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         .where("sinValidation.id = :sinValidationId", { sinValidationId })
         .getOne();
 
-      if (sinToBeUpdated) {
+      if (!sinToBeUpdated) {
         throw new CustomNamedError(
           "SIN validation record not found.",
           SIN_VALIDATION_RECORD_NOT_FOUND,

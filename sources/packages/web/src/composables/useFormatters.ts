@@ -7,12 +7,22 @@ import { Address, SINStatusEnum } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
 
 const DEFAULT_EMPTY_VALUE = "-";
+export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 
 /**
  * Helpers to adjust how values are shown in the UI.
  */
 
 export function useFormatters() {
+  /**
+   * Get the date only part of a date/time or string object.
+   * @param date date/time to have the date extracted.
+   * @returns date only string in ISO format YYYY-MM-DD.
+   */
+  const getISODateOnlyString = (date: Date | string): string => {
+    return dayjs(date).format(DATE_ONLY_ISO_FORMAT);
+  };
+
   /**
    * Convert a string or date to a string format like "Thu Aug 05 2021".
    * @param date string or date to be converted.
@@ -182,5 +192,6 @@ export function useFormatters() {
     yesNoFlagDescription,
     booleanToYesNo,
     sinDisplayFormat,
+    getISODateOnlyString,
   };
 }

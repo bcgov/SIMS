@@ -28,11 +28,7 @@
             :rows="DEFAULT_PAGE_LIMIT"
             :rowsPerPageOptions="PAGINATION_LIST"
           >
-            <Column
-              field="createdAtFormatted"
-              header="Date created"
-              bodyClass="text-nowrap"
-            />
+            <Column field="createdAtFormatted" header="Date created" />
             <Column field="sinFormatted" header="SIN" bodyClass="text-nowrap" />
             <Column field="isValidSINFormatted" header="SIN validated" />
             <Column field="sinStatus" header="Response code"></Column>
@@ -44,17 +40,15 @@
               header="Date of birth"
             />
             <Column field="validGenderCheckFormatted" header="Gender" />
-            <Column
-              field="sinExpiryDateFormatted"
-              header="Expiry date"
-              bodyClass="text-nowrap"
-            />
+            <Column field="sinExpiryDateFormatted" header="Expiry date" />
             <Column header="Action">
               <template #body="slotProps">
                 <v-btn
                   color="primary"
                   :disabled="
-                    !slotProps.data.temporarySIN || processingEditExpiryDate
+                    !slotProps.data.temporarySIN ||
+                    !!slotProps.data.sinExpiryDate ||
+                    processingEditExpiryDate
                   "
                   @click="addExpiryDate(slotProps.data.id)"
                   >Add expiry date</v-btn
@@ -107,7 +101,12 @@ import {
   SINValidations,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
-import { useFileUtils, ModalDialog, useToastMessage } from "@/composables";
+import {
+  useFileUtils,
+  ModalDialog,
+  useToastMessage,
+  useFormatters,
+} from "@/composables";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import {
   CreateSINValidationAPIInDTO,
@@ -132,6 +131,7 @@ export default {
     const addExpiryDateModal = ref(
       {} as ModalDialog<FormIOForm<UpdateSINValidationAPIInDTO> | boolean>,
     );
+    const { getISODateOnlyString } = useFormatters();
     const toast = useToastMessage();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
@@ -155,7 +155,7 @@ export default {
         processingNewSIN.value = true;
         const formioForm =
           modalResult as FormIOForm<CreateSINValidationAPIInDTO>;
-        StudentService.shared.createStudentSINValidation(
+        await StudentService.shared.createStudentSINValidation(
           props.studentId,
           formioForm.data,
         );
@@ -180,7 +180,10 @@ export default {
         processingEditExpiryDate.value = true;
         const formioForm =
           modalResult as FormIOForm<UpdateSINValidationAPIInDTO>;
-        StudentService.shared.updateStudentSINValidation(
+        formioForm.data.expiryDate = getISODateOnlyString(
+          formioForm.data.expiryDate,
+        );
+        await StudentService.shared.updateStudentSINValidation(
           props.studentId,
           sinValidationId,
           formioForm.data,
