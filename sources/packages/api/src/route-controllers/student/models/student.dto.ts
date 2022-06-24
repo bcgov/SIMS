@@ -11,7 +11,7 @@ import {
   MaxLength,
   ValidateIf,
 } from "class-validator";
-import { IsValidSIN } from "src/route-controllers/utils/custom-validators/sin-validator";
+import { IsValidSIN } from "../../utils/custom-validators/sin-validator";
 import {
   ApplicationStatus,
   FileOriginType,
