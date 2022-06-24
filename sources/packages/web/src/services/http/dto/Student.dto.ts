@@ -134,3 +134,24 @@ export interface SINValidationsAPIOutDTO {
   temporarySIN: boolean;
   sinExpiryDate?: string;
 }
+
+/**
+ * DTO to allow manually creation of SIN validations.
+ */
+export interface CreateSINValidationAPIInDTO {
+  sin: string;
+  skipValidations: boolean;
+  noteDescription: string;
+}
+
+/**
+ * Updates a SIN validation record expiry date.
+ */
+export interface UpdateSINValidationAPIInDTO {
+  /**
+   * Expire date is a date-only value.
+   ** Please ensure that the time is not sent to the API.
+   */
+  expiryDate: string;
+  noteDescription: string;
+}
