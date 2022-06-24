@@ -143,6 +143,7 @@ export class ApplicationExceptionAESTController extends BaseController {
     return {
       results: applicationExceptions.results.map((eachApplication) => {
         return {
+          applicationId: eachApplication.application.id,
           studentId: eachApplication.application.student.id,
           applicationNumber: eachApplication.application.applicationNumber,
           submittedDate: eachApplication.createdAt,

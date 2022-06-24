@@ -55,6 +55,7 @@ export class ApplicationExceptionAPIOutDTO {
 }
 
 export class ApplicationExceptionSummaryAPIOutDTO {
+  applicationId: number;
   studentId: number;
   submittedDate: Date;
   fullName: string;

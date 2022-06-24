@@ -197,6 +197,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       .select([
         "exception.id",
         "exception.createdAt",
+        "application.id",
         "application.applicationNumber",
         "user.firstName",
         "user.lastName",

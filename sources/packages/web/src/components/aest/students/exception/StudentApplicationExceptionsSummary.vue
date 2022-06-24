@@ -2,6 +2,7 @@
   <body-header
     title="Requested exceptions"
     :recordsCount="applicationExceptions.results?.length"
+    subTitle="Make a determination on application submitted with exceptions."
     class="m-1"
   >
     <template #actions>
@@ -51,7 +52,10 @@
             <v-btn
               class="primary-btn-background"
               @click="
-                goToViewScholasticStanding(slotProps.data.scholasticStandingId)
+                gotToAssessmentsSummary(
+                  slotProps.data.applicationId,
+                  slotProps.data.studentId,
+                )
               "
               >View</v-btn
             >
@@ -77,11 +81,12 @@ import {
 } from "@/types";
 import { ApplicationExceptionSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 const DEFAULT_SORT_FIELD = "applicationNumber";
 
 export default {
-  setup(props: any) {
+  setup(_props: any) {
     const router = useRouter();
     const page = ref(DEFAULT_PAGE_NUMBER);
     const pageLimit = ref(DEFAULT_PAGE_LIMIT);
@@ -92,6 +97,19 @@ export default {
     const applicationExceptions = ref(
       {} as PaginatedResults<ApplicationExceptionSummaryAPIOutDTO>,
     );
+
+    const gotToAssessmentsSummary = (
+      applicationId: number,
+      studentId: number,
+    ) => {
+      router.push({
+        name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+        params: {
+          applicationId: applicationId,
+          studentId: studentId,
+        },
+      });
+    };
 
     const getExceptionList = async () => {
       applicationExceptions.value =
@@ -129,6 +147,7 @@ export default {
     });
 
     return {
+      gotToAssessmentsSummary,
       applicationExceptions,
       dateOnlyLongString,
       pageEvent,
