@@ -141,12 +141,18 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
           "sinValidation.temporarySIN",
           "sinValidation.sinExpiryDate",
         ])
+        .innerJoin(
+          Student,
+          "student",
+          "student.user.id = sinValidation.user.id",
+        )
         .where("sinValidation.id = :sinValidationId", { sinValidationId })
+        .andWhere("student.id = :studentId", { studentId })
         .getOne();
 
       if (!sinToBeUpdated) {
         throw new CustomNamedError(
-          "SIN validation record not found.",
+          "SIN validation record not found or it does not belong to the student.",
           SIN_VALIDATION_RECORD_NOT_FOUND,
         );
       }

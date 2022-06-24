@@ -345,7 +345,8 @@ export class StudentAESTController extends BaseController {
    */
   @Patch(":studentId/sin-validations/:sinValidationId")
   @ApiNotFoundResponse({
-    description: "Student does not exists or SIN validation record not found.",
+    description:
+      "Student does not exists or SIN validation record not found or it does not belong to the student.",
   })
   @ApiUnprocessableEntityResponse({
     description:
