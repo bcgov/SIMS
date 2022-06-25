@@ -349,6 +349,15 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
+    const hasSINRestriction = await this.studentHasRestriction(
+      studentId,
+      RestrictionCode.SINF,
+    );
+    if (hasSINRestriction) {
+      // The student already has an active SIN restriction, avoid adding it again.
+      return;
+    }
+
     const student = await entityManager
       .getRepository(Student)
       .createQueryBuilder("student")
