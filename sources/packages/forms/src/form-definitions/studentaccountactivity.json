@@ -4,7 +4,9 @@
   "type": "form",
   "name": "studentAccountActivity",
   "path": "studentaccountactivity",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "label": "Columns",
@@ -232,7 +234,9 @@
                   "disabled": false,
                   "tableView": false,
                   "modalEdit": false,
-                  "defaultValue": [{}],
+                  "defaultValue": [
+                    {}
+                  ],
                   "persistent": true,
                   "protected": false,
                   "dbIndex": false,
@@ -6587,7 +6591,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>TheCanada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content24",
@@ -6883,7 +6887,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>TheCanada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "labelWidth": "",
                       "labelMargin": "",

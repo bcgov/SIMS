@@ -34,7 +34,7 @@ import {
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { AssessmentControllerService } from "..";
-import { IUserToken } from "src/auth/userToken.interface";
+import { IUserToken } from "../../auth/userToken.interface";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("assessment")

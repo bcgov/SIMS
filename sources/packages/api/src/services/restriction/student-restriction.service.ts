@@ -333,7 +333,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * The SIN number must be a permanent one or a temporary with expiry date later
    * then the end date of the offering.
    * Case the SIN is not valid the student can still apply to the offering but a
-   * restriction will be created to stop findings to be disbursed till the a valid
+   * restriction will be created to stop funding to be disbursed till the a valid
    * SIN is provided.
    * @param studentId student to be validate.
    * @param offeringId offering to be verified.
