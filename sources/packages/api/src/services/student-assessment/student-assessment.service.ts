@@ -184,10 +184,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   /**
    * Updates Program Information Request (PIR) related data.
    * @param assessmentId assessment id to be updated.
+      * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    * @param locationId location id related to the offering.
    * @param status status of the program information request.
-   * @param auditUserId user that should be considered the one that is
-   * causing the changes.
+
    * @param programId program id related to the application.
    * When the application do not have an offering, this is used
    * to determine the associated program.
@@ -197,9 +198,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    */
   async updateProgramInfo(
     assessmentId: number,
+    auditUserId: number,
     locationId: number,
     status: ProgramInfoStatus,
-    auditUserId: number,
     programId?: number,
     offeringId?: number,
   ): Promise<StudentAssessment> {
