@@ -4,7 +4,9 @@
   "type": "form",
   "name": "uploadStudentDocuments",
   "path": "uploadstudentdocuments",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "label": "HTML",

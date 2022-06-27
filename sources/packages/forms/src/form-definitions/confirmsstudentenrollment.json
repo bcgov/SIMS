@@ -4,7 +4,9 @@
   "type": "form",
   "name": "confirmsstudentenrollment",
   "path": "confirmsstudentenrollment",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "title": "COE Panel",
@@ -20,7 +22,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -42,7 +49,12 @@
           "label": "Student Name",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "{{ data.applicationStudentName }}",
           "refreshOnChange": true,
           "customClass": "category-header-large primary-color mt-5 mb-5",
@@ -117,7 +129,12 @@
           "label": "Application Number | Location Name | Study Dates",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "{{ data.applicationNumber + \" | \" + data.applicationLocationName + \" | \" + data.applicationOfferingStartDate + \" - \" + data.applicationOfferingEndDate }}",
           "refreshOnChange": true,
           "customClass": "category-header-medium secondary-color  mt-5 mb-5",
@@ -194,7 +211,12 @@
           "labelMargin": "",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "<strong>Disbursement Date:</strong> {{ data.disbursementDate }}",
           "refreshOnChange": true,
           "customClass": "",
@@ -277,7 +299,12 @@
           "components": [
             {
               "label": "HTML",
-              "attrs": [{ "attr": "", "value": "" }],
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
               "content": "Application Details",
               "refreshOnChange": false,
               "customClass": "category-header-medium primary-color font-weight-bold h2",
@@ -322,7 +349,11 @@
                 "multiple": false,
                 "unique": false
               },
-              "conditional": { "show": null, "when": null, "eq": "" },
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              },
               "overlay": {
                 "style": "",
                 "left": "",
@@ -352,7 +383,12 @@
               "components": [
                 {
                   "label": "Program Details Label",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "Program Details",
                   "refreshOnChange": false,
                   "customClass": "font-weight-bold h4",
@@ -397,7 +433,11 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -419,7 +459,12 @@
                   "label": "programName",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "{{ data.applicationProgramName }}",
                   "refreshOnChange": true,
                   "customClass": "font-weight-bold color-blue h4",
@@ -494,7 +539,12 @@
                   "label": "Program Description",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "{{ data.applicationProgramDescription }}",
                   "refreshOnChange": true,
                   "customClass": "",
@@ -603,7 +653,11 @@
                 "multiple": false,
                 "unique": false
               },
-              "conditional": { "show": null, "when": null, "eq": "" },
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              },
               "overlay": {
                 "style": "",
                 "left": "",
@@ -636,7 +690,12 @@
               "components": [
                 {
                   "label": "HTML",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "Offering Details",
                   "refreshOnChange": false,
                   "customClass": "font-weight-bold h4",
@@ -681,7 +740,11 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -703,7 +766,12 @@
                   "label": "offeringName",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "{{ data.applicationOfferingName }}",
                   "refreshOnChange": true,
                   "customClass": "font-weight-bold color-blue h4",
@@ -778,7 +846,12 @@
                   "label": "offering Intensity",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "Offering Intensity",
                   "refreshOnChange": true,
                   "customClass": "font-weight-bold",
@@ -853,7 +926,12 @@
                   "label": "Offering Intensity",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "{{ data.applicationOfferingIntensity }}",
                   "refreshOnChange": true,
                   "customClass": "",
@@ -934,7 +1012,12 @@
                           "label": "Study start date ",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": "Study start date",
                           "refreshOnChange": true,
                           "customClass": "font-weight-bold",
@@ -1010,7 +1093,12 @@
                           "label": "Application Offering Start Date",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": "{{ data.applicationOfferingStartDate }}",
                           "refreshOnChange": true,
                           "customClass": "",
@@ -1096,7 +1184,12 @@
                           "label": "Study End date",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": "Study End date ",
                           "refreshOnChange": true,
                           "customClass": "font-weight-bold",
@@ -1172,7 +1265,12 @@
                           "label": "Offering End Date",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": " {{ data.applicationOfferingEndDate }}",
                           "refreshOnChange": true,
                           "customClass": "",
@@ -1295,7 +1393,11 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -1320,7 +1422,12 @@
                   "label": "Study Break",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "Study Breaks ?",
                   "refreshOnChange": true,
                   "customClass": "font-weight-bold",
@@ -1395,7 +1502,12 @@
                   "label": "Offering Has Study Break ",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "{{ !data.applicationOfferingHasStudyBreak }}",
                   "refreshOnChange": true,
                   "customClass": "",
@@ -1487,7 +1599,9 @@
                   "disabled": true,
                   "tableView": false,
                   "modalEdit": false,
-                  "defaultValue": [{}],
+                  "defaultValue": [
+                    {}
+                  ],
                   "persistent": true,
                   "protected": false,
                   "dbIndex": false,
@@ -1542,7 +1656,12 @@
                           "components": [
                             {
                               "label": "Break Start Date",
-                              "attrs": [{ "attr": "", "value": "" }],
+                              "attrs": [
+                                {
+                                  "attr": "",
+                                  "value": ""
+                                }
+                              ],
                               "content": "Break Start Date",
                               "refreshOnChange": true,
                               "customClass": "font-weight-bold",
@@ -1612,7 +1731,12 @@
                             },
                             {
                               "label": "Offering Break Start Date",
-                              "attrs": [{ "attr": "", "value": "" }],
+                              "attrs": [
+                                {
+                                  "attr": "",
+                                  "value": ""
+                                }
+                              ],
                               "content": "{{ row.breakStartDate }}",
                               "refreshOnChange": true,
                               "key": "offeringBreakStartDate",
@@ -1692,7 +1816,12 @@
                           "components": [
                             {
                               "label": "Break End Date",
-                              "attrs": [{ "attr": "", "value": "" }],
+                              "attrs": [
+                                {
+                                  "attr": "",
+                                  "value": ""
+                                }
+                              ],
                               "content": "Break End Date",
                               "refreshOnChange": true,
                               "customClass": "font-weight-bold",
@@ -1762,7 +1891,12 @@
                             },
                             {
                               "label": "Offering Break End Date",
-                              "attrs": [{ "attr": "", "value": "" }],
+                              "attrs": [
+                                {
+                                  "attr": "",
+                                  "value": ""
+                                }
+                              ],
                               "content": "{{ row.breakEndDate}}",
                               "refreshOnChange": true,
                               "key": "offeringBreakEndDate",
@@ -1932,7 +2066,12 @@
                           "label": "Actual tuition ",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": "Actual tuition",
                           "refreshOnChange": true,
                           "customClass": "font-weight-bold",
@@ -2008,7 +2147,12 @@
                           "label": "Offering Actual Tuition",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": "{{ data.applicationOfferingActualTuition }}",
                           "refreshOnChange": true,
                           "customClass": "",
@@ -2094,7 +2238,12 @@
                           "label": "Program related costs ",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": "Program related costs",
                           "refreshOnChange": true,
                           "customClass": "font-weight-bold",
@@ -2170,7 +2319,12 @@
                           "label": "Offering Program Related Cost",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": "{{ data.applicationOfferingProgramRelatedCost }}",
                           "refreshOnChange": true,
                           "customClass": "",
@@ -2256,7 +2410,12 @@
                           "label": "Mandatory fees ",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": "Mandatory fees",
                           "refreshOnChange": true,
                           "customClass": "font-weight-bold",
@@ -2332,7 +2491,12 @@
                           "label": "Offering Mandatory Cost",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": "{{ data.applicationOfferingMandatoryCost }}",
                           "refreshOnChange": true,
                           "customClass": "",
@@ -2418,7 +2582,12 @@
                           "label": "Exceptional expenses",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": "Exceptional expenses",
                           "refreshOnChange": true,
                           "customClass": "font-weight-bold",
@@ -2494,7 +2663,12 @@
                           "label": "Offering Exceptional Expenses",
                           "tag": "p",
                           "className": "",
-                          "attrs": [{ "attr": "", "value": "" }],
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
                           "content": " {{ data.applicationOfferingExceptionalExpenses }}",
                           "refreshOnChange": true,
                           "customClass": "",
@@ -2617,7 +2791,11 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": { "show": null, "when": null, "eq": "" },
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
                   "overlay": {
                     "style": "",
                     "left": "",
@@ -2642,7 +2820,12 @@
                   "label": "Study Delivered",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "Study Delivered",
                   "refreshOnChange": true,
                   "customClass": "font-weight-bold",
@@ -2717,7 +2900,12 @@
                   "label": "Offering Study Delivered",
                   "tag": "p",
                   "className": "",
-                  "attrs": [{ "attr": "", "value": "" }],
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "{{ data.applicationOfferingStudyDelivered }}",
                   "refreshOnChange": true,
                   "customClass": "",
@@ -2827,7 +3015,11 @@
                 "multiple": false,
                 "unique": false
               },
-              "conditional": { "show": null, "when": null, "eq": "" },
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              },
               "overlay": {
                 "style": "",
                 "left": "",
@@ -2855,7 +3047,12 @@
                   "components": [
                     {
                       "label": "HTML",
-                      "attrs": [{ "attr": "", "value": "" }],
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
                       "content": "Location",
                       "refreshOnChange": false,
                       "customClass": "font-weight-bold label-medium",
@@ -2925,7 +3122,12 @@
                     },
                     {
                       "label": "Location Name",
-                      "attrs": [{ "attr": "", "value": "" }],
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
                       "content": "{{ data.applicationLocationName }}",
                       "refreshOnChange": true,
                       "key": "html30",
@@ -3005,7 +3207,12 @@
                   "components": [
                     {
                       "label": "Application Number",
-                      "attrs": [{ "attr": "", "value": "" }],
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
                       "content": "Application Number",
                       "refreshOnChange": false,
                       "customClass": "font-weight-bold label-medium",
@@ -3075,7 +3282,12 @@
                     },
                     {
                       "label": "Application Number",
-                      "attrs": [{ "attr": "", "value": "" }],
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
                       "content": "{{ data.applicationNumber }}",
                       "refreshOnChange": true,
                       "key": "html26",
@@ -3262,7 +3474,11 @@
             "multiple": false,
             "unique": false
           },
-          "conditional": { "show": null, "when": null, "eq": "" },
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": ""
+          },
           "overlay": {
             "style": "",
             "left": "",
@@ -3368,7 +3584,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -3378,7 +3596,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -3435,7 +3657,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -3445,7 +3669,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,

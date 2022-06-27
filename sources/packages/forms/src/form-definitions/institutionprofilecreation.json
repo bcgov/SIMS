@@ -4,7 +4,9 @@
   "type": "form",
   "name": "institutionprofilecreation",
   "path": "institutionprofilecreation",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "title": "User information panel",

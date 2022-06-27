@@ -4,7 +4,9 @@
   "type": "form",
   "name": "studentwelcomepage",
   "path": "studentwelcomepage",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "title": "Panel",

@@ -4,7 +4,9 @@
   "type": "form",
   "name": "aestAddNewSin",
   "path": "aestaddnewsin",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "label": "HTML",
@@ -12,7 +14,12 @@
       "labelMargin": "",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "Enter a new SIN for the student. The SIN will be validated with Employment and Social Development Canada (ESDC) unless you skip the validations.",
       "refreshOnChange": false,
       "customClass": "",
@@ -21,7 +28,12 @@
       "key": "html",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -88,7 +100,9 @@
       "tooltip": "",
       "prefix": "",
       "suffix": "",
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "inputMask": "999 999 999",
       "displayMask": "",
       "allowMultipleMasks": false,
@@ -141,10 +155,17 @@
       "key": "sin",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
-      "attributes": { "data-cy": "sin" },
+      "attributes": {
+        "data-cy": "sin"
+      },
       "overlay": {
         "style": "",
         "page": "",
@@ -205,10 +226,17 @@
       "key": "skipValidations",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
-      "attributes": { "data-cy": "skipValidations" },
+      "attributes": {
+        "data-cy": "skipValidations"
+      },
       "overlay": {
         "style": "",
         "page": "",
@@ -243,7 +271,12 @@
       "labelMargin": "",
       "tag": "p",
       "className": "alert alert-danger fa fa-exclamation-circle w-100",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "<strong class=\"ml-2\">Danger! Are you sure you want to skip the validations?</strong>\n<br>\n<span>By selecting this, you are forcing the SIN to be valid for the student. Please proceed with caution.</span>",
       "refreshOnChange": false,
       "customClass": "",
@@ -325,7 +358,9 @@
       "tooltip": "",
       "prefix": "",
       "suffix": "",
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "displayMask": "",
       "editor": "",
       "autoExpand": false,
@@ -377,10 +412,17 @@
       "key": "noteDescription",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
-      "attributes": { "data-cy": "noteDescription" },
+      "attributes": {
+        "data-cy": "noteDescription"
+      },
       "overlay": {
         "style": "",
         "page": "",
@@ -451,7 +493,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -461,7 +505,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -518,7 +566,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -528,7 +578,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,

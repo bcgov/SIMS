@@ -4,7 +4,9 @@
   "type": "form",
   "name": "SFAA2023-24",
   "path": "sfaa2023-24",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "title": "Welcome",
