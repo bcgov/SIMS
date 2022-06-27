@@ -349,15 +349,6 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const hasSINRestriction = await this.studentHasRestriction(
-      studentId,
-      RestrictionCode.SINF,
-    );
-    if (hasSINRestriction) {
-      // The student already has an active SIN restriction, avoid adding it again.
-      return;
-    }
-
     const student = await entityManager
       .getRepository(Student)
       .createQueryBuilder("student")
@@ -376,6 +367,16 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       // SIN is not temporary so no restriction should be created.
       return;
     }
+
+    const hasSINRestriction = await this.studentHasRestriction(
+      studentId,
+      RestrictionCode.SINF,
+    );
+    if (hasSINRestriction) {
+      // The student already has an active SIN restriction, avoid adding it again.
+      return;
+    }
+
     // By default assume that the temporary SIN does not have an expiry
     // date defined and the restriction must be created.
     let mustCreateSINException = true;
