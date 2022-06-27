@@ -4,7 +4,9 @@
   "type": "form",
   "name": "uploadStudentDocumentsAEST",
   "path": "uploadstudentdocumentsaest",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "title": "File Upload",
@@ -22,7 +24,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -46,7 +53,12 @@
           "labelMargin": "",
           "tag": "h3",
           "className": "category-header-medium primary-color",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "Upload a document for the student",
           "refreshOnChange": false,
           "customClass": "",
@@ -123,7 +135,12 @@
           "labelMargin": "",
           "tag": "h4",
           "className": "category-header-small",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "Instructions",
           "refreshOnChange": false,
           "customClass": "",
@@ -200,7 +217,12 @@
           "labelMargin": "",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "Rename the file with <span class=\"font-weight-bold\">“AEST_[DocumentName]”</span>. This will help students identify in their account which documents were uploaded from the ministry.\n",
           "refreshOnChange": false,
           "customClass": "align-bullets",
@@ -292,7 +314,12 @@
           "image": false,
           "uploadOnly": false,
           "webcam": false,
-          "fileTypes": [{ "label": "", "value": "" }],
+          "fileTypes": [
+            {
+              "label": "",
+              "value": ""
+            }
+          ],
           "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
           "fileMinSize": "0KB",
           "fileMaxSize": "4MB",
@@ -450,7 +477,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -460,7 +489,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -517,7 +550,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -527,7 +562,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -584,7 +623,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -594,7 +635,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,

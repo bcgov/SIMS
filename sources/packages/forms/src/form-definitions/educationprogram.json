@@ -4,7 +4,9 @@
   "type": "form",
   "name": "educationProgram",
   "path": "educationprogram",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "label": "HTML",

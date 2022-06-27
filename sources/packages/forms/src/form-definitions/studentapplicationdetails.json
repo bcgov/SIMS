@@ -1,6 +1,8 @@
 {
   "type": "form",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "owner": "ann.m.jacob@gov.bc.ca",
   "components": [
     {
