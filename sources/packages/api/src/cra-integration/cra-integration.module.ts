@@ -19,6 +19,8 @@ import {
   SFASPartTimeApplicationsService,
   GCNotifyService,
   GCNotifyActionsService,
+  StudentRestrictionService,
+  RestrictionService,
 } from "../services";
 
 @Module({
@@ -42,6 +44,8 @@ import {
     SFASPartTimeApplicationsService,
     GCNotifyService,
     GCNotifyActionsService,
+    RestrictionService,
+    StudentRestrictionService,
   ],
   exports: [
     CRAPersonalVerificationService,

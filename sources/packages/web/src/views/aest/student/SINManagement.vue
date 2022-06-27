@@ -27,6 +27,7 @@
             :paginator="true"
             :rows="DEFAULT_PAGE_LIMIT"
             :rowsPerPageOptions="PAGINATION_LIST"
+            breakpoint="1380px"
           >
             <Column field="createdAtFormatted" header="Date created" />
             <Column field="sinFormatted" header="SIN" bodyClass="text-nowrap" />
