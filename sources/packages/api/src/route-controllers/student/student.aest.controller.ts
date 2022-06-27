@@ -5,16 +5,23 @@ import {
   Injectable,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
   Res,
+  UnprocessableEntityException,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import {
   GCNotifyActionsService,
+  SINValidationService,
   StudentFileService,
   StudentRestrictionService,
   StudentService,
@@ -30,11 +37,15 @@ import {
   AESTStudentProfileAPIOutDTO,
   AESTStudentSearchAPIInDTO,
   ApplicationSummaryAPIOutDTO,
+  CreateSINValidationAPIInDTO,
   SearchStudentAPIOutDTO,
+  SINValidationsAPIOutDTO,
+  UpdateSINValidationAPIInDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
+  CustomNamedError,
   defaultFileFilter,
   getISODateOnlyString,
   MAX_UPLOAD_FILES,
@@ -51,6 +62,11 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { Student } from "../../database/entities";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import {
+  SIN_VALIDATION_RECORD_INVALID_OPERATION,
+  SIN_VALIDATION_RECORD_NOT_FOUND,
+} from "../../constants";
 
 /**
  * Student controller for AEST Client.
@@ -67,6 +83,7 @@ export class StudentAESTController extends BaseController {
     private readonly studentControllerService: StudentControllerService,
     private readonly gcNotifyActionsService: GCNotifyActionsService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly sinValidationService: SINValidationService,
   ) {
     super();
   }
@@ -254,5 +271,117 @@ export class StudentAESTController extends BaseController {
       studentId,
       pagination,
     );
+  }
+
+  /**
+   * Get the SIN validations associated with the student user.
+   * @param studentId student to retrieve the SIN validations.
+   * @returns the history of SIN validations associated with the student user.
+   */
+  @Get(":studentId/sin-validations")
+  @ApiNotFoundResponse({ description: "Student does not exists." })
+  async getStudentSINValidations(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<SINValidationsAPIOutDTO[]> {
+    const student = await this.studentService.getStudentById(studentId);
+    if (!student) {
+      throw new NotFoundException("Student does not exists.");
+    }
+    const sinValidations =
+      await this.sinValidationService.getSINValidationsByUserId(
+        student.user.id,
+      );
+
+    return sinValidations?.map((sinValidation) => ({
+      id: sinValidation.id,
+      sin: sinValidation.sin,
+      createdAt: sinValidation.createdAt,
+      isValidSIN: sinValidation.isValidSIN,
+      sinStatus: sinValidation.sinStatus,
+      validSINCheck: sinValidation.validSINCheck,
+      validBirthdateCheck: sinValidation.validBirthdateCheck,
+      validFirstNameCheck: sinValidation.validFirstNameCheck,
+      validLastNameCheck: sinValidation.validLastNameCheck,
+      validGenderCheck: sinValidation.validGenderCheck,
+      temporarySIN: sinValidation.temporarySIN,
+      sinExpiryDate: getISODateOnlyString(sinValidation.sinExpiryDate),
+    }));
+  }
+
+  /**
+   * Creates a new SIN validation entry associated with the student user.
+   * This entry will be updated in the student record as the one that represents
+   * the current state of the SIN validation.
+   * @param studentId student to have the SIN validation created.
+   * @returns newly created record id.
+   */
+  @Post(":studentId/sin-validations")
+  @ApiNotFoundResponse({ description: "Student does not exists." })
+  async createStudentSINValidation(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Body() payload: CreateSINValidationAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const studentExists = await this.studentService.studentExists(studentId);
+    if (!studentExists) {
+      throw new NotFoundException("Student does not exists.");
+    }
+    const createdSINValidation =
+      await this.sinValidationService.createSINValidation(
+        studentId,
+        payload.sin,
+        payload.skipValidations,
+        payload.noteDescription,
+        userToken.userId,
+      );
+    return { id: createdSINValidation.id };
+  }
+
+  /**
+   * Updates the SIN validation expiry date for temporary SIN.
+   * @param studentId student to have the SIN validation updated.
+   * @param sinValidationId SIN validation record to be updated.
+   * @param payload data to be updated.
+   */
+  @Patch(":studentId/sin-validations/:sinValidationId")
+  @ApiNotFoundResponse({
+    description:
+      "Student does not exists or SIN validation record not found or it does not belong to the student.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Not a temporary SIN or the expiry date is already set and cannot be updated again.",
+  })
+  async updateStudentSINValidation(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("sinValidationId", ParseIntPipe) sinValidationId: number,
+    @Body() payload: UpdateSINValidationAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    const studentExists = await this.studentService.studentExists(studentId);
+    if (!studentExists) {
+      throw new NotFoundException("Student does not exists.");
+    }
+    try {
+      await this.sinValidationService.updateSINValidation(
+        sinValidationId,
+        studentId,
+        new Date(payload.expiryDate),
+        payload.noteDescription,
+        userToken.userId,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case SIN_VALIDATION_RECORD_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case SIN_VALIDATION_RECORD_INVALID_OPERATION:
+            throw new UnprocessableEntityException(error.message);
+          default:
+            throw error;
+        }
+      }
+      throw error;
+    }
   }
 }

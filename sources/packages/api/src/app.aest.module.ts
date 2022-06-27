@@ -33,6 +33,7 @@ import {
   RestrictionService,
   ApplicationExceptionService,
   StudentScholasticStandingsService,
+  SINValidationService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -114,6 +115,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     ApplicationExceptionService,
     StudentScholasticStandingsService,
     ScholasticStandingControllerService,
+    SINValidationService,
   ],
 })
 export class AppAESTModule {}

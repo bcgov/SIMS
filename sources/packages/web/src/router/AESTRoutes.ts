@@ -44,6 +44,7 @@ import StudentAppealRequestsApproval from "@/views/aest/StudentAppealRequestsApp
 import NoticeOfAssessment from "@/views/aest/NoticeOfAssessment.vue";
 import ApplicationExceptionsApproval from "@/views/aest/ApplicationExceptionsApproval.vue";
 import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
+import SINManagement from "@/views/aest/student/SINManagement.vue";
 import StudentApplicationExceptions from "@/views/aest/institution/StudentApplicationExceptions.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
@@ -137,6 +138,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.STUDENT_NOTES,
             props: true,
             component: StudentNotes,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.SINManagement,
+            name: AESTRoutesConst.SIN_MANAGEMENT,
+            props: true,
+            component: SINManagement,
             meta: {
               clientType: ClientIdType.AEST,
             },

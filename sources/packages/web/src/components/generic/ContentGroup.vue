@@ -1,5 +1,5 @@
 <template>
-  <div class="content-group p-3">
+  <div class="content-group">
     <slot></slot>
   </div>
 </template>

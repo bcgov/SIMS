@@ -86,9 +86,18 @@ export default {
         },
       },
       {
+        label: "Social insurance number",
+        icon: "fa fa-check-square-o",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.SIN_MANAGEMENT,
+            params: { studentId: props.studentId },
+          });
+        },
+      },
+      {
         label: "Notes",
         icon: "fa fa-sticky-note-o",
-
         command: () => {
           router.push({
             name: AESTRoutesConst.STUDENT_NOTES,

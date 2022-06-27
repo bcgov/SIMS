@@ -2,8 +2,8 @@
  * FormIO form. Methods available can be checked on
  * https://help.form.io/developers/form-renderer.
  */
-export interface FormIOForm {
-  data: any;
+export interface FormIOForm<T = any> {
+  data: T;
   checkValidity: (
     data: any,
     dirty: boolean,
