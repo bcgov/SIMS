@@ -70,7 +70,6 @@ import {
   faFileAlt as faFileAltSolid,
   faHandPaper as faHandPaperSolid,
   faPlusCircle as faPlusCircleSolid,
-  faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faFileAlt,
@@ -78,10 +77,11 @@ import {
   faCheckSquare,
   faHandPaper,
   faCopy as farCopy,
+  faCheckCircle as farCheckCircle,
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
-  faCheckCircle,
+  farCheckCircle,
   faMapPin,
   faCheck,
   faCircle,

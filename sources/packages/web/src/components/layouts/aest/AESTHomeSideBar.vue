@@ -129,7 +129,7 @@ export default {
 
     const exceptionsItem = ref({
       label: "Exceptions",
-      icon: ["fas", "check-circle"],
+      icon: ["far", "check-circle"],
       command: () => {
         router.push({
           name: AESTRoutesConst.EXCEPTIONS,
