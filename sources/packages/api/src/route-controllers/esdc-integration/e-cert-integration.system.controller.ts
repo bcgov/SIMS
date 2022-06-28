@@ -1,4 +1,4 @@
-import { Controller, Post } from "@nestjs/common";
+import { Controller, Post, Query } from "@nestjs/common";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
@@ -9,6 +9,7 @@ import { ECertFileHandler } from "../../esdc-integration/e-cert-integration/e-ce
 import { ESDCFileResponseDTO, ESDCFileResultDTO } from "./models/esdc-model";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { DisbursementReceiptRequestService } from "src/esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/e-cert")
 @ApiTags("system-access")
@@ -16,6 +17,7 @@ export class ECertIntegrationController extends BaseController {
   constructor(
     private readonly eCertFileHandler: ECertFileHandler,
     private readonly disbursementReceiptProcessingService: DisbursementReceiptProcessingService,
+    private readonly disbursementReceiptRequestService: DisbursementReceiptRequestService,
   ) {
     super();
   }
@@ -98,6 +100,26 @@ export class ECertIntegrationController extends BaseController {
       processSummary: response.processSummary,
       errorsSummary: response.errorsSummary,
     }));
+  }
+
+  /**
+   * Send provincial daily disbursement information to FIN.
+   * @returns Summary details of processing.
+   */
+  @Post("process-provincial-daily-disbursements")
+  async processProvincialDailyDisbursements(
+    @Query("processDate") processDate: Date,
+  ): Promise<ESDCFileResultDTO[]> {
+    const dailyDisbursementsResults =
+      await this.disbursementReceiptRequestService.processProvincialDailyDisbursements(
+        processDate,
+      );
+    return [
+      {
+        generatedFile: dailyDisbursementsResults.generatedFile,
+        uploadedRecords: dailyDisbursementsResults.uploadedRecords,
+      },
+    ];
   }
 
   @InjectLogger()

@@ -22,3 +22,10 @@ export interface DisbursementReceiptModel {
   totalDisbursedGrantAmountInstitution: string;
   grants: DisbursementReceiptGrantModel[];
 }
+
+export interface DailyDisbursementTotalRecords {
+  "BC Student Loan": number;
+  "BC Student Grant": number;
+  "BC Total": number;
+  "Total Records": number;
+}

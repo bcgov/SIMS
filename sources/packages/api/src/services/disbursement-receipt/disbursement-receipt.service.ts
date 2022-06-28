@@ -7,7 +7,10 @@ import {
   DisbursementSchedule,
   User,
 } from "../../database/entities";
-import { DisbursementReceiptModel } from "./disbursement-receipt.model";
+import {
+  DailyDisbursementTotalRecords,
+  DisbursementReceiptModel,
+} from "./disbursement-receipt.model";
 
 /**
  * Service for disbursement receipts.
@@ -110,5 +113,42 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
       }
     });
     return generatedId;
+  }
+
+  async getMaxDisbursementReceiptDate(): Promise<Date> {
+    const batchRunDate = await this.repo
+      .createQueryBuilder("disbursementReceipt")
+      .select("MAX(disbursementReceipt.batchRunDate)")
+      .getRawOne();
+    return batchRunDate?.max ?? new Date();
+  }
+
+  async getDailyDisbursementRecords(
+    batchRunDate: Date,
+  ): Promise<DailyDisbursementTotalRecords> {
+    const bcFundingType = "BC";
+    const query = await this.repo
+      .createQueryBuilder("disbursementReceipt")
+      .select("SUM(disbursementReceipt.total_disbursed_amount) as totalbcsl")
+      .addSelect("SUM(disbursementReceiptValues.grant_amount) as  totalbcsg")
+      .addSelect("count(disbursementReceipt.id) as totalrecords")
+      .innerJoin(
+        "disbursementReceipt.disbursementReceiptValues",
+        "disbursementReceiptValues",
+      )
+      .where("disbursementReceipt.batchRunDate = :batchRunDate", {
+        batchRunDate,
+      })
+      .andWhere("disbursementReceipt.fundingType = :bcFundingType", {
+        bcFundingType,
+      });
+    const records = await query.getRawOne();
+
+    return {
+      "BC Student Loan": +(records?.totalbcsl ?? 0),
+      "BC Student Grant": +(records?.totalbcsg ?? 0),
+      "BC Total": +(+records?.totalbcsl + +records?.totalbcsg ?? 0),
+      "Total Records": +(records?.totalrecords ?? 0),
+    };
   }
 }

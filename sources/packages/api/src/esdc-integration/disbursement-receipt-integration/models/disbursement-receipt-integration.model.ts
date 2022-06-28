@@ -11,9 +11,27 @@ export enum DisbursementReceiptRecordType {
 }
 
 /**
- * Response model which is extracted from disbursement receipt file.
+ * Response model which is extracted from daily disbursement receipt file.
  */
 export class DisbursementReceiptDownloadResponse {
   header: DisbursementReceiptHeader;
   records: DisbursementReceiptDetail[];
+}
+
+/**
+ * Result of a file uploaded to SFTP on ZONE B network.
+ */
+export interface DailyDisbursementUploadResult {
+  generatedFile: string;
+  uploadedRecords: number;
+}
+
+/**
+ * Represents a single line in a daily disbursement receipt file.
+ * When implemented in a derived class this
+ * interface allow the object to be represented
+ * as a formatted fixed string.
+ */
+export interface DailyDisbursementRequestFileLine {
+  getFixedFormat(): string;
 }

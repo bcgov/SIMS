@@ -89,7 +89,7 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
    * @param reportData
    * @returns CSV string.
    */
-  private buildCSVString(reportData: any[]): string {
+  buildCSVString(reportData: any[]): string {
     if (!reportData || reportData.length === 0) {
       return "No data found.";
     }
