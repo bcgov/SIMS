@@ -219,7 +219,7 @@ export class InstitutionInstitutionsController extends BaseController {
     }
     // Check if the user being added to th institution belongs to the institution.
     if (
-      institution.guid.toLowerCase() !==
+      institution.businessGuid.toLowerCase() !==
       bceidUserAccount.institution.guid.toLowerCase()
     ) {
       throw new UnprocessableEntityException(

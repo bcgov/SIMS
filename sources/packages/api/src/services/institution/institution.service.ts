@@ -192,7 +192,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     user.lastName = account.user.surname;
     user.email = institutionModel.userEmail;
 
-    institution.guid = account.institution.guid;
+    institution.businessGuid = account.institution.guid;
     institution.legalOperatingName = account.institution.legalName;
 
     await this.createAssociation({
@@ -269,7 +269,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       );
 
       institutionEntity = await this.repo.findOne({
-        guid: account.institution.guid,
+        businessGuid: account.institution.guid,
       });
       if (institutionEntity) {
         // Create association with user
@@ -285,7 +285,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
         );
       }
     }
-    if (institutionEntity.guid !== account.institution.guid) {
+    if (institutionEntity.businessGuid !== account.institution.guid) {
       throw new UnprocessableEntityException(
         "Unable to process BCeID account of current user because account institution guid mismatch",
       );
@@ -421,8 +421,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     });
   }
 
-  async doesExist(guid: string): Promise<boolean> {
-    const count = await this.repo.count({ guid: guid });
+  async doesExist(businessGuid: string): Promise<boolean> {
+    const count = await this.repo.count({ businessGuid });
     if (1 === count) {
       return true;
     }

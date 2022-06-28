@@ -25,11 +25,13 @@ export interface InstitutionAddress {
 export class Institution extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
-
+  /**
+   * Business identifier of an institution.
+   */
   @Column({
-    name: "guid",
+    name: "business_guid",
   })
-  guid: string;
+  businessGuid: string;
 
   @Column({
     name: "legal_operating_name",
