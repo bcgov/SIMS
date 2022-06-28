@@ -13,6 +13,10 @@ import {
   DATE_FORMAT,
 } from "../models/esdc-integration.model";
 import { DailyDisbursementUploadResult } from "./models/disbursement-receipt-integration.model";
+import {
+  ReportFilterParam,
+  ReportsFilterModel,
+} from "src/services/report/report.models";
 
 @Injectable()
 export class DisbursementReceiptRequestService extends ESDCFileHandler {
@@ -31,25 +35,24 @@ export class DisbursementReceiptRequestService extends ESDCFileHandler {
    * @returns Processing Daily Disbursement request result.
    */
   async processProvincialDailyDisbursements(
-    processDate?: Date,
+    batchRunDate?: Date,
   ): Promise<DailyDisbursementUploadResult> {
-    if (processDate) {
-      processDate =
+    const reportName = "Daily_Disbursement_File";
+    if (batchRunDate) {
+      batchRunDate =
         await this.disbursementReceiptService.getMaxDisbursementReceiptDate();
     }
     this.logger.log(
-      `Fetches the Daily disbursement information which are not sent on ${processDate}`,
+      `Fetches the Daily disbursement information which are not sent on ${batchRunDate}`,
     );
-    const dailyDisbursementsRecords =
-      await this.disbursementReceiptService.getDailyDisbursementRecords(
-        processDate,
-      );
-    const dailyDisbursementsContent = this.reportService.buildCSVString([
-      dailyDisbursementsRecords,
-    ]);
-    // Create the request filename with the file path for the MSFAA Request
-    // sent File.
-    const filename = await this.createRequestFileName("fileCode");
+
+    const reportFilterModel: ReportsFilterModel = {
+      reportName: reportName,
+      params: { ["batchRunDate"]: batchRunDate },
+    };
+    const dailyDisbursementsRecordsInCSV =
+      await this.reportService.getReportDataAsCSV(reportFilterModel);
+
     return;
   }
 
