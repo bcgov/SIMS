@@ -262,9 +262,10 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
 
     const fieldSortOptions = {
       applicationNumber: "application.applicationNumber",
+      submittedDate: "exception.createdAt",
     };
 
-    const dbColumnName = fieldSortOptions[sortField] || "exception.createdAt";
+    const dbColumnName = fieldSortOptions[sortField];
     orderByCondition[dbColumnName] = sortOrder;
     return orderByCondition;
   }
