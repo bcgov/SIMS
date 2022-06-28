@@ -5,19 +5,21 @@ import {
   NotFoundException,
   Param,
   Patch,
+  Post,
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { InstitutionService } from "../../services";
 import { AddressInfo, Institution } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   InstitutionProfileAPIInDTO,
   InstitutionDetailAPIOutDTO,
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
+  AESTInstitutionFormAPIInDTO,
 } from "./models/institution.dto";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
@@ -34,6 +36,8 @@ import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
 import { ClientTypeBaseRoute } from "../../types";
+import { IUserToken } from "src/auth/userToken.interface";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /**
  * Institution controller for AEST Client.
@@ -202,5 +206,27 @@ export class InstitutionAESTController extends BaseController {
     return this.locationControllerService.getInstitutionLocations(
       institutionId,
     );
+  }
+
+  /**
+   * Create institutions that are not allowed to create the profile by
+   * themselves due to limitations, for instance, when the institution
+   * has only a basic BCeID login.
+   * @param payload complete information to create the profile.
+   * @returns primary identifier of the created resource.
+   */
+  @Post()
+  async createInstitution(
+    @Body() payload: AESTInstitutionFormAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const institution = await this.institutionService.createInstitution(
+      payload,
+      userToken.userId,
+    );
+
+    return {
+      id: institution.id,
+    };
   }
 }

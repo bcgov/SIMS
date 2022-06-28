@@ -77,7 +77,7 @@ export class InstitutionService {
     await ApiClient.Institution.createInstitution(data);
   }
 
-  public async updateInstitute(
+  public async updateInstitution(
     data: InstitutionContactAPIInDTO,
     institutionId?: number,
   ): Promise<void> {

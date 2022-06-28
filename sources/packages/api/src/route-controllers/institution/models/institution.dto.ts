@@ -49,6 +49,11 @@ export class InstitutionFormAPIInDTO extends AddressDetailsAPIInDTO {
   institutionType: number;
 }
 
+export class AESTInstitutionFormAPIInDTO extends InstitutionFormAPIInDTO {
+  @IsNotEmpty()
+  legalOperatingName: string;
+}
+
 export class InstitutionDto extends PartialType(InstitutionFormAPIInDTO) {
   @IsOptional()
   userEmail?: string;

@@ -104,10 +104,11 @@ export class InstitutionInstitutionsController extends BaseController {
     }
 
     // Save institution
-    const institution = await this.institutionService.createInstitution(
-      userToken,
-      payload,
-    );
+    const institution =
+      await this.institutionService.createInstitutionWithAssociatedUser(
+        payload,
+        userToken,
+      );
 
     return {
       id: institution.id,

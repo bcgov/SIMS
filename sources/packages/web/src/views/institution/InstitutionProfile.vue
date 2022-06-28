@@ -42,7 +42,7 @@ export default {
 
     const updateInstitution = async (data: InstitutionContactAPIInDTO) => {
       try {
-        await InstitutionService.shared.updateInstitute(data);
+        await InstitutionService.shared.updateInstitution(data);
         toast.success("Update Successful", "Institution successfully updated!");
         await store.dispatch("institution/getInstitutionDetails");
         router.push({

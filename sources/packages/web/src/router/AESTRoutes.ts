@@ -405,6 +405,14 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.AESTInstitutionProfileCreate,
+        name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE,
+        component: ProfileEdit,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
         path: AppRoutes.Reports,
         name: AESTRoutesConst.REPORTS,
         components: {

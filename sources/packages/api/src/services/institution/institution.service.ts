@@ -69,6 +69,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     location,
     role,
     institutionUser,
+    auditUserId,
   }: {
     institution: Institution;
     type: InstitutionUserType;
@@ -76,12 +77,16 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     location?: InstitutionLocation;
     role?: InstitutionUserRole;
     institutionUser?: InstitutionUser;
+    auditUserId: number;
   }): Promise<InstitutionUser> {
+    const auditUser = { id: auditUserId } as User;
     const finalInstitutionUser =
       institutionUser || this.institutionUserRepo.create();
+    finalInstitutionUser.creator = auditUser;
     finalInstitutionUser.user = user;
     finalInstitutionUser.institution = institution;
     const auth = this.institutionUserAuthRepo.create();
+    auth.creator = auditUser;
     const authType = await this.institutionUserTypeAndRoleRepo.findOneOrFail({
       type,
       role: role || null,
@@ -149,24 +154,39 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   async createInstitution(
-    userInfo: UserInfo,
     institutionModel: InstitutionFormModel,
+    auditUserId: number,
   ): Promise<Institution> {
-    const institution = this.create();
+    const institution = this.initializeInstitutionFromFormModel(
+      institutionModel,
+      auditUserId,
+    );
+    return this.repo.save(institution);
+  }
+
+  async createInstitutionWithAssociatedUser(
+    institutionModel: InstitutionFormModel,
+    userInfo: UserInfo,
+  ): Promise<Institution> {
+    const institution = this.initializeInstitutionFromFormModel(
+      institutionModel,
+      userInfo.userId,
+    );
+
     const user = new User();
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
     );
 
     if (account == null) {
-      //This scenario occurs if basic BCeID users try to push the bceid account into our application.
+      // This scenario occurs if basic BCeID users try to push the bceid account into our application.
       this.logger.error(
         "Account information could not be retrieved from BCeID",
       );
       return;
     }
 
-    //Username retrieved from the token
+    // Username retrieved from the token.
     user.userName = userInfo.userName;
     user.firstName = account.user.firstname;
     user.lastName = account.user.surname;
@@ -174,6 +194,24 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
     institution.guid = account.institution.guid;
     institution.legalOperatingName = account.institution.legalName;
+
+    await this.createAssociation({
+      institution,
+      user,
+      type: InstitutionUserType.admin,
+      auditUserId: userInfo.userId,
+    });
+
+    return institution;
+  }
+
+  private initializeInstitutionFromFormModel(
+    institutionModel: InstitutionFormModel,
+    auditUserId: number,
+  ): Institution {
+    const institution = new Institution();
+    institution.creator = { id: auditUserId } as User;
+    institution.legalOperatingName = institutionModel.legalOperatingName;
     institution.operatingName = institutionModel.operatingName;
     institution.primaryPhone = institutionModel.primaryPhone;
     institution.primaryEmail = institutionModel.primaryEmail;
@@ -184,7 +222,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       id: institutionModel.institutionType,
     } as InstitutionType;
 
-    //Institution Primary Contact Information
+    // Institution Primary Contact Information.
     institution.institutionPrimaryContact = {
       firstName: institutionModel.primaryContactFirstName,
       lastName: institutionModel.primaryContactLastName,
@@ -192,16 +230,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       phone: institutionModel.primaryContactPhone,
     };
 
-    //Institution Address
+    // Institution Address.
     institution.institutionAddress = {
       mailingAddress: transformAddressDetails(institutionModel),
     };
-
-    await this.createAssociation({
-      institution,
-      user,
-      type: InstitutionUserType.admin,
-    });
 
     return institution;
   }
@@ -245,6 +277,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
           institution: institutionEntity,
           user,
           type: InstitutionUserType.admin,
+          auditUserId: userInfo.userId,
         });
       } else {
         throw new UnprocessableEntityException(
