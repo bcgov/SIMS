@@ -23,6 +23,7 @@ import {
   InstitutionLocationAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   AESTCreateInstitutionAPIInDTO,
+  PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -35,7 +36,7 @@ export class InstitutionApi extends HttpBaseClient {
    */
   async createInstitution(
     createInstitutionDTO: AESTCreateInstitutionAPIInDTO,
-  ): Promise<void> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     return this.postCall<AESTCreateInstitutionAPIInDTO>(
       this.addClientRoot("institution"),
       createInstitutionDTO,
@@ -49,7 +50,7 @@ export class InstitutionApi extends HttpBaseClient {
    */
   async createInstitutionWithAssociatedUser(
     createInstitutionDto: CreateInstitutionAPIInDTO,
-  ): Promise<void> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     return this.postCall<CreateInstitutionAPIInDTO>(
       this.addClientRoot("institution"),
       createInstitutionDto,

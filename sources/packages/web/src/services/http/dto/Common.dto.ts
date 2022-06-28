@@ -40,3 +40,10 @@ export interface FileCreateAPIOutDTO {
   size: number;
   mimetype: string;
 }
+
+/**
+ * Common primary identifier for all the DTO.
+ */
+export interface PrimaryIdentifierAPIOutDTO {
+  id: number;
+}

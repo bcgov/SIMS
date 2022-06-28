@@ -21,12 +21,10 @@ import { useFormioDropdownLoader, useToastMessage } from "@/composables";
 
 export default {
   setup() {
-    // Hooks
     const store = useStore();
     const toast = useToastMessage();
     const router = useRouter();
     const formioDataLoader = useFormioDropdownLoader();
-    // Data-bind
     const initialData = ref({});
 
     const submitted = async (data: CreateInstitutionAPIInDTO) => {

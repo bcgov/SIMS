@@ -32,6 +32,7 @@ import {
   InstitutionLocationAPIInDTO,
   InstitutionLocationPrimaryContactAPIInDTO,
   AESTCreateInstitutionAPIInDTO,
+  PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -49,8 +50,10 @@ export class InstitutionService {
    * has only a basic BCeID login.
    * @param data complete information to create the profile.
    */
-  async createInstitution(data: AESTCreateInstitutionAPIInDTO): Promise<void> {
-    await ApiClient.Institution.createInstitution(data);
+  async createInstitution(
+    data: AESTCreateInstitutionAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.Institution.createInstitution(data);
   }
 
   /**
@@ -60,8 +63,8 @@ export class InstitutionService {
    */
   async createInstitutionWithAssociatedUser(
     data: CreateInstitutionAPIInDTO,
-  ): Promise<void> {
-    await ApiClient.Institution.createInstitutionWithAssociatedUser(data);
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.Institution.createInstitutionWithAssociatedUser(data);
   }
 
   public async updateInstitution(

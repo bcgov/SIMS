@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { ClientIdType } from "@/types";
 import {
   AESTCreateInstitutionAPIInDTO,
@@ -23,6 +24,7 @@ import {
 import { InstitutionService } from "@/services/InstitutionService";
 import { useToastMessage } from "@/composables";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 type InstitutionDetailFormModel = Pick<
   InstitutionDetailAPIOutDTO,
@@ -34,6 +36,7 @@ type InstitutionDetailFormModel = Pick<
 export default {
   components: { InstitutionProfileForm },
   setup() {
+    const router = useRouter();
     const toast = useToastMessage();
     const institutionProfileModel = ref({
       clientType: ClientIdType.AEST,
@@ -42,11 +45,16 @@ export default {
 
     const createInstitution = async (data: AESTCreateInstitutionAPIInDTO) => {
       try {
-        await InstitutionService.shared.createInstitution(data);
+        const createdInstitution =
+          await InstitutionService.shared.createInstitution(data);
         toast.success(
           "Successfully created",
           "Institution successfully created!",
         );
+        router.push({
+          name: AESTRoutesConst.INSTITUTION_PROFILE,
+          params: { institutionId: createdInstitution.id },
+        });
       } catch (error) {
         toast.error(
           "Unexpected error",

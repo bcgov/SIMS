@@ -16,7 +16,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
     createInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
   ): Promise<void> {
-    return this.postCall<InstitutionLocationFormAPIInDTO>(
+    await this.postCall<InstitutionLocationFormAPIInDTO>(
       this.addClientRoot("location"),
       createInstitutionLocationDto,
     );
@@ -53,7 +53,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async createUser(
     createInstitutionUserDto: InstitutionUserAPIInDTO,
   ): Promise<void> {
-    return this.postCall<InstitutionUserAPIInDTO>(
+    await this.postCall<InstitutionUserAPIInDTO>(
       this.addClientRoot("institution/user"),
       createInstitutionUserDto,
     );
