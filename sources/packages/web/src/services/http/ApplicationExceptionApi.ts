@@ -44,11 +44,11 @@ export class ApplicationExceptionApi extends HttpBaseClient {
   }
 
   /**
-   * Gets all student application exceptions.
+   * Gets all pending student application exceptions.
    * @param paginationOptions options to execute the pagination.
    * @returns list of student application exceptions.
    */
-  async getExceptions(
+  async getPendingExceptions(
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationExceptionSummaryAPIOutDTO>> {
     let url = `application-exception`;

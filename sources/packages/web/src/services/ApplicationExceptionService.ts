@@ -42,13 +42,15 @@ export class ApplicationExceptionService {
   }
 
   /**
-   * Gets all student application exceptions.
+   * Gets all pending student application exceptions.
    * @param paginationOptions options to execute the pagination.
    * @returns list of student application exceptions.
    */
-  async getExceptions(
+  async getPendingExceptions(
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<ApplicationExceptionSummaryAPIOutDTO>> {
-    return ApiClient.ApplicationExceptionApi.getExceptions(paginationOptions);
+    return ApiClient.ApplicationExceptionApi.getPendingExceptions(
+      paginationOptions,
+    );
   }
 }

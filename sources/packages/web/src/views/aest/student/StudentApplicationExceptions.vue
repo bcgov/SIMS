@@ -1,69 +1,79 @@
 <template>
-  <body-header
-    title="Requested exceptions"
-    :recordsCount="applicationExceptions.results?.length"
-    subTitle="Make a determination on application submitted with exceptions."
-    class="m-1"
-  >
-    <template #actions>
-      <v-text-field
-        class="v-text-field-search-width"
-        density="compact"
-        label="Search name or application #"
-        variant="outlined"
-        v-model="searchCriteria"
-        @keyup.enter="searchExceptions"
-      >
-        <template v-slot:prependInner>
-          <font-awesome-icon :icon="['fas', 'search']" class="m" />
-        </template>
-      </v-text-field>
+  <full-page-container>
+    <template #header>
+      <header-navigator title="Students" subTitle="Exceptions" />
     </template>
-  </body-header>
-  <content-group>
-    <toggle-content :toggled="!applicationExceptions.results?.length">
-      <DataTable
-        :value="applicationExceptions.results"
-        :lazy="true"
-        class="p-m-4"
-        :paginator="true"
-        :rows="pageLimit"
-        :rowsPerPageOptions="PAGINATION_LIST"
-        :totalRecords="applicationExceptions.count"
-        @page="pageEvent"
-        @sort="sortEvent"
-      >
-        <Column field="submittedDate" header="Date submitted">
-          <template #body="slotProps">
-            <span>
-              {{ dateOnlyLongString(slotProps.data.submittedDate) }}
-            </span>
-          </template>
-        </Column>
-        <Column field="fullName" header="Name" :sortable="true"> </Column>
-        <Column
-          field="applicationNumber"
-          header="Application #"
-          :sortable="true"
-        ></Column>
 
-        <Column header="Action">
-          <template #body="slotProps">
-            <v-btn
-              class="primary-btn-background"
-              @click="
-                gotToAssessmentsSummary(
-                  slotProps.data.applicationId,
-                  slotProps.data.studentId,
-                )
-              "
-              >View</v-btn
-            >
+    <body-header
+      title="Requested exceptions"
+      :recordsCount="applicationExceptions.results?.length"
+      subTitle="Make a determination on application submitted with exceptions."
+      class="m-1"
+    >
+      <template #actions>
+        <v-text-field
+          class="v-text-field-search-width"
+          density="compact"
+          label="Search name or application #"
+          variant="outlined"
+          v-model="searchCriteria"
+          @keyup.enter="searchExceptions"
+        >
+          <template v-slot:prependInner>
+            <font-awesome-icon :icon="['fas', 'search']" class="m" />
           </template>
-        </Column>
-      </DataTable>
-    </toggle-content>
-  </content-group>
+        </v-text-field>
+      </template>
+    </body-header>
+    <content-group>
+      <toggle-content :toggled="!applicationExceptions.results?.length">
+        <DataTable
+          :value="applicationExceptions.results"
+          :lazy="true"
+          class="p-m-4"
+          :paginator="true"
+          :rows="pageLimit"
+          :rowsPerPageOptions="PAGINATION_LIST"
+          :totalRecords="applicationExceptions.count"
+          @page="pageEvent"
+          @sort="sortEvent"
+        >
+          <Column
+            field="submittedDate"
+            :sortable="true"
+            header="Date submitted"
+          >
+            <template #body="slotProps">
+              <span>
+                {{ dateOnlyLongString(slotProps.data.submittedDate) }}
+              </span>
+            </template>
+          </Column>
+          <Column field="fullName" header="Name" :sortable="true"> </Column>
+          <Column
+            field="applicationNumber"
+            :sortable="true"
+            header="Application #"
+          ></Column>
+
+          <Column header="Action">
+            <template #body="slotProps">
+              <v-btn
+                class="primary-btn-background"
+                @click="
+                  gotToAssessmentsSummary(
+                    slotProps.data.applicationId,
+                    slotProps.data.studentId,
+                  )
+                "
+                >View</v-btn
+              >
+            </template>
+          </Column>
+        </DataTable>
+      </toggle-content>
+    </content-group>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -79,9 +89,10 @@ import {
   PageAndSortEvent,
   PaginatedResults,
 } from "@/types";
-import { ApplicationExceptionSummaryAPIOutDTO } from "@/services/http/dto";
+
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { ApplicationExceptionSummaryAPIOutDTO } from "@/services/http/dto/ApplicationException.dto";
 
 const DEFAULT_SORT_FIELD = "applicationNumber";
 
@@ -113,7 +124,7 @@ export default {
 
     const getExceptionList = async () => {
       applicationExceptions.value =
-        await ApplicationExceptionService.shared.getExceptions({
+        await ApplicationExceptionService.shared.getPendingExceptions({
           page: page.value,
           pageLimit: pageLimit.value,
           sortField: sortField.value,

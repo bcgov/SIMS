@@ -36,7 +36,7 @@ import {
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ApplicationExceptionStatus } from "../../database/entities";
 import {
-  ApplicationStatusPaginationOptionsAPIInDTO,
+  ApplicationExceptionPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 
@@ -127,29 +127,27 @@ export class ApplicationExceptionAESTController extends BaseController {
   }
 
   /**
-   * Gets all student application exceptions.
+   * Gets all pending student application exceptions.
    * @param pagination options to execute the pagination.
-   * @returns list of student application exceptions.
+   * @returns list of pending student application exceptions.
    */
   @Get()
-  async getExceptions(
-    @Query() pagination: ApplicationStatusPaginationOptionsAPIInDTO,
+  async getPendingApplicationExceptions(
+    @Query() pagination: ApplicationExceptionPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationExceptionSummaryAPIOutDTO>> {
     const applicationExceptions =
-      await this.applicationExceptionService.getApplicationExceptions(
+      await this.applicationExceptionService.getPendingApplicationExceptions(
         pagination,
       );
 
     return {
-      results: applicationExceptions.results.map((eachApplication) => {
-        return {
-          applicationId: eachApplication.application.id,
-          studentId: eachApplication.application.student.id,
-          applicationNumber: eachApplication.application.applicationNumber,
-          submittedDate: eachApplication.createdAt,
-          fullName: getUserFullName(eachApplication.application.student.user),
-        };
-      }),
+      results: applicationExceptions.results.map((eachApplication) => ({
+        applicationId: eachApplication.application.id,
+        studentId: eachApplication.application.student.id,
+        applicationNumber: eachApplication.application.applicationNumber,
+        submittedDate: eachApplication.createdAt,
+        fullName: getUserFullName(eachApplication.application.student.user),
+      })),
       count: applicationExceptions.count,
     };
   }

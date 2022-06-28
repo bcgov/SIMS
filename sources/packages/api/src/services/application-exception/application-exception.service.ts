@@ -185,11 +185,11 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
   }
 
   /**
-   * Gets all students application exceptions.
+   * Gets all pending students application exceptions.
    * @param paginationOptions options to execute the pagination.
-   * @returns list of student application exceptions.
+   * @returns list of pending student application exceptions.
    */
-  async getApplicationExceptions(
+  async getPendingApplicationExceptions(
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<ApplicationException>> {
     const applicationExceptionsQuery = this.repo
@@ -205,7 +205,10 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       ])
       .innerJoin("exception.application", "application")
       .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user");
+      .innerJoin("student.user", "user")
+      .where("exception.exceptionStatus = :exceptionStatus", {
+        exceptionStatus: ApplicationExceptionStatus.Pending,
+      });
 
     if (paginationOptions.searchCriteria) {
       applicationExceptionsQuery
@@ -259,6 +262,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
 
     const fieldSortOptions = {
       applicationNumber: "application.applicationNumber",
+      submittedDate: "exception.createdAt",
     };
     const dbColumnName = fieldSortOptions[sortField];
     orderByCondition[dbColumnName] = sortOrder;
