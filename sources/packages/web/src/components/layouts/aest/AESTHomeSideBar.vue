@@ -132,7 +132,7 @@ export default {
       icon: ["far", "check-circle"],
       command: () => {
         router.push({
-          name: AESTRoutesConst.EXCEPTIONS,
+          name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
         });
       },
     } as MenuModel);

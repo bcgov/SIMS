@@ -250,7 +250,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
    * @returns OrderByCondition
    */
   private transformToEntitySortField(
-    sortField = "applicationNumber",
+    sortField = "submittedDate",
     sortOrder = FieldSortOrder.ASC,
   ): OrderByCondition {
     const orderByCondition = {};
@@ -264,7 +264,8 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       applicationNumber: "application.applicationNumber",
       submittedDate: "exception.createdAt",
     };
-    const dbColumnName = fieldSortOptions[sortField];
+
+    const dbColumnName = fieldSortOptions[sortField] || "exception.createdAt";
     orderByCondition[dbColumnName] = sortOrder;
     return orderByCondition;
   }

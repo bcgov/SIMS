@@ -418,7 +418,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.Exceptions,
-        name: AESTRoutesConst.EXCEPTIONS,
+        name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
         components: {
           default: StudentApplicationExceptions,
           sidebar: AESTHomeSideBar,

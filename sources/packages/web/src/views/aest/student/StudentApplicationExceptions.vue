@@ -3,7 +3,6 @@
     <template #header>
       <header-navigator title="Students" subTitle="Exceptions" />
     </template>
-
     <body-header
       title="Requested exceptions"
       :recordsCount="applicationExceptions.results?.length"
@@ -20,7 +19,7 @@
           @keyup.enter="searchExceptions"
         >
           <template v-slot:prependInner>
-            <font-awesome-icon :icon="['fas', 'search']" class="m" />
+            <font-awesome-icon :icon="['fas', 'search']" />
           </template>
         </v-text-field>
       </template>
@@ -55,7 +54,6 @@
             :sortable="true"
             header="Application #"
           ></Column>
-
           <Column header="Action">
             <template #body="slotProps">
               <v-btn
@@ -79,7 +77,6 @@
 <script lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
 import {
   DEFAULT_PAGE_LIMIT,
@@ -89,15 +86,14 @@ import {
   PageAndSortEvent,
   PaginatedResults,
 } from "@/types";
-
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationExceptionSummaryAPIOutDTO } from "@/services/http/dto/ApplicationException.dto";
 
-const DEFAULT_SORT_FIELD = "applicationNumber";
+const DEFAULT_SORT_FIELD = "submittedDate";
 
 export default {
-  setup(_props: any) {
+  setup() {
     const router = useRouter();
     const page = ref(DEFAULT_PAGE_NUMBER);
     const pageLimit = ref(DEFAULT_PAGE_LIMIT);
