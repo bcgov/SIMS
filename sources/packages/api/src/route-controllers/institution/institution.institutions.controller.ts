@@ -30,7 +30,7 @@ import {
 import {
   InstitutionContactAPIInDTO,
   InstitutionDetailAPIOutDTO,
-  InstitutionFormAPIInDTO,
+  CreateInstitutionAPIInDTO,
 } from "./models/institution.dto";
 
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
@@ -84,17 +84,17 @@ export class InstitutionInstitutionsController extends BaseController {
   }
 
   /**
-   * Create institution on Institution setup process.
-   * @param payload
-   * @param userToken
-   * @returns Primary identifier of the created resource.
+   * Create institution during institution setup process when the institution
+   * profile and the user are create and associated altogether.
+   * @param payload information from the institution and the user.
+   * @returns primary identifier of the created resource.
    */
   @ApiUnprocessableEntityResponse({
     description: "Institution user already exist",
   })
   @Post()
-  async createInstitution(
-    @Body() payload: InstitutionFormAPIInDTO,
+  async createInstitutionWithAssociatedUser(
+    @Body() payload: CreateInstitutionAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Check user exists or not
@@ -104,10 +104,11 @@ export class InstitutionInstitutionsController extends BaseController {
     }
 
     // Save institution
-    const institution = await this.institutionService.createInstitution(
-      userToken,
-      payload,
-    );
+    const institution =
+      await this.institutionService.createInstitutionWithAssociatedUser(
+        payload,
+        userToken,
+      );
 
     return {
       id: institution.id,

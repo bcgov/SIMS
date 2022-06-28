@@ -11,6 +11,7 @@ import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
 import InstitutionDetails from "@/views/aest/institution/InstitutionDetails.vue";
 import Profile from "@/views/aest/institution/Profile.vue";
 import ProfileEdit from "@/views/aest/institution/ProfileEdit.vue";
+import ProfileCreate from "@/views/aest/institution/ProfileCreate.vue";
 import Programs from "@/views/aest/institution/Programs.vue";
 import Locations from "@/views/aest/institution/Locations.vue";
 import Users from "@/views/aest/institution/Users.vue";
@@ -400,6 +401,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.INSTITUTION_PROFILE_EDIT,
         props: true,
         component: ProfileEdit,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.AESTInstitutionProfileCreate,
+        name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE,
+        components: {
+          default: ProfileCreate,
+          sidebar: AESTHomeSideBar,
+        },
         meta: {
           clientType: ClientIdType.AEST,
         },

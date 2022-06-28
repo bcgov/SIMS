@@ -16,26 +16,47 @@ import {
   InstitutionUserAPIOutDTO,
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
-  InstitutionFormAPIInDTO,
+  CreateInstitutionAPIInDTO,
   InstitutionUserTypeAndRoleAPIOutDTO,
   InstitutionUserDetailAPIOutDTO,
   UserRoleOptionAPIOutDTO,
   InstitutionLocationAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  AESTCreateInstitutionAPIInDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
 export class InstitutionApi extends HttpBaseClient {
-  public async createInstitution(
-    createInstitutionDto: InstitutionFormAPIInDTO,
+  /**
+   * Create institutions that are not allowed to create the profile by
+   * themselves due to limitations, for instance, when the institution
+   * has only a basic BCeID login.
+   * @param createInstitutionDTO complete information to create the profile.
+   */
+  async createInstitution(
+    createInstitutionDTO: AESTCreateInstitutionAPIInDTO,
   ): Promise<void> {
-    return this.postCall<InstitutionFormAPIInDTO>(
+    return this.postCall<AESTCreateInstitutionAPIInDTO>(
+      this.addClientRoot("institution"),
+      createInstitutionDTO,
+    );
+  }
+
+  /**
+   * Create institution during institution setup process when the institution
+   * profile and the user are create and associated altogether.
+   * @param createInstitutionDto information from the institution and the user.
+   */
+  async createInstitutionWithAssociatedUser(
+    createInstitutionDto: CreateInstitutionAPIInDTO,
+  ): Promise<void> {
+    return this.postCall<CreateInstitutionAPIInDTO>(
       this.addClientRoot("institution"),
       createInstitutionDto,
     );
   }
 
-  public async updateInstitution(
+  async updateInstitution(
     data: InstitutionContactAPIInDTO | InstitutionProfileAPIInDTO,
     institutionId?: number,
   ): Promise<void> {
@@ -45,7 +66,7 @@ export class InstitutionApi extends HttpBaseClient {
     >(this.addClientRoot(url), data);
   }
 
-  public async getDetail(
+  async getDetail(
     institutionId?: number,
     authHeader?: any,
   ): Promise<InstitutionDetailAPIOutDTO> {
@@ -56,17 +77,17 @@ export class InstitutionApi extends HttpBaseClient {
     );
   }
 
-  public async sync() {
+  async sync() {
     return this.patchCall(this.addClientRoot("institution/sync"), {});
   }
 
-  public async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleAPIOutDTO> {
+  async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleAPIOutDTO> {
     return this.getCallTyped<InstitutionUserTypeAndRoleAPIOutDTO>(
       this.addClientRoot("institution/user-types-roles"),
     );
   }
 
-  public async getMyInstitutionDetails(
+  async getMyInstitutionDetails(
     header?: any,
   ): Promise<InstitutionUserDetailAPIOutDTO> {
     return this.getCallTyped<InstitutionUserDetailAPIOutDTO>(
@@ -75,7 +96,7 @@ export class InstitutionApi extends HttpBaseClient {
     );
   }
 
-  public async getInstitutionTypeOptions(): Promise<OptionItemDto[]> {
+  async getInstitutionTypeOptions(): Promise<OptionItemDto[]> {
     try {
       const response = await this.apiClient.get(
         "institution/type/options-list",
@@ -88,7 +109,7 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async checkIfExist(guid: string, headers: any): Promise<boolean> {
+  async checkIfExist(guid: string, headers: any): Promise<boolean> {
     try {
       await this.apiClient.head(
         this.addClientRoot(`institution/${guid}`),
@@ -104,7 +125,7 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async allInstitutionLocations(
+  async allInstitutionLocations(
     institutionId?: number,
   ): Promise<InstitutionLocationAPIOutDTO[]> {
     const url = institutionId
@@ -115,7 +136,7 @@ export class InstitutionApi extends HttpBaseClient {
     );
   }
 
-  public async getActiveApplicationsSummary(
+  async getActiveApplicationsSummary(
     locationId: number,
     paginationOptions: PaginationOptions,
     archived: boolean,
@@ -147,7 +168,7 @@ export class InstitutionApi extends HttpBaseClient {
     >(this.addClientRoot(url));
   }
 
-  public async searchInstitutions(
+  async searchInstitutions(
     legalName: string,
     operatingName: string,
   ): Promise<SearchInstitutionAPIOutDTO[]> {
@@ -164,7 +185,7 @@ export class InstitutionApi extends HttpBaseClient {
     );
   }
 
-  public async getBasicInstitutionInfoById(
+  async getBasicInstitutionInfoById(
     institutionId: number,
   ): Promise<InstitutionBasicAPIOutDTO> {
     return this.getCallTyped<InstitutionBasicAPIOutDTO>(
@@ -177,7 +198,7 @@ export class InstitutionApi extends HttpBaseClient {
    * @param url url to be send
    * @returns All the institution users for the given institution.
    */
-  public async institutionUserSummary(
+  async institutionUserSummary(
     url: string,
   ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
     return this.getCallTyped<PaginatedResults<InstitutionUserAPIOutDTO>>(
@@ -185,7 +206,7 @@ export class InstitutionApi extends HttpBaseClient {
     );
   }
 
-  public async getPaginatedAESTInstitutionProgramsSummary(
+  async getPaginatedAESTInstitutionProgramsSummary(
     institutionId: number,
     pageSize: number,
     page: number,
@@ -226,7 +247,7 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
+  async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
     return this.getCallTyped<UserRoleOptionAPIOutDTO[]>(
       this.addClientRoot("institution/admin-roles"),
     );

@@ -1,6 +1,6 @@
 <template>
   <formio
-    formName="institutionprofile"
+    formName="institutionProfile"
     :data="profileData"
     @loaded="formLoaded"
     @submitted="submitInstitutionProfile"
@@ -8,9 +8,9 @@
 </template>
 
 <script lang="ts">
-import { InstitutionDto } from "@/types";
 import { useFormioDropdownLoader } from "@/composables";
 import { SetupContext } from "vue";
+import { InstitutionProfileForm } from "@/types";
 
 export default {
   props: {
@@ -23,7 +23,7 @@ export default {
   setup(_props: any, context: SetupContext) {
     const formioDataLoader = useFormioDropdownLoader();
 
-    const submitInstitutionProfile = async (data: InstitutionDto) => {
+    const submitInstitutionProfile = async (data: InstitutionProfileForm) => {
       context.emit("submitInstitutionProfile", data);
     };
 
