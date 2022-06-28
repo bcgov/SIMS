@@ -1222,6 +1222,9 @@
             },
             {
               "label": "HTML",
+              "labelWidth": "",
+              "labelMargin": "",
+              "tag": "p",
               "className": "alert alert-warning fa fa-exclamation-triangle",
               "attrs": [
                 {
@@ -1229,12 +1232,31 @@
                   "value": ""
                 }
               ],
-              "content": "<strong class=\"ml-2\">You have a temporary Social Insurance Number</strong>\n<br>\n<span>You may still create your account but your applications will not be processed until we verify your SIN information. Please <a href=\"https://studentaidbc.ca/apply/eligibility#basic-eligibility\" target=\"_blank\">here</a> to prepare for the documentation required to submit and support your citizenship status'.</span>",
+              "content": "<strong class=\"ml-2\">You have a temporary Social Insurance Number</strong>\n<br>\n<span>You may still create your account but your applications will not be processed until we verify your SIN information. Please refer <a href=\"https://studentaidbc.ca/apply/eligibility#basic-eligibility\" target=\"_blank\">here</a> to prepare for the documentation required to submit and support your citizenship status'.</span>",
               "refreshOnChange": true,
               "customClass": "banner-warning",
               "hidden": true,
+              "modalEdit": false,
               "key": "html4",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": "",
+                "json": ""
+              },
               "customConditional": "// If the SIN starts with a 9 it indicates a temporary SIN.\nshow = !!data.sinNumber && data.sinNumber.charAt(0) === \"9\";\n",
+              "logic": [],
+              "attributes": {},
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
               "type": "htmlelement",
               "input": false,
               "tableView": false,
@@ -1251,7 +1273,6 @@
               "persistent": false,
               "clearOnHide": true,
               "refreshOn": "",
-              "modalEdit": false,
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
@@ -1266,7 +1287,6 @@
               "calculateValue": "",
               "calculateServer": false,
               "widget": null,
-              "attributes": {},
               "validateOn": "change",
               "validate": {
                 "required": false,
@@ -1276,27 +1296,13 @@
                 "multiple": false,
                 "unique": false
               },
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-              },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
               "allowCalculateOverride": false,
               "encrypted": false,
               "showCharCount": false,
               "showWordCount": false,
-              "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "tag": "p",
-              "id": "e2zqjhh"
+              "id": "e1tpmdm"
             }
           ],
           "placeholder": "",
