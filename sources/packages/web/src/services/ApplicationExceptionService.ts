@@ -1,8 +1,10 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   ApplicationExceptionAPIOutDTO,
+  ApplicationExceptionSummaryAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
+import { PaginatedResults, PaginationOptions } from "@/types";
 
 export class ApplicationExceptionService {
   // Share Instance
@@ -36,6 +38,19 @@ export class ApplicationExceptionService {
     await ApiClient.ApplicationExceptionApi.approveException(
       exceptionId,
       payload,
+    );
+  }
+
+  /**
+   * Gets all pending student application exceptions.
+   * @param paginationOptions options to execute the pagination.
+   * @returns list of student application exceptions.
+   */
+  async getPendingExceptions(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<ApplicationExceptionSummaryAPIOutDTO>> {
+    return ApiClient.ApplicationExceptionApi.getPendingExceptions(
+      paginationOptions,
     );
   }
 }

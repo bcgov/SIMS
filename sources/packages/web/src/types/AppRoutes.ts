@@ -60,6 +60,7 @@ export enum AppRoutes {
   NoticeOfAssessmentView = "notice-of-assessment/:assessmentId",
   Reports = "reports",
   ApplicationExceptionsApproval = "application-exceptions/:exceptionId",
+  Exceptions = "exceptions",
   // program
   Programs = "programs",
   ViewProgram = "institution/:institutionId/location/:locationId/program/:programId",
@@ -70,6 +71,7 @@ export enum AppRoutes {
   Restrictions = "restrictions",
   FileUploads = "files",
   Notes = "notes",
+  SINManagement = "sin-management",
   Applications = "applications",
   ApplicationDetail = "student/:studentId/application/:applicationId",
   SupportingUserDetail = "supporting-user/:supportingUserId",

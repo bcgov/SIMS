@@ -77,6 +77,7 @@ export const AESTRoutesConst = {
   STUDENT_RESTRICTION: Symbol(),
   STUDENT_FILE_UPLOADS: Symbol(),
   STUDENT_NOTES: Symbol(),
+  SIN_MANAGEMENT: Symbol(),
   PROGRAM_DETAILS: Symbol(),
   SEARCH_INSTITUTIONS: Symbol(),
   INSTITUTION_PROFILE: Symbol(),
@@ -103,6 +104,7 @@ export const AESTRoutesConst = {
   NOTICE_OF_ASSESSMENT_VIEW: Symbol(),
   REPORTS: Symbol(),
   APPLICATION_EXCEPTIONS_APPROVAL: Symbol(),
+  APPLICATION_EXCEPTIONS_PENDING: Symbol(),
 };
 
 /**

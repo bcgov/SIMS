@@ -23,4 +23,9 @@ export enum RestrictionCode {
    * for a PT course application, "PTSSR" restriction is added to the student account.
    */
   PTSSR = "PTSSR",
+  /**
+   * When a student has a temporary SIN and applies for a full-time/part-time application
+   * this restriction is applied case the SIN expiry date is before the offering end date.
+   */
+  SINF = "SINF",
 }

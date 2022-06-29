@@ -4,7 +4,9 @@
   "type": "form",
   "name": "institutionlocation",
   "path": "institutionlocation",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "label": "HTML",

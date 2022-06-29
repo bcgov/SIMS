@@ -57,6 +57,7 @@ import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
 import { ConfigService } from "../config/config.service";
 import { IConfig } from "../../types";
+import { StudentRestrictionService } from "../restriction/student-restriction.service";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
@@ -79,14 +80,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
   logger: LoggerService;
   private readonly config: IConfig;
   constructor(
-    connection: Connection,
     configService: ConfigService,
+    private readonly connection: Connection,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
     private readonly fileService: StudentFileService,
     private readonly workflow: WorkflowActionsService,
     private readonly msfaaNumberService: MSFAANumberService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super(connection.getRepository(Application));
     this.config = configService.getConfig();
@@ -653,36 +655,49 @@ export class ApplicationService extends RecordDataModelService<Application> {
     offering: EducationProgramOffering,
     auditUserId: number,
   ): Promise<Application> {
-    const application = await this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.id",
-        "currentAssessment.id",
-        "currentAssessment.assessmentWorkflowId",
-      ])
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("application.location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus != :applicationStatus", {
-        applicationStatus: ApplicationStatus.overwritten,
-      })
-      .andWhere("application.pirStatus = :pirStatus", {
-        pirStatus: ProgramInfoStatus.required,
-      })
-      .getOne();
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      const applicationRepo =
+        transactionalEntityManager.getRepository(Application);
+      const application = await applicationRepo
+        .createQueryBuilder("application")
+        .select([
+          "application.id",
+          "currentAssessment.id",
+          "student.id",
+          "currentAssessment.assessmentWorkflowId",
+        ])
+        .innerJoin("application.currentAssessment", "currentAssessment")
+        .innerJoin("application.student", "student")
+        .where("application.id = :applicationId", { applicationId })
+        .andWhere("application.location.id = :locationId", { locationId })
+        .andWhere("application.applicationStatus != :applicationStatus", {
+          applicationStatus: ApplicationStatus.overwritten,
+        })
+        .andWhere("application.pirStatus = :pirStatus", {
+          pirStatus: ProgramInfoStatus.required,
+        })
+        .getOne();
 
-    if (!application) {
-      throw new CustomNamedError(
-        "Not able to find an application that requires a PIR to be completed.",
-        PIR_REQUEST_NOT_FOUND_ERROR,
+      if (!application) {
+        throw new CustomNamedError(
+          "Not able to find an application that requires a PIR to be completed.",
+          PIR_REQUEST_NOT_FOUND_ERROR,
+        );
+      }
+      const auditUser = { id: auditUserId } as User;
+      application.currentAssessment.offering = offering;
+      application.currentAssessment.modifier = auditUser;
+      application.pirStatus = ProgramInfoStatus.completed;
+      application.modifier = auditUser;
+      await this.studentRestrictionService.assessSINRestrictionForOfferingId(
+        application.student.id,
+        offering.id,
+        applicationId,
+        auditUserId,
+        transactionalEntityManager,
       );
-    }
-    const auditUser = { id: auditUserId } as User;
-    application.currentAssessment.offering = offering;
-    application.currentAssessment.modifier = auditUser;
-    application.pirStatus = ProgramInfoStatus.completed;
-    application.modifier = auditUser;
-    return this.repo.save(application);
+      return applicationRepo.save(application);
+    });
   }
 
   /**

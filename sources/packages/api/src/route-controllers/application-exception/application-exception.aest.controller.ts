@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
@@ -23,6 +24,7 @@ import {
 import BaseController from "../BaseController";
 import {
   ApplicationExceptionAPIOutDTO,
+  ApplicationExceptionSummaryAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "./models/application-exception.dto";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -33,6 +35,10 @@ import {
 } from "../../constants";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ApplicationExceptionStatus } from "../../database/entities";
+import {
+  ApplicationExceptionPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -118,5 +124,31 @@ export class ApplicationExceptionAESTController extends BaseController {
       }
       throw error;
     }
+  }
+
+  /**
+   * Gets all pending student application exceptions.
+   * @param pagination options to execute the pagination.
+   * @returns list of pending student application exceptions.
+   */
+  @Get()
+  async getPendingApplicationExceptions(
+    @Query() pagination: ApplicationExceptionPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<ApplicationExceptionSummaryAPIOutDTO>> {
+    const applicationExceptions =
+      await this.applicationExceptionService.getPendingApplicationExceptions(
+        pagination,
+      );
+
+    return {
+      results: applicationExceptions.results.map((eachApplication) => ({
+        applicationId: eachApplication.application.id,
+        studentId: eachApplication.application.student.id,
+        applicationNumber: eachApplication.application.applicationNumber,
+        submittedDate: eachApplication.createdAt,
+        fullName: getUserFullName(eachApplication.application.student.user),
+      })),
+      count: applicationExceptions.count,
+    };
   }
 }

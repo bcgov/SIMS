@@ -4,7 +4,9 @@
   "type": "form",
   "name": "confirmcoe",
   "path": "confirmcoe",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "label": "HTML",
@@ -12,7 +14,12 @@
       "labelMargin": "",
       "tag": "h3",
       "className": "category-header-medium",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "Do you want to confirm this application?",
       "refreshOnChange": false,
       "customClass": "",
@@ -21,7 +28,12 @@
       "key": "html3",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -84,7 +96,12 @@
       "labelMargin": "",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "Confirming enrollment verifies this applicant is attending your institution and will allow funding to be disbursed.",
       "refreshOnChange": false,
       "customClass": "align-bullets",
@@ -93,7 +110,12 @@
       "key": "html4",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -166,7 +188,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -202,8 +229,16 @@
           "tableView": false,
           "modalEdit": false,
           "values": [
-            { "label": "Yes", "value": "yes", "shortcut": "" },
-            { "label": "No", "value": "no", "shortcut": "" }
+            {
+              "label": "Yes",
+              "value": "yes",
+              "shortcut": ""
+            },
+            {
+              "label": "No",
+              "value": "no",
+              "shortcut": ""
+            }
           ],
           "dataType": "",
           "persistent": true,
@@ -320,7 +355,9 @@
               "tooltip": "",
               "prefix": "$",
               "suffix": "",
-              "widget": { "type": "input" },
+              "widget": {
+                "type": "input"
+              },
               "displayMask": "",
               "customClass": "",
               "tabindex": "",
@@ -377,7 +414,9 @@
               },
               "customConditional": "",
               "logic": [],
-              "attributes": { "data-cy": "tuitionRemittanceAmount" },
+              "attributes": {
+                "data-cy": "tuitionRemittanceAmount"
+              },
               "overlay": {
                 "style": "",
                 "page": "",
@@ -527,7 +566,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -537,7 +578,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -594,7 +639,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -604,7 +651,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,

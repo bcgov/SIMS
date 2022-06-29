@@ -2,13 +2,21 @@ import { Type } from "class-transformer";
 import {
   Allow,
   ArrayMinSize,
+  IsBoolean,
+  IsDateString,
   IsDefined,
   IsNotEmpty,
   IsOptional,
   Length,
+  MaxLength,
   ValidateIf,
 } from "class-validator";
-import { ApplicationStatus, FileOriginType } from "../../../database/entities";
+import { IsValidSIN } from "../../utils/custom-validators/sin-validator";
+import {
+  ApplicationStatus,
+  FileOriginType,
+  NOTE_DESCRIPTION_MAX_LENGTH,
+} from "../../../database/entities";
 import { RestrictionNotificationType } from "../../../database/entities/restriction-notification-type.type";
 import {
   AddressAPIOutDTO,
@@ -162,4 +170,50 @@ export class ApplicationSummaryAPIOutDTO {
   applicationName: string;
   submitted?: Date;
   status: ApplicationStatus;
+}
+
+/**
+ * History of SIN validations associated with a user.
+ */
+export class SINValidationsAPIOutDTO {
+  id: number;
+  sin: string;
+  createdAt: Date;
+  isValidSIN?: boolean;
+  sinStatus?: string;
+  validSINCheck?: string;
+  validBirthdateCheck?: string;
+  validFirstNameCheck?: string;
+  validLastNameCheck?: string;
+  validGenderCheck?: string;
+  temporarySIN: boolean;
+  sinExpiryDate?: string;
+}
+
+/**
+ * DTO to allow manually creation of SIN validations.
+ */
+export class CreateSINValidationAPIInDTO {
+  @IsValidSIN()
+  sin: string;
+  @IsBoolean()
+  skipValidations: boolean;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
+}
+
+/**
+ * Updates a SIN validation record expiry date.
+ */
+export class UpdateSINValidationAPIInDTO {
+  /**
+   * Expire date is a date-only value.
+   ** Please ensure that the time is not sent to the API.
+   */
+  @IsDateString()
+  expiryDate: string;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
 }

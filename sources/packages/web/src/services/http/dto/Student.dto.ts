@@ -116,3 +116,42 @@ export interface StudentRestrictionAPIOutDTO {
    */
   type: RestrictionNotificationType;
 }
+
+/**
+ * History of SIN validations associated with a user.
+ */
+export interface SINValidationsAPIOutDTO {
+  id: number;
+  sin: string;
+  createdAt: Date;
+  isValidSIN?: boolean;
+  sinStatus?: string;
+  validSINCheck?: string;
+  validBirthdateCheck?: string;
+  validFirstNameCheck?: string;
+  validLastNameCheck?: string;
+  validGenderCheck?: string;
+  temporarySIN: boolean;
+  sinExpiryDate?: string;
+}
+
+/**
+ * DTO to allow manually creation of SIN validations.
+ */
+export interface CreateSINValidationAPIInDTO {
+  sin: string;
+  skipValidations: boolean;
+  noteDescription: string;
+}
+
+/**
+ * Updates a SIN validation record expiry date.
+ */
+export interface UpdateSINValidationAPIInDTO {
+  /**
+   * Expire date is a date-only value.
+   ** Please ensure that the time is not sent to the API.
+   */
+  expiryDate: string;
+  noteDescription: string;
+}

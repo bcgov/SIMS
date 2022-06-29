@@ -4,13 +4,20 @@
   "type": "form",
   "name": "noticeofassessment",
   "path": "noticeofassessment",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "label": "Notice of Assessment",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "Notice of Assessment",
       "refreshOnChange": false,
       "customClass": "header-lg",
@@ -19,7 +26,12 @@
       "key": "noticeOfAssessment",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -122,7 +134,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -132,7 +146,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -187,7 +205,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -197,7 +217,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -210,7 +234,12 @@
       "label": "NOA",
       "tag": "hr",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "",
       "refreshOnChange": false,
       "customClass": "",
@@ -219,7 +248,12 @@
       "key": "noa",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -280,7 +314,12 @@
       "label": "Name",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "Name",
       "refreshOnChange": false,
       "customClass": "category-header-medium secondary-color",
@@ -289,7 +328,12 @@
       "key": "name",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -350,7 +394,12 @@
       "label": "HTML",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "{{ data.fullName }}",
       "refreshOnChange": true,
       "customClass": "",
@@ -359,7 +408,12 @@
       "key": "html50",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -420,7 +474,12 @@
       "label": "Application Number",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "Application Number",
       "refreshOnChange": false,
       "customClass": "category-header-medium secondary-color",
@@ -429,7 +488,12 @@
       "key": "applicationNumber",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -490,7 +554,12 @@
       "label": "HTML",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "{{ data.applicationNumber }}",
       "refreshOnChange": true,
       "customClass": "",
@@ -499,7 +568,12 @@
       "key": "html51",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -570,7 +644,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -592,7 +671,12 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "You are eligible for <b>${{data.eligibleAmount}}</b>",
           "refreshOnChange": true,
           "customClass": "",
@@ -667,7 +751,12 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "At <b>{{data.locationName}}</b> for <b>{{data.programName}}</b>",
           "refreshOnChange": true,
           "customClass": "",
@@ -742,7 +831,12 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "<b>{{data.offeringStudyStartDate}}</b> to <b>{{data.offeringStudyEndDate}} </b>",
           "refreshOnChange": true,
           "customClass": "",
@@ -817,7 +911,12 @@
           "label": "instructions",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "If you do not wish to proceed or disagree, you can cancel your application",
           "refreshOnChange": false,
           "customClass": "header-md secondary-color",
@@ -892,7 +991,12 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "Offering Intensity: {{ data.offeringIntensity }}",
           "refreshOnChange": true,
           "customClass": "",
@@ -1008,7 +1112,12 @@
       "label": "What you must do",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "What you must do",
       "refreshOnChange": false,
       "customClass": "category-header-medium primary-color",
@@ -1017,7 +1126,12 @@
       "key": "whatYouMustDo",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -1088,7 +1202,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -1110,7 +1229,12 @@
           "label": "msfaa",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "Your 10-digit MSFAA number is {{ data.msfaaNumber }}",
           "refreshOnChange": true,
           "customClass": "header-md secondary-color",
@@ -1257,7 +1381,12 @@
           "label": "Already had a loan",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "If you've already had a loan",
           "refreshOnChange": false,
           "customClass": "header-md secondary-color",
@@ -1374,7 +1503,11 @@
             "multiple": false,
             "unique": false
           },
-          "conditional": { "show": null, "when": null, "eq": "" },
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": ""
+          },
           "overlay": {
             "style": "",
             "left": "",
@@ -1436,7 +1569,12 @@
       "label": "When you will receive funds",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "When you will receive funds",
       "refreshOnChange": false,
       "customClass": "category-header-medium primary-color",
@@ -1445,7 +1583,12 @@
       "key": "whenYouWillReceiveFunds",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -1516,7 +1659,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -1538,7 +1686,12 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "On or after the following dates: ",
           "refreshOnChange": false,
           "customClass": "header-md secondary-color",
@@ -1693,7 +1846,12 @@
                     "label": "Date 1",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Date 1: The earliest date you will receive funding",
                     "refreshOnChange": false,
                     "customClass": "",
@@ -1772,7 +1930,12 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1Date ? data.disbursement.disbursement1Date : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -1853,7 +2016,12 @@
                     "label": "Date2",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Date 2 (If applicable): The earliest date you will receive funding",
                     "refreshOnChange": false,
                     "customClass": "",
@@ -1932,7 +2100,12 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2Date ? data.disbursement.disbursement2Date : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -2058,7 +2231,12 @@
       "label": "How your amount was calculated",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "How your amount was calculated",
       "refreshOnChange": false,
       "customClass": "category-header-medium primary-color",
@@ -2067,7 +2245,12 @@
       "key": "howYourAmountWasCalculated",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -2138,7 +2321,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -2160,7 +2348,12 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "You've received the largest amount possible for your school term. The amount may not cover all your costs. You may have to seek funds outside of StudentAid BC.",
           "refreshOnChange": false,
           "customClass": "",
@@ -2235,7 +2428,12 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "If you are not receiving funding but are still attending school you may apply for interest-free status",
           "refreshOnChange": false,
           "customClass": "header-md secondary-color",
@@ -2310,7 +2508,12 @@
           "label": "HTML",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "<p>Your application was subject to the federal and provincial financial need assessment calculations, based on Canada Student Loan Program and StudentAid BC’s respective policies</p><ul><li>Total family income on the previous year's returns: <b>${{ (data.assessment?.totalFamilyIncome).toFixed(2) }}</b></li><li>This Includes the income of your spouse, parents, stepparents, sponsors, or legal guardians</li><li>Scholarships and bursaries reported</li><li>Voluntary or targeted contributions reported, and</li><li>Assets reported by parents, stepparents, sponsors, or legal guardians (dependent students only)</li></ul>",
           "refreshOnChange": true,
           "customClass": "align-bullets",
@@ -2436,7 +2639,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -2498,7 +2706,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Assessed Costs",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium primary-color",
@@ -2543,7 +2756,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -2563,15 +2780,24 @@
                   }
                 ]
               },
-              { "components": [] },
-              { "components": [] }
+              {
+                "components": []
+              },
+              {
+                "components": []
+              }
             ],
             [
               {
                 "components": [
                   {
                     "label": "Assessed costs",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Assessed Costs",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -2617,7 +2843,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -2641,7 +2871,12 @@
                 "components": [
                   {
                     "label": "Federal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Federal",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -2687,7 +2922,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -2711,7 +2950,12 @@
                 "components": [
                   {
                     "label": "Provincial",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Provincial",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -2757,7 +3001,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -2783,7 +3031,12 @@
                 "components": [
                   {
                     "label": "Tuition and fees",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Tuition and fees",
                     "refreshOnChange": false,
                     "key": "tuitionAndFees",
@@ -2829,7 +3082,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -2853,7 +3110,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html24",
@@ -2898,7 +3160,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -2922,7 +3188,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html23",
@@ -2967,7 +3238,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -2993,7 +3268,12 @@
                 "components": [
                   {
                     "label": "Books and supplies",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Books and supplies",
                     "refreshOnChange": false,
                     "key": "booksAndSupplies",
@@ -3039,7 +3319,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3063,7 +3347,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html18",
@@ -3108,7 +3397,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3132,7 +3425,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html22",
@@ -3177,7 +3475,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3203,7 +3505,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Exceptional Education Costs",
                     "refreshOnChange": false,
                     "key": "html14",
@@ -3248,7 +3555,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3272,7 +3583,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html19",
@@ -3317,7 +3633,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3341,7 +3661,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html27",
@@ -3386,7 +3711,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3412,7 +3741,12 @@
                 "components": [
                   {
                     "label": "Living allowance",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Living allowance",
                     "refreshOnChange": false,
                     "key": "livingAllowance",
@@ -3458,7 +3792,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3482,7 +3820,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html20",
@@ -3527,7 +3870,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3551,7 +3898,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html29",
@@ -3596,7 +3948,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3622,7 +3978,12 @@
                 "components": [
                   {
                     "label": "Return Transportation Costs",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Return Transportation Costs",
                     "refreshOnChange": false,
                     "key": "returnTransportationCosts",
@@ -3667,7 +4028,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3691,7 +4056,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html25",
@@ -3736,7 +4106,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3760,7 +4134,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html21",
@@ -3805,7 +4184,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3831,7 +4214,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Child Care Costs",
                     "refreshOnChange": false,
                     "key": "html15",
@@ -3876,7 +4264,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3900,7 +4292,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html26",
@@ -3945,7 +4342,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -3969,7 +4370,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html30",
@@ -4014,7 +4420,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4040,7 +4450,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Other Allowable Costs",
                     "refreshOnChange": false,
                     "key": "html16",
@@ -4085,7 +4500,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4109,7 +4528,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html28",
@@ -4154,7 +4578,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4178,7 +4606,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html31",
@@ -4223,7 +4656,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4249,7 +4686,12 @@
                 "components": [
                   {
                     "label": "Total assessed costs",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Total assessed costs",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -4295,7 +4737,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4319,7 +4765,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment.totalAssessedCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -4364,7 +4815,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4388,7 +4843,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment.totalAssessedCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -4433,7 +4893,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4459,7 +4923,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Assessed Contributions",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium primary-color",
@@ -4504,7 +4973,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4524,15 +4997,24 @@
                   }
                 ]
               },
-              { "components": [] },
-              { "components": [] }
+              {
+                "components": []
+              },
+              {
+                "components": []
+              }
             ],
             [
               {
                 "components": [
                   {
                     "label": "Student financial contributions",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Student financial contributions",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -4578,7 +5060,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4603,7 +5089,12 @@
                   {
                     "label": "Federal",
                     "tag": "o",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Federal",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -4649,7 +5140,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4672,7 +5167,12 @@
                 "components": [
                   {
                     "label": "Provincial",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Provincial",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -4718,7 +5218,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4744,7 +5248,12 @@
                 "components": [
                   {
                     "label": "Assessed student contribution",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Assessed student contribution",
                     "refreshOnChange": false,
                     "key": "studentContribution",
@@ -4790,7 +5299,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4814,7 +5327,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.studentTotalFederalContribution === 'number' ? '$' + (data.assessment.studentTotalFederalContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html46",
@@ -4860,7 +5378,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4884,7 +5406,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.studentTotalProvincialContribution === 'number' ? '$' + (data.assessment.studentTotalProvincialContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html45",
@@ -4930,7 +5457,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -4956,7 +5487,12 @@
                 "components": [
                   {
                     "label": "Assessed spouse contribution",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Assessed spouse contribution",
                     "refreshOnChange": false,
                     "key": "assessedSpouseContributions",
@@ -5002,7 +5538,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5026,7 +5566,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html38",
@@ -5071,7 +5616,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5095,7 +5644,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html39",
@@ -5141,7 +5695,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5167,7 +5725,12 @@
                 "components": [
                   {
                     "label": "Assessed parent contribution",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Assessed parent contribution",
                     "refreshOnChange": false,
                     "key": "assessedParentContribution",
@@ -5213,7 +5776,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5237,7 +5804,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html44",
@@ -5282,7 +5854,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5306,7 +5882,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html43",
@@ -5351,7 +5932,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5377,7 +5962,12 @@
                 "components": [
                   {
                     "label": "Total student contribution",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Total student contribution",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -5423,7 +6013,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5447,7 +6041,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.totalFederalContribution === 'number' ? '$' + (data.assessment.totalFederalContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -5492,7 +6091,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5516,7 +6119,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.totalProvincialContribution === 'number' ? '$' + (data.assessment.totalProvincialContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -5562,7 +6170,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5632,7 +6244,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5651,15 +6267,24 @@
                   }
                 ]
               },
-              { "components": [] },
-              { "components": [] }
+              {
+                "components": []
+              },
+              {
+                "components": []
+              }
             ],
             [
               {
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Total Assessed need",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -5705,7 +6330,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -5733,7 +6362,12 @@
                     "labelMargin": "",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.federalAssessmentNeed === 'number' ? '$' + (data.assessment.federalAssessmentNeed).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -5814,7 +6448,12 @@
                     "labelMargin": "",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.provincialAssessmentNeed === 'number' ? '$' + (data.assessment.provincialAssessmentNeed).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -5976,7 +6615,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Assessed Costs",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium primary-color",
@@ -6021,7 +6665,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6041,14 +6689,21 @@
                   }
                 ]
               },
-              { "components": [] }
+              {
+                "components": []
+              }
             ],
             [
               {
                 "components": [
                   {
                     "label": "Tuition and fees",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Tuition and fees",
                     "refreshOnChange": false,
                     "key": "tuitionAndFees1",
@@ -6094,7 +6749,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6118,7 +6777,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "tutionCost",
@@ -6163,7 +6827,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6189,7 +6857,12 @@
                 "components": [
                   {
                     "label": "Books and supplies",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Books and supplies",
                     "refreshOnChange": false,
                     "key": "booksAndSupplies1",
@@ -6235,7 +6908,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6259,7 +6936,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "booksCost",
@@ -6304,7 +6986,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6330,7 +7016,12 @@
                 "components": [
                   {
                     "label": "Return Transportation Costs",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Transportation Costs",
                     "refreshOnChange": false,
                     "key": "returnTransportationCosts1",
@@ -6375,7 +7066,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6399,7 +7094,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "transpotationCosts",
@@ -6444,7 +7144,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6470,7 +7174,12 @@
                 "components": [
                   {
                     "label": "Miscellaneous Costs",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Miscellaneous Costs",
                     "refreshOnChange": false,
                     "key": "otherMiscellaneousCosts",
@@ -6516,7 +7225,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6540,7 +7253,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.miscellaneousCost === 'number' ? '$' + (data.assessment.miscellaneousCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "miscellaneousCost",
@@ -6585,7 +7303,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6613,7 +7335,12 @@
                     "label": "Total Academic Expenses",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Total Academic Expenses",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -6693,7 +7420,12 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{(typeof data.assessment?.totalAcademicExpenses === 'number' ? data.assessment?.totalAcademicExpenses : 0).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -6774,7 +7506,12 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Childcare Costs",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -6851,7 +7588,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "key": "html115",
@@ -6896,7 +7638,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -6924,7 +7670,12 @@
                     "label": "Total assessed costs",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Total assessed costs = Total Academic Expenses + Childcare Costs",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
@@ -7004,7 +7755,12 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{(typeof data.assessment?.totalAssessmentNeed === 'number' ? data.assessment?.totalAssessmentNeed : 0).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
@@ -7180,7 +7936,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -7241,7 +8002,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Loan/Grant Type",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -7286,7 +8052,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7310,7 +8080,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Disbursement 1",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -7355,7 +8130,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7379,7 +8158,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Disbursement 2",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -7424,7 +8208,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7448,7 +8236,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Total",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -7493,7 +8286,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7519,7 +8316,12 @@
                 "components": [
                   {
                     "label": "Canada Student Loan",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Canada Student Loan",
                     "refreshOnChange": false,
                     "key": "canadaStudentLoan",
@@ -7564,7 +8366,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7588,7 +8394,12 @@
                 "components": [
                   {
                     "label": "CSLF1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1cslf ? '$'+ data.disbursement.disbursement1cslf : '-'}}",
                     "refreshOnChange": true,
                     "key": "html2",
@@ -7633,7 +8444,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7657,7 +8472,12 @@
                 "components": [
                   {
                     "label": "CSLF2",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2cslf ? '$'+ data.disbursement.disbursement2cslf : '-'}}",
                     "refreshOnChange": true,
                     "key": "html58",
@@ -7702,7 +8522,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7726,7 +8550,12 @@
                 "components": [
                   {
                     "label": "CSLFTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1cslf ? parseFloat(data.disbursement.disbursement1cslf) : 0) + (data.disbursement?.disbursement2cslf ? parseFloat(data.disbursement.disbursement2cslf) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html63",
@@ -7771,7 +8600,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7797,7 +8630,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "British Columbia Student Loan",
                     "refreshOnChange": false,
                     "key": "html1",
@@ -7843,7 +8681,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7867,7 +8709,12 @@
                 "components": [
                   {
                     "label": "BCSL1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1bcsl ? '$'+ data.disbursement.disbursement1bcsl : '-'}}",
                     "refreshOnChange": true,
                     "key": "html5",
@@ -7913,7 +8760,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -7937,7 +8788,12 @@
                 "components": [
                   {
                     "label": "BCSL2",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2bcsl ? '$'+ data.disbursement.disbursement2bcsl : '-'}}",
                     "refreshOnChange": true,
                     "key": "html72",
@@ -7982,7 +8838,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8006,7 +8866,12 @@
                 "components": [
                   {
                     "label": "BCSLTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1bcsl ? parseFloat(data.disbursement.disbursement1bcsl) : 0) + (data.disbursement?.disbursement2bcsl ? parseFloat(data.disbursement.disbursement2bcsl) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html64",
@@ -8051,7 +8916,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8077,7 +8946,12 @@
                 "components": [
                   {
                     "label": "CSGP",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "CSGP",
                     "refreshOnChange": false,
                     "key": "csgp",
@@ -8122,7 +8996,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8146,7 +9024,12 @@
                 "components": [
                   {
                     "label": "CSGP1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1csgp ? '$'+ data.disbursement.disbursement1csgp : '-'}}",
                     "refreshOnChange": true,
                     "key": "html3",
@@ -8191,7 +9074,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8215,7 +9102,12 @@
                 "components": [
                   {
                     "label": "CSGP2",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2csgp ? '$'+ data.disbursement.disbursement2csgp : '-'}}",
                     "refreshOnChange": true,
                     "key": "html73",
@@ -8260,7 +9152,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8284,7 +9180,12 @@
                 "components": [
                   {
                     "label": "CSGPTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement.disbursement1csgp) : 0) + (data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement.disbursement2csgp) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html65",
@@ -8329,7 +9230,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8355,7 +9260,12 @@
                 "components": [
                   {
                     "label": "CSGD",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "CSGD",
                     "refreshOnChange": false,
                     "key": "csgd",
@@ -8400,7 +9310,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8424,7 +9338,12 @@
                 "components": [
                   {
                     "label": "CSGD1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1csgd ? '$'+ data.disbursement.disbursement1csgd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html4",
@@ -8469,7 +9388,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8493,7 +9416,12 @@
                 "components": [
                   {
                     "label": "CSGD2",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2csgd ? '$'+ data.disbursement.disbursement2csgd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html74",
@@ -8538,7 +9466,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8562,7 +9494,12 @@
                 "components": [
                   {
                     "label": "CSGDTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement.disbursement1csgd) : 0) + (data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement.disbursement2csgd) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html66",
@@ -8607,7 +9544,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8633,7 +9574,12 @@
                 "components": [
                   {
                     "label": "CSG-FT",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "CSG-FT",
                     "refreshOnChange": false,
                     "key": "csgFt",
@@ -8678,7 +9624,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8702,7 +9652,12 @@
                 "components": [
                   {
                     "label": "CSGF1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1csgf ? '$'+ data.disbursement.disbursement1csgf : '-'}}",
                     "refreshOnChange": true,
                     "key": "html6",
@@ -8747,7 +9702,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8771,7 +9730,12 @@
                 "components": [
                   {
                     "label": "CSGF2",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2csgf ? '$'+ data.disbursement.disbursement2csgf : '-'}}",
                     "refreshOnChange": true,
                     "key": "html75",
@@ -8816,7 +9780,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8840,7 +9808,12 @@
                 "components": [
                   {
                     "label": "CSGFTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1csgf ? parseFloat(data.disbursement.disbursement1csgf) : 0) + (data.disbursement?.disbursement2csgf ? parseFloat(data.disbursement.disbursement2csgf) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html67",
@@ -8885,7 +9858,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8911,7 +9888,12 @@
                 "components": [
                   {
                     "label": "CSG-TU",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "CSG-TU",
                     "refreshOnChange": false,
                     "key": "csgTu",
@@ -8957,7 +9939,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -8981,7 +9967,12 @@
                 "components": [
                   {
                     "label": "CSGT1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1csgt ? '$'+ data.disbursement.disbursement1csgt : '-'}}",
                     "refreshOnChange": true,
                     "key": "html8",
@@ -9026,7 +10017,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9050,7 +10045,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2csgt ? '$'+ data.disbursement.disbursement2csgt : '-'}}",
                     "refreshOnChange": true,
                     "key": "html76",
@@ -9095,7 +10095,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9119,7 +10123,12 @@
                 "components": [
                   {
                     "label": "CSGTTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1csgt ? parseFloat(data.disbursement.disbursement1csgt) : 0) + (data.disbursement?.disbursement2csgt ? parseFloat(data.disbursement.disbursement2csgt) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html68",
@@ -9164,7 +10173,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9190,7 +10203,12 @@
                 "components": [
                   {
                     "label": "BCAG",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "BCAG",
                     "refreshOnChange": false,
                     "key": "bcag",
@@ -9236,7 +10254,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9260,7 +10282,12 @@
                 "components": [
                   {
                     "label": "BCAG1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1bcag ? '$'+ data.disbursement.disbursement1bcag : '-'}}",
                     "refreshOnChange": true,
                     "key": "html9",
@@ -9305,7 +10332,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9329,7 +10360,12 @@
                 "components": [
                   {
                     "label": "BCAG2",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2bcag ? '$'+ data.disbursement.disbursement2bcag : '-'}}",
                     "refreshOnChange": true,
                     "key": "html77",
@@ -9374,7 +10410,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9398,7 +10438,12 @@
                 "components": [
                   {
                     "label": "BCAGTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement.disbursement1bcag) : 0) + (data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement.disbursement2bcag) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html69",
@@ -9443,7 +10488,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9469,7 +10518,12 @@
                 "components": [
                   {
                     "label": "SBSD",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "SBSD",
                     "refreshOnChange": false,
                     "key": "sbsd",
@@ -9515,7 +10569,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9539,7 +10597,12 @@
                 "components": [
                   {
                     "label": "SBSD1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1sbsd ? '$'+ data.disbursement.disbursement1sbsd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html11",
@@ -9585,7 +10648,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9609,7 +10676,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2sbsd ? '$'+ data.disbursement.disbursement2sbsd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html78",
@@ -9654,7 +10726,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9678,7 +10754,12 @@
                 "components": [
                   {
                     "label": "SBSDTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement.disbursement1sbsd) : 0) + (data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement.disbursement2sbsd) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html70",
@@ -9723,7 +10804,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9749,7 +10834,12 @@
                 "components": [
                   {
                     "label": "BGPD",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "BGPD",
                     "refreshOnChange": false,
                     "key": "bgpd",
@@ -9795,7 +10885,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9819,7 +10913,12 @@
                 "components": [
                   {
                     "label": "BGPD1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1bgpd ? '$'+ data.disbursement.disbursement1bgpd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html10",
@@ -9865,7 +10964,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9889,7 +10992,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2bgpd ? '$'+ data.disbursement.disbursement2bgpd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html79",
@@ -9934,7 +11042,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -9958,7 +11070,12 @@
                 "components": [
                   {
                     "label": "BGPDTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1bgpd ? parseFloat(data.disbursement.disbursement1bgpd) : 0) + (data.disbursement?.disbursement2bgpd ? parseFloat(data.disbursement.disbursement2bgpd) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html71",
@@ -10003,7 +11120,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10029,7 +11150,12 @@
                 "components": [
                   {
                     "label": "BCSG",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "BCSG",
                     "refreshOnChange": false,
                     "key": "bcsg",
@@ -10074,7 +11200,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10098,7 +11228,12 @@
                 "components": [
                   {
                     "label": "BCSG1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1bcsg ? '$'+ data.disbursement.disbursement1bcsg : '-'}}",
                     "refreshOnChange": true,
                     "key": "html80",
@@ -10143,7 +11278,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10167,7 +11306,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2bcsg ? '$'+ data.disbursement.disbursement2bcsg : '-'}}",
                     "refreshOnChange": true,
                     "key": "html81",
@@ -10212,7 +11356,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10236,7 +11384,12 @@
                 "components": [
                   {
                     "label": "BCSGTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1bcsg ? parseFloat(data.disbursement.disbursement1bcsg) : 0) + (data.disbursement?.disbursement2bcsg ? parseFloat(data.disbursement.disbursement2bcsg) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html82",
@@ -10281,7 +11434,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10390,7 +11547,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Loan/Grant Type",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -10435,7 +11597,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10459,7 +11625,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Disbursement 1",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -10504,7 +11675,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10528,7 +11703,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Disbursement 2",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -10573,7 +11753,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10597,7 +11781,12 @@
                 "components": [
                   {
                     "label": "HTML",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Total",
                     "refreshOnChange": false,
                     "customClass": "category-header-medium-small secondary-color",
@@ -10642,7 +11831,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10668,7 +11861,12 @@
                 "components": [
                   {
                     "label": "Canada Student Loan",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "Canada Student Loan",
                     "refreshOnChange": false,
                     "key": "canadaStudentLoan1",
@@ -10713,7 +11911,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -10739,7 +11941,12 @@
                     "label": "CSLP1",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1cslp ? '$'+ data.disbursement.disbursement1cslp : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -10818,7 +12025,12 @@
                     "label": "CSLP2",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2cslp ? '$'+ data.disbursement.disbursement2cslp : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -10897,7 +12109,12 @@
                     "label": "CSLPTotal",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1cslp ? parseFloat(data.disbursement.disbursement1cslp) : 0) + (data.disbursement?.disbursement2cslp ? parseFloat(data.disbursement.disbursement2cslp) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -10978,7 +12195,12 @@
                     "label": "HTML",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "BCAG",
                     "refreshOnChange": false,
                     "customClass": "",
@@ -11058,7 +12280,12 @@
                     "label": "BCAG1",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1bcag ? '$'+ data.disbursement.disbursement1bcag : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -11138,7 +12365,12 @@
                     "label": "BCAG2",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2bcag ? '$'+ data.disbursement.disbursement2bcag : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -11217,7 +12449,12 @@
                     "label": "BCAGTotal",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement.disbursement1bcag) : 0) + (data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement.disbursement2bcag) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -11296,7 +12533,12 @@
                 "components": [
                   {
                     "label": "CSGP",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "CSGP",
                     "refreshOnChange": false,
                     "key": "csgp1",
@@ -11341,7 +12583,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11365,7 +12611,12 @@
                 "components": [
                   {
                     "label": "CSGP1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1csgp ? '$'+ data.disbursement.disbursement1csgp : '-'}}",
                     "refreshOnChange": true,
                     "key": "html41",
@@ -11410,7 +12661,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11434,7 +12689,12 @@
                 "components": [
                   {
                     "label": "CSGP2",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2csgp ? '$'+ data.disbursement.disbursement2csgp : '-'}}",
                     "refreshOnChange": true,
                     "key": "html91",
@@ -11479,7 +12739,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11503,7 +12767,12 @@
                 "components": [
                   {
                     "label": "CSGPTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement.disbursement1csgp) : 0) + (data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement.disbursement2csgp) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html92",
@@ -11548,7 +12817,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11574,7 +12847,12 @@
                 "components": [
                   {
                     "label": "CSGD",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "CSGD",
                     "refreshOnChange": false,
                     "key": "csgd1",
@@ -11619,7 +12897,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11643,7 +12925,12 @@
                 "components": [
                   {
                     "label": "CSGD1",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1csgd ? '$'+ data.disbursement.disbursement1csgd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html42",
@@ -11688,7 +12975,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11712,7 +13003,12 @@
                 "components": [
                   {
                     "label": "CSGD2",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2csgd ? '$'+ data.disbursement.disbursement2csgd : '-'}}",
                     "refreshOnChange": true,
                     "key": "html93",
@@ -11757,7 +13053,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11781,7 +13081,12 @@
                 "components": [
                   {
                     "label": "CSGDTotal",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement.disbursement1csgd) : 0) + (data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement.disbursement2csgd) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "key": "html94",
@@ -11826,7 +13131,11 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": { "show": null, "when": null, "eq": "" },
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": ""
+                    },
                     "overlay": {
                       "style": "",
                       "left": "",
@@ -11854,7 +13163,12 @@
                     "label": "CSPT",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "CSPT",
                     "refreshOnChange": false,
                     "customClass": "",
@@ -11935,7 +13249,12 @@
                     "labelMargin": "",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1csgpt ? '$'+ data.disbursement.disbursement1csgpt : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12016,7 +13335,12 @@
                     "labelMargin": "",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2csgpt ? '$'+ data.disbursement.disbursement2csgpt : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12097,7 +13421,12 @@
                     "labelMargin": "",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1csgpt ? parseFloat(data.disbursement.disbursement1csgpt) : 0) + (data.disbursement?.disbursement2csgpt ? parseFloat(data.disbursement.disbursement2csgpt) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12178,7 +13507,12 @@
                     "label": "SBSD",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "SBSD",
                     "refreshOnChange": false,
                     "customClass": "",
@@ -12258,7 +13592,12 @@
                     "label": "SBSD1",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement1sbsd ? '$'+ data.disbursement.disbursement1sbsd : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12337,7 +13676,12 @@
                     "label": "SBSD2",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "{{data.disbursement?.disbursement2sbsd ? '$'+ data.disbursement.disbursement2sbsd : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12416,7 +13760,12 @@
                     "label": "SBSDTotal",
                     "tag": "p",
                     "className": "",
-                    "attrs": [{ "attr": "", "value": "" }],
+                    "attrs": [
+                      {
+                        "attr": "",
+                        "value": ""
+                      }
+                    ],
                     "content": "${{((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement.disbursement1sbsd) : 0) + (data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement.disbursement2sbsd) : 0)).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
@@ -12623,7 +13972,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -12633,7 +13984,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -12690,7 +14045,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -12700,7 +14057,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,

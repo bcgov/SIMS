@@ -9,7 +9,7 @@ import {
   NoteType,
   SINValidation,
 } from "../../database/entities";
-import { Connection } from "typeorm";
+import { Connection, EntityManager } from "typeorm";
 import { UserInfo } from "../../types";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
@@ -253,7 +253,7 @@ export class StudentService extends RecordDataModelService<Student> {
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
       .where("user.id= :userId ", { userId })
-      .select(["sinValidation.isValidSIN", "student.id"])
+      .select(["student.id", "sinValidation.id", "sinValidation.isValidSIN"])
       .getOne();
     return student?.sinValidation.isValidSIN;
   }
@@ -386,6 +386,7 @@ export class StudentService extends RecordDataModelService<Student> {
 
   /**
    * Service to add note for an Institution.
+   * ! Deprecated, please use the alternative method createStudentNote.
    * @param studentId
    * @param note
    */
@@ -398,13 +399,46 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
+   * Creates a new note and associate it with the student.
+   * This method is most likely to be used alongside with some other
+   * DB data changes and must be executed in a DB transaction.
+   * @param studentId student to have the note associated.
+   * @param noteType note type.
+   * @param noteDescription note description.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager transactional entity manager.
+   */
+  async createStudentNote(
+    studentId: number,
+    noteType: NoteType,
+    noteDescription: string,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<Note> {
+    const auditUser = { id: auditUserId } as User;
+    // Create the note to be associated with the student.
+    const newNote = new Note();
+    newNote.description = noteDescription;
+    newNote.noteType = noteType;
+    newNote.creator = auditUser;
+    const savedNote = await entityManager.getRepository(Note).save(newNote);
+    // Associate the created note with the student.
+    await entityManager
+      .getRepository(Student)
+      .createQueryBuilder()
+      .relation(Student, "notes")
+      .of({ id: studentId } as Student)
+      .add(savedNote);
+    return newNote;
+  }
+
+  /**
    * Uses the user id to identify a student that must have his
    * SIN validation active record updated.
    * @param userId user id related to the student.
    * @param sinValidation SIN validation record to have the
    * relationship created with the student.
-   * @param auditUserId user that should be considered the one that is
-   * causing the changes.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns updated student.
    */
   async updateSINValidationByUserId(
