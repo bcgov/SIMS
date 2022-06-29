@@ -49,6 +49,7 @@ export class InstitutionService {
    * themselves due to limitations, for instance, when the institution
    * has only a basic BCeID login.
    * @param data complete information to create the profile.
+   * @return created institution profile.
    */
   async createInstitution(
     data: AESTCreateInstitutionAPIInDTO,
@@ -60,6 +61,7 @@ export class InstitutionService {
    * Create institution during institution setup process when the institution
    * profile and the user are create and associated altogether.
    * @param data information from the institution and the user.
+   * @return created institution profile.
    */
   async createInstitutionWithAssociatedUser(
     data: CreateInstitutionAPIInDTO,

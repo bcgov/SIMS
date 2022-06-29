@@ -36,7 +36,7 @@ import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
 import { ClientTypeBaseRoute } from "../../types";
-import { IUserToken } from "src/auth/userToken.interface";
+import { IUserToken } from "../../auth/userToken.interface";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /**
