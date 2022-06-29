@@ -16,7 +16,7 @@ import {
   InstitutionControllerService,
 } from "../../route-controllers";
 import { JwtService } from "@nestjs/jwt";
-import { DisbursementReceiptRequestService } from "src/esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
+import { DisbursementReceiptRequestService } from "../../esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
 
 describe("InstitutionController", () => {
   let controller: InstitutionInstitutionsController;
