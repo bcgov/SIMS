@@ -10,8 +10,8 @@ import {
 import { DisbursementReceiptHeader } from "./disbursement-receipt-files/disbursement-receipt-file-header";
 import { DisbursementReceiptFooter } from "./disbursement-receipt-files/disbursement-receipt-file-footer";
 import { DisbursementReceiptDetail } from "./disbursement-receipt-files/disbursement-receipt-file-detail";
-import { getFileNameAsCurrentTimestamp } from "src/utilities";
-import { ESDCIntegrationConfig } from "src/types";
+import { getFileNameAsCurrentTimestamp } from "../../utilities";
+import { ESDCIntegrationConfig } from "../../types";
 
 @Injectable()
 export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<DisbursementReceiptDownloadResponse> {
