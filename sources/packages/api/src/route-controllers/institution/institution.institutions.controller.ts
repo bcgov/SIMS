@@ -152,7 +152,6 @@ export class InstitutionInstitutionsController extends BaseController {
    * Get institution details of given institution.
    * @returns Institution details.
    */
-  @IsInstitutionAdmin()
   @Get()
   async getInstitutionDetail(
     @UserToken() token: IInstitutionUserToken,
