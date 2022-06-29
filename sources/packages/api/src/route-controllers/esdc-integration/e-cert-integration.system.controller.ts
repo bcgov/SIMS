@@ -104,6 +104,7 @@ export class ECertIntegrationController extends BaseController {
 
   /**
    * Send provincial daily disbursement information to FIN.
+   * @param processDate Batch run date.
    * @returns Summary details of processing.
    */
   @Post("process-provincial-daily-disbursements")

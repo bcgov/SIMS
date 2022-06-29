@@ -97,6 +97,7 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
 
   /**
    * Expected file name of the daily disbursements records file.
+   * @param reportName Report name to be a part of filename.
    * @returns Full file path of the file to be saved on the SFTP.
    */
   createRequestFileName(reportName: string): {

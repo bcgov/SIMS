@@ -25,13 +25,3 @@ export interface DailyDisbursementUploadResult {
   generatedFile: string;
   uploadedRecords: number;
 }
-
-/**
- * Represents a single line in a daily disbursement receipt file.
- * When implemented in a derived class this
- * interface allow the object to be represented
- * as a formatted fixed string.
- */
-export interface DailyDisbursementRequestFileLine {
-  getFixedFormat(): string;
-}
