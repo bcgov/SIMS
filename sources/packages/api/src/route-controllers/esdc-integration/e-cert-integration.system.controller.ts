@@ -115,8 +115,11 @@ export class ECertIntegrationController extends BaseController {
   async processProvincialDailyDisbursements(
     @Body() payload: DailyDisbursementReportAPIInDTO,
   ): Promise<string> {
+    const batchRunDate = payload.batchRunDate
+      ? new Date(payload.batchRunDate)
+      : null;
     return this.disbursementReceiptRequestService.processProvincialDailyDisbursements(
-      new Date(payload.batchRunDate),
+      batchRunDate,
     );
   }
 
