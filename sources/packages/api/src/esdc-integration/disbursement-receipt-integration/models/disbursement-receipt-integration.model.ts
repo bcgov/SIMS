@@ -11,7 +11,7 @@ export enum DisbursementReceiptRecordType {
 }
 
 /**
- * Response model which is extracted from disbursement receipt file.
+ * Response model which is extracted from daily disbursement receipt file.
  */
 export class DisbursementReceiptDownloadResponse {
   header: DisbursementReceiptHeader;

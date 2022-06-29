@@ -106,3 +106,8 @@ export const MAX_UPLOAD_PARTS = 3;
  * to the student account.
  */
 export const MINISTRY_FILE_UPLOAD_GROUP_NAME = "Ministry communications";
+
+/**
+ * Daily disbursement report name.
+ */
+export const DAILY_DISBURSEMENT_REPORT_NAME = "Daily_Disbursement_File";
