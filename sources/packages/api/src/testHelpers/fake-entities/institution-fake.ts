@@ -3,7 +3,7 @@ import { Institution, InstitutionType } from "../../database/entities";
 
 export function createFakeInstitution(): Institution {
   const institution = new Institution();
-  institution.guid = faker.random.uuid();
+  institution.businessGuid = faker.random.uuid();
   institution.legalOperatingName = faker.company.companyName();
   institution.operatingName = faker.company.companySuffix();
   institution.primaryPhone = faker.phone.phoneNumber();

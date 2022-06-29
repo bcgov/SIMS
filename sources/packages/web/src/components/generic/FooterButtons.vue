@@ -5,6 +5,7 @@
       color="primary"
       variant="outlined"
       class="mr-2"
+      v-if="showSecondaryButton"
       data-cy="secondaryFooterButton"
       @click="$emit('secondaryClick')"
       >{{ secondaryLabel }}</v-btn
@@ -41,6 +42,11 @@ export default {
       type: Boolean,
       required: true,
       default: false,
+    },
+    showSecondaryButton: {
+      type: Boolean,
+      required: true,
+      default: true,
     },
     justify: {
       type: String,

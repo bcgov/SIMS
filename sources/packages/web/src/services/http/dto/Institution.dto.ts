@@ -105,7 +105,11 @@ export interface InstitutionBasicAPIOutDTO {
   designationStatus: DesignationAgreementStatus;
 }
 
-export interface InstitutionFormAPIInDTO {
+/**
+ * DTO for institution creation by the institution user during the on board process
+ * when the institution profile and the admin user must be created altogether.
+ */
+export interface CreateInstitutionAPIInDTO {
   userEmail: string;
   operatingName: string;
   primaryPhone: string;
@@ -117,13 +121,19 @@ export interface InstitutionFormAPIInDTO {
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  provinceState?: string;
-  country: string;
-  postalCode: string;
   institutionType: number;
+  mailingAddress: AddressDetailsFormAPIDTO;
+}
+
+/**
+ * Ministry user institution creation. No user information is provided and
+ * user related information (e.g. userEmail) is not needed. Besides that,
+ * the Ministry user should be able to provide all data needed to create
+ * the institution.
+ */
+export interface AESTCreateInstitutionAPIInDTO
+  extends Omit<CreateInstitutionAPIInDTO, "userEmail"> {
+  legalOperatingName: string;
 }
 
 export interface InstitutionUserTypeAndRoleAPIOutDTO {

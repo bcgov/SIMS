@@ -46,7 +46,7 @@ export default {
 
     const updateInstitution = async (data: InstitutionContactAPIInDTO) => {
       try {
-        await InstitutionService.shared.updateInstitute(
+        await InstitutionService.shared.updateInstitution(
           data,
           props.institutionId,
         );

@@ -15,8 +15,20 @@ export interface UpdateInstitution {
   mailingAddress: AddressInfo;
 }
 
-export interface InstitutionFormModel extends AddressInfo {
-  userEmail: string;
+export interface InstitutionFormModel {
+  /**
+   * Optional for institutions authenticated using a business BCeID when
+   * the name will be retrieved from BCeID Web Service directly.
+   * For institutions created by the Ministry the name will be provided
+   * by the Ministry user creating the institution profile.
+   */
+  legalOperatingName?: string;
+  /**
+   * Optional when creating the institution that is not associated with
+   * a user initially, for instance, when Ministry is creating the institution
+   * on behalf of an institution that is not allowed to do it.
+   */
+  userEmail?: string;
   operatingName: string;
   primaryPhone: string;
   primaryEmail: string;
@@ -28,6 +40,7 @@ export interface InstitutionFormModel extends AddressInfo {
   primaryContactEmail: string;
   primaryContactPhone: string;
   institutionType: number;
+  mailingAddress: AddressInfo;
 }
 
 export interface InstitutionUserModel {

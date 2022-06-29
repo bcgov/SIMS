@@ -1,10 +1,5 @@
+import { AESTInstitutionProgramsSummaryDto, PaginationParams } from "@/types";
 import {
-  Institute,
-  AESTInstitutionProgramsSummaryDto,
-  PaginationParams,
-} from "@/types";
-import {
-  EducationProgram,
   InstitutionLocationsDetails,
   InstitutionUserAuthDetails,
   InstitutionUserViewModel,
@@ -30,12 +25,14 @@ import {
   InstitutionUserAPIOutDTO,
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
-  InstitutionFormAPIInDTO,
+  CreateInstitutionAPIInDTO,
   InstitutionUserTypeAndRoleAPIOutDTO,
   InstitutionUserAPIInDTO,
   UserRoleOptionAPIOutDTO,
   InstitutionLocationAPIInDTO,
   InstitutionLocationPrimaryContactAPIInDTO,
+  AESTCreateInstitutionAPIInDTO,
+  PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -47,37 +44,32 @@ export class InstitutionService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getInstitutes(): Promise<Institute[]> {
-    // TODO: Sending dummy list for now later replace with API call
-    const institutes: Institute[] = [
-      {
-        name: "Sprott Shaw College",
-        code: "ssc",
-      },
-    ];
-    return institutes;
+  /**
+   * Create institutions that are not allowed to create the profile by
+   * themselves due to limitations, for instance, when the institution
+   * has only a basic BCeID login.
+   * @param data complete information to create the profile.
+   * @return created institution profile.
+   */
+  async createInstitution(
+    data: AESTCreateInstitutionAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.Institution.createInstitution(data);
   }
 
-  public async getProgramsFor(
-    institute?: Institute,
-  ): Promise<EducationProgram[]> {
-    if (institute?.code === "ssc") {
-      const programs: EducationProgram[] = [
-        {
-          name: "Nursing Program",
-          code: "np",
-        },
-      ];
-      return programs;
-    }
-    return [];
+  /**
+   * Create institution during institution setup process when the institution
+   * profile and the user are create and associated altogether.
+   * @param data information from the institution and the user.
+   * @return created institution profile.
+   */
+  async createInstitutionWithAssociatedUser(
+    data: CreateInstitutionAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.Institution.createInstitutionWithAssociatedUser(data);
   }
 
-  public async createInstitution(data: InstitutionFormAPIInDTO): Promise<void> {
-    await ApiClient.Institution.createInstitution(data);
-  }
-
-  public async updateInstitute(
+  public async updateInstitution(
     data: InstitutionContactAPIInDTO,
     institutionId?: number,
   ): Promise<void> {

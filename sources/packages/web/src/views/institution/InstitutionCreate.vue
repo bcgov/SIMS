@@ -1,7 +1,7 @@
 <template>
   <full-page-container>
     <formio
-      formName="institutionprofilecreation"
+      formName="institutionProfileCreation"
       :data="initialData"
       @loaded="formLoaded"
       @submitted="submitted"
@@ -15,23 +15,23 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { UserService } from "@/services/UserService";
 import { InstitutionService } from "@/services/InstitutionService";
-import { InstitutionFormAPIInDTO } from "@/services/http/dto";
+import { CreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioDropdownLoader, useToastMessage } from "@/composables";
 
 export default {
   setup() {
-    // Hooks
     const store = useStore();
     const toast = useToastMessage();
     const router = useRouter();
     const formioDataLoader = useFormioDropdownLoader();
-    // Data-bind
     const initialData = ref({});
 
-    const submitted = async (data: InstitutionFormAPIInDTO) => {
+    const submitted = async (data: CreateInstitutionAPIInDTO) => {
       try {
-        await InstitutionService.shared.createInstitution(data);
+        await InstitutionService.shared.createInstitutionWithAssociatedUser(
+          data,
+        );
         await store.dispatch("institution/initialize");
         toast.success(
           "Create Successful",
