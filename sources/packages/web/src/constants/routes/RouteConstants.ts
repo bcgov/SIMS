@@ -104,6 +104,7 @@ export const AESTRoutesConst = {
   NOTICE_OF_ASSESSMENT_VIEW: Symbol(),
   REPORTS: Symbol(),
   APPLICATION_EXCEPTIONS_APPROVAL: Symbol(),
+  APPLICATION_EXCEPTIONS_PENDING: Symbol(),
 };
 
 /**

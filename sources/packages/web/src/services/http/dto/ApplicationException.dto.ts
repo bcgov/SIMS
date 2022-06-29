@@ -26,3 +26,11 @@ export interface ApplicationExceptionAPIOutDTO {
   assessedDate?: Date;
   exceptionRequests: ApplicationExceptionRequestAPIOutDTO[];
 }
+
+export interface ApplicationExceptionSummaryAPIOutDTO {
+  applicationId: number;
+  studentId: number;
+  submittedDate: Date;
+  fullName: string;
+  applicationNumber: string;
+}
