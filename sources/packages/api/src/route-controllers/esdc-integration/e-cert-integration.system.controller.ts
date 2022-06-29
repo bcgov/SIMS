@@ -9,7 +9,7 @@ import { ECertFileHandler } from "../../esdc-integration/e-cert-integration/e-ce
 import { ESDCFileResponseDTO, ESDCFileResultDTO } from "./models/esdc-model";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { DisbursementReceiptRequestService } from "src/esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
+import { DisbursementReceiptRequestService } from "../../esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/e-cert")
 @ApiTags("system-access")
