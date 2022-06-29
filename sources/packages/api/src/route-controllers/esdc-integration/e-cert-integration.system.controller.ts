@@ -7,7 +7,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { DisbursementReceiptProcessingService } from "../../esdc-integration/disbursement-receipt-integration/disbursement-receipt-processing.service";
 import { ECertFileHandler } from "../../esdc-integration/e-cert-integration/e-cert-file-handler";
 import {
-  DailyDisbursementReportInDTO,
+  DailyDisbursementReportAPIInDTO,
   ESDCFileResponseDTO,
   ESDCFileResultDTO,
 } from "./models/esdc-model";
@@ -113,7 +113,7 @@ export class ECertIntegrationController extends BaseController {
    */
   @Post("process-provincial-daily-disbursements")
   async processProvincialDailyDisbursements(
-    @Body() payload: DailyDisbursementReportInDTO,
+    @Body() payload: DailyDisbursementReportAPIInDTO,
   ): Promise<string> {
     return this.disbursementReceiptRequestService.processProvincialDailyDisbursements(
       new Date(payload.batchRunDate),

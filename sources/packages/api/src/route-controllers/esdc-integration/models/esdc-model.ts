@@ -9,7 +9,7 @@ export interface ESDCFileResponseDTO {
   errorsSummary: string[];
 }
 
-export class DailyDisbursementReportInDTO {
+export class DailyDisbursementReportAPIInDTO {
   @IsOptional()
   @IsDateString()
   batchRunDate: string;
