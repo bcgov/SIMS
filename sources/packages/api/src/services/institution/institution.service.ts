@@ -153,6 +153,12 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return this.institutionUserRepo.save(newInstitutionUser);
   }
 
+  /**
+   * Creates the institution record.
+   * @param institutionModel complete information to create the profile.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns primary identifier of the created resource.
+   */
   async createInstitution(
     institutionModel: InstitutionFormModel,
     auditUserId: number,
@@ -164,6 +170,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return this.repo.save(institution);
   }
 
+  /**
+   * Creates an institution during institution setup process when the
+   * institution profile and the user are created and associated altogether.
+   * @param institutionModel information from the institution and the user.
+   * @param userInfo user to be associated with the institution.
+   * @returns primary identifier of the created resource.
+   */
   async createInstitutionWithAssociatedUser(
     institutionModel: InstitutionFormModel,
     userInfo: UserInfo,
@@ -205,6 +218,15 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return institution;
   }
 
+  /**
+   * Converts the model received to create an institution to
+   * the actual institution entity model to be persisted to the
+   * database.
+   * @param institutionModel information to be use to create the
+   * institution profile.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns institution entity model.
+   */
   private initializeInstitutionFromFormModel(
     institutionModel: InstitutionFormModel,
     auditUserId: number,
