@@ -51,11 +51,11 @@ export class DisbursementReceiptRequestService extends ESDCFileHandler {
     };
     const dailyDisbursementsRecordsInCSV =
       await this.reportService.getReportDataAsCSV(reportFilterModel);
-    const remoteFilePath = await this.integrationService.createRequestFileName(
-      reportName,
-    );
 
-    return await this.integrationService.uploadDailyDisbursementContent(
+    const remoteFilePath =
+      this.integrationService.createRequestFileName(reportName);
+
+    return this.integrationService.uploadDailyDisbursementContent(
       dailyDisbursementsRecordsInCSV,
       remoteFilePath.filePath,
     );
