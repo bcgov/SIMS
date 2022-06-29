@@ -6,6 +6,7 @@
       ></BCLogo>
       <v-spacer></v-spacer>
       <v-btn
+        v-if="isAuthenticated"
         text
         @click="
           $router.push({ name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE })

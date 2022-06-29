@@ -1,10 +1,19 @@
 <template>
-  <formio
+  <formio-container
     formName="institutionProfile"
-    :data="profileData"
+    :formData="profileData"
     @loaded="formLoaded"
     @submitted="submitInstitutionProfile"
-  ></formio>
+  >
+    <template #actions="{ submit }">
+      <footer-buttons
+        :processing="processing"
+        primaryLabel="Create profile"
+        @primaryClick="submit"
+        :showSecondaryButton="false"
+      />
+    </template>
+  </formio-container>
 </template>
 
 <script lang="ts">
@@ -17,6 +26,10 @@ export default {
     profileData: {
       type: Object,
       required: true,
+    },
+    processing: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ["submitInstitutionProfile"],

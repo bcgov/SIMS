@@ -9,6 +9,7 @@
     <institution-profile-form
       :profileData="institutionProfileModel"
       @submitInstitutionProfile="createInstitution"
+      :processing="processing"
     ></institution-profile-form>
   </full-page-container>
 </template>
@@ -38,6 +39,7 @@ export default {
   setup() {
     const router = useRouter();
     const toast = useToastMessage();
+    const processing = ref(false);
     const institutionProfileModel = ref({
       clientType: ClientIdType.AEST,
       mode: "create",
@@ -45,6 +47,7 @@ export default {
 
     const createInstitution = async (data: AESTCreateInstitutionAPIInDTO) => {
       try {
+        processing.value = true;
         const createdInstitution =
           await InstitutionService.shared.createInstitution(data);
         toast.success(
@@ -60,6 +63,8 @@ export default {
           "Unexpected error",
           "Unexpected error while creating the institution.",
         );
+      } finally {
+        processing.value = false;
       }
     };
 
