@@ -10,6 +10,7 @@
       :profileData="institutionProfileModel"
       @submitInstitutionProfile="createInstitution"
       :processing="processing"
+      submitLabel="Create profile"
     ></institution-profile-form>
   </full-page-container>
 </template>

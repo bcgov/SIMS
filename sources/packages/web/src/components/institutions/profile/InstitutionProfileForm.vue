@@ -8,7 +8,7 @@
     <template #actions="{ submit }">
       <footer-buttons
         :processing="processing"
-        primaryLabel="Create profile"
+        :primaryLabel="submitLabel"
         @primaryClick="submit"
         :showSecondaryButton="false"
       />
@@ -19,13 +19,18 @@
 <script lang="ts">
 import { useFormioDropdownLoader } from "@/composables";
 import { SetupContext } from "vue";
-import { InstitutionProfileForm } from "@/types";
+import { FormIOForm, InstitutionProfileForm } from "@/types";
 
 export default {
   props: {
     profileData: {
       type: Object,
       required: true,
+    },
+    submitLabel: {
+      type: String,
+      required: false,
+      default: "Submit",
     },
     processing: {
       type: Boolean,
@@ -36,8 +41,10 @@ export default {
   setup(_props: any, context: SetupContext) {
     const formioDataLoader = useFormioDropdownLoader();
 
-    const submitInstitutionProfile = async (data: InstitutionProfileForm) => {
-      context.emit("submitInstitutionProfile", data);
+    const submitInstitutionProfile = async (
+      form: FormIOForm<InstitutionProfileForm>,
+    ) => {
+      context.emit("submitInstitutionProfile", form.data);
     };
 
     const formLoaded = async (form: any) => {
