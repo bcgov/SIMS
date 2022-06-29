@@ -1,4 +1,4 @@
-import { Controller, Post, Query } from "@nestjs/common";
+import { Body, Controller, Post, Query } from "@nestjs/common";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
@@ -6,7 +6,11 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { DisbursementReceiptProcessingService } from "../../esdc-integration/disbursement-receipt-integration/disbursement-receipt-processing.service";
 import { ECertFileHandler } from "../../esdc-integration/e-cert-integration/e-cert-file-handler";
-import { ESDCFileResponseDTO, ESDCFileResultDTO } from "./models/esdc-model";
+import {
+  DailyDisbursementReportInDTO,
+  ESDCFileResponseDTO,
+  ESDCFileResultDTO,
+} from "./models/esdc-model";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { DisbursementReceiptRequestService } from "../../esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
@@ -109,18 +113,11 @@ export class ECertIntegrationController extends BaseController {
    */
   @Post("process-provincial-daily-disbursements")
   async processProvincialDailyDisbursements(
-    @Query("processDate") processDate: Date,
-  ): Promise<ESDCFileResultDTO[]> {
-    const dailyDisbursementsResults =
-      await this.disbursementReceiptRequestService.processProvincialDailyDisbursements(
-        processDate,
-      );
-    return [
-      {
-        generatedFile: dailyDisbursementsResults.generatedFile,
-        uploadedRecords: dailyDisbursementsResults.uploadedRecords,
-      },
-    ];
+    @Body() payload: DailyDisbursementReportInDTO,
+  ): Promise<string> {
+    return this.disbursementReceiptRequestService.processProvincialDailyDisbursements(
+      new Date(payload.batchRunDate),
+    );
   }
 
   @InjectLogger()

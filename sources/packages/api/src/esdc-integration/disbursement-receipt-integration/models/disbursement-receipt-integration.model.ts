@@ -17,11 +17,3 @@ export class DisbursementReceiptDownloadResponse {
   header: DisbursementReceiptHeader;
   records: DisbursementReceiptDetail[];
 }
-
-/**
- * Result of a file uploaded to SFTP on ZONE B network.
- */
-export interface DailyDisbursementUploadResult {
-  generatedFile: string;
-  uploadedRecords: number;
-}

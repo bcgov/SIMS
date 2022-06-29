@@ -3,7 +3,6 @@ import { ConfigService } from "../../services";
 import { SshService } from "../../services/ssh/ssh.service";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import {
-  DailyDisbursementUploadResult,
   DisbursementReceiptDownloadResponse,
   DisbursementReceiptRecordType,
 } from "./models/disbursement-receipt-integration.model";
@@ -66,37 +65,7 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
   }
 
   /**
-   * Converts the daily disbursements records to the final content and upload it.
-   * @param dailyDisbursementsRecordsInCSV in string format.
-   * @param remoteFilePath Remote location to upload the file (path + file name).
-   * @returns Upload result.
-   */
-  async uploadDailyDisbursementContent(
-    dailyDisbursementsRecordsInCSV: string,
-    remoteFilePath: string,
-  ): Promise<DailyDisbursementUploadResult> {
-    // Send the file to ftp.
-    this.logger.log("Creating new SFTP client to start upload...");
-    const client = await this.getClient();
-    try {
-      this.logger.log(`Uploading ${remoteFilePath}`);
-      await client.put(
-        Buffer.from(dailyDisbursementsRecordsInCSV),
-        remoteFilePath,
-      );
-      return {
-        generatedFile: remoteFilePath,
-        uploadedRecords: 1,
-      };
-    } finally {
-      this.logger.log("Finalizing SFTP client...");
-      await SshService.closeQuietly(client);
-      this.logger.log("SFTP client finalized.");
-    }
-  }
-
-  /**
-   * Expected file name of the daily disbursements records file.
+   * Create file name of the daily disbursements records file.
    * @param reportName Report name to be a part of filename.
    * @returns Full file path of the file to be saved on the SFTP.
    */
