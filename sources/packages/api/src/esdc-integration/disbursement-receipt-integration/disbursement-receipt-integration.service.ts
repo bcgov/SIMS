@@ -3,17 +3,22 @@ import { ConfigService } from "../../services";
 import { SshService } from "../../services/ssh/ssh.service";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import {
+  DailyDisbursementUploadResult,
   DisbursementReceiptDownloadResponse,
   DisbursementReceiptRecordType,
 } from "./models/disbursement-receipt-integration.model";
 import { DisbursementReceiptHeader } from "./disbursement-receipt-files/disbursement-receipt-file-header";
 import { DisbursementReceiptFooter } from "./disbursement-receipt-files/disbursement-receipt-file-footer";
 import { DisbursementReceiptDetail } from "./disbursement-receipt-files/disbursement-receipt-file-detail";
+import { getFileNameAsCurrentTimestamp } from "src/utilities";
+import { ESDCIntegrationConfig } from "src/types";
 
 @Injectable()
 export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<DisbursementReceiptDownloadResponse> {
+  private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(config: ConfigService, sshService: SshService) {
     super(config.getConfig().zoneBSFTP, sshService);
+    this.esdcConfig = config.getConfig().ESDCIntegration;
   }
 
   /**
@@ -58,5 +63,52 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
       throw new Error("SIN Hash validation failed.");
     }
     return { header, records };
+  }
+
+  /**
+   * Converts the daily disbursements records to the final content and upload it.
+   * @param dailyDisbursementsRecordsInCSV in string format.
+   * @param remoteFilePath Remote location to upload the file (path + file name).
+   * @returns Upload result.
+   */
+  async uploadDailyDisbursementContent(
+    dailyDisbursementsRecordsInCSV: string,
+    remoteFilePath: string,
+  ): Promise<DailyDisbursementUploadResult> {
+    // Send the file to ftp.
+    this.logger.log("Creating new SFTP client to start upload...");
+    const client = await this.getClient();
+    try {
+      this.logger.log(`Uploading ${remoteFilePath}`);
+      await client.put(
+        Buffer.from(dailyDisbursementsRecordsInCSV),
+        remoteFilePath,
+      );
+      return {
+        generatedFile: remoteFilePath,
+        uploadedRecords: 1,
+      };
+    } finally {
+      this.logger.log("Finalizing SFTP client...");
+      await SshService.closeQuietly(client);
+      this.logger.log("SFTP client finalized.");
+    }
+  }
+
+  /**
+   * Expected file name of the daily disbursements records file.
+   * @returns Full file path of the file to be saved on the SFTP.
+   */
+  createRequestFileName(reportName: string): {
+    fileName: string;
+    filePath: string;
+  } {
+    const timestamp = getFileNameAsCurrentTimestamp();
+    const fileName = `${reportName}_${timestamp}.csv`;
+    const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
+    return {
+      fileName,
+      filePath,
+    };
   }
 }

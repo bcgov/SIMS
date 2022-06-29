@@ -13,10 +13,8 @@ import {
   DATE_FORMAT,
 } from "../models/esdc-integration.model";
 import { DailyDisbursementUploadResult } from "./models/disbursement-receipt-integration.model";
-import {
-  ReportFilterParam,
-  ReportsFilterModel,
-} from "src/services/report/report.models";
+import { ReportsFilterModel } from "src/services/report/report.models";
+import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
 
 @Injectable()
 export class DisbursementReceiptRequestService extends ESDCFileHandler {
@@ -24,6 +22,7 @@ export class DisbursementReceiptRequestService extends ESDCFileHandler {
     configService: ConfigService,
     private readonly reportService: ReportService,
     private readonly disbursementReceiptService: DisbursementReceiptService,
+    private readonly integrationService: DisbursementReceiptIntegrationService,
   ) {
     super(configService);
   }
@@ -52,8 +51,14 @@ export class DisbursementReceiptRequestService extends ESDCFileHandler {
     };
     const dailyDisbursementsRecordsInCSV =
       await this.reportService.getReportDataAsCSV(reportFilterModel);
+    const remoteFilePath = await this.integrationService.createRequestFileName(
+      reportName,
+    );
 
-    return;
+    return await this.integrationService.uploadDailyDisbursementContent(
+      dailyDisbursementsRecordsInCSV,
+      remoteFilePath.filePath,
+    );
   }
 
   /**
