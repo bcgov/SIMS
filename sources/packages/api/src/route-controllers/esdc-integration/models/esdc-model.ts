@@ -12,5 +12,5 @@ export interface ESDCFileResponseDTO {
 export class DailyDisbursementReportAPIInDTO {
   @IsOptional()
   @IsDateString()
-  batchRunDate: string;
+  batchRunDate?: string;
 }
