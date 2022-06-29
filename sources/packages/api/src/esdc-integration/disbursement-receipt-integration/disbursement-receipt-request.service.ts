@@ -1,11 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
-import {
-  ConfigService,
-  DisbursementReceiptService,
-  ReportService,
-} from "../../services";
+import { DisbursementReceiptService, ReportService } from "../../services";
 import { ReportsFilterModel } from "../../services/report/report.models";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
 import { DAILY_DISBURSEMENT_REPORT_NAME } from "../../utilities";
@@ -13,7 +9,6 @@ import { DAILY_DISBURSEMENT_REPORT_NAME } from "../../utilities";
 @Injectable()
 export class DisbursementReceiptRequestService {
   constructor(
-    configService: ConfigService,
     private readonly reportService: ReportService,
     private readonly disbursementReceiptService: DisbursementReceiptService,
     private readonly integrationService: DisbursementReceiptIntegrationService,
