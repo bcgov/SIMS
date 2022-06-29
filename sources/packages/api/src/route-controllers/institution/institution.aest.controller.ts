@@ -224,7 +224,6 @@ export class InstitutionAESTController extends BaseController {
       payload,
       userToken.userId,
     );
-
     return {
       id: institution.id,
     };

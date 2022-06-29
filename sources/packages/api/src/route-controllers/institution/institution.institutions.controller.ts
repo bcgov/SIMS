@@ -84,8 +84,8 @@ export class InstitutionInstitutionsController extends BaseController {
   }
 
   /**
-   * Create institution during institution setup process when the institution
-   * profile and the user are create and associated altogether.
+   * Creates an institution during institution setup process when the
+   * institution profile and the user are create and associated altogether.
    * @param payload information from the institution and the user.
    * @returns primary identifier of the created resource.
    */

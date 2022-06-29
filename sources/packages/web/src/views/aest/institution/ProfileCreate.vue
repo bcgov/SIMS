@@ -19,21 +19,16 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { ClientIdType } from "@/types";
-import {
-  AESTCreateInstitutionAPIInDTO,
-  InstitutionDetailAPIOutDTO,
-} from "@/services/http/dto";
+import { AESTCreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { useToastMessage } from "@/composables";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
-type InstitutionDetailFormModel = Pick<
-  InstitutionDetailAPIOutDTO,
-  "clientType"
-> & {
+interface FormModel {
+  clientType: ClientIdType;
   mode: string;
-};
+}
 
 export default {
   components: { InstitutionProfileForm },
@@ -44,7 +39,7 @@ export default {
     const institutionProfileModel = ref({
       clientType: ClientIdType.AEST,
       mode: "create",
-    } as InstitutionDetailFormModel);
+    } as FormModel);
 
     const createInstitution = async (data: AESTCreateInstitutionAPIInDTO) => {
       try {

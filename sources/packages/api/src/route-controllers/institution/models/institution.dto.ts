@@ -16,7 +16,7 @@ import {
 } from "../../models/common.dto";
 
 /**
- * Institution creation by the institution user during the on board process
+ * DTO for institution creation by the institution user during the on board process
  * when the institution profile and the admin user must be created altogether.
  */
 export class CreateInstitutionAPIInDTO {

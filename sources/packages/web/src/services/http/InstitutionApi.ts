@@ -44,8 +44,8 @@ export class InstitutionApi extends HttpBaseClient {
   }
 
   /**
-   * Create institution during institution setup process when the institution
-   * profile and the user are create and associated altogether.
+   * Creates an institution during institution setup process when the
+   * institution profile and the user are create and associated altogether.
    * @param createInstitutionDto information from the institution and the user.
    */
   async createInstitutionWithAssociatedUser(
