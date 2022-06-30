@@ -1,6 +1,6 @@
 <template>
-  <v-navigation-drawer class="body-background" permanent>
-    <v-list density="compact">
+  <v-navigation-drawer app class="body-background" permanent>
+    <v-list density="compact" nav>
       <v-list-item
         v-for="topItem in topItems"
         :key="topItem.label"
@@ -9,7 +9,7 @@
         @click="topItem.command"
       />
     </v-list>
-    <v-list density="compact">
+    <v-list density="compact" nav>
       <v-list-subheader>Student requests</v-list-subheader>
       <v-list-item
         :prepend-icon="exceptionsItem.icon"
@@ -17,10 +17,8 @@
         @click="exceptionsItem.command"
       />
     </v-list>
-    <v-list density="compact">
-      <v-list-item-title class="text-muted ml-4"
-        >Institution requests</v-list-item-title
-      >
+    <v-list density="compact" nav>
+      <v-list-subheader>Institution requests</v-list-subheader>
       <v-list-item
         :title="pendingDesignationItem.label"
         :prepend-icon="pendingDesignationItem.icon"
@@ -28,7 +26,7 @@
       />
     </v-list>
     <template #append>
-      <v-list density="compact">
+      <v-list density="compact" nav>
         <v-list-item @click="reports.command" :title="reports.label">
         </v-list-item>
       </v-list>

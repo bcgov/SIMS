@@ -2,11 +2,13 @@
   <!-- TODO: need to use v-list-group and update code with vuetify is -->
   <v-navigation-drawer app class="body-background" permanent>
     <v-list-item
+      density="compact"
+      nav
       :prepend-icon="studentMenu.studentApplication.icon"
       :title="studentMenu.studentApplication.label"
       @click="studentMenu.studentApplication.command"
     />
-    <v-list density="compact" v-if="relatedParentPartners.length">
+    <v-list density="compact" v-if="relatedParentPartners.length" nav>
       <v-list-subheader>Supporting users</v-list-subheader>
       <v-list-item
         v-for="relatedParentPartner in relatedParentPartners"
@@ -17,6 +19,8 @@
       />
     </v-list>
     <v-list-item
+      density="compact"
+      nav
       :prepend-icon="studentMenu.assessments.icon"
       :title="studentMenu.assessments.label"
       @click="studentMenu.assessments.command"
