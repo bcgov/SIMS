@@ -1,18 +1,13 @@
 <template>
-  <v-navigation-drawer app class="body-background">
-    <v-list dense nav>
+  <v-navigation-drawer app class="body-background" permanent>
+    <v-list density="compact" nav>
       <v-list-item
         v-for="item in items"
         :key="item.label"
         @click="item.command"
-      >
-        <v-list-item-icon>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>{{ item.label }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+        :prepend-icon="item.icon"
+        :title="item.label"
+      />
     </v-list>
   </v-navigation-drawer>
 </template>
