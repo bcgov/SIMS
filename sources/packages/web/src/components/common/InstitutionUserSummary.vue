@@ -1,54 +1,36 @@
+<!-- This component is shared between ministry and student users -->
 <template>
-  <!-- This component is shared between ministry and student users -->
-  <div class="mb-4">
-    <span class="category-header-large color-blue">
-      All Users({{ usersListAndCount.count }})
-    </span>
-    <div class="float-right">
-      <InputText
+  <body-header
+    title="All users"
+    class="m-1"
+    :recordsCount="usersListAndCount.count"
+  >
+    <template #actions>
+      <v-btn
+        class="ml-2 primary-btn-background float-right"
+        @click="openNewUserModal"
+      >
+        <v-icon icon="fa fa-plus-circle" class="mr-2" />
+        Add new user
+      </v-btn>
+      <v-btn
+        class="ml-2 primary-btn-background float-right"
+        @click="searchUserTable"
+      >
+        <v-icon icon="fas fa-magnifying-glass" />
+      </v-btn>
+      <v-text-field
+        class="v-text-field-search-width float-right"
+        density="compact"
+        label="Search user"
+        variant="outlined"
         v-model="searchBox"
-        placeholder="Search User"
-        @keyup.enter="searchUserTable()"
-      />
-      <v-btn
-        @click="searchUserTable()"
-        tile
-        class="ml-2 primary-btn-background"
+        @keyup.enter="searchUserTable"
+        prepend-inner-icon="fas fa-magnifying-glass"
       >
-        <font-awesome-icon :icon="['fas', 'search']" />
-      </v-btn>
-
-      <v-btn
-        v-if="clientType === ClientIdType.Institution"
-        class="ml-2 primary-btn-background"
-        @click="openNewUserModal()"
-      >
-        <font-awesome-icon :icon="['fas', 'external-link-square-alt']" />
-        Add New User
-      </v-btn>
-
-      <!-- Add user -->
-      <AddInstitutionUser
-        v-if="clientType === ClientIdType.Institution"
-        :userType="userType"
-        :showAddUser="showAddUser"
-        :adminRoles="adminRoles"
-        @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
-        @getAllInstitutionUsers="getAllInstitutionUsers"
-      />
-
-      <!-- edit user -->
-      <EditInstitutionUser
-        v-if="clientType === ClientIdType.Institution"
-        :userType="userType"
-        :showEditUser="showEditUser"
-        :institutionUserName="institutionUserName"
-        :adminRoles="adminRoles"
-        @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
-        @getAllInstitutionUsers="getAllInstitutionUsers"
-      />
-    </div>
-  </div>
+      </v-text-field>
+    </template>
+  </body-header>
   <content-group>
     <DataTable
       :value="usersListAndCount.results"
@@ -113,16 +95,19 @@
               @click="editInstitutionUser(slotProps.data.userName)"
               variant="plain"
             >
+              <v-btn
+                v-if="slotProps.data.isActive"
+                @click="viewRequest(data)"
+                variant="text"
+                color="primary"
+                text="Edit"
+                class="text-decoration-underline"
+              >
+                Edit
+              </v-btn>
               <font-awesome-icon
                 :icon="['fas', 'pen']"
-                v-if="slotProps.data.isActive"
-                right
-                v-tooltip="'Edit User'"
-              >
-              </font-awesome-icon
-              ><font-awesome-icon
-                :icon="['fas', 'pen']"
-                v-else
+                v-if="!slotProps.data.isActive"
                 right
                 v-tooltip="'Disabled User Cannot Be Edited'"
               >
@@ -141,6 +126,26 @@
       </Column>
     </DataTable>
   </content-group>
+  <!-- Add user -->
+  <add-institution-user
+    ref="addInstitutionUserModal"
+    v-if="clientType === ClientIdType.Institution"
+    :userType="userType"
+    :showAddUser="showAddUser"
+    :adminRoles="adminRoles"
+    @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
+    @getAllInstitutionUsers="getAllInstitutionUsers"
+  />
+  <!-- edit user -->
+  <EditInstitutionUser
+    v-if="clientType === ClientIdType.Institution"
+    :userType="userType"
+    :showEditUser="showEditUser"
+    :institutionUserName="institutionUserName"
+    :adminRoles="adminRoles"
+    @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
+    @getAllInstitutionUsers="getAllInstitutionUsers"
+  />
 </template>
 
 <script lang="ts">
@@ -149,7 +154,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
 import { useToast } from "primevue/usetoast";
-import { useAuth } from "@/composables";
+import { ModalDialog, useAuth } from "@/composables";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
 import {
   InstitutionUserViewModel,
@@ -179,6 +184,8 @@ export default {
     },
   },
   setup(props: any) {
+    const addInstitutionUserModal = ref({} as ModalDialog<boolean>);
+
     const { parsedToken } = useAuth();
     const toast = useToast();
     const showAddUser = ref(false);
@@ -190,8 +197,8 @@ export default {
     const searchBox = ref("");
     const currentPage = ref();
     const currentPageLimit = ref();
-    const openNewUserModal = () => {
-      showAddUser.value = true;
+    const openNewUserModal = async () => {
+      await addInstitutionUserModal.value.showModal();
     };
     const institutionUserName = ref();
     const adminRoles = ref();
@@ -302,6 +309,7 @@ export default {
       }
     });
     return {
+      addInstitutionUserModal,
       openNewUserModal,
       showAddUser,
       showEditUser,

@@ -1,4 +1,5 @@
 import "@mdi/font/css/materialdesignicons.css";
+import "@fortawesome/fontawesome-free/css/all.css";
 import "vuetify/lib/styles/main.sass";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/lib/components";
