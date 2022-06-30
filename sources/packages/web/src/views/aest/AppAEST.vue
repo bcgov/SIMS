@@ -11,12 +11,12 @@
         @click="
           $router.push({ name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE })
         "
-        ><v-icon icon="fa fa-edit"></v-icon>Create institution</v-btn
+        ><v-icon icon="fa:fa fa-edit"></v-icon>Create institution</v-btn
       >
       <v-btn
         v-if="isAuthenticated"
         class="mr-5"
-        icon="fa fa-user"
+        icon="fa:fa fa-user"
         variant="outlined"
         elevation="1"
         color="grey"
