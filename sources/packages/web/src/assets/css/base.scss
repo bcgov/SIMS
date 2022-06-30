@@ -60,37 +60,30 @@ html * {
 }
 
 /** Moving the dimension and position properties of status badge to common class **/
-.status_badge {
-  border-width: 1px;
-  padding: 15px;
-  border-style: solid;
-  border-radius: 30px;
-  position: static;
-  font-weight: 700;
+.v-chip--variant-outlined {
+  border: 2px solid !important;
+  font-weight: 700 !important;
+  background-color: white !important;
 }
 
 // success badge
-.status-badge-success .v-badge__badge {
-  @extend .status_badge;
-  border-color: $badge-border-success;
+.v-chip--variant-outlined.status-chip-success {
+  border-color: $badge-border-success !important;
 }
 
 // inactive badge
-.status-badge-inactive .v-badge__badge {
-  @extend .status_badge;
-  border-color: $badge-border-inactive;
+.v-chip--variant-outlined.status-chip-inactive {
+  border-color: $badge-border-inactive !important;
 }
 
 //warning badge
-.status-badge-warning .v-badge__badge {
-  @extend .status_badge;
-  border-color: $badge-border-warning;
+.v-chip--variant-outlined.status-chip-warning {
+  border-color: $badge-border-warning !important;
 }
 
 //error badge
-.status-badge-error .v-badge__badge {
-  @extend .status_badge;
-  border-color: $badge-border-error;
+.v-chip--variant-outlined.status-chip-error {
+  border-color: $badge-border-error !important;
 }
 
 //Defining the height of rounded filter button

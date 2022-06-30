@@ -26,3 +26,8 @@
   background-color: $banner-background-error;
   border: 3px solid $banner-color-error;
 }
+
+.v-list-item-icon--start {
+  -webkit-margin-end: 10px !important;
+  margin-inline-end: 10px !important;
+}

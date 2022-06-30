@@ -1,64 +1,35 @@
 <template>
-  <v-navigation-drawer app class="body-background">
-    <v-list dense nav>
+  <v-navigation-drawer class="body-background" permanent>
+    <v-list density="compact">
       <v-list-item
-        v-for="item in items"
-        :key="item.label"
-        @click="item.command"
-      >
-        <v-list-item-icon>
-          <font-awesome-icon :icon="item.icon" class="mr-2" />
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>{{ item.label }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+        v-for="topItem in topItems"
+        :key="topItem.label"
+        :prepend-icon="topItem.icon"
+        :title="topItem.label"
+        @click="topItem.command"
+      />
     </v-list>
-    <v-list dense nav>
-      <v-list-item-title class="text-muted ml-4"
-        >Student requests</v-list-item-title
-      >
-      <v-list-item @click="exceptionsItem.command">
-        <v-list-item-icon>
-          <font-awesome-icon :icon="exceptionsItem.icon" class="mr-2" />
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>{{ exceptionsItem.label }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item>
-        <v-list-item-icon>
-          <font-awesome-icon :icon="['fas', 'folder-open']" class="mr-2" />
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>Pending applications</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+    <v-list density="compact">
+      <v-list-subheader>Student requests</v-list-subheader>
+      <v-list-item
+        :prepend-icon="exceptionsItem.icon"
+        :title="exceptionsItem.label"
+        @click="exceptionsItem.command"
+      />
     </v-list>
-    <v-list dense nav>
+    <v-list density="compact">
       <v-list-item-title class="text-muted ml-4"
         >Institution requests</v-list-item-title
       >
-      <v-list-item @click="pendingDesignationItem.command">
-        <v-list-item-icon>
-          <font-awesome-icon :icon="pendingDesignationItem.icon" class="mr-2" />
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>{{
-            pendingDesignationItem.label
-          }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+      <v-list-item
+        :title="pendingDesignationItem.label"
+        :prepend-icon="pendingDesignationItem.icon"
+        @click="pendingDesignationItem.command"
+      />
     </v-list>
     <template #append>
-      <v-list dense nav>
-        <v-list-item @click="reports.command">
-          <v-list-item-icon>
-            <font-awesome-icon :icon="reports.icon" class="mr-2" />
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>{{ reports.label }}</v-list-item-title>
-          </v-list-item-content>
+      <v-list density="compact">
+        <v-list-item @click="reports.command" :title="reports.label">
         </v-list-item>
       </v-list>
     </template>
@@ -73,10 +44,10 @@ import { MenuModel } from "@/types";
 export default {
   setup() {
     const router = useRouter();
-    const items = ref<MenuModel[]>([
+    const topItems = ref<MenuModel[]>([
       {
         label: "Dashboard",
-        icon: ["fas", "home"],
+        icon: "mdi-home-outline",
         command: () => {
           router.push({
             name: AESTRoutesConst.AEST_DASHBOARD,
@@ -85,7 +56,7 @@ export default {
       },
       {
         label: "Search Students",
-        icon: ["fas", "search"],
+        icon: "mdi-magnify",
         command: () => {
           router.push({
             name: AESTRoutesConst.SEARCH_STUDENTS,
@@ -94,22 +65,28 @@ export default {
       },
       {
         label: "Search Institutions",
-        icon: ["fas", "search"],
+        icon: "mdi-magnify",
         command: () => {
           router.push({
             name: AESTRoutesConst.SEARCH_INSTITUTIONS,
           });
         },
       },
-      {
-        label: "Settings",
-        icon: ["fas", "cog"],
-      },
     ]);
+
+    const exceptionsItem = ref({
+      label: "Exceptions",
+      icon: "mdi-alert-circle-outline",
+      command: () => {
+        router.push({
+          name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
+        });
+      },
+    } as MenuModel);
 
     const pendingDesignationItem = ref({
       label: "Pending designations",
-      icon: ["fas", "pen-nib"],
+      icon: "mdi-bookmark-outline",
       command: () => {
         router.push({
           name: AESTRoutesConst.PENDING_DESIGNATIONS,
@@ -119,7 +96,7 @@ export default {
 
     const reports = ref({
       label: "Reports",
-      icon: ["far", "copy"],
+      icon: "mdi-home-outline",
       command: () => {
         router.push({
           name: AESTRoutesConst.REPORTS,
@@ -127,21 +104,12 @@ export default {
       },
     } as MenuModel);
 
-    const exceptionsItem = ref({
-      label: "Exceptions",
-      icon: ["far", "check-circle"],
-      command: () => {
-        router.push({
-          name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
-        });
-      },
-    } as MenuModel);
-
     return {
-      items,
+      topItems,
       pendingDesignationItem,
       exceptionsItem,
       reports,
+      AESTRoutesConst,
     };
   },
 };
