@@ -38,6 +38,7 @@ export default {
         provinceState: address.provinceState,
         postalCode: address.postalCode,
         pdStatus: studentDetail.pdStatus ?? "None",
+        sin: studentDetail.sin,
       };
     });
     return {

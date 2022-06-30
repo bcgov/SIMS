@@ -96,6 +96,7 @@ export class StudentApi extends HttpBaseClient {
     appNumber: string,
     firstName: string,
     lastName: string,
+    sin: string,
   ): Promise<SearchStudentAPIOutDTO[]> {
     let queryString = "";
     if (appNumber) {
@@ -106,6 +107,9 @@ export class StudentApi extends HttpBaseClient {
     }
     if (lastName) {
       queryString += `lastName=${lastName}&`;
+    }
+    if (sin) {
+      queryString += `sin=${sin}&`;
     }
     const url = this.addClientRoot(
       `students/search?${queryString.slice(0, -1)}`,

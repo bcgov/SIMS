@@ -34,6 +34,7 @@ export interface StudentProfileAPIOutDTO {
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
   pdStatus: StudentPDStatus;
+  sin: string;
 }
 
 export interface AESTStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
@@ -90,6 +91,7 @@ export interface SearchStudentAPIOutDTO {
   firstName: string;
   lastName: string;
   birthDate: string;
+  sin: string;
 }
 
 export interface ApplicationSummaryAPIOutDTO {

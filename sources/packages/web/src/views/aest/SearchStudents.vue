@@ -2,32 +2,47 @@
   <full-page-container>
     <h2 class="color-blue">Search Students</h2>
     <v-row class="mt-5"
-      ><v-col><label for="appNumber">Application Number</label></v-col
-      ><v-col><label for="firstName">Given Names</label></v-col
-      ><v-col><label for="lastName">Last Name</label></v-col> <v-col></v-col
+      ><v-col>Application Number</v-col><v-col>SIN</v-col
+      ><v-col>Given Names</v-col><v-col>Last Name</v-col> <v-col></v-col
     ></v-row>
     <v-row
-      ><v-col
-        ><InputText
-          type="text"
+      ><v-col>
+        <v-text-field
+          density="compact"
           data-cy="appNumber"
+          variant="outlined"
           v-model="appNumber"
-          @keyup.enter="searchStudents()" /></v-col
-      ><v-col
-        ><InputText
-          type="text"
+          @keyup.enter="searchStudents"
+        />
+      </v-col>
+      <v-col>
+        <v-text-field
+          density="compact"
+          data-cy="sin"
+          variant="outlined"
+          v-model="sin"
+          @keyup.enter="searchStudents"
+        />
+      </v-col>
+      <v-col>
+        <v-text-field
+          density="compact"
           data-cy="firstName"
+          variant="outlined"
           v-model="firstName"
-          @keyup.enter="searchStudents()" /></v-col
-      ><v-col
-        ><InputText
-          type="text"
+          @keyup.enter="searchStudents"
+        /> </v-col
+      ><v-col>
+        <v-text-field
+          density="compact"
           data-cy="lastName"
+          variant="outlined"
           v-model="lastName"
-          @keyup.enter="searchStudents()" /></v-col
+          @keyup.enter="searchStudents"
+        /> </v-col
       ><v-col
         ><v-btn
-          :disabled="!appNumber && !firstName && !lastName"
+          :disabled="!appNumber && !firstName && !lastName && !sin"
           color="primary"
           class="p-button-raised"
           data-cy="searchStudents"
@@ -96,6 +111,7 @@ export default {
     const firstName = ref("");
     const lastName = ref("");
     const students = ref([] as SearchStudentAPIOutDTO[]);
+    const sin = ref("");
     const goToViewStudent = (studentId: number) => {
       router.push({
         name: AESTRoutesConst.STUDENT_PROFILE,
@@ -107,6 +123,7 @@ export default {
         appNumber.value,
         firstName.value,
         lastName.value,
+        sin.value,
       );
       if (students.value.length === 0) {
         toast.warn(
@@ -119,6 +136,7 @@ export default {
       return students.value.length > 0;
     });
     return {
+      sin,
       appNumber,
       firstName,
       lastName,

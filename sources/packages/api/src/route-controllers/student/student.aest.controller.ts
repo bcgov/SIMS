@@ -224,6 +224,7 @@ export class StudentAESTController extends BaseController {
       firstName: eachStudent.user.firstName,
       lastName: eachStudent.user.lastName,
       birthDate: getISODateOnlyString(eachStudent.birthDate),
+      sin: eachStudent.sinValidation.sin,
     }));
   }
 

@@ -115,8 +115,14 @@ export class StudentService {
     appNumber: string,
     firstName: string,
     lastName: string,
+    sin: string,
   ): Promise<SearchStudentAPIOutDTO[]> {
-    return ApiClient.Students.searchStudents(appNumber, firstName, lastName);
+    return ApiClient.Students.searchStudents(
+      appNumber,
+      firstName,
+      lastName,
+      sin,
+    );
   }
 
   /**
