@@ -63,7 +63,7 @@ html * {
 .v-chip--variant-outlined {
   border: 2px solid !important;
   font-weight: 700 !important;
-  background-color: white !important;
+  background-color: $badge-background-color !important;
 }
 
 // Success v-chip.
