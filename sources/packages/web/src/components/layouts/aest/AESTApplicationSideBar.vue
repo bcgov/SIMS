@@ -1,51 +1,30 @@
 <template>
   <!-- TODO: need to use v-list-group and update code with vuetify is -->
-  <v-navigation-drawer app class="body-background">
-    <v-list dense nav>
-      <v-list-item @click="studentMenu.studentApplication.command">
-        <v-list-item-icon>
-          <font-awesome-icon
-            :icon="studentMenu.studentApplication.icon"
-            class="mr-2"
-          />
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title
-            >{{ studentMenu.studentApplication.label }}
-          </v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+  <v-navigation-drawer app class="body-background" permanent>
+    <v-list-item
+      density="compact"
+      nav
+      :prepend-icon="studentMenu.studentApplication.icon"
+      :title="studentMenu.studentApplication.label"
+      @click="studentMenu.studentApplication.command"
+    />
+    <v-list density="compact" v-if="relatedParentPartners.length" nav>
+      <v-list-subheader>Supporting users</v-list-subheader>
       <v-list-item
         v-for="relatedParentPartner in relatedParentPartners"
         :key="relatedParentPartner.label"
+        :prepend-icon="relatedParentPartner.icon"
+        :title="relatedParentPartner.label"
         @click="relatedParentPartner.command"
-      >
-        <!-- TODO: remove the div when `v-list-item-group` is available and implemented -->
-        <div class="px-3">
-          <v-list-item-icon>
-            <font-awesome-icon :icon="relatedParentPartner.icon" class="mr-2" />
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>{{
-              relatedParentPartner.label
-            }}</v-list-item-title>
-          </v-list-item-content>
-        </div>
-      </v-list-item>
-      <v-list-item @click="studentMenu.assessments.command">
-        <v-list-item-icon>
-          <font-awesome-icon
-            :icon="studentMenu.assessments.icon"
-            class="mr-2"
-          />
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title
-            >{{ studentMenu.assessments.label }}
-          </v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+      />
     </v-list>
+    <v-list-item
+      density="compact"
+      nav
+      :prepend-icon="studentMenu.assessments.icon"
+      :title="studentMenu.assessments.label"
+      @click="studentMenu.assessments.command"
+    />
   </v-navigation-drawer>
 </template>
 
@@ -78,8 +57,7 @@ export default {
     const studentMenu = ref<StudentApplicationMenu>({
       studentApplication: {
         label: "Student",
-        // TODO: in figma this icon is PRO version
-        icon: ["fas", "graduation-cap"],
+        icon: "mdi-school-outline",
         command: () => {
           router.push({
             name: AESTRoutesConst.APPLICATION_DETAILS,
@@ -92,7 +70,7 @@ export default {
       },
       assessments: {
         label: "Assessments",
-        icon: ["far", "check-square"],
+        icon: "mdi-checkbox-marked-outline",
         command: () => {
           router.push({
             name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
@@ -104,6 +82,7 @@ export default {
         },
       },
     });
+
     const goToSupportingUser = (supportingUserId: number) => {
       router.push({
         name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
@@ -114,6 +93,7 @@ export default {
         },
       });
     };
+
     onMounted(async () => {
       const supportingUsers =
         await SupportingUsersService.shared.getSupportingUsersForSideBar(
@@ -123,14 +103,14 @@ export default {
         if (supportingUser.supportingUserType === SupportingUserType.Parent) {
           relatedParentPartners.value.push({
             label: `Parent ${index + 1}`,
-            icon: ["far", "user"],
+            icon: "mdi-account-outline",
             command: () => goToSupportingUser(supportingUser.supportingUserId),
           });
         }
         if (supportingUser.supportingUserType === SupportingUserType.Partner) {
           relatedParentPartners.value.push({
             label: "Partner",
-            icon: ["far", "user"],
+            icon: "mdi-account-outline",
             command: () => goToSupportingUser(supportingUser.supportingUserId),
           });
         }

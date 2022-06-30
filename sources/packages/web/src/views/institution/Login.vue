@@ -10,32 +10,40 @@
     </v-card-header>
     <v-card-text
       >We are using BCeID for Authentication. Please click on Login/Register
-      buttons below to start your sign in/sign up with your Business
-      BCeID.</v-card-text
-    >
-    <v-row justify="center" class="m-3">
-      <v-btn class="mr-2" color="primary" @click="login">
-        <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
-        Login with BCeID
-      </v-btn>
-      <v-btn color="primary" @click="login">
-        <v-icon size="25" class="mr-2">mdi-account-star-outline</v-icon>
-        Sign Up with BCeID
-      </v-btn>
-    </v-row>
-    <Message severity="error" class="mx-2" v-if="showBasicBCeIDMessage">
-      No such Business account has been found with BCeID. Please login with your
-      Business BCeId
-    </Message>
-    <Message severity="error" class="mx-2" v-if="showDisabledUserMessage">
-      Disabled User - you dont have access to the system. Please contact
-      Administrator for more informations.
-    </Message>
-    <Message severity="error" class="mx-2" v-if="showUnknownUserMessage">
-      The user was validated successfully but is not currently allowed to have
-      access to this application. Please contact the Administrator for more
-      information
-    </Message>
+      buttons below to start your sign in/sign up with your Business BCeID.
+      <Message severity="error" v-if="showBasicBCeIDMessage">
+        No such Business account has been found with BCeID. Please login with
+        your Business BCeId
+      </Message>
+      <Message severity="error" v-if="showDisabledUserMessage">
+        Disabled User - you don't have access to the system. Please contact
+        Administrator for more informations.
+      </Message>
+      <Message severity="error" v-if="showUnknownUserMessage">
+        The user was validated successfully but is not currently allowed to have
+        access to this application. Please contact the Administrator for more
+        information
+      </Message>
+    </v-card-text>
+    <v-card-actions>
+      <v-row justify="center" class="my-3">
+        <v-btn
+          class="primary-btn-background"
+          @click="login"
+          prepend-icon="fa:fa fa-user"
+        >
+          Login with BCeID
+        </v-btn>
+        <v-btn
+          class="primary-btn-background"
+          @click="login"
+          variant="outlined"
+          prepend-icon="fa:fa fa-user-plus"
+        >
+          Sign Up with BCeID
+        </v-btn>
+      </v-row>
+    </v-card-actions>
   </v-card>
 </template>
 
