@@ -32,3 +32,8 @@
   -webkit-margin-end: 10px !important;
   margin-inline-end: 10px !important;
 }
+
+// Reducing the spacing to looks like more with the UI definitions.
+.v-list-group__items {
+  --indent-padding: 10px !important;
+}

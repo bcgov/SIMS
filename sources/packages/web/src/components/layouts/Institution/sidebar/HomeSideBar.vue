@@ -8,28 +8,28 @@
         :prepend-icon="item.icon"
         :title="item.label"
       />
-      <v-list density="compact" nav>
-        <v-list-subheader>Locations</v-list-subheader>
+      <v-list-subheader>Locations</v-list-subheader>
+      <v-list-group
+        v-for="location in locationsMenu"
+        :key="location.label"
+        collapse-icon="mdi-chevron-up"
+        expand-icon="mdi-chevron-down"
+      >
+        <template #activator="{ props }">
+          <v-list-item
+            v-bind="props"
+            :title="location.label"
+            :prepend-icon="location.icon"
+          ></v-list-item>
+        </template>
         <v-list-item
-          v-for="location in locationsMenu"
-          :key="location.label"
-          @click="location.command"
-        >
-          <v-list-item-content>
-            <v-list-item-title
-              ><v-icon>{{ location.icon }}</v-icon>
-              {{ location.label }}</v-list-item-title
-            >
-            <v-list-item
-              v-for="locationItem in location?.items"
-              :key="locationItem"
-              :prepend-icon="locationItem.icon"
-              :title="locationItem.label"
-              @click="locationItem.command"
-            />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+          v-for="locationItem in location?.items"
+          :key="locationItem"
+          :prepend-icon="locationItem.icon"
+          :title="locationItem.label"
+          @click="locationItem.command"
+        />
+      </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
