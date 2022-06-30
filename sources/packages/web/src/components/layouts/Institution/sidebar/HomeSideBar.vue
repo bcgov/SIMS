@@ -137,7 +137,6 @@ export default {
             : undefined;
 
         if (locationMenu) {
-          // if (locationUserMenu) locationMenu?.items?.push(locationUserMenu);
           locationsMenu.value.push(locationMenu);
         }
       }

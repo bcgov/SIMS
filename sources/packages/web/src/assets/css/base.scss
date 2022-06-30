@@ -59,29 +59,29 @@ html * {
   padding: 0.5rem !important;
 }
 
-/** Moving the dimension and position properties of status badge to common class **/
+// Specific styles for the outlined v-chip.
 .v-chip--variant-outlined {
   border: 2px solid !important;
   font-weight: 700 !important;
   background-color: white !important;
 }
 
-// success badge
+// Success v-chip.
 .v-chip--variant-outlined.status-chip-success {
   border-color: $badge-border-success !important;
 }
 
-// inactive badge
+// Inactive v-chip.
 .v-chip--variant-outlined.status-chip-inactive {
   border-color: $badge-border-inactive !important;
 }
 
-//warning badge
+// Warning v-chip.
 .v-chip--variant-outlined.status-chip-warning {
   border-color: $badge-border-warning !important;
 }
 
-//error badge
+// Error v-chip.
 .v-chip--variant-outlined.status-chip-error {
   border-color: $badge-border-error !important;
 }
