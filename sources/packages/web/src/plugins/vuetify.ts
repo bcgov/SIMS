@@ -22,7 +22,7 @@ export default createVuetify({
     },
   },
   icons: {
-    defaultSet: "fa",
+    defaultSet: "mdi",
     aliases,
     sets: {
       fa,

@@ -59,38 +59,31 @@ html * {
   padding: 0.5rem !important;
 }
 
-/** Moving the dimension and position properties of status badge to common class **/
-.status_badge {
-  border-width: 1px;
-  padding: 15px;
-  border-style: solid;
-  border-radius: 30px;
-  position: static;
-  font-weight: 700;
+// Specific styles for the outlined v-chip.
+.v-chip--variant-outlined {
+  border: 2px solid !important;
+  font-weight: 700 !important;
+  background-color: $badge-background-color !important;
 }
 
-// success badge
-.status-badge-success .v-badge__badge {
-  @extend .status_badge;
-  border-color: $badge-border-success;
+// Success v-chip.
+.v-chip--variant-outlined.status-chip-success {
+  border-color: $badge-border-success !important;
 }
 
-// inactive badge
-.status-badge-inactive .v-badge__badge {
-  @extend .status_badge;
-  border-color: $badge-border-inactive;
+// Inactive v-chip.
+.v-chip--variant-outlined.status-chip-inactive {
+  border-color: $badge-border-inactive !important;
 }
 
-//warning badge
-.status-badge-warning .v-badge__badge {
-  @extend .status_badge;
-  border-color: $badge-border-warning;
+// Warning v-chip.
+.v-chip--variant-outlined.status-chip-warning {
+  border-color: $badge-border-warning !important;
 }
 
-//error badge
-.status-badge-error .v-badge__badge {
-  @extend .status_badge;
-  border-color: $badge-border-error;
+// Error v-chip.
+.v-chip--variant-outlined.status-chip-error {
+  border-color: $badge-border-error !important;
 }
 
 //Defining the height of rounded filter button

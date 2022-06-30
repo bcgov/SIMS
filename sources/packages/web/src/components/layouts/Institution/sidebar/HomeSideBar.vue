@@ -1,49 +1,35 @@
 <template>
-  <v-navigation-drawer app class="body-background">
-    <v-list dense nav>
+  <v-navigation-drawer app class="body-background" permanent>
+    <v-list density="compact" nav>
       <v-list-item
         v-for="item in items"
         :key="item.label"
         @click="item.command"
-      >
-        <v-list-item-icon>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>{{ item.label }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title class="spaced-text text-muted"
-            >LOCATIONS</v-list-item-title
-          >
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item
+        :prepend-icon="item.icon"
+        :title="item.label"
+      />
+      <v-list-subheader>Locations</v-list-subheader>
+      <v-list-group
         v-for="location in locationsMenu"
         :key="location.label"
-        @click="location.command"
+        collapse-icon="mdi-chevron-up"
+        expand-icon="mdi-chevron-down"
       >
-        <v-list-item-content>
-          <v-list-item-title
-            ><v-icon>{{ location.icon }}</v-icon>
-            {{ location.label }}</v-list-item-title
-          >
+        <template #activator="{ props }">
           <v-list-item
-            v-for="locationItem in location?.items"
-            :key="locationItem"
-            @click="locationItem.command"
-          >
-            <v-list-item-icon>
-              <v-icon>{{ locationItem.icon }}</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>{{ locationItem.label }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-content>
-      </v-list-item>
+            v-bind="props"
+            :title="location.label"
+            :prepend-icon="location.icon"
+          ></v-list-item>
+        </template>
+        <v-list-item
+          v-for="locationItem in location?.items"
+          :key="locationItem"
+          :prepend-icon="locationItem.icon"
+          :title="locationItem.label"
+          @click="locationItem.command"
+        />
+      </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -53,14 +39,10 @@ import { useStore } from "vuex";
 import { ref, onMounted, computed, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
-// TODO: SINCE USERS ARE NOT PART OF MVP, COMMENTING THE BELOW CODE,
-// TODO: PLEASE UNCOMMENT IT WHEN IT IS TAKEN FOR DEVELOPMENT
-// import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
-import { useInstitutionAuth } from "../../../../composables/institution/useInstitutionAuth";
+import { useInstitutionAuth } from "@/composables/institution/useInstitutionAuth";
 import { MenuModel } from "@/types";
 
 export default {
-  components: {},
   setup() {
     const store = useStore();
     const router = useRouter();
@@ -154,34 +136,7 @@ export default {
               }
             : undefined;
 
-        // TODO: SINCE USERS ARE NOT PART OF MVP, COMMENTING THE BELOW CODE,
-        // TODO: PLEASE UNCOMMENT IT WHEN IT IS TAKEN FOR DEVELOPMENT
-        // const locationUserMenu =
-        //   isAdmin.value ||
-        //   userAuth.value?.some(
-        //     (el: InstitutionUserAuthRolesAndLocation) =>
-        //       el?.locationId === data?.id &&
-        //       el?.userType === InstitutionUserTypes.locationManager,
-        //   )
-        //     ? {
-        //         label: "Users",
-        //         icon: "mdi-account-multiple-outline",
-        //         command: () => {
-        //           router.push({
-        //             name: InstitutionRoutesConst.LOCATION_USERS,
-        //             params: {
-        //               locationId: data.id,
-        //               locationName: data.name,
-        //             },
-        //           });
-        //         },
-        //       }
-        //     : undefined;
-
         if (locationMenu) {
-          // TODO: SINCE USERS ARE NOT PART OF MVP, COMMENTING THE BELOW CODE,
-          // TODO: PLEASE UNCOMMENT IT WHEN IT IS TAKEN FOR DEVELOPMENT
-          // if (locationUserMenu) locationMenu?.items?.push(locationUserMenu);
           locationsMenu.value.push(locationMenu);
         }
       }
