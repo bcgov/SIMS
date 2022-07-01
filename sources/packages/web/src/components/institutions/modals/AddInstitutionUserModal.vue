@@ -5,58 +5,78 @@
     @dialogClosed="dialogClosed"
     title="Add new user"
   >
-    <template #content
-      ><content-group>
-        <v-row align="center" class="mx-1">
-          <!-- <v-text-field
+    <template #content>
+      <v-form ref="addNewUserForm">
+        <content-group>
+          <v-row align="center" class="mx-1">
+            <!-- <v-text-field
             style="min-width: 300px"
             class="mr-3"
             density="compact"
             variant="outlined"
             label="Basic BCeID user ID"
           /> -->
-          <v-autocomplete
-            v-model="selectedBCeIDUser"
-            :items="bceidUsers"
-            style="min-width: 300px"
-            class="mr-3"
-            density="compact"
-            variant="outlined"
-            label="Business BCeID user Id"
-          ></v-autocomplete>
-          <v-switch label="Admin" color="primary" inset class="mr-3"></v-switch>
-          <v-switch
-            label="Legal signing authority"
-            inset
-            color="primary"
-          ></v-switch>
-        </v-row>
-      </content-group>
-      <h3 class="category-header-medium primary-color my-2">
-        Assign user to locations
-      </h3>
-      <content-group>
-        <span>
-          <v-row
-            ><v-col><strong>Locations</strong> </v-col
-            ><v-col>
-              <strong>User Type</strong>
-            </v-col>
+            <v-autocomplete
+              v-model="selectedBCeIDUser"
+              :items="bceidUsers"
+              style="min-width: 300px"
+              class="mr-3"
+              density="compact"
+              variant="outlined"
+              label="Business BCeID user Id"
+              :rules="[(v) => !!v || 'User is required']"
+            ></v-autocomplete>
+            <v-switch
+              label="Admin"
+              color="primary"
+              inset
+              class="mr-3"
+              v-model="isAdmin"
+            ></v-switch>
+            <v-switch
+              :disabled="!isAdmin"
+              label="Legal signing authority"
+              inset
+              color="primary"
+              v-model="isLegalSigningAuthority"
+            ></v-switch>
           </v-row>
-          <v-row v-for="location in locationsAccess" :key="location.id"
-            ><v-col>
-              <div>{{ location.name }}</div>
-              {{ location.address }}
-            </v-col>
-            <v-col>
-              <v-radio-group inline v-model="location.userAccess">
-                <v-radio label="User" value="user"></v-radio>
-                <v-radio label="No access" value="none"></v-radio>
-              </v-radio-group>
-            </v-col>
-          </v-row>
-        </span>
-      </content-group>
+        </content-group>
+        <h3 class="category-header-medium primary-color my-2" v-if="!isAdmin">
+          Assign user to locations
+        </h3>
+        <content-group v-if="!isAdmin">
+          <span>
+            <v-row
+              ><v-col><strong>Locations</strong> </v-col
+              ><v-col>
+                <strong>Roles</strong>
+              </v-col>
+            </v-row>
+            <v-row v-for="location in locationsAccess" :key="location.id"
+              ><v-col>
+                <div>{{ location.name }}</div>
+                {{ location.address }}
+              </v-col>
+              <v-col>
+                <v-radio-group
+                  inline
+                  v-model="location.userAccess"
+                  color="primary"
+                  :rules="[hasLocationAccessValidationRule()]"
+                >
+                  <v-radio label="User" value="user" color="primary"></v-radio>
+                  <v-radio
+                    label="No access"
+                    value="none"
+                    color="primary"
+                  ></v-radio>
+                </v-radio-group>
+              </v-col>
+            </v-row>
+          </span>
+        </content-group>
+      </v-form>
     </template>
     <template #footer>
       <footer-buttons
@@ -103,6 +123,7 @@ export default {
   setup(props: any) {
     const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
     const { getFormattedAddress } = useFormatters();
+    const addNewUserForm = ref({} as { validate: () => Promise<any> });
     const isAdmin = ref(false);
     const isLegalSigningAuthority = ref(false);
     const locationsAccess = reactive([] as LocationAuthorization[]);
@@ -139,14 +160,39 @@ export default {
       { immediate: true },
     );
 
-    const submit = () => {
-      resolvePromise(true);
+    watch(isAdmin, () => {
+      if (!isAdmin.value) {
+        isLegalSigningAuthority.value = false;
+      }
+    });
+
+    const submit = async () => {
+      console.log(addNewUserForm.value);
+      const formValidation = await addNewUserForm.value.validate();
+      console.log(formValidation);
+      if (formValidation.valid) {
+        resolvePromise(true);
+      }
     };
 
     const cancel = () => {
       resolvePromise(false);
     };
 
+    const hasLocationAccessValidationRule = () => {
+      if (isAdmin.value) {
+        return true;
+      }
+      const hasSomeLocationAccess = locationsAccess.some(
+        (locationAccess) =>
+          locationAccess.userAccess === LocationUserAccess.User,
+      );
+      if (!hasSomeLocationAccess) {
+        return "Select at least one location.";
+      }
+
+      return true;
+    };
     return {
       showDialog,
       showModal,
@@ -157,6 +203,8 @@ export default {
       isLegalSigningAuthority,
       bceidUsers,
       selectedBCeIDUser,
+      addNewUserForm,
+      hasLocationAccessValidationRule,
     };
   },
 };

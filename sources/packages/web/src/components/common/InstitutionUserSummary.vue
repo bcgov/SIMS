@@ -9,16 +9,15 @@
       <v-btn
         class="ml-2 primary-btn-background float-right"
         @click="openNewUserModal"
+        prepend-icon="fa:fa fa-plus-circle"
       >
-        <v-icon icon="fa fa-plus-circle" class="mr-2" />
         Add new user
       </v-btn>
       <v-btn
         class="ml-2 primary-btn-background float-right"
         @click="searchUserTable"
-      >
-        <v-icon icon="fas fa-magnifying-glass" />
-      </v-btn>
+        prepend-icon="fa:fas fa-magnifying-glass"
+      />
       <v-text-field
         class="v-text-field-search-width float-right"
         density="compact"
@@ -26,7 +25,7 @@
         variant="outlined"
         v-model="searchBox"
         @keyup.enter="searchUserTable"
-        prepend-inner-icon="fas fa-magnifying-glass"
+        prepend-inner-icon="fa:fas fa-magnifying-glass"
       >
       </v-text-field>
     </template>
@@ -77,50 +76,40 @@
       >
       <Column :field="UserFields.IsActive" header="Status"
         ><template #body="slotProps">
-          <StatusBadge
-            :status="
-              slotProps.data.isActive
-                ? GeneralStatusForBadge.Active
-                : GeneralStatusForBadge.InActive
-            "
+          <status-chip-active-user
+            :is-active="slotProps.data.isActive"
           /> </template
       ></Column>
-      <Column
-        field=""
-        header="Actions"
-        v-if="clientType === ClientIdType.Institution"
+      <Column header="Actions" v-if="clientType === ClientIdType.Institution"
         ><template #body="slotProps">
           <span v-if="slotProps.data.userName !== parsedToken?.userName">
             <v-btn
+              v-if="slotProps.data.isActive"
               @click="editInstitutionUser(slotProps.data.userName)"
-              variant="plain"
+              variant="text"
+              text="Edit"
+              color="primary"
+              append-icon="mdi-pencil-outline"
             >
-              <v-btn
-                v-if="slotProps.data.isActive"
-                @click="viewRequest(data)"
-                variant="text"
-                color="primary"
-                text="Edit"
-                class="text-decoration-underline"
-              >
-                Edit
-              </v-btn>
-              <font-awesome-icon
-                :icon="['fas', 'pen']"
-                v-if="!slotProps.data.isActive"
-                right
-                v-tooltip="'Disabled User Cannot Be Edited'"
-              >
-                mdi-pencil
-              </font-awesome-icon>
+              <span class="text-decoration-underline">Edit</span>
             </v-btn>
-            <InputSwitch
+            <v-btn
+              v-if="slotProps.data.isActive"
+              @click="editInstitutionUser(slotProps.data.userName)"
+              variant="text"
+              text="Edit"
+              color="primary"
+              append-icon="mdi-account-remove-outline"
+            >
+              <span class="text-decoration-underline">Deactivate</span>
+            </v-btn>
+            <!-- <InputSwitch
               v-model="slotProps.data.isActive"
               v-tooltip="
                 slotProps.data.isActive ? 'Disable User' : 'Enable User'
               "
               @change="updateUserStatus(slotProps.data)"
-            />
+            /> -->
           </span>
         </template>
       </Column>
@@ -155,7 +144,7 @@ import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionU
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
 import { useToast } from "primevue/usetoast";
 import { ModalDialog, useAuth } from "@/composables";
-import StatusBadge from "@/components/generic/StatusBadge.vue";
+import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue";
 import {
   InstitutionUserViewModel,
   InstitutionUserAndCountForDataTable,
@@ -167,15 +156,13 @@ import {
   DataTableSortOrder,
   PAGINATION_LIST,
 } from "@/types";
-import InputSwitch from "primevue/inputswitch";
 import { AuthService } from "@/services/AuthService";
 
 export default {
   components: {
     AddInstitutionUser,
     EditInstitutionUser,
-    StatusBadge,
-    InputSwitch,
+    StatusChipActiveUser,
   },
   props: {
     institutionId: {
