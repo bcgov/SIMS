@@ -63,7 +63,6 @@
                   inline
                   v-model="location.userAccess"
                   color="primary"
-                  :rules="[hasLocationAccessValidationRule()]"
                 >
                   <v-radio label="User" value="user" color="primary"></v-radio>
                   <v-radio
@@ -75,6 +74,8 @@
               </v-col>
             </v-row>
           </span>
+          <v-input :rules="[hasLocationAccessValidationRule()]" error>
+          </v-input>
         </content-group>
       </v-form>
     </template>
@@ -188,7 +189,7 @@ export default {
           locationAccess.userAccess === LocationUserAccess.User,
       );
       if (!hasSomeLocationAccess) {
-        return "Select at least one location.";
+        return "Select at least one location for non-admin users.";
       }
 
       return true;
