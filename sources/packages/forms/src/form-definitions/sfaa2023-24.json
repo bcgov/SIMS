@@ -4619,8 +4619,6 @@
               "tableView": false,
               "defaultValue": [
                 {
-                  "textField": "",
-                  "courseCodeName": "",
                   "courseName": "",
                   "courseCode": "",
                   "courseStartDate": "",
