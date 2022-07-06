@@ -37,7 +37,7 @@ export interface OfferingDTO {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  studyBreaks?: StudyBreak[];
+  studyBreaks?: StudyBreakAndWeeks;
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
   assessedBy?: string;
@@ -65,7 +65,7 @@ export interface OfferingFormModel {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  studyBreaks?: StudyBreak[];
+  studyBreaks?: StudyBreakAndWeeks;
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
   offeringChipStatus: string;
@@ -89,4 +89,14 @@ export interface ProgramOfferingDetailsDto {
 export interface StudyBreak {
   breakStartDate: Date;
   breakEndDate: Date;
+}
+/**
+ * Interface for study breaks with funded and unfunded weeks properties.
+ */
+export interface StudyBreakAndWeeks {
+  studyBreaks: StudyBreak[];
+  fundedStudyPeriodDays: number;
+  totalDays: number;
+  totalFundedWeeks: number;
+  unfundedStudyPeriodDays: number;
 }

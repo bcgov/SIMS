@@ -73,10 +73,12 @@ export const transformToActiveApplicationDataAPIOutDTO = (
       offering.educationProgram.deliveredOnSite,
     ),
     applicationOfferingStudyDelivery: offering.offeringDelivered,
-    applicationOfferingStudyBreak: offering.studyBreaks?.map((studyBreak) => ({
-      breakStartDate: getISODateOnlyString(studyBreak.breakStartDate),
-      breakEndDate: getISODateOnlyString(studyBreak.breakEndDate),
-    })),
+    applicationOfferingStudyBreak: offering.studyBreaks?.studyBreaks?.map(
+      (studyBreak) => ({
+        breakStartDate: getISODateOnlyString(studyBreak.breakStartDate),
+        breakEndDate: getISODateOnlyString(studyBreak.breakEndDate),
+      }),
+    ),
     applicationOfferingTuition: offering.actualTuitionCosts,
     applicationOfferingProgramRelatedCosts: offering.programRelatedCosts,
     applicationOfferingMandatoryFess: offering.mandatoryFees,
