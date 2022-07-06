@@ -35,6 +35,7 @@ import {
   InstitutionUserTypeAndRoleModel,
   InstitutionUserPermissionModel,
 } from "./institution.service.model";
+import { BCeIDAccountTypeCodes } from "../bceid/bceid.models";
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
 export const LEGAL_SIGNING_AUTHORITY_MSG =
   "Legal signing authority already exist for this Institution.";
@@ -187,8 +188,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     );
 
     const user = new User();
+    // Only BCeID business users are allowed to create the institution profile
+    // and have BCeID users directly associated with the institution.
+    // Basic BCeID users must have the Ministry creating the institution profile
+    // and creating the basic BCeID users on their behalf.
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
+      BCeIDAccountTypeCodes.Business,
     );
 
     if (account == null) {
@@ -274,6 +280,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async syncInstitution(userInfo: UserInfo): Promise<void> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
+      // TODO: to be changed to alow basic BCeID users to sign in.
+      BCeIDAccountTypeCodes.Business,
     );
     const user = await this.userService.getActiveUser(userInfo.userName);
     if (!user) {
@@ -546,7 +554,12 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async getInstitutionDetailById(institutionId: number): Promise<Institution> {
     return this.repo
       .createQueryBuilder("institution")
-      .select(["institution", "institutionType.id", "institutionType.name"])
+      .select([
+        "institution",
+        "institution.businessGuid",
+        "institutionType.id",
+        "institutionType.name",
+      ])
       .innerJoin("institution.institutionType", "institutionType")
       .where("institution.id = :institutionId", { institutionId })
       .getOne();

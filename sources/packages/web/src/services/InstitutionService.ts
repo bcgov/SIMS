@@ -3,7 +3,6 @@ import {
   InstitutionLocationsDetails,
   InstitutionUserAuthDetails,
   InstitutionUserViewModel,
-  UserPermissionDto,
   InstitutionUserRoleLocation,
   InstitutionUserWithUserType,
   OptionItemDto,

@@ -80,37 +80,35 @@
             :is-active="slotProps.data.isActive"
           /> </template
       ></Column>
-      <Column header="Actions" v-if="clientType === ClientIdType.Institution"
+      <Column header="Actions"
         ><template #body="slotProps">
-          <span v-if="slotProps.data.userName !== parsedToken?.userName">
-            <v-btn
-              v-if="slotProps.data.isActive"
-              @click="editInstitutionUser(slotProps.data.userName)"
-              variant="text"
-              text="Edit"
-              color="primary"
-              append-icon="mdi-pencil-outline"
-            >
-              <span class="text-decoration-underline">Edit</span>
-            </v-btn>
-            <v-btn
-              v-if="slotProps.data.isActive"
-              @click="editInstitutionUser(slotProps.data.userName)"
-              variant="text"
-              text="Edit"
-              color="primary"
-              append-icon="mdi-account-remove-outline"
-            >
-              <span class="text-decoration-underline">Deactivate</span>
-            </v-btn>
-            <!-- <InputSwitch
+          <v-btn
+            v-if="slotProps.data.isActive"
+            @click="editInstitutionUser(slotProps.data.userName)"
+            variant="text"
+            text="Edit"
+            color="primary"
+            append-icon="mdi-pencil-outline"
+          >
+            <span class="text-decoration-underline">Edit</span>
+          </v-btn>
+          <v-btn
+            v-if="slotProps.data.isActive"
+            @click="editInstitutionUser(slotProps.data.userName)"
+            variant="text"
+            text="Edit"
+            color="primary"
+            append-icon="mdi-account-remove-outline"
+          >
+            <span class="text-decoration-underline">Deactivate</span>
+          </v-btn>
+          <!-- <InputSwitch
               v-model="slotProps.data.isActive"
               v-tooltip="
                 slotProps.data.isActive ? 'Disable User' : 'Enable User'
               "
               @change="updateUserStatus(slotProps.data)"
             /> -->
-          </span>
         </template>
       </Column>
     </DataTable>
@@ -118,11 +116,7 @@
   <!-- Add user -->
   <add-institution-user
     ref="addInstitutionUserModal"
-    :userType="userType"
-    :showAddUser="showAddUser"
-    :adminRoles="adminRoles"
-    @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
-    @getAllInstitutionUsers="getAllInstitutionUsers"
+    :institutionId="institutionId"
   />
   <!-- edit user -->
   <EditInstitutionUser
@@ -136,17 +130,16 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
 import { useToast } from "primevue/usetoast";
-import { ModalDialog, useAuth } from "@/composables";
+import { ModalDialog } from "@/composables";
 import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue";
 import {
   InstitutionUserViewModel,
   InstitutionUserAndCountForDataTable,
-  ClientIdType,
   GeneralStatusForBadge,
   UserFields,
   DEFAULT_PAGE_LIMIT,
@@ -170,21 +163,16 @@ export default {
   },
   setup(props: any) {
     const addInstitutionUserModal = ref({} as ModalDialog<boolean>);
-
-    const { parsedToken } = useAuth();
     const toast = useToast();
     const showAddUser = ref(false);
     const showEditUser = ref(false);
     const usersListAndCount = ref({} as InstitutionUserAndCountForDataTable);
-    const userRoleType = ref();
     const userType = ref();
     const loading = ref(false);
     const searchBox = ref("");
     const currentPage = ref();
     const currentPageLimit = ref();
-    const openNewUserModal = async () => {
-      await addInstitutionUserModal.value.showModal();
-    };
+
     const institutionUserName = ref();
     const adminRoles = ref();
 
@@ -203,18 +191,21 @@ export default {
       sortOrder = DataTableSortOrder.ASC,
     ) => {
       loading.value = true;
-      usersListAndCount.value =
-        await InstitutionService.shared.institutionUserSummary(
-          {
-            page: page,
-            pageLimit: pageCount,
-            searchCriteria: searchBox.value,
-            sortField: sortField,
-            sortOrder: sortOrder,
-          },
-          props.institutionId,
-        );
-      loading.value = false;
+      try {
+        usersListAndCount.value =
+          await InstitutionService.shared.institutionUserSummary(
+            {
+              page: page,
+              pageLimit: pageCount,
+              searchCriteria: searchBox.value,
+              sortField: sortField,
+              sortOrder: sortOrder,
+            },
+            props.institutionId,
+          );
+      } finally {
+        loading.value = false;
+      }
     };
 
     const updateShowAddInstitutionModal = () => {
@@ -275,24 +266,18 @@ export default {
       );
     };
 
-    onMounted(async () => {
-      // Call Service
-      await getAllInstitutionUsers();
-
-      if (clientType.value === ClientIdType.Institution) {
-        // Get User type and Role
-        userRoleType.value =
-          await InstitutionService.shared.getUserTypeAndRoles();
-        userType.value = userRoleType.value?.userTypes
-          ? userRoleType.value.userTypes.map((el: string) =>
-              el !== "admin" ? { name: el, code: el } : null,
-            )
-          : [];
-
-        adminRoles.value =
-          await InstitutionService.shared.getGetAdminRoleOptions();
-      }
+    watch(props.institutionId, () => getAllInstitutionUsers(), {
+      immediate: true,
     });
+
+    const openNewUserModal = async () => {
+      const modalResult = await addInstitutionUserModal.value.showModal();
+      if (modalResult) {
+        // Refresh the list to display the added user.
+        await getAllInstitutionUsers();
+      }
+    };
+
     return {
       addInstitutionUserModal,
       openNewUserModal,
@@ -305,8 +290,6 @@ export default {
       userType,
       institutionUserName,
       updateUserStatus,
-      parsedToken,
-      ClientIdType,
       GeneralStatusForBadge,
       paginationAndSortEvent,
       loading,

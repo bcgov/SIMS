@@ -118,6 +118,7 @@ export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
   formattedEstablishedDate?: string;
   institutionTypeName?: string;
   isBCPrivate?: boolean;
+  hasBusinessGuid: boolean;
 }
 
 export class InstitutionBasicAPIOutDTO {

@@ -48,6 +48,7 @@ export interface InstitutionDetailAPIOutDTO
   institutionTypeName?: string;
   isBCPrivate?: boolean;
   clientType?: ClientIdType;
+  hasBusinessGuid: boolean;
 }
 
 export interface InstitutionDetailAPIInDTO extends InstitutionProfileAPIInDTO {
@@ -103,6 +104,7 @@ export interface SearchInstitutionAPIOutDTO {
 export interface InstitutionBasicAPIOutDTO {
   operatingName: string;
   designationStatus: DesignationAgreementStatus;
+  hasBusinessBCeID: boolean;
 }
 
 /**

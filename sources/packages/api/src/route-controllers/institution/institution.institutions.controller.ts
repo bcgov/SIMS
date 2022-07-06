@@ -202,58 +202,10 @@ export class InstitutionInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
     @Body() payload: CreateInstitutionUserAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    // Get institution
-    const institution = await this.institutionService.getInstituteByUserName(
-      userToken.userName,
+    return this.institutionControllerService.createInstitutionUserWithAuth(
+      userToken.authorizations.institutionId,
+      payload,
     );
-
-    // Find user on BCeID Web Service
-    const bceidUserAccount = await this.bceidAccountService.getAccountDetails(
-      payload.userId,
-    );
-    if (!bceidUserAccount) {
-      throw new UnprocessableEntityException(
-        "User to be added not found on BCeID Web Service.",
-      );
-    }
-    // Check if the user being added to th institution belongs to the institution.
-    if (
-      institution.businessGuid.toLowerCase() !==
-      bceidUserAccount.institution.guid.toLowerCase()
-    ) {
-      throw new UnprocessableEntityException(
-        "User to be added not found under the institution.",
-      );
-    }
-
-    /** A legal signing authority role can be added to only one user per institution */
-    const addLegalSigningAuthorityExist = payload.permissions.some(
-      (role) => role.userRole === InstitutionUserRoles.legalSigningAuthority,
-    );
-
-    if (addLegalSigningAuthorityExist) {
-      const legalSigningAuthority =
-        await this.institutionService.checkLegalSigningAuthority(
-          institution.id,
-        );
-
-      if (legalSigningAuthority) {
-        throw new UnprocessableEntityException(
-          LEGAL_SIGNING_AUTHORITY_EXIST,
-          LEGAL_SIGNING_AUTHORITY_MSG,
-        );
-      }
-    }
-
-    // Create the user and the related records.
-    const createdInstitutionUser =
-      await this.institutionService.createInstitutionUser(
-        institution.id,
-        bceidUserAccount,
-        payload,
-      );
-
-    return { id: createdInstitutionUser.id };
   }
 
   /**

@@ -106,6 +106,26 @@ export interface InstitutionUserAndCountForDataTable {
   count: number;
 }
 
+/**
+ * Represents the possible location user access
+ * available on the institution user manager.
+ */
+export enum LocationUserAccess {
+  User = "user",
+  NoAccess = "none",
+}
+
+/**
+ * Represents the locations and the user access for every
+ * institution location on the institution user manager.
+ */
+export interface LocationAuthorization {
+  id: number;
+  name: string;
+  address: string;
+  userAccess: LocationUserAccess;
+}
+
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
 export const LEGAL_SIGNING_AUTHORITY_MSG =
   "Legal signing authority already exists for this Institution.";

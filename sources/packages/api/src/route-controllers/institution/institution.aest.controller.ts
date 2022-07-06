@@ -32,7 +32,10 @@ import {
   PaginationParams,
   PaginatedResults,
 } from "../../utilities";
-import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
+import {
+  CreateInstitutionUserAPIInDTO,
+  InstitutionUserAPIOutDTO,
+} from "./models/institution-user.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
 import { ClientTypeBaseRoute } from "../../types";
@@ -227,5 +230,22 @@ export class InstitutionAESTController extends BaseController {
     return {
       id: institution.id,
     };
+  }
+
+  /**
+   * Create a user associated with the institution and with
+   * authorizations associated.
+   * @param payload authorizations to be associated with the user.
+   * @returns Primary identifier of the created resource.
+   */
+  @Post(":institutionId/user")
+  async createInstitutionUserWithAuth(
+    institutionId: number,
+    @Body() payload: CreateInstitutionUserAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.institutionControllerService.createInstitutionUserWithAuth(
+      institutionId,
+      payload,
+    );
   }
 }
