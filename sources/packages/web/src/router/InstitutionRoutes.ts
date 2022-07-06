@@ -31,7 +31,7 @@ import LocationCOERequest from "@/views/institution/locations/confirmation-of-en
 import LocationProgramView from "@/views/institution/locations/programs/LocationProgramView.vue";
 import LocationProgramOffering from "@/views/institution/locations/programs/LocationProgramOffering.vue";
 import LocationEditProgramInfoRequest from "@/views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
-import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
+import { InstitutionUserTypes } from "@/types";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
 import ViewSubmittedApplicationScholasticStanding from "@/views/institution/locations/active-applications/ViewSubmittedApplicationScholasticStanding.vue";

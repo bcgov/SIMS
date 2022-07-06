@@ -36,8 +36,8 @@ import {
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
   InstitutionUserAPIOutDTO,
-  InstitutionUserAPIInDTO,
-  InstitutionUserPermissionAPIInDTO,
+  CreateInstitutionUserAPIInDTO,
+  UpdateInstitutionUserAPIInDTO,
   UserActiveStatusAPIInDTO,
   InstitutionUserDetailAPIOutDTO,
   InstitutionUserLocationsAPIOutDTO,
@@ -187,9 +187,9 @@ export class InstitutionInstitutionsController extends BaseController {
   }
 
   /**
-   * Create an Institution user.
-   * @param payload
-   * @param user
+   * Create a user associated with the institution and with
+   * authorizations associated.
+   * @param payload authorizations to be associated with the user.
    * @returns Primary identifier of the created resource.
    */
   @ApiUnprocessableEntityResponse({
@@ -199,12 +199,12 @@ export class InstitutionInstitutionsController extends BaseController {
   @IsInstitutionAdmin()
   @Post("user")
   async createInstitutionUserWithAuth(
-    @Body() payload: InstitutionUserAPIInDTO,
-    @UserToken() user: IInstitutionUserToken,
+    @UserToken() userToken: IInstitutionUserToken,
+    @Body() payload: CreateInstitutionUserAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Get institution
     const institution = await this.institutionService.getInstituteByUserName(
-      user.userName,
+      userToken.userName,
     );
 
     // Find user on BCeID Web Service
@@ -328,10 +328,9 @@ export class InstitutionInstitutionsController extends BaseController {
   }
 
   /**
-   * Update the permissions of institution user.
-   * @param token
-   * @param userName
-   * @param payload
+   * Updates the permissions of an institution user.
+   * @param userName user to have the permissions updated.
+   * @param payload permissions to be update.
    */
   @ApiNotFoundResponse({
     description: "User to be updated not found.",
@@ -345,7 +344,7 @@ export class InstitutionInstitutionsController extends BaseController {
   async updateInstitutionUserWithAuth(
     @UserToken() token: IInstitutionUserToken,
     @Param("userName") userName: string,
-    @Body() payload: InstitutionUserPermissionAPIInDTO,
+    @Body() payload: UpdateInstitutionUserAPIInDTO,
   ): Promise<void> {
     // Check its a active user
     const institutionUser =

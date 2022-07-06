@@ -24,6 +24,8 @@ import {
   PaginatedResultsAPIOutDTO,
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
+  CreateInstitutionUserAPIInDTO,
+  UpdateInstitutionUserAPIInDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -251,6 +253,36 @@ export class InstitutionApi extends HttpBaseClient {
   async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
     return this.getCallTyped<UserRoleOptionAPIOutDTO[]>(
       this.addClientRoot("institution/admin-roles"),
+    );
+  }
+
+  /**
+   * Create a user associated with the institution and with
+   * authorizations associated.
+   * @param payload authorizations to be associated with the user.
+   * @returns Primary identifier of the created resource.
+   */
+  async createInstitutionUserWithAuth(
+    payload: CreateInstitutionUserAPIInDTO,
+  ): Promise<void> {
+    await this.postCall<CreateInstitutionUserAPIInDTO>(
+      this.addClientRoot("institution/user"),
+      payload,
+    );
+  }
+
+  /**
+   * Updates the permissions of an institution user.
+   * @param userName user to have the permissions updated.
+   * @param payload permissions to be update.
+   */
+  async updateInstitutionUserWithAuth(
+    userName: string,
+    payload: UpdateInstitutionUserAPIInDTO,
+  ): Promise<void> {
+    return this.patchCall<UpdateInstitutionUserAPIInDTO>(
+      this.addClientRoot(`institution/user/${userName}`),
+      payload,
     );
   }
 }

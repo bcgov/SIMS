@@ -1,6 +1,17 @@
 import { Address } from "../Common";
 import { InstitutionLocationsDetails } from "./InstitutionLocation";
 
+export enum InstitutionUserTypes {
+  admin = "admin",
+  // TODO: To be removed.
+  locationManager = "location-manager",
+  user = "user",
+}
+
+export enum InstitutionUserRoles {
+  legalSigningAuthority = "legal-signing-authority",
+}
+
 export interface InstitutionUserViewModel {
   id: number;
   email: string;
@@ -93,11 +104,6 @@ export interface InstitutionUserAndAuthDetailsForStore {
 export interface InstitutionUserAndCountForDataTable {
   results: InstitutionUserViewModel[];
   count: number;
-}
-
-export enum InstitutionUserRoles {
-  legalSigningAuthority = "legal-signing-authority",
-  primaryContact = "primary-contact",
 }
 
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";

@@ -1,5 +1,5 @@
 import store from "@/store";
-import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
+import { InstitutionUserTypes } from "@/types";
 import {
   InstitutionUserAuthRolesAndLocation,
   LocationStateForStore,

@@ -246,22 +246,22 @@ export default {
           payLoad.value?.location?.length) ||
         isAdmin.value
       ) {
-        try {
-          await InstitutionService.shared.updateUser(
-            props.institutionUserName as string,
-            payLoad.value,
-          );
-          toast.success(
-            "User Updated",
-            `${userData.value?.user?.firstName} Updated Successfully!`,
-          );
-        } catch (excp) {
-          const errorMessage =
-            excp === LEGAL_SIGNING_AUTHORITY_EXIST
-              ? LEGAL_SIGNING_AUTHORITY_MSG
-              : "An error happened during the update process.";
-          toast.error("Unexpected error", errorMessage);
-        }
+        // try {
+        //   await InstitutionService.shared.updateUser(
+        //     props.institutionUserName as string,
+        //     payLoad.value,
+        //   );
+        //   toast.success(
+        //     "User Updated",
+        //     `${userData.value?.user?.firstName} Updated Successfully!`,
+        //   );
+        // } catch (excp) {
+        //   const errorMessage =
+        //     excp === LEGAL_SIGNING_AUTHORITY_EXIST
+        //       ? LEGAL_SIGNING_AUTHORITY_MSG
+        //       : "An error happened during the update process.";
+        //   toast.error("Unexpected error", errorMessage);
+        // }
         closeEditUser();
         context.emit("getAllInstitutionUsers");
       } else {

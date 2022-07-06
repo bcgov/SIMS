@@ -118,7 +118,6 @@
   <!-- Add user -->
   <add-institution-user
     ref="addInstitutionUserModal"
-    v-if="clientType === ClientIdType.Institution"
     :userType="userType"
     :showAddUser="showAddUser"
     :adminRoles="adminRoles"
@@ -127,7 +126,6 @@
   />
   <!-- edit user -->
   <EditInstitutionUser
-    v-if="clientType === ClientIdType.Institution"
     :userType="userType"
     :showEditUser="showEditUser"
     :institutionUserName="institutionUserName"

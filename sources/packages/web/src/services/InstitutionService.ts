@@ -27,12 +27,13 @@ import {
   InstitutionBasicAPIOutDTO,
   CreateInstitutionAPIInDTO,
   InstitutionUserTypeAndRoleAPIOutDTO,
-  InstitutionUserAPIInDTO,
   UserRoleOptionAPIOutDTO,
   InstitutionLocationAPIInDTO,
   InstitutionLocationPrimaryContactAPIInDTO,
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
+  CreateInstitutionUserAPIInDTO,
+  UpdateInstitutionUserAPIInDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -195,39 +196,61 @@ export class InstitutionService {
     return ApiClient.Institution.getUserTypeAndRoles();
   }
 
-  private async prepareUserPayload(
-    isNew: boolean,
-    data: InstitutionUserAuthDetails,
-  ) {
-    const payload = {} as InstitutionUserAPIInDTO;
-    if (isNew) {
-      payload.userId = data.userId;
-    }
+  // private async prepareUserPayload(
+  //   isNew: boolean,
+  //   data: InstitutionUserAuthDetails,
+  // ) {
+  //   const payload = {} as InstitutionUserAPIInDTO;
+  //   if (isNew) {
+  //     payload.userId = data.userId;
+  //   }
 
-    if (data.location) {
-      // Add locations specific permissions.
-      payload.permissions = data.location.map(
-        (permission: InstitutionUserRoleLocation) =>
-          ({
-            userType: permission.userType,
-            locationId: permission.locationId,
-          } as UserPermissionDto),
-      );
-    } else {
-      // Add institution specific permissions.
-      payload.permissions = [
-        {
-          userType: data.userType,
-          userRole: data.userRole === "admin" ? undefined : data.userRole,
-        },
-      ];
-    }
-    return payload;
+  //   if (data.location) {
+  //     // Add locations specific permissions.
+  //     payload.permissions = data.location.map(
+  //       (permission: InstitutionUserRoleLocation) =>
+  //         ({
+  //           userType: permission.userType,
+  //           locationId: permission.locationId,
+  //         } as UserPermissionDto),
+  //     );
+  //   } else {
+  //     // Add institution specific permissions.
+  //     payload.permissions = [
+  //       {
+  //         userType: data.userType,
+  //         userRole: data.userRole === "admin" ? undefined : data.userRole,
+  //       },
+  //     ];
+  //   }
+  //   return payload;
+  // }
+
+  /**
+   * Create a user associated with the institution and with
+   * authorizations associated.
+   * @param payload authorizations to be associated with the user.
+   * @returns Primary identifier of the created resource.
+   */
+  async createInstitutionUserWithAuth(
+    payload: CreateInstitutionUserAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Institution.createInstitutionUserWithAuth(payload);
   }
 
-  public async createUser(data: InstitutionUserAuthDetails): Promise<void> {
-    const payload = await this.prepareUserPayload(true, data);
-    await ApiClient.InstitutionLocation.createUser(payload);
+  /**
+   * Updates the permissions of an institution user.
+   * @param userName user to have the permissions updated.
+   * @param payload permissions to be update.
+   */
+  async updateInstitutionUserWithAuth(
+    userName: string,
+    payload: UpdateInstitutionUserAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Institution.updateInstitutionUserWithAuth(
+      userName,
+      payload,
+    );
   }
 
   public async getInstitutionLocationUserDetails(
@@ -236,14 +259,6 @@ export class InstitutionService {
     return ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(
       userName,
     );
-  }
-
-  public async updateUser(
-    userName: string,
-    data: InstitutionUserAuthDetails,
-  ): Promise<void> {
-    const payload = await this.prepareUserPayload(false, data);
-    await ApiClient.InstitutionLocation.updateUser(userName, payload);
   }
 
   public async updateUserStatus(userName: string, userStatus: boolean) {

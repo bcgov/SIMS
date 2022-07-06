@@ -147,10 +147,23 @@ export interface UserPermissionAPIInDTO {
   userRole?: string;
 }
 
-export interface InstitutionUserAPIInDTO {
+/**
+ * Associates a new user from BCeID with an institution
+ * associating also the authorizations.
+ */
+export interface CreateInstitutionUserAPIInDTO {
   userId?: string;
   permissions: UserPermissionAPIInDTO[];
 }
+
+/**
+ * Update an existing user association with an institution
+ * changing the authorizations.
+ */
+export type UpdateInstitutionUserAPIInDTO = Omit<
+  CreateInstitutionUserAPIInDTO,
+  "userId"
+>;
 
 export interface UserActiveStatusAPIInDTO {
   isActive: boolean;
