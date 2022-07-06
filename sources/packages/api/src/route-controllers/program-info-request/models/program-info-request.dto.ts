@@ -32,8 +32,16 @@ export interface ProgramInfoRequestAPIOutDTO {
   offeringDelivered: string;
   offeringType: OfferingTypes;
   offeringIntensity: OfferingIntensity;
+  courseDetails?: CourseDetails;
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
+}
+
+export interface CourseDetails {
+  courseName: string;
+  courseCode: string;
+  courseStartDate: Date;
+  courseEndDate: Date;
 }
 
 export interface GetPIRDeniedReasonDto {

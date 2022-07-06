@@ -383,4 +383,19 @@ export interface ApplicationData {
    * Location id selected by the student.
    */
   selectedLocation?: number;
+  /**
+   * Course Details is present only for Part Time course intensity.
+   */
+  courseDetails?: CourseDetails;
+}
+
+/**
+ * Course details is populated when the offering intensity is Part Time.
+ * This contains the course code, name the start and the end date.
+ */
+export interface CourseDetails {
+  courseName: string;
+  courseCode: string;
+  courseStartDate: Date;
+  courseEndDate: Date;
 }
