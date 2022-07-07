@@ -37,7 +37,9 @@ export interface OfferingDTO {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  studyBreaks?: StudyBreakAndWeeks;
+  breaksAndWeeks?: StudyBreakAndWeeks;
+  // TODO: This dto is extended by some PIR dto and interfaces, clean up during api reorganization.
+  studyBreaks?: StudyBreak;
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
   assessedBy?: string;
@@ -65,7 +67,7 @@ export interface OfferingFormModel {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  studyBreaks?: StudyBreakAndWeeks;
+  breaksAndWeeks?: StudyBreakAndWeeks;
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
   offeringChipStatus: string;
