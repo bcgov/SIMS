@@ -31,7 +31,7 @@ export interface SaveOfferingModel {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  studyBreaks?: StudyBreakAndWeeks;
+  breaksAndWeeks: StudyBreakAndWeeks;
   offeringDeclaration: boolean;
   assessedBy?: string;
   assessedDate?: Date;

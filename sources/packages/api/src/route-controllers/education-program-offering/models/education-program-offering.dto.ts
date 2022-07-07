@@ -61,7 +61,7 @@ export interface ProgramOfferingDto {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  studyBreaks?: StudyBreakAndWeeks;
+  breaksAndWeeks: StudyBreakAndWeeks;
   offeringDeclaration: boolean;
   assessedBy?: string;
   assessedDate?: Date;
@@ -101,7 +101,7 @@ export const transformToProgramOfferingDto = (
     showYearOfStudy: offering.showYearOfStudy,
     hasOfferingWILComponent: offering.hasOfferingWILComponent,
     offeringWILType: offering.offeringWILType,
-    studyBreaks: offering.studyBreaks,
+    breaksAndWeeks: offering.studyBreaks,
     offeringDeclaration: offering.offeringDeclaration,
     submittedDate: offering.submittedDate,
     offeringStatus: offering.offeringStatus,

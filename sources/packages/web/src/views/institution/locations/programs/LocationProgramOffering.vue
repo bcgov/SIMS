@@ -37,6 +37,7 @@
     />
   </v-container>
   <full-page-container>
+    {{ initialData }}
     <formio
       formName="educationprogramoffering"
       :data="initialData"
