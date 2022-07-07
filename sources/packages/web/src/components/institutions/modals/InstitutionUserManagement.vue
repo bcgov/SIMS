@@ -1,3 +1,4 @@
+<!-- Shared modal content for modals AddInstitutionUserModal and EditInstitutionUserModal -->
 <template>
   <v-form ref="userForm">
     <content-group>
@@ -49,36 +50,22 @@
           </v-col>
         </v-row>
       </span>
-      <v-input :rules="[hasLocationAccessValidationRule()]" error> </v-input>
+      <v-input :rules="[hasLocationAuthorizationValidationRule()]" error>
+      </v-input>
     </content-group>
   </v-form>
 </template>
 
 <script lang="ts">
 import { ref, watch, PropType, reactive } from "vue";
-import {
-  InstitutionUserRoles,
-  LocationAuthorization,
-  LocationUserAccess,
-  UserManagementModel,
-} from "@/types";
+import { LocationUserAccess, UserManagementModel } from "@/types";
 
 export default {
   props: {
-    isAdmin: {
-      type: Boolean,
+    initialData: {
+      type: Object as PropType<UserManagementModel>,
       required: true,
-      default: false,
-    },
-    isLegalSigningAuthority: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    locationAuthorizations: {
-      type: Object as PropType<LocationAuthorization[]>,
-      required: true,
-      default: [] as LocationAuthorization[],
+      default: new UserManagementModel(),
     },
   },
   setup(props: any) {
@@ -86,25 +73,18 @@ export default {
     const formModel = reactive(new UserManagementModel());
 
     watch(
-      () => props.isAdmin,
-      () => (formModel.isAdmin = props.isAdmin),
+      () => props.initialData,
+      () => {
+        formModel.selectedBCeIDUser = props.initialData.selectedBCeIDUser;
+        formModel.isAdmin = props.initialData.isAdmin;
+        formModel.isLegalSigningAuthority =
+          props.initialData.isLegalSigningAuthority;
+        formModel.locationAuthorizations =
+          props.initialData.locationAuthorizations;
+      },
       {
         immediate: true,
       },
-    );
-
-    watch(
-      () => props.isLegalSigningAuthority,
-      () => (formModel.isLegalSigningAuthority = props.isLegalSigningAuthority),
-      { immediate: true },
-    );
-
-    watch(
-      () => props.locationAuthorizations,
-      () => {
-        formModel.locationAuthorizations = props.locationAuthorizations;
-      },
-      { immediate: true },
     );
 
     // If user is not an admin remove legalSigningAuthority value.
@@ -117,9 +97,9 @@ export default {
       },
     );
 
-    // UI validation to ensure that at least on location is selected to the
-    // user have access for non-admin users.
-    const hasLocationAccessValidationRule = () => {
+    // UI validation to ensure that the user has access to at least
+    // on location when admin is not selected.
+    const hasLocationAuthorizationValidationRule = () => {
       if (formModel.isAdmin) {
         return true;
       }
@@ -135,8 +115,7 @@ export default {
 
     return {
       formModel,
-      hasLocationAccessValidationRule,
-      InstitutionUserRoles,
+      hasLocationAuthorizationValidationRule,
       userForm,
     };
   },

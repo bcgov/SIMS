@@ -7,10 +7,8 @@
   >
     <template #content>
       <institution-user-management
-        :isAdmin="isAdmin"
-        :isLegalSigningAuthority="isLegalSigningAuthority"
-        :locationAuthorizations="locationAuthorizations"
         ref="institutionUserManagement"
+        :initialData="initialData"
       >
         <template #user-name>
           <v-text-field
@@ -37,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, watch, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useFormatters, useModalDialog } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -45,7 +43,6 @@ import {
   InstitutionUserRoles,
   InstitutionUserTypes,
   InstitutionUserViewModel,
-  LocationAuthorization,
   LocationUserAccess,
   UserManagementModel,
 } from "@/types";
@@ -69,9 +66,7 @@ export default {
     } = useModalDialog<boolean, InstitutionUserViewModel>();
     const institutionUserManagement = ref();
     const { getFormattedAddress } = useFormatters();
-    const isAdmin = ref(false);
-    const isLegalSigningAuthority = ref(false);
-    const locationAuthorizations = reactive([] as LocationAuthorization[]);
+    const initialData = ref(new UserManagementModel());
 
     // Information of the user being edited received through the modal show dialog.
     const userInfo = computed(() => {
@@ -97,12 +92,12 @@ export default {
           userInfo.value.userName,
         );
       // A user is considered an admin if any authorization has a userType defined as admin.
-      isAdmin.value = userDetails.authorizations.some(
+      const isAdmin = userDetails.authorizations.some(
         (authorization) =>
           authorization.authType.type === InstitutionUserTypes.admin,
       );
       // A user is considered a legal signing authority if any rule is defined as legal-signing-authority.
-      isLegalSigningAuthority.value = userDetails.authorizations.some(
+      const isLegalSigningAuthority = userDetails.authorizations.some(
         (authorization) =>
           authorization.authType.role ===
           InstitutionUserRoles.legalSigningAuthority,
@@ -113,14 +108,19 @@ export default {
           props.institutionId,
         );
       // Reset the array.
-      locationAuthorizations.length = 0;
-      const authorizations = locations.map((location) => ({
+
+      const locationAuthorizations = locations.map((location) => ({
         id: location.id,
         name: location.name,
         address: getFormattedAddress(location.data.address),
         userAccess: getLocationAccess(location.id, userDetails),
       }));
-      locationAuthorizations.push(...authorizations);
+
+      initialData.value = {
+        isAdmin,
+        isLegalSigningAuthority,
+        locationAuthorizations,
+      } as UserManagementModel;
     });
 
     // Update the user and closes the modal.
@@ -151,11 +151,9 @@ export default {
       showModal,
       submit,
       cancel,
-      isAdmin,
-      isLegalSigningAuthority,
-      locationAuthorizations,
       userInfo,
       institutionUserManagement,
+      initialData,
     };
   },
 };

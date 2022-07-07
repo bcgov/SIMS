@@ -53,23 +53,14 @@
       <Column :field="UserFields.Email" header="Email" sortable="true"></Column>
       <Column :field="UserFields.UserType" header="User Type">
         <template #body="slotProps">
-          <ul
-            class="no-bullets"
-            v-for="userType in slotProps.data.userType"
-            :key="userType"
-          >
-            <li>{{ userType }}</li>
-          </ul></template
-        ></Column
+          <!-- Get the first index of the array since the user will have admin or user type only. -->
+          {{ slotProps.data.userType[0] }}
+        </template></Column
       >
       <Column :field="UserFields.Role" header="Role"></Column>
       <Column :field="UserFields.Location" header="Locations"
         ><template #body="slotProps">
-          <ul
-            class="no-bullets"
-            v-for="location in slotProps.data.location"
-            :key="location"
-          >
+          <ul v-for="location in slotProps.data.location" :key="location">
             <li>{{ location }}</li>
           </ul></template
         ></Column
@@ -93,22 +84,16 @@
             <span class="text-decoration-underline">Edit</span>
           </v-btn>
           <v-btn
-            v-if="slotProps.data.isActive"
-            @click="editInstitutionUser(slotProps.data.userName)"
+            @click="updateUserStatus(slotProps.data)"
             variant="text"
             text="Edit"
             color="primary"
             append-icon="mdi-account-remove-outline"
           >
-            <span class="text-decoration-underline">Deactivate</span>
+            <span class="text-decoration-underline">{{
+              slotProps.data.isActive ? "Disable User" : "Enable User"
+            }}</span>
           </v-btn>
-          <!-- <InputSwitch
-              v-model="slotProps.data.isActive"
-              v-tooltip="
-                slotProps.data.isActive ? 'Disable User' : 'Enable User'
-              "
-              @change="updateUserStatus(slotProps.data)"
-            /> -->
         </template>
       </Column>
     </DataTable>
@@ -126,12 +111,11 @@
 </template>
 
 <script lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, watch } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
-import { useToast } from "primevue/usetoast";
-import { ModalDialog } from "@/composables";
+import { ModalDialog, useToastMessage } from "@/composables";
 import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue";
 import {
   InstitutionUserViewModel,
@@ -143,7 +127,6 @@ import {
   DataTableSortOrder,
   PAGINATION_LIST,
 } from "@/types";
-import { AuthService } from "@/services/AuthService";
 
 export default {
   components: {
@@ -158,31 +141,23 @@ export default {
     },
   },
   setup(props: any) {
+    const toast = useToastMessage();
+    const usersListAndCount = ref({} as InstitutionUserAndCountForDataTable);
+    const loading = ref(false);
+    const searchBox = ref("");
+    const currentPage = ref();
+    const currentPageLimit = ref();
     const addInstitutionUserModal = ref({} as ModalDialog<boolean>);
     const editInstitutionUserModal = ref(
       {} as ModalDialog<boolean, InstitutionUserViewModel>,
     );
 
-    const toast = useToast();
-    const showAddUser = ref(false);
-    const showEditUser = ref(false);
-    const usersListAndCount = ref({} as InstitutionUserAndCountForDataTable);
-    const userType = ref();
-    const loading = ref(false);
-    const searchBox = ref("");
-    const currentPage = ref();
-    const currentPageLimit = ref();
-
-    const institutionUserName = ref();
-    const adminRoles = ref();
-
-    const clientType = computed(() => AuthService.shared.authClientType);
     /**
-     * function to load usersListAndCount respective to the client type
-     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
-     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT
-     * @param sortField sort field, if nothing passed then UserFields.DisplayName
-     * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.DESC
+     * Function to load usersListAndCount respective to the client type.
+     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER.
+     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT.
+     * @param sortField sort field, if nothing passed then UserFields.DisplayName.
+     * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.DESC.
      */
     const getAllInstitutionUsers = async (
       page = DEFAULT_PAGE_NUMBER,
@@ -208,45 +183,27 @@ export default {
       }
     };
 
-    const updateShowAddInstitutionModal = () => {
-      showAddUser.value = !showAddUser.value;
-    };
-
-    const updateShowEditInstitutionModal = () => {
-      showEditUser.value = !showEditUser.value;
-    };
-
-    const editInstitutionUser = async (userName: string) => {
-      institutionUserName.value = userName;
-      showEditUser.value = true;
-    };
-
     const updateUserStatus = async (userDetails: InstitutionUserViewModel) => {
       try {
+        const enabled = !userDetails.isActive;
         await InstitutionService.shared.updateUserStatus(
           userDetails.userName,
-          userDetails.isActive,
+          enabled,
         );
         await getAllInstitutionUsers();
-        toast.add({
-          severity: "success",
-          summary: `${userDetails.displayName} is ${
-            userDetails.isActive ? "Enabled" : "Disabled"
-          }`,
-          detail: " Successfully!",
-          life: 5000,
-        });
-      } catch (excp) {
-        toast.add({
-          severity: "error",
-          summary: "Unexpected error",
-          detail: "An error happened during the update process.",
-          life: 5000,
-        });
+        toast.success(
+          "User status updated",
+          `${userDetails.displayName} is ${enabled ? "enabled" : "disabled"}`,
+        );
+      } catch (error) {
+        toast.error(
+          "Unexpected error",
+          "An error happened during the update process.",
+        );
       }
     };
 
-    // pagination sort event callback
+    // Pagination sort event callback.
     const paginationAndSortEvent = async (event: any) => {
       currentPage.value = event?.page;
       currentPageLimit.value = event?.rows;
@@ -258,7 +215,7 @@ export default {
       );
     };
 
-    // search user table
+    // Search user table.
     const searchUserTable = async () => {
       await getAllInstitutionUsers(
         currentPage.value ?? DEFAULT_PAGE_NUMBER,
@@ -266,9 +223,13 @@ export default {
       );
     };
 
-    watch(props.institutionId, () => getAllInstitutionUsers(), {
-      immediate: true,
-    });
+    watch(
+      () => props.institutionId,
+      () => getAllInstitutionUsers(),
+      {
+        immediate: true,
+      },
+    );
 
     const openNewUserModal = async () => {
       const modalResult = await addInstitutionUserModal.value.showModal();
@@ -278,8 +239,10 @@ export default {
       }
     };
 
-    const openEditUserModal = async (user: InstitutionUserViewModel) => {
-      const modalResult = await editInstitutionUserModal.value.showModal(user);
+    const openEditUserModal = async (userDetails: InstitutionUserViewModel) => {
+      const modalResult = await editInstitutionUserModal.value.showModal(
+        userDetails,
+      );
       if (modalResult) {
         // Refresh the list to display the updated user.
         await getAllInstitutionUsers();
@@ -291,14 +254,7 @@ export default {
       editInstitutionUserModal,
       openNewUserModal,
       openEditUserModal,
-      showAddUser,
-      showEditUser,
-      updateShowAddInstitutionModal,
       getAllInstitutionUsers,
-      editInstitutionUser,
-      updateShowEditInstitutionModal,
-      userType,
-      institutionUserName,
       updateUserStatus,
       GeneralStatusForBadge,
       paginationAndSortEvent,
@@ -309,8 +265,6 @@ export default {
       usersListAndCount,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
-      adminRoles,
-      clientType,
     };
   },
 };

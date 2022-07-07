@@ -7,7 +7,7 @@
   >
     <template #content>
       <institution-user-management
-        :locationAuthorizations="locationAuthorizations"
+        :initialData="initialData"
         ref="institutionUserManagement"
       >
         <template #user-name="{ formModel }">
@@ -48,18 +48,12 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, watch } from "vue";
+import { ref, watch } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useFormatters, useModalDialog } from "@/composables";
+import { useFormatters, useModalDialog, useToastMessage } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
 import { UserService } from "@/services/UserService";
-import {
-  BCeIDUser,
-  InstitutionUserRoles,
-  LocationAuthorization,
-  LocationUserAccess,
-  UserManagementModel,
-} from "@/types";
+import { BCeIDUser, LocationUserAccess, UserManagementModel } from "@/types";
 import InstitutionUserManagement from "@/components/institutions/modals/InstitutionUserManagement.vue";
 
 export default {
@@ -71,14 +65,13 @@ export default {
     },
   },
   setup(props: any) {
+    const toast = useToastMessage();
     const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
     const institutionUserManagement = ref();
     const { getFormattedAddress } = useFormatters();
     const hasBusinessGuid = ref(false);
-    const legalSigningAuthority = ref<string | undefined>();
-    const locationAuthorizations = reactive([] as LocationAuthorization[]);
     const bceidUsers = ref([] as BCeIDUser[]);
-    const selectedBCeIDUser = ref("");
+    const initialData = ref(new UserManagementModel());
 
     /**
      * Load all institution locations.
@@ -88,13 +81,13 @@ export default {
         await InstitutionService.shared.getAllInstitutionLocations(
           props.institutionId,
         );
-      const authorizations = locations.map((location) => ({
+      const locationAuthorizations = locations.map((location) => ({
         id: location.id,
         name: location.name,
         address: getFormattedAddress(location.data.address),
         userAccess: LocationUserAccess.NoAccess,
       }));
-      locationAuthorizations.push(...authorizations);
+      initialData.value = { locationAuthorizations } as UserManagementModel;
     };
 
     /**
@@ -142,14 +135,23 @@ export default {
       }
       const userManagementModel = institutionUserManagement.value
         .formModel as UserManagementModel;
-      await InstitutionService.shared.createInstitutionUserWithAuth(
-        userManagementModel.selectedBCeIDUser,
-        userManagementModel.isAdmin,
-        userManagementModel.isLegalSigningAuthority,
-        userManagementModel.locationAuthorizations,
-      );
-      resolvePromise(true);
+      try {
+        await InstitutionService.shared.createInstitutionUserWithAuth(
+          userManagementModel.selectedBCeIDUser,
+          userManagementModel.isAdmin,
+          userManagementModel.isLegalSigningAuthority,
+          userManagementModel.locationAuthorizations,
+        );
+        toast.success("User created", "User successfully created.");
+        resolvePromise(true);
+      } catch {
+        toast.error(
+          "Unexpected error",
+          "An error happened while creating the user.",
+        );
+      }
     };
+
     // Closed the modal dialog.
     const cancel = () => {
       resolvePromise(false);
@@ -160,11 +162,8 @@ export default {
       showModal,
       submit,
       cancel,
-      locationAuthorizations,
-      legalSigningAuthority,
+      initialData,
       bceidUsers,
-      selectedBCeIDUser,
-      InstitutionUserRoles,
       hasBusinessGuid,
       institutionUserManagement,
     };
