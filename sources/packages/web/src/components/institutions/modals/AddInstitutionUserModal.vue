@@ -16,8 +16,7 @@
             v-if="hasBusinessGuid"
             v-model="formModel.selectedBCeIDUser"
             :items="bceidUsers"
-            style="min-width: 300px"
-            class="mr-3"
+            class="mr-3 bceid-input"
             density="compact"
             variant="outlined"
             label="Business BCeID user Id"
@@ -27,8 +26,7 @@
           <v-text-field
             v-else
             v-model.trim="formModel.selectedBCeIDUser"
-            style="min-width: 300px"
-            class="mr-3"
+            class="mr-3 bceid-input"
             density="compact"
             variant="outlined"
             label="Basic BCeID user ID"
@@ -167,3 +165,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.bceid-input {
+  width: 300px;
+}
+</style>

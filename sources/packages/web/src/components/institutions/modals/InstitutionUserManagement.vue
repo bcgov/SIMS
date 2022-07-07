@@ -75,7 +75,6 @@ export default {
     watch(
       () => props.initialData,
       () => {
-        formModel.selectedBCeIDUser = props.initialData.selectedBCeIDUser;
         formModel.isAdmin = props.initialData.isAdmin;
         formModel.isLegalSigningAuthority =
           props.initialData.isLegalSigningAuthority;
