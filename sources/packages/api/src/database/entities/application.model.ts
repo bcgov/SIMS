@@ -386,7 +386,7 @@ export interface ApplicationData {
   /**
    * Course Details is present only for Part Time course intensity.
    */
-  courseDetails?: CourseDetails;
+  courseDetails?: CourseDetails[];
 }
 
 /**

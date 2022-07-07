@@ -32,7 +32,7 @@ export interface ProgramInfoRequestAPIOutDTO {
   offeringDelivered: string;
   offeringType: OfferingTypes;
   offeringIntensity: OfferingIntensity;
-  courseDetails?: CourseDetails;
+  courseDetails?: CourseDetails[];
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
 }
