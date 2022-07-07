@@ -53,7 +53,12 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useFormatters, useModalDialog, useToastMessage } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
 import { UserService } from "@/services/UserService";
-import { BCeIDUser, LocationUserAccess, UserManagementModel } from "@/types";
+import {
+  BCeIDUser,
+  LocationUserAccess,
+  UserManagementModel,
+  VForm,
+} from "@/types";
 import InstitutionUserManagement from "@/components/institutions/modals/InstitutionUserManagement.vue";
 
 export default {
@@ -121,16 +126,16 @@ export default {
 
     // Creates the user and closes the modal.
     const submit = async () => {
-      const formValidation =
-        await institutionUserManagement.value.userForm.validate();
-      if (!formValidation.valid) {
+      const form = institutionUserManagement.value.userForm as VForm;
+      const validationResult = await form.validate();
+      if (!validationResult.valid) {
         return;
       }
       const userManagementModel = institutionUserManagement.value
         .formModel as UserManagementModel;
       try {
         await InstitutionService.shared.createInstitutionUserWithAuth(
-          userManagementModel.selectedBCeIDUser,
+          userManagementModel.selectedBCeIDUser as string,
           userManagementModel.isAdmin,
           userManagementModel.isLegalSigningAuthority,
           userManagementModel.locationAuthorizations,
