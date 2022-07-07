@@ -6,28 +6,31 @@
     :recordsCount="usersListAndCount.count"
   >
     <template #actions>
-      <v-btn
-        class="ml-2 primary-btn-background float-right"
-        @click="openNewUserModal"
-        prepend-icon="fa:fa fa-plus-circle"
-      >
-        Add new user
-      </v-btn>
-      <v-btn
-        class="ml-2 primary-btn-background float-right"
-        @click="searchUserTable"
-        prepend-icon="fa:fas fa-magnifying-glass"
-      />
-      <v-text-field
-        class="v-text-field-search-width float-right"
-        density="compact"
-        label="Search user"
-        variant="outlined"
-        v-model="searchBox"
-        @keyup.enter="searchUserTable"
-        prepend-inner-icon="fa:fas fa-magnifying-glass"
-      >
-      </v-text-field>
+      <v-row class="m-0">
+        <v-text-field
+          class="v-text-field-search-width"
+          density="compact"
+          label="Search user"
+          variant="outlined"
+          v-model="searchBox"
+          @keyup.enter="searchUserTable"
+          prepend-inner-icon="fa:fas fa-magnifying-glass"
+        >
+        </v-text-field>
+        <v-btn
+          class="ml-2 primary-btn-background"
+          @click="searchUserTable"
+          prepend-icon="fa:fas fa-magnifying-glass"
+        />
+        <v-btn
+          v-if="hasBusinessGuid"
+          class="ml-2 primary-btn-background"
+          @click="openNewUserModal"
+          prepend-icon="fa:fa fa-plus-circle"
+        >
+          Add new user
+        </v-btn>
+      </v-row>
     </template>
   </body-header>
   <content-group>
@@ -102,6 +105,7 @@
   <add-institution-user
     ref="addInstitutionUserModal"
     :institutionId="institutionId"
+    :hasBusinessGuid="hasBusinessGuid"
   />
   <!-- Edit user. -->
   <edit-institution-user
@@ -138,6 +142,10 @@ export default {
     institutionId: {
       type: Number,
       required: false,
+    },
+    hasBusinessGuid: {
+      type: Boolean,
+      required: true,
     },
   },
   setup(props: any) {

@@ -193,6 +193,7 @@ export class InstitutionAESTController extends BaseController {
     return {
       operatingName: institutionDetail.operatingName,
       designationStatus: designationStatus,
+      hasBusinessGuid: !!institutionDetail.businessGuid,
     };
   }
 

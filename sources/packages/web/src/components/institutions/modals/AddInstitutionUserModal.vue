@@ -63,13 +63,16 @@ export default {
       type: Number,
       required: false,
     },
+    hasBusinessGuid: {
+      type: Boolean,
+      required: true,
+    },
   },
   setup(props: any) {
     const toast = useToastMessage();
     const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
     const institutionUserManagement = ref();
     const { getFormattedAddress } = useFormatters();
-    const hasBusinessGuid = ref(false);
     const bceidUsers = ref([] as BCeIDUser[]);
     const initialData = ref(new UserManagementModel());
 
@@ -103,22 +106,12 @@ export default {
         })) ?? ([] as BCeIDUser[]);
     };
 
-    /**
-     * Set the type of the institution as basic/business BCeID.
-     */
-    const setHasBusinessGuid = async () => {
-      const institutionDetails = await InstitutionService.shared.getDetail(
-        props.institutionId,
-      );
-      hasBusinessGuid.value = institutionDetails.hasBusinessGuid;
-    };
-
     // Watch for changes on institutionId to reload the UI.
     watch(
       () => props.institutionId,
       async () => {
-        await Promise.all([loadLocations(), setHasBusinessGuid()]);
-        if (hasBusinessGuid.value) {
+        await loadLocations();
+        if (props.hasBusinessGuid) {
           // Load BCeID users only for institutions that have a business guid.
           await loadBCeIDBusinessUsers();
         }
@@ -164,7 +157,6 @@ export default {
       cancel,
       initialData,
       bceidUsers,
-      hasBusinessGuid,
       institutionUserManagement,
     };
   },

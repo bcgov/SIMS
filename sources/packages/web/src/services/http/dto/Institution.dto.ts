@@ -48,6 +48,10 @@ export interface InstitutionDetailAPIOutDTO
   institutionTypeName?: string;
   isBCPrivate?: boolean;
   clientType?: ClientIdType;
+  /**
+   * Indicates if the institution has a BCeID business guid
+   * associated with, if not it is a basic BCeID institution.
+   */
   hasBusinessGuid: boolean;
 }
 
@@ -104,7 +108,11 @@ export interface SearchInstitutionAPIOutDTO {
 export interface InstitutionBasicAPIOutDTO {
   operatingName: string;
   designationStatus: DesignationAgreementStatus;
-  hasBusinessBCeID: boolean;
+  /**
+   * Indicates if the institution has a BCeID business guid
+   * associated with, if not it is a basic BCeID institution.
+   */
+  hasBusinessGuid: boolean;
 }
 
 /**

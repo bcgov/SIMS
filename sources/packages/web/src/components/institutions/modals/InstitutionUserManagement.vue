@@ -22,7 +22,7 @@
       </v-row>
     </content-group>
     <h3
-      class="category-header-medium primary-color my-2"
+      class="category-header-medium primary-color mt-4 mb-2"
       v-if="!formModel.isAdmin"
     >
       Assign user to locations

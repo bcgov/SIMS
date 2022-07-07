@@ -10,7 +10,7 @@
           </slot>
         </v-card-title>
       </v-card-header>
-      <v-divider class="mx-6 mt-1"></v-divider>
+      <v-divider class="mx-6 mt-1 mb-4"></v-divider>
       <v-card-text class="pt-0">
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
