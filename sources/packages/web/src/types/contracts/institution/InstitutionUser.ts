@@ -107,6 +107,14 @@ export interface InstitutionUserAndCountForDataTable {
 }
 
 /**
+ * BCeID user key-value-pair for display name and user name value.
+ */
+export interface BCeIDUser {
+  value: string;
+  title: string;
+}
+
+/**
  * Represents the possible location user access
  * available on the institution user manager.
  */
@@ -124,6 +132,13 @@ export interface LocationAuthorization {
   name: string;
   address: string;
   userAccess: LocationUserAccess;
+}
+
+export class UserManagementModel {
+  selectedBCeIDUser = "";
+  isAdmin = false;
+  isLegalSigningAuthority = false;
+  locationAuthorizations = [] as LocationAuthorization[];
 }
 
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";

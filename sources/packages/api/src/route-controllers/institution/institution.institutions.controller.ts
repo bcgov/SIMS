@@ -246,11 +246,8 @@ export class InstitutionInstitutionsController extends BaseController {
     if (!institutionUser) {
       throw new NotFoundException("User not found.");
     }
-    // disabled users details can't be edited
-    if (!institutionUser.user.isActive) {
-      throw new UnprocessableEntityException("Not an Active User.");
-    }
-    // checking if user belong to logged-in users institution
+
+    // Checking if user belongs to logged-in users institution.
     if (institutionUser.institution.id !== token.authorizations.institutionId) {
       throw new ForbiddenException(
         "Details requested for user who does not belong to the institution of logged in user.",

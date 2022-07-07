@@ -7,14 +7,14 @@
   >
     <template #content>
       <institution-user-management
-        :locationsAccess="locationsAccess"
+        :locationAuthorizations="locationAuthorizations"
         ref="institutionUserManagement"
       >
-        <template #user-name>
+        <template #user-name="{ formModel }">
           <!-- Business BCeID  -->
           <v-autocomplete
             v-if="hasBusinessGuid"
-            v-model="selectedBCeIDUser"
+            v-model="formModel.selectedBCeIDUser"
             :items="bceidUsers"
             style="min-width: 300px"
             class="mr-3"
@@ -26,7 +26,7 @@
           <!-- Basic BCeID  -->
           <v-text-field
             v-else
-            v-model="selectedBCeIDUser"
+            v-model.trim="formModel.selectedBCeIDUser"
             style="min-width: 300px"
             class="mr-3"
             density="compact"
@@ -54,21 +54,13 @@ import { useFormatters, useModalDialog } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
 import { UserService } from "@/services/UserService";
 import {
-  CreateInstitutionUserAPIInDTO,
-  UserPermissionAPIInDTO,
-} from "@/services/http/dto";
-import {
+  BCeIDUser,
   InstitutionUserRoles,
-  InstitutionUserTypes,
   LocationAuthorization,
   LocationUserAccess,
+  UserManagementModel,
 } from "@/types";
 import InstitutionUserManagement from "@/components/institutions/modals/InstitutionUserManagement.vue";
-
-interface BCeIDUser {
-  value: string;
-  title: string;
-}
 
 export default {
   components: { ModalDialogBase, InstitutionUserManagement },
@@ -82,10 +74,9 @@ export default {
     const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
     const institutionUserManagement = ref();
     const { getFormattedAddress } = useFormatters();
-    const isAdmin = ref(false);
     const hasBusinessGuid = ref(false);
     const legalSigningAuthority = ref<string | undefined>();
-    const locationsAccess = reactive([] as LocationAuthorization[]);
+    const locationAuthorizations = reactive([] as LocationAuthorization[]);
     const bceidUsers = ref([] as BCeIDUser[]);
     const selectedBCeIDUser = ref("");
 
@@ -97,13 +88,13 @@ export default {
         await InstitutionService.shared.getAllInstitutionLocations(
           props.institutionId,
         );
-      const locationAuthorizations = locations.map((location) => ({
+      const authorizations = locations.map((location) => ({
         id: location.id,
         name: location.name,
         address: getFormattedAddress(location.data.address),
         userAccess: LocationUserAccess.NoAccess,
       }));
-      locationsAccess.push(...locationAuthorizations);
+      locationAuthorizations.push(...authorizations);
     };
 
     /**
@@ -131,7 +122,7 @@ export default {
 
     // Watch for changes on institutionId to reload the UI.
     watch(
-      props.institutionId,
+      () => props.institutionId,
       async () => {
         await Promise.all([loadLocations(), setHasBusinessGuid()]);
         if (hasBusinessGuid.value) {
@@ -149,37 +140,13 @@ export default {
       if (!formValidation.valid) {
         return;
       }
-      const createUserPayload = {} as CreateInstitutionUserAPIInDTO;
-      createUserPayload.userId = selectedBCeIDUser.value;
-      if (isAdmin.value) {
-        // User is an admin and will have access for all the locations.
-        createUserPayload.permissions = [
-          {
-            userType: InstitutionUserTypes.admin,
-            userRole: legalSigningAuthority.value
-              ? InstitutionUserRoles.legalSigningAuthority
-              : undefined,
-          } as UserPermissionAPIInDTO,
-        ];
-      } else {
-        // User is not an admin and will have the permission assigned to the individual locations.
-        // Filter locations with access. At this point the UI validations already ensured
-        // that there will be at least one location defined with some access level.
-        createUserPayload.permissions = locationsAccess
-          .filter(
-            (locationAccess) =>
-              locationAccess.userAccess === LocationUserAccess.User,
-          )
-          .map(
-            (locationAccess) =>
-              ({
-                locationId: locationAccess.id,
-                userType: locationAccess.userAccess,
-              } as UserPermissionAPIInDTO),
-          );
-      }
+      const userManagementModel = institutionUserManagement.value
+        .formModel as UserManagementModel;
       await InstitutionService.shared.createInstitutionUserWithAuth(
-        createUserPayload,
+        userManagementModel.selectedBCeIDUser,
+        userManagementModel.isAdmin,
+        userManagementModel.isLegalSigningAuthority,
+        userManagementModel.locationAuthorizations,
       );
       resolvePromise(true);
     };
@@ -193,8 +160,7 @@ export default {
       showModal,
       submit,
       cancel,
-      locationsAccess,
-      isAdmin,
+      locationAuthorizations,
       legalSigningAuthority,
       bceidUsers,
       selectedBCeIDUser,

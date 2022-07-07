@@ -84,7 +84,7 @@
         ><template #body="slotProps">
           <v-btn
             v-if="slotProps.data.isActive"
-            @click="editInstitutionUser(slotProps.data.userName)"
+            @click="openEditUserModal(slotProps.data)"
             variant="text"
             text="Edit"
             color="primary"
@@ -113,19 +113,15 @@
       </Column>
     </DataTable>
   </content-group>
-  <!-- Add user -->
+  <!-- Add user. -->
   <add-institution-user
     ref="addInstitutionUserModal"
     :institutionId="institutionId"
   />
-  <!-- edit user -->
-  <EditInstitutionUser
-    :userType="userType"
-    :showEditUser="showEditUser"
-    :institutionUserName="institutionUserName"
-    :adminRoles="adminRoles"
-    @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
-    @getAllInstitutionUsers="getAllInstitutionUsers"
+  <!-- Edit user. -->
+  <edit-institution-user
+    ref="editInstitutionUserModal"
+    :institutionId="institutionId"
   />
 </template>
 
@@ -163,6 +159,10 @@ export default {
   },
   setup(props: any) {
     const addInstitutionUserModal = ref({} as ModalDialog<boolean>);
+    const editInstitutionUserModal = ref(
+      {} as ModalDialog<boolean, InstitutionUserViewModel>,
+    );
+
     const toast = useToast();
     const showAddUser = ref(false);
     const showEditUser = ref(false);
@@ -278,9 +278,19 @@ export default {
       }
     };
 
+    const openEditUserModal = async (user: InstitutionUserViewModel) => {
+      const modalResult = await editInstitutionUserModal.value.showModal(user);
+      if (modalResult) {
+        // Refresh the list to display the updated user.
+        await getAllInstitutionUsers();
+      }
+    };
+
     return {
       addInstitutionUserModal,
+      editInstitutionUserModal,
       openNewUserModal,
+      openEditUserModal,
       showAddUser,
       showEditUser,
       updateShowAddInstitutionModal,

@@ -154,7 +154,7 @@ export interface UserPermissionAPIInDTO {
  * associating also the authorizations.
  */
 export interface CreateInstitutionUserAPIInDTO {
-  userId?: string;
+  userId: string;
   permissions: UserPermissionAPIInDTO[];
 }
 

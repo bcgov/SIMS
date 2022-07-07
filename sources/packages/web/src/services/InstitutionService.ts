@@ -1,4 +1,11 @@
-import { AESTInstitutionProgramsSummaryDto, PaginationParams } from "@/types";
+import {
+  AESTInstitutionProgramsSummaryDto,
+  InstitutionUserRoles,
+  InstitutionUserTypes,
+  LocationAuthorization,
+  LocationUserAccess,
+  PaginationParams,
+} from "@/types";
 import {
   InstitutionLocationsDetails,
   InstitutionUserAuthDetails,
@@ -33,6 +40,7 @@ import {
   PrimaryIdentifierAPIOutDTO,
   CreateInstitutionUserAPIInDTO,
   UpdateInstitutionUserAPIInDTO,
+  UserPermissionAPIInDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -195,35 +203,42 @@ export class InstitutionService {
     return ApiClient.Institution.getUserTypeAndRoles();
   }
 
-  // private async prepareUserPayload(
-  //   isNew: boolean,
-  //   data: InstitutionUserAuthDetails,
-  // ) {
-  //   const payload = {} as InstitutionUserAPIInDTO;
-  //   if (isNew) {
-  //     payload.userId = data.userId;
-  //   }
+  private createUserPermissions(
+    isAdmin: boolean,
+    isLegalSigningAuthority: boolean,
+    locationAuthorizations: LocationAuthorization[],
+  ): UserPermissionAPIInDTO[] {
+    let permissions: UserPermissionAPIInDTO[];
+    if (isAdmin) {
+      // User is an admin and will have access for all the locations.
+      permissions = [
+        {
+          userType: InstitutionUserTypes.admin,
+          userRole: isLegalSigningAuthority
+            ? InstitutionUserRoles.legalSigningAuthority
+            : undefined,
+        } as UserPermissionAPIInDTO,
+      ];
+    } else {
+      // User is not an admin and will have the permission assigned to the individual locations.
+      // Filter locations with access. At this point the UI validations already ensured
+      // that there will be at least one location defined with some access level.
+      permissions = locationAuthorizations
+        .filter(
+          (locationAccess) =>
+            locationAccess.userAccess === LocationUserAccess.User,
+        )
+        .map(
+          (locationAccess) =>
+            ({
+              locationId: locationAccess.id,
+              userType: locationAccess.userAccess,
+            } as UserPermissionAPIInDTO),
+        );
+    }
 
-  //   if (data.location) {
-  //     // Add locations specific permissions.
-  //     payload.permissions = data.location.map(
-  //       (permission: InstitutionUserRoleLocation) =>
-  //         ({
-  //           userType: permission.userType,
-  //           locationId: permission.locationId,
-  //         } as UserPermissionDto),
-  //     );
-  //   } else {
-  //     // Add institution specific permissions.
-  //     payload.permissions = [
-  //       {
-  //         userType: data.userType,
-  //         userRole: data.userRole === "admin" ? undefined : data.userRole,
-  //       },
-  //     ];
-  //   }
-  //   return payload;
-  // }
+    return permissions;
+  }
 
   /**
    * Create a user associated with the institution and with
@@ -232,9 +247,18 @@ export class InstitutionService {
    * @returns Primary identifier of the created resource.
    */
   async createInstitutionUserWithAuth(
-    payload: CreateInstitutionUserAPIInDTO,
+    userId: string,
+    isAdmin: boolean,
+    isLegalSigningAuthority: boolean,
+    locationAuthorizations: LocationAuthorization[],
   ): Promise<void> {
-    await ApiClient.Institution.createInstitutionUserWithAuth(payload);
+    const userPayload = { userId } as CreateInstitutionUserAPIInDTO;
+    userPayload.permissions = this.createUserPermissions(
+      isAdmin,
+      isLegalSigningAuthority,
+      locationAuthorizations,
+    );
+    await ApiClient.Institution.createInstitutionUserWithAuth(userPayload);
   }
 
   /**
@@ -244,11 +268,19 @@ export class InstitutionService {
    */
   async updateInstitutionUserWithAuth(
     userName: string,
-    payload: UpdateInstitutionUserAPIInDTO,
+    isAdmin: boolean,
+    isLegalSigningAuthority: boolean,
+    locationAuthorizations: LocationAuthorization[],
   ): Promise<void> {
+    const userPayload = {} as UpdateInstitutionUserAPIInDTO;
+    userPayload.permissions = this.createUserPermissions(
+      isAdmin,
+      isLegalSigningAuthority,
+      locationAuthorizations,
+    );
     await ApiClient.Institution.updateInstitutionUserWithAuth(
       userName,
-      payload,
+      userPayload,
     );
   }
 
