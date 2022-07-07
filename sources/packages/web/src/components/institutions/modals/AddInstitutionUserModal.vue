@@ -133,7 +133,7 @@ export default {
         .formModel as UserManagementModel;
       try {
         await InstitutionService.shared.createInstitutionUserWithAuth(
-          userManagementModel.selectedBCeIDUser as string,
+          userManagementModel.selectedBCeIDUser,
           userManagementModel.isAdmin,
           userManagementModel.isLegalSigningAuthority,
           userManagementModel.locationAuthorizations,
