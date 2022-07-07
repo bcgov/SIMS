@@ -59,7 +59,7 @@ export default {
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
-    const { dateString } = useFormatters();
+    const { dateOnlyLongString } = useFormatters();
     const initialData = ref({} as GetProgramInfoRequestDto);
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
@@ -99,11 +99,18 @@ export default {
         );
       initialData.value = {
         ...programRequestData.value,
-        studentStudyStartDate: dateString(
+        studentStudyStartDate: dateOnlyLongString(
           programRequestData.value.studentStudyStartDate,
         ),
-        studentStudyEndDate: dateString(
+        studentStudyEndDate: dateOnlyLongString(
           programRequestData.value.studentStudyEndDate,
+        ),
+        courseDetails: programRequestData.value.courseDetails?.map(
+          (courseDetail) => ({
+            ...courseDetail,
+            courseStartDate: dateOnlyLongString(courseDetail.courseStartDate),
+            courseEndDate: dateOnlyLongString(courseDetail.courseEndDate),
+          }),
         ),
         // for `Deny program information request` checkbox
         denyProgramInformationRequest: !!(
