@@ -396,6 +396,6 @@ export interface ApplicationData {
 export interface CourseDetails {
   courseName: string;
   courseCode: string;
-  courseStartDate: Date;
-  courseEndDate: Date;
+  courseStartDate: string;
+  courseEndDate: string;
 }

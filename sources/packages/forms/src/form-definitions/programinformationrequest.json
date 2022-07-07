@@ -361,7 +361,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "ewj0h3b0000000000"
+                    "id": "ewj0h3b00000000000000"
                   },
                   {
                     "label": "HTML",
@@ -443,7 +443,7 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "elfl294000000000"
+                    "id": "elfl2940000000000000"
                   },
                   {
                     "label": "Location Name",
@@ -518,7 +518,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "e4av0x00000000"
+                    "id": "e4av0x000000000000"
                   },
                   {
                     "label": "HTML",
@@ -600,7 +600,7 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "em6aap0000000"
+                    "id": "em6aap00000000000"
                   },
                   {
                     "label": "Location Name",
@@ -675,7 +675,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "eqgy0m000000"
+                    "id": "eqgy0m0000000000"
                   },
                   {
                     "label": "HTML",
@@ -757,7 +757,7 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "eb005z600000"
+                    "id": "eb005z6000000000"
                   },
                   {
                     "label": "Study Period",
@@ -832,7 +832,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "en8iljt0000"
+                    "id": "en8iljt00000000"
                   },
                   {
                     "label": "HTML",
@@ -914,7 +914,7 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "addons": [],
-                    "id": "eo82qdk000"
+                    "id": "eo82qdk0000000"
                   },
                   {
                     "label": "HTML",
@@ -989,7 +989,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "e10bov100"
+                    "id": "e10bov1000000"
                   }
                 ]
               }
@@ -1088,7 +1088,7 @@
                                     "value": ""
                                   }
                                 ],
-                                "content": "<Strong>Course name</Strong><br>\n{{ row.courseName }} {{ row.courseCode }}",
+                                "content": "<div><Strong>Course name</Strong></div><div>{{ row.courseName }} {{ row.courseCode }}</div>\n",
                                 "refreshOnChange": false,
                                 "customClass": "",
                                 "hidden": false,
@@ -1156,7 +1156,7 @@
                                 "showWordCount": false,
                                 "allowMultipleMasks": false,
                                 "addons": [],
-                                "id": "e1mdqzh"
+                                "id": "ef303c"
                               }
                             ],
                             "width": 6,
@@ -1180,7 +1180,7 @@
                                     "value": ""
                                   }
                                 ],
-                                "content": "<Strong>Course dates</Strong><br>\n{{ row.courseStartDate }} - {{ row.courseEndDate }}",
+                                "content": "<div><Strong>Course dates</Strong></div>\n<div>{{ row.courseStartDate }} - {{ row.courseEndDate }}</div>\n",
                                 "refreshOnChange": false,
                                 "customClass": "",
                                 "hidden": false,
@@ -1248,7 +1248,7 @@
                                 "showWordCount": false,
                                 "allowMultipleMasks": false,
                                 "addons": [],
-                                "id": "e8t32s9"
+                                "id": "eqparj"
                               }
                             ],
                             "width": 6,
@@ -1328,7 +1328,7 @@
                         "addons": [],
                         "tree": false,
                         "lazyLoad": false,
-                        "id": "exhh4dr000000000000000000"
+                        "id": "exhh4dr0000000000000000000000"
                       }
                     ],
                     "placeholder": "",
@@ -1345,7 +1345,7 @@
                     "addons": [],
                     "tree": true,
                     "lazyLoad": false,
-                    "id": "eusrual1"
+                    "id": "eusrual11111"
                   }
                 ]
               }

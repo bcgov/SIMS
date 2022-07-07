@@ -13,7 +13,7 @@ export class CompleteProgramInfoRequestAPIInDTO {
   selectedOffering: number;
 }
 
-export interface ProgramInfoRequestAPIOutDTO {
+export class ProgramInfoRequestAPIOutDTO {
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;
@@ -37,11 +37,11 @@ export interface ProgramInfoRequestAPIOutDTO {
   otherReasonDesc?: string;
 }
 
-export interface CourseDetails {
+export class CourseDetails {
   courseName: string;
   courseCode: string;
-  courseStartDate: Date;
-  courseEndDate: Date;
+  courseStartDate: string;
+  courseEndDate: string;
 }
 
 export interface GetPIRDeniedReasonDto {
