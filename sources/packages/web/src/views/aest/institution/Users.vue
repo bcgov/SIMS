@@ -35,8 +35,6 @@ export default {
       },
       { immediate: true },
     );
-    console.log("hasBusinessGuid");
-    console.log(hasBusinessGuid.value);
     return { hasBusinessGuid };
   },
 };

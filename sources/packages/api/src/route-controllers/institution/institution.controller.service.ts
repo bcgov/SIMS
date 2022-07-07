@@ -24,7 +24,7 @@ import {
 } from "./models/institution-user.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
-import { InstitutionUserRoles } from "src/auth/user-types.enum";
+import { InstitutionUserRoles } from "../../auth/user-types.enum";
 
 /**
  * Service/Provider for Institutions controller to wrap the common methods.
