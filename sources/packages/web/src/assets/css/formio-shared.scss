@@ -447,7 +447,7 @@
 // Creates a panel that will not affect the layout. Used mainly
 // for grouping when the Container component is not applicable
 // because there is no need of a schema change.
-// > is used to get the immediate child element with class "border"
+// ">" is used to get the immediate child element with class "border"
 // and its immediate child element "card-body", else it will
 // effect the non formio-panel-unset class inner panels.
 .formio-component-panel.formio-panel-unset > .border {

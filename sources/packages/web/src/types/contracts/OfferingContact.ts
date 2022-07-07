@@ -37,8 +37,8 @@ export interface OfferingDTO {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  breaksAndWeeks?: StudyBreakAndWeeks;
-  // TODO: This dto is extended by some PIR dto and interfaces, clean up during api reorganization.
+  breaksAndWeeks?: StudyBreaksAndWeeks;
+  // TODO: This dto is extended by some PIR dto and interfaces, clean up/take a copy of dto without "breaksAndWeeks" for PIR DTOs and remove studyBreaks from here during api reorganization.
   studyBreaks?: StudyBreak;
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
@@ -67,7 +67,7 @@ export interface OfferingFormModel {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  breaksAndWeeks?: StudyBreakAndWeeks;
+  breaksAndWeeks?: StudyBreaksAndWeeks;
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
   offeringChipStatus: string;
@@ -95,7 +95,7 @@ export interface StudyBreak {
 /**
  * Interface for study breaks with funded and unfunded weeks properties.
  */
-export interface StudyBreakAndWeeks {
+export interface StudyBreaksAndWeeks {
   studyBreaks: StudyBreak[];
   fundedStudyPeriodDays: number;
   totalDays: number;

@@ -175,7 +175,7 @@ export class EducationProgramOffering extends RecordDataModel {
     name: "study_breaks",
     type: "jsonb",
   })
-  studyBreaks?: StudyBreakAndWeeks;
+  studyBreaks?: StudyBreaksAndWeeks;
 
   /**
    * Declaration by the user creating or updating the offering.
@@ -247,7 +247,7 @@ export class EducationProgramOffering extends RecordDataModel {
 }
 
 /**
- * study break.
+ * Study break.
  */
 export interface StudyBreak {
   breakStartDate: Date;
@@ -257,7 +257,7 @@ export interface StudyBreak {
 /**
  * Interface for study breaks with funded and unfunded weeks properties.
  */
-export interface StudyBreakAndWeeks {
+export interface StudyBreaksAndWeeks {
   studyBreaks: StudyBreak[];
   fundedStudyPeriodDays: number;
   totalDays: number;

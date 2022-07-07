@@ -1,6 +1,6 @@
 import {
   OfferingIntensity,
-  StudyBreakAndWeeks,
+  StudyBreaksAndWeeks,
   OfferingStatus,
   OfferingTypes,
 } from "../../database/entities";
@@ -31,7 +31,7 @@ export interface SaveOfferingModel {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  breaksAndWeeks: StudyBreakAndWeeks;
+  breaksAndWeeks: StudyBreaksAndWeeks;
   offeringDeclaration: boolean;
   assessedBy?: string;
   assessedDate?: Date;
