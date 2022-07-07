@@ -257,8 +257,7 @@ export class InstitutionApi extends HttpBaseClient {
   }
 
   /**
-   * Create a user associated with the institution and with
-   * authorizations associated.
+   * Create a user, associate with the institution, and assign the authorizations.
    * @param payload authorizations to be associated with the user.
    * @returns Primary identifier of the created resource.
    */

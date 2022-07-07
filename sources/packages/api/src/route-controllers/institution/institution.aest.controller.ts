@@ -234,11 +234,11 @@ export class InstitutionAESTController extends BaseController {
   }
 
   /**
-   * Create a user associated with the institution and with
-   * authorizations associated.
+   * Create a user, associate with the institution, and assign the authorizations.
    * @param payload authorizations to be associated with the user.
    * @returns Primary identifier of the created resource.
    */
+  // TODO: Add API Responses and validations. This method will be worked in the upcoming PR.
   @Post(":institutionId/user")
   async createInstitutionUserWithAuth(
     institutionId: number,

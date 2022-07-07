@@ -203,6 +203,14 @@ export class InstitutionService {
     return ApiClient.Institution.getUserTypeAndRoles();
   }
 
+  /**
+   * Create the user authorizations to be associate with the user.
+   * @param isAdmin must be created as an admin user.
+   * @param isLegalSigningAuthority for admin users, define if the role
+   * legal-signing-authority should be associated with the user.
+   * @param locationAuthorizations for non-admin users, the individual permission
+   * for every location.
+   */
   private createUserPermissions(
     isAdmin: boolean,
     isLegalSigningAuthority: boolean,
@@ -241,10 +249,14 @@ export class InstitutionService {
   }
 
   /**
-   * Create a user associated with the institution and with
-   * authorizations associated.
-   * @param payload authorizations to be associated with the user.
-   * @returns Primary identifier of the created resource.
+   * Create a user, associate with the institution, and assign the authorizations.
+   * @param userId user BCeID id from BCeID Web Service (e.g. SomeUserName)
+   * that will have its data retrieved to be created on SIMS.
+   * @param isAdmin must be created as an admin user.
+   * @param isLegalSigningAuthority for admin users, define if the role
+   * legal-signing-authority should be associated with the user.
+   * @param locationAuthorizations for non-admin users, the individual permission
+   * for every location.
    */
   async createInstitutionUserWithAuth(
     userId: string,
@@ -262,9 +274,13 @@ export class InstitutionService {
   }
 
   /**
-   * Updates the permissions of an institution user.
-   * @param userName user to have the permissions updated.
-   * @param payload permissions to be update.
+   * Updates an existing user authorizations.
+   * @param userName unique user name from SIMS (e.g. someGuid@bceid).
+   * @param isAdmin must be created as an admin user.
+   * @param isLegalSigningAuthority for admin users, define if the role
+   * legal-signing-authority should be associated with the user.
+   * @param locationAuthorizations for non-admin users, the individual permission
+   * for every location.
    */
   async updateInstitutionUserWithAuth(
     userName: string,

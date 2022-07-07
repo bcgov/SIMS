@@ -162,7 +162,14 @@ export interface UserPermissionAPIInDTO {
  * associating also the authorizations.
  */
 export interface CreateInstitutionUserAPIInDTO {
+  /**
+   * User BCeID id from BCeID Web Service (e.g. SomeUserName) that will have its
+   * data retrieved to be created on SIMS.
+   */
   userId: string;
+  /**
+   * Permissions to be associated with the new user.
+   */
   permissions: UserPermissionAPIInDTO[];
 }
 

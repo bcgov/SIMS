@@ -114,6 +114,12 @@ export class InstitutionControllerService {
     };
   }
 
+  /**
+   * Create a user, associate with the institution, and assign the authorizations.
+   * @param institutionId institution to have the user associated.
+   * @param payload user and authorization information.
+   * @returns created user id.
+   */
   async createInstitutionUserWithAuth(
     institutionId: number,
     payload: CreateInstitutionUserAPIInDTO,
@@ -160,6 +166,7 @@ export class InstitutionControllerService {
           institution.id,
         );
 
+      // TODO: throw a nice API error to be captured in Vue.
       if (legalSigningAuthority) {
         throw new UnprocessableEntityException(
           LEGAL_SIGNING_AUTHORITY_EXIST,
