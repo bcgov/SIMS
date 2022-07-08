@@ -23,6 +23,7 @@ import {
   Groups,
 } from "../../auth/decorators";
 import { ApiTags } from "@nestjs/swagger";
+import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
 
 @Controller("users")
 @ApiTags("users")
@@ -42,6 +43,8 @@ export class UserController extends BaseController {
   ): Promise<BCeIDDetailsDto | null> {
     const account = await this.bceidService.getAccountDetails(
       userToken.idp_user_name,
+      // TODO: To be changed to allow basic BCeID sign in.
+      BCeIDAccountTypeCodes.Business,
     );
     if (account == null) {
       return null;
@@ -67,8 +70,12 @@ export class UserController extends BaseController {
   async getAllBCeIDs(
     @UserToken() userToken: IUserToken,
   ): Promise<BCeIDAccountsDto> {
+    // Only business BCeID will execute a search on BCeID Web Services.
+    // Basic BCeID need to have the full user name provided to execute the
+    // getAccountDetail method on BCeID Web Services.
     const account = await this.bceidService.getAccountDetails(
       userToken.idp_user_name,
+      BCeIDAccountTypeCodes.Business,
     );
 
     if (!account) {

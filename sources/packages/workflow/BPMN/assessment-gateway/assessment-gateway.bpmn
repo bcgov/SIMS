@@ -71,9 +71,7 @@ The workflow from this point on should not rely or any variable created on the a
         <bpmn:flowNodeRef>Event_1wxl0x4</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0ldfkbb</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0p65yh4</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>CallActivity_1okgvpw</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1aiys42</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_1uq9e1u</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0wu28r4</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_16jzsun</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1b33apa</bpmn:flowNodeRef>
@@ -83,6 +81,8 @@ The workflow from this point on should not rely or any variable created on the a
         <bpmn:flowNodeRef>Gateway_00zu2th</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0tepnnt</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_00o0505</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_1uq9e1u</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CallActivity_1okgvpw</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_17ga6r2" />
       </bpmn:lane>
       <bpmn:lane id="Lane_0rbuxn8" name="Prepare for Assessment">
@@ -510,16 +510,6 @@ execution.setVariable("netAssests", parent1NetAssests + parent2NetAssests);
       <bpmn:outgoing>Flow_1yv43nz</bpmn:outgoing>
       <bpmn:outgoing>Flow_0kkg2vm</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:businessRuleTask id="Task_1uq9e1u" name="Get Assessment Definition" camunda:resultVariable="definition_key" camunda:decisionRef="assessment-selector" camunda:mapDecisionResult="singleResult">
-      <bpmn:extensionElements>
-        <camunda:inputOutput>
-          <camunda:inputParameter name="offeringIntensity">${offeringIntensity}</camunda:inputParameter>
-          <camunda:inputParameter name="programYear">${programYear}</camunda:inputParameter>
-        </camunda:inputOutput>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0iwnsaf</bpmn:incoming>
-      <bpmn:outgoing>Flow_0naszjy</bpmn:outgoing>
-    </bpmn:businessRuleTask>
     <bpmn:callActivity id="Activity_1aiys42" name="Disbursement schedule" calledElement="disbursement-schedule-gateway">
       <bpmn:extensionElements>
         <camunda:in source="applicationId" target="applicationId" />
@@ -565,113 +555,6 @@ execution.setVariable("netAssests", parent1NetAssests + parent2NetAssests);
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0xq6e41</bpmn:incoming>
       <bpmn:outgoing>Flow_0fx85bq</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:callActivity id="CallActivity_1okgvpw" name="Calculate Assessment" calledElement="${definition_key.get(&#34;assessment&#34;)}">
-      <bpmn:extensionElements>
-        <camunda:in source="studyStartDate" target="studyStartDate" />
-        <camunda:in source="studyEndDate" target="studyEndDate" />
-        <camunda:in source="actualTuitionCosts" target="actualTuitionCosts" />
-        <camunda:in source="exceptionalExpenses" target="exceptionalExpenses" />
-        <camunda:in source="programRelatedCosts" target="programRelatedCosts" />
-        <camunda:in source="applicationId" target="applicationId" />
-        <camunda:in source="programYear" target="programYear" />
-        <camunda:in source="programLocation" target="programLocation" />
-        <camunda:in source="livingWithParents" target="livingWithParents" />
-        <camunda:in source="dependants" target="dependants" />
-        <camunda:in source="relationshipStatus" target="relationshipStatus" />
-        <camunda:in source="childSupportAndOrSpousalSupport" target="childSupportAndOrSpousalSupport" />
-        <camunda:in source="indigenousStatus" target="indigenousStatus" />
-        <camunda:in source="permanentDisability" target="permanentDisability" />
-        <camunda:in source="youthInCare" target="youthInCare" />
-        <camunda:in source="studentCalculatedTotalIncome" target="studentCalculatedTotalIncome" />
-        <camunda:in source="scholarshipAmount" target="scholarshipAmount" />
-        <camunda:in source="governmentFundingCosts" target="governmentFundingCosts" />
-        <camunda:in source="nongovernmentfundingCosts" target="nongovernmentfundingCosts" />
-        <camunda:in source="voluntaryContributions" target="voluntaryContributions" />
-        <camunda:in source="hasDependents" target="hasDependents" />
-        <camunda:in source="netAssests" target="netAssests" />
-        <camunda:in source="parent2Ei" target="parent2Ei" />
-        <camunda:in source="parent1Ei" target="parent1Ei" />
-        <camunda:in source="parent2CppSelfemploymentOther" target="parent2CppSelfemploymentOther" />
-        <camunda:in source="parent2CppEmployment" target="parent2CppEmployment" />
-        <camunda:in source="parent1CppSelfemploymentOther" target="parent1CppSelfemploymentOther" />
-        <camunda:in source="parent1CppEmployment" target="parent1CppEmployment" />
-        <camunda:in source="parent2Tax" target="parent2Tax" />
-        <camunda:in source="parent1Tax" target="parent1Tax" />
-        <camunda:in source="parent2CalculatedTotalIncome" target="parent2CalculatedTotalIncome" />
-        <camunda:in source="parent1CalculatedTotalIncome" target="parent1CalculatedTotalIncome" />
-        <camunda:in source="parent1Contributions" target="parentContributions" />
-        <camunda:in source="piDaycareCost" target="piDaycareCost" />
-        <camunda:in source="partnerChildSpousalSupportCost" target="partnerChildSpousalSupportCost" />
-        <camunda:in source="livingWithPartner" target="livingWithPartner" />
-        <camunda:in source="partnerLoanPayment" target="partnerLoanPayment" />
-        <camunda:in source="partnerEmploymentInsuranceBenefits" target="partnerEmploymentInsuranceBenefits" />
-        <camunda:in source="partnerDisabilityAssistance" target="partnerDisabilityAssistance" />
-        <camunda:in source="partnerPermanentDisabilityBenefits" target="partnerPermanentDisabilityBenefits" />
-        <camunda:out source="federalAssessmentNeed" target="federalAssessmentNeed" />
-        <camunda:out source="provincialAssessmentNeed" target="provincialAssessmentNeed" />
-        <camunda:out source="weeks" target="weeks" />
-        <camunda:in source="mandatoryFees" target="mandatoryFees" />
-        <camunda:out source="totalTutionCost" target="totalTutionCost" />
-        <camunda:out source="totalBookCost" target="totalBookCost" />
-        <camunda:out source="totalExceptionalExpenses" target="totalExceptionalExpenses" />
-        <camunda:out source="livingCategory" target="livingCategory" />
-        <camunda:out source="totalTransportationCost" target="totalTransportationCost" />
-        <camunda:in source="daycareCosts12YearsOrOver" target="daycareCosts12YearsOrOver" />
-        <camunda:in source="daycareCosts11YearsOrUnder" target="daycareCosts11YearsOrUnder" />
-        <camunda:out source="totalChildcareCost" target="totalChildcareCost" />
-        <camunda:out source="totalChildSpousalSupport" target="totalChildSpousalSupport" />
-        <camunda:out source="netFederalScholarship" target="netFederalScholarship" />
-        <camunda:in source="transportationCost" target="transportationCost" />
-        <camunda:in source="livingathomeRent" target="livingathomeRent" />
-        <camunda:in source="studentPDStatus" target="studentPDStatus" />
-        <camunda:in source="whenDidYouGraduateOrLeaveHighSchool" target="whenDidYouGraduateOrLeaveHighSchool" />
-        <camunda:out source="totalFamilyIncome" target="totalFamilyIncome" />
-        <camunda:out source="camundaDependantStatus" target="camundaDependantStatus" />
-        <camunda:out source="msolMonthly" target="msolMonthly" />
-        <camunda:in source="partnerCalculatedTotalIncome" target="partnerCalculatedTotalIncome" />
-        <camunda:in source="numberOfParents" target="numberOfParents" />
-        <camunda:in source="studyStartDate" target="studyStartDate" />
-        <camunda:out source="numberOfParents" target="numberOfParents" />
-        <camunda:out source="noOfdependants" target="noOfdependants" />
-        <camunda:out source="noOfParentdependants" target="noOfParentdependants" />
-        <camunda:out source="familySize" target="familySize" />
-        <camunda:out source="parentdependantJson" target="parentdependantJson" />
-        <camunda:in source="parent1DependentTable" target="parent1DependentTable" />
-        <camunda:in source="parent2DependentTable" target="parent2DependentTable" />
-        <camunda:out source="totalSecondResidenceLimit" target="totalSecondResidenceLimit" />
-        <camunda:out source="totalLoanPayment" target="totalLoanPayment" />
-        <camunda:out source="totalCost" target="totalCost" />
-        <camunda:out source="netFederalFsc" target="netFederalFsc" />
-        <camunda:out source="netProvincialFsc" target="netProvincialFsc" />
-        <camunda:out source="parentalContribution" target="parentalContribution" />
-        <camunda:out source="applicantSpouseContribution" target="applicantSpouseContribution" />
-        <camunda:out source="netFederalContribution" target="netFederalContribution" />
-        <camunda:out source="netProvincialContribution" target="netProvincialContribution" />
-        <camunda:out source="totalMSOL" target="totalMSOL" />
-        <camunda:out source="otherAllowableCosts" target="otherAllowableCosts" />
-        <camunda:in source="courseLoad" target="courseLoad" />
-        <camunda:out source="dependant11YearsOrUnderExpenses" target="dependant11YearsOrUnderExpenses" />
-        <camunda:out source="dependant12YearsOrOverExpenses" target="dependant12YearsOrOverExpenses" />
-        <camunda:out source="totalDependentExpenses" target="totalDependentExpenses" />
-        <camunda:out source="totalFinancialNeed" target="totalFinancialNeed" />
-        <camunda:out source="totalMiscellaneousCost" target="totalMiscellaneousCost" />
-        <camunda:out source="totalAcademicExpenses" target="totalAcademicExpenses" />
-        <camunda:in source="isProgramOnline" target="isProgramOnline" />
-        <camunda:executionListener event="start">
-          <camunda:script scriptFormat="javascript">var isProgramOnline = false;
-if(execution.getVariable("offeringDelivered") == "online"){
-  isProgramOnline = true;
-}
-execution.setVariable("isProgramOnline", isProgramOnline);</camunda:script>
-        </camunda:executionListener>
-        <camunda:out source="eligibleDependents11YearsOrUnder" target="eligibleDependents11YearsOrUnder" />
-        <camunda:out source="eligibleDependents12YearsOrOver" target="eligibleDependents12YearsOrOver" />
-        <camunda:in source="dependantstatus" target="dependantstatus" />
-        <camunda:in source="partnerStudentStudyWeeks" target="partnerStudentStudyWeeks" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0naszjy</bpmn:incoming>
-      <bpmn:outgoing>Flow_09tnx9v</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:callActivity id="Activity_0p65yh4" name="Calculate Award" calledElement="${definition_key.get(&#34;award&#34;)}">
       <bpmn:extensionElements>
@@ -1121,6 +1004,7 @@ JSON.stringify({ data: assessmentJson });
               <camunda:value>appeals.partnerIncomeAppeal.submittedData</camunda:value>
               <camunda:value>applicationId</camunda:value>
               <camunda:value>offering.courseLoad</camunda:value>
+              <camunda:value>offering.studyBreaks.totalFundedWeeks</camunda:value>
             </camunda:list>
           </camunda:inputParameter>
           <camunda:inputParameter name="errorCodeName">SIMS-GET-ASSESSMENT-FULL-DATA-ERROR</camunda:inputParameter>
@@ -1203,6 +1087,7 @@ JSON.stringify({ data: assessmentJson });
           <camunda:outputParameter name="partnerIncomeAppealData">${appeals_partnerIncomeAppeal_submittedData}</camunda:outputParameter>
           <camunda:outputParameter name="applicationId">${applicationId}</camunda:outputParameter>
           <camunda:outputParameter name="courseLoad">${offering_courseLoad}</camunda:outputParameter>
+          <camunda:outputParameter name="weeks">${offering_studyBreaks_totalFundedWeeks}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0t5tfgt</bpmn:incoming>
@@ -1830,6 +1715,123 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
     <bpmn:sequenceFlow id="Flow_11x0no4" name="Dependant" sourceRef="Gateway_05bfr8g" targetRef="Gateway_15ky2tk">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${dependantstatus == "dependant"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:businessRuleTask id="Task_1uq9e1u" name="Get Assessment Definition" camunda:resultVariable="definition_key" camunda:decisionRef="assessment-selector" camunda:mapDecisionResult="singleResult">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="offeringIntensity">${offeringIntensity}</camunda:inputParameter>
+          <camunda:inputParameter name="programYear">${programYear}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0iwnsaf</bpmn:incoming>
+      <bpmn:outgoing>Flow_0naszjy</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:callActivity id="CallActivity_1okgvpw" name="Calculate Assessment" calledElement="${definition_key.get(&#34;assessment&#34;)}">
+      <bpmn:extensionElements>
+        <camunda:in source="studyStartDate" target="studyStartDate" />
+        <camunda:in source="studyEndDate" target="studyEndDate" />
+        <camunda:in source="actualTuitionCosts" target="actualTuitionCosts" />
+        <camunda:in source="exceptionalExpenses" target="exceptionalExpenses" />
+        <camunda:in source="programRelatedCosts" target="programRelatedCosts" />
+        <camunda:in source="applicationId" target="applicationId" />
+        <camunda:in source="programYear" target="programYear" />
+        <camunda:in source="programLocation" target="programLocation" />
+        <camunda:in source="livingWithParents" target="livingWithParents" />
+        <camunda:in source="dependants" target="dependants" />
+        <camunda:in source="relationshipStatus" target="relationshipStatus" />
+        <camunda:in source="childSupportAndOrSpousalSupport" target="childSupportAndOrSpousalSupport" />
+        <camunda:in source="indigenousStatus" target="indigenousStatus" />
+        <camunda:in source="permanentDisability" target="permanentDisability" />
+        <camunda:in source="youthInCare" target="youthInCare" />
+        <camunda:in source="studentCalculatedTotalIncome" target="studentCalculatedTotalIncome" />
+        <camunda:in source="scholarshipAmount" target="scholarshipAmount" />
+        <camunda:in source="governmentFundingCosts" target="governmentFundingCosts" />
+        <camunda:in source="nongovernmentfundingCosts" target="nongovernmentfundingCosts" />
+        <camunda:in source="voluntaryContributions" target="voluntaryContributions" />
+        <camunda:in source="hasDependents" target="hasDependents" />
+        <camunda:in source="netAssests" target="netAssests" />
+        <camunda:in source="parent2Ei" target="parent2Ei" />
+        <camunda:in source="parent1Ei" target="parent1Ei" />
+        <camunda:in source="parent2CppSelfemploymentOther" target="parent2CppSelfemploymentOther" />
+        <camunda:in source="parent2CppEmployment" target="parent2CppEmployment" />
+        <camunda:in source="parent1CppSelfemploymentOther" target="parent1CppSelfemploymentOther" />
+        <camunda:in source="parent1CppEmployment" target="parent1CppEmployment" />
+        <camunda:in source="parent2Tax" target="parent2Tax" />
+        <camunda:in source="parent1Tax" target="parent1Tax" />
+        <camunda:in source="parent2CalculatedTotalIncome" target="parent2CalculatedTotalIncome" />
+        <camunda:in source="parent1CalculatedTotalIncome" target="parent1CalculatedTotalIncome" />
+        <camunda:in source="parent1Contributions" target="parentContributions" />
+        <camunda:in source="piDaycareCost" target="piDaycareCost" />
+        <camunda:in source="partnerChildSpousalSupportCost" target="partnerChildSpousalSupportCost" />
+        <camunda:in source="livingWithPartner" target="livingWithPartner" />
+        <camunda:in source="partnerLoanPayment" target="partnerLoanPayment" />
+        <camunda:in source="partnerEmploymentInsuranceBenefits" target="partnerEmploymentInsuranceBenefits" />
+        <camunda:in source="partnerDisabilityAssistance" target="partnerDisabilityAssistance" />
+        <camunda:in source="partnerPermanentDisabilityBenefits" target="partnerPermanentDisabilityBenefits" />
+        <camunda:out source="federalAssessmentNeed" target="federalAssessmentNeed" />
+        <camunda:out source="provincialAssessmentNeed" target="provincialAssessmentNeed" />
+        <camunda:in source="mandatoryFees" target="mandatoryFees" />
+        <camunda:out source="totalTutionCost" target="totalTutionCost" />
+        <camunda:out source="totalBookCost" target="totalBookCost" />
+        <camunda:out source="totalExceptionalExpenses" target="totalExceptionalExpenses" />
+        <camunda:out source="livingCategory" target="livingCategory" />
+        <camunda:out source="totalTransportationCost" target="totalTransportationCost" />
+        <camunda:in source="daycareCosts12YearsOrOver" target="daycareCosts12YearsOrOver" />
+        <camunda:in source="daycareCosts11YearsOrUnder" target="daycareCosts11YearsOrUnder" />
+        <camunda:out source="totalChildcareCost" target="totalChildcareCost" />
+        <camunda:out source="totalChildSpousalSupport" target="totalChildSpousalSupport" />
+        <camunda:out source="netFederalScholarship" target="netFederalScholarship" />
+        <camunda:in source="transportationCost" target="transportationCost" />
+        <camunda:in source="livingathomeRent" target="livingathomeRent" />
+        <camunda:in source="studentPDStatus" target="studentPDStatus" />
+        <camunda:in source="whenDidYouGraduateOrLeaveHighSchool" target="whenDidYouGraduateOrLeaveHighSchool" />
+        <camunda:out source="totalFamilyIncome" target="totalFamilyIncome" />
+        <camunda:out source="camundaDependantStatus" target="camundaDependantStatus" />
+        <camunda:out source="msolMonthly" target="msolMonthly" />
+        <camunda:in source="partnerCalculatedTotalIncome" target="partnerCalculatedTotalIncome" />
+        <camunda:in source="numberOfParents" target="numberOfParents" />
+        <camunda:in source="studyStartDate" target="studyStartDate" />
+        <camunda:out source="numberOfParents" target="numberOfParents" />
+        <camunda:out source="noOfdependants" target="noOfdependants" />
+        <camunda:out source="noOfParentdependants" target="noOfParentdependants" />
+        <camunda:out source="familySize" target="familySize" />
+        <camunda:out source="parentdependantJson" target="parentdependantJson" />
+        <camunda:in source="parent1DependentTable" target="parent1DependentTable" />
+        <camunda:in source="parent2DependentTable" target="parent2DependentTable" />
+        <camunda:out source="totalSecondResidenceLimit" target="totalSecondResidenceLimit" />
+        <camunda:out source="totalLoanPayment" target="totalLoanPayment" />
+        <camunda:out source="totalCost" target="totalCost" />
+        <camunda:out source="netFederalFsc" target="netFederalFsc" />
+        <camunda:out source="netProvincialFsc" target="netProvincialFsc" />
+        <camunda:out source="parentalContribution" target="parentalContribution" />
+        <camunda:out source="applicantSpouseContribution" target="applicantSpouseContribution" />
+        <camunda:out source="netFederalContribution" target="netFederalContribution" />
+        <camunda:out source="netProvincialContribution" target="netProvincialContribution" />
+        <camunda:out source="totalMSOL" target="totalMSOL" />
+        <camunda:out source="otherAllowableCosts" target="otherAllowableCosts" />
+        <camunda:in source="courseLoad" target="courseLoad" />
+        <camunda:out source="dependant11YearsOrUnderExpenses" target="dependant11YearsOrUnderExpenses" />
+        <camunda:out source="dependant12YearsOrOverExpenses" target="dependant12YearsOrOverExpenses" />
+        <camunda:out source="totalDependentExpenses" target="totalDependentExpenses" />
+        <camunda:out source="totalFinancialNeed" target="totalFinancialNeed" />
+        <camunda:out source="totalMiscellaneousCost" target="totalMiscellaneousCost" />
+        <camunda:out source="totalAcademicExpenses" target="totalAcademicExpenses" />
+        <camunda:in source="isProgramOnline" target="isProgramOnline" />
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript">var isProgramOnline = false;
+if(execution.getVariable("offeringDelivered") == "online"){
+  isProgramOnline = true;
+}
+execution.setVariable("isProgramOnline", isProgramOnline);</camunda:script>
+        </camunda:executionListener>
+        <camunda:out source="eligibleDependents11YearsOrUnder" target="eligibleDependents11YearsOrUnder" />
+        <camunda:out source="eligibleDependents12YearsOrOver" target="eligibleDependents12YearsOrOver" />
+        <camunda:in source="dependantstatus" target="dependantstatus" />
+        <camunda:in source="partnerStudentStudyWeeks" target="partnerStudentStudyWeeks" />
+        <camunda:in source="weeks" target="weeks" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0naszjy</bpmn:incoming>
+      <bpmn:outgoing>Flow_09tnx9v</bpmn:outgoing>
+    </bpmn:callActivity>
     <bpmn:textAnnotation id="TextAnnotation_0xdedyz">
       <bpmn:text>This will generate (or associate) the MSFAA number that will be present in the NOA</bpmn:text>
     </bpmn:textAnnotation>
@@ -1913,10 +1915,6 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1440s3a_di" bpmnElement="Lane_1440s3a" isHorizontal="true">
         <dc:Bounds x="580" y="80" width="2280" height="1280" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0cf9yon" bpmnElement="TextAnnotation_0zowv9u" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
-        <dc:Bounds x="1370" y="391" width="170" height="41" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_11x0no4_di" bpmnElement="Flow_11x0no4">
@@ -2532,15 +2530,8 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
       <bpmndi:BPMNShape id="BPMNShape_17n9kde" bpmnElement="Gateway_1ibal4g" isMarkerVisible="true">
         <dc:Bounds x="1207" y="2145" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BusinessRuleTask_1n6nw6b_di" bpmnElement="Task_1uq9e1u">
-        <dc:Bounds x="730" y="2580" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_11rhs8d_di" bpmnElement="Activity_1aiys42">
         <dc:Bounds x="1180" y="2580" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_1okgvpw_di" bpmnElement="CallActivity_1okgvpw">
-        <dc:Bounds x="890" y="2580" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0p65yh4_di" bpmnElement="Activity_0p65yh4">
         <dc:Bounds x="1030" y="2580" width="100" height="80" />
@@ -2723,6 +2714,13 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
       <bpmndi:BPMNShape id="Gateway_15ky2tk_di" bpmnElement="Gateway_15ky2tk" isMarkerVisible="true">
         <dc:Bounds x="1917" y="1136" width="50" height="50" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BusinessRuleTask_1n6nw6b_di" bpmnElement="Task_1uq9e1u">
+        <dc:Bounds x="730" y="2580" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1okgvpw_di" bpmnElement="CallActivity_1okgvpw">
+        <dc:Bounds x="890" y="2580" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0xdedyz_di" bpmnElement="TextAnnotation_0xdedyz">
         <dc:Bounds x="1900" y="2442" width="130" height="70" />
       </bpmndi:BPMNShape>
@@ -2746,14 +2744,10 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
       <bpmndi:BPMNShape id="TextAnnotation_09zyg53_di" bpmnElement="TextAnnotation_09zyg53">
         <dc:Bounds x="2281" y="364" width="100" height="68" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_0b1d0j7_di" bpmnElement="Association_0b1d0j7">
-        <di:waypoint x="1444" y="432" />
-        <di:waypoint x="1398" y="518" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0cbdhes_di" bpmnElement="Association_0cbdhes">
-        <di:waypoint x="1466" y="432" />
-        <di:waypoint x="1513" y="518" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_0cf9yon" bpmnElement="TextAnnotation_0zowv9u" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="1370" y="391" width="170" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1eqxjsa_di" bpmnElement="Event_1eqxjsa">
         <dc:Bounds x="1034" y="500" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -2787,6 +2781,14 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
       <bpmndi:BPMNEdge id="Association_0t3evxv_di" bpmnElement="Association_0t3evxv">
         <di:waypoint x="2281" y="385" />
         <di:waypoint x="2221" y="363" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0b1d0j7_di" bpmnElement="Association_0b1d0j7">
+        <di:waypoint x="1444" y="432" />
+        <di:waypoint x="1398" y="518" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0cbdhes_di" bpmnElement="Association_0cbdhes">
+        <di:waypoint x="1466" y="432" />
+        <di:waypoint x="1513" y="518" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_16iez0e_di" bpmnElement="Group_16iez0e">
         <dc:Bounds x="873" y="2550" width="270" height="140" />
@@ -2930,10 +2932,6 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_02zuelh">
     <bpmndi:BPMNPlane id="BPMNPlane_04npmot" bpmnElement="Activity_1wcph1p">
-      <bpmndi:BPMNShape id="BPMNShape_077aex5" bpmnElement="TextAnnotation_14suvvs">
-        <dc:Bounds x="350" y="10" width="180" height="70" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_08y8buh_di" bpmnElement="Flow_08y8buh">
         <di:waypoint x="648" y="340" />
         <di:waypoint x="950" y="340" />
@@ -3012,6 +3010,10 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1emtgvs_di" bpmnElement="TextAnnotation_1emtgvs">
         <dc:Bounds x="778" y="80" width="180" height="55" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_077aex5" bpmnElement="TextAnnotation_14suvvs">
+        <dc:Bounds x="350" y="10" width="180" height="70" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_05ganvj_di" bpmnElement="Association_05ganvj">

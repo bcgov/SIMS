@@ -249,7 +249,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.hasOfferingWILComponent =
       educationProgramOffering.hasOfferingWILComponent;
     programOffering.offeringWILType = educationProgramOffering.offeringWILType;
-    programOffering.studyBreaks = educationProgramOffering.studyBreaks;
+    programOffering.studyBreaks = educationProgramOffering.breaksAndWeeks;
     programOffering.offeringDeclaration =
       educationProgramOffering.offeringDeclaration;
     programOffering.offeringType = educationProgramOffering.offeringType;

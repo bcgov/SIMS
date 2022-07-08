@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0gep0eb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0gep0eb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
   <bpmn:collaboration id="Collaboration_0pefwi1">
     <bpmn:participant id="calcuate-assessment" name="Assessment Calculation" processRef="calculate-assessment" />
     <bpmn:group id="Group_0s8yva4" categoryValueRef="CategoryValue_04qn60t" />
@@ -261,9 +261,8 @@
         <bpmn:flowNodeRef>Activity_1r4kuzq</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0ttholm</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1fbx78j</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_15k5kcn</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_0ooro4k</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_15k5kcn</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="Flow_0obe75l" sourceRef="Event_0wcp9zw" targetRef="Gateway_student_prov_parent_partner" />
@@ -347,7 +346,7 @@
     <bpmn:sequenceFlow id="Flow_0i5iz76" sourceRef="Event_0jywtq7" targetRef="Gateway_net_federal_prov_total" />
     <bpmn:sequenceFlow id="Flow_03rar00" sourceRef="Event_1cz9g43" targetRef="Gateway_student_fed_parent" />
     <bpmn:sequenceFlow id="Flow_13xio72" sourceRef="Gateway_student_fed_parent" targetRef="Activity_1o69kw2" />
-    <bpmn:sequenceFlow id="SequenceFlow_0qhnmfe" sourceRef="StartEvent_1" targetRef="Task_0ooro4k" />
+    <bpmn:sequenceFlow id="SequenceFlow_0qhnmfe" sourceRef="StartEvent_1" targetRef="Activity_15k5kcn" />
     <bpmn:sequenceFlow id="Flow_0p80zve" sourceRef="Activity_1hsai79" targetRef="Event_1isln2u" />
     <bpmn:sequenceFlow id="Flow_1ilfqk8" name="exempt" sourceRef="Gateway_00k5yn0" targetRef="Activity_0c875om">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${indigenousStatus == "yes" || studentPDStatus == "true" || youthInCare == "yes"}</bpmn:conditionExpression>
@@ -368,7 +367,6 @@
     <bpmn:sequenceFlow id="Flow_08ibaew" sourceRef="Activity_1nld6zz" targetRef="Activity_1we8n5y" />
     <bpmn:sequenceFlow id="Flow_14nh8zw" sourceRef="Activity_1r4kuzq" targetRef="Activity_1we8n5y" />
     <bpmn:sequenceFlow id="Flow_13jara5" sourceRef="Activity_15k5kcn" targetRef="Gateway_0jr6kcv" />
-    <bpmn:sequenceFlow id="Flow_1uk7uwk" sourceRef="Task_0ooro4k" targetRef="Activity_15k5kcn" />
     <bpmn:sequenceFlow id="Flow_0z7x9uj" sourceRef="Activity_0ttholm" targetRef="Activity_1we8n5y" />
     <bpmn:sequenceFlow id="Flow_063hmoe" sourceRef="Activity_1we8n5y" targetRef="Activity_19nhz3z" />
     <bpmn:sequenceFlow id="Flow_18ke8l5" sourceRef="Activity_19nhz3z" targetRef="Activity_1fbx78j" />
@@ -848,19 +846,14 @@ execution.setVariable("familySize", familySize);</camunda:script>
       <bpmn:incoming>Flow_0nj9ebu</bpmn:incoming>
       <bpmn:outgoing>Flow_1s9kwiw</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:scriptTask id="Activity_15k5kcn" name="Determine Dependant Status" scriptFormat="javascript" camunda:resultVariable="camundaDependantStatus">
-      <bpmn:incoming>Flow_1uk7uwk</bpmn:incoming>
-      <bpmn:outgoing>Flow_13jara5</bpmn:outgoing>
-      <bpmn:script>Math.round(Math.ceil(Math.abs(new Date(execution.getVariable("studyStartDate")) - new Date(execution.getVariable("whenDidYouGraduateOrLeaveHighSchool"))) / (1000 * 60 * 60 * 24 * 365)) &lt; 4)  ? "yes" : "no"</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:scriptTask id="Task_0ooro4k" name="Calculate Weeks" scriptFormat="javascript" camunda:resultVariable="weeks">
-      <bpmn:incoming>SequenceFlow_0qhnmfe</bpmn:incoming>
-      <bpmn:outgoing>Flow_1uk7uwk</bpmn:outgoing>
-      <bpmn:script>Math.round(Math.ceil(Math.abs(new Date(execution.getVariable("studyEndDate")) - new Date(execution.getVariable("studyStartDate"))) / (1000 * 60 * 60 * 24))/7)</bpmn:script>
-    </bpmn:scriptTask>
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>SequenceFlow_0qhnmfe</bpmn:outgoing>
     </bpmn:startEvent>
+    <bpmn:scriptTask id="Activity_15k5kcn" name="Determine Dependant Status" scriptFormat="javascript" camunda:resultVariable="camundaDependantStatus">
+      <bpmn:incoming>SequenceFlow_0qhnmfe</bpmn:incoming>
+      <bpmn:outgoing>Flow_13jara5</bpmn:outgoing>
+      <bpmn:script>Math.round(Math.ceil(Math.abs(new Date(execution.getVariable("studyStartDate")) - new Date(execution.getVariable("whenDidYouGraduateOrLeaveHighSchool"))) / (1000 * 60 * 60 * 24 * 365)) &lt; 4)  ? "yes" : "no"</bpmn:script>
+    </bpmn:scriptTask>
   </bpmn:process>
   <bpmn:signal id="Signal_0igifb3" name="Signal_158lckj" />
   <bpmn:category id="Category_0g89m17">
@@ -962,12 +955,8 @@ execution.setVariable("familySize", familySize);</camunda:script>
         <di:waypoint x="900" y="310" />
         <di:waypoint x="920" y="310" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1uk7uwk_di" bpmnElement="Flow_1uk7uwk">
-        <di:waypoint x="400" y="310" />
-        <di:waypoint x="435" y="310" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_13jara5_di" bpmnElement="Flow_13jara5">
-        <di:waypoint x="535" y="310" />
+        <di:waypoint x="470" y="310" />
         <di:waypoint x="565" y="310" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_14nh8zw_di" bpmnElement="Flow_14nh8zw">
@@ -1035,7 +1024,7 @@ execution.setVariable("familySize", familySize);</camunda:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0qhnmfe_di" bpmnElement="SequenceFlow_0qhnmfe">
         <di:waypoint x="278" y="310" />
-        <di:waypoint x="300" y="310" />
+        <di:waypoint x="370" y="310" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_13xio72_di" bpmnElement="Flow_13xio72">
         <di:waypoint x="550" y="2100" />
@@ -1651,14 +1640,11 @@ execution.setVariable("familySize", familySize);</camunda:script>
       <bpmndi:BPMNShape id="Activity_0fifikz_di" bpmnElement="Activity_calc_other_allowable_cost">
         <dc:Bounds x="1650" y="580" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0639nh3_di" bpmnElement="Activity_15k5kcn">
-        <dc:Bounds x="435" y="270" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0pphzp4_di" bpmnElement="Task_0ooro4k">
-        <dc:Bounds x="300" y="270" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="242" y="292" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0639nh3_di" bpmnElement="Activity_15k5kcn">
+        <dc:Bounds x="370" y="270" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_0s8yva4_di" bpmnElement="Group_0s8yva4">
         <dc:Bounds x="1070" y="490" width="720" height="220" />

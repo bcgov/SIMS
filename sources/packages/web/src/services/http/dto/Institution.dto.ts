@@ -48,6 +48,11 @@ export interface InstitutionDetailAPIOutDTO
   institutionTypeName?: string;
   isBCPrivate?: boolean;
   clientType?: ClientIdType;
+  /**
+   * Indicates if the institution has a BCeID business guid
+   * associated with, if not it is a basic BCeID institution.
+   */
+  hasBusinessGuid: boolean;
 }
 
 export interface InstitutionDetailAPIInDTO extends InstitutionProfileAPIInDTO {
@@ -103,6 +108,11 @@ export interface SearchInstitutionAPIOutDTO {
 export interface InstitutionBasicAPIOutDTO {
   operatingName: string;
   designationStatus: DesignationAgreementStatus;
+  /**
+   * Indicates if the institution has a BCeID business guid
+   * associated with, if not it is a basic BCeID institution.
+   */
+  hasBusinessGuid: boolean;
 }
 
 /**
@@ -147,10 +157,30 @@ export interface UserPermissionAPIInDTO {
   userRole?: string;
 }
 
-export interface InstitutionUserAPIInDTO {
-  userId?: string;
+/**
+ * Associates a new user from BCeID with an institution
+ * associating also the authorizations.
+ */
+export interface CreateInstitutionUserAPIInDTO {
+  /**
+   * User BCeID id from BCeID Web Service (e.g. SomeUserName) that will have its
+   * data retrieved to be created on SIMS.
+   */
+  userId: string;
+  /**
+   * Permissions to be associated with the new user.
+   */
   permissions: UserPermissionAPIInDTO[];
 }
+
+/**
+ * Update an existing user association with an institution
+ * changing the authorizations.
+ */
+export type UpdateInstitutionUserAPIInDTO = Omit<
+  CreateInstitutionUserAPIInDTO,
+  "userId"
+>;
 
 export interface UserActiveStatusAPIInDTO {
   isActive: boolean;

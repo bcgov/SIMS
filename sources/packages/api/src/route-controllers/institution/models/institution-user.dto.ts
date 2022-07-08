@@ -1,47 +1,62 @@
+import { OmitType } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
   ArrayMinSize,
   IsArray,
   IsBoolean,
+  IsEnum,
   IsIn,
   IsNotEmpty,
   IsOptional,
   ValidateNested,
 } from "class-validator";
+import {
+  InstitutionUserRoles,
+  InstitutionUserTypes,
+} from "../../../auth/user-types.enum";
 import { AddressAPIOutDTO } from "../../../route-controllers/models/common.dto";
-import { InstitutionUserType, InstitutionUserRole } from "../../../types";
-
-export class InstitutionUserAPIInDTO {
-  @IsNotEmpty()
-  userId: string;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @ArrayMinSize(1)
-  @Type(() => UserPermissionInDTO)
-  permissions: UserPermissionInDTO[];
-}
 
 export class UserPermissionInDTO {
   @IsOptional()
   locationId?: number;
-
   @IsNotEmpty()
-  @IsIn(Object.values(InstitutionUserType))
-  userType: string;
-
+  @IsEnum(InstitutionUserTypes)
+  userType: InstitutionUserTypes;
   @IsOptional()
-  @IsIn(Object.values(InstitutionUserRole))
-  userRole?: string;
+  @IsEnum(InstitutionUserRoles)
+  @IsIn(Object.values(InstitutionUserRoles))
+  userRole?: InstitutionUserRoles;
 }
 
-export class InstitutionUserPermissionAPIInDTO {
+/**
+ * Associates a new user from BCeID with an institution
+ * associating also the authorizations.
+ */
+export class CreateInstitutionUserAPIInDTO {
+  /**
+   * User BCeID id from BCeID Web Service (e.g. SomeUserName) that will have its
+   * data retrieved to be created on SIMS.
+   */
+  @IsNotEmpty()
+  userId: string;
+  /**
+   * Permissions to be associated with the new user.
+   */
   @IsArray()
   @ValidateNested({ each: true })
   @ArrayMinSize(1)
   @Type(() => UserPermissionInDTO)
   permissions: UserPermissionInDTO[];
 }
+
+/**
+ * Update an existing user association with an institution
+ * changing the authorizations.
+ */
+export class UpdateInstitutionUserAPIInDTO extends OmitType(
+  CreateInstitutionUserAPIInDTO,
+  ["userId"],
+) {}
 
 export class UserActiveStatusAPIInDTO {
   @IsBoolean()

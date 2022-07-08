@@ -447,10 +447,19 @@
 // Creates a panel that will not affect the layout. Used mainly
 // for grouping when the Container component is not applicable
 // because there is no need of a schema change.
-.formio-component-panel.formio-panel-unset .border {
+// ">" is used to get the immediate child element with class "border"
+// and its immediate child element "card-body", else it will
+// effect the non formio-panel-unset class inner panels.
+.formio-component-panel.formio-panel-unset > .border {
   border-style: none !important;
 }
 
-.formio-component-panel.formio-panel-unset .card-body {
+.formio-component-panel.formio-panel-unset > .border > .card-body {
   padding: 0px;
+}
+
+// Squared bordered style for formio md-6 col.
+.formio-bordered-column .col-md-6 {
+  border: 1px solid #e8e8e8;
+  border-radius: 0px;
 }

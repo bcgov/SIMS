@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0gep0eb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0gep0eb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
   <bpmn:collaboration id="PTCalculateAssessment">
     <bpmn:participant id="calcuate-pt-assessment" name="Part Time Assessment Calculation" processRef="calculate-pt-assessment" />
   </bpmn:collaboration>
@@ -56,14 +56,13 @@
         </bpmn:childLaneSet>
       </bpmn:lane>
       <bpmn:lane id="Lane_12k32od" name="Pre Calculation &#38; Lookup">
-        <bpmn:flowNodeRef>RelationshipStatusConditionGateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>CalculateWeeks</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEventPTCalculateAssessment</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>SplitAcademicDependantGateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>CalculateDependantExpensesLink</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>CalculateAcademicExpensesLink</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>CalculateFamilyIncome</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>DetermineFamilySizeDependents</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RelationshipStatusConditionGateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CalculateFamilyIncome</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>CalculateFamilyIncomeWithSpouse</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1ljysin" name="Total Financial Need">
@@ -75,8 +74,7 @@
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="Flow_1mm6kf2" sourceRef="TutionCost" targetRef="BooksAndSuppliesCost" />
-    <bpmn:sequenceFlow id="SequenceFlow_0qhnmfe" sourceRef="StartEventPTCalculateAssessment" targetRef="CalculateWeeks" />
-    <bpmn:sequenceFlow id="Flow_1uk7uwk" sourceRef="CalculateWeeks" targetRef="RelationshipStatusConditionGateway" />
+    <bpmn:sequenceFlow id="SequenceFlow_0qhnmfe" sourceRef="StartEventPTCalculateAssessment" targetRef="RelationshipStatusConditionGateway" />
     <bpmn:sequenceFlow id="Flow_1vnlqoa" name="single independent" sourceRef="RelationshipStatusConditionGateway" targetRef="CalculateFamilyIncome">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${relationshipStatus == "single" || relationshipStatus == "other" }</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -92,16 +90,6 @@
     <bpmn:startEvent id="StartEventPTCalculateAssessment">
       <bpmn:outgoing>SequenceFlow_0qhnmfe</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:scriptTask id="CalculateWeeks" name="Calculate Weeks" scriptFormat="javascript" camunda:resultVariable="weeks">
-      <bpmn:incoming>SequenceFlow_0qhnmfe</bpmn:incoming>
-      <bpmn:outgoing>Flow_1uk7uwk</bpmn:outgoing>
-      <bpmn:script>Math.round(Math.ceil(Math.abs(new Date(execution.getVariable("studyEndDate")) - new Date(execution.getVariable("studyStartDate"))) / (1000 * 60 * 60 * 24))/7)</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:exclusiveGateway id="RelationshipStatusConditionGateway">
-      <bpmn:incoming>Flow_1uk7uwk</bpmn:incoming>
-      <bpmn:outgoing>Flow_1vnlqoa</bpmn:outgoing>
-      <bpmn:outgoing>Flow_02oxjsw</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:intermediateCatchEvent id="CalculateDependantExpensesStart" name="calculate-dependant-expenses">
       <bpmn:outgoing>Flow_07usdr2</bpmn:outgoing>
       <bpmn:linkEventDefinition id="LinkEventDefinition_0e0rdci" name="calculate-dependant-expenses" />
@@ -228,10 +216,6 @@ execution.setVariable(
       <bpmn:outgoing>Flow_0zof4f8</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1sawxvk" sourceRef="JoinAcademicDependantGateway" targetRef="TotalExpenses" />
-    <bpmn:serviceTask id="CalculateFamilyIncome" name="Calculate Family Income" camunda:expression="${studentCalculatedTotalIncome}" camunda:resultVariable="totalFamilyIncome">
-      <bpmn:incoming>Flow_1vnlqoa</bpmn:incoming>
-      <bpmn:outgoing>Flow_0zvj6qz</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:task id="DetermineFamilySizeDependents" name="Determine Family Size &#38; Dependents">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
@@ -289,10 +273,6 @@ execution.setVariable("familySize", familySize);</camunda:script>
       <bpmn:incoming>Flow_0zvj6qz</bpmn:incoming>
       <bpmn:outgoing>Flow_0vp5ftv</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:serviceTask id="CalculateFamilyIncomeWithSpouse" name="Calculate Family Income with Spouse" camunda:expression="${studentCalculatedTotalIncome + partnerCalculatedTotalIncome}" camunda:resultVariable="totalFamilyIncome">
-      <bpmn:incoming>Flow_02oxjsw</bpmn:incoming>
-      <bpmn:outgoing>Flow_1s94j9g</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:endEvent id="Event_1rinngx">
       <bpmn:incoming>Flow_0zof4f8</bpmn:incoming>
     </bpmn:endEvent>
@@ -339,6 +319,19 @@ execution.setVariable("familySize", familySize);</camunda:script>
       <bpmn:incoming>Flow_0ftduyv</bpmn:incoming>
       <bpmn:outgoing>Flow_1mm6kf2</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="RelationshipStatusConditionGateway">
+      <bpmn:incoming>SequenceFlow_0qhnmfe</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vnlqoa</bpmn:outgoing>
+      <bpmn:outgoing>Flow_02oxjsw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="CalculateFamilyIncome" name="Calculate Family Income" camunda:expression="${studentCalculatedTotalIncome}" camunda:resultVariable="totalFamilyIncome">
+      <bpmn:incoming>Flow_1vnlqoa</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zvj6qz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="CalculateFamilyIncomeWithSpouse" name="Calculate Family Income with Spouse" camunda:expression="${studentCalculatedTotalIncome + partnerCalculatedTotalIncome}" camunda:resultVariable="totalFamilyIncome">
+      <bpmn:incoming>Flow_02oxjsw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s94j9g</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:signal id="Signal_0igifb3" name="Signal_158lckj" />
   <bpmn:message id="Message_06yfl3v" name="calculate-total-cost" />
@@ -372,6 +365,10 @@ execution.setVariable("familySize", familySize);</camunda:script>
       <bpmndi:BPMNShape id="Lane_0ldrkw9_di" bpmnElement="Lane_0ldrkw9" isHorizontal="true">
         <dc:Bounds x="247" y="450" width="943" height="540" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0ftduyv_di" bpmnElement="Flow_0ftduyv">
+        <di:waypoint x="298" y="610" />
+        <di:waypoint x="350" y="610" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0zof4f8_di" bpmnElement="Flow_0zof4f8">
         <di:waypoint x="660" y="1080" />
         <di:waypoint x="712" y="1080" />
@@ -435,13 +432,13 @@ execution.setVariable("familySize", familySize);</camunda:script>
         <di:waypoint x="760" y="570" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0zvj6qz_di" bpmnElement="Flow_0zvj6qz">
-        <di:waypoint x="720" y="210" />
+        <di:waypoint x="640" y="210" />
         <di:waypoint x="820" y="210" />
         <di:waypoint x="820" y="260" />
         <di:waypoint x="880" y="260" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1s94j9g_di" bpmnElement="Flow_1s94j9g">
-        <di:waypoint x="720" y="310" />
+        <di:waypoint x="640" y="310" />
         <di:waypoint x="820" y="310" />
         <di:waypoint x="820" y="260" />
         <di:waypoint x="880" y="260" />
@@ -453,32 +450,24 @@ execution.setVariable("familySize", familySize);</camunda:script>
         <di:waypoint x="630" y="570" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_02oxjsw_di" bpmnElement="Flow_02oxjsw">
-        <di:waypoint x="470" y="285" />
-        <di:waypoint x="470" y="310" />
-        <di:waypoint x="620" y="310" />
+        <di:waypoint x="360" y="285" />
+        <di:waypoint x="360" y="310" />
+        <di:waypoint x="540" y="310" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="524" y="275" width="63" height="27" />
+          <dc:Bounds x="431" y="275" width="64" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1vnlqoa_di" bpmnElement="Flow_1vnlqoa">
-        <di:waypoint x="470" y="235" />
-        <di:waypoint x="470" y="210" />
-        <di:waypoint x="620" y="210" />
+        <di:waypoint x="360" y="235" />
+        <di:waypoint x="360" y="210" />
+        <di:waypoint x="540" y="210" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="510" y="176" width="61" height="27" />
+          <dc:Bounds x="414" y="176" width="62" height="27" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1uk7uwk_di" bpmnElement="Flow_1uk7uwk">
-        <di:waypoint x="400" y="260" />
-        <di:waypoint x="445" y="260" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0qhnmfe_di" bpmnElement="SequenceFlow_0qhnmfe">
         <di:waypoint x="258" y="260" />
-        <di:waypoint x="300" y="260" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ftduyv_di" bpmnElement="Flow_0ftduyv">
-        <di:waypoint x="298" y="610" />
-        <di:waypoint x="350" y="610" />
+        <di:waypoint x="335" y="260" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mm6kf2_di" bpmnElement="Flow_1mm6kf2">
         <di:waypoint x="400" y="570" />
@@ -491,12 +480,6 @@ execution.setVariable("familySize", familySize);</camunda:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEventPTCalculateAssessment">
         <dc:Bounds x="222" y="242" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0pphzp4_di" bpmnElement="CalculateWeeks">
-        <dc:Bounds x="300" y="220" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0jr6kcv_di" bpmnElement="RelationshipStatusConditionGateway" isMarkerVisible="true">
-        <dc:Bounds x="445" y="235" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0xzqazp_di" bpmnElement="CalculateDependantExpensesStart">
         <dc:Bounds x="272" y="832" width="36" height="36" />
@@ -552,14 +535,8 @@ execution.setVariable("familySize", familySize);</camunda:script>
       <bpmndi:BPMNShape id="Activity_0jgwhlu_di" bpmnElement="TotalExpenses">
         <dc:Bounds x="560" y="1040" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1r4kuzq_di" bpmnElement="CalculateFamilyIncome">
-        <dc:Bounds x="620" y="170" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0bylhv9_di" bpmnElement="DetermineFamilySizeDependents">
         <dc:Bounds x="880" y="220" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1nld6zz_di" bpmnElement="CalculateFamilyIncomeWithSpouse">
-        <dc:Bounds x="620" y="270" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1rinngx_di" bpmnElement="Event_1rinngx">
         <dc:Bounds x="712" y="1062" width="36" height="36" />
@@ -590,6 +567,15 @@ execution.setVariable("familySize", familySize);</camunda:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_05f59g8_di" bpmnElement="TutionCost">
         <dc:Bounds x="350" y="570" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0jr6kcv_di" bpmnElement="RelationshipStatusConditionGateway" isMarkerVisible="true">
+        <dc:Bounds x="335" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1r4kuzq_di" bpmnElement="CalculateFamilyIncome">
+        <dc:Bounds x="540" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nld6zz_di" bpmnElement="CalculateFamilyIncomeWithSpouse">
+        <dc:Bounds x="540" y="270" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

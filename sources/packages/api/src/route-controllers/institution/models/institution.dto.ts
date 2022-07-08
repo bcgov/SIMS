@@ -118,11 +118,21 @@ export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
   formattedEstablishedDate?: string;
   institutionTypeName?: string;
   isBCPrivate?: boolean;
+  /**
+   * Indicates if the institution has a BCeID business guid
+   * associated with, if not it is a basic BCeID institution.
+   */
+  hasBusinessGuid: boolean;
 }
 
 export class InstitutionBasicAPIOutDTO {
   operatingName: string;
   designationStatus: DesignationStatus;
+  /**
+   * Indicates if the institution has a BCeID business guid
+   * associated with, if not it is a basic BCeID institution.
+   */
+  hasBusinessGuid: boolean;
 }
 
 export class SearchInstitutionAPIOutDTO {

@@ -37,13 +37,17 @@ export class BCeIDService {
    * information sharing rule for the online service (onlineServiceId) with the specified requester
    * user account type (requesterAccountTypeCode) and target user account type (accountTypeCode).
    * The information returned by a query is restricted to the properties included in the information sharing rules.
-   * @param userName User name associated with the account whose details are being queried.
+   * @param userId user name associated with the account whose details are being queried.
+   * @param accountTypeCode type of the BCeID to be search.
    * @returns account details if the account was found, otherwise null.
    */
-  public async getAccountDetails(userName: string): Promise<AccountDetails> {
-    var client = await this.getSoapClient();
+  public async getAccountDetails(
+    userId: string,
+    accountTypeCode: BCeIDAccountTypeCodes,
+  ): Promise<AccountDetails> {
+    const client = await this.getSoapClient();
     // SOAP call body to execute the getAccountDetail request.
-    var body = {
+    const body = {
       accountDetailRequest: {
         onlineServiceId: this.bceidConfig.onlineServiceId,
         // Internal indicate that the user being provided
@@ -52,11 +56,10 @@ export class BCeIDService {
         requesterAccountTypeCode: BCeIDAccountTypeCodes.Internal,
         // The user guid of the user on the internal gov network.
         requesterUserGuid: this.bceidConfig.requesterUserGuid,
-        userId: userName,
+        userId,
         // Type of the user account to search for the userId
-        // parameter provided above. Only business BCeID are
-        // on the scope of the application.
-        accountTypeCode: BCeIDAccountTypeCodes.Business,
+        // parameter provided above.
+        accountTypeCode,
       },
     };
 
@@ -103,9 +106,9 @@ export class BCeIDService {
   public async searchBCeIDAccounts(
     options: SearchAccountOptions,
   ): Promise<SearchBCeIDAccountResult> {
-    var client = await this.getSoapClient();
+    const client = await this.getSoapClient();
     // SOAP call body to execute the searchBCeIDAccount request.
-    var body = {
+    const body = {
       bceidAccountSearchRequest: {
         onlineServiceId: this.bceidConfig.onlineServiceId,
         requesterAccountTypeCode: BCeIDAccountTypeCodes.Business,
