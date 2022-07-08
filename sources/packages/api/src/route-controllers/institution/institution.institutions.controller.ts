@@ -66,6 +66,7 @@ import {
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
 import { InstitutionLocationControllerService } from "../institution-locations/institution-location.controller.service";
+import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
 
 /**
  * Institution controller for institutions Client.
@@ -241,7 +242,10 @@ export class InstitutionInstitutionsController extends BaseController {
     // For basic BCeID user the information isExistingUser and isActiveUser
     // are enough to define if the user can complete the login or not.
     const businessBCeIDUserAccount =
-      await this.bceidAccountService.getAccountDetails(token.idp_user_name);
+      await this.bceidAccountService.getAccountDetails(
+        token.idp_user_name,
+        BCeIDAccountTypeCodes.Business,
+      );
     if (businessBCeIDUserAccount) {
       // Check if the institution associated with the BCeID business guid is already present.
       status.associatedInstitutionExists =
