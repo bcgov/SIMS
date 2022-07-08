@@ -3268,7 +3268,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "datepickerMode": "day",
-                      "id": "enxi3md00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "id": "enxi3md0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
                     },
                     {
                       "label": "Break end date",
@@ -3404,7 +3404,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "datepickerMode": "day",
-                      "id": "ezdpcu000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                      "id": "ezdpcu00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
                     },
                     {
                       "label": "Total break days",
@@ -3492,7 +3492,7 @@
                       "showWordCount": false,
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ekbckv000000000000000000",
+                      "id": "ekbckv00000000000000000000000000000000000",
                       "defaultValue": ""
                     },
                     {
@@ -3581,7 +3581,7 @@
                       "showWordCount": false,
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ee78q8h00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                      "id": "ee78q8h0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                       "defaultValue": null
                     },
                     {
@@ -3670,7 +3670,7 @@
                       "showWordCount": false,
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eahi4yv0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                      "id": "eahi4yv000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                       "defaultValue": null
                     }
                   ],
@@ -4333,7 +4333,7 @@
               "encrypted": false,
               "redrawOn": "",
               "customDefaultValue": "",
-              "calculateValue": "// Sum of all eligibleBreakDays.\r\nconst sumOfTotalEligibleBreakDaysObject = data.breaksAndWeeks?.studyBreaks\r\n  ?.filter((each) => each && +each.eligibleBreakDays)\r\n  ?.reduce(\r\n    (previous, current) => ({\r\n      eligibleBreakDays: previous.eligibleBreakDays + current.eligibleBreakDays,\r\n    }),\r\n    {\r\n      eligibleBreakDays: 0,\r\n    }\r\n  );\r\n\r\nconst sumOfTotalEligibleBreakDays =\r\n  sumOfTotalEligibleBreakDaysObject?.eligibleBreakDays;\r\n\r\n// Checking is sumOfTotalEligibleBreakDays is number or not.\r\nvalue = _.isNumber(sumOfTotalEligibleBreakDays)\r\n  ? sumOfTotalEligibleBreakDays\r\n  : 0;\r\n",
+              "calculateValue": "// Sum of all eligibleBreakDays.\r\nconst sumOfTotalEligibleBreakDaysObject = data.breaksAndWeeks.studyBreaks\r\n  .filter((each) => each && +each.eligibleBreakDays)\r\n  .reduce(\r\n    (previous, current) => ({\r\n      eligibleBreakDays: previous.eligibleBreakDays + current.eligibleBreakDays,\r\n    }),\r\n    {\r\n      eligibleBreakDays: 0,\r\n    }\r\n  );\r\n\r\nconst sumOfTotalEligibleBreakDays =\r\n  sumOfTotalEligibleBreakDaysObject.eligibleBreakDays;\r\n\r\n// Checking is sumOfTotalEligibleBreakDays is number or not.\r\nvalue = _.isNumber(sumOfTotalEligibleBreakDays)\r\n  ? sumOfTotalEligibleBreakDays\r\n  : 0;\r\n",
               "calculateServer": true,
               "key": "sumOfTotalEligibleBreakDays",
               "tags": [],
@@ -4391,7 +4391,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "euivecn"
+              "id": "e68s4"
             },
             {
               "label": "Sum Of Total In Eligible Break Days",
@@ -4406,7 +4406,7 @@
               "encrypted": false,
               "redrawOn": "",
               "customDefaultValue": "",
-              "calculateValue": "// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDaysObject = data.breaksAndWeeks.studyBreaks\r\n  ?.filter((each) => each && +each.ineligibleBreakDays)\r\n  ?.reduce(\r\n    (previous, current) => ({\r\n      ineligibleBreakDays:\r\n        previous.ineligibleBreakDays + current.ineligibleBreakDays,\r\n    }),\r\n    { ineligibleBreakDays: 0 }\r\n  );\r\n\r\nconst sumOfTotalInEligibleBreakDays =\r\n  sumOfTotalInEligibleBreakDaysObject?.ineligibleBreakDays;\r\n\r\n// Checking is sumOfTotalInEligibleBreakDays is number or not.\r\nvalue = _.isNumber(sumOfTotalInEligibleBreakDays)\r\n  ? sumOfTotalInEligibleBreakDays\r\n  : 0;\r\n",
+              "calculateValue": "// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDaysObject = data.breaksAndWeeks.studyBreaks\r\n  .filter((each) => each && +each.ineligibleBreakDays)\r\n  .reduce(\r\n    (previous, current) => ({\r\n      ineligibleBreakDays:\r\n        previous.ineligibleBreakDays + current.ineligibleBreakDays,\r\n    }),\r\n    { ineligibleBreakDays: 0 }\r\n  );\r\n\r\nconst sumOfTotalInEligibleBreakDays =\r\n  sumOfTotalInEligibleBreakDaysObject.ineligibleBreakDays;\r\n\r\n// Checking is sumOfTotalInEligibleBreakDays is number or not.\r\nvalue = _.isNumber(sumOfTotalInEligibleBreakDays)\r\n  ? sumOfTotalInEligibleBreakDays\r\n  : 0;\r\n",
               "calculateServer": true,
               "key": "sumOfTotalInEligibleBreakDays",
               "tags": [],
@@ -4464,7 +4464,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "e4q6cwk"
+              "id": "e6toduo"
             },
             {
               "label": "Invalid Study Breaks",
@@ -4537,7 +4537,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "eo21gl"
+              "id": "ek5z64b"
             },
             {
               "label": "Study Breaks Overlapping Detection",
@@ -6290,7 +6290,7 @@
       "encrypted": false,
       "redrawOn": "data",
       "customDefaultValue": "",
-      "calculateValue": "value =\r\n  data.programOfferingIntensityMismatch ||\r\n  data.programOfferingDeliveryMismatch ||\r\n  data.programOfferingWILMismatch ||\r\n  data.invalidStudyDates ||\r\n  data.invalidStudyBreaks ||\r\n  data.invalidCourseLoad\r\n    ? \"Pending\"\r\n    : \"Approved\";",
+      "calculateValue": "value =\r\n  data.programOfferingIntensityMismatch ||\r\n  data.programOfferingDeliveryMismatch ||\r\n  data.programOfferingWILMismatch ||\r\n  data.invalidStudyDates ||\r\n  data.invalidStudyBreaks ||\r\n  data.invalidCourseLoad\r\n    ? \"Pending\"\r\n    : \"Approved\";\r\n",
       "calculateServer": true,
       "key": "offeringStatus",
       "tags": [],
@@ -6348,7 +6348,7 @@
       "allowMultipleMasks": false,
       "addons": [],
       "inputType": "hidden",
-      "id": "el2b2p"
+      "id": "eagfa7x"
     },
     {
       "label": "offeringStatusToDisplay",
