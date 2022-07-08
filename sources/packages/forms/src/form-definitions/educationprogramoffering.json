@@ -2335,7 +2335,7 @@
               "id": "enysm7c"
             },
             {
-              "label": "ineligibleDaysForFundingAfter10PercentageCalculation",
+              "label": "Ineligible Days For Funding After 10 Percentage Calculation",
               "labelWidth": "",
               "labelMargin": "",
               "customClass": "",
@@ -2347,7 +2347,7 @@
               "encrypted": false,
               "redrawOn": "",
               "customDefaultValue": "",
-              "calculateValue": "// Calculate MAX(0,(SUM(TOTAL ELIGIBLE BREAK DAYS)- 0.1(TOTAL DAYS)).\r\n// i.e, sum of all TOTAL ELIGIBLE BREAK DAYS minus 10% of total study days.\r\n\r\n// Sum of all eligible break days.\r\nconst sumOfTotalEligibleBreakDays = data.sumOfTotalEligibleBreakDays;\r\n\r\n// Allowable 10% total days.\r\nconst allowable10Percentage = data.allowable10Percentage;\r\n\r\n// Calculating the ineligible days\r\nvalue =\r\n  typeof sumOfTotalEligibleBreakDays === typeof 1 &&\r\n  typeof allowable10Percentage === typeof 1\r\n    ? sumOfTotalEligibleBreakDays - allowable10Percentage\r\n    : 0;\r\n\r\n",
+              "calculateValue": "// Calculate MAX(0,(SUM(TOTAL ELIGIBLE BREAK DAYS)- 0.1(TOTAL DAYS)).\r\n// i.e, sum of all TOTAL ELIGIBLE BREAK DAYS minus 10% of total study days.\r\n\r\n// Sum of all eligible break days.\r\nconst sumOfTotalEligibleBreakDays = data.sumOfTotalEligibleBreakDays;\r\n\r\n// Allowable 10% total days.\r\nconst allowable10Percentage = data.allowable10Percentage;\r\n\r\n// Calculating the ineligible days\r\nvalue =\r\n  _.isNumber(sumOfTotalEligibleBreakDays) && _.isNumber(allowable10Percentage)\r\n    ? sumOfTotalEligibleBreakDays - allowable10Percentage\r\n    : 0;\r\n",
               "calculateServer": true,
               "key": "ineligibleDaysForFundingAfter10PercentageCalculation",
               "tags": [],
@@ -2405,10 +2405,10 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "e0ls2lp"
+              "id": "ea8b3wq"
             },
             {
-              "label": "allowable10Percentage",
+              "label": "Allowable 10 Percentage",
               "labelWidth": "",
               "labelMargin": "",
               "customClass": "",
@@ -2420,7 +2420,7 @@
               "encrypted": false,
               "redrawOn": "",
               "customDefaultValue": "",
-              "calculateValue": "// calculating allowable 10% of the total study period/\r\n// Checking the data.totalDays is a number or not.\r\nvalue = typeof data.breaksAndWeeks.totalDays === typeof 1 ? 0.1 * data.breaksAndWeeks.totalDays : 0;\r\n",
+              "calculateValue": "// Calculating allowable 10% of the total study period/\r\n// Checking the data.totalDays is a number or not.\r\nvalue = _.isNumber(data.breaksAndWeeks.totalDays)\r\n  ? 0.1 * data.breaksAndWeeks.totalDays\r\n  : 0;\r\n",
               "calculateServer": true,
               "key": "allowable10Percentage",
               "tags": [],
@@ -2478,7 +2478,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "e6q25ut"
+              "id": "eo379i"
             },
             {
               "label": "Invalid Study Dates",
@@ -2551,7 +2551,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "eqxqxze"
+              "id": "exlagr"
             },
             {
               "label": "Invalid study dates popup",
@@ -3268,7 +3268,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "datepickerMode": "day",
-                      "id": "enxi3md0000000000000000000"
+                      "id": "enxi3md00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
                     },
                     {
                       "label": "Break end date",
@@ -3404,7 +3404,7 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "datepickerMode": "day",
-                      "id": "ezdpcu00000000000000000000"
+                      "id": "ezdpcu000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
                     },
                     {
                       "label": "Total break days",
@@ -3444,7 +3444,7 @@
                       "redrawOn": "",
                       "clearOnHide": true,
                       "customDefaultValue": "",
-                      "calculateValue": "let result = 0\r\nif (\r\n  row.breakStartDate &&\r\n  row.breakEndDate\r\n) {\r\n  const date1 = new Date(row.breakStartDate);\r\n  const date2 = new Date(row.breakEndDate);\r\n  const diffTime = ((date2 - date1) < 0) ? 0 :(date2 - date1);\r\n  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));\r\n  result = diffDays;\r\n}\r\nvalue = result;\r\n",
+                      "calculateValue": "value = 0;\r\nif (row.breakStartDate && row.breakEndDate) {\r\n  const diffDays = moment(row.breakEndDate, \"YYYY-MM-DD\").diff(\r\n    moment(row.breakStartDate, \"YYYY-MM-DD\"),\r\n    \"days\"\r\n  );\r\n  value = Math.max(diffDays, 0);\r\n}\r\n",
                       "calculateServer": true,
                       "allowCalculateOverride": false,
                       "validateOn": "change",
@@ -3492,8 +3492,8 @@
                       "showWordCount": false,
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ecnnl70000000000000",
-                      "defaultValue": null
+                      "id": "ekbckv000000000000000000",
+                      "defaultValue": ""
                     },
                     {
                       "label": "Total eligible break days",
@@ -3581,7 +3581,7 @@
                       "showWordCount": false,
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ee78q8h0000000000000000000000",
+                      "id": "ee78q8h00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                       "defaultValue": null
                     },
                     {
@@ -3670,7 +3670,7 @@
                       "showWordCount": false,
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eahi4yv000000000000000000",
+                      "id": "eahi4yv0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                       "defaultValue": null
                     }
                   ],
@@ -3742,7 +3742,7 @@
                               "redrawOn": "",
                               "clearOnHide": true,
                               "customDefaultValue": "",
-                              "calculateValue": "let result = 0;\r\nif (data.studyStartDate && data.studyEndDate) {\r\n  const date1 = new Date(data.studyStartDate);\r\n  const date2 = new Date(data.studyEndDate);\r\n  const diffTime = (date2 - date1 < 0) ? 0 : (date2 - date1);\r\n  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));\r\n  result = diffDays;\r\n} \r\nvalue = result;\r\n",
+                              "calculateValue": "value = 0;\r\nif (data.studyStartDate && data.studyEndDate) {\r\n  const diffDays = moment(data.studyEndDate, \"YYYY-MM-DD\").diff(\r\n    moment(data.studyStartDate, \"YYYY-MM-DD\"),\r\n    \"days\"\r\n  );\r\n  value = Math.max(diffDays, 0);\r\n}\r\n",
                               "calculateServer": true,
                               "allowCalculateOverride": false,
                               "validateOn": "change",
@@ -3791,8 +3791,8 @@
                               "showWordCount": false,
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "em2deav",
-                              "defaultValue": ""
+                              "id": "ex59v8",
+                              "defaultValue": null
                             }
                           ],
                           "width": 6,
@@ -3841,7 +3841,7 @@
                               "redrawOn": "",
                               "clearOnHide": true,
                               "customDefaultValue": "",
-                              "calculateValue": "// funded study weeks is funded study period days/7 round up\r\nvalue =\r\n  (typeof data.breaksAndWeeks.fundedStudyPeriodDays === typeof 1)\r\n    ? Math.round(data.breaksAndWeeks.fundedStudyPeriodDays / 7)\r\n    : 0;\r\n",
+                              "calculateValue": "// Funded study weeks is funded study period days/7 round up\r\nvalue = _.isNumber(data.breaksAndWeeks.fundedStudyPeriodDays)\r\n  ? Math.round(data.breaksAndWeeks.fundedStudyPeriodDays / 7)\r\n  : 0;\r\n",
                               "calculateServer": true,
                               "allowCalculateOverride": false,
                               "validateOn": "change",
@@ -3890,8 +3890,8 @@
                               "showWordCount": false,
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "err1hp8",
-                              "defaultValue": ""
+                              "id": "eh6f4n",
+                              "defaultValue": null
                             }
                           ],
                           "width": 6,
@@ -4010,7 +4010,7 @@
                               "redrawOn": "",
                               "clearOnHide": true,
                               "customDefaultValue": "",
-                              "calculateValue": "// funded study period days is total days minus unfunded study period days.\r\nvalue =\r\n  ((typeof data.breaksAndWeeks.totalDays === typeof 1) &&\r\n  (typeof data.breaksAndWeeks.unfundedStudyPeriodDays === typeof 1))\r\n    ? data.breaksAndWeeks.totalDays - data.breaksAndWeeks.unfundedStudyPeriodDays\r\n    : 0;",
+                              "calculateValue": "// Funded study period days is total days minus unfunded study period days.\r\nvalue =\r\n  _.isNumber(data.breaksAndWeeks.totalDays) &&\r\n  _.isNumber(data.breaksAndWeeks.unfundedStudyPeriodDays)\r\n    ? Math.max(\r\n        data.breaksAndWeeks.totalDays -\r\n          data.breaksAndWeeks.unfundedStudyPeriodDays,\r\n        0\r\n      )\r\n    : 0;\r\n",
                               "calculateServer": true,
                               "allowCalculateOverride": false,
                               "validateOn": "change",
@@ -4059,7 +4059,7 @@
                               "showWordCount": false,
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "ery8d",
+                              "id": "eugol9r",
                               "defaultValue": ""
                             }
                           ],
@@ -4109,7 +4109,7 @@
                               "redrawOn": "",
                               "clearOnHide": true,
                               "customDefaultValue": "",
-                              "calculateValue": "// If the ineligibleDaysForFundingAfter10PercentageCalculation is less than 1,\r\n// then add 0 to sum of all total ineligible break days to get the unfunded study\r\n// period days. If greater than 0, the directly add the result to sum of all\r\n// total ineligible break days to get the unfunded study period days.\r\n\r\n// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDays = data.sumOfTotalInEligibleBreakDays;\r\nconst ineligibleDaysForFundingAfter10PercentageCalculation =\r\n    data.ineligibleDaysForFundingAfter10PercentageCalculation < 1 ? 0 : data.ineligibleDaysForFundingAfter10PercentageCalculation;\r\n\r\n// sum of sumOfTotalInEligibleBreakDays and ineligibleDaysForFundingAfter10PercentageCalculation is  unfundedStudyPeriodDays.\r\nvalue =\r\n    ((typeof sumOfTotalInEligibleBreakDays === typeof 1) &&\r\n        (typeof ineligibleDaysForFundingAfter10PercentageCalculation === typeof 1)) ?\r\n    (sumOfTotalInEligibleBreakDays +\r\n        ineligibleDaysForFundingAfter10PercentageCalculation) :\r\n    0;\r\n    ",
+                              "calculateValue": "// If the ineligibleDaysForFundingAfter10PercentageCalculation is less than 1,\r\n// then add 0 to sum of all total ineligible break days to get the unfunded study\r\n// period days. If greater than 0, the directly add the result to sum of all\r\n// total ineligible break days to get the unfunded study period days.\r\n\r\n// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDays = data.sumOfTotalInEligibleBreakDays;\r\nconst ineligibleDaysForFundingAfter10PercentageCalculation = Math.max(\r\n  data.ineligibleDaysForFundingAfter10PercentageCalculation,\r\n  0\r\n);\r\n\r\n// sum of sumOfTotalInEligibleBreakDays and ineligibleDaysForFundingAfter10PercentageCalculation is  unfundedStudyPeriodDays.\r\nvalue =\r\n  _.isNumber(sumOfTotalInEligibleBreakDays) &&\r\n  _.isNumber(ineligibleDaysForFundingAfter10PercentageCalculation)\r\n    ? sumOfTotalInEligibleBreakDays +\r\n      ineligibleDaysForFundingAfter10PercentageCalculation\r\n    : 0;\r\n",
                               "calculateServer": true,
                               "allowCalculateOverride": false,
                               "validateOn": "change",
@@ -4158,8 +4158,8 @@
                               "showWordCount": false,
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "e2wk6qa",
-                              "defaultValue": null
+                              "id": "e5t6qi",
+                              "defaultValue": ""
                             }
                           ],
                           "width": 6,
@@ -4321,7 +4321,7 @@
               "id": "ekwxnk"
             },
             {
-              "label": "sumOfTotalEligibleBreakDays",
+              "label": "Sum Of Total Eligible Break Days",
               "labelWidth": "",
               "labelMargin": "",
               "customClass": "",
@@ -4333,7 +4333,7 @@
               "encrypted": false,
               "redrawOn": "",
               "customDefaultValue": "",
-              "calculateValue": "// Sum of all eligibleBreakDays.\r\nconst sumOfTotalEligibleBreakDaysObject = data.breaksAndWeeks?.studyBreaks\r\n    ?.filter((each) => each && +each.eligibleBreakDays)\r\n    ?.reduce(\r\n        (previous, current) => ({\r\n            eligibleBreakDays: previous.eligibleBreakDays + current.eligibleBreakDays,\r\n        }), {\r\n            eligibleBreakDays: 0\r\n        }\r\n    );\r\n\r\nconst sumOfTotalEligibleBreakDays =\r\n    sumOfTotalEligibleBreakDaysObject?.eligibleBreakDays;\r\n\r\n// Checking is sumOfTotalEligibleBreakDays is number or not.\r\nvalue =\r\n    typeof sumOfTotalEligibleBreakDays === typeof 1 ?\r\n    sumOfTotalEligibleBreakDays :\r\n    0;",
+              "calculateValue": "// Sum of all eligibleBreakDays.\r\nconst sumOfTotalEligibleBreakDaysObject = data.breaksAndWeeks?.studyBreaks\r\n  ?.filter((each) => each && +each.eligibleBreakDays)\r\n  ?.reduce(\r\n    (previous, current) => ({\r\n      eligibleBreakDays: previous.eligibleBreakDays + current.eligibleBreakDays,\r\n    }),\r\n    {\r\n      eligibleBreakDays: 0,\r\n    }\r\n  );\r\n\r\nconst sumOfTotalEligibleBreakDays =\r\n  sumOfTotalEligibleBreakDaysObject?.eligibleBreakDays;\r\n\r\n// Checking is sumOfTotalEligibleBreakDays is number or not.\r\nvalue = _.isNumber(sumOfTotalEligibleBreakDays)\r\n  ? sumOfTotalEligibleBreakDays\r\n  : 0;\r\n",
               "calculateServer": true,
               "key": "sumOfTotalEligibleBreakDays",
               "tags": [],
@@ -4391,10 +4391,10 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "ei84pvl"
+              "id": "euivecn"
             },
             {
-              "label": "sumOfTotalInEligibleBreakDays",
+              "label": "Sum Of Total In Eligible Break Days",
               "labelWidth": "",
               "labelMargin": "",
               "customClass": "",
@@ -4406,7 +4406,7 @@
               "encrypted": false,
               "redrawOn": "",
               "customDefaultValue": "",
-              "calculateValue": "\r\n// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDaysObject = data.breaksAndWeeks.studyBreaks\r\n  ?.filter((each) => each && +each.ineligibleBreakDays)\r\n  ?.reduce(\r\n    (previous, current) => ({\r\n      ineligibleBreakDays:\r\n        previous.ineligibleBreakDays + current.ineligibleBreakDays,\r\n    }),\r\n    { ineligibleBreakDays: 0 }\r\n  );\r\n\r\nconst sumOfTotalInEligibleBreakDays =\r\n  sumOfTotalInEligibleBreakDaysObject?.ineligibleBreakDays;\r\n\r\n// Checking is sumOfTotalInEligibleBreakDays is number or not.\r\nvalue =\r\n  typeof sumOfTotalInEligibleBreakDays === typeof 1\r\n    ? sumOfTotalInEligibleBreakDays\r\n    : 0;\r\n    \r\n",
+              "calculateValue": "// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDaysObject = data.breaksAndWeeks.studyBreaks\r\n  ?.filter((each) => each && +each.ineligibleBreakDays)\r\n  ?.reduce(\r\n    (previous, current) => ({\r\n      ineligibleBreakDays:\r\n        previous.ineligibleBreakDays + current.ineligibleBreakDays,\r\n    }),\r\n    { ineligibleBreakDays: 0 }\r\n  );\r\n\r\nconst sumOfTotalInEligibleBreakDays =\r\n  sumOfTotalInEligibleBreakDaysObject?.ineligibleBreakDays;\r\n\r\n// Checking is sumOfTotalInEligibleBreakDays is number or not.\r\nvalue = _.isNumber(sumOfTotalInEligibleBreakDays)\r\n  ? sumOfTotalInEligibleBreakDays\r\n  : 0;\r\n",
               "calculateServer": true,
               "key": "sumOfTotalInEligibleBreakDays",
               "tags": [],
@@ -4464,7 +4464,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "e40ws4"
+              "id": "e4q6cwk"
             },
             {
               "label": "Invalid Study Breaks",
@@ -4479,7 +4479,7 @@
               "encrypted": false,
               "redrawOn": "data",
               "customDefaultValue": "",
-              "calculateValue": "let invalidStudyBreaks;\r\n// If any breaks in study exceed 21 days then Warning then the offering status should be pending.\r\n\r\n// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDays = data.sumOfTotalInEligibleBreakDays;\r\n\r\nif (\r\n    (typeof sumOfTotalInEligibleBreakDays === typeof 1) &&\r\n    (sumOfTotalInEligibleBreakDays > 0)\r\n) {\r\n    invalidStudyBreaks = true;\r\n}\r\n\r\n// If breaks in study exceed 10% of total study period then Warning message.\r\n\r\n// Sum of all eligibleBreakDays.\r\nconst sumOfTotalEligibleBreakDays = data.sumOfTotalEligibleBreakDays;\r\n\r\n// Allowable 10% of the total days.\r\nconst allowable10Percentage = data.allowable10Percentage;\r\n\r\nif (\r\n    ((typeof sumOfTotalEligibleBreakDays === typeof 1) &&\r\n        (typeof allowable10Percentage === typeof 1)) &&\r\n    (sumOfTotalEligibleBreakDays > allowable10Percentage)\r\n) {\r\n    invalidStudyBreaks = true;\r\n}\r\n\r\nvalue = !!invalidStudyBreaks;",
+              "calculateValue": "let invalidStudyBreaks;\r\n// If any breaks in study exceed 21 days then Warning then the offering status should be pending.\r\n\r\n// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDays = data.sumOfTotalInEligibleBreakDays;\r\n\r\nif (\r\n  _.isNumber(sumOfTotalInEligibleBreakDays) &&\r\n  sumOfTotalInEligibleBreakDays > 0\r\n) {\r\n  invalidStudyBreaks = true;\r\n}\r\n\r\n// If breaks in study exceed 10% of total study period then Warning message.\r\n\r\n// Sum of all eligibleBreakDays.\r\nconst sumOfTotalEligibleBreakDays = data.sumOfTotalEligibleBreakDays;\r\n\r\n// Allowable 10% of the total days.\r\nconst allowable10Percentage = data.allowable10Percentage;\r\n\r\nif (\r\n  _.isNumber(sumOfTotalEligibleBreakDays) &&\r\n  _.isNumber(allowable10Percentage) &&\r\n  sumOfTotalEligibleBreakDays > allowable10Percentage\r\n) {\r\n  invalidStudyBreaks = true;\r\n}\r\n\r\nvalue = !!invalidStudyBreaks;\r\n",
               "calculateServer": true,
               "key": "invalidStudyBreaks",
               "tags": [],
@@ -4537,7 +4537,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "etuoi6"
+              "id": "eo21gl"
             },
             {
               "label": "Study Breaks Overlapping Detection",
@@ -4610,7 +4610,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "ep5gb2m"
+              "id": "ensjx6r"
             }
           ],
           "id": "e78bqqp"
@@ -4641,7 +4641,7 @@
             "eq": "",
             "json": ""
           },
-          "customConditional": "// If any breaks in study exceed 21 days then Warning message should appear.\r\n// If the sum of Total ineligible break days is greater than 0, that means,\r\n// there is atleast one break, whose study exceed 21 days.\r\n\r\n// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDays = data.sumOfTotalInEligibleBreakDays;\r\n\r\nshow =\r\n    ((typeof sumOfTotalInEligibleBreakDays === typeof 1) &&\r\n        (sumOfTotalInEligibleBreakDays > 0)) ?\r\n    true :\r\n    false;",
+          "customConditional": "// If any breaks in study exceed 21 days then Warning message should appear.\r\n// If the sum of Total ineligible break days is greater than 0, that means,\r\n// there is atleast one break, whose study exceed 21 days.\r\n\r\n// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDays = data.sumOfTotalInEligibleBreakDays;\r\n\r\nshow =\r\n  _.isNumber(sumOfTotalInEligibleBreakDays) && sumOfTotalInEligibleBreakDays > 0\r\n    ? true\r\n    : false;\r\n",
           "logic": [],
           "attributes": {},
           "overlay": {
@@ -4695,7 +4695,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "exlob7"
+          "id": "eei6sib"
         },
         {
           "label": "HTML",
@@ -4723,7 +4723,7 @@
             "eq": "",
             "json": ""
           },
-          "customConditional": "// If breaks in study exceed 10% of total study period then Warning message.\r\n\r\n// Sum of all eligibleBreakDays.\r\nconst sumOfTotalEligibleBreakDays = data.sumOfTotalEligibleBreakDays;\r\n\r\n// Allowable 10% of the total days.\r\nconst allowable10Percentage = data.allowable10Percentage;\r\n\r\nshow = (\r\n        ((typeof sumOfTotalEligibleBreakDays === typeof 1) &&\r\n            (typeof allowable10Percentage === typeof 1)) &&\r\n        (sumOfTotalEligibleBreakDays > allowable10Percentage)\r\n    ) ?\r\n    true : false;",
+          "customConditional": "// If breaks in study exceed 10% of total study period then Warning message.\r\n\r\n// Sum of all eligibleBreakDays.\r\nconst sumOfTotalEligibleBreakDays = data.sumOfTotalEligibleBreakDays;\r\n\r\n// Allowable 10% of the total days.\r\nconst allowable10Percentage = data.allowable10Percentage;\r\n\r\nshow =\r\n  _.isNumber(sumOfTotalEligibleBreakDays) &&\r\n  _.isNumber(allowable10Percentage) &&\r\n  sumOfTotalEligibleBreakDays > allowable10Percentage\r\n    ? true\r\n    : false;\r\n",
           "logic": [],
           "attributes": {},
           "overlay": {
@@ -4777,7 +4777,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "e3chas"
+          "id": "evdctda"
         },
         {
           "label": "HTML",
@@ -6348,7 +6348,7 @@
       "allowMultipleMasks": false,
       "addons": [],
       "inputType": "hidden",
-      "id": "eaxi7k"
+      "id": "el2b2p"
     },
     {
       "label": "offeringStatusToDisplay",

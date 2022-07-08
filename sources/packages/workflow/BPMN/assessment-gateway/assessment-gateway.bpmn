@@ -1087,7 +1087,7 @@ JSON.stringify({ data: assessmentJson });
           <camunda:outputParameter name="partnerIncomeAppealData">${appeals_partnerIncomeAppeal_submittedData}</camunda:outputParameter>
           <camunda:outputParameter name="applicationId">${applicationId}</camunda:outputParameter>
           <camunda:outputParameter name="courseLoad">${offering_courseLoad}</camunda:outputParameter>
-          <camunda:outputParameter name="totalFundedWeeks">${offering_studyBreaks_totalFundedWeeks}</camunda:outputParameter>
+          <camunda:outputParameter name="weeks">${offering_studyBreaks_totalFundedWeeks}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0t5tfgt</bpmn:incoming>
@@ -1769,7 +1769,6 @@ JSON.stringify(updateProgramInfoJson);</camunda:script>
         <camunda:in source="partnerPermanentDisabilityBenefits" target="partnerPermanentDisabilityBenefits" />
         <camunda:out source="federalAssessmentNeed" target="federalAssessmentNeed" />
         <camunda:out source="provincialAssessmentNeed" target="provincialAssessmentNeed" />
-        <camunda:out source="weeks" target="weeks" />
         <camunda:in source="mandatoryFees" target="mandatoryFees" />
         <camunda:out source="totalTutionCost" target="totalTutionCost" />
         <camunda:out source="totalBookCost" target="totalBookCost" />
@@ -1828,7 +1827,7 @@ execution.setVariable("isProgramOnline", isProgramOnline);</camunda:script>
         <camunda:out source="eligibleDependents12YearsOrOver" target="eligibleDependents12YearsOrOver" />
         <camunda:in source="dependantstatus" target="dependantstatus" />
         <camunda:in source="partnerStudentStudyWeeks" target="partnerStudentStudyWeeks" />
-        <camunda:in source="totalFundedWeeks" target="weeks" />
+        <camunda:in source="weeks" target="weeks" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0naszjy</bpmn:incoming>
       <bpmn:outgoing>Flow_09tnx9v</bpmn:outgoing>
@@ -2464,13 +2463,6 @@ execution.setVariable("isProgramOnline", isProgramOnline);</camunda:script>
           <dc:Bounds x="2214" y="1731" width="60" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BusinessRuleTask_1n6nw6b_di" bpmnElement="Task_1uq9e1u">
-        <dc:Bounds x="730" y="2580" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_1okgvpw_di" bpmnElement="CallActivity_1okgvpw">
-        <dc:Bounds x="890" y="2580" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_03z8wvb_di" bpmnElement="Activity_0fcbd0j">
         <dc:Bounds x="2050" y="1666" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -2721,6 +2713,13 @@ execution.setVariable("isProgramOnline", isProgramOnline);</camunda:script>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_15ky2tk_di" bpmnElement="Gateway_15ky2tk" isMarkerVisible="true">
         <dc:Bounds x="1917" y="1136" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BusinessRuleTask_1n6nw6b_di" bpmnElement="Task_1uq9e1u">
+        <dc:Bounds x="730" y="2580" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1okgvpw_di" bpmnElement="CallActivity_1okgvpw">
+        <dc:Bounds x="890" y="2580" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0xdedyz_di" bpmnElement="TextAnnotation_0xdedyz">
         <dc:Bounds x="1900" y="2442" width="130" height="70" />
