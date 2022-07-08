@@ -9,19 +9,6 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import { StatusCodes } from "http-status-codes";
 
 export class UserApi extends HttpBaseClient {
-  public async checkUser(headers?: any): Promise<boolean> {
-    try {
-      const response = await this.apiClient.get(
-        "users/check-user",
-        headers || this.addAuthHeader(),
-      );
-      return response.data as boolean;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
   public async bceidAccount(headers?: any): Promise<BCeIDDetailsDto> {
     try {
       const response = await this.apiClient.get(
@@ -42,19 +29,6 @@ export class UserApi extends HttpBaseClient {
         headers || this.addAuthHeader(),
       );
       return response.data as BCeIDAccountsDto;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  public async checkActiveUser(headers?: any): Promise<boolean> {
-    try {
-      const response = await this.apiClient.get(
-        "users/check-active-user",
-        headers || this.addAuthHeader(),
-      );
-      return response.data as boolean;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

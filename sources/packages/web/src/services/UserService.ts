@@ -14,10 +14,6 @@ export class UserService {
     return this.instance || (this.instance = new this());
   }
 
-  async checkUser(authHeader?: any): Promise<boolean> {
-    return ApiClient.User.checkUser(authHeader);
-  }
-
   async getBCeIDAccountDetails(authHeader?: any): Promise<BCeIDDetailsDto> {
     return ApiClient.User.bceidAccount(authHeader);
   }
@@ -28,10 +24,6 @@ export class UserService {
     } catch (excp) {
       return null;
     }
-  }
-
-  async checkActiveUser(authHeader?: any): Promise<boolean> {
-    return ApiClient.User.checkActiveUser(authHeader);
   }
 
   async getInstitutionUser(): Promise<InstitutionUserDetailsDto> {
