@@ -443,12 +443,20 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     });
   }
 
+  /**
+   * Check if the business guid is already present on DB.
+   * @param businessGuid BCeID business guid.
+   * @returns true if an institution with the business guid is
+   * already present on DB, otherwise false.
+   */
   async doesExist(businessGuid: string): Promise<boolean> {
-    const count = await this.repo.count({ businessGuid });
-    if (1 === count) {
-      return true;
-    }
-    return false;
+    const institution = await this.repo
+      .createQueryBuilder("institution")
+      .select("1")
+      .where("institution.businessGuid = :businessGuid", { businessGuid })
+      .limit(1)
+      .getRawOne();
+    return !!institution;
   }
 
   async updateInstitutionUser(

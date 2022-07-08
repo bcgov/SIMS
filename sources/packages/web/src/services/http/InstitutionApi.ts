@@ -24,6 +24,7 @@ import {
   PaginatedResultsAPIOutDTO,
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
+  InstitutionUserStatusAPIOutDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -251,6 +252,18 @@ export class InstitutionApi extends HttpBaseClient {
   async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
     return this.getCallTyped<UserRoleOptionAPIOutDTO[]>(
       this.addClientRoot("institution/admin-roles"),
+    );
+  }
+
+  /**
+   * Get the user status from institution perspective returning the
+   * possible user and institution association.
+   * @returns information to support the institution login process and
+   * the decisions that need happen to complete the process.
+   */
+  async getInstitutionUserStatus(): Promise<InstitutionUserStatusAPIOutDTO> {
+    return this.getCallTyped<InstitutionUserStatusAPIOutDTO>(
+      this.addClientRoot("institution/user/status"),
     );
   }
 }

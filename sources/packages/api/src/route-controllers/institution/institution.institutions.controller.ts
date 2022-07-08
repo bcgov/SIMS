@@ -15,6 +15,7 @@ import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
+  AllowInactiveUser,
   IsInstitutionAdmin,
   UserToken,
 } from "../../auth/decorators";
@@ -43,6 +44,7 @@ import {
   InstitutionUserLocationsAPIOutDTO,
   UserRoleOptionAPIOutDTO,
   InstitutionUserTypeAndRoleAPIOutDTO,
+  InstitutionUserStatusAPIOutDTO,
 } from "./models/institution-user.dto";
 import {
   ApiForbiddenResponse,
@@ -264,6 +266,40 @@ export class InstitutionInstitutionsController extends BaseController {
   @Get("user-types-roles")
   async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleAPIOutDTO> {
     return this.institutionService.getUserTypesAndRoles();
+  }
+
+  /**
+   * Get the user status from institution perspective returning the
+   * possible user and institution association.
+   * @returns information to support the institution login process and
+   * the decisions that need happen to complete the process.
+   */
+  @AllowInactiveUser()
+  @Get("user/status")
+  async getInstitutionUserStatus(
+    @UserToken() token: IInstitutionUserToken,
+  ): Promise<InstitutionUserStatusAPIOutDTO> {
+    const status = {} as InstitutionUserStatusAPIOutDTO;
+    status.isExistingUser = !!token.userId;
+    status.isActiveUser = token.isActive;
+    if (status.isExistingUser) {
+      // If the user exists there is no need to return any additional data.
+      return status;
+    }
+    // Try to find the business BCeID user on BCeID Web Service.
+    // For basic BCeID user the information isExistingUser and isActiveUser
+    // are enough to define if the user can complete the login or not.
+    const businessBCeIDUserAccount =
+      await this.bceidAccountService.getAccountDetails(token.idp_user_name);
+    if (businessBCeIDUserAccount) {
+      // Check if the institution associated with the BCeID business guid is already present.
+      status.associatedInstitutionExists =
+        await this.institutionService.doesExist(
+          businessBCeIDUserAccount.institution.guid,
+        );
+      status.hasBusinessBCeIDAccount = true;
+    }
+    return status;
   }
 
   /**

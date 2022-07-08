@@ -52,18 +52,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.LoginWithBusinessBCeID,
-        name: InstitutionRoutesConst.LOGIN_WITH_BUSINESS_BCEID,
-        component: Login,
-        props: {
-          showBasicBCeIDMessage: true,
-        },
-        meta: {
-          requiresAuth: false,
-          clientType: ClientIdType.Institution,
-        },
-      },
-      {
         path: AppRoutes.DisabledUser,
         name: InstitutionRoutesConst.DISABLED_LOGIN,
         component: Login,
