@@ -14,8 +14,7 @@
           <v-text-field
             v-model="userInfo.displayName"
             disabled
-            style="min-width: 300px"
-            class="mr-3"
+            class="mr-3 bceid-input"
             density="compact"
             variant="outlined"
             label="BCeID user ID"
@@ -158,3 +157,9 @@ export default {
   },
 };
 </script>
+<style scoped>
+.bceid-input {
+  /* Temporary fix for v-text-field/v-autocomplete. To be review in upcoming vuetify versions. */
+  width: 300px;
+}
+</style>

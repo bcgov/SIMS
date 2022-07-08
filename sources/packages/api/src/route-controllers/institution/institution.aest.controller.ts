@@ -235,6 +235,7 @@ export class InstitutionAESTController extends BaseController {
 
   /**
    * Create a user, associate with the institution, and assign the authorizations.
+   * @param institutionId institution to have the user created.
    * @param payload authorizations to be associated with the user.
    * @returns Primary identifier of the created resource.
    */

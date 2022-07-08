@@ -167,6 +167,7 @@ export default {
 </script>
 <style scoped>
 .bceid-input {
+  /* Temporary fix for v-text-field/v-autocomplete. To be review in upcoming vuetify versions. */
   width: 300px;
 }
 </style>
