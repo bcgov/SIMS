@@ -139,6 +139,11 @@ export interface LocationAuthorization {
   userAccess: LocationUserAccess;
 }
 
+/**
+ * Model used for manage users creation and edit.
+ * Allow the authorization configuration for the
+ * institution users.
+ */
 export class UserManagementModel {
   selectedBCeIDUser = "";
   isAdmin = false;
