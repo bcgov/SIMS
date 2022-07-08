@@ -20,6 +20,7 @@ export interface BCeIDAccountDto {
   displayName: string;
   email: string;
   firstname: string;
+  userId: string;
   guid: string;
   surname: string;
   telephone?: string;

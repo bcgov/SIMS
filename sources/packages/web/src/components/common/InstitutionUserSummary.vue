@@ -1,54 +1,38 @@
+<!-- This component is shared between ministry and student users -->
 <template>
-  <!-- This component is shared between ministry and student users -->
-  <div class="mb-4">
-    <span class="category-header-large color-blue">
-      All Users({{ usersListAndCount.count }})
-    </span>
-    <div class="float-right">
-      <InputText
-        v-model="searchBox"
-        placeholder="Search User"
-        @keyup.enter="searchUserTable()"
-      />
-      <v-btn
-        @click="searchUserTable()"
-        tile
-        class="ml-2 primary-btn-background"
-      >
-        <font-awesome-icon :icon="['fas', 'search']" />
-      </v-btn>
-
-      <v-btn
-        v-if="clientType === ClientIdType.Institution"
-        class="ml-2 primary-btn-background"
-        @click="openNewUserModal()"
-      >
-        <font-awesome-icon :icon="['fas', 'external-link-square-alt']" />
-        Add New User
-      </v-btn>
-
-      <!-- Add user -->
-      <AddInstitutionUser
-        v-if="clientType === ClientIdType.Institution"
-        :userType="userType"
-        :showAddUser="showAddUser"
-        :adminRoles="adminRoles"
-        @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
-        @getAllInstitutionUsers="getAllInstitutionUsers"
-      />
-
-      <!-- edit user -->
-      <EditInstitutionUser
-        v-if="clientType === ClientIdType.Institution"
-        :userType="userType"
-        :showEditUser="showEditUser"
-        :institutionUserName="institutionUserName"
-        :adminRoles="adminRoles"
-        @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
-        @getAllInstitutionUsers="getAllInstitutionUsers"
-      />
-    </div>
-  </div>
+  <body-header
+    title="All users"
+    class="m-1"
+    :recordsCount="usersListAndCount.count"
+  >
+    <template #actions>
+      <v-row class="m-0">
+        <v-text-field
+          class="v-text-field-search-width"
+          density="compact"
+          label="Search user"
+          variant="outlined"
+          v-model="searchBox"
+          @keyup.enter="searchUserTable"
+          prepend-inner-icon="fa:fas fa-magnifying-glass"
+        >
+        </v-text-field>
+        <v-btn
+          class="ml-2 primary-btn-background"
+          @click="searchUserTable"
+          prepend-icon="fa:fas fa-magnifying-glass"
+        />
+        <v-btn
+          v-if="hasBusinessGuid"
+          class="ml-2 primary-btn-background"
+          @click="openNewUserModal"
+          prepend-icon="fa:fa fa-plus-circle"
+        >
+          Add new user
+        </v-btn>
+      </v-row>
+    </template>
+  </body-header>
   <content-group>
     <DataTable
       :value="usersListAndCount.results"
@@ -72,89 +56,74 @@
       <Column :field="UserFields.Email" header="Email" sortable="true"></Column>
       <Column :field="UserFields.UserType" header="User Type">
         <template #body="slotProps">
-          <ul
-            class="no-bullets"
-            v-for="userType in slotProps.data.userType"
-            :key="userType"
-          >
-            <li>{{ userType }}</li>
-          </ul></template
-        ></Column
+          <!-- Get the first index of the array since the user will have admin or user type only. -->
+          {{ slotProps.data.userType[0] }}
+        </template></Column
       >
       <Column :field="UserFields.Role" header="Role"></Column>
       <Column :field="UserFields.Location" header="Locations"
         ><template #body="slotProps">
-          <ul
-            class="no-bullets"
-            v-for="location in slotProps.data.location"
-            :key="location"
-          >
+          <ul v-for="location in slotProps.data.location" :key="location">
             <li>{{ location }}</li>
           </ul></template
         ></Column
       >
       <Column :field="UserFields.IsActive" header="Status"
         ><template #body="slotProps">
-          <StatusBadge
-            :status="
-              slotProps.data.isActive
-                ? GeneralStatusForBadge.Active
-                : GeneralStatusForBadge.InActive
-            "
+          <status-chip-active-user
+            :is-active="slotProps.data.isActive"
           /> </template
       ></Column>
-      <Column
-        field=""
-        header="Actions"
-        v-if="clientType === ClientIdType.Institution"
+      <Column header="Actions"
         ><template #body="slotProps">
-          <span v-if="slotProps.data.userName !== parsedToken?.userName">
-            <v-btn
-              @click="editInstitutionUser(slotProps.data.userName)"
-              variant="plain"
-            >
-              <font-awesome-icon
-                :icon="['fas', 'pen']"
-                v-if="slotProps.data.isActive"
-                right
-                v-tooltip="'Edit User'"
-              >
-              </font-awesome-icon
-              ><font-awesome-icon
-                :icon="['fas', 'pen']"
-                v-else
-                right
-                v-tooltip="'Disabled User Cannot Be Edited'"
-              >
-                mdi-pencil
-              </font-awesome-icon>
-            </v-btn>
-            <InputSwitch
-              v-model="slotProps.data.isActive"
-              v-tooltip="
-                slotProps.data.isActive ? 'Disable User' : 'Enable User'
-              "
-              @change="updateUserStatus(slotProps.data)"
-            />
-          </span>
+          <v-btn
+            v-if="slotProps.data.isActive"
+            @click="openEditUserModal(slotProps.data)"
+            variant="text"
+            text="Edit"
+            color="primary"
+            append-icon="mdi-pencil-outline"
+          >
+            <span class="text-decoration-underline">Edit</span>
+          </v-btn>
+          <v-btn
+            @click="updateUserStatus(slotProps.data)"
+            variant="text"
+            text="Edit"
+            color="primary"
+            append-icon="mdi-account-remove-outline"
+          >
+            <span class="text-decoration-underline">{{
+              slotProps.data.isActive ? "Disable User" : "Enable User"
+            }}</span>
+          </v-btn>
         </template>
       </Column>
     </DataTable>
   </content-group>
+  <!-- Add user. -->
+  <add-institution-user
+    ref="addInstitutionUserModal"
+    :institutionId="institutionId"
+    :hasBusinessGuid="hasBusinessGuid"
+  />
+  <!-- Edit user. -->
+  <edit-institution-user
+    ref="editInstitutionUserModal"
+    :institutionId="institutionId"
+  />
 </template>
 
 <script lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, watch } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
-import { useToast } from "primevue/usetoast";
-import { useAuth } from "@/composables";
-import StatusBadge from "@/components/generic/StatusBadge.vue";
+import { ModalDialog, useToastMessage } from "@/composables";
+import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue";
 import {
   InstitutionUserViewModel,
   InstitutionUserAndCountForDataTable,
-  ClientIdType,
   GeneralStatusForBadge,
   UserFields,
   DEFAULT_PAGE_LIMIT,
@@ -162,47 +131,41 @@ import {
   DataTableSortOrder,
   PAGINATION_LIST,
 } from "@/types";
-import InputSwitch from "primevue/inputswitch";
-import { AuthService } from "@/services/AuthService";
 
 export default {
   components: {
     AddInstitutionUser,
     EditInstitutionUser,
-    StatusBadge,
-    InputSwitch,
+    StatusChipActiveUser,
   },
   props: {
     institutionId: {
       type: Number,
       required: false,
     },
+    hasBusinessGuid: {
+      type: Boolean,
+      required: true,
+    },
   },
   setup(props: any) {
-    const { parsedToken } = useAuth();
-    const toast = useToast();
-    const showAddUser = ref(false);
-    const showEditUser = ref(false);
+    const toast = useToastMessage();
     const usersListAndCount = ref({} as InstitutionUserAndCountForDataTable);
-    const userRoleType = ref();
-    const userType = ref();
     const loading = ref(false);
     const searchBox = ref("");
     const currentPage = ref();
     const currentPageLimit = ref();
-    const openNewUserModal = () => {
-      showAddUser.value = true;
-    };
-    const institutionUserName = ref();
-    const adminRoles = ref();
+    const addInstitutionUserModal = ref({} as ModalDialog<boolean>);
+    const editInstitutionUserModal = ref(
+      {} as ModalDialog<boolean, InstitutionUserViewModel>,
+    );
 
-    const clientType = computed(() => AuthService.shared.authClientType);
     /**
-     * function to load usersListAndCount respective to the client type
-     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
-     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT
-     * @param sortField sort field, if nothing passed then UserFields.DisplayName
-     * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.DESC
+     * Function to load usersListAndCount respective to the client type.
+     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER.
+     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT.
+     * @param sortField sort field, if nothing passed then UserFields.DisplayName.
+     * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.DESC.
      */
     const getAllInstitutionUsers = async (
       page = DEFAULT_PAGE_NUMBER,
@@ -211,59 +174,44 @@ export default {
       sortOrder = DataTableSortOrder.ASC,
     ) => {
       loading.value = true;
-      usersListAndCount.value =
-        await InstitutionService.shared.institutionUserSummary(
-          {
-            page: page,
-            pageLimit: pageCount,
-            searchCriteria: searchBox.value,
-            sortField: sortField,
-            sortOrder: sortOrder,
-          },
-          props.institutionId,
-        );
-      loading.value = false;
-    };
-
-    const updateShowAddInstitutionModal = () => {
-      showAddUser.value = !showAddUser.value;
-    };
-
-    const updateShowEditInstitutionModal = () => {
-      showEditUser.value = !showEditUser.value;
-    };
-
-    const editInstitutionUser = async (userName: string) => {
-      institutionUserName.value = userName;
-      showEditUser.value = true;
+      try {
+        usersListAndCount.value =
+          await InstitutionService.shared.institutionUserSummary(
+            {
+              page: page,
+              pageLimit: pageCount,
+              searchCriteria: searchBox.value,
+              sortField: sortField,
+              sortOrder: sortOrder,
+            },
+            props.institutionId,
+          );
+      } finally {
+        loading.value = false;
+      }
     };
 
     const updateUserStatus = async (userDetails: InstitutionUserViewModel) => {
       try {
+        const enabled = !userDetails.isActive;
         await InstitutionService.shared.updateUserStatus(
           userDetails.userName,
-          userDetails.isActive,
+          enabled,
         );
         await getAllInstitutionUsers();
-        toast.add({
-          severity: "success",
-          summary: `${userDetails.displayName} is ${
-            userDetails.isActive ? "Enabled" : "Disabled"
-          }`,
-          detail: " Successfully!",
-          life: 5000,
-        });
-      } catch (excp) {
-        toast.add({
-          severity: "error",
-          summary: "Unexpected error",
-          detail: "An error happened during the update process.",
-          life: 5000,
-        });
+        toast.success(
+          "User status updated",
+          `${userDetails.displayName} is ${enabled ? "enabled" : "disabled"}`,
+        );
+      } catch (error) {
+        toast.error(
+          "Unexpected error",
+          "An error happened during the update process.",
+        );
       }
     };
 
-    // pagination sort event callback
+    // Pagination sort event callback.
     const paginationAndSortEvent = async (event: any) => {
       currentPage.value = event?.page;
       currentPageLimit.value = event?.rows;
@@ -275,7 +223,7 @@ export default {
       );
     };
 
-    // search user table
+    // Search user table.
     const searchUserTable = async () => {
       await getAllInstitutionUsers(
         currentPage.value ?? DEFAULT_PAGE_NUMBER,
@@ -283,37 +231,39 @@ export default {
       );
     };
 
-    onMounted(async () => {
-      // Call Service
-      await getAllInstitutionUsers();
+    watch(
+      () => props.institutionId,
+      () => getAllInstitutionUsers(),
+      {
+        immediate: true,
+      },
+    );
 
-      if (clientType.value === ClientIdType.Institution) {
-        // Get User type and Role
-        userRoleType.value =
-          await InstitutionService.shared.getUserTypeAndRoles();
-        userType.value = userRoleType.value?.userTypes
-          ? userRoleType.value.userTypes.map((el: string) =>
-              el !== "admin" ? { name: el, code: el } : null,
-            )
-          : [];
-
-        adminRoles.value =
-          await InstitutionService.shared.getGetAdminRoleOptions();
+    const openNewUserModal = async () => {
+      const modalResult = await addInstitutionUserModal.value.showModal();
+      if (modalResult) {
+        // Refresh the list to display the added user.
+        await getAllInstitutionUsers();
       }
-    });
+    };
+
+    const openEditUserModal = async (userDetails: InstitutionUserViewModel) => {
+      const modalResult = await editInstitutionUserModal.value.showModal(
+        userDetails,
+      );
+      if (modalResult) {
+        // Refresh the list to display the updated user.
+        await getAllInstitutionUsers();
+      }
+    };
+
     return {
+      addInstitutionUserModal,
+      editInstitutionUserModal,
       openNewUserModal,
-      showAddUser,
-      showEditUser,
-      updateShowAddInstitutionModal,
+      openEditUserModal,
       getAllInstitutionUsers,
-      editInstitutionUser,
-      updateShowEditInstitutionModal,
-      userType,
-      institutionUserName,
       updateUserStatus,
-      parsedToken,
-      ClientIdType,
       GeneralStatusForBadge,
       paginationAndSortEvent,
       loading,
@@ -323,8 +273,6 @@ export default {
       usersListAndCount,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
-      adminRoles,
-      clientType,
     };
   },
 };

@@ -5,7 +5,6 @@ import {
   ActiveApplicationDataAPIOutDTO,
   OptionItemAPIOutDTO,
   InstitutionUserAPIOutDTO,
-  InstitutionUserAPIInDTO,
   UserActiveStatusAPIInDTO,
   InstitutionUserLocationsAPIOutDTO,
   InstitutionLocationPrimaryContactAPIInDTO,
@@ -44,42 +43,11 @@ export class InstitutionLocationApi extends HttpBaseClient {
     );
   }
 
-  /**
-   * This client expects custom error message in one or more
-   * scenarios and hence trying to parse and throw the message
-   * if available.
-   * @param createInstitutionUserDto
-   */
-  public async createUser(
-    createInstitutionUserDto: InstitutionUserAPIInDTO,
-  ): Promise<void> {
-    await this.postCall<InstitutionUserAPIInDTO>(
-      this.addClientRoot("institution/user"),
-      createInstitutionUserDto,
-    );
-  }
-
   public async getInstitutionLocationUserDetails(
     userName: string,
   ): Promise<InstitutionUserAPIOutDTO> {
     return this.getCallTyped<InstitutionUserAPIOutDTO>(
       this.addClientRoot(`institution/user/${userName}`),
-    );
-  }
-
-  /**
-   * This client expects custom error message in one or more
-   * scenarios and hence trying to parse and throw the message
-   * if available.
-   * @param updateInstitutionUserDto
-   */
-  public async updateUser(
-    userName: string,
-    updateInstitutionUserDto: InstitutionUserAPIInDTO,
-  ): Promise<void> {
-    return this.patchCall<InstitutionUserAPIInDTO>(
-      this.addClientRoot(`institution/user/${userName}`),
-      updateInstitutionUserDto,
     );
   }
 

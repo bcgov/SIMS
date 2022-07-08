@@ -1,7 +1,8 @@
 import { ref } from "vue";
 
-export function useModalDialog<T>() {
+export function useModalDialog<T, TParameter = any>() {
   const showDialog = ref(false);
+  const showParameter = ref<TParameter>();
   let promise: (value: T) => void;
 
   const resolvePromise = (value: T) => {
@@ -9,7 +10,8 @@ export function useModalDialog<T>() {
     promise(value);
   };
 
-  const showModal = async (): Promise<T> => {
+  const showModal = async (params?: TParameter): Promise<T> => {
+    showParameter.value = params;
     showDialog.value = true;
     return new Promise((resolve) => {
       promise = resolve;
@@ -20,9 +22,10 @@ export function useModalDialog<T>() {
     showDialog,
     resolvePromise,
     showModal,
+    showParameter,
   };
 }
 
-export interface ModalDialog<T> {
-  showModal: () => Promise<T>;
+export interface ModalDialog<T, TParameter = any> {
+  showModal: (params?: TParameter) => Promise<T>;
 }

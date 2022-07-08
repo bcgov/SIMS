@@ -1,6 +1,17 @@
 import { Address } from "../Common";
 import { InstitutionLocationsDetails } from "./InstitutionLocation";
 
+export enum InstitutionUserTypes {
+  admin = "admin",
+  // TODO: To be removed.
+  locationManager = "location-manager",
+  user = "user",
+}
+
+export enum InstitutionUserRoles {
+  legalSigningAuthority = "legal-signing-authority",
+}
+
 export interface InstitutionUserViewModel {
   id: number;
   email: string;
@@ -71,6 +82,11 @@ export interface InstitutionStateForStore {
   operatingName: string;
   institutionType: string;
   isBCPrivate: boolean;
+  /**
+   * Indicates if the institution has a BCeID business guid
+   * associated with, if not it is a basic BCeID institution.
+   */
+  hasBusinessGuid: boolean;
 }
 
 export interface LocationStateForStore {
@@ -95,9 +111,44 @@ export interface InstitutionUserAndCountForDataTable {
   count: number;
 }
 
-export enum InstitutionUserRoles {
-  legalSigningAuthority = "legal-signing-authority",
-  primaryContact = "primary-contact",
+/**
+ * BCeID user key-value-pair for display name and user name value.
+ */
+export interface BCeIDUser {
+  value: string;
+  title: string;
+}
+
+/**
+ * Represents the possible location user access
+ * available on the institution user manager.
+ */
+export enum LocationUserAccess {
+  User = "user",
+  NoAccess = "none",
+}
+
+/**
+ * Represents the locations and the user access for every
+ * institution location on the institution user manager.
+ */
+export interface LocationAuthorization {
+  id: number;
+  name: string;
+  address: string;
+  userAccess: LocationUserAccess;
+}
+
+/**
+ * Model used for manage users creation and edit.
+ * Allow the authorization configuration for the
+ * institution users.
+ */
+export class UserManagementModel {
+  selectedBCeIDUser = "";
+  isAdmin = false;
+  isLegalSigningAuthority = false;
+  locationAuthorizations = [] as LocationAuthorization[];
 }
 
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
