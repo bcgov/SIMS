@@ -65,7 +65,7 @@ export class UserController extends BaseController {
     }
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @AllowAuthorizedParty(AuthorizedParties.institution, AuthorizedParties.aest)
   @Get("bceid-accounts")
   async getAllBCeIDs(
     @UserToken() userToken: IUserToken,

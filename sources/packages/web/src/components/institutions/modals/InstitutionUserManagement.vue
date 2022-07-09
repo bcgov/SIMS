@@ -2,24 +2,42 @@
 <template>
   <v-form ref="userForm">
     <content-group>
-      <v-row align="center" class="mx-1">
-        <!-- This slot holds the BCeID basic(plain text)/business(dropdown) and readonly views(plain readonly text input). -->
-        <slot name="user-name" :formModel="formModel" />
-        <v-switch
-          label="Admin"
-          color="primary"
-          inset
-          class="mr-3"
-          v-model="formModel.isAdmin"
-        ></v-switch>
-        <v-switch
-          :disabled="!formModel.isAdmin"
-          label="Legal signing authority"
-          inset
-          color="primary"
-          v-model="formModel.isLegalSigningAuthority"
-        ></v-switch>
-      </v-row>
+      <span>
+        <v-row no-gutters>
+          <v-row align="center" no-gutters>
+            <v-col cols="auto">
+              <!-- This slot holds the BCeID basic(plain text)/business(dropdown) and readonly views(plain readonly text input). -->
+              <slot name="user-name" :formModel="formModel" />
+            </v-col>
+            <v-col cols="auto">
+              <v-switch
+                hide-details
+                label="Admin"
+                color="primary"
+                inset
+                class="mr-3"
+                v-model="formModel.isAdmin"
+              ></v-switch>
+            </v-col>
+            <v-col cols="auto">
+              <v-switch
+                hide-details
+                :disabled="!formModel.isAdmin"
+                label="Legal signing authority"
+                inset
+                color="primary"
+                v-model="formModel.isLegalSigningAuthority"
+              ></v-switch>
+            </v-col>
+          </v-row>
+        </v-row>
+        <v-input
+          :rules="[isAdminOrHasLocationAccessValidationRule()]"
+          hide-details="auto"
+          error
+        >
+        </v-input>
+      </span>
     </content-group>
     <h3
       class="category-header-medium primary-color mt-4 mb-2"
@@ -28,30 +46,48 @@
       Assign user to locations
     </h3>
     <content-group v-if="!formModel.isAdmin">
-      <span>
-        <v-row
-          ><v-col><strong>Locations</strong> </v-col
-          ><v-col>
-            <strong>Roles</strong>
-          </v-col>
-        </v-row>
-        <v-row
-          v-for="location in formModel.locationAuthorizations"
-          :key="location.id"
-          ><v-col>
-            <div>{{ location.name }}</div>
-            {{ location.address }}
-          </v-col>
-          <v-col>
-            <v-radio-group inline v-model="location.userAccess" color="primary">
-              <v-radio label="User" value="user" color="primary"></v-radio>
-              <v-radio label="No access" value="none" color="primary"></v-radio>
-            </v-radio-group>
-          </v-col>
-        </v-row>
-      </span>
-      <v-input :rules="[hasLocationAuthorizationValidationRule()]" error>
-      </v-input>
+      <toggle-content :toggled="!formModel.locationAuthorizations.length">
+        <span>
+          <v-row class="mb-1"
+            ><v-col><strong>Locations</strong> </v-col
+            ><v-col>
+              <strong>Roles</strong>
+            </v-col>
+          </v-row>
+          <v-row
+            no-gutters
+            v-for="location in formModel.locationAuthorizations"
+            :key="location.id"
+            class="mb-2"
+            ><v-col>
+              <div>{{ location.name }}</div>
+              {{ location.address }}
+            </v-col>
+            <v-col>
+              <v-radio-group
+                hide-details
+                inline
+                v-model="location.userAccess"
+                color="primary"
+                class="mt-2"
+              >
+                <v-radio label="User" value="user" color="primary"></v-radio>
+                <v-radio
+                  label="No access"
+                  value="none"
+                  color="primary"
+                ></v-radio>
+              </v-radio-group>
+            </v-col>
+          </v-row>
+        </span>
+        <v-input
+          :rules="[hasLocationAuthorizationValidationRule()]"
+          hide-details="auto"
+          error
+        >
+        </v-input>
+      </toggle-content>
     </content-group>
   </v-form>
 </template>
@@ -96,9 +132,17 @@ export default {
       },
     );
 
+    const isAdminOrHasLocationAccessValidationRule = () => {
+      const isValid =
+        formModel.isAdmin || hasLocationAuthorizationValidationRule() === true;
+      if (!isValid) {
+        return "The user should be either an admin or have access to at least one location.";
+      }
+      return true;
+    };
     // UI validation to ensure that the user has access to at least
     // on location when admin is not selected.
-    const hasLocationAuthorizationValidationRule = () => {
+    const hasLocationAuthorizationValidationRule = (): boolean | string => {
       if (formModel.isAdmin) {
         return true;
       }
@@ -114,6 +158,7 @@ export default {
 
     return {
       formModel,
+      isAdminOrHasLocationAccessValidationRule,
       hasLocationAuthorizationValidationRule,
       userForm,
     };

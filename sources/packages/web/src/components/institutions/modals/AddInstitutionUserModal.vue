@@ -13,6 +13,7 @@
         <template #user-name="{ formModel }">
           <!-- Business BCeID  -->
           <v-autocomplete
+            hide-details
             v-if="hasBusinessGuid"
             v-model="formModel.selectedBCeIDUser"
             :items="bceidUsers"
@@ -24,6 +25,7 @@
           ></v-autocomplete>
           <!-- Basic BCeID  -->
           <v-text-field
+            hide-details
             v-else
             v-model.trim="formModel.selectedBCeIDUser"
             class="mr-3 bceid-input"
@@ -137,6 +139,7 @@ export default {
           userManagementModel.isAdmin,
           userManagementModel.isLegalSigningAuthority,
           userManagementModel.locationAuthorizations,
+          props.institutionId,
         );
         toast.success("User created", "User successfully created.");
         resolvePromise(true);

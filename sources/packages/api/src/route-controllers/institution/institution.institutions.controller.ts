@@ -259,18 +259,15 @@ export class InstitutionInstitutionsController extends BaseController {
 
   /**
    * Get institution user by user name(guid).
-   * @param userName
-   * @returns Institution user details.
+   * @param userName user name (guid).
+   * @returns institution user details.
    */
   @ApiNotFoundResponse({
     description: "User not found.",
   })
-  @ApiUnprocessableEntityResponse({
-    description: "User not active.",
-  })
   @ApiForbiddenResponse({
     description:
-      "Details requested for user who does not belong to the institution of logged in user.",
+      "Details requested for user who does not belong to the institution.",
   })
   @IsInstitutionAdmin()
   @Get("user/:userName")
@@ -278,41 +275,10 @@ export class InstitutionInstitutionsController extends BaseController {
     @Param("userName") userName: string,
     @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionUserAPIOutDTO> {
-    // Get institutionUser
-    const institutionUser =
-      await this.institutionService.getInstitutionUserByUserName(userName);
-
-    if (!institutionUser) {
-      throw new NotFoundException("User not found.");
-    }
-
-    // Checking if user belongs to logged-in users institution.
-    if (institutionUser.institution.id !== token.authorizations.institutionId) {
-      throw new ForbiddenException(
-        "Details requested for user who does not belong to the institution of logged in user.",
-      );
-    }
-    return {
-      id: institutionUser.id,
-      user: {
-        firstName: institutionUser.user?.firstName,
-        lastName: institutionUser.user?.lastName,
-        userName: institutionUser.user?.userName,
-        isActive: institutionUser.user?.isActive,
-        id: institutionUser.user?.id,
-        email: institutionUser.user.email,
-      },
-      authorizations: institutionUser.authorizations?.map((el) => {
-        return {
-          location: {
-            name: el.location?.name,
-            data: el.location?.data,
-            id: el.location?.id,
-          },
-          authType: { type: el.authType?.type, role: el.authType?.role },
-        };
-      }),
-    };
+    return this.institutionControllerService.getInstitutionUserByUserName(
+      userName,
+      token.authorizations.institutionId,
+    );
   }
 
   /**
@@ -377,9 +343,8 @@ export class InstitutionInstitutionsController extends BaseController {
 
   /**
    * Update the active status of the user.
-   * @param token
-   * @param userName
-   * @param body
+   * @param userName unique name of the user to be updated.
+   * @param payload information to enable or disable the user.
    */
   @ApiNotFoundResponse({
     description: "User to be updated not found.",
@@ -393,25 +358,12 @@ export class InstitutionInstitutionsController extends BaseController {
   async updateUserStatus(
     @UserToken() token: IInstitutionUserToken,
     @Param("userName") userName: string,
-    @Body() body: UserActiveStatusAPIInDTO,
+    @Body() payload: UserActiveStatusAPIInDTO,
   ): Promise<void> {
-    // Check  user exists or not
-    const institutionUser =
-      await this.institutionService.getInstitutionUserByUserName(userName);
-
-    if (!institutionUser) {
-      throw new NotFoundException("Institution user to be updated not found.");
-    }
-
-    // checking if user belong to logged-in users institution
-    if (institutionUser.institution.id !== token.authorizations.institutionId) {
-      throw new ForbiddenException(
-        "User to be updated doesn't belong to institution of logged in user.",
-      );
-    }
-    await this.userService.updateUserStatus(
-      institutionUser.user.id,
-      body.isActive,
+    await this.institutionControllerService.updateUserStatus(
+      userName,
+      payload,
+      token.authorizations.institutionId,
     );
   }
 

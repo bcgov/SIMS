@@ -23,7 +23,7 @@
           prepend-icon="fa:fas fa-magnifying-glass"
         />
         <v-btn
-          v-if="hasBusinessGuid"
+          v-if="hasBusinessGuid || allowBasicBCeIDCreation"
           class="ml-2 primary-btn-background"
           @click="openNewUserModal"
           prepend-icon="fa:fa fa-plus-circle"
@@ -146,6 +146,11 @@ export default {
     hasBusinessGuid: {
       type: Boolean,
       required: true,
+    },
+    allowBasicBCeIDCreation: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
   },
   setup(props: any) {

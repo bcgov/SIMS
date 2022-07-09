@@ -24,7 +24,7 @@ import {
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
 import { InstitutionLocationControllerService } from "../institution-locations/institution-location.controller.service";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
@@ -35,6 +35,7 @@ import {
 import {
   CreateInstitutionUserAPIInDTO,
   InstitutionUserAPIOutDTO,
+  UserActiveStatusAPIInDTO,
 } from "./models/institution-user.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
@@ -249,5 +250,38 @@ export class InstitutionAESTController extends BaseController {
       institutionId,
       payload,
     );
+  }
+
+  /**
+   * Get institution user by user name(guid).
+   * @param userName user name (guid).
+   * @returns institution user details.
+   */
+  @ApiNotFoundResponse({
+    description: "User not found.",
+  })
+  @Get("user/:userName")
+  async getInstitutionUserByUserName(
+    @Param("userName") userName: string,
+  ): Promise<InstitutionUserAPIOutDTO> {
+    return this.institutionControllerService.getInstitutionUserByUserName(
+      userName,
+    );
+  }
+
+  /**
+   * Update the active status of the user.
+   * @param userName unique name of the user to be updated.
+   * @param payload information to enable or disable the user.
+   */
+  @ApiNotFoundResponse({
+    description: "User to be updated not found.",
+  })
+  @Patch("user-status/:userName")
+  async updateUserStatus(
+    @Param("userName") userName: string,
+    @Body() payload: UserActiveStatusAPIInDTO,
+  ): Promise<void> {
+    await this.institutionControllerService.updateUserStatus(userName, payload);
   }
 }

@@ -258,12 +258,15 @@ export class InstitutionService {
    * legal-signing-authority should be associated with the user.
    * @param locationAuthorizations for non-admin users, the individual permission
    * for every location.
+   * @param institutionId institution to have the user associated. If not provided the
+   * token information will be used, if available.
    */
   async createInstitutionUserWithAuth(
     userId: string,
     isAdmin: boolean,
     isLegalSigningAuthority: boolean,
     locationAuthorizations: LocationAuthorization[],
+    institutionId?: number,
   ): Promise<void> {
     const userPayload = { userId } as CreateInstitutionUserAPIInDTO;
     userPayload.permissions = this.createUserPermissions(
@@ -271,7 +274,10 @@ export class InstitutionService {
       isLegalSigningAuthority,
       locationAuthorizations,
     );
-    await ApiClient.Institution.createInstitutionUserWithAuth(userPayload);
+    await ApiClient.Institution.createInstitutionUserWithAuth(
+      userPayload,
+      institutionId,
+    );
   }
 
   /**

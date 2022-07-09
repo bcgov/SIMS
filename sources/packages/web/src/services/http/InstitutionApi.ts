@@ -7,6 +7,7 @@ import {
   PaginatedResults,
   PaginationOptions,
   PaginationParams,
+  ClientIdType,
 } from "@/types";
 import {
   ActiveApplicationSummaryAPIOutDTO,
@@ -29,6 +30,7 @@ import {
   UpdateInstitutionUserAPIInDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
+import { AuthService } from "../AuthService";
 
 export class InstitutionApi extends HttpBaseClient {
   /**
@@ -260,13 +262,20 @@ export class InstitutionApi extends HttpBaseClient {
   /**
    * Create a user, associate with the institution, and assign the authorizations.
    * @param payload authorizations to be associated with the user.
+   * @param institutionId institution to have the user associated. If not provided the
+   * token information will be used, if available.
    * @returns Primary identifier of the created resource.
    */
   async createInstitutionUserWithAuth(
     payload: CreateInstitutionUserAPIInDTO,
+    institutionId?: number,
   ): Promise<void> {
+    let url = "institution/user";
+    if (AuthService.shared.authClientType === ClientIdType.AEST) {
+      url = `institution/${institutionId}/user`;
+    }
     await this.postCall<CreateInstitutionUserAPIInDTO>(
-      this.addClientRoot("institution/user"),
+      this.addClientRoot(url),
       payload,
     );
   }

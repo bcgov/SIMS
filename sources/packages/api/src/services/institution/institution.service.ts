@@ -434,11 +434,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   ): Promise<InstitutionUser> {
     return this.institutionUserRepo
       .createQueryBuilder("institutionUser")
-      .leftJoinAndSelect("institutionUser.user", "user")
-      .leftJoinAndSelect("institutionUser.institution", "institution")
-      .leftJoinAndSelect("institutionUser.authorizations", "authorizations")
+      .innerJoinAndSelect("institutionUser.user", "user")
+      .innerJoinAndSelect("institutionUser.institution", "institution")
+      .innerJoinAndSelect("institutionUser.authorizations", "authorizations")
+      .innerJoinAndSelect("authorizations.authType", "authType")
       .leftJoinAndSelect("authorizations.location", "location")
-      .leftJoinAndSelect("authorizations.authType", "authType")
       .where("user.userName = :userName", { userName })
       .getOne();
   }

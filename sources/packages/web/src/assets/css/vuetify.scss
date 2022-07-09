@@ -42,3 +42,9 @@
 .v-radio .mdi:before {
   font: unset !important;
 }
+
+// Reducing the spacing.
+.v-input__details {
+  margin-bottom: 4px !important;
+  padding-left: 0px !important;
+}

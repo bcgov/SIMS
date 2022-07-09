@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -8,6 +9,7 @@ import {
   InstitutionService,
   LEGAL_SIGNING_AUTHORITY_EXIST,
   LEGAL_SIGNING_AUTHORITY_MSG,
+  UserService,
 } from "../../services";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
@@ -21,6 +23,7 @@ import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
 import {
   CreateInstitutionUserAPIInDTO,
   InstitutionUserAPIOutDTO,
+  UserActiveStatusAPIInDTO,
 } from "./models/institution-user.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
@@ -34,6 +37,7 @@ export class InstitutionControllerService {
   constructor(
     private readonly institutionService: InstitutionService,
     private readonly bceIDService: BCeIDService,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -184,5 +188,79 @@ export class InstitutionControllerService {
       );
 
     return { id: createdInstitutionUser.id };
+  }
+
+  async getInstitutionUserByUserName(
+    userName: string,
+    institutionId?: number,
+  ): Promise<InstitutionUserAPIOutDTO> {
+    // Get institutionUser
+    const institutionUser =
+      await this.institutionService.getInstitutionUserByUserName(userName);
+
+    if (!institutionUser) {
+      throw new NotFoundException("User not found.");
+    }
+
+    // Checking if the user belongs to the institution.
+    if (institutionId && institutionUser.institution.id !== institutionId) {
+      throw new ForbiddenException(
+        "Details requested for user who does not belong to the institution.",
+      );
+    }
+    return {
+      id: institutionUser.id,
+      user: {
+        firstName: institutionUser.user.firstName,
+        lastName: institutionUser.user.lastName,
+        userName: institutionUser.user.userName,
+        isActive: institutionUser.user.isActive,
+        id: institutionUser.user.id,
+        email: institutionUser.user.email,
+      },
+      authorizations: institutionUser.authorizations.map((authorization) => ({
+        location: {
+          name: authorization.location?.name,
+          data: authorization.location?.data,
+          id: authorization.location?.id,
+        },
+        authType: {
+          type: authorization.authType.type,
+          role: authorization.authType.role,
+        },
+      })),
+    };
+  }
+
+  /**
+   * Update the active status of the user.
+   * @param userName unique name of the user to be updated.
+   * @param payload information to enable or disable the user.
+   * @param institutionId: when provided will validate if the
+   * user belongs to the institution.
+   */
+  async updateUserStatus(
+    userName: string,
+    payload: UserActiveStatusAPIInDTO,
+    institutionId?: number,
+  ): Promise<void> {
+    // Check if user exists or not.
+    const institutionUser =
+      await this.institutionService.getInstitutionUserByUserName(userName);
+
+    if (!institutionUser) {
+      throw new NotFoundException("Institution user to be updated not found.");
+    }
+
+    // Check if the user is associated with the provided institution.
+    if (institutionId && institutionUser.institution.id !== institutionId) {
+      throw new ForbiddenException(
+        "User to be updated doesn't belong to institution of logged in user.",
+      );
+    }
+    await this.userService.updateUserStatus(
+      institutionUser.user.id,
+      payload.isActive,
+    );
   }
 }
