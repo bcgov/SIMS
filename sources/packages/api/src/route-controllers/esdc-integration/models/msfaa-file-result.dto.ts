@@ -1,13 +1,10 @@
-export interface MSFAAFileResultDto {
+export class MSFAARequestResultAPIOutDTO {
   generatedFile: string;
   uploadedRecords: number;
-}
-
-export interface MSFAARequestResultDto extends MSFAAFileResultDto {
   offeringIntensity: string;
 }
 
-export interface ProcessResponseResDto {
+export class ProcessResponseResAPIOutDTO {
   processSummary: string[];
   errorsSummary: string[];
 }

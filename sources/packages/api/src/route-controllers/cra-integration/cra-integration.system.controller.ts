@@ -1,18 +1,20 @@
 import { Controller, Post } from "@nestjs/common";
 import { CRAPersonalVerificationService } from "../../services";
-import { CRAValidationResultDto } from "./models/cra-validation-result.dto";
-import { ProcessResponseResDto } from "./models/process-response.res.dto";
+import { CRAValidationResultAPIOutDTO } from "./models/cra-validation-result.dto";
+import { ProcessResponseResAPIOutDTO } from "./models/process-response.res.dto";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-@Controller("system-access/cra-integration")
-@ApiTags("system-access")
-export class CRAIntegrationController extends BaseController {
+// todo: test all endpoints
+@Controller("cra-integration")
+@ApiTags(`${ClientTypeBaseRoute.SystemAccess}-cra-integration`)
+export class CRAIntegrationSystemAccessController extends BaseController {
   constructor(private readonly cra: CRAPersonalVerificationService) {
     super();
   }
@@ -24,7 +26,7 @@ export class CRAIntegrationController extends BaseController {
    * @returns Processing result log.
    */
   @Post("process-income-verification")
-  async processIncomeVerification(): Promise<CRAValidationResultDto> {
+  async processIncomeVerification(): Promise<CRAValidationResultAPIOutDTO> {
     this.logger.log("Executing income validation...");
     const uploadResult = await this.cra.createIncomeVerificationRequest();
     this.logger.log("Income validation executed.");
@@ -39,7 +41,7 @@ export class CRAIntegrationController extends BaseController {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   @Post("process-responses")
-  async processResponses(): Promise<ProcessResponseResDto[]> {
+  async processResponses(): Promise<ProcessResponseResAPIOutDTO[]> {
     const results = await this.cra.processResponses();
     return results.map((result) => {
       return {
