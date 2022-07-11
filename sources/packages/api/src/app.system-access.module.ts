@@ -11,11 +11,19 @@ import {
   WorkflowActionsService,
   WorkflowService,
   RestrictionService,
+  SupportingUserService,
+  CRAIncomeVerificationService,
+  ApplicationService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+  StudentFileService,
+  MSFAANumberService,
 } from "./services";
 import {
   ApplicationExceptionSystemAccessController,
   AssessmentControllerService,
   AssessmentSystemAccessController,
+  ApplicationSystemAccessController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -28,6 +36,7 @@ import { SINValidationSystemAccessController } from "./route-controllers/esdc-in
     AssessmentSystemAccessController,
     ApplicationExceptionSystemAccessController,
     SINValidationSystemAccessController,
+    ApplicationSystemAccessController,
   ],
   providers: [
     ConfigService,
@@ -41,6 +50,13 @@ import { SINValidationSystemAccessController } from "./route-controllers/esdc-in
     AssessmentControllerService,
     RestrictionService,
     ApplicationExceptionService,
+    SupportingUserService,
+    CRAIncomeVerificationService,
+    ApplicationService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
+    StudentFileService,
+    MSFAANumberService,
   ],
 })
 export class AppSystemAccessModule {}

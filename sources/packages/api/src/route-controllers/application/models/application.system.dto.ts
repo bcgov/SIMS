@@ -5,17 +5,17 @@ import {
   SupportingUserType,
   OfferingIntensity,
 } from "../../../database/entities";
-export class UpdateApplicationStatusDto {
+export class UpdateApplicationStatusAPIInDTO {
   @IsEnum(ApplicationStatus)
   status: ApplicationStatus;
 }
 
-export class UpdateOfferingIntensity extends UpdateApplicationStatusDto {
+export class UpdateOfferingIntensity extends UpdateApplicationStatusAPIInDTO {
   @IsEnum(OfferingIntensity)
   offeringIntensity: OfferingIntensity;
 }
 
-export interface CRAVerificationIncomeDetailsDto {
+export class CRAVerificationIncomeDetailsAPIOutDTO {
   /**
    * Income manually reported by the Student in the Application.
    */
@@ -34,7 +34,7 @@ export interface CRAVerificationIncomeDetailsDto {
   verifiedOnCRA: boolean;
 }
 
-export class CreateIncomeVerificationDto {
+export class CreateIncomeVerificationAPIInDTO {
   @IsInt()
   @Min(2000)
   taxYear: number;
@@ -47,11 +47,11 @@ export class CreateIncomeVerificationDto {
   supportingUserId?: number;
 }
 
-export class CreateSupportingUsersDto {
+export class CreateSupportingUsersAPIInDTO {
   @IsEnum(SupportingUserType)
   supportingUserType: SupportingUserType;
 }
 
-export interface SupportingUserDto {
+export class SupportingUserDetailsAPIOutDTO {
   supportingData: any;
 }
