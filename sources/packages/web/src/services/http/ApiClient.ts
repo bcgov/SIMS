@@ -2,7 +2,7 @@ import { ConfigApi } from "@/services/http/ConfigApi";
 import { StudentApi } from "@/services/http/StudentApi";
 import { ProgramYearApi } from "@/services/http/ProgramYearApi";
 import { UserApi } from "@/services/http/UserApi";
-import { InstitutionApi } from "@/services/http/Institution";
+import { InstitutionApi } from "@/services/http/InstitutionApi";
 import { DynamicFormsApi } from "@/services/http/DynamicForms";
 import { WorkflowApi } from "@/services/http/WorkflowApi";
 import { ApplicationApi } from "@/services/http/ApplicationApi";

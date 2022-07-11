@@ -30,14 +30,14 @@ import {
 import {
   InstitutionContactAPIInDTO,
   InstitutionDetailAPIOutDTO,
-  InstitutionFormAPIInDTO,
+  CreateInstitutionAPIInDTO,
 } from "./models/institution.dto";
 
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
   InstitutionUserAPIOutDTO,
-  InstitutionUserAPIInDTO,
-  InstitutionUserPermissionAPIInDTO,
+  CreateInstitutionUserAPIInDTO,
+  UpdateInstitutionUserAPIInDTO,
   UserActiveStatusAPIInDTO,
   InstitutionUserDetailAPIOutDTO,
   InstitutionUserLocationsAPIOutDTO,
@@ -84,17 +84,17 @@ export class InstitutionInstitutionsController extends BaseController {
   }
 
   /**
-   * Create institution on Institution setup process.
-   * @param payload
-   * @param userToken
-   * @returns Primary identifier of the created resource.
+   * Creates an institution during institution setup process when the
+   * institution profile and the user are created and associated altogether.
+   * @param payload information from the institution and the user.
+   * @returns primary identifier of the created resource.
    */
   @ApiUnprocessableEntityResponse({
     description: "Institution user already exist",
   })
   @Post()
-  async createInstitution(
-    @Body() payload: InstitutionFormAPIInDTO,
+  async createInstitutionWithAssociatedUser(
+    @Body() payload: CreateInstitutionAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Check user exists or not
@@ -104,10 +104,11 @@ export class InstitutionInstitutionsController extends BaseController {
     }
 
     // Save institution
-    const institution = await this.institutionService.createInstitution(
-      userToken,
-      payload,
-    );
+    const institution =
+      await this.institutionService.createInstitutionWithAssociatedUser(
+        payload,
+        userToken,
+      );
 
     return {
       id: institution.id,
@@ -152,7 +153,6 @@ export class InstitutionInstitutionsController extends BaseController {
    * Get institution details of given institution.
    * @returns Institution details.
    */
-  @IsInstitutionAdmin()
   @Get()
   async getInstitutionDetail(
     @UserToken() token: IInstitutionUserToken,
@@ -187,9 +187,8 @@ export class InstitutionInstitutionsController extends BaseController {
   }
 
   /**
-   * Create an Institution user.
-   * @param payload
-   * @param user
+   * Create a user, associate with the institution, and assign the authorizations.
+   * @param payload authorizations to be associated with the user.
    * @returns Primary identifier of the created resource.
    */
   @ApiUnprocessableEntityResponse({
@@ -199,61 +198,13 @@ export class InstitutionInstitutionsController extends BaseController {
   @IsInstitutionAdmin()
   @Post("user")
   async createInstitutionUserWithAuth(
-    @Body() payload: InstitutionUserAPIInDTO,
-    @UserToken() user: IInstitutionUserToken,
+    @UserToken() userToken: IInstitutionUserToken,
+    @Body() payload: CreateInstitutionUserAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    // Get institution
-    const institution = await this.institutionService.getInstituteByUserName(
-      user.userName,
+    return this.institutionControllerService.createInstitutionUserWithAuth(
+      userToken.authorizations.institutionId,
+      payload,
     );
-
-    // Find user on BCeID Web Service
-    const bceidUserAccount = await this.bceidAccountService.getAccountDetails(
-      payload.userId,
-    );
-    if (!bceidUserAccount) {
-      throw new UnprocessableEntityException(
-        "User to be added not found on BCeID Web Service.",
-      );
-    }
-    // Check if the user being added to th institution belongs to the institution.
-    if (
-      institution.guid.toLowerCase() !==
-      bceidUserAccount.institution.guid.toLowerCase()
-    ) {
-      throw new UnprocessableEntityException(
-        "User to be added not found under the institution.",
-      );
-    }
-
-    /** A legal signing authority role can be added to only one user per institution */
-    const addLegalSigningAuthorityExist = payload.permissions.some(
-      (role) => role.userRole === InstitutionUserRoles.legalSigningAuthority,
-    );
-
-    if (addLegalSigningAuthorityExist) {
-      const legalSigningAuthority =
-        await this.institutionService.checkLegalSigningAuthority(
-          institution.id,
-        );
-
-      if (legalSigningAuthority) {
-        throw new UnprocessableEntityException(
-          LEGAL_SIGNING_AUTHORITY_EXIST,
-          LEGAL_SIGNING_AUTHORITY_MSG,
-        );
-      }
-    }
-
-    // Create the user and the related records.
-    const createdInstitutionUser =
-      await this.institutionService.createInstitutionUser(
-        institution.id,
-        bceidUserAccount,
-        payload,
-      );
-
-    return { id: createdInstitutionUser.id };
   }
 
   /**
@@ -294,11 +245,8 @@ export class InstitutionInstitutionsController extends BaseController {
     if (!institutionUser) {
       throw new NotFoundException("User not found.");
     }
-    // disabled users details can't be edited
-    if (!institutionUser.user.isActive) {
-      throw new UnprocessableEntityException("Not an Active User.");
-    }
-    // checking if user belong to logged-in users institution
+
+    // Checking if user belongs to logged-in users institution.
     if (institutionUser.institution.id !== token.authorizations.institutionId) {
       throw new ForbiddenException(
         "Details requested for user who does not belong to the institution of logged in user.",
@@ -328,10 +276,9 @@ export class InstitutionInstitutionsController extends BaseController {
   }
 
   /**
-   * Update the permissions of institution user.
-   * @param token
-   * @param userName
-   * @param payload
+   * Updates the permissions of an institution user.
+   * @param userName user to have the permissions updated.
+   * @param payload permissions to be update.
    */
   @ApiNotFoundResponse({
     description: "User to be updated not found.",
@@ -345,7 +292,7 @@ export class InstitutionInstitutionsController extends BaseController {
   async updateInstitutionUserWithAuth(
     @UserToken() token: IInstitutionUserToken,
     @Param("userName") userName: string,
-    @Body() payload: InstitutionUserPermissionAPIInDTO,
+    @Body() payload: UpdateInstitutionUserAPIInDTO,
   ): Promise<void> {
     // Check its a active user
     const institutionUser =

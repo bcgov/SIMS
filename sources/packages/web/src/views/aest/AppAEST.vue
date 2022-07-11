@@ -7,12 +7,20 @@
       <v-spacer></v-spacer>
       <v-btn
         v-if="isAuthenticated"
+        text
+        @click="
+          $router.push({ name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE })
+        "
+        ><v-icon icon="fa:fa fa-edit"></v-icon>Create institution</v-btn
+      >
+      <v-btn
+        v-if="isAuthenticated"
         class="mr-5"
-        icon="mdi-account"
+        icon="fa:fa fa-user"
         variant="outlined"
         elevation="1"
         color="grey"
-        @click="togleUserMenu"
+        @click="toggleUserMenu"
       ></v-btn>
       <Menu
         v-if="isAuthenticated"
@@ -36,6 +44,7 @@ import { ClientIdType } from "@/types";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: { BCLogo, IdleTimeChecker },
@@ -49,7 +58,7 @@ export default {
       await executeLogout(ClientIdType.AEST);
     };
 
-    const togleUserMenu = (event: any) => {
+    const toggleUserMenu = (event: any) => {
       userOptionsMenuRef.value.toggle(event);
     };
 
@@ -66,8 +75,9 @@ export default {
       isAuthenticated,
       logoff,
       userOptionsMenuRef,
-      togleUserMenu,
+      toggleUserMenu,
       ClientIdType,
+      AESTRoutesConst,
     };
   },
 };

@@ -12,7 +12,7 @@ import { SetupContext } from "vue";
 import { FormIOForm } from "@/types";
 import { useFormioUtils } from "@/composables";
 export default {
-  emits: ["submitted"],
+  emits: ["submitted", "loaded"],
   props: {
     formName: {
       type: String,
@@ -34,6 +34,7 @@ export default {
 
     const formLoaded = (form: FormIOForm) => {
       formioForm = form;
+      context.emit("loaded", form);
     };
 
     const submit = () => {

@@ -187,7 +187,7 @@
           "allowCalculateOverride": false,
           "validateOn": "change",
           "validate": {
-            "required": false,
+            "required": true,
             "minLength": "",
             "maxLength": "",
             "minWords": "",
@@ -214,7 +214,31 @@
             "json": ""
           },
           "customConditional": "",
-          "logic": [],
+          "logic": [
+            {
+              "name": "Enable legalOperatingName for creation",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "mode",
+                  "eq": "create"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set disabled as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
+            }
+          ],
           "attributes": {
             "data-cy": "legalOperatingName"
           },
@@ -232,7 +256,7 @@
           "dataGridLabel": false,
           "addons": [],
           "inputType": "text",
-          "id": "e990gs",
+          "id": "eiloy9e",
           "defaultValue": ""
         },
         {
@@ -3294,41 +3318,25 @@
       "id": "ena4n"
     },
     {
-      "label": "Submit",
+      "label": "mode (create/edit)",
       "labelWidth": "",
       "labelMargin": "",
-      "action": "submit",
-      "showValidations": false,
-      "theme": "primary",
-      "size": "md",
-      "block": false,
-      "leftIcon": "",
-      "rightIcon": "",
-      "shortcut": "",
-      "description": "",
-      "tooltip": "",
-      "customClass": "text-center",
-      "tabindex": "",
-      "disableOnInvalid": false,
-      "hidden": false,
-      "autofocus": false,
-      "disabled": false,
-      "tableView": false,
+      "customClass": "",
       "modalEdit": false,
-      "key": "submit",
+      "defaultValue": null,
+      "persistent": true,
+      "protected": false,
+      "dbIndex": false,
+      "encrypted": false,
+      "redrawOn": "",
+      "customDefaultValue": "",
+      "calculateValue": "",
+      "calculateServer": false,
+      "key": "mode",
       "tags": [],
       "properties": {},
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": "",
-        "json": ""
-      },
-      "customConditional": "",
       "logic": [],
-      "attributes": {
-        "data-cy": "submit"
-      },
+      "attributes": {},
       "overlay": {
         "style": "",
         "page": "",
@@ -3337,28 +3345,26 @@
         "width": "",
         "height": ""
       },
-      "type": "button",
+      "type": "hidden",
       "input": true,
-      "saveOnEnter": false,
+      "tableView": false,
       "placeholder": "",
       "prefix": "",
       "suffix": "",
       "multiple": false,
-      "defaultValue": null,
-      "protected": false,
       "unique": false,
-      "persistent": false,
+      "hidden": false,
       "clearOnHide": true,
       "refreshOn": "",
-      "redrawOn": "",
-      "dataGridLabel": true,
+      "dataGridLabel": false,
       "labelPosition": "top",
+      "description": "",
       "errorLabel": "",
+      "tooltip": "",
       "hideLabel": false,
-      "dbIndex": false,
-      "customDefaultValue": "",
-      "calculateValue": "",
-      "calculateServer": false,
+      "tabindex": "",
+      "disabled": false,
+      "autofocus": false,
       "widget": {
         "type": "input"
       },
@@ -3371,13 +3377,18 @@
         "multiple": false,
         "unique": false
       },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
-      "encrypted": false,
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "eiywxr9j"
+      "inputType": "hidden",
+      "id": "ehyi91f"
     },
     {
       "label": "applicationId",

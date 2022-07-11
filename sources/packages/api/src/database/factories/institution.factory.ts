@@ -7,7 +7,7 @@ export async function institutionFactory(
   const institution = new Institution();
   institution.legalOperatingName = faker.company.companyName();
   institution.operatingName = institution.legalOperatingName;
-  institution.guid = faker.random.uuid();
+  institution.businessGuid = faker.random.uuid();
   institution.establishedDate = faker.date.past();
   institution.website = faker.internet.url();
   institution.institutionType = {

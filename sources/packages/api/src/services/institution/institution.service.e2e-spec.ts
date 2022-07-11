@@ -30,6 +30,7 @@ const factory = async (
     institution,
     user,
     type: InstitutionUserType.admin,
+    auditUserId: user.id,
   });
 
   return [institution, user, iu];
@@ -79,7 +80,7 @@ describe("InstitutionService", () => {
     const result = await service.getInstituteByUserName(user.userName);
     expect(result).toBeDefined();
     expect(result.id).toEqual(institution.id);
-    expect(result.guid).toEqual(institution.guid);
+    expect(result.businessGuid).toEqual(institution.businessGuid);
     await service.institutionUserRepo.remove(institutionUser);
     await service.remove(institution);
     await service.remove(user);
@@ -97,6 +98,7 @@ describe("InstitutionService", () => {
       institution,
       type: InstitutionUserType.user,
       user: newUser,
+      auditUserId: user.id,
     });
 
     // Test
@@ -154,6 +156,7 @@ describe("InstitutionService", () => {
       institution,
       type: InstitutionUserType.admin,
       location,
+      auditUserId: user.id,
     });
     const subject = await service.getUser(institutionUser.id);
     expect(subject).toBeDefined();

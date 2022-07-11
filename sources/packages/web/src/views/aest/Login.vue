@@ -10,19 +10,25 @@
     </v-card-header>
     <v-card-text
       >Please use your IDIR to authenticate. You must be previously authorized
-      by the system administrator in order to successfully login.</v-card-text
-    >
-    <v-row justify="center" class="m-3">
-      <v-btn color="primary" data-cy="loginWithIDIR" @click="login">
-        <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
-        Login with IDIR
-      </v-btn>
-    </v-row>
-    <Message severity="error" class="mx-2" v-if="showNotAllowedUser">
-      The user was validated successfully but is not currently allowed to have
-      access to this application. Please contact the Administrator for more
-      information.
-    </Message>
+      by the system administrator in order to successfully login.
+      <Message severity="error" v-if="showNotAllowedUser">
+        The user was validated successfully but is not currently allowed to have
+        access to this application. Please contact the Administrator for more
+        information.
+      </Message>
+    </v-card-text>
+    <v-card-actions>
+      <v-row justify="center">
+        <v-btn
+          class="primary-btn-background"
+          data-cy="loginWithIDIR"
+          @click="login"
+          prepend-icon="fa:fa fa-user"
+        >
+          Login with IDIR
+        </v-btn>
+      </v-row>
+    </v-card-actions>
   </v-card>
 </template>
 

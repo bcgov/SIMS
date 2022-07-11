@@ -35,13 +35,25 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       line.getFixedFormat(),
     );
     const fileContent = fixedFormattedLines.join("\r\n");
+    return this.uploadRawContent(fileContent, remoteFilePath);
+  }
 
+  /**
+   * Converts the fileLines to the final content and upload it.
+   * @param rawContent Raw content in string format.
+   * @param remoteFilePath full remote file path with file name.
+   * @returns Upload result.
+   */
+  async uploadRawContent(
+    rawContent: string,
+    remoteFilePath: string,
+  ): Promise<string> {
     // Send the file to ftp.
     this.logger.log("Creating new SFTP client to start upload...");
     const client = await this.getClient();
     try {
       this.logger.log(`Uploading ${remoteFilePath}`);
-      return await client.put(Buffer.from(fileContent), remoteFilePath);
+      return await client.put(Buffer.from(rawContent), remoteFilePath);
     } finally {
       this.logger.log("Finalizing SFTP client...");
       await SshService.closeQuietly(client);

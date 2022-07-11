@@ -9,11 +9,15 @@ import {
 import { DisbursementReceiptHeader } from "./disbursement-receipt-files/disbursement-receipt-file-header";
 import { DisbursementReceiptFooter } from "./disbursement-receipt-files/disbursement-receipt-file-footer";
 import { DisbursementReceiptDetail } from "./disbursement-receipt-files/disbursement-receipt-file-detail";
+import { getFileNameAsCurrentTimestamp } from "../../utilities";
+import { ESDCIntegrationConfig } from "../../types";
 
 @Injectable()
 export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<DisbursementReceiptDownloadResponse> {
+  private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(config: ConfigService, sshService: SshService) {
     super(config.getConfig().zoneBSFTP, sshService);
+    this.esdcConfig = config.getConfig().ESDCIntegration;
   }
 
   /**
@@ -58,5 +62,23 @@ export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<D
       throw new Error("SIN Hash validation failed.");
     }
     return { header, records };
+  }
+
+  /**
+   * Create file name of the daily disbursements records file.
+   * @param reportName Report name to be a part of filename.
+   * @returns Full file path of the file to be saved on the SFTP.
+   */
+  createRequestFileName(reportName: string): {
+    fileName: string;
+    filePath: string;
+  } {
+    const timestamp = getFileNameAsCurrentTimestamp();
+    const fileName = `${reportName}_${timestamp}.csv`;
+    const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
+    return {
+      fileName,
+      filePath,
+    };
   }
 }

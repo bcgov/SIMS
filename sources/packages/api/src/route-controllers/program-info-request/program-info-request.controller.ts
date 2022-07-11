@@ -147,6 +147,7 @@ export class ProgramInfoRequestController extends BaseController {
       result.offeringType = offering.offeringType;
       result.offeringIntensity = offering.offeringIntensity;
     }
+    result.courseDetails = application.data.courseDetails;
     result.pirDenyReasonId = application.pirDeniedReasonId?.id;
     result.otherReasonDesc = application.pirDeniedOtherDesc;
     return result;

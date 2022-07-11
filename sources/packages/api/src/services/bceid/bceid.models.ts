@@ -101,6 +101,10 @@ export enum BCeIDAccountTypeCodes {
    */
   Internal = "Internal",
   /**
+   * Basic BCeID account type.
+   */
+  Individual = "Individual",
+  /**
    * Business BCeID account type.
    */
   Business = "Business",

@@ -5,8 +5,7 @@ import {
   IsPositive,
   ValidateNested,
 } from "class-validator";
-import { PartialType } from "@nestjs/mapped-types";
-import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-account.dto";
+import { OmitType } from "@nestjs/mapped-types";
 import { Type } from "class-transformer";
 
 import { DesignationStatus } from "../../../route-controllers/institution-locations/models/institution-location.dto";
@@ -17,9 +16,10 @@ import {
 } from "../../models/common.dto";
 
 /**
- * DTO object for institution creation.
+ * DTO for institution creation by the institution user during the on board process
+ * when the institution profile and the admin user must be created altogether.
  */
-export class InstitutionFormAPIInDTO extends AddressDetailsAPIInDTO {
+export class CreateInstitutionAPIInDTO {
   @IsNotEmpty()
   userEmail: string;
   @IsOptional()
@@ -34,7 +34,8 @@ export class InstitutionFormAPIInDTO extends AddressDetailsAPIInDTO {
   regulatingBody: string;
   @IsDate()
   establishedDate: Date;
-  //TODO Can be broken into a different DTO if needed
+  @IsPositive()
+  institutionType: number;
   //Institutions Primary Contact Information
   @IsNotEmpty()
   primaryContactFirstName: string;
@@ -44,26 +45,23 @@ export class InstitutionFormAPIInDTO extends AddressDetailsAPIInDTO {
   primaryContactEmail: string;
   @IsNotEmpty()
   primaryContactPhone: string;
-  //TODO Can be broken into a different DTO
-  @IsPositive()
-  institutionType: number;
+  @ValidateNested()
+  @Type(() => AddressDetailsAPIInDTO)
+  mailingAddress: AddressDetailsAPIInDTO;
 }
 
-export class InstitutionDto extends PartialType(InstitutionFormAPIInDTO) {
-  @IsOptional()
-  userEmail?: string;
-
-  @IsOptional()
-  userFirstName?: string;
-
-  @IsOptional()
-  userLastName?: string;
-
-  @IsOptional()
-  legalOperatingName?: string;
-
-  @IsOptional()
-  institutionTypeName: string;
+/**
+ * Ministry user institution creation. No user information is provided and
+ * user related information (e.g. userEmail) is not needed. Besides that,
+ * the Ministry user should be able to provide all data needed to create
+ * the institution.
+ */
+export class AESTCreateInstitutionFormAPIInDTO extends OmitType(
+  CreateInstitutionAPIInDTO,
+  ["userEmail"],
+) {
+  @IsNotEmpty()
+  legalOperatingName: string;
 }
 
 export class InstitutionContactAPIInDTO {
@@ -120,17 +118,21 @@ export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
   formattedEstablishedDate?: string;
   institutionTypeName?: string;
   isBCPrivate?: boolean;
+  /**
+   * Indicates if the institution has a BCeID business guid
+   * associated with, if not it is a basic BCeID institution.
+   */
+  hasBusinessGuid: boolean;
 }
 
 export class InstitutionBasicAPIOutDTO {
   operatingName: string;
   designationStatus: DesignationStatus;
-}
-
-export interface InstitutionDetailDto {
-  institution: InstitutionDto;
-  account: BCeIDDetailsDto;
-  isBCPrivate?: boolean;
+  /**
+   * Indicates if the institution has a BCeID business guid
+   * associated with, if not it is a basic BCeID institution.
+   */
+  hasBusinessGuid: boolean;
 }
 
 export class SearchInstitutionAPIOutDTO {

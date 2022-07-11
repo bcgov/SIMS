@@ -3,6 +3,7 @@ import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import HttpClient from "./HttpClient";
 import { MINIMUM_TOKEN_VALIDITY } from "@/constants/system-constants";
 import { ApiProcessError, ClientIdType, ClientTypeBaseRoute } from "@/types";
+import { PrimaryIdentifierAPIOutDTO } from "../dto";
 
 export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
@@ -53,9 +54,17 @@ export default abstract class HttpBaseClient {
     }
   }
 
-  protected async postCall<T>(url: string, payload: T): Promise<void> {
+  protected async postCall<T>(
+    url: string,
+    payload: T,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
-      await this.apiClient.post(url, payload, this.addAuthHeader());
+      const response = await this.apiClient.post(
+        url,
+        payload,
+        this.addAuthHeader(),
+      );
+      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

@@ -1,20 +1,27 @@
 <template>
-  <div class="p-m-4">
-    <HeaderNavigator title="Manage Users" subTitle="User Summary" />
-    <v-container>
-      <v-card class="mt-6 py-4 px-4">
-        <InstitutionUserSummary />
-      </v-card>
-    </v-container>
-  </div>
+  <full-page-container :full-width="true">
+    <template #header>
+      <header-navigator title="Manage Users" subTitle="User Summary" />
+    </template>
+    <institution-user-summary :hasBusinessGuid="hasBusinessGuid" />
+  </full-page-container>
 </template>
 
 <script lang="ts">
+import { computed } from "vue";
 import InstitutionUserSummary from "@/components/common/InstitutionUserSummary.vue";
+import { useInstitutionState } from "@/composables";
 
 export default {
   components: {
     InstitutionUserSummary,
+  },
+  setup() {
+    const { institutionState } = useInstitutionState();
+    const hasBusinessGuid = computed(
+      () => institutionState.value.hasBusinessGuid,
+    );
+    return { hasBusinessGuid };
   },
 };
 </script>
