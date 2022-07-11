@@ -214,10 +214,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
       [],
       associatedFiles,
     );
-    application.creator = auditUser;
-    application.studentAssessments = [originalAssessment];
-    application.currentAssessment = originalAssessment;
-    await this.repo.save([application, newApplication]);
+    await this.connection.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager
+        .getRepository(Application)
+        .save(newApplication);
+      newApplication.creator = auditUser;
+      newApplication.studentAssessments = [originalAssessment];
+      newApplication.currentAssessment = originalAssessment;
+      await transactionalEntityManager
+        .getRepository(Application)
+        .save([application, newApplication]);
+    });
     // Deleting the existing workflow, if there is one.
     if (application.currentAssessment.assessmentWorkflowId) {
       await this.workflow.deleteApplicationAssessment(
@@ -624,7 +631,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     } else {
       query.andWhere("application.applicationStatus NOT IN (:...status)", {
         status: [
-          ApplicationStatus.submitted,
           ApplicationStatus.completed,
           ApplicationStatus.overwritten,
           ApplicationStatus.cancelled,
