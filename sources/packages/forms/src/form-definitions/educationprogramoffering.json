@@ -276,10 +276,10 @@
       },
       "logic": [
         {
-          "name": "Disable for non Institution clients",
+          "name": "Disable for non Institution clients and offerings in non editable status",
           "trigger": {
             "type": "javascript",
-            "javascript": "/**\r\n * The given logic is added to the panel of the form to display the\r\n * form as read-only for ministry(AEST) user and also allow the hidden component values\r\n * to be calculated.\r\n * If a form.io is loaded with readOnly attribute set to true, then the restricts\r\n * hidden components to calculate it's value by design.\r\n*/\r\nresult = (data.clientType !== 'institution');"
+            "javascript": "/**\r\n * The given logic is added to the panel of the form to display the\r\n * form as read-only for ministry(AEST) user and also allow the hidden component values\r\n * to be calculated.\r\n * If a form.io is loaded with readOnly attribute set to true, then the restricts\r\n * hidden components to calculate it's value by design.\r\n * Offerings which are not in Approved,Pending or Declined status\r\n * must not be editable.\r\n*/\r\nresult = ((data.clientType !== 'institution') || (!['Approved','Declined','Pending'].includes(data.offeringStatusToDisplay)));"
           },
           "actions": [
             {
@@ -388,7 +388,7 @@
           "displayMask": "",
           "spellcheck": true,
           "truncateMultipleSpaces": false,
-          "id": "eokr23b"
+          "id": "esuig6o"
         },
         {
           "title": "Panel",
@@ -587,7 +587,7 @@
               },
               "customOptions": {},
               "useExactSearch": false,
-              "id": "e0x4bx9"
+              "id": "e6tfwti"
             },
             {
               "label": "Display this to students",
@@ -657,7 +657,7 @@
               "inputType": "checkbox",
               "value": "",
               "name": "",
-              "id": "eben2rf"
+              "id": "e902oll"
             },
             {
               "label": "HTML",
@@ -732,7 +732,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "e2xw3h7"
+              "id": "e5k3zq7"
             },
             {
               "label": "How will this be offered?",
@@ -816,7 +816,7 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "eqxzy4t"
+              "id": "ebx0lps"
             },
             {
               "label": "Program Offering Intensity Mismatch",
@@ -884,7 +884,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "e4jllnp"
+              "id": "evpvij"
             },
             {
               "label": "Study period intensity popup",
@@ -959,7 +959,7 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "eunb2cb"
+              "id": "e1v117j"
             },
             {
               "title": "Course Load Panel",
@@ -1050,7 +1050,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "e82se6h"
+                  "id": "ebvb4wa"
                 },
                 {
                   "label": "invalidCourseLoad",
@@ -1118,7 +1118,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "e5m8t9l"
+                  "id": "ervwtej"
                 }
               ],
               "placeholder": "",
@@ -1176,7 +1176,7 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "eac1vu"
+              "id": "e1o2eka"
             },
             {
               "label": "How will this offering be delivered?",
@@ -1266,7 +1266,7 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "e5vp74s"
+              "id": "elbzrd9p"
             },
             {
               "label": "Program Offering Delivery Mismatch",
@@ -1334,7 +1334,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "egcutnm"
+              "id": "eayqmvq"
             },
             {
               "label": "HTML",
@@ -1409,7 +1409,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "eqg2a8l"
+              "id": "enmgnvj"
             },
             {
               "label": "Does this contain a work-integrated learning component?",
@@ -1493,7 +1493,7 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "e62bf6f"
+              "id": "elgomg"
             },
             {
               "label": "Program Offering WIL Mismatch",
@@ -1561,7 +1561,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "eqzif08"
+              "id": "esio3nv"
             },
             {
               "label": "HTML",
@@ -1636,7 +1636,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "eim7xj"
+              "id": "e80fu3c"
             },
             {
               "collapsible": false,
@@ -1723,7 +1723,7 @@
                   "displayMask": "",
                   "spellcheck": true,
                   "truncateMultipleSpaces": false,
-                  "id": "eybpmke"
+                  "id": "e1mj2i"
                 }
               ],
               "placeholder": "",
@@ -1787,7 +1787,7 @@
               "title": "Panel",
               "theme": "default",
               "breadcrumb": "default",
-              "id": "eqmbd4"
+              "id": "e463620p"
             },
             {
               "title": "Study dates panel",
@@ -1873,7 +1873,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "em8ez5l"
+                  "id": "exiud5c"
                 },
                 {
                   "collapsible": false,
@@ -2008,7 +2008,7 @@
                                 "mousewheel": true,
                                 "arrowkeys": true
                               },
-                              "id": "eozatd4"
+                              "id": "efj98ko"
                             }
                           ],
                           "width": 6,
@@ -2139,7 +2139,7 @@
                                 "mousewheel": true,
                                 "arrowkeys": true
                               },
-                              "id": "ezwmq8k"
+                              "id": "et74bzh"
                             }
                           ],
                           "width": 6,
@@ -2215,7 +2215,7 @@
                       "tree": false,
                       "lazyLoad": false,
                       "autoAdjust": false,
-                      "id": "e8wuji"
+                      "id": "erc5gni"
                     }
                   ],
                   "placeholder": "",
@@ -2279,30 +2279,47 @@
                   "title": "Panel",
                   "theme": "default",
                   "breadcrumb": "default",
-                  "id": "eab3bff"
+                  "id": "e62442"
                 },
                 {
                   "label": "Ineligible Days For Funding After 10 Percentage Calculation",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "customClass": "",
+                  "modalEdit": false,
+                  "defaultValue": null,
+                  "persistent": true,
+                  "protected": false,
+                  "dbIndex": false,
+                  "encrypted": false,
+                  "redrawOn": "",
+                  "customDefaultValue": "",
                   "calculateValue": "// Calculate MAX(0,(SUM(TOTAL ELIGIBLE BREAK DAYS)- 0.1(TOTAL DAYS)).\r\n// i.e, sum of all TOTAL ELIGIBLE BREAK DAYS minus 10% of total study days.\r\n\r\n// Sum of all eligible break days.\r\nconst sumOfTotalEligibleBreakDays = data.sumOfTotalEligibleBreakDays;\r\n\r\n// Allowable 10% total days.\r\nconst allowable10Percentage = data.allowable10Percentage;\r\n\r\n// Calculating the ineligible days\r\nvalue =\r\n  _.isNumber(sumOfTotalEligibleBreakDays) && _.isNumber(allowable10Percentage)\r\n    ? sumOfTotalEligibleBreakDays - allowable10Percentage\r\n    : 0;\r\n",
                   "calculateServer": true,
                   "key": "ineligibleDaysForFundingAfter10PercentageCalculation",
+                  "tags": [],
+                  "properties": {},
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
                   "type": "hidden",
                   "input": true,
                   "tableView": false,
                   "placeholder": "",
                   "prefix": "",
-                  "customClass": "",
                   "suffix": "",
                   "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
                   "unique": false,
-                  "persistent": true,
                   "hidden": false,
                   "clearOnHide": true,
                   "refreshOn": "",
-                  "redrawOn": "",
-                  "modalEdit": false,
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
@@ -2312,12 +2329,9 @@
                   "tabindex": "",
                   "disabled": false,
                   "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
                   "widget": {
                     "type": "input"
                   },
-                  "attributes": {},
                   "validateOn": "change",
                   "validate": {
                     "required": false,
@@ -2332,45 +2346,53 @@
                     "when": null,
                     "eq": ""
                   },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
                   "allowCalculateOverride": false,
-                  "encrypted": false,
                   "showCharCount": false,
                   "showWordCount": false,
-                  "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "e3eqyj"
+                  "id": "ektt0wl"
                 },
                 {
                   "label": "Allowable 10 Percentage",
-                  "calculateValue": "// Calculating allowable 10% of the total study period/\r\n// Checking the data.totalDays is a number or not.\r\nvalue = _.isNumber(data.breaksAndWeeks.totalDays)\r\n  ? 0.1 * data.breaksAndWeeks.totalDays\r\n  : 0;\r\n",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "customClass": "",
+                  "modalEdit": false,
+                  "defaultValue": null,
+                  "persistent": true,
+                  "protected": false,
+                  "dbIndex": false,
+                  "encrypted": false,
+                  "redrawOn": "",
+                  "customDefaultValue": "",
+                  "calculateValue": "// Calculating allowable 10% of the total study period/\r\n// Checking the data.totalDays is a number or not.\r\nvalue = _.isNumber(data.breaksAndWeeks.totalDays)\r\n  ? ((10 * data.breaksAndWeeks.totalDays)/100)\r\n  : 0;\r\n",
                   "calculateServer": true,
                   "key": "allowable10Percentage",
+                  "tags": [],
+                  "properties": {},
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
                   "type": "hidden",
                   "input": true,
                   "tableView": false,
                   "placeholder": "",
                   "prefix": "",
-                  "customClass": "",
                   "suffix": "",
                   "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
                   "unique": false,
-                  "persistent": true,
                   "hidden": false,
                   "clearOnHide": true,
                   "refreshOn": "",
-                  "redrawOn": "",
-                  "modalEdit": false,
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
@@ -2380,12 +2402,9 @@
                   "tabindex": "",
                   "disabled": false,
                   "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
                   "widget": {
                     "type": "input"
                   },
-                  "attributes": {},
                   "validateOn": "change",
                   "validate": {
                     "required": false,
@@ -2400,22 +2419,13 @@
                     "when": null,
                     "eq": ""
                   },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
                   "allowCalculateOverride": false,
-                  "encrypted": false,
                   "showCharCount": false,
                   "showWordCount": false,
-                  "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "e4b1fe"
+                  "id": "et8o1ka"
                 },
                 {
                   "label": "Invalid Study Dates",
@@ -2483,7 +2493,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "ej4ewl9"
+                  "id": "e5q6tb"
                 },
                 {
                   "label": "Invalid study dates popup",
@@ -2558,7 +2568,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ew4ecsm"
+                  "id": "eswyl6x"
                 }
               ],
               "placeholder": "",
@@ -2620,7 +2630,7 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "euh3aow"
+              "id": "eosdpd"
             },
             {
               "title": "study break panel",
@@ -2706,7 +2716,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ezkou8k"
+                  "id": "ewzf6l"
                 },
                 {
                   "label": "HTML",
@@ -2780,7 +2790,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "e7l938"
+                  "id": "epjac2f"
                 },
                 {
                   "label": "No study breaks",
@@ -2848,7 +2858,7 @@
                   "inputType": "checkbox",
                   "value": "",
                   "name": "",
-                  "id": "euv58rz"
+                  "id": "eyhv05e"
                 },
                 {
                   "label": "BreaksAndWeeks",
@@ -2951,7 +2961,7 @@
                             "dateFormat": "yyyy-MM-dd"
                           },
                           "hideOnChildrenHidden": false,
-                          "id": "e58tex00",
+                          "id": "eiebncd000000",
                           "prefix": "",
                           "customClass": "",
                           "suffix": "",
@@ -3072,7 +3082,7 @@
                             "dateFormat": "yyyy-MM-dd"
                           },
                           "hideOnChildrenHidden": false,
-                          "id": "e1sksnj00",
+                          "id": "ec96v1000000",
                           "prefix": "",
                           "customClass": "",
                           "suffix": "",
@@ -3163,7 +3173,7 @@
                           "key": "breakDays",
                           "type": "number",
                           "input": true,
-                          "id": "ep1komc00",
+                          "id": "eoy70b4000000",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -3238,7 +3248,7 @@
                           "key": "eligibleBreakDays",
                           "type": "number",
                           "input": true,
-                          "id": "e2czsgg00",
+                          "id": "e5ase000000",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -3314,7 +3324,7 @@
                           "key": "ineligibleBreakDays",
                           "type": "number",
                           "input": true,
-                          "id": "e7g8hf900",
+                          "id": "e3p9dd000000",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -3411,7 +3421,7 @@
                       "tree": true,
                       "lazyLoad": false,
                       "disableAddingRemovingRows": false,
-                      "id": "e2zyc83"
+                      "id": "ebphad"
                     },
                     {
                       "customClass": "formio-panel-unset px-4",
@@ -3502,7 +3512,7 @@
                                   "properties": {},
                                   "allowMultipleMasks": false,
                                   "addons": [],
-                                  "id": "eabtowj"
+                                  "id": "ebq988"
                                 }
                               ],
                               "width": 6,
@@ -3516,92 +3526,79 @@
                               "components": [
                                 {
                                   "label": "Total funded weeks",
-                                  "labelPosition": "top",
-                                  "labelWidth": "",
-                                  "labelMargin": "",
-                                  "placeholder": "",
-                                  "description": "",
-                                  "tooltip": "",
-                                  "prefix": "",
-                                  "suffix": "",
-                                  "widget": {
-                                    "type": "input"
-                                  },
-                                  "displayMask": "",
-                                  "customClass": "",
-                                  "tabindex": "",
-                                  "autocomplete": "",
-                                  "hidden": false,
-                                  "hideLabel": false,
                                   "mask": false,
-                                  "autofocus": false,
                                   "disabled": true,
                                   "tableView": false,
-                                  "modalEdit": false,
-                                  "multiple": false,
-                                  "persistent": true,
                                   "delimiter": false,
-                                  "decimalLimit": "",
                                   "requireDecimal": false,
                                   "inputFormat": "plain",
-                                  "protected": false,
-                                  "dbIndex": false,
                                   "truncateMultipleSpaces": false,
-                                  "encrypted": false,
-                                  "redrawOn": "",
-                                  "clearOnHide": true,
-                                  "customDefaultValue": "",
                                   "calculateValue": "// Funded study weeks is funded study period days/7 round up\r\nvalue = _.isNumber(data.breaksAndWeeks.fundedStudyPeriodDays)\r\n  ? Math.ceil(data.breaksAndWeeks.fundedStudyPeriodDays / 7)\r\n  : 0;\r\n",
                                   "calculateServer": true,
-                                  "allowCalculateOverride": false,
-                                  "validateOn": "change",
                                   "validate": {
                                     "required": true,
-                                    "min": "",
-                                    "max": "",
-                                    "customMessage": "",
                                     "custom": "",
                                     "customPrivate": false,
-                                    "json": "",
                                     "strictDateValidation": false,
                                     "multiple": false,
                                     "unique": false,
+                                    "min": "",
+                                    "max": "",
                                     "step": "any",
                                     "integer": ""
                                   },
-                                  "errorLabel": "",
-                                  "errors": "",
                                   "key": "totalFundedWeeks",
-                                  "tags": [],
-                                  "properties": {},
+                                  "type": "number",
+                                  "input": true,
+                                  "placeholder": "",
+                                  "prefix": "",
+                                  "customClass": "",
+                                  "suffix": "",
+                                  "multiple": false,
+                                  "defaultValue": null,
+                                  "protected": false,
+                                  "unique": false,
+                                  "persistent": true,
+                                  "hidden": false,
+                                  "clearOnHide": true,
+                                  "refreshOn": "",
+                                  "redrawOn": "",
+                                  "modalEdit": false,
+                                  "dataGridLabel": false,
+                                  "labelPosition": "top",
+                                  "description": "",
+                                  "errorLabel": "",
+                                  "tooltip": "",
+                                  "hideLabel": false,
+                                  "tabindex": "",
+                                  "autofocus": false,
+                                  "dbIndex": false,
+                                  "customDefaultValue": "",
+                                  "widget": {
+                                    "type": "input"
+                                  },
+                                  "attributes": {},
+                                  "validateOn": "change",
                                   "conditional": {
                                     "show": null,
                                     "when": null,
-                                    "eq": "",
-                                    "json": ""
+                                    "eq": ""
                                   },
-                                  "customConditional": "",
-                                  "logic": [],
-                                  "attributes": {},
                                   "overlay": {
                                     "style": "",
-                                    "page": "",
                                     "left": "",
                                     "top": "",
                                     "width": "",
                                     "height": ""
                                   },
-                                  "type": "number",
-                                  "input": true,
-                                  "unique": false,
-                                  "refreshOn": "",
-                                  "dataGridLabel": false,
+                                  "allowCalculateOverride": false,
+                                  "encrypted": false,
                                   "showCharCount": false,
                                   "showWordCount": false,
+                                  "properties": {},
                                   "allowMultipleMasks": false,
                                   "addons": [],
-                                  "id": "eyk0tx",
-                                  "defaultValue": ""
+                                  "id": "e3dddk"
                                 }
                               ],
                               "width": 6,
@@ -3676,7 +3673,7 @@
                           "tree": false,
                           "lazyLoad": false,
                           "autoAdjust": false,
-                          "id": "ex772kl"
+                          "id": "eiwwxc"
                         },
                         {
                           "label": "Columns",
@@ -3685,79 +3682,92 @@
                               "components": [
                                 {
                                   "label": "Funded study period days",
-                                  "mask": false,
-                                  "disabled": true,
-                                  "tableView": false,
-                                  "delimiter": false,
-                                  "requireDecimal": false,
-                                  "inputFormat": "plain",
-                                  "truncateMultipleSpaces": false,
-                                  "calculateValue": "// Funded study period days is total days minus unfunded study period days.\r\nvalue =\r\n  _.isNumber(data.breaksAndWeeks.totalDays) &&\r\n  _.isNumber(data.breaksAndWeeks.unfundedStudyPeriodDays)\r\n    ? Math.max(\r\n        data.breaksAndWeeks.totalDays -\r\n          data.breaksAndWeeks.unfundedStudyPeriodDays,\r\n        0\r\n      )\r\n    : 0;\r\n",
-                                  "calculateServer": true,
-                                  "validate": {
-                                    "required": true,
-                                    "custom": "",
-                                    "customPrivate": false,
-                                    "strictDateValidation": false,
-                                    "multiple": false,
-                                    "unique": false,
-                                    "min": "",
-                                    "max": "",
-                                    "step": "any",
-                                    "integer": ""
-                                  },
-                                  "key": "fundedStudyPeriodDays",
-                                  "type": "number",
-                                  "input": true,
-                                  "placeholder": "",
-                                  "prefix": "",
-                                  "customClass": "",
-                                  "suffix": "",
-                                  "multiple": false,
-                                  "defaultValue": null,
-                                  "protected": false,
-                                  "unique": false,
-                                  "persistent": true,
-                                  "hidden": false,
-                                  "clearOnHide": true,
-                                  "refreshOn": "",
-                                  "redrawOn": "",
-                                  "modalEdit": false,
-                                  "dataGridLabel": false,
                                   "labelPosition": "top",
+                                  "labelWidth": "",
+                                  "labelMargin": "",
+                                  "placeholder": "",
                                   "description": "",
-                                  "errorLabel": "",
                                   "tooltip": "",
-                                  "hideLabel": false,
-                                  "tabindex": "",
-                                  "autofocus": false,
-                                  "dbIndex": false,
-                                  "customDefaultValue": "",
+                                  "prefix": "",
+                                  "suffix": "",
                                   "widget": {
                                     "type": "input"
                                   },
-                                  "attributes": {},
+                                  "displayMask": "",
+                                  "customClass": "",
+                                  "tabindex": "",
+                                  "autocomplete": "",
+                                  "hidden": false,
+                                  "hideLabel": false,
+                                  "mask": false,
+                                  "autofocus": false,
+                                  "disabled": true,
+                                  "tableView": false,
+                                  "modalEdit": false,
+                                  "multiple": false,
+                                  "persistent": true,
+                                  "delimiter": false,
+                                  "decimalLimit": "",
+                                  "requireDecimal": false,
+                                  "inputFormat": "plain",
+                                  "protected": false,
+                                  "dbIndex": false,
+                                  "truncateMultipleSpaces": false,
+                                  "encrypted": false,
+                                  "redrawOn": "",
+                                  "clearOnHide": true,
+                                  "customDefaultValue": "",
+                                  "calculateValue": "// Funded study period days is total days minus unfunded study period days.\r\nvalue =\r\n  _.isNumber(data.breaksAndWeeks.totalDays) &&\r\n  _.isNumber(data.breaksAndWeeks.unfundedStudyPeriodDays)\r\n    ? Math.max(\r\n        parseFloat((data.breaksAndWeeks.totalDays -\r\n          data.breaksAndWeeks.unfundedStudyPeriodDays).toFixed(1)),\r\n        0\r\n      )\r\n    : 0;\r\n",
+                                  "calculateServer": true,
+                                  "allowCalculateOverride": false,
                                   "validateOn": "change",
+                                  "validate": {
+                                    "required": true,
+                                    "min": "",
+                                    "max": "",
+                                    "customMessage": "",
+                                    "custom": "",
+                                    "customPrivate": false,
+                                    "json": "",
+                                    "strictDateValidation": false,
+                                    "multiple": false,
+                                    "unique": false,
+                                    "step": "any",
+                                    "integer": ""
+                                  },
+                                  "errorLabel": "",
+                                  "errors": "",
+                                  "key": "fundedStudyPeriodDays",
+                                  "tags": [],
+                                  "properties": {},
                                   "conditional": {
                                     "show": null,
                                     "when": null,
-                                    "eq": ""
+                                    "eq": "",
+                                    "json": ""
                                   },
+                                  "customConditional": "",
+                                  "logic": [],
+                                  "attributes": {},
                                   "overlay": {
                                     "style": "",
+                                    "page": "",
                                     "left": "",
                                     "top": "",
                                     "width": "",
                                     "height": ""
                                   },
-                                  "allowCalculateOverride": false,
-                                  "encrypted": false,
+                                  "type": "number",
+                                  "input": true,
+                                  "unique": false,
+                                  "refreshOn": "",
+                                  "dataGridLabel": false,
                                   "showCharCount": false,
                                   "showWordCount": false,
-                                  "properties": {},
                                   "allowMultipleMasks": false,
                                   "addons": [],
-                                  "id": "eomclnm"
+                                  "id": "em7t769",
+                                  "defaultValue": ""
                                 }
                               ],
                               "width": 6,
@@ -3771,79 +3781,92 @@
                               "components": [
                                 {
                                   "label": "Unfunded study period days",
-                                  "mask": false,
-                                  "disabled": true,
-                                  "tableView": false,
-                                  "delimiter": false,
-                                  "requireDecimal": false,
-                                  "inputFormat": "plain",
-                                  "truncateMultipleSpaces": false,
-                                  "calculateValue": "// If the ineligibleDaysForFundingAfter10PercentageCalculation is less than 1,\r\n// then add 0 to sum of all total ineligible break days to get the unfunded study\r\n// period days. If greater than 0, the directly add the result to sum of all\r\n// total ineligible break days to get the unfunded study period days.\r\n\r\n// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDays = data.sumOfTotalInEligibleBreakDays;\r\nconst ineligibleDaysForFundingAfter10PercentageCalculation = Math.max(\r\n  data.ineligibleDaysForFundingAfter10PercentageCalculation,\r\n  0\r\n);\r\n\r\n// sum of sumOfTotalInEligibleBreakDays and ineligibleDaysForFundingAfter10PercentageCalculation is  unfundedStudyPeriodDays.\r\nvalue =\r\n  _.isNumber(sumOfTotalInEligibleBreakDays) &&\r\n  _.isNumber(ineligibleDaysForFundingAfter10PercentageCalculation)\r\n    ? sumOfTotalInEligibleBreakDays +\r\n      ineligibleDaysForFundingAfter10PercentageCalculation\r\n    : 0;\r\n",
-                                  "calculateServer": true,
-                                  "validate": {
-                                    "required": true,
-                                    "custom": "",
-                                    "customPrivate": false,
-                                    "strictDateValidation": false,
-                                    "multiple": false,
-                                    "unique": false,
-                                    "min": "",
-                                    "max": "",
-                                    "step": "any",
-                                    "integer": ""
-                                  },
-                                  "key": "unfundedStudyPeriodDays",
-                                  "type": "number",
-                                  "input": true,
-                                  "placeholder": "",
-                                  "prefix": "",
-                                  "customClass": "",
-                                  "suffix": "",
-                                  "multiple": false,
-                                  "defaultValue": null,
-                                  "protected": false,
-                                  "unique": false,
-                                  "persistent": true,
-                                  "hidden": false,
-                                  "clearOnHide": true,
-                                  "refreshOn": "",
-                                  "redrawOn": "",
-                                  "modalEdit": false,
-                                  "dataGridLabel": false,
                                   "labelPosition": "top",
+                                  "labelWidth": "",
+                                  "labelMargin": "",
+                                  "placeholder": "",
                                   "description": "",
-                                  "errorLabel": "",
                                   "tooltip": "",
-                                  "hideLabel": false,
-                                  "tabindex": "",
-                                  "autofocus": false,
-                                  "dbIndex": false,
-                                  "customDefaultValue": "",
+                                  "prefix": "",
+                                  "suffix": "",
                                   "widget": {
                                     "type": "input"
                                   },
-                                  "attributes": {},
+                                  "displayMask": "",
+                                  "customClass": "",
+                                  "tabindex": "",
+                                  "autocomplete": "",
+                                  "hidden": false,
+                                  "hideLabel": false,
+                                  "mask": false,
+                                  "autofocus": false,
+                                  "disabled": true,
+                                  "tableView": false,
+                                  "modalEdit": false,
+                                  "multiple": false,
+                                  "persistent": true,
+                                  "delimiter": false,
+                                  "decimalLimit": "",
+                                  "requireDecimal": false,
+                                  "inputFormat": "plain",
+                                  "protected": false,
+                                  "dbIndex": false,
+                                  "truncateMultipleSpaces": false,
+                                  "encrypted": false,
+                                  "redrawOn": "",
+                                  "clearOnHide": true,
+                                  "customDefaultValue": "",
+                                  "calculateValue": "// If the ineligibleDaysForFundingAfter10PercentageCalculation is less than 1,\r\n// then add 0 to sum of all total ineligible break days to get the unfunded study\r\n// period days. If greater than 0, the directly add the result to sum of all\r\n// total ineligible break days to get the unfunded study period days.\r\n\r\n// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDays = data.sumOfTotalInEligibleBreakDays;\r\nconst ineligibleDaysForFundingAfter10PercentageCalculation = Math.max(\r\n  data.ineligibleDaysForFundingAfter10PercentageCalculation,\r\n  0\r\n);\r\n\r\n// sum of sumOfTotalInEligibleBreakDays and ineligibleDaysForFundingAfter10PercentageCalculation is  unfundedStudyPeriodDays.\r\nvalue =\r\n  _.isNumber(sumOfTotalInEligibleBreakDays) &&\r\n  _.isNumber(ineligibleDaysForFundingAfter10PercentageCalculation)\r\n    ? parseFloat((sumOfTotalInEligibleBreakDays +\r\n      ineligibleDaysForFundingAfter10PercentageCalculation).toFixed(1))\r\n    : 0;\r\n",
+                                  "calculateServer": true,
+                                  "allowCalculateOverride": false,
                                   "validateOn": "change",
+                                  "validate": {
+                                    "required": true,
+                                    "min": "",
+                                    "max": "",
+                                    "customMessage": "",
+                                    "custom": "",
+                                    "customPrivate": false,
+                                    "json": "",
+                                    "strictDateValidation": false,
+                                    "multiple": false,
+                                    "unique": false,
+                                    "step": "any",
+                                    "integer": ""
+                                  },
+                                  "errorLabel": "",
+                                  "errors": "",
+                                  "key": "unfundedStudyPeriodDays",
+                                  "tags": [],
+                                  "properties": {},
                                   "conditional": {
                                     "show": null,
                                     "when": null,
-                                    "eq": ""
+                                    "eq": "",
+                                    "json": ""
                                   },
+                                  "customConditional": "",
+                                  "logic": [],
+                                  "attributes": {},
                                   "overlay": {
                                     "style": "",
+                                    "page": "",
                                     "left": "",
                                     "top": "",
                                     "width": "",
                                     "height": ""
                                   },
-                                  "allowCalculateOverride": false,
-                                  "encrypted": false,
+                                  "type": "number",
+                                  "input": true,
+                                  "unique": false,
+                                  "refreshOn": "",
+                                  "dataGridLabel": false,
                                   "showCharCount": false,
                                   "showWordCount": false,
-                                  "properties": {},
                                   "allowMultipleMasks": false,
                                   "addons": [],
-                                  "id": "ebk8iaa"
+                                  "id": "e201rn",
+                                  "defaultValue": ""
                                 }
                               ],
                               "width": 6,
@@ -3918,7 +3941,7 @@
                           "tree": false,
                           "lazyLoad": false,
                           "autoAdjust": false,
-                          "id": "ey7puth"
+                          "id": "ezlbd8a"
                         }
                       ],
                       "placeholder": "",
@@ -3981,7 +4004,7 @@
                       "title": "Panel",
                       "theme": "default",
                       "breadcrumb": "default",
-                      "id": "e3u2g5"
+                      "id": "es4t79"
                     }
                   ],
                   "placeholder": "",
@@ -4043,30 +4066,47 @@
                   "addons": [],
                   "tree": true,
                   "lazyLoad": false,
-                  "id": "ez29tl7"
+                  "id": "ep51wk9"
                 },
                 {
                   "label": "Sum Of Total Eligible Break Days",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "customClass": "",
+                  "modalEdit": false,
+                  "defaultValue": null,
+                  "persistent": true,
+                  "protected": false,
+                  "dbIndex": false,
+                  "encrypted": false,
+                  "redrawOn": "",
+                  "customDefaultValue": "",
                   "calculateValue": "// Sum of all eligibleBreakDays.\r\nconst sumOfTotalEligibleBreakDaysObject = data.breaksAndWeeks.studyBreaks\r\n  .filter((each) => each && +each.eligibleBreakDays)\r\n  .reduce(\r\n    (previous, current) => ({\r\n      eligibleBreakDays: previous.eligibleBreakDays + current.eligibleBreakDays,\r\n    }),\r\n    {\r\n      eligibleBreakDays: 0,\r\n    }\r\n  );\r\n\r\nconst sumOfTotalEligibleBreakDays =\r\n  sumOfTotalEligibleBreakDaysObject.eligibleBreakDays;\r\n\r\n// Checking is sumOfTotalEligibleBreakDays is number or not.\r\nvalue = _.isNumber(sumOfTotalEligibleBreakDays)\r\n  ? sumOfTotalEligibleBreakDays\r\n  : 0;\r\n",
                   "calculateServer": true,
                   "key": "sumOfTotalEligibleBreakDays",
+                  "tags": [],
+                  "properties": {},
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
                   "type": "hidden",
                   "input": true,
                   "tableView": false,
                   "placeholder": "",
                   "prefix": "",
-                  "customClass": "",
                   "suffix": "",
                   "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
                   "unique": false,
-                  "persistent": true,
                   "hidden": false,
                   "clearOnHide": true,
                   "refreshOn": "",
-                  "redrawOn": "",
-                  "modalEdit": false,
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
@@ -4076,12 +4116,9 @@
                   "tabindex": "",
                   "disabled": false,
                   "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
                   "widget": {
                     "type": "input"
                   },
-                  "attributes": {},
                   "validateOn": "change",
                   "validate": {
                     "required": false,
@@ -4096,45 +4133,53 @@
                     "when": null,
                     "eq": ""
                   },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
                   "allowCalculateOverride": false,
-                  "encrypted": false,
                   "showCharCount": false,
                   "showWordCount": false,
-                  "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "eerlaz"
+                  "id": "ep0n4rq"
                 },
                 {
-                  "label": "Sum Of Total In Eligible Break Days",
+                  "label": "Sum Of Total Ineligible Break Days",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "customClass": "",
+                  "modalEdit": false,
+                  "defaultValue": null,
+                  "persistent": true,
+                  "protected": false,
+                  "dbIndex": false,
+                  "encrypted": false,
+                  "redrawOn": "",
+                  "customDefaultValue": "",
                   "calculateValue": "// Sum of all total ineligible break days.\r\nconst sumOfTotalInEligibleBreakDaysObject = data.breaksAndWeeks.studyBreaks\r\n  .filter((each) => each && +each.ineligibleBreakDays)\r\n  .reduce(\r\n    (previous, current) => ({\r\n      ineligibleBreakDays:\r\n        previous.ineligibleBreakDays + current.ineligibleBreakDays,\r\n    }),\r\n    { ineligibleBreakDays: 0 }\r\n  );\r\n\r\nconst sumOfTotalInEligibleBreakDays =\r\n  sumOfTotalInEligibleBreakDaysObject.ineligibleBreakDays;\r\n\r\n// Checking is sumOfTotalInEligibleBreakDays is number or not.\r\nvalue = _.isNumber(sumOfTotalInEligibleBreakDays)\r\n  ? sumOfTotalInEligibleBreakDays\r\n  : 0;\r\n",
                   "calculateServer": true,
                   "key": "sumOfTotalInEligibleBreakDays",
+                  "tags": [],
+                  "properties": {},
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
                   "type": "hidden",
                   "input": true,
                   "tableView": false,
                   "placeholder": "",
                   "prefix": "",
-                  "customClass": "",
                   "suffix": "",
                   "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
                   "unique": false,
-                  "persistent": true,
                   "hidden": false,
                   "clearOnHide": true,
                   "refreshOn": "",
-                  "redrawOn": "",
-                  "modalEdit": false,
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
@@ -4144,12 +4189,9 @@
                   "tabindex": "",
                   "disabled": false,
                   "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
                   "widget": {
                     "type": "input"
                   },
-                  "attributes": {},
                   "validateOn": "change",
                   "validate": {
                     "required": false,
@@ -4164,22 +4206,13 @@
                     "when": null,
                     "eq": ""
                   },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
                   "allowCalculateOverride": false,
-                  "encrypted": false,
                   "showCharCount": false,
                   "showWordCount": false,
-                  "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "ef3iwm"
+                  "id": "es9lt9"
                 },
                 {
                   "label": "Invalid Study Breaks",
@@ -4247,7 +4280,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "e2on47o"
+                  "id": "emmm2y"
                 },
                 {
                   "label": "Study Breaks Overlapping Detection",
@@ -4315,7 +4348,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "e47vi0o"
+                  "id": "edu786e"
                 }
               ],
               "placeholder": "",
@@ -4377,7 +4410,7 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "ekz6h0p"
+              "id": "efokw3m"
             },
             {
               "label": "HTML",
@@ -4453,7 +4486,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "ep6b6if"
+              "id": "eak26b5"
             },
             {
               "label": "HTML",
@@ -4529,7 +4562,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "egrf2ni"
+              "id": "ey3cffty"
             },
             {
               "label": "HTML",
@@ -4603,7 +4636,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "erd49i"
+              "id": "eodldhm"
             },
             {
               "label": "HTML",
@@ -4677,7 +4710,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "e1v09qp"
+              "id": "ezznt8"
             },
             {
               "label": "Columns",
@@ -4763,7 +4796,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "enm04ie"
+                      "id": "esebe4f"
                     }
                   ],
                   "width": 3,
@@ -4854,7 +4887,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eulqv2q"
+                      "id": "eegrusi"
                     }
                   ],
                   "width": 3,
@@ -4945,7 +4978,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eyjzxb"
+                      "id": "eovfyq"
                     }
                   ],
                   "size": "md",
@@ -5036,7 +5069,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "emlqm47r"
+                      "id": "edz6s3"
                     }
                   ],
                   "size": "md",
@@ -5112,7 +5145,7 @@
               "tree": false,
               "lazyLoad": false,
               "autoAdjust": false,
-              "id": "ez7h69d"
+              "id": "e7s7hnx"
             },
             {
               "label": "Study period availability",
@@ -5186,7 +5219,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "etv4d9"
+              "id": "e2eatzr"
             },
             {
               "title": "Offering type panel",
@@ -5280,7 +5313,7 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "ecgyu94"
+                  "id": "e0alo4r"
                 }
               ],
               "placeholder": "",
@@ -5343,7 +5376,7 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "e9l7aiw"
+              "id": "eo62lnq"
             }
           ],
           "placeholder": "",
@@ -5384,7 +5417,7 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "eu0fcfm"
+          "id": "eqf6g5"
         },
         {
           "label": "Declaration",
@@ -5458,7 +5491,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "tag": "p",
-          "id": "enasna"
+          "id": "emfg1rk"
         },
         {
           "collapsible": false,
@@ -5541,7 +5574,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "eul70va"
+              "id": "elmyy5d"
             },
             {
               "label": "I confirm this study period offering meets the policies outlined in the StudentAid BC policy manual.",
@@ -5611,7 +5644,7 @@
               "inputType": "checkbox",
               "value": "",
               "name": "",
-              "id": "el1aamv"
+              "id": "ei5on5"
             }
           ],
           "placeholder": "",
@@ -5675,7 +5708,7 @@
           "title": "Panel",
           "theme": "default",
           "breadcrumb": "default",
-          "id": "e9odavv"
+          "id": "ezagg1"
         },
         {
           "label": "Submit",
@@ -5752,7 +5785,7 @@
           "action": "submit",
           "disableOnInvalid": false,
           "theme": "primary",
-          "id": "egdtgi"
+          "id": "epfnyoj"
         }
       ],
       "placeholder": "",
@@ -5793,7 +5826,7 @@
       "addons": [],
       "tree": false,
       "lazyLoad": false,
-      "id": "epa4ljn"
+      "id": "eo0fsmq"
     },
     {
       "label": "clientType",

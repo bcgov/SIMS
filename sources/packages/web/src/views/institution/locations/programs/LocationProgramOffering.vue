@@ -320,17 +320,6 @@ export default {
       }
     };
 
-    const requestChange = () => {
-      router.push({
-        name: InstitutionRoutesConst.OFFERING_REQUEST_CHANGE,
-        params: {
-          programId: props.programId,
-          offeringId: props.offeringId,
-          locationId: props.locationId,
-        },
-      });
-    };
-
     const toggleMenu = (event: any) => {
       menu?.value?.toggle(event);
     };
@@ -348,7 +337,6 @@ export default {
       offeringApprovalStatus,
       BannerTypes,
       hasExistingApplication,
-      requestChange,
       items,
       toggleMenu,
       menu,

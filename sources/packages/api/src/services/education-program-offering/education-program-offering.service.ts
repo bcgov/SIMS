@@ -144,7 +144,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId
    * @param programId
    * @param offeringId
-   * @param onlyEditable
+   * @param onlyEditable if set to true then fetch offering
+   * in status Approved | Declined | Pending.
    * @returns
    */
   async getProgramOffering(
@@ -561,6 +562,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
   /**
    * Get the offering to request change.
+   * Offering in Approved status alone can be requested for change.
    * @param locationId
    * @param programId
    * @param offeringId
