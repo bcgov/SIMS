@@ -10,6 +10,7 @@ import {
   NoteType,
   User,
   Institution,
+  StudentAssessment,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
@@ -25,7 +26,9 @@ import {
   PaginationOptions,
   PaginatedResults,
   getISODateOnlyString,
+  CustomNamedError,
 } from "../../utilities";
+export const OFFERING_NOT_FOUND = "OFFERING_NOT_FOUND";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(private readonly connection: Connection) {
@@ -173,6 +176,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.submittedDate",
         "offerings.offeringStatus",
         "offerings.courseLoad",
+        "offerings.parentOffering",
         "assessedBy.firstName",
         "assessedBy.lastName",
         "institutionLocation.name",
@@ -208,10 +212,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringId: number,
     educationProgramOffering: SaveOfferingModel,
   ): Promise<UpdateResult> {
+    const hasExistingApplication = await this.hasExistingApplication(
+      offeringId,
+    );
     const programOffering = this.populateProgramOffering(
       locationId,
       programId,
       educationProgramOffering,
+      hasExistingApplication,
     );
     return this.repo.update(offeringId, programOffering);
   }
@@ -220,41 +228,46 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     educationProgramOffering: SaveOfferingModel,
+    hasExistingApplication?: boolean,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.offeringName;
-    programOffering.studyStartDate = educationProgramOffering.studyStartDate;
-    programOffering.studyEndDate = educationProgramOffering.studyEndDate;
-    programOffering.actualTuitionCosts =
-      educationProgramOffering.actualTuitionCosts;
-    programOffering.programRelatedCosts =
-      educationProgramOffering.programRelatedCosts;
-    programOffering.mandatoryFees = educationProgramOffering.mandatoryFees;
-    programOffering.exceptionalExpenses =
-      educationProgramOffering.exceptionalExpenses;
-    programOffering.offeringDelivered =
-      educationProgramOffering.offeringDelivered;
-    programOffering.lacksStudyBreaks =
-      educationProgramOffering.lacksStudyBreaks;
-    programOffering.offeringType =
-      educationProgramOffering.offeringType ?? OfferingTypes.Public;
-    programOffering.educationProgram = { id: programId } as EducationProgram;
-    programOffering.institutionLocation = {
-      id: locationId,
-    } as InstitutionLocation;
-    programOffering.offeringIntensity =
-      educationProgramOffering.offeringIntensity;
-    programOffering.yearOfStudy = educationProgramOffering.yearOfStudy;
-    programOffering.showYearOfStudy = educationProgramOffering.showYearOfStudy;
-    programOffering.hasOfferingWILComponent =
-      educationProgramOffering.hasOfferingWILComponent;
-    programOffering.offeringWILType = educationProgramOffering.offeringWILType;
-    programOffering.studyBreaks = educationProgramOffering.studyBreaks;
-    programOffering.offeringDeclaration =
-      educationProgramOffering.offeringDeclaration;
-    programOffering.offeringType = educationProgramOffering.offeringType;
-    programOffering.courseLoad = educationProgramOffering.courseLoad;
-    programOffering.offeringStatus = educationProgramOffering.offeringStatus;
+    if (!hasExistingApplication) {
+      programOffering.studyStartDate = educationProgramOffering.studyStartDate;
+      programOffering.studyEndDate = educationProgramOffering.studyEndDate;
+      programOffering.actualTuitionCosts =
+        educationProgramOffering.actualTuitionCosts;
+      programOffering.programRelatedCosts =
+        educationProgramOffering.programRelatedCosts;
+      programOffering.mandatoryFees = educationProgramOffering.mandatoryFees;
+      programOffering.exceptionalExpenses =
+        educationProgramOffering.exceptionalExpenses;
+      programOffering.offeringDelivered =
+        educationProgramOffering.offeringDelivered;
+      programOffering.lacksStudyBreaks =
+        educationProgramOffering.lacksStudyBreaks;
+      programOffering.offeringType =
+        educationProgramOffering.offeringType ?? OfferingTypes.Public;
+      programOffering.educationProgram = { id: programId } as EducationProgram;
+      programOffering.institutionLocation = {
+        id: locationId,
+      } as InstitutionLocation;
+      programOffering.offeringIntensity =
+        educationProgramOffering.offeringIntensity;
+      programOffering.yearOfStudy = educationProgramOffering.yearOfStudy;
+      programOffering.showYearOfStudy =
+        educationProgramOffering.showYearOfStudy;
+      programOffering.hasOfferingWILComponent =
+        educationProgramOffering.hasOfferingWILComponent;
+      programOffering.offeringWILType =
+        educationProgramOffering.offeringWILType;
+      programOffering.studyBreaks = educationProgramOffering.studyBreaks;
+      programOffering.offeringDeclaration =
+        educationProgramOffering.offeringDeclaration;
+      programOffering.offeringType = educationProgramOffering.offeringType;
+      programOffering.courseLoad = educationProgramOffering.courseLoad;
+      programOffering.offeringStatus = educationProgramOffering.offeringStatus;
+    }
     return programOffering;
   }
 
@@ -452,5 +465,82 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .limit(1)
       .getRawOne();
     return !!offeringExists;
+  }
+
+  /**
+   * Check if the given offering has any submitted applications.
+   * @param offeringId
+   * @returns true if an offering has any assessment
+   */
+  async hasExistingApplication(offeringId: number): Promise<boolean> {
+    const queryResult = await this.connection
+      .getRepository(StudentAssessment)
+      .createQueryBuilder("assessment")
+      .select("1")
+      .where("assessment.offering.id = :offeringId", { offeringId })
+      .limit(1)
+      .getRawOne();
+    return !!queryResult;
+  }
+
+  /**
+   * Request a change for an offering.
+   * @param locationId
+   * @param programId
+   * @param offeringId
+   * @param userId
+   * @param educationProgramOffering
+   * @returns new offering created from existing offering with changes requested.
+   */
+  async requestChange(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+    userId: number,
+    educationProgramOffering: SaveOfferingModel,
+  ): Promise<EducationProgramOffering> {
+    const currentOffering = await this.getProgramOffering(
+      locationId,
+      programId,
+      offeringId,
+    );
+
+    if (!currentOffering) {
+      throw new CustomNamedError(
+        "Offering for given location and program not found.",
+        OFFERING_NOT_FOUND,
+      );
+    }
+
+    const requestedOffering = this.populateProgramOffering(
+      locationId,
+      programId,
+      educationProgramOffering,
+    );
+    const auditUser = { id: userId } as User;
+    requestedOffering.offeringStatus = OfferingStatus.AwaitingApproval;
+    requestedOffering.parentOffering =
+      currentOffering.parentOffering ??
+      ({ id: currentOffering.id } as EducationProgramOffering);
+    requestedOffering.creator = auditUser;
+    requestedOffering.createdAt = new Date();
+    let persistedOffering = new EducationProgramOffering();
+    await this.connection.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager
+        .getRepository(EducationProgramOffering)
+        .createQueryBuilder()
+        .update(EducationProgramOffering)
+        .set({
+          offeringStatus: OfferingStatus.UnderReview,
+          modifier: auditUser,
+        })
+        .where("id = :offeringId", { offeringId })
+        .execute();
+
+      persistedOffering = await transactionalEntityManager
+        .getRepository(EducationProgramOffering)
+        .save(requestedOffering);
+    });
+    return persistedOffering;
   }
 }

@@ -28,6 +28,7 @@ import {
   EducationProgramOfferingService,
   FormService,
   EducationProgramService,
+  InstitutionLocationService,
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -42,6 +43,7 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   PaginatedResults,
+  CustomNamedError,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { EducationProgramOfferingModel } from "../../services/education-program-offering/education-program-offering.service.models";
@@ -56,6 +58,7 @@ export class EducationProgramOfferingController extends BaseController {
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
     private readonly programService: EducationProgramService,
+    private readonly institutionLocationService: InstitutionLocationService,
   ) {
     super();
   }
@@ -155,11 +158,13 @@ export class EducationProgramOfferingController extends BaseController {
       offeringId,
     );
     if (!offering) {
-      throw new UnprocessableEntityException(
+      throw new NotFoundException(
         "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
-    return transformToProgramOfferingDto(offering);
+    const hasExistingApplication =
+      await this.programOfferingService.hasExistingApplication(offeringId);
+    return transformToProgramOfferingDto(offering, hasExistingApplication);
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -399,5 +404,60 @@ export class EducationProgramOfferingController extends BaseController {
       );
     }
     return transformToProgramOfferingDto(offering);
+  }
+
+  /**
+   * Request a change to offering.
+   * @param payload
+   * @param locationId
+   * @param programId
+   * @param userToken
+   * @returns primary identifier of created resource.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @HasLocationAccess("locationId")
+  @Post(
+    ":offeringId/location/:locationId/education-program/:programId/request-change",
+  )
+  async requestChange(
+    @Body() payload: SaveOfferingDTO,
+    @Param("offeringId") offeringId: number,
+    @Param("locationId") locationId: number,
+    @Param("programId") programId: number,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const program = await this.programService.getInstitutionProgram(
+      programId,
+      userToken.authorizations.institutionId,
+    );
+    if (!program) {
+      throw new NotFoundException("Program not found for the institution.");
+    }
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.EducationProgramOffering,
+      payload,
+    );
+
+    if (!submissionResult.valid) {
+      throw new UnprocessableEntityException(
+        "Not able to request a change for program offering due to an invalid request.",
+      );
+    }
+
+    try {
+      const requestedOffering = await this.programOfferingService.requestChange(
+        locationId,
+        programId,
+        offeringId,
+        userToken.userId,
+        submissionResult.data.data,
+      );
+      return { id: requestedOffering.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
   }
 }
