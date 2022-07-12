@@ -4,6 +4,10 @@ export interface FormValidationResult {
   valid: boolean;
 }
 
+export interface ErrorMessage {
+  errorMessages: string[];
+}
+
 export type VForm = Vue & {
   /**
    * Validates all registered inputs. Returns true if successful and false if not.
@@ -18,5 +22,5 @@ export type VForm = Vue & {
    * Resets validation of all registered inputs without modifying their state
    */
   resetValidation: () => void;
-  errors: any[];
+  errors: ErrorMessage[];
 };

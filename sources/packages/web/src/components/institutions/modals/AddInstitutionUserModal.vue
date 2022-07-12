@@ -1,50 +1,53 @@
 <template>
-  <!-- Add user -->
-  <modal-dialog-base
-    :showDialog="showDialog"
-    @dialogClosed="dialogClosed"
-    title="Add new user"
-  >
-    <template #content>
-      <institution-user-management
-        :initialData="initialData"
-        ref="institutionUserManagement"
-      >
-        <template #user-name="{ formModel }">
-          <!-- Business BCeID  -->
-          <v-autocomplete
-            hide-details
-            v-if="hasBusinessGuid"
-            v-model="formModel.selectedBCeIDUser"
-            :items="bceidUsers"
-            class="mr-3 bceid-input"
-            density="compact"
-            variant="outlined"
-            label="Business BCeID user Id"
-            :rules="[(v) => !!v || 'Business BCeID user Id is required']"
-          ></v-autocomplete>
-          <!-- Basic BCeID  -->
-          <v-text-field
-            hide-details
-            v-else
-            v-model.trim="formModel.selectedBCeIDUser"
-            class="mr-3 bceid-input"
-            density="compact"
-            variant="outlined"
-            label="Basic BCeID user ID"
-            :rules="[(v) => !!v || 'Basic BCeID user Id is required']"
-          />
-        </template>
-      </institution-user-management>
-    </template>
-    <template #footer>
-      <footer-buttons
-        primaryLabel="Add user now"
-        @primaryClick="submit"
-        @secondaryClick="cancel"
-      />
-    </template>
-  </modal-dialog-base>
+  <v-form ref="addUserForm">
+    <modal-dialog-base
+      :showDialog="showDialog"
+      @dialogClosed="dialogClosed"
+      title="Add new user"
+    >
+      <template #content>
+        <institution-user-management
+          ref="institutionUserManagement"
+          :errors="addUserForm.errors"
+          :initialData="initialData"
+        >
+          <template #user-name="{ formModel }">
+            <!-- Business BCeID  -->
+            <v-autocomplete
+              hide-details
+              v-if="hasBusinessGuid"
+              v-model="formModel.selectedBCeIDUser"
+              :items="bceidUsers"
+              class="mr-3 bceid-input"
+              density="compact"
+              variant="outlined"
+              label="Business BCeID user Id"
+              :rules="[(v) => !!v || 'Business BCeID user Id is required.']"
+            ></v-autocomplete>
+            <!-- Basic BCeID  -->
+            <v-text-field
+              hide-details
+              v-else
+              v-model.trim="formModel.selectedBCeIDUser"
+              class="mr-3 bceid-input"
+              density="compact"
+              variant="outlined"
+              label="Basic BCeID user ID"
+              :rules="[(v) => !!v || 'Basic BCeID user Id is required']"
+            />
+          </template>
+        </institution-user-management>
+      </template>
+      <template #footer>
+        <footer-buttons
+          :processing="processing"
+          primaryLabel="Add user now"
+          @primaryClick="submit"
+          @secondaryClick="cancel"
+        />
+      </template>
+    </modal-dialog-base>
+  </v-form>
 </template>
 
 <script lang="ts">
@@ -54,6 +57,7 @@ import { useFormatters, useModalDialog, useToastMessage } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
 import { UserService } from "@/services/UserService";
 import {
+  ApiProcessError,
   BCeIDUser,
   LocationUserAccess,
   UserManagementModel,
@@ -74,8 +78,11 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useToastMessage();
+    // TODO: Add validation for the same user added twice.
     const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
+    const toast = useToastMessage();
+    const processing = ref(false);
+    const addUserForm = ref({} as VForm);
     const institutionUserManagement = ref();
     const { getFormattedAddress } = useFormatters();
     const bceidUsers = ref([] as BCeIDUser[]);
@@ -126,14 +133,14 @@ export default {
 
     // Creates the user and closes the modal.
     const submit = async () => {
-      const form = institutionUserManagement.value.userForm as VForm;
-      const validationResult = await form.validate();
+      const validationResult = await addUserForm.value.validate();
       if (!validationResult.valid) {
         return;
       }
       const userManagementModel = institutionUserManagement.value
         .formModel as UserManagementModel;
       try {
+        processing.value = true;
         await InstitutionService.shared.createInstitutionUserWithAuth(
           userManagementModel.selectedBCeIDUser,
           userManagementModel.isAdmin,
@@ -143,11 +150,17 @@ export default {
         );
         toast.success("User created", "User successfully created.");
         resolvePromise(true);
-      } catch {
-        toast.error(
-          "Unexpected error",
-          "An error happened while creating the user.",
-        );
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          addUserForm.value.errors.push({ errorMessages: [error.message] });
+        } else {
+          toast.error(
+            "An unexpected error happen",
+            "An unexpected error happen while updating the user.",
+          );
+        }
+      } finally {
+        processing.value = false;
       }
     };
 
@@ -157,10 +170,12 @@ export default {
     };
 
     return {
+      addUserForm,
       showDialog,
       showModal,
       submit,
       cancel,
+      processing,
       initialData,
       bceidUsers,
       institutionUserManagement,

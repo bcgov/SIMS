@@ -20,6 +20,11 @@ export const SIN_VALIDATION_RECORD_NOT_FOUND =
 export const SIN_VALIDATION_RECORD_INVALID_OPERATION =
   "SIN_VALIDATION_RECORD_INVALID_OPERATION";
 /**
+ * An user is trying to be added to the institution when it is already present.
+ */
+export const INSTITUTION_USER_ALREADY_EXISTS =
+  "INSTITUTION_USER_ALREADY_EXISTS";
+/**
  * Only one legal signing authority is allowed per institution.
  * If there is attempt to assign a second user as legal signing authority,
  * a exception with this code will be thrown.

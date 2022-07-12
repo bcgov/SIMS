@@ -17,9 +17,7 @@ import {
   InstitutionUserType,
   UserInfo,
 } from "../../types";
-import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
-import { InjectLogger } from "../../common";
 import { AccountDetails } from "../bceid/account-details.model";
 import {
   sortUsersColumnMap,
@@ -47,11 +45,8 @@ import { InstitutionUserAuthService } from "../institution-user-auth/institution
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
-  @InjectLogger()
-  logger: LoggerService;
-
-  institutionUserRepo: Repository<InstitutionUser>;
-  institutionUserTypeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
+  private readonly institutionUserRepo: Repository<InstitutionUser>;
+  private readonly institutionUserTypeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
 
   constructor(
     connection: Connection,
@@ -63,7 +58,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     this.institutionUserTypeAndRoleRepo = connection.getRepository(
       InstitutionUserTypeAndRole,
     );
-    this.logger.log("[Created]");
   }
 
   async createAssociation({
@@ -117,6 +111,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     bceidUserAccount: AccountDetails,
     permissionInfo: InstitutionUserModel,
   ): Promise<InstitutionUser> {
+    const userName = `${bceidUserAccount.user.guid}@bceid`.toLowerCase();
+    // TODO: Add user already exists validation.
     await this.validateUniqueSigningAuthority(
       institutionId,
       permissionInfo.permissions,
@@ -129,7 +125,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     userEntity.email = bceidUserAccount.user.email;
     userEntity.firstName = bceidUserAccount.user.firstname;
     userEntity.lastName = bceidUserAccount.user.surname;
-    userEntity.userName = `${bceidUserAccount.user.guid}@bceid`.toLowerCase();
+    userEntity.userName = userName;
     // Create new relationship between institution and the new user.
     const newInstitutionUser = new InstitutionUser();
     newInstitutionUser.user = userEntity;

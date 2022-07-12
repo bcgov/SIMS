@@ -27,6 +27,7 @@
       </template>
       <template #footer>
         <footer-buttons
+          :processing="processing"
           primaryLabel="Edit user now"
           @primaryClick="submit"
           @secondaryClick="cancel"
@@ -37,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useFormatters, useModalDialog, useToastMessage } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -69,20 +70,18 @@ export default {
     const {
       showDialog,
       resolvePromise,
-      showModal,
-      showParameter: user,
+      showModal: showModalInternal,
     } = useModalDialog<boolean, InstitutionUserViewModel>();
+    const processing = ref(false);
     const editUserForm = ref({} as VForm);
     const toast = useToastMessage();
     const institutionUserManagement = ref();
     const { getFormattedAddress } = useFormatters();
     const initialData = ref(new UserManagementModel());
-
     // Information of the user being edited received through the modal show dialog.
-    const userInfo = computed(() => {
-      return user.value ?? ({} as InstitutionUserViewModel);
-    });
+    const userInfo = ref({} as InstitutionUserViewModel);
 
+    // Define if the location has user access.
     const getLocationAccess = (
       locationId: number,
       userDetails: InstitutionUserAPIOutDTO,
@@ -95,10 +94,13 @@ export default {
         : LocationUserAccess.NoAccess;
     };
 
-    watch(userInfo, async () => {
+    // Show the modal and loads the user information.
+    const showModal = async (
+      params: InstitutionUserViewModel,
+    ): Promise<boolean> => {
       editUserForm.value.reset();
       editUserForm.value.resetValidation();
-      console.log(editUserForm.value);
+      userInfo.value = params;
       // Get the user permissions.
       const userDetails =
         await InstitutionService.shared.getInstitutionLocationUserDetails(
@@ -120,8 +122,6 @@ export default {
         await InstitutionService.shared.getAllInstitutionLocations(
           props.institutionId,
         );
-      // Reset the array.
-
       const locationAuthorizations = locations.map((location) => ({
         id: location.id,
         name: location.name,
@@ -134,7 +134,9 @@ export default {
         isLegalSigningAuthority,
         locationAuthorizations,
       } as UserManagementModel;
-    });
+      // Call the modal method to show the modal.
+      return showModalInternal(params);
+    };
 
     // Update the user and closes the modal.
     const submit = async () => {
@@ -143,6 +145,7 @@ export default {
         return;
       }
       try {
+        processing.value = true;
         const userManagementModel = institutionUserManagement.value
           .formModel as UserManagementModel;
         await InstitutionService.shared.updateInstitutionUserWithAuth(
@@ -154,13 +157,15 @@ export default {
         resolvePromise(true);
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
-          editUserForm.value.errors.push(error.message);
+          editUserForm.value.errors.push({ errorMessages: [error.message] });
         } else {
           toast.error(
             "An unexpected error happen",
             "An unexpected error happen while updating the user.",
           );
         }
+      } finally {
+        processing.value = false;
       }
     };
 
@@ -182,6 +187,7 @@ export default {
       showModal,
       submit,
       cancel,
+      processing,
       userInfo,
       institutionUserManagement,
       initialData,
