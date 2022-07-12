@@ -32,7 +32,7 @@ import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/
 import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ESDCIntegrationConfig } from "../../types";
-import { ESDCFileResponseAPIOutDTO } from "../../route-controllers/esdc-integration/models/esdc-model";
+import { ESDCFileResponseAPIOutDTO } from "../../route-controllers/esdc-integration/models/esdc.dto";
 import { ECertDisbursementSchedule } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";

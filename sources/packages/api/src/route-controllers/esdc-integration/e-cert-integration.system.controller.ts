@@ -10,7 +10,7 @@ import {
   DailyDisbursementReportAPIInDTO,
   ESDCFileResponseAPIOutDTO,
   ESDCFileResultAPIOutDTO,
-} from "./models/esdc-model";
+} from "./models/esdc.dto";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { DisbursementReceiptRequestService } from "../../esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";

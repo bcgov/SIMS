@@ -4,7 +4,7 @@ import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { FedRestrictionProcessingService } from "../../esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
-import { ESDCFileResponseAPIOutDTO } from "./models/esdc-model";
+import { ESDCFileResponseAPIOutDTO } from "./models/esdc.dto";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";

@@ -8,7 +8,7 @@ import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { SINValidationProcessingService } from "../../esdc-integration/sin-validation/sin-validation-processing.service";
-import { ESDCFileResultAPIOutDTO } from "./models/esdc-model";
+import { ESDCFileResultAPIOutDTO } from "./models/esdc.dto";
 import { IUserToken } from "../../auth/userToken.interface";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
