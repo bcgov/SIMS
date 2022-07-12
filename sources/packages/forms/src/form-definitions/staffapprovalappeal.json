@@ -4,7 +4,9 @@
   "type": "form",
   "name": "staffApprovalAppeal",
   "path": "staffapprovalappeal",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "label": "Income",
@@ -12,7 +14,12 @@
       "labelMargin": "",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "Staff area",
       "refreshOnChange": false,
       "customClass": "category-header-medium primary-color",
@@ -21,7 +28,12 @@
       "key": "newIncome",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -94,7 +106,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -130,8 +147,16 @@
           "tableView": false,
           "modalEdit": false,
           "values": [
-            { "label": "Yes", "value": "Approved", "shortcut": "" },
-            { "label": "No", "value": "Declined", "shortcut": "" }
+            {
+              "label": "Yes",
+              "value": "Approved",
+              "shortcut": ""
+            },
+            {
+              "label": "No",
+              "value": "Declined",
+              "shortcut": ""
+            }
           ],
           "dataType": "auto",
           "persistent": true,
@@ -208,7 +233,9 @@
           "tooltip": "",
           "prefix": "",
           "suffix": "",
-          "widget": { "type": "input" },
+          "widget": {
+            "type": "input"
+          },
           "displayMask": "",
           "editor": "",
           "autoExpand": false,
@@ -297,7 +324,12 @@
           "labelMargin": "",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "<strong>Approved by: </strong>{{ data.assessedByUserName }} | <strong>Approved on: </strong>{{ data.assessedDate }}",
           "refreshOnChange": true,
           "customClass": "",
@@ -374,7 +406,12 @@
           "labelMargin": "",
           "tag": "p",
           "className": "",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "<strong>Declined by: </strong>{{ data.assessedByUserName }} | <strong>Declined on: </strong>{{ data.assessedDate }}",
           "refreshOnChange": true,
           "customClass": "",
@@ -383,7 +420,12 @@
           "key": "html1",
           "tags": [],
           "properties": {},
-          "conditional": { "show": "", "when": "", "eq": "", "json": "" },
+          "conditional": {
+            "show": "",
+            "when": "",
+            "eq": "",
+            "json": ""
+          },
           "customConditional": "show = data.showAudit && data.appealStatus === \"Declined\";",
           "logic": [],
           "attributes": {},
@@ -529,7 +571,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -539,7 +583,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -596,7 +644,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -606,7 +656,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -663,7 +717,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -673,7 +729,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,

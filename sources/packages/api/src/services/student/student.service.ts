@@ -253,7 +253,7 @@ export class StudentService extends RecordDataModelService<Student> {
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
       .where("user.id= :userId ", { userId })
-      .select(["sinValidation.isValidSIN", "student.id"])
+      .select(["student.id", "sinValidation.id", "sinValidation.isValidSIN"])
       .getOne();
     return student?.sinValidation.isValidSIN;
   }

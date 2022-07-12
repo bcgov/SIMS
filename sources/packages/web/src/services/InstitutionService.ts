@@ -1,14 +1,15 @@
 import {
-  Institute,
   AESTInstitutionProgramsSummaryDto,
+  InstitutionUserRoles,
+  InstitutionUserTypes,
+  LocationAuthorization,
+  LocationUserAccess,
   PaginationParams,
 } from "@/types";
 import {
-  EducationProgram,
   InstitutionLocationsDetails,
   InstitutionUserAuthDetails,
   InstitutionUserViewModel,
-  UserPermissionDto,
   InstitutionUserRoleLocation,
   InstitutionUserWithUserType,
   OptionItemDto,
@@ -30,12 +31,16 @@ import {
   InstitutionUserAPIOutDTO,
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
-  InstitutionFormAPIInDTO,
+  CreateInstitutionAPIInDTO,
   InstitutionUserTypeAndRoleAPIOutDTO,
-  InstitutionUserAPIInDTO,
   UserRoleOptionAPIOutDTO,
   InstitutionLocationAPIInDTO,
   InstitutionLocationPrimaryContactAPIInDTO,
+  AESTCreateInstitutionAPIInDTO,
+  PrimaryIdentifierAPIOutDTO,
+  CreateInstitutionUserAPIInDTO,
+  UpdateInstitutionUserAPIInDTO,
+  UserPermissionAPIInDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -47,37 +52,32 @@ export class InstitutionService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getInstitutes(): Promise<Institute[]> {
-    // TODO: Sending dummy list for now later replace with API call
-    const institutes: Institute[] = [
-      {
-        name: "Sprott Shaw College",
-        code: "ssc",
-      },
-    ];
-    return institutes;
+  /**
+   * Create institutions that are not allowed to create the profile by
+   * themselves due to limitations, for instance, when the institution
+   * has only a basic BCeID login.
+   * @param data complete information to create the profile.
+   * @return created institution profile.
+   */
+  async createInstitution(
+    data: AESTCreateInstitutionAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.Institution.createInstitution(data);
   }
 
-  public async getProgramsFor(
-    institute?: Institute,
-  ): Promise<EducationProgram[]> {
-    if (institute?.code === "ssc") {
-      const programs: EducationProgram[] = [
-        {
-          name: "Nursing Program",
-          code: "np",
-        },
-      ];
-      return programs;
-    }
-    return [];
+  /**
+   * Create institution during institution setup process when the institution
+   * profile and the user are create and associated altogether.
+   * @param data information from the institution and the user.
+   * @return created institution profile.
+   */
+  async createInstitutionWithAssociatedUser(
+    data: CreateInstitutionAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.Institution.createInstitutionWithAssociatedUser(data);
   }
 
-  public async createInstitution(data: InstitutionFormAPIInDTO): Promise<void> {
-    await ApiClient.Institution.createInstitution(data);
-  }
-
-  public async updateInstitute(
+  public async updateInstitution(
     data: InstitutionContactAPIInDTO,
     institutionId?: number,
   ): Promise<void> {
@@ -203,39 +203,101 @@ export class InstitutionService {
     return ApiClient.Institution.getUserTypeAndRoles();
   }
 
-  private async prepareUserPayload(
-    isNew: boolean,
-    data: InstitutionUserAuthDetails,
-  ) {
-    const payload = {} as InstitutionUserAPIInDTO;
-    if (isNew) {
-      payload.userId = data.userId;
+  /**
+   * Create the user authorizations to be associate with the user.
+   * @param isAdmin must be created as an admin user.
+   * @param isLegalSigningAuthority for admin users, define if the role
+   * legal-signing-authority should be associated with the user.
+   * @param locationAuthorizations for non-admin users, the individual permission
+   * for every location.
+   */
+  private createUserPermissions(
+    isAdmin: boolean,
+    isLegalSigningAuthority: boolean,
+    locationAuthorizations: LocationAuthorization[],
+  ): UserPermissionAPIInDTO[] {
+    let permissions: UserPermissionAPIInDTO[];
+    if (isAdmin) {
+      // User is an admin and will have access for all the locations.
+      permissions = [
+        {
+          userType: InstitutionUserTypes.admin,
+          userRole: isLegalSigningAuthority
+            ? InstitutionUserRoles.legalSigningAuthority
+            : undefined,
+        } as UserPermissionAPIInDTO,
+      ];
+    } else {
+      // User is not an admin and will have the permission assigned to the individual locations.
+      // Filter locations with access. At this point the UI validations already ensured
+      // that there will be at least one location defined with some access level.
+      permissions = locationAuthorizations
+        .filter(
+          (locationAccess) =>
+            locationAccess.userAccess === LocationUserAccess.User,
+        )
+        .map(
+          (locationAccess) =>
+            ({
+              locationId: locationAccess.id,
+              userType: locationAccess.userAccess,
+            } as UserPermissionAPIInDTO),
+        );
     }
 
-    if (data.location) {
-      // Add locations specific permissions.
-      payload.permissions = data.location.map(
-        (permission: InstitutionUserRoleLocation) =>
-          ({
-            userType: permission.userType,
-            locationId: permission.locationId,
-          } as UserPermissionDto),
-      );
-    } else {
-      // Add institution specific permissions.
-      payload.permissions = [
-        {
-          userType: data.userType,
-          userRole: data.userRole === "admin" ? undefined : data.userRole,
-        },
-      ];
-    }
-    return payload;
+    return permissions;
   }
 
-  public async createUser(data: InstitutionUserAuthDetails): Promise<void> {
-    const payload = await this.prepareUserPayload(true, data);
-    await ApiClient.InstitutionLocation.createUser(payload);
+  /**
+   * Create a user, associate with the institution, and assign the authorizations.
+   * @param userId user BCeID id from BCeID Web Service (e.g. SomeUserName)
+   * that will have its data retrieved to be created on SIMS.
+   * @param isAdmin must be created as an admin user.
+   * @param isLegalSigningAuthority for admin users, define if the role
+   * legal-signing-authority should be associated with the user.
+   * @param locationAuthorizations for non-admin users, the individual permission
+   * for every location.
+   */
+  async createInstitutionUserWithAuth(
+    userId: string,
+    isAdmin: boolean,
+    isLegalSigningAuthority: boolean,
+    locationAuthorizations: LocationAuthorization[],
+  ): Promise<void> {
+    const userPayload = { userId } as CreateInstitutionUserAPIInDTO;
+    userPayload.permissions = this.createUserPermissions(
+      isAdmin,
+      isLegalSigningAuthority,
+      locationAuthorizations,
+    );
+    await ApiClient.Institution.createInstitutionUserWithAuth(userPayload);
+  }
+
+  /**
+   * Updates an existing user authorizations.
+   * @param userName unique user name from SIMS (e.g. someGuid@bceid).
+   * @param isAdmin must be created as an admin user.
+   * @param isLegalSigningAuthority for admin users, define if the role
+   * legal-signing-authority should be associated with the user.
+   * @param locationAuthorizations for non-admin users, the individual permission
+   * for every location.
+   */
+  async updateInstitutionUserWithAuth(
+    userName: string,
+    isAdmin: boolean,
+    isLegalSigningAuthority: boolean,
+    locationAuthorizations: LocationAuthorization[],
+  ): Promise<void> {
+    const userPayload = {} as UpdateInstitutionUserAPIInDTO;
+    userPayload.permissions = this.createUserPermissions(
+      isAdmin,
+      isLegalSigningAuthority,
+      locationAuthorizations,
+    );
+    await ApiClient.Institution.updateInstitutionUserWithAuth(
+      userName,
+      userPayload,
+    );
   }
 
   public async getInstitutionLocationUserDetails(
@@ -244,14 +306,6 @@ export class InstitutionService {
     return ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(
       userName,
     );
-  }
-
-  public async updateUser(
-    userName: string,
-    data: InstitutionUserAuthDetails,
-  ): Promise<void> {
-    const payload = await this.prepareUserPayload(false, data);
-    await ApiClient.InstitutionLocation.updateUser(userName, payload);
   }
 
   public async updateUserStatus(userName: string, userStatus: boolean) {

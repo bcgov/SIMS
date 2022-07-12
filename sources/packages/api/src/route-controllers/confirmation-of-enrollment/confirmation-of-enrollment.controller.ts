@@ -268,7 +268,7 @@ export class ConfirmationOfEnrollmentController extends BaseController {
       ),
       applicationLocationId: offering.institutionLocation.id,
       applicationDeniedReason: getCOEDeniedReason(disbursementSchedule),
-      studyBreaks: offering.studyBreaks?.map((studyBreak) => ({
+      studyBreaks: offering.studyBreaks?.studyBreaks?.map((studyBreak) => ({
         breakStartDate: dateString(studyBreak.breakStartDate),
         breakEndDate: dateString(studyBreak.breakEndDate),
       })),

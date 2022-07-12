@@ -4,7 +4,9 @@
   "type": "form",
   "name": "approvedeclineoffering",
   "path": "approvedeclineoffering",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "title": "Action Panel",

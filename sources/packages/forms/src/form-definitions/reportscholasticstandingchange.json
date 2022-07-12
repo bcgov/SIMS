@@ -4,7 +4,9 @@
   "type": "form",
   "name": "reportscholasticstandingchange",
   "path": "reportscholasticstandingchange",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "label": "Student Name",
@@ -1888,7 +1890,9 @@
                   "disabled": false,
                   "tableView": false,
                   "modalEdit": false,
-                  "defaultValue": [{}],
+                  "defaultValue": [
+                    {}
+                  ],
                   "persistent": false,
                   "protected": false,
                   "dbIndex": false,

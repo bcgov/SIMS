@@ -4,7 +4,9 @@
   "type": "form",
   "name": "studentExceptions",
   "path": "studentexceptions",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "label": "HTML",
@@ -12,7 +14,12 @@
       "labelMargin": "",
       "tag": "div",
       "className": "mb-4",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "<span class=\"category-header-large primary-color mr-2\" role=\"heading\" aria-level=\"2\">Student exceptions</span> \n<span class=\"fa fa-circle formio-status-chip {{ data.exceptionStatusClass }} mt-2\">\n  {{ data.exceptionStatusOnLoad }}\n</span>",
       "refreshOnChange": true,
       "customClass": "",
@@ -21,7 +28,12 @@
       "key": "html4",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -84,7 +96,12 @@
       "labelMargin": "",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "Review the student application and supporting documents on the previous page. Then approve or decline the student’s exception request below.",
       "refreshOnChange": false,
       "customClass": "",
@@ -93,7 +110,12 @@
       "key": "html2",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -166,7 +188,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -190,7 +217,12 @@
           "labelMargin": "",
           "tag": "h3",
           "className": "category-header-medium primary-color",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "Requests ({{ data.exceptionNames.length }})",
           "refreshOnChange": true,
           "customClass": "category-header-medium primary-color",
@@ -300,7 +332,12 @@
               "labelMargin": "",
               "tag": "strong",
               "className": "",
-              "attrs": [{ "attr": "", "value": "" }],
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
               "content": "Citizenship for permanent residency",
               "refreshOnChange": false,
               "customClass": "",
@@ -453,7 +490,12 @@
               "labelMargin": "",
               "tag": "strong",
               "className": "",
-              "attrs": [{ "attr": "", "value": "" }],
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
               "content": "Citizenship for protected persons",
               "refreshOnChange": false,
               "customClass": "",
@@ -606,7 +648,12 @@
               "labelMargin": "",
               "tag": "strong",
               "className": "",
-              "attrs": [{ "attr": "", "value": "" }],
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
               "content": "Citizenship for B.C. residency",
               "refreshOnChange": false,
               "customClass": "",
@@ -759,7 +806,12 @@
               "labelMargin": "",
               "tag": "strong",
               "className": "",
-              "attrs": [{ "attr": "", "value": "" }],
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
               "content": "Dependant's income tax",
               "refreshOnChange": false,
               "customClass": "",
@@ -912,7 +964,12 @@
               "labelMargin": "",
               "tag": "strong",
               "className": "",
-              "attrs": [{ "attr": "", "value": "" }],
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
               "content": "Dependant's shared custody",
               "refreshOnChange": false,
               "customClass": "",
@@ -1065,7 +1122,12 @@
               "labelMargin": "",
               "tag": "strong",
               "className": "",
-              "attrs": [{ "attr": "", "value": "" }],
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
               "content": "Estranged from parents",
               "refreshOnChange": false,
               "customClass": "",
@@ -1218,7 +1280,12 @@
               "labelMargin": "",
               "tag": "strong",
               "className": "",
-              "attrs": [{ "attr": "", "value": "" }],
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
               "content": "Parent's residency",
               "refreshOnChange": false,
               "customClass": "",
@@ -1371,7 +1438,12 @@
               "labelMargin": "",
               "tag": "strong",
               "className": "",
-              "attrs": [{ "attr": "", "value": "" }],
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
               "content": "Exceptional expenses",
               "refreshOnChange": false,
               "customClass": "",
@@ -1521,7 +1593,12 @@
             {
               "label": "HTML",
               "tag": "strong",
-              "attrs": [{ "attr": "", "value": "" }],
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
               "content": "Rent living situation",
               "refreshOnChange": false,
               "key": "html14",
@@ -1566,7 +1643,11 @@
                 "multiple": false,
                 "unique": false
               },
-              "conditional": { "show": null, "when": null, "eq": "" },
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              },
               "overlay": {
                 "style": "",
                 "left": "",
@@ -1662,7 +1743,12 @@
             {
               "label": "HTML",
               "tag": "strong",
-              "attrs": [{ "attr": "", "value": "" }],
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
               "content": "Transportation",
               "refreshOnChange": false,
               "key": "html15",
@@ -1707,7 +1793,11 @@
                 "multiple": false,
                 "unique": false
               },
-              "conditional": { "show": null, "when": null, "eq": "" },
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              },
               "overlay": {
                 "style": "",
                 "left": "",
@@ -1824,7 +1914,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [
         {
           "name": "Disable staff area approval",
@@ -1866,7 +1961,12 @@
           "label": "Staff area",
           "tag": "h3",
           "className": "category-header-medium primary-color",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "Staff area",
           "refreshOnChange": false,
           "key": "html",
@@ -1911,7 +2011,11 @@
             "multiple": false,
             "unique": false
           },
-          "conditional": { "show": null, "when": null, "eq": "" },
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": ""
+          },
           "overlay": {
             "style": "",
             "left": "",
@@ -1934,8 +2038,16 @@
           "inline": false,
           "tableView": false,
           "values": [
-            { "label": "Yes", "value": "Approved", "shortcut": "" },
-            { "label": "No", "value": "Declined", "shortcut": "" }
+            {
+              "label": "Yes",
+              "value": "Approved",
+              "shortcut": ""
+            },
+            {
+              "label": "No",
+              "value": "Declined",
+              "shortcut": ""
+            }
           ],
           "validate": {
             "required": true,
@@ -1979,7 +2091,11 @@
           "widget": null,
           "attributes": {},
           "validateOn": "change",
-          "conditional": { "show": null, "when": null, "eq": "" },
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": ""
+          },
           "overlay": {
             "style": "",
             "left": "",
@@ -2046,10 +2162,16 @@
           "customDefaultValue": "",
           "calculateValue": "",
           "calculateServer": false,
-          "widget": { "type": "input" },
+          "widget": {
+            "type": "input"
+          },
           "attributes": {},
           "validateOn": "change",
-          "conditional": { "show": null, "when": null, "eq": "" },
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": ""
+          },
           "overlay": {
             "style": "",
             "left": "",
@@ -2078,7 +2200,12 @@
         },
         {
           "label": "HTML",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "<strong>Approved by: </strong>{{ data.assessedByUserName }} | <strong>Approved on: </strong>{{ data.assessedDate }}",
           "refreshOnChange": true,
           "key": "html1",
@@ -2124,7 +2251,11 @@
             "multiple": false,
             "unique": false
           },
-          "conditional": { "show": null, "when": null, "eq": "" },
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": ""
+          },
           "overlay": {
             "style": "",
             "left": "",
@@ -2144,7 +2275,12 @@
         },
         {
           "label": "HTML",
-          "attrs": [{ "attr": "", "value": "" }],
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
           "content": "<strong>Declined by: </strong>{{ data.assessedByUserName }} | <strong>Declined on: </strong>{{ data.assessedDate }}",
           "refreshOnChange": true,
           "key": "html5",
@@ -2190,7 +2326,11 @@
             "multiple": false,
             "unique": false
           },
-          "conditional": { "show": null, "when": null, "eq": "" },
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": ""
+          },
           "overlay": {
             "style": "",
             "left": "",
@@ -2297,7 +2437,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -2307,7 +2449,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -2364,7 +2510,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -2374,7 +2522,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,

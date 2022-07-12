@@ -1,6 +1,8 @@
 {
   "type": "form",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "owner": "dheepak.ramanathan@gov.bc.ca",
   "components": [
     {

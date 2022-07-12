@@ -35,6 +35,7 @@ import {
   InstitutionUserTypeAndRoleModel,
   InstitutionUserPermissionModel,
 } from "./institution.service.model";
+import { BCeIDAccountTypeCodes } from "../bceid/bceid.models";
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
 export const LEGAL_SIGNING_AUTHORITY_MSG =
   "Legal signing authority already exist for this Institution.";
@@ -69,6 +70,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     location,
     role,
     institutionUser,
+    auditUserId,
   }: {
     institution: Institution;
     type: InstitutionUserType;
@@ -76,12 +78,16 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     location?: InstitutionLocation;
     role?: InstitutionUserRole;
     institutionUser?: InstitutionUser;
+    auditUserId: number;
   }): Promise<InstitutionUser> {
+    const auditUser = { id: auditUserId } as User;
     const finalInstitutionUser =
       institutionUser || this.institutionUserRepo.create();
+    finalInstitutionUser.creator = auditUser;
     finalInstitutionUser.user = user;
     finalInstitutionUser.institution = institution;
     const auth = this.institutionUserAuthRepo.create();
+    auth.creator = auditUser;
     const authType = await this.institutionUserTypeAndRoleRepo.findOneOrFail({
       type,
       role: role || null,
@@ -148,32 +154,92 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return this.institutionUserRepo.save(newInstitutionUser);
   }
 
+  /**
+   * Creates the institution record.
+   * @param institutionModel complete information to create the profile.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns primary identifier of the created resource.
+   */
   async createInstitution(
-    userInfo: UserInfo,
     institutionModel: InstitutionFormModel,
+    auditUserId: number,
   ): Promise<Institution> {
-    const institution = this.create();
+    const institution = this.initializeInstitutionFromFormModel(
+      institutionModel,
+      auditUserId,
+    );
+    return this.repo.save(institution);
+  }
+
+  /**
+   * Creates an institution during institution setup process when the
+   * institution profile and the user are created and associated altogether.
+   * @param institutionModel information from the institution and the user.
+   * @param userInfo user to be associated with the institution.
+   * @returns primary identifier of the created resource.
+   */
+  async createInstitutionWithAssociatedUser(
+    institutionModel: InstitutionFormModel,
+    userInfo: UserInfo,
+  ): Promise<Institution> {
+    const institution = this.initializeInstitutionFromFormModel(
+      institutionModel,
+      userInfo.userId,
+    );
+
     const user = new User();
+    // Only BCeID business users are allowed to create the institution profile
+    // and have BCeID users directly associated with the institution.
+    // Basic BCeID users must have the Ministry creating the institution profile
+    // and creating the basic BCeID users on their behalf.
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
+      BCeIDAccountTypeCodes.Business,
     );
 
     if (account == null) {
-      //This scenario occurs if basic BCeID users try to push the bceid account into our application.
+      // This scenario occurs if basic BCeID users try to push the bceid account into our application.
       this.logger.error(
         "Account information could not be retrieved from BCeID",
       );
       return;
     }
 
-    //Username retrieved from the token
+    // Username retrieved from the token.
     user.userName = userInfo.userName;
     user.firstName = account.user.firstname;
     user.lastName = account.user.surname;
     user.email = institutionModel.userEmail;
 
-    institution.guid = account.institution.guid;
+    institution.businessGuid = account.institution.guid;
     institution.legalOperatingName = account.institution.legalName;
+
+    await this.createAssociation({
+      institution,
+      user,
+      type: InstitutionUserType.admin,
+      auditUserId: userInfo.userId,
+    });
+
+    return institution;
+  }
+
+  /**
+   * Converts the model received to create an institution to
+   * the actual institution entity model to be persisted to the
+   * database.
+   * @param institutionModel information to be use to create the
+   * institution profile.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns institution entity model.
+   */
+  private initializeInstitutionFromFormModel(
+    institutionModel: InstitutionFormModel,
+    auditUserId: number,
+  ): Institution {
+    const institution = new Institution();
+    institution.creator = { id: auditUserId } as User;
+    institution.legalOperatingName = institutionModel.legalOperatingName;
     institution.operatingName = institutionModel.operatingName;
     institution.primaryPhone = institutionModel.primaryPhone;
     institution.primaryEmail = institutionModel.primaryEmail;
@@ -184,7 +250,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       id: institutionModel.institutionType,
     } as InstitutionType;
 
-    //Institution Primary Contact Information
+    // Institution Primary Contact Information.
     institution.institutionPrimaryContact = {
       firstName: institutionModel.primaryContactFirstName,
       lastName: institutionModel.primaryContactLastName,
@@ -192,16 +258,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       phone: institutionModel.primaryContactPhone,
     };
 
-    //Institution Address
+    // Institution Address.
     institution.institutionAddress = {
-      mailingAddress: transformAddressDetails(institutionModel),
+      mailingAddress: transformAddressDetails(institutionModel.mailingAddress),
     };
-
-    await this.createAssociation({
-      institution,
-      user,
-      type: InstitutionUserType.admin,
-    });
 
     return institution;
   }
@@ -220,6 +280,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async syncInstitution(userInfo: UserInfo): Promise<void> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
+      // TODO: to be changed to alow basic BCeID users to sign in.
+      BCeIDAccountTypeCodes.Business,
     );
     const user = await this.userService.getActiveUser(userInfo.userName);
     if (!user) {
@@ -237,7 +299,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       );
 
       institutionEntity = await this.repo.findOne({
-        guid: account.institution.guid,
+        businessGuid: account.institution.guid,
       });
       if (institutionEntity) {
         // Create association with user
@@ -245,6 +307,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
           institution: institutionEntity,
           user,
           type: InstitutionUserType.admin,
+          auditUserId: userInfo.userId,
         });
       } else {
         throw new UnprocessableEntityException(
@@ -252,7 +315,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
         );
       }
     }
-    if (institutionEntity.guid !== account.institution.guid) {
+    if (institutionEntity.businessGuid !== account.institution.guid) {
       throw new UnprocessableEntityException(
         "Unable to process BCeID account of current user because account institution guid mismatch",
       );
@@ -388,8 +451,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     });
   }
 
-  async doesExist(guid: string): Promise<boolean> {
-    const count = await this.repo.count({ guid: guid });
+  async doesExist(businessGuid: string): Promise<boolean> {
+    const count = await this.repo.count({ businessGuid });
     if (1 === count) {
       return true;
     }
@@ -491,7 +554,12 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async getInstitutionDetailById(institutionId: number): Promise<Institution> {
     return this.repo
       .createQueryBuilder("institution")
-      .select(["institution", "institutionType.id", "institutionType.name"])
+      .select([
+        "institution",
+        "institution.businessGuid",
+        "institutionType.id",
+        "institutionType.name",
+      ])
       .innerJoin("institution.institutionType", "institutionType")
       .where("institution.id = :institutionId", { institutionId })
       .getOne();
@@ -507,7 +575,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   ): Promise<Institution> {
     return this.repo
       .createQueryBuilder("institution")
-      .select(["institution.id", "institution.operatingName"])
+      .select([
+        "institution.id",
+        "institution.operatingName",
+        "institution.businessGuid",
+      ])
       .where("institution.id = :institutionId", { institutionId })
       .getOne();
   }

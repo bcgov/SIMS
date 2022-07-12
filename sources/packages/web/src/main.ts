@@ -79,9 +79,11 @@ import {
   faHandPaper,
   faCopy as farCopy,
   faStickyNote,
+  faCheckCircle as farCheckCircle,
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
+  farCheckCircle,
   faMapPin,
   faCheck,
   faCircle,

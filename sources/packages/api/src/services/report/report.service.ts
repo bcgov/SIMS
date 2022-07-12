@@ -62,8 +62,14 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
    * query argument.
    * @returns filter param value for query.
    */
-  private convertFilterDataAsParameter(filterParam: any): string | string[] {
-    if (Array.isArray(filterParam) || typeof filterParam !== "object") {
+  private convertFilterDataAsParameter(
+    filterParam: any,
+  ): Date | string | string[] {
+    if (
+      Array.isArray(filterParam) ||
+      filterParam instanceof Date ||
+      typeof filterParam !== "object"
+    ) {
       return filterParam;
     }
     const paramValue = [];

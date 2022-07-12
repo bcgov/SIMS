@@ -5,19 +5,21 @@ import {
   NotFoundException,
   Param,
   Patch,
+  Post,
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { InstitutionService } from "../../services";
 import { AddressInfo, Institution } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   InstitutionProfileAPIInDTO,
   InstitutionDetailAPIOutDTO,
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
+  AESTCreateInstitutionFormAPIInDTO,
 } from "./models/institution.dto";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
@@ -30,10 +32,15 @@ import {
   PaginationParams,
   PaginatedResults,
 } from "../../utilities";
-import { InstitutionUserAPIOutDTO } from "./models/institution-user.dto";
+import {
+  CreateInstitutionUserAPIInDTO,
+  InstitutionUserAPIOutDTO,
+} from "./models/institution-user.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
 import { ClientTypeBaseRoute } from "../../types";
+import { IUserToken } from "../../auth/userToken.interface";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /**
  * Institution controller for AEST Client.
@@ -186,6 +193,7 @@ export class InstitutionAESTController extends BaseController {
     return {
       operatingName: institutionDetail.operatingName,
       designationStatus: designationStatus,
+      hasBusinessGuid: !!institutionDetail.businessGuid,
     };
   }
 
@@ -201,6 +209,45 @@ export class InstitutionAESTController extends BaseController {
     // get all institution locations with designation statuses.
     return this.locationControllerService.getInstitutionLocations(
       institutionId,
+    );
+  }
+
+  /**
+   * Create institutions that are not allowed to create the profile by
+   * themselves due to limitations, for instance, when the institution
+   * has only a basic BCeID login.
+   * @param payload complete information to create the profile.
+   * @returns primary identifier of the created resource.
+   */
+  @Post()
+  async createInstitution(
+    @Body() payload: AESTCreateInstitutionFormAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const institution = await this.institutionService.createInstitution(
+      payload,
+      userToken.userId,
+    );
+    return {
+      id: institution.id,
+    };
+  }
+
+  /**
+   * Create a user, associate with the institution, and assign the authorizations.
+   * @param institutionId institution to have the user created.
+   * @param payload authorizations to be associated with the user.
+   * @returns Primary identifier of the created resource.
+   */
+  // TODO: Add API Responses and validations. This method will be worked in the upcoming PR.
+  @Post(":institutionId/user")
+  async createInstitutionUserWithAuth(
+    institutionId: number,
+    @Body() payload: CreateInstitutionUserAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.institutionControllerService.createInstitutionUserWithAuth(
+      institutionId,
+      payload,
     );
   }
 }

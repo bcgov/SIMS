@@ -4,7 +4,9 @@
   "type": "form",
   "name": "aestAddSINExpiryDate",
   "path": "aestaddsinexpirydate",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "label": "HTML",
@@ -12,7 +14,12 @@
       "labelMargin": "",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "Enter a date that the SIN will expiry on. Please note you will not be able to change this.",
       "refreshOnChange": false,
       "customClass": "",
@@ -21,7 +28,12 @@
       "key": "html",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -172,7 +184,9 @@
               },
               "customConditional": "",
               "logic": [],
-              "attributes": { "data-cy": "expiryDate" },
+              "attributes": {
+                "data-cy": "expiryDate"
+              },
               "overlay": {
                 "style": "",
                 "page": "",
@@ -241,7 +255,12 @@
       "key": "columns",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -310,7 +329,9 @@
       "tooltip": "",
       "prefix": "",
       "suffix": "",
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "displayMask": "",
       "editor": "",
       "autoExpand": false,
@@ -362,10 +383,17 @@
       "key": "noteDescription",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
-      "attributes": { "data-cy": "noteDescription" },
+      "attributes": {
+        "data-cy": "noteDescription"
+      },
       "overlay": {
         "style": "",
         "page": "",
@@ -436,7 +464,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -446,7 +476,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -503,7 +537,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -513,7 +549,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,

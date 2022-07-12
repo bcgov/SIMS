@@ -11,6 +11,7 @@ import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
 import InstitutionDetails from "@/views/aest/institution/InstitutionDetails.vue";
 import Profile from "@/views/aest/institution/Profile.vue";
 import ProfileEdit from "@/views/aest/institution/ProfileEdit.vue";
+import ProfileCreate from "@/views/aest/institution/ProfileCreate.vue";
 import Programs from "@/views/aest/institution/Programs.vue";
 import Locations from "@/views/aest/institution/Locations.vue";
 import Users from "@/views/aest/institution/Users.vue";
@@ -45,6 +46,7 @@ import NoticeOfAssessment from "@/views/aest/NoticeOfAssessment.vue";
 import ApplicationExceptionsApproval from "@/views/aest/ApplicationExceptionsApproval.vue";
 import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
 import SINManagement from "@/views/aest/student/SINManagement.vue";
+import StudentApplicationExceptions from "@/views/aest/student/StudentApplicationExceptions.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -405,10 +407,32 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.AESTInstitutionProfileCreate,
+        name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE,
+        components: {
+          default: ProfileCreate,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
         path: AppRoutes.Reports,
         name: AESTRoutesConst.REPORTS,
         components: {
           default: Reports,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.Exceptions,
+        name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
+        components: {
+          default: StudentApplicationExceptions,
           sidebar: AESTHomeSideBar,
         },
         meta: {

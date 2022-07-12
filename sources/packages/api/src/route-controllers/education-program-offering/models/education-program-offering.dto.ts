@@ -2,7 +2,7 @@ import { OfferingTypes, OfferingStatus } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 import {
   EducationProgramOffering,
-  StudyBreak,
+  StudyBreaksAndWeeks,
 } from "../../../database/entities/education-program-offering.model";
 import { getUserFullName } from "../../../utilities";
 import { IsEnum, IsNotEmpty } from "class-validator";
@@ -22,7 +22,7 @@ export interface SaveOfferingDTO {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  studyBreaks?: StudyBreak[];
+  studyBreaks?: StudyBreaksAndWeeks;
   offeringDeclaration: boolean;
   assessedBy?: string;
   assessedDate?: Date;
@@ -61,7 +61,7 @@ export interface ProgramOfferingDto {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  studyBreaks?: StudyBreak[];
+  breaksAndWeeks: StudyBreaksAndWeeks;
   offeringDeclaration: boolean;
   assessedBy?: string;
   assessedDate?: Date;
@@ -104,7 +104,7 @@ export const transformToProgramOfferingDto = (
     showYearOfStudy: offering.showYearOfStudy,
     hasOfferingWILComponent: offering.hasOfferingWILComponent,
     offeringWILType: offering.offeringWILType,
-    studyBreaks: offering.studyBreaks,
+    breaksAndWeeks: offering.studyBreaks,
     offeringDeclaration: offering.offeringDeclaration,
     submittedDate: offering.submittedDate,
     offeringStatus: offering.offeringStatus,

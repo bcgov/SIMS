@@ -48,6 +48,11 @@ export interface InstitutionDetailAPIOutDTO
   institutionTypeName?: string;
   isBCPrivate?: boolean;
   clientType?: ClientIdType;
+  /**
+   * Indicates if the institution has a BCeID business guid
+   * associated with, if not it is a basic BCeID institution.
+   */
+  hasBusinessGuid: boolean;
 }
 
 export interface InstitutionDetailAPIInDTO extends InstitutionProfileAPIInDTO {
@@ -103,9 +108,18 @@ export interface SearchInstitutionAPIOutDTO {
 export interface InstitutionBasicAPIOutDTO {
   operatingName: string;
   designationStatus: DesignationAgreementStatus;
+  /**
+   * Indicates if the institution has a BCeID business guid
+   * associated with, if not it is a basic BCeID institution.
+   */
+  hasBusinessGuid: boolean;
 }
 
-export interface InstitutionFormAPIInDTO {
+/**
+ * DTO for institution creation by the institution user during the on board process
+ * when the institution profile and the admin user must be created altogether.
+ */
+export interface CreateInstitutionAPIInDTO {
   userEmail: string;
   operatingName: string;
   primaryPhone: string;
@@ -117,13 +131,19 @@ export interface InstitutionFormAPIInDTO {
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  provinceState?: string;
-  country: string;
-  postalCode: string;
   institutionType: number;
+  mailingAddress: AddressDetailsFormAPIDTO;
+}
+
+/**
+ * Ministry user institution creation. No user information is provided and
+ * user related information (e.g. userEmail) is not needed. Besides that,
+ * the Ministry user should be able to provide all data needed to create
+ * the institution.
+ */
+export interface AESTCreateInstitutionAPIInDTO
+  extends Omit<CreateInstitutionAPIInDTO, "userEmail"> {
+  legalOperatingName: string;
 }
 
 export interface InstitutionUserTypeAndRoleAPIOutDTO {
@@ -137,10 +157,30 @@ export interface UserPermissionAPIInDTO {
   userRole?: string;
 }
 
-export interface InstitutionUserAPIInDTO {
-  userId?: string;
+/**
+ * Associates a new user from BCeID with an institution
+ * associating also the authorizations.
+ */
+export interface CreateInstitutionUserAPIInDTO {
+  /**
+   * User BCeID id from BCeID Web Service (e.g. SomeUserName) that will have its
+   * data retrieved to be created on SIMS.
+   */
+  userId: string;
+  /**
+   * Permissions to be associated with the new user.
+   */
   permissions: UserPermissionAPIInDTO[];
 }
+
+/**
+ * Update an existing user association with an institution
+ * changing the authorizations.
+ */
+export type UpdateInstitutionUserAPIInDTO = Omit<
+  CreateInstitutionUserAPIInDTO,
+  "userId"
+>;
 
 export interface UserActiveStatusAPIInDTO {
   isActive: boolean;

@@ -31,9 +31,10 @@ import {
   UpdateAssessmentWorkflowIdDTO,
   UpdateProgramInfoDTO,
 } from "./models/assessment.system-access.dto";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { AssessmentControllerService } from "..";
+import { IUserToken } from "../../auth/userToken.interface";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("assessment")
@@ -94,6 +95,7 @@ export class AssessmentSystemAccessController extends BaseController {
         offeringDelivered: offering?.offeringDelivered,
         offeringIntensity: offering?.offeringIntensity,
         courseLoad: offering?.courseLoad,
+        studyBreaks: offering?.studyBreaks,
       },
       program: {
         programCredentialType: offering?.educationProgram?.credentialType,
@@ -144,6 +146,7 @@ export class AssessmentSystemAccessController extends BaseController {
   async updateProgramInfoRequest(
     @Param("id") assessmentId: number,
     @Body() payload: UpdateProgramInfoDTO,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
     if (payload.offeringId) {
       const offering = await this.offeringService.getProgramOffering(
@@ -161,6 +164,7 @@ export class AssessmentSystemAccessController extends BaseController {
     try {
       await this.assessmentService.updateProgramInfo(
         assessmentId,
+        userToken.userId,
         payload.locationId,
         payload.status,
         payload.programId,

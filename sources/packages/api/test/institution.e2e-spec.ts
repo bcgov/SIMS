@@ -118,12 +118,14 @@ describe("Institution controller (e2e)", () => {
         institution,
         user,
         type: InstitutionUserType.admin,
+        auditUserId: user.id,
       });
     } else {
       await institutionService.createAssociation({
         institution,
         user: existing,
         type: InstitutionUserType.admin,
+        auditUserId: user.id,
       });
     }
     await request(app.getHttpServer())

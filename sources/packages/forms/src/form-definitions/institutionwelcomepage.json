@@ -1,6 +1,8 @@
 {
   "type": "form",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "title": "Panel",

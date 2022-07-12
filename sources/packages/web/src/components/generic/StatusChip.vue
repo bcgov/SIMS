@@ -1,21 +1,14 @@
 <template>
-  <v-badge :color="backGroundColor" :text-color="textColor" :class="badgeClass">
-    <template v-slot:badge>
-      <font-awesome-icon
-        :icon="['fas', 'circle']"
-        class="mr-1"
-        :color="iconColor"
-      />
-      <span>{{ label ?? status }}</span>
-    </template>
-  </v-badge>
+  <v-chip :text-color="textColor" :class="chipClass" variant="outlined">
+    <v-icon start icon="fa:fa fa-circle" :color="iconColor" size="12" />
+    {{ label ?? status }}
+  </v-chip>
 </template>
 <script lang="ts">
 import { computed } from "vue";
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import {
   COLOR_BLACK,
-  COLOR_WHITE,
   COLOR_BANNER_SUCCESS,
   COLOR_BANNER_WARNING,
   COLOR_BANNER_ERROR,
@@ -46,21 +39,17 @@ export default {
       }
     });
 
-    const badgeClass = computed(() => {
+    const chipClass = computed(() => {
       switch (props.status) {
         case StatusChipTypes.Success:
-          return "status-badge-success";
+          return "status-chip-success";
         case StatusChipTypes.Warning:
-          return "status-badge-warning";
+          return "status-chip-warning";
         case StatusChipTypes.Error:
-          return "status-badge-error";
+          return "status-chip-error";
         default:
-          return "status-badge-inactive";
+          return "status-chip-inactive";
       }
-    });
-
-    const backGroundColor = computed(() => {
-      return COLOR_WHITE;
     });
 
     const textColor = computed(() => {
@@ -68,9 +57,8 @@ export default {
     });
 
     return {
-      badgeClass,
+      chipClass,
       textColor,
-      backGroundColor,
       iconColor,
     };
   },
