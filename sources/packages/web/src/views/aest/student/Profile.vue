@@ -10,6 +10,7 @@
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import { StudentService } from "@/services/StudentService";
+import { useFormatters } from "@/composables";
 
 export default {
   props: {
@@ -20,6 +21,7 @@ export default {
   },
   setup(props: any) {
     const initialData = ref();
+    const { sinDisplayFormat } = useFormatters();
     onMounted(async () => {
       const studentDetail = await StudentService.shared.getStudentProfile(
         props.studentId,
@@ -38,10 +40,12 @@ export default {
         provinceState: address.provinceState,
         postalCode: address.postalCode,
         pdStatus: studentDetail.pdStatus ?? "None",
+        sin: sinDisplayFormat(studentDetail.sin),
       };
     });
     return {
       initialData,
+      sinDisplayFormat,
     };
   },
 };

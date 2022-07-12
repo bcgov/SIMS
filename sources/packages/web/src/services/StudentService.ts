@@ -17,6 +17,7 @@ import {
   StudentRestrictionAPIOutDTO,
   CreateSINValidationAPIInDTO,
   UpdateSINValidationAPIInDTO,
+  SearchStudentAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 import { MISSING_STUDENT_ACCOUNT } from "@/constants";
@@ -106,17 +107,13 @@ export class StudentService {
 
   /**
    * Search students for ministry search page.
-   * @param appNumber
-   * @param firstName
-   * @param lastName
+   * @param payload search criteria.
    * @returns student search results.
    */
   async searchStudents(
-    appNumber: string,
-    firstName: string,
-    lastName: string,
+    payload: SearchStudentAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
-    return ApiClient.Students.searchStudents(appNumber, firstName, lastName);
+    return ApiClient.Students.searchStudents(payload);
   }
 
   /**

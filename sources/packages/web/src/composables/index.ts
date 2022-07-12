@@ -17,3 +17,4 @@ export * from "./useLocation";
 export * from "./useOffering";
 export * from "./useProgramInfoRequest";
 export * from "./useActiveApplication";
+export * from "./useValidators";
