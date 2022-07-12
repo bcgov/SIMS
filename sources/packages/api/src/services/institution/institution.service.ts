@@ -47,8 +47,8 @@ import { UserService } from "../user/user.service";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
-  private readonly institutionUserRepo: Repository<InstitutionUser>;
-  private readonly institutionUserTypeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
+  institutionUserRepo: Repository<InstitutionUser>;
+  institutionUserTypeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
 
   constructor(
     connection: Connection,
