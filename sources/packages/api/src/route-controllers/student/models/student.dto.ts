@@ -72,8 +72,7 @@ export class AESTStudentSearchAPIInDTO {
   @IsNotEmpty()
   appNumber: string;
   @ValidateIf(
-    (input) =>
-      !input.firstName && !input.lastName && !input.appNumber && !input.sin,
+    (input) => !input.firstName && !input.lastName && !input.appNumber,
   )
   @IsNotEmpty()
   sin: string;
