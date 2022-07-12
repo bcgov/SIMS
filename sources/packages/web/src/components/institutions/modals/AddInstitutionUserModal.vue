@@ -15,7 +15,7 @@
             <!-- Business BCeID  -->
             <v-autocomplete
               hide-details
-              v-if="hasBusinessGuid"
+              v-if="hasBusinessGuid && canSearchBCeIDUsers"
               v-model="formModel.selectedBCeIDUser"
               :items="bceidUsers"
               class="mr-3 bceid-input"
@@ -32,8 +32,8 @@
               class="mr-3 bceid-input"
               density="compact"
               variant="outlined"
-              label="Basic BCeID user ID"
-              :rules="[(v) => !!v || 'Basic BCeID user Id is required']"
+              :label="userNameLabel"
+              :rules="[(v) => !!v || 'BCeID user Id is required']"
             />
           </template>
         </institution-user-management>
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useFormatters, useModalDialog, useToastMessage } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -76,10 +76,18 @@ export default {
       type: Boolean,
       required: true,
     },
+    canSearchBCeIDUsers: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   setup(props: any) {
-    // TODO: Add validation for the same user added twice.
-    const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
+    const {
+      showDialog,
+      resolvePromise,
+      showModal: showModalInternal,
+    } = useModalDialog<boolean>();
     const toast = useToastMessage();
     const processing = ref(false);
     const addUserForm = ref({} as VForm);
@@ -123,13 +131,19 @@ export default {
       () => props.institutionId,
       async () => {
         await loadLocations();
-        if (props.hasBusinessGuid) {
+        if (props.hasBusinessGuid && props.canSearchBCeIDUsers) {
           // Load BCeID users only for institutions that have a business guid.
           await loadBCeIDBusinessUsers();
         }
       },
       { immediate: true },
     );
+
+    const showModal = async (): Promise<boolean> => {
+      addUserForm.value.reset();
+      addUserForm.value.resetValidation();
+      return showModalInternal();
+    };
 
     // Creates the user and closes the modal.
     const submit = async () => {
@@ -169,7 +183,14 @@ export default {
       resolvePromise(false);
     };
 
+    const userNameLabel = computed(() => {
+      return props.hasBusinessGuid
+        ? "Business BCeID user ID"
+        : "Basic BCeID user ID";
+    });
+
     return {
+      userNameLabel,
       addUserForm,
       showDialog,
       showModal,

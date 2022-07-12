@@ -331,6 +331,7 @@ export class InstitutionControllerService {
       const admins = await this.institutionUserAuthService.getUsersByUserType(
         institutionUser.institution.id,
         InstitutionUserTypes.admin,
+        true,
       );
       if (admins?.length === 1) {
         // If there is only one admin user, check if it is the one being disabled.

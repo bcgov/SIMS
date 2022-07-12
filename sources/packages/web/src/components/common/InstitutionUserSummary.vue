@@ -77,11 +77,10 @@
       <Column header="Actions"
         ><template #body="slotProps">
           <v-btn
-            v-if="slotProps.data.isActive"
+            :disabled="!slotProps.data.isActive"
             @click="openEditUserModal(slotProps.data)"
             variant="text"
-            text="Edit"
-            color="primary"
+            :color="slotProps.data.isActive ? 'primary' : 'gray'"
             append-icon="mdi-pencil-outline"
           >
             <span class="text-decoration-underline">Edit</span>

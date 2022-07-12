@@ -53,6 +53,19 @@ import {
 } from "@/types";
 import InstitutionUserManagement from "@/components/institutions/modals/InstitutionUserManagement.vue";
 import { InstitutionUserAPIOutDTO } from "@/services/http/dto";
+import {
+  BCEID_ACCOUNT_NOT_FOUND,
+  INSTITUTION_MUST_HAVE_AN_ADMIN,
+  INSTITUTION_USER_ALREADY_EXISTS,
+  LEGAL_SIGNING_AUTHORITY_EXIST,
+} from "@/constants";
+
+const submitKnownErrors = [
+  INSTITUTION_USER_ALREADY_EXISTS,
+  LEGAL_SIGNING_AUTHORITY_EXIST,
+  INSTITUTION_MUST_HAVE_AN_ADMIN,
+  BCEID_ACCOUNT_NOT_FOUND,
+];
 
 export default {
   components: { ModalDialogBase, InstitutionUserManagement },
@@ -156,7 +169,10 @@ export default {
         );
         resolvePromise(true);
       } catch (error: unknown) {
-        if (error instanceof ApiProcessError) {
+        if (
+          error instanceof ApiProcessError &&
+          submitKnownErrors.includes(error.errorType)
+        ) {
           editUserForm.value.errors.push({ errorMessages: [error.message] });
         } else {
           toast.error(

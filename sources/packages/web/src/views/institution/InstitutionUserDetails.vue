@@ -3,7 +3,10 @@
     <template #header>
       <header-navigator title="Manage Users" subTitle="User Summary" />
     </template>
-    <institution-user-summary :hasBusinessGuid="hasBusinessGuid" />
+    <institution-user-summary
+      :hasBusinessGuid="hasBusinessGuid"
+      :canSearchBCeIDUsers="true"
+    />
   </full-page-container>
 </template>
 

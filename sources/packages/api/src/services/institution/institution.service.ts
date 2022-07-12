@@ -124,7 +124,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       doesUserExistsCheck,
       validateUniqueSigningAuthority,
     ]);
-    if (!doesUserExists) {
+    if (doesUserExists) {
       throw new CustomNamedError(
         "The user already exists.",
         INSTITUTION_USER_ALREADY_EXISTS,

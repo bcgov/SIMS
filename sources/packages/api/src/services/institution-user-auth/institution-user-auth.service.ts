@@ -63,14 +63,16 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
    * The the users associated with an institution by its user type (e.g. admin, user).
    * @param institutionId institution to be searched.
    * @param userType user type to be searched.
+   * @param isActive optionally filter by the user active status.
    * @returns users that belongs to the institution and are the type specified by
    * the userType parameter.
    */
   async getUsersByUserType(
     institutionId: number,
     userType: InstitutionUserTypes,
+    isActive?: boolean,
   ): Promise<InstitutionUserAuth[]> {
-    return this.repo
+    const getUsersQuery = this.repo
       .createQueryBuilder("institutionUserAuth")
       .select([
         "institutionUserAuth.id",
@@ -79,11 +81,15 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
         "authType.id",
       ])
       .innerJoin("institutionUserAuth.institutionUser", "institutionUser")
+      .innerJoin("institutionUser.user", "user")
       .innerJoin("institutionUser.institution", "institution")
       .innerJoin("institutionUserAuth.authType", "authType")
       .where("institution.id = :institutionId", { institutionId })
-      .andWhere("authType.type = :userType", { userType })
-      .getMany();
+      .andWhere("authType.type = :userType", { userType });
+    if (isActive) {
+      getUsersQuery.andWhere("user.isActive = :isActive", { isActive });
+    }
+    return getUsersQuery.getMany();
   }
 
   /**
