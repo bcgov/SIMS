@@ -214,10 +214,23 @@ export class ApplicationService extends RecordDataModelService<Application> {
       [],
       associatedFiles,
     );
-    application.creator = auditUser;
-    application.studentAssessments = [originalAssessment];
-    application.currentAssessment = originalAssessment;
-    await this.repo.save([application, newApplication]);
+    // While editing an application, a new application record is created and a new
+    // assessment record is also created to be the used as a "current Assessment" record.
+    // The application and the assessment records have a DB relationship and the
+    // assessment record also has a second relationship to the application that
+    // keeps its history. Due to this double relationships the application record
+    // and the assessment cannot be create at the same moment what causes a
+    // "cyclic dependency error" on Typeorm. Saving the application record and later
+    // having it associated with the assessment solves the issue.
+    await this.connection.transaction(async (transactionalEntityManager) => {
+      const applicationRepository =
+        transactionalEntityManager.getRepository(Application);
+      await applicationRepository.save(newApplication);
+      newApplication.creator = auditUser;
+      newApplication.studentAssessments = [originalAssessment];
+      newApplication.currentAssessment = originalAssessment;
+      await applicationRepository.save([application, newApplication]);
+    });
     // Deleting the existing workflow, if there is one.
     if (application.currentAssessment.assessmentWorkflowId) {
       await this.workflow.deleteApplicationAssessment(
@@ -624,7 +637,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     } else {
       query.andWhere("application.applicationStatus NOT IN (:...status)", {
         status: [
-          ApplicationStatus.submitted,
           ApplicationStatus.completed,
           ApplicationStatus.overwritten,
           ApplicationStatus.cancelled,
