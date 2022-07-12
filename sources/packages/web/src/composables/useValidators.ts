@@ -4,6 +4,11 @@ const SIN_MAX_LENGTH = 9;
  * Helpers to validate input from the UI.
  */
 export function useValidators() {
+  /**
+   * Checks if a SIN is valid.
+   * @param sin value to be entered.
+   * @returns true or false.
+   */
   const isSINValid = (sin: string): boolean => {
     let valid = false;
     if (sin) {
