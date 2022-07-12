@@ -100,12 +100,13 @@ import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { SearchStudentAPIOutDTO } from "@/services/http/dto";
-import { useFormatters, useToastMessage } from "@/composables";
+import { useFormatters, useToastMessage, useValidators } from "@/composables";
 
 export default {
   setup() {
     const toast = useToastMessage();
-    const { dateOnlyLongString, isSINValid } = useFormatters();
+    const { dateOnlyLongString } = useFormatters();
+    const { isSINValid } = useValidators();
     const router = useRouter();
     const appNumber = ref("");
     const firstName = ref("");

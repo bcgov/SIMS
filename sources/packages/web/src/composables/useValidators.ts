@@ -1,0 +1,33 @@
+const SIN_MAX_LENGTH = 9;
+
+/**
+ * Helpers to validate input from the UI.
+ */
+export function useValidators() {
+  const isSINValid = (sin: string): boolean => {
+    let valid = false;
+    if (sin) {
+      sin = sin.replace(/\s/g, "");
+      if (sin.length === SIN_MAX_LENGTH) {
+        let checksum = 0;
+        for (let i = 0; i < sin.length; i++) {
+          const currentDigit = +sin.charAt(i);
+          if ((i + 1) % 2 === 0) {
+            const digitTimes2 = currentDigit * 2;
+            checksum += digitTimes2 < 10 ? digitTimes2 : digitTimes2 - 9;
+          } else {
+            checksum += +sin.charAt(i);
+          }
+        }
+        if (checksum % 10 === 0) {
+          valid = true;
+        }
+      }
+    }
+    return valid;
+  };
+
+  return {
+    isSINValid,
+  };
+}
