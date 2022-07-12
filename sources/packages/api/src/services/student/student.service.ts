@@ -309,7 +309,7 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Search students based on the search criteria.
    * @param searchCriteria options to search by firstName,
-   * lastName or appNumber.
+   * lastName, appNumber or sin.
    * @returns list of students.
    */
   async searchStudentApplication(searchCriteria: {
@@ -338,7 +338,7 @@ export class StudentService extends RecordDataModelService<Student> {
 
     if (searchCriteria.sin) {
       searchQuery.andWhere("sinValidation.sin = :sin", {
-        sin: searchCriteria.sin,
+        sin: removeWhiteSpaces(searchCriteria.sin),
       });
     }
     if (searchCriteria.firstName) {

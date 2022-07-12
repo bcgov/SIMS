@@ -84,6 +84,16 @@ export interface StudentFileMetadataAPIOutDTO {
 }
 
 /**
+ * Interface for student search API request
+ */
+export interface SearchStudentAPIInDTO {
+  firstName?: string;
+  lastName?: string;
+  appNumber?: string;
+  sin?: string;
+}
+
+/**
  * Interface for student search API response
  */
 export interface SearchStudentAPIOutDTO {

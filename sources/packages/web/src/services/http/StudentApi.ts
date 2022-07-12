@@ -13,6 +13,7 @@ import {
   SINValidationsAPIOutDTO,
   CreateSINValidationAPIInDTO,
   UpdateSINValidationAPIInDTO,
+  SearchStudentAPIInDTO,
 } from "@/services/http/dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -87,34 +88,13 @@ export class StudentApi extends HttpBaseClient {
 
   /**
    * Search students based on the search criteria.
-   * @param appNumber application number.
-   * @param firstName students first name (given names).
-   * @param lastName student last name
+   * @param payload search criteria.
    * @returns searched student details.
    */
   async searchStudents(
-    appNumber: string,
-    firstName: string,
-    lastName: string,
-    sin: string,
+    payload: SearchStudentAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
-    let queryString = "";
-    if (appNumber) {
-      queryString += `appNumber=${appNumber}&`;
-    }
-    if (firstName) {
-      queryString += `firstName=${firstName}&`;
-    }
-    if (lastName) {
-      queryString += `lastName=${lastName}&`;
-    }
-    if (sin) {
-      queryString += `sin=${sin}&`;
-    }
-    const url = this.addClientRoot(
-      `students/search?${queryString.slice(0, -1)}`,
-    );
-    return this.getCallTyped<SearchStudentAPIOutDTO[]>(url);
+    return this.postCall(this.addClientRoot("students/search"), payload);
   }
 
   /**
