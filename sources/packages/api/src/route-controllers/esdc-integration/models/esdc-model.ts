@@ -1,10 +1,10 @@
 import { IsDateString, IsOptional } from "class-validator";
 
-export interface ESDCFileResultDTO {
+export class ESDCFileResultAPIOutDTO {
   generatedFile: string;
   uploadedRecords: number;
 }
-export interface ESDCFileResponseDTO {
+export class ESDCFileResponseAPIOutDTO {
   processSummary: string[];
   errorsSummary: string[];
 }

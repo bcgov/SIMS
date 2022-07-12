@@ -8,16 +8,17 @@ import { DisbursementReceiptProcessingService } from "../../esdc-integration/dis
 import { ECertFileHandler } from "../../esdc-integration/e-cert-integration/e-cert-file-handler";
 import {
   DailyDisbursementReportAPIInDTO,
-  ESDCFileResponseDTO,
-  ESDCFileResultDTO,
+  ESDCFileResponseAPIOutDTO,
+  ESDCFileResultAPIOutDTO,
 } from "./models/esdc-model";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { DisbursementReceiptRequestService } from "../../esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
+import { ClientTypeBaseRoute } from "../../types";
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-@Controller("system-access/e-cert")
-@ApiTags("system-access")
-export class ECertIntegrationController extends BaseController {
+@Controller("e-cert")
+@ApiTags(`${ClientTypeBaseRoute.SystemAccess}-e-cert`)
+export class ECertIntegrationSystemAccessController extends BaseController {
   constructor(
     private readonly eCertFileHandler: ECertFileHandler,
     private readonly disbursementReceiptProcessingService: DisbursementReceiptProcessingService,
@@ -33,7 +34,7 @@ export class ECertIntegrationController extends BaseController {
    * amount of records added to the file.
    */
   @Post("process-full-time")
-  async processFullTimeECertFile(): Promise<ESDCFileResultDTO> {
+  async processFullTimeECertFile(): Promise<ESDCFileResultAPIOutDTO> {
     this.logger.log("Sending Full-Time E-Cert File...");
     const uploadFullTimeResult =
       await this.eCertFileHandler.generateFullTimeECert();
@@ -49,7 +50,7 @@ export class ECertIntegrationController extends BaseController {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   @Post("process-full-time-responses")
-  async processFullTimeResponses(): Promise<ESDCFileResponseDTO[]> {
+  async processFullTimeResponses(): Promise<ESDCFileResponseAPIOutDTO[]> {
     const fullTimeResults =
       await this.eCertFileHandler.processFullTimeResponses();
     return fullTimeResults.map((fullTimeResult) => ({
@@ -65,7 +66,7 @@ export class ECertIntegrationController extends BaseController {
    * amount of records added to the file.
    */
   @Post("process-part-time")
-  async processPartTimeECertFile(): Promise<ESDCFileResultDTO> {
+  async processPartTimeECertFile(): Promise<ESDCFileResultAPIOutDTO> {
     this.logger.log("Sending Part-Time E-Cert File...");
     const uploadPartTimeResult =
       await this.eCertFileHandler.generatePartTimeECert();
@@ -81,7 +82,7 @@ export class ECertIntegrationController extends BaseController {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   @Post("process-part-time-responses")
-  async processPartTimeResponses(): Promise<ESDCFileResponseDTO[]> {
+  async processPartTimeResponses(): Promise<ESDCFileResponseAPIOutDTO[]> {
     const partTimeResults =
       await this.eCertFileHandler.processPartTimeResponses();
     return partTimeResults.map((partTimeResult) => ({
@@ -97,7 +98,7 @@ export class ECertIntegrationController extends BaseController {
   @Post("process-disbursement-receipts")
   async processDisbursementReceipts(
     @UserToken() userToken: IUserToken,
-  ): Promise<ESDCFileResponseDTO[]> {
+  ): Promise<ESDCFileResponseAPIOutDTO[]> {
     const processResponse =
       await this.disbursementReceiptProcessingService.process(userToken.userId);
     return processResponse.map((response) => ({
@@ -108,7 +109,7 @@ export class ECertIntegrationController extends BaseController {
 
   /**
    * Send provincial daily disbursement information to FIN.
-   * @param processDate Batch run date.
+   * @param payload payload.
    * @returns Summary details of processing.
    */
   @Post("process-provincial-daily-disbursements")

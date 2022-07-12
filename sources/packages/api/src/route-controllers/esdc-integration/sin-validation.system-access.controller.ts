@@ -8,7 +8,7 @@ import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { SINValidationProcessingService } from "../../esdc-integration/sin-validation/sin-validation-processing.service";
-import { ESDCFileResultDTO } from "./models/esdc-model";
+import { ESDCFileResultAPIOutDTO } from "./models/esdc-model";
 import { IUserToken } from "../../auth/userToken.interface";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
@@ -29,7 +29,7 @@ export class SINValidationSystemAccessController extends BaseController {
   @Post("process-request")
   async processMSFAARequest(
     @UserToken() userToken: IUserToken,
-  ): Promise<ESDCFileResultDTO> {
+  ): Promise<ESDCFileResultAPIOutDTO> {
     this.logger.log("Sending ESDC SIN validation request file.");
     const uploadResult =
       await this.sinValidationProcessingService.uploadSINValidationRequests(
