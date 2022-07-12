@@ -1,49 +1,54 @@
 <template>
-  <!-- Add user -->
-  <modal-dialog-base
-    :showDialog="showDialog"
-    @dialogClosed="dialogClosed"
-    title="Edit user"
-  >
-    <template #content>
-      <institution-user-management
-        ref="institutionUserManagement"
-        :initialData="initialData"
-      >
-        <template #user-name>
-          <v-text-field
-            v-model="userInfo.displayName"
-            disabled
-            class="mr-3 bceid-input"
-            density="compact"
-            variant="outlined"
-            label="BCeID user ID"
-            :rules="[(v) => !!v || 'Basic BCeID user Id is required']"
-          />
-        </template>
-      </institution-user-management>
-    </template>
-    <template #footer>
-      <footer-buttons
-        primaryLabel="Edit user now"
-        @primaryClick="submit"
-        @secondaryClick="cancel"
-      />
-    </template>
-  </modal-dialog-base>
+  <v-form ref="editUserForm">
+    <modal-dialog-base
+      :showDialog="showDialog"
+      @dialogClosed="dialogClosed"
+      title="Edit user"
+    >
+      <template #content>
+        <institution-user-management
+          ref="institutionUserManagement"
+          :errors="editUserForm.errors"
+          :initialData="initialData"
+        >
+          <template #user-name>
+            <v-text-field
+              hide-details
+              v-model="userInfo.displayName"
+              disabled
+              class="mr-3 bceid-input"
+              density="compact"
+              variant="outlined"
+              :label="userNameLabel"
+              :rules="[(v) => !!v || 'Basic BCeID user Id is required']"
+            />
+          </template>
+        </institution-user-management>
+      </template>
+      <template #footer>
+        <footer-buttons
+          primaryLabel="Edit user now"
+          @primaryClick="submit"
+          @secondaryClick="cancel"
+        />
+      </template>
+    </modal-dialog-base>
+  </v-form>
 </template>
 
 <script lang="ts">
 import { ref, watch, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useFormatters, useModalDialog } from "@/composables";
+import { useFormatters, useModalDialog, useToastMessage } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
+  ApiProcessError,
   InstitutionUserRoles,
   InstitutionUserTypes,
   InstitutionUserViewModel,
   LocationUserAccess,
   UserManagementModel,
+  VForm,
 } from "@/types";
 import InstitutionUserManagement from "@/components/institutions/modals/InstitutionUserManagement.vue";
 import { InstitutionUserAPIOutDTO } from "@/services/http/dto";
@@ -55,6 +60,10 @@ export default {
       type: Number,
       required: false,
     },
+    hasBusinessGuid: {
+      type: Boolean,
+      required: true,
+    },
   },
   setup(props: any) {
     const {
@@ -63,6 +72,8 @@ export default {
       showModal,
       showParameter: user,
     } = useModalDialog<boolean, InstitutionUserViewModel>();
+    const editUserForm = ref({} as VForm);
+    const toast = useToastMessage();
     const institutionUserManagement = ref();
     const { getFormattedAddress } = useFormatters();
     const initialData = ref(new UserManagementModel());
@@ -85,6 +96,9 @@ export default {
     };
 
     watch(userInfo, async () => {
+      editUserForm.value.reset();
+      editUserForm.value.resetValidation();
+      console.log(editUserForm.value);
       // Get the user permissions.
       const userDetails =
         await InstitutionService.shared.getInstitutionLocationUserDetails(
@@ -124,20 +138,30 @@ export default {
 
     // Update the user and closes the modal.
     const submit = async () => {
-      const formValidation =
-        await institutionUserManagement.value.userForm.validate();
+      const formValidation = await editUserForm.value.validate();
       if (!formValidation.valid) {
         return;
       }
-      const userManagementModel = institutionUserManagement.value
-        .formModel as UserManagementModel;
-      await InstitutionService.shared.updateInstitutionUserWithAuth(
-        userInfo.value.userName,
-        userManagementModel.isAdmin,
-        userManagementModel.isLegalSigningAuthority,
-        userManagementModel.locationAuthorizations,
-      );
-      resolvePromise(true);
+      try {
+        const userManagementModel = institutionUserManagement.value
+          .formModel as UserManagementModel;
+        await InstitutionService.shared.updateInstitutionUserWithAuth(
+          userInfo.value.userName,
+          userManagementModel.isAdmin,
+          userManagementModel.isLegalSigningAuthority,
+          userManagementModel.locationAuthorizations,
+        );
+        resolvePromise(true);
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          editUserForm.value.errors.push(error.message);
+        } else {
+          toast.error(
+            "An unexpected error happen",
+            "An unexpected error happen while updating the user.",
+          );
+        }
+      }
     };
 
     // Closed the modal dialog.
@@ -145,7 +169,15 @@ export default {
       resolvePromise(false);
     };
 
+    const userNameLabel = computed(() => {
+      return props.hasBusinessGuid
+        ? "Business BCeID user ID"
+        : "Basic BCeID user ID";
+    });
+
     return {
+      editUserForm,
+      userNameLabel,
       showDialog,
       showModal,
       submit,

@@ -7,9 +7,6 @@ import {
   UnprocessableEntityException,
   Query,
   Param,
-  NotFoundException,
-  Head,
-  ForbiddenException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -19,14 +16,11 @@ import {
   IsInstitutionAdmin,
   UserToken,
 } from "../../auth/decorators";
-import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import {
   InstitutionService,
   UserService,
   BCeIDService,
   InstitutionLocationService,
-  LEGAL_SIGNING_AUTHORITY_EXIST,
-  LEGAL_SIGNING_AUTHORITY_MSG,
 } from "../../services";
 import {
   InstitutionContactAPIInDTO,
@@ -42,8 +36,6 @@ import {
   UserActiveStatusAPIInDTO,
   InstitutionUserDetailAPIOutDTO,
   InstitutionUserLocationsAPIOutDTO,
-  UserRoleOptionAPIOutDTO,
-  InstitutionUserTypeAndRoleAPIOutDTO,
   InstitutionUserStatusAPIOutDTO,
 } from "./models/institution-user.dto";
 import {
@@ -194,9 +186,12 @@ export class InstitutionInstitutionsController extends BaseController {
    * @param payload authorizations to be associated with the user.
    * @returns Primary identifier of the created resource.
    */
+  @ApiNotFoundResponse({ description: "Institution not found." })
   @ApiUnprocessableEntityResponse({
     description:
-      "User to be added either not found in BCeID Account Service or does not belong to same institution of logged in user.",
+      "User to be added was not found on BCeID Account Service " +
+      "or the user does not belong to the same institution " +
+      "or a second legal signing authority is trying to be set when one is already in place.",
   })
   @IsInstitutionAdmin()
   @Post("user")
@@ -208,16 +203,6 @@ export class InstitutionInstitutionsController extends BaseController {
       userToken.authorizations.institutionId,
       payload,
     );
-  }
-
-  /**
-   * Get Institution user types and roles.
-   * @returns Institution user types and roles.
-   */
-  @IsInstitutionAdmin()
-  @Get("user-types-roles")
-  async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleAPIOutDTO> {
-    return this.institutionService.getUserTypesAndRoles();
   }
 
   /**
@@ -293,6 +278,10 @@ export class InstitutionInstitutionsController extends BaseController {
     description:
       "User to be updated does not belong to the institution of logged in user.",
   })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "The user is not active or a second legal signing authority is trying to be set and only one is allowed.",
+  })
   @IsInstitutionAdmin()
   @Patch("user/:userName")
   async updateInstitutionUserWithAuth(
@@ -300,44 +289,10 @@ export class InstitutionInstitutionsController extends BaseController {
     @Param("userName") userName: string,
     @Body() payload: UpdateInstitutionUserAPIInDTO,
   ): Promise<void> {
-    // Check its a active user
-    const institutionUser =
-      await this.institutionService.getInstitutionUserByUserName(userName);
-
-    if (!institutionUser) {
-      throw new NotFoundException("User to be updated not found");
-    }
-
-    // checking if user belong to logged-in users institution
-    if (institutionUser.institution.id !== token.authorizations.institutionId) {
-      throw new ForbiddenException(
-        "User to be updated does not belong to the institution of logged in user.",
-      );
-    }
-
-    /** A legal signing authority role can be added to only one user per institution */
-    const addLegalSigningAuthorityExist = payload.permissions.some(
-      (role) => role.userRole === InstitutionUserRoles.legalSigningAuthority,
-    );
-
-    if (addLegalSigningAuthorityExist) {
-      const legalSigningAuthority =
-        await this.institutionService.checkLegalSigningAuthority(
-          token.authorizations.institutionId,
-        );
-
-      if (legalSigningAuthority) {
-        throw new UnprocessableEntityException(
-          LEGAL_SIGNING_AUTHORITY_EXIST,
-          LEGAL_SIGNING_AUTHORITY_MSG,
-        );
-      }
-    }
-
-    // remove existing associations and add new associations
-    await this.institutionService.updateInstitutionUser(
+    await this.institutionControllerService.updateInstitutionUserWithAuth(
+      userName,
       payload,
-      institutionUser,
+      token.authorizations.institutionId,
     );
   }
 
@@ -430,44 +385,6 @@ export class InstitutionInstitutionsController extends BaseController {
         },
       };
     });
-  }
-
-  /**
-   * Check if an Institution exist.
-   ** Returns HTTP 404 if institution does not exist.
-   ** Otherwise return HTTP 200.
-   * @param guid
-   */
-  @Head("/:guid")
-  async checkIfInstitutionExist(@Param("guid") guid: string): Promise<void> {
-    const response = await this.institutionService.doesExist(guid);
-    if (!response) {
-      throw new NotFoundException(
-        `Institution with guid: ${guid} does not exist`,
-      );
-    }
-  }
-
-  /**
-   * API to get the lookup values for admin role.
-   **Note: There are are more than one type of admin role. Basic admin has role as NULL rest of them have role name.
-   **This API is exclusively for admin roles and does not include other non-admin roles.
-   * @returns Admin Roles.
-   */
-  @IsInstitutionAdmin()
-  @Get("admin-roles")
-  async getAdminRoles(): Promise<UserRoleOptionAPIOutDTO[]> {
-    const userRoles = await this.institutionService.getAdminRoles();
-    /** This API is to feed the values to drop-down component. Name and code have same value in this scenario. */
-    return userRoles.map((role) => ({
-      name: role.role || role.type,
-      code: role.role || role.type,
-    }));
-  }
-
-  @Patch("sync")
-  async sync(@UserToken() token: IInstitutionUserToken) {
-    await this.institutionService.syncInstitution(token);
   }
 
   /**

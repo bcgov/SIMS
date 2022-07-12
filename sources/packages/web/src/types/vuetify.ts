@@ -18,4 +18,5 @@ export type VForm = Vue & {
    * Resets validation of all registered inputs without modifying their state
    */
   resetValidation: () => void;
+  errors: any[];
 };

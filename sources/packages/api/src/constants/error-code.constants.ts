@@ -19,3 +19,19 @@ export const SIN_VALIDATION_RECORD_NOT_FOUND =
   "SIN_VALIDATION_RECORD_NOT_FOUND";
 export const SIN_VALIDATION_RECORD_INVALID_OPERATION =
   "SIN_VALIDATION_RECORD_INVALID_OPERATION";
+/**
+ * Only one legal signing authority is allowed per institution.
+ * If there is attempt to assign a second user as legal signing authority,
+ * a exception with this code will be thrown.
+ */
+export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
+/**
+ * An institution must have at least on admin user always present. If the user
+ * permissions are edited in a way that the only administrator will be deactivated
+ * or changed to a regular user, an exception will be thrown.
+ */
+export const INSTITUTION_MUST_HAVE_AN_ADMIN = "INSTITUTION_MUST_HAVE_AN_ADMIN";
+/**
+ * The BCeID user id was not able to be retrieved from the BCeID Web Service.
+ */
+export const BCEID_ACCOUNT_NOT_FOUND = "BCEID_ACCOUNT_NOT_FOUND";

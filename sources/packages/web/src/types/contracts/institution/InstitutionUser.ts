@@ -3,8 +3,6 @@ import { InstitutionLocationsDetails } from "./InstitutionLocation";
 
 export enum InstitutionUserTypes {
   admin = "admin",
-  // TODO: To be removed.
-  locationManager = "location-manager",
   user = "user",
 }
 
@@ -150,7 +148,3 @@ export class UserManagementModel {
   isLegalSigningAuthority = false;
   locationAuthorizations = [] as LocationAuthorization[];
 }
-
-export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
-export const LEGAL_SIGNING_AUTHORITY_MSG =
-  "Legal signing authority already exists for this Institution.";

@@ -32,7 +32,6 @@ import {
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
   CreateInstitutionAPIInDTO,
-  InstitutionUserTypeAndRoleAPIOutDTO,
   UserRoleOptionAPIOutDTO,
   InstitutionLocationAPIInDTO,
   InstitutionLocationPrimaryContactAPIInDTO,
@@ -200,10 +199,6 @@ export class InstitutionService {
     };
   }
 
-  public async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleAPIOutDTO> {
-    return ApiClient.Institution.getUserTypeAndRoles();
-  }
-
   /**
    * Create the user authorizations to be associate with the user.
    * @param isAdmin must be created as an admin user.
@@ -251,7 +246,7 @@ export class InstitutionService {
 
   /**
    * Create a user, associate with the institution, and assign the authorizations.
-   * @param userId user BCeID id from BCeID Web Service (e.g. SomeUserName)
+   * @param bceidUserId user BCeID id from BCeID Web Service (e.g. SomeUserName)
    * that will have its data retrieved to be created on SIMS.
    * @param isAdmin must be created as an admin user.
    * @param isLegalSigningAuthority for admin users, define if the role
@@ -262,13 +257,13 @@ export class InstitutionService {
    * token information will be used, if available.
    */
   async createInstitutionUserWithAuth(
-    userId: string,
+    bceidUserId: string,
     isAdmin: boolean,
     isLegalSigningAuthority: boolean,
     locationAuthorizations: LocationAuthorization[],
     institutionId?: number,
   ): Promise<void> {
-    const userPayload = { userId } as CreateInstitutionUserAPIInDTO;
+    const userPayload = { bceidUserId } as CreateInstitutionUserAPIInDTO;
     userPayload.permissions = this.createUserPermissions(
       isAdmin,
       isLegalSigningAuthority,
@@ -388,10 +383,6 @@ export class InstitutionService {
     return ApiClient.Institution.getInstitutionTypeOptions();
   }
 
-  public async checkIfExist(guid: string, headers: any): Promise<boolean> {
-    return ApiClient.Institution.checkIfExist(guid, headers);
-  }
-
   public async getActiveApplicationsSummary(
     locationId: number,
     paginationOptions: PaginationOptions,
@@ -459,10 +450,6 @@ export class InstitutionService {
       sortColumn,
       sortOrder,
     );
-  }
-
-  public async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
-    return ApiClient.Institution.getGetAdminRoleOptions();
   }
 
   /**

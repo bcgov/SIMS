@@ -18,9 +18,7 @@ import {
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
   CreateInstitutionAPIInDTO,
-  InstitutionUserTypeAndRoleAPIOutDTO,
   InstitutionUserDetailAPIOutDTO,
-  UserRoleOptionAPIOutDTO,
   InstitutionLocationAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   AESTCreateInstitutionAPIInDTO,
@@ -87,12 +85,6 @@ export class InstitutionApi extends HttpBaseClient {
     return this.patchCall(this.addClientRoot("institution/sync"), {});
   }
 
-  async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserTypeAndRoleAPIOutDTO>(
-      this.addClientRoot("institution/user-types-roles"),
-    );
-  }
-
   async getMyInstitutionDetails(
     header?: any,
   ): Promise<InstitutionUserDetailAPIOutDTO> {
@@ -110,22 +102,6 @@ export class InstitutionApi extends HttpBaseClient {
       );
       return response.data;
     } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  async checkIfExist(guid: string, headers: any): Promise<boolean> {
-    try {
-      await this.apiClient.head(
-        this.addClientRoot(`institution/${guid}`),
-        headers,
-      );
-      return true;
-    } catch (error) {
-      if (404 === error.response.status) {
-        return false;
-      }
       this.handleRequestError(error);
       throw error;
     }
@@ -253,12 +229,6 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
-    return this.getCallTyped<UserRoleOptionAPIOutDTO[]>(
-      this.addClientRoot("institution/admin-roles"),
-    );
-  }
-
   /**
    * Create a user, associate with the institution, and assign the authorizations.
    * @param payload authorizations to be associated with the user.
@@ -274,10 +244,14 @@ export class InstitutionApi extends HttpBaseClient {
     if (AuthService.shared.authClientType === ClientIdType.AEST) {
       url = `institution/${institutionId}/user`;
     }
-    await this.postCall<CreateInstitutionUserAPIInDTO>(
-      this.addClientRoot(url),
-      payload,
-    );
+    try {
+      await this.postCall<CreateInstitutionUserAPIInDTO>(
+        this.addClientRoot(url),
+        payload,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   /**
@@ -289,10 +263,14 @@ export class InstitutionApi extends HttpBaseClient {
     userName: string,
     payload: UpdateInstitutionUserAPIInDTO,
   ): Promise<void> {
-    return this.patchCall<UpdateInstitutionUserAPIInDTO>(
-      this.addClientRoot(`institution/user/${userName}`),
-      payload,
-    );
+    try {
+      return await this.patchCall<UpdateInstitutionUserAPIInDTO>(
+        this.addClientRoot(`institution/user/${userName}`),
+        payload,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   /**

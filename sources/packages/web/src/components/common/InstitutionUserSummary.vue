@@ -111,6 +111,7 @@
   <edit-institution-user
     ref="editInstitutionUserModal"
     :institutionId="institutionId"
+    :hasBusinessGuid="hasBusinessGuid"
   />
 </template>
 
@@ -130,7 +131,9 @@ import {
   DEFAULT_PAGE_NUMBER,
   DataTableSortOrder,
   PAGINATION_LIST,
+  ApiProcessError,
 } from "@/types";
+import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
 
 export default {
   components: {
@@ -208,7 +211,14 @@ export default {
           "User status updated",
           `${userDetails.displayName} is ${enabled ? "enabled" : "disabled"}`,
         );
-      } catch (error) {
+      } catch (error: unknown) {
+        if (
+          error instanceof ApiProcessError &&
+          error.errorType === INSTITUTION_MUST_HAVE_AN_ADMIN
+        ) {
+          toast.warn("Cannot disable the institution admin", error.message);
+          return;
+        }
         toast.error(
           "Unexpected error",
           "An error happened during the update process.",

@@ -166,7 +166,7 @@ export interface CreateInstitutionUserAPIInDTO {
    * User BCeID id from BCeID Web Service (e.g. SomeUserName) that will have its
    * data retrieved to be created on SIMS.
    */
-  userId: string;
+  bceidUserId: string;
   /**
    * Permissions to be associated with the new user.
    */

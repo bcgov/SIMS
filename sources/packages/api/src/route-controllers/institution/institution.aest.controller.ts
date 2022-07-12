@@ -4,6 +4,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -24,7 +25,11 @@ import {
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
 import { InstitutionLocationControllerService } from "../institution-locations/institution-location.controller.service";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
@@ -35,6 +40,7 @@ import {
 import {
   CreateInstitutionUserAPIInDTO,
   InstitutionUserAPIOutDTO,
+  UpdateInstitutionUserAPIInDTO,
   UserActiveStatusAPIInDTO,
 } from "./models/institution-user.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
@@ -240,15 +246,49 @@ export class InstitutionAESTController extends BaseController {
    * @param payload authorizations to be associated with the user.
    * @returns Primary identifier of the created resource.
    */
-  // TODO: Add API Responses and validations. This method will be worked in the upcoming PR.
+  @ApiNotFoundResponse({ description: "Institution not found." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "User to be added was not found on BCeID Account Service " +
+      "or the user does not belong to the same institution " +
+      "or a second legal signing authority is trying to be set when one is already in place.",
+  })
   @Post(":institutionId/user")
   async createInstitutionUserWithAuth(
-    institutionId: number,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
     @Body() payload: CreateInstitutionUserAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     return this.institutionControllerService.createInstitutionUserWithAuth(
       institutionId,
       payload,
+    );
+  }
+
+  /**
+   * Updates the permissions of an institution user.
+   * @param userName user to have the permissions updated.
+   * @param payload permissions to be update.
+   */
+  @ApiNotFoundResponse({
+    description: "User to be updated not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "The user is not active" +
+      " or the user permission is being updated in a way tha no admin will be present" +
+      " or a second legal signing authority is trying to be set and only one is allowed.",
+  })
+  @Patch("user/:userName")
+  async updateInstitutionUserWithAuth(
+    @Param("userName") userName: string,
+    @Body() payload: UpdateInstitutionUserAPIInDTO,
+  ): Promise<void> {
+    const institutionUser =
+      await this.institutionService.getInstitutionUserByUserName(userName);
+    await this.institutionControllerService.updateInstitutionUserWithAuth(
+      userName,
+      payload,
+      institutionUser.institution.id,
     );
   }
 

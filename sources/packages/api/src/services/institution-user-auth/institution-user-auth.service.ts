@@ -7,7 +7,7 @@ import {
   InstitutionUserRoles,
   InstitutionUserTypes,
 } from "../../auth/user-types.enum";
-import { InstitutionLocationService } from "..";
+import { InstitutionLocationService } from "../institution-location/institution-location.service";
 
 @Injectable()
 export class InstitutionUserAuthService extends RecordDataModelService<InstitutionUserAuth> {
@@ -57,5 +57,72 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
     }
 
     return new InstitutionUserAuthorizations();
+  }
+
+  /**
+   * The the users associated with an institution by its user type (e.g. admin, user).
+   * @param institutionId institution to be searched.
+   * @param userType user type to be searched.
+   * @returns users that belongs to the institution and are the type specified by
+   * the userType parameter.
+   */
+  async getUsersByUserType(
+    institutionId: number,
+    userType: InstitutionUserTypes,
+  ): Promise<InstitutionUserAuth[]> {
+    return this.repo
+      .createQueryBuilder("institutionUserAuth")
+      .select([
+        "institutionUserAuth.id",
+        "institutionUser.id",
+        "institution.id",
+        "authType.id",
+      ])
+      .innerJoin("institutionUserAuth.institutionUser", "institutionUser")
+      .innerJoin("institutionUser.institution", "institution")
+      .innerJoin("institutionUserAuth.authType", "authType")
+      .where("institution.id = :institutionId", { institutionId })
+      .andWhere("authType.type = :userType", { userType })
+      .getMany();
+  }
+
+  /**
+   * The the users associated with an institution by its user role (e.g. legal-signing-authority).
+   * @param institutionId institution to be searched.
+   * @param userRole user role to be searched.
+   * @returns users that belongs to the institution and are the type specified by
+   * the userRole parameter.
+   */
+  async getUsersByUserRole(
+    institutionId: number,
+    userRole: InstitutionUserRoles,
+  ): Promise<InstitutionUserAuth[]> {
+    return this.repo
+      .createQueryBuilder("userAuth")
+      .select(["userAuth.id", "user.id", "user.userName", "institutionUser.id"])
+      .innerJoin("userAuth.institutionUser", "institutionUser")
+      .innerJoin("institutionUser.user", "user")
+      .innerJoin("userAuth.authType", "authType")
+      .innerJoin("institutionUser.institution", "institution")
+      .where("institution.id = :institutionId", { institutionId })
+      .andWhere("authType.role = :userRole", { userRole })
+      .getMany();
+  }
+
+  /**
+   * Get the legal signing authority assigned to an Institution.
+   * Only one user is supposed to have the role assigned.
+   * @param institutionId institution to be searched.
+   * @returns institution user authority, if present.
+   */
+  async getLegalSigningAuthority(
+    institutionId: number,
+  ): Promise<InstitutionUserAuth> {
+    const userRoles = await this.getUsersByUserRole(
+      institutionId,
+      InstitutionUserRoles.legalSigningAuthority,
+    );
+    const [legalSigningAuthority] = userRoles;
+    return legalSigningAuthority;
   }
 }

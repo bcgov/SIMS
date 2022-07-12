@@ -7,8 +7,7 @@ import {
 import {
   BCeIDService,
   InstitutionService,
-  LEGAL_SIGNING_AUTHORITY_EXIST,
-  LEGAL_SIGNING_AUTHORITY_MSG,
+  InstitutionUserAuthService,
   UserService,
 } from "../../services";
 import {
@@ -17,17 +16,25 @@ import {
   transformToInstitutionUserRespDto,
   PaginationOptions,
   PaginatedResults,
+  CustomNamedError,
 } from "../../utilities";
 import { AddressInfo, InstitutionUser } from "../../database/entities";
 import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
 import {
   CreateInstitutionUserAPIInDTO,
   InstitutionUserAPIOutDTO,
+  UpdateInstitutionUserAPIInDTO,
   UserActiveStatusAPIInDTO,
 } from "./models/institution-user.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
-import { InstitutionUserRoles } from "../../auth/user-types.enum";
+import { ApiProcessError } from "../../types";
+import {
+  BCEID_ACCOUNT_NOT_FOUND,
+  INSTITUTION_MUST_HAVE_AN_ADMIN,
+  LEGAL_SIGNING_AUTHORITY_EXIST,
+} from "../../constants";
+import { InstitutionUserTypes } from "../../auth/user-types.enum";
 
 /**
  * Service/Provider for Institutions controller to wrap the common methods.
@@ -38,6 +45,7 @@ export class InstitutionControllerService {
     private readonly institutionService: InstitutionService,
     private readonly bceIDService: BCeIDService,
     private readonly userService: UserService,
+    private readonly institutionUserAuthService: InstitutionUserAuthService,
   ) {}
 
   /**
@@ -133,18 +141,25 @@ export class InstitutionControllerService {
         institutionId,
       );
 
+    if (!institution) {
+      throw new NotFoundException("Institution not found.");
+    }
+
     const accountType = institution.businessGuid
       ? BCeIDAccountTypeCodes.Business
       : BCeIDAccountTypeCodes.Individual;
 
     // Find user on BCeID Web Service
     const bceidUserAccount = await this.bceIDService.getAccountDetails(
-      payload.userId,
+      payload.bceidUserId,
       accountType,
     );
     if (!bceidUserAccount) {
       throw new UnprocessableEntityException(
-        "User not found on BCeID Web Service.",
+        new ApiProcessError(
+          "User not found on BCeID Web Service.",
+          BCEID_ACCOUNT_NOT_FOUND,
+        ),
       );
     }
     // Check if the user being added to the institution belongs to the institution.
@@ -159,35 +174,84 @@ export class InstitutionControllerService {
       );
     }
 
-    // A legal signing authority role can be added to only one user per institution.
-    const hasLegalSigningAuthorityToBeAdded = payload.permissions.some(
-      (role) => role.userRole === InstitutionUserRoles.legalSigningAuthority,
-    );
-
-    if (hasLegalSigningAuthorityToBeAdded) {
-      const legalSigningAuthority =
-        await this.institutionService.checkLegalSigningAuthority(
+    try {
+      // Create the user and the related records.
+      const createdInstitutionUser =
+        await this.institutionService.createInstitutionUser(
           institution.id,
+          bceidUserAccount,
+          payload,
         );
-
-      // TODO: throw a nice API error to be captured in Vue.
-      if (legalSigningAuthority) {
-        throw new UnprocessableEntityException(
-          LEGAL_SIGNING_AUTHORITY_EXIST,
-          LEGAL_SIGNING_AUTHORITY_MSG,
-        );
+      return { id: createdInstitutionUser.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case LEGAL_SIGNING_AUTHORITY_EXIST:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          default:
+            throw error;
+        }
       }
+      throw error;
+    }
+  }
+
+  /**
+   * Update the user authorizations Create a user, associate with the institution, and assign the authorizations.
+   * @param institutionId institution to have the user associated.
+   * @userName unique user name to have the authorizations updated.
+   * @param payload user and authorization information.
+   * @returns created user id.
+   */
+  async updateInstitutionUserWithAuth(
+    userName: string,
+    payload: UpdateInstitutionUserAPIInDTO,
+    institutionId: number,
+  ): Promise<void> {
+    // Check its a active user
+    const institutionUser =
+      await this.institutionService.getInstitutionUserByUserName(userName);
+
+    if (!institutionUser) {
+      throw new NotFoundException("User to be updated not found");
     }
 
-    // Create the user and the related records.
-    const createdInstitutionUser =
-      await this.institutionService.createInstitutionUser(
-        institution.id,
-        bceidUserAccount,
-        payload,
+    if (institutionUser.user.isActive !== true) {
+      throw new UnprocessableEntityException(
+        "Not able to edit an inactive user.",
       );
+    }
 
-    return { id: createdInstitutionUser.id };
+    // Checking if user belong to the institution.
+    if (institutionId && institutionUser.institution.id !== institutionId) {
+      throw new ForbiddenException(
+        "User to be updated does not belong to the institution.",
+      );
+    }
+
+    try {
+      // Remove existing associations and add new associations.
+      await this.institutionService.updateInstitutionUser(
+        institutionId,
+        institutionUser.id,
+        payload.permissions,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case INSTITUTION_MUST_HAVE_AN_ADMIN:
+          case LEGAL_SIGNING_AUTHORITY_EXIST:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          default:
+            throw error;
+        }
+      }
+      throw error;
+    }
   }
 
   async getInstitutionUserByUserName(
@@ -258,6 +322,28 @@ export class InstitutionControllerService {
         "User to be updated doesn't belong to institution of logged in user.",
       );
     }
+
+    if (!payload.isActive) {
+      // Case the user is being disabled check if it is not the only admin for the institution.
+      // Institutions must always have at least one admin user enabled.
+      const admins = await this.institutionUserAuthService.getUsersByUserType(
+        institutionUser.institution.id,
+        InstitutionUserTypes.admin,
+      );
+      if (admins?.length === 1) {
+        // If there is only one admin user, check if it is the one being disabled.
+        const [admin] = admins;
+        if (admin.institutionUser.id === institutionUser.id) {
+          throw new UnprocessableEntityException(
+            new ApiProcessError(
+              "The user cannot be disabled because it is the only administrator present on the institution.",
+              INSTITUTION_MUST_HAVE_AN_ADMIN,
+            ),
+          );
+        }
+      }
+    }
+
     await this.userService.updateUserStatus(
       institutionUser.user.id,
       payload.isActive,

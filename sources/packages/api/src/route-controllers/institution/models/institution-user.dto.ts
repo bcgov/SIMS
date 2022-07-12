@@ -38,7 +38,7 @@ export class CreateInstitutionUserAPIInDTO {
    * data retrieved to be created on SIMS.
    */
   @IsNotEmpty()
-  userId: string;
+  bceidUserId: string;
   /**
    * Permissions to be associated with the new user.
    */
@@ -55,7 +55,7 @@ export class CreateInstitutionUserAPIInDTO {
  */
 export class UpdateInstitutionUserAPIInDTO extends OmitType(
   CreateInstitutionUserAPIInDTO,
-  ["userId"],
+  ["bceidUserId"],
 ) {}
 
 export class UserActiveStatusAPIInDTO {
