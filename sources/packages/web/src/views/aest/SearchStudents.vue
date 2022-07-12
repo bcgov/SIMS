@@ -42,7 +42,7 @@
         /> </v-col
       ><v-col
         ><v-btn
-          :disabled="!appNumber && !firstName && !lastName && !sin"
+          :disabled="!appNumber && !firstName && !lastName && !isSINValid(sin)"
           color="primary"
           class="p-button-raised"
           data-cy="searchStudents"
@@ -105,7 +105,7 @@ import { useFormatters, useToastMessage } from "@/composables";
 export default {
   setup() {
     const toast = useToastMessage();
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, isSINValid } = useFormatters();
     const router = useRouter();
     const appNumber = ref("");
     const firstName = ref("");
@@ -132,6 +132,7 @@ export default {
         );
       }
     };
+
     const studentsFound = computed(() => {
       return students.value.length > 0;
     });
@@ -145,6 +146,7 @@ export default {
       students,
       goToViewStudent,
       dateOnlyLongString,
+      isSINValid,
     };
   },
 };

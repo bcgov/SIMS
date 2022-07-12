@@ -337,8 +337,8 @@ export class StudentService extends RecordDataModelService<Student> {
       .where("user.isActive = true");
 
     if (searchCriteria.sin) {
-      searchQuery.andWhere("sinValidation.sin Ilike :sin", {
-        sin: `%${searchCriteria.sin}%`,
+      searchQuery.andWhere("sinValidation.sin = :sin", {
+        sin: searchCriteria.sin,
       });
     }
     if (searchCriteria.firstName) {
