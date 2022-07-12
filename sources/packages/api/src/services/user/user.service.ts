@@ -101,4 +101,18 @@ export class UserService extends DataModelService<User> {
     user.lastName = userName;
     return this.repo.save(user);
   }
+
+  /**
+   * Check if a user already exists on DB by the user name that is a unique column.
+   * @param userName unique user name.
+   * @returns true if the user exists, otherwise false.
+   */
+  async doesUserExists(userName: string): Promise<boolean> {
+    const user = await this.repo
+      .createQueryBuilder("user")
+      .select("1")
+      .where("user.userName = :userName", { userName })
+      .getRawOne();
+    return !!user;
+  }
 }

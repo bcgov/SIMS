@@ -32,6 +32,7 @@ import { ApiProcessError } from "../../types";
 import {
   BCEID_ACCOUNT_NOT_FOUND,
   INSTITUTION_MUST_HAVE_AN_ADMIN,
+  INSTITUTION_USER_ALREADY_EXISTS,
   LEGAL_SIGNING_AUTHORITY_EXIST,
 } from "../../constants";
 import { InstitutionUserTypes } from "../../auth/user-types.enum";
@@ -157,7 +158,7 @@ export class InstitutionControllerService {
     if (!bceidUserAccount) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
-          "User not found on BCeID Web Service.",
+          "User not found on BCeID.",
           BCEID_ACCOUNT_NOT_FOUND,
         ),
       );
@@ -186,6 +187,7 @@ export class InstitutionControllerService {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
+          case INSTITUTION_USER_ALREADY_EXISTS:
           case LEGAL_SIGNING_AUTHORITY_EXIST:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),

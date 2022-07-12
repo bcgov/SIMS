@@ -39,9 +39,11 @@ import {
 } from "../../auth/user-types.enum";
 import {
   INSTITUTION_MUST_HAVE_AN_ADMIN,
+  INSTITUTION_USER_ALREADY_EXISTS,
   LEGAL_SIGNING_AUTHORITY_EXIST,
 } from "../../constants";
 import { InstitutionUserAuthService } from "../institution-user-auth/institution-user-auth.service";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
@@ -52,6 +54,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     connection: Connection,
     private readonly bceidService: BCeIDService,
     private readonly institutionUserAuthService: InstitutionUserAuthService,
+    private readonly userService: UserService,
   ) {
     super(connection.getRepository(Institution));
     this.institutionUserRepo = connection.getRepository(InstitutionUser);
@@ -112,11 +115,22 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     permissionInfo: InstitutionUserModel,
   ): Promise<InstitutionUser> {
     const userName = `${bceidUserAccount.user.guid}@bceid`.toLowerCase();
-    // TODO: Add user already exists validation.
-    await this.validateUniqueSigningAuthority(
+    const validateUniqueSigningAuthority = this.validateUniqueSigningAuthority(
       institutionId,
       permissionInfo.permissions,
     );
+    const doesUserExistsCheck = this.userService.doesUserExists(userName);
+    const [doesUserExists] = await Promise.all([
+      doesUserExistsCheck,
+      validateUniqueSigningAuthority,
+    ]);
+    if (!doesUserExists) {
+      throw new CustomNamedError(
+        "The user already exists.",
+        INSTITUTION_USER_ALREADY_EXISTS,
+      );
+    }
+
     // Used to create the relationships with institution.
     const institution = { id: institutionId } as Institution;
     // Create the new user to be added to sims.users table.
@@ -202,10 +216,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
     if (account == null) {
       // This scenario occurs if basic BCeID users try to push the bceid account into our application.
-      this.logger.error(
-        "Account information could not be retrieved from BCeID",
-      );
-      return;
+      throw new Error("Account information could not be retrieved from BCeID.");
     }
 
     // Username retrieved from the token.
