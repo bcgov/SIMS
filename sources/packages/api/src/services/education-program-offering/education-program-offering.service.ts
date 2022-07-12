@@ -28,7 +28,7 @@ import {
   getISODateOnlyString,
   CustomNamedError,
 } from "../../utilities";
-export const OFFERING_NOT_FOUND = "OFFERING_NOT_FOUND";
+export const OFFERING_NOT_VALID = "OFFERING_NOT_FOUND";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(private readonly connection: Connection) {
@@ -144,14 +144,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId
    * @param programId
    * @param offeringId
+   * @param onlyEditable
    * @returns
    */
   async getProgramOffering(
     locationId: number,
     programId: number,
     offeringId: number,
+    onlyEditable?: boolean,
   ): Promise<EducationProgramOffering> {
-    return this.repo
+    const offeringQuery = this.repo
       .createQueryBuilder("offerings")
       .select([
         "offerings.id",
@@ -195,8 +197,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       })
       .andWhere("institutionLocation.id = :locationId", {
         locationId: locationId,
-      })
-      .getOne();
+      });
+
+    if (onlyEditable) {
+      offeringQuery.andWhere(
+        "offerings.offeringStatus IN (:...offeringStatus)",
+        {
+          offeringStatus: [
+            OfferingStatus.Approved,
+            OfferingStatus.Pending,
+            OfferingStatus.Declined,
+          ],
+        },
+      );
+    }
+    return offeringQuery.getOne();
   }
 
   /**
@@ -499,7 +514,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     userId: number,
     educationProgramOffering: SaveOfferingModel,
   ): Promise<EducationProgramOffering> {
-    const currentOffering = await this.getProgramOffering(
+    const currentOffering = await this.getApprovedOfferingToRequestChange(
       locationId,
       programId,
       offeringId,
@@ -507,8 +522,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     if (!currentOffering) {
       throw new CustomNamedError(
-        "Offering for given location and program not found.",
-        OFFERING_NOT_FOUND,
+        "Either offering for given location and program not found or the offering not in appropriate status to be requested for change.",
+        OFFERING_NOT_VALID,
       );
     }
 
@@ -542,5 +557,35 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         .save(requestedOffering);
     });
     return persistedOffering;
+  }
+
+  /**
+   * Get the offering to request change.
+   * @param locationId
+   * @param programId
+   * @param offeringId
+   * @returns offering.
+   */
+  async getApprovedOfferingToRequestChange(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+  ): Promise<EducationProgramOffering> {
+    return this.repo
+      .createQueryBuilder("offerings")
+      .select(["offerings.id", "offerings.parentOffering"])
+      .where("offerings.id= :offeringId", {
+        offeringId: offeringId,
+      })
+      .andWhere("offerings.offeringStatus = :offeringStatus", {
+        offeringStatus: OfferingStatus.Approved,
+      })
+      .andWhere("offerings.educationProgram.id = :programId", {
+        programId: programId,
+      })
+      .andWhere("offerings.institutionLocation.id = :locationId", {
+        locationId: locationId,
+      })
+      .getOne();
   }
 }

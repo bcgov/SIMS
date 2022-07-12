@@ -184,9 +184,12 @@ export class EducationProgramOfferingController extends BaseController {
         locationId,
         programId,
         offeringId,
+        true,
       );
     if (!requestOffering) {
-      throw new ForbiddenException();
+      throw new UnprocessableEntityException(
+        "Either offering for the program and location not found or the offering not in appropriate status to be updated.",
+      );
     }
     const requestProgram = await this.programService.getInstitutionProgram(
       programId,
@@ -455,7 +458,7 @@ export class EducationProgramOfferingController extends BaseController {
       return { id: requestedOffering.id };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        throw new NotFoundException(error.message);
+        throw new UnprocessableEntityException(error.message);
       }
       throw error;
     }

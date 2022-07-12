@@ -24,11 +24,12 @@
           <v-btn
             color="primary"
             v-if="hasExistingApplication"
-            @click="requestChange"
-            >Request Change</v-btn
+            prepend-icon="fa:fa fa-chevron-circle-down"
+            @click="toggleMenu"
+            >Edit Actions</v-btn
           >
-        </template></header-navigator
-      >
+          <Menu ref="menu" :model="items" :popup="true" /> </template
+      ></header-navigator>
       <program-offering-detail-header
         v-if="offeringId"
         class="m-4"
@@ -109,6 +110,22 @@ export default {
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
+    const menu = ref();
+    const items = [
+      {
+        label: "Request Change",
+        command: () => {
+          router.push({
+            name: InstitutionRoutesConst.OFFERING_REQUEST_CHANGE,
+            params: {
+              programId: props.programId,
+              offeringId: props.offeringId,
+              locationId: props.locationId,
+            },
+          });
+        },
+      },
+    ];
     const initialData = ref(
       {} as Partial<OfferingFormModel & ProgramValidationModel>,
     );
@@ -142,7 +159,10 @@ export default {
       return "Add Study Period";
     });
     const hasExistingApplication = computed(
-      () => initialData.value.hasExistingApplication && isInstitutionUser.value,
+      () =>
+        initialData.value.hasExistingApplication &&
+        isInstitutionUser.value &&
+        initialData.value.offeringStatus === OfferingStatus.Approved,
     );
 
     const loadFormData = async () => {
@@ -310,6 +330,10 @@ export default {
         },
       });
     };
+
+    const toggleMenu = (event: any) => {
+      menu?.value?.toggle(event);
+    };
     return {
       submitted,
       initialData,
@@ -325,6 +349,9 @@ export default {
       BannerTypes,
       hasExistingApplication,
       requestChange,
+      items,
+      toggleMenu,
+      menu,
     };
   },
 };
