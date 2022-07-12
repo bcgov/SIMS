@@ -218,4 +218,25 @@ export class EducationProgramOfferingService {
       payload,
     );
   }
+
+  /**
+   * Request a change for an offering.
+   * @param locationId
+   * @param programId
+   * @param offeringId
+   * @param payload
+   */
+  public async requestChange(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+    payload: OfferingDTO,
+  ): Promise<void> {
+    return ApiClient.EducationProgramOffering.requestChange(
+      locationId,
+      programId,
+      offeringId,
+      payload,
+    );
+  }
 }

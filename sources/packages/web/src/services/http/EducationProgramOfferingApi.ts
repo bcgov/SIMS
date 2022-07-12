@@ -257,4 +257,23 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       payload,
     );
   }
+
+  /**
+   * Request a change for an offering.
+   * @param locationId
+   * @param programId
+   * @param offeringId
+   * @param payload
+   */
+  public async requestChange(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+    payload: OfferingDTO,
+  ): Promise<void> {
+    await this.postCall<OfferingDTO>(
+      `institution/offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`,
+      payload,
+    );
+  }
 }
