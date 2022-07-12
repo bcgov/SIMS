@@ -21,6 +21,7 @@
           data-cy="sin"
           variant="outlined"
           v-model="sin"
+          @keydown.space.prevent
           @keyup.enter="searchStudents"
         />
       </v-col>
