@@ -251,6 +251,7 @@ export class InstitutionAESTController extends BaseController {
     description:
       "User to be added was not found on BCeID Account Service " +
       "or the user does not belong to the same institution " +
+      "or the user already exists " +
       "or a second legal signing authority is trying to be set when one is already in place.",
   })
   @Post(":institutionId/user")
@@ -275,7 +276,7 @@ export class InstitutionAESTController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "The user is not active" +
-      " or the user permission is being updated in a way tha no admin will be present" +
+      " or the user permission is being updated in a way that no admin will be present" +
       " or a second legal signing authority is trying to be set and only one is allowed.",
   })
   @Patch("user/:userName")
@@ -283,12 +284,9 @@ export class InstitutionAESTController extends BaseController {
     @Param("userName") userName: string,
     @Body() payload: UpdateInstitutionUserAPIInDTO,
   ): Promise<void> {
-    const institutionUser =
-      await this.institutionService.getInstitutionUserByUserName(userName);
     await this.institutionControllerService.updateInstitutionUserWithAuth(
       userName,
       payload,
-      institutionUser.institution.id,
     );
   }
 

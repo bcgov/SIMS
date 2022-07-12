@@ -191,6 +191,7 @@ export class InstitutionInstitutionsController extends BaseController {
     description:
       "User to be added was not found on BCeID Account Service " +
       "or the user does not belong to the same institution " +
+      "or the user already exists " +
       "or a second legal signing authority is trying to be set when one is already in place.",
   })
   @IsInstitutionAdmin()
@@ -280,7 +281,9 @@ export class InstitutionInstitutionsController extends BaseController {
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "The user is not active or a second legal signing authority is trying to be set and only one is allowed.",
+      "The user is not active" +
+      " or the user permission is being updated in a way that no admin will be present" +
+      " or a second legal signing authority is trying to be set and only one is allowed.",
   })
   @IsInstitutionAdmin()
   @Patch("user/:userName")
