@@ -220,13 +220,16 @@ export class EducationProgramOfferingService {
   }
 
   /**
-   * Request a change for an offering.
+   * Request a change to offering to modify it's
+   * properties that affect the assessment of student application.
+   **During this process a new offering is created by copying the existing
+   * offering and modifying the properties required.
    * @param locationId
    * @param programId
    * @param offeringId
    * @param payload
    */
-  public async requestChange(
+  async requestChange(
     locationId: number,
     programId: number,
     offeringId: number,

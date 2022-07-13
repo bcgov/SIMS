@@ -6,7 +6,6 @@
         :routeLocation="getRouteLocation()"
         subTitle="Request to Change"
       />
-
       <program-offering-detail-header
         v-if="offeringId"
         class="m-4"
@@ -22,7 +21,7 @@
         class="mb-2"
         :type="BannerTypes.Warning"
         header="You're requesting a change when students have applied financial aid for this offering"
-        summary="Please be advised if the request is approved, the students who applied for financial aid fpr this offering will go through a reassessment and it may change their funding amount."
+        summary="Please be advised if the request is approved, the students who applied for financial aid for this offering will go through a reassessment and it may change their funding amount."
       />
     </template>
     <assess-offering-modal
@@ -45,6 +44,7 @@ import {
   OfferingFormModel,
   OfferingStatus,
   ProgramValidationModel,
+  OfferingDTO,
 } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage, useOffering } from "@/composables";
@@ -131,7 +131,7 @@ export default {
         },
       };
     };
-    const saveOffering = async (data: any) => {
+    const saveOffering = async (data: OfferingDTO) => {
       try {
         await EducationProgramOfferingService.shared.requestChange(
           props.locationId,

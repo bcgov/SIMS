@@ -80,7 +80,6 @@ import {
   faCopy as farCopy,
   faStickyNote,
   faCheckCircle as farCheckCircle,
-  faArrowAltCircleDown as farArrowAltCircleDown,
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
@@ -113,7 +112,6 @@ library.add(
   farCopy,
   faStickyNote,
   faExclamationCircleSolid,
-  farArrowAltCircleDown,
 );
 
 AppConfigService.shared.init().then(() => {

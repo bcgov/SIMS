@@ -254,7 +254,7 @@ export class EducationProgramOffering extends RecordDataModel {
     name: "parent_offering_id",
     referencedColumnName: ColumnNames.ID,
   })
-  parentOffering: EducationProgramOffering;
+  parentOffering?: EducationProgramOffering;
 }
 
 /**

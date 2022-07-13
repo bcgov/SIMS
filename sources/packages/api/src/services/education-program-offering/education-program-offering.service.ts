@@ -28,7 +28,8 @@ import {
   getISODateOnlyString,
   CustomNamedError,
 } from "../../utilities";
-export const OFFERING_NOT_VALID = "OFFERING_NOT_FOUND";
+import { OFFERING_NOT_VALID } from "../../constants";
+
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(private readonly connection: Connection) {
@@ -138,13 +139,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * This is to fetch the Education Offering
+   * This is to fetch the Offering
    * that are associated with the Location, Program
-   * and offering
+   * and given offering id.
    * @param locationId
    * @param programId
    * @param offeringId
-   * @param onlyEditable if set to true then fetch offering
+   * @param isEditOnly if set to true then fetch offering
    * in status Approved | Declined | Pending.
    * @returns
    */
@@ -152,7 +153,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     offeringId: number,
-    onlyEditable?: boolean,
+    isEditOnly?: boolean,
   ): Promise<EducationProgramOffering> {
     const offeringQuery = this.repo
       .createQueryBuilder("offerings")
@@ -200,7 +201,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         locationId: locationId,
       });
 
-    if (onlyEditable) {
+    if (isEditOnly) {
       offeringQuery.andWhere(
         "offerings.offeringStatus IN (:...offeringStatus)",
         {
@@ -534,30 +535,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       educationProgramOffering,
     );
     const auditUser = { id: userId } as User;
+    //Populating the status, parent offering and audit fields.
     requestedOffering.offeringStatus = OfferingStatus.AwaitingApproval;
     requestedOffering.parentOffering =
       currentOffering.parentOffering ??
       ({ id: currentOffering.id } as EducationProgramOffering);
     requestedOffering.creator = auditUser;
-    requestedOffering.createdAt = new Date();
-    let persistedOffering = new EducationProgramOffering();
-    await this.connection.transaction(async (transactionalEntityManager) => {
-      await transactionalEntityManager
-        .getRepository(EducationProgramOffering)
-        .createQueryBuilder()
-        .update(EducationProgramOffering)
-        .set({
-          offeringStatus: OfferingStatus.UnderReview,
-          modifier: auditUser,
-        })
-        .where("id = :offeringId", { offeringId })
-        .execute();
 
-      persistedOffering = await transactionalEntityManager
-        .getRepository(EducationProgramOffering)
-        .save(requestedOffering);
-    });
-    return persistedOffering;
+    //Update the status and audit details of current offering.
+    const underReviewOffering = new EducationProgramOffering();
+    underReviewOffering.id = offeringId;
+    underReviewOffering.offeringStatus = OfferingStatus.UnderReview;
+    underReviewOffering.modifier = auditUser;
+
+    await this.repo.save([underReviewOffering, requestedOffering]);
+    return requestedOffering;
   }
 
   /**
