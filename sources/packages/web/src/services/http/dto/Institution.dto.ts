@@ -229,7 +229,7 @@ export interface InstitutionUserStatusAPIOutDTO {
    */
   isActiveUser?: boolean;
   /**
-   * Indicates if the user belongs to a institutionn already present on DB.
+   * Indicates if the user belongs to an institution already present on DB.
    * The user can be not present on DB but its institution can be already present,
    * what means that the user does not have access to the solution.
    * Case the user is not present and the institution is not present it means
