@@ -60,7 +60,7 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
   }
 
   /**
-   * The the users associated with an institution by its user type (e.g. admin, user).
+   * The users associated with an institution by its user type (e.g. admin, user).
    * @param institutionId institution to be searched.
    * @param userType user type to be searched.
    * @param isActive optionally filter by the user active status.
@@ -93,7 +93,7 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
   }
 
   /**
-   * The the users associated with an institution by its user role (e.g. legal-signing-authority).
+   * The users associated with an institution by its user role (e.g. legal-signing-authority).
    * @param institutionId institution to be searched.
    * @param userRole user role to be searched.
    * @returns users that belongs to the institution and are the type specified by

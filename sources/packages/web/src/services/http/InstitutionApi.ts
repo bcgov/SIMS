@@ -255,9 +255,9 @@ export class InstitutionApi extends HttpBaseClient {
   }
 
   /**
-   * Updates the permissions of an institution user.
+   * Update the user authorizations for the institution user.
    * @param userName user to have the permissions updated.
-   * @param payload permissions to be update.
+   * @param payload permissions to be updated.
    */
   async updateInstitutionUserWithAuth(
     userName: string,

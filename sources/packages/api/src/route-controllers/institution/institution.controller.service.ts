@@ -201,7 +201,7 @@ export class InstitutionControllerService {
   }
 
   /**
-   * Update the user authorizations Create a user, associate with the institution, and assign the authorizations.
+   * Update the user authorizations for the institution user.
    * @userName unique user name to have the authorizations updated.
    * @param payload user and authorization information.
    * @param authorizedInstitutionId optional institution to check for user authorization.
@@ -212,7 +212,6 @@ export class InstitutionControllerService {
     payload: UpdateInstitutionUserAPIInDTO,
     authorizedInstitutionId?: number,
   ): Promise<void> {
-    // Check its a active user.
     const institutionUser =
       await this.institutionService.getInstitutionUserByUserName(userName);
 
@@ -226,7 +225,7 @@ export class InstitutionControllerService {
       );
     }
 
-    // Checking if user belong to the institution.
+    // Checking if the user belongs to the institution.
     if (
       authorizedInstitutionId &&
       institutionUser.institution.id !== authorizedInstitutionId
@@ -237,7 +236,6 @@ export class InstitutionControllerService {
     }
 
     try {
-      // Remove existing associations and add new associations.
       await this.institutionService.updateInstitutionUser(
         institutionUser.institution.id,
         institutionUser.id,
@@ -263,7 +261,6 @@ export class InstitutionControllerService {
     userName: string,
     institutionId?: number,
   ): Promise<InstitutionUserAPIOutDTO> {
-    // Get institutionUser
     const institutionUser =
       await this.institutionService.getInstitutionUserByUserName(userName);
 
@@ -305,15 +302,14 @@ export class InstitutionControllerService {
    * Update the active status of the user.
    * @param userName unique name of the user to be updated.
    * @param payload information to enable or disable the user.
-   * @param institutionId: when provided will validate if the
+   * @param authorizedInstitutionId: when provided will validate if the
    * user belongs to the institution.
    */
   async updateUserStatus(
     userName: string,
     payload: UserActiveStatusAPIInDTO,
-    institutionId?: number,
+    authorizedInstitutionId?: number,
   ): Promise<void> {
-    // Check if user exists or not.
     const institutionUser =
       await this.institutionService.getInstitutionUserByUserName(userName);
 
@@ -322,7 +318,10 @@ export class InstitutionControllerService {
     }
 
     // Check if the user is associated with the provided institution.
-    if (institutionId && institutionUser.institution.id !== institutionId) {
+    if (
+      authorizedInstitutionId &&
+      institutionUser.institution.id !== authorizedInstitutionId
+    ) {
       throw new ForbiddenException(
         "User to be updated doesn't belong to institution of logged in user.",
       );

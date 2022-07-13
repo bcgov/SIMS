@@ -217,7 +217,7 @@ export interface UserRoleOptionAPIOutDTO {
 export interface InstitutionUserStatusAPIOutDTO {
   /**
    * Indicates if the user is present on DB or not.
-   * A user that is not present on a existing institution means that
+   * A user that is not present on an existing institution means that
    * the user never got access to this institution.
    * A user not present associated on BCeID to an institution that is also
    * not present means that the institution must be created, what can be done
@@ -225,11 +225,11 @@ export interface InstitutionUserStatusAPIOutDTO {
    */
   isExistingUser: boolean;
   /**
-   * Case the user is present indicate if the the same is active.
+   * Case the user is present indicate if the same is active.
    */
   isActiveUser?: boolean;
   /**
-   * Indicates if the user belongs to a institution already present on DB.
+   * Indicates if the user belongs to a institutionn already present on DB.
    * The user can be not present on DB but its institution can be already present,
    * what means that the user does not have access to the solution.
    * Case the user is not present and the institution is not present it means
