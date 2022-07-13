@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Program detail"
-        :routeLocation="getRouteLocation()"
+        :routeLocation="programDetailRoute"
         subTitle="Request to Change"
       />
       <program-offering-detail-header
@@ -36,10 +36,10 @@
 </template>
 
 <script lang="ts">
-import { useRouter, RouteLocationRaw } from "vue-router";
+import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import {
   OfferingFormModel,
   OfferingStatus,
@@ -80,6 +80,14 @@ export default {
       {} as Partial<OfferingFormModel & ProgramValidationModel>,
     );
     const { mapOfferingChipStatus } = useOffering();
+    const programDetailRoute = computed(() => ({
+      name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
+      params: {
+        programId: props.programId,
+        locationId: props.locationId,
+        offeringId: props.offeringId,
+      },
+    }));
 
     const loadFormData = async () => {
       const programDetails = await EducationProgramService.shared.getProgram(
@@ -120,17 +128,6 @@ export default {
     onMounted(async () => {
       await loadFormData();
     });
-
-    const getRouteLocation = (): RouteLocationRaw => {
-      return {
-        name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
-        params: {
-          programId: props.programId,
-          locationId: props.locationId,
-          offeringId: props.offeringId,
-        },
-      };
-    };
     const saveOffering = async (data: OfferingDTO) => {
       try {
         await EducationProgramOfferingService.shared.requestChange(
@@ -160,7 +157,7 @@ export default {
     return {
       saveOffering,
       initialData,
-      getRouteLocation,
+      programDetailRoute,
       OfferingStatus,
       BannerTypes,
     };

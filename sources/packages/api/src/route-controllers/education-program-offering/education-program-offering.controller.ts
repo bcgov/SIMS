@@ -100,6 +100,7 @@ export class EducationProgramOfferingController extends BaseController {
         locationId,
         programId,
         submissionResult.data.data,
+        userToken.userId,
       );
     return { id: createdProgramOffering.id };
   }
@@ -172,7 +173,7 @@ export class EducationProgramOfferingController extends BaseController {
     ]);
     if (!offering) {
       throw new NotFoundException(
-        "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
+        "Not able to find an Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
     return transformToProgramOfferingDto(offering, hasExistingApplication);
@@ -226,6 +227,7 @@ export class EducationProgramOfferingController extends BaseController {
         programId,
         offeringId,
         updatingResult.data.data,
+        userToken.userId,
       );
     return updateProgramOffering.affected;
   }

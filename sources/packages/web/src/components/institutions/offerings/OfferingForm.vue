@@ -1,4 +1,6 @@
 <template>
+  <!--TODO: Use formio-container component here once LocationProgramOffering.vue
+  is refactored. -->
   <formio
     formName="educationprogramoffering"
     :data="data"

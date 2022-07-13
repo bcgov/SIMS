@@ -41,18 +41,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId location id to associate the new program offering.
    * @param programId program id to associate the new program offering.
    * @param educationProgramOffering Information used to create the program offering.
+   * @param userId User who creates the offering.
    * @returns Education program offering created.
    */
   async createEducationProgramOffering(
     locationId: number,
     programId: number,
     educationProgramOffering: SaveOfferingModel,
+    userId: number,
   ): Promise<EducationProgramOffering> {
     const programOffering = this.populateProgramOffering(
       locationId,
       programId,
       educationProgramOffering,
     );
+    programOffering.creator = { id: userId } as User;
     return this.repo.save(programOffering);
   }
 
@@ -221,6 +224,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId location id to associate the new program offering.
    * @param programId program id to associate the new program offering.
    * @param educationProgramOffering Information used to create the program offering.
+   * @param userId User who updates the offering.
    * @returns Education program offering created.
    */
   async updateEducationProgramOffering(
@@ -228,6 +232,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     offeringId: number,
     educationProgramOffering: SaveOfferingModel,
+    userId: number,
   ): Promise<UpdateResult> {
     const hasExistingApplication = await this.hasExistingApplication(
       offeringId,
@@ -238,6 +243,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       educationProgramOffering,
       hasExistingApplication,
     );
+    programOffering.modifier = { id: userId } as User;
     return this.repo.update(offeringId, programOffering);
   }
 
@@ -501,11 +507,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * Request a change for an offering.
-   * @param locationId
-   * @param programId
+   * Request a change to offering to modify it's
+   * properties that affect the assessment of student application.
+   ** During this process a new offering is created by copying the existing
+   * offering and modifying the properties required.
+   * @param locationId Offering location.
+   * @param programId Program of the offering.
    * @param offeringId
-   * @param userId
+   * @param userId User who requests change to the offering.
    * @param educationProgramOffering
    * @returns new offering created from existing offering with changes requested.
    */
@@ -568,7 +577,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     return this.repo
       .createQueryBuilder("offerings")
       .select(["offerings.id", "offerings.parentOffering"])
-      .where("offerings.id= :offeringId", {
+      .where("offerings.id = :offeringId", {
         offeringId: offeringId,
       })
       .andWhere("offerings.offeringStatus = :offeringStatus", {
