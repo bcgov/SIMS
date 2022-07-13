@@ -24,6 +24,7 @@ import {
   Award,
   ECertRecord,
   ECertUploadResult,
+  ESDCFileResponseDTO,
 } from "./models/e-cert-integration-model";
 import { Injectable } from "@nestjs/common";
 import { ECertIntegrationService } from "./e-cert-integration.service";
@@ -32,7 +33,6 @@ import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/
 import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ESDCIntegrationConfig } from "../../types";
-import { ESDCFileResponseAPIOutDTO } from "../../route-controllers/esdc-integration/models/esdc.dto";
 import { ECertDisbursementSchedule } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
@@ -84,7 +84,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async processFullTimeResponses(): Promise<ESDCFileResponseAPIOutDTO[]> {
+  async processFullTimeResponses(): Promise<ESDCFileResponseDTO[]> {
     return this.processResponses(
       this.eCertFullTimeIntegrationService,
       ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
@@ -96,7 +96,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async processPartTimeResponses(): Promise<ESDCFileResponseAPIOutDTO[]> {
+  async processPartTimeResponses(): Promise<ESDCFileResponseDTO[]> {
     return this.processResponses(
       this.eCertPartTimeIntegrationService,
       ECERT_PART_TIME_FEEDBACK_FILE_CODE,

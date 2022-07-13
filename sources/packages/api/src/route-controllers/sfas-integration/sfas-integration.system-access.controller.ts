@@ -11,7 +11,6 @@ import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("sfas-integration")
-// todo: test all endpoints
 @ApiTags(`${ClientTypeBaseRoute.SystemAccess}-sfas-integration`)
 export class SFASIntegrationSystemAccessController extends BaseController {
   constructor(private readonly sfas: SFASIntegrationProcessingService) {

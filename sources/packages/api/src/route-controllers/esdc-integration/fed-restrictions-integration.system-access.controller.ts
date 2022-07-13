@@ -10,9 +10,8 @@ import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-// todo: test all endpoints
 @Controller("fed-restrictions")
-@ApiTags(`${ClientTypeBaseRoute.SystemAccess}-fed-restrictionsn`)
+@ApiTags(`${ClientTypeBaseRoute.SystemAccess}-fed-restrictions`)
 export class FedRestrictionsIntegrationSystemAccessController extends BaseController {
   constructor(
     private readonly processingService: FedRestrictionProcessingService,

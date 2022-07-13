@@ -18,7 +18,6 @@ import {
 } from "../../utilities";
 import { ClientTypeBaseRoute } from "../../types";
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-// todo: test all endpoints
 @Controller("msfaa-integration")
 @ApiTags(`${ClientTypeBaseRoute.SystemAccess}-msfaa-integration`)
 export class MSFAAIntegrationSystemAccessController extends BaseController {

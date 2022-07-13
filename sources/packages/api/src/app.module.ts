@@ -3,7 +3,6 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { DatabaseModule } from "./database/database.module";
 import { RouterModule } from "@nestjs/core";
-// todo: clean unused services, that were part of system controllers
 import {
   StudentService,
   UserService,

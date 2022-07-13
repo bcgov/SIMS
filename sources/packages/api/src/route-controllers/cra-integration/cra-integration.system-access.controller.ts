@@ -11,7 +11,6 @@ import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-// todo: test all endpoints
 @Controller("cra-integration")
 @ApiTags(`${ClientTypeBaseRoute.SystemAccess}-cra-integration`)
 export class CRAIntegrationSystemAccessController extends BaseController {

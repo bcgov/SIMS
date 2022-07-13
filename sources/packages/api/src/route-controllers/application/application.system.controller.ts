@@ -44,7 +44,6 @@ import { ApplicationStatus } from "../../database/entities";
  * to process and have access to all data as needed.
  */
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-// todo: test all endpoints
 @Controller("application")
 @ApiTags(`${ClientTypeBaseRoute.SystemAccess}-application`)
 export class ApplicationSystemAccessController extends BaseController {
@@ -68,8 +67,7 @@ export class ApplicationSystemAccessController extends BaseController {
     description:
       "Not able to update the overall Application status with provided data.",
   })
-  // todo: remove 'application from url after id - > change the consumer too - probably camunda
-  @Patch(":id/application/status")
+  @Patch(":id/status")
   async updateApplicationStatus(
     @Param("id", ParseIntPipe) applicationId: number,
     @Body() payload: UpdateApplicationStatusAPIInDTO,
