@@ -1,8 +1,5 @@
 import { Controller, Post } from "@nestjs/common";
-import {
-  MSFAARequestResultAPIOutDTO,
-  ProcessResponseAPIOutDTO,
-} from "./models/msfaa-file-result.dto";
+import { MSFAARequestResultAPIOutDTO } from "./models/msfaa-file-result.dto";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
@@ -17,6 +14,7 @@ import {
   MSFAA_PART_TIME_FILE_CODE,
 } from "../../utilities";
 import { ClientTypeBaseRoute } from "../../types";
+import { ProcessResponseAPIOutDTO } from "./models/esdc.dto";
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("msfaa-integration")
 @ApiTags(`${ClientTypeBaseRoute.SystemAccess}-msfaa-integration`)

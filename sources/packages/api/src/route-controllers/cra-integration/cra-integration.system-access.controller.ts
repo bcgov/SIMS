@@ -1,7 +1,7 @@
 import { Controller, Post } from "@nestjs/common";
 import { CRAPersonalVerificationService } from "../../services";
 import { CRAValidationResultAPIOutDTO } from "./models/cra-validation-result.dto";
-import { ProcessResponseResAPIOutDTO } from "./models/process-response.dto";
+import { ProcessResponseAPIOutDTO } from "./models/process-response.dto";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
@@ -40,7 +40,7 @@ export class CRAIntegrationSystemAccessController extends BaseController {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   @Post("process-responses")
-  async processResponses(): Promise<ProcessResponseResAPIOutDTO[]> {
+  async processResponses(): Promise<ProcessResponseAPIOutDTO[]> {
     const results = await this.cra.processResponses();
     return results.map((result) => {
       return {

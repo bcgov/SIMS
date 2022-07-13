@@ -3,8 +3,3 @@ export class MSFAARequestResultAPIOutDTO {
   uploadedRecords: number;
   offeringIntensity: string;
 }
-
-export class ProcessResponseAPIOutDTO {
-  processSummary: string[];
-  errorsSummary: string[];
-}
