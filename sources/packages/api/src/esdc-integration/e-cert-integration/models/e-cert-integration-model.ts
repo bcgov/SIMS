@@ -79,7 +79,7 @@ export interface ECertUploadResult {
   uploadedRecords: number;
 }
 
-export interface ESDCFileResponseDTO {
+export interface ESDCFileResponse {
   processSummary: string[];
   errorsSummary: string[];
 }

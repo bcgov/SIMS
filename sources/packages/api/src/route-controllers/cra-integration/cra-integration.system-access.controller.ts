@@ -1,7 +1,7 @@
 import { Controller, Post } from "@nestjs/common";
 import { CRAPersonalVerificationService } from "../../services";
 import { CRAValidationResultAPIOutDTO } from "./models/cra-validation-result.dto";
-import { ProcessResponseResAPIOutDTO } from "./models/process-response.res.dto";
+import { ProcessResponseResAPIOutDTO } from "./models/process-response.dto";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";

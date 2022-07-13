@@ -5,7 +5,7 @@ export * from "./dynamic-form/dynamic-form.controller";
 export * from "./cra-integration/cra-integration.system-access.controller";
 export * from "./education-program/education-program.controller";
 export * from "./education-program-offering/education-program-offering.controller";
-export * from "./application/application.system.controller";
+export * from "./application/application.system-access.controller";
 export * from "./atbc/atbc.system.controller";
 export * from "./program-info-request/program-info-request.controller";
 export * from "./confirmation-of-enrollment/confirmation-of-enrollment.controller";

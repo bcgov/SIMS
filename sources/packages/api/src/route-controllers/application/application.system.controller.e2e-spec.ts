@@ -41,7 +41,7 @@ import {
 } from "../../testHelpers/fake-entities";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
 import { CraIntegrationModule } from "../../cra-integration/cra-integration.module";
-import { ApplicationSystemAccessController } from "./application.system.controller";
+import { ApplicationSystemAccessController } from "./application.system-access.controller";
 
 describe.skip("Test system-access/application Controller", () => {
   let accesstoken: string;

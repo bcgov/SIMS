@@ -1,7 +1,7 @@
 import { Controller, Post } from "@nestjs/common";
 import {
   MSFAARequestResultAPIOutDTO,
-  ProcessResponseResAPIOutDTO,
+  ProcessResponseAPIOutDTO,
 } from "./models/msfaa-file-result.dto";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
@@ -72,7 +72,7 @@ export class MSFAAIntegrationSystemAccessController extends BaseController {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   @Post("process-responses")
-  async processResponses(): Promise<ProcessResponseResAPIOutDTO[]> {
+  async processResponses(): Promise<ProcessResponseAPIOutDTO[]> {
     const results = await this.msfaaResponseService.processResponses();
     return results.map((result) => {
       return {

@@ -4,7 +4,7 @@ export class MSFAARequestResultAPIOutDTO {
   offeringIntensity: string;
 }
 
-export class ProcessResponseResAPIOutDTO {
+export class ProcessResponseAPIOutDTO {
   processSummary: string[];
   errorsSummary: string[];
 }

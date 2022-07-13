@@ -101,7 +101,7 @@ export class ApplicationSystemAccessController extends BaseController {
       "Student Application is not in the expected status. Applications status must the 'assessment' in order to have an MSFAA associated.",
   })
   @ApiUnprocessableEntityResponse({
-    description: `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' to an MSFAA number be assigned.`,
+    description: `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' for an MSFAA number be assigned.`,
   })
   @Patch(":applicationId/msfaa-number")
   async associateMSFAANumber(

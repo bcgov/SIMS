@@ -1,5 +1,5 @@
 import { Controller, Post } from "@nestjs/common";
-import { ProcessResponseResAPIOutDTO } from "./models/msfaa-file-result.dto";
+import { ProcessResponseAPIOutDTO } from "./models/msfaa-file-result.dto";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
@@ -49,7 +49,7 @@ export class SINValidationSystemAccessController extends BaseController {
   @Post("process-responses")
   async processResponses(
     @UserToken() userToken: IUserToken,
-  ): Promise<ProcessResponseResAPIOutDTO[]> {
+  ): Promise<ProcessResponseAPIOutDTO[]> {
     this.logger.log("Processing ESDC SIN validation response files.");
     const results = await this.sinValidationProcessingService.processResponses(
       userToken.userId,

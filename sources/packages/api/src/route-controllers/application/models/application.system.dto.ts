@@ -1,18 +1,12 @@
 import { IsEnum, IsInt, IsOptional, Min } from "class-validator";
-
 import {
   ApplicationStatus,
   SupportingUserType,
-  OfferingIntensity,
 } from "../../../database/entities";
+
 export class UpdateApplicationStatusAPIInDTO {
   @IsEnum(ApplicationStatus)
   status: ApplicationStatus;
-}
-
-export class UpdateOfferingIntensity extends UpdateApplicationStatusAPIInDTO {
-  @IsEnum(OfferingIntensity)
-  offeringIntensity: OfferingIntensity;
 }
 
 export class CRAVerificationIncomeDetailsAPIOutDTO {

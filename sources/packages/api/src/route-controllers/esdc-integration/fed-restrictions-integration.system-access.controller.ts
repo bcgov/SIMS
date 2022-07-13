@@ -27,7 +27,7 @@ export class FedRestrictionsIntegrationSystemAccessController extends BaseContro
     return {
       processSummary: uploadResult.processSummary,
       errorsSummary: uploadResult.errorsSummary,
-    } as ESDCFileResponseAPIOutDTO;
+    };
   }
 
   @InjectLogger()
