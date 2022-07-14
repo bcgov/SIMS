@@ -1119,7 +1119,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     if (application.applicationStatus !== ApplicationStatus.assessment) {
       throw new CustomNamedError(
-        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' to an MSFAA number be assigned.`,
+        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' for an MSFAA number be assigned.`,
         INVALID_OPERATION_IN_THE_CURRENT_STATUS,
       );
     }

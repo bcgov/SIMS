@@ -133,6 +133,7 @@ export class StudentControllerService {
       },
       pdStatus: determinePDStatus(student),
       validSin: student.sinValidation.isValidSIN,
+      sin: student.sinValidation.sin,
     };
   }
 

@@ -4,6 +4,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UnprocessableEntityException,
@@ -19,13 +20,13 @@ import {
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
-  UpdateApplicationStatusDto,
-  SupportingUserDto,
-  CreateSupportingUsersDto,
-  CreateIncomeVerificationDto,
-  CRAVerificationIncomeDetailsDto,
-} from "./models/application.system.model";
-import { IConfig } from "../../types";
+  UpdateApplicationStatusAPIInDTO,
+  SupportingUserDetailsAPIOutDTO,
+  CreateSupportingUsersAPIInDTO,
+  CreateIncomeVerificationAPIInDTO,
+  CRAVerificationIncomeDetailsAPIOutDTO,
+} from "./models/application.system.dto";
+import { ClientTypeBaseRoute, IConfig } from "../../types";
 import {
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -34,6 +35,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { IUserToken } from "../../auth/userToken.interface";
+import { ApplicationStatus } from "../../database/entities";
 
 /**
  * Allow system access to the application data.
@@ -42,9 +44,9 @@ import { IUserToken } from "../../auth/userToken.interface";
  * to process and have access to all data as needed.
  */
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-@Controller("system-access/application")
-@ApiTags("system-access")
-export class ApplicationSystemController extends BaseController {
+@Controller("application")
+@ApiTags(`${ClientTypeBaseRoute.SystemAccess}-application`)
+export class ApplicationSystemAccessController extends BaseController {
   private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
@@ -61,10 +63,14 @@ export class ApplicationSystemController extends BaseController {
    * @param applicationId application id to be updated.
    * @param payload status of the program information request.
    */
-  @Patch(":id/application/status")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Not able to update the overall Application status with provided data.",
+  })
+  @Patch(":id/status")
   async updateApplicationStatus(
-    @Param("id") applicationId: number,
-    @Body() payload: UpdateApplicationStatusDto,
+    @Param("id", ParseIntPipe) applicationId: number,
+    @Body() payload: UpdateApplicationStatusAPIInDTO,
   ): Promise<void> {
     const updateResult = await this.applicationService.updateApplicationStatus(
       applicationId,
@@ -94,10 +100,12 @@ export class ApplicationSystemController extends BaseController {
     description:
       "Student Application is not in the expected status. Applications status must the 'assessment' in order to have an MSFAA associated.",
   })
-  @ApiUnprocessableEntityResponse({})
+  @ApiUnprocessableEntityResponse({
+    description: `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' for an MSFAA number be assigned.`,
+  })
   @Patch(":applicationId/msfaa-number")
   async associateMSFAANumber(
-    @Param("applicationId") applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<void> {
     try {
       await this.applicationService.associateMSFAANumber(applicationId);
@@ -121,8 +129,8 @@ export class ApplicationSystemController extends BaseController {
    */
   @Post(":applicationId/income-verification")
   async createIncomeVerification(
-    @Param("applicationId") applicationId: number,
-    @Body() payload: CreateIncomeVerificationDto,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @Body() payload: CreateIncomeVerificationAPIInDTO,
   ): Promise<number> {
     const incomeVerification =
       await this.incomeVerificationService.createIncomeVerification(
@@ -153,11 +161,14 @@ export class ApplicationSystemController extends BaseController {
    * the application.
    * @returns student income verification for application.
    */
+  @ApiNotFoundResponse({
+    description: "Income verification not found for the application.",
+  })
   @Get(":applicationId/income-verification/:incomeVerificationId")
   async getIncomeVerification(
-    @Param("applicationId") applicationId: number,
-    @Param("incomeVerificationId") incomeVerificationId: number,
-  ): Promise<CRAVerificationIncomeDetailsDto> {
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @Param("incomeVerificationId", ParseIntPipe) incomeVerificationId: number,
+  ): Promise<CRAVerificationIncomeDetailsAPIOutDTO> {
     const income =
       await this.incomeVerificationService.getIncomeVerificationForApplication(
         applicationId,
@@ -189,8 +200,8 @@ export class ApplicationSystemController extends BaseController {
    */
   @Post(":applicationId/supporting-user")
   async createSupportingUser(
-    @Param("applicationId") applicationId: number,
-    @Body() payload: CreateSupportingUsersDto,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @Body() payload: CreateSupportingUsersAPIInDTO,
   ): Promise<number> {
     const createdUser = await this.supportingUserService.createSupportingUser(
       applicationId,
@@ -208,11 +219,14 @@ export class ApplicationSystemController extends BaseController {
    * Student Application.
    * @returns supporting user or an HTTP not found exception.
    */
+  @ApiNotFoundResponse({
+    description: "Not able to find supporting user for the application.",
+  })
   @Get(":applicationId/supporting-user/:supportingUserId")
   async getSupportingUser(
-    @Param("applicationId") applicationId: number,
-    @Param("supportingUserId") supportingUserId: number,
-  ): Promise<SupportingUserDto> {
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @Param("supportingUserId", ParseIntPipe) supportingUserId: number,
+  ): Promise<SupportingUserDetailsAPIOutDTO> {
     const supportingUser =
       await this.supportingUserService.getSupportingUserById(
         applicationId,

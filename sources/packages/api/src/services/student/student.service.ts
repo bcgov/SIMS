@@ -309,13 +309,14 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Search students based on the search criteria.
    * @param searchCriteria options to search by firstName,
-   * lastName or appNumber.
+   * lastName, appNumber or sin.
    * @returns list of students.
    */
   async searchStudentApplication(searchCriteria: {
     firstName?: string;
     lastName?: string;
     appNumber?: string;
+    sin?: string;
   }): Promise<Student[]> {
     const searchQuery = this.repo
       .createQueryBuilder("student")
@@ -324,6 +325,7 @@ export class StudentService extends RecordDataModelService<Student> {
         "student.birthDate",
         "user.firstName",
         "user.lastName",
+        "sinValidation.sin",
       ])
       .leftJoin(
         Application,
@@ -331,7 +333,14 @@ export class StudentService extends RecordDataModelService<Student> {
         "application.student.id = student.id",
       )
       .innerJoin("student.user", "user")
+      .innerJoin("student.sinValidation", "sinValidation")
       .where("user.isActive = true");
+
+    if (searchCriteria.sin) {
+      searchQuery.andWhere("sinValidation.sin = :sin", {
+        sin: removeWhiteSpaces(searchCriteria.sin),
+      });
+    }
     if (searchCriteria.firstName) {
       searchQuery.andWhere("user.firstName Ilike :firstName", {
         firstName: `%${searchCriteria.firstName}%`,

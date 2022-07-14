@@ -101,7 +101,7 @@ export class EducationProgramOffering extends RecordDataModel {
   /**
    * Related program.
    */
-  @OneToOne((_) => EducationProgram, { eager: false, cascade: true })
+  @OneToOne(() => EducationProgram, { eager: false, cascade: true })
   @JoinColumn({
     name: "program_id",
     referencedColumnName: ColumnNames.ID,
@@ -110,7 +110,7 @@ export class EducationProgramOffering extends RecordDataModel {
   /**
    * Related location.
    */
-  @OneToOne((_) => InstitutionLocation, { eager: false, cascade: true })
+  @OneToOne(() => InstitutionLocation, { eager: false, cascade: true })
   @JoinColumn({
     name: "location_id",
     referencedColumnName: ColumnNames.ID,
@@ -244,6 +244,17 @@ export class EducationProgramOffering extends RecordDataModel {
     nullable: true,
   })
   courseLoad?: number;
+
+  /**
+   * The parent offering from which
+   * the current offering was created during request for change.
+   */
+  @ManyToOne(() => EducationProgramOffering, { eager: false, nullable: true })
+  @JoinColumn({
+    name: "parent_offering_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  parentOffering?: EducationProgramOffering;
 }
 
 /**
