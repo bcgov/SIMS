@@ -135,8 +135,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     supportingUserId: number,
   ): Promise<SupportingUser> {
     return this.repo.findOne({
-      id: supportingUserId,
-      application: { id: applicationId },
+      where: { id: supportingUserId, application: { id: applicationId } },
     });
   }
 
@@ -153,8 +152,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     userId: number,
   ): Promise<SupportingUser> {
     return this.repo.findOne({
-      application: { id: applicationId },
-      user: { id: userId },
+      where: { application: { id: applicationId }, user: { id: userId } },
     });
   }
 

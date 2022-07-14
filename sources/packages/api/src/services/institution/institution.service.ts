@@ -89,8 +89,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const auth = this.institutionUserAuthRepo.create();
     auth.creator = auditUser;
     const authType = await this.institutionUserTypeAndRoleRepo.findOneOrFail({
-      type,
-      role: role || null,
+      where: { type, role: role || null },
     });
     auth.authType = authType;
     auth.institutionUser = institutionUser;
@@ -139,8 +138,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       }
       // Find the correct user type and role.
       const authType = await this.institutionUserTypeAndRoleRepo.findOne({
-        type: permission.userType,
-        role: permission.userRole ?? null,
+        where: { type: permission.userType, role: permission.userRole ?? null },
       });
       if (!authType) {
         throw new Error(
@@ -299,7 +297,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       );
 
       institutionEntity = await this.repo.findOne({
-        businessGuid: account.institution.guid,
+        where: { businessGuid: account.institution.guid },
       });
       if (institutionEntity) {
         // Create association with user
@@ -447,12 +445,12 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institutionUser: InstitutionUser,
   ): Promise<InstitutionUserAuth[]> {
     return this.institutionUserAuthRepo.find({
-      institutionUser: institutionUser,
+      where: { institutionUser },
     });
   }
 
   async doesExist(businessGuid: string): Promise<boolean> {
-    const count = await this.repo.count({ businessGuid });
+    const count = await this.repo.count({ where: { businessGuid } });
     if (1 === count) {
       return true;
     }
@@ -476,8 +474,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       }
       // Find the correct user type and role.
       const authType = await this.institutionUserTypeAndRoleRepo.findOne({
-        type: permission.userType,
-        role: permission.userRole ?? null,
+        where: { type: permission.userType, role: permission.userRole ?? null },
       });
       if (!authType) {
         throw new Error(
@@ -623,8 +620,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param note
    */
   async saveInstitutionNote(institutionId: number, note: Note): Promise<void> {
-    const institution = await this.repo.findOne(institutionId, {
-      relations: ["notes"],
+    const institution = await this.repo.findOne({
+      where: { id: institutionId },
+      relations: { notes: true },
     });
     institution.notes.push(note);
     await this.repo.save(institution);

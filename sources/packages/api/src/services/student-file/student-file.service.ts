@@ -80,7 +80,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   async getStudentFileByUniqueName(
     uniqueFileName: string,
   ): Promise<StudentFile> {
-    return this.repo.findOne({ uniqueFileName: uniqueFileName });
+    return this.repo.findOne({ where: { uniqueFileName: uniqueFileName } });
   }
 
   /**

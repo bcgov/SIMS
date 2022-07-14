@@ -206,16 +206,14 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     userId: number,
     updateRestrictionDTO: ResolveRestrictionDTO,
   ): Promise<StudentRestriction> {
-    const studentRestrictionEntity = await this.repo.findOne(
-      {
+    const studentRestrictionEntity = await this.repo.findOne({
+      where: {
         id: studentRestrictionId,
         student: { id: studentId } as Student,
         isActive: true,
       },
-      {
-        relations: ["resolutionNote", "modifier", "restriction"],
-      },
-    );
+      relations: { resolutionNote: true, modifier: true, restriction: true },
+    });
 
     if (!studentRestrictionEntity) {
       throw new CustomNamedError(
@@ -384,7 +382,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       // Temporary SIN has an expiry date and it must be validated with the end date of the offering.
       const offering = await entityManager
         .getRepository(EducationProgramOffering)
-        .findOne(offeringId, { select: ["studyEndDate"] });
+        .findOne({ where: { id: offeringId }, select: { studyEndDate: true } });
       // Check if the SIN expiry date is later than the offering end date.
       mustCreateSINException =
         offering.studyEndDate > student.sinValidation.sinExpiryDate;

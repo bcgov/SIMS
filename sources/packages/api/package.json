@@ -28,21 +28,22 @@
     "docker:start": "npm run setup:db && node dist/main"
   },
   "dependencies": {
-    "@nestjs/common": "^8.3.1",
+    "@nestjs/common": "^9.0.3",
     "@nestjs/core": "^8.3.1",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/mapped-types": "^1.0.1",
     "@nestjs/passport": "^8.2.1",
     "@nestjs/platform-express": "^8.3.1",
     "@nestjs/swagger": "^5.2.0",
-    "@nestjs/typeorm": "^8.0.3",
+    "@nestjs/typeorm": "^9.0.0",
     "@types/ssh2-sftp-client": "^5.3.1",
+    "axios": "^0.27.2",
     "class-transformer": "^0.3.2",
     "class-validator": "^0.13.1",
     "dayjs": "^1.10.4",
     "dotenv": "^8.2.0",
     "jwt-decode": "^3.1.2",
-    "passport": "^0.4.1",
+    "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "pg": "^8.5.1",
     "qs": "^6.9.6",
@@ -52,7 +53,7 @@
     "soap": "^0.36.0",
     "ssh2-sftp-client": "^7.1.0",
     "swagger-ui-express": "^4.3.0",
-    "typeorm": "^0.2.30"
+    "typeorm": "^0.3.7"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.2.1",
