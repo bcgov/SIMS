@@ -443,6 +443,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   /**
    * Remove all existing permissions from the user and insert the provided ones.
+   * @institutionId institution to have the user updated.
    * @param institutionUserId institution user to be updated.
    * @param permissions complete list of the user permissions that will entirely
    * replace the existing ones.

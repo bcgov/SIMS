@@ -233,12 +233,12 @@ export class InstitutionInstitutionsController extends BaseController {
         BCeIDAccountTypeCodes.Business,
       );
     if (businessBCeIDUserAccount) {
+      status.hasBusinessBCeIDAccount = true;
       // Check if the institution associated with the BCeID business guid is already present.
       status.associatedInstitutionExists =
         await this.institutionService.doesExist(
           businessBCeIDUserAccount.institution.guid,
         );
-      status.hasBusinessBCeIDAccount = true;
     }
     return status;
   }

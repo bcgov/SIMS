@@ -257,9 +257,15 @@ export class InstitutionControllerService {
     }
   }
 
+  /**
+   * Get institution user by user name(guid).
+   * @param userName user name (guid).
+   * @param authorizedInstitutionId optional institution to check for user authorization.
+   * @returns institution user details.
+   */
   async getInstitutionUserByUserName(
     userName: string,
-    institutionId?: number,
+    authorizedInstitutionId?: number,
   ): Promise<InstitutionUserAPIOutDTO> {
     const institutionUser =
       await this.institutionService.getInstitutionUserByUserName(userName);
@@ -269,7 +275,10 @@ export class InstitutionControllerService {
     }
 
     // Checking if the user belongs to the institution.
-    if (institutionId && institutionUser.institution.id !== institutionId) {
+    if (
+      authorizedInstitutionId &&
+      institutionUser.institution.id !== authorizedInstitutionId
+    ) {
       throw new ForbiddenException(
         "Details requested for user who does not belong to the institution.",
       );
@@ -302,7 +311,7 @@ export class InstitutionControllerService {
    * Update the active status of the user.
    * @param userName unique name of the user to be updated.
    * @param payload information to enable or disable the user.
-   * @param authorizedInstitutionId: when provided will validate if the
+   * @param authorizedInstitutionId when provided will validate if the
    * user belongs to the institution.
    */
   async updateUserStatus(
@@ -328,7 +337,7 @@ export class InstitutionControllerService {
     }
 
     if (!payload.isActive) {
-      // Case the user is being disabled check if it is not the only admin for the institution.
+      // Case the user is being disabled check if it is the only admin for the institution.
       // Institutions must always have at least one admin user enabled.
       const admins = await this.institutionUserAuthService.getUsersByUserType(
         institutionUser.institution.id,
