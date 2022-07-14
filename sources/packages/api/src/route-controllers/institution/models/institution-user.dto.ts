@@ -131,11 +131,6 @@ export class UserRoleOptionAPIOutDTO {
   code: string;
 }
 
-export class InstitutionUserTypeAndRoleAPIOutDTO {
-  userTypes: string[];
-  userRoles: string[];
-}
-
 export class InstitutionUserStatusAPIOutDTO {
   /**
    * Indicates if the user is present on DB or not.

@@ -146,11 +146,6 @@ export interface AESTCreateInstitutionAPIInDTO
   legalOperatingName: string;
 }
 
-export interface InstitutionUserTypeAndRoleAPIOutDTO {
-  userTypes: string[];
-  userRoles: string[];
-}
-
 export interface UserPermissionAPIInDTO {
   locationId?: number;
   userType?: string;
