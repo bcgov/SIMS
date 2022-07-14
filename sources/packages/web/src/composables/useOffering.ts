@@ -7,6 +7,7 @@ export function useOffering() {
       case OfferingStatus.Approved:
         return StatusChipTypes.Success;
       case OfferingStatus.Pending:
+      case OfferingStatus.UnderReview:
         return StatusChipTypes.Warning;
       case OfferingStatus.Declined:
         return StatusChipTypes.Error;

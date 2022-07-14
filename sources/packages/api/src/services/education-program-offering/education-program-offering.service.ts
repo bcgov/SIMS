@@ -10,6 +10,7 @@ import {
   NoteType,
   User,
   Institution,
+  StudentAssessment,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
@@ -25,7 +26,10 @@ import {
   PaginationOptions,
   PaginatedResults,
   getISODateOnlyString,
+  CustomNamedError,
 } from "../../utilities";
+import { OFFERING_NOT_VALID } from "../../constants";
+
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(private readonly connection: Connection) {
@@ -37,18 +41,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId location id to associate the new program offering.
    * @param programId program id to associate the new program offering.
    * @param educationProgramOffering Information used to create the program offering.
+   * @param userId User who creates the offering.
    * @returns Education program offering created.
    */
   async createEducationProgramOffering(
     locationId: number,
     programId: number,
     educationProgramOffering: SaveOfferingModel,
+    userId: number,
   ): Promise<EducationProgramOffering> {
     const programOffering = this.populateProgramOffering(
       locationId,
       programId,
       educationProgramOffering,
     );
+    programOffering.creator = { id: userId } as User;
     return this.repo.save(programOffering);
   }
 
@@ -135,20 +142,23 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * This is to fetch the Education Offering
+   * This is to fetch the Offering
    * that are associated with the Location, Program
-   * and offering
+   * and given offering id.
    * @param locationId
    * @param programId
    * @param offeringId
+   * @param isEditOnly if set to true then fetch offering
+   * in status Approved | Declined | Pending.
    * @returns
    */
   async getProgramOffering(
     locationId: number,
     programId: number,
     offeringId: number,
+    isEditOnly?: boolean,
   ): Promise<EducationProgramOffering> {
-    return this.repo
+    const offeringQuery = this.repo
       .createQueryBuilder("offerings")
       .select([
         "offerings.id",
@@ -173,6 +183,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.submittedDate",
         "offerings.offeringStatus",
         "offerings.courseLoad",
+        "offerings.parentOffering",
         "assessedBy.firstName",
         "assessedBy.lastName",
         "institutionLocation.name",
@@ -191,8 +202,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       })
       .andWhere("institutionLocation.id = :locationId", {
         locationId: locationId,
-      })
-      .getOne();
+      });
+
+    if (isEditOnly) {
+      offeringQuery.andWhere(
+        "offerings.offeringStatus IN (:...offeringStatus)",
+        {
+          offeringStatus: [
+            OfferingStatus.Approved,
+            OfferingStatus.Pending,
+            OfferingStatus.Declined,
+          ],
+        },
+      );
+    }
+    return offeringQuery.getOne();
   }
 
   /**
@@ -200,6 +224,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId location id to associate the new program offering.
    * @param programId program id to associate the new program offering.
    * @param educationProgramOffering Information used to create the program offering.
+   * @param userId User who updates the offering.
    * @returns Education program offering created.
    */
   async updateEducationProgramOffering(
@@ -207,12 +232,18 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     offeringId: number,
     educationProgramOffering: SaveOfferingModel,
+    userId: number,
   ): Promise<UpdateResult> {
+    const hasExistingApplication = await this.hasExistingApplication(
+      offeringId,
+    );
     const programOffering = this.populateProgramOffering(
       locationId,
       programId,
       educationProgramOffering,
+      hasExistingApplication,
     );
+    programOffering.modifier = { id: userId } as User;
     return this.repo.update(offeringId, programOffering);
   }
 
@@ -220,41 +251,46 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     educationProgramOffering: SaveOfferingModel,
+    hasExistingApplication?: boolean,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.offeringName;
-    programOffering.studyStartDate = educationProgramOffering.studyStartDate;
-    programOffering.studyEndDate = educationProgramOffering.studyEndDate;
-    programOffering.actualTuitionCosts =
-      educationProgramOffering.actualTuitionCosts;
-    programOffering.programRelatedCosts =
-      educationProgramOffering.programRelatedCosts;
-    programOffering.mandatoryFees = educationProgramOffering.mandatoryFees;
-    programOffering.exceptionalExpenses =
-      educationProgramOffering.exceptionalExpenses;
-    programOffering.offeringDelivered =
-      educationProgramOffering.offeringDelivered;
-    programOffering.lacksStudyBreaks =
-      educationProgramOffering.lacksStudyBreaks;
-    programOffering.offeringType =
-      educationProgramOffering.offeringType ?? OfferingTypes.Public;
-    programOffering.educationProgram = { id: programId } as EducationProgram;
-    programOffering.institutionLocation = {
-      id: locationId,
-    } as InstitutionLocation;
-    programOffering.offeringIntensity =
-      educationProgramOffering.offeringIntensity;
-    programOffering.yearOfStudy = educationProgramOffering.yearOfStudy;
-    programOffering.showYearOfStudy = educationProgramOffering.showYearOfStudy;
-    programOffering.hasOfferingWILComponent =
-      educationProgramOffering.hasOfferingWILComponent;
-    programOffering.offeringWILType = educationProgramOffering.offeringWILType;
-    programOffering.studyBreaks = educationProgramOffering.breaksAndWeeks;
-    programOffering.offeringDeclaration =
-      educationProgramOffering.offeringDeclaration;
-    programOffering.offeringType = educationProgramOffering.offeringType;
-    programOffering.courseLoad = educationProgramOffering.courseLoad;
-    programOffering.offeringStatus = educationProgramOffering.offeringStatus;
+    if (!hasExistingApplication) {
+      programOffering.studyStartDate = educationProgramOffering.studyStartDate;
+      programOffering.studyEndDate = educationProgramOffering.studyEndDate;
+      programOffering.actualTuitionCosts =
+        educationProgramOffering.actualTuitionCosts;
+      programOffering.programRelatedCosts =
+        educationProgramOffering.programRelatedCosts;
+      programOffering.mandatoryFees = educationProgramOffering.mandatoryFees;
+      programOffering.exceptionalExpenses =
+        educationProgramOffering.exceptionalExpenses;
+      programOffering.offeringDelivered =
+        educationProgramOffering.offeringDelivered;
+      programOffering.lacksStudyBreaks =
+        educationProgramOffering.lacksStudyBreaks;
+      programOffering.offeringType =
+        educationProgramOffering.offeringType ?? OfferingTypes.Public;
+      programOffering.educationProgram = { id: programId } as EducationProgram;
+      programOffering.institutionLocation = {
+        id: locationId,
+      } as InstitutionLocation;
+      programOffering.offeringIntensity =
+        educationProgramOffering.offeringIntensity;
+      programOffering.yearOfStudy = educationProgramOffering.yearOfStudy;
+      programOffering.showYearOfStudy =
+        educationProgramOffering.showYearOfStudy;
+      programOffering.hasOfferingWILComponent =
+        educationProgramOffering.hasOfferingWILComponent;
+      programOffering.offeringWILType =
+        educationProgramOffering.offeringWILType;
+      programOffering.studyBreaks = educationProgramOffering.breaksAndWeeks;
+      programOffering.offeringDeclaration =
+        educationProgramOffering.offeringDeclaration;
+      programOffering.offeringType = educationProgramOffering.offeringType;
+      programOffering.courseLoad = educationProgramOffering.courseLoad;
+      programOffering.offeringStatus = educationProgramOffering.offeringStatus;
+    }
     return programOffering;
   }
 
@@ -452,5 +488,107 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .limit(1)
       .getRawOne();
     return !!offeringExists;
+  }
+
+  /**
+   * Check if the given offering has any submitted applications.
+   * @param offeringId
+   * @returns true if an offering has any assessment
+   */
+  async hasExistingApplication(offeringId: number): Promise<boolean> {
+    const queryResult = await this.connection
+      .getRepository(StudentAssessment)
+      .createQueryBuilder("assessment")
+      .select("1")
+      .where("assessment.offering.id = :offeringId", { offeringId })
+      .limit(1)
+      .getRawOne();
+    return !!queryResult;
+  }
+
+  /**
+   * Request a change to offering to modify it's
+   * properties that affect the assessment of student application.
+   ** During this process a new offering is created by copying the existing
+   * offering and modifying the properties required.
+   * @param locationId Offering location.
+   * @param programId Program of the offering.
+   * @param offeringId
+   * @param userId User who requests change to the offering.
+   * @param educationProgramOffering
+   * @returns new offering created from existing offering with changes requested.
+   */
+  async requestChange(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+    userId: number,
+    educationProgramOffering: SaveOfferingModel,
+  ): Promise<EducationProgramOffering> {
+    const currentOffering = await this.getApprovedOfferingToRequestChange(
+      locationId,
+      programId,
+      offeringId,
+    );
+
+    if (!currentOffering) {
+      throw new CustomNamedError(
+        "Either offering for given location and program not found or the offering not in appropriate status to be requested for change.",
+        OFFERING_NOT_VALID,
+      );
+    }
+
+    const requestedOffering = this.populateProgramOffering(
+      locationId,
+      programId,
+      educationProgramOffering,
+    );
+    const auditUser = { id: userId } as User;
+    //Populating the status, parent offering and audit fields.
+    requestedOffering.offeringStatus = OfferingStatus.AwaitingApproval;
+    requestedOffering.parentOffering =
+      currentOffering.parentOffering ??
+      ({ id: currentOffering.id } as EducationProgramOffering);
+    requestedOffering.creator = auditUser;
+
+    //Update the status and audit details of current offering.
+    const underReviewOffering = new EducationProgramOffering();
+    underReviewOffering.id = offeringId;
+    underReviewOffering.offeringStatus = OfferingStatus.UnderReview;
+    underReviewOffering.modifier = auditUser;
+
+    await this.repo.save([underReviewOffering, requestedOffering]);
+    return requestedOffering;
+  }
+
+  /**
+   * Get the offering to request change.
+   * Offering in Approved status alone can be requested for change.
+   * @param locationId
+   * @param programId
+   * @param offeringId
+   * @returns offering.
+   */
+  async getApprovedOfferingToRequestChange(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+  ): Promise<EducationProgramOffering> {
+    return this.repo
+      .createQueryBuilder("offerings")
+      .select(["offerings.id", "offerings.parentOffering"])
+      .where("offerings.id = :offeringId", {
+        offeringId: offeringId,
+      })
+      .andWhere("offerings.offeringStatus = :offeringStatus", {
+        offeringStatus: OfferingStatus.Approved,
+      })
+      .andWhere("offerings.educationProgram.id = :programId", {
+        programId: programId,
+      })
+      .andWhere("offerings.institutionLocation.id = :locationId", {
+        locationId: locationId,
+      })
+      .getOne();
   }
 }

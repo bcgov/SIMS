@@ -19,6 +19,7 @@ export const SIN_VALIDATION_RECORD_NOT_FOUND =
   "SIN_VALIDATION_RECORD_NOT_FOUND";
 export const SIN_VALIDATION_RECORD_INVALID_OPERATION =
   "SIN_VALIDATION_RECORD_INVALID_OPERATION";
+export const OFFERING_NOT_VALID = "OFFERING_NOT_VALID";
 /**
  * An user is trying to be added to the institution when it is already present.
  */

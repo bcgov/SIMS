@@ -1,4 +1,4 @@
-export interface ProcessResponseResDto {
+export class ProcessResponseAPIOutDTO {
   processSummary: string[];
   errorsSummary: string[];
 }

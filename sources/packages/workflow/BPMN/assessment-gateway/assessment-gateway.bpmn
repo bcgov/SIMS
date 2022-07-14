@@ -273,7 +273,7 @@ execution.setVariable('error_retry', 0);</camunda:script>
             <camunda:inputParameter name="payload">{
   "status": "Assessment"
 }</camunda:inputParameter>
-            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/application/status</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/status</camunda:inputParameter>
             <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -1311,7 +1311,7 @@ ${errorMsg}</camunda:inputParameter>
             <camunda:inputParameter name="payload">{
   "status": "In Progress"
 }</camunda:inputParameter>
-            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/application/status</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/status</camunda:inputParameter>
             <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>

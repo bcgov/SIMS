@@ -34,6 +34,7 @@ import LocationEditProgramInfoRequest from "@/views/institution/locations/progra
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
 import ViewSubmittedApplicationScholasticStanding from "@/views/institution/locations/active-applications/ViewSubmittedApplicationScholasticStanding.vue";
+import OfferingRequestChange from "@/views/institution/locations/offerings/OfferingRequestChange.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -403,6 +404,22 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           clientType: ClientIdType.Institution,
           checkAllowedLocation: {
             userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
+          },
+        },
+      },
+      {
+        path: AppRoutes.LocationOfferingsRequestChange,
+        name: InstitutionRoutesConst.OFFERING_REQUEST_CHANGE,
+        component: OfferingRequestChange,
+        props: true,
+        meta: {
+          clientType: ClientIdType.Institution,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.admin,
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
           },
         },
       },
