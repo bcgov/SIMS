@@ -51,7 +51,7 @@ import { useToastMessage, useOffering } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
-import OfferingForm from "@/components/institutions/offerings/OfferingForm.vue";
+import OfferingForm from "@/components/common/OfferingForm.vue";
 
 export default {
   components: {
