@@ -317,9 +317,14 @@ export class InstitutionAESTController extends BaseController {
   })
   @Patch("user-status/:userName")
   async updateUserStatus(
+    @UserToken() userToken: IUserToken,
     @Param("userName") userName: string,
     @Body() payload: UserActiveStatusAPIInDTO,
   ): Promise<void> {
-    await this.institutionControllerService.updateUserStatus(userName, payload);
+    await this.institutionControllerService.updateUserStatus(
+      userName,
+      payload,
+      userToken.userId,
+    );
   }
 }

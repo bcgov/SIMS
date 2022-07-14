@@ -311,12 +311,14 @@ export class InstitutionControllerService {
    * Update the active status of the user.
    * @param userName unique name of the user to be updated.
    * @param payload information to enable or disable the user.
+   * @auditUserId user that should be considered the one that is causing the changes.
    * @param authorizedInstitutionId when provided will validate if the
    * user belongs to the institution.
    */
   async updateUserStatus(
     userName: string,
     payload: UserActiveStatusAPIInDTO,
+    auditUserId: number,
     authorizedInstitutionId?: number,
   ): Promise<void> {
     const institutionUser =
@@ -337,6 +339,13 @@ export class InstitutionControllerService {
     }
 
     if (!payload.isActive) {
+      // Check id the user is not trying to disable his own institution user.
+      if (institutionUser.user.id === auditUserId) {
+        throw new UnprocessableEntityException(
+          "The user is not allowed to disable his own institution user.",
+        );
+      }
+
       // Case the user is being disabled check if it is the only admin for the institution.
       // Institutions must always have at least one admin user enabled.
       const admins = await this.institutionUserAuthService.getUsersByUserType(

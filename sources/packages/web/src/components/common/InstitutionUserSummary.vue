@@ -10,7 +10,7 @@
         <v-text-field
           class="v-text-field-search-width"
           density="compact"
-          label="Search user"
+          label="Search name"
           variant="outlined"
           v-model="searchBox"
           @keyup.enter="searchUserTable"
@@ -62,7 +62,11 @@
           {{ slotProps.data.userType[0] }}
         </template></Column
       >
-      <Column :field="UserFields.Role" header="Role"></Column>
+      <Column :field="UserFields.role" header="Role">
+        <template #body="slotProps">
+          {{ institutionUserRoleToDisplay(slotProps.data.role) }}
+        </template>
+      </Column>
       <Column :field="UserFields.Location" header="Locations"
         ><template #body="slotProps">
           <ul v-for="location in slotProps.data.location" :key="location">
@@ -88,9 +92,9 @@
             <span class="text-decoration-underline">Edit</span>
           </v-btn>
           <v-btn
+            v-if="canDisableUser(slotProps.data.userName)"
             @click="updateUserStatus(slotProps.data)"
             variant="text"
-            text="Edit"
             color="primary"
             append-icon="mdi-account-remove-outline"
           >
@@ -107,6 +111,7 @@
     ref="addInstitutionUserModal"
     :institutionId="institutionId"
     :hasBusinessGuid="hasBusinessGuid"
+    :canSearchBCeIDUsers="canSearchBCeIDUsers"
   />
   <!-- Edit user. -->
   <edit-institution-user
@@ -121,7 +126,12 @@ import { ref, watch } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
-import { ModalDialog, useToastMessage } from "@/composables";
+import {
+  ModalDialog,
+  useAuth,
+  useFormatters,
+  useToastMessage,
+} from "@/composables";
 import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue";
 import {
   InstitutionUserViewModel,
@@ -151,6 +161,11 @@ export default {
       type: Boolean,
       required: true,
     },
+    canSearchBCeIDUsers: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     allowBasicBCeIDCreation: {
       type: Boolean,
       required: true,
@@ -159,6 +174,8 @@ export default {
   },
   setup(props: any) {
     const toast = useToastMessage();
+    const { parsedToken } = useAuth();
+    const { institutionUserRoleToDisplay } = useFormatters();
     const usersListAndCount = ref({} as InstitutionUserAndCountForDataTable);
     const loading = ref(false);
     const searchBox = ref("");
@@ -273,12 +290,18 @@ export default {
       }
     };
 
+    const canDisableUser = (userName: string): boolean => {
+      return parsedToken.value?.userName !== userName;
+    };
+
     return {
       addInstitutionUserModal,
       editInstitutionUserModal,
       openNewUserModal,
       openEditUserModal,
+      canDisableUser,
       getAllInstitutionUsers,
+      institutionUserRoleToDisplay,
       updateUserStatus,
       GeneralStatusForBadge,
       paginationAndSortEvent,

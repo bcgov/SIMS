@@ -321,6 +321,7 @@ export class InstitutionInstitutionsController extends BaseController {
     await this.institutionControllerService.updateUserStatus(
       userName,
       payload,
+      token.userId,
       token.authorizations.institutionId,
     );
   }
