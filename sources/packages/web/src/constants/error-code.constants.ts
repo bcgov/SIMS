@@ -15,7 +15,7 @@ export const INSTITUTION_USER_ALREADY_EXISTS =
   "INSTITUTION_USER_ALREADY_EXISTS";
 /**
  * Only one legal signing authority is allowed per institution.
- * If there is attempt to assign a second user as legal signing authority,
+ * If there is an attempt to assign a second user as legal signing authority,
  * a exception with this code will be thrown.
  */
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";

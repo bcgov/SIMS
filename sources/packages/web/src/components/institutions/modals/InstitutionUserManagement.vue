@@ -47,36 +47,34 @@
   </h3>
   <content-group v-if="!formModel.isAdmin">
     <toggle-content :toggled="!formModel.locationAuthorizations.length">
-      <span>
-        <v-row class="mb-1"
-          ><v-col><strong>Locations</strong> </v-col
-          ><v-col>
-            <strong>Roles</strong>
-          </v-col>
-        </v-row>
-        <v-row
-          no-gutters
-          v-for="location in formModel.locationAuthorizations"
-          :key="location.id"
-          class="mb-2"
-          ><v-col>
-            <div>{{ location.name }}</div>
-            {{ location.address }}
-          </v-col>
-          <v-col>
-            <v-radio-group
-              hide-details
-              inline
-              v-model="location.userAccess"
-              color="primary"
-              class="mt-2"
-            >
-              <v-radio label="User" value="user" color="primary"></v-radio>
-              <v-radio label="No access" value="none" color="primary"></v-radio>
-            </v-radio-group>
-          </v-col>
-        </v-row>
-      </span>
+      <v-row class="mb-1"
+        ><v-col><strong>Locations</strong> </v-col
+        ><v-col>
+          <strong>Roles</strong>
+        </v-col>
+      </v-row>
+      <v-row
+        no-gutters
+        v-for="location in formModel.locationAuthorizations"
+        :key="location.id"
+        class="mb-2"
+        ><v-col>
+          <div>{{ location.name }}</div>
+          {{ location.address }}
+        </v-col>
+        <v-col>
+          <v-radio-group
+            hide-details
+            inline
+            v-model="location.userAccess"
+            color="primary"
+            class="mt-2"
+          >
+            <v-radio label="User" value="user" color="primary"></v-radio>
+            <v-radio label="No access" value="none" color="primary"></v-radio>
+          </v-radio-group>
+        </v-col>
+      </v-row>
       <v-input
         :rules="[hasLocationAuthorizationValidationRule()]"
         hide-details="auto"
