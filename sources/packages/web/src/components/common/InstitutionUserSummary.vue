@@ -21,7 +21,8 @@
           class="ml-2 primary-btn-background"
           @click="searchUserTable"
           prepend-icon="fa:fas fa-magnifying-glass"
-        />
+          >Search</v-btn
+        >
         <v-btn
           v-if="hasBusinessGuid || allowBasicBCeIDCreation"
           class="ml-2 primary-btn-background"
@@ -44,6 +45,7 @@
       @page="paginationAndSortEvent($event)"
       @sort="paginationAndSortEvent($event)"
       :loading="loading"
+      breakpoint="1250px"
     >
       <template #empty>
         <p class="text-center font-weight-bold">No records found.</p>
