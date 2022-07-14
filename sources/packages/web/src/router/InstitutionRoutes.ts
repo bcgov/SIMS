@@ -415,11 +415,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.Institution,
           checkAllowedLocation: {
-            userTypes: [
-              InstitutionUserTypes.admin,
-              InstitutionUserTypes.locationManager,
-              InstitutionUserTypes.user,
-            ],
+            userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
           },
         },
       },
