@@ -427,6 +427,7 @@ export class EducationProgramOfferingController extends BaseController {
    * properties that affect the assessment of student application.
    ** During this process a new offering is created by copying the existing
    * offering and modifying the properties required.
+   * @param offeringId offering to which change is requested.
    * @param payload offering data to create
    * the new offering.
    * @param locationId location to which the offering
