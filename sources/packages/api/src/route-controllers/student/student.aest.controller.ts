@@ -213,9 +213,9 @@ export class StudentAESTController extends BaseController {
    * @param searchCriteria criteria to be used in the search.
    * @returns searched student details.
    */
-  @Get("search")
+  @Post("search")
   async searchStudents(
-    @Query() searchCriteria: AESTStudentSearchAPIInDTO,
+    @Body() searchCriteria: AESTStudentSearchAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
     const searchStudentApplications =
       await this.studentService.searchStudentApplication(searchCriteria);
@@ -224,6 +224,7 @@ export class StudentAESTController extends BaseController {
       firstName: eachStudent.user.firstName,
       lastName: eachStudent.user.lastName,
       birthDate: getISODateOnlyString(eachStudent.birthDate),
+      sin: eachStudent.sinValidation.sin,
     }));
   }
 

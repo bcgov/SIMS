@@ -21,6 +21,7 @@ import {
   DisbursementValueType,
   AssessmentStatus,
   SupportingUserType,
+  StudyBreaksAndWeeks,
 } from "../../../database/entities";
 
 export class ProgramYearAPIOutDTO {
@@ -40,6 +41,7 @@ export class ApplicationOfferingAPIOutDTO {
   offeringDelivered: string;
   offeringIntensity: string;
   courseLoad?: number;
+  studyBreaks: StudyBreaksAndWeeks;
 }
 
 export class ApplicationProgramAPIOutDTO {

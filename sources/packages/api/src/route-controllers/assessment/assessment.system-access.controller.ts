@@ -95,6 +95,7 @@ export class AssessmentSystemAccessController extends BaseController {
         offeringDelivered: offering?.offeringDelivered,
         offeringIntensity: offering?.offeringIntensity,
         courseLoad: offering?.courseLoad,
+        studyBreaks: offering?.studyBreaks,
       },
       program: {
         programCredentialType: offering?.educationProgram?.credentialType,

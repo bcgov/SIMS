@@ -54,10 +54,10 @@ export default abstract class HttpBaseClient {
     }
   }
 
-  protected async postCall<T>(
+  protected async postCall<T, TResult = PrimaryIdentifierAPIOutDTO>(
     url: string,
     payload: T,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
+  ): Promise<TResult> {
     try {
       const response = await this.apiClient.post(
         url,

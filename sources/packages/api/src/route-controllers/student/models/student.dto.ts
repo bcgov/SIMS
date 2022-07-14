@@ -62,15 +62,20 @@ export class UpdateStudentAPIInDTO extends AddressDetailsAPIInDTO {
  * Student AEST search parameters.
  */
 export class AESTStudentSearchAPIInDTO {
-  @ValidateIf((input) => !input.lastName && !input.appNumber)
+  @ValidateIf((input) => !input.lastName && !input.appNumber && !input.sin)
   @IsNotEmpty()
   firstName: string;
-  @ValidateIf((input) => !input.firstName && !input.appNumber)
+  @ValidateIf((input) => !input.firstName && !input.appNumber && !input.sin)
   @IsNotEmpty()
   lastName: string;
-  @ValidateIf((input) => !input.firstName && !input.lastName)
+  @ValidateIf((input) => !input.firstName && !input.lastName && !input.sin)
   @IsNotEmpty()
   appNumber: string;
+  @ValidateIf(
+    (input) => !input.firstName && !input.lastName && !input.appNumber,
+  )
+  @IsNotEmpty()
+  sin: string;
 }
 
 export class SearchStudentAPIOutDTO {
@@ -78,6 +83,7 @@ export class SearchStudentAPIOutDTO {
   firstName: string;
   lastName: string;
   birthDate: string;
+  sin: string;
 }
 
 /**
@@ -148,6 +154,7 @@ export class StudentProfileAPIOutDTO {
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
   pdStatus: StudentPDStatus;
+  sin: string;
 }
 
 export class AESTStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
