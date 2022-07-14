@@ -1,6 +1,5 @@
 <!-- Shared modal content for modals AddInstitutionUserModal and EditInstitutionUserModal -->
 <template>
-  <!-- Move to a component -->
   <error-summary :errors="errors" />
   <content-group>
     <span>

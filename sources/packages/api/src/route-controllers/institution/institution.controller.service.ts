@@ -202,7 +202,7 @@ export class InstitutionControllerService {
 
   /**
    * Update the user authorizations for the institution user.
-   * @userName unique user name to have the authorizations updated.
+   * @param userName unique user name to have the authorizations updated.
    * @param payload user and authorization information.
    * @param authorizedInstitutionId optional institution to check for user authorization.
    * @returns created user id.
@@ -216,7 +216,7 @@ export class InstitutionControllerService {
       await this.institutionService.getInstitutionUserByUserName(userName);
 
     if (!institutionUser) {
-      throw new NotFoundException("User to be updated not found");
+      throw new NotFoundException("User to be updated not found.");
     }
 
     if (institutionUser.user.isActive !== true) {
@@ -311,7 +311,7 @@ export class InstitutionControllerService {
    * Update the active status of the user.
    * @param userName unique name of the user to be updated.
    * @param payload information to enable or disable the user.
-   * @auditUserId user that should be considered the one that is causing the changes.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @param authorizedInstitutionId when provided will validate if the
    * user belongs to the institution.
    */

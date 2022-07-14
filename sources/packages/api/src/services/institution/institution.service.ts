@@ -443,7 +443,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   /**
    * Remove all existing permissions from the user and insert the provided ones.
-   * @institutionId institution to have the user updated.
+   * @param institutionId institution to have the user updated.
    * @param institutionUserId institution user to be updated.
    * @param permissions complete list of the user permissions that will entirely
    * replace the existing ones.
@@ -529,7 +529,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param institutionId institution to be verified.
    * @param institutionUserId institution user being updated.
    * @param permissions complete list of permissions to be associated with the user.
-   * @param institutionUserId optional institution user being updated, when provided it is considered
    * as an user being updated, otherwise it is considered as a new user being added.
    */
   private async validateAtLeastOneAdmin(

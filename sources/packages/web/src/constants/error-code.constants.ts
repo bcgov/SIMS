@@ -9,7 +9,7 @@ export const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
 export const INVALID_TUITION_REMITTANCE_AMOUNT =
   "INVALID_TUITION_REMITTANCE_AMOUNT";
 /**
- * An user is trying to be added to the institution when it is already present.
+ * A user is trying to be added to the institution when it is already present.
  */
 export const INSTITUTION_USER_ALREADY_EXISTS =
   "INSTITUTION_USER_ALREADY_EXISTS";

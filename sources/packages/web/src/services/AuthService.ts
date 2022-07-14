@@ -144,7 +144,6 @@ export class AuthService {
   private async processInstitutionLogin() {
     const userStatus =
       await InstitutionService.shared.getInstitutionUserStatus();
-    console.log(userStatus);
     if (userStatus.isActiveUser === true) {
       // User is active so just proceed.
       await store.dispatch("institution/initialize");
