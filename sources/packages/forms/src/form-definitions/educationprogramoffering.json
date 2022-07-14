@@ -279,7 +279,7 @@
           "name": "Disable for non Institution clients and offerings in non editable status",
           "trigger": {
             "type": "javascript",
-            "javascript": "/**\r\n * The given logic is added to the panel of the form to display the\r\n * form as read-only for ministry(AEST) user and also allow the hidden component values\r\n * to be calculated.\r\n * If a form.io is loaded with readOnly attribute set to true, then the restricts\r\n * hidden components to calculate it's value by design.\r\n * Offerings which are not in Approved,Pending or Declined status\r\n * must not be editable.\r\n*/\r\nresult = ((data.clientType !== 'institution') || !(['Approved','Declined','Pending'].includes(data.offeringStatusToDisplay)));"
+            "javascript": "/**\r\n * The given logic is added to the panel of the form to display the\r\n * form as read-only for ministry(AEST) user and also allow the hidden component values\r\n * to be calculated.\r\n * If a form.io is loaded with readOnly attribute set to true, then the restricts\r\n * hidden components to calculate it's value by design.\r\n * Offerings which are not in Approved,Pending or Declined status\r\n * must not be editable.\r\n*/\r\nresult = ((data.clientType !== 'institution') || (data.id && !['Approved','Declined','Pending'].includes(data.offeringStatusToDisplay)));"
           },
           "actions": [
             {
@@ -388,7 +388,7 @@
           "displayMask": "",
           "spellcheck": true,
           "truncateMultipleSpaces": false,
-          "id": "e00ckog"
+          "id": "et08xo9"
         },
         {
           "title": "Panel",
@@ -417,7 +417,7 @@
               "name": "Enable offering inputs if no application is linked",
               "trigger": {
                 "type": "javascript",
-                "javascript": "/**\n * If there are no applications linked\n * then enable all the inputs that affect the application assessment.\n * \n * This action is done only for institution users\n * and offering in status Approved or Pending or Declined.\n*/\n\nresult = (data.clientType === 'institution' && !data.hasExistingApplication && ['Approved','Declined','Pending'].includes(data.offeringStatusToDisplay));\n"
+                "javascript": "/**\n * If there are no applications linked\n * then enable all the inputs that affect the application assessment.\n * \n * This action is done only for institution users\n * and offering in status Approved or Pending or Declined.\n*/\n\nresult = (data.clientType === 'institution' && !data.hasExistingApplication && (['Approved','Declined','Pending'].includes(data.offeringStatusToDisplay) || !data.id));\n"
               },
               "actions": [
                 {
@@ -587,7 +587,7 @@
               },
               "customOptions": {},
               "useExactSearch": false,
-              "id": "e09mx88"
+              "id": "eidmnkn"
             },
             {
               "label": "Display this to students",
@@ -657,7 +657,7 @@
               "inputType": "checkbox",
               "value": "",
               "name": "",
-              "id": "eg8jaup"
+              "id": "e25pqeb"
             },
             {
               "label": "HTML",
@@ -732,7 +732,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "ec9alm"
+              "id": "exnu3p"
             },
             {
               "label": "How will this be offered?",
@@ -816,7 +816,7 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "emwn88"
+              "id": "elm4e18"
             },
             {
               "label": "Program Offering Intensity Mismatch",
@@ -884,7 +884,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "eviusy"
+              "id": "e4mabfl"
             },
             {
               "label": "Study period intensity popup",
@@ -959,7 +959,7 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "ep2iffd"
+              "id": "edcts4b"
             },
             {
               "title": "Course Load Panel",
@@ -1050,7 +1050,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ec3x5nf"
+                  "id": "e00pn5"
                 },
                 {
                   "label": "invalidCourseLoad",
@@ -1118,7 +1118,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "eo6vk4f"
+                  "id": "e6ez92b"
                 }
               ],
               "placeholder": "",
@@ -1176,7 +1176,7 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "e1u0hm"
+              "id": "eg9dzube"
             },
             {
               "label": "How will this offering be delivered?",
@@ -1266,7 +1266,7 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "eddenzq"
+              "id": "e5d7auh"
             },
             {
               "label": "Program Offering Delivery Mismatch",
@@ -1334,7 +1334,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "eephjzu"
+              "id": "et69b9h"
             },
             {
               "label": "HTML",
@@ -1409,7 +1409,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "eqtnr48"
+              "id": "e7o6yni"
             },
             {
               "label": "Does this contain a work-integrated learning component?",
@@ -1493,7 +1493,7 @@
               "addons": [],
               "inputType": "radio",
               "fieldSet": false,
-              "id": "e8vzncgu"
+              "id": "ea3atjl"
             },
             {
               "label": "Program Offering WIL Mismatch",
@@ -1561,7 +1561,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "inputType": "hidden",
-              "id": "ekauof8"
+              "id": "e4s7hko"
             },
             {
               "label": "HTML",
@@ -1636,7 +1636,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "ewhwnt"
+              "id": "eakw9lh"
             },
             {
               "collapsible": false,
@@ -1723,7 +1723,7 @@
                   "displayMask": "",
                   "spellcheck": true,
                   "truncateMultipleSpaces": false,
-                  "id": "e0htf1"
+                  "id": "emwluv"
                 }
               ],
               "placeholder": "",
@@ -1787,7 +1787,7 @@
               "title": "Panel",
               "theme": "default",
               "breadcrumb": "default",
-              "id": "egcphgm"
+              "id": "eguik3n"
             },
             {
               "title": "Study dates panel",
@@ -1873,7 +1873,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ekl5w0v"
+                  "id": "e549q5b"
                 },
                 {
                   "collapsible": false,
@@ -2008,7 +2008,7 @@
                                 "mousewheel": true,
                                 "arrowkeys": true
                               },
-                              "id": "ebrnfuw"
+                              "id": "edabaw"
                             }
                           ],
                           "width": 6,
@@ -2139,7 +2139,7 @@
                                 "mousewheel": true,
                                 "arrowkeys": true
                               },
-                              "id": "elo0vga"
+                              "id": "evwwp0k"
                             }
                           ],
                           "width": 6,
@@ -2215,7 +2215,7 @@
                       "tree": false,
                       "lazyLoad": false,
                       "autoAdjust": false,
-                      "id": "epx2lls"
+                      "id": "e4gkwa"
                     }
                   ],
                   "placeholder": "",
@@ -2279,7 +2279,7 @@
                   "title": "Panel",
                   "theme": "default",
                   "breadcrumb": "default",
-                  "id": "enrhto8"
+                  "id": "e9hncxm"
                 },
                 {
                   "label": "Ineligible Days For Funding After 10 Percentage Calculation",
@@ -2347,7 +2347,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "emmmh9"
+                  "id": "es3cn1n"
                 },
                 {
                   "label": "Allowable 10 Percentage",
@@ -2415,7 +2415,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "eriq7t"
+                  "id": "eo5ez9e"
                 },
                 {
                   "label": "Invalid Study Dates",
@@ -2483,7 +2483,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "eyuh2rs"
+                  "id": "e251x0r"
                 },
                 {
                   "label": "Invalid study dates popup",
@@ -2558,7 +2558,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "em9bcfx"
+                  "id": "exkykf"
                 }
               ],
               "placeholder": "",
@@ -2620,7 +2620,7 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "eeo7fq"
+              "id": "ebwwmo"
             },
             {
               "title": "study break panel",
@@ -2706,7 +2706,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ela2yrq"
+                  "id": "end2wm"
                 },
                 {
                   "label": "HTML",
@@ -2780,7 +2780,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tag": "p",
-                  "id": "ezz4m7"
+                  "id": "eh792y"
                 },
                 {
                   "label": "No study breaks",
@@ -2848,7 +2848,7 @@
                   "inputType": "checkbox",
                   "value": "",
                   "name": "",
-                  "id": "eh7ig6v"
+                  "id": "ef2ylc5"
                 },
                 {
                   "label": "BreaksAndWeeks",
@@ -2951,7 +2951,7 @@
                             "dateFormat": "yyyy-MM-dd"
                           },
                           "hideOnChildrenHidden": false,
-                          "id": "exqdsqp",
+                          "id": "eusnvdl",
                           "prefix": "",
                           "customClass": "",
                           "suffix": "",
@@ -3072,7 +3072,7 @@
                             "dateFormat": "yyyy-MM-dd"
                           },
                           "hideOnChildrenHidden": false,
-                          "id": "esrinl",
+                          "id": "epsq7w6",
                           "prefix": "",
                           "customClass": "",
                           "suffix": "",
@@ -3163,7 +3163,7 @@
                           "key": "breakDays",
                           "type": "number",
                           "input": true,
-                          "id": "ebcn4arm",
+                          "id": "e3tzgdo",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -3238,7 +3238,7 @@
                           "key": "eligibleBreakDays",
                           "type": "number",
                           "input": true,
-                          "id": "eh9tik",
+                          "id": "e9504u5",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -3314,7 +3314,7 @@
                           "key": "ineligibleBreakDays",
                           "type": "number",
                           "input": true,
-                          "id": "ex154a",
+                          "id": "eohmdon",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -3411,7 +3411,7 @@
                       "tree": true,
                       "lazyLoad": false,
                       "disableAddingRemovingRows": false,
-                      "id": "e3qmoxl"
+                      "id": "ek9nobf"
                     },
                     {
                       "customClass": "formio-panel-unset px-4",
@@ -3502,7 +3502,7 @@
                                   "properties": {},
                                   "allowMultipleMasks": false,
                                   "addons": [],
-                                  "id": "ejnrm4r"
+                                  "id": "et6mkl8"
                                 }
                               ],
                               "width": 6,
@@ -3588,7 +3588,7 @@
                                   "properties": {},
                                   "allowMultipleMasks": false,
                                   "addons": [],
-                                  "id": "eibjkct"
+                                  "id": "esbwl9"
                                 }
                               ],
                               "width": 6,
@@ -3663,7 +3663,7 @@
                           "tree": false,
                           "lazyLoad": false,
                           "autoAdjust": false,
-                          "id": "ec56ld2p"
+                          "id": "eun0m9"
                         },
                         {
                           "label": "Columns",
@@ -3744,7 +3744,7 @@
                                   "properties": {},
                                   "allowMultipleMasks": false,
                                   "addons": [],
-                                  "id": "e0o08xq"
+                                  "id": "elbz748"
                                 }
                               ],
                               "width": 6,
@@ -3830,7 +3830,7 @@
                                   "properties": {},
                                   "allowMultipleMasks": false,
                                   "addons": [],
-                                  "id": "e5c51b"
+                                  "id": "e8gnhms"
                                 }
                               ],
                               "width": 6,
@@ -3905,7 +3905,7 @@
                           "tree": false,
                           "lazyLoad": false,
                           "autoAdjust": false,
-                          "id": "e44iowd"
+                          "id": "e8pbnns"
                         }
                       ],
                       "placeholder": "",
@@ -3968,7 +3968,7 @@
                       "title": "Panel",
                       "theme": "default",
                       "breadcrumb": "default",
-                      "id": "ejqyuj5"
+                      "id": "e7r7mf"
                     }
                   ],
                   "placeholder": "",
@@ -4030,7 +4030,7 @@
                   "addons": [],
                   "tree": true,
                   "lazyLoad": false,
-                  "id": "ekp5vdf"
+                  "id": "epculcv"
                 },
                 {
                   "label": "Sum Of Total Eligible Break Days",
@@ -4098,7 +4098,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "e3n8r0v"
+                  "id": "e9xexay"
                 },
                 {
                   "label": "Sum Of Total Ineligible Break Days",
@@ -4166,7 +4166,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "eqolqzu"
+                  "id": "e98bbfe"
                 },
                 {
                   "label": "Invalid Study Breaks",
@@ -4234,7 +4234,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "empre9r"
+                  "id": "eduuskm"
                 },
                 {
                   "label": "Study Breaks Overlapping Detection",
@@ -4302,7 +4302,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "emhc1h"
+                  "id": "e1l6p4"
                 }
               ],
               "placeholder": "",
@@ -4364,7 +4364,7 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "emoi0wf"
+              "id": "ev1bmap"
             },
             {
               "label": "HTML",
@@ -4440,7 +4440,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "edml6ep"
+              "id": "eu2ue4i"
             },
             {
               "label": "HTML",
@@ -4516,7 +4516,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "eld7uxd"
+              "id": "e14gjrv"
             },
             {
               "label": "HTML",
@@ -4590,7 +4590,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "emw7mtw"
+              "id": "eutlng5"
             },
             {
               "label": "HTML",
@@ -4664,7 +4664,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "eq2h1ih"
+              "id": "ef6le4c"
             },
             {
               "label": "Columns",
@@ -4750,7 +4750,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eptlwt"
+                      "id": "epuzom7"
                     }
                   ],
                   "width": 3,
@@ -4841,7 +4841,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ehng16"
+                      "id": "ead1b9s"
                     }
                   ],
                   "width": 3,
@@ -4932,7 +4932,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e3bnmwn"
+                      "id": "eudppma"
                     }
                   ],
                   "size": "md",
@@ -5023,7 +5023,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "el8lcjj"
+                      "id": "e1k45j4"
                     }
                   ],
                   "size": "md",
@@ -5099,7 +5099,7 @@
               "tree": false,
               "lazyLoad": false,
               "autoAdjust": false,
-              "id": "ecmdcba"
+              "id": "exrp7d8"
             },
             {
               "label": "Study period availability",
@@ -5173,7 +5173,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "eckjds9"
+              "id": "edotj8"
             },
             {
               "title": "Offering type panel",
@@ -5267,7 +5267,7 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "egq37o"
+                  "id": "ebwpcsj"
                 }
               ],
               "placeholder": "",
@@ -5330,7 +5330,7 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "eqszm3d"
+              "id": "e4aagcq"
             }
           ],
           "placeholder": "",
@@ -5371,7 +5371,7 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "exg8iam"
+          "id": "eb9frsc"
         },
         {
           "label": "Declaration",
@@ -5445,7 +5445,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "tag": "p",
-          "id": "elibm7u"
+          "id": "ea42lp"
         },
         {
           "collapsible": false,
@@ -5528,7 +5528,7 @@
               "allowMultipleMasks": false,
               "addons": [],
               "tag": "p",
-              "id": "eoc06km"
+              "id": "eszn1e"
             },
             {
               "label": "I confirm this study period offering meets the policies outlined in the StudentAid BC policy manual.",
@@ -5598,7 +5598,7 @@
               "inputType": "checkbox",
               "value": "",
               "name": "",
-              "id": "ezglz28"
+              "id": "eb6a9c"
             }
           ],
           "placeholder": "",
@@ -5662,7 +5662,7 @@
           "title": "Panel",
           "theme": "default",
           "breadcrumb": "default",
-          "id": "egl7jsb"
+          "id": "eyfwz7e"
         },
         {
           "label": "Submit",
@@ -5739,7 +5739,7 @@
           "action": "submit",
           "disableOnInvalid": false,
           "theme": "primary",
-          "id": "ekvuk8"
+          "id": "eywfxis"
         }
       ],
       "placeholder": "",
@@ -5780,7 +5780,7 @@
       "addons": [],
       "tree": false,
       "lazyLoad": false,
-      "id": "esf69f"
+      "id": "e19gzk"
     },
     {
       "label": "clientType",
