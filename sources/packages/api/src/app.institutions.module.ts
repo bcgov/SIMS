@@ -23,6 +23,7 @@ import {
   RestrictionService,
   StudentScholasticStandingsService,
   StudentAssessmentService,
+  InstitutionUserAuthService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -72,6 +73,7 @@ import { LoggerModule } from "./logger/logger.module";
     StudentScholasticStandingsService,
     StudentAssessmentService,
     ScholasticStandingControllerService,
+    InstitutionUserAuthService,
   ],
 })
 export class AppInstitutionsModule {}

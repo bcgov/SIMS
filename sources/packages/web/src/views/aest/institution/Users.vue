@@ -1,9 +1,10 @@
 <template>
   <v-card class="mt-4">
     <div class="mx-5 py-4">
-      <InstitutionUserSummary
+      <institution-user-summary
         :institutionId="institutionId"
         :hasBusinessGuid="hasBusinessGuid"
+        :allowBasicBCeIDCreation="true"
       />
     </div>
   </v-card>

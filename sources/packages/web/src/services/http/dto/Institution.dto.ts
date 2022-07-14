@@ -146,11 +146,6 @@ export interface AESTCreateInstitutionAPIInDTO
   legalOperatingName: string;
 }
 
-export interface InstitutionUserTypeAndRoleAPIOutDTO {
-  userTypes: string[];
-  userRoles: string[];
-}
-
 export interface UserPermissionAPIInDTO {
   locationId?: number;
   userType?: string;
@@ -166,7 +161,7 @@ export interface CreateInstitutionUserAPIInDTO {
    * User BCeID id from BCeID Web Service (e.g. SomeUserName) that will have its
    * data retrieved to be created on SIMS.
    */
-  userId: string;
+  bceidUserId: string;
   /**
    * Permissions to be associated with the new user.
    */
@@ -212,4 +207,35 @@ export interface UserRoleOptionAPIOutDTO {
   name: string;
   code: string;
   id?: number;
+}
+
+export interface InstitutionUserStatusAPIOutDTO {
+  /**
+   * Indicates if the user is present on DB or not.
+   * A user that is not present on an existing institution means that
+   * the user never got access to this institution.
+   * A user not present associated on BCeID to an institution that is also
+   * not present means that the institution must be created, what can be done
+   * by a business BCeID user or by the Ministry for a basic BCeID.
+   */
+  isExistingUser: boolean;
+  /**
+   * Case the user is present indicate if the same is active.
+   */
+  isActiveUser?: boolean;
+  /**
+   * Indicates if the user belongs to an institution already present on DB.
+   * The user can be not present on DB but its institution can be already present,
+   * what means that the user does not have access to the solution.
+   * Case the user is not present and the institution is not present it means
+   * that the institution can be created if the user has a business BCeID account,
+   * otherwise the institution must be created in advance by the Ministry.
+   * !Returned only when isExistingUser is false to support the login process.
+   */
+  associatedInstitutionExists?: boolean;
+  /**
+   * Indicates if the user is a business BCeID.
+   * !Returned only when isExistingUser is false to support the login process.
+   */
+  hasBusinessBCeIDAccount?: boolean;
 }

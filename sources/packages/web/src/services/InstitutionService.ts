@@ -32,12 +32,12 @@ import {
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
   CreateInstitutionAPIInDTO,
-  InstitutionUserTypeAndRoleAPIOutDTO,
   UserRoleOptionAPIOutDTO,
   InstitutionLocationAPIInDTO,
   InstitutionLocationPrimaryContactAPIInDTO,
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
+  InstitutionUserStatusAPIOutDTO,
   CreateInstitutionUserAPIInDTO,
   UpdateInstitutionUserAPIInDTO,
   UserPermissionAPIInDTO,
@@ -199,10 +199,6 @@ export class InstitutionService {
     };
   }
 
-  public async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleAPIOutDTO> {
-    return ApiClient.Institution.getUserTypeAndRoles();
-  }
-
   /**
    * Create the user authorizations to be associate with the user.
    * @param isAdmin must be created as an admin user.
@@ -250,27 +246,33 @@ export class InstitutionService {
 
   /**
    * Create a user, associate with the institution, and assign the authorizations.
-   * @param userId user BCeID id from BCeID Web Service (e.g. SomeUserName)
+   * @param bceidUserId user BCeID id from BCeID Web Service (e.g. SomeUserName)
    * that will have its data retrieved to be created on SIMS.
    * @param isAdmin must be created as an admin user.
    * @param isLegalSigningAuthority for admin users, define if the role
    * legal-signing-authority should be associated with the user.
    * @param locationAuthorizations for non-admin users, the individual permission
    * for every location.
+   * @param institutionId institution to have the user associated. If not provided the
+   * token information will be used, if available.
    */
   async createInstitutionUserWithAuth(
-    userId: string,
+    bceidUserId: string,
     isAdmin: boolean,
     isLegalSigningAuthority: boolean,
     locationAuthorizations: LocationAuthorization[],
+    institutionId?: number,
   ): Promise<void> {
-    const userPayload = { userId } as CreateInstitutionUserAPIInDTO;
+    const userPayload = { bceidUserId } as CreateInstitutionUserAPIInDTO;
     userPayload.permissions = this.createUserPermissions(
       isAdmin,
       isLegalSigningAuthority,
       locationAuthorizations,
     );
-    await ApiClient.Institution.createInstitutionUserWithAuth(userPayload);
+    await ApiClient.Institution.createInstitutionUserWithAuth(
+      userPayload,
+      institutionId,
+    );
   }
 
   /**
@@ -381,10 +383,6 @@ export class InstitutionService {
     return ApiClient.Institution.getInstitutionTypeOptions();
   }
 
-  public async checkIfExist(guid: string, headers: any): Promise<boolean> {
-    return ApiClient.Institution.checkIfExist(guid, headers);
-  }
-
   public async getActiveApplicationsSummary(
     locationId: number,
     paginationOptions: PaginationOptions,
@@ -454,7 +452,13 @@ export class InstitutionService {
     );
   }
 
-  public async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
-    return ApiClient.Institution.getGetAdminRoleOptions();
+  /**
+   * Get the user status from institution perspective returning the
+   * possible user and institution association.
+   * @returns information to support the institution login process and
+   * the decisions that need happen to complete the process.
+   */
+  async getInstitutionUserStatus(): Promise<InstitutionUserStatusAPIOutDTO> {
+    return ApiClient.Institution.getInstitutionUserStatus();
   }
 }

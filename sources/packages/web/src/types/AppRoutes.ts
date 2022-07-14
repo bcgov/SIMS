@@ -84,7 +84,6 @@ export enum AppRoutes {
   PartnerSupportingInfo = "supporting-info/partner",
   // Shared
   Login = "login",
-  LoginWithBusinessBCeID = "login/business-bceid",
   DisabledUser = "login/disabled-user",
   UnknownUser = "login/unknown-user",
   ForbiddenUser = "/forbidden-user",

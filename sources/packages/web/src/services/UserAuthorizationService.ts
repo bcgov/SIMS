@@ -4,6 +4,7 @@ import {
   InstitutionUserAuthRolesAndLocation,
   LocationStateForStore,
 } from "@/types/contracts/institution/InstitutionUser";
+
 export class UserAuthorizationService {
   private static instance: UserAuthorizationService;
 
@@ -37,24 +38,8 @@ export class UserAuthorizationService {
       }
 
       return allowedTypeList.some((type) => {
-        /* Check if user a location Manager and the 
-            location Manager has access to the requested page
-          */
-        if (
-          this.checkUserTypeIsAllowed(
-            type,
-            InstitutionUserTypes.locationManager,
-          )
-        )
-          return true;
-
-        /* Check if user a user and the 
-              User has access to the requested page
-            */
-        if (this.checkUserTypeIsAllowed(type, InstitutionUserTypes.user))
-          return true;
-
-        return false;
+        // Check if user a user and if the user has access to the requested page.
+        return this.checkUserTypeIsAllowed(type, InstitutionUserTypes.user);
       });
     } catch (error) {
       return false;
@@ -64,7 +49,6 @@ export class UserAuthorizationService {
   public checkUserTypeIsAllowed(allowedUserType: string, userType: string) {
     const institutionUserTypes: InstitutionUserAuthRolesAndLocation[] =
       store.getters["institution/myAuthorizationDetails"].authorizations;
-
     return (
       allowedUserType === userType &&
       institutionUserTypes.some(
@@ -116,19 +100,6 @@ export class UserAuthorizationService {
     urlParamsLocationId?: string,
   ) {
     return checkAllowedLocationUserTypes?.some((type) => {
-      /* Check if user a location Manager and the 
-          location Manager has access to the requested page and  
-          check location Manager has access to the locationId 
-        */
-      if (
-        this.checkUserTypeIsAllowedForLocation(
-          type,
-          InstitutionUserTypes.locationManager,
-          urlParamsLocationId,
-        )
-      )
-        return true;
-
       /* Check if user a user and the 
           User has access to the requested page and  
           check User has access to the locationId
@@ -139,8 +110,9 @@ export class UserAuthorizationService {
           InstitutionUserTypes.user,
           urlParamsLocationId,
         )
-      )
+      ) {
         return true;
+      }
 
       /* Check if user a admin and the 
           Admin has access to the requested page and  
@@ -153,8 +125,9 @@ export class UserAuthorizationService {
           InstitutionUserTypes.admin,
           urlParamsLocationId,
         )
-      )
+      ) {
         return true;
+      }
 
       return false;
     });
