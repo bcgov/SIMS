@@ -1,8 +1,5 @@
 import { Controller, Post } from "@nestjs/common";
-import {
-  MSFAARequestResultDto,
-  ProcessResponseResDto,
-} from "./models/msfaa-file-result.dto";
+import { MSFAARequestResultAPIOutDTO } from "./models/msfaa-file-result.dto";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
@@ -16,10 +13,12 @@ import {
   MSFAA_FULL_TIME_FILE_CODE,
   MSFAA_PART_TIME_FILE_CODE,
 } from "../../utilities";
+import { ClientTypeBaseRoute } from "../../types";
+import { ProcessResponseAPIOutDTO } from "./models/esdc.dto";
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-@Controller("system-access/msfaa-integration")
-@ApiTags("system-access")
-export class MSFAAIntegrationController extends BaseController {
+@Controller("msfaa-integration")
+@ApiTags(`${ClientTypeBaseRoute.SystemAccess}-msfaa-integration`)
+export class MSFAAIntegrationSystemAccessController extends BaseController {
   constructor(
     private readonly msfaaRequestService: MSFAARequestService,
     private readonly msfaaResponseService: MSFAAResponseService,
@@ -36,7 +35,7 @@ export class MSFAAIntegrationController extends BaseController {
    * @returns Processing result log.
    */
   @Post("process-request")
-  async processMSFAARequest(): Promise<MSFAARequestResultDto[]> {
+  async processMSFAARequest(): Promise<MSFAARequestResultAPIOutDTO[]> {
     this.logger.log("Sending MSFAA request File...");
     const uploadFullTimeResult = this.msfaaRequestService.processMSFAARequest(
       MSFAA_FULL_TIME_FILE_CODE,
@@ -71,7 +70,7 @@ export class MSFAAIntegrationController extends BaseController {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   @Post("process-responses")
-  async processResponses(): Promise<ProcessResponseResDto[]> {
+  async processResponses(): Promise<ProcessResponseAPIOutDTO[]> {
     const results = await this.msfaaResponseService.processResponses();
     return results.map((result) => {
       return {

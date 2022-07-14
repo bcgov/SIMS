@@ -3,7 +3,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
-import { ApplicationSystemController } from "..";
 import { DatabaseModule } from "../../database/database.module";
 import { AuthModule } from "../../auth/auth.module";
 import {
@@ -42,6 +41,7 @@ import {
 } from "../../testHelpers/fake-entities";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
 import { CraIntegrationModule } from "../../cra-integration/cra-integration.module";
+import { ApplicationSystemAccessController } from "./application.system-access.controller";
 
 describe.skip("Test system-access/application Controller", () => {
   let accesstoken: string;
@@ -62,7 +62,7 @@ describe.skip("Test system-access/application Controller", () => {
     accesstoken = token.access_token;
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule, AuthModule, CraIntegrationModule],
-      controllers: [ApplicationSystemController],
+      controllers: [ApplicationSystemAccessController],
       providers: [
         ApplicationService,
         StudentFileService,
