@@ -106,11 +106,13 @@ export class InstitutionUserControllerService {
    * Create a user, associate with the institution, and assign the authorizations.
    * @param institutionId institution to have the user associated.
    * @param payload user and authorization information.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns created user id.
    */
   async createInstitutionUserWithAuth(
     institutionId: number,
     payload: CreateInstitutionUserAPIInDTO,
+    auditUserId?: number,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     const institution =
       await this.institutionService.getBasicInstitutionDetailById(
@@ -157,6 +159,7 @@ export class InstitutionUserControllerService {
           institution.id,
           bceidUserAccount,
           payload,
+          auditUserId,
         );
       return { id: createdInstitutionUser.id };
     } catch (error: unknown) {
@@ -179,12 +182,14 @@ export class InstitutionUserControllerService {
    * Update the user authorizations for the institution user.
    * @param institutionUserId institution user id to have the permissions updated.
    * @param payload user and authorization information.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @param authorizedInstitutionId optional institution to check for user authorization.
    * @returns created user id.
    */
   async updateInstitutionUserWithAuth(
     institutionUserId: number,
     payload: UpdateInstitutionUserAPIInDTO,
+    auditUserId: number,
     authorizedInstitutionId?: number,
   ): Promise<void> {
     const institutionUser =
@@ -215,6 +220,7 @@ export class InstitutionUserControllerService {
         institutionUser.institution.id,
         institutionUser.id,
         payload.permissions,
+        auditUserId,
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {

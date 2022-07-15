@@ -112,7 +112,6 @@ export class UserAuthDetailAPIOutDTO {
 }
 
 export class InstitutionUserDetailAPIOutDTO {
-  id?: number;
   user: InstitutionUserSummaryAPIOutDTO;
   authorizations: UserAuthDetailAPIOutDTO;
 }

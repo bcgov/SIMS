@@ -83,7 +83,6 @@ export interface UserAuthDetailAPIOutDTO {
   authorizations: InstitutionLocationAuthAPIOutDTO[];
 }
 export interface InstitutionUserDetailAPIOutDTO {
-  id?: number;
   user: InstitutionUserSummaryAPIOutDTO;
   authorizations: UserAuthDetailAPIOutDTO;
 }

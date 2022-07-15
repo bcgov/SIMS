@@ -107,12 +107,15 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param institutionId Institution to add the user.
    * @param bceidUserAccount BCeID account to be used to create the user.
    * @param permissionInfo Permissions informations to be added to the user.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * If not provided the user being created will be considered the one.
    * @returns institution user
    */
   async createInstitutionUser(
     institutionId: number,
     bceidUserAccount: AccountDetails,
     permissionInfo: InstitutionUserModel,
+    auditUserId?: number,
   ): Promise<InstitutionUser> {
     const userName = `${bceidUserAccount.user.guid}@bceid`.toLowerCase();
     const validateUniqueSigningAuthority = this.validateUniqueSigningAuthority(
@@ -140,11 +143,14 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     userEntity.firstName = bceidUserAccount.user.firstname;
     userEntity.lastName = bceidUserAccount.user.surname;
     userEntity.userName = userName;
+    // If an audit user was not provided consider the one that will be created as the audit user.
+    const auditUser = auditUserId ? ({ id: auditUserId } as User) : userEntity;
     // Create new relationship between institution and the new user.
     const newInstitutionUser = new InstitutionUser();
     newInstitutionUser.user = userEntity;
     newInstitutionUser.institution = institution;
     newInstitutionUser.authorizations = [];
+    newInstitutionUser.creator = auditUser;
     // Create the permissions for the user under the institution.
     for (const permission of permissionInfo.permissions) {
       const newAuthorization = new InstitutionUserAuth();
@@ -165,6 +171,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
         );
       }
       newAuthorization.authType = authType;
+      newAuthorization.creator = auditUser;
       newInstitutionUser.authorizations.push(newAuthorization);
     }
 
@@ -447,11 +454,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param institutionUserId institution user to be updated.
    * @param permissions complete list of the user permissions that will entirely
    * replace the existing ones.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    */
   async updateInstitutionUser(
     institutionId: number,
     institutionUserId: number,
     permissions: UserPermissionModel[],
+    auditUserId: number,
   ): Promise<void> {
     const validateAtLeastOneAdmin = this.validateAtLeastOneAdmin(
       institutionId,
@@ -468,6 +477,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       validateUniqueSigningAuthority,
     ]);
 
+    const auditUser = { id: auditUserId } as User;
     const newAuthorizationEntries = [] as InstitutionUserAuth[];
     // Create the permissions for the user under the institution.
     for (const permission of permissions) {
@@ -492,6 +502,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
         );
       }
       newAuthorization.authType = authType;
+      newAuthorization.creator = auditUser;
       newAuthorizationEntries.push(newAuthorization);
     }
 

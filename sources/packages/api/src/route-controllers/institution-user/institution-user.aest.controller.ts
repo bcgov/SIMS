@@ -81,12 +81,14 @@ export class InstitutionUserAESTController extends BaseController {
   })
   @Post(":institutionId")
   async createInstitutionUserWithAuth(
+    @UserToken() token: IUserToken,
     @Param("institutionId", ParseIntPipe) institutionId: number,
     @Body() payload: CreateInstitutionUserAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     return this.institutionUserControllerService.createInstitutionUserWithAuth(
       institutionId,
       payload,
+      token.userId,
     );
   }
 
@@ -106,12 +108,14 @@ export class InstitutionUserAESTController extends BaseController {
   })
   @Patch(":institutionUserId")
   async updateInstitutionUserWithAuth(
+    @UserToken() token: IUserToken,
     @Param("institutionUserId", ParseIntPipe) institutionUserId: number,
     @Body() payload: UpdateInstitutionUserAPIInDTO,
   ): Promise<void> {
     await this.institutionUserControllerService.updateInstitutionUserWithAuth(
       institutionUserId,
       payload,
+      token.userId,
     );
   }
 
