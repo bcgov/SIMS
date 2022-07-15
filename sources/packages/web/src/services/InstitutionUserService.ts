@@ -108,6 +108,7 @@ export class InstitutionUserService {
    * legal-signing-authority should be associated with the user.
    * @param locationAuthorizations for non-admin users, the individual permission
    * for every location.
+   * @return user permissions converted to be sent as API payloads require.
    */
   private createUserPermissions(
     isAdmin: boolean,
@@ -222,7 +223,10 @@ export class InstitutionUserService {
    * @param institutionUserId institution user id to have the permissions updated.
    * @param isActive enable or disable the user.
    */
-  async updateUserStatus(institutionUserId: number, isActive: boolean) {
+  async updateUserStatus(
+    institutionUserId: number,
+    isActive: boolean,
+  ): Promise<void> {
     return ApiClient.InstitutionUserApi.updateUserStatus(
       institutionUserId,
       isActive,

@@ -16,12 +16,9 @@ export class InstitutionUserApi extends HttpBaseClient {
    * Get details of user who is logged in.
    * @returns user details.
    */
-  async getMyInstitutionDetails(
-    header?: any,
-  ): Promise<InstitutionUserDetailAPIOutDTO> {
+  async getMyInstitutionDetails(): Promise<InstitutionUserDetailAPIOutDTO> {
     return this.getCallTyped<InstitutionUserDetailAPIOutDTO>(
       this.addClientRoot("institution-user/my-details"),
-      header,
     );
   }
 
@@ -52,7 +49,6 @@ export class InstitutionUserApi extends HttpBaseClient {
    * @param payload authorizations to be associated with the user.
    * @param institutionId institution to have the user associated. If not provided the
    * token information will be used, if available.
-   * @returns Primary identifier of the created resource.
    */
   async createInstitutionUserWithAuth(
     payload: CreateInstitutionUserAPIInDTO,

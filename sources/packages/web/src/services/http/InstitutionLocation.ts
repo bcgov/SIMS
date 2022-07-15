@@ -62,12 +62,11 @@ export class InstitutionLocationApi extends HttpBaseClient {
    * Get location details of logged in user.
    * @returns location details.
    */
-  async getMyInstitutionLocationsDetails(
-    header?: any,
-  ): Promise<InstitutionLocationsAPIOutDTO[]> {
+  async getMyInstitutionLocationsDetails(): Promise<
+    InstitutionLocationsAPIOutDTO[]
+  > {
     return this.getCallTyped<InstitutionLocationsAPIOutDTO[]>(
       this.addClientRoot("location"),
-      header,
     );
   }
 }
