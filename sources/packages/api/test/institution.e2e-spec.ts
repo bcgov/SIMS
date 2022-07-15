@@ -101,52 +101,6 @@ describe("Institution controller (e2e)", () => {
     });
   });
 
-  it.skip("should Create institution user", async () => {
-    // Create institution
-    const institution = await institutionFactory();
-    const location = await institutionLocationFactory();
-    const user = await userFactory({
-      userName: parsedToken.userName,
-    });
-    await institutionService.save(institution);
-    location.institution = institution;
-    await locationService.save(location);
-    const existing = await userService.getUser(user.userName);
-    if (!existing) {
-      await userService.save(user);
-      await institutionService.createAssociation({
-        institution,
-        user,
-        type: InstitutionUserType.admin,
-        auditUserId: user.id,
-      });
-    } else {
-      await institutionService.createAssociation({
-        institution,
-        user: existing,
-        type: InstitutionUserType.admin,
-        auditUserId: user.id,
-      });
-    }
-    await request(app.getHttpServer())
-      .post("/institution/user")
-      .auth(accessToken, { type: "bearer" })
-      .send({
-        locationId: location.id,
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        email: faker.internet.email(),
-        userGuid: faker.random.uuid(),
-        userType: InstitutionUserType.user,
-      })
-      .set("Accept", "application/json")
-      .expect(HttpStatus.CREATED);
-
-    await locationService.remove(location);
-    await institutionService.remove(institution);
-    await userService.remove(existing || user);
-  });
-
   afterAll(async () => {
     await app.close();
   });
