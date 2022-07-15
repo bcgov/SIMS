@@ -107,51 +107,6 @@ export class InstitutionService {
     return ApiClient.Institution.allInstitutionLocations(institutionId);
   }
 
-  /**
-   * Create the user authorizations to be associate with the user.
-   * @param isAdmin must be created as an admin user.
-   * @param isLegalSigningAuthority for admin users, define if the role
-   * legal-signing-authority should be associated with the user.
-   * @param locationAuthorizations for non-admin users, the individual permission
-   * for every location.
-   */
-  private createUserPermissions(
-    isAdmin: boolean,
-    isLegalSigningAuthority: boolean,
-    locationAuthorizations: LocationAuthorization[],
-  ): UserPermissionAPIInDTO[] {
-    let permissions: UserPermissionAPIInDTO[];
-    if (isAdmin) {
-      // User is an admin and will have access for all the locations.
-      permissions = [
-        {
-          userType: InstitutionUserTypes.admin,
-          userRole: isLegalSigningAuthority
-            ? InstitutionUserRoles.legalSigningAuthority
-            : undefined,
-        } as UserPermissionAPIInDTO,
-      ];
-    } else {
-      // User is not an admin and will have the permission assigned to the individual locations.
-      // Filter locations with access. At this point the UI validations already ensured
-      // that there will be at least one location defined with some access level.
-      permissions = locationAuthorizations
-        .filter(
-          (locationAccess) =>
-            locationAccess.userAccess === LocationUserAccess.User,
-        )
-        .map(
-          (locationAccess) =>
-            ({
-              locationId: locationAccess.id,
-              userType: locationAccess.userAccess,
-            } as UserPermissionAPIInDTO),
-        );
-    }
-
-    return permissions;
-  }
-
   public async getLocationsOptionsList(): Promise<OptionItemDto[]> {
     return ApiClient.InstitutionLocation.getOptionsList();
   }
