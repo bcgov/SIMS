@@ -117,20 +117,6 @@ export class InstitutionUserDetailAPIOutDTO {
   authorizations: UserAuthDetailAPIOutDTO;
 }
 
-export class InstitutionUserLocationsAPIOutDTO {
-  id: number;
-  name: string;
-  address: AddressAPIOutDTO;
-}
-
-/**
- * DTO To load the admin roles dropdown component
- */
-export class UserRoleOptionAPIOutDTO {
-  name: string;
-  code: string;
-}
-
 export class InstitutionUserStatusAPIOutDTO {
   /**
    * Indicates if the user is present on DB or not.

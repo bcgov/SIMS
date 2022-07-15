@@ -92,10 +92,10 @@
             <span class="text-decoration-underline">Edit</span>
           </v-btn>
           <v-btn
-            v-if="canDisableUser(slotProps.data.userName)"
+            :disabled="slotProps.data.disableRemove"
             @click="updateUserStatus(slotProps.data)"
             variant="text"
-            color="primary"
+            :color="slotProps.data.disableRemove ? 'gray' : 'primary'"
             append-icon="mdi-account-remove-outline"
           >
             <span class="text-decoration-underline">{{
@@ -123,15 +123,9 @@
 
 <script lang="ts">
 import { ref, watch } from "vue";
-import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
-import {
-  ModalDialog,
-  useAuth,
-  useFormatters,
-  useToastMessage,
-} from "@/composables";
+import { ModalDialog, useFormatters, useToastMessage } from "@/composables";
 import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue";
 import {
   InstitutionUserViewModel,
@@ -145,6 +139,7 @@ import {
   ApiProcessError,
 } from "@/types";
 import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
+import { InstitutionUserService } from "@/services/InstitutionUserService";
 
 export default {
   components: {
@@ -174,7 +169,6 @@ export default {
   },
   setup(props: any) {
     const toast = useToastMessage();
-    const { parsedToken } = useAuth();
     const { institutionUserRoleToDisplay } = useFormatters();
     const usersListAndCount = ref({} as InstitutionUserAndCountForDataTable);
     const loading = ref(false);
@@ -202,7 +196,7 @@ export default {
       loading.value = true;
       try {
         usersListAndCount.value =
-          await InstitutionService.shared.institutionUserSummary(
+          await InstitutionUserService.shared.institutionUserSummary(
             {
               page: page,
               pageLimit: pageCount,
@@ -220,7 +214,7 @@ export default {
     const updateUserStatus = async (userDetails: InstitutionUserViewModel) => {
       try {
         const enabled = !userDetails.isActive;
-        await InstitutionService.shared.updateUserStatus(
+        await InstitutionUserService.shared.updateUserStatus(
           userDetails.userName,
           enabled,
         );
@@ -290,16 +284,11 @@ export default {
       }
     };
 
-    const canDisableUser = (userName: string): boolean => {
-      return parsedToken.value?.userName !== userName;
-    };
-
     return {
       addInstitutionUserModal,
       editInstitutionUserModal,
       openNewUserModal,
       openEditUserModal,
-      canDisableUser,
       getAllInstitutionUsers,
       institutionUserRoleToDisplay,
       updateUserStatus,

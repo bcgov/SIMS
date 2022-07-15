@@ -4,7 +4,6 @@ import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
-import { InstitutionService } from "./InstitutionService";
 import { ApplicationToken } from "@/types";
 import { RouteHelper } from "@/helpers";
 import { LocationAsRelativeRaw } from "vue-router";
@@ -15,6 +14,7 @@ import {
 import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
 import { useStudentStore } from "@/composables";
+import { InstitutionUserService } from "./InstitutionUserService";
 
 /**
  * Manages the KeyCloak initialization and authentication methods.
@@ -143,7 +143,7 @@ export class AuthService {
    */
   private async processInstitutionLogin() {
     const userStatus =
-      await InstitutionService.shared.getInstitutionUserStatus();
+      await InstitutionUserService.shared.getInstitutionUserStatus();
     if (userStatus.isActiveUser === true) {
       // User is active so just proceed.
       await store.dispatch("institution/initialize");

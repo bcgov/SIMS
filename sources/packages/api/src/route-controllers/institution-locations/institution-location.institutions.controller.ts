@@ -30,7 +30,6 @@ import {
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { getISODateOnlyString, getUserFullName } from "../../utilities";
-
 import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
@@ -42,6 +41,7 @@ import {
   InstitutionLocationPrimaryContactAPIInDTO,
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationDetailsAPIOutDTO,
+  InstitutionLocationsAPIOutDTO,
 } from "./models/institution-location.dto";
 import { FormNames } from "../../services/form/constants";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
@@ -216,5 +216,34 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     }
     const offering = application.currentAssessment.offering;
     return transformToActiveApplicationDataAPIOutDTO(application, offering);
+  }
+
+  /**
+   * Get locations details of logged in user.
+   * @returns location details.
+   */
+  @Get()
+  async getMyInstitutionLocationsDetails(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<InstitutionLocationsAPIOutDTO[]> {
+    // get all institution locations that user has access too.
+    const InstitutionLocationData =
+      await this.locationService.getMyInstitutionLocations(
+        userToken.authorizations.getLocationsIds(),
+      );
+    return InstitutionLocationData.map((el) => {
+      return {
+        id: el.id,
+        name: el.name,
+        address: {
+          addressLine1: el.data.address?.addressLine1,
+          addressLine2: el.data.address?.addressLine2,
+          provinceState: el.data.address?.provinceState,
+          country: el.data.address?.country,
+          city: el.data.address?.city,
+          postalCode: el.data.address?.postalCode,
+        },
+      };
+    });
   }
 }

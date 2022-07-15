@@ -19,7 +19,7 @@ export interface InstitutionUserViewModel {
   userType: string[];
   role: string;
   isActive: boolean;
-  disableRemove?: boolean;
+  disableRemove: boolean;
 }
 
 export interface InstitutionAuthType {

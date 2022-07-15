@@ -4,7 +4,6 @@ import {
   Get,
   NotFoundException,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -25,24 +24,7 @@ import {
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
 import { InstitutionLocationControllerService } from "../institution-locations/institution-location.controller.service";
-import {
-  ApiNotFoundResponse,
-  ApiTags,
-  ApiUnprocessableEntityResponse,
-} from "@nestjs/swagger";
-import {
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  FieldSortOrder,
-  PaginationParams,
-  PaginatedResults,
-} from "../../utilities";
-import {
-  CreateInstitutionUserAPIInDTO,
-  InstitutionUserAPIOutDTO,
-  UpdateInstitutionUserAPIInDTO,
-  UserActiveStatusAPIInDTO,
-} from "./models/institution-user.dto";
+import { ApiTags } from "@nestjs/swagger";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
 import { ClientTypeBaseRoute } from "../../types";
@@ -146,41 +128,6 @@ export class InstitutionAESTController extends BaseController {
   }
 
   /**
-   * Controller method to get all institution users with the
-   * given institutionId.
-   * @param institutionId
-   * @queryParm page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @queryParm pageLimit, page size or records per page, if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @queryParm searchName, user's name keyword to be searched
-   * @queryParm sortField, field to be sorted
-   * @queryParm sortOrder, order to be sorted
-   * @returns All the institution users for the given institution
-   * with total count.
-   */
-  @Get(":institutionId/user")
-  async getInstitutionUsers(
-    @Param("institutionId") institutionId: number,
-    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
-    @Query(PaginationParams.SortField) sortField: string,
-    @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
-    @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
-    @Query(PaginationParams.PageLimit) pageLimit = DEFAULT_PAGE_LIMIT,
-  ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
-    return this.institutionControllerService.getInstitutionUsers(
-      institutionId,
-      {
-        page,
-        pageLimit,
-        searchCriteria,
-        sortField,
-        sortOrder,
-      },
-    );
-  }
-
-  /**
    * Get the Basic Institution info for the ministry institution detail page.
    * @param institutionId
    * @returns Basic information of institution.
@@ -238,93 +185,5 @@ export class InstitutionAESTController extends BaseController {
     return {
       id: institution.id,
     };
-  }
-
-  /**
-   * Create a user, associate with the institution, and assign the authorizations.
-   * @param institutionId institution to have the user created.
-   * @param payload authorizations to be associated with the user.
-   * @returns Primary identifier of the created resource.
-   */
-  @ApiNotFoundResponse({ description: "Institution not found." })
-  @ApiUnprocessableEntityResponse({
-    description:
-      "User to be added was not found on BCeID Account Service " +
-      "or the user does not belong to the same institution " +
-      "or the user already exists " +
-      "or a second legal signing authority is trying to be set when one is already in place.",
-  })
-  @Post(":institutionId/user")
-  async createInstitutionUserWithAuth(
-    @Param("institutionId", ParseIntPipe) institutionId: number,
-    @Body() payload: CreateInstitutionUserAPIInDTO,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return this.institutionControllerService.createInstitutionUserWithAuth(
-      institutionId,
-      payload,
-    );
-  }
-
-  /**
-   * Update the user authorizations for the institution user.
-   * @param userName user to have the permissions updated.
-   * @param payload permissions to be updated.
-   */
-  @ApiNotFoundResponse({
-    description: "User to be updated not found.",
-  })
-  @ApiUnprocessableEntityResponse({
-    description:
-      "The user is not active" +
-      " or the user permission is being updated in a way that no admin will be present" +
-      " or a second legal signing authority is trying to be set and only one is allowed.",
-  })
-  @Patch("user/:userName")
-  async updateInstitutionUserWithAuth(
-    @Param("userName") userName: string,
-    @Body() payload: UpdateInstitutionUserAPIInDTO,
-  ): Promise<void> {
-    await this.institutionControllerService.updateInstitutionUserWithAuth(
-      userName,
-      payload,
-    );
-  }
-
-  /**
-   * Get institution user by user name(guid).
-   * @param userName user name (guid).
-   * @returns institution user details.
-   */
-  @ApiNotFoundResponse({
-    description: "User not found.",
-  })
-  @Get("user/:userName")
-  async getInstitutionUserByUserName(
-    @Param("userName") userName: string,
-  ): Promise<InstitutionUserAPIOutDTO> {
-    return this.institutionControllerService.getInstitutionUserByUserName(
-      userName,
-    );
-  }
-
-  /**
-   * Update the active status of the user.
-   * @param userName unique name of the user to be updated.
-   * @param payload information to enable or disable the user.
-   */
-  @ApiNotFoundResponse({
-    description: "User to be updated not found.",
-  })
-  @Patch("user-status/:userName")
-  async updateUserStatus(
-    @UserToken() userToken: IUserToken,
-    @Param("userName") userName: string,
-    @Body() payload: UserActiveStatusAPIInDTO,
-  ): Promise<void> {
-    await this.institutionControllerService.updateUserStatus(
-      userName,
-      payload,
-      userToken.userId,
-    );
   }
 }
