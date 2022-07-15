@@ -74,16 +74,16 @@ export class InstitutionUserApi extends HttpBaseClient {
 
   /**
    * Update the user authorizations for the institution user.
-   * @param userName user to have the permissions updated.
+   * @param institutionUserId institution user id to have the permissions updated.
    * @param payload permissions to be updated.
    */
   async updateInstitutionUserWithAuth(
-    userName: string,
+    institutionUserId: number,
     payload: UpdateInstitutionUserAPIInDTO,
   ): Promise<void> {
     try {
       return await this.patchCall<UpdateInstitutionUserAPIInDTO>(
-        this.addClientRoot(`institution-user/${userName}`),
+        this.addClientRoot(`institution-user/${institutionUserId}`),
         payload,
       );
     } catch (error: unknown) {
@@ -105,29 +105,29 @@ export class InstitutionUserApi extends HttpBaseClient {
 
   /**
    * Get institution user by user name(guid).
-   * @param userName user name (guid).
+   * @param institutionUserId institution user id to have the permissions updated.
    * @returns institution user details.
    */
-  async getInstitutionUserByUserName(
-    userName: string,
+  async getInstitutionUserById(
+    institutionUserId: number,
   ): Promise<InstitutionUserAPIOutDTO> {
     return this.getCallTyped<InstitutionUserAPIOutDTO>(
-      this.addClientRoot(`institution-user/${userName}`),
+      this.addClientRoot(`institution-user/${institutionUserId}`),
     );
   }
 
   /**
    * Update the active status of the user.
-   * @param userName unique name of the user to be updated.
+   * @param institutionUserId institution user id to have the permissions updated.
    * @param isActive enable or disable the user.
    */
   public async updateUserStatus(
-    userName: string,
+    institutionUserId: number,
     isActive: boolean,
   ): Promise<void> {
     try {
       await this.patchCall<UserActiveStatusAPIInDTO>(
-        this.addClientRoot(`institution-user/${userName}/status`),
+        this.addClientRoot(`institution-user/${institutionUserId}/status`),
         {
           isActive,
         },

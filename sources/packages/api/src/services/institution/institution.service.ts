@@ -391,12 +391,12 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   /**
-   * Get the user and institution details, including locations, by the unique user name.
-   * @param userName unique user name.
+   * Get the user and institution details, including locations, by the institution user id.
+   * @param institutionUserId institution user id to have the permissions updated.
    * @returns institution, locations, and user details.
    */
-  async getInstitutionUserByUserName(
-    userName: string,
+  async getInstitutionUserById(
+    institutionUserId: number,
   ): Promise<InstitutionUser> {
     return this.institutionUserRepo
       .createQueryBuilder("institutionUser")
@@ -421,7 +421,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .innerJoinAndSelect("institutionUser.authorizations", "authorizations")
       .innerJoinAndSelect("authorizations.authType", "authType")
       .leftJoinAndSelect("authorizations.location", "location")
-      .where("user.userName = :userName", { userName })
+      .where("institutionUser.id = :institutionUserId", { institutionUserId })
       .getOne();
   }
 

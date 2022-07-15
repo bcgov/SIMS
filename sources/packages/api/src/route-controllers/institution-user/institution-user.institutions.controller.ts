@@ -6,6 +6,7 @@ import {
   Post,
   Query,
   Param,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -136,7 +137,7 @@ export class InstitutionUserInstitutionsController extends BaseController {
 
   /**
    * Update the user authorizations for the institution user.
-   * @param userName user to have the permissions updated.
+   * @param institutionUserId institution user id to have the permissions updated.
    * @param payload permissions to be updated.
    */
   @ApiNotFoundResponse({
@@ -153,14 +154,14 @@ export class InstitutionUserInstitutionsController extends BaseController {
       " or a second legal signing authority is trying to be set and only one is allowed.",
   })
   @IsInstitutionAdmin()
-  @Patch(":userName")
+  @Patch(":institutionUserId")
   async updateInstitutionUserWithAuth(
     @UserToken() token: IInstitutionUserToken,
-    @Param("userName") userName: string,
+    @Param("institutionUserId", ParseIntPipe) institutionUserId: number,
     @Body() payload: UpdateInstitutionUserAPIInDTO,
   ): Promise<void> {
     await this.institutionUserControllerService.updateInstitutionUserWithAuth(
-      userName,
+      institutionUserId,
       payload,
       token.authorizations.institutionId,
     );
@@ -205,7 +206,7 @@ export class InstitutionUserInstitutionsController extends BaseController {
 
   /**
    * Get institution user by user name(guid).
-   * @param userName user name (guid).
+   * @param institutionUserId institution user id to have the permissions updated.
    * @returns institution user details.
    */
   @ApiNotFoundResponse({
@@ -216,20 +217,20 @@ export class InstitutionUserInstitutionsController extends BaseController {
       "Details requested for user who does not belong to the institution.",
   })
   @IsInstitutionAdmin()
-  @Get(":userName")
+  @Get(":institutionUserId")
   async getInstitutionUserByUserName(
-    @Param("userName") userName: string,
+    @Param("institutionUserId", ParseIntPipe) institutionUserId: number,
     @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionUserAPIOutDTO> {
-    return this.institutionUserControllerService.getInstitutionUserByUserName(
-      userName,
+    return this.institutionUserControllerService.getInstitutionUserById(
+      institutionUserId,
       token.authorizations.institutionId,
     );
   }
 
   /**
    * Update the active status of the user.
-   * @param userName unique name of the user to be updated.
+   * @param institutionUserId institution user id to have the permissions updated.
    * @param payload information to enable or disable the user.
    */
   @ApiNotFoundResponse({
@@ -240,14 +241,14 @@ export class InstitutionUserInstitutionsController extends BaseController {
       "User to be updated doesn't belong to institution of logged in user.",
   })
   @IsInstitutionAdmin()
-  @Patch(":userName/status")
+  @Patch(":institutionUserId/status")
   async updateUserStatus(
     @UserToken() token: IInstitutionUserToken,
-    @Param("userName") userName: string,
+    @Param("institutionUserId", ParseIntPipe) institutionUserId: number,
     @Body() payload: UserActiveStatusAPIInDTO,
   ): Promise<void> {
     await this.institutionUserControllerService.updateUserStatus(
-      userName,
+      institutionUserId,
       payload,
       token.userId,
       token.authorizations.institutionId,

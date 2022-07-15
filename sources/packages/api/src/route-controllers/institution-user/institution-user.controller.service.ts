@@ -174,18 +174,18 @@ export class InstitutionUserControllerService {
 
   /**
    * Update the user authorizations for the institution user.
-   * @param userName unique user name to have the authorizations updated.
+   * @param institutionUserId institution user id to have the permissions updated.
    * @param payload user and authorization information.
    * @param authorizedInstitutionId optional institution to check for user authorization.
    * @returns created user id.
    */
   async updateInstitutionUserWithAuth(
-    userName: string,
+    institutionUserId: number,
     payload: UpdateInstitutionUserAPIInDTO,
     authorizedInstitutionId?: number,
   ): Promise<void> {
     const institutionUser =
-      await this.institutionService.getInstitutionUserByUserName(userName);
+      await this.institutionService.getInstitutionUserById(institutionUserId);
 
     if (!institutionUser) {
       throw new NotFoundException("User to be updated not found.");
@@ -231,16 +231,16 @@ export class InstitutionUserControllerService {
 
   /**
    * Get institution user by user name(guid).
-   * @param userName user name (guid).
+   * @param institutionUserId institution user id to have the permissions updated.
    * @param authorizedInstitutionId optional institution to check for user authorization.
    * @returns institution user details.
    */
-  async getInstitutionUserByUserName(
-    userName: string,
+  async getInstitutionUserById(
+    institutionUserId: number,
     authorizedInstitutionId?: number,
   ): Promise<InstitutionUserAPIOutDTO> {
     const institutionUser =
-      await this.institutionService.getInstitutionUserByUserName(userName);
+      await this.institutionService.getInstitutionUserById(institutionUserId);
 
     if (!institutionUser) {
       throw new NotFoundException("User not found.");
@@ -281,20 +281,20 @@ export class InstitutionUserControllerService {
 
   /**
    * Update the active status of the user.
-   * @param userName unique name of the user to be updated.
+   * @param institutionUserId institution user id to have the permissions updated.
    * @param payload information to enable or disable the user.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param authorizedInstitutionId when provided will validate if the
    * user belongs to the institution.
    */
   async updateUserStatus(
-    userName: string,
+    institutionUserId: number,
     payload: UserActiveStatusAPIInDTO,
     auditUserId: number,
     authorizedInstitutionId?: number,
   ): Promise<void> {
     const institutionUser =
-      await this.institutionService.getInstitutionUserByUserName(userName);
+      await this.institutionService.getInstitutionUserById(institutionUserId);
 
     if (!institutionUser) {
       throw new NotFoundException("Institution user to be updated not found.");

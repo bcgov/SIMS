@@ -117,8 +117,8 @@ export default {
       userInfo.value = params;
       // Get the user permissions.
       const userDetails =
-        await InstitutionUserService.shared.getInstitutionUserByUserName(
-          userInfo.value.userName,
+        await InstitutionUserService.shared.getInstitutionUserById(
+          userInfo.value.institutionUserId,
         );
       // A user is considered an admin if any authorization has a userType defined as admin.
       const isAdmin = userDetails.authorizations.some(
@@ -163,7 +163,7 @@ export default {
         const userManagementModel = institutionUserManagement.value
           .formModel as UserManagementModel;
         await InstitutionUserService.shared.updateInstitutionUserWithAuth(
-          userInfo.value.userName,
+          userInfo.value.institutionUserId,
           userManagementModel.isAdmin,
           userManagementModel.isLegalSigningAuthority,
           userManagementModel.locationAuthorizations,

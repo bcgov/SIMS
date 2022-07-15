@@ -11,7 +11,7 @@ export enum InstitutionUserRoles {
 }
 
 export interface InstitutionUserViewModel {
-  id: number;
+  institutionUserId: number;
   email: string;
   userName: string;
   displayName: string;

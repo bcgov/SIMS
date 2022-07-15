@@ -215,7 +215,7 @@ export default {
       try {
         const enabled = !userDetails.isActive;
         await InstitutionUserService.shared.updateUserStatus(
-          userDetails.userName,
+          userDetails.institutionUserId,
           enabled,
         );
         await getAllInstitutionUsers();

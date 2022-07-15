@@ -92,7 +92,7 @@ export class InstitutionUserAESTController extends BaseController {
 
   /**
    * Update the user authorizations for the institution user.
-   * @param userName user to have the permissions updated.
+   * @param institutionUserId institution user id to have the permissions updated.
    * @param payload permissions to be updated.
    */
   @ApiNotFoundResponse({
@@ -104,50 +104,50 @@ export class InstitutionUserAESTController extends BaseController {
       " or the user permission is being updated in a way that no admin will be present" +
       " or a second legal signing authority is trying to be set and only one is allowed.",
   })
-  @Patch(":userName")
+  @Patch(":institutionUserId")
   async updateInstitutionUserWithAuth(
-    @Param("userName") userName: string,
+    @Param("institutionUserId", ParseIntPipe) institutionUserId: number,
     @Body() payload: UpdateInstitutionUserAPIInDTO,
   ): Promise<void> {
     await this.institutionUserControllerService.updateInstitutionUserWithAuth(
-      userName,
+      institutionUserId,
       payload,
     );
   }
 
   /**
    * Get institution user by user name(guid).
-   * @param userName user name (guid).
+   * @param institutionUserId institution user id to have the permissions updated.
    * @returns institution user details.
    */
   @ApiNotFoundResponse({
     description: "User not found.",
   })
-  @Get(":userName")
+  @Get(":institutionUserId")
   async getInstitutionUserByUserName(
-    @Param("userName") userName: string,
+    @Param("institutionUserId", ParseIntPipe) institutionUserId: number,
   ): Promise<InstitutionUserAPIOutDTO> {
-    return this.institutionUserControllerService.getInstitutionUserByUserName(
-      userName,
+    return this.institutionUserControllerService.getInstitutionUserById(
+      institutionUserId,
     );
   }
 
   /**
    * Update the active status of the user.
-   * @param userName unique name of the user to be updated.
+   * @param institutionUserId institution user id to have the permissions updated.
    * @param payload information to enable or disable the user.
    */
   @ApiNotFoundResponse({
     description: "User to be updated not found.",
   })
-  @Patch(":userName/status")
+  @Patch(":institutionUserId/status")
   async updateUserStatus(
     @UserToken() userToken: IUserToken,
-    @Param("userName") userName: string,
+    @Param("institutionUserId", ParseIntPipe) institutionUserId: number,
     @Body() payload: UserActiveStatusAPIInDTO,
   ): Promise<void> {
     await this.institutionUserControllerService.updateUserStatus(
-      userName,
+      institutionUserId,
       payload,
       userToken.userId,
     );

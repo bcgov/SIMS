@@ -57,7 +57,7 @@ export class InstitutionUserService {
         : [];
 
       const viewModel: InstitutionUserViewModel = {
-        id: institutionUser.id,
+        institutionUserId: institutionUser.id,
         displayName: `${institutionUser.user.firstName} ${institutionUser.user.lastName}`,
         email: institutionUser.user.email,
         userName: institutionUser.user.userName,
@@ -174,7 +174,7 @@ export class InstitutionUserService {
 
   /**
    * Updates an existing user authorizations.
-   * @param userName unique user name from SIMS (e.g. someGuid@bceid).
+   * @param institutionUserId institution user id to have the permissions updated.
    * @param isAdmin must be created as an admin user.
    * @param isLegalSigningAuthority for admin users, define if the role
    * legal-signing-authority should be associated with the user.
@@ -182,7 +182,7 @@ export class InstitutionUserService {
    * for every location.
    */
   async updateInstitutionUserWithAuth(
-    userName: string,
+    institutionUserId: number,
     isAdmin: boolean,
     isLegalSigningAuthority: boolean,
     locationAuthorizations: LocationAuthorization[],
@@ -194,29 +194,34 @@ export class InstitutionUserService {
       locationAuthorizations,
     );
     await ApiClient.InstitutionUserApi.updateInstitutionUserWithAuth(
-      userName,
+      institutionUserId,
       userPayload,
     );
   }
 
   /**
    * Get institution user by user name(guid).
-   * @param userName user name (guid).
+   * @param institutionUserId institution user id to have the permissions updated.
    * @returns institution user details.
    */
-  async getInstitutionUserByUserName(
-    userName: string,
+  async getInstitutionUserById(
+    institutionUserId: number,
   ): Promise<InstitutionUserAPIOutDTO> {
-    return ApiClient.InstitutionUserApi.getInstitutionUserByUserName(userName);
+    return ApiClient.InstitutionUserApi.getInstitutionUserById(
+      institutionUserId,
+    );
   }
 
   /**
    * Update the active status of the user.
-   * @param userName unique name of the user to be updated.
+   * @param institutionUserId institution user id to have the permissions updated.
    * @param isActive enable or disable the user.
    */
-  async updateUserStatus(userName: string, isActive: boolean) {
-    return ApiClient.InstitutionUserApi.updateUserStatus(userName, isActive);
+  async updateUserStatus(institutionUserId: number, isActive: boolean) {
+    return ApiClient.InstitutionUserApi.updateUserStatus(
+      institutionUserId,
+      isActive,
+    );
   }
 
   /**
