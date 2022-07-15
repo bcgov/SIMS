@@ -115,6 +115,7 @@ export class InstitutionUserAESTController extends BaseController {
     await this.institutionUserControllerService.updateInstitutionUserWithAuth(
       institutionUserId,
       payload,
+      false,
       token.userId,
     );
   }
@@ -153,6 +154,7 @@ export class InstitutionUserAESTController extends BaseController {
     await this.institutionUserControllerService.updateUserStatus(
       institutionUserId,
       payload,
+      false,
       userToken.userId,
     );
   }

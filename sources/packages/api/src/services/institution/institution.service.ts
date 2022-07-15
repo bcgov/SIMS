@@ -63,42 +63,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     );
   }
 
-  async createAssociation({
-    institution,
-    type = InstitutionUserType.user,
-    user,
-    location,
-    role,
-    institutionUser,
-    auditUserId,
-  }: {
-    institution: Institution;
-    type: InstitutionUserType;
-    user?: User;
-    location?: InstitutionLocation;
-    role?: InstitutionUserRole;
-    institutionUser?: InstitutionUser;
-    auditUserId: number;
-  }): Promise<InstitutionUser> {
-    const auditUser = { id: auditUserId } as User;
-    const finalInstitutionUser =
-      institutionUser || this.institutionUserRepo.create();
-    finalInstitutionUser.creator = auditUser;
-    finalInstitutionUser.user = user;
-    finalInstitutionUser.institution = institution;
-    const auth = new InstitutionUserAuth();
-    auth.creator = auditUser;
-    const authType = await this.institutionUserTypeAndRoleRepo.findOneOrFail({
-      type,
-      role: role || null,
-    });
-    auth.authType = authType;
-    auth.institutionUser = institutionUser;
-    auth.location = location;
-    finalInstitutionUser.authorizations = [auth];
-    return await this.institutionUserRepo.save(finalInstitutionUser);
-  }
-
   /**
    * Creates all necessary records to have a new user added to the
    * institution, with the right permissions and ready to login.
@@ -108,14 +72,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param bceidUserAccount BCeID account to be used to create the user.
    * @param permissionInfo Permissions informations to be added to the user.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * If not provided the user being created will be considered the one.
    * @returns institution user
    */
   async createInstitutionUser(
     institutionId: number,
     bceidUserAccount: AccountDetails,
     permissionInfo: InstitutionUserModel,
-    auditUserId?: number,
+    auditUserId: number,
   ): Promise<InstitutionUser> {
     const userName = `${bceidUserAccount.user.guid}@bceid`.toLowerCase();
     const validateUniqueSigningAuthority = this.validateUniqueSigningAuthority(
@@ -144,7 +107,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     userEntity.lastName = bceidUserAccount.user.surname;
     userEntity.userName = userName;
     // If an audit user was not provided consider the one that will be created as the audit user.
-    const auditUser = auditUserId ? ({ id: auditUserId } as User) : userEntity;
+    const auditUser = { id: auditUserId } as User;
     // Create new relationship between institution and the new user.
     const newInstitutionUser = new InstitutionUser();
     newInstitutionUser.user = userEntity;
@@ -188,9 +151,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institutionModel: InstitutionFormModel,
     auditUserId: number,
   ): Promise<Institution> {
+    const auditUser = { id: auditUserId } as User;
     const institution = this.initializeInstitutionFromFormModel(
       institutionModel,
-      auditUserId,
+      auditUser,
     );
     return this.repo.save(institution);
   }
@@ -206,12 +170,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institutionModel: InstitutionFormModel,
     userInfo: UserInfo,
   ): Promise<Institution> {
+    // New user to be associated with the institution. It will also be considered the audit user.
+    const user = new User();
     const institution = this.initializeInstitutionFromFormModel(
       institutionModel,
-      userInfo.userId,
+      user,
     );
 
-    const user = new User();
     // Only BCeID business users are allowed to create the institution profile
     // and have BCeID users directly associated with the institution.
     // Basic BCeID users must have the Ministry creating the institution profile
@@ -220,7 +185,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       userInfo.idp_user_name,
       BCeIDAccountTypeCodes.Business,
     );
-
     if (account == null) {
       // This scenario occurs if basic BCeID users try to push the bceid account into our application.
       throw new Error("Account information could not be retrieved from BCeID.");
@@ -234,13 +198,28 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
     institution.businessGuid = account.institution.guid;
     institution.legalOperatingName = account.institution.legalName;
-
-    await this.createAssociation({
-      institution,
-      user,
-      type: InstitutionUserType.admin,
-      auditUserId: userInfo.userId,
-    });
+    institution.creator = user;
+    // Institution user that has the association between the institution
+    // record and the user record.
+    const institutionUser = new InstitutionUser();
+    institutionUser.creator = user;
+    institutionUser.user = user;
+    institutionUser.institution = institution;
+    // Get admin authorization type.
+    const authorizationType =
+      await this.institutionUserTypeAndRoleRepo.findOneOrFail({
+        type: InstitutionUserType.admin,
+        role: null,
+      });
+    // Assign the new user with an admin authorization.
+    const userAuthorization = new InstitutionUserAuth();
+    userAuthorization.creator = user;
+    userAuthorization.authType = authorizationType;
+    userAuthorization.institutionUser = institutionUser;
+    // Associates the authorizations.
+    institutionUser.authorizations = [userAuthorization];
+    // Saves institution, user, and institution user altogether.
+    await this.institutionUserRepo.save(institutionUser);
 
     return institution;
   }
@@ -251,15 +230,15 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * database.
    * @param institutionModel information to be use to create the
    * institution profile.
-   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param auditUser user that should be considered the one that is causing the changes.
    * @returns institution entity model.
    */
   private initializeInstitutionFromFormModel(
     institutionModel: InstitutionFormModel,
-    auditUserId: number,
+    auditUser: User,
   ): Institution {
     const institution = new Institution();
-    institution.creator = { id: auditUserId } as User;
+    institution.creator = auditUser;
     institution.legalOperatingName = institutionModel.legalOperatingName;
     institution.operatingName = institutionModel.operatingName;
     institution.primaryPhone = institutionModel.primaryPhone;
@@ -455,27 +434,34 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param permissions complete list of the user permissions that will entirely
    * replace the existing ones.
    * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param ensureHasAdmin if true, will ensure that at least one admin is present, otherwise
+   * will allow that all institution admins are removed or disabled.
    */
   async updateInstitutionUser(
     institutionId: number,
     institutionUserId: number,
     permissions: UserPermissionModel[],
     auditUserId: number,
+    ensureHasAdmin = true,
   ): Promise<void> {
-    const validateAtLeastOneAdmin = this.validateAtLeastOneAdmin(
-      institutionId,
-      institutionUserId,
-      permissions,
+    const validations: Promise<void>[] = [];
+    if (ensureHasAdmin) {
+      validations.push(
+        this.validateAtLeastOneAdmin(
+          institutionId,
+          institutionUserId,
+          permissions,
+        ),
+      );
+    }
+    validations.push(
+      this.validateUniqueSigningAuthority(
+        institutionId,
+        permissions,
+        institutionUserId,
+      ),
     );
-    const validateUniqueSigningAuthority = this.validateUniqueSigningAuthority(
-      institutionId,
-      permissions,
-      institutionUserId,
-    );
-    await Promise.all([
-      validateAtLeastOneAdmin,
-      validateUniqueSigningAuthority,
-    ]);
+    await Promise.all(validations);
 
     const auditUser = { id: auditUserId } as User;
     const newAuthorizationEntries = [] as InstitutionUserAuth[];

@@ -133,6 +133,7 @@ export class InstitutionUserInstitutionsController extends BaseController {
     return this.institutionUserControllerService.createInstitutionUserWithAuth(
       userToken.authorizations.institutionId,
       payload,
+      userToken.userId,
     );
   }
 
@@ -164,6 +165,7 @@ export class InstitutionUserInstitutionsController extends BaseController {
     await this.institutionUserControllerService.updateInstitutionUserWithAuth(
       institutionUserId,
       payload,
+      true,
       token.userId,
       token.authorizations.institutionId,
     );
@@ -252,6 +254,7 @@ export class InstitutionUserInstitutionsController extends BaseController {
     await this.institutionUserControllerService.updateUserStatus(
       institutionUserId,
       payload,
+      true,
       token.userId,
       token.authorizations.institutionId,
     );

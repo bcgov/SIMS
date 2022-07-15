@@ -112,7 +112,7 @@ export class InstitutionUserControllerService {
   async createInstitutionUserWithAuth(
     institutionId: number,
     payload: CreateInstitutionUserAPIInDTO,
-    auditUserId?: number,
+    auditUserId: number,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     const institution =
       await this.institutionService.getBasicInstitutionDetailById(
@@ -182,6 +182,8 @@ export class InstitutionUserControllerService {
    * Update the user authorizations for the institution user.
    * @param institutionUserId institution user id to have the permissions updated.
    * @param payload user and authorization information.
+   * @param ensureHasAdmin if true, will ensure that at least one admin is present, otherwise
+   * will allow that all institution admins are removed or disabled.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param authorizedInstitutionId optional institution to check for user authorization.
    * @returns created user id.
@@ -189,6 +191,7 @@ export class InstitutionUserControllerService {
   async updateInstitutionUserWithAuth(
     institutionUserId: number,
     payload: UpdateInstitutionUserAPIInDTO,
+    ensureHasAdmin: boolean,
     auditUserId: number,
     authorizedInstitutionId?: number,
   ): Promise<void> {
@@ -221,6 +224,7 @@ export class InstitutionUserControllerService {
         institutionUser.id,
         payload.permissions,
         auditUserId,
+        ensureHasAdmin,
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
@@ -293,6 +297,8 @@ export class InstitutionUserControllerService {
    * Update the active status of the user.
    * @param institutionUserId institution user id to have the permissions updated.
    * @param payload information to enable or disable the user.
+   * @param ensureHasAdmin if true, will ensure that at least one admin is present, otherwise
+   * will allow that all institution admins are removed or disabled.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param authorizedInstitutionId when provided will validate if the
    * user belongs to the institution.
@@ -300,6 +306,7 @@ export class InstitutionUserControllerService {
   async updateUserStatus(
     institutionUserId: number,
     payload: UserActiveStatusAPIInDTO,
+    ensureHasAdmin: boolean,
     auditUserId: number,
     authorizedInstitutionId?: number,
   ): Promise<void> {
@@ -328,23 +335,25 @@ export class InstitutionUserControllerService {
         );
       }
 
-      // Case the user is being disabled check if it is the only admin for the institution.
-      // Institutions must always have at least one admin user enabled.
-      const admins = await this.institutionUserAuthService.getUsersByUserType(
-        institutionUser.institution.id,
-        InstitutionUserTypes.admin,
-        true,
-      );
-      if (admins?.length === 1) {
-        // If there is only one admin user, check if it is the one being disabled.
-        const [admin] = admins;
-        if (admin.institutionUser.id === institutionUser.id) {
-          throw new UnprocessableEntityException(
-            new ApiProcessError(
-              "The user cannot be disabled because it is the only administrator present on the institution.",
-              INSTITUTION_MUST_HAVE_AN_ADMIN,
-            ),
-          );
+      if (ensureHasAdmin) {
+        // Case the user is being disabled check if it is the only admin for the institution.
+        // Institutions must always have at least one admin user enabled.
+        const admins = await this.institutionUserAuthService.getUsersByUserType(
+          institutionUser.institution.id,
+          InstitutionUserTypes.admin,
+          true,
+        );
+        if (admins?.length === 1) {
+          // If there is only one admin user, check if it is the one being disabled.
+          const [admin] = admins;
+          if (admin.institutionUser.id === institutionUser.id) {
+            throw new UnprocessableEntityException(
+              new ApiProcessError(
+                "The user cannot be disabled because it is the only administrator present on the institution.",
+                INSTITUTION_MUST_HAVE_AN_ADMIN,
+              ),
+            );
+          }
         }
       }
     }
