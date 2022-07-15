@@ -28,7 +28,7 @@ export interface InstitutionUserSummaryAPIOutDTO {
   lastName: string;
   userName: string;
   isActive: boolean;
-  userFullName?: string;
+  userFullName: string;
 }
 
 export interface InstitutionUserAPIOutDTO {

@@ -58,18 +58,17 @@
       <Column :field="UserFields.Email" header="Email" sortable="true"></Column>
       <Column :field="UserFields.UserType" header="User Type">
         <template #body="slotProps">
-          <!-- Get the first index of the array since the user will have admin or user type only. -->
-          {{ slotProps.data.userType[0] }}
+          {{ slotProps.data.userType }}
         </template></Column
       >
-      <Column :field="UserFields.role" header="Role">
+      <Column :field="UserFields.Roles" header="Role">
         <template #body="slotProps">
-          {{ institutionUserRoleToDisplay(slotProps.data.role) }}
+          {{ institutionUserRoleToDisplay(slotProps.data.roles[0]) }}
         </template>
       </Column>
-      <Column :field="UserFields.Location" header="Locations"
+      <Column :field="UserFields.Locations" header="Locations"
         ><template #body="slotProps">
-          <ul v-for="location in slotProps.data.location" :key="location">
+          <ul v-for="location in slotProps.data.locations" :key="location">
             <li>{{ location }}</li>
           </ul></template
         ></Column
@@ -129,7 +128,7 @@ import { ModalDialog, useFormatters, useToastMessage } from "@/composables";
 import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue";
 import {
   InstitutionUserViewModel,
-  InstitutionUserAndCountForDataTable,
+  InstitutionUserSummary,
   GeneralStatusForBadge,
   UserFields,
   DEFAULT_PAGE_LIMIT,
@@ -170,7 +169,7 @@ export default {
   setup(props: any) {
     const toast = useToastMessage();
     const { institutionUserRoleToDisplay } = useFormatters();
-    const usersListAndCount = ref({} as InstitutionUserAndCountForDataTable);
+    const usersListAndCount = ref({} as InstitutionUserSummary);
     const loading = ref(false);
     const searchBox = ref("");
     const currentPage = ref();

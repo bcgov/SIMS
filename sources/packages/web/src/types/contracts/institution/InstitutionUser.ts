@@ -15,9 +15,9 @@ export interface InstitutionUserViewModel {
   email: string;
   userName: string;
   displayName: string;
-  location: string[];
-  userType: string[];
-  role: string;
+  locations: string[];
+  userType: string;
+  roles: string[];
   isActive: boolean;
   disableRemove: boolean;
 }
@@ -104,7 +104,7 @@ export interface InstitutionUserAndAuthDetailsForStore {
   authorizations: AuthorizationsForStore;
 }
 
-export interface InstitutionUserAndCountForDataTable {
+export interface InstitutionUserSummary {
   results: InstitutionUserViewModel[];
   count: number;
 }

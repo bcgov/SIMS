@@ -3,10 +3,8 @@ import {
   InstitutionUserTypes,
   LocationAuthorization,
   LocationUserAccess,
-} from "@/types";
-import {
   InstitutionUserViewModel,
-  InstitutionUserAndCountForDataTable,
+  InstitutionUserSummary,
   PaginationOptions,
 } from "@/types";
 import ApiClient from "@/services/http/ApiClient";
@@ -36,42 +34,47 @@ export class InstitutionUserService {
     return ApiClient.InstitutionUserApi.getMyInstitutionDetails();
   }
 
-  mapUserRolesAndLocation(
-    response: InstitutionUserAPIOutDTO[],
-  ): InstitutionUserViewModel[] {
-    return response.map((institutionUser) => {
-      const roleArray = institutionUser.authorizations
-        .map((auth) => auth.authType.role ?? "")
-        .filter((institutionUserRole) => institutionUserRole !== "");
-      const role = roleArray.length > 0 ? roleArray.join(" ") : "-";
-      const locationArray = institutionUser.authorizations
-        .map((auth) => auth.location?.name ?? "")
-        .filter((loc) => loc !== "");
-      const userType = institutionUser.authorizations.map(
-        (auth) => auth.authType.type,
-      );
-      const location = userType.includes("admin")
-        ? ["All"]
-        : locationArray.length > 0
-        ? locationArray
-        : [];
-
-      const viewModel: InstitutionUserViewModel = {
-        institutionUserId: institutionUser.id,
-        displayName: `${institutionUser.user.firstName} ${institutionUser.user.lastName}`,
-        email: institutionUser.user.email,
-        userName: institutionUser.user.userName,
-        userType,
-        role,
-        location,
-        isActive: institutionUser.user.isActive,
-        disableRemove:
-          AuthService.shared.userToken?.userName ===
-          institutionUser.user.userName,
-      };
-
-      return viewModel;
-    });
+  /**
+   * Convert the institution user preparing it to be displayed as a summary view.
+   * @param institutionUser institution user to be converted.
+   * @returns institution user prepared to be displayed on the UI.
+   */
+  private convertToInstitutionUserViewModel(
+    institutionUser: InstitutionUserAPIOutDTO,
+  ): InstitutionUserViewModel {
+    const roles = institutionUser.authorizations
+      .filter((user) => !!user.authType.role)
+      .map((user) => user.authType.role);
+    const userTypes = institutionUser.authorizations.map(
+      (user) => user.authType.type,
+    );
+    const isAdmin = userTypes.includes(InstitutionUserTypes.admin);
+    const userType = isAdmin
+      ? InstitutionUserTypes.admin
+      : InstitutionUserTypes.user;
+    const locations: string[] = [];
+    if (isAdmin) {
+      locations.push("All");
+    } else {
+      const locationNames = institutionUser.authorizations
+        .filter((authorization) => !!authorization.location)
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        .map((authorization) => authorization.location!.name);
+      locations.push(...locationNames);
+    }
+    return {
+      institutionUserId: institutionUser.id,
+      email: institutionUser.user.email,
+      userName: institutionUser.user.userName,
+      displayName: institutionUser.user.userFullName,
+      locations,
+      userType,
+      roles,
+      isActive: institutionUser.user.isActive,
+      disableRemove:
+        AuthService.shared.userToken?.userName ===
+        institutionUser.user.userName,
+    };
   }
 
   /**
@@ -85,13 +88,15 @@ export class InstitutionUserService {
   async institutionUserSummary(
     paginationOptions: PaginationOptions,
     institutionId?: number,
-  ): Promise<InstitutionUserAndCountForDataTable> {
+  ): Promise<InstitutionUserSummary> {
     const response = await ApiClient.InstitutionUserApi.searchUsers(
       paginationOptions,
       institutionId,
     );
     return {
-      results: this.mapUserRolesAndLocation(response.results),
+      results: response.results.map((result) =>
+        this.convertToInstitutionUserViewModel(result),
+      ),
       count: response.count,
     };
   }

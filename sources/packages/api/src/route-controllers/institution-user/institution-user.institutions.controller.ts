@@ -67,6 +67,7 @@ export class InstitutionUserInstitutionsController extends BaseController {
   ): Promise<InstitutionUserDetailAPIOutDTO> {
     const userDetails = await this.userService.getUser(token.userName);
     const user = {
+      userName: userDetails.userName,
       firstName: userDetails?.firstName,
       lastName: userDetails.lastName,
       isActive: userDetails.isActive,

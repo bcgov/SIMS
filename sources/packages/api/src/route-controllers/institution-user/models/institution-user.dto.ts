@@ -89,13 +89,13 @@ export class InstitutionUserSummaryAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
-  userName?: string;
+  userName: string;
   isActive: boolean;
-  userFullName?: string;
+  userFullName: string;
 }
 
 export class InstitutionUserAPIOutDTO {
-  id?: number;
+  id: number;
   user: InstitutionUserSummaryAPIOutDTO;
   authorizations: InstitutionUserAuthAPIOutDTO[];
 }

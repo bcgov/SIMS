@@ -14,6 +14,7 @@ import {
   PaginationOptions,
   PaginatedResults,
   CustomNamedError,
+  getUserFullName,
 } from "../../utilities";
 import { InstitutionUser } from "../../database/entities";
 import {
@@ -62,8 +63,8 @@ export class InstitutionUserControllerService {
       );
 
     return {
-      results: institutionUsers.map((eachInstitutionUser: InstitutionUser) => {
-        return this.transformToInstitutionUserAPIOutDTO(eachInstitutionUser);
+      results: institutionUsers.map((institutionUser: InstitutionUser) => {
+        return this.transformToInstitutionUserAPIOutDTO(institutionUser);
       }),
       count: count,
     };
@@ -90,11 +91,13 @@ export class InstitutionUserControllerService {
         },
       })),
       user: {
+        id: institutionUser.id,
         email: institutionUser.user.email,
         firstName: institutionUser.user.firstName,
         lastName: institutionUser.user.lastName,
         userName: institutionUser.user.userName,
         isActive: institutionUser.user.isActive,
+        userFullName: getUserFullName(institutionUser.user),
       },
     };
   }
@@ -264,6 +267,7 @@ export class InstitutionUserControllerService {
         isActive: institutionUser.user.isActive,
         id: institutionUser.user.id,
         email: institutionUser.user.email,
+        userFullName: getUserFullName(institutionUser.user),
       },
       authorizations: institutionUser.authorizations.map((authorization) => ({
         location: {
