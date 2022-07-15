@@ -4,7 +4,7 @@ import { RecordDataModel } from "./entities/record.model";
 export class DataModelService<DataModel> {
   static getRepo<DataModel>(
     connection: Connection,
-    entity: Function,
+    entity: any,
   ): Repository<DataModel> {
     return connection.getRepository(entity) as Repository<DataModel>;
   }
