@@ -224,7 +224,7 @@ export class InstitutionUserInstitutionsController extends BaseController {
   }
 
   /**
-   * Get institution user by user name(guid).
+   * Get institution user by institution user id.
    * @param institutionUserId institution user id to have the permissions updated.
    * @returns institution user details.
    */
@@ -237,7 +237,7 @@ export class InstitutionUserInstitutionsController extends BaseController {
   })
   @IsInstitutionAdmin()
   @Get(":institutionUserId")
-  async getInstitutionUserByUserName(
+  async getInstitutionUserById(
     @Param("institutionUserId", ParseIntPipe) institutionUserId: number,
     @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionUserAPIOutDTO> {

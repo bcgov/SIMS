@@ -63,9 +63,9 @@ export class InstitutionUserControllerService {
       );
 
     return {
-      results: institutionUsers.map((institutionUser: InstitutionUser) => {
-        return this.transformToInstitutionUserAPIOutDTO(institutionUser);
-      }),
+      results: institutionUsers.map((institutionUser: InstitutionUser) =>
+        this.transformToInstitutionUserAPIOutDTO(institutionUser),
+      ),
       count: count,
     };
   }
