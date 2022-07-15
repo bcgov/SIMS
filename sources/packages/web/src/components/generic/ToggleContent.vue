@@ -1,15 +1,15 @@
 <template>
   <div v-if="toggled">
-    <v-row justify="center" class="mt-4">
+    <v-row justify="center" class="mt-1">
       <slot name="image">
         <v-img
-          height="200"
+          height="150"
           alt="There's nothing here yet"
           src="@/assets/images/playful-cat.svg"
         />
       </slot>
     </v-row>
-    <v-row justify="center m-4">
+    <v-row justify="center mt-5">
       <slot name="message">
         <h5 class="muted-content-strong">{{ message }}</h5>
       </slot>

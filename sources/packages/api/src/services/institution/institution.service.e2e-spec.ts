@@ -17,6 +17,7 @@ import {
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
 import { FieldSortOrder } from "../../utilities";
+import { InstitutionUserAuthService } from "../institution-user-auth/institution-user-auth.service";
 
 const factory = async (
   userService: UserService,
@@ -52,6 +53,7 @@ describe("InstitutionService", () => {
         UserService,
         InstitutionLocationService,
         DesignationAgreementLocationService,
+        InstitutionUserAuthService,
       ],
     }).compile();
     await module.init();
@@ -131,15 +133,6 @@ describe("InstitutionService", () => {
     await service.remove(institution);
     await userService.remove(user);
     await userService.remove(newUser);
-  });
-
-  it("should return types and roles", async () => {
-    const results = await service.getUserTypesAndRoles();
-    expect(results).toBeDefined();
-    expect(results.userTypes).toBeDefined();
-    expect(results.userTypes.length).toBeGreaterThanOrEqual(3);
-    expect(results.userRoles).toBeDefined();
-    expect(results.userRoles.length).toBeGreaterThanOrEqual(2);
   });
 
   it.skip("should create auth association", async () => {

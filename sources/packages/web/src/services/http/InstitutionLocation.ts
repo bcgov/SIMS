@@ -55,12 +55,16 @@ export class InstitutionLocationApi extends HttpBaseClient {
     userName: string,
     userStatus: boolean,
   ): Promise<void> {
-    return this.patchCall<UserActiveStatusAPIInDTO>(
-      this.addClientRoot(`institution/user-status/${userName}`),
-      {
-        isActive: userStatus,
-      },
-    );
+    try {
+      await this.patchCall<UserActiveStatusAPIInDTO>(
+        this.addClientRoot(`institution/user-status/${userName}`),
+        {
+          isActive: userStatus,
+        },
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   public async getMyInstitutionLocationsDetails(

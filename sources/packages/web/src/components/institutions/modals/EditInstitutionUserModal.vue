@@ -1,52 +1,71 @@
 <template>
-  <!-- Add user -->
-  <modal-dialog-base
-    :showDialog="showDialog"
-    @dialogClosed="dialogClosed"
-    title="Edit user"
-  >
-    <template #content>
-      <institution-user-management
-        ref="institutionUserManagement"
-        :initialData="initialData"
-      >
-        <template #user-name>
-          <v-text-field
-            v-model="userInfo.displayName"
-            disabled
-            class="mr-3 bceid-input"
-            density="compact"
-            variant="outlined"
-            label="BCeID user ID"
-            :rules="[(v) => !!v || 'Basic BCeID user Id is required']"
-          />
-        </template>
-      </institution-user-management>
-    </template>
-    <template #footer>
-      <footer-buttons
-        primaryLabel="Edit user now"
-        @primaryClick="submit"
-        @secondaryClick="cancel"
-      />
-    </template>
-  </modal-dialog-base>
+  <v-form ref="editUserForm">
+    <modal-dialog-base
+      :showDialog="showDialog"
+      @dialogClosed="dialogClosed"
+      title="Edit user"
+    >
+      <template #content>
+        <institution-user-management
+          ref="institutionUserManagement"
+          :errors="editUserForm.errors"
+          :initialData="initialData"
+        >
+          <template #user-name>
+            <v-text-field
+              hide-details
+              v-model="userInfo.displayName"
+              disabled
+              class="mr-3 bceid-input"
+              density="compact"
+              variant="outlined"
+              :label="userNameLabel"
+              :rules="[(v) => !!v || 'Basic BCeID user Id is required']"
+            />
+          </template>
+        </institution-user-management>
+      </template>
+      <template #footer>
+        <footer-buttons
+          :processing="processing"
+          primaryLabel="Edit user now"
+          @primaryClick="submit"
+          @secondaryClick="cancel"
+        />
+      </template>
+    </modal-dialog-base>
+  </v-form>
 </template>
 
 <script lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useFormatters, useModalDialog } from "@/composables";
+import { useFormatters, useModalDialog, useToastMessage } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
+  ApiProcessError,
   InstitutionUserRoles,
   InstitutionUserTypes,
   InstitutionUserViewModel,
   LocationUserAccess,
   UserManagementModel,
+  VForm,
 } from "@/types";
 import InstitutionUserManagement from "@/components/institutions/modals/InstitutionUserManagement.vue";
 import { InstitutionUserAPIOutDTO } from "@/services/http/dto";
+import {
+  BCEID_ACCOUNT_NOT_FOUND,
+  INSTITUTION_MUST_HAVE_AN_ADMIN,
+  INSTITUTION_USER_ALREADY_EXISTS,
+  LEGAL_SIGNING_AUTHORITY_EXIST,
+} from "@/constants";
+
+const submitKnownErrors = [
+  INSTITUTION_USER_ALREADY_EXISTS,
+  LEGAL_SIGNING_AUTHORITY_EXIST,
+  INSTITUTION_MUST_HAVE_AN_ADMIN,
+  BCEID_ACCOUNT_NOT_FOUND,
+];
 
 export default {
   components: { ModalDialogBase, InstitutionUserManagement },
@@ -55,23 +74,27 @@ export default {
       type: Number,
       required: false,
     },
+    hasBusinessGuid: {
+      type: Boolean,
+      required: true,
+    },
   },
   setup(props: any) {
     const {
       showDialog,
       resolvePromise,
-      showModal,
-      showParameter: user,
+      showModal: showModalInternal,
     } = useModalDialog<boolean, InstitutionUserViewModel>();
+    const processing = ref(false);
+    const editUserForm = ref({} as VForm);
+    const toast = useToastMessage();
     const institutionUserManagement = ref();
     const { getFormattedAddress } = useFormatters();
     const initialData = ref(new UserManagementModel());
-
     // Information of the user being edited received through the modal show dialog.
-    const userInfo = computed(() => {
-      return user.value ?? ({} as InstitutionUserViewModel);
-    });
+    const userInfo = ref({} as InstitutionUserViewModel);
 
+    // Define if the location has user access.
     const getLocationAccess = (
       locationId: number,
       userDetails: InstitutionUserAPIOutDTO,
@@ -84,7 +107,13 @@ export default {
         : LocationUserAccess.NoAccess;
     };
 
-    watch(userInfo, async () => {
+    // Show the modal and loads the user information.
+    const showModal = async (
+      params: InstitutionUserViewModel,
+    ): Promise<boolean> => {
+      editUserForm.value.reset();
+      editUserForm.value.resetValidation();
+      userInfo.value = params;
       // Get the user permissions.
       const userDetails =
         await InstitutionService.shared.getInstitutionLocationUserDetails(
@@ -106,8 +135,6 @@ export default {
         await InstitutionService.shared.getAllInstitutionLocations(
           props.institutionId,
         );
-      // Reset the array.
-
       const locationAuthorizations = locations.map((location) => ({
         id: location.id,
         name: location.name,
@@ -120,24 +147,42 @@ export default {
         isLegalSigningAuthority,
         locationAuthorizations,
       } as UserManagementModel;
-    });
+      // Call the modal method to show the modal.
+      return showModalInternal(params);
+    };
 
     // Update the user and closes the modal.
     const submit = async () => {
-      const formValidation =
-        await institutionUserManagement.value.userForm.validate();
+      const formValidation = await editUserForm.value.validate();
       if (!formValidation.valid) {
         return;
       }
-      const userManagementModel = institutionUserManagement.value
-        .formModel as UserManagementModel;
-      await InstitutionService.shared.updateInstitutionUserWithAuth(
-        userInfo.value.userName,
-        userManagementModel.isAdmin,
-        userManagementModel.isLegalSigningAuthority,
-        userManagementModel.locationAuthorizations,
-      );
-      resolvePromise(true);
+      try {
+        processing.value = true;
+        const userManagementModel = institutionUserManagement.value
+          .formModel as UserManagementModel;
+        await InstitutionService.shared.updateInstitutionUserWithAuth(
+          userInfo.value.userName,
+          userManagementModel.isAdmin,
+          userManagementModel.isLegalSigningAuthority,
+          userManagementModel.locationAuthorizations,
+        );
+        resolvePromise(true);
+      } catch (error: unknown) {
+        if (
+          error instanceof ApiProcessError &&
+          submitKnownErrors.includes(error.errorType)
+        ) {
+          editUserForm.value.errors.push({ errorMessages: [error.message] });
+        } else {
+          toast.error(
+            "An unexpected error happen",
+            "An unexpected error happen while updating the user.",
+          );
+        }
+      } finally {
+        processing.value = false;
+      }
     };
 
     // Closed the modal dialog.
@@ -145,11 +190,20 @@ export default {
       resolvePromise(false);
     };
 
+    const userNameLabel = computed(() => {
+      return props.hasBusinessGuid
+        ? "Business BCeID user ID"
+        : "Basic BCeID user ID";
+    });
+
     return {
+      editUserForm,
+      userNameLabel,
       showDialog,
       showModal,
       submit,
       cancel,
+      processing,
       userInfo,
       institutionUserManagement,
       initialData,

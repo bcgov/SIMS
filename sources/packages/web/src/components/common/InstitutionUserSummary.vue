@@ -10,7 +10,7 @@
         <v-text-field
           class="v-text-field-search-width"
           density="compact"
-          label="Search user"
+          label="Search name"
           variant="outlined"
           v-model="searchBox"
           @keyup.enter="searchUserTable"
@@ -21,9 +21,10 @@
           class="ml-2 primary-btn-background"
           @click="searchUserTable"
           prepend-icon="fa:fas fa-magnifying-glass"
-        />
+          >Search</v-btn
+        >
         <v-btn
-          v-if="hasBusinessGuid"
+          v-if="hasBusinessGuid || allowBasicBCeIDCreation"
           class="ml-2 primary-btn-background"
           @click="openNewUserModal"
           prepend-icon="fa:fa fa-plus-circle"
@@ -44,6 +45,7 @@
       @page="paginationAndSortEvent($event)"
       @sort="paginationAndSortEvent($event)"
       :loading="loading"
+      breakpoint="1250px"
     >
       <template #empty>
         <p class="text-center font-weight-bold">No records found.</p>
@@ -60,7 +62,11 @@
           {{ slotProps.data.userType[0] }}
         </template></Column
       >
-      <Column :field="UserFields.Role" header="Role"></Column>
+      <Column :field="UserFields.role" header="Role">
+        <template #body="slotProps">
+          {{ institutionUserRoleToDisplay(slotProps.data.role) }}
+        </template>
+      </Column>
       <Column :field="UserFields.Location" header="Locations"
         ><template #body="slotProps">
           <ul v-for="location in slotProps.data.location" :key="location">
@@ -77,19 +83,18 @@
       <Column header="Actions"
         ><template #body="slotProps">
           <v-btn
-            v-if="slotProps.data.isActive"
+            :disabled="!slotProps.data.isActive"
             @click="openEditUserModal(slotProps.data)"
             variant="text"
-            text="Edit"
-            color="primary"
+            :color="slotProps.data.isActive ? 'primary' : 'gray'"
             append-icon="mdi-pencil-outline"
           >
             <span class="text-decoration-underline">Edit</span>
           </v-btn>
           <v-btn
+            v-if="canDisableUser(slotProps.data.userName)"
             @click="updateUserStatus(slotProps.data)"
             variant="text"
-            text="Edit"
             color="primary"
             append-icon="mdi-account-remove-outline"
           >
@@ -106,11 +111,13 @@
     ref="addInstitutionUserModal"
     :institutionId="institutionId"
     :hasBusinessGuid="hasBusinessGuid"
+    :canSearchBCeIDUsers="canSearchBCeIDUsers"
   />
   <!-- Edit user. -->
   <edit-institution-user
     ref="editInstitutionUserModal"
     :institutionId="institutionId"
+    :hasBusinessGuid="hasBusinessGuid"
   />
 </template>
 
@@ -119,7 +126,12 @@ import { ref, watch } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
-import { ModalDialog, useToastMessage } from "@/composables";
+import {
+  ModalDialog,
+  useAuth,
+  useFormatters,
+  useToastMessage,
+} from "@/composables";
 import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue";
 import {
   InstitutionUserViewModel,
@@ -130,7 +142,9 @@ import {
   DEFAULT_PAGE_NUMBER,
   DataTableSortOrder,
   PAGINATION_LIST,
+  ApiProcessError,
 } from "@/types";
+import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
 
 export default {
   components: {
@@ -147,9 +161,21 @@ export default {
       type: Boolean,
       required: true,
     },
+    canSearchBCeIDUsers: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    allowBasicBCeIDCreation: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   setup(props: any) {
     const toast = useToastMessage();
+    const { parsedToken } = useAuth();
+    const { institutionUserRoleToDisplay } = useFormatters();
     const usersListAndCount = ref({} as InstitutionUserAndCountForDataTable);
     const loading = ref(false);
     const searchBox = ref("");
@@ -203,7 +229,14 @@ export default {
           "User status updated",
           `${userDetails.displayName} is ${enabled ? "enabled" : "disabled"}`,
         );
-      } catch (error) {
+      } catch (error: unknown) {
+        if (
+          error instanceof ApiProcessError &&
+          error.errorType === INSTITUTION_MUST_HAVE_AN_ADMIN
+        ) {
+          toast.warn("Cannot disable the institution admin", error.message);
+          return;
+        }
         toast.error(
           "Unexpected error",
           "An error happened during the update process.",
@@ -257,12 +290,18 @@ export default {
       }
     };
 
+    const canDisableUser = (userName: string): boolean => {
+      return parsedToken.value?.userName !== userName;
+    };
+
     return {
       addInstitutionUserModal,
       editInstitutionUserModal,
       openNewUserModal,
       openEditUserModal,
+      canDisableUser,
       getAllInstitutionUsers,
+      institutionUserRoleToDisplay,
       updateUserStatus,
       GeneralStatusForBadge,
       paginationAndSortEvent,

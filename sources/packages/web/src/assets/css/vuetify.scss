@@ -42,3 +42,14 @@
 .v-radio .mdi:before {
   font: unset !important;
 }
+
+// Reducing the spacing.
+.v-input__details {
+  margin-bottom: 4px !important;
+  padding-left: 0px !important;
+}
+
+// Fixing wrong label alignment for radio buttons on Vuetify beta 4.
+.v-label {
+  margin-bottom: 0px !important;
+}

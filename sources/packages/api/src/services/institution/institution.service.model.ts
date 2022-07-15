@@ -43,8 +43,19 @@ export interface InstitutionFormModel {
   mailingAddress: AddressInfo;
 }
 
+/**
+ * Associates a new user from BCeID with an institution
+ * associating also the authorizations.
+ */
 export interface InstitutionUserModel {
-  userId: string;
+  /**
+   * User BCeID id from BCeID Web Service (e.g. SomeUserName) that will have its
+   * data retrieved to be created on SIMS.
+   */
+  bceidUserId: string;
+  /**
+   * Permissions to be associated with the new user.
+   */
   permissions: UserPermissionModel[];
 }
 
@@ -52,10 +63,6 @@ export interface UserPermissionModel {
   locationId?: number;
   userType: string;
   userRole?: string;
-}
-
-export interface InstitutionUserPermissionModel {
-  permissions: UserPermissionModel[];
 }
 
 export interface InstitutionUserTypeAndRoleModel {
