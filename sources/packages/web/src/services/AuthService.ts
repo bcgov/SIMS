@@ -145,7 +145,13 @@ export class AuthService {
     const userStatus =
       await InstitutionUserService.shared.getInstitutionUserStatus();
     if (userStatus.isActiveUser === true) {
+      // This is the usual login process when everything is ready and the user
+      // is allowed to access the system. In this case ensure that the user
+      // and institution information is in sync with BCeID.
+      await InstitutionUserService.shared.syncBCeIDInformation();
       // User is active so just proceed.
+      // The BCeID sync must happen prior to this method to ensure that the most
+      // updated information will be loaded into the store.
       await store.dispatch("institution/initialize");
       return;
     }

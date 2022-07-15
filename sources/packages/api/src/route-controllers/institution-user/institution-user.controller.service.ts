@@ -195,8 +195,9 @@ export class InstitutionUserControllerService {
     auditUserId: number,
     authorizedInstitutionId?: number,
   ): Promise<void> {
-    const institutionUser =
-      await this.institutionService.getInstitutionUserById(institutionUserId);
+    const institutionUser = await this.institutionService.getInstitutionUser({
+      institutionUserId,
+    });
 
     if (!institutionUser) {
       throw new NotFoundException("User to be updated not found.");
@@ -252,8 +253,9 @@ export class InstitutionUserControllerService {
     institutionUserId: number,
     authorizedInstitutionId?: number,
   ): Promise<InstitutionUserAPIOutDTO> {
-    const institutionUser =
-      await this.institutionService.getInstitutionUserById(institutionUserId);
+    const institutionUser = await this.institutionService.getInstitutionUser({
+      institutionUserId,
+    });
 
     if (!institutionUser) {
       throw new NotFoundException("User not found.");
@@ -310,8 +312,9 @@ export class InstitutionUserControllerService {
     auditUserId: number,
     authorizedInstitutionId?: number,
   ): Promise<void> {
-    const institutionUser =
-      await this.institutionService.getInstitutionUserById(institutionUserId);
+    const institutionUser = await this.institutionService.getInstitutionUser({
+      institutionUserId,
+    });
 
     if (!institutionUser) {
       throw new NotFoundException("Institution user to be updated not found.");

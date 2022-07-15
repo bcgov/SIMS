@@ -12,11 +12,7 @@ import {
   NoteType,
 } from "../../database/entities";
 import { Connection, Repository, getConnection } from "typeorm";
-import {
-  InstitutionUserRole,
-  InstitutionUserType,
-  UserInfo,
-} from "../../types";
+import { InstitutionUserType, UserInfo } from "../../types";
 import { BCeIDService } from "../bceid/bceid.service";
 import { AccountDetails } from "../bceid/account-details.model";
 import {
@@ -38,6 +34,7 @@ import {
   InstitutionUserTypes,
 } from "../../auth/user-types.enum";
 import {
+  BCEID_ACCOUNT_NOT_FOUND,
   INSTITUTION_MUST_HAVE_AN_ADMIN,
   INSTITUTION_USER_ALREADY_EXISTS,
   LEGAL_SIGNING_AUTHORITY_EXIST,
@@ -377,14 +374,16 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   /**
-   * Get the user and institution details, including locations, by the institution user id.
-   * @param institutionUserId institution user id to have the permissions updated.
+   * Get the user and institution details, including locations,
+   * by the institution user id or user id only.
+   * @param options options to search the institution user.
    * @returns institution, locations, and user details.
    */
-  async getInstitutionUserById(
-    institutionUserId: number,
-  ): Promise<InstitutionUser> {
-    return this.institutionUserRepo
+  async getInstitutionUser(options: {
+    institutionUserId?: number;
+    userId?: number;
+  }): Promise<InstitutionUser> {
+    const query = this.institutionUserRepo
       .createQueryBuilder("institutionUser")
       .select([
         "institutionUser.id",
@@ -401,14 +400,26 @@ export class InstitutionService extends RecordDataModelService<Institution> {
         "authType.type",
         "authType.role",
         "institution.id",
+        "institution.businessGuid",
       ])
       .innerJoinAndSelect("institutionUser.user", "user")
       .innerJoinAndSelect("institutionUser.institution", "institution")
       .innerJoinAndSelect("institutionUser.authorizations", "authorizations")
       .innerJoinAndSelect("authorizations.authType", "authType")
-      .leftJoinAndSelect("authorizations.location", "location")
-      .where("institutionUser.id = :institutionUserId", { institutionUserId })
-      .getOne();
+      .leftJoinAndSelect("authorizations.location", "location");
+    if (options.institutionUserId) {
+      query.where("institutionUser.id = :institutionUserId", {
+        institutionUserId: options.institutionUserId,
+      });
+    }
+
+    if (options.userId) {
+      query.where("user.id = :userId", {
+        userId: options.userId,
+      });
+    }
+
+    return query.getOne();
   }
 
   /**
@@ -765,5 +776,58 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       mailingAddress: transformAddressDetails(updateInstitution.mailingAddress),
     };
     return this.repo.save(institution);
+  }
+
+  /**
+   * Synchronize the user/institution information from BCeID.
+   * Every time that a user login to the system check is some of the readonly
+   * information (that must be changed on BCeID) changed.
+   * @param userId user id.
+   * @param bceidUserName user name on BCeID.
+   */
+  async syncBCeIDInformation(userId: number, bceidUserName: string) {
+    const institutionUser = await this.getInstitutionUser({ userId });
+
+    const accountType = institutionUser.institution.businessGuid
+      ? BCeIDAccountTypeCodes.Business
+      : BCeIDAccountTypeCodes.Individual;
+
+    // Find user on BCeID Web Service
+    const bceidUserAccount = await this.bceidService.getAccountDetails(
+      bceidUserName,
+      accountType,
+    );
+    if (!bceidUserAccount) {
+      throw new CustomNamedError(
+        "User not found on BCeID.",
+        BCEID_ACCOUNT_NOT_FOUND,
+      );
+    }
+
+    let mustUpdate = false;
+    if (
+      // Used single equal comparison(!=) to ensure that null and undefined results in
+      // the same evaluation due to the possibility of the mononymous names.
+      institutionUser.user.firstName != bceidUserAccount.user.firstname ||
+      institutionUser.user.lastName !== bceidUserAccount.user.surname
+    ) {
+      institutionUser.user.firstName = bceidUserAccount.user.firstname;
+      institutionUser.user.lastName = bceidUserAccount.user.surname;
+      mustUpdate = true;
+    }
+
+    if (
+      accountType === BCeIDAccountTypeCodes.Business &&
+      institutionUser.institution.legalOperatingName !==
+        bceidUserAccount.institution.legalName
+    ) {
+      institutionUser.institution.legalOperatingName =
+        bceidUserAccount.institution.legalName;
+      mustUpdate = true;
+    }
+
+    if (mustUpdate) {
+      await this.institutionUserRepo.save(institutionUser);
+    }
   }
 }

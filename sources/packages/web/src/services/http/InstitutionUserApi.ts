@@ -136,4 +136,16 @@ export class InstitutionUserApi extends HttpBaseClient {
       this.handleAPICustomError(error);
     }
   }
+
+  /**
+   * Synchronize the user/institution information from BCeID.
+   * Every time that a user login to the system check is some of the readonly
+   * information (that must be changed on BCeID) changed.
+   */
+  async syncBCeIDInformation(): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot("institution-user/sync-bceid-info"),
+      null,
+    );
+  }
 }

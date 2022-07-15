@@ -138,6 +138,21 @@ export class InstitutionUserInstitutionsController extends BaseController {
   }
 
   /**
+   * Synchronize the user/institution information from BCeID.
+   * Every time that a user login to the system check is some of the readonly
+   * information (that must be changed on BCeID) changed.
+   */
+  @Patch("sync-bceid-info")
+  async syncBCeIDInformation(
+    @UserToken() token: IInstitutionUserToken,
+  ): Promise<void> {
+    await this.institutionService.syncBCeIDInformation(
+      token.userId,
+      token.idp_user_name,
+    );
+  }
+
+  /**
    * Update the user authorizations for the institution user.
    * @param institutionUserId institution user id to have the permissions updated.
    * @param payload permissions to be updated.

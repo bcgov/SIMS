@@ -74,10 +74,6 @@ export class InstitutionApi extends HttpBaseClient {
     );
   }
 
-  async sync() {
-    return this.patchCall(this.addClientRoot("institution/sync"), {});
-  }
-
   async getInstitutionTypeOptions(): Promise<OptionItemDto[]> {
     try {
       const response = await this.apiClient.get(

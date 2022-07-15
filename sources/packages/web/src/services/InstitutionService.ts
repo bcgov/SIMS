@@ -77,10 +77,6 @@ export class InstitutionService {
     return ApiClient.Institution.getDetail(institutionId, authHeader);
   }
 
-  public async sync() {
-    return ApiClient.Institution.sync();
-  }
-
   public async createInstitutionLocation(
     data: InstitutionLocationFormAPIInDTO,
   ) {

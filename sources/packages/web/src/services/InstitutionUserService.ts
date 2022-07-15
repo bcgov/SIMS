@@ -238,4 +238,13 @@ export class InstitutionUserService {
   async getInstitutionUserStatus(): Promise<InstitutionUserStatusAPIOutDTO> {
     return ApiClient.InstitutionUserApi.getInstitutionUserStatus();
   }
+
+  /**
+   * Synchronize the user/institution information from BCeID.
+   * Every time that a user login to the system check is some of the readonly
+   * information (that must be changed on BCeID) changed.
+   */
+  async syncBCeIDInformation(): Promise<void> {
+    await ApiClient.InstitutionUserApi.syncBCeIDInformation();
+  }
 }
