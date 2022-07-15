@@ -1,10 +1,4 @@
-import {
-  AESTInstitutionProgramsSummaryDto,
-  InstitutionUserRoles,
-  InstitutionUserTypes,
-  LocationAuthorization,
-  LocationUserAccess,
-} from "@/types";
+import { AESTInstitutionProgramsSummaryDto } from "@/types";
 import {
   OptionItemDto,
   DataTableSortOrder,
@@ -27,7 +21,6 @@ import {
   InstitutionLocationPrimaryContactAPIInDTO,
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
-  UserPermissionAPIInDTO,
 } from "@/services/http/dto";
 
 export class InstitutionService {
