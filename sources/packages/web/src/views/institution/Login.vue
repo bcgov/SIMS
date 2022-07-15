@@ -15,7 +15,7 @@
                 <p class="category-header-medium primary-color">
                   Login with BCeID
                 </p>
-                <p style="max-width: 180px">
+                <p class="sign-in-description">
                   For returning users—login using your BCeID.
                 </p>
                 <v-btn
@@ -30,7 +30,7 @@
                 ><p class="category-header-medium primary-color">
                   Sign up with BCeID
                 </p>
-                <p style="max-width: 180px">
+                <p class="sign-in-description">
                   For new users—sign up using your BCeID.
                 </p>
                 <v-btn
@@ -103,3 +103,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.sign-in-description {
+  max-width: 180px;
+}
+</style>

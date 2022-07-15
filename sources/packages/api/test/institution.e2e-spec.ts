@@ -1,24 +1,10 @@
 require("../env_setup");
-import jwtDecode from "jwt-decode";
-import * as faker from "faker";
-
 import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication, ValidationPipe } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import { KeycloakConfig } from "../src/auth/keycloakConfig";
 import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
-import {
-  InstitutionLocationService,
-  InstitutionService,
-  UserService,
-} from "../src/services";
-import {
-  institutionFactory,
-  institutionLocationFactory,
-  userFactory,
-} from "../src/database/factories";
-import { InstitutionUserType } from "../src/types";
 
 // Setting longer timeout because this test is connecting external system
 jest.setTimeout(15000);
@@ -31,10 +17,6 @@ describe("Institution controller (e2e)", () => {
   // the authentication endpoints.
   // This token is retrieved from Keyclock.
   let accessToken: string;
-  let institutionService: InstitutionService;
-  let locationService: InstitutionLocationService;
-  let userService: UserService;
-  let parsedToken: any;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -44,7 +26,6 @@ describe("Institution controller (e2e)", () => {
       clientId,
     );
     accessToken = token.access_token;
-    parsedToken = jwtDecode(accessToken);
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -59,12 +40,6 @@ describe("Institution controller (e2e)", () => {
       }),
     );
     await app.init();
-
-    institutionService = app.get<InstitutionService>(InstitutionService);
-    locationService = app.get<InstitutionLocationService>(
-      InstitutionLocationService,
-    );
-    userService = app.get<UserService>(UserService);
   });
 
   describe.skip("save institution", () => {

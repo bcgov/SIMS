@@ -104,7 +104,7 @@ export class InstitutionUserApi extends HttpBaseClient {
   }
 
   /**
-   * Get institution user by user name(guid).
+   * Get institution user by institution user id.
    * @param institutionUserId institution user id to have the permissions updated.
    * @returns institution user details.
    */

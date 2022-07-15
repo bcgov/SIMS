@@ -233,9 +233,7 @@ export class InstitutionService {
    * Get location details of logged in user.
    * @returns location details.
    */
-  async getMyInstitutionLocationsDetails(authHeader?: any) {
-    return ApiClient.InstitutionLocation.getMyInstitutionLocationsDetails(
-      authHeader,
-    );
+  async getMyInstitutionLocationsDetails() {
+    return ApiClient.InstitutionLocation.getMyInstitutionLocationsDetails();
   }
 }

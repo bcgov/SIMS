@@ -226,22 +226,22 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   async getMyInstitutionLocationsDetails(
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsAPIOutDTO[]> {
-    // get all institution locations that user has access too.
+    // Get all institution locations that user has access too.
     const InstitutionLocationData =
       await this.locationService.getMyInstitutionLocations(
         userToken.authorizations.getLocationsIds(),
       );
-    return InstitutionLocationData.map((el) => {
+    return InstitutionLocationData.map((location) => {
       return {
-        id: el.id,
-        name: el.name,
+        id: location.id,
+        name: location.name,
         address: {
-          addressLine1: el.data.address?.addressLine1,
-          addressLine2: el.data.address?.addressLine2,
-          provinceState: el.data.address?.provinceState,
-          country: el.data.address?.country,
-          city: el.data.address?.city,
-          postalCode: el.data.address?.postalCode,
+          addressLine1: location.data.address?.addressLine1,
+          addressLine2: location.data.address?.addressLine2,
+          provinceState: location.data.address?.provinceState,
+          country: location.data.address?.country,
+          city: location.data.address?.city,
+          postalCode: location.data.address?.postalCode,
         },
       };
     });

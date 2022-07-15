@@ -244,7 +244,7 @@ export class InstitutionUserControllerService {
   }
 
   /**
-   * Get institution user by user name(guid).
+   * Get institution user by institution user id.
    * @param institutionUserId institution user id to have the permissions updated.
    * @param authorizedInstitutionId optional institution to check for user authorization.
    * @returns institution user details.
