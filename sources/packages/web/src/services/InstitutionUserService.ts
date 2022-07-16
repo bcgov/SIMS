@@ -58,8 +58,7 @@ export class InstitutionUserService {
     } else {
       const locationNames = institutionUser.authorizations
         .filter((authorization) => !!authorization.location)
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        .map((authorization) => authorization.location!.name);
+        .map((authorization) => authorization.location?.name ?? "");
       locations.push(...locationNames);
     }
     return {
