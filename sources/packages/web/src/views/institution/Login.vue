@@ -1,20 +1,20 @@
 <template>
-  <v-card elevation="2" class="mx-auto mt-15" max-width="660px" outlined>
+  <v-card elevation="2" class="mx-auto mt-12" max-width="620px" outlined>
     <v-card-text>
       <v-row no-gutters>
         <v-col cols="9">
           <h1 class="category-header-large primary-color">
             Welcome to StudentAid BC
           </h1>
-          <p class="mb-8">
+          <p class="mb-5">
             Login or sign up here to manage your institution account.
           </p>
           <content-group>
             <v-row>
               <v-col>
-                <p class="category-header-medium primary-color">
+                <h3 class="category-header-medium primary-color">
                   Login with BCeID
-                </p>
+                </h3>
                 <p class="sign-in-description">
                   For returning users—login using your BCeID.
                 </p>
@@ -27,9 +27,9 @@
                 </v-btn>
               </v-col>
               <v-col
-                ><p class="category-header-medium primary-color">
+                ><h3 class="category-header-medium primary-color">
                   Sign up with BCeID
-                </p>
+                </h3>
                 <p class="sign-in-description">
                   For new users—sign up using your BCeID.
                 </p>
@@ -48,11 +48,11 @@
         <v-col
           ><v-img
             height="260"
-            class="mt-4 ml-4"
+            class="ml-2"
             alt="Person standing with laptop"
             src="@/assets/images/person-standing-with-laptop.svg"
         /></v-col>
-        <v-col cols="12">
+        <v-col cols="12" class="my-n3">
           <Message severity="error" v-if="showBasicBCeIDMessage">
             No such Business account has been found with BCeID. Please login
             with your Business BCeId
