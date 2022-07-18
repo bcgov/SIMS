@@ -5,7 +5,7 @@
     information needs to be changed please visit
     <a rel="noopener" href="https://www.bceid.ca/" target="_blank">bceid.ca</a>.
   </Message>
-  <Card class="p-m-4">
+  <v-card class="p-m-4">
     <template #content>
       <formio
         formName="institutionUserProfile"
@@ -13,7 +13,7 @@
         @submitted="submitted"
       ></formio>
     </template>
-  </Card>
+  </v-card>
 </template>
 
 <script lang="ts">

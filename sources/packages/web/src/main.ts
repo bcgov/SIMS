@@ -19,8 +19,6 @@ import InputText from "primevue/inputtext";
 import InputMask from "primevue/inputmask";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import Card from "primevue/card";
-import Button from "primevue/button";
 import Message from "primevue/message";
 import Toast from "primevue/toast";
 import Checkbox from "primevue/checkbox";
@@ -124,8 +122,6 @@ AppConfigService.shared.init().then(() => {
     .component("Toast", Toast)
     .component("Menu", Menu)
     .component("Menubar", Menubar)
-    .component("Card", Card)
-    .component("Button", Button)
     .component("DataTable", DataTable)
     .component("Column", Column)
     .component("InputText", InputText)

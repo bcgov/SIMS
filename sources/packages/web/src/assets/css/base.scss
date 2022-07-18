@@ -86,11 +86,6 @@ html * {
   border-color: $badge-border-error !important;
 }
 
-//Defining the height of rounded filter button
-.filter-button {
-  max-height: 30px;
-}
-
 /** Style to align records per page with arrows in data table. **/
 .p-paginator .p-dropdown .p-dropdown-label {
   margin-top: 8px;
