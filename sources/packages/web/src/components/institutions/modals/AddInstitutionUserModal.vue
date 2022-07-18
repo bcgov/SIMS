@@ -64,6 +64,7 @@ import {
   VForm,
 } from "@/types";
 import InstitutionUserManagement from "@/components/institutions/modals/InstitutionUserManagement.vue";
+import { InstitutionUserService } from "@/services/InstitutionUserService";
 
 export default {
   components: { ModalDialogBase, InstitutionUserManagement },
@@ -155,7 +156,7 @@ export default {
         .formModel as UserManagementModel;
       try {
         processing.value = true;
-        await InstitutionService.shared.createInstitutionUserWithAuth(
+        await InstitutionUserService.shared.createInstitutionUserWithAuth(
           userManagementModel.selectedBCeIDUser,
           userManagementModel.isAdmin,
           userManagementModel.isLegalSigningAuthority,

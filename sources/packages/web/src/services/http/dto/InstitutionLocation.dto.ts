@@ -85,3 +85,8 @@ export interface ActiveApplicationSummaryAPIOutDTO {
   scholasticStandingId?: number;
   applicationScholasticStandingStatus: ApplicationScholasticStandingStatus;
 }
+
+export interface InstitutionLocationsAPIOutDTO {
+  id: number;
+  name: string;
+}
