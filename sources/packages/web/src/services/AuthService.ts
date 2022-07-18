@@ -14,7 +14,7 @@ import {
 import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
 import { useStudentStore } from "@/composables";
-import { InstitutionUserService } from "./InstitutionUserService";
+import { InstitutionUserService } from "@/services/InstitutionUserService";
 
 /**
  * Manages the KeyCloak initialization and authentication methods.
