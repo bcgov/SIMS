@@ -1,4 +1,3 @@
-import { Address } from "../Common";
 import { InstitutionLocationsDetails } from "./InstitutionLocation";
 
 export enum InstitutionUserTypes {
