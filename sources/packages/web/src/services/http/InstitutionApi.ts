@@ -7,28 +7,21 @@ import {
   PaginatedResults,
   PaginationOptions,
   PaginationParams,
-  ClientIdType,
 } from "@/types";
 import {
   ActiveApplicationSummaryAPIOutDTO,
   InstitutionDetailAPIOutDTO,
   InstitutionContactAPIInDTO,
   InstitutionProfileAPIInDTO,
-  InstitutionUserAPIOutDTO,
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
   CreateInstitutionAPIInDTO,
-  InstitutionUserDetailAPIOutDTO,
   InstitutionLocationAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
-  InstitutionUserStatusAPIOutDTO,
-  CreateInstitutionUserAPIInDTO,
-  UpdateInstitutionUserAPIInDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
-import { AuthService } from "../AuthService";
 
 export class InstitutionApi extends HttpBaseClient {
   /**
@@ -78,19 +71,6 @@ export class InstitutionApi extends HttpBaseClient {
     return this.getCallTyped<InstitutionDetailAPIOutDTO>(
       this.addClientRoot(url),
       authHeader,
-    );
-  }
-
-  async sync() {
-    return this.patchCall(this.addClientRoot("institution/sync"), {});
-  }
-
-  async getMyInstitutionDetails(
-    header?: any,
-  ): Promise<InstitutionUserDetailAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserDetailAPIOutDTO>(
-      this.addClientRoot("institution/my-details"),
-      header,
     );
   }
 
@@ -175,19 +155,6 @@ export class InstitutionApi extends HttpBaseClient {
     );
   }
 
-  /**
-   * Controller method to get all institution users.
-   * @param url url to be send
-   * @returns All the institution users for the given institution.
-   */
-  async institutionUserSummary(
-    url: string,
-  ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
-    return this.getCallTyped<PaginatedResults<InstitutionUserAPIOutDTO>>(
-      this.addClientRoot(url),
-    );
-  }
-
   async getPaginatedAESTInstitutionProgramsSummary(
     institutionId: number,
     pageSize: number,
@@ -227,61 +194,5 @@ export class InstitutionApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
-  }
-
-  /**
-   * Create a user, associate with the institution, and assign the authorizations.
-   * @param payload authorizations to be associated with the user.
-   * @param institutionId institution to have the user associated. If not provided the
-   * token information will be used, if available.
-   * @returns Primary identifier of the created resource.
-   */
-  async createInstitutionUserWithAuth(
-    payload: CreateInstitutionUserAPIInDTO,
-    institutionId?: number,
-  ): Promise<void> {
-    let url = "institution/user";
-    if (AuthService.shared.authClientType === ClientIdType.AEST) {
-      url = `institution/${institutionId}/user`;
-    }
-    try {
-      await this.postCall<CreateInstitutionUserAPIInDTO>(
-        this.addClientRoot(url),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
-  }
-
-  /**
-   * Update the user authorizations for the institution user.
-   * @param userName user to have the permissions updated.
-   * @param payload permissions to be updated.
-   */
-  async updateInstitutionUserWithAuth(
-    userName: string,
-    payload: UpdateInstitutionUserAPIInDTO,
-  ): Promise<void> {
-    try {
-      return await this.patchCall<UpdateInstitutionUserAPIInDTO>(
-        this.addClientRoot(`institution/user/${userName}`),
-        payload,
-      );
-    } catch (error: unknown) {
-      this.handleAPICustomError(error);
-    }
-  }
-
-  /**
-   * Get the user status from institution perspective returning the
-   * possible user and institution association.
-   * @returns information to support the institution login process and
-   * the decisions that need happen to complete the process.
-   */
-  async getInstitutionUserStatus(): Promise<InstitutionUserStatusAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserStatusAPIOutDTO>(
-      this.addClientRoot("institution/user/status"),
-    );
   }
 }

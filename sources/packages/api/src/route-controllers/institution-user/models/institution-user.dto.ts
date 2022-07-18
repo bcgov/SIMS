@@ -89,13 +89,13 @@ export class InstitutionUserSummaryAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
-  userName?: string;
+  userName: string;
   isActive: boolean;
-  userFullName?: string;
+  userFullName: string;
 }
 
 export class InstitutionUserAPIOutDTO {
-  id?: number;
+  id: number;
   user: InstitutionUserSummaryAPIOutDTO;
   authorizations: InstitutionUserAuthAPIOutDTO[];
 }
@@ -112,23 +112,8 @@ export class UserAuthDetailAPIOutDTO {
 }
 
 export class InstitutionUserDetailAPIOutDTO {
-  id?: number;
   user: InstitutionUserSummaryAPIOutDTO;
   authorizations: UserAuthDetailAPIOutDTO;
-}
-
-export class InstitutionUserLocationsAPIOutDTO {
-  id: number;
-  name: string;
-  address: AddressAPIOutDTO;
-}
-
-/**
- * DTO To load the admin roles dropdown component
- */
-export class UserRoleOptionAPIOutDTO {
-  name: string;
-  code: string;
 }
 
 export class InstitutionUserStatusAPIOutDTO {

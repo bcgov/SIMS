@@ -52,6 +52,12 @@ export class ApplicationExceptionPaginationOptionsAPIInDTO extends PaginationOpt
   sortField?: string;
 }
 
+export class InstitutionUserPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["displayName", "email", "userType", "role", "isActive"])
+  sortField?: string;
+}
+
 /**
  * Common DTO result used when an API endpoint
  * must enable pagination and search options.
