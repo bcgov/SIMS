@@ -17,9 +17,9 @@
         @click="exceptionsItem.command"
       />
       <v-list-item
-        :prepend-icon="reassessmentsItem.icon"
-        :title="reassessmentsItem.label"
-        @click="reassessmentsItem.command"
+        :prepend-icon="appealsItem.icon"
+        :title="appealsItem.label"
+        @click="appealsItem.command"
       />
     </v-list>
     <v-list density="compact" nav>
@@ -87,12 +87,12 @@ export default {
       },
     } as MenuModel);
 
-    const reassessmentsItem = ref({
+    const appealsItem = ref({
       label: "Appeals",
       icon: "mdi-folder-open-outline",
       command: () => {
         router.push({
-          name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
+          name: AESTRoutesConst.APPLICATION_APPEALS_PENDING,
         });
       },
     } as MenuModel);
@@ -118,7 +118,7 @@ export default {
     } as MenuModel);
 
     return {
-      reassessmentsItem,
+      appealsItem,
       topItems,
       pendingDesignationItem,
       exceptionsItem,

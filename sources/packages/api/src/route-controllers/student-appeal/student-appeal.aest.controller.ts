@@ -143,9 +143,9 @@ export class StudentAppealAESTController extends BaseController {
   }
 
   /**
-   * Gets all pending student application exceptions.
+   * Gets all pending student application appeals.
    * @param pagination options to execute the pagination.
-   * @returns list of pending student application exceptions.
+   * @returns list of pending student application appeals.
    */
   @Get()
   async getPendingAppeals(
