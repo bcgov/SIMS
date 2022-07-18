@@ -15,7 +15,7 @@ import {
   AssignRestrictionDTO,
   ResolveRestrictionDTO,
 } from "../../route-controllers/restriction/models/restriction.dto";
-import { Connection, EntityManager, SelectQueryBuilder } from "typeorm";
+import { DataSource, EntityManager, SelectQueryBuilder } from "typeorm";
 import { CustomNamedError } from "../../utilities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 import { RestrictionService } from "./restriction.service";
@@ -29,10 +29,10 @@ export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 @Injectable()
 export class StudentRestrictionService extends RecordDataModelService<StudentRestriction> {
   constructor(
-    connection: Connection,
+    dataSource: DataSource,
     private readonly restrictionService: RestrictionService,
   ) {
-    super(connection.getRepository(StudentRestriction));
+    super(dataSource.getRepository(StudentRestriction));
   }
 
   /**

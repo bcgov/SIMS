@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { Connection, SelectQueryBuilder } from "typeorm";
+import { DataSource, SelectQueryBuilder } from "typeorm";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
 import {
   LocationWithDesignationStatus,
@@ -12,10 +12,10 @@ import { transformAddressDetails } from "../../utilities";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
   constructor(
-    connection: Connection,
+    dataSource: DataSource,
     private readonly designationAgreementLocationService: DesignationAgreementLocationService,
   ) {
-    super(connection.getRepository(InstitutionLocation));
+    super(dataSource.getRepository(InstitutionLocation));
   }
 
   async getInstitutionLocationById(id: number): Promise<InstitutionLocation> {

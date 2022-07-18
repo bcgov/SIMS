@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Connection, InsertResult } from "typeorm";
+import { DataSource, InsertResult } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   DisbursementFeedbackErrors,
@@ -12,8 +12,8 @@ import {
  */
 @Injectable()
 export class DisbursementScheduleErrorsService extends RecordDataModelService<DisbursementFeedbackErrors> {
-  constructor(connection: Connection) {
-    super(connection.getRepository(DisbursementFeedbackErrors));
+  constructor(dataSource: DataSource) {
+    super(dataSource.getRepository(DisbursementFeedbackErrors));
   }
 
   /**

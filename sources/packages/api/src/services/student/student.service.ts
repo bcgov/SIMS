@@ -9,7 +9,7 @@ import {
   NoteType,
   SINValidation,
 } from "../../database/entities";
-import { Connection, EntityManager } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { UserInfo } from "../../types";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
@@ -27,10 +27,10 @@ import * as dayjs from "dayjs";
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
-    connection: Connection,
+    dataSource: DataSource,
     private readonly sfasIndividualService: SFASIndividualService,
   ) {
-    super(connection.getRepository(Student));
+    super(dataSource.getRepository(Student));
     this.logger.log("[Created]");
   }
 

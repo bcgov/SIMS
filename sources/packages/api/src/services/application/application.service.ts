@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
-  Connection,
+  DataSource,
   In,
   Not,
   UpdateResult,
@@ -81,7 +81,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   private readonly config: IConfig;
   constructor(
     configService: ConfigService,
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
@@ -90,7 +90,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {
-    super(connection.getRepository(Application));
+    super(dataSource.getRepository(Application));
     this.config = configService.getConfig();
     this.logger.log("[Created]");
   }
@@ -222,7 +222,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // and the assessment cannot be create at the same moment what causes a
     // "cyclic dependency error" on Typeorm. Saving the application record and later
     // having it associated with the assessment solves the issue.
-    await this.connection.transaction(async (transactionalEntityManager) => {
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationRepository =
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
@@ -667,7 +667,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     offering: EducationProgramOffering,
     auditUserId: number,
   ): Promise<Application> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationRepo =
         transactionalEntityManager.getRepository(Application);
       const application = await applicationRepo

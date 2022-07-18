@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 import { PIRDeniedReason } from "../../database/entities/pir-denied-reason.model";
 
 @Injectable()
 export class PIRDeniedReasonService extends RecordDataModelService<PIRDeniedReason> {
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(PIRDeniedReason));
+  constructor(private readonly dataSource: DataSource) {
+    super(dataSource.getRepository(PIRDeniedReason));
   }
 
   async getPIRDeniedReasons(): Promise<PIRDeniedReason[]> {

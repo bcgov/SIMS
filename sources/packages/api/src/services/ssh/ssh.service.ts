@@ -16,7 +16,7 @@ export class SshService {
   }
 
   /**
-   * Force the connection to be closed ensuring the an
+   * Force the dataSource to be closed ensuring the an
    * exception will not be raised in the process.
    * @param client
    */

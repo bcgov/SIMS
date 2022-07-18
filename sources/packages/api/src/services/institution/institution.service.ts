@@ -11,7 +11,7 @@ import {
   Note,
   NoteType,
 } from "../../database/entities";
-import { Connection, Repository, getConnection } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   InstitutionUserRole,
   InstitutionUserType,
@@ -36,6 +36,7 @@ import {
   InstitutionUserPermissionModel,
 } from "./institution.service.model";
 import { BCeIDAccountTypeCodes } from "../bceid/bceid.models";
+import { simsDataSource } from "config/ormconfig";
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
 export const LEGAL_SIGNING_AUTHORITY_MSG =
   "Legal signing authority already exist for this Institution.";
@@ -49,17 +50,17 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   institutionUserTypeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
   institutionUserAuthRepo: Repository<InstitutionUserAuth>;
   constructor(
-    connection: Connection,
+    dataSource: DataSource,
     private readonly bceidService: BCeIDService,
     private readonly userService: UserService,
   ) {
-    super(connection.getRepository(Institution));
-    this.institutionUserRepo = connection.getRepository(InstitutionUser);
-    this.institutionUserTypeAndRoleRepo = connection.getRepository(
+    super(dataSource.getRepository(Institution));
+    this.institutionUserRepo = dataSource.getRepository(InstitutionUser);
+    this.institutionUserTypeAndRoleRepo = dataSource.getRepository(
       InstitutionUserTypeAndRole,
     );
     this.institutionUserAuthRepo =
-      connection.getRepository(InstitutionUserAuth);
+      dataSource.getRepository(InstitutionUserAuth);
     this.logger.log("[Created]");
   }
 
@@ -485,8 +486,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       newAuthorizationEntries.push(newAuthorization);
     }
 
-    // establish  database connection
-    const queryRunner = getConnection().createQueryRunner();
+    // establish  database dataSource
+    const queryRunner = simsDataSource.createQueryRunner();
     await queryRunner.connect();
     // get previous associations
     const previousAssociations = await this.getAssociationByUserID(

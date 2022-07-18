@@ -1,9 +1,9 @@
 import "reflect-metadata";
 require("../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
-import { getConnection } from "typeorm";
 import { DatabaseModule } from "./database.module";
 import { DatabaseService } from "./database.service";
+import { simsDataSource } from "config/ormconfig";
 
 describe("Database Service", () => {
   let service: DatabaseService;
@@ -21,8 +21,7 @@ describe("Database Service", () => {
   });
 
   it("should create service", async () => {
-    const connection = getConnection();
-    const svc = new DatabaseService(connection);
+    const svc = new DatabaseService(simsDataSource);
     expect(svc).toBeDefined();
   });
 });

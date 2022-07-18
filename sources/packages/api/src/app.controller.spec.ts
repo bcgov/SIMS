@@ -1,6 +1,6 @@
 require("../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
-import { getConnection } from "typeorm";
+import { simsDataSource } from "config/ormconfig";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { closeDB, setupDB } from "./testHelpers";
@@ -28,7 +28,7 @@ describe("AppController", () => {
   describe("root", () => {
     it("should return Hello world string with db connection status and version", () => {
       const expected = `Hello World! The database connection is ${
-        getConnection().isConnected
+        simsDataSource.isInitialized
       } and version: ${process.env.VERSION ?? "-1"}`;
       expect(appController.getHello()).toBe(expected);
     });

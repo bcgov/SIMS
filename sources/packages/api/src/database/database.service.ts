@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 
 @Injectable()
 export class DatabaseService {
-  constructor(public connection: Connection) {}
+  constructor(public dataSource: DataSource) {}
 }

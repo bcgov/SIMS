@@ -21,7 +21,7 @@ describe("ProgramYearController", () => {
   });
 
   afterAll(async () => {
-    await dbService.connection.close();
+    await dbService.dataSource.close();
   });
 
   it("should be defined", () => {

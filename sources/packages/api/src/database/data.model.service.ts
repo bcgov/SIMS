@@ -1,12 +1,12 @@
-import { Connection, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { RecordDataModel } from "./entities/record.model";
 
 export class DataModelService<DataModel> {
   static getRepo<DataModel>(
-    connection: Connection,
+    dataSource: DataSource,
     entity: any,
   ): Repository<DataModel> {
-    return connection.getRepository(entity) as Repository<DataModel>;
+    return dataSource.getRepository(entity) as Repository<DataModel>;
   }
 
   constructor(protected repo: Repository<DataModel>) {}

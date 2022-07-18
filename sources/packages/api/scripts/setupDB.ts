@@ -1,29 +1,23 @@
-require("../env_setup");
-import { createConnection } from "typeorm";
-const config = require("../ormconfig");
+import ormConfig, { simsDataSource } from "config/ormconfig";
 
 /**
  * Script main execution method
  */
 (async () => {
   try {
-    // Create Connection
+    // Create DataSource
     console.log("**** Running setupDB ****");
-    delete config.entities;
-    const connection = await createConnection({
-      ...config,
-      logging: ["error", "warn", "info"],
-    });
-    await connection.query(`CREATE SCHEMA IF NOT EXISTS ${config.schema};`);
-    await connection.query(`SET search_path TO ${config.schema}, public;`);
-    await connection.query(`SET SCHEMA '${config.schema}';`);
+    const connection = await simsDataSource.initialize();
+    await connection.query(`CREATE SCHEMA IF NOT EXISTS ${ormConfig.schema};`);
+    await connection.query(`SET search_path TO ${ormConfig.schema}, public;`);
+    await connection.query(`SET SCHEMA '${ormConfig.schema}';`);
     console.log(`**** Running migration ****`);
     await connection.runMigrations();
-    await connection.close();
+    await connection.destroy();
     console.log(`**** Running setupDB: [Complete] ****`);
   } catch (error) {
     console.error(`Exception occurs during setup db process: ${error}`);
-    console.dir(config);
+    console.dir(ormConfig);
     throw error;
   }
 })();

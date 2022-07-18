@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Restriction, RestrictionType } from "../../database/entities";
-import { Connection, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION } from "../../utilities";
 import { EnsureFederalRestrictionResult } from "./models/federal-restriction.model";
 import { RestrictionCode } from "./models/restriction.model";
@@ -11,8 +11,8 @@ import { RestrictionCode } from "./models/restriction.model";
  */
 @Injectable()
 export class RestrictionService extends RecordDataModelService<Restriction> {
-  constructor(connection: Connection) {
-    super(connection.getRepository(Restriction));
+  constructor(dataSource: DataSource) {
+    super(dataSource.getRepository(Restriction));
   }
 
   /**

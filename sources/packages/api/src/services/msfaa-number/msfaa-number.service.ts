@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
   Brackets,
-  Connection,
+  DataSource,
   In,
   IsNull,
   Repository,
@@ -25,10 +25,10 @@ import { SequenceControlService } from "../sequence-control/sequence-control.ser
 @Injectable()
 export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   constructor(
-    connection: Connection,
+    dataSource: DataSource,
     private readonly sequenceService: SequenceControlService,
   ) {
-    super(connection.getRepository(MSFAANumber));
+    super(dataSource.getRepository(MSFAANumber));
   }
 
   /**

@@ -10,7 +10,7 @@ import {
   ProgramStatus,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
@@ -36,11 +36,11 @@ import { EducationProgramOfferingService } from "../education-program-offering/e
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
   constructor(
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
   ) {
-    super(connection.getRepository(EducationProgram));
-    this.offeringsRepo = connection.getRepository(EducationProgramOffering);
+    super(dataSource.getRepository(EducationProgram));
+    this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
   }
 
   /**
@@ -569,7 +569,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     userId: number,
     payload: ApproveProgram,
   ): Promise<void> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       // create Note
       const notes = new Note();
       notes.description = payload.approvedNote;
@@ -620,7 +620,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     userId: number,
     payload: DeclineProgram,
   ): Promise<void> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       // create Note
       const notes = new Note();
       notes.description = payload.declinedNote;

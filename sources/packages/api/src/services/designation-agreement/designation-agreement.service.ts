@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 import {
   DesignationAgreement,
   DesignationAgreementLocation,
@@ -23,8 +23,8 @@ import {
  */
 @Injectable()
 export class DesignationAgreementService extends RecordDataModelService<DesignationAgreement> {
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(DesignationAgreement));
+  constructor(private readonly dataSource: DataSource) {
+    super(dataSource.getRepository(DesignationAgreement));
   }
 
   /**
@@ -228,7 +228,7 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         );
     }
 
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager
         .getRepository(DesignationAgreement)
         .save(designation);

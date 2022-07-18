@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   Application,
@@ -18,8 +18,8 @@ import { UpdateSupportingUserInfo } from "./supporting-user.models";
 
 @Injectable()
 export class SupportingUserService extends RecordDataModelService<SupportingUser> {
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(SupportingUser));
+  constructor(private readonly dataSource: DataSource) {
+    super(dataSource.getRepository(SupportingUser));
   }
 
   /**
@@ -63,7 +63,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     supportingUserType: SupportingUserType,
     updateInfo: UpdateSupportingUserInfo,
   ): Promise<SupportingUser> {
-    const queryRunner = this.connection.createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
     await configureIdleTransactionSessionTimeout(
       queryRunner,
       SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS,
