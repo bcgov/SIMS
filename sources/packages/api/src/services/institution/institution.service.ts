@@ -159,6 +159,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   /**
    * Creates an institution during institution setup process when the
    * institution profile and the user are created and associated altogether.
+   * This process happens only for business BCeID institutions because they
+   * are allowed to create the institutions by themselves. Basic BCeID institutions
+   * need the Ministry to create the institutions on their behalf and have the basic
+   * BCeID users associated as well.
    * @param institutionModel information from the institution and the user.
    * @param userInfo user to be associated with the institution.
    * @returns primary identifier of the created resource.
