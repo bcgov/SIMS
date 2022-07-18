@@ -235,14 +235,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       return {
         id: location.id,
         name: location.name,
-        address: {
-          addressLine1: location.data.address?.addressLine1,
-          addressLine2: location.data.address?.addressLine2,
-          provinceState: location.data.address?.provinceState,
-          country: location.data.address?.country,
-          city: location.data.address?.city,
-          postalCode: location.data.address?.postalCode,
-        },
       };
     });
   }

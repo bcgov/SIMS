@@ -124,5 +124,4 @@ export enum DesignationStatus {
 export class InstitutionLocationsAPIOutDTO {
   id: number;
   name: string;
-  address: AddressAPIOutDTO;
 }

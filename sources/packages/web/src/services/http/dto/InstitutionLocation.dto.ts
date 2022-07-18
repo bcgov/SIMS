@@ -89,5 +89,4 @@ export interface ActiveApplicationSummaryAPIOutDTO {
 export interface InstitutionLocationsAPIOutDTO {
   id: number;
   name: string;
-  address: AddressAPIOutDTO;
 }

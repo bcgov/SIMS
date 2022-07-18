@@ -90,8 +90,8 @@ export interface InstitutionStateForStore {
 export interface LocationStateForStore {
   id: number;
   name: string;
-  address: Address;
 }
+
 export interface InstitutionUserAndAuthDetailsForStore {
   user: {
     email: string;

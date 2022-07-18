@@ -380,14 +380,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   /**
    * Get the user and institution details, including locations,
    * by the institution user id or user id only.
-   * @param options options to search the institution user.
+   * @param institutionUserId options to search the institution user.
    * @returns institution, locations, and user details.
    */
-  async getInstitutionUser(options: {
-    institutionUserId?: number;
-    userId?: number;
-  }): Promise<InstitutionUser> {
-    const query = this.institutionUserRepo
+  async getInstitutionUserById(
+    institutionUserId?: number,
+  ): Promise<InstitutionUser> {
+    return this.institutionUserRepo
       .createQueryBuilder("institutionUser")
       .select([
         "institutionUser.id",
@@ -410,20 +409,32 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .innerJoinAndSelect("institutionUser.institution", "institution")
       .innerJoinAndSelect("institutionUser.authorizations", "authorizations")
       .innerJoinAndSelect("authorizations.authType", "authType")
-      .leftJoinAndSelect("authorizations.location", "location");
-    if (options.institutionUserId) {
-      query.where("institutionUser.id = :institutionUserId", {
-        institutionUserId: options.institutionUserId,
-      });
-    }
+      .leftJoinAndSelect("authorizations.location", "location")
+      .where("institutionUser.id = :institutionUserId", { institutionUserId })
+      .getOne();
+  }
 
-    if (options.userId) {
-      query.where("user.id = :userId", {
-        userId: options.userId,
-      });
-    }
-
-    return query.getOne();
+  /**
+   * Get the institution user and institution details by the user id.
+   * @param userId user id.
+   * @returns institution and user details.
+   */
+  async getInstitutionUserByUserId(userId: number): Promise<InstitutionUser> {
+    return this.institutionUserRepo
+      .createQueryBuilder("institutionUser")
+      .select([
+        "institutionUser.id",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "institution.id",
+        "institution.businessGuid",
+        "institution.legalOperatingName",
+      ])
+      .innerJoinAndSelect("institutionUser.user", "user")
+      .innerJoinAndSelect("institutionUser.institution", "institution")
+      .where("user.id = :userId", { userId })
+      .getOne();
   }
 
   /**
@@ -790,7 +801,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param bceidUserName user name on BCeID.
    */
   async syncBCeIDInformation(userId: number, bceidUserName: string) {
-    const institutionUser = await this.getInstitutionUser({ userId });
+    const institutionUser = await this.getInstitutionUserByUserId(userId);
 
     const accountType = institutionUser.institution.businessGuid
       ? BCeIDAccountTypeCodes.Business
