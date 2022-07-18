@@ -101,7 +101,7 @@ export class InstitutionUserInstitutionsController extends BaseController {
    * @returns all filtered institution users.
    */
   @Get()
-  async searchUsers(
+  async getInstitutionUserSummary(
     @Query() paginationOptions: InstitutionUserPaginationOptionsAPIInDTO,
     @UserToken() token: IInstitutionUserToken,
   ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {

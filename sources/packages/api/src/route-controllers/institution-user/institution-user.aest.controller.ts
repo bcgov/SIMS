@@ -55,7 +55,7 @@ export class InstitutionUserAESTController extends BaseController {
    * @returns all filtered institution users.
    */
   @Get()
-  async searchUsers(
+  async getInstitutionUserSummary(
     @Query("institutionId", ParseIntPipe) institutionId: number,
     @Query() paginationOptions: InstitutionUserPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {

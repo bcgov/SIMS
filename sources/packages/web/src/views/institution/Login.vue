@@ -55,16 +55,16 @@
         <v-col cols="12" class="my-n3">
           <Message severity="error" v-if="showBasicBCeIDMessage">
             No such Business account has been found with BCeID. Please login
-            with your Business BCeId
+            with your Business BCeId.
           </Message>
           <Message severity="error" v-if="showDisabledUserMessage">
             Disabled User - you don't have access to the system. Please contact
-            Administrator for more informations.
+            Administrator for more information.
           </Message>
           <Message severity="error" v-if="showUnknownUserMessage">
             The user was validated successfully but is not currently allowed to
             have access to this application. Please contact the Administrator
-            for more information
+            for more information.
           </Message>
         </v-col>
       </v-row>

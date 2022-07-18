@@ -65,7 +65,7 @@ export interface CreateInstitutionUserAPIInDTO {
  */
 export type UpdateInstitutionUserAPIInDTO = Omit<
   CreateInstitutionUserAPIInDTO,
-  "userId"
+  "bceidUserId"
 >;
 
 export interface UserActiveStatusAPIInDTO {

@@ -88,10 +88,11 @@ export class InstitutionUserService {
     paginationOptions: PaginationOptions,
     institutionId?: number,
   ): Promise<InstitutionUserSummary> {
-    const response = await ApiClient.InstitutionUserApi.searchUsers(
-      paginationOptions,
-      institutionId,
-    );
+    const response =
+      await ApiClient.InstitutionUserApi.getInstitutionUserSummary(
+        paginationOptions,
+        institutionId,
+      );
     return {
       results: response.results.map((result) =>
         this.convertToInstitutionUserViewModel(result),

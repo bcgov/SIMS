@@ -30,7 +30,7 @@ export class InstitutionUserApi extends HttpBaseClient {
    * when available.
    * @returns all filtered institution users.
    */
-  async searchUsers(
+  async getInstitutionUserSummary(
     paginationOptions: PaginationOptions,
     institutionId?: number,
   ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
