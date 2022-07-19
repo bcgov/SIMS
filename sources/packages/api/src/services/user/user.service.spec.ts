@@ -22,7 +22,7 @@ describe("UserService", () => {
   });
 
   afterAll(async () => {
-    await dbService.dataSource.close();
+    await dbService.dataSource.destroy();
   });
 
   it("should be defined", () => {
