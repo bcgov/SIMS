@@ -13,7 +13,11 @@ import {
   IsInstitutionAdmin,
   UserToken,
 } from "../../auth/decorators";
-import { InstitutionService, UserService } from "../../services";
+import {
+  InstitutionService,
+  InstitutionTypeService,
+  UserService,
+} from "../../services";
 import {
   InstitutionContactAPIInDTO,
   InstitutionDetailAPIOutDTO,
@@ -27,6 +31,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
 import { InstitutionLocationControllerService } from "../institution-locations/institution-location.controller.service";
+import { OptionItemAPIOutDTO } from "../models/common.dto";
 
 /**
  * Institution controller for institutions Client.
@@ -131,5 +136,15 @@ export class InstitutionInstitutionsController extends BaseController {
     return this.locationControllerService.getInstitutionLocations(
       userToken.authorizations.institutionId,
     );
+  }
+
+  /**
+   * Get the list os all institutions types to be returned in an option
+   * list (key/value pair) schema.
+   * @returns institutions types in an option list (key/value pair) schema.
+   */
+  @Get("type/options-list")
+  async getInstitutionTypeOptions(): Promise<OptionItemAPIOutDTO[]> {
+    return this.institutionControllerService.getInstitutionTypeOptions();
   }
 }

@@ -35,6 +35,7 @@ import {
   StudentScholasticStandingsService,
   SINValidationService,
   InstitutionUserAuthService,
+  InstitutionTypeService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -122,6 +123,7 @@ import { InstitutionUserControllerService } from "./route-controllers/institutio
     SINValidationService,
     InstitutionUserAuthService,
     InstitutionUserControllerService,
+    InstitutionTypeService,
   ],
 })
 export class AppAESTModule {}

@@ -1,18 +1,22 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { InstitutionService } from "../../services";
+import { InstitutionService, InstitutionTypeService } from "../../services";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
   getExtendedDateFormat,
 } from "../../utilities";
 import { AddressInfo } from "../../database/entities";
 import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
+import { OptionItemAPIOutDTO } from "../models/common.dto";
 
 /**
  * Service/Provider for Institutions controller to wrap the common methods.
  */
 @Injectable()
 export class InstitutionControllerService {
-  constructor(private readonly institutionService: InstitutionService) {}
+  constructor(
+    private readonly institutionService: InstitutionService,
+    private readonly institutionTypeService: InstitutionTypeService,
+  ) {}
 
   /**
    * Get institution detail.
@@ -66,5 +70,18 @@ export class InstitutionControllerService {
       isBCPrivate: isBCPrivate,
       hasBusinessGuid: !!institutionDetail.businessGuid,
     };
+  }
+
+  /**
+   * Get the list os all institutions types to be returned in an option
+   * list (key/value pair) schema.
+   * @returns institutions types in an option list (key/value pair) schema.
+   */
+  async getInstitutionTypeOptions(): Promise<OptionItemAPIOutDTO[]> {
+    const institutionTypes = await this.institutionTypeService.getAll();
+    return institutionTypes.map((institutionType) => ({
+      id: institutionType.id,
+      description: institutionType.name,
+    }));
   }
 }
