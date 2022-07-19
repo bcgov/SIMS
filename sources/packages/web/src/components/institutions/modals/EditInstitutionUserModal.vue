@@ -60,6 +60,7 @@ import {
   LEGAL_SIGNING_AUTHORITY_EXIST,
 } from "@/constants";
 import useEmitter from "@/composables/useEmitter";
+import { InstitutionUserService } from "@/services/InstitutionUserService";
 
 const submitKnownErrors = [
   INSTITUTION_USER_ALREADY_EXISTS,
@@ -118,8 +119,8 @@ export default {
       userInfo.value = params;
       // Get the user permissions.
       const userDetails =
-        await InstitutionService.shared.getInstitutionLocationUserDetails(
-          userInfo.value.userName,
+        await InstitutionUserService.shared.getInstitutionUserById(
+          userInfo.value.institutionUserId,
         );
       // A user is considered an admin if any authorization has a userType defined as admin.
       const isAdmin = userDetails.authorizations.some(
@@ -163,8 +164,8 @@ export default {
         processing.value = true;
         const userManagementModel = institutionUserManagement.value
           .formModel as UserManagementModel;
-        await InstitutionService.shared.updateInstitutionUserWithAuth(
-          userInfo.value.userName,
+        await InstitutionUserService.shared.updateInstitutionUserWithAuth(
+          userInfo.value.institutionUserId,
           userManagementModel.isAdmin,
           userManagementModel.isLegalSigningAuthority,
           userManagementModel.locationAuthorizations,

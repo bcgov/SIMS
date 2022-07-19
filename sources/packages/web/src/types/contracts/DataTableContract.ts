@@ -13,8 +13,8 @@ export enum UserFields {
   DisplayName = "displayName",
   Email = "email",
   UserType = "userType",
-  Role = "role",
-  Location = "location",
+  Roles = "roles",
+  Locations = "locations",
   IsActive = "isActive",
 }
 

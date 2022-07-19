@@ -1,4 +1,3 @@
-import { Address } from "../Common";
 import { InstitutionLocationsDetails } from "./InstitutionLocation";
 
 export enum InstitutionUserTypes {
@@ -11,15 +10,15 @@ export enum InstitutionUserRoles {
 }
 
 export interface InstitutionUserViewModel {
-  id: number;
+  institutionUserId: number;
   email: string;
   userName: string;
   displayName: string;
-  location: string[];
-  userType: string[];
-  role: string;
+  locations: string[];
+  userType: string;
+  roles: string[];
   isActive: boolean;
-  disableRemove?: boolean;
+  disableRemove: boolean;
 }
 
 export interface InstitutionAuthType {
@@ -90,8 +89,8 @@ export interface InstitutionStateForStore {
 export interface LocationStateForStore {
   id: number;
   name: string;
-  address: Address;
 }
+
 export interface InstitutionUserAndAuthDetailsForStore {
   user: {
     email: string;
@@ -104,7 +103,7 @@ export interface InstitutionUserAndAuthDetailsForStore {
   authorizations: AuthorizationsForStore;
 }
 
-export interface InstitutionUserAndCountForDataTable {
+export interface InstitutionUserSummary {
   results: InstitutionUserViewModel[];
   count: number;
 }

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "../../utilities";
-import { Connection } from "typeorm";
+import { Connection, UpdateResult } from "typeorm";
 import { DataModelService } from "../../database/data.model.service";
 import { Student, User } from "../../database/entities";
 import { UserLoginInfo } from "./user.model";
@@ -46,7 +46,16 @@ export class UserService extends DataModelService<User> {
     };
   }
 
-  async updateUserStatus(userId: number, isActive: boolean) {
+  /**
+   * Define the user as active or inactive to allow or prevent access to the system.
+   * @param userId user to be updated.
+   * @param isActive active or inactive value.
+   * @returns update result.
+   */
+  async updateUserStatus(
+    userId: number,
+    isActive: boolean,
+  ): Promise<UpdateResult> {
     return this.repo
       .createQueryBuilder()
       .update(User)

@@ -4,7 +4,6 @@ import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
-import { InstitutionService } from "./InstitutionService";
 import { ApplicationToken } from "@/types";
 import { RouteHelper } from "@/helpers";
 import { LocationAsRelativeRaw } from "vue-router";
@@ -15,6 +14,7 @@ import {
 import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
 import { useStudentStore } from "@/composables";
+import { InstitutionUserService } from "@/services/InstitutionUserService";
 
 /**
  * Manages the KeyCloak initialization and authentication methods.
@@ -143,9 +143,15 @@ export class AuthService {
    */
   private async processInstitutionLogin() {
     const userStatus =
-      await InstitutionService.shared.getInstitutionUserStatus();
+      await InstitutionUserService.shared.getInstitutionUserStatus();
     if (userStatus.isActiveUser === true) {
+      // This is the usual login process when everything is ready and the user
+      // is allowed to access the system. In this case ensure that the user
+      // and institution information is in sync with BCeID.
+      await InstitutionUserService.shared.syncBCeIDInformation();
       // User is active so just proceed.
+      // The BCeID sync must happen prior to this method to ensure that the most
+      // updated information will be loaded into the store.
       await store.dispatch("institution/initialize");
       return;
     }

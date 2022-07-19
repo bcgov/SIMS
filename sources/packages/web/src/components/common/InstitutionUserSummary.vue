@@ -58,18 +58,17 @@
       <Column :field="UserFields.Email" header="Email" sortable="true"></Column>
       <Column :field="UserFields.UserType" header="User Type">
         <template #body="slotProps">
-          <!-- Get the first index of the array since the user will have admin or user type only. -->
-          {{ slotProps.data.userType[0] }}
+          {{ slotProps.data.userType }}
         </template></Column
       >
-      <Column :field="UserFields.role" header="Role">
+      <Column :field="UserFields.Roles" header="Role">
         <template #body="slotProps">
-          {{ institutionUserRoleToDisplay(slotProps.data.role) }}
+          {{ institutionUserRoleToDisplay(slotProps.data.roles[0]) }}
         </template>
       </Column>
-      <Column :field="UserFields.Location" header="Locations"
+      <Column :field="UserFields.Locations" header="Locations"
         ><template #body="slotProps">
-          <ul v-for="location in slotProps.data.location" :key="location">
+          <ul v-for="location in slotProps.data.locations" :key="location">
             <li>{{ location }}</li>
           </ul></template
         ></Column
@@ -92,10 +91,10 @@
             <span class="text-decoration-underline">Edit</span>
           </v-btn>
           <v-btn
-            v-if="canDisableUser(slotProps.data.userName)"
+            :disabled="slotProps.data.disableRemove"
             @click="updateUserStatus(slotProps.data)"
             variant="text"
-            color="primary"
+            :color="slotProps.data.disableRemove ? 'gray' : 'primary'"
             append-icon="mdi-account-remove-outline"
           >
             <span class="text-decoration-underline">{{
@@ -123,19 +122,13 @@
 
 <script lang="ts">
 import { ref, watch } from "vue";
-import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
-import {
-  ModalDialog,
-  useAuth,
-  useFormatters,
-  useSnackBar,
-} from "@/composables";
+import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
 import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue";
 import {
   InstitutionUserViewModel,
-  InstitutionUserAndCountForDataTable,
+  InstitutionUserSummary,
   GeneralStatusForBadge,
   UserFields,
   DEFAULT_PAGE_LIMIT,
@@ -146,6 +139,7 @@ import {
 } from "@/types";
 import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
 import useEmitter from "@/composables/useEmitter";
+import { InstitutionUserService } from "@/services/InstitutionUserService";
 
 export default {
   components: {
@@ -176,9 +170,8 @@ export default {
   setup(props: any) {
     const emitter = useEmitter();
     const toast = useSnackBar();
-    const { parsedToken } = useAuth();
     const { institutionUserRoleToDisplay } = useFormatters();
-    const usersListAndCount = ref({} as InstitutionUserAndCountForDataTable);
+    const usersListAndCount = ref({} as InstitutionUserSummary);
     const loading = ref(false);
     const searchBox = ref("");
     const currentPage = ref();
@@ -204,7 +197,7 @@ export default {
       loading.value = true;
       try {
         usersListAndCount.value =
-          await InstitutionService.shared.institutionUserSummary(
+          await InstitutionUserService.shared.institutionUserSummary(
             {
               page: page,
               pageLimit: pageCount,
@@ -222,8 +215,8 @@ export default {
     const updateUserStatus = async (userDetails: InstitutionUserViewModel) => {
       try {
         const enabled = !userDetails.isActive;
-        await InstitutionService.shared.updateUserStatus(
-          userDetails.userName,
+        await InstitutionUserService.shared.updateUserStatus(
+          userDetails.institutionUserId,
           enabled,
         );
         await getAllInstitutionUsers();
@@ -299,16 +292,11 @@ export default {
       }
     };
 
-    const canDisableUser = (userName: string): boolean => {
-      return parsedToken.value?.userName !== userName;
-    };
-
     return {
       addInstitutionUserModal,
       editInstitutionUserModal,
       openNewUserModal,
       openEditUserModal,
-      canDisableUser,
       getAllInstitutionUsers,
       institutionUserRoleToDisplay,
       updateUserStatus,
