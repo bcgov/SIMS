@@ -34,6 +34,7 @@ import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -50,6 +51,7 @@ export default {
     },
   },
   setup(props: any) {
+    const emitter = useEmitter();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const initialData = ref({} as ActiveApplicationDataAPIOutDTO);
@@ -114,7 +116,7 @@ export default {
           props.locationId,
           data,
         );
-        toast.success("Change Reported", "Report a change submitted");
+        emitter.emit("snackBar", toast.success1("Report a change submitted"));
         router.push(goBackRouteParams.value);
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
@@ -126,13 +128,16 @@ export default {
               APPLICATION_CHANGE_NOT_ELIGIBLE,
             ].includes(error.errorType)
           ) {
-            toast.warn("Not able to submit", error.message);
+            emitter.emit(
+              "snackBar",
+              toast.warn1(`Not able to submit. ${error.message}`),
+            );
             return;
           }
         }
-        toast.error(
-          "Unexpected error",
-          "An unexpected error happened during the submission.",
+        emitter.emit(
+          "snackBar",
+          toast.error1("An unexpected error happened during the submission."),
         );
       }
     };

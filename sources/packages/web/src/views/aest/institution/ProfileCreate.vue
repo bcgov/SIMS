@@ -24,6 +24,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { useToastMessage } from "@/composables";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import useEmitter from "@/composables/useEmitter";
 
 interface FormModel {
   clientType: ClientIdType;
@@ -33,6 +34,7 @@ interface FormModel {
 export default {
   components: { InstitutionProfileForm },
   setup() {
+    const emitter = useEmitter();
     const router = useRouter();
     const toast = useToastMessage();
     const processing = ref(false);
@@ -46,18 +48,18 @@ export default {
         processing.value = true;
         const createdInstitution =
           await InstitutionService.shared.createInstitution(data);
-        toast.success(
-          "Successfully created",
-          "Institution successfully created!",
+        emitter.emit(
+          "snackBar",
+          toast.success1("Institution successfully created!"),
         );
         router.push({
           name: AESTRoutesConst.INSTITUTION_PROFILE,
           params: { institutionId: createdInstitution.id },
         });
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "Unexpected error while creating the institution.",
+        emitter.emit(
+          "snackBar",
+          toast.error1("Unexpected error while creating the institution."),
         );
       } finally {
         processing.value = false;

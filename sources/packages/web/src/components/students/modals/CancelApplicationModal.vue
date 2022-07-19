@@ -39,6 +39,7 @@ import { ApplicationService } from "@/services/ApplicationService";
 import Dialog from "primevue/dialog";
 import { useToastMessage } from "@/composables";
 import { ApplicationStatusToBeUpdatedDto, ApplicationStatus } from "@/types";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -56,6 +57,7 @@ export default {
   },
   emits: ["showHideCancelApplication", "reloadData"],
   setup(props: any, context: any) {
+    const emitter = useEmitter();
     const toast = useToastMessage();
     const updateShowCancelApplicationModal = () => {
       context.emit("showHideCancelApplication");
@@ -71,14 +73,14 @@ export default {
         );
         updateShowCancelApplicationModal();
         context.emit("reloadData", props.applicationId);
-        toast.success(
-          "Application Cancelled",
-          "Your application is now cancelled!",
+        emitter.emit(
+          "snackBar",
+          toast.success1("Your application is now cancelled!"),
         );
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "An error happened while cancelling the Application.",
+        emitter.emit(
+          "snackBar",
+          toast.error1("An error happened while cancelling the Application."),
         );
       }
     };

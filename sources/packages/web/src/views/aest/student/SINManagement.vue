@@ -113,6 +113,7 @@ import {
   CreateSINValidationAPIInDTO,
   UpdateSINValidationAPIInDTO,
 } from "@/services/http/dto";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -125,6 +126,7 @@ export default {
     },
   },
   setup(props: any) {
+    const emitter = useEmitter();
     const studentSINValidations = ref([] as SINValidations[]);
     const addNewSINModal = ref(
       {} as ModalDialog<FormIOForm<CreateSINValidationAPIInDTO> | boolean>,
@@ -160,15 +162,17 @@ export default {
           props.studentId,
           formioForm.data,
         );
-        toast.success(
-          "New SIN created",
-          "New SIN record created and associated to the student.",
+        emitter.emit(
+          "snackBar",
+          toast.success1(
+            "New SIN record created and associated to the student.",
+          ),
         );
         await loadSINValidations();
       } catch {
-        toast.error(
-          "Unexpected error",
-          "Unexpected error while creating a new SIN record.",
+        emitter.emit(
+          "snackBar",
+          toast.error1("Unexpected error while creating a new SIN record."),
         );
       } finally {
         processingNewSIN.value = false;
@@ -193,15 +197,15 @@ export default {
           sinValidationId,
           formioForm.data,
         );
-        toast.success(
-          "Expiry date updated",
-          "Temporary SIN expiry date updated.",
+        emitter.emit(
+          "snackBar",
+          toast.success1("Temporary SIN expiry date updated."),
         );
         await loadSINValidations();
       } catch {
-        toast.error(
-          "Unexpected error",
-          "Unexpected error while updating the expiry date.",
+        emitter.emit(
+          "snackBar",
+          toast.error1("Unexpected error while updating the expiry date."),
         );
       } finally {
         processingEditExpiryDate.value = false;

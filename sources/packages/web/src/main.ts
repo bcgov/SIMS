@@ -7,6 +7,7 @@ import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 
+import mitt from "mitt";
 import { createApp } from "vue";
 import vuetify from "./plugins/vuetify";
 import App from "./App.vue";
@@ -111,9 +112,10 @@ library.add(
   faStickyNote,
   faExclamationCircleSolid,
 );
+const emitter = mitt();
 
 AppConfigService.shared.init().then(() => {
-  createApp(App)
+  const app = createApp(App)
     .use(vuetify)
     .use(store)
     .use(router)
@@ -148,6 +150,10 @@ AppConfigService.shared.init().then(() => {
     .component("ToggleContent", ToggleContent)
     .component("FormioContainer", FormioContainer)
     .component("FooterButtons", FooterButtons)
-    .directive("tooltip", Tooltip)
-    .mount("#app");
+    .directive("tooltip", Tooltip);
+
+  console.log(app.config);
+  app.config.globalProperties.emitter = emitter;
+  console.log(app, "+++++++Apppp mitt config");
+  app.mount("#app");
 });

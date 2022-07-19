@@ -46,10 +46,12 @@ import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
+import useEmitter from '@/composables/useEmitter';
 
 export default {
   components: { ModalDialogBase },
   setup() {
+    const emitter = useEmitter();
     const initialData = ref({});
     const router = useRouter();
     const toast = useToastMessage();
@@ -98,9 +100,11 @@ export default {
           });
         }
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "An error happened while trying to start a new application.",
+        emitter.emit(
+          "snackBar",
+          toast.error1(
+            "An error happened while trying to start a new application.",
+          ),
         );
       }
     };

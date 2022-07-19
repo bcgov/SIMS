@@ -18,9 +18,11 @@ import { useToastMessage } from "@/composables";
 import { useStore } from "vuex";
 import { SINStatusEnum } from "@/types";
 import { computed } from "vue";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   setup() {
+    const emitter = useEmitter();
     const router = useRouter();
     const toast = useToastMessage();
     const store = useStore();
@@ -35,9 +37,11 @@ export default {
           name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
         });
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "An error happened while trying to start an application.",
+        emitter.emit(
+          "snackBar",
+          toast.error1(
+            "An error happened while trying to start an application.",
+          ),
         );
       }
     };

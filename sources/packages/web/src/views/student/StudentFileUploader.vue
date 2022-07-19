@@ -29,6 +29,7 @@ import {
   StudentFileUploaderAPIInDTO,
   StudentFileUploaderInfoAPIInDTO,
 } from "@/services/http/dto/Student.dto";
+import useEmitter from "@/composables/useEmitter";
 
 const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
 export default {
@@ -36,6 +37,7 @@ export default {
     StudentDocumentList,
   },
   setup() {
+    const emitter = useEmitter();
     const reloadDocuments = ref(false);
     const formioUtils = useFormioUtils();
     const toast = useToastMessage();
@@ -53,16 +55,16 @@ export default {
         // form reset and document list reload
         form.submission = {};
         reloadDocuments.value = !reloadDocuments.value;
-        toast.success(
-          "Document Submitted",
-          "Your documents have been submitted!",
+        emitter.emit(
+          "snackBar",
+          toast.success1("Your documents have been submitted!"),
         );
       } catch (error) {
         let errorMessage = "An error happened while submitting your documents.";
         if (error.response.data?.errorType === APPLICATION_NOT_FOUND) {
           errorMessage = error.response.data.message;
         }
-        toast.error("Unexpected error", errorMessage);
+        emitter.emit("snackBar", toast.error1(errorMessage));
       }
     };
     return { submitForm, reloadDocuments };

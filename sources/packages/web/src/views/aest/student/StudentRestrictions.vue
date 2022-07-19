@@ -101,6 +101,7 @@ import {
   RestrictionEntityType,
 } from "@/types";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -115,6 +116,7 @@ export default {
     },
   },
   setup(props: any) {
+    const emitter = useEmitter();
     const studentRestrictions = ref();
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
@@ -157,14 +159,16 @@ export default {
           payload,
         );
         await loadStudentRestrictions();
-        toast.success(
-          "Restriction Resolved",
-          "The given restriction has been resolved and resolution notes added.",
+        emitter.emit(
+          "snackBar",
+          toast.success1(
+            "The given restriction has been resolved and resolution notes added.",
+          ),
         );
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "Unexpected error while resolving the restriction.",
+        emitter.emit(
+          "snackBar",
+          toast.error1("Unexpected error while resolving the restriction."),
         );
       }
     };
@@ -180,14 +184,14 @@ export default {
           data,
         );
         await loadStudentRestrictions();
-        toast.success(
-          "Restriction Added",
-          "The restriction has been added to student.",
+        emitter.emit(
+          "snackBar",
+          toast.success1("The restriction has been added to student."),
         );
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "Unexpected error while adding the restriction.",
+        emitter.emit(
+          "snackBar",
+          toast.error1("Unexpected error while adding the restriction."),
         );
       }
     };

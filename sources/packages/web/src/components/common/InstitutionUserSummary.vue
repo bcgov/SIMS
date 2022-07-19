@@ -145,6 +145,7 @@ import {
   ApiProcessError,
 } from "@/types";
 import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -173,6 +174,7 @@ export default {
     },
   },
   setup(props: any) {
+    const emitter = useEmitter();
     const toast = useToastMessage();
     const { parsedToken } = useAuth();
     const { institutionUserRoleToDisplay } = useFormatters();
@@ -225,21 +227,28 @@ export default {
           enabled,
         );
         await getAllInstitutionUsers();
-        toast.success(
-          "User status updated",
-          `${userDetails.displayName} is ${enabled ? "enabled" : "disabled"}`,
+        emitter.emit(
+          "snackBar",
+          toast.success1(
+            `${userDetails.displayName} is ${enabled ? "enabled" : "disabled"}`,
+          ),
         );
       } catch (error: unknown) {
         if (
           error instanceof ApiProcessError &&
           error.errorType === INSTITUTION_MUST_HAVE_AN_ADMIN
         ) {
-          toast.warn("Cannot disable the institution admin", error.message);
+          emitter.emit(
+            "snackBar",
+            toast.warn1(
+              `Cannot disable the institution admin. ${error.message}`,
+            ),
+          );
           return;
         }
-        toast.error(
-          "Unexpected error",
-          "An error happened during the update process.",
+        emitter.emit(
+          "snackBar",
+          toast.error1("An error happened during the update process."),
         );
       }
     };

@@ -83,9 +83,11 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { SearchInstitutionAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage, useFormatters } from "@/composables";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   setup() {
+    const emitter = useEmitter();
     const toast = useToastMessage();
     const router = useRouter();
     const legalName = ref("");
@@ -104,9 +106,9 @@ export default {
         operatingName.value,
       );
       if (institutions.value.length === 0) {
-        toast.warn(
-          "No Institutions found",
-          "No Institutions found for the given search criteria.",
+        emitter.emit(
+          "snackBar",
+          toast.warn1("No Institutions found for the given search criteria."),
         );
       }
     };

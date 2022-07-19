@@ -64,6 +64,7 @@ import {
   VForm,
 } from "@/types";
 import InstitutionUserManagement from "@/components/institutions/modals/InstitutionUserManagement.vue";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: { ModalDialogBase, InstitutionUserManagement },
@@ -83,6 +84,7 @@ export default {
     },
   },
   setup(props: any) {
+    const emitter = useEmitter();
     const {
       showDialog,
       resolvePromise,
@@ -162,15 +164,15 @@ export default {
           userManagementModel.locationAuthorizations,
           props.institutionId,
         );
-        toast.success("User created", "User successfully created.");
+        emitter.emit("snackBar", toast.success1("User successfully created."));
         resolvePromise(true);
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           addUserForm.value.errors.push({ errorMessages: [error.message] });
         } else {
-          toast.error(
-            "An unexpected error happen",
-            "An unexpected error happen while updating the user.",
+          emitter.emit(
+            "snackBar",
+            toast.error1("An unexpected error happen while updating the user."),
           );
         }
       } finally {

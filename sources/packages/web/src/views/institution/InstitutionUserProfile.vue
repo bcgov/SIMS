@@ -26,9 +26,11 @@ import {
   InstitutionUserPersistDto,
 } from "../../types";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   setup() {
+    const emitter = useEmitter();
     // Hooks
     const toast = useToastMessage();
     const router = useRouter();
@@ -43,14 +45,17 @@ export default {
         await UserService.shared.updateInstitutionUser(
           institutionUserPersistDto,
         );
-        toast.success("Updated!", "Institution User successfully updated!");
+        emitter.emit(
+          "snackBar",
+          toast.success1("Institution User successfully updated!"),
+        );
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         });
       } catch (excp) {
-        toast.error(
-          "Unexpected error!",
-          "An error happened during the update process.",
+        emitter.emit(
+          "snackBar",
+          toast.error1("An error happened during the update process."),
         );
       }
     };
@@ -65,9 +70,9 @@ export default {
           userEmail: institutionUser.userEmail,
         };
       } else {
-        toast.error(
-          "Institution user Account error",
-          "Unable to fetch Institution user account details.",
+        emitter.emit(
+          "snackBar",
+          toast.error1("Unable to fetch Institution user account details."),
         );
       }
     });

@@ -65,6 +65,7 @@ import {
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "@/constants";
 import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto/ConfirmationOfEnrolment.dto";
+import useEmitter from "@/composables/useEmitter";
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify component is used
@@ -97,6 +98,7 @@ export default {
     },
   },
   setup(props: any) {
+    const emitter = useEmitter();
     const router = useRouter();
     const toast = useToastMessage();
     const initialData = ref({} as ApplicationDetailsForCOEDTO);
@@ -126,7 +128,10 @@ export default {
           props.disbursementScheduleId,
           payload,
         );
-        toast.success("Confirmed", "Confirmation of Enrollment Confirmed!");
+        emitter.emit(
+          "snackBar",
+          toast.success1("Confirmation of Enrollment Confirmed!"),
+        );
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An error happened while confirming the COE.";
@@ -142,7 +147,7 @@ export default {
               break;
           }
         }
-        toast.error(errorLabel, errorMsg);
+        emitter.emit("snackBar", toast.error1(`${errorLabel}. ${errorMsg}`));
       }
     };
     const editProgramInformation = async () => {
@@ -152,9 +157,11 @@ export default {
             props.locationId,
             props.disbursementScheduleId,
           );
-          toast.success(
-            "Edit Program Information",
-            "Program Information Request is now available to be edited.",
+          emitter.emit(
+            "snackBar",
+            toast.success1(
+              "Program Information Request is now available to be edited.",
+            ),
           );
           router.push({
             name: InstitutionRoutesConst.COE_SUMMARY,
@@ -163,9 +170,11 @@ export default {
             },
           });
         } catch {
-          toast.error(
-            "Unexpected error",
-            "An error happened while updating Confirmation of Enrollment.",
+          emitter.emit(
+            "snackBar",
+            toast.error1(
+              "An error happened while updating Confirmation of Enrollment.",
+            ),
           );
         }
       }
@@ -179,7 +188,10 @@ export default {
           props.disbursementScheduleId,
           submissionData,
         );
-        toast.success("COE is Denied", "Application Status Has Been Updated.");
+        emitter.emit(
+          "snackBar",
+          toast.success1("Application Status Has Been Updated."),
+        );
         router.push({
           name: InstitutionRoutesConst.COE_SUMMARY,
           params: {
@@ -187,9 +199,11 @@ export default {
           },
         });
       } catch {
-        toast.error(
-          "Unexpected error",
-          "An error happened while denying Confirmation of Enrollment.",
+        emitter.emit(
+          "snackBar",
+          toast.error1(
+            "An error happened while denying Confirmation of Enrollment.",
+          ),
         );
       }
     };

@@ -36,6 +36,7 @@ import {
   UpdateStudentAPIInDTO,
 } from "@/services/http/dto/Student.dto";
 import { AddressDetailsFormAPIDTO } from "@/services/http/dto";
+import useEmitter from "@/composables/useEmitter";
 
 enum FormModes {
   edit = "edit",
@@ -65,6 +66,7 @@ export default {
     },
   },
   setup(props: any) {
+    const emitter = useEmitter();
     const router = useRouter();
     const toast = useToastMessage();
     const showApplyPDButton = ref();
@@ -117,14 +119,18 @@ export default {
     const applyPDStatus = async () => {
       try {
         await StudentService.shared.applyForPDStatus();
-        toast.success(
-          "Applied for PD Status!",
-          "Your application is submitted. The outcome will display on your profile",
+        emitter.emit(
+          "snackBar",
+          toast.success1(
+            "Your application is submitted. The outcome will display on your profile",
+          ),
         );
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "An error happened during the apply PD process. Please try after sometime.",
+        emitter.emit(
+          "snackBar",
+          toast.error1(
+            "An error happened during the apply PD process. Please try after sometime.",
+          ),
         );
       }
       await getStudentDetails();
@@ -142,9 +148,9 @@ export default {
       try {
         if (props.editMode) {
           await StudentService.shared.updateStudent(formData);
-          toast.success(
-            "Student Updated",
-            "Student contact information updated!",
+          emitter.emit(
+            "snackBar",
+            toast.success1("Student contact information updated!"),
           );
         } else {
           await StudentService.shared.createStudent(
@@ -154,11 +160,14 @@ export default {
             studentStore.setHasStudentAccount(true),
             studentStore.updateProfileData(),
           ]);
-          toast.success("Student created", "Student was successfully created!");
+          emitter.emit(
+            "snackBar",
+            toast.success1("Student was successfully created!"),
+          );
         }
         router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
       } catch {
-        toast.error("Error", "Error while saving student");
+        emitter.emit("snackBar", toast.error1("Error while saving student"));
       }
     };
 

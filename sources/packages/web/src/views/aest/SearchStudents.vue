@@ -111,10 +111,13 @@ import {
   SearchStudentAPIOutDTO,
 } from "@/services/http/dto";
 import { useFormatters, useToastMessage, useValidators } from "@/composables";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   setup() {
+    // todo: ann rename toast to snack bar
     const toast = useToastMessage();
+    const emitter = useEmitter();
     const { dateOnlyLongString } = useFormatters();
     const { isSINValid } = useValidators();
     const router = useRouter();
@@ -138,9 +141,9 @@ export default {
       };
       students.value = await StudentService.shared.searchStudents(payload);
       if (students.value.length === 0) {
-        toast.warn(
-          "No Students found",
-          "No Students found for the given search criteria.",
+        emitter.emit(
+          "snackBar",
+          toast.success1("No Students found for the given search criteria."),
         );
       }
     };

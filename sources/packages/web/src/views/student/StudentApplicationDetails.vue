@@ -62,6 +62,7 @@ import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
 import { GetApplicationDataDto, ApplicationStatus } from "@/types";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
+import useEmitter from "@/composables/useEmitter";
 
 /**
  * added MenuType interface for prime vue component menu,
@@ -88,6 +89,7 @@ export default {
     },
   },
   setup(props: any) {
+    const emitter = useEmitter();
     const router = useRouter();
     const items = ref([] as MenuType[]);
     const menu = ref();
@@ -127,10 +129,9 @@ export default {
           },
         });
       } catch (error) {
-        toast.error(
-          "Unexpected Error",
-          undefined,
-          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+        emitter.emit(
+          "snackBar",
+          toast.error1("Unexpected Error", toast.EXTENDED_MESSAGE_DISPLAY_TIME),
         );
       }
     };

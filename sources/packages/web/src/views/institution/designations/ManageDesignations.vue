@@ -44,12 +44,14 @@ import {
 } from "@/types/contracts/DesignationAgreementContract";
 import { useInstitutionAuth, useToastMessage } from "@/composables";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
     DesignationAgreementSummary,
   },
   setup() {
+    const emitter = useEmitter();
     const router = useRouter();
     const toast = useToastMessage();
     const { isLegalSigningAuthority } = useInstitutionAuth();
@@ -65,9 +67,9 @@ export default {
           name: InstitutionRoutesConst.DESIGNATION_REQUEST,
         });
       } else {
-        toast.warn(
-          "Pending Designation",
-          "There is already a pending designation agreement.",
+        emitter.emit(
+          "snackBar",
+          toast.warn1("There is already a pending designation agreement."),
         );
       }
     };
