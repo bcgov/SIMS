@@ -1,6 +1,5 @@
 import { AESTInstitutionProgramsSummaryDto } from "@/types";
 import {
-  OptionItemDto,
   DataTableSortOrder,
   PaginatedResults,
   PaginationOptions,
@@ -21,13 +20,14 @@ import {
   InstitutionLocationPrimaryContactAPIInDTO,
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
+  OptionItemAPIOutDTO,
 } from "@/services/http/dto";
 
 export class InstitutionService {
   // Share Instance
   private static instance: InstitutionService;
 
-  public static get shared(): InstitutionService {
+  static get shared(): InstitutionService {
     return this.instance || (this.instance = new this());
   }
 
@@ -56,27 +56,25 @@ export class InstitutionService {
     return ApiClient.Institution.createInstitutionWithAssociatedUser(data);
   }
 
-  public async updateInstitution(
+  async updateInstitution(
     data: InstitutionContactAPIInDTO,
     institutionId?: number,
   ): Promise<void> {
     await ApiClient.Institution.updateInstitution(data, institutionId);
   }
 
-  public async getDetail(
+  async getDetail(
     institutionId?: number,
     authHeader?: any,
   ): Promise<InstitutionDetailAPIOutDTO> {
     return ApiClient.Institution.getDetail(institutionId, authHeader);
   }
 
-  public async createInstitutionLocation(
-    data: InstitutionLocationFormAPIInDTO,
-  ) {
+  async createInstitutionLocation(data: InstitutionLocationFormAPIInDTO) {
     await ApiClient.InstitutionLocation.createInstitutionLocation(data);
   }
 
-  public async updateInstitutionLocation(
+  async updateInstitutionLocation(
     locationId: number,
     institutionLocation:
       | InstitutionLocationPrimaryContactAPIInDTO
@@ -88,27 +86,32 @@ export class InstitutionService {
     );
   }
 
-  public async getInstitutionLocation(
+  async getInstitutionLocation(
     locationId: number,
   ): Promise<InstitutionLocationFormAPIOutDTO> {
     return ApiClient.InstitutionLocation.getInstitutionLocation(locationId);
   }
 
-  public async getAllInstitutionLocations(
+  async getAllInstitutionLocations(
     institutionId?: number,
   ): Promise<InstitutionLocationAPIOutDTO[]> {
     return ApiClient.Institution.allInstitutionLocations(institutionId);
   }
 
-  public async getLocationsOptionsList(): Promise<OptionItemDto[]> {
+  async getLocationsOptionsList(): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.InstitutionLocation.getOptionsList();
   }
 
-  public async getInstitutionTypeOptions(): Promise<OptionItemDto[]> {
+  /**
+   * Get the list os all institutions types to be returned in an option
+   * list (key/value pair) schema.
+   * @returns institutions types in an option list (key/value pair) schema.
+   */
+  async getInstitutionTypeOptions(): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.Institution.getInstitutionTypeOptions();
   }
 
-  public async getActiveApplicationsSummary(
+  async getActiveApplicationsSummary(
     locationId: number,
     paginationOptions: PaginationOptions,
     archived: boolean,
@@ -120,7 +123,7 @@ export class InstitutionService {
     );
   }
 
-  public async getActiveApplication(
+  async getActiveApplication(
     applicationId: number,
     locationId: number,
   ): Promise<ActiveApplicationDataAPIOutDTO> {

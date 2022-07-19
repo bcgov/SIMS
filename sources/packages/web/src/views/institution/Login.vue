@@ -12,9 +12,7 @@
           <content-group>
             <v-row>
               <v-col>
-                <h3 class="category-header-medium primary-color">
-                  Login with BCeID
-                </h3>
+                <h3 class="category-header-medium primary-color">Login</h3>
                 <p class="sign-in-description">
                   For returning users—login using your BCeID.
                 </p>
@@ -27,9 +25,7 @@
                 </v-btn>
               </v-col>
               <v-col
-                ><h3 class="category-header-medium primary-color">
-                  Sign up with BCeID
-                </h3>
+                ><h3 class="category-header-medium primary-color">Sign up</h3>
                 <p class="sign-in-description">
                   For new users—sign up using your BCeID.
                 </p>
@@ -58,7 +54,7 @@
             with your Business BCeId.
           </Message>
           <Message severity="error" v-if="showDisabledUserMessage">
-            Disabled User - you don't have access to the system. Please contact
+            Disabled user - you don't have access to the system. Please contact
             Administrator for more information.
           </Message>
           <Message severity="error" v-if="showUnknownUserMessage">

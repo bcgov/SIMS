@@ -24,6 +24,7 @@ import {
   StudentScholasticStandingsService,
   StudentAssessmentService,
   InstitutionUserAuthService,
+  InstitutionTypeService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -78,6 +79,7 @@ import { LoggerModule } from "./logger/logger.module";
     ScholasticStandingControllerService,
     InstitutionUserAuthService,
     InstitutionUserControllerService,
+    InstitutionTypeService,
   ],
 })
 export class AppInstitutionsModule {}
