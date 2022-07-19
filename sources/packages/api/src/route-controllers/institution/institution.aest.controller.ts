@@ -189,7 +189,7 @@ export class InstitutionAESTController extends BaseController {
   }
 
   /**
-   * Get the list os all institutions types to be returned in an option
+   * Get the list of all institutions types to be returned in an option
    * list (key/value pair) schema.
    * @returns institutions types in an option list (key/value pair) schema.
    */
