@@ -5,11 +5,11 @@ const directLoad =
 
 const entities = directLoad
   ? ["src/database/entities/*.model{.ts,.js}"]
-  : ["dist/src/database/entities/*.model{.ts,.js}"];
+  : ["dist/database/entities/*.model{.ts,.js}"];
 
 const migrations = directLoad
   ? ["src/database/migrations/*{.ts,.js}"]
-  : ["dist/src/database/migrations/*{.ts,.js}"];
+  : ["dist/database/migrations/*{.ts,.js}"];
 
 export const ormConfig: PostgresConnectionOptions = {
   type: "postgres",
