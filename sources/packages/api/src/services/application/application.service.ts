@@ -293,7 +293,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ApplicationStatus.draft,
     );
     // If an application id is provided it means that an update is supposed to happen,
-    // so an application draft is expected to be find. If not found, thown an error.
+    // so an application draft is expected to be find. If not found, thrown an error.
     if (applicationId && !draftApplication) {
       throw new CustomNamedError(
         "Not able to find the draft application associated with the student.",
