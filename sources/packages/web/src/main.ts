@@ -152,8 +152,6 @@ AppConfigService.shared.init().then(() => {
     .component("FooterButtons", FooterButtons)
     .directive("tooltip", Tooltip);
 
-  console.log(app.config);
   app.config.globalProperties.emitter = emitter;
-  console.log(app, "+++++++Apppp mitt config");
   app.mount("#app");
 });

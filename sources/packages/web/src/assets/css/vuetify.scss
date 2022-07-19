@@ -54,11 +54,11 @@
   margin-bottom: 0px !important;
 }
 // v-snackbar success style.
-.snackbar-success .v-overlay__content {
+.snackbar-success > .v-overlay__content {
   border: 3px solid $banner-color-success;
   border-radius: 8px;
 }
-.snackbar-success .v-overlay__content {
+.snackbar-success > .v-overlay__content {
   background: $banner-background-success;
 }
 .snackbar-success .icon-color {
@@ -66,11 +66,11 @@
 }
 
 // v-snackbar error style.
-.snackbar-error .v-overlay__content {
+.snackbar-error > .v-overlay__content {
   border: 3px solid $banner-color-error;
   border-radius: 8px;
 }
-.snackbar-error .v-overlay__content {
+.snackbar-error > .v-overlay__content {
   background: $banner-background-error;
 }
 .snackbar-error .icon-color {
@@ -78,11 +78,11 @@
 }
 
 // v-snackbar warning style.
-.snackbar-warn .v-overlay__content {
+.snackbar-warn > .v-overlay__content {
   border: 3px solid $banner-color-warning;
   border-radius: 8px;
 }
-.snackbar-warn .v-overlay__content {
+.snackbar-warn > .v-overlay__content {
   background: $banner-background-warning;
 }
 .snackbar-warn .icon-color {
