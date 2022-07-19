@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import useEmitter from "@/composables/useEmitter";
@@ -44,7 +44,7 @@ export default {
   },
   setup(props: any) {
     const emitter = useEmitter();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const confirmAssessment = async () => {
       try {
         await StudentAssessmentsService.shared.confirmAssessmentNOA(
@@ -52,12 +52,12 @@ export default {
         );
         emitter.emit(
           "snackBar",
-          toast.success1("Confirmation of Assessment completed successfully!"),
+          toast.success("Confirmation of Assessment completed successfully!"),
         );
       } catch (error) {
         emitter.emit(
           "snackBar",
-          toast.error1("An error happened while confirming the assessment."),
+          toast.error("An error happened while confirming the assessment."),
         );
       }
     };

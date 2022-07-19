@@ -24,7 +24,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { AuthService } from "@/services/AuthService";
 import { InstitutionLocationEdit } from "@/types";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 import useEmitter from "@/composables/useEmitter";
 
 export default {
@@ -40,7 +40,7 @@ export default {
     // Hooks
     const store = useStore();
     const initialData = ref({} as InstitutionLocationEdit);
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const router = useRouter();
     const updateInstitutionLocation = async (
       data: InstitutionLocationPrimaryContactAPIInDTO,
@@ -54,12 +54,12 @@ export default {
         store.dispatch("institution/getUserInstitutionLocationDetails");
         emitter.emit(
           "snackBar",
-          toast.success1("Location Details have been updated!"),
+          toast.success("Location Details have been updated!"),
         );
       } catch (excp) {
         emitter.emit(
           "snackBar",
-          toast.error1("An error happened during the update process."),
+          toast.error("An error happened during the update process."),
         );
       }
     };

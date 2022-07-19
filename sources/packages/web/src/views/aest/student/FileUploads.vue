@@ -87,7 +87,7 @@ import {
   useFileUtils,
   ModalDialog,
   useFormioUtils,
-  useToastMessage,
+  useSnackBar,
 } from "@/composables";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import {
@@ -111,7 +111,7 @@ export default {
     const studentFileUploads = ref([] as StudentUploadFileAPIOutDTO[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { dateOnlyLongString } = useFormatters();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const fileUtils = useFileUtils();
     const formioUtils = useFormioUtils();
     const initialData = ref({ studentId: props.studentId });
@@ -141,13 +141,13 @@ export default {
         );
         emitter.emit(
           "snackBar",
-          toast.success1(
+          toast.success(
             "The documents were submitted and a notification was sent to the student.",
           ),
         );
         await loadStudentFileUploads();
       } catch {
-        emitter.emit("snackBar", toast.error1("An unexpected error happened."));
+        emitter.emit("snackBar", toast.error("An unexpected error happened."));
       }
     };
 

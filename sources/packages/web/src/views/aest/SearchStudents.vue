@@ -110,13 +110,13 @@ import {
   SearchStudentAPIInDTO,
   SearchStudentAPIOutDTO,
 } from "@/services/http/dto";
-import { useFormatters, useToastMessage, useValidators } from "@/composables";
+import { useFormatters, useSnackBar, useValidators } from "@/composables";
 import useEmitter from "@/composables/useEmitter";
 
 export default {
   setup() {
     // todo: ann rename toast to snack bar
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const emitter = useEmitter();
     const { dateOnlyLongString } = useFormatters();
     const { isSINValid } = useValidators();
@@ -143,7 +143,7 @@ export default {
       if (students.value.length === 0) {
         emitter.emit(
           "snackBar",
-          toast.success1("No Students found for the given search criteria."),
+          toast.warn("No Students found for the given search criteria."),
         );
       }
     };

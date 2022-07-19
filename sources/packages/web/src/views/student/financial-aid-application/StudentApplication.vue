@@ -38,7 +38,7 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import {
   useFormioDropdownLoader,
   useFormioUtils,
-  useToastMessage,
+  useSnackBar,
   useModalDialog,
 } from "@/composables";
 import { useRouter } from "vue-router";
@@ -46,7 +46,7 @@ import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
-import useEmitter from '@/composables/useEmitter';
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: { ModalDialogBase },
@@ -54,7 +54,7 @@ export default {
     const emitter = useEmitter();
     const initialData = ref({});
     const router = useRouter();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const formioDataLoader = useFormioDropdownLoader();
     const formioUtils = useFormioUtils();
     const { showDialog, showModal } = useModalDialog<void>();
@@ -102,7 +102,7 @@ export default {
       } catch (error) {
         emitter.emit(
           "snackBar",
-          toast.error1(
+          toast.error(
             "An error happened while trying to start a new application.",
           ),
         );

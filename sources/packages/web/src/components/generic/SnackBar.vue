@@ -4,7 +4,7 @@
     variant="text"
     :color="snackBarType"
     location="top right"
-    timeout="20000"
+    :timeout="snackBarTimeOut"
     :class="snackBarClass"
     class="mt-16"
   >
@@ -32,7 +32,6 @@ export default {
     snackBarOptions: {
       type: Object,
       required: true,
-
       default() {
         return {} as SnackBarOptions;
       },
@@ -42,6 +41,7 @@ export default {
     const showSnackBar = ref(props.snackBarOptions?.show ?? false);
     const snackBarType = ref(props.snackBarOptions?.type ?? "");
     const snackBarContent = ref(props.snackBarOptions?.content);
+    const snackBarTimeOut = ref(props.snackBarOptions?.displayTime ?? 5000);
     const snackBarClass = computed(() => {
       switch (props.snackBarOptions.type) {
         case SnackBarType.success:
@@ -51,7 +51,7 @@ export default {
         case SnackBarType.warn:
           return "snackbar-warn";
         default:
-          return "snackbar-error";
+          return "";
       }
     });
 
@@ -61,11 +61,10 @@ export default {
           return "fa:fa fa-circle-check";
         case SnackBarType.error:
           return "fa:fa fa-circle-exclamation";
-        // todo: ann check with lynn
         case SnackBarType.warn:
-          return "fa:fa fa-circle-waiting";
+          return "fa:fa fa-clock";
         default:
-          return "fa:fa fa-circle-exclamation";
+          return "";
       }
     });
 
@@ -75,6 +74,7 @@ export default {
         showSnackBar.value = props.snackBarOptions.show;
         snackBarType.value = props.snackBarOptions.type;
         snackBarContent.value = props.snackBarOptions.content;
+        snackBarTimeOut.value = props.snackBarOptions.displayTime;
       },
       { immediate: true },
     );
@@ -85,6 +85,7 @@ export default {
       snackBarContent,
       snackBarClass,
       snackBarIcon,
+      snackBarTimeOut,
     };
   },
 };

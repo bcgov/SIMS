@@ -17,14 +17,14 @@ import { UserService } from "@/services/UserService";
 import { InstitutionService } from "@/services/InstitutionService";
 import { CreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useFormioDropdownLoader, useToastMessage } from "@/composables";
+import { useFormioDropdownLoader, useSnackBar } from "@/composables";
 import useEmitter from "@/composables/useEmitter";
 
 export default {
   setup() {
     const emitter = useEmitter();
     const store = useStore();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const router = useRouter();
     const formioDataLoader = useFormioDropdownLoader();
     const initialData = ref({});
@@ -37,7 +37,7 @@ export default {
         await store.dispatch("institution/initialize");
         emitter.emit(
           "snackBar",
-          toast.success1("Institution and User successfully created!"),
+          toast.success("Institution and User successfully created!"),
         );
         await store.dispatch("institution/getInstitutionDetails");
         router.push({
@@ -46,7 +46,7 @@ export default {
       } catch (error) {
         emitter.emit(
           "snackBar",
-          toast.error1("Unexpected error while creating the institution."),
+          toast.error("Unexpected error while creating the institution."),
         );
       }
     };
@@ -63,7 +63,7 @@ export default {
       } else {
         emitter.emit(
           "snackBar",
-          toast.error1("Unable to fetch account details."),
+          toast.error("Unable to fetch account details."),
         );
       }
     });

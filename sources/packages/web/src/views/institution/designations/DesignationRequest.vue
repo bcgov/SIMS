@@ -22,7 +22,7 @@ import {
   useFormatters,
   useInstitutionAuth,
   useInstitutionState,
-  useToastMessage,
+  useSnackBar,
 } from "@/composables";
 import { useRouter } from "vue-router";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
@@ -34,12 +34,14 @@ import {
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { SubmitDesignationAgreementDto } from "@/types/contracts/DesignationAgreementContract";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: { DesignationAgreementForm },
   setup() {
     const router = useRouter();
-    const toastMessage = useToastMessage();
+    const emitter = useEmitter();
+    const toast = useSnackBar();
     const formatter = useFormatters();
     const { institutionState } = useInstitutionState();
     const { userFullName, userEmail, isLegalSigningAuthority } =
@@ -87,12 +89,17 @@ export default {
             }),
           ),
         } as SubmitDesignationAgreementDto);
-        toastMessage.success("Submitted", "Designation agreement submitted.");
+        emitter.emit(
+          "snackBar",
+          toast.success("Designation agreement submitted."),
+        );
         router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
       } catch (error) {
-        toastMessage.error(
-          "Unexpected error",
-          "And unexpected error happened during the designation agreement submission.",
+        emitter.emit(
+          "snackBar",
+          toast.error(
+            "And unexpected error happened during the designation agreement submission.",
+          ),
         );
       }
     };

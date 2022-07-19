@@ -58,7 +58,7 @@ import {
 } from "@/types";
 import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
-import { useToastMessage, ModalDialog } from "@/composables";
+import { useSnackBar, ModalDialog } from "@/composables";
 import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
 import {
   FIRST_COE_NOT_COMPLETE,
@@ -100,7 +100,7 @@ export default {
   setup(props: any) {
     const emitter = useEmitter();
     const router = useRouter();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEDTO);
     const menu = ref();
     const items = ref([] as MenuType[]);
@@ -130,7 +130,7 @@ export default {
         );
         emitter.emit(
           "snackBar",
-          toast.success1("Confirmation of Enrollment Confirmed!"),
+          toast.success("Confirmation of Enrollment Confirmed!"),
         );
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
@@ -147,7 +147,7 @@ export default {
               break;
           }
         }
-        emitter.emit("snackBar", toast.error1(`${errorLabel}. ${errorMsg}`));
+        emitter.emit("snackBar", toast.error(`${errorLabel}. ${errorMsg}`));
       }
     };
     const editProgramInformation = async () => {
@@ -159,7 +159,7 @@ export default {
           );
           emitter.emit(
             "snackBar",
-            toast.success1(
+            toast.success(
               "Program Information Request is now available to be edited.",
             ),
           );
@@ -172,7 +172,7 @@ export default {
         } catch {
           emitter.emit(
             "snackBar",
-            toast.error1(
+            toast.error(
               "An error happened while updating Confirmation of Enrollment.",
             ),
           );
@@ -190,7 +190,7 @@ export default {
         );
         emitter.emit(
           "snackBar",
-          toast.success1("Application Status Has Been Updated."),
+          toast.success("Application Status Has Been Updated."),
         );
         router.push({
           name: InstitutionRoutesConst.COE_SUMMARY,
@@ -201,7 +201,7 @@ export default {
       } catch {
         emitter.emit(
           "snackBar",
-          toast.error1(
+          toast.error(
             "An error happened while denying Confirmation of Enrollment.",
           ),
         );

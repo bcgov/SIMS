@@ -28,7 +28,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ScholasticStandingDataAPIInDTO,
 } from "@/services/http/dto/ScholasticStanding.dto";
-import { useFormatters, useToastMessage } from "@/composables";
+import { useFormatters, useSnackBar } from "@/composables";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
@@ -55,7 +55,7 @@ export default {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const initialData = ref({} as ActiveApplicationDataAPIOutDTO);
-    const toast = useToastMessage();
+    const toast = useSnackBar();
 
     const loadInitialData = async () => {
       const applicationDetails =
@@ -116,7 +116,7 @@ export default {
           props.locationId,
           data,
         );
-        emitter.emit("snackBar", toast.success1("Report a change submitted"));
+        emitter.emit("snackBar", toast.success("Report a change submitted"));
         router.push(goBackRouteParams.value);
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
@@ -130,14 +130,14 @@ export default {
           ) {
             emitter.emit(
               "snackBar",
-              toast.warn1(`Not able to submit. ${error.message}`),
+              toast.warn(`Not able to submit. ${error.message}`),
             );
             return;
           }
         }
         emitter.emit(
           "snackBar",
-          toast.error1("An unexpected error happened during the submission."),
+          toast.error("An unexpected error happened during the submission."),
         );
       }
     };

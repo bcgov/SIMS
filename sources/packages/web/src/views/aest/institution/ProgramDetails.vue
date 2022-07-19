@@ -49,7 +49,7 @@ import {
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { COLOR_BLUE } from "@/constants";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
-import { ModalDialog, useToastMessage } from "@/composables";
+import { ModalDialog, useSnackBar } from "@/composables";
 import DeclineProgramModal from "@/components/aest/institution/modals/DeclineProgramModal.vue";
 import useEmitter from "@/composables/useEmitter";
 
@@ -82,7 +82,7 @@ export default {
     const declineProgramModal = ref(
       {} as ModalDialog<DeclineProgram | undefined>,
     );
-    const toast = useToastMessage();
+    const toast = useSnackBar();
 
     const getEducationProgramAndOffering = async () => {
       educationProgram.value =
@@ -105,13 +105,13 @@ export default {
 
         emitter.emit(
           "snackBar",
-          toast.success1(`${educationProgram.value.name} approved !`),
+          toast.success(`${educationProgram.value.name} approved !`),
         );
         await getEducationProgramAndOffering();
       } catch {
         emitter.emit(
           "snackBar",
-          toast.error1("An error happened while approving the program."),
+          toast.error("An error happened while approving the program."),
         );
       }
     };
@@ -131,13 +131,13 @@ export default {
 
         emitter.emit(
           "snackBar",
-          toast.success1(`${educationProgram.value.name} Decline !`),
+          toast.success(`${educationProgram.value.name} Decline !`),
         );
         await getEducationProgramAndOffering();
       } catch {
         emitter.emit(
           "snackBar",
-          toast.error1("An error happened while declining the program."),
+          toast.error("An error happened while declining the program."),
         );
       }
     };

@@ -20,7 +20,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { UserService } from "../../services/UserService";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 import {
   InstitutionUserDetailsDto,
   InstitutionUserPersistDto,
@@ -32,7 +32,7 @@ export default {
   setup() {
     const emitter = useEmitter();
     // Hooks
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const router = useRouter();
     // Data-bind
     const initialData = ref({});
@@ -47,7 +47,7 @@ export default {
         );
         emitter.emit(
           "snackBar",
-          toast.success1("Institution User successfully updated!"),
+          toast.success("Institution User successfully updated!"),
         );
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
@@ -55,7 +55,7 @@ export default {
       } catch (excp) {
         emitter.emit(
           "snackBar",
-          toast.error1("An error happened during the update process."),
+          toast.error("An error happened during the update process."),
         );
       }
     };
@@ -72,7 +72,7 @@ export default {
       } else {
         emitter.emit(
           "snackBar",
-          toast.error1("Unable to fetch Institution user account details."),
+          toast.error("Unable to fetch Institution user account details."),
         );
       }
     });

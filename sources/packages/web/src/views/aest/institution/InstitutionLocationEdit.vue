@@ -22,7 +22,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import LocationEditForm from "@/components/institutions/locations/LocationEditForm.vue";
 import { InstitutionLocationEdit } from "@/types";
 import { InstitutionLocationAPIInDTO } from "@/services/http/dto";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import useEmitter from "@/composables/useEmitter";
 
@@ -37,7 +37,7 @@ export default {
   setup(props: any) {
     const emitter = useEmitter();
     const initialData = ref({} as InstitutionLocationEdit);
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const router = useRouter();
     const updateInstitutionLocation = async (
       data: InstitutionLocationAPIInDTO,
@@ -50,14 +50,14 @@ export default {
         router.push(goBackRouteParams.value);
         emitter.emit(
           "snackBar",
-          toast.success1(
+          toast.success(
             `Your location information for ${data.locationName} have been updated`,
           ),
         );
       } catch (excp) {
         emitter.emit(
           "snackBar",
-          toast.error1("An error happened during the update process."),
+          toast.error("An error happened during the update process."),
         );
       }
     };

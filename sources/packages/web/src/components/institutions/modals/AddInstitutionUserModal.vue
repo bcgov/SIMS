@@ -53,7 +53,7 @@
 <script lang="ts">
 import { ref, watch, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useFormatters, useModalDialog, useToastMessage } from "@/composables";
+import { useFormatters, useModalDialog, useSnackBar } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
 import { UserService } from "@/services/UserService";
 import {
@@ -90,7 +90,7 @@ export default {
       resolvePromise,
       showModal: showModalInternal,
     } = useModalDialog<boolean>();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const processing = ref(false);
     const addUserForm = ref({} as VForm);
     const institutionUserManagement = ref();
@@ -164,7 +164,7 @@ export default {
           userManagementModel.locationAuthorizations,
           props.institutionId,
         );
-        emitter.emit("snackBar", toast.success1("User successfully created."));
+        emitter.emit("snackBar", toast.success("User successfully created."));
         resolvePromise(true);
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
@@ -172,7 +172,7 @@ export default {
         } else {
           emitter.emit(
             "snackBar",
-            toast.error1("An unexpected error happen while updating the user."),
+            toast.error("An unexpected error happen while updating the user."),
           );
         }
       } finally {

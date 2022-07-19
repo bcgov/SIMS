@@ -82,13 +82,13 @@ import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { SearchInstitutionAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { useToastMessage, useFormatters } from "@/composables";
+import { useSnackBar, useFormatters } from "@/composables";
 import useEmitter from "@/composables/useEmitter";
 
 export default {
   setup() {
     const emitter = useEmitter();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const router = useRouter();
     const legalName = ref("");
     const operatingName = ref("");
@@ -108,7 +108,7 @@ export default {
       if (institutions.value.length === 0) {
         emitter.emit(
           "snackBar",
-          toast.warn1("No Institutions found for the given search criteria."),
+          toast.warn("No Institutions found for the given search criteria."),
         );
       }
     };

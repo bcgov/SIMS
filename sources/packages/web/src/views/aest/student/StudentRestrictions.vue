@@ -90,7 +90,7 @@ import { onMounted, ref } from "vue";
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
 import AddStudentRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
-import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
+import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
   GeneralStatusForBadge,
   DEFAULT_PAGE_LIMIT,
@@ -123,7 +123,7 @@ export default {
     const viewRestriction = ref({} as ModalDialog<void>);
     const addRestriction = ref({} as ModalDialog<void>);
     const studentRestriction = ref();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
 
     const loadStudentRestrictions = async () => {
       studentRestrictions.value =
@@ -161,14 +161,14 @@ export default {
         await loadStudentRestrictions();
         emitter.emit(
           "snackBar",
-          toast.success1(
+          toast.success(
             "The given restriction has been resolved and resolution notes added.",
           ),
         );
       } catch (error) {
         emitter.emit(
           "snackBar",
-          toast.error1("Unexpected error while resolving the restriction."),
+          toast.error("Unexpected error while resolving the restriction."),
         );
       }
     };
@@ -186,12 +186,12 @@ export default {
         await loadStudentRestrictions();
         emitter.emit(
           "snackBar",
-          toast.success1("The restriction has been added to student."),
+          toast.success("The restriction has been added to student."),
         );
       } catch (error) {
         emitter.emit(
           "snackBar",
-          toast.error1("Unexpected error while adding the restriction."),
+          toast.error("Unexpected error while adding the restriction."),
         );
       }
     };

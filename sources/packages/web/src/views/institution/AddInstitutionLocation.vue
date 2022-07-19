@@ -18,7 +18,7 @@ import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import useEmitter from "@/composables/useEmitter";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 
 export default {
   props: {
@@ -32,7 +32,7 @@ export default {
     const emitter = useEmitter();
     // Hooks
     const store = useStore();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const router = useRouter();
     const submitted = async (data: InstitutionLocationFormAPIInDTO) => {
       if (props.createMode) {
@@ -42,12 +42,12 @@ export default {
           store.dispatch("institution/getUserInstitutionLocationDetails");
           emitter.emit(
             "snackBar",
-            toast.success1("Institution Location created Successfully!"),
+            toast.success("Institution Location created Successfully!"),
           );
         } catch (excp) {
           emitter.emit(
             "snackBar",
-            toast.error1("An error happened during the create process."),
+            toast.error("An error happened during the create process."),
           );
         }
       }

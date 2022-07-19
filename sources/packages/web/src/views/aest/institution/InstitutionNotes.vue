@@ -48,7 +48,7 @@
 import { onMounted, ref } from "vue";
 import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
-import { useFormatters, useToastMessage } from "@/composables";
+import { useFormatters, useSnackBar } from "@/composables";
 import { InstitutionNoteType, NoteBaseDTO, NoteEntityType } from "@/types";
 import useEmitter from "@/composables/useEmitter";
 
@@ -65,7 +65,7 @@ export default {
     const notes = ref();
     const filteredNoteType = ref();
     const { dateOnlyLongString } = useFormatters();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
 
     const filterNotes = async (noteType?: InstitutionNoteType) => {
       filteredNoteType.value = noteType;
@@ -81,12 +81,12 @@ export default {
         await filterNotes(filteredNoteType.value);
         emitter.emit(
           "snackBar",
-          toast.success1("The note has been added to the institution."),
+          toast.success("The note has been added to the institution."),
         );
       } catch (error) {
         emitter.emit(
           "snackBar",
-          toast.error1("Unexpected error while adding the note."),
+          toast.error("Unexpected error while adding the note."),
         );
       }
     };

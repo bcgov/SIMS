@@ -76,7 +76,7 @@ import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { useToastMessage, useOffering, ModalDialog } from "@/composables";
+import { useSnackBar, useOffering, ModalDialog } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/components/generic/Banner.models";
@@ -110,7 +110,7 @@ export default {
   //Todo: Change the initialData to a well defined contract.
   setup(props: any) {
     const emitter = useEmitter();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const router = useRouter();
     const menu = ref();
     const items = [
@@ -276,7 +276,7 @@ export default {
             );
             emitter.emit(
               "snackBar",
-              toast.success1("Education Offering updated successfully!"),
+              toast.success("Education Offering updated successfully!"),
             );
           } else {
             await EducationProgramOfferingService.shared.createProgramOffering(
@@ -286,14 +286,14 @@ export default {
             );
             emitter.emit(
               "snackBar",
-              toast.success1("Education Offering created successfully!"),
+              toast.success("Education Offering created successfully!"),
             );
           }
           router.push(getRouteLocation());
         } catch (excp) {
           emitter.emit(
             "snackBar",
-            toast.error1(
+            toast.error(
               "An error happened during the Offering saving process.",
             ),
           );
@@ -312,7 +312,7 @@ export default {
           );
           emitter.emit(
             "snackBar",
-            toast.success1(
+            toast.success(
               `The given offering has been ${offeringStatus.toLowerCase()} and notes added.`,
             ),
           );
@@ -320,7 +320,7 @@ export default {
         } catch (error) {
           emitter.emit(
             "snackBar",
-            toast.error1(
+            toast.error(
               "Unexpected error while approving/declining the offering.",
             ),
           );

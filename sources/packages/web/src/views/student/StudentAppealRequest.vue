@@ -53,7 +53,7 @@ import { ApiProcessError, StudentAppealRequest } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   INVALID_APPLICATION_NUMBER,
@@ -72,7 +72,7 @@ export default {
   },
   setup() {
     const emitter = useEmitter();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     let requestFormData: any = undefined;
     const appealRequestsForms = ref([] as StudentAppealRequest[]);
     let applicationId: number;
@@ -96,14 +96,12 @@ export default {
         if (error.response.data?.errorType === INVALID_APPLICATION_NUMBER) {
           emitter.emit(
             "snackBar",
-            toast.warn1(
-              `Application not found. ${error.response.data.message}`,
-            ),
+            toast.warn(`Application not found. ${error.response.data.message}`),
           );
         } else {
           emitter.emit(
             "snackBar",
-            toast.error1(`${errorLabel}. ${errorMessage}`),
+            toast.error(`${errorLabel}. ${errorMessage}`),
           );
         }
       }
@@ -129,7 +127,7 @@ export default {
         );
         emitter.emit(
           "snackBar",
-          toast.success1(
+          toast.success(
             "The request for change has been submitted successfully.",
           ),
         );
@@ -145,14 +143,14 @@ export default {
           ) {
             emitter.emit(
               "snackBar",
-              toast.warn1(`Not able to submit. ${error.message}`),
+              toast.warn(`Not able to submit. ${error.message}`),
             );
             return;
           }
         }
         emitter.emit(
           "snackBar",
-          toast.error1("An unexpected error happened during the submission."),
+          toast.error("An unexpected error happened during the submission."),
         );
       }
     };

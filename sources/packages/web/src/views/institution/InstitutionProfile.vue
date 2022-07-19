@@ -26,7 +26,7 @@ import {
   InstitutionContactAPIInDTO,
 } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 import { useStore } from "vuex";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 import useEmitter from "@/composables/useEmitter";
@@ -37,7 +37,7 @@ export default {
     const emitter = useEmitter();
     // Hooks
     const store = useStore();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const router = useRouter();
     // Data-bind
     const institutionProfileModel = ref({} as InstitutionDetailAPIOutDTO);
@@ -47,7 +47,7 @@ export default {
         await InstitutionService.shared.updateInstitution(data);
         emitter.emit(
           "snackBar",
-          toast.success1("Institution successfully updated!"),
+          toast.success("Institution successfully updated!"),
         );
         await store.dispatch("institution/getInstitutionDetails");
         router.push({
@@ -56,7 +56,7 @@ export default {
       } catch (error) {
         emitter.emit(
           "snackBar",
-          toast.error1("Unexpected error while updating the institution."),
+          toast.error("Unexpected error while updating the institution."),
         );
       }
     };

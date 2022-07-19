@@ -42,7 +42,7 @@ import {
   GetDesignationAgreementsDto,
   DesignationAgreementStatus,
 } from "@/types/contracts/DesignationAgreementContract";
-import { useInstitutionAuth, useToastMessage } from "@/composables";
+import { useInstitutionAuth, useSnackBar } from "@/composables";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
 import useEmitter from "@/composables/useEmitter";
 
@@ -53,7 +53,7 @@ export default {
   setup() {
     const emitter = useEmitter();
     const router = useRouter();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const { isLegalSigningAuthority } = useInstitutionAuth();
     const designations = ref([] as GetDesignationAgreementsDto[]);
 
@@ -69,7 +69,7 @@ export default {
       } else {
         emitter.emit(
           "snackBar",
-          toast.warn1("There is already a pending designation agreement."),
+          toast.warn("There is already a pending designation agreement."),
         );
       }
     };

@@ -53,7 +53,7 @@ import { StudentService } from "@/services/StudentService";
 import { ApplicationService } from "@/services/ApplicationService";
 import {
   useFormioUtils,
-  useToastMessage,
+  useSnackBar,
   ModalDialog,
   useFormatters,
 } from "@/composables";
@@ -101,7 +101,7 @@ export default {
     const router = useRouter();
     const initialData = ref({});
     const formioUtils = useFormioUtils();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const savingDraft = ref(false);
     const submittingApplication = ref(false);
     let applicationWizard: any;
@@ -120,7 +120,7 @@ export default {
         isReadOnly.value = true;
         emitter.emit(
           "snackBar",
-          toast.error1(
+          toast.error(
             "This application can no longer be edited or submitted",
             toast.EXTENDED_MESSAGE_DISPLAY_TIME,
           ),
@@ -187,10 +187,10 @@ export default {
         });
         emitter.emit(
           "snackBar",
-          toast.success1("Application draft saved with success."),
+          toast.success("Application draft saved with success."),
         );
       } catch (error) {
-        emitter.emit("snackBar", toast.error1("An unexpected error happen."));
+        emitter.emit("snackBar", toast.error("An unexpected error happen."));
       } finally {
         savingDraft.value = false;
       }
@@ -211,7 +211,7 @@ export default {
         });
         emitter.emit(
           "snackBar",
-          toast.success1("Thank you, your application has been submitted."),
+          toast.success("Thank you, your application has been submitted."),
         );
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
@@ -228,7 +228,7 @@ export default {
               break;
           }
         }
-        emitter.emit("snackBar", toast.error1(`${errorLabel}. ${errorMsg}`));
+        emitter.emit("snackBar", toast.error(`${errorLabel}. ${errorMsg}`));
       } finally {
         submittingApplication.value = false;
       }

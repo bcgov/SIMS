@@ -18,7 +18,7 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import {
   ModalDialog,
-  useToastMessage,
+  useSnackBar,
   useAuthBCSC,
   useFormatters,
   useStudentStore,
@@ -68,7 +68,7 @@ export default {
   setup(props: any) {
     const emitter = useEmitter();
     const router = useRouter();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const showApplyPDButton = ref();
     const initialData = ref({} as StudentFormData);
     const studentAllInfo = ref({} as StudentFormInfo);
@@ -121,14 +121,14 @@ export default {
         await StudentService.shared.applyForPDStatus();
         emitter.emit(
           "snackBar",
-          toast.success1(
+          toast.success(
             "Your application is submitted. The outcome will display on your profile",
           ),
         );
       } catch (error) {
         emitter.emit(
           "snackBar",
-          toast.error1(
+          toast.error(
             "An error happened during the apply PD process. Please try after sometime.",
           ),
         );
@@ -150,7 +150,7 @@ export default {
           await StudentService.shared.updateStudent(formData);
           emitter.emit(
             "snackBar",
-            toast.success1("Student contact information updated!"),
+            toast.success("Student contact information updated!"),
           );
         } else {
           await StudentService.shared.createStudent(
@@ -162,12 +162,12 @@ export default {
           ]);
           emitter.emit(
             "snackBar",
-            toast.success1("Student was successfully created!"),
+            toast.success("Student was successfully created!"),
           );
         }
         router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
       } catch {
-        emitter.emit("snackBar", toast.error1("Error while saving student"));
+        emitter.emit("snackBar", toast.error("Error while saving student"));
       }
     };
 

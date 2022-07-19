@@ -130,7 +130,7 @@ import {
   ModalDialog,
   useAuth,
   useFormatters,
-  useToastMessage,
+  useSnackBar,
 } from "@/composables";
 import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue";
 import {
@@ -175,7 +175,7 @@ export default {
   },
   setup(props: any) {
     const emitter = useEmitter();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const { parsedToken } = useAuth();
     const { institutionUserRoleToDisplay } = useFormatters();
     const usersListAndCount = ref({} as InstitutionUserAndCountForDataTable);
@@ -229,7 +229,7 @@ export default {
         await getAllInstitutionUsers();
         emitter.emit(
           "snackBar",
-          toast.success1(
+          toast.success(
             `${userDetails.displayName} is ${enabled ? "enabled" : "disabled"}`,
           ),
         );
@@ -240,7 +240,7 @@ export default {
         ) {
           emitter.emit(
             "snackBar",
-            toast.warn1(
+            toast.warn(
               `Cannot disable the institution admin. ${error.message}`,
             ),
           );
@@ -248,7 +248,7 @@ export default {
         }
         emitter.emit(
           "snackBar",
-          toast.error1("An error happened during the update process."),
+          toast.error("An error happened during the update process."),
         );
       }
     };

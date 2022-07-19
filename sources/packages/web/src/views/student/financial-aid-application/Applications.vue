@@ -14,7 +14,7 @@
 <script lang="ts">
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 import { useStore } from "vuex";
 import { SINStatusEnum } from "@/types";
 import { computed } from "vue";
@@ -24,7 +24,7 @@ export default {
   setup() {
     const emitter = useEmitter();
     const router = useRouter();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const store = useStore();
 
     const sinValidStatus = computed(
@@ -39,7 +39,7 @@ export default {
       } catch (error) {
         emitter.emit(
           "snackBar",
-          toast.error1(
+          toast.error(
             "An error happened while trying to start an application.",
           ),
         );

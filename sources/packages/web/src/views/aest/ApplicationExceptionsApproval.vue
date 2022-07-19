@@ -36,7 +36,7 @@ import {
   ApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
-import { useAssessment, useFormatters, useToastMessage } from "@/composables";
+import { useAssessment, useFormatters, useSnackBar } from "@/composables";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import useEmitter from "@/composables/useEmitter";
 
@@ -90,7 +90,7 @@ export default {
   setup(props: any) {
     const emitter = useEmitter();
     const router = useRouter();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
     const { mapRequestAssessmentChipStatus } = useAssessment();
     const applicationExceptions = ref({} as ApplicationExceptionFormModel);
@@ -145,7 +145,7 @@ export default {
         );
         emitter.emit(
           "snackBar",
-          toast.success1(
+          toast.success(
             `Application exception status is now ${approveExceptionPayload.exceptionStatus}.`,
           ),
         );
@@ -153,7 +153,7 @@ export default {
       } catch (error: unknown) {
         emitter.emit(
           "snackBar",
-          toast.error1("An unexpected error happened during the approval."),
+          toast.error("An unexpected error happened during the approval."),
         );
       } finally {
         processing.value = false;

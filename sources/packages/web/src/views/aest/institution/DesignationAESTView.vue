@@ -44,7 +44,7 @@ import {
   useFormatters,
   useDesignationAgreement,
   ModalDialog,
-  useToastMessage,
+  useSnackBar,
 } from "@/composables";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
@@ -84,7 +84,7 @@ export default {
     const { mapDesignationChipStatus } = useDesignationAgreement();
     const designationAgreement = ref({} as GetDesignationAgreementDto);
     const designationFormModel = reactive({} as DesignationModel);
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const showActionButtons = computed(
       () =>
         designationFormModel.designationStatus !==
@@ -190,7 +190,7 @@ export default {
           );
           emitter.emit(
             "snackBar",
-            toast.success1(
+            toast.success(
               `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
             ),
           );
@@ -198,7 +198,7 @@ export default {
         } catch (error) {
           emitter.emit(
             "snackBar",
-            toast.error1(
+            toast.error(
               "Unexpected error while approving/declining the designation.",
             ),
           );

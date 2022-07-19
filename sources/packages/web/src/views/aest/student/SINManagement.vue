@@ -105,7 +105,7 @@ import { StudentService } from "@/services/StudentService";
 import {
   useFileUtils,
   ModalDialog,
-  useToastMessage,
+  useSnackBar,
   useFormatters,
 } from "@/composables";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
@@ -135,7 +135,7 @@ export default {
       {} as ModalDialog<FormIOForm<UpdateSINValidationAPIInDTO> | boolean>,
     );
     const { getISODateOnlyString } = useFormatters();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
     const processingNewSIN = ref(false);
@@ -164,7 +164,7 @@ export default {
         );
         emitter.emit(
           "snackBar",
-          toast.success1(
+          toast.success(
             "New SIN record created and associated to the student.",
           ),
         );
@@ -172,7 +172,7 @@ export default {
       } catch {
         emitter.emit(
           "snackBar",
-          toast.error1("Unexpected error while creating a new SIN record."),
+          toast.error("Unexpected error while creating a new SIN record."),
         );
       } finally {
         processingNewSIN.value = false;
@@ -199,13 +199,13 @@ export default {
         );
         emitter.emit(
           "snackBar",
-          toast.success1("Temporary SIN expiry date updated."),
+          toast.success("Temporary SIN expiry date updated."),
         );
         await loadSINValidations();
       } catch {
         emitter.emit(
           "snackBar",
-          toast.error1("Unexpected error while updating the expiry date."),
+          toast.error("Unexpected error while updating the expiry date."),
         );
       } finally {
         processingEditExpiryDate.value = false;

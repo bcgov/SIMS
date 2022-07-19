@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { useFormioUtils, useToastMessage } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 import { StudentService } from "@/services/StudentService";
 import StudentDocumentList from "@/components/students/StudentDocumentList.vue";
 import { ref } from "vue";
@@ -40,7 +40,7 @@ export default {
     const emitter = useEmitter();
     const reloadDocuments = ref(false);
     const formioUtils = useFormioUtils();
-    const toast = useToastMessage();
+    const toast = useSnackBar();
     const submitForm = async (
       submittedForm: StudentFileUploaderInfoAPIInDTO,
       form: any,
@@ -57,14 +57,14 @@ export default {
         reloadDocuments.value = !reloadDocuments.value;
         emitter.emit(
           "snackBar",
-          toast.success1("Your documents have been submitted!"),
+          toast.success("Your documents have been submitted!"),
         );
       } catch (error) {
         let errorMessage = "An error happened while submitting your documents.";
         if (error.response.data?.errorType === APPLICATION_NOT_FOUND) {
           errorMessage = error.response.data.message;
         }
-        emitter.emit("snackBar", toast.error1(errorMessage));
+        emitter.emit("snackBar", toast.error(errorMessage));
       }
     };
     return { submitForm, reloadDocuments };

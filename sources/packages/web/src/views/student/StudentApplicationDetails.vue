@@ -58,7 +58,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
-import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
+import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import { GetApplicationDataDto, ApplicationStatus } from "@/types";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
@@ -97,7 +97,7 @@ export default {
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
-    const toast = useToastMessage();
+    const toast = useSnackBar();
 
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
@@ -131,7 +131,7 @@ export default {
       } catch (error) {
         emitter.emit(
           "snackBar",
-          toast.error1("Unexpected Error", toast.EXTENDED_MESSAGE_DISPLAY_TIME),
+          toast.error("Unexpected Error", toast.EXTENDED_MESSAGE_DISPLAY_TIME),
         );
       }
     };
