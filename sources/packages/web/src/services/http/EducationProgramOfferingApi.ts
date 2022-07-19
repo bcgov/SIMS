@@ -12,7 +12,10 @@ import {
   EducationProgramOfferingDto,
 } from "@/types";
 import { addSortOptions } from "@/helpers";
-import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
+import {
+  OfferingAssessmentAPIInDTO,
+  OfferingChangeRequestAPIOutDTO,
+} from "@/services/http/dto";
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
    * Creates program offering and returns the id of the created resource.
@@ -277,6 +280,16 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     await this.postCall<OfferingDTO>(
       `institution/offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`,
       payload,
+    );
+  }
+
+  /**
+   * Get all offerings that were were requested for change.
+   * @returns all offerings that were requested for change.
+   */
+  async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
+    return this.getCallTyped<OfferingChangeRequestAPIOutDTO[]>(
+      this.addClientRoot("institution/offering/change-requests"),
     );
   }
 }

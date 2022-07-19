@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   NotFoundException,
   Param,
   Patch,
@@ -19,7 +20,10 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { EducationProgramOfferingService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
-import { OfferingAssessmentAPIInDTO } from "./models/education-program-offering.dto";
+import {
+  OfferingAssessmentAPIInDTO,
+  OfferingChangeRequestAPIOutDTO,
+} from "./models/education-program-offering.dto";
 
 /**
  * Institution location controller for institutions Client.
@@ -70,5 +74,22 @@ export class EducationProgramOfferingAESTController extends BaseController {
       payload.assessmentNotes,
       payload.offeringStatus,
     );
+  }
+  /**
+   * Get all offerings that were were requested for change.
+   * @returns
+   */
+  @Get("change-requests")
+  async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
+    const offerings =
+      await this.programOfferingService.getOfferingChangeRequests();
+    return offerings.map((offering) => ({
+      offeringId: offering.id,
+      offeringName: offering.name,
+      submittedDate: offering.submittedDate,
+      locationName: offering.institutionLocation.name,
+      institutionName:
+        offering.institutionLocation.institution.legalOperatingName,
+    }));
   }
 }

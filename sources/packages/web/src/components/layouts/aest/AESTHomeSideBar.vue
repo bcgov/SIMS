@@ -20,9 +20,14 @@
     <v-list density="compact" nav>
       <v-list-subheader>Institution requests</v-list-subheader>
       <v-list-item
-        :title="pendingDesignationItem.label"
-        :prepend-icon="pendingDesignationItem.icon"
-        @click="pendingDesignationItem.command"
+        :title="designations.label"
+        :prepend-icon="designations.icon"
+        @click="designations.command"
+      />
+      <v-list-item
+        :title="offerings.label"
+        :prepend-icon="offerings.icon"
+        @click="offerings.command"
       />
     </v-list>
     <template #append>
@@ -82,7 +87,7 @@ export default {
       },
     } as MenuModel);
 
-    const pendingDesignationItem = ref({
+    const designations = ref({
       label: "Pending designations",
       icon: "mdi-bookmark-outline",
       command: () => {
@@ -102,11 +107,22 @@ export default {
       },
     } as MenuModel);
 
+    const offerings = ref({
+      label: "Offerings",
+      icon: "mdi-view-list-outline",
+      command: () => {
+        router.push({
+          name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS,
+        });
+      },
+    } as MenuModel);
+
     return {
       topItems,
-      pendingDesignationItem,
+      designations,
       exceptionsItem,
       reports,
+      offerings,
       AESTRoutesConst,
     };
   },

@@ -591,4 +591,29 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       })
       .getOne();
   }
+
+  /**
+   * Get all offerings that were were requested for change
+   * i.e in Awaiting Approval status.
+   * @returns all offerings that were requested for change.
+   */
+  async getOfferingChangeRequests(): Promise<EducationProgramOffering[]> {
+    return this.repo
+      .createQueryBuilder("offerings")
+      .select([
+        "offerings.id",
+        "offerings.name",
+        "offerings.submittedDate",
+        "institutionLocation.name",
+        "institution.legalOperatingName",
+        "institution.operatingName",
+      ])
+      .innerJoin("offerings.educationProgram", "educationProgram")
+      .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .innerJoin("institutionLocation.institution", "institution")
+      .where("offerings.offeringStatus = :offeringStatus", {
+        offeringStatus: OfferingStatus.AwaitingApproval,
+      })
+      .getMany();
+  }
 }

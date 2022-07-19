@@ -11,7 +11,10 @@ import {
   EducationProgramOfferingDto,
   PaginatedResults,
 } from "../types";
-import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
+import {
+  OfferingAssessmentAPIInDTO,
+  OfferingChangeRequestAPIOutDTO,
+} from "@/services/http/dto";
 
 export class EducationProgramOfferingService {
   // Share Instance
@@ -241,5 +244,13 @@ export class EducationProgramOfferingService {
       offeringId,
       payload,
     );
+  }
+
+  /**
+   * Get all offerings that were were requested for change.
+   * @returns all offerings that were requested for change.
+   */
+  async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
+    return ApiClient.EducationProgramOffering.getOfferingChangeRequests();
   }
 }
