@@ -78,7 +78,8 @@ export class InstitutionControllerService {
    * @returns institutions types in an option list (key/value pair) schema.
    */
   async getInstitutionTypeOptions(): Promise<OptionItemAPIOutDTO[]> {
-    const institutionTypes = await this.institutionTypeService.getAll();
+    const institutionTypes =
+      await this.institutionTypeService.getAllInstitutionTypes();
     return institutionTypes.map((institutionType) => ({
       id: institutionType.id,
       description: institutionType.name,
