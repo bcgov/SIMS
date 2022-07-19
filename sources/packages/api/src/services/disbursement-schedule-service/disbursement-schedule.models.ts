@@ -19,7 +19,17 @@ export interface Disbursement {
  * Enum for COE enrollment period.
  */
 export enum EnrollmentPeriod {
+  /**
+   * The ones considered inside a 21 days period
+   * prior to the offering start date, that allow
+   * them to be approved.
+   */
   Current = "current",
+  /**
+   * The ones not yet inside a 21 days period
+   * prior to the offering start date, that allow
+   * them to be approved.
+   */
   Upcoming = "upcoming",
 }
 

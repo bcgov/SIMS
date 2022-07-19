@@ -1,6 +1,6 @@
 import {
   PaginatedResults,
-  COESummaryDTO,
+  COESummaryAPIOutDTO,
   ApplicationDetailsForCOEDTO,
   COEDeniedReasonDto,
   DenyConfirmationOfEnrollment,
@@ -9,20 +9,29 @@ import {
 } from "@/types";
 import ApiClient from "./http/ApiClient";
 import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto/ConfirmationOfEnrolment.dto";
+import { PaginatedResultsAPIOutDTO } from "./http/dto";
 
 export class ConfirmationOfEnrollmentService {
   // Share Instance
   private static instance: ConfirmationOfEnrollmentService;
 
-  public static get shared(): ConfirmationOfEnrollmentService {
+  static get shared(): ConfirmationOfEnrollmentService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getCOESummary(
+  /**
+   * Get all Confirmation Of Enrollment(COE) of a location in an institution
+   * This API is paginated with COE Status as default sort.
+   * @param locationId location to retrieve confirmation of enrollments.
+   * @param enrollmentPeriod types of the period (e.g. current, upcoming)
+   * @param paginationOptions options for pagination.
+   * @returns COE paginated result.
+   */
+  async getCOESummary(
     locationId: number,
     enrollmentPeriod: EnrollmentPeriod,
     paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResults<COESummaryDTO>> {
+  ): Promise<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>> {
     return ApiClient.ConfirmationOfEnrollment.getCOESummary(
       locationId,
       enrollmentPeriod,
@@ -30,7 +39,7 @@ export class ConfirmationOfEnrollmentService {
     );
   }
 
-  public async getApplicationForCOE(
+  async getApplicationForCOE(
     disbursementScheduleId: number,
     locationId: number,
   ): Promise<ApplicationDetailsForCOEDTO> {
@@ -40,7 +49,7 @@ export class ConfirmationOfEnrollmentService {
     );
   }
 
-  public async confirmCOE(
+  async confirmCOE(
     locationId: number,
     disbursementScheduleId: number,
     confirmationData: ConfirmationOfEnrollmentAPIInDTO,
@@ -52,21 +61,18 @@ export class ConfirmationOfEnrollmentService {
     );
   }
 
-  public async rollbackCOE(
-    locationId: number,
-    applicationId: number,
-  ): Promise<void> {
+  async rollbackCOE(locationId: number, applicationId: number): Promise<void> {
     await ApiClient.ConfirmationOfEnrollment.rollbackCOE(
       locationId,
       applicationId,
     );
   }
 
-  public async getCOEDenialReasons(): Promise<COEDeniedReasonDto> {
+  async getCOEDenialReasons(): Promise<COEDeniedReasonDto> {
     return ApiClient.ConfirmationOfEnrollment.getCOEDenialReasons();
   }
 
-  public async denyConfirmationOfEnrollment(
+  async denyConfirmationOfEnrollment(
     locationId: number,
     disbursementScheduleId: number,
     denyCOEPayload: DenyConfirmationOfEnrollment,

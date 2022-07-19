@@ -8,6 +8,8 @@ import {
   UnprocessableEntityException,
   Body,
   Query,
+  ParseEnumPipe,
+  ParseIntPipe,
 } from "@nestjs/common";
 import {
   HasLocationAccess,
@@ -31,7 +33,7 @@ import {
   COEStatus,
   DisbursementValueType,
 } from "../../database/entities";
-import { COESummaryDTO } from "../application/models/application.model";
+import { COESummaryAPIOutDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   dateString,
@@ -39,29 +41,33 @@ import {
   getCOEDeniedReason,
   COE_DENIED_REASON_OTHER_ID,
   getExtendedDateFormat,
-  PaginationParams,
-  PaginationOptions,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
-  FieldSortOrder,
-  PaginatedResults,
   getISODateOnlyString,
   getTotalDisbursementAmount,
+  CustomNamedError,
 } from "../../utilities";
 import {
   ApplicationDetailsForCOEDTO,
   DenyConfirmationOfEnrollmentDto,
   COEDeniedReasonDto,
   ConfirmationOfEnrollmentAPIInDTO,
-} from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
+} from "./models/confirmation-of-enrollment.model";
 import { EnrollmentPeriod } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
-import { ApiProcessError } from "../../types";
-import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "../../constants";
+import {
+  ConfirmationOfEnrollmentPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 const COE_NOT_FOUND_MESSAGE =
   "Confirmation of enrollment not found or application status not valid.";
@@ -73,8 +79,8 @@ const INVALID_TUITION_REMITTANCE_AMOUNT_MESSAGE =
   "Tuition amount provided should be lesser than both (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan).";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@Controller("institution/location")
-@ApiTags("institution")
+@Controller("location")
+@ApiTags(`${ClientTypeBaseRoute.Institution}-location`)
 export class ConfirmationOfEnrollmentController extends BaseController {
   constructor(
     private readonly disbursementScheduleService: DisbursementScheduleService,
@@ -89,38 +95,22 @@ export class ConfirmationOfEnrollmentController extends BaseController {
   /**
    * Get all Confirmation Of Enrollment(COE) of a location in an institution
    * This API is paginated with COE Status as default sort.
-   * @param locationId
-   * @param enrollmentPeriod
-   * @param searchCriteria Search text to search COE.
-   * @param sortField Field to sort COE.
-   * @param page Current page of paginated result.
-   * @param pageLimit Records per page in a paginated result.
-   * @param sortOrder sort order of COE.
-   * @returns COE Paginated Result.
+   * @param locationId location to retrieve confirmation of enrollments.
+   * @param enrollmentPeriod types of the period (e.g. current, upcoming)
+   * @param paginationOptions options for pagination.
+   * @returns COE paginated result.
    */
   @HasLocationAccess("locationId")
   @Get(
     ":locationId/confirmation-of-enrollment/enrollmentPeriod/:enrollmentPeriod",
   )
   async getCOESummary(
-    @Param("locationId") locationId: number,
-    @Param("enrollmentPeriod") enrollmentPeriod: EnrollmentPeriod,
-    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
-    @Query(PaginationParams.SortField) sortField: string,
-    @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
-    @Query(PaginationParams.PageLimit) pageLimit = DEFAULT_PAGE_LIMIT,
-    @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
-  ): Promise<PaginatedResults<COESummaryDTO>> {
-    if (!Object.values(EnrollmentPeriod).includes(enrollmentPeriod)) {
-      throw new NotFoundException("Invalid enrollment period value.");
-    }
-    const paginationOptions = {
-      page: page,
-      pageLimit: pageLimit,
-      sortField: sortField,
-      sortOrder: sortOrder,
-      searchCriteria: searchCriteria,
-    } as PaginationOptions;
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("enrollmentPeriod", new ParseEnumPipe(EnrollmentPeriod))
+    enrollmentPeriod: EnrollmentPeriod,
+    @Query()
+    paginationOptions: ConfirmationOfEnrollmentPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>> {
     const disbursementPaginatedResult =
       await this.disbursementScheduleService.getCOEByLocation(
         locationId,
@@ -147,7 +137,7 @@ export class ConfirmationOfEnrollmentController extends BaseController {
             ),
           };
         },
-      ) as COESummaryDTO[],
+      ),
       count: disbursementPaginatedResult.count,
     };
   }
@@ -164,14 +154,19 @@ export class ConfirmationOfEnrollmentController extends BaseController {
   @Post(
     ":locationId/confirmation-of-enrollment/application/:applicationId/rollback",
   )
+  @ApiUnprocessableEntityResponse({ description: "" })
+  @ApiNotFoundResponse({
+    description:
+      "Student Application was not found or the location does not have access to it or PIR not required Application.",
+  })
   async startCOERollback(
     @UserToken() userToken: IUserToken,
-    @Param("locationId") locationId: number,
-    @Param("applicationId") applicationId: number,
-  ): Promise<number> {
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
-      /** Validation to check if the application is in Enrollment status and first coe is in Required status.
-       * Otherwise the application is not eligible for COE override  */
+      // Validation to check if the application is in Enrollment status and first coe is in Required status.
+      // Otherwise the application is not eligible for COE override.
       const firstCOEofApplication =
         await this.disbursementScheduleService.getFirstCOEOfApplication(
           applicationId,
@@ -202,16 +197,19 @@ export class ConfirmationOfEnrollmentController extends BaseController {
 
       await this.assessmentService.startAssessment(result.createdAssessment.id);
 
-      return result.createdApplication.id;
-    } catch (error) {
-      switch (error.name) {
-        case APPLICATION_NOT_FOUND:
-          throw new NotFoundException(error.message);
-        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          throw error;
+      return { id: result.createdApplication.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case APPLICATION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            throw new UnprocessableEntityException(error.message);
+          default:
+            throw error;
+        }
       }
+      throw error;
     }
   }
 

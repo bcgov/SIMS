@@ -78,17 +78,17 @@ import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import {
-  PaginatedResults,
-  COESummaryDTO,
   DataTableSortOrder,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
   DEFAULT_PAGE_NUMBER,
   PageAndSortEvent,
+  COESummaryAPIOutDTO,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { COLOR_BLUE } from "@/constants";
 import COEStatusBadge from "@/components/generic/COEStatusBadge.vue";
+import { PaginatedResultsAPIOutDTO } from "@/services/http/dto";
 const DEFAULT_SORT_FIELD = "coeStatus";
 
 export default {
@@ -114,7 +114,9 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const { dateString, dateOnlyLongString } = useFormatters();
-    const disbursements = ref({} as PaginatedResults<COESummaryDTO>);
+    const disbursements = ref(
+      {} as PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>,
+    );
     const page = ref(DEFAULT_PAGE_NUMBER);
     const pageLimit = ref(DEFAULT_PAGE_LIMIT);
     const sortField = ref(DEFAULT_SORT_FIELD);

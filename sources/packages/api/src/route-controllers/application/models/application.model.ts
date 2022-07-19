@@ -105,7 +105,8 @@ export interface PIRSummaryDTO {
 export interface ApplicationStatusToBeUpdatedDto {
   applicationStatus: ApplicationStatus;
 }
-export interface COESummaryDTO {
+
+export class COESummaryAPIOutDTO {
   applicationNumber: string;
   studyStartPeriod: string;
   studyEndPeriod: string;

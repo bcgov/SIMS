@@ -956,7 +956,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     if (!appToOverride) {
       throw new CustomNamedError(
-        "Student Application not found or the location does not have access to it or PIR not required Application",
+        "Student Application not found or the location does not have access to it or PIR not required Application.",
         APPLICATION_NOT_FOUND,
       );
     }
