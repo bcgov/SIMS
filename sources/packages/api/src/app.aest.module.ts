@@ -34,6 +34,7 @@ import {
   ApplicationExceptionService,
   StudentScholasticStandingsService,
   SINValidationService,
+  InstitutionUserAuthService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -54,10 +55,12 @@ import {
   ApplicationExceptionAESTController,
   ScholasticStandingAESTController,
   ScholasticStandingControllerService,
+  InstitutionUserAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
+import { InstitutionUserControllerService } from "./route-controllers/institution-user/institution-user.controller.service";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -66,6 +69,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     DesignationAgreementAESTController,
     ApplicationAESTController,
     InstitutionAESTController,
+    InstitutionUserAESTController,
     AssessmentAESTController,
     StudentAESTController,
     StudentAppealAESTController,
@@ -116,6 +120,8 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     StudentScholasticStandingsService,
     ScholasticStandingControllerService,
     SINValidationService,
+    InstitutionUserAuthService,
+    InstitutionUserControllerService,
   ],
 })
 export class AppAESTModule {}

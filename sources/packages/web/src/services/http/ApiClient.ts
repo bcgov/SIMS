@@ -15,12 +15,13 @@ import { ConfirmationOfEnrollmentApi } from "@/services/http/ConfirmationOfEnrol
 import { SupportingUserApi } from "@/services/http/SupportingUserApi";
 import { NoteApi } from "@/services/http/NoteApi";
 import { RestrictionApi } from "@/services/http/RestrictionApi";
-import { DesignationAgreementApi } from "./DesignationAgreementApi";
-import { StudentAppealApi } from "./StudentAppealApi";
-import { StudentAssessmentApi } from "./StudentAssessmentApi";
-import { ReportApi } from "./ReportApi";
-import { ApplicationExceptionApi } from "./ApplicationExceptionApi";
-import { ScholasticStandingApi } from "./ScholasticStandingApi";
+import { DesignationAgreementApi } from "@/services/http/DesignationAgreementApi";
+import { StudentAppealApi } from "@/services/http/StudentAppealApi";
+import { StudentAssessmentApi } from "@/services/http/StudentAssessmentApi";
+import { ReportApi } from "@/services/http/ReportApi";
+import { ApplicationExceptionApi } from "@/services/http/ApplicationExceptionApi";
+import { ScholasticStandingApi } from "@/services/http/ScholasticStandingApi";
+import { InstitutionUserApi } from "@/services/http/InstitutionUserApi";
 
 const ApiClient = {
   Configs: new ConfigApi(),
@@ -46,6 +47,7 @@ const ApiClient = {
   ReportApi: new ReportApi(),
   ApplicationExceptionApi: new ApplicationExceptionApi(),
   ScholasticStandingApi: new ScholasticStandingApi(),
+  InstitutionUserApi: new InstitutionUserApi(),
 };
 
 export default ApiClient;

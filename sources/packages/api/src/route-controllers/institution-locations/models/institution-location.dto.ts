@@ -120,3 +120,8 @@ export enum DesignationStatus {
    */
   NotDesignated = "Not designated",
 }
+
+export class InstitutionLocationsAPIOutDTO {
+  id: number;
+  name: string;
+}

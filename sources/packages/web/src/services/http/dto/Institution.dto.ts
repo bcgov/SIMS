@@ -61,42 +61,6 @@ export interface InstitutionDetailAPIInDTO extends InstitutionProfileAPIInDTO {
   institutionTypeName?: string;
   isBCPrivate?: boolean;
 }
-export interface InstitutionUserAuthTypeAPIOutDTO {
-  role: string;
-  type: string;
-}
-
-export interface InstitutionLocationAuthDataAPIOutDTO {
-  address: AddressAPIOutDTO;
-}
-
-export interface InstitutionAuthLocationAPIOutDTO {
-  id: number;
-  name: string;
-  data: InstitutionLocationAuthDataAPIOutDTO;
-}
-
-export interface InstitutionUserAuthAPIOutDTO {
-  id?: number;
-  authType: InstitutionUserAuthTypeAPIOutDTO;
-  location?: InstitutionAuthLocationAPIOutDTO;
-}
-
-export interface InstitutionUserSummaryAPIOutDTO {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  userName: string;
-  isActive: boolean;
-  userFullName?: string;
-}
-
-export interface InstitutionUserAPIOutDTO {
-  id: number;
-  user: InstitutionUserSummaryAPIOutDTO;
-  authorizations: InstitutionUserAuthAPIOutDTO[];
-}
 
 export interface SearchInstitutionAPIOutDTO {
   id: number;
@@ -144,72 +108,4 @@ export interface CreateInstitutionAPIInDTO {
 export interface AESTCreateInstitutionAPIInDTO
   extends Omit<CreateInstitutionAPIInDTO, "userEmail"> {
   legalOperatingName: string;
-}
-
-export interface InstitutionUserTypeAndRoleAPIOutDTO {
-  userTypes: string[];
-  userRoles: string[];
-}
-
-export interface UserPermissionAPIInDTO {
-  locationId?: number;
-  userType?: string;
-  userRole?: string;
-}
-
-/**
- * Associates a new user from BCeID with an institution
- * associating also the authorizations.
- */
-export interface CreateInstitutionUserAPIInDTO {
-  /**
-   * User BCeID id from BCeID Web Service (e.g. SomeUserName) that will have its
-   * data retrieved to be created on SIMS.
-   */
-  userId: string;
-  /**
-   * Permissions to be associated with the new user.
-   */
-  permissions: UserPermissionAPIInDTO[];
-}
-
-/**
- * Update an existing user association with an institution
- * changing the authorizations.
- */
-export type UpdateInstitutionUserAPIInDTO = Omit<
-  CreateInstitutionUserAPIInDTO,
-  "userId"
->;
-
-export interface UserActiveStatusAPIInDTO {
-  isActive: boolean;
-}
-
-export interface InstitutionLocationAuthAPIOutDTO {
-  locationId: number;
-  userType: string;
-  userRole: string;
-}
-
-export interface UserAuthDetailAPIOutDTO {
-  institutionId: number;
-  authorizations: InstitutionLocationAuthAPIOutDTO[];
-}
-export interface InstitutionUserDetailAPIOutDTO {
-  id?: number;
-  user: InstitutionUserSummaryAPIOutDTO;
-  authorizations: UserAuthDetailAPIOutDTO;
-}
-
-export interface InstitutionUserLocationsAPIOutDTO {
-  id: number;
-  name: string;
-  address: AddressAPIOutDTO;
-}
-
-export interface UserRoleOptionAPIOutDTO {
-  name: string;
-  code: string;
-  id?: number;
 }

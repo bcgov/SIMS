@@ -38,7 +38,7 @@ export class CreateInstitutionUserAPIInDTO {
    * data retrieved to be created on SIMS.
    */
   @IsNotEmpty()
-  userId: string;
+  bceidUserId: string;
   /**
    * Permissions to be associated with the new user.
    */
@@ -55,7 +55,7 @@ export class CreateInstitutionUserAPIInDTO {
  */
 export class UpdateInstitutionUserAPIInDTO extends OmitType(
   CreateInstitutionUserAPIInDTO,
-  ["userId"],
+  ["bceidUserId"],
 ) {}
 
 export class UserActiveStatusAPIInDTO {
@@ -89,13 +89,13 @@ export class InstitutionUserSummaryAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
-  userName?: string;
+  userName: string;
   isActive: boolean;
-  userFullName?: string;
+  userFullName: string;
 }
 
 export class InstitutionUserAPIOutDTO {
-  id?: number;
+  id: number;
   user: InstitutionUserSummaryAPIOutDTO;
   authorizations: InstitutionUserAuthAPIOutDTO[];
 }
@@ -112,26 +112,37 @@ export class UserAuthDetailAPIOutDTO {
 }
 
 export class InstitutionUserDetailAPIOutDTO {
-  id?: number;
   user: InstitutionUserSummaryAPIOutDTO;
   authorizations: UserAuthDetailAPIOutDTO;
 }
 
-export class InstitutionUserLocationsAPIOutDTO {
-  id: number;
-  name: string;
-  address: AddressAPIOutDTO;
-}
-
-/**
- * DTO To load the admin roles dropdown component
- */
-export class UserRoleOptionAPIOutDTO {
-  name: string;
-  code: string;
-}
-
-export class InstitutionUserTypeAndRoleAPIOutDTO {
-  userTypes: string[];
-  userRoles: string[];
+export class InstitutionUserStatusAPIOutDTO {
+  /**
+   * Indicates if the user is present on DB or not.
+   * A user that is not present on an existing institution means that
+   * the user never got access to this institution.
+   * A user not present associated on BCeID to an institution that is also
+   * not present means that the institution must be created, what can be done
+   * by a business BCeID user or by the Ministry for a basic BCeID.
+   */
+  isExistingUser: boolean;
+  /**
+   * Case the user is present indicate if the same is active.
+   */
+  isActiveUser?: boolean;
+  /**
+   * Indicates if the user belongs to an institution already present on DB.
+   * The user can be not present on DB but its institution can be already present,
+   * what means that the user does not have access to the solution.
+   * Case the user is not present and the institution is not present it means
+   * that the institution can be created if the user has a business BCeID account,
+   * otherwise the institution must be created in advance by the Ministry.
+   * !Returned only when isExistingUser is false to support the login process.
+   */
+  associatedInstitutionExists?: boolean;
+  /**
+   * Indicates if the user is a business BCeID.
+   * !Returned only when isExistingUser is false to support the login process.
+   */
+  hasBusinessBCeIDAccount?: boolean;
 }

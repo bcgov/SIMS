@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "../../utilities";
-import { DataSource } from "typeorm";
+import { DataSource, UpdateResult } from "typeorm";
 import { DataModelService } from "../../database/data.model.service";
 import { Student, User } from "../../database/entities";
 import { UserLoginInfo } from "./user.model";
@@ -48,7 +48,16 @@ export class UserService extends DataModelService<User> {
     };
   }
 
-  async updateUserStatus(userId: number, isActive: boolean) {
+  /**
+   * Define the user as active or inactive to allow or prevent access to the system.
+   * @param userId user to be updated.
+   * @param isActive active or inactive value.
+   * @returns update result.
+   */
+  async updateUserStatus(
+    userId: number,
+    isActive: boolean,
+  ): Promise<UpdateResult> {
     return this.repo
       .createQueryBuilder()
       .update(User)
@@ -102,5 +111,19 @@ export class UserService extends DataModelService<User> {
     user.firstName = null;
     user.lastName = userName;
     return this.repo.save(user);
+  }
+
+  /**
+   * Check if a user already exists on DB by the user name that is a unique column.
+   * @param userName unique user name.
+   * @returns true if the user exists, otherwise false.
+   */
+  async doesUserExists(userName: string): Promise<boolean> {
+    const user = await this.repo
+      .createQueryBuilder("user")
+      .select("1")
+      .where("user.userName = :userName", { userName })
+      .getRawOne();
+    return !!user;
   }
 }

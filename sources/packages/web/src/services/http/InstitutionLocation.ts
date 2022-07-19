@@ -4,11 +4,9 @@ import {
   InstitutionLocationFormAPIOutDTO,
   ActiveApplicationDataAPIOutDTO,
   OptionItemAPIOutDTO,
-  InstitutionUserAPIOutDTO,
-  UserActiveStatusAPIInDTO,
-  InstitutionUserLocationsAPIOutDTO,
   InstitutionLocationPrimaryContactAPIInDTO,
   InstitutionLocationAPIInDTO,
+  InstitutionLocationsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class InstitutionLocationApi extends HttpBaseClient {
@@ -43,35 +41,6 @@ export class InstitutionLocationApi extends HttpBaseClient {
     );
   }
 
-  public async getInstitutionLocationUserDetails(
-    userName: string,
-  ): Promise<InstitutionUserAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserAPIOutDTO>(
-      this.addClientRoot(`institution/user/${userName}`),
-    );
-  }
-
-  public async updateUserStatus(
-    userName: string,
-    userStatus: boolean,
-  ): Promise<void> {
-    return this.patchCall<UserActiveStatusAPIInDTO>(
-      this.addClientRoot(`institution/user-status/${userName}`),
-      {
-        isActive: userStatus,
-      },
-    );
-  }
-
-  public async getMyInstitutionLocationsDetails(
-    header?: any,
-  ): Promise<InstitutionUserLocationsAPIOutDTO[]> {
-    return this.getCallTyped<InstitutionUserLocationsAPIOutDTO[]>(
-      this.addClientRoot("institution/my-locations"),
-      header,
-    );
-  }
-
   public async getOptionsList(): Promise<OptionItemAPIOutDTO[]> {
     return this.getCallTyped<OptionItemAPIOutDTO[]>(
       this.addClientRoot("location/options-list"),
@@ -86,6 +55,18 @@ export class InstitutionLocationApi extends HttpBaseClient {
       this.addClientRoot(
         `location/${locationId}/active-application/${applicationId}`,
       ),
+    );
+  }
+
+  /**
+   * Get location details of logged in user.
+   * @returns location details.
+   */
+  async getMyInstitutionLocationsDetails(): Promise<
+    InstitutionLocationsAPIOutDTO[]
+  > {
+    return this.getCallTyped<InstitutionLocationsAPIOutDTO[]>(
+      this.addClientRoot("location"),
     );
   }
 }

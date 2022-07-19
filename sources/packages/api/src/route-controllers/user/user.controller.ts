@@ -35,26 +35,6 @@ export class UserController extends BaseController {
     super();
   }
 
-  @AllowAuthorizedParty(
-    AuthorizedParties.institution,
-    AuthorizedParties.student,
-  )
-  @AllowInactiveUser()
-  @Get("/check-user")
-  async checkUser(@UserToken() userToken: IUserToken): Promise<boolean> {
-    try {
-      const userInSABC = await this.service.getUser(userToken.userName);
-      if (!userInSABC) {
-        return false;
-      } else {
-        return true;
-      }
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @AllowInactiveUser()
   @Get("bceid-account")
@@ -85,7 +65,7 @@ export class UserController extends BaseController {
     }
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @AllowAuthorizedParty(AuthorizedParties.institution, AuthorizedParties.aest)
   @Get("bceid-accounts")
   async getAllBCeIDs(
     @UserToken() userToken: IUserToken,
@@ -126,26 +106,6 @@ export class UserController extends BaseController {
     return {
       accounts,
     };
-  }
-
-  @AllowAuthorizedParty(
-    AuthorizedParties.institution,
-    AuthorizedParties.student,
-  )
-  @AllowInactiveUser()
-  @Get("/check-active-user")
-  async checkActiveUser(@UserToken() userToken: IUserToken): Promise<boolean> {
-    try {
-      const isActive = await this.service.getActiveUser(userToken.userName);
-      if (!isActive) {
-        return false;
-      } else {
-        return true;
-      }
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)

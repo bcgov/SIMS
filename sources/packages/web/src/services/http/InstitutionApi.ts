@@ -13,19 +13,13 @@ import {
   InstitutionDetailAPIOutDTO,
   InstitutionContactAPIInDTO,
   InstitutionProfileAPIInDTO,
-  InstitutionUserAPIOutDTO,
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
   CreateInstitutionAPIInDTO,
-  InstitutionUserTypeAndRoleAPIOutDTO,
-  InstitutionUserDetailAPIOutDTO,
-  UserRoleOptionAPIOutDTO,
   InstitutionLocationAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
-  CreateInstitutionUserAPIInDTO,
-  UpdateInstitutionUserAPIInDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -80,25 +74,6 @@ export class InstitutionApi extends HttpBaseClient {
     );
   }
 
-  async sync() {
-    return this.patchCall(this.addClientRoot("institution/sync"), {});
-  }
-
-  async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserTypeAndRoleAPIOutDTO>(
-      this.addClientRoot("institution/user-types-roles"),
-    );
-  }
-
-  async getMyInstitutionDetails(
-    header?: any,
-  ): Promise<InstitutionUserDetailAPIOutDTO> {
-    return this.getCallTyped<InstitutionUserDetailAPIOutDTO>(
-      this.addClientRoot("institution/my-details"),
-      header,
-    );
-  }
-
   async getInstitutionTypeOptions(): Promise<OptionItemDto[]> {
     try {
       const response = await this.apiClient.get(
@@ -107,22 +82,6 @@ export class InstitutionApi extends HttpBaseClient {
       );
       return response.data;
     } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  async checkIfExist(guid: string, headers: any): Promise<boolean> {
-    try {
-      await this.apiClient.head(
-        this.addClientRoot(`institution/${guid}`),
-        headers,
-      );
-      return true;
-    } catch (error) {
-      if (404 === error.response.status) {
-        return false;
-      }
       this.handleRequestError(error);
       throw error;
     }
@@ -196,19 +155,6 @@ export class InstitutionApi extends HttpBaseClient {
     );
   }
 
-  /**
-   * Controller method to get all institution users.
-   * @param url url to be send
-   * @returns All the institution users for the given institution.
-   */
-  async institutionUserSummary(
-    url: string,
-  ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
-    return this.getCallTyped<PaginatedResults<InstitutionUserAPIOutDTO>>(
-      this.addClientRoot(url),
-    );
-  }
-
   async getPaginatedAESTInstitutionProgramsSummary(
     institutionId: number,
     pageSize: number,
@@ -248,40 +194,5 @@ export class InstitutionApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
-  }
-
-  async getGetAdminRoleOptions(): Promise<UserRoleOptionAPIOutDTO[]> {
-    return this.getCallTyped<UserRoleOptionAPIOutDTO[]>(
-      this.addClientRoot("institution/admin-roles"),
-    );
-  }
-
-  /**
-   * Create a user, associate with the institution, and assign the authorizations.
-   * @param payload authorizations to be associated with the user.
-   * @returns Primary identifier of the created resource.
-   */
-  async createInstitutionUserWithAuth(
-    payload: CreateInstitutionUserAPIInDTO,
-  ): Promise<void> {
-    await this.postCall<CreateInstitutionUserAPIInDTO>(
-      this.addClientRoot("institution/user"),
-      payload,
-    );
-  }
-
-  /**
-   * Updates the permissions of an institution user.
-   * @param userName user to have the permissions updated.
-   * @param payload permissions to be update.
-   */
-  async updateInstitutionUserWithAuth(
-    userName: string,
-    payload: UpdateInstitutionUserAPIInDTO,
-  ): Promise<void> {
-    return this.patchCall<UpdateInstitutionUserAPIInDTO>(
-      this.addClientRoot(`institution/user/${userName}`),
-      payload,
-    );
   }
 }
