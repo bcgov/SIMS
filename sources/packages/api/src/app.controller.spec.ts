@@ -27,7 +27,7 @@ describe("AppController", () => {
 
   describe("root", () => {
     it("should return Hello world string with db connection status and version", () => {
-      const expected = `Hello World! The database connection is ${
+      const expected = `Hello World! The database dataSource is ${
         simsDataSource.isInitialized
       } and version: ${process.env.VERSION ?? "-1"}`;
       expect(appController.getHello()).toBe(expected);

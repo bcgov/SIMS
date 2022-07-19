@@ -14,7 +14,7 @@ export class AppController {
 
   @Get("/user-info")
   @ApiTags("user-info")
-  keycloak(@Req() req: any): object {
+  keycloak(@Req() req: any): Record<string, unknown> {
     console.dir(req.headers);
     return req.user;
   }
