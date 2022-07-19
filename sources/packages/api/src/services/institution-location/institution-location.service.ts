@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { DataSource, SelectQueryBuilder } from "typeorm";
+import { DataSource, In, SelectQueryBuilder } from "typeorm";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
 import {
   LocationWithDesignationStatus,
@@ -174,7 +174,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   async getMyInstitutionLocations(
     locationIds: number[],
   ): Promise<InstitutionLocation[]> {
-    return this.repo.findByIds(locationIds);
+    return this.repo.findBy({ id: In(locationIds) });
   }
 
   /**

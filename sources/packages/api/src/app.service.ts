@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { simsDataSource } from "config/ormconfig";
+import { simsDataSource } from "src/database/config/ormconfig";
 
 @Injectable()
 export class AppService {

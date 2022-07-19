@@ -1,6 +1,6 @@
 require("../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
-import { simsDataSource } from "config/ormconfig";
+import { simsDataSource } from "src/database/config/ormconfig";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { closeDB, setupDB } from "./testHelpers";

@@ -36,7 +36,6 @@ import {
   InstitutionUserPermissionModel,
 } from "./institution.service.model";
 import { BCeIDAccountTypeCodes } from "../bceid/bceid.models";
-import { simsDataSource } from "config/ormconfig";
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
 export const LEGAL_SIGNING_AUTHORITY_MSG =
   "Legal signing authority already exist for this Institution.";
@@ -50,7 +49,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   institutionUserTypeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
   institutionUserAuthRepo: Repository<InstitutionUserAuth>;
   constructor(
-    dataSource: DataSource,
+    private readonly dataSource: DataSource,
     private readonly bceidService: BCeIDService,
     private readonly userService: UserService,
   ) {
@@ -487,7 +486,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     }
 
     // establish  database dataSource
-    const queryRunner = simsDataSource.createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     // get previous associations
     const previousAssociations = await this.getAssociationByUserID(

@@ -23,7 +23,7 @@ describe.skip("Test User model", () => {
     await repo.save(sub);
 
     // Fetch
-    const item = await repo.findByIds([sub.id]);
+    const item = await repo.findBy({ id: sub.id });
     expect(item.length).toBeGreaterThan(0);
     const r = item[0];
     expect(r.id).toEqual(sub.id);

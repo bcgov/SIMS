@@ -572,7 +572,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     } else {
       applicationQuery.orderBy(
-        `CASE application.applicationStatus
+        `CASE application.application_status
               WHEN '${ApplicationStatus.draft}' THEN 1
               WHEN '${ApplicationStatus.submitted}' THEN 2
               WHEN '${ApplicationStatus.inProgress}' THEN 3
@@ -864,7 +864,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         overwrittenStatus: ApplicationStatus.overwritten,
       })
       .orderBy(
-        `CASE application.pirStatus
+        `CASE application.pir_status
             WHEN '${ProgramInfoStatus.required}' THEN 1
             WHEN '${ProgramInfoStatus.submitted}' THEN 2
             WHEN '${ProgramInfoStatus.completed}' THEN 3

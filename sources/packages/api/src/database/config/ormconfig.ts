@@ -5,13 +5,13 @@ const directLoad =
 
 const entities = directLoad
   ? ["src/database/entities/*.model{.ts,.js}"]
-  : ["dist/database/entities/*.model{.ts,.js}"];
+  : ["dist/src/database/entities/*.model{.ts,.js}"];
 
 const migrations = directLoad
   ? ["src/database/migrations/*{.ts,.js}"]
-  : ["dist/database/migrations/*{.ts,.js}"];
+  : ["dist/src/database/migrations/*{.ts,.js}"];
 
-const ormConfig: PostgresConnectionOptions = {
+export const ormConfig: PostgresConnectionOptions = {
   type: "postgres",
   host: process.env.POSTGRES_HOST || "localhost",
   port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
@@ -28,5 +28,3 @@ export const simsDataSource = new DataSource({
   ...ormConfig,
   logging: ["error", "warn", "info"],
 });
-
-export default ormConfig;

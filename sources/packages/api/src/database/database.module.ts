@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { LoggerModule } from "../logger/logger.module";
 import { DatabaseService } from "./database.service";
-import ormConfig from "config/ormconfig";
+import { ormConfig } from "../database/config/ormconfig";
 
 const finalConfig: any = {
   ...ormConfig,

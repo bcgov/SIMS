@@ -241,7 +241,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       // default sort and order
       summaryResult.orderBy(
-        `CASE programs.programStatus
+        `CASE programs.program_status
                 WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
                 WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
                 WHEN '${ProgramStatus.Declined}' THEN ${SortPriority.Priority3}
@@ -351,7 +351,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       // default sort and order
       paginatedProgramQuery.orderBy(
-        `CASE programs.programStatus
+        `CASE programs.program_status
                 WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
                 WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
                 WHEN '${ProgramStatus.Declined}' THEN ${SortPriority.Priority3}

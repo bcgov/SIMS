@@ -1,4 +1,4 @@
-import ormConfig, { simsDataSource } from "config/ormconfig";
+import { ormConfig, simsDataSource } from "../src/database/config/ormconfig";
 
 /**
  * Script main execution method
