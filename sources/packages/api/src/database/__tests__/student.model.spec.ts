@@ -48,7 +48,7 @@ describe("Test student model", () => {
     await controller.save(sub);
 
     // Fetch and test
-    const result = await controller.findById(sub.id);
+    const result = await controller.getStudentById(sub.id);
     expect(result.id).toEqual(sub.id);
     expect(result.user).toBeDefined();
     expect(result.user.id).toEqual(sub.user.id);
