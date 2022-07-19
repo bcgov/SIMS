@@ -13,11 +13,7 @@ import {
   IsInstitutionAdmin,
   UserToken,
 } from "../../auth/decorators";
-import {
-  InstitutionService,
-  InstitutionTypeService,
-  UserService,
-} from "../../services";
+import { InstitutionService, UserService } from "../../services";
 import {
   InstitutionContactAPIInDTO,
   InstitutionDetailAPIOutDTO,
