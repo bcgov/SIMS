@@ -36,7 +36,7 @@ import { ref } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useFormioUtils } from "@/composables";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
-import { DenyConfirmationOfEnrollment } from "@/types";
+import { DenyConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto";
 
 const COE_DENIAL_REASON_RADIO = "coeDenyReasonId";
 
@@ -72,7 +72,9 @@ export default {
       );
     };
 
-    const submitApplication = async (args: DenyConfirmationOfEnrollment) => {
+    const submitApplication = async (
+      args: DenyConfirmationOfEnrollmentAPIInDTO,
+    ) => {
       context.emit("submitData", args);
     };
     return {

@@ -32,8 +32,8 @@ import {
   DisbursementSchedule,
   COEStatus,
   DisbursementValueType,
+  ProgramInfoStatus,
 } from "../../database/entities";
-import { COESummaryAPIOutDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   dateString,
@@ -46,11 +46,12 @@ import {
   CustomNamedError,
 } from "../../utilities";
 import {
-  ApplicationDetailsForCOEDTO,
-  DenyConfirmationOfEnrollmentDto,
-  COEDeniedReasonDto,
+  ApplicationDetailsForCOEAPIOutDTO,
+  DenyConfirmationOfEnrollmentAPIInDTO,
+  COEDeniedReasonAPIOutDTO,
   ConfirmationOfEnrollmentAPIInDTO,
-} from "./models/confirmation-of-enrollment.model";
+  COESummaryAPIOutDTO,
+} from "./models/confirmation-of-enrollment.dto";
 import { EnrollmentPeriod } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
@@ -154,12 +155,13 @@ export class ConfirmationOfEnrollmentController extends BaseController {
   @Post(
     ":locationId/confirmation-of-enrollment/application/:applicationId/rollback",
   )
-  @ApiUnprocessableEntityResponse({ description: "" })
   @ApiNotFoundResponse({
-    description:
-      "Student Application was not found or the location does not have access to it or PIR not required Application.",
+    description: `Student Application not found or the location does not have access to it or the PIR is defined with the status as '${ProgramInfoStatus.notRequired}'.`,
   })
-  async startCOERollback(
+  @ApiUnprocessableEntityResponse({
+    description: `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.enrollment}' and COE status '${COEStatus.required}' to be override.`,
+  })
+  async rollbackCOE(
     @UserToken() userToken: IUserToken,
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("applicationId", ParseIntPipe) applicationId: number,
@@ -214,19 +216,20 @@ export class ConfirmationOfEnrollmentController extends BaseController {
   }
 
   /**
-   * Get the application details for Confirmation Of Enrollment(COE)
-   * @param locationId location id
-   * @param disbursementScheduleId disbursement schedule id of COE
-   * @returns application details for COE
+   * Get the application details for the Confirmation Of Enrollment(COE).
+   * @param locationId location id.
+   * @param disbursementScheduleId disbursement schedule id of COE.
+   * @returns application details for COE.
    */
   @HasLocationAccess("locationId")
+  @ApiNotFoundResponse({ description: COE_NOT_FOUND_MESSAGE })
   @Get(
     ":locationId/confirmation-of-enrollment/disbursement/:disbursementScheduleId",
   )
   async getApplicationForCOE(
     @Param("locationId") locationId: number,
     @Param("disbursementScheduleId") disbursementScheduleId: number,
-  ): Promise<ApplicationDetailsForCOEDTO> {
+  ): Promise<ApplicationDetailsForCOEAPIOutDTO> {
     const disbursementSchedule =
       await this.disbursementScheduleService.getDisbursementAndApplicationDetails(
         locationId,
@@ -280,18 +283,22 @@ export class ConfirmationOfEnrollmentController extends BaseController {
 
   /**
    * Approve confirmation of enrollment(COE).
-   ** An application can have up to two COEs based on the disbursement.
-   ** Hence COE Approval happens twice for application with more than once disbursement.
-   ** Irrespective of number of COEs to be approved, Application status is set to complete
-   ** on first COE approval.
-   * @param locationId location id of the application
-   * @param disbursementScheduleId disbursement schedule id of COE
+   * An application can have up to two COEs based on the disbursement schedule,
+   * hence the COE approval happens twice for application with more than once disbursement.
+   * Irrespective of number of COEs to be approved, application status is set to complete
+   * on first COE approval.
+   * @param locationId location id of the application.
+   * @param disbursementScheduleId disbursement schedule id of COE.
+   * @param payload COE confirmation information.
    */
+  @HasLocationAccess("locationId")
+  @ApiNotFoundResponse({ description: COE_NOT_FOUND_MESSAGE })
   @ApiUnprocessableEntityResponse({
     description:
-      "Tuition amount provided should be lesser than both (Actual tuition + Program related costs) and (Canada grants + Canada Loan + BC Loan). OR First disbursement(COE) not complete. Please complete the first disbursement.",
+      "Tuition amount provided should be lesser than both (actual tuition + program related costs) and (Canada grants + Canada Loan + BC Loan) " +
+      `or confirmation of enrollment window is greater than ${COE_WINDOW} days ` +
+      "or the first disbursement(COE) is not completed and it must be completed.",
   })
-  @HasLocationAccess("locationId")
   @Patch(
     ":locationId/confirmation-of-enrollment/disbursement/:disbursementScheduleId/confirm",
   )
@@ -311,8 +318,8 @@ export class ConfirmationOfEnrollmentController extends BaseController {
     if (!disbursementSchedule) {
       throw new NotFoundException(COE_NOT_FOUND_MESSAGE);
     }
-    // institution user can only confirm COE, when the student is
-    // within COE_WINDOW of disbursement date
+    // Institution user can only confirm COE, when the student is
+    // within COE_WINDOW of disbursement date.
     if (
       !this.applicationService.withinValidCOEWindow(
         disbursementSchedule.disbursementDate,
@@ -390,20 +397,23 @@ export class ConfirmationOfEnrollmentController extends BaseController {
 
   /**
    * Deny the Confirmation Of Enrollment(COE).
-   ** Note: If an application has 2 COEs, and if the first COE is Rejected then 2nd COE is implicitly rejected.
+   ** Note: If an application has 2 COEs, and if the first COE is rejected then 2nd COE is implicitly rejected.
    * @param locationId location that is completing the COE.
    * @param disbursementScheduleId disbursement schedule id of COE.
    * @param payload contains the denied reason of the
    * student application.
    */
   @HasLocationAccess("locationId")
+  @ApiNotFoundResponse({
+    description: "Unable to find a COE which could be completed.",
+  })
   @Patch(
     ":locationId/confirmation-of-enrollment/disbursement/:disbursementScheduleId/deny",
   )
   async denyConfirmationOfEnrollment(
     @Param("locationId") locationId: number,
     @Param("disbursementScheduleId") disbursementScheduleId: number,
-    @Body() payload: DenyConfirmationOfEnrollmentDto,
+    @Body() payload: DenyConfirmationOfEnrollmentAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     if (
@@ -444,11 +454,11 @@ export class ConfirmationOfEnrollmentController extends BaseController {
   }
 
   /**
-   * Get all COE denied reason, which are active
-   * @returns COE denied reason list
+   * Get all COE denied reasons, which are active.
+   * @returns COE denied reason list.
    */
   @Get("confirmation-of-enrollment/denial-reasons")
-  async getCOEDeniedReason(): Promise<COEDeniedReasonDto[]> {
+  async getCOEDeniedReason(): Promise<COEDeniedReasonAPIOutDTO[]> {
     const coeDeniedReason =
       await this.deniedCOEReasonService.getCOEDeniedReasons();
     return coeDeniedReason.map((eachCOEDeniedReason) => ({

@@ -956,7 +956,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     if (!appToOverride) {
       throw new CustomNamedError(
-        "Student Application not found or the location does not have access to it or PIR not required Application.",
+        `Student Application not found or the location does not have access to it or the PIR is defined with the status as '${ProgramInfoStatus.notRequired}'.`,
         APPLICATION_NOT_FOUND,
       );
     }
@@ -1072,19 +1072,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * checks if current PST/PDT date from offering
-   * start date is inside or equal to COE window
-   * @param offeringStartDate offering start date
-   * @returns True if current to offering
-   * start date is within COE window else False
+   * Checks if current date from offering start date
+   * is inside or equal to COE window.
+   * @param offeringStartDate offering start date.
+   * @returns true if current to offering
+   * start date is within COE window otherwise false.
    */
   withinValidCOEWindow(offeringStartDate: Date): boolean {
-    return (
-      dateDifference(
-        setToStartOfTheDayInPSTPDT(new Date()),
-        getPSTPDTDate(offeringStartDate, true),
-      ) <= COE_WINDOW
-    );
+    return dateDifference(new Date(), offeringStartDate) <= COE_WINDOW;
   }
 
   /**

@@ -83,12 +83,15 @@ import {
   PAGINATION_LIST,
   DEFAULT_PAGE_NUMBER,
   PageAndSortEvent,
-  COESummaryAPIOutDTO,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { COLOR_BLUE } from "@/constants";
 import COEStatusBadge from "@/components/generic/COEStatusBadge.vue";
-import { PaginatedResultsAPIOutDTO } from "@/services/http/dto";
+import {
+  COESummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
+
 const DEFAULT_SORT_FIELD = "coeStatus";
 
 export default {

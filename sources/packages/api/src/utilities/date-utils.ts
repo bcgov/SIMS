@@ -50,19 +50,16 @@ export const dateString = (date: string | Date): string => {
 };
 
 /**
- * find the date difference
- * @param firstDate first date.
- * @param lastDate Last date.
+ * Difference in days between endDate and startDate (endDate-startDate).
+ * @param endDate end date.
+ * @param startDate start date.
  * @returns the date difference in days.
  */
 export const dateDifference = (
-  firstDate: string | Date,
-  lastDate: string | Date,
+  endDate: string | Date,
+  startDate: string | Date,
 ): number => {
-  const date1 = new Date(firstDate).getTime();
-  const date2 = new Date(lastDate).getTime();
-  const difference = date2 - date1;
-  return difference / (1000 * 60 * 60 * 24);
+  return dayjs(endDate).diff(startDate, "days");
 };
 
 /**

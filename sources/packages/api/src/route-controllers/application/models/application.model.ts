@@ -106,17 +106,6 @@ export interface ApplicationStatusToBeUpdatedDto {
   applicationStatus: ApplicationStatus;
 }
 
-export class COESummaryAPIOutDTO {
-  applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  applicationId: number;
-  coeStatus: COEStatus;
-  fullName: string;
-  disbursementScheduleId: number;
-  disbursementDate: string;
-}
-
 export interface ApplicationWithProgramYearDto {
   applicationId: number;
   formName: string;
