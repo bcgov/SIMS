@@ -79,7 +79,7 @@ export class AssessmentAESTController extends BaseController {
       id: appeals.id,
       submittedDate: appeals.submittedDate,
       status: appeals.status,
-      requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
+      requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
     }));
   }
 
