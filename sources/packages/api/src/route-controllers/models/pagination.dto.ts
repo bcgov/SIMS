@@ -60,7 +60,7 @@ export class InstitutionUserPaginationOptionsAPIInDTO extends PaginationOptionsA
 
 export class ConfirmationOfEnrollmentPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn(["fullName", "applicationNumber", "disbursementDate"])
+  @IsIn(["fullName", "applicationNumber", "disbursementDate", "coeStatus"])
   sortField?: string;
 }
 

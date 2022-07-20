@@ -24,8 +24,8 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
     enrollmentPeriod: EnrollmentPeriod,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>> {
-    let url = `institution/location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}?`;
-    url = getPaginationQueryString(paginationOptions);
+    let url = `location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}?`;
+    url += getPaginationQueryString(paginationOptions);
     return this.getCallTyped<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>>(
       this.addClientRoot(url),
     );
@@ -41,16 +41,11 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
     disbursementScheduleId: number,
     locationId: number,
   ): Promise<ApplicationDetailsForCOEAPIOutDTO> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}`,
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCallTyped<ApplicationDetailsForCOEAPIOutDTO>(
+      this.addClientRoot(
+        `location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}`,
+      ),
+    );
   }
 
   /**
@@ -70,7 +65,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   ): Promise<void> {
     try {
       await this.patchCall(
-        `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/confirm`,
+        `location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/confirm`,
         payload,
       );
     } catch (error: unknown) {
@@ -88,7 +83,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
    */
   async rollbackCOE(locationId: number, applicationId: number): Promise<void> {
     await this.postCall(
-      `institution/location/${locationId}/confirmation-of-enrollment/application/${applicationId}/rollback`,
+      `location/${locationId}/confirmation-of-enrollment/application/${applicationId}/rollback`,
       null,
     );
   }
@@ -98,16 +93,9 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
    * @returns COE denied reason list.
    */
   async getCOEDenialReasons(): Promise<COEDeniedReasonAPIOutDTO> {
-    try {
-      const response = await this.apiClient.get(
-        "institution/location/confirmation-of-enrollment/denial-reasons",
-        this.addAuthHeader(),
-      );
-      return response?.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return await this.getCallTyped<COEDeniedReasonAPIOutDTO>(
+      this.addClientRoot("location/confirmation-of-enrollment/denial-reasons"),
+    );
   }
 
   /**
@@ -124,7 +112,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
     payload: DenyConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
     await this.patchCall<DenyConfirmationOfEnrollmentAPIInDTO>(
-      `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/deny`,
+      `location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/deny`,
       payload,
     );
   }

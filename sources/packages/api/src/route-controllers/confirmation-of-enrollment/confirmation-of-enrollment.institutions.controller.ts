@@ -81,8 +81,10 @@ const INVALID_TUITION_REMITTANCE_AMOUNT_MESSAGE =
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
-@ApiTags(`${ClientTypeBaseRoute.Institution}-location`)
-export class ConfirmationOfEnrollmentController extends BaseController {
+@ApiTags(
+  `${ClientTypeBaseRoute.Institution}-location[Confirmation Of Enrollment - CoE]`,
+)
+export class ConfirmationOfEnrollmentInstitutionsController extends BaseController {
   constructor(
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly applicationService: ApplicationService,

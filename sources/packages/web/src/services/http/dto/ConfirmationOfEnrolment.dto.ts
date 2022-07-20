@@ -42,7 +42,6 @@ export interface ApplicationDetailsForCOEAPIOutDTO {
   disbursementDate: string;
 }
 
-// TODO: Change by the option list?
 export interface COEDeniedReasonAPIOutDTO {
   value: number;
   label: string;

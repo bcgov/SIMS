@@ -24,6 +24,8 @@ import {
   StudentScholasticStandingsService,
   StudentAssessmentService,
   InstitutionUserAuthService,
+  DisbursementScheduleService,
+  COEDeniedReasonService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -36,6 +38,7 @@ import {
   ScholasticStandingControllerService,
   InstitutionUserInstitutionsController,
   InstitutionUserControllerService,
+  ConfirmationOfEnrollmentInstitutionsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -48,6 +51,7 @@ import { LoggerModule } from "./logger/logger.module";
     InstitutionUserInstitutionsController,
     InstitutionLocationInstitutionsController,
     ScholasticStandingInstitutionsController,
+    ConfirmationOfEnrollmentInstitutionsController,
   ],
   providers: [
     FormService,
@@ -78,6 +82,8 @@ import { LoggerModule } from "./logger/logger.module";
     ScholasticStandingControllerService,
     InstitutionUserAuthService,
     InstitutionUserControllerService,
+    DisbursementScheduleService,
+    COEDeniedReasonService,
   ],
 })
 export class AppInstitutionsModule {}
