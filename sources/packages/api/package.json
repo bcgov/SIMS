@@ -25,7 +25,8 @@
     "local": "ENVIRONMENT=local NODE_ENV=local npm run start:dev",
     "test:local": "NODE_ENV=local ENVIRONMENT=test jest",
     "test:local:win": "SET NODE_ENV=local&&SET ENVIRONMENT=test&&jest",
-    "docker:start": "npm run setup:db && node dist/main"
+    "docker:start": "npm run setup:db && node dist/main",
+    "migration:create": "cd src/database/migrations && npx typeorm-ts-node-commonjs migration:create"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.3",
