@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Brackets, Connection } from "typeorm";
+import { Brackets, DataSource } from "typeorm";
 import {
   Application,
   AssessmentTriggerType,
@@ -37,11 +37,11 @@ import { StudentAssessmentService } from "../student-assessment/student-assessme
 @Injectable()
 export class StudentAppealService extends RecordDataModelService<StudentAppeal> {
   constructor(
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {
-    super(connection.getRepository(StudentAppeal));
+    super(dataSource.getRepository(StudentAppeal));
   }
 
   /**
@@ -284,7 +284,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     const auditUser = { id: auditUserId } as User;
     const auditDate = new Date();
 
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       appealToUpdate.appealRequests = [];
       for (const approval of approvals) {
         // Create the new note.

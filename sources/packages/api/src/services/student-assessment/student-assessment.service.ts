@@ -13,7 +13,7 @@ import {
   StudentAssessment,
   User,
 } from "../../database/entities";
-import { Brackets, Connection, IsNull, UpdateResult } from "typeorm";
+import { Brackets, DataSource, IsNull, UpdateResult } from "typeorm";
 import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
 import { StudentRestrictionService, WorkflowActionsService } from "..";
 import {
@@ -32,11 +32,11 @@ import {
 @Injectable()
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
   constructor(
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly workflow: WorkflowActionsService,
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {
-    super(connection.getRepository(StudentAssessment));
+    super(dataSource.getRepository(StudentAssessment));
   }
 
   /**
@@ -205,7 +205,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     programId?: number,
     offeringId?: number,
   ): Promise<StudentAssessment> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const assessmentRepo =
         transactionalEntityManager.getRepository(StudentAssessment);
       const assessment = await assessmentRepo

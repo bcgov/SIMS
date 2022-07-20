@@ -10,7 +10,7 @@ import {
   ProgramStatus,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
@@ -36,11 +36,11 @@ import { EducationProgramOfferingService } from "../education-program-offering/e
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
   constructor(
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
   ) {
-    super(connection.getRepository(EducationProgram));
-    this.offeringsRepo = connection.getRepository(EducationProgramOffering);
+    super(dataSource.getRepository(EducationProgram));
+    this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
   }
 
   /**
@@ -240,8 +240,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
     } else {
       // default sort and order
+      // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
       summaryResult.orderBy(
-        `CASE programs.programStatus
+        `CASE programs.program_status
                 WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
                 WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
                 WHEN '${ProgramStatus.Declined}' THEN ${SortPriority.Priority3}
@@ -350,8 +351,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
     } else {
       // default sort and order
+      // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
       paginatedProgramQuery.orderBy(
-        `CASE programs.programStatus
+        `CASE programs.program_status
                 WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
                 WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
                 WHEN '${ProgramStatus.Declined}' THEN ${SortPriority.Priority3}
@@ -569,7 +571,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     userId: number,
     payload: ApproveProgram,
   ): Promise<void> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       // create Note
       const notes = new Note();
       notes.description = payload.approvedNote;
@@ -620,7 +622,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     userId: number,
     payload: DeclineProgram,
   ): Promise<void> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       // create Note
       const notes = new Note();
       notes.description = payload.declinedNote;

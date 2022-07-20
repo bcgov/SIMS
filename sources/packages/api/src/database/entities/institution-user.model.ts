@@ -1,5 +1,4 @@
 import {
-  Column,
   Entity,
   JoinColumn,
   OneToMany,
@@ -18,21 +17,21 @@ export class InstitutionUser extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne((type) => User, { eager: true, cascade: true })
+  @OneToOne(() => User, { eager: true, cascade: true })
   @JoinColumn({
     name: "user_id",
     referencedColumnName: "id",
   })
   user: User;
 
-  @OneToOne((type) => Institution, { eager: true, cascade: true })
+  @OneToOne(() => Institution, { eager: true, cascade: true })
   @JoinColumn({
     name: "institution_id",
     referencedColumnName: "id",
   })
   institution: Institution;
 
-  @OneToMany((type) => InstitutionUserAuth, (auth) => auth.institutionUser, {
+  @OneToMany(() => InstitutionUserAuth, (auth) => auth.institutionUser, {
     eager: true,
     cascade: true,
   })

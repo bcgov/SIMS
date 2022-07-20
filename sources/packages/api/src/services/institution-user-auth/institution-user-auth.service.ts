@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 import { InstitutionUserAuth } from "../../database/entities";
 import { InstitutionUserAuthorizations } from "./institution-user-auth.models";
 import {
@@ -12,10 +12,10 @@ import { InstitutionLocationService } from "../institution-location/institution-
 @Injectable()
 export class InstitutionUserAuthService extends RecordDataModelService<InstitutionUserAuth> {
   constructor(
-    connection: Connection,
+    dataSource: DataSource,
     private readonly locationService: InstitutionLocationService,
   ) {
-    super(connection.getRepository(InstitutionUserAuth));
+    super(dataSource.getRepository(InstitutionUserAuth));
   }
 
   async getAuthorizationsByUserName(

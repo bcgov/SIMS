@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 import { ProgramYear } from "../../database/entities/program-year.model";
 
 @Injectable()
 export class ProgramYearService extends RecordDataModelService<ProgramYear> {
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(ProgramYear));
+  constructor(dataSource: DataSource) {
+    super(dataSource.getRepository(ProgramYear));
   }
 
   async getProgramYears(): Promise<ProgramYear[]> {

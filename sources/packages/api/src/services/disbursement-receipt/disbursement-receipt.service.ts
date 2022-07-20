@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   DisbursementReceipt,
@@ -14,8 +14,8 @@ import { DisbursementReceiptModel } from "./disbursement-receipt.model";
  */
 @Injectable()
 export class DisbursementReceiptService extends RecordDataModelService<DisbursementReceipt> {
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(DisbursementReceipt));
+  constructor(private readonly dataSource: DataSource) {
+    super(dataSource.getRepository(DisbursementReceipt));
   }
 
   /**
@@ -80,7 +80,7 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
         disbursementReceiptValue.createdAt = createdAt;
         return disbursementReceiptValue;
       });
-    await this.connection.transaction(async (transactionalEntityManager) => {
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
       //Query builder inserts does not cascade insert with relationships.
       //Cascaded insert can be achieved only through repository.save().
       //Hence inside a transaction we are using save to persist relations.
