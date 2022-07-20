@@ -5,7 +5,7 @@ import { ProgramYear } from "../../database/entities/program-year.model";
 
 @Injectable()
 export class ProgramYearService extends RecordDataModelService<ProgramYear> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(ProgramYear));
   }
 

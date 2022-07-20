@@ -572,6 +572,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     } else {
       applicationQuery.orderBy(
+        // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
         `CASE application.application_status
               WHEN '${ApplicationStatus.draft}' THEN 1
               WHEN '${ApplicationStatus.submitted}' THEN 2
@@ -840,40 +841,43 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @returns student Application list.
    */
   async getPIRApplications(locationId: number): Promise<Application[]> {
-    return this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.applicationNumber",
-        "application.id",
-        "application.pirStatus",
-        "currentAssessment.id",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "student",
-      ])
-      .leftJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
-      .innerJoin("application.student", "student")
-      .innerJoinAndSelect("student.user", "user")
-      .where("application.location.id = :locationId", { locationId })
-      .andWhere("application.pirStatus is not null")
-      .andWhere("application.pirStatus != :nonPirStatus", {
-        nonPirStatus: ProgramInfoStatus.notRequired,
-      })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.overwritten,
-      })
-      .orderBy(
-        `CASE application.pir_status
+    return (
+      this.repo
+        .createQueryBuilder("application")
+        .select([
+          "application.applicationNumber",
+          "application.id",
+          "application.pirStatus",
+          "currentAssessment.id",
+          "offering.studyStartDate",
+          "offering.studyEndDate",
+          "student",
+        ])
+        .leftJoin("application.currentAssessment", "currentAssessment")
+        .leftJoin("currentAssessment.offering", "offering")
+        .innerJoin("application.student", "student")
+        .innerJoinAndSelect("student.user", "user")
+        .where("application.location.id = :locationId", { locationId })
+        .andWhere("application.pirStatus is not null")
+        .andWhere("application.pirStatus != :nonPirStatus", {
+          nonPirStatus: ProgramInfoStatus.notRequired,
+        })
+        .andWhere("application.applicationStatus != :overwrittenStatus", {
+          overwrittenStatus: ApplicationStatus.overwritten,
+        })
+        // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
+        .orderBy(
+          `CASE application.pir_status
             WHEN '${ProgramInfoStatus.required}' THEN 1
             WHEN '${ProgramInfoStatus.submitted}' THEN 2
             WHEN '${ProgramInfoStatus.completed}' THEN 3
             WHEN '${ProgramInfoStatus.declined}' THEN 4
             ELSE 5
           END`,
-      )
-      .addOrderBy("application.applicationNumber")
-      .getMany();
+        )
+        .addOrderBy("application.applicationNumber")
+        .getMany()
+    );
   }
   /**
    * Update Student Application status.

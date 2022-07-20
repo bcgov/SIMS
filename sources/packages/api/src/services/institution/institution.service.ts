@@ -11,7 +11,7 @@ import {
   Note,
   NoteType,
 } from "../../database/entities";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, IsNull, Repository } from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
 import { BCeIDService } from "../bceid/bceid.service";
 import { AccountDetails } from "../bceid/account-details.model";
@@ -122,7 +122,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       }
       // Find the correct user type and role.
       const authType = await this.institutionUserTypeAndRoleRepo.findOne({
-        where: { type: permission.userType, role: permission.userRole ?? null },
+        where: {
+          type: permission.userType,
+          role: permission.userRole ?? IsNull(),
+        },
       });
       if (!authType) {
         throw new Error(
@@ -210,7 +213,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       await this.institutionUserTypeAndRoleRepo.findOneOrFail({
         where: {
           type: InstitutionUserType.admin,
-          role: null,
+          role: IsNull(),
         },
       });
     // Assign the new user with an admin authorization.
@@ -506,7 +509,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       }
       // Find the correct user type and role.
       const authType = await this.institutionUserTypeAndRoleRepo.findOne({
-        where: { type: permission.userType, role: permission.userRole ?? null },
+        where: {
+          type: permission.userType,
+          role: permission.userRole ?? IsNull(),
+        },
       });
       if (!authType) {
         throw new Error(

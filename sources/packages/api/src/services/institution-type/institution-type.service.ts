@@ -8,7 +8,7 @@ import { DataSource } from "typeorm";
  */
 @Injectable()
 export class InstitutionTypeService extends RecordDataModelService<InstitutionType> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(InstitutionType));
   }
 

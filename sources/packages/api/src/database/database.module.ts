@@ -2,16 +2,12 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { LoggerModule } from "../logger/logger.module";
 import { DatabaseService } from "./database.service";
-import { ormConfig } from "../database/config/ormconfig";
+import { ormConfig } from "./data-source";
 
-const finalConfig: any = {
-  ...ormConfig,
-  schema: process.env.DB_SCHEMA || "sims",
-};
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      ...finalConfig,
+      ...ormConfig,
       logging: ["error", "warn"],
     }),
     LoggerModule,

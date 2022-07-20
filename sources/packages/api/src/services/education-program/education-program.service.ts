@@ -240,6 +240,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
     } else {
       // default sort and order
+      // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
       summaryResult.orderBy(
         `CASE programs.program_status
                 WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
@@ -350,6 +351,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
     } else {
       // default sort and order
+      // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
       paginatedProgramQuery.orderBy(
         `CASE programs.program_status
                 WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}

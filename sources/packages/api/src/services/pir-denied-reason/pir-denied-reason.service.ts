@@ -5,7 +5,7 @@ import { PIRDeniedReason } from "../../database/entities/pir-denied-reason.model
 
 @Injectable()
 export class PIRDeniedReasonService extends RecordDataModelService<PIRDeniedReason> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(PIRDeniedReason));
   }
 

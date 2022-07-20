@@ -3,7 +3,7 @@ require("../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { DatabaseModule } from "./database.module";
 import { DatabaseService } from "./database.service";
-import { simsDataSource } from "../database/config/ormconfig";
+import { simsDataSource } from "./data-source";
 
 describe("Database Service", () => {
   let service: DatabaseService;

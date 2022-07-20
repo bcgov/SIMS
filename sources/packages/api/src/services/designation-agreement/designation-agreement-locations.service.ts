@@ -11,7 +11,7 @@ import {
  */
 @Injectable()
 export class DesignationAgreementLocationService extends RecordDataModelService<DesignationAgreementLocation> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(DesignationAgreementLocation));
   }
 
