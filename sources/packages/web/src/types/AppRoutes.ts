@@ -27,6 +27,7 @@ export enum AppRoutes {
   LocationProgramsEdit = "location-programs/location/:locationId/program-edit/:programId",
   LocationOfferings = "location-offerings/location/:locationId/education-program/:programId",
   LocationOfferingsEdit = "location-offerings/location/:locationId/education-program/:programId/offering/:offeringId",
+  LocationOfferingsRequestChange = "location-offerings/location/:locationId/education-program/:programId/offering/:offeringId/request-change",
   LocationProgramsOfferingsCreate = "location-offerings/location/:locationId/education-program/:programId/create",
   LocationUsers = "location-users/",
   ActiveApplicationsSummary = "active-applications/location/:locationId/summary",
@@ -84,7 +85,6 @@ export enum AppRoutes {
   PartnerSupportingInfo = "supporting-info/partner",
   // Shared
   Login = "login",
-  LoginWithBusinessBCeID = "login/business-bceid",
   DisabledUser = "login/disabled-user",
   UnknownUser = "login/unknown-user",
   ForbiddenUser = "/forbidden-user",

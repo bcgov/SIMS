@@ -1,4 +1,4 @@
-export interface CRAValidationResultDto {
+export class CRAValidationResultAPIOutDTO {
   generatedFile: string;
   uploadedRecords: number;
 }

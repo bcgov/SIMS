@@ -71,6 +71,7 @@ export interface ProgramOfferingDto {
   locationName: string;
   institutionName: string;
   courseLoad?: number;
+  hasExistingApplication?: boolean;
 }
 
 export interface ProgramOfferingDetailsDto {
@@ -80,10 +81,12 @@ export interface ProgramOfferingDetailsDto {
 /**
  * Transformation util for Program Offering.
  * @param offering
+ * @param hasExistingApplication is the offering linked to any application.
  * @returns ProgramOfferingDto
  */
 export const transformToProgramOfferingDto = (
   offering: EducationProgramOffering,
+  hasExistingApplication?: boolean,
 ): ProgramOfferingDto => {
   return {
     id: offering.id,
@@ -111,6 +114,7 @@ export const transformToProgramOfferingDto = (
     assessedBy: getUserFullName(offering.assessedBy),
     assessedDate: offering.assessedDate,
     courseLoad: offering.courseLoad,
+    hasExistingApplication,
   };
 };
 

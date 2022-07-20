@@ -1,10 +1,10 @@
 import { IsDateString, IsOptional } from "class-validator";
 
-export interface ESDCFileResultDTO {
+export class ESDCFileResultAPIOutDTO {
   generatedFile: string;
   uploadedRecords: number;
 }
-export interface ESDCFileResponseDTO {
+export class ESDCFileResponseAPIOutDTO {
   processSummary: string[];
   errorsSummary: string[];
 }
@@ -13,4 +13,9 @@ export class DailyDisbursementReportAPIInDTO {
   @IsOptional()
   @IsDateString()
   batchRunDate?: string;
+}
+
+export class ProcessResponseAPIOutDTO {
+  processSummary: string[];
+  errorsSummary: string[];
 }

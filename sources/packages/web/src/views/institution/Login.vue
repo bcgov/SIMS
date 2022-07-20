@@ -1,49 +1,70 @@
 <template>
-  <v-card elevation="2" class="mx-auto mt-15" max-width="690px" outlined>
-    <v-card-header>
-      <v-card-header-text>
-        <v-card-title class="my-6 bold-text" style="font-size: 27px"
-          >Welcome to StudentAid BC</v-card-title
-        >
-        <v-card-subtitle>Welcome text goes here…</v-card-subtitle>
-      </v-card-header-text>
-    </v-card-header>
-    <v-card-text
-      >We are using BCeID for Authentication. Please click on Login/Register
-      buttons below to start your sign in/sign up with your Business BCeID.
-      <Message severity="error" v-if="showBasicBCeIDMessage">
-        No such Business account has been found with BCeID. Please login with
-        your Business BCeId
-      </Message>
-      <Message severity="error" v-if="showDisabledUserMessage">
-        Disabled User - you don't have access to the system. Please contact
-        Administrator for more informations.
-      </Message>
-      <Message severity="error" v-if="showUnknownUserMessage">
-        The user was validated successfully but is not currently allowed to have
-        access to this application. Please contact the Administrator for more
-        information
-      </Message>
-    </v-card-text>
-    <v-card-actions>
-      <v-row justify="center" class="my-3">
-        <v-btn
-          class="primary-btn-background"
-          @click="login"
-          prepend-icon="fa:fa fa-user"
-        >
-          Login with BCeID
-        </v-btn>
-        <v-btn
-          class="primary-btn-background"
-          @click="login"
-          variant="outlined"
-          prepend-icon="fa:fa fa-user-plus"
-        >
-          Sign Up with BCeID
-        </v-btn>
+  <v-card elevation="2" class="mx-auto mt-12" max-width="620px" outlined>
+    <v-card-text>
+      <v-row no-gutters>
+        <v-col cols="9">
+          <h1 class="category-header-large primary-color">
+            Welcome to StudentAid BC
+          </h1>
+          <p class="mb-5">
+            Login or sign up here to manage your institution account.
+          </p>
+          <content-group>
+            <v-row>
+              <v-col>
+                <h3 class="category-header-medium primary-color">Login</h3>
+                <p class="sign-in-description">
+                  For returning users—login using your BCeID.
+                </p>
+                <v-btn
+                  class="primary-btn-background"
+                  @click="login"
+                  prepend-icon="fa:fa fa-user"
+                >
+                  Login with BCeID
+                </v-btn>
+              </v-col>
+              <v-col
+                ><h3 class="category-header-medium primary-color">Sign up</h3>
+                <p class="sign-in-description">
+                  For new users—sign up using your BCeID.
+                </p>
+                <v-btn
+                  class="primary-btn-background"
+                  @click="login"
+                  variant="outlined"
+                  prepend-icon="fa:fa fa-user-plus"
+                >
+                  Sign Up with BCeID
+                </v-btn></v-col
+              >
+            </v-row>
+          </content-group>
+        </v-col>
+        <v-col
+          ><v-img
+            height="260"
+            class="ml-2"
+            alt="Person standing with laptop"
+            src="@/assets/images/person-standing-with-laptop.svg"
+        /></v-col>
+        <v-col cols="12" class="my-n3">
+          <Message severity="error" v-if="showBasicBCeIDMessage">
+            No such Business account has been found with BCeID. Please login
+            with your Business BCeId.
+          </Message>
+          <Message severity="error" v-if="showDisabledUserMessage">
+            Disabled user - you don't have access to the system. Please contact
+            Administrator for more information.
+          </Message>
+          <Message severity="error" v-if="showUnknownUserMessage">
+            The user was validated successfully but is not currently allowed to
+            have access to this application. Please contact the Administrator
+            for more information.
+          </Message>
+        </v-col>
       </v-row>
-    </v-card-actions>
+    </v-card-text>
   </v-card>
 </template>
 
@@ -52,7 +73,6 @@ import { useAuth } from "@/composables";
 import { AppIDPType, ClientIdType } from "@/types";
 
 export default {
-  components: {},
   props: {
     showBasicBCeIDMessage: {
       type: Boolean,
@@ -79,3 +99,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.sign-in-description {
+  max-width: 180px;
+}
+</style>

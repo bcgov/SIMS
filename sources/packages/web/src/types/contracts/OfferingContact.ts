@@ -45,6 +45,7 @@ export interface OfferingDTO {
   assessedBy?: string;
   assessedDate?: Date;
   courseLoad?: number;
+  hasExistingApplication?: boolean;
 }
 
 /**
@@ -73,6 +74,7 @@ export interface OfferingFormModel {
   offeringChipStatus: string;
   clientType?: ClientIdType;
   offeringStatusToDisplay: OfferingStatus;
+  hasExistingApplication?: boolean;
 }
 
 export interface ProgramValidationModel {

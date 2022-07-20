@@ -4,14 +4,15 @@ import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { SFASIntegrationProcessingService } from "../../sfas-integration/sfas-integration-processing.service";
-import { ProcessResultDTO } from "./models/sfas-integration.dto";
+import { ProcessResultAPIOutDTO } from "./models/sfas-integration.dto";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-@Controller("system-access/sfas-integration")
-@ApiTags("system-access")
-export class SFASIntegrationController extends BaseController {
+@Controller("sfas-integration")
+@ApiTags(`${ClientTypeBaseRoute.SystemAccess}-sfas-integration`)
+export class SFASIntegrationSystemAccessController extends BaseController {
   constructor(private readonly sfas: SFASIntegrationProcessingService) {
     super();
   }
@@ -21,7 +22,7 @@ export class SFASIntegrationController extends BaseController {
    * inserting or updating the records.
    */
   @Post("process")
-  async processSinValidation(): Promise<ProcessResultDTO[]> {
+  async processSinValidation(): Promise<ProcessResultAPIOutDTO[]> {
     this.logger.log("Executing SFAS integration...");
     const results = await this.sfas.process();
     this.logger.log("SFAS integration process executed.");

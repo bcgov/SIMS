@@ -78,3 +78,8 @@ export interface ECertUploadResult {
   generatedFile: string;
   uploadedRecords: number;
 }
+
+export interface ESDCFileResponse {
+  processSummary: string[];
+  errorsSummary: string[];
+}

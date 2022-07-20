@@ -1,9 +1,22 @@
 import { Vue } from "vue-class-component";
 
+/**
+ * Vuetify result from a call to the 'validate()' method.
+ */
 export interface FormValidationResult {
   valid: boolean;
 }
 
+/**
+ * Vuetify error message.
+ */
+export interface ErrorMessage {
+  errorMessages: string[];
+}
+
+/**
+ * Vuetify v-form type definition.
+ */
 export type VForm = Vue & {
   /**
    * Validates all registered inputs. Returns true if successful and false if not.
@@ -18,4 +31,8 @@ export type VForm = Vue & {
    * Resets validation of all registered inputs without modifying their state
    */
   resetValidation: () => void;
+  /**
+   * Form errors.
+   */
+  errors: ErrorMessage[];
 };

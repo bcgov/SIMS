@@ -4,8 +4,7 @@ import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
-import { InstitutionService } from "./InstitutionService";
-import { ApplicationToken, BCeIDDetailsDto } from "@/types";
+import { ApplicationToken } from "@/types";
 import { RouteHelper } from "@/helpers";
 import { LocationAsRelativeRaw } from "vue-router";
 import {
@@ -15,6 +14,7 @@ import {
 import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
 import { useStudentStore } from "@/composables";
+import { InstitutionUserService } from "@/services/InstitutionUserService";
 
 /**
  * Manages the KeyCloak initialization and authentication methods.
@@ -82,8 +82,6 @@ export class AuthService {
       clientId: config.authConfig.clientIds[clientType],
     });
 
-    let isForbiddenUser = false;
-
     try {
       await this.keycloak.init({
         onLoad: "check-sso",
@@ -98,44 +96,15 @@ export class AuthService {
         );
         switch (clientType) {
           case ClientIdType.Student: {
-            const studentStore = useStudentStore(store);
-            const hasStudentAccount =
-              await StudentService.shared.synchronizeFromUserToken();
-            await studentStore.setHasStudentAccount(hasStudentAccount);
-            if (hasStudentAccount) {
-              await studentStore.updateProfileData();
-            } else {
-              // If the student is not present, redirect to student profile
-              // for account creation.
-              this.priorityRedirect = {
-                name: StudentRoutesConst.STUDENT_PROFILE,
-              };
-            }
+            await this.processStudentLogin();
             break;
           }
           case ClientIdType.Institution: {
-            const authHeader = HttpBaseClient.createAuthHeader(
-              this.keycloak.token,
-            );
-            const bceIdAccountDetails =
-              await UserService.shared.getBCeIDAccountDetails(authHeader);
-            isForbiddenUser = await this.navigateForInstitution(
-              authHeader,
-              bceIdAccountDetails,
-            );
+            await this.processInstitutionLogin();
             break;
           }
           case ClientIdType.AEST: {
-            const authHeader = HttpBaseClient.createAuthHeader(
-              this.keycloak.token,
-            );
-            const isAuthorized = await UserService.shared.syncAESTUser(
-              authHeader,
-            );
-            if (!isAuthorized) {
-              isForbiddenUser = true;
-              await this.logout(ClientIdType.AEST, { notAllowedUser: true });
-            }
+            await this.processAESTLogin();
             break;
           }
         }
@@ -144,51 +113,95 @@ export class AuthService {
       }
     } catch (error) {
       console.error(`Keycloak initialization error - ${clientType}`);
-      console.log(error);
-    }
-    this.keycloak.onTokenExpired = () => {
-      store.dispatch("auth/logout");
-    };
-    if (isForbiddenUser) {
-      throw new Error("Forbidden user");
+      console.error(error);
     }
   }
 
-  private async navigateForInstitution(
-    authHeader: any,
-    bceIdAccountDetails: BCeIDDetailsDto,
-  ): Promise<boolean> {
-    if (!bceIdAccountDetails) {
-      await this.logout(ClientIdType.Institution, { isBasicBCeID: true });
-      return false;
-    } else if (await UserService.shared.checkUser(authHeader)) {
-      if (!(await UserService.shared.checkActiveUser(authHeader))) {
-        await this.logout(ClientIdType.Institution, { isUserDisabled: true });
-        return true;
-      }
-      await store.dispatch("institution/initialize", authHeader);
-      return false;
+  /**
+   * Process the login for the student redirecting to the student profile
+   * creation case it is the first access.
+   */
+  private async processStudentLogin() {
+    const studentStore = useStudentStore(store);
+    const hasStudentAccount =
+      await StudentService.shared.synchronizeFromUserToken();
+    await studentStore.setHasStudentAccount(hasStudentAccount);
+    if (hasStudentAccount) {
+      await studentStore.updateProfileData();
     } else {
-      if (
-        await InstitutionService.shared.checkIfExist(
-          bceIdAccountDetails.institution.guid,
-          authHeader,
-        )
-      ) {
-        await this.logout(ClientIdType.Institution, { isUnknownUser: true });
-        return true;
-      }
+      // If the student is not present, redirect to student profile
+      // for account creation.
+      this.priorityRedirect = {
+        name: StudentRoutesConst.STUDENT_PROFILE,
+      };
+    }
+  }
+
+  /**
+   * Process the login for the institution executing the verifications
+   * to determine if the user can proceed or must be redirect somewhere.
+   */
+  private async processInstitutionLogin() {
+    const userStatus =
+      await InstitutionUserService.shared.getInstitutionUserStatus();
+    if (userStatus.isActiveUser === true) {
+      // This is the usual login process when everything is ready and the user
+      // is allowed to access the system. In this case ensure that the user
+      // and institution information is in sync with BCeID.
+      await InstitutionUserService.shared.syncBCeIDInformation();
+      // User is active so just proceed.
+      // The BCeID sync must happen prior to this method to ensure that the most
+      // updated information will be loaded into the store.
+      await store.dispatch("institution/initialize");
+      return;
+    }
+
+    if (userStatus.isActiveUser === false) {
+      // User exists and it is not active.
+      // Redirect to login page with a proper message.
+      await this.logout(ClientIdType.Institution, {
+        isUserDisabled: true,
+      });
+      return;
+    }
+
+    if (
+      !userStatus.isExistingUser &&
+      !userStatus.associatedInstitutionExists &&
+      userStatus.hasBusinessBCeIDAccount
+    ) {
+      // Business BCeID user logging for the first time when the institution is not created yet.
+      // Redirect to the institution profile to allow the user to create the institution.
       this.priorityRedirect = {
         name: InstitutionRoutesConst.INSTITUTION_CREATE,
       };
-      return false;
+      return;
+    }
+
+    if (!userStatus.isExistingUser) {
+      // User is a business BCeID, the institution exists but the user was never added, hence he is not allowed to access
+      // the application and must request to his administrator to include him using the manage users UI.
+      // Or user is a basic BCeID that must be added by the Ministry before have access to the system.
+      await this.logout(ClientIdType.Institution, {
+        isUnknownUser: true,
+      });
+    }
+  }
+
+  /**
+   * Process the login for AEST verifying if the user belongs to the group that
+   * allow an IDIR to have access to the application.
+   */
+  private async processAESTLogin() {
+    const isAuthorized = await UserService.shared.syncAESTUser();
+    if (!isAuthorized) {
+      await this.logout(ClientIdType.AEST, { notAllowedUser: true });
     }
   }
 
   async logout(
     type: ClientIdType,
     options?: {
-      isBasicBCeID?: boolean;
       isUserDisabled?: boolean;
       isUnknownUser?: boolean;
       notAllowedUser?: boolean;
@@ -200,9 +213,7 @@ export class AuthService {
     let redirectUri = RouteHelper.getAbsoluteRootRoute(type);
     switch (type) {
       case ClientIdType.Institution: {
-        if (options?.isBasicBCeID) {
-          redirectUri += "/login/business-bceid";
-        } else if (options?.isUserDisabled) {
+        if (options?.isUserDisabled) {
           redirectUri += "/login/disabled-user";
         } else if (options?.isUnknownUser) {
           redirectUri += "/login/unknown-user";
@@ -237,6 +248,7 @@ export class AuthService {
     const siteMinderLogoutURL = `${externalLogoutUrl}?returl=${logoutURL}&retnow=1`;
     window.location.href = siteMinderLogoutURL;
   }
+
   async renewTokenIfExpired() {
     await HttpBaseClient.renewTokenIfExpired();
   }

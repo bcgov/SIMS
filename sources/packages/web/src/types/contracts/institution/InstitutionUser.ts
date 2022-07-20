@@ -1,10 +1,7 @@
-import { Address } from "../Common";
 import { InstitutionLocationsDetails } from "./InstitutionLocation";
 
 export enum InstitutionUserTypes {
   admin = "admin",
-  // TODO: To be removed.
-  locationManager = "location-manager",
   user = "user",
 }
 
@@ -13,15 +10,15 @@ export enum InstitutionUserRoles {
 }
 
 export interface InstitutionUserViewModel {
-  id: number;
+  institutionUserId: number;
   email: string;
   userName: string;
   displayName: string;
-  location: string[];
-  userType: string[];
-  role: string;
+  locations: string[];
+  userType: string;
+  roles: string[];
   isActive: boolean;
-  disableRemove?: boolean;
+  disableRemove: boolean;
 }
 
 export interface InstitutionAuthType {
@@ -92,8 +89,8 @@ export interface InstitutionStateForStore {
 export interface LocationStateForStore {
   id: number;
   name: string;
-  address: Address;
 }
+
 export interface InstitutionUserAndAuthDetailsForStore {
   user: {
     email: string;
@@ -106,7 +103,7 @@ export interface InstitutionUserAndAuthDetailsForStore {
   authorizations: AuthorizationsForStore;
 }
 
-export interface InstitutionUserAndCountForDataTable {
+export interface InstitutionUserSummary {
   results: InstitutionUserViewModel[];
   count: number;
 }
@@ -150,7 +147,3 @@ export class UserManagementModel {
   isLegalSigningAuthority = false;
   locationAuthorizations = [] as LocationAuthorization[];
 }
-
-export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
-export const LEGAL_SIGNING_AUTHORITY_MSG =
-  "Legal signing authority already exists for this Institution.";

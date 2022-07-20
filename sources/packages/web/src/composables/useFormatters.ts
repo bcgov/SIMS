@@ -3,7 +3,7 @@ import {
   PENDING_SIN_MESSAGE,
 } from "@/constants/message-constants";
 import { SINValidStatus } from "@/store/modules/student/student";
-import { Address, SINStatusEnum } from "@/types";
+import { Address, InstitutionUserRoles, SINStatusEnum } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
 
 const DEFAULT_EMPTY_VALUE = "-";
@@ -182,6 +182,20 @@ export function useFormatters() {
     );
   };
 
+  /**
+   * Convert the user role in the expected format to be displayed.
+   * @param institutionUserRole institution user role.
+   * @returns user role in the expected format to be displayed.
+   */
+  const institutionUserRoleToDisplay = (
+    institutionUserRole: InstitutionUserRoles,
+  ): string => {
+    if (institutionUserRole === InstitutionUserRoles.legalSigningAuthority) {
+      return "Legal signing authority";
+    }
+    return institutionUserRole;
+  };
+
   return {
     dateString,
     dateOnlyLongString,
@@ -193,5 +207,6 @@ export function useFormatters() {
     booleanToYesNo,
     sinDisplayFormat,
     getISODateOnlyString,
+    institutionUserRoleToDisplay,
   };
 }

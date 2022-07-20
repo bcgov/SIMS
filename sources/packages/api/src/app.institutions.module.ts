@@ -23,6 +23,8 @@ import {
   RestrictionService,
   StudentScholasticStandingsService,
   StudentAssessmentService,
+  InstitutionUserAuthService,
+  InstitutionTypeService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -33,6 +35,8 @@ import {
   InstitutionLocationControllerService,
   ScholasticStandingInstitutionsController,
   ScholasticStandingControllerService,
+  InstitutionUserInstitutionsController,
+  InstitutionUserControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -42,6 +46,7 @@ import { LoggerModule } from "./logger/logger.module";
   controllers: [
     DesignationAgreementInstitutionsController,
     InstitutionInstitutionsController,
+    InstitutionUserInstitutionsController,
     InstitutionLocationInstitutionsController,
     ScholasticStandingInstitutionsController,
   ],
@@ -72,6 +77,9 @@ import { LoggerModule } from "./logger/logger.module";
     StudentScholasticStandingsService,
     StudentAssessmentService,
     ScholasticStandingControllerService,
+    InstitutionUserAuthService,
+    InstitutionUserControllerService,
+    InstitutionTypeService,
   ],
 })
 export class AppInstitutionsModule {}

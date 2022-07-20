@@ -1,42 +1,58 @@
 <template>
-  <v-container>
-    <header-navigator
-      title="Program detail"
-      :routeLocation="getRouteLocation()"
-      :subTitle="subTitle"
-    >
-      <template #buttons>
-        <v-btn
-          v-if="showActionButtons"
-          color="primary"
-          variant="outlined"
-          @click="assessOffering(OfferingStatus.Declined)"
-          >Decline</v-btn
-        >
-        <v-btn
-          class="ml-2"
-          color="primary"
-          v-if="showActionButtons"
-          @click="assessOffering(OfferingStatus.Approved)"
-          >Approve offering</v-btn
-        >
-      </template></header-navigator
-    >
-    <program-offering-detail-header
-      v-if="offeringId"
-      class="m-4"
-      :headerDetails="{
-        ...initialData,
-        status: initialData.offeringStatus,
-        institutionId: institutionId,
-      }"
-    />
+  <full-page-container>
+    <template #header>
+      <header-navigator
+        title="Program detail"
+        :routeLocation="getRouteLocation()"
+        :subTitle="subTitle"
+      >
+        <template #buttons>
+          <v-btn
+            v-if="showActionButtons"
+            color="primary"
+            variant="outlined"
+            @click="assessOffering(OfferingStatus.Declined)"
+            >Decline</v-btn
+          >
+          <v-btn
+            class="ml-2"
+            color="primary"
+            v-if="showActionButtons"
+            @click="assessOffering(OfferingStatus.Approved)"
+            >Approve offering</v-btn
+          >
+          <v-btn
+            color="primary"
+            v-if="hasExistingApplication"
+            prepend-icon="fa:fa fa-chevron-circle-down"
+            @click="toggleMenu"
+            >Edit Actions</v-btn
+          >
+          <Menu ref="menu" :model="items" :popup="true" /> </template
+      ></header-navigator>
+      <program-offering-detail-header
+        v-if="offeringId"
+        class="m-4"
+        :headerDetails="{
+          ...initialData,
+          status: initialData.offeringStatus,
+          institutionId: institutionId,
+        }"
+      />
+    </template>
+    <template #alerts>
+      <banner
+        v-if="hasExistingApplication"
+        class="mb-2"
+        :type="BannerTypes.Success"
+        header="Students have applied financial aid for this offering"
+        summary="You can still make changes to the name. If you need edit the locked fields, please click on the edit actions menu and request to edit."
+      />
+    </template>
     <assess-offering-modal
       ref="assessOfferingModalRef"
       :offeringStatus="offeringApprovalStatus"
     />
-  </v-container>
-  <full-page-container>
     <formio
       formName="educationprogramoffering"
       :data="initialData"
@@ -63,6 +79,7 @@ import {
 import { useToastMessage, useOffering, ModalDialog } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
+import { BannerTypes } from "@/components/generic/Banner.models";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import AssessOfferingModal from "@/components/aest/institution/modals/AssessOfferingModal.vue";
 
@@ -93,6 +110,22 @@ export default {
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
+    const menu = ref();
+    const items = [
+      {
+        label: "Request Change",
+        command: () => {
+          router.push({
+            name: InstitutionRoutesConst.OFFERING_REQUEST_CHANGE,
+            params: {
+              programId: props.programId,
+              offeringId: props.offeringId,
+              locationId: props.locationId,
+            },
+          });
+        },
+      },
+    ];
     const initialData = ref(
       {} as Partial<OfferingFormModel & ProgramValidationModel>,
     );
@@ -111,13 +144,11 @@ export default {
     const isReadonly = computed(() => {
       return isAESTUser.value;
     });
-
     const showActionButtons = computed(
       () =>
         initialData.value.offeringStatus === OfferingStatus.Pending &&
         isAESTUser.value,
     );
-
     const subTitle = computed(() => {
       if (isReadonly.value) {
         return "View Study Period";
@@ -127,6 +158,13 @@ export default {
       }
       return "Add Study Period";
     });
+    const hasExistingApplication = computed(
+      () =>
+        initialData.value.hasExistingApplication &&
+        isInstitutionUser.value &&
+        initialData.value.offeringStatus === OfferingStatus.Approved,
+    );
+
     const loadFormData = async () => {
       if (isInstitutionUser.value) {
         const programDetails = await EducationProgramService.shared.getProgram(
@@ -281,6 +319,10 @@ export default {
         }
       }
     };
+
+    const toggleMenu = (event: any) => {
+      menu?.value?.toggle(event);
+    };
     return {
       submitted,
       initialData,
@@ -293,6 +335,11 @@ export default {
       OfferingStatus,
       assessOfferingModalRef,
       offeringApprovalStatus,
+      BannerTypes,
+      hasExistingApplication,
+      items,
+      toggleMenu,
+      menu,
     };
   },
 };

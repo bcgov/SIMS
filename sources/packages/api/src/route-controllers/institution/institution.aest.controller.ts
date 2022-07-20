@@ -25,22 +25,12 @@ import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
 import { InstitutionLocationControllerService } from "../institution-locations/institution-location.controller.service";
 import { ApiTags } from "@nestjs/swagger";
-import {
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  FieldSortOrder,
-  PaginationParams,
-  PaginatedResults,
-} from "../../utilities";
-import {
-  CreateInstitutionUserAPIInDTO,
-  InstitutionUserAPIOutDTO,
-} from "./models/institution-user.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import { IUserToken } from "../../auth/userToken.interface";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { OptionItemAPIOutDTO } from "../models/common.dto";
 
 /**
  * Institution controller for AEST Client.
@@ -139,41 +129,6 @@ export class InstitutionAESTController extends BaseController {
   }
 
   /**
-   * Controller method to get all institution users with the
-   * given institutionId.
-   * @param institutionId
-   * @queryParm page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @queryParm pageLimit, page size or records per page, if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @queryParm searchName, user's name keyword to be searched
-   * @queryParm sortField, field to be sorted
-   * @queryParm sortOrder, order to be sorted
-   * @returns All the institution users for the given institution
-   * with total count.
-   */
-  @Get(":institutionId/user")
-  async getInstitutionUsers(
-    @Param("institutionId") institutionId: number,
-    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
-    @Query(PaginationParams.SortField) sortField: string,
-    @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
-    @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
-    @Query(PaginationParams.PageLimit) pageLimit = DEFAULT_PAGE_LIMIT,
-  ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
-    return this.institutionControllerService.getInstitutionUsers(
-      institutionId,
-      {
-        page,
-        pageLimit,
-        searchCriteria,
-        sortField,
-        sortOrder,
-      },
-    );
-  }
-
-  /**
    * Get the Basic Institution info for the ministry institution detail page.
    * @param institutionId
    * @returns Basic information of institution.
@@ -234,20 +189,12 @@ export class InstitutionAESTController extends BaseController {
   }
 
   /**
-   * Create a user, associate with the institution, and assign the authorizations.
-   * @param institutionId institution to have the user created.
-   * @param payload authorizations to be associated with the user.
-   * @returns Primary identifier of the created resource.
+   * Get the list of all institutions types to be returned in an option
+   * list (key/value pair) schema.
+   * @returns institutions types in an option list (key/value pair) schema.
    */
-  // TODO: Add API Responses and validations. This method will be worked in the upcoming PR.
-  @Post(":institutionId/user")
-  async createInstitutionUserWithAuth(
-    institutionId: number,
-    @Body() payload: CreateInstitutionUserAPIInDTO,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return this.institutionControllerService.createInstitutionUserWithAuth(
-      institutionId,
-      payload,
-    );
+  @Get("type/options-list")
+  async getInstitutionTypeOptions(): Promise<OptionItemAPIOutDTO[]> {
+    return this.institutionControllerService.getInstitutionTypeOptions();
   }
 }
