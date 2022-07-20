@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { LoggerModule } from "../logger/logger.module";
-import { DatabaseService } from "./database.service";
 import { ormConfig } from "./data-source";
 
 @Module({
@@ -12,6 +11,5 @@ import { ormConfig } from "./data-source";
     }),
     LoggerModule,
   ],
-  providers: [DatabaseService],
 })
 export class DatabaseModule {}
