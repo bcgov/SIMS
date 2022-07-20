@@ -3,7 +3,6 @@ require("../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { DatabaseModule } from "./database.module";
 import { DatabaseService } from "./database.service";
-import { simsDataSource } from "./data-source";
 
 describe("Database Service", () => {
   let service: DatabaseService;
@@ -21,7 +20,7 @@ describe("Database Service", () => {
   });
 
   it("should create service", async () => {
-    const svc = new DatabaseService(simsDataSource);
+    const svc = new DatabaseService();
     expect(svc).toBeDefined();
   });
 });

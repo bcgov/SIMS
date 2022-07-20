@@ -3,13 +3,11 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { MSFAANumberService } from "../../services/msfaa-number/msfaa-number.service";
 import { DatabaseModule } from "../../database/database.module";
-import { DatabaseService } from "../../database/database.service";
 import * as dayjs from "dayjs";
 import { MAX_MSFAA_VALID_DAYS } from "../../utilities";
 
 describe("MSFAANumberService", () => {
   let service: MSFAANumberService;
-  let dbService: DatabaseService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,11 +16,6 @@ describe("MSFAANumberService", () => {
     }).compile();
 
     service = module.get<MSFAANumberService>(MSFAANumberService);
-    dbService = module.get<DatabaseService>(DatabaseService);
-  });
-
-  afterAll(async () => {
-    await dbService.dataSource.destroy();
   });
 
   it("should be defined", () => {
