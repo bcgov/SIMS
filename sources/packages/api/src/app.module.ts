@@ -40,7 +40,6 @@ import {
   EducationProgramOfferingController,
   ATBCController,
   ProgramInfoRequestController,
-  InstitutionTypeController,
   NotesController,
   RestrictionController,
 } from "./route-controllers";
@@ -108,7 +107,6 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     EducationProgramOfferingController,
     ATBCController,
     ProgramInfoRequestController,
-    InstitutionTypeController,
     NotesController,
     RestrictionController,
   ],

@@ -26,6 +26,7 @@ import {
   InstitutionUserAuthService,
   DisbursementScheduleService,
   COEDeniedReasonService,
+  InstitutionTypeService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -84,6 +85,7 @@ import { LoggerModule } from "./logger/logger.module";
     InstitutionUserControllerService,
     DisbursementScheduleService,
     COEDeniedReasonService,
+    InstitutionTypeService,
   ],
 })
 export class AppInstitutionsModule {}
