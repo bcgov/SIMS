@@ -10,16 +10,34 @@
       }"
       subTitle="View Financial Aid Application"
       ><template #buttons>
-        <v-btn
-          v-if="initialData.applicationCOEStatus === COEStatus.required"
-          color="primary"
-          @click="toggle"
-          ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
-          Actions
-        </v-btn>
+        <v-menu v-if="initialData.applicationCOEStatus === COEStatus.required">
+          <template v-slot:activator="{ props }">
+            <v-btn color="primary" v-bind="props">
+              <v-icon size="25">mdi-arrow-down-bold-circle</v-icon>
+              Application Actions
+            </v-btn>
+          </template>
+          <v-list>
+            <template v-for="(item, index) in items" :key="index">
+              <v-list-item :value="index">
+                <v-list-item-title
+                  @click="item.command"
+                  :class="item.textColor"
+                >
+                  <span class="label-bold">{{ item.label }}</span>
+                </v-list-item-title>
+              </v-list-item>
+              <v-divider
+                v-if="index < items.length - 1"
+                :key="index"
+                inset
+              ></v-divider>
+            </template>
+          </v-list>
+        </v-menu>
       </template>
     </HeaderNavigator>
-    <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
+
     <v-container>
       <Information :data="initialData" />
       <formio formName="confirmsstudentenrollment" :data="initialData"></formio>
@@ -47,7 +65,6 @@ import { onMounted, ref, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
-import Menu from "primevue/menu";
 import {
   COEStatus,
   ApplicationDetailsForCOEDTO,
@@ -55,6 +72,7 @@ import {
   ProgramInfoStatus,
   FormIOForm,
   ApiProcessError,
+  MenuType,
 } from "@/types";
 import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
@@ -66,22 +84,9 @@ import {
 } from "@/constants";
 import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto/ConfirmationOfEnrolment.dto";
 import useEmitter from "@/composables/useEmitter";
-/**
- * added MenuType interface for prime vue component menu,
- *  remove it when vuetify component is used
- */
-
-export interface MenuType {
-  label?: string;
-  icon?: string;
-  separator?: boolean;
-  command?: any;
-  class?: string;
-}
 
 export default {
   components: {
-    Menu,
     ConfirmCOEEditModal,
     ConfirmCOEDenyModal,
     Information,
@@ -102,7 +107,6 @@ export default {
     const router = useRouter();
     const toast = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEDTO);
-    const menu = ref();
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
     const editCOEModal = ref({} as ModalDialog<boolean>);
@@ -214,11 +218,11 @@ export default {
       items.value = [
         {
           label: "Confirm Enrollment",
-          class:
+          textColor:
             COEStatus.required === initialData.value.applicationCOEStatus &&
             !initialData.value.applicationWithinCOEWindow
               ? "text-muted"
-              : "font-weight-bold",
+              : "",
           command: () => {
             if (
               COEStatus.required === initialData.value.applicationCOEStatus &&
@@ -228,10 +232,8 @@ export default {
             }
           },
         },
-        { separator: true },
         {
           label: "Decline Request",
-          class: "font-weight-bold",
           command: denyProgramInformation,
         },
       ];
@@ -239,10 +241,8 @@ export default {
       if (
         ProgramInfoStatus.notRequired !== initialData.value.applicationPIRStatus
       ) {
-        items.value.push({ separator: true });
         items.value.push({
           label: "Edit Program Information",
-          class: "font-weight-bold",
           command: editProgramInformation,
         });
       }
@@ -261,13 +261,8 @@ export default {
       await loadInitialData();
     });
 
-    const toggle = (event: any) => {
-      menu?.value?.toggle(event);
-    };
     return {
-      toggle,
       initialData,
-      menu,
       items,
       COEStatus,
       showHideConfirmCOE,

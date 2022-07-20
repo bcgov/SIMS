@@ -21,15 +21,32 @@
             @click="assessOffering(OfferingStatus.Approved)"
             >Approve offering</v-btn
           >
-          <v-btn
-            color="primary"
-            v-if="hasExistingApplication"
-            prepend-icon="fa:fa fa-chevron-circle-down"
-            @click="toggleMenu"
-            >Edit Actions</v-btn
-          >
-          <Menu ref="menu" :model="items" :popup="true" /> </template
-      ></header-navigator>
+          <v-menu v-if="hasExistingApplication">
+            <template v-slot:activator="{ props }">
+              <v-btn
+                color="primary"
+                prepend-icon="fa:fa fa-chevron-circle-down"
+                v-bind="props"
+                >Edit Actions</v-btn
+              >
+            </template>
+            <v-list>
+              <template v-for="(item, index) in items" :key="index">
+                <v-list-item :value="index">
+                  <v-list-item-title @click="item.command">
+                    <span class="label-bold">{{ item.label }}</span>
+                  </v-list-item-title>
+                </v-list-item>
+                <v-divider
+                  v-if="index < items.length - 1"
+                  :key="index"
+                  inset
+                ></v-divider>
+              </template>
+            </v-list>
+          </v-menu>
+        </template>
+      </header-navigator>
       <program-offering-detail-header
         v-if="offeringId"
         class="m-4"
@@ -112,7 +129,6 @@ export default {
     const emitter = useEmitter();
     const toast = useSnackBar();
     const router = useRouter();
-    const menu = ref();
     const items = [
       {
         label: "Request Change",
@@ -328,9 +344,6 @@ export default {
       }
     };
 
-    const toggleMenu = (event: any) => {
-      menu?.value?.toggle(event);
-    };
     return {
       submitted,
       initialData,
@@ -346,8 +359,6 @@ export default {
       BannerTypes,
       hasExistingApplication,
       items,
-      toggleMenu,
-      menu,
     };
   },
 };

@@ -6,19 +6,18 @@
     location="top right"
     :timeout="snackBarTimeOut"
     :class="snackBarClass"
-    class="mt-16"
+    class="mt-16 mr-8"
   >
-    <span
-      ><v-icon :icon="snackBarIcon" class="mr-2 icon-color"></v-icon
-      ><span class="label-bold default-text ml-2">{{
-        snackBarContent
-      }}</span></span
-    >
+    <div class="mt-2">
+      <v-icon :icon="snackBarIcon" class="icon-color mt-0" size="23"></v-icon
+      ><span class="label-bold default-color ml-2">{{ snackBarContent }}</span>
+    </div>
     <template v-slot:actions>
       <v-icon
         icon="fa:fa fa-close"
+        size="23"
+        class="default-color"
         @click="showSnackBar = false"
-        class="mr-2"
       ></v-icon>
     </template>
   </v-snackbar>

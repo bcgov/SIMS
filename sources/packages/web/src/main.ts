@@ -14,14 +14,11 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import PrimeVue from "primevue/config";
-import Menu from "primevue/menu";
-import Menubar from "primevue/menubar";
 import InputText from "primevue/inputtext";
 import InputMask from "primevue/inputmask";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Message from "primevue/message";
-import Toast from "primevue/toast";
 import Checkbox from "primevue/checkbox";
 import ToastService from "primevue/toastservice";
 import Calendar from "primevue/calendar";
@@ -121,9 +118,6 @@ AppConfigService.shared.init().then(() => {
     .use(router)
     .use(PrimeVue)
     .use(ToastService)
-    .component("Toast", Toast)
-    .component("Menu", Menu)
-    .component("Menubar", Menubar)
     .component("DataTable", DataTable)
     .component("Column", Column)
     .component("InputText", InputText)

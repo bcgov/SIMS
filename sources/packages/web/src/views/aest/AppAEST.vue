@@ -13,21 +13,32 @@
         "
         ><v-icon icon="fa:fa fa-edit"></v-icon>Create institution</v-btn
       >
-      <v-btn
-        v-if="isAuthenticated"
-        class="mr-5"
-        icon="fa:fa fa-user"
-        variant="outlined"
-        elevation="1"
-        color="grey"
-        @click="toggleUserMenu"
-      ></v-btn>
-      <Menu
-        v-if="isAuthenticated"
-        ref="userOptionsMenuRef"
-        :model="userMenuItems"
-        :popup="true"
-      />
+      <v-menu v-if="isAuthenticated">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            class="mr-5"
+            icon="fa:fa fa-user"
+            variant="outlined"
+            elevation="1"
+            color="grey"
+            v-bind="props"
+          ></v-btn>
+        </template>
+        <v-list>
+          <template v-for="(item, index) in menuItems" :key="index">
+            <v-list-item :value="index">
+              <v-list-item-title @click="item.command">
+                <span class="label-bold">{{ item.label }}</span>
+              </v-list-item-title>
+            </v-list-item>
+            <v-divider
+              v-if="index < menuItems.length - 1"
+              :key="index"
+              inset
+            ></v-divider>
+          </template>
+        </v-list>
+      </v-menu>
     </v-app-bar>
     <router-view name="sidebar"></router-view>
     <v-main class="body-background">
@@ -39,7 +50,6 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
 import { ClientIdType } from "@/types";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
@@ -50,32 +60,20 @@ export default {
   components: { BCLogo, IdleTimeChecker },
   setup() {
     const { executeLogout } = useAuth();
-    const userOptionsMenuRef = ref();
-    const userMenuItems = ref({});
     const { isAuthenticated } = useAuth();
-
     const logoff = async () => {
       await executeLogout(ClientIdType.AEST);
     };
-
-    const toggleUserMenu = (event: any) => {
-      userOptionsMenuRef.value.toggle(event);
-    };
-
-    userMenuItems.value = [
+    const menuItems = [
       {
-        label: "Log off",
-        icon: "pi pi-power-off",
+        label: "Log Out",
         command: logoff,
       },
     ];
-
     return {
-      userMenuItems,
+      menuItems,
       isAuthenticated,
       logoff,
-      userOptionsMenuRef,
-      toggleUserMenu,
       ClientIdType,
       AESTRoutesConst,
     };

@@ -44,21 +44,32 @@
         @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
         >Profile</v-btn
       >
-      <v-btn
-        v-if="isAuthenticated"
-        class="mr-5"
-        icon="mdi-account"
-        variant="outlined"
-        elevation="1"
-        color="grey"
-        @click="togleUserMenu"
-      ></v-btn>
-      <Menu
-        v-if="isAuthenticated"
-        ref="userOptionsMenuRef"
-        :model="userMenuItems"
-        :popup="true"
-      />
+      <v-menu v-if="isAuthenticated">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            class="mr-5"
+            icon="fa:fa fa-user"
+            variant="outlined"
+            elevation="1"
+            color="grey"
+            v-bind="props"
+          ></v-btn>
+        </template>
+        <v-list>
+          <template v-for="(item, index) in menuItems" :key="index">
+            <v-list-item :value="index">
+              <v-list-item-title @click="item.command">
+                <span class="label-bold">{{ item.label }}</span>
+              </v-list-item-title>
+            </v-list-item>
+            <v-divider
+              v-if="index < menuItems.length - 1"
+              :key="index"
+              inset
+            ></v-divider>
+          </template>
+        </v-list>
+      </v-menu>
     </v-app-bar>
     <router-view name="sidebar"></router-view>
     <v-main class="body-background">
@@ -71,7 +82,7 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ClientIdType, MenuModel } from "@/types";
 import { useAuth, useStudentStore } from "@/composables";
@@ -83,7 +94,6 @@ export default {
   setup() {
     const { executeLogout } = useAuth();
     const router = useRouter();
-    const userOptionsMenuRef = ref();
     const { isAuthenticated } = useAuth();
     const { hasStudentAccount } = useStudentStore();
 
@@ -97,21 +107,14 @@ export default {
         });
       }
     };
-
     const hasAuthenticatedStudentAccount = computed(
       () => isAuthenticated.value && hasStudentAccount.value,
     );
-
-    const togleUserMenu = (event: any) => {
-      userOptionsMenuRef.value.toggle(event);
-    };
-
-    const userMenuItems = computed(() => {
+    const menuItems = computed(() => {
       const menuItems: MenuModel[] = [];
       if (hasStudentAccount.value) {
         menuItems.push({
           label: "Notifications Settings",
-          icon: "pi pi-bell",
           command: () => {
             router.push({
               name: StudentRoutesConst.NOTIFICATIONS_SETTINGS,
@@ -130,8 +133,7 @@ export default {
       }
 
       menuItems.push({
-        label: "Log off",
-        icon: "pi pi-power-off",
+        label: "Log Out",
         command: async () => {
           await executeLogout(ClientIdType.Student);
         },
@@ -142,11 +144,9 @@ export default {
 
     return {
       logoClick,
-      userMenuItems,
+      menuItems,
       isAuthenticated,
       StudentRoutesConst,
-      userOptionsMenuRef,
-      togleUserMenu,
       ClientIdType,
       hasAuthenticatedStudentAccount,
     };
