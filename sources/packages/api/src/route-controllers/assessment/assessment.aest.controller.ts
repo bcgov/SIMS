@@ -63,7 +63,8 @@ export class AssessmentAESTController extends BaseController {
         ApplicationExceptionStatus.Pending,
         ApplicationExceptionStatus.Declined,
       );
-    if (applicationExceptions) {
+
+    if (applicationExceptions && applicationExceptions.length > 0) {
       return applicationExceptions.map((applicationException) => ({
         id: applicationException.id,
         submittedDate: applicationException.createdAt,
