@@ -42,8 +42,6 @@ import {
   CustomNamedError,
   getUTCNow,
   dateDifference,
-  getPSTPDTDate,
-  setToStartOfTheDayInPSTPDT,
   COE_WINDOW,
   PIR_DENIED_REASON_OTHER_ID,
   sortApplicationsColumnMap,
@@ -960,7 +958,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     if (!appToOverride) {
       throw new CustomNamedError(
-        "Student Application not found or the location does not have access to it or PIR not required Application",
+        `Student Application not found or the location does not have access to it or the PIR is defined with the status as '${ProgramInfoStatus.notRequired}'.`,
         APPLICATION_NOT_FOUND,
       );
     }
@@ -1012,16 +1010,25 @@ export class ApplicationService extends RecordDataModelService<Application> {
     originalAssessment.submittedBy = auditUser;
     originalAssessment.submittedDate = now;
     originalAssessment.creator = auditUser;
-    newApplication.studentAssessments = [originalAssessment];
-    newApplication.currentAssessment = originalAssessment;
 
-    await this.repo.save([appToOverride, newApplication]);
-
-    return {
-      overriddenApplication: appToOverride,
-      createdApplication: newApplication,
-      createdAssessment: originalAssessment,
-    };
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const applicationRepository =
+        transactionalEntityManager.getRepository(Application);
+      // Application must be saved to have the id properly generated and associated
+      // to the assessment. This is a special case where the application is associated
+      // in the assessment record and the assessment record is associated as a
+      // currentAssessment also in the application.
+      await applicationRepository.save(newApplication);
+      newApplication.creator = auditUser;
+      newApplication.studentAssessments = [originalAssessment];
+      newApplication.currentAssessment = originalAssessment;
+      await applicationRepository.save([appToOverride, newApplication]);
+      return {
+        overriddenApplication: appToOverride,
+        createdApplication: newApplication,
+        createdAssessment: originalAssessment,
+      };
+    });
   }
 
   /**
@@ -1076,19 +1083,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * checks if current PST/PDT date from offering
-   * start date is inside or equal to COE window
-   * @param offeringStartDate offering start date
-   * @returns True if current to offering
-   * start date is within COE window else False
+   * Checks if the confirmation of enrollment can be executed in the present date.
+   * Institutions can execute confirmation of enrollments not before 21 days of the offering start date.
+   * After the offering start date institutions can still execute the CoE.
+   * @param offeringStartDate offering start date.
+   * @returns true if the confirmation of enrollment can happen, otherwise false.
    */
   withinValidCOEWindow(offeringStartDate: Date): boolean {
-    return (
-      dateDifference(
-        setToStartOfTheDayInPSTPDT(new Date()),
-        getPSTPDTDate(offeringStartDate, true),
-      ) <= COE_WINDOW
-    );
+    return dateDifference(new Date(), offeringStartDate) <= COE_WINDOW;
   }
 
   /**

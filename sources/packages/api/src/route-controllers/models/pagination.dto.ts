@@ -58,9 +58,9 @@ export class InstitutionUserPaginationOptionsAPIInDTO extends PaginationOptionsA
   sortField?: string;
 }
 
-export class StudentAppealPendingPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+export class ConfirmationOfEnrollmentPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn(["submittedDate", "applicationNumber", "fullName"])
+  @IsIn(["fullName", "applicationNumber", "disbursementDate", "coeStatus"])
   sortField?: string;
 }
 
