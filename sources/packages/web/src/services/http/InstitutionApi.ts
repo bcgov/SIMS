@@ -1,6 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
-  OptionItemDto,
   DataTableSortOrder,
   FieldSortOrder,
   AESTInstitutionProgramsSummaryDto,
@@ -20,6 +19,7 @@ import {
   PaginatedResultsAPIOutDTO,
   AESTCreateInstitutionAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
+  OptionItemAPIOutDTO,
 } from "@/services/http/dto";
 import { addPaginationOptions, addSortOptions } from "@/helpers";
 
@@ -74,17 +74,15 @@ export class InstitutionApi extends HttpBaseClient {
     );
   }
 
-  async getInstitutionTypeOptions(): Promise<OptionItemDto[]> {
-    try {
-      const response = await this.apiClient.get(
-        "institution/type/options-list",
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  /**
+   * Get the list os all institutions types to be returned in an option
+   * list (key/value pair) schema.
+   * @returns institutions types in an option list (key/value pair) schema.
+   */
+  async getInstitutionTypeOptions(): Promise<OptionItemAPIOutDTO[]> {
+    return this.getCallTyped(
+      this.addClientRoot("institution/type/options-list"),
+    );
   }
 
   async allInstitutionLocations(

@@ -1,5 +1,4 @@
 require("../../../env_setup");
-import { closeDB } from "../../testHelpers";
 import * as faker from "faker";
 import { SINValidation, Student, User } from "../../database/entities";
 import { StudentService, ATBCService, UserService } from "../../services";
@@ -37,9 +36,6 @@ describe("Test ATBC Controller", () => {
     studentService = await moduleFixture.get(StudentService);
     app = moduleFixture.createNestApplication();
     await app.init();
-  });
-  afterAll(async () => {
-    await closeDB();
   });
 
   it("should return an HTTP 200 status when applying for PD and student is valid", async () => {

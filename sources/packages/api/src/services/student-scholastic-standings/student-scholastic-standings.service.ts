@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { StudentScholasticStanding } from "../../database/entities/student-scholastic-standing.model";
 import {
   Application,
@@ -38,13 +38,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   private readonly offeringRepo: Repository<EducationProgramOffering>;
 
   constructor(
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {
-    super(connection.getRepository(StudentScholasticStanding));
-    this.applicationRepo = connection.getRepository(Application);
-    this.offeringRepo = connection.getRepository(EducationProgramOffering);
+    super(dataSource.getRepository(StudentScholasticStanding));
+    this.applicationRepo = dataSource.getRepository(Application);
+    this.offeringRepo = dataSource.getRepository(EducationProgramOffering);
   }
 
   /**
@@ -120,7 +120,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     application: Application,
     scholasticStandingData: ScholasticStanding,
   ): Promise<StudentScholasticStanding> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
 

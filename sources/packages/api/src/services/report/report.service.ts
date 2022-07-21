@@ -87,7 +87,7 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
    * @returns report config.
    */
   private async getConfig(reportName: string): Promise<ReportConfig> {
-    return this.repo.findOne({ reportName: reportName });
+    return this.repo.findOne({ where: { reportName: reportName } });
   }
 
   /**

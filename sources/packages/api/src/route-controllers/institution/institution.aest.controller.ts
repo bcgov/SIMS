@@ -30,6 +30,7 @@ import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/in
 import { ClientTypeBaseRoute } from "../../types";
 import { IUserToken } from "../../auth/userToken.interface";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { OptionItemAPIOutDTO } from "../models/common.dto";
 
 /**
  * Institution controller for AEST Client.
@@ -185,5 +186,15 @@ export class InstitutionAESTController extends BaseController {
     return {
       id: institution.id,
     };
+  }
+
+  /**
+   * Get the list of all institutions types to be returned in an option
+   * list (key/value pair) schema.
+   * @returns institutions types in an option list (key/value pair) schema.
+   */
+  @Get("type/options-list")
+  async getInstitutionTypeOptions(): Promise<OptionItemAPIOutDTO[]> {
+    return this.institutionControllerService.getInstitutionTypeOptions();
   }
 }

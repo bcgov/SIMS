@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Connection, EntityManager } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { SequenceControl } from "../../database/entities";
 import { InjectLogger } from "../../common";
@@ -20,8 +20,8 @@ const TRANSACTION_IDLE_TIMEOUT_SECONDS = 30;
  */
 @Injectable()
 export class SequenceControlService extends RecordDataModelService<SequenceControl> {
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(SequenceControl));
+  constructor(private readonly dataSource: DataSource) {
+    super(dataSource.getRepository(SequenceControl));
   }
 
   /**
@@ -45,7 +45,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
     this.logger.log(
       `Checking next sequence available for sequence name ${sequenceName}...`,
     );
-    const queryRunner = this.connection.createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
     await configureIdleTransactionSessionTimeout(
       queryRunner,
       TRANSACTION_IDLE_TIMEOUT_SECONDS,

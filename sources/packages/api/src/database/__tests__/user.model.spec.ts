@@ -1,14 +1,14 @@
 require("../../../env_setup");
 import { closeDB, setupDB } from "../../testHelpers";
-import { Connection, getConnection, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import * as faker from "faker";
 
 import { User } from "../entities/user.model";
 
 describe.skip("Test User model", () => {
-  let connection: Connection;
+  let dataSource: DataSource;
   beforeAll(async () => {
-    connection = await setupDB();
+    dataSource = await setupDB();
   });
   afterAll(async () => {
     await closeDB();
@@ -16,14 +16,14 @@ describe.skip("Test User model", () => {
 
   it("should save user model object", async () => {
     // Save
-    const repo: Repository<User> = connection.getRepository(User);
+    const repo: Repository<User> = dataSource.getRepository(User);
     const sub = new User();
     sub.userName = faker.random.uuid();
     sub.email = faker.internet.email();
     await repo.save(sub);
 
     // Fetch
-    const item = await repo.findByIds([sub.id]);
+    const item = await repo.findBy({ id: sub.id });
     expect(item.length).toBeGreaterThan(0);
     const r = item[0];
     expect(r.id).toEqual(sub.id);

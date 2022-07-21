@@ -7,7 +7,6 @@ export async function institutionUserTypeAndRoleFactory(
   options: { type: InstitutionUserType; role: InstitutionUserRole },
 ): Promise<InstitutionUserTypeAndRole> {
   return repo.findOneOrFail({
-    type: options.type,
-    role: options.role,
+    where: { type: options.type, role: options.role },
   });
 }

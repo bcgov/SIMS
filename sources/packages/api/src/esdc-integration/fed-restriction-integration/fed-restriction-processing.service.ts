@@ -9,7 +9,7 @@ import {
 import { FedRestrictionIntegrationService } from "./fed-restriction-integration.service";
 import { ESDCIntegrationConfig } from "../../types";
 import * as os from "os";
-import { Connection, InsertResult } from "typeorm";
+import { DataSource, InsertResult } from "typeorm";
 import { FederalRestriction, Restriction } from "../../database/entities";
 import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "../../utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
@@ -25,7 +25,7 @@ import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 export class FedRestrictionProcessingService {
   private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     config: ConfigService,
     private readonly restrictionService: RestrictionService,
     private readonly federalRestrictionService: FederalRestrictionService,
@@ -106,7 +106,7 @@ export class FedRestrictionProcessingService {
 
     this.logger.log("Starting database transaction.");
     // Start the transaction that will handle all the import.
-    const queryRunner = this.connection.createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.startTransaction();
 
     try {

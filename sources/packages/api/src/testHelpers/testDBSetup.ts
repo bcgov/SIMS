@@ -1,21 +1,14 @@
-import { createConnection, getConnection } from "typeorm";
-
-const config = require("../../ormconfig");
+import { ormConfig, simsDataSource } from "../database/data-source";
 
 export async function setupDB() {
   try {
-    const connection = await createConnection({
-      ...config,
-      logging: ["error", "warn"],
-    });
-    return connection;
+    return simsDataSource.initialize();
   } catch (excp) {
     console.error(`Exception to connected db: ${excp}`);
-    console.dir(config);
+    console.dir(ormConfig);
   }
 }
 
 export async function closeDB() {
-  const connection = getConnection();
-  await connection.close();
+  await simsDataSource.destroy();
 }

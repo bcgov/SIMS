@@ -1,6 +1,6 @@
 require("../../../env_setup");
 import { closeDB, setupDB } from "../../testHelpers";
-import { Connection, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import * as faker from "faker";
 import {
   User,
@@ -21,7 +21,7 @@ import {
 import { InstitutionLocation } from "../entities/institution-location.model";
 
 describe.skip("Test institution user and auth model", () => {
-  let connection: Connection;
+  let dataSource: DataSource;
   let typeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
   let userAuthRepo: Repository<InstitutionUserAuth>;
   let institutionUserRepo: Repository<InstitutionUser>;
@@ -29,17 +29,17 @@ describe.skip("Test institution user and auth model", () => {
   let institutionRepo: Repository<Institution>;
   let locationRepo: Repository<InstitutionLocation>;
   beforeAll(async () => {
-    connection = await setupDB();
-    typeAndRoleRepo = connection.getRepository<InstitutionUserTypeAndRole>(
+    dataSource = await setupDB();
+    typeAndRoleRepo = dataSource.getRepository<InstitutionUserTypeAndRole>(
       InstitutionUserTypeAndRole,
     );
     userAuthRepo =
-      connection.getRepository<InstitutionUserAuth>(InstitutionUserAuth);
+      dataSource.getRepository<InstitutionUserAuth>(InstitutionUserAuth);
     institutionUserRepo =
-      connection.getRepository<InstitutionUser>(InstitutionUser);
-    userRepo = connection.getRepository(User);
-    institutionRepo = connection.getRepository(Institution);
-    locationRepo = connection.getRepository(InstitutionLocation);
+      dataSource.getRepository<InstitutionUser>(InstitutionUser);
+    userRepo = dataSource.getRepository(User);
+    institutionRepo = dataSource.getRepository(Institution);
+    locationRepo = dataSource.getRepository(InstitutionLocation);
   });
   afterAll(async () => {
     await closeDB();
@@ -82,7 +82,9 @@ describe.skip("Test institution user and auth model", () => {
     expect(auth.id).toBeDefined();
 
     // Fetch institution user
-    const subject = await institutionUserRepo.findOneOrFail(institutionUser.id);
+    const subject = await institutionUserRepo.findOneOrFail({
+      where: { id: institutionUser.id },
+    });
     const subjectAuth = subject.authorizations.filter(
       (item) => item.id === auth.id,
     );
