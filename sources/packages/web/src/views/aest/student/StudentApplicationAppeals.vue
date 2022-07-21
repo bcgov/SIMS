@@ -17,7 +17,7 @@
           variant="outlined"
           v-model="searchCriteria"
           @keyup.enter="searchAppeals"
-          prepend-inner-icon="fa:fas fa-magnifying-glass"
+          prepend-inner-icon="mdi-magnify"
         >
         </v-text-field>
       </template>
