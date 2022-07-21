@@ -342,6 +342,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   /**
    * Get all pending student appeals.
    * @param paginationOptions options to execute the pagination.
+   * @param status appeal status.
    * @returns StudentAppeal list.
    */
   async getAppealsByStatus(
