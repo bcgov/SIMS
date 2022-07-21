@@ -1,6 +1,6 @@
 <template>
   <div class="p-m-4">
-    <HeaderNavigator
+    <header-navigator
       title="Confirmation of enrolment"
       :routeLocation="{
         name: InstitutionRoutesConst.COE_SUMMARY,
@@ -36,7 +36,7 @@
           </v-list>
         </v-menu>
       </template>
-    </HeaderNavigator>
+    </header-navigator>
 
     <v-container>
       <Information :data="initialData" />

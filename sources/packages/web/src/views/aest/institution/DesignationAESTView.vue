@@ -6,21 +6,23 @@
       :routeLocation="routeLocation"
     >
       <template #buttons>
-        <v-btn
-          v-if="showActionButtons"
-          color="primary"
-          variant="outlined"
-          data-cy="declinedDesignationAgreementButton"
-          @click="updateDesignation(DesignationAgreementStatus.Declined)"
-          >Decline</v-btn
-        >
-        <v-btn
-          class="ml-2 primary-btn-background"
-          v-if="showActionButtons"
-          data-cy="approvedDesignationAgreementButton"
-          @click="updateDesignation(DesignationAgreementStatus.Approved)"
-          >Approve designation</v-btn
-        >
+        <v-row class="p-0 m-0">
+          <v-btn
+            v-if="showActionButtons"
+            color="primary"
+            variant="outlined"
+            data-cy="declinedDesignationAgreementButton"
+            @click="updateDesignation(DesignationAgreementStatus.Declined)"
+            >Decline</v-btn
+          >
+          <v-btn
+            class="ml-2 primary-btn-background"
+            v-if="showActionButtons"
+            data-cy="approvedDesignationAgreementButton"
+            @click="updateDesignation(DesignationAgreementStatus.Approved)"
+            >Approve designation</v-btn
+          >
+        </v-row>
       </template>
     </header-navigator>
     <full-page-container class="mt-4">

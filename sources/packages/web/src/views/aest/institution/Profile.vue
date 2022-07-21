@@ -2,8 +2,13 @@
   <v-card class="mt-4">
     <div class="mx-5 py-4">
       <body-header title="Profile" class="m-1">
-        <template #actions-align-end>
-          <v-btn text @click="editProfile" variant="title" :color="COLOR_BLUE"
+        <template #actions>
+          <v-btn
+            class="float-right"
+            text
+            @click="editProfile"
+            variant="title"
+            :color="COLOR_BLUE"
             ><v-icon icon="fa:fa fa-cog" class="mr-1" /> Edit
           </v-btn>
         </template>

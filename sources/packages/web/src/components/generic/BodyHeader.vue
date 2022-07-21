@@ -7,12 +7,7 @@
       <slot name="status-chip"></slot>
     </v-col>
     <v-col order="3">
-      <div>
-        <slot name="actions"></slot>
-      </div>
-      <div class="float-right">
-        <slot name="actions-align-end"></slot>
-      </div>
+      <slot name="actions"></slot>
     </v-col>
   </v-row>
   <v-row class="mb-4">

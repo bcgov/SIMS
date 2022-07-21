@@ -97,6 +97,7 @@
 }
 
 // Inset adjustment for v-divider.
+// Todo: inset adjustment, remove when stable vuetify is installed.
 .v-divider--inset:not(.v-divider--vertical) {
   max-width: calc(100% - 29px) !important;
   margin-inline-start: 16px !important;

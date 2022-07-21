@@ -1,7 +1,7 @@
 <template>
   <full-page-container layout-template="centered">
     <template #header>
-      <HeaderNavigator :title="locationName" subTitle="Report a Change" />
+      <header-navigator :title="locationName" subTitle="Report a Change" />
     </template>
 
     <TabView lazy class="mt-4">

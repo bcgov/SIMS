@@ -7,44 +7,47 @@
         :subTitle="subTitle"
       >
         <template #buttons>
-          <v-btn
-            v-if="showActionButtons"
-            color="primary"
-            variant="outlined"
-            @click="assessOffering(OfferingStatus.Declined)"
-            >Decline</v-btn
-          >
-          <v-btn
-            class="ml-2"
-            color="primary"
-            v-if="showActionButtons"
-            @click="assessOffering(OfferingStatus.Approved)"
-            >Approve offering</v-btn
-          >
-          <v-menu v-if="hasExistingApplication">
-            <template v-slot:activator="{ props }">
-              <v-btn
-                color="primary"
-                prepend-icon="fa:fa fa-chevron-circle-down"
-                v-bind="props"
-                >Edit Actions</v-btn
-              >
-            </template>
-            <v-list>
-              <template v-for="(item, index) in items" :key="index">
-                <v-list-item :value="index">
-                  <v-list-item-title @click="item.command">
-                    <span class="label-bold">{{ item.label }}</span>
-                  </v-list-item-title>
-                </v-list-item>
-                <v-divider
-                  v-if="index < items.length - 1"
-                  :key="index"
-                  inset
-                ></v-divider>
+          <v-row class="p-0 m-0">
+            <v-btn
+              v-if="showActionButtons"
+              color="primary"
+              variant="outlined"
+              @click="assessOffering(OfferingStatus.Declined)"
+              >Decline</v-btn
+            >
+            <v-btn
+              class="ml-2"
+              color="primary"
+              v-if="showActionButtons"
+              @click="assessOffering(OfferingStatus.Approved)"
+              >Approve offering</v-btn
+            >
+            <v-menu v-if="hasExistingApplication">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  class="ml-2"
+                  color="primary"
+                  prepend-icon="fa:fa fa-chevron-circle-down"
+                  v-bind="props"
+                  >Edit Actions</v-btn
+                >
               </template>
-            </v-list>
-          </v-menu>
+              <v-list>
+                <template v-for="(item, index) in items" :key="index">
+                  <v-list-item :value="index">
+                    <v-list-item-title @click="item.command">
+                      <span class="label-bold">{{ item.label }}</span>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-divider
+                    v-if="index < items.length - 1"
+                    :key="index"
+                    inset
+                  ></v-divider>
+                </template>
+              </v-list>
+            </v-menu>
+          </v-row>
         </template>
       </header-navigator>
       <program-offering-detail-header

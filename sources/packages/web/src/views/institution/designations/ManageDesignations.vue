@@ -12,10 +12,10 @@
         assistance."
       :recordsCount="designations.length"
     >
-      <template #actions-align-end>
+      <template #actions>
         <v-btn
           v-if="isLegalSigningAuthority"
-          class="ml-2 primary-btn-background"
+          class="ml-2 primary-btn-background float-right"
           data-cy="requestDesignation"
           @click="goToRequestDesignation()"
           ><font-awesome-icon

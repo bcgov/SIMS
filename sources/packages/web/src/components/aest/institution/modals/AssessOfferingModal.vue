@@ -15,20 +15,13 @@
       </div>
     </template>
     <template v-slot:footer>
-      <v-row>
-        <v-col>
-          <v-btn color="primary" variant="outlined" @click="dialogClosed">
-            Cancel
-          </v-btn>
-        </v-col>
-        <v-col>
-          <v-btn
-            @click="submitForm()"
-            class="float-right primary-btn-background"
-          >
-            Submit Action
-          </v-btn>
-        </v-col>
+      <v-row class="m-0 p-0">
+        <v-btn color="primary" variant="outlined" @click="dialogClosed">
+          Cancel
+        </v-btn>
+        <v-btn @click="submitForm()" class="float-right primary-btn-background">
+          Submit Action
+        </v-btn>
       </v-row>
     </template>
   </ModalDialogBase>

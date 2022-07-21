@@ -1,6 +1,6 @@
 <template>
   <div class="p-m-4">
-    <HeaderNavigator
+    <header-navigator
       title="Manage Institution Locations"
       subTitle="Location Summary"
     />

@@ -1,8 +1,8 @@
 <template>
   <student-page-container>
     <body-header>
-      <template #actions-align-end>
-        <v-row class="m-0 p-0">
+      <template #actions>
+        <v-row class="m-0 p-0 float-right">
           <v-btn
             color="primary"
             v-if="!notDraft"

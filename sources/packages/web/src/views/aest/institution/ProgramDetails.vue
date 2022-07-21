@@ -9,7 +9,7 @@
       subTitle="View program"
     >
       <template #buttons>
-        <div v-if="isPendingProgram">
+        <v-row class="p-0 m-0" v-if="isPendingProgram">
           <v-btn
             variant="outlined"
             :color="COLOR_BLUE"
@@ -20,7 +20,7 @@
           <v-btn class="primary-btn-background" @click="approveProgram"
             >Approve program</v-btn
           >
-        </div>
+        </v-row>
       </template>
     </header-navigator>
     <ManageProgramAndOfferingSummary
