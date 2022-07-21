@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Connection, Brackets } from "typeorm";
+import { DataSource, Brackets } from "typeorm";
 import { DataModelService } from "../../database/data.model.service";
 import { SFASPartTimeApplications } from "../../database/entities";
 import { InjectLogger } from "../../common";
@@ -17,8 +17,8 @@ export class SFASPartTimeApplicationsService
   extends DataModelService<SFASPartTimeApplications>
   implements SFASDataImporter
 {
-  constructor(connection: Connection) {
-    super(connection.getRepository(SFASPartTimeApplications));
+  constructor(dataSource: DataSource) {
+    super(dataSource.getRepository(SFASPartTimeApplications));
   }
 
   /**

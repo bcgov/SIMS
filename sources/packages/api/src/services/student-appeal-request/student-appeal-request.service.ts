@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, SelectQueryBuilder } from "typeorm";
+import { DataSource, SelectQueryBuilder } from "typeorm";
 import {
   StudentAppealRequest,
   StudentAppealStatus,
@@ -8,8 +8,8 @@ import {
 
 @Injectable()
 export class StudentAppealRequestsService extends RecordDataModelService<StudentAppealRequest> {
-  constructor(connection: Connection) {
-    super(connection.getRepository(StudentAppealRequest));
+  constructor(dataSource: DataSource) {
+    super(dataSource.getRepository(StudentAppealRequest));
   }
 
   /**

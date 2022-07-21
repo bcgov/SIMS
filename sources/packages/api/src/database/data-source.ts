@@ -1,3 +1,5 @@
+import { DataSource } from "typeorm";
+import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 const directLoad =
   process.env.ENVIRONMENT === "test" || process.env.NODE_ENV === "cmd";
 
@@ -9,7 +11,7 @@ const migrations = directLoad
   ? ["src/database/migrations/*{.ts,.js}"]
   : ["dist/database/migrations/*{.ts,.js}"];
 
-module.exports = {
+export const ormConfig: PostgresConnectionOptions = {
   type: "postgres",
   host: process.env.POSTGRES_HOST || "localhost",
   port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
@@ -19,9 +21,10 @@ module.exports = {
   schema: process.env.DB_SCHEMA || "sims",
   synchronize: false,
   migrations,
-  cli: {
-    migrationsDir: "src/database/migrations",
-    entitiesDir: "src/database/entities",
-  },
   entities,
 };
+
+export const simsDataSource = new DataSource({
+  ...ormConfig,
+  logging: ["error", "warn", "info"],
+});

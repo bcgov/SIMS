@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, In, UpdateResult } from "typeorm";
+import { DataSource, In, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import { StudentFile, Student, User } from "../../database/entities";
@@ -13,8 +13,8 @@ import { GCNotifyResult } from "../notification/gc-notify.model";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(StudentFile));
+  constructor(private readonly dataSource: DataSource) {
+    super(dataSource.getRepository(StudentFile));
   }
 
   /**
@@ -80,7 +80,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   async getStudentFileByUniqueName(
     uniqueFileName: string,
   ): Promise<StudentFile> {
-    return this.repo.findOne({ uniqueFileName: uniqueFileName });
+    return this.repo.findOne({ where: { uniqueFileName: uniqueFileName } });
   }
 
   /**
@@ -126,7 +126,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     metadata?: StudentFileMetadata,
   ): Promise<UpdateResult> {
     let updateResult: UpdateResult;
-    await this.connection.transaction(async (transactionalEntityManager) => {
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
       updateResult = await transactionalEntityManager
         .getRepository(StudentFile)
         .update(

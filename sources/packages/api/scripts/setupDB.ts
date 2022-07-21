@@ -1,29 +1,29 @@
-require("../env_setup");
-import { createConnection } from "typeorm";
-const config = require("../ormconfig");
+import { DataSource } from "typeorm";
+import { ormConfig } from "../src/database/data-source";
 
 /**
  * Script main execution method
  */
 (async () => {
+  const migrationDataSource = new DataSource({
+    ...ormConfig,
+    logging: ["error", "warn", "info"],
+  });
+  const dataSource = await migrationDataSource.initialize();
   try {
-    // Create Connection
+    // Create DataSource
     console.log("**** Running setupDB ****");
-    delete config.entities;
-    const connection = await createConnection({
-      ...config,
-      logging: ["error", "warn", "info"],
-    });
-    await connection.query(`CREATE SCHEMA IF NOT EXISTS ${config.schema};`);
-    await connection.query(`SET search_path TO ${config.schema}, public;`);
-    await connection.query(`SET SCHEMA '${config.schema}';`);
+    await dataSource.query(`CREATE SCHEMA IF NOT EXISTS ${ormConfig.schema};`);
+    await dataSource.query(`SET search_path TO ${ormConfig.schema}, public;`);
+    await dataSource.query(`SET SCHEMA '${ormConfig.schema}';`);
     console.log(`**** Running migration ****`);
-    await connection.runMigrations();
-    await connection.close();
+    await dataSource.runMigrations();
     console.log(`**** Running setupDB: [Complete] ****`);
   } catch (error) {
     console.error(`Exception occurs during setup db process: ${error}`);
-    console.dir(config);
+    console.dir(ormConfig);
     throw error;
+  } finally {
+    await dataSource.destroy();
   }
 })();

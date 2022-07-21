@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 import { COEDeniedReason } from "../../database/entities/coe-denied-reason.model";
 
 @Injectable()
 export class COEDeniedReasonService extends RecordDataModelService<COEDeniedReason> {
-  constructor(connection: Connection) {
-    super(connection.getRepository(COEDeniedReason));
+  constructor(dataSource: DataSource) {
+    super(dataSource.getRepository(COEDeniedReason));
   }
 
   async getCOEDeniedReasons(): Promise<COEDeniedReason[]> {

@@ -1,19 +1,21 @@
 import { Injectable } from "@nestjs/common";
 import { SERVICE_ACCOUNT_DEFAULT_USER_EMAIL } from "../../utilities";
-import { Connection, UpdateResult } from "typeorm";
+import { DataSource, UpdateResult } from "typeorm";
 import { DataModelService } from "../../database/data.model.service";
 import { Student, User } from "../../database/entities";
 import { UserLoginInfo } from "./user.model";
 
 @Injectable()
 export class UserService extends DataModelService<User> {
-  constructor(connection: Connection) {
-    super(connection.getRepository(User));
+  constructor(dataSource: DataSource) {
+    super(dataSource.getRepository(User));
   }
 
   async getUser(userName: string) {
     return this.repo.findOne({
-      userName,
+      where: {
+        userName,
+      },
     });
   }
 
@@ -69,7 +71,7 @@ export class UserService extends DataModelService<User> {
   }
 
   async getActiveUser(userName: string): Promise<User> {
-    return this.repo.findOne({ userName: userName, isActive: true });
+    return this.repo.findOne({ where: { userName: userName, isActive: true } });
   }
 
   /**

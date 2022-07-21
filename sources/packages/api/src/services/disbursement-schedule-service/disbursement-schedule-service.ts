@@ -11,7 +11,7 @@ import {
   mapFromRawAndEntities,
 } from "../../utilities";
 import {
-  Connection,
+  DataSource,
   In,
   Repository,
   Brackets,
@@ -53,12 +53,12 @@ const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
   private readonly assessmentRepo: Repository<StudentAssessment>;
   constructor(
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly sequenceService: SequenceControlService,
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {
-    super(connection.getRepository(DisbursementSchedule));
-    this.assessmentRepo = connection.getRepository(StudentAssessment);
+    super(dataSource.getRepository(DisbursementSchedule));
+    this.assessmentRepo = dataSource.getRepository(StudentAssessment);
   }
 
   /**
@@ -312,7 +312,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   async getDisbursementScheduleByDocumentNumber(
     documentNumber: number,
   ): Promise<DisbursementSchedule> {
-    return this.repo.findOne({ documentNumber: documentNumber });
+    return this.repo.findOne({ where: { documentNumber } });
   }
 
   /**
@@ -333,7 +333,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     tuitionRemittanceRequestedAmount: number,
   ): Promise<void> {
     const documentNumber = await this.getNextDocumentNumber();
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager
         .getRepository(DisbursementSchedule)
         .createQueryBuilder()
