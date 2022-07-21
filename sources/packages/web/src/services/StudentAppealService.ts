@@ -52,9 +52,9 @@ export class StudentAppealService {
   }
 
   /**
-   * Gets all pending student application exceptions.
+   * Gets all pending student application appeals.
    * @param paginationOptions options to execute the pagination.
-   * @returns list of student application exceptions.
+   * @returns list of student application appeals.
    */
   async getPendingAppeals(
     paginationOptions: PaginationOptions,

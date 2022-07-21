@@ -46,7 +46,7 @@ export class ApplicationExceptionApi extends HttpBaseClient {
   /**
    * Gets all pending student application exceptions.
    * @param paginationOptions options to execute the pagination.
-   * @returns list of student application appeals.
+   * @returns list of student application exceptions.
    */
   async getPendingExceptions(
     paginationOptions: PaginationOptions,
