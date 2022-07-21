@@ -11,38 +11,39 @@
         application.
       </p>
       <v-row>
+        <v-col>
+          <v-text-field
+            density="compact"
+            label="Application Number"
+            variant="outlined"
+            v-model="applicationNumber"
+            data-cy="applicationNumber"
+            type="number"
+            :rules="[(v) => /\d+/.test(v) || 'Invalid Application Number']"
+          />
+        </v-col>
+        <v-col>
+          <v-text-field
+            density="compact"
+            label="Students Last Name"
+            variant="outlined"
+            v-model="studentsLastName"
+            data-cy="studentsLastName"
+            :rules="[(v) => !!v || 'Students Last Name Required']"
+          />
+        </v-col>
+        <v-col>
+          <v-text-field
+            density="compact"
+            label="Student's Date Of Birth"
+            variant="outlined"
+            v-model="studentsDateOfBirth"
+            data-cy="studentsDateOfBirth"
+            type="date"
+            :rules="[(v) => !!v || 'Student\'s Date Of Birth Required']"
+          />
+        </v-col>
         <v-col
-          ><div class="p-fluid p-formgrid p-grid">
-            <div class="p-field p-col-12 p-md-4">
-              <label class="field-required" for="applicationNumber"
-                >Application Number</label
-              >
-              <InputNumber
-                name="applicationNumber"
-                :format="false"
-                :useGrouping="false"
-                :allowEmpty="true"
-                v-model="applicationNumber"
-              />
-            </div>
-            <div class="p-field p-col-12 p-md-4">
-              <label class="field-required" for="studentsLastName"
-                >Student's Last Name</label
-              >
-              <InputText name="studentsLastName" v-model="studentsLastName" />
-            </div>
-            <div class="p-field p-col-12 p-md-4">
-              <label class="field-required" for="studentsLastName"
-                >Student's Date Of Birth</label
-              >
-              <InputMask
-                v-model="studentsDateOfBirth"
-                mask="9999-99-99"
-                slotChar="yyyy-mm-dd"
-              />
-            </div></div
-        ></v-col>
-        <v-col class="mt-9" cols="auto"
           ><v-btn color="primary" @click="applicationSearch"
             >Search</v-btn
           ></v-col

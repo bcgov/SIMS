@@ -27,7 +27,7 @@ export default {
   },
 
   methods: {
-    updateValue: function(value) {
+    updateValue: function (value) {
       this.$emit("input", value);
     },
   },

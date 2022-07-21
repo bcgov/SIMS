@@ -1,93 +1,88 @@
 <template>
-  <div class="p-m-4">
-    <HeaderNavigator
-      :title="locationDetails?.locationName"
-      subTitle="Programs"
-    />
-    <v-container>
-      <v-card class="mt-4">
-        <v-container>
-          <div>
-            <span class="color-blue category-header-large ml-2"
-              >All programs</span
-            >
-            <div class="float-right">
-              <InputText
-                v-model="searchBox"
-                placeholder="Search Program"
-                @keyup.enter="searchProgramTable()"
-              />
-              <v-btn
-                @click="searchProgramTable()"
-                tile
-                class="mx-2 primary-btn-background"
-              >
-                <font-awesome-icon :icon="['fas', 'search']" />
-              </v-btn>
-              <v-btn
-                class="float-right mb-2 primary-btn-background"
-                @click="goToAddNewProgram()"
-              >
-                <v-icon size="25" left> mdi-open-in-new </v-icon>
-                Create New Program
-              </v-btn>
-            </div>
-          </div>
-          <DataTable
-            :value="programAndCount.results"
-            :lazy="true"
-            :paginator="true"
-            :rows="DEFAULT_PAGE_LIMIT"
-            :rowsPerPageOptions="PAGINATION_LIST"
-            :totalRecords="programAndCount.count"
-            @page="paginationAndSortEvent($event)"
-            @sort="paginationAndSortEvent($event)"
-            :loading="loading"
+  <full-page-container>
+    <template #header>
+      <header-navigator
+        :title="locationDetails?.locationName"
+        subTitle="Programs"
+      />
+    </template>
+    <body-header title="All programs" :recordsCount="programAndCount.count">
+      <template #actions>
+        <v-row class="m-0 p-0">
+          <v-text-field
+            density="compact"
+            label="Search Program"
+            variant="outlined"
+            v-model="searchBox"
+            data-cy="searchBox"
+            @keyup.enter="searchProgramTable"
+            prepend-inner-icon="fa:fa fa-search"
+            hide-details
+          />
+          <v-btn
+            class="ml-2 primary-btn-background"
+            @click="goToAddNewProgram()"
           >
-            <Column :field="ProgramSummaryFields.CipCode" header="CIP"></Column>
-            <Column
-              :field="ProgramSummaryFields.ProgramName"
-              header="Program Name"
-              :sortable="true"
-            ></Column>
-            <Column
-              :field="ProgramSummaryFields.CredentialType"
-              header="Credential"
-              :sortable="true"
+            <v-icon size="25" left> mdi-open-in-new </v-icon>
+            Create New Program
+          </v-btn>
+        </v-row>
+      </template>
+    </body-header>
+    <content-group>
+      <DataTable
+        :value="programAndCount.results"
+        :lazy="true"
+        :paginator="true"
+        :rows="DEFAULT_PAGE_LIMIT"
+        :rowsPerPageOptions="PAGINATION_LIST"
+        :totalRecords="programAndCount.count"
+        @page="paginationAndSortEvent($event)"
+        @sort="paginationAndSortEvent($event)"
+        :loading="loading"
+      >
+        <Column :field="ProgramSummaryFields.CipCode" header="CIP"></Column>
+        <Column
+          :field="ProgramSummaryFields.ProgramName"
+          header="Program Name"
+          :sortable="true"
+        ></Column>
+        <Column
+          :field="ProgramSummaryFields.CredentialType"
+          header="Credential"
+          :sortable="true"
+        >
+          <template #body="slotProps">
+            <div>
+              {{ slotProps.data.credentialTypeToDisplay }}
+            </div>
+          </template></Column
+        >
+        <Column
+          :field="ProgramSummaryFields.TotalOfferings"
+          header="Offerings"
+        ></Column>
+        <Column
+          :field="ProgramSummaryFields.ProgramStatus"
+          header="Status"
+          :sortable="true"
+          ><template #body="slotProps">
+            <program-status-chip
+              :status="slotProps.data.programStatus"
+            ></program-status-chip></template
+        ></Column>
+        <Column>
+          <template #body="slotProps">
+            <v-btn
+              variant="outlined"
+              @click="goToViewProgram(slotProps.data.id)"
+              >View</v-btn
             >
-              <template #body="slotProps">
-                <div>
-                  {{ slotProps.data.credentialTypeToDisplay }}
-                </div>
-              </template></Column
-            >
-            <Column
-              :field="ProgramSummaryFields.TotalOfferings"
-              header="Offerings"
-            ></Column>
-            <Column
-              :field="ProgramSummaryFields.ProgramStatus"
-              header="Status"
-              :sortable="true"
-              ><template #body="slotProps">
-                <program-status-chip
-                  :status="slotProps.data.programStatus"
-                ></program-status-chip></template
-            ></Column>
-            <Column>
-              <template #body="slotProps">
-                <v-btn
-                  variant="outlined"
-                  @click="goToViewProgram(slotProps.data.id)"
-                  >View</v-btn
-                >
-              </template>
-            </Column>
-          </DataTable>
-        </v-container>
-      </v-card>
-    </v-container>
-  </div>
+          </template>
+        </Column>
+      </DataTable>
+    </content-group>
+  </full-page-container>
 </template>
 
 <script lang="ts">

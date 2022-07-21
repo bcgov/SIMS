@@ -2,37 +2,34 @@
   <student-page-container>
     <body-header>
       <template #actions-align-end>
-        <v-row>
-          <v-col order="1">
-            <v-btn
-              color="primary"
-              v-if="!notDraft"
-              v-show="!isFirstPage && !submittingApplication"
-              variant="text"
-              :loading="savingDraft"
-              @click="saveDraft()"
-            >
-              <v-icon left :size="20"> mdi-pencil </v-icon
-              >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
-            >
-          </v-col>
-          <v-col order="2">
-            <v-btn
-              v-if="!isReadOnly"
-              :disabled="!isLastPage || submittingApplication"
-              v-show="!isFirstPage"
-              color="primary"
-              @click="wizardSubmit()"
-              >{{
-                submittingApplication ? "Submitting..." : "Submit application"
-              }}
-              <span v-if="submittingApplication">
-                &nbsp;&nbsp;
-                <ProgressSpinner
-                  style="width: 30px; height: 25px"
-                  strokeWidth="10" /></span
-            ></v-btn>
-          </v-col>
+        <v-row class="m-0 p-0">
+          <v-btn
+            color="primary"
+            v-if="!notDraft"
+            v-show="!isFirstPage && !submittingApplication"
+            variant="text"
+            :loading="savingDraft"
+            @click="saveDraft()"
+          >
+            <v-icon left :size="20"> mdi-pencil </v-icon
+            >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
+          >
+          <v-btn
+            v-if="!isReadOnly"
+            class="ml-2"
+            :disabled="!isLastPage || submittingApplication"
+            v-show="!isFirstPage"
+            color="primary"
+            @click="wizardSubmit()"
+            >{{
+              submittingApplication ? "Submitting..." : "Submit application"
+            }}
+            <span v-if="submittingApplication">
+              &nbsp;&nbsp;
+              <ProgressSpinner
+                style="width: 30px; height: 25px"
+                strokeWidth="10" /></span
+          ></v-btn>
         </v-row>
       </template>
     </body-header>
