@@ -15,7 +15,7 @@
 - To create new migration runner file. Run the command
 
    ```bash
-   npx typeorm migration:create -n "<Migration File Name>"
+   npm run migration:create -n "<Migration File Name>"
    ```
 
 - The above command will generate a migration file containing method stubs for async up and async down methods under the following package

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   NoteType,
   SINValidation,
@@ -27,10 +27,10 @@ import {
 @Injectable()
 export class SINValidationService extends RecordDataModelService<SINValidation> {
   constructor(
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly studentService: StudentService,
   ) {
-    super(connection.getRepository(SINValidation));
+    super(dataSource.getRepository(SINValidation));
   }
 
   /**
@@ -79,7 +79,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
     noteDescription: string,
     auditUserId: number,
   ): Promise<SINValidation> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const student = await this.studentService.getStudentById(studentId);
       const auditUser = { id: auditUserId } as User;
       const savedNote = await this.studentService.createStudentNote(
@@ -130,7 +130,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
     noteDescription: string,
     auditUserId: number,
   ): Promise<SINValidation> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       // Get the record to be updated.
       const sinValidationRepo =
         transactionalEntityManager.getRepository(SINValidation);

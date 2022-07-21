@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
-  Connection,
+  DataSource,
   In,
   Not,
   UpdateResult,
@@ -81,7 +81,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   private readonly config: IConfig;
   constructor(
     configService: ConfigService,
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
@@ -90,7 +90,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {
-    super(connection.getRepository(Application));
+    super(dataSource.getRepository(Application));
     this.config = configService.getConfig();
     this.logger.log("[Created]");
   }
@@ -222,7 +222,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // and the assessment cannot be create at the same moment what causes a
     // "cyclic dependency error" on Typeorm. Saving the application record and later
     // having it associated with the assessment solves the issue.
-    await this.connection.transaction(async (transactionalEntityManager) => {
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationRepository =
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
@@ -293,7 +293,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ApplicationStatus.draft,
     );
     // If an application id is provided it means that an update is supposed to happen,
-    // so an application draft is expected to be find. If not found, thown an error.
+    // so an application draft is expected to be find. If not found, thrown an error.
     if (applicationId && !draftApplication) {
       throw new CustomNamedError(
         "Not able to find the draft application associated with the student.",
@@ -572,7 +572,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     } else {
       applicationQuery.orderBy(
-        `CASE application.applicationStatus
+        // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
+        `CASE application.application_status
               WHEN '${ApplicationStatus.draft}' THEN 1
               WHEN '${ApplicationStatus.submitted}' THEN 2
               WHEN '${ApplicationStatus.inProgress}' THEN 3
@@ -667,7 +668,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     offering: EducationProgramOffering,
     auditUserId: number,
   ): Promise<Application> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationRepo =
         transactionalEntityManager.getRepository(Application);
       const application = await applicationRepo
@@ -840,40 +841,43 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @returns student Application list.
    */
   async getPIRApplications(locationId: number): Promise<Application[]> {
-    return this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.applicationNumber",
-        "application.id",
-        "application.pirStatus",
-        "currentAssessment.id",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "student",
-      ])
-      .leftJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
-      .innerJoin("application.student", "student")
-      .innerJoinAndSelect("student.user", "user")
-      .where("application.location.id = :locationId", { locationId })
-      .andWhere("application.pirStatus is not null")
-      .andWhere("application.pirStatus != :nonPirStatus", {
-        nonPirStatus: ProgramInfoStatus.notRequired,
-      })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.overwritten,
-      })
-      .orderBy(
-        `CASE application.pirStatus
+    return (
+      this.repo
+        .createQueryBuilder("application")
+        .select([
+          "application.applicationNumber",
+          "application.id",
+          "application.pirStatus",
+          "currentAssessment.id",
+          "offering.studyStartDate",
+          "offering.studyEndDate",
+          "student",
+        ])
+        .leftJoin("application.currentAssessment", "currentAssessment")
+        .leftJoin("currentAssessment.offering", "offering")
+        .innerJoin("application.student", "student")
+        .innerJoinAndSelect("student.user", "user")
+        .where("application.location.id = :locationId", { locationId })
+        .andWhere("application.pirStatus is not null")
+        .andWhere("application.pirStatus != :nonPirStatus", {
+          nonPirStatus: ProgramInfoStatus.notRequired,
+        })
+        .andWhere("application.applicationStatus != :overwrittenStatus", {
+          overwrittenStatus: ApplicationStatus.overwritten,
+        })
+        // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
+        .orderBy(
+          `CASE application.pir_status
             WHEN '${ProgramInfoStatus.required}' THEN 1
             WHEN '${ProgramInfoStatus.submitted}' THEN 2
             WHEN '${ProgramInfoStatus.completed}' THEN 3
             WHEN '${ProgramInfoStatus.declined}' THEN 4
             ELSE 5
           END`,
-      )
-      .addOrderBy("application.applicationNumber")
-      .getMany();
+        )
+        .addOrderBy("application.applicationNumber")
+        .getMany()
+    );
   }
   /**
    * Update Student Application status.
@@ -945,14 +949,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
     auditUserId: number,
   ): Promise<ApplicationOverriddenResult> {
     // Only override application when pir status is not "not required".
-    const appToOverride = await this.repo.findOne(
-      {
+    const appToOverride = await this.repo.findOne({
+      where: {
         id: applicationId,
         location: { id: locationId },
         pirStatus: Not(ProgramInfoStatus.notRequired),
       },
-      { relations: ["studentFiles", "currentAssessment"] },
-    );
+      relations: { studentFiles: true, currentAssessment: true },
+    });
 
     if (!appToOverride) {
       throw new CustomNamedError(
