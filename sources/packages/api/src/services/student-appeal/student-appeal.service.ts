@@ -344,7 +344,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * @param paginationOptions options to execute the pagination.
    * @returns StudentAppeal list.
    */
-  async getPendingAppeals(
+  async getAppealsByStatus(
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<StudentAppeal>> {
     const studentAppealsQuery = this.repo
