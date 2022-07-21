@@ -16,23 +16,14 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-row>
-        <v-col>
-          <v-btn color="primary" variant="outlined" @click="dialogClosed">
-            No
-          </v-btn>
-        </v-col>
-        <v-col>
-          <v-btn
-            color="warning"
-            depressed
-            class="text-white"
-            @click="extendTime"
-          >
-            <v-icon left size="25"> mdi-clock </v-icon>
-            Yes
-          </v-btn>
-        </v-col>
+      <v-row class="m-0 p-0">
+        <v-btn color="primary" variant="outlined" @click="dialogClosed">
+          No
+        </v-btn>
+        <v-btn color="warning" depressed class="text-white" @click="extendTime">
+          <v-icon left size="25"> mdi-clock </v-icon>
+          Yes
+        </v-btn>
       </v-row>
     </template>
   </ModalDialogBase>

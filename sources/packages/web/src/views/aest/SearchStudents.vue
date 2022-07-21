@@ -143,7 +143,7 @@ export default {
       if (students.value.length === 0) {
         emitter.emit(
           "snackBar",
-          toast.warn("No Students found for the given search criteria."),
+          toast.warn("No Students found for the given search criteria. "),
         );
       }
     };

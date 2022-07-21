@@ -12,23 +12,19 @@
       Are you sure you want to change the program or offering information?
     </template>
     <template v-slot:footer>
-      <v-row>
-        <v-col>
-          <v-btn color="primary" variant="outlined" @click="dialogClosed">
-            Cancel
-          </v-btn>
-        </v-col>
-        <v-col>
-          <v-btn
-            color="danger"
-            depressed
-            @click="editProgramInfo"
-            style="color: white"
-          >
-            <v-icon left size="25"> mdi-pencil </v-icon>
-            Edit Program Information
-          </v-btn>
-        </v-col>
+      <v-row class="m-0 p-0">
+        <v-btn color="primary" variant="outlined" @click="dialogClosed">
+          Cancel
+        </v-btn>
+        <v-btn
+          color="danger"
+          depressed
+          @click="editProgramInfo"
+          style="color: white"
+        >
+          <v-icon left size="25"> mdi-pencil </v-icon>
+          Edit Program Information
+        </v-btn>
       </v-row>
     </template>
   </ModalDialogBase>

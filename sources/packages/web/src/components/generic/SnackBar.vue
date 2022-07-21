@@ -9,8 +9,16 @@
     class="mt-16 mr-8"
   >
     <div class="mt-2">
-      <v-icon :icon="snackBarIcon" class="icon-color mt-0" size="23"></v-icon
-      ><span class="label-bold default-color ml-2">{{ snackBarContent }}</span>
+      <v-row>
+        <v-col cols="1">
+          <v-icon
+            :icon="snackBarIcon"
+            class="icon-color mt-0"
+            size="23"
+          ></v-icon>
+        </v-col>
+        <v-col class="label-bold default-color">{{ snackBarContent }}</v-col>
+      </v-row>
     </div>
     <template v-slot:actions>
       <v-icon

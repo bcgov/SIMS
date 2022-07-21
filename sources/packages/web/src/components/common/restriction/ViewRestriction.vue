@@ -11,24 +11,20 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-row>
-        <v-col>
-          <v-btn color="primary" variant="outlined" @click="dialogClosed">
-            Cancel
-          </v-btn>
-        </v-col>
-        <v-col>
-          <v-btn
-            v-if="
-              restrictionData.isActive &&
-              restrictionData.restrictionType === RestrictionType.Provincial
-            "
-            @click="resolveRestriction()"
-            class="float-right primary-btn-background"
-          >
-            Resolve Restriction
-          </v-btn>
-        </v-col>
+      <v-row class="m-0 p-0">
+        <v-btn color="primary" variant="outlined" @click="dialogClosed">
+          Cancel
+        </v-btn>
+        <v-btn
+          v-if="
+            restrictionData.isActive &&
+            restrictionData.restrictionType === RestrictionType.Provincial
+          "
+          @click="resolveRestriction()"
+          class="float-right primary-btn-background"
+        >
+          Resolve Restriction
+        </v-btn>
       </v-row>
     </template>
   </ModalDialogBase>
