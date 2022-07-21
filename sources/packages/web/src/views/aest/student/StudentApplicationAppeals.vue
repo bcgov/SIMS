@@ -17,10 +17,8 @@
           variant="outlined"
           v-model="searchCriteria"
           @keyup.enter="searchAppeals"
+          prepend-inner-icon="fa:fas fa-magnifying-glass"
         >
-          <template v-slot:prependInner>
-            <font-awesome-icon :icon="['fas', 'search']" />
-          </template>
         </v-text-field>
       </template>
     </body-header>
