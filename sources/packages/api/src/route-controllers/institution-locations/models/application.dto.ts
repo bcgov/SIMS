@@ -9,7 +9,7 @@ import {
   ApplicationStatus,
   EducationProgramOffering,
 } from "../../../database/entities";
-import { StudyBreak } from "../../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
+import { StudyBreak } from "../../confirmation-of-enrollment/models/confirmation-of-enrollment.dto";
 import { ApplicationScholasticStandingStatus } from "../../../services/application/application.models";
 
 export class ActiveApplicationDataAPIOutDTO {

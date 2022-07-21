@@ -1,43 +1,3 @@
-import { ProgramInfoStatus } from "@/types";
-
-export interface COESummaryDTO {
-  applicationNumber: string;
-  studyStartPeriod: Date;
-  studyEndPeriod: Date;
-  applicationId: number;
-  coeStatus: COEStatus;
-  fullName: string;
-  disbursementScheduleId: number;
-  disbursementDate: Date;
-}
-
-export interface ApplicationDetailsForCOEDTO {
-  applicationProgramName: string;
-  applicationProgramDescription: string;
-  applicationOfferingName: string;
-  applicationOfferingIntensity: string;
-  applicationOfferingStartDate: string;
-  applicationOfferingEndDate: string;
-  applicationOfferingHasStudyBreak: boolean;
-  applicationOfferingActualTuition: number;
-  applicationOfferingProgramRelatedCost: number;
-  applicationOfferingMandatoryCost: number;
-  applicationOfferingExceptionalExpenses: number;
-  applicationOfferingStudyDelivered: string;
-  applicationStudentName: string;
-  applicationNumber: string;
-  applicationLocationName: string;
-  applicationStatus: string;
-  applicationCOEStatus: COEStatus;
-  applicationId: number;
-  applicationWithinCOEWindow: boolean;
-  applicationLocationId: number;
-  applicationDeniedReason?: string;
-  studyBreaks?: StudyBreakCOE[];
-  applicationPIRStatus: ProgramInfoStatus;
-  disbursementDate: string;
-}
-
 /**
  * Possible status for Confirmation of Enrollment, when the Application_status is in Enrollment
  */
@@ -56,16 +16,6 @@ export enum COEStatus {
   declined = "Declined",
 }
 
-export interface COEDeniedReasonDto {
-  value: number;
-  label: string;
-}
-
-export interface DenyConfirmationOfEnrollment {
-  coeDenyReasonId: number;
-  otherReasonDesc?: string;
-}
-
 /**
  * Read only Dto for study break item.
  * This is for COE where study breaks are shown in read only view.
@@ -79,6 +29,16 @@ export interface StudyBreakCOE {
  * Enum for COE enrollment period.
  */
 export enum EnrollmentPeriod {
+  /**
+   * The ones considered inside a 21 days period
+   * prior to the offering start date, that allow
+   * them to be approved.
+   */
   Current = "current",
+  /**
+   * The ones not yet inside a 21 days period
+   * prior to the offering start date, that allow
+   * them to be approved.
+   */
   Upcoming = "upcoming",
 }

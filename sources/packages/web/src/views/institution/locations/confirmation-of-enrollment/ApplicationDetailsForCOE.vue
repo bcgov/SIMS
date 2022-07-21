@@ -50,8 +50,6 @@ import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnroll
 import Menu from "primevue/menu";
 import {
   COEStatus,
-  ApplicationDetailsForCOEDTO,
-  DenyConfirmationOfEnrollment,
   ProgramInfoStatus,
   FormIOForm,
   ApiProcessError,
@@ -64,12 +62,16 @@ import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "@/constants";
-import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto/ConfirmationOfEnrolment.dto";
-/**
- * added MenuType interface for prime vue component menu,
- *  remove it when vuetify component is used
- */
+import {
+  ApplicationDetailsForCOEAPIOutDTO,
+  ConfirmationOfEnrollmentAPIInDTO,
+  DenyConfirmationOfEnrollmentAPIInDTO,
+} from "@/services/http/dto";
 
+/**
+ * Added MenuType interface for prime vue component menu,
+ * remove it when vuetify component is used.
+ */
 export interface MenuType {
   label?: string;
   icon?: string;
@@ -99,7 +101,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const toast = useToastMessage();
-    const initialData = ref({} as ApplicationDetailsForCOEDTO);
+    const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
     const menu = ref();
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
@@ -121,7 +123,7 @@ export default {
       try {
         const payload = modalResult.data as ConfirmationOfEnrollmentAPIInDTO;
         payload.tuitionRemittanceAmount = payload.tuitionRemittanceAmount ?? 0;
-        await ConfirmationOfEnrollmentService.shared.confirmCOE(
+        await ConfirmationOfEnrollmentService.shared.confirmEnrollment(
           props.locationId,
           props.disbursementScheduleId,
           payload,
@@ -171,7 +173,7 @@ export default {
       }
     };
     const submitCOEDeny = async (
-      submissionData: DenyConfirmationOfEnrollment,
+      submissionData: DenyConfirmationOfEnrollmentAPIInDTO,
     ) => {
       try {
         await ConfirmationOfEnrollmentService.shared.denyConfirmationOfEnrollment(
