@@ -1011,6 +1011,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       async (transactionalEntityManager) => {
         const applicationRepository =
           transactionalEntityManager.getRepository(Application);
+        // Application must be saved to have the id properly generated and associated
+        // to the assessment. This is a special case where the application is associated
+        // in the assessment record and the assessment record is associated as a
+        // currentAssessment also in the application.
         await applicationRepository.save(newApplication);
         newApplication.creator = auditUser;
         newApplication.studentAssessments = [originalAssessment];
