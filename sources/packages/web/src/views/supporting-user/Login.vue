@@ -13,15 +13,24 @@
       >We are using BCSC for authentication. Please click on Login/Register
       buttons below to start your sign in/sign up.</v-card-text
     >
-    <v-row justify="center" class="m-3">
-      <v-btn justify-center color="primary" @click="login">
-        <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
-        Login with BCSC
-      </v-btn>
-      <v-btn color="primary" @click="login">
-        <v-icon size="25" class="mr-2">mdi-account-star-outline</v-icon>
-        Sign Up with BCSC
-      </v-btn>
+    <v-row class="m-3">
+      <v-col>
+        <v-btn
+          justify-center
+          color="primary"
+          @click="login"
+          class="float-right"
+        >
+          <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
+          Login with BCSC
+        </v-btn>
+      </v-col>
+      <v-col>
+        <v-btn color="primary" @click="login">
+          <v-icon size="25" class="mr-2">mdi-account-star-outline</v-icon>
+          Sign Up with BCSC
+        </v-btn>
+      </v-col>
     </v-row>
   </v-card>
 </template>

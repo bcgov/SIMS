@@ -111,9 +111,9 @@ export default {
       () => isAuthenticated.value && hasStudentAccount.value,
     );
     const menuItems = computed(() => {
-      const menuItems: MenuModel[] = [];
+      const items: MenuModel[] = [];
       if (hasStudentAccount.value) {
-        menuItems.push({
+        items.push({
           label: "Notifications Settings",
           command: () => {
             router.push({
@@ -122,7 +122,7 @@ export default {
           },
         });
 
-        menuItems.push({
+        items.push({
           label: "Account Activity",
           command: () => {
             router.push({
@@ -132,14 +132,14 @@ export default {
         });
       }
 
-      menuItems.push({
+      items.push({
         label: "Log Out",
         command: async () => {
           await executeLogout(ClientIdType.Student);
         },
       });
 
-      return menuItems;
+      return items;
     });
 
     return {

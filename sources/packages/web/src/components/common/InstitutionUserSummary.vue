@@ -6,23 +6,18 @@
     :recordsCount="usersListAndCount.count"
   >
     <template #actions>
-      <v-row class="m-0">
+      <v-row class="m-0 p-0">
         <v-text-field
-          class="v-text-field-search-width"
           density="compact"
           label="Search name"
           variant="outlined"
           v-model="searchBox"
+          data-cy="searchBox"
           @keyup.enter="searchUserTable"
-          prepend-inner-icon="fa:fas fa-magnifying-glass"
+          prepend-inner-icon="fa:fa fa-search"
+          hide-details
         >
         </v-text-field>
-        <v-btn
-          class="ml-2 primary-btn-background"
-          @click="searchUserTable"
-          prepend-icon="fa:fas fa-magnifying-glass"
-          >Search</v-btn
-        >
         <v-btn
           v-if="hasBusinessGuid || allowBasicBCeIDCreation"
           class="ml-2 primary-btn-background"

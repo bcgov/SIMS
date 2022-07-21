@@ -5,15 +5,13 @@
     information needs to be changed please visit
     <a rel="noopener" href="https://www.bceid.ca/" target="_blank">bceid.ca</a>.
   </Message>
-  <v-card class="p-m-4">
-    <template #content>
-      <formio
-        formName="institutionUserProfile"
-        :data="initialData"
-        @submitted="submitted"
-      ></formio>
-    </template>
-  </v-card>
+  <full-page-container>
+    <formio
+      formName="institutionUserProfile"
+      :data="initialData"
+      @submitted="submitted"
+    ></formio>
+  </full-page-container>
 </template>
 
 <script lang="ts">

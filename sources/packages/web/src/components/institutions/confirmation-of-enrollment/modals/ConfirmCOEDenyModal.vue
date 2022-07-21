@@ -15,18 +15,24 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" variant="outlined" @click="dialogClosed">
-        Cancel
-      </v-btn>
-      <v-btn
-        color="danger"
-        depressed
-        @click="denyProgramInfo"
-        class="text-white"
-      >
-        <v-icon left size="25"> mdi-cancel </v-icon>
-        Decline Request
-      </v-btn>
+      <v-row>
+        <v-col>
+          <v-btn color="primary" variant="outlined" @click="dialogClosed">
+            Cancel
+          </v-btn>
+        </v-col>
+        <v-col>
+          <v-btn
+            color="danger"
+            depressed
+            @click="denyProgramInfo"
+            class="text-white"
+          >
+            <v-icon left size="25"> mdi-cancel </v-icon>
+            Decline Request
+          </v-btn>
+        </v-col>
+      </v-row>
     </template>
   </ModalDialogBase>
 </template>

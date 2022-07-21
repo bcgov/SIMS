@@ -11,15 +11,21 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" variant="outlined" @click="dialogClosed">
-        Cancel
-      </v-btn>
-      <v-btn
-        @click="addRestriction()"
-        class="float-right primary-btn-background"
-      >
-        Add Restriction
-      </v-btn>
+      <v-row>
+        <v-col>
+          <v-btn color="primary" variant="outlined" @click="dialogClosed">
+            Cancel
+          </v-btn>
+        </v-col>
+        <v-col>
+          <v-btn
+            @click="addRestriction()"
+            class="float-right primary-btn-background"
+          >
+            Add Restriction
+          </v-btn>
+        </v-col>
+      </v-row>
     </template>
   </ModalDialogBase>
 </template>

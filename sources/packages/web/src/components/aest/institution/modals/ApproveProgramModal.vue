@@ -12,12 +12,18 @@
       ></formio>
     </template>
     <template v-slot:footer>
-      <v-btn variant="outlined" :color="COLOR_BLUE" @click="dialogClosed">
-        Cancel
-      </v-btn>
-      <v-btn class="primary-btn-background" @click="approveProgram">
-        Approve now
-      </v-btn>
+      <v-row>
+        <v-col>
+          <v-btn variant="outlined" :color="COLOR_BLUE" @click="dialogClosed">
+            Cancel
+          </v-btn>
+        </v-col>
+        <v-col>
+          <v-btn class="primary-btn-background" @click="approveProgram">
+            Approve now
+          </v-btn>
+        </v-col>
+      </v-row>
     </template>
   </ModalDialogBase>
 </template>

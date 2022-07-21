@@ -9,7 +9,7 @@
     @customEvent="customEvent"
   ></formio>
   <v-row v-if="showNav">
-    <v-col md="6">
+    <v-col order="1">
       <v-btn
         color="primary"
         v-show="!isFirstPage"
@@ -19,8 +19,12 @@
         >Previous section</v-btn
       >
     </v-col>
-    <v-col md="6" class="ml-auto text-right">
-      <v-btn color="primary" v-show="!isLastPage" @click="wizardGoNext"
+    <v-col order="2">
+      <v-btn
+        class="float-right"
+        color="primary"
+        v-show="!isLastPage"
+        @click="wizardGoNext"
         >Next section</v-btn
       >
     </v-col>

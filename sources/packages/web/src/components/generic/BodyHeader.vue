@@ -1,18 +1,25 @@
 <template>
-  <div class="mb-4">
-    <span class="category-header-large color-blue">
+  <v-row no-gutters>
+    <v-col class="category-header-large color-blue" order="1">
       {{ fullTitleMessage }}
-    </span>
-    <span class="ml-2">
+    </v-col>
+    <v-col class="ml-2" order="2">
       <slot name="status-chip"></slot>
-    </span>
-    <div class="float-right">
-      <slot name="actions"></slot>
-    </div>
-    <div class="mt-1">
+    </v-col>
+    <v-col order="3">
+      <div>
+        <slot name="actions"></slot>
+      </div>
+      <div class="float-right">
+        <slot name="actions-align-end"></slot>
+      </div>
+    </v-col>
+  </v-row>
+  <v-row class="mb-4">
+    <v-col>
       {{ subTitle }}
-    </div>
-  </div>
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">

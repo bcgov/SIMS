@@ -10,12 +10,18 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" variant="outlined" @click="dialogClosed">
-        Cancel
-      </v-btn>
-      <v-btn @click="addNewNote()" class="float-right primary-btn-background">
-        Add note
-      </v-btn>
+      <v-row>
+        <v-col>
+          <v-btn color="primary" variant="outlined" @click="dialogClosed">
+            Cancel
+          </v-btn>
+        </v-col>
+        <v-col>
+          <v-btn @click="addNewNote()" class="primary-btn-background">
+            Add note
+          </v-btn>
+        </v-col>
+      </v-row>
     </template>
   </ModalDialogBase>
 </template>

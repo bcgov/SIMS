@@ -1,36 +1,36 @@
 <template>
-  <div class="p-m-4">
-    <header-navigator
-      title="Manage institutions"
-      subTitle="Manage designations"
-    />
-    <full-page-container class="mt-4">
-      <body-header
-        title="Designation agreements"
-        subTitle="Ensure you have an active designation to administer student financial
-        assistance."
-        :recordsCount="designations.length"
-      >
-        <template #actions>
-          <v-btn
-            v-if="isLegalSigningAuthority"
-            class="ml-2 primary-btn-background"
-            data-cy="requestDesignation"
-            @click="goToRequestDesignation()"
-            ><font-awesome-icon
-              :icon="['fas', 'concierge-bell']"
-              class="mr-2"
-            />Request designation</v-btn
-          >
-        </template>
-      </body-header>
-      <designation-agreement-summary
-        :designations="designations"
-        toggleMessage="You don't have any agreements yet"
-        @viewDesignation="goToViewDesignation"
+  <full-page-container>
+    <template #header>
+      <header-navigator
+        title="Manage institutions"
+        subTitle="Manage designations"
       />
-    </full-page-container>
-  </div>
+    </template>
+    <body-header
+      title="Designation agreements"
+      subTitle="Ensure you have an active designation to administer student financial
+        assistance."
+      :recordsCount="designations.length"
+    >
+      <template #actions-align-end>
+        <v-btn
+          v-if="isLegalSigningAuthority"
+          class="ml-2 primary-btn-background"
+          data-cy="requestDesignation"
+          @click="goToRequestDesignation()"
+          ><font-awesome-icon
+            :icon="['fas', 'concierge-bell']"
+            class="mr-2"
+          />Request designation</v-btn
+        >
+      </template>
+    </body-header>
+    <designation-agreement-summary
+      :designations="designations"
+      toggleMessage="You don't have any agreements yet"
+      @viewDesignation="goToViewDesignation"
+    />
+  </full-page-container>
 </template>
 
 <script lang="ts">
