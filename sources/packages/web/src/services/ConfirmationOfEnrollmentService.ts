@@ -76,23 +76,6 @@ export class ConfirmationOfEnrollmentService {
   }
 
   /**
-   * Creates a new Student Application to maintain history,
-   * overriding the current one in order to rollback the
-   * process and start the assessment all over again.
-   * @param locationId location id executing the COE rollback.
-   * @param disbursementScheduleId disbursement schedule id of COE.
-   */
-  async rollbackCOE(
-    locationId: number,
-    disbursementScheduleId: number,
-  ): Promise<void> {
-    await ApiClient.ConfirmationOfEnrollment.rollbackCOE(
-      locationId,
-      disbursementScheduleId,
-    );
-  }
-
-  /**
    * Get all COE denied reasons, which are active.
    * @returns COE denied reason list.
    */

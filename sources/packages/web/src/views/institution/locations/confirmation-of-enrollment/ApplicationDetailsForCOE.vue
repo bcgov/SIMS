@@ -37,7 +37,6 @@
         >
       </template>
     </formio-modal-dialog>
-    <ConfirmCOEEditModal ref="editCOEModal" />
     <ConfirmCOEDenyModal ref="denyCOEModal" @submitData="submitCOEDeny" />
   </div>
 </template>
@@ -48,13 +47,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import Menu from "primevue/menu";
-import {
-  COEStatus,
-  ProgramInfoStatus,
-  FormIOForm,
-  ApiProcessError,
-} from "@/types";
-import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
+import { COEStatus, FormIOForm, ApiProcessError } from "@/types";
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
 import { useToastMessage, ModalDialog } from "@/composables";
 import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
@@ -83,7 +76,6 @@ export interface MenuType {
 export default {
   components: {
     Menu,
-    ConfirmCOEEditModal,
     ConfirmCOEDenyModal,
     Information,
     FormioModalDialog,
@@ -147,31 +139,6 @@ export default {
         toast.error(errorLabel, errorMsg);
       }
     };
-    const editProgramInformation = async () => {
-      if (await editCOEModal.value.showModal()) {
-        try {
-          await ConfirmationOfEnrollmentService.shared.rollbackCOE(
-            props.locationId,
-            props.disbursementScheduleId,
-          );
-          toast.success(
-            "Edit Program Information",
-            "Program Information Request is now available to be edited.",
-          );
-          router.push({
-            name: InstitutionRoutesConst.COE_SUMMARY,
-            params: {
-              locationId: props.locationId,
-            },
-          });
-        } catch {
-          toast.error(
-            "Unexpected error",
-            "An error happened while updating Confirmation of Enrollment.",
-          );
-        }
-      }
-    };
     const submitCOEDeny = async (
       submissionData: DenyConfirmationOfEnrollmentAPIInDTO,
     ) => {
@@ -223,17 +190,6 @@ export default {
           command: denyProgramInformation,
         },
       ];
-
-      if (
-        ProgramInfoStatus.notRequired !== initialData.value.applicationPIRStatus
-      ) {
-        items.value.push({ separator: true });
-        items.value.push({
-          label: "Edit Program Information",
-          class: "font-weight-bold",
-          command: editProgramInformation,
-        });
-      }
     };
 
     watch(

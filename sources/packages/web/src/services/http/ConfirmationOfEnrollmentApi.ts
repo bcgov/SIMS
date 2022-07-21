@@ -76,25 +76,6 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   }
 
   /**
-   * Creates a new Student Application to maintain history,
-   * overriding the current one in order to rollback the
-   * process and start the assessment all over again.
-   * @param locationId location id executing the COE rollback.
-   * @param disbursementScheduleId application to be rolled back.
-   */
-  async rollbackCOE(
-    locationId: number,
-    disbursementScheduleId: number,
-  ): Promise<void> {
-    await this.postCall(
-      this.addClientRoot(
-        `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/rollback`,
-      ),
-      null,
-    );
-  }
-
-  /**
    * Get all COE denied reasons, which are active.
    * @returns COE denied reason list.
    */
