@@ -372,7 +372,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         .andWhere(
           new Brackets((qb) => {
             qb.where(
-              "CONCAT(user.firstName,' ', user.lastName) Ilike :searchCriteria",
+              "CONCAT(user.firstName, ' ', user.lastName) Ilike :searchCriteria",
             ).orWhere("application.applicationNumber Ilike :searchCriteria");
           }),
         )
