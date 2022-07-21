@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Brackets, DataSource } from "typeorm";
-import { Brackets, Connection, OrderByCondition } from "typeorm";
+import { Brackets, DataSource, OrderByCondition } from "typeorm";
 import {
   Application,
   AssessmentTriggerType,
