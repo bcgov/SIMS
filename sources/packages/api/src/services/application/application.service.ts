@@ -19,8 +19,6 @@ import {
   Student,
   StudentFile,
   ProgramYear,
-  InstitutionLocation,
-  EducationProgram,
   PIRDeniedReason,
   MSFAANumber,
   OfferingIntensity,
@@ -32,7 +30,6 @@ import {
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
-  ApplicationOverriddenResult,
   ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
   ApplicationSubmissionResult,
 } from "./application.models";

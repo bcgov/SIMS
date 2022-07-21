@@ -2,7 +2,6 @@ import {
   Controller,
   Param,
   Get,
-  Post,
   Patch,
   NotFoundException,
   UnprocessableEntityException,
@@ -20,19 +19,15 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   ApplicationService,
-  APPLICATION_NOT_FOUND,
   WorkflowActionsService,
   COEDeniedReasonService,
   DisbursementScheduleService,
   StudentAssessmentService,
-  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
 } from "../../services";
 import {
   ApplicationStatus,
   DisbursementSchedule,
-  COEStatus,
   DisbursementValueType,
-  ProgramInfoStatus,
 } from "../../database/entities";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
@@ -43,7 +38,6 @@ import {
   getExtendedDateFormat,
   getISODateOnlyString,
   getTotalDisbursementAmount,
-  CustomNamedError,
 } from "../../utilities";
 import {
   ApplicationDetailsForCOEAPIOutDTO,
@@ -68,7 +62,6 @@ import {
   ConfirmationOfEnrollmentPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 const COE_NOT_FOUND_MESSAGE =
   "Confirmation of enrollment not found or application status not valid.";
