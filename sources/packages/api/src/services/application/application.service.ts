@@ -42,8 +42,6 @@ import {
   CustomNamedError,
   getUTCNow,
   dateDifference,
-  getPSTPDTDate,
-  setToStartOfTheDayInPSTPDT,
   COE_WINDOW,
   PIR_DENIED_REASON_OTHER_ID,
   sortApplicationsColumnMap,
@@ -1072,11 +1070,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Checks if current date from offering start date
-   * is inside or equal to COE window.
+   * Checks if the confirmation of enrollment can be executed in the present date.
+   * Institutions can execute confirmation of enrollments not before 21 days of the offering start date.
+   * After the offering start date institutions can still execute the CoE.
    * @param offeringStartDate offering start date.
-   * @returns true if current to offering
-   * start date is within COE window otherwise false.
+   * @returns true if the confirmation of enrollment can happen, otherwise false.
    */
   withinValidCOEWindow(offeringStartDate: Date): boolean {
     return dateDifference(new Date(), offeringStartDate) <= COE_WINDOW;

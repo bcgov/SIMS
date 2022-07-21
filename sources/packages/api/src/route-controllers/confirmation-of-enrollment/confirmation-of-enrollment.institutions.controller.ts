@@ -150,12 +150,12 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
    * overriding the current one in order to rollback the
    * process and start the assessment all over again.
    * @param locationId location id executing the COE rollback.
-   * @param applicationId application to be rolled back.
+   * @param disbursementScheduleId disbursement schedule id of COE.
    * @returns the id of the newly created Student Application.
    */
   @HasLocationAccess("locationId")
   @Post(
-    ":locationId/confirmation-of-enrollment/application/:applicationId/rollback",
+    ":locationId/confirmation-of-enrollment/disbursement-schedule/:disbursementScheduleId/rollback",
   )
   @ApiNotFoundResponse({
     description: `Student Application not found or the location does not have access to it or the PIR is defined with the status as '${ProgramInfoStatus.notRequired}'.`,
@@ -166,15 +166,16 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
   async rollbackCOE(
     @UserToken() userToken: IUserToken,
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @Param("disbursementScheduleId", ParseIntPipe)
+    disbursementScheduleId: number,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       // Validation to check if the application is in Enrollment status and first coe is in Required status.
       // Otherwise the application is not eligible for COE override.
       const firstCOEofApplication =
-        await this.disbursementScheduleService.getFirstCOEOfApplication(
-          applicationId,
-        );
+        await this.disbursementScheduleService.getFirstDisbursementSchedule({
+          disbursementScheduleId,
+        });
       if (
         !firstCOEofApplication ||
         !(
@@ -189,7 +190,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       }
       const result = await this.applicationService.overrideApplicationForCOE(
         locationId,
-        applicationId,
+        firstCOEofApplication.studentAssessment.application.id,
         userToken.userId,
       );
 
@@ -226,11 +227,12 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
   @HasLocationAccess("locationId")
   @ApiNotFoundResponse({ description: COE_NOT_FOUND_MESSAGE })
   @Get(
-    ":locationId/confirmation-of-enrollment/disbursement/:disbursementScheduleId",
+    ":locationId/confirmation-of-enrollment/disbursement-schedule/:disbursementScheduleId",
   )
   async getApplicationForCOE(
-    @Param("locationId") locationId: number,
-    @Param("disbursementScheduleId") disbursementScheduleId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("disbursementScheduleId", ParseIntPipe)
+    disbursementScheduleId: number,
   ): Promise<ApplicationDetailsForCOEAPIOutDTO> {
     const disbursementSchedule =
       await this.disbursementScheduleService.getDisbursementAndApplicationDetails(
@@ -302,11 +304,12 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       "or the first disbursement(COE) is not completed and it must be completed.",
   })
   @Patch(
-    ":locationId/confirmation-of-enrollment/disbursement/:disbursementScheduleId/confirm",
+    ":locationId/confirmation-of-enrollment/disbursement-schedule/:disbursementScheduleId/confirm",
   )
   async confirmEnrollment(
-    @Param("locationId") locationId: number,
-    @Param("disbursementScheduleId") disbursementScheduleId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("disbursementScheduleId", ParseIntPipe)
+    disbursementScheduleId: number,
     @Body() payload: ConfirmationOfEnrollmentAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
@@ -320,8 +323,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     if (!disbursementSchedule) {
       throw new NotFoundException(COE_NOT_FOUND_MESSAGE);
     }
-    // Institution user can only confirm COE, when the student is
-    // within COE_WINDOW of disbursement date.
+
     if (
       !this.applicationService.withinValidCOEWindow(
         disbursementSchedule.disbursementDate,
@@ -333,10 +335,10 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     }
 
     const firstOutstandingDisbursement =
-      await this.disbursementScheduleService.getFirstCOEOfApplication(
-        disbursementSchedule.studentAssessment.application.id,
-        true,
-      );
+      await this.disbursementScheduleService.getFirstDisbursementSchedule({
+        disbursementScheduleId: disbursementSchedule.id,
+        onlyPendingCOE: true,
+      });
 
     if (disbursementSchedule.id !== firstOutstandingDisbursement.id) {
       throw new UnprocessableEntityException(
@@ -410,11 +412,12 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     description: "Unable to find a COE which could be completed.",
   })
   @Patch(
-    ":locationId/confirmation-of-enrollment/disbursement/:disbursementScheduleId/deny",
+    ":locationId/confirmation-of-enrollment/disbursement-schedule/:disbursementScheduleId/deny",
   )
   async denyConfirmationOfEnrollment(
-    @Param("locationId") locationId: number,
-    @Param("disbursementScheduleId") disbursementScheduleId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("disbursementScheduleId", ParseIntPipe)
+    disbursementScheduleId: number,
     @Body() payload: DenyConfirmationOfEnrollmentAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
@@ -437,8 +440,8 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         "Unable to find a COE which could be completed.",
       );
     }
-    await this.disbursementScheduleService.updateCOEToDeny(
-      disbursementSchedule.studentAssessment.application.id,
+    await this.disbursementScheduleService.updateCOEToDenied(
+      disbursementSchedule.id,
       userToken.userId,
       payload.coeDenyReasonId,
       payload.otherReasonDesc,

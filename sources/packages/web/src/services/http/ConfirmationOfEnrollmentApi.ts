@@ -43,7 +43,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   ): Promise<ApplicationDetailsForCOEAPIOutDTO> {
     return this.getCallTyped<ApplicationDetailsForCOEAPIOutDTO>(
       this.addClientRoot(
-        `location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}`,
+        `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}`,
       ),
     );
   }
@@ -65,7 +65,9 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   ): Promise<void> {
     try {
       await this.patchCall(
-        `location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/confirm`,
+        this.addClientRoot(
+          `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/confirm`,
+        ),
         payload,
       );
     } catch (error: unknown) {
@@ -78,12 +80,17 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
    * overriding the current one in order to rollback the
    * process and start the assessment all over again.
    * @param locationId location id executing the COE rollback.
-   * @param applicationId application to be rolled back.
+   * @param disbursementScheduleId application to be rolled back.
    * @returns the id of the newly created Student Application.
    */
-  async rollbackCOE(locationId: number, applicationId: number): Promise<void> {
+  async rollbackCOE(
+    locationId: number,
+    disbursementScheduleId: number,
+  ): Promise<void> {
     await this.postCall(
-      `location/${locationId}/confirmation-of-enrollment/application/${applicationId}/rollback`,
+      this.addClientRoot(
+        `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/rollback`,
+      ),
       null,
     );
   }
@@ -112,7 +119,9 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
     payload: DenyConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
     await this.patchCall<DenyConfirmationOfEnrollmentAPIInDTO>(
-      `location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/deny`,
+      this.addClientRoot(
+        `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/deny`,
+      ),
       payload,
     );
   }

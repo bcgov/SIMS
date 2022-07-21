@@ -80,13 +80,16 @@ export class ConfirmationOfEnrollmentService {
    * overriding the current one in order to rollback the
    * process and start the assessment all over again.
    * @param locationId location id executing the COE rollback.
-   * @param applicationId application to be rolled back.
+   * @param disbursementScheduleId disbursement schedule id of COE.
    * @returns the id of the newly created Student Application.
    */
-  async rollbackCOE(locationId: number, applicationId: number): Promise<void> {
+  async rollbackCOE(
+    locationId: number,
+    disbursementScheduleId: number,
+  ): Promise<void> {
     await ApiClient.ConfirmationOfEnrollment.rollbackCOE(
       locationId,
-      applicationId,
+      disbursementScheduleId,
     );
   }
 

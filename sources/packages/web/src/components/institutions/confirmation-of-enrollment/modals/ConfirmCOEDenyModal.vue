@@ -1,5 +1,5 @@
 <template>
-  <ModalDialogBase
+  <modal-dialog-base
     title="Decline Confirmation of Enrolment"
     dialogType="question"
     :showDialog="showDialog"
@@ -8,27 +8,20 @@
     <template v-slot:content>
       <v-container>
         <formio
-          formName="declineconfirmationofenrollment"
+          formName="declineConfirmationOfEnrollment"
           @loaded="formLoaded"
           @submitted="submitApplication"
         ></formio>
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" variant="outlined" @click="dialogClosed">
-        Cancel
-      </v-btn>
-      <v-btn
-        color="danger"
-        depressed
-        @click="denyProgramInfo"
-        class="text-white"
-      >
-        <v-icon left size="25"> mdi-cancel </v-icon>
-        Decline Request
-      </v-btn>
+      <footer-buttons
+        primaryLabel="Decline Request"
+        @primaryClick="denyProgramInfo"
+        @secondaryClick="dialogClosed"
+      />
     </template>
-  </ModalDialogBase>
+  </modal-dialog-base>
 </template>
 
 <script lang="ts">
@@ -45,7 +38,7 @@ export default {
     ModalDialogBase,
   },
   emits: ["submitData"],
-  setup(props: any, context: any) {
+  setup(_props: any, context: any) {
     const { showDialog, showModal } = useModalDialog<void>();
     const formioUtils = useFormioUtils();
     const COEDenialform = ref();
