@@ -63,7 +63,8 @@ export class AssessmentAESTController extends BaseController {
         ApplicationExceptionStatus.Pending,
         ApplicationExceptionStatus.Declined,
       );
-    if (applicationExceptions) {
+
+    if (applicationExceptions.length > 0) {
       return applicationExceptions.map((applicationException) => ({
         id: applicationException.id,
         submittedDate: applicationException.createdAt,
@@ -78,7 +79,7 @@ export class AssessmentAESTController extends BaseController {
       id: appeals.id,
       submittedDate: appeals.submittedDate,
       status: appeals.status,
-      requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
+      requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
     }));
   }
 

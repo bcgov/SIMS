@@ -14,7 +14,7 @@
           variant="outlined"
           v-model="searchBox"
           @keyup.enter="searchUserTable"
-          prepend-inner-icon="fa:fas fa-magnifying-glass"
+          prepend-inner-icon="mdi-magnify"
         >
         </v-text-field>
         <v-btn
