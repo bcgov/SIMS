@@ -1011,7 +1011,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     originalAssessment.submittedDate = now;
     originalAssessment.creator = auditUser;
 
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationRepository =
         transactionalEntityManager.getRepository(Application);
       // Application must be saved to have the id properly generated and associated
