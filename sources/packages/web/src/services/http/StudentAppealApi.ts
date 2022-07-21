@@ -1,10 +1,6 @@
-import {
-  addPaginationOptions,
-  addSortOptions,
-  getPaginationQueryString,
-} from "@/helpers";
+import { getPaginationQueryString } from "@/helpers";
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { PaginatedResults, PaginationOptions, PaginationParams } from "@/types";
+import { PaginatedResults, PaginationOptions } from "@/types";
 import { PaginatedResultsAPIOutDTO } from "./dto";
 import {
   StudentAppealAPIInDTO,
