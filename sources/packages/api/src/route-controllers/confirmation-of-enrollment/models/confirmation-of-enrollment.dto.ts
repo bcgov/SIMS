@@ -47,7 +47,7 @@ export class ConfirmationOfEnrollmentAPIInDTO {
 }
 
 /**
- * Read only Interface for study break item.
+ * Offering study break item.
  */
 export class StudyBreak {
   breakStartDate: string;
