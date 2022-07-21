@@ -1006,16 +1006,23 @@ export class ApplicationService extends RecordDataModelService<Application> {
     originalAssessment.submittedBy = auditUser;
     originalAssessment.submittedDate = now;
     originalAssessment.creator = auditUser;
-    newApplication.studentAssessments = [originalAssessment];
-    newApplication.currentAssessment = originalAssessment;
 
-    await this.repo.save([appToOverride, newApplication]);
-
-    return {
-      overriddenApplication: appToOverride,
-      createdApplication: newApplication,
-      createdAssessment: originalAssessment,
-    };
+    return await this.connection.transaction(
+      async (transactionalEntityManager) => {
+        const applicationRepository =
+          transactionalEntityManager.getRepository(Application);
+        await applicationRepository.save(newApplication);
+        newApplication.creator = auditUser;
+        newApplication.studentAssessments = [originalAssessment];
+        newApplication.currentAssessment = originalAssessment;
+        await applicationRepository.save([appToOverride, newApplication]);
+        return {
+          overriddenApplication: appToOverride,
+          createdApplication: newApplication,
+          createdAssessment: originalAssessment,
+        };
+      },
+    );
   }
 
   /**
