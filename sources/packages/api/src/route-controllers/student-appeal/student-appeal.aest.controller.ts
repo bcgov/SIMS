@@ -153,6 +153,7 @@ export class StudentAppealAESTController extends BaseController {
   ): Promise<PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>> {
     const studentAppeals = await this.studentAppealService.getAppealsByStatus(
       pagination,
+      StudentAppealStatus.Pending,
     );
 
     return {

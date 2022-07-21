@@ -346,6 +346,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    */
   async getAppealsByStatus(
     paginationOptions: PaginationOptions,
+    status: StudentAppealStatus,
   ): Promise<PaginatedResults<StudentAppeal>> {
     const studentAppealsQuery = this.repo
       .createQueryBuilder("studentAppeal")
@@ -364,7 +365,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .innerJoin("studentAppeal.appealRequests", "appealRequests")
       .where(
         `EXISTS(${this.studentAppealRequestsService
-          .appealsByStatusQueryObject(StudentAppealStatus.Pending)
+          .appealsByStatusQueryObject(status)
           .getSql()})`,
       );
     if (paginationOptions.searchCriteria) {
