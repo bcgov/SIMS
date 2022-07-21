@@ -100,7 +100,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
    * @returns COE denied reason list.
    */
   async getCOEDenialReasons(): Promise<COEDeniedReasonAPIOutDTO> {
-    return await this.getCallTyped<COEDeniedReasonAPIOutDTO>(
+    return this.getCallTyped<COEDeniedReasonAPIOutDTO>(
       this.addClientRoot("location/confirmation-of-enrollment/denial-reasons"),
     );
   }
