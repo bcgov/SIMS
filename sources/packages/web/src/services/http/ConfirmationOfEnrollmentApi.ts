@@ -81,7 +81,6 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
    * process and start the assessment all over again.
    * @param locationId location id executing the COE rollback.
    * @param disbursementScheduleId application to be rolled back.
-   * @returns the id of the newly created Student Application.
    */
   async rollbackCOE(
     locationId: number,

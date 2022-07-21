@@ -16,6 +16,7 @@ import {
   Repository,
   Brackets,
   OrderByCondition,
+  UpdateResult,
 } from "typeorm";
 import { SequenceControlService, StudentRestrictionService } from "..";
 import { RecordDataModelService } from "../../database/data.model.service";
@@ -23,13 +24,11 @@ import {
   Application,
   ApplicationStatus,
   AssessmentTriggerType,
-  COEDeniedReason,
   COEStatus,
   DisbursementSchedule,
   DisbursementValue,
   OfferingIntensity,
   StudentAssessment,
-  User,
 } from "../../database/entities";
 import {
   Disbursement,
@@ -562,22 +561,38 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @param disbursementScheduleId disbursement schedule id to be updated.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param coeDeniedReasonId denied reason id of a denied COE.
-   * @param otherReasonDesc if the denied reason is other, respective description.
+   * @param otherReasonDesc result of the update operation.
    */
   async updateCOEToDenied(
     disbursementScheduleId: number,
     auditUserId: number,
     coeDeniedReasonId: number,
     otherReasonDesc: string,
-  ): Promise<DisbursementSchedule> {
-    const coeToUpdate = new DisbursementSchedule();
-    coeToUpdate.id = disbursementScheduleId;
-    coeToUpdate.coeStatus = COEStatus.declined;
-    coeToUpdate.coeUpdatedBy = { id: auditUserId } as User;
-    coeToUpdate.coeDeniedReason = { id: coeDeniedReasonId } as COEDeniedReason;
-    coeToUpdate.coeDeniedOtherDesc =
-      coeDeniedReasonId === COE_DENIED_REASON_OTHER_ID ? otherReasonDesc : null;
-    return this.repo.save(coeToUpdate);
+  ): Promise<UpdateResult> {
+    const updateResult = await this.repo
+      .createQueryBuilder()
+      .update(DisbursementSchedule)
+      .set({
+        coeStatus: COEStatus.declined,
+        coeUpdatedBy: { id: auditUserId },
+        coeUpdatedAt: new Date(),
+        coeDeniedReason: { id: coeDeniedReasonId },
+        coeDeniedOtherDesc:
+          coeDeniedReasonId === COE_DENIED_REASON_OTHER_ID
+            ? otherReasonDesc
+            : null,
+      })
+      .where("id = :disbursementScheduleId", { disbursementScheduleId })
+      .andWhere("coeStatus = :required", { required: COEStatus.required })
+      .execute();
+
+    if (updateResult.affected !== 1) {
+      throw new Error(
+        `While updating COE status to '${COEStatus.declined}' the number of affected row was bigger than the expected one. Expected 1 received ${updateResult.affected}`,
+      );
+    }
+
+    return updateResult;
   }
 
   /**

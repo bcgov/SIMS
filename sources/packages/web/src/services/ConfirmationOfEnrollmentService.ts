@@ -81,7 +81,6 @@ export class ConfirmationOfEnrollmentService {
    * process and start the assessment all over again.
    * @param locationId location id executing the COE rollback.
    * @param disbursementScheduleId disbursement schedule id of COE.
-   * @returns the id of the newly created Student Application.
    */
   async rollbackCOE(
     locationId: number,
