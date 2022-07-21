@@ -2,7 +2,6 @@ import {
   Controller,
   Param,
   Get,
-  Post,
   Patch,
   NotFoundException,
   UnprocessableEntityException,
@@ -20,19 +19,15 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   ApplicationService,
-  APPLICATION_NOT_FOUND,
   WorkflowActionsService,
   COEDeniedReasonService,
   DisbursementScheduleService,
   StudentAssessmentService,
-  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
 } from "../../services";
 import {
   ApplicationStatus,
   DisbursementSchedule,
-  COEStatus,
   DisbursementValueType,
-  ProgramInfoStatus,
 } from "../../database/entities";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
@@ -43,7 +38,6 @@ import {
   getExtendedDateFormat,
   getISODateOnlyString,
   getTotalDisbursementAmount,
-  CustomNamedError,
 } from "../../utilities";
 import {
   ApplicationDetailsForCOEAPIOutDTO,
@@ -68,7 +62,6 @@ import {
   ConfirmationOfEnrollmentPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 const COE_NOT_FOUND_MESSAGE =
   "Confirmation of enrollment not found or application status not valid.";
@@ -143,79 +136,6 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       ),
       count: disbursementPaginatedResult.count,
     };
-  }
-
-  /**
-   * Creates a new Student Application to maintain history,
-   * overriding the current one in order to rollback the
-   * process and start the assessment all over again.
-   * @param locationId location id executing the COE rollback.
-   * @param disbursementScheduleId disbursement schedule id of COE.
-   * @returns the id of the newly created Student Application.
-   */
-  @HasLocationAccess("locationId")
-  @Post(
-    ":locationId/confirmation-of-enrollment/disbursement-schedule/:disbursementScheduleId/rollback",
-  )
-  @ApiNotFoundResponse({
-    description: `Student Application not found or the location does not have access to it or the PIR is defined with the status as '${ProgramInfoStatus.notRequired}'.`,
-  })
-  @ApiUnprocessableEntityResponse({
-    description: `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.enrollment}' and COE status '${COEStatus.required}' to be override.`,
-  })
-  async rollbackCOE(
-    @UserToken() userToken: IUserToken,
-    @Param("locationId", ParseIntPipe) locationId: number,
-    @Param("disbursementScheduleId", ParseIntPipe)
-    disbursementScheduleId: number,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
-    try {
-      // Validation to check if the application is in Enrollment status and first coe is in Required status.
-      // Otherwise the application is not eligible for COE override.
-      const firstCOEofApplication =
-        await this.disbursementScheduleService.getFirstDisbursementSchedule({
-          disbursementScheduleId,
-        });
-      if (
-        !firstCOEofApplication ||
-        !(
-          firstCOEofApplication.studentAssessment.application
-            .applicationStatus === ApplicationStatus.enrollment &&
-          firstCOEofApplication.coeStatus === COEStatus.required
-        )
-      ) {
-        throw new UnprocessableEntityException(
-          `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.enrollment}' and COE status '${COEStatus.required}' to be override.`,
-        );
-      }
-      const result = await this.applicationService.overrideApplicationForCOE(
-        locationId,
-        firstCOEofApplication.studentAssessment.application.id,
-        userToken.userId,
-      );
-
-      if (result.overriddenApplication.currentAssessment.assessmentWorkflowId) {
-        await this.workflow.deleteApplicationAssessment(
-          result.overriddenApplication.currentAssessment.assessmentWorkflowId,
-        );
-      }
-
-      await this.assessmentService.startAssessment(result.createdAssessment.id);
-
-      return { id: result.createdApplication.id };
-    } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          case APPLICATION_NOT_FOUND:
-            throw new NotFoundException(error.message);
-          case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
-            throw new UnprocessableEntityException(error.message);
-          default:
-            throw error;
-        }
-      }
-      throw error;
-    }
   }
 
   /**
