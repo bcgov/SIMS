@@ -147,7 +147,7 @@ export class StudentAppealAESTController extends BaseController {
    * @param pagination options to execute the pagination.
    * @returns list of pending student application appeals.
    */
-  @Get()
+  @Get("pending")
   async getPendingAppeals(
     @Query() pagination: StudentAppealPendingPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>> {

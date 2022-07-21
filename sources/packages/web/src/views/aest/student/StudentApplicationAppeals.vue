@@ -16,7 +16,7 @@
           label="Search name or application #"
           variant="outlined"
           v-model="searchCriteria"
-          @keyup.enter="searchExceptions"
+          @keyup.enter="searchAppeals"
         >
           <template v-slot:prependInner>
             <font-awesome-icon :icon="['fas', 'search']" />
@@ -143,7 +143,7 @@ export default {
       await getAppealList();
     };
 
-    const searchExceptions = async () => {
+    const searchAppeals = async () => {
       page.value = DEFAULT_PAGE_NUMBER;
       pageLimit.value = DEFAULT_PAGE_LIMIT;
       await getAppealList();
@@ -159,7 +159,7 @@ export default {
       dateOnlyLongString,
       pageEvent,
       sortEvent,
-      searchExceptions,
+      searchAppeals,
       pageLimit,
       searchCriteria,
       PAGINATION_LIST,

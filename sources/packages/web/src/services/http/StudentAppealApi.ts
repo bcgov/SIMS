@@ -1,6 +1,6 @@
 import { getPaginationQueryString } from "@/helpers";
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { PaginatedResults, PaginationOptions } from "@/types";
+import { PaginationOptions } from "@/types";
 import { PaginatedResultsAPIOutDTO } from "./dto";
 import {
   StudentAppealAPIInDTO,
@@ -51,17 +51,17 @@ export class StudentAppealApi extends HttpBaseClient {
   }
 
   /**
-   * Gets all pending student application exceptions.
+   * Gets all pending student application appeals.
    * @param paginationOptions options to execute the pagination.
-   * @returns list of student application exceptions.
+   * @returns list of student application appeals.
    */
   async getPendingAppeals(
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>> {
-    let url = "appeal?";
+    let url = "appeal/pending?";
     url += getPaginationQueryString(paginationOptions);
     return this.getCallTyped<
-      PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>
+      PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>
     >(this.addClientRoot(url));
   }
 }
