@@ -1,5 +1,5 @@
 <template>
-  <ModalDialogBase
+  <modal-dialog-base
     dialogType="question"
     title="Apply for a permanent disability status"
     :showDialog="showDialog"
@@ -12,14 +12,14 @@
       </p>
     </template>
     <template v-slot:footer>
-      <v-row class="m-0 p-0">
-        <v-btn variant="outlined" color="primary" @click="requestPD(false)"
-          >No</v-btn
-        >
-        <v-btn color="primary" @click="requestPD(true)">Yes</v-btn>
-      </v-row>
+      <footer-buttons
+        primaryLabel="Yes"
+        secondaryLabel="No"
+        @primaryClick="requestPD(true)"
+        @secondaryClick="requestPD(false)"
+      />
     </template>
-  </ModalDialogBase>
+  </modal-dialog-base>
 </template>
 
 <script lang="ts">

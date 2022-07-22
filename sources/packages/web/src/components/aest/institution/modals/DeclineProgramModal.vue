@@ -1,5 +1,5 @@
 <template>
-  <ModalDialogBase
+  <modal-dialog-base
     title="Decline program"
     :showDialog="showDialog"
     @dialogClosed="dialogClosed"
@@ -12,16 +12,13 @@
       ></formio>
     </template>
     <template v-slot:footer>
-      <v-row class="m-0 p-0">
-        <v-btn variant="outlined" :color="COLOR_BLUE" @click="dialogClosed">
-          Cancel
-        </v-btn>
-        <v-btn class="primary-btn-background" @click="declineProgram">
-          Decline now
-        </v-btn>
-      </v-row>
+      <footer-buttons
+        primaryLabel="Decline now"
+        @primaryClick="declineProgram"
+        @secondaryClick="dialogClosed"
+      />
     </template>
-  </ModalDialogBase>
+  </modal-dialog-base>
 </template>
 
 <script lang="ts">

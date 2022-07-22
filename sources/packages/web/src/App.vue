@@ -8,7 +8,7 @@
 import SnackBar from "@/components/generic/SnackBar.vue";
 import { SnackBarOptions } from "@/types";
 import { ref } from "vue";
-import useEmitter from "./composables/useEmitter";
+import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: { SnackBar },

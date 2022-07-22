@@ -1,5 +1,5 @@
 <template>
-  <ModalDialogBase
+  <modal-dialog-base
     title="Application already in progress"
     dialogType="warning"
     :showDialog="showDialog"
@@ -14,11 +14,13 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" variant="outlined" @click="dialogClosed">
-        Close
-      </v-btn>
+      <footer-buttons
+        secondaryLabel="Close"
+        :showPrimaryButton="false"
+        @secondaryClick="dialogClosed"
+      />
     </template>
-  </ModalDialogBase>
+  </modal-dialog-base>
   <student-page-container>
     <v-sheet elevation="1" class="mx-auto">
       <v-container>

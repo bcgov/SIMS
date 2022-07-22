@@ -1,5 +1,5 @@
 <template>
-  <ModalDialogBase :showDialog="showDialog" @dialogClosed="dialogClosed">
+  <modal-dialog-base :showDialog="showDialog" @dialogClosed="dialogClosed">
     <template v-slot:content>
       <v-container class="min-width-modal">
         <formio
@@ -10,16 +10,13 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-row class="m-0 p-0">
-        <v-btn color="primary" variant="outlined" @click="dialogClosed">
-          Cancel
-        </v-btn>
-        <v-btn @click="addNewNote()" class="primary-btn-background">
-          Add note
-        </v-btn>
-      </v-row>
+      <footer-buttons
+        primaryLabel="Add note"
+        @primaryClick="addNewNote"
+        @secondaryClick="dialogClosed"
+      />
     </template>
-  </ModalDialogBase>
+  </modal-dialog-base>
 </template>
 
 <script lang="ts">

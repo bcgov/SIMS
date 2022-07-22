@@ -1,5 +1,5 @@
 <template>
-  <ModalDialogBase :showDialog="showDialog" @dialogClosed="dialogClosed">
+  <modal-dialog-base :showDialog="showDialog" @dialogClosed="dialogClosed">
     <template v-slot:content>
       <v-container class="temporary-modal">
         <formio
@@ -11,19 +11,13 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-row class="m-0 p-0">
-        <v-btn color="primary" variant="outlined" @click="dialogClosed">
-          Cancel
-        </v-btn>
-        <v-btn
-          @click="addRestriction()"
-          class="float-right primary-btn-background"
-        >
-          Add Restriction
-        </v-btn>
-      </v-row>
+      <footer-buttons
+        primaryLabel="Add Restriction"
+        @primaryClick="addRestriction"
+        @secondaryClick="dialogClosed"
+      />
     </template>
-  </ModalDialogBase>
+  </modal-dialog-base>
 </template>
 
 <script lang="ts">

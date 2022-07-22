@@ -1,5 +1,5 @@
 <template>
-  <ModalDialogBase
+  <modal-dialog-base
     :showDialog="showDialog"
     @dialogClosed="dialogClosed"
     :title="title"
@@ -15,16 +15,13 @@
       </div>
     </template>
     <template v-slot:footer>
-      <v-row class="m-0 p-0">
-        <v-btn color="primary" variant="outlined" @click="dialogClosed">
-          Cancel
-        </v-btn>
-        <v-btn @click="submitForm()" class="float-right primary-btn-background">
-          Submit Action
-        </v-btn>
-      </v-row>
+      <footer-buttons
+        primaryLabel="Submit Action"
+        @primaryClick="submitForm"
+        @secondaryClick="dialogClosed"
+      />
     </template>
-  </ModalDialogBase>
+  </modal-dialog-base>
 </template>
 
 <script lang="ts">

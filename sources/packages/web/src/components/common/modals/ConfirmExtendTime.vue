@@ -1,5 +1,5 @@
 <template>
-  <ModalDialogBase
+  <modal-dialog-base
     title="Confirm Extend Time"
     dialogType="warning"
     :showDialog="showDialog"
@@ -16,17 +16,14 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-row class="m-0 p-0">
-        <v-btn color="primary" variant="outlined" @click="dialogClosed">
-          No
-        </v-btn>
-        <v-btn color="warning" depressed class="text-white" @click="extendTime">
-          <v-icon left size="25"> mdi-clock </v-icon>
-          Yes
-        </v-btn>
-      </v-row>
+      <footer-buttons
+        primaryLabel="Yes"
+        secondaryLabel="No"
+        @primaryClick="extendTime"
+        @secondaryClick="dialogClosed"
+      />
     </template>
-  </ModalDialogBase>
+  </modal-dialog-base>
 </template>
 
 <script lang="ts">
