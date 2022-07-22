@@ -17,9 +17,7 @@
             @click="declineProgram"
             >Decline</v-btn
           >
-          <v-btn class="primary-btn-background" @click="approveProgram"
-            >Approve program</v-btn
-          >
+          <v-btn color="primary" @click="approveProgram">Approve program</v-btn>
         </v-row>
       </template>
     </header-navigator>

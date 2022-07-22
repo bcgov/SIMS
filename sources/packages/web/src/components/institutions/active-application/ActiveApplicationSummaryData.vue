@@ -60,7 +60,7 @@
                 slotProps.data.applicationScholasticStandingStatus ===
                 ApplicationScholasticStandingStatus.Available
               "
-              class="primary-btn-background"
+              color="primary"
               @click="goToViewApplication(slotProps.data.applicationId)"
               >Report a change</v-btn
             >
@@ -69,7 +69,7 @@
                 slotProps.data.applicationScholasticStandingStatus ===
                 ApplicationScholasticStandingStatus.Completed
               "
-              class="primary-btn-background"
+              color="primary"
               @click="
                 goToViewScholasticStanding(slotProps.data.scholasticStandingId)
               "

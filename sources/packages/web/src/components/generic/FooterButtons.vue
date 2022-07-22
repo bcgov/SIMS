@@ -13,8 +13,9 @@
     <v-btn
       :disabled="processing"
       v-if="showPrimaryButton"
-      class="primary-btn-background ml-2"
+      class="ml-2"
       data-cy="primaryFooterButton"
+      color="primary"
       @click="$emit('primaryClick')"
     >
       {{ primaryLabel }}

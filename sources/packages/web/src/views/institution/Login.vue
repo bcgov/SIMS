@@ -17,7 +17,7 @@
                   For returning users—login using your BCeID.
                 </p>
                 <v-btn
-                  class="primary-btn-background"
+                  color="primary"
                   @click="login"
                   prepend-icon="fa:fa fa-user"
                 >
@@ -30,7 +30,7 @@
                   For new users—sign up using your BCeID.
                 </p>
                 <v-btn
-                  class="primary-btn-background"
+                  color="primary"
                   @click="login"
                   variant="outlined"
                   prepend-icon="fa:fa fa-user-plus"

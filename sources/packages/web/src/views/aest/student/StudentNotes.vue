@@ -9,8 +9,7 @@
               <v-col>
                 <v-btn
                   rounded
-                  variant="tonal"
-                  :class="{ 'primary-btn-background': !filteredNoteType }"
+                  :color="!filteredNoteType ? 'primary' : 'secondary'"
                   data-cy="allNotesButton"
                   @click="filterNotes()"
                   >All Notes</v-btn
@@ -19,10 +18,7 @@
               <v-col v-for="item in StudentNoteType" :key="item">
                 <v-btn
                   rounded
-                  variant="tonal"
-                  :class="{
-                    'primary-btn-background': filteredNoteType === item,
-                  }"
+                  :color="filteredNoteType === item ? 'primary' : 'secondary'"
                   data-cy="noteTypeItem"
                   @click="filterNotes(item)"
                   >{{ item }}</v-btn

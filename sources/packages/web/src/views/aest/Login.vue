@@ -20,7 +20,7 @@
     <v-card-actions>
       <v-row justify="center">
         <v-btn
-          class="primary-btn-background"
+          color="primary"
           data-cy="loginWithIDIR"
           @click="login"
           prepend-icon="fa:fa fa-user"

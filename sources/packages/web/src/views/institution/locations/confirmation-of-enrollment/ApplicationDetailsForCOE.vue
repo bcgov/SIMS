@@ -50,7 +50,7 @@
     >
       <template #actions="{ cancel, submit }">
         <v-btn color="primary" variant="outlined" @click="cancel">Cancel</v-btn>
-        <v-btn class="float-right primary-btn-background" @click="submit"
+        <v-btn class="float-right" @click="submit" color="primary"
           >Continue to confirmation</v-btn
         >
       </template>

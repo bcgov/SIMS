@@ -15,7 +15,8 @@
       <template #actions>
         <v-btn
           v-if="isLegalSigningAuthority"
-          class="ml-2 primary-btn-background float-right"
+          class="ml-2 float-right"
+          color="primary"
           data-cy="requestDesignation"
           @click="goToRequestDesignation()"
           ><font-awesome-icon

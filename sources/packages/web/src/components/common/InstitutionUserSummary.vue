@@ -20,7 +20,8 @@
         </v-text-field>
         <v-btn
           v-if="hasBusinessGuid || allowBasicBCeIDCreation"
-          class="ml-2 primary-btn-background"
+          class="ml-2"
+          color="primary"
           @click="openNewUserModal"
           prepend-icon="fa:fa fa-plus-circle"
         >

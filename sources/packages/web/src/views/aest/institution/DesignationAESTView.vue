@@ -16,7 +16,8 @@
             >Decline</v-btn
           >
           <v-btn
-            class="ml-2 primary-btn-background"
+            class="ml-2"
+            color="primary"
             v-if="showActionButtons"
             data-cy="approvedDesignationAgreementButton"
             @click="updateDesignation(DesignationAgreementStatus.Approved)"

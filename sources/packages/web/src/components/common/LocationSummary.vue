@@ -7,10 +7,7 @@
       </p>
     </v-col>
     <v-col cols="4" v-if="clientType === ClientIdType.Institution">
-      <v-btn
-        class="float-right primary-btn-background"
-        @click="goToAddNewLocation()"
-      >
+      <v-btn class="float-right" color="primary" @click="goToAddNewLocation()">
         <font-awesome-icon
           :icon="['fas', 'external-link-square-alt']"
           class="mr-2"

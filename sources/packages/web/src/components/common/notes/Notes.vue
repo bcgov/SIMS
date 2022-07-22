@@ -2,7 +2,7 @@
   <v-row class="m-2">
     <v-col class="category-header-medium color-blue">{{ title }}</v-col>
     <v-col
-      ><v-btn @click="addNewNote()" class="float-right primary-btn-background">
+      ><v-btn @click="addNewNote()" class="float-right" color="primary">
         <font-awesome-icon :icon="['fas', 'plus']" class="mr-2" />
         Create new note</v-btn
       ></v-col

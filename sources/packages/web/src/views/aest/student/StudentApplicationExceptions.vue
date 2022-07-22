@@ -59,7 +59,7 @@
           <Column header="Action">
             <template #body="slotProps">
               <v-btn
-                class="primary-btn-background"
+                color="primary"
                 @click="
                   gotToAssessmentsSummary(
                     slotProps.data.applicationId,

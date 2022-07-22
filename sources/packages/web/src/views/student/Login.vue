@@ -14,11 +14,7 @@
     >
     <v-card-actions>
       <v-row justify="center" class="m-3">
-        <v-btn
-          class="primary-btn-background"
-          @click="login"
-          prepend-icon="fa:fa fa-user"
-        >
+        <v-btn color="primary" @click="login" prepend-icon="fa:fa fa-user">
           Login / Sign up with BCSC
         </v-btn>
       </v-row>
