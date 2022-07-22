@@ -53,10 +53,11 @@ import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-applicat
 import { ConfigService } from "../config/config.service";
 import { IConfig } from "../../types";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
+import {
+  PIR_DENIED_REASON_NOT_FOUND_ERROR,
+  PIR_REQUEST_NOT_FOUND_ERROR,
+} from "../../constants";
 
-export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
-export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
-  "PIR_DENIED_REASON_NOT_FOUND_ERROR";
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
   "ONLY_ONE_APPLICATION_DRAFT_PER_STUDENT_ALLOWED";
@@ -405,6 +406,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "currentAssessment.triggerType",
         "location.name",
         "student.id",
+        "student.birthDate",
+        "user.id",
         "user.firstName",
         "user.lastName",
         "pirProgram.id",
@@ -428,10 +431,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.active",
         "programYear.startDate",
         "programYear.endDate",
+        "sinValidation.id",
+        "sinValidation.sin",
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirProgram", "pirProgram")
       .innerJoin("application.student", "student")
+      .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.location", "location")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
@@ -502,39 +508,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       applicationQuery.andWhere("user.id = :userId", { userId });
     }
     return applicationQuery.getOne();
-  }
-
-  /**
-   * Get student application details for a Program Information Request(PIR).
-   * @param applicationId student application id.
-   * @param locationId associated location that has access to the
-   * Program Information Request.
-   * @returns student application details.
-   */
-  async getApplicationForPIR(
-    applicationId: number,
-    locationId: number,
-  ): Promise<Application> {
-    const query = this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.data",
-        "student.birthDate",
-        "sinValidation.id",
-        "sinValidation.sin",
-        "user.id",
-        "user.lastName",
-      ])
-      .innerJoin("application.student", "student")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .innerJoin("student.user", "user")
-      .where("application.id = :applicationId", {
-        applicationId,
-      });
-    if (locationId) {
-      query.andWhere("application.location.id = locationId:", { locationId });
-    }
-    return query.getOne();
   }
 
   /**
@@ -660,7 +633,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Updates only applications that have the PIR status as required.
    * @param applicationId application id to be updated.
    * @param locationId location that is setting the offering.
-   * @param offering offering to be set in the assessment.
+   * @param offeringId offering to be set in the assessment.
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @returns updated application.
@@ -668,7 +641,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async setOfferingForProgramInfoRequest(
     applicationId: number,
     locationId: number,
-    offering: EducationProgramOffering,
+    offeringId: number,
     auditUserId: number,
   ): Promise<Application> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
@@ -701,13 +674,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
         );
       }
       const auditUser = { id: auditUserId } as User;
-      application.currentAssessment.offering = offering;
+      application.currentAssessment.offering = {
+        id: offeringId,
+      } as EducationProgramOffering;
       application.currentAssessment.modifier = auditUser;
       application.pirStatus = ProgramInfoStatus.completed;
       application.modifier = auditUser;
       await this.studentRestrictionService.assessSINRestrictionForOfferingId(
         application.student.id,
-        offering.id,
+        offeringId,
         applicationId,
         auditUserId,
         transactionalEntityManager,

@@ -28,9 +28,7 @@ import {
   ApplicationService,
   EducationProgramOfferingService,
   WorkflowActionsService,
-  PIR_REQUEST_NOT_FOUND_ERROR,
   PIRDeniedReasonService,
-  PIR_DENIED_REASON_NOT_FOUND_ERROR,
 } from "../../services";
 import {
   getUserFullName,
@@ -44,7 +42,11 @@ import {
   Application,
   AssessmentTriggerType,
 } from "../../database/entities";
-import { OFFERING_INTENSITY_MISMATCH } from "../../constants";
+import {
+  OFFERING_INTENSITY_MISMATCH,
+  PIR_DENIED_REASON_NOT_FOUND_ERROR,
+  PIR_REQUEST_NOT_FOUND_ERROR,
+} from "../../constants";
 import {
   ApiNotFoundResponse,
   ApiTags,
@@ -203,7 +205,10 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
    * @param applicationId application id to be updated.
    * @param payload offering to be updated in the student application.
    */
-  @ApiNotFoundResponse({ description: "Application not found." })
+  @ApiNotFoundResponse({
+    description:
+      "Application not found or not able to find an application that requires a PIR to be completed.",
+  })
   @ApiUnauthorizedResponse({
     description: "The location does not have access to the offering.",
   })
@@ -215,62 +220,55 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @Body() payload: CompleteProgramInfoRequestAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
+    // Validate if the application exists and the location has access to it.
+    const application = await this.applicationService.getProgramInfoRequest(
+      locationId,
+      applicationId,
+    );
+    if (!application) {
+      throw new NotFoundException("Application not found.");
+    }
+    // Validates if the offering exists and belongs to the location.
+    const offering = await this.offeringService.getOfferingLocationId(
+      payload.selectedOffering,
+    );
+    if (offering?.institutionLocation.id !== locationId) {
+      throw new UnauthorizedException(
+        "The location does not have access to the offering.",
+      );
+    }
+
     try {
-      const application = await this.applicationService.getApplicationForPIR(
-        applicationId,
-        locationId,
-      );
-      if (!application) {
-        throw new NotFoundException("Application not found.");
-      }
-
-      // Check if the offering belongs to the location.
-      const offeringLocation = await this.offeringService.getOfferingLocationId(
-        payload.selectedOffering,
-      );
-
-      if (offeringLocation?.institutionLocation.id !== locationId) {
-        throw new UnauthorizedException(
-          "The location does not have access to the offering.",
-        );
-      }
-      const studyStartDate = offeringLocation.studyStartDate;
-      const studyEndDate = offeringLocation.studyEndDate;
-      // Offering exists, is valid and just need to be associated
-      // with the application to complete the PIR.
-      const offeringToCompletePIR = {
-        id: payload.selectedOffering,
-      } as EducationProgramOffering;
-
+      // validate possible overlaps with exists applications.
       await this.applicationService.validateOverlappingDatesAndPIR(
         applicationId,
         application.student.user.lastName,
         application.student.user.id,
         application.student.sinValidation.sin,
         application.student.birthDate,
-        studyStartDate,
-        studyEndDate,
+        offering.studyStartDate,
+        offering.studyEndDate,
       );
-
+      // Complete PIR.
       const updatedApplication =
         await this.applicationService.setOfferingForProgramInfoRequest(
           applicationId,
           locationId,
-          offeringToCompletePIR,
+          offering.id,
           userToken.userId,
         );
-
-      if (updatedApplication) {
-        // Send a message to allow the workflow to proceed.
-        await this.workflowService.sendProgramInfoCompletedMessage(
-          updatedApplication.currentAssessment.assessmentWorkflowId,
-        );
-      }
+      // Send a message to allow the workflow to proceed.
+      await this.workflowService.sendProgramInfoCompletedMessage(
+        updatedApplication.currentAssessment.assessmentWorkflowId,
+      );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
-          case PIR_OR_DATE_OVERLAP_ERROR:
           case PIR_REQUEST_NOT_FOUND_ERROR:
+            throw new NotFoundException(
+              new ApiProcessError(error.message, error.name),
+            );
+          case PIR_OR_DATE_OVERLAP_ERROR:
           case OFFERING_INTENSITY_MISMATCH:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
