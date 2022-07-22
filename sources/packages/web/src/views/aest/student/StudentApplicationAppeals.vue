@@ -1,41 +1,37 @@
 <template>
   <full-page-container>
     <template #header>
-      <header-navigator title="Students" subTitle="Exceptions" />
+      <header-navigator title="Student requests" subTitle="Appeals" />
     </template>
     <body-header
-      title="Requested exceptions"
-      :recordsCount="applicationExceptions.results?.length"
-      subTitle="Make a determination on application submitted with exceptions."
+      title="Requested appeals"
+      :recordsCount="applicationAppeals.results?.length"
+      subTitle="Make a determination on requested change(s) that may require a reassessment"
       class="m-1"
     >
       <template #actions>
         <v-text-field
+          class="v-text-field-search-width"
           density="compact"
           label="Search name or application #"
           variant="outlined"
           v-model="searchCriteria"
-          data-cy="searchExceptions"
-          @keyup.enter="searchExceptions"
+          @keyup.enter="searchAppeals"
           prepend-inner-icon="mdi-magnify"
-          hide-details
         >
-          <template v-slot:prependInner>
-            <font-awesome-icon :icon="['fas', 'search']" />
-          </template>
         </v-text-field>
       </template>
     </body-header>
     <content-group>
-      <toggle-content :toggled="!applicationExceptions.results?.length">
+      <toggle-content :toggled="!applicationAppeals.results?.length">
         <DataTable
-          :value="applicationExceptions.results"
+          :value="applicationAppeals.results"
           :lazy="true"
           class="p-m-4"
           :paginator="true"
           :rows="pageLimit"
           :rowsPerPageOptions="PAGINATION_LIST"
-          :totalRecords="applicationExceptions.count"
+          :totalRecords="applicationAppeals.count"
           @page="pageEvent"
           @sort="sortEvent"
         >
@@ -79,7 +75,6 @@
 <script lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
 import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
@@ -90,7 +85,8 @@ import {
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { ApplicationExceptionSummaryAPIOutDTO } from "@/services/http/dto/ApplicationException.dto";
+import { StudentAppealPendingSummaryAPIOutDTO } from "@/services/http/dto/StudentAppeal.dto";
+import { StudentAppealService } from "@/services/StudentAppealService";
 
 const DEFAULT_SORT_FIELD = "submittedDate";
 
@@ -103,8 +99,8 @@ export default {
     const sortOrder = ref(DataTableSortOrder.ASC);
     const searchCriteria = ref();
     const { dateOnlyLongString } = useFormatters();
-    const applicationExceptions = ref(
-      {} as PaginatedResults<ApplicationExceptionSummaryAPIOutDTO>,
+    const applicationAppeals = ref(
+      {} as PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>,
     );
 
     const gotToAssessmentsSummary = (
@@ -120,9 +116,9 @@ export default {
       });
     };
 
-    const getExceptionList = async () => {
-      applicationExceptions.value =
-        await ApplicationExceptionService.shared.getPendingExceptions({
+    const getAppealList = async () => {
+      applicationAppeals.value =
+        await StudentAppealService.shared.getPendingAppeals({
           page: page.value,
           pageLimit: pageLimit.value,
           sortField: sortField.value,
@@ -134,7 +130,7 @@ export default {
     const pageEvent = async (event: PageAndSortEvent) => {
       page.value = event?.page;
       pageLimit.value = event?.rows;
-      await getExceptionList();
+      await getAppealList();
     };
 
     const sortEvent = async (event: PageAndSortEvent) => {
@@ -142,26 +138,26 @@ export default {
       pageLimit.value = DEFAULT_PAGE_LIMIT;
       sortField.value = event.sortField;
       sortOrder.value = event.sortOrder;
-      await getExceptionList();
+      await getAppealList();
     };
 
-    const searchExceptions = async () => {
+    const searchAppeals = async () => {
       page.value = DEFAULT_PAGE_NUMBER;
       pageLimit.value = DEFAULT_PAGE_LIMIT;
-      await getExceptionList();
+      await getAppealList();
     };
 
     onMounted(async () => {
-      await getExceptionList();
+      await getAppealList();
     });
 
     return {
       gotToAssessmentsSummary,
-      applicationExceptions,
+      applicationAppeals,
       dateOnlyLongString,
       pageEvent,
       sortEvent,
-      searchExceptions,
+      searchAppeals,
       pageLimit,
       searchCriteria,
       PAGINATION_LIST,

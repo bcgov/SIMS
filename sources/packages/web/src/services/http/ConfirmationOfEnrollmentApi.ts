@@ -1,115 +1,108 @@
-import {
-  PaginatedResults,
-  COESummaryDTO,
-  ApplicationDetailsForCOEDTO,
-  COEDeniedReasonDto,
-  DenyConfirmationOfEnrollment,
-  EnrollmentPeriod,
-  PaginationOptions,
-  PaginationParams,
-} from "@/types";
+import { EnrollmentPeriod, PaginationOptions } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { addSortOptions, addPaginationOptions } from "@/helpers";
-import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto/ConfirmationOfEnrolment.dto";
+import { getPaginationQueryString } from "@/helpers";
+import {
+  ApplicationDetailsForCOEAPIOutDTO,
+  COEDeniedReasonAPIOutDTO,
+  COESummaryAPIOutDTO,
+  ConfirmationOfEnrollmentAPIInDTO,
+  DenyConfirmationOfEnrollmentAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
 
 export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
-  public async getCOESummary(
+  /**
+   * Get all Confirmation Of Enrollment(COE) of a location in an institution.
+   * Paginated with COE status as default sort.
+   * @param locationId location to retrieve confirmation of enrollments.
+   * @param enrollmentPeriod types of the period (e.g. current, upcoming)
+   * @param paginationOptions options for pagination.
+   * @returns COE paginated result.
+   */
+  async getCOESummary(
     locationId: number,
     enrollmentPeriod: EnrollmentPeriod,
     paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResults<COESummaryDTO>> {
-    let url = `institution/location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}`;
-
-    // Adding pagination params. There is always a default page and pageLimit for paginated APIs.
-    url = addPaginationOptions(
-      url,
-      paginationOptions.page,
-      paginationOptions.pageLimit,
-      "?",
+  ): Promise<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>> {
+    let url = `location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}?`;
+    url += getPaginationQueryString(paginationOptions);
+    return this.getCallTyped<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>>(
+      this.addClientRoot(url),
     );
-
-    //Adding Sort params. There is always a default sortField and sortOrder for COE.
-    url = addSortOptions(
-      url,
-      paginationOptions.sortField,
-      paginationOptions.sortOrder,
-    );
-
-    // Search criteria is populated only when search box has search text in it.
-    if (paginationOptions.searchCriteria) {
-      url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
-    }
-    return this.getCallTyped<PaginatedResults<COESummaryDTO>>(url);
   }
 
-  public async getApplicationForCOE(
+  /**
+   * Get the application details for the Confirmation Of Enrollment(COE).
+   * @param locationId location id.
+   * @param disbursementScheduleId disbursement schedule id of COE.
+   * @returns application details for COE.
+   */
+  async getApplicationForCOE(
     disbursementScheduleId: number,
     locationId: number,
-  ): Promise<ApplicationDetailsForCOEDTO> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}`,
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  ): Promise<ApplicationDetailsForCOEAPIOutDTO> {
+    return this.getCallTyped<ApplicationDetailsForCOEAPIOutDTO>(
+      this.addClientRoot(
+        `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}`,
+      ),
+    );
   }
 
-  public async confirmCOE(
+  /**
+   * Approve confirmation of enrollment(COE).
+   * An application can have up to two COEs based on the disbursement schedule,
+   * hence the COE approval happens twice for application with more than once disbursement.
+   * Irrespective of number of COEs to be approved, application status is set to complete
+   * on first COE approval.
+   * @param locationId location id of the application.
+   * @param disbursementScheduleId disbursement schedule id of COE.
+   * @param payload COE confirmation information.
+   */
+  async confirmEnrollment(
     locationId: number,
     disbursementScheduleId: number,
-    confirmationData: ConfirmationOfEnrollmentAPIInDTO,
+    payload: ConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
     try {
       await this.patchCall(
-        `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/confirm`,
-        confirmationData,
+        this.addClientRoot(
+          `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/confirm`,
+        ),
+        payload,
       );
     } catch (error: unknown) {
       this.handleAPICustomError(error);
     }
   }
 
-  public async rollbackCOE(
-    locationId: number,
-    applicationId: number,
-  ): Promise<void> {
-    try {
-      await this.apiClient.post(
-        `institution/location/${locationId}/confirmation-of-enrollment/application/${applicationId}/rollback`,
-        null,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  /**
+   * Get all COE denied reasons, which are active.
+   * @returns COE denied reason list.
+   */
+  async getCOEDenialReasons(): Promise<COEDeniedReasonAPIOutDTO> {
+    return this.getCallTyped<COEDeniedReasonAPIOutDTO>(
+      this.addClientRoot("location/confirmation-of-enrollment/denial-reasons"),
+    );
   }
 
-  public async getCOEDenialReasons(): Promise<COEDeniedReasonDto> {
-    try {
-      const response = await this.apiClient.get(
-        "institution/location/confirmation-of-enrollment/denial-reasons",
-        this.addAuthHeader(),
-      );
-      return response?.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  public async denyConfirmationOfEnrollment(
+  /**
+   * Deny the Confirmation Of Enrollment(COE).
+   ** Note: If an application has 2 COEs, and if the first COE is Rejected then 2nd COE is implicitly rejected.
+   * @param locationId location that is completing the COE.
+   * @param disbursementScheduleId disbursement schedule id of COE.
+   * @param payload contains the denied reason of the
+   * student application.
+   */
+  async denyConfirmationOfEnrollment(
     locationId: number,
     disbursementScheduleId: number,
-    denyCOEPayload: DenyConfirmationOfEnrollment,
+    payload: DenyConfirmationOfEnrollmentAPIInDTO,
   ): Promise<void> {
-    await this.patchCall<DenyConfirmationOfEnrollment>(
-      `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/deny`,
-      denyCOEPayload,
+    await this.patchCall<DenyConfirmationOfEnrollmentAPIInDTO>(
+      this.addClientRoot(
+        `location/${locationId}/confirmation-of-enrollment/disbursement-schedule/${disbursementScheduleId}/deny`,
+      ),
+      payload,
     );
   }
 }

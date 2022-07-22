@@ -12,7 +12,7 @@
           data-cy="searchProgramName"
           variant="outlined"
           @keyup.enter="goToSearchProgramName()"
-          prepend-inner-icon="fa:fa fa-search"
+          prepend-inner-icon="mdi-magnify"
           hide-details
         />
       </template>

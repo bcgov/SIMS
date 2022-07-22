@@ -55,7 +55,6 @@
         >
       </template>
     </formio-modal-dialog>
-    <ConfirmCOEEditModal ref="editCOEModal" />
     <ConfirmCOEDenyModal ref="denyCOEModal" @submitData="submitCOEDeny" />
   </div>
 </template>
@@ -65,16 +64,7 @@ import { onMounted, ref, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
-import {
-  COEStatus,
-  ApplicationDetailsForCOEDTO,
-  DenyConfirmationOfEnrollment,
-  ProgramInfoStatus,
-  FormIOForm,
-  ApiProcessError,
-  MenuType,
-} from "@/types";
-import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
+import { COEStatus, FormIOForm, ApiProcessError, MenuType } from "@/types";
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
 import { useSnackBar, ModalDialog } from "@/composables";
 import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
@@ -82,12 +72,15 @@ import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "@/constants";
-import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto/ConfirmationOfEnrolment.dto";
 import useEmitter from "@/composables/useEmitter";
+import {
+  ApplicationDetailsForCOEAPIOutDTO,
+  ConfirmationOfEnrollmentAPIInDTO,
+  DenyConfirmationOfEnrollmentAPIInDTO,
+} from "@/services/http/dto";
 
 export default {
   components: {
-    ConfirmCOEEditModal,
     ConfirmCOEDenyModal,
     Information,
     FormioModalDialog,
@@ -106,7 +99,7 @@ export default {
     const emitter = useEmitter();
     const router = useRouter();
     const toast = useSnackBar();
-    const initialData = ref({} as ApplicationDetailsForCOEDTO);
+    const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
     const editCOEModal = ref({} as ModalDialog<boolean>);
@@ -127,7 +120,7 @@ export default {
       try {
         const payload = modalResult.data as ConfirmationOfEnrollmentAPIInDTO;
         payload.tuitionRemittanceAmount = payload.tuitionRemittanceAmount ?? 0;
-        await ConfirmationOfEnrollmentService.shared.confirmCOE(
+        await ConfirmationOfEnrollmentService.shared.confirmEnrollment(
           props.locationId,
           props.disbursementScheduleId,
           payload,
@@ -154,37 +147,8 @@ export default {
         emitter.emit("snackBar", toast.error(`${errorLabel}. ${errorMsg}`));
       }
     };
-    const editProgramInformation = async () => {
-      if (await editCOEModal.value.showModal()) {
-        try {
-          await ConfirmationOfEnrollmentService.shared.rollbackCOE(
-            props.locationId,
-            props.disbursementScheduleId,
-          );
-          emitter.emit(
-            "snackBar",
-            toast.success(
-              "Program Information Request is now available to be edited.",
-            ),
-          );
-          router.push({
-            name: InstitutionRoutesConst.COE_SUMMARY,
-            params: {
-              locationId: props.locationId,
-            },
-          });
-        } catch {
-          emitter.emit(
-            "snackBar",
-            toast.error(
-              "An error happened while updating Confirmation of Enrollment.",
-            ),
-          );
-        }
-      }
-    };
     const submitCOEDeny = async (
-      submissionData: DenyConfirmationOfEnrollment,
+      submissionData: DenyConfirmationOfEnrollmentAPIInDTO,
     ) => {
       try {
         await ConfirmationOfEnrollmentService.shared.denyConfirmationOfEnrollment(
@@ -237,15 +201,6 @@ export default {
           command: denyProgramInformation,
         },
       ];
-
-      if (
-        ProgramInfoStatus.notRequired !== initialData.value.applicationPIRStatus
-      ) {
-        items.value.push({
-          label: "Edit Program Information",
-          command: editProgramInformation,
-        });
-      }
     };
 
     watch(

@@ -58,6 +58,18 @@ export class InstitutionUserPaginationOptionsAPIInDTO extends PaginationOptionsA
   sortField?: string;
 }
 
+export class ConfirmationOfEnrollmentPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["fullName", "applicationNumber", "disbursementDate", "coeStatus"])
+  sortField?: string;
+}
+
+export class StudentAppealPendingPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["submittedDate", "applicationNumber", "fullName"])
+  sortField?: string;
+}
+
 /**
  * Common DTO result used when an API endpoint
  * must enable pagination and search options.

@@ -16,7 +16,7 @@
             v-model="searchBox"
             data-cy="searchBox"
             @keyup.enter="searchProgramTable"
-            prepend-inner-icon="fa:fa fa-search"
+            prepend-inner-icon="mdi-magnify"
             hide-details
           />
           <v-btn

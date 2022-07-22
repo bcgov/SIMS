@@ -35,3 +35,12 @@ export interface StudentAppealRequestApprovalAPIInDTO {
 export interface StudentAppealApprovalAPIInDTO {
   requests: StudentAppealRequestApprovalAPIInDTO[];
 }
+
+export interface StudentAppealPendingSummaryAPIOutDTO {
+  appealId: number;
+  applicationId: number;
+  studentId: number;
+  submittedDate: Date;
+  fullName: string;
+  applicationNumber: string;
+}

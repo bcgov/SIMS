@@ -99,15 +99,20 @@ export class ApplicationStudentsController extends BaseController {
       );
     }
 
-    application.data =
-      await this.applicationControllerService.generateApplicationFormData(
+    const applicationDataPromise =
+      this.applicationControllerService.generateApplicationFormData(
         application.data,
       );
-
-    const firstCOE =
-      await this.disbursementScheduleService.getFirstCOEOfApplication(
+    const firstCOEPromise =
+      this.disbursementScheduleService.getFirstDisbursementSchedule({
         applicationId,
-      );
+      });
+    const [applicationData, firstCOE] = await Promise.all([
+      applicationDataPromise,
+      firstCOEPromise,
+    ]);
+
+    application.data = applicationData;
     return this.applicationControllerService.transformToApplicationDetailForStudentDTO(
       application,
       firstCOE,

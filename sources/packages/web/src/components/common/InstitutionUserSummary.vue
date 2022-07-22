@@ -14,7 +14,7 @@
           v-model="searchBox"
           data-cy="searchBox"
           @keyup.enter="searchUserTable"
-          prepend-inner-icon="fa:fa fa-search"
+          prepend-inner-icon="mdi-magnify"
           hide-details
         >
         </v-text-field>

@@ -105,16 +105,6 @@ export interface PIRSummaryDTO {
 export interface ApplicationStatusToBeUpdatedDto {
   applicationStatus: ApplicationStatus;
 }
-export interface COESummaryDTO {
-  applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  applicationId: number;
-  coeStatus: COEStatus;
-  fullName: string;
-  disbursementScheduleId: number;
-  disbursementDate: string;
-}
 
 export interface ApplicationWithProgramYearDto {
   applicationId: number;

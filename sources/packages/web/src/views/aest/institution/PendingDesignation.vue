@@ -16,7 +16,7 @@
           data-cy="searchDesignations"
           variant="outlined"
           @keyup.enter="searchDesignations"
-          prepend-inner-icon="fa:fa fa-search"
+          prepend-inner-icon="mdi-magnify"
           hide-details
         />
       </template>
