@@ -7,14 +7,15 @@ import {
   InternalServerErrorException,
   Get,
   NotFoundException,
-  BadRequestException,
   UnauthorizedException,
+  ParseIntPipe,
 } from "@nestjs/common";
 import {
   CompleteProgramInfoRequestAPIInDTO,
-  DenyProgramInfoRequestDto,
+  DenyProgramInfoRequestAPIInDTO,
   ProgramInfoRequestAPIOutDTO,
-  GetPIRDeniedReasonDto,
+  PIRDeniedReasonAPIOutDTO,
+  PIRSummaryAPIOutDTO,
 } from "./models/program-info-request.dto";
 import {
   HasLocationAccess,
@@ -35,6 +36,7 @@ import {
   getUserFullName,
   getISODateOnlyString,
   PIR_OR_DATE_OVERLAP_ERROR,
+  CustomNamedError,
 } from "../../utilities";
 import {
   EducationProgramOffering,
@@ -42,20 +44,22 @@ import {
   Application,
   AssessmentTriggerType,
 } from "../../database/entities";
-import { PIRSummaryDTO } from "../application/models/application.model";
 import { OFFERING_INTENSITY_MISMATCH } from "../../constants";
 import {
   ApiNotFoundResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ApiProcessError } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@Controller("institution/location")
-@ApiTags("institution")
-export class ProgramInfoRequestController extends BaseController {
+@Controller("location")
+@ApiTags(
+  `${ClientTypeBaseRoute.Institution}-location[Program Information Request - PIR]`,
+)
+export class ProgramInfoRequestInstitutionsController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly workflowService: WorkflowActionsService,
@@ -69,13 +73,9 @@ export class ProgramInfoRequestController extends BaseController {
    * Gets the information to show a Program Information Request (PIR)
    * with the data provided by the student, either when student select
    * an existing program or not.
-   * Once the PIR is completed, it provides the data that express how
-   * the PIR was completed. It could be completed by select an existing
-   * offering, creating a new public offering or creating a new offering
-   * specific to the student application.
-   * @param locationId
-   * @param applicationId
-   * @returns program info request
+   * @param locationId location id.
+   * @param applicationId application id.
+   * @returns program information request.
    */
   @ApiNotFoundResponse({
     description:
@@ -87,8 +87,8 @@ export class ProgramInfoRequestController extends BaseController {
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request/application/:applicationId")
   async getProgramInfoRequest(
-    @Param("locationId") locationId: number,
-    @Param("applicationId") applicationId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ProgramInfoRequestAPIOutDTO> {
     const application = await this.applicationService.getProgramInfoRequest(
       locationId,
@@ -167,9 +167,9 @@ export class ProgramInfoRequestController extends BaseController {
   @HasLocationAccess("locationId")
   @Patch(":locationId/program-info-request/application/:applicationId/deny")
   async denyProgramInfoRequest(
-    @Param("locationId") locationId: number,
-    @Param("applicationId") applicationId: number,
-    @Body() payload: DenyProgramInfoRequestDto,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @Body() payload: DenyProgramInfoRequestAPIInDTO,
   ): Promise<void> {
     try {
       const application =
@@ -198,29 +198,30 @@ export class ProgramInfoRequestController extends BaseController {
   /**
    * Completes the Program Info Request (PIR), defining the
    * PIR status as completed in the student application table.
-   * The PIR could be completed by select an existing offering,
-   * creating a new public offering or creating a new offering
-   * specific to the student application.
+   * The PIR is completed by select an existing offering.
    * @param locationId location that is completing the PIR.
    * @param applicationId application id to be updated.
-   * @param payload contains the offering id to be updated in the
-   * student application or the information to create a new PIR.
+   * @param payload offering to be updated in the student application.
    */
+  @ApiNotFoundResponse({ description: "Application not found." })
+  @ApiUnauthorizedResponse({
+    description: "The location does not have access to the offering.",
+  })
   @HasLocationAccess("locationId")
   @Patch(":locationId/program-info-request/application/:applicationId/complete")
   async completeProgramInfoRequest(
-    @Param("locationId") locationId: number,
-    @Param("applicationId") applicationId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @Body() payload: CompleteProgramInfoRequestAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      // TODO: Check authorization to ensure that the location has access to this application.
-      const application = await this.applicationService.getApplicationById(
+      const application = await this.applicationService.getApplicationForPIR(
         applicationId,
+        locationId,
       );
       if (!application) {
-        throw new BadRequestException("Application not found.");
+        throw new NotFoundException("Application not found.");
       }
 
       // Check if the offering belongs to the location.
@@ -265,17 +266,16 @@ export class ProgramInfoRequestController extends BaseController {
           updatedApplication.currentAssessment.assessmentWorkflowId,
         );
       }
-    } catch (error) {
-      if (
-        [
-          PIR_OR_DATE_OVERLAP_ERROR,
-          PIR_REQUEST_NOT_FOUND_ERROR,
-          OFFERING_INTENSITY_MISMATCH,
-        ].includes(error.name)
-      ) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(error.message, error.name),
-        );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case PIR_OR_DATE_OVERLAP_ERROR:
+          case PIR_REQUEST_NOT_FOUND_ERROR:
+          case OFFERING_INTENSITY_MISMATCH:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
       }
       throw new InternalServerErrorException(
         "Error while completing a Program Information Request (PIR).",
@@ -284,16 +284,16 @@ export class ProgramInfoRequestController extends BaseController {
   }
 
   /**
-   * Get all application of a location in an institution
+   * Get all applications of a location in an institution
    * with Program Info Request (PIR) status completed and required
    * @param locationId location that is completing the PIR.
-   * @returns student application list of an institution location
+   * @returns student application list of an institution location.
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request")
   async getPIRSummary(
-    @Param("locationId") locationId: number,
-  ): Promise<PIRSummaryDTO[]> {
+    @Param("locationId", ParseIntPipe) locationId: number,
+  ): Promise<PIRSummaryAPIOutDTO[]> {
     const applications = await this.applicationService.getPIRApplications(
       locationId,
     );
@@ -307,22 +307,20 @@ export class ProgramInfoRequestController extends BaseController {
         pirStatus: eachApplication.pirStatus,
         fullName: getUserFullName(eachApplication.student.user),
       };
-    }) as PIRSummaryDTO[];
+    });
   }
 
   /**
-   * Get all PIR denied reason ,which are active
-   * @returns PIR denied reason list
+   * Get all PIR denied reasons, which are active.
+   * @returns PIR denied reason list.
    */
   @Get("program-info-request/denied-reason")
-  async getPIRDeniedReason(): Promise<GetPIRDeniedReasonDto[]> {
+  async getPIRDeniedReason(): Promise<PIRDeniedReasonAPIOutDTO[]> {
     const pirDeniedReason =
       await this.pirDeniedReasonService.getPIRDeniedReasons();
-    return pirDeniedReason.map((eachPIRDeniedReason) => {
-      return {
-        id: eachPIRDeniedReason.id,
-        description: eachPIRDeniedReason.reason,
-      };
-    }) as GetPIRDeniedReasonDto[];
+    return pirDeniedReason.map((eachPIRDeniedReason) => ({
+      id: eachPIRDeniedReason.id,
+      description: eachPIRDeniedReason.reason,
+    }));
   }
 }

@@ -39,7 +39,6 @@ import {
   EducationProgramController,
   EducationProgramOfferingController,
   ATBCController,
-  ProgramInfoRequestController,
   NotesController,
   RestrictionController,
 } from "./route-controllers";
@@ -106,7 +105,6 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     EducationProgramController,
     EducationProgramOfferingController,
     ATBCController,
-    ProgramInfoRequestController,
     NotesController,
     RestrictionController,
   ],
@@ -130,7 +128,6 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     ProgramYearService,
     SequenceControlService,
     InstitutionTypeService,
-    PIRDeniedReasonService,
     MSFAANumberService,
     StudentRestrictionService,
     RestrictionService,

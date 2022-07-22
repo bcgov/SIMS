@@ -505,12 +505,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get student application details with the application Id.
-   * @param applicationId student application id .
-   * @returns student Application Details.
+   * Get student application details for a Program Information Request(PIR).
+   * @param applicationId student application id.
+   * @param locationId associated location that has access to the
+   * Program Information Request.
+   * @returns student application details.
    */
-  async getApplicationById(applicationId: number): Promise<Application> {
-    return this.repo
+  async getApplicationForPIR(
+    applicationId: number,
+    locationId: number,
+  ): Promise<Application> {
+    const query = this.repo
       .createQueryBuilder("application")
       .select([
         "application.data",
@@ -523,10 +528,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("application.student", "student")
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("student.user", "user")
-      .andWhere("application.id = :applicationId", {
+      .where("application.id = :applicationId", {
         applicationId,
-      })
-      .getOne();
+      });
+    if (locationId) {
+      query.andWhere("application.location.id = locationId:", { locationId });
+    }
+    return query.getOne();
   }
 
   /**

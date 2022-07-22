@@ -38,12 +38,12 @@ import {
   ApiProcessError,
   FormIOCustomEvent,
   FormIOCustomEventTypes,
-  GetProgramInfoRequestDto,
 } from "@/types";
 import {
   PIR_OR_DATE_OVERLAP_ERROR,
   OFFERING_INTENSITY_MISMATCH,
 } from "@/constants";
+import { ProgramInfoRequestAPIOutDTO } from "@/services/http/dto";
 
 export default {
   props: {
@@ -60,7 +60,7 @@ export default {
     const toast = useToastMessage();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
-    const initialData = ref({} as GetProgramInfoRequestDto);
+    const initialData = ref({} as ProgramInfoRequestAPIOutDTO);
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
     const programRequestData = ref();
