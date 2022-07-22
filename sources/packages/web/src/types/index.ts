@@ -38,3 +38,5 @@ export * from "@/types/contracts/RestrictionContract";
 export * from "@/types/contracts/ApplicationExceptionsStatus";
 export * from "@/types/contracts/institution/InstitutionUser";
 export * from "@/types/vuetify";
+export * from "@/types/contracts/SnackBar";
+export * from "@/types/contracts/Menu";

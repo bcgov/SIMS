@@ -6,23 +6,18 @@
     :recordsCount="usersListAndCount.count"
   >
     <template #actions>
-      <v-row class="m-0">
+      <v-row class="m-0 p-0">
         <v-text-field
-          class="v-text-field-search-width"
           density="compact"
           label="Search name"
           variant="outlined"
           v-model="searchBox"
+          data-cy="searchBox"
           @keyup.enter="searchUserTable"
           prepend-inner-icon="mdi-magnify"
+          hide-details
         >
         </v-text-field>
-        <v-btn
-          class="ml-2 primary-btn-background"
-          @click="searchUserTable"
-          prepend-icon="fa:fas fa-magnifying-glass"
-          >Search</v-btn
-        >
         <v-btn
           v-if="hasBusinessGuid || allowBasicBCeIDCreation"
           class="ml-2 primary-btn-background"
@@ -124,7 +119,7 @@
 import { ref, watch } from "vue";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
-import { ModalDialog, useFormatters, useToastMessage } from "@/composables";
+import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
 import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue";
 import {
   InstitutionUserViewModel,
@@ -138,6 +133,7 @@ import {
   ApiProcessError,
 } from "@/types";
 import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
+
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 
 export default {
@@ -167,7 +163,7 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const { institutionUserRoleToDisplay } = useFormatters();
     const usersListAndCount = ref({} as InstitutionUserSummary);
     const loading = ref(false);
@@ -218,8 +214,7 @@ export default {
           enabled,
         );
         await getAllInstitutionUsers();
-        toast.success(
-          "User status updated",
+        snackBar.success(
           `${userDetails.displayName} is ${enabled ? "enabled" : "disabled"}`,
         );
       } catch (error: unknown) {
@@ -227,13 +222,12 @@ export default {
           error instanceof ApiProcessError &&
           error.errorType === INSTITUTION_MUST_HAVE_AN_ADMIN
         ) {
-          toast.warn("Cannot disable the institution admin", error.message);
+          snackBar.warn(
+            `Cannot disable the institution admin. ${error.message}`,
+          );
           return;
         }
-        toast.error(
-          "Unexpected error",
-          "An error happened during the update process.",
-        );
+        snackBar.error("An error happened during the update process.");
       }
     };
 

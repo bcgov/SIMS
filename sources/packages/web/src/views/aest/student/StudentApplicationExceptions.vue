@@ -11,12 +11,14 @@
     >
       <template #actions>
         <v-text-field
-          class="v-text-field-search-width"
           density="compact"
           label="Search name or application #"
           variant="outlined"
           v-model="searchCriteria"
+          data-cy="searchExceptions"
           @keyup.enter="searchExceptions"
+          prepend-inner-icon="mdi-magnify"
+          hide-details
         >
           <template v-slot:prependInner>
             <font-awesome-icon :icon="['fas', 'search']" />

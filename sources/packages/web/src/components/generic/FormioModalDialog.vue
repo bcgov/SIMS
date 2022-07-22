@@ -1,5 +1,9 @@
 <template>
-  <ModalDialogBase :title="title" :showDialog="showDialog" :maxWidth="maxWidth">
+  <modal-dialog-base
+    :title="title"
+    :showDialog="showDialog"
+    :maxWidth="maxWidth"
+  >
     <template v-slot:content>
       <formio
         :formName="formName"
@@ -12,7 +16,7 @@
         <slot name="actions" :cancel="cancel" :submit="submit"></slot>
       </div>
     </template>
-  </ModalDialogBase>
+  </modal-dialog-base>
 </template>
 
 <script lang="ts">

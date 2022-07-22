@@ -1,96 +1,90 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <div class="mb-4">
-        <span class="category-header-large color-blue">
-          All Programs ({{ institutionProgramsSummary.count }})
-        </span>
-        <div class="float-right">
-          <InputText
-            name="searchProgramName"
-            v-model="searchProgramName"
-            placeholder="Search Program Name"
-            @keyup.enter="goToSearchProgramName()"
-          />
-          <v-btn
-            class="ml-2 primary-btn-background"
-            @click="goToSearchProgramName()"
-            ><font-awesome-icon :icon="['fas', 'search']"
-          /></v-btn>
-        </div>
-      </div>
-      <content-group>
-        <DataTable
-          :value="institutionProgramsSummary.results"
-          :lazy="true"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
-          :totalRecords="institutionProgramsSummary.count"
-          @page="pageSortEvent($event)"
-          @sort="pageSortEvent($event)"
-          :loading="loading"
+  <full-page-container>
+    <body-header
+      title="All Programs"
+      :recordsCount="institutionProgramsSummary.count"
+    >
+      <template #actions>
+        <v-text-field
+          density="compact"
+          v-model="searchProgramName"
+          label="Search Program Name"
+          data-cy="searchProgramName"
+          variant="outlined"
+          @keyup.enter="goToSearchProgramName()"
+          prepend-inner-icon="mdi-magnify"
+          hide-details
+        />
+      </template>
+    </body-header>
+    <content-group>
+      <DataTable
+        :value="institutionProgramsSummary.results"
+        :lazy="true"
+        :paginator="true"
+        :rows="DEFAULT_PAGE_LIMIT"
+        :rowsPerPageOptions="PAGINATION_LIST"
+        :totalRecords="institutionProgramsSummary.count"
+        @page="pageSortEvent($event)"
+        @sort="pageSortEvent($event)"
+        :loading="loading"
+      >
+        <template #empty>
+          <p class="text-center font-weight-bold">No records found.</p>
+        </template>
+        <Column
+          :field="ProgramSummaryFields.SubmittedDate"
+          header="Date Submitted"
+          :sortable="true"
         >
-          <template #empty>
-            <p class="text-center font-weight-bold">No records found.</p>
+          <template #body="slotProps">
+            <div class="p-text-capitalize">
+              {{ slotProps.data.formattedSubmittedDate }}
+            </div>
           </template>
-          <Column
-            :field="ProgramSummaryFields.SubmittedDate"
-            header="Date Submitted"
-            :sortable="true"
-          >
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.formattedSubmittedDate }}
-              </div>
-            </template>
-          </Column>
-          <Column
-            :field="ProgramSummaryFields.ProgramName"
-            header="Program Name"
-          >
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.programName }}
-              </div>
-            </template>
-          </Column>
-          <Column :field="ProgramSummaryFields.LocationName" header="Location">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.locationName }}
-              </div>
-            </template>
-          </Column>
-          <Column
-            :field="ProgramSummaryFields.TotalOfferings"
-            header="Study periods"
-          >
-          </Column>
-          <Column :field="ProgramSummaryFields.ProgramStatus" header="Status"
-            ><template #body="slotProps">
-              <program-status-chip
-                :status="slotProps.data.programStatus"
-              ></program-status-chip> </template
-          ></Column>
-          <Column>
-            <template #body="slotProps">
-              <v-btn
-                variant="outlined"
-                @click="
-                  goToViewProgramDetail(
-                    slotProps.data.programId,
-                    slotProps.data.locationId,
-                  )
-                "
-                >View</v-btn
-              >
-            </template>
-          </Column>
-        </DataTable>
-      </content-group>
-    </div>
-  </v-card>
+        </Column>
+        <Column :field="ProgramSummaryFields.ProgramName" header="Program Name">
+          <template #body="slotProps">
+            <div class="p-text-capitalize">
+              {{ slotProps.data.programName }}
+            </div>
+          </template>
+        </Column>
+        <Column :field="ProgramSummaryFields.LocationName" header="Location">
+          <template #body="slotProps">
+            <div class="p-text-capitalize">
+              {{ slotProps.data.locationName }}
+            </div>
+          </template>
+        </Column>
+        <Column
+          :field="ProgramSummaryFields.TotalOfferings"
+          header="Study periods"
+        >
+        </Column>
+        <Column :field="ProgramSummaryFields.ProgramStatus" header="Status"
+          ><template #body="slotProps">
+            <program-status-chip
+              :status="slotProps.data.programStatus"
+            ></program-status-chip> </template
+        ></Column>
+        <Column>
+          <template #body="slotProps">
+            <v-btn
+              variant="outlined"
+              @click="
+                goToViewProgramDetail(
+                  slotProps.data.programId,
+                  slotProps.data.locationId,
+                )
+              "
+              >View</v-btn
+            >
+          </template>
+        </Column>
+      </DataTable>
+    </content-group>
+  </full-page-container>
 </template>
 
 <script lang="ts">

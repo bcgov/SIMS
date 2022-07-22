@@ -48,7 +48,7 @@ import { ref, onMounted, computed } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
-import { useFormatters, useToastMessage } from "@/composables";
+import { useFormatters, useSnackBar } from "@/composables";
 import {
   StudentAppealRequest,
   StudentAppealApproval,
@@ -80,7 +80,8 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const toast = useToastMessage();
+
+    const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
     const studentAppealRequests = ref([] as StudentAppealRequest[]);
     const appealStatus = ref(StudentAppealStatus.Pending);
@@ -127,22 +128,17 @@ export default {
           props.appealId,
           approvals,
         );
-        toast.success(
-          "Student request completed",
-          "The request was completed with success.",
-        );
+        snackBar.success("The request was completed with success.");
+
         gotToAssessmentsSummary();
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           if (error.errorType === ASSESSMENT_ALREADY_IN_PROGRESS) {
-            toast.warn("Not able to submit", error.message);
+            snackBar.warn(error.message);
             return;
           }
         }
-        toast.error(
-          "Unexpected error",
-          "An unexpected error happened during the approval.",
-        );
+        snackBar.error("An unexpected error happened during the approval.");
       }
     };
 

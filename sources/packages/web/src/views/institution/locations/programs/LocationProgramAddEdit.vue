@@ -39,7 +39,7 @@ import {
 import { onMounted, ref, computed } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
@@ -56,7 +56,7 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const institutionId = ref();
     const clientType = computed(() => AuthService.shared.authClientType);
@@ -188,23 +188,14 @@ export default {
               props.programId,
               data,
             );
-            toast.success(
-              "Updated!",
-              "Education Program updated successfully!",
-            );
+            snackBar.success("Education Program updated successfully!");
           } else {
             await EducationProgramService.shared.createProgram(data);
-            toast.success(
-              "Created!",
-              "Education Program created successfully!",
-            );
+            snackBar.success("Education Program created successfully!");
           }
           goBack();
         } catch (excp) {
-          toast.error(
-            "Unexpected error",
-            "An error happened during the saving process.",
-          );
+          snackBar.error("An error happened during the saving process.");
         }
       }
     };

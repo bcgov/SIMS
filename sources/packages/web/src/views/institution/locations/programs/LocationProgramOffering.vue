@@ -7,15 +7,35 @@
         :subTitle="subTitle"
       >
         <template #buttons>
-          <v-btn
-            color="primary"
-            v-if="hasExistingApplication"
-            prepend-icon="fa:fa fa-chevron-circle-down"
-            @click="toggleMenu"
-            >Edit Actions</v-btn
-          >
-          <Menu ref="menu" :model="items" :popup="true" /> </template
-      ></header-navigator>
+          <v-row class="p-0 m-0">
+            <v-menu v-if="hasExistingApplication">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  class="ml-2"
+                  color="primary"
+                  prepend-icon="fa:fa fa-chevron-circle-down"
+                  v-bind="props"
+                  >Edit Actions</v-btn
+                >
+              </template>
+              <v-list>
+                <template v-for="(item, index) in items" :key="index">
+                  <v-list-item :value="index">
+                    <v-list-item-title @click="item.command">
+                      <span class="label-bold">{{ item.label }}</span>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-divider
+                    v-if="index < items.length - 1"
+                    :key="index"
+                    inset
+                  ></v-divider>
+                </template>
+              </v-list>
+            </v-menu>
+          </v-row>
+        </template>
+      </header-navigator>
       <program-offering-detail-header
         v-if="offeringId"
         class="m-4"
@@ -50,7 +70,7 @@ import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
 import { OfferingFormModel, OfferingStatus, OfferingDTO } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useToastMessage, ModalDialog } from "@/composables";
+import { useSnackBar, ModalDialog } from "@/composables";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
@@ -80,9 +100,8 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const router = useRouter();
-    const menu = ref();
     const items = [
       {
         label: "Request Change",
@@ -159,7 +178,7 @@ export default {
             props.offeringId,
             data,
           );
-          toast.success("Updated!", "Education Offering updated successfully!");
+          snackBar.success("Education Offering updated successfully!");
         } else {
           //Create new offering
           await EducationProgramOfferingService.shared.createProgramOffering(
@@ -167,20 +186,14 @@ export default {
             props.programId,
             data,
           );
-          toast.success("Created!", "Education Offering created successfully!");
+          snackBar.success("Education Offering created successfully!");
         }
         router.push(routeLocation.value);
       } catch (error: unknown) {
-        toast.error(
-          "Unexpected error",
-          "An error happened during the Offering saving process.",
-        );
+        snackBar.error("An error happened during the Offering saving process.");
       }
     };
 
-    const toggleMenu = (event: any) => {
-      menu?.value?.toggle(event);
-    };
     return {
       saveOffering,
       initialData,
@@ -191,8 +204,6 @@ export default {
       BannerTypes,
       hasExistingApplication,
       items,
-      toggleMenu,
-      menu,
       routeLocation,
     };
   },

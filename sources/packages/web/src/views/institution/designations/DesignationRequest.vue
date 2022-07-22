@@ -22,7 +22,7 @@ import {
   useFormatters,
   useInstitutionAuth,
   useInstitutionState,
-  useToastMessage,
+  useSnackBar,
 } from "@/composables";
 import { useRouter } from "vue-router";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
@@ -39,7 +39,8 @@ export default {
   components: { DesignationAgreementForm },
   setup() {
     const router = useRouter();
-    const toastMessage = useToastMessage();
+
+    const snackBar = useSnackBar();
     const formatter = useFormatters();
     const { institutionState } = useInstitutionState();
     const { userFullName, userEmail, isLegalSigningAuthority } =
@@ -87,11 +88,10 @@ export default {
             }),
           ),
         } as SubmitDesignationAgreementDto);
-        toastMessage.success("Submitted", "Designation agreement submitted.");
+        snackBar.success("Designation agreement submitted.");
         router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
       } catch (error) {
-        toastMessage.error(
-          "Unexpected error",
+        snackBar.error(
           "And unexpected error happened during the designation agreement submission.",
         );
       }

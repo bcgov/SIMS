@@ -45,13 +45,6 @@ html * {
 }
 
 /**
-* Overwrite the default internal padding
-* for PrimeVue components.
-*/
-.p-inputtext {
-  padding: 0.375rem 0.75rem !important;
-}
-/**
 * Overwrite the default margin
 * for PrimeVue components.
 */
@@ -84,11 +77,6 @@ html * {
 // Error v-chip.
 .v-chip--variant-outlined.status-chip-error {
   border-color: $badge-border-error !important;
-}
-
-//Defining the height of rounded filter button
-.filter-button {
-  max-height: 30px;
 }
 
 /** Style to align records per page with arrows in data table. **/

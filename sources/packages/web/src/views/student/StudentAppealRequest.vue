@@ -53,7 +53,7 @@ import { ApiProcessError, StudentAppealRequest } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   INVALID_APPLICATION_NUMBER,
@@ -70,7 +70,7 @@ export default {
     AppealRequestsForm,
   },
   setup() {
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     let requestFormData: any = undefined;
     const appealRequestsForms = ref([] as StudentAppealRequest[]);
     let applicationId: number;
@@ -92,9 +92,11 @@ export default {
         const errorMessage = "An error happened while requesting a change.";
         const errorLabel = "Unexpected error";
         if (error.response.data?.errorType === INVALID_APPLICATION_NUMBER) {
-          toast.warn("Application not found", error.response.data.message);
+          snackBar.warn(
+            `Application not found. ${error.response.data.message}`,
+          );
         } else {
-          toast.error(errorLabel, errorMessage);
+          snackBar.error(`${errorLabel}. ${errorMessage}`);
         }
       }
     };
@@ -117,8 +119,7 @@ export default {
           applicationId,
           appealRequests,
         );
-        toast.success(
-          "Request submitted",
+        snackBar.success(
           "The request for change has been submitted successfully.",
         );
         //TODO: Redirect to appeal view page once it is developed.
@@ -131,14 +132,11 @@ export default {
               APPLICATION_CHANGE_NOT_ELIGIBLE,
             ].includes(error.errorType)
           ) {
-            toast.warn("Not able to submit", error.message);
+            snackBar.warn(`Not able to submit. ${error.message}`);
             return;
           }
         }
-        toast.error(
-          "Unexpected error",
-          "An unexpected error happened during the submission.",
-        );
+        snackBar.error("An unexpected error happened during the submission.");
       }
     };
 

@@ -30,7 +30,7 @@ import {
   useFormioUtils,
   useFormioDropdownLoader,
   useFormatters,
-  useToastMessage,
+  useSnackBar,
   useProgramInfoRequest,
 } from "@/composables";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -57,7 +57,7 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const initialData = ref({} as GetProgramInfoRequestDto);
@@ -181,18 +181,14 @@ export default {
             props.applicationId,
             data,
           );
-          toast.success(
-            "Denied!",
-            "Program Information Request denied successfully!",
-          );
+          snackBar.success("Program Information Request denied successfully!");
         } else {
           await ProgramInfoRequestService.shared.completeProgramInfoRequest(
             props.locationId,
             props.applicationId,
             data,
           );
-          toast.success(
-            "Completed!",
+          snackBar.success(
             "Program Information Request completed successfully!",
           );
         }
@@ -215,8 +211,7 @@ export default {
             errorMsg = error.message;
           }
         }
-
-        toast.error(errorLabel, errorMsg);
+        snackBar.error(`${errorLabel}. ${errorMsg}`);
       }
     };
     return {

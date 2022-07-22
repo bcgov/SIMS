@@ -6,21 +6,23 @@
       :routeLocation="routeLocation"
     >
       <template #buttons>
-        <v-btn
-          v-if="showActionButtons"
-          color="primary"
-          variant="outlined"
-          data-cy="declinedDesignationAgreementButton"
-          @click="updateDesignation(DesignationAgreementStatus.Declined)"
-          >Decline</v-btn
-        >
-        <v-btn
-          class="ml-2 primary-btn-background"
-          v-if="showActionButtons"
-          data-cy="approvedDesignationAgreementButton"
-          @click="updateDesignation(DesignationAgreementStatus.Approved)"
-          >Approve designation</v-btn
-        >
+        <v-row class="p-0 m-0">
+          <v-btn
+            v-if="showActionButtons"
+            color="primary"
+            variant="outlined"
+            data-cy="declinedDesignationAgreementButton"
+            @click="updateDesignation(DesignationAgreementStatus.Declined)"
+            >Decline</v-btn
+          >
+          <v-btn
+            class="ml-2 primary-btn-background"
+            v-if="showActionButtons"
+            data-cy="approvedDesignationAgreementButton"
+            @click="updateDesignation(DesignationAgreementStatus.Approved)"
+            >Approve designation</v-btn
+          >
+        </v-row>
       </template>
     </header-navigator>
     <full-page-container class="mt-4">
@@ -44,7 +46,7 @@ import {
   useFormatters,
   useDesignationAgreement,
   ModalDialog,
-  useToastMessage,
+  useSnackBar,
 } from "@/composables";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
@@ -82,7 +84,7 @@ export default {
     const { mapDesignationChipStatus } = useDesignationAgreement();
     const designationAgreement = ref({} as GetDesignationAgreementDto);
     const designationFormModel = reactive({} as DesignationModel);
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const showActionButtons = computed(
       () =>
         designationFormModel.designationStatus !==
@@ -186,14 +188,12 @@ export default {
             props.designationId,
             response as UpdateDesignationDto,
           );
-          toast.success(
-            `Designation ${designationStatus}`,
+          snackBar.success(
             `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
           );
           await loadDesignation();
         } catch (error) {
-          toast.error(
-            "Unexpected error",
+          snackBar.error(
             "Unexpected error while approving/declining the designation.",
           );
         }

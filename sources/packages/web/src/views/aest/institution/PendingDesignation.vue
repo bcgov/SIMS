@@ -1,27 +1,24 @@
 <template>
-  <header-navigator title="Institutions" subTitle="Designations" />
-  <v-card class="mt-4 p-4">
+  <full-page-container>
+    <template #header>
+      <header-navigator title="Institutions" subTitle="Designations" />
+    </template>
     <body-header
       title="Pending Designations"
       subTitle="Make a determination on each designation after viewing it's content."
       :recordsCount="designations?.length"
-      class="m-1"
     >
-      <!-- TODO: While moving to vuetify3, data table search here(non-lazy) can be a OOTB search from vuetify datatable. -->
       <template #actions>
-        <InputText
-          type="text"
-          placeholder="Search Designations"
+        <v-text-field
+          label="Search Designations"
+          density="compact"
           v-model="searchCriteria"
-          data-cy="searchCriteria"
+          data-cy="searchDesignations"
+          variant="outlined"
           @keyup.enter="searchDesignations"
+          prepend-inner-icon="mdi-magnify"
+          hide-details
         />
-        <v-btn
-          class="ml-2 primary-btn-background"
-          data-cy="searchCriteriaButton"
-          @click="searchDesignations"
-          ><font-awesome-icon :icon="['fas', 'search']" class="mr-2"
-        /></v-btn>
       </template>
     </body-header>
     <content-group>
@@ -29,6 +26,7 @@
         :toggled="!designations.length"
         message="There are no pending designation agreements"
       >
+        <!-- TODO: While moving to vuetify3, data table search here(non-lazy) can be a OOTB search from vuetify datatable. -->
         <DataTable
           :value="designations"
           :paginator="true"
@@ -72,7 +70,7 @@
         </template>
       </toggle-content>
     </content-group>
-  </v-card>
+  </full-page-container>
 </template>
 
 <script lang="ts">
