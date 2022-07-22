@@ -10,22 +10,7 @@
       title="Requested changes"
       :recordsCount="offeringChangeRequests.length"
       subTitle="Make a determination on requested change(s) that may require a reassessment."
-    >
-      <template #actions>
-        <v-text-field
-          class="v-text-field-search-width"
-          density="compact"
-          label="Search name or application #"
-          variant="outlined"
-          v-model="searchCriteria"
-          @keyup.enter="searchExceptions"
-        >
-          <template v-slot:prependInner>
-            <v-icon>mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-      </template>
-    </body-header>
+    />
     <content-group>
       <toggle-content :toggled="!offeringChangeRequests.length">
         <DataTable

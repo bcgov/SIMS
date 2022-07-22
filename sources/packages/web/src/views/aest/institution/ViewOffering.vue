@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container layout-template="centered">
     <template #header>
       <header-navigator
         title="Study period offerings"
@@ -30,7 +30,19 @@
         }"
       />
     </template>
-    <offering-form :data="initialData"></offering-form>
+
+    <v-tabs v-model="tab" color="primary" :ripple="false">
+      <v-tab value="active-offering" :ripple="false">Active Offering</v-tab>
+      <v-tab value="requested-offering">Requested Offering</v-tab>
+    </v-tabs>
+    <v-window v-model="tab">
+      <v-window-item value="active-offering">
+        <offering-form :data="initialData"></offering-form>
+      </v-window-item>
+      <v-window-item value="requested-offering"
+        ><offering-form :data="initialData"></offering-form>
+      </v-window-item>
+    </v-window>
     <assess-offering-modal
       ref="assessOfferingModalRef"
       :offeringStatus="offeringApprovalStatus"
@@ -78,6 +90,7 @@ export default {
 
   setup(props: any) {
     const toast = useToastMessage();
+    const tab = ref("active-offering");
     const initialData = ref({} as Partial<OfferingFormModel>);
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
@@ -147,6 +160,7 @@ export default {
       programRoute,
       showActionButtons,
       offeringApprovalStatus,
+      tab,
     };
   },
 };
