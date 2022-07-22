@@ -1,3 +1,4 @@
+require("../env_setup");
 import { DataSource } from "typeorm";
 import { ormConfig } from "../src/database/data-source";
 

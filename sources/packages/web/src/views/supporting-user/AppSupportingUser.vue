@@ -21,18 +21,13 @@
           ></v-btn>
         </template>
         <v-list>
-          <template v-for="(item, index) in menuItems" :key="index">
-            <v-list-item :value="index">
-              <v-list-item-title @click="item.command">
-                <span class="label-bold">{{ item.label }}</span>
+          <v-list-item :value="menuItem.label">
+            <v-list-item-title>
+              <v-list-item-title @click="menuItem.command">
+                <span class="label-bold">{{ menuItem.label }}</span>
               </v-list-item-title>
-            </v-list-item>
-            <v-divider
-              v-if="index < menuItems.length - 1"
-              :key="index"
-              inset
-            ></v-divider>
-          </template>
+            </v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
     </v-app-bar>
@@ -62,12 +57,10 @@ export default {
     const logoff = async () => {
       await executeLogout(ClientIdType.SupportingUsers);
     };
-    const menuItems = [
-      {
-        label: "Log Out",
-        command: logoff,
-      },
-    ];
+    const menuItem = {
+      label: "Log Out",
+      command: logoff,
+    };
 
     const goToDashboard = () => {
       router.push({
@@ -76,7 +69,7 @@ export default {
     };
 
     return {
-      menuItems,
+      menuItem,
       isAuthenticated,
       logoff,
       goToDashboard,
