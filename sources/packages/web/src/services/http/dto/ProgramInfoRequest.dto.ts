@@ -1,25 +1,33 @@
-import { OfferingDTO, OfferingIntensity, ProgramInfoStatus } from "@/types";
+import {
+  CourseDetails,
+  OfferingDTO,
+  OfferingIntensity,
+  OfferingTypes,
+  ProgramInfoStatus,
+} from "@/types";
 
-export interface ProgramInfoRequestAPIOutDTO
-  extends CompleteProgramInfoRequestAPIInDTO {
+export interface ProgramInfoRequestAPIOutDTO {
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;
   studentSelectedProgram: string;
+  selectedProgram?: number;
+  selectedOffering?: number;
+  pirStatus: ProgramInfoStatus;
   studentCustomProgram: string;
   studentCustomProgramDescription: string;
   studentStudyStartDate: string;
   studentStudyEndDate: string;
-  pirStatus: ProgramInfoStatus;
+  offeringIntensitySelectedByStudent: OfferingIntensity;
   programYearId: number;
+  isActiveProgramYear: boolean;
+  offeringName: string;
+  offeringDelivered: string;
+  offeringType: OfferingTypes;
+  offeringIntensity: OfferingIntensity;
+  courseDetails?: CourseDetails[];
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
-  // for `Deny program information request` checkbox
-  denyProgramInformationRequest: boolean;
-  isActiveProgramYear: boolean;
-  offeringIntensitySelectedByStudent: OfferingIntensity;
-  programYearStartDate: Date;
-  programYearEndDate: Date;
 }
 
 export interface PIRSummaryDTO {

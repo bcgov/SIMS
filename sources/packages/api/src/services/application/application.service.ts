@@ -385,8 +385,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Gets the Program Information Request
-   * associated with the application.
+   * Gets the Program Information Requests (PIR) associated with the
+   * application and the original assessment that contains the offering
+   * to be complete or that was completed during the PIR process.
    * @param locationId location id.
    * @param applicationId application id.
    * @returns student application with Program Information Request.
@@ -402,8 +403,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.pirStatus",
         "application.data",
         "application.pirDeniedOtherDesc",
-        "currentAssessment.id",
-        "currentAssessment.triggerType",
         "location.name",
         "student.id",
         "student.birthDate",
@@ -433,14 +432,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.endDate",
         "sinValidation.id",
         "sinValidation.sin",
+        "studentAssessments.id",
+        "studentAssessments.triggerType",
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirProgram", "pirProgram")
       .innerJoin("application.student", "student")
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.location", "location")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
+      .innerJoin("application.studentAssessments", "studentAssessments")
+      .leftJoin("studentAssessments.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
       .innerJoin("student.user", "user")
       .leftJoin("application.pirDeniedReasonId", "PIRDeniedReason")
@@ -448,6 +449,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationId,
       })
       .andWhere("location.id = :locationId", { locationId })
+      .andWhere("studentAssessments.triggerType = :triggerType", {
+        triggerType: AssessmentTriggerType.OriginalAssessment,
+      })
+      .andWhere("application.pirStatus != :pirStatus", {
+        pirStatus: ProgramInfoStatus.notRequired,
+      })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
       })

@@ -36,12 +36,7 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   CustomNamedError,
 } from "../../utilities";
-import {
-  EducationProgramOffering,
-  ProgramInfoStatus,
-  Application,
-  AssessmentTriggerType,
-} from "../../database/entities";
+import { Application, AssessmentTriggerType } from "../../database/entities";
 import {
   OFFERING_INTENSITY_MISMATCH,
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
@@ -98,60 +93,52 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     );
     if (!application) {
       throw new NotFoundException(
-        "The application was not found under the provided location.",
+        "The application was not found under the provided location or the application is not expecting a Program Information Request (PIR) at this moment.",
       );
     }
-    if (
-      !application.pirStatus ||
-      application.pirStatus === ProgramInfoStatus.notRequired
-    ) {
-      throw new NotFoundException(
-        "Program Information Request (PIR) not found.",
-      );
-    }
-    // Original assessment to be used as a reference.
-    // PIR process happens only during original assessment.
-    if (
-      application.currentAssessment.triggerType !==
-      AssessmentTriggerType.OriginalAssessment
-    ) {
-      throw new UnprocessableEntityException(
-        "Student application is missing original assessment.",
-      );
-    }
-    // Offering that belongs to the original assessment.
-    const offering = application.currentAssessment.offering;
+
     const result = {} as ProgramInfoRequestAPIOutDTO;
-    // Program Info Request specific data.
     result.institutionLocationName = application.location.name;
     result.applicationNumber = application.applicationNumber;
     result.studentFullName = getUserFullName(application.student.user);
-    result.studentSelectedProgram = application.pirProgram?.name;
-
-    // If an offering is present, this value will be the program id associated
-    // with the offering, otherwise the program id from PIR will be used.
-    result.selectedProgram =
-      offering?.educationProgram.id ?? application.pirProgram?.id;
-    result.selectedOffering = offering?.id;
     result.pirStatus = application.pirStatus;
-    // Load application dynamic data.
+    // Student application dynamic data.
     result.studentCustomProgram = application.data.programName;
     result.studentCustomProgramDescription =
       application.data.programDescription;
     result.studentStudyStartDate = application.data.studystartDate;
     result.studentStudyEndDate = application.data.studyendDate;
-    result.offeringIntensitySelectedByStudent =
-      application.data.howWillYouBeAttendingTheProgram;
-    result.programYearId = application.programYear.id;
-    result.isActiveProgramYear = application.programYear.active;
-    if (offering) {
-      result.offeringName = offering.name;
-      result.offeringType = offering.offeringType;
-      result.offeringIntensity = offering.offeringIntensity;
-    }
     result.courseDetails = application.data.courseDetails;
     result.pirDenyReasonId = application.pirDeniedReasonId?.id;
     result.otherReasonDesc = application.pirDeniedOtherDesc;
+    result.offeringIntensitySelectedByStudent =
+      application.data.howWillYouBeAttendingTheProgram;
+    // Program year data.
+    result.programYearId = application.programYear.id;
+    result.isActiveProgramYear = application.programYear.active;
+    // Education program, if selected by the student.
+    result.studentSelectedProgram = application.pirProgram?.name;
+    // Original assessment to be used as a reference for the PIR (original
+    // assessment always available for submitted student applications).
+    // PIR process happens only during original assessment.
+    // Offering available only when PIR is completed.
+    const originalAssessmentOffering = application.studentAssessments.find(
+      (assessment) =>
+        assessment.triggerType === AssessmentTriggerType.OriginalAssessment,
+    ).offering;
+    // If an offering is present (PIR is completed), this value will be the
+    // program id associated with the offering, otherwise the program id
+    // from PIR (sims.applications table) will be used.
+    result.selectedProgram =
+      originalAssessmentOffering?.educationProgram.id ??
+      application.pirProgram?.id;
+    // Offering only available when PIR is completed.
+    if (originalAssessmentOffering) {
+      result.selectedOffering = originalAssessmentOffering.id;
+      result.offeringName = originalAssessmentOffering.name;
+      result.offeringType = originalAssessmentOffering.offeringType;
+      result.offeringIntensity = originalAssessmentOffering.offeringIntensity;
+    }
     return result;
   }
 
@@ -162,9 +149,13 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
    * @param applicationId application id to be updated.
    * @param payload contains the denied reason of the student application.
    */
+  @ApiNotFoundResponse({
+    description:
+      "Not able to find an application that requires a PIR to be completed.",
+  })
   @ApiUnprocessableEntityResponse({
     description:
-      "Not able to find an application that requires a PIR to be completed or 'Other' is selected as PIR reason but the reason was not provided.",
+      "'Other' is selected as PIR reason but the reason was not provided.",
   })
   @HasLocationAccess("locationId")
   @Patch(":locationId/program-info-request/application/:applicationId/deny")
@@ -186,14 +177,16 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           application.currentAssessment.assessmentWorkflowId,
         );
       }
-    } catch (error) {
-      switch (error.name) {
-        case PIR_REQUEST_NOT_FOUND_ERROR:
-        case PIR_DENIED_REASON_NOT_FOUND_ERROR:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          throw error;
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case PIR_REQUEST_NOT_FOUND_ERROR:
+            throw new NotFoundException(error.message);
+          case PIR_DENIED_REASON_NOT_FOUND_ERROR:
+            throw new UnprocessableEntityException(error.message);
+        }
       }
+      throw error;
     }
   }
 
