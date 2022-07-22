@@ -39,7 +39,6 @@ export default {
           await InstitutionService.shared.createInstitutionLocation(data);
           router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
           store.dispatch("institution/getUserInstitutionLocationDetails");
-
           snackBar.success("Institution Location created Successfully!");
         } catch (excp) {
           snackBar.error("An error happened during the create process.");

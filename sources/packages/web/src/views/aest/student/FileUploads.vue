@@ -137,7 +137,6 @@ export default {
           props.studentId,
           payload,
         );
-
         snackBar.success(
           "The documents were submitted and a notification was sent to the student.",
         );

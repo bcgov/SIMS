@@ -46,7 +46,6 @@ export default {
           data,
         );
         router.push(goBackRouteParams.value);
-
         snackBar.success(
           `Your location information for ${data.locationName} have been updated`,
         );

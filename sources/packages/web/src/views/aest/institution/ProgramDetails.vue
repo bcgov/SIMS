@@ -100,7 +100,6 @@ export default {
           props.institutionId,
           approveProgramData,
         );
-
         snackBar.success(`${educationProgram.value.name} approved !`);
         await getEducationProgramAndOffering();
       } catch {
@@ -120,7 +119,6 @@ export default {
           props.institutionId,
           declineProgramData,
         );
-
         snackBar.success(`${educationProgram.value.name} Decline !`);
         await getEducationProgramAndOffering();
       } catch {

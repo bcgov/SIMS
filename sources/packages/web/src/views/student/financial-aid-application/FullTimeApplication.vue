@@ -120,7 +120,6 @@ export default {
         await ApplicationService.shared.getApplicationWithPY(props.id, true);
       if (!programYearDetails.active) {
         isReadOnly.value = true;
-
         snackBar.error(
           "This application can no longer be edited or submitted",
           snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
@@ -185,7 +184,6 @@ export default {
           data: applicationWizard.submission.data,
           associatedFiles,
         });
-
         snackBar.success("Application draft saved with success.");
       } catch (error) {
         snackBar.error("An unexpected error happen.");
@@ -207,7 +205,6 @@ export default {
         router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         });
-
         snackBar.success("Thank you, your application has been submitted.");
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";

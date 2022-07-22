@@ -33,7 +33,6 @@ export default {
           data,
         );
         await store.dispatch("institution/initialize");
-
         snackBar.success("Institution and User successfully created!");
         await store.dispatch("institution/getInstitutionDetails");
         router.push({

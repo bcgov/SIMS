@@ -141,11 +141,9 @@ export default {
           props.exceptionId,
           approveExceptionPayload,
         );
-
         snackBar.success(
           `Application exception status is now ${approveExceptionPayload.exceptionStatus}.`,
         );
-
         gotToAssessmentsSummary();
       } catch (error: unknown) {
         snackBar.error("An unexpected error happened during the approval.");

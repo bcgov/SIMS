@@ -43,7 +43,6 @@ export default {
     const updateInstitution = async (data: InstitutionContactAPIInDTO) => {
       try {
         await InstitutionService.shared.updateInstitution(data);
-
         snackBar.success("Institution successfully updated!");
         await store.dispatch("institution/getInstitutionDetails");
         router.push({

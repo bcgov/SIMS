@@ -160,7 +160,6 @@ export default {
           props.studentId,
           formioForm.data,
         );
-
         snackBar.success(
           "New SIN record created and associated to the student.",
         );
@@ -190,7 +189,6 @@ export default {
           sinValidationId,
           formioForm.data,
         );
-
         snackBar.success("Temporary SIN expiry date updated.");
         await loadSINValidations();
       } catch {

@@ -48,7 +48,6 @@ export default {
         await StudentAssessmentsService.shared.confirmAssessmentNOA(
           props.assessmentId,
         );
-
         snackBar.success("Confirmation of Assessment completed successfully!");
       } catch (error) {
         snackBar.error("An error happened while confirming the assessment.");

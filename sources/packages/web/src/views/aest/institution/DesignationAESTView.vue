@@ -188,7 +188,6 @@ export default {
             props.designationId,
             response as UpdateDesignationDto,
           );
-
           snackBar.success(
             `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
           );

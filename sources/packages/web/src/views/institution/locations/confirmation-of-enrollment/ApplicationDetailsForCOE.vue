@@ -124,7 +124,6 @@ export default {
           props.disbursementScheduleId,
           payload,
         );
-
         snackBar.success("Confirmation of Enrollment Confirmed!");
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
@@ -153,7 +152,6 @@ export default {
           props.disbursementScheduleId,
           submissionData,
         );
-
         snackBar.success("Application Status Has Been Updated.");
         router.push({
           name: InstitutionRoutesConst.COE_SUMMARY,

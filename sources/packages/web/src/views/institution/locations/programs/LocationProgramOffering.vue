@@ -291,7 +291,6 @@ export default {
               props.offeringId,
               data,
             );
-
             snackBar.success("Education Offering updated successfully!");
           } else {
             await EducationProgramOfferingService.shared.createProgramOffering(
@@ -299,7 +298,6 @@ export default {
               props.programId,
               data,
             );
-
             snackBar.success("Education Offering created successfully!");
           }
           router.push(getRouteLocation());
@@ -320,7 +318,6 @@ export default {
             props.offeringId,
             responseData as OfferingAssessmentAPIInDTO,
           );
-
           snackBar.success(
             `The given offering has been ${offeringStatus.toLowerCase()} and notes added.`,
           );

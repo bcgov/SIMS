@@ -181,7 +181,6 @@ export default {
             props.applicationId,
             data,
           );
-
           snackBar.success("Program Information Request denied successfully!");
         } else {
           await ProgramInfoRequestService.shared.completeProgramInfoRequest(
@@ -189,7 +188,6 @@ export default {
             props.applicationId,
             data,
           );
-
           snackBar.success(
             "Program Information Request completed successfully!",
           );

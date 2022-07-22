@@ -131,7 +131,6 @@ export default {
             return;
           }
         }
-
         snackBar.error("An unexpected error happened during the submission.");
       }
     };

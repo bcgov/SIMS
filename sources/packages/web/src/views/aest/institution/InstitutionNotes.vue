@@ -77,7 +77,6 @@ export default {
       try {
         await NoteService.shared.addInstitutionNote(props.institutionId, data);
         await filterNotes(filteredNoteType.value);
-
         snackBar.success("The note has been added to the institution.");
       } catch (error) {
         snackBar.error("Unexpected error while adding the note.");

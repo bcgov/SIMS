@@ -157,7 +157,6 @@ export default {
           payload,
         );
         await loadStudentRestrictions();
-
         snackBar.success(
           "The given restriction has been resolved and resolution notes added.",
         );
@@ -177,7 +176,6 @@ export default {
           data,
         );
         await loadStudentRestrictions();
-
         snackBar.success("The restriction has been added to student.");
       } catch (error) {
         snackBar.error("Unexpected error while adding the restriction.");

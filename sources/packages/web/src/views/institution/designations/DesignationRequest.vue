@@ -88,7 +88,6 @@ export default {
             }),
           ),
         } as SubmitDesignationAgreementDto);
-
         snackBar.success("Designation agreement submitted.");
         router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
       } catch (error) {

@@ -119,7 +119,6 @@ export default {
           applicationId,
           appealRequests,
         );
-
         snackBar.success(
           "The request for change has been submitted successfully.",
         );
@@ -137,7 +136,6 @@ export default {
             return;
           }
         }
-
         snackBar.error("An unexpected error happened during the submission.");
       }
     };

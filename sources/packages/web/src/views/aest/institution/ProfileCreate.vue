@@ -46,7 +46,6 @@ export default {
         processing.value = true;
         const createdInstitution =
           await InstitutionService.shared.createInstitution(data);
-
         snackBar.success("Institution successfully created!");
         router.push({
           name: AESTRoutesConst.INSTITUTION_PROFILE,

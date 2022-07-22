@@ -117,7 +117,6 @@ export default {
     const applyPDStatus = async () => {
       try {
         await StudentService.shared.applyForPDStatus();
-
         snackBar.success(
           "Your application is submitted. The outcome will display on your profile",
         );
@@ -141,7 +140,6 @@ export default {
       try {
         if (props.editMode) {
           await StudentService.shared.updateStudent(formData);
-
           snackBar.success("Student contact information updated!");
         } else {
           await StudentService.shared.createStudent(
@@ -151,7 +149,6 @@ export default {
             studentStore.setHasStudentAccount(true),
             studentStore.updateProfileData(),
           ]);
-
           snackBar.success("Student was successfully created!");
         }
         router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });

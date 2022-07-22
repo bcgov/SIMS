@@ -136,7 +136,6 @@ export default {
           props.offeringId,
           data,
         );
-
         snackBar.success("Request for change has been submitted.");
         router.push({
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,

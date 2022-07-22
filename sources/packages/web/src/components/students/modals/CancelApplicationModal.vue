@@ -71,7 +71,6 @@ export default {
         );
         updateShowCancelApplicationModal();
         context.emit("reloadData", props.applicationId);
-
         snackBar.success("Your application is now cancelled!");
       } catch (error) {
         snackBar.error("An error happened while cancelling the Application.");

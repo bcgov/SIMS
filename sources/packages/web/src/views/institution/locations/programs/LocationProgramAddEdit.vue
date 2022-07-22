@@ -188,11 +188,9 @@ export default {
               props.programId,
               data,
             );
-
             snackBar.success("Education Program updated successfully!");
           } else {
             await EducationProgramService.shared.createProgram(data);
-
             snackBar.success("Education Program created successfully!");
           }
           goBack();

@@ -160,7 +160,6 @@ export default {
           payload,
         );
         await loadInstitutionRestrictions();
-
         snackBar.success(
           "The given restriction has been resolved and resolution notes added.",
         );
@@ -180,7 +179,6 @@ export default {
           data,
         );
         await loadInstitutionRestrictions();
-
         snackBar.success("The restriction has been added to institution.");
       } catch (error) {
         snackBar.error("Unexpected error while adding the restriction.");

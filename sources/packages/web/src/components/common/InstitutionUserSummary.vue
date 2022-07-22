@@ -214,7 +214,6 @@ export default {
           enabled,
         );
         await getAllInstitutionUsers();
-
         snackBar.success(
           `${userDetails.displayName} is ${enabled ? "enabled" : "disabled"}`,
         );
@@ -226,10 +225,8 @@ export default {
           snackBar.warn(
             `Cannot disable the institution admin. ${error.message}`,
           );
-
           return;
         }
-
         snackBar.error("An error happened during the update process.");
       }
     };

@@ -128,7 +128,6 @@ export default {
           props.appealId,
           approvals,
         );
-
         snackBar.success("The request was completed with success.");
 
         gotToAssessmentsSummary();
@@ -139,7 +138,6 @@ export default {
             return;
           }
         }
-
         snackBar.error("An unexpected error happened during the approval.");
       }
     };
