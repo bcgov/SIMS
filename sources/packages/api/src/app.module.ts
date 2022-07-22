@@ -22,7 +22,6 @@ import {
   ProgramYearService,
   SequenceControlService,
   InstitutionTypeService,
-  PIRDeniedReasonService,
   MSFAANumberService,
   StudentRestrictionService,
   RestrictionService,
