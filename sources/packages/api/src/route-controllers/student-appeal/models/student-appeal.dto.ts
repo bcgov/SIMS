@@ -60,3 +60,12 @@ export class StudentAppealApprovalAPIInDTO {
   @Type(() => StudentAppealRequestApprovalAPIInDTO)
   requests: StudentAppealRequestApprovalAPIInDTO[];
 }
+
+export class StudentAppealPendingSummaryAPIOutDTO {
+  appealId: number;
+  applicationId: number;
+  studentId: number;
+  submittedDate: Date;
+  fullName: string;
+  applicationNumber: string;
+}

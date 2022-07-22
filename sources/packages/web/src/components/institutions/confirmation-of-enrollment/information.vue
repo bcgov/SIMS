@@ -15,13 +15,14 @@
 </template>
 <script lang="ts">
 import { onMounted, ref, watch } from "vue";
-import { COEStatus, ApplicationDetailsForCOEDTO } from "@/types";
+import { COEStatus } from "@/types";
+import { ApplicationDetailsForCOEAPIOutDTO } from "@/services/http/dto";
 
 export default {
   props: {
     data: {
       type: Object,
-      default: {} as ApplicationDetailsForCOEDTO,
+      default: {} as ApplicationDetailsForCOEAPIOutDTO,
     },
   },
   setup(props: any) {

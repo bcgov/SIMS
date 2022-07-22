@@ -8,7 +8,7 @@ export * from "./education-program-offering/education-program-offering.controlle
 export * from "./application/application.system-access.controller";
 export * from "./atbc/atbc.system.controller";
 export * from "./program-info-request/program-info-request.controller";
-export * from "./confirmation-of-enrollment/confirmation-of-enrollment.controller";
+export * from "./confirmation-of-enrollment/confirmation-of-enrollment.institutions.controller";
 export * from "./supporting-user/supporting-user.supporting-users.controller";
 export * from "./esdc-integration/msfaa-integration.system-access.controller";
 export * from "./sfas-integration/sfas-integration.system-access.controller";

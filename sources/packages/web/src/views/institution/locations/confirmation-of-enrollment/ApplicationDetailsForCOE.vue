@@ -37,7 +37,6 @@
         >
       </template>
     </formio-modal-dialog>
-    <ConfirmCOEEditModal ref="editCOEModal" />
     <ConfirmCOEDenyModal ref="denyCOEModal" @submitData="submitCOEDeny" />
   </div>
 </template>
@@ -48,15 +47,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import Menu from "primevue/menu";
-import {
-  COEStatus,
-  ApplicationDetailsForCOEDTO,
-  DenyConfirmationOfEnrollment,
-  ProgramInfoStatus,
-  FormIOForm,
-  ApiProcessError,
-} from "@/types";
-import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
+import { COEStatus, FormIOForm, ApiProcessError } from "@/types";
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
 import { useToastMessage, ModalDialog } from "@/composables";
 import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
@@ -64,12 +55,16 @@ import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "@/constants";
-import { ConfirmationOfEnrollmentAPIInDTO } from "@/services/http/dto/ConfirmationOfEnrolment.dto";
-/**
- * added MenuType interface for prime vue component menu,
- *  remove it when vuetify component is used
- */
+import {
+  ApplicationDetailsForCOEAPIOutDTO,
+  ConfirmationOfEnrollmentAPIInDTO,
+  DenyConfirmationOfEnrollmentAPIInDTO,
+} from "@/services/http/dto";
 
+/**
+ * Added MenuType interface for prime vue component menu,
+ * remove it when vuetify component is used.
+ */
 export interface MenuType {
   label?: string;
   icon?: string;
@@ -81,7 +76,6 @@ export interface MenuType {
 export default {
   components: {
     Menu,
-    ConfirmCOEEditModal,
     ConfirmCOEDenyModal,
     Information,
     FormioModalDialog,
@@ -99,7 +93,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const toast = useToastMessage();
-    const initialData = ref({} as ApplicationDetailsForCOEDTO);
+    const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
     const menu = ref();
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
@@ -121,7 +115,7 @@ export default {
       try {
         const payload = modalResult.data as ConfirmationOfEnrollmentAPIInDTO;
         payload.tuitionRemittanceAmount = payload.tuitionRemittanceAmount ?? 0;
-        await ConfirmationOfEnrollmentService.shared.confirmCOE(
+        await ConfirmationOfEnrollmentService.shared.confirmEnrollment(
           props.locationId,
           props.disbursementScheduleId,
           payload,
@@ -145,33 +139,8 @@ export default {
         toast.error(errorLabel, errorMsg);
       }
     };
-    const editProgramInformation = async () => {
-      if (await editCOEModal.value.showModal()) {
-        try {
-          await ConfirmationOfEnrollmentService.shared.rollbackCOE(
-            props.locationId,
-            props.disbursementScheduleId,
-          );
-          toast.success(
-            "Edit Program Information",
-            "Program Information Request is now available to be edited.",
-          );
-          router.push({
-            name: InstitutionRoutesConst.COE_SUMMARY,
-            params: {
-              locationId: props.locationId,
-            },
-          });
-        } catch {
-          toast.error(
-            "Unexpected error",
-            "An error happened while updating Confirmation of Enrollment.",
-          );
-        }
-      }
-    };
     const submitCOEDeny = async (
-      submissionData: DenyConfirmationOfEnrollment,
+      submissionData: DenyConfirmationOfEnrollmentAPIInDTO,
     ) => {
       try {
         await ConfirmationOfEnrollmentService.shared.denyConfirmationOfEnrollment(
@@ -221,17 +190,6 @@ export default {
           command: denyProgramInformation,
         },
       ];
-
-      if (
-        ProgramInfoStatus.notRequired !== initialData.value.applicationPIRStatus
-      ) {
-        items.value.push({ separator: true });
-        items.value.push({
-          label: "Edit Program Information",
-          class: "font-weight-bold",
-          command: editProgramInformation,
-        });
-      }
     };
 
     watch(
