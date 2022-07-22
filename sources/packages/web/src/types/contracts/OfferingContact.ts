@@ -54,6 +54,9 @@ export interface OfferingDTO {
  ** Whenever the DTO is enhanced please make sure this model is sync with DTO.
  */
 export interface OfferingFormModel {
+  programIntensity: ProgramIntensity;
+  programDeliveryTypes: ProgramDeliveryTypes;
+  hasWILComponent: string;
   offeringName: string;
   studyStartDate?: Date;
   studyEndDate?: Date;
@@ -77,11 +80,13 @@ export interface OfferingFormModel {
   hasExistingApplication?: boolean;
 }
 
-export interface ProgramValidationModel {
-  programIntensity: ProgramIntensity;
-  programDeliveryTypes: ProgramDeliveryTypes;
-  hasWILComponent: string;
-}
+/**
+ * Properties of program that are used to validate an offering.
+ */
+export type ProgramValidationModel = Pick<
+  OfferingFormModel,
+  "programIntensity" | "programDeliveryTypes" | "hasWILComponent"
+>;
 
 export interface ProgramOfferingDetailsDto {
   studyStartDate?: Date;

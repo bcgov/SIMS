@@ -26,6 +26,7 @@ import StudentNotes from "@/views/aest/student/StudentNotes.vue";
 import StudentRestrictions from "@/views/aest/student/StudentRestrictions.vue";
 import InstitutionLocationEdit from "@/views/aest/institution/InstitutionLocationEdit.vue";
 import Reports from "@/views/aest/Reports.vue";
+import ViewOffering from "@/views/aest/institution/ViewOffering.vue";
 import {
   AESTRoutesConst,
   SharedRouteConst,
@@ -35,7 +36,6 @@ import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
 import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
-import LocationProgramOffering from "@/views/institution/locations/programs/LocationProgramOffering.vue";
 import AESTApplicationSideBar from "@/components/layouts/aest/AESTApplicationSideBar.vue";
 import SupportingUser from "@/views/aest/SupportingUser.vue";
 import PendingDesignations from "@/views/aest/institution/PendingDesignation.vue";
@@ -282,7 +282,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.VIEW_OFFERING,
         props: true,
         components: {
-          default: LocationProgramOffering,
+          default: ViewOffering,
           sidebar: AESTHomeSideBar,
         },
         meta: {
