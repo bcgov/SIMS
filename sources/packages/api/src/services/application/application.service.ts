@@ -6,7 +6,7 @@ import {
   Not,
   UpdateResult,
   Brackets,
-  OrderByCondition,
+  FindOneOptions,
 } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
@@ -52,6 +52,7 @@ import {
   PaginationOptions,
   PaginatedResults,
   FieldSortOrder,
+  OrderByCondition,
 } from "../../utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
@@ -1375,7 +1376,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationNumber: applicationNumber,
         student: { id: studentId } as Student,
       },
-      select: ["id"],
+      select: { id: true },
     }));
   }
 
@@ -1394,33 +1395,24 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationNumber?: string,
     applicationId?: number,
   ): Promise<Application> {
-    const applicationQuery = this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.id",
-        "application.applicationNumber",
-        "application.isArchived",
-      ])
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .where("user.id = :userId", { userId })
-      .andWhere("application.applicationStatus = :completed", {
-        completed: ApplicationStatus.completed,
-      });
+    const findQuery: FindOneOptions<Application> = {
+      select: {
+        id: true,
+        applicationNumber: true,
+        isArchived: true,
+      },
+      where: {
+        student: { user: { id: userId } },
+        applicationStatus: ApplicationStatus.completed,
+      },
+    };
     if (applicationId) {
-      applicationQuery.andWhere("application.id = :applicationId", {
-        applicationId,
-      });
+      findQuery.where = {
+        ...findQuery.where,
+        applicationNumber: applicationNumber,
+      };
     }
-    if (applicationNumber) {
-      applicationQuery.andWhere(
-        "application.applicationNumber = :applicationNumber",
-        {
-          applicationNumber,
-        },
-      );
-    }
-    return applicationQuery.getOne();
+    return this.repo.findOne(findQuery);
   }
 
   /**
