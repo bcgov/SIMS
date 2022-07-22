@@ -387,7 +387,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Gets the Program Information Requests (PIR) associated with the
    * application and the original assessment that contains the offering
-   * to be complete or that was completed during the PIR process.
+   * to be completed or that was completed during the PIR process.
    * @param locationId location id.
    * @param applicationId application id.
    * @returns student application with Program Information Request.

@@ -1,10 +1,13 @@
 import {
   CourseDetails,
-  OfferingDTO,
   OfferingIntensity,
   OfferingTypes,
   ProgramInfoStatus,
 } from "@/types";
+
+export interface CompleteProgramInfoRequestAPIInDTO {
+  selectedOffering: number;
+}
 
 export interface ProgramInfoRequestAPIOutDTO {
   institutionLocationName: string;
@@ -28,21 +31,6 @@ export interface ProgramInfoRequestAPIOutDTO {
   courseDetails?: CourseDetails[];
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
-}
-
-export interface PIRSummaryDTO {
-  applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  applicationId: number;
-  pirStatus: ProgramInfoStatus;
-  fullName: string;
-}
-
-export interface CompleteProgramInfoRequestAPIInDTO extends OfferingDTO {
-  selectedProgram?: number;
-  selectedOffering?: number;
-  offeringType?: string;
 }
 
 export interface PIRDeniedReasonAPIOutDTO {
