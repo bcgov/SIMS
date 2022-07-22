@@ -25,13 +25,13 @@
           ></v-btn>
         </template>
         <v-list>
-          <template>
-            <v-list-item-title :value="menuItems">
-              <v-list-item-title @click="menuItems.command">
-                <span class="label-bold">{{ menuItems.label }}</span>
+          <v-list-item :value="menuItem.label">
+            <v-list-item-title>
+              <v-list-item-title @click="menuItem.command">
+                <span class="label-bold">{{ menuItem.label }}</span>
               </v-list-item-title>
             </v-list-item-title>
-          </template>
+          </v-list-item>
         </v-list>
       </v-menu>
     </v-app-bar>
@@ -59,13 +59,13 @@ export default {
     const logoff = async () => {
       await executeLogout(ClientIdType.AEST);
     };
-    const menuItems = {
+    const menuItem = {
       label: "Log Out",
       command: logoff,
     };
 
     return {
-      menuItems,
+      menuItem,
       isAuthenticated,
       logoff,
       ClientIdType,

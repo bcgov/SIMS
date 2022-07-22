@@ -32,7 +32,6 @@
                 <v-btn
                   color="primary"
                   @click="login"
-                  variant="outlined"
                   prepend-icon="fa:fa fa-user-plus"
                 >
                   Sign Up with BCeID
