@@ -1,15 +1,13 @@
 <template>
   <div class="p-m-4">
-    <HeaderNavigator
+    <header-navigator
       title="Back all programs"
       :routeLocation="{
         name: InstitutionRoutesConst.LOCATION_PROGRAMS,
         params: { locationId: locationId },
       }"
       subTitle="View program"
-    >
-    </HeaderNavigator>
-
+    />
     <ManageProgramAndOfferingSummary
       :programId="programId"
       :locationId="locationId"

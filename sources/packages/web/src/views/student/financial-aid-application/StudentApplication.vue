@@ -1,5 +1,5 @@
 <template>
-  <ModalDialogBase
+  <modal-dialog-base
     title="Application already in progress"
     dialogType="warning"
     :showDialog="showDialog"
@@ -14,11 +14,13 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" variant="outlined" @click="dialogClosed">
-        Close
-      </v-btn>
+      <footer-buttons
+        secondaryLabel="Close"
+        :showPrimaryButton="false"
+        @secondaryClick="dialogClosed"
+      />
     </template>
-  </ModalDialogBase>
+  </modal-dialog-base>
   <student-page-container>
     <v-sheet elevation="1" class="mx-auto">
       <v-container>
@@ -38,7 +40,7 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import {
   useFormioDropdownLoader,
   useFormioUtils,
-  useToastMessage,
+  useSnackBar,
   useModalDialog,
 } from "@/composables";
 import { useRouter } from "vue-router";
@@ -52,7 +54,7 @@ export default {
   setup() {
     const initialData = ref({});
     const router = useRouter();
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const formioDataLoader = useFormioDropdownLoader();
     const formioUtils = useFormioUtils();
     const { showDialog, showModal } = useModalDialog<void>();
@@ -98,8 +100,7 @@ export default {
           });
         }
       } catch (error) {
-        toast.error(
-          "Unexpected error",
+        snackBar.error(
           "An error happened while trying to start a new application.",
         );
       }

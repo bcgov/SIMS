@@ -24,7 +24,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { AuthService } from "@/services/AuthService";
 import { InstitutionLocationEdit } from "@/types";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 
 export default {
   components: { LocationEditForm },
@@ -38,7 +38,7 @@ export default {
     // Hooks
     const store = useStore();
     const initialData = ref({} as InstitutionLocationEdit);
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const updateInstitutionLocation = async (
       data: InstitutionLocationPrimaryContactAPIInDTO,
@@ -50,15 +50,9 @@ export default {
         );
         router.push(goBackRouteParams.value);
         store.dispatch("institution/getUserInstitutionLocationDetails");
-        toast.success(
-          "Your location information have been updated",
-          "Location Details have been updated!",
-        );
+        snackBar.success("Location Details have been updated!");
       } catch (excp) {
-        toast.error(
-          "Unexpected error",
-          "An error happened during the update process.",
-        );
+        snackBar.error("An error happened during the update process.");
       }
     };
     onMounted(async () => {

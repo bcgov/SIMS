@@ -1,34 +1,38 @@
 <template>
   <student-page-container>
-    <v-row class="center-container application-container mb-5 text-right">
-      <v-col md="12" class="ml-auto">
-        <v-btn
-          color="primary"
-          class="mr-5"
-          v-if="!notDraft"
-          v-show="!isFirstPage && !submittingApplication"
-          text
-          :loading="savingDraft"
-          @click="saveDraft()"
-        >
-          <v-icon left :size="25"> mdi-pencil </v-icon
-          >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
-        >
-        <v-btn
-          v-if="!isReadOnly"
-          :disabled="!isLastPage || submittingApplication"
-          v-show="!isFirstPage"
-          color="primary"
-          @click="wizardSubmit()"
-          >{{ submittingApplication ? "Submitting..." : "Submit application" }}
-          <span v-if="submittingApplication">
-            &nbsp;&nbsp;
-            <ProgressSpinner
-              style="width: 30px; height: 25px"
-              strokeWidth="10" /></span
-        ></v-btn>
-      </v-col>
-    </v-row>
+    <body-header>
+      <template #actions>
+        <v-row class="m-0 p-0 float-right">
+          <v-btn
+            color="primary"
+            v-if="!notDraft"
+            v-show="!isFirstPage && !submittingApplication"
+            variant="text"
+            :loading="savingDraft"
+            @click="saveDraft()"
+          >
+            <v-icon left :size="20"> mdi-pencil </v-icon
+            >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
+          >
+          <v-btn
+            v-if="!isReadOnly"
+            class="ml-2"
+            :disabled="!isLastPage || submittingApplication"
+            v-show="!isFirstPage"
+            color="primary"
+            @click="wizardSubmit()"
+            >{{
+              submittingApplication ? "Submitting..." : "Submit application"
+            }}
+            <span v-if="submittingApplication">
+              &nbsp;&nbsp;
+              <ProgressSpinner
+                style="width: 30px; height: 25px"
+                strokeWidth="10" /></span
+          ></v-btn>
+        </v-row>
+      </template>
+    </body-header>
     <StudentApplication
       :selectedForm="selectedForm"
       :initialData="initialData"
@@ -53,7 +57,7 @@ import { StudentService } from "@/services/StudentService";
 import { ApplicationService } from "@/services/ApplicationService";
 import {
   useFormioUtils,
-  useToastMessage,
+  useSnackBar,
   ModalDialog,
   useFormatters,
 } from "@/composables";
@@ -99,7 +103,7 @@ export default {
     const router = useRouter();
     const initialData = ref({});
     const formioUtils = useFormioUtils();
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const savingDraft = ref(false);
     const submittingApplication = ref(false);
     let applicationWizard: any;
@@ -111,15 +115,14 @@ export default {
     const editApplicationModal = ref({} as ModalDialog<boolean>);
 
     const checkProgramYear = async () => {
-      // check program year, if not active allow only readonly mode with a toast
+      // check program year, if not active allow only readonly mode with a snackBar
       const programYearDetails =
         await ApplicationService.shared.getApplicationWithPY(props.id, true);
       if (!programYearDetails.active) {
         isReadOnly.value = true;
-        toast.error(
-          "Unexpected Error",
+        snackBar.error(
           "This application can no longer be edited or submitted",
-          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+          snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
         );
       }
     };
@@ -181,9 +184,9 @@ export default {
           data: applicationWizard.submission.data,
           associatedFiles,
         });
-        toast.success("Draft saved!", "Application draft saved with success.");
+        snackBar.success("Application draft saved with success.");
       } catch (error) {
-        toast.error("Unexpected error!", "An unexpected error happen.");
+        snackBar.error("An unexpected error happen.");
       } finally {
         savingDraft.value = false;
       }
@@ -202,10 +205,7 @@ export default {
         router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         });
-        toast.success(
-          "Application saved!",
-          "Thank you, your application has been submitted.",
-        );
+        snackBar.success("Thank you, your application has been submitted.");
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An unexpected error happen.";
@@ -221,8 +221,7 @@ export default {
               break;
           }
         }
-
-        toast.error(errorLabel, errorMsg);
+        snackBar.error(`${errorLabel}. ${errorMsg}`);
       } finally {
         submittingApplication.value = false;
       }

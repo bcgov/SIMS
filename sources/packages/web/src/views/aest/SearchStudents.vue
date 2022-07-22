@@ -5,7 +5,7 @@
       <v-row
         ><v-col>
           <v-text-field
-            label="Application Number"
+            label="Application number"
             density="compact"
             data-cy="appNumber"
             variant="outlined"
@@ -27,7 +27,7 @@
         </v-col>
         <v-col>
           <v-text-field
-            label="Given Names"
+            label="Given names"
             density="compact"
             data-cy="firstName"
             variant="outlined"
@@ -37,7 +37,7 @@
           /> </v-col
         ><v-col>
           <v-text-field
-            label="Last Name"
+            label="Last name"
             density="compact"
             data-cy="lastName"
             variant="outlined"
@@ -110,11 +110,11 @@ import {
   SearchStudentAPIInDTO,
   SearchStudentAPIOutDTO,
 } from "@/services/http/dto";
-import { useFormatters, useToastMessage, useValidators } from "@/composables";
+import { useFormatters, useSnackBar, useValidators } from "@/composables";
 
 export default {
   setup() {
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
     const { isSINValid } = useValidators();
     const router = useRouter();
@@ -138,10 +138,7 @@ export default {
       };
       students.value = await StudentService.shared.searchStudents(payload);
       if (students.value.length === 0) {
-        toast.warn(
-          "No Students found",
-          "No Students found for the given search criteria.",
-        );
+        snackBar.warn("No Students found for the given search criteria. ");
       }
     };
 

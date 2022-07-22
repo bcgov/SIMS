@@ -1,6 +1,6 @@
 <template>
   <div class="p-m-4">
-    <HeaderNavigator
+    <header-navigator
       title="Confirmation of enrolment"
       :routeLocation="{
         name: InstitutionRoutesConst.COE_SUMMARY,
@@ -10,16 +10,34 @@
       }"
       subTitle="View Financial Aid Application"
       ><template #buttons>
-        <v-btn
-          v-if="initialData.applicationCOEStatus === COEStatus.required"
-          color="primary"
-          @click="toggle"
-          ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
-          Actions
-        </v-btn>
+        <v-menu v-if="initialData.applicationCOEStatus === COEStatus.required">
+          <template v-slot:activator="{ props }">
+            <v-btn color="primary" v-bind="props">
+              <v-icon size="25">mdi-arrow-down-bold-circle</v-icon>
+              Application Actions
+            </v-btn>
+          </template>
+          <v-list>
+            <template v-for="(item, index) in items" :key="index">
+              <v-list-item :value="index">
+                <v-list-item-title
+                  @click="item.command"
+                  :class="item.textColor"
+                >
+                  <span class="label-bold">{{ item.label }}</span>
+                </v-list-item-title>
+              </v-list-item>
+              <v-divider
+                v-if="index < items.length - 1"
+                :key="index"
+                inset
+              ></v-divider>
+            </template>
+          </v-list>
+        </v-menu>
       </template>
-    </HeaderNavigator>
-    <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
+    </header-navigator>
+
     <v-container>
       <Information :data="initialData" />
       <formio formName="confirmsstudentenrollment" :data="initialData"></formio>
@@ -46,36 +64,23 @@ import { onMounted, ref, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
-import Menu from "primevue/menu";
-import { COEStatus, FormIOForm, ApiProcessError } from "@/types";
+import { COEStatus, FormIOForm, ApiProcessError, MenuType } from "@/types";
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
-import { useToastMessage, ModalDialog } from "@/composables";
+import { useSnackBar, ModalDialog } from "@/composables";
 import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
 import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "@/constants";
+
 import {
   ApplicationDetailsForCOEAPIOutDTO,
   ConfirmationOfEnrollmentAPIInDTO,
   DenyConfirmationOfEnrollmentAPIInDTO,
 } from "@/services/http/dto";
 
-/**
- * Added MenuType interface for prime vue component menu,
- * remove it when vuetify component is used.
- */
-export interface MenuType {
-  label?: string;
-  icon?: string;
-  separator?: boolean;
-  command?: any;
-  class?: string;
-}
-
 export default {
   components: {
-    Menu,
     ConfirmCOEDenyModal,
     Information,
     FormioModalDialog,
@@ -92,9 +97,8 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
-    const menu = ref();
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
     const editCOEModal = ref({} as ModalDialog<boolean>);
@@ -120,7 +124,7 @@ export default {
           props.disbursementScheduleId,
           payload,
         );
-        toast.success("Confirmed", "Confirmation of Enrollment Confirmed!");
+        snackBar.success("Confirmation of Enrollment Confirmed!");
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An error happened while confirming the COE.";
@@ -136,7 +140,7 @@ export default {
               break;
           }
         }
-        toast.error(errorLabel, errorMsg);
+        snackBar.error(`${errorLabel}. ${errorMsg}`);
       }
     };
     const submitCOEDeny = async (
@@ -148,7 +152,7 @@ export default {
           props.disbursementScheduleId,
           submissionData,
         );
-        toast.success("COE is Denied", "Application Status Has Been Updated.");
+        snackBar.success("Application Status Has Been Updated.");
         router.push({
           name: InstitutionRoutesConst.COE_SUMMARY,
           params: {
@@ -156,8 +160,7 @@ export default {
           },
         });
       } catch {
-        toast.error(
-          "Unexpected error",
+        snackBar.error(
           "An error happened while denying Confirmation of Enrollment.",
         );
       }
@@ -169,11 +172,11 @@ export default {
       items.value = [
         {
           label: "Confirm Enrollment",
-          class:
+          textColor:
             COEStatus.required === initialData.value.applicationCOEStatus &&
             !initialData.value.applicationWithinCOEWindow
               ? "text-muted"
-              : "font-weight-bold",
+              : "",
           command: () => {
             if (
               COEStatus.required === initialData.value.applicationCOEStatus &&
@@ -183,10 +186,8 @@ export default {
             }
           },
         },
-        { separator: true },
         {
           label: "Decline Request",
-          class: "font-weight-bold",
           command: denyProgramInformation,
         },
       ];
@@ -205,13 +206,8 @@ export default {
       await loadInitialData();
     });
 
-    const toggle = (event: any) => {
-      menu?.value?.toggle(event);
-    };
     return {
-      toggle,
       initialData,
-      menu,
       items,
       COEStatus,
       showHideConfirmCOE,

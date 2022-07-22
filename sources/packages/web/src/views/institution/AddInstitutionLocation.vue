@@ -14,10 +14,11 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { useToast } from "primevue/usetoast";
 import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+
+import { useSnackBar } from "@/composables";
 
 export default {
   props: {
@@ -30,7 +31,7 @@ export default {
   setup(props: any) {
     // Hooks
     const store = useStore();
-    const toast = useToast();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const submitted = async (data: InstitutionLocationFormAPIInDTO) => {
       if (props.createMode) {
@@ -38,19 +39,9 @@ export default {
           await InstitutionService.shared.createInstitutionLocation(data);
           router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
           store.dispatch("institution/getUserInstitutionLocationDetails");
-          toast.add({
-            severity: "success",
-            summary: "Created!",
-            detail: "Institution Location created Successfully!",
-            life: 5000,
-          });
+          snackBar.success("Institution Location created Successfully!");
         } catch (excp) {
-          toast.add({
-            severity: "error",
-            summary: "Unexpected error",
-            detail: "An error happened during the create process.",
-            life: 5000,
-          });
+          snackBar.error("An error happened during the create process.");
         }
       }
     };

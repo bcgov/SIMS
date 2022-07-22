@@ -35,7 +35,7 @@ import StudentApplications from "@/components/aest/StudentApplications.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { useToastMessage, ModalDialog } from "@/composables";
+import { useSnackBar, ModalDialog } from "@/composables";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 
@@ -48,7 +48,7 @@ export default {
   },
   setup() {
     const router = useRouter();
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const showModal = ref(false);
     const selectedApplicationId = ref(0);
@@ -79,10 +79,9 @@ export default {
           },
         });
       } catch (error) {
-        toast.error(
+        snackBar.error(
           "Unexpected Error",
-          undefined,
-          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+          snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
         );
       }
     };

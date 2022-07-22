@@ -24,7 +24,7 @@ import {
 } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { useToastMessage } from "@/composables";
+import { useSnackBar } from "@/composables";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 
 export default {
@@ -36,7 +36,7 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const institutionProfileModel = ref({} as InstitutionDetailAPIOutDTO);
     const institutionProfileRoute = {
@@ -50,13 +50,10 @@ export default {
           data,
           props.institutionId,
         );
-        toast.success("Update Successful", "Institution successfully updated!");
+        snackBar.success("Institution successfully updated!");
         router.push(institutionProfileRoute);
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "Unexpected error while updating the institution.",
-        );
+        snackBar.error("Unexpected error while updating the institution.");
       }
     };
 

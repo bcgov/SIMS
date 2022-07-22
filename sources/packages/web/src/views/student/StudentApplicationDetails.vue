@@ -8,15 +8,38 @@
         }"
         subTitle="Financial aid application"
         ><template #buttons>
-          <v-btn color="primary" @click="toggle"
-            ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
-            Options
-          </v-btn>
+          <v-menu>
+            <template v-slot:activator="{ props }"
+              ><v-btn color="primary" @click="toggle" v-bind="props"
+                ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon
+                >Application Options
+              </v-btn>
+            </template>
+            <v-list>
+              <template v-for="(item, index) in items" :key="index">
+                <v-list-item :value="index">
+                  <v-list-item-icon class="mr-6" :class="item.textColor">
+                    {{ item.icon }}
+                  </v-list-item-icon>
+                  <v-list-item-title
+                    @click="item.command"
+                    :class="item.textColor"
+                  >
+                    <span class="label-bold"> {{ item.label }}</span>
+                  </v-list-item-title>
+                </v-list-item>
+                <v-divider
+                  v-if="index < items.length - 1"
+                  :key="index"
+                  inset
+                ></v-divider>
+              </template>
+            </v-list>
+          </v-menu>
         </template>
       </header-navigator>
     </template>
 
-    <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
     <CancelApplication
       :showModal="showModal"
       :applicationId="id"
@@ -52,31 +75,18 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import Menu from "primevue/menu";
 import { onMounted, ref, watch, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
-import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
-import { GetApplicationDataDto, ApplicationStatus } from "@/types";
+import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
+import { GetApplicationDataDto, ApplicationStatus, MenuType } from "@/types";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 
-/**
- * added MenuType interface for prime vue component menu,
- *  remove it when vuetify componnt is used
- */
-export interface MenuType {
-  label?: string;
-  icon?: string;
-  separator?: boolean;
-  command?: any;
-}
-
 export default {
   components: {
-    Menu,
     CancelApplication,
     ApplicationDetails,
     ConfirmEditApplication,
@@ -90,12 +100,11 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const items = ref([] as MenuType[]);
-    const menu = ref();
     const { dateString } = useFormatters();
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
 
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
@@ -127,10 +136,9 @@ export default {
           },
         });
       } catch (error) {
-        toast.error(
+        snackBar.error(
           "Unexpected Error",
-          undefined,
-          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+          snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
         );
       }
     };
@@ -160,22 +168,19 @@ export default {
         applicationDetails.value.applicationStatus !==
           ApplicationStatus.completed
       ) {
-        items.value.push(
-          {
-            label: "Edit",
-            icon: "pi pi-fw pi-pencil",
-            command:
-              applicationDetails.value.applicationStatus ===
-              ApplicationStatus.draft
-                ? editApplication
-                : confirmEditApplication,
-          },
-          { separator: true },
-        );
+        items.value.push({
+          label: "Edit",
+          icon: "fa:fa fa-pencil",
+          command:
+            applicationDetails.value.applicationStatus ===
+            ApplicationStatus.draft
+              ? editApplication
+              : confirmEditApplication,
+        });
       }
       items.value.push({
         label: "View",
-        icon: "pi pi-fw pi-folder-open",
+        icon: "fa:fa fa-folder-open",
         command: viewApplication,
       });
       if (
@@ -184,16 +189,14 @@ export default {
         applicationDetails.value.applicationStatus !==
           ApplicationStatus.completed
       ) {
-        items.value.push(
-          { separator: true },
-          {
-            label: "Cancel",
-            icon: "pi pi-fw pi-trash text-danger",
-            command: () => {
-              showHideCancelApplication();
-            },
+        items.value.push({
+          label: "Cancel",
+          icon: "fa:fa fa-trash",
+          textColor: "error-color",
+          command: () => {
+            showHideCancelApplication();
           },
-        );
+        });
       }
     };
 
@@ -215,14 +218,8 @@ export default {
       await getApplicationDetails(props.id);
     });
 
-    const toggle = (event: any) => {
-      menu?.value?.toggle(event);
-    };
-
     return {
       items,
-      toggle,
-      menu,
       StudentRoutesConst,
       showHideCancelApplication,
       showModal,

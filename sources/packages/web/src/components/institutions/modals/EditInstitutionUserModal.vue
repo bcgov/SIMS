@@ -40,7 +40,7 @@
 <script lang="ts">
 import { ref, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useFormatters, useModalDialog, useToastMessage } from "@/composables";
+import { useFormatters, useModalDialog, useSnackBar } from "@/composables";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
   ApiProcessError,
@@ -59,6 +59,7 @@ import {
   INSTITUTION_USER_ALREADY_EXISTS,
   LEGAL_SIGNING_AUTHORITY_EXIST,
 } from "@/constants";
+
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 
 const submitKnownErrors = [
@@ -88,7 +89,7 @@ export default {
     } = useModalDialog<boolean, InstitutionUserViewModel>();
     const processing = ref(false);
     const editUserForm = ref({} as VForm);
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const institutionUserManagement = ref();
     const { getFormattedAddress } = useFormatters();
     const initialData = ref(new UserManagementModel());
@@ -176,10 +177,7 @@ export default {
         ) {
           editUserForm.value.errors.push({ errorMessages: [error.message] });
         } else {
-          toast.error(
-            "An unexpected error happen",
-            "An unexpected error happen while updating the user.",
-          );
+          snackBar.error("An unexpected error happen while updating the user.");
         }
       } finally {
         processing.value = false;

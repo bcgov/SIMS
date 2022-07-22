@@ -9,7 +9,7 @@
       subTitle="View program"
     >
       <template #buttons>
-        <div v-if="isPendingProgram">
+        <v-row class="p-0 m-0" v-if="isPendingProgram">
           <v-btn
             variant="outlined"
             :color="COLOR_BLUE"
@@ -20,7 +20,7 @@
           <v-btn class="primary-btn-background" @click="approveProgram"
             >Approve program</v-btn
           >
-        </div>
+        </v-row>
       </template>
     </header-navigator>
     <ManageProgramAndOfferingSummary
@@ -49,7 +49,7 @@ import {
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { COLOR_BLUE } from "@/constants";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
-import { ModalDialog, useToastMessage } from "@/composables";
+import { ModalDialog, useSnackBar } from "@/composables";
 import DeclineProgramModal from "@/components/aest/institution/modals/DeclineProgramModal.vue";
 
 export default {
@@ -80,7 +80,7 @@ export default {
     const declineProgramModal = ref(
       {} as ModalDialog<DeclineProgram | undefined>,
     );
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
 
     const getEducationProgramAndOffering = async () => {
       educationProgram.value =
@@ -100,16 +100,10 @@ export default {
           props.institutionId,
           approveProgramData,
         );
-        toast.success(
-          "Program Approved",
-          `${educationProgram.value.name} approved !`,
-        );
+        snackBar.success(`${educationProgram.value.name} approved !`);
         await getEducationProgramAndOffering();
       } catch {
-        toast.error(
-          "Unexpected error",
-          "An error happened while approving the program.",
-        );
+        snackBar.error("An error happened while approving the program.");
       }
     };
 
@@ -125,16 +119,10 @@ export default {
           props.institutionId,
           declineProgramData,
         );
-        toast.success(
-          "Program Decline",
-          `${educationProgram.value.name} Decline !`,
-        );
+        snackBar.success(`${educationProgram.value.name} Decline !`);
         await getEducationProgramAndOffering();
       } catch {
-        toast.error(
-          "Unexpected error",
-          "An error happened while declining the program.",
-        );
+        snackBar.error("An error happened while declining the program.");
       }
     };
 

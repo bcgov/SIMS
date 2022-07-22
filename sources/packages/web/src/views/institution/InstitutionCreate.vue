@@ -17,12 +17,12 @@ import { UserService } from "@/services/UserService";
 import { InstitutionService } from "@/services/InstitutionService";
 import { CreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useFormioDropdownLoader, useToastMessage } from "@/composables";
+import { useFormioDropdownLoader, useSnackBar } from "@/composables";
 
 export default {
   setup() {
     const store = useStore();
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const formioDataLoader = useFormioDropdownLoader();
     const initialData = ref({});
@@ -33,19 +33,13 @@ export default {
           data,
         );
         await store.dispatch("institution/initialize");
-        toast.success(
-          "Create Successful",
-          "Institution and User successfully created!",
-        );
+        snackBar.success("Institution and User successfully created!");
         await store.dispatch("institution/getInstitutionDetails");
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         });
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "Unexpected error while creating the institution.",
-        );
+        snackBar.error("Unexpected error while creating the institution.");
       }
     };
 
@@ -59,7 +53,7 @@ export default {
           institutionLegalName: bceidAccount.institution.legalName,
         };
       } else {
-        toast.error("BCeID Account error", "Unable to fetch account details.");
+        snackBar.error("Unable to fetch account details.");
       }
     });
 

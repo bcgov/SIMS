@@ -3,18 +3,18 @@
     :title="header"
     :subTitle="subTitle"
     :recordsCount="disbursements.results?.length"
-    class="m-1"
   >
     <template #actions>
-      <InputText
-        type="text"
-        placeholder="Search name"
+      <v-text-field
+        density="compact"
+        label="Search Name"
+        variant="outlined"
         v-model="searchCriteria"
+        data-cy="searchCriteria"
         @keyup.enter="searchCOE"
+        prepend-inner-icon="mdi-magnify"
+        hide-details
       />
-      <v-btn class="ml-2 primary-btn-background" @click="searchCOE"
-        ><font-awesome-icon :icon="['fas', 'search']" class="mr-2"
-      /></v-btn>
     </template>
   </body-header>
   <content-group>

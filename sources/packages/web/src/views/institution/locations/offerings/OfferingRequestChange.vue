@@ -47,7 +47,7 @@ import {
   OfferingDTO,
 } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useToastMessage, useOffering } from "@/composables";
+import { useSnackBar, useOffering } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
@@ -74,7 +74,7 @@ export default {
   },
 
   setup(props: any) {
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const initialData = ref(
       {} as Partial<OfferingFormModel & ProgramValidationModel>,
@@ -136,10 +136,7 @@ export default {
           props.offeringId,
           data,
         );
-        toast.success(
-          "Offering Updated",
-          "Request for change has been submitted.",
-        );
+        snackBar.success("Request for change has been submitted.");
         router.push({
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
           params: {
@@ -148,8 +145,7 @@ export default {
           },
         });
       } catch (error: unknown) {
-        toast.error(
-          "Unexpected error",
+        snackBar.error(
           "An error happened while requesting a change to the offering.",
         );
       }

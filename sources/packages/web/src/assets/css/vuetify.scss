@@ -53,3 +53,52 @@
 .v-label {
   margin-bottom: 0px !important;
 }
+// v-snackbar success style.
+.snackbar-success .v-overlay__content {
+  border: 3px solid $banner-color-success;
+  border-radius: 8px;
+}
+.snackbar-success .v-overlay__content {
+  background: $banner-background-success;
+}
+.snackbar-success .icon-color {
+  color: $banner-color-success;
+}
+
+// v-snackbar error style.
+.snackbar-error .v-overlay__content {
+  border: 3px solid $banner-color-error;
+  border-radius: 8px;
+}
+.snackbar-error .v-overlay__content {
+  background: $banner-background-error;
+}
+.snackbar-error .icon-color {
+  color: $banner-color-error;
+}
+
+// v-snackbar warning style.
+.snackbar-warn .v-overlay__content {
+  border: 3px solid $banner-color-warning;
+  border-radius: 8px;
+}
+.snackbar-warn .v-overlay__content {
+  background: $banner-background-warning;
+}
+.snackbar-warn .icon-color {
+  color: $banner-color-warning;
+}
+
+.default-color {
+  color: $brand-black;
+}
+.error-color {
+  color: $banner-color-error;
+}
+
+// Inset adjustment for v-divider.
+// Todo: inset adjustment, remove when stable vuetify is installed.
+.v-divider--inset:not(.v-divider--vertical) {
+  max-width: calc(100% - 29px) !important;
+  margin-inline-start: 16px !important;
+}

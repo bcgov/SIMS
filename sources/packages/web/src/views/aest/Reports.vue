@@ -17,11 +17,12 @@
 
 <script lang="ts">
 import { ReportsFilterAPIInDTO } from "@/services/http/dto";
-import { useToastMessage, useFileUtils } from "@/composables";
+import { useSnackBar, useFileUtils } from "@/composables";
 import { FormIOForm } from "@/types";
+
 export default {
   setup() {
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
     let formData: FormIOForm;
 
@@ -37,10 +38,7 @@ export default {
       try {
         await fileUtils.downloadReports(data);
       } catch {
-        toast.error(
-          "Unexpected error",
-          "Unexpected error while downloading the report.",
-        );
+        snackBar.error("Unexpected error while downloading the report.");
       }
     };
     return { exportReport, formLoaded, submitForm };

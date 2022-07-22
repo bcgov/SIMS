@@ -12,6 +12,7 @@
     >
     <v-btn
       :disabled="processing"
+      v-if="showPrimaryButton"
       class="primary-btn-background ml-2"
       data-cy="primaryFooterButton"
       @click="$emit('primaryClick')"
@@ -44,6 +45,11 @@ export default {
       default: false,
     },
     showSecondaryButton: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    showPrimaryButton: {
       type: Boolean,
       required: true,
       default: true,

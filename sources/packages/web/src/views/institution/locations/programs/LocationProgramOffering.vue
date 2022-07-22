@@ -7,29 +7,49 @@
         :subTitle="subTitle"
       >
         <template #buttons>
-          <v-btn
-            v-if="showActionButtons"
-            color="primary"
-            variant="outlined"
-            @click="assessOffering(OfferingStatus.Declined)"
-            >Decline</v-btn
-          >
-          <v-btn
-            class="ml-2"
-            color="primary"
-            v-if="showActionButtons"
-            @click="assessOffering(OfferingStatus.Approved)"
-            >Approve offering</v-btn
-          >
-          <v-btn
-            color="primary"
-            v-if="hasExistingApplication"
-            prepend-icon="fa:fa fa-chevron-circle-down"
-            @click="toggleMenu"
-            >Edit Actions</v-btn
-          >
-          <Menu ref="menu" :model="items" :popup="true" /> </template
-      ></header-navigator>
+          <v-row class="p-0 m-0">
+            <v-btn
+              v-if="showActionButtons"
+              color="primary"
+              variant="outlined"
+              @click="assessOffering(OfferingStatus.Declined)"
+              >Decline</v-btn
+            >
+            <v-btn
+              class="ml-2"
+              color="primary"
+              v-if="showActionButtons"
+              @click="assessOffering(OfferingStatus.Approved)"
+              >Approve offering</v-btn
+            >
+            <v-menu v-if="hasExistingApplication">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  class="ml-2"
+                  color="primary"
+                  prepend-icon="fa:fa fa-chevron-circle-down"
+                  v-bind="props"
+                  >Edit Actions</v-btn
+                >
+              </template>
+              <v-list>
+                <template v-for="(item, index) in items" :key="index">
+                  <v-list-item :value="index">
+                    <v-list-item-title @click="item.command">
+                      <span class="label-bold">{{ item.label }}</span>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-divider
+                    v-if="index < items.length - 1"
+                    :key="index"
+                    inset
+                  ></v-divider>
+                </template>
+              </v-list>
+            </v-menu>
+          </v-row>
+        </template>
+      </header-navigator>
       <program-offering-detail-header
         v-if="offeringId"
         class="m-4"
@@ -76,7 +96,7 @@ import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { useToastMessage, useOffering, ModalDialog } from "@/composables";
+import { useSnackBar, useOffering, ModalDialog } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/components/generic/Banner.models";
@@ -108,9 +128,8 @@ export default {
   },
   //Todo: Change the initialData to a well defined contract.
   setup(props: any) {
-    const toast = useToastMessage();
+    const snackBar = useSnackBar();
     const router = useRouter();
-    const menu = ref();
     const items = [
       {
         label: "Request Change",
@@ -272,25 +291,18 @@ export default {
               props.offeringId,
               data,
             );
-            toast.success(
-              "Updated!",
-              "Education Offering updated successfully!",
-            );
+            snackBar.success("Education Offering updated successfully!");
           } else {
             await EducationProgramOfferingService.shared.createProgramOffering(
               props.locationId,
               props.programId,
               data,
             );
-            toast.success(
-              "Created!",
-              "Education Offering created successfully!",
-            );
+            snackBar.success("Education Offering created successfully!");
           }
           router.push(getRouteLocation());
         } catch (excp) {
-          toast.error(
-            "Unexpected error",
+          snackBar.error(
             "An error happened during the Offering saving process.",
           );
         }
@@ -306,23 +318,18 @@ export default {
             props.offeringId,
             responseData as OfferingAssessmentAPIInDTO,
           );
-          toast.success(
-            `Offering ${offeringStatus}`,
+          snackBar.success(
             `The given offering has been ${offeringStatus.toLowerCase()} and notes added.`,
           );
           await loadFormData();
         } catch (error) {
-          toast.error(
-            "Unexpected error",
+          snackBar.error(
             "Unexpected error while approving/declining the offering.",
           );
         }
       }
     };
 
-    const toggleMenu = (event: any) => {
-      menu?.value?.toggle(event);
-    };
     return {
       submitted,
       initialData,
@@ -338,8 +345,6 @@ export default {
       BannerTypes,
       hasExistingApplication,
       items,
-      toggleMenu,
-      menu,
     };
   },
 };
