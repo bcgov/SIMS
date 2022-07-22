@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Brackets, Connection, OrderByCondition } from "typeorm";
+import { Brackets, DataSource } from "typeorm";
 import {
   Application,
   ApplicationException,
@@ -14,6 +14,7 @@ import {
 import {
   CustomNamedError,
   FieldSortOrder,
+  OrderByCondition,
   PaginatedResults,
   PaginationOptions,
 } from "../../utilities";
@@ -28,8 +29,8 @@ import {
  */
 @Injectable()
 export class ApplicationExceptionService extends RecordDataModelService<ApplicationException> {
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(ApplicationException));
+  constructor(private readonly dataSource: DataSource) {
+    super(dataSource.getRepository(ApplicationException));
   }
 
   /**
@@ -126,7 +127,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     noteDescription: string,
     auditUserId: number,
   ): Promise<ApplicationException> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationExceptionRepo =
         transactionalEntityManager.getRepository(ApplicationException);
       const exceptionToUpdate = await applicationExceptionRepo

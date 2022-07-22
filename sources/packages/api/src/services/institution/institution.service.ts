@@ -11,7 +11,7 @@ import {
   Note,
   NoteType,
 } from "../../database/entities";
-import { Connection, Repository, getConnection } from "typeorm";
+import { DataSource, IsNull, Repository } from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
 import { BCeIDService } from "../bceid/bceid.service";
 import { AccountDetails } from "../bceid/account-details.model";
@@ -48,14 +48,14 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   institutionUserTypeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
 
   constructor(
-    connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly bceidService: BCeIDService,
     private readonly institutionUserAuthService: InstitutionUserAuthService,
     private readonly userService: UserService,
   ) {
-    super(connection.getRepository(Institution));
-    this.institutionUserRepo = connection.getRepository(InstitutionUser);
-    this.institutionUserTypeAndRoleRepo = connection.getRepository(
+    super(dataSource.getRepository(Institution));
+    this.institutionUserRepo = dataSource.getRepository(InstitutionUser);
+    this.institutionUserTypeAndRoleRepo = dataSource.getRepository(
       InstitutionUserTypeAndRole,
     );
   }
@@ -122,8 +122,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       }
       // Find the correct user type and role.
       const authType = await this.institutionUserTypeAndRoleRepo.findOne({
-        type: permission.userType,
-        role: permission.userRole ?? null,
+        where: {
+          type: permission.userType,
+          role: permission.userRole ?? IsNull(),
+        },
       });
       if (!authType) {
         throw new Error(
@@ -209,8 +211,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     // Get admin authorization type.
     const authorizationType =
       await this.institutionUserTypeAndRoleRepo.findOneOrFail({
-        type: InstitutionUserType.admin,
-        role: null,
+        where: {
+          type: InstitutionUserType.admin,
+          role: IsNull(),
+        },
       });
     // Assign the new user with an admin authorization.
     const userAuthorization = new InstitutionUserAuth();
@@ -505,8 +509,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       }
       // Find the correct user type and role.
       const authType = await this.institutionUserTypeAndRoleRepo.findOne({
-        type: permission.userType,
-        role: permission.userRole ?? null,
+        where: {
+          type: permission.userType,
+          role: permission.userRole ?? IsNull(),
+        },
       });
       if (!authType) {
         throw new Error(
@@ -519,7 +525,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     }
 
     // Establish database connection.
-    const queryRunner = getConnection().createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
     try {
       await queryRunner.connect();
       // Open new transaction.
@@ -738,8 +744,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param note
    */
   async saveInstitutionNote(institutionId: number, note: Note): Promise<void> {
-    const institution = await this.repo.findOne(institutionId, {
-      relations: ["notes"],
+    const institution = await this.repo.findOne({
+      where: { id: institutionId },
+      relations: { notes: true },
     });
     institution.notes.push(note);
     await this.repo.save(institution);

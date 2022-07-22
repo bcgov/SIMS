@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
-  Connection,
+  DataSource,
   In,
   Not,
   UpdateResult,
   Brackets,
-  OrderByCondition,
+  FindOneOptions,
 } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
@@ -19,8 +19,6 @@ import {
   Student,
   StudentFile,
   ProgramYear,
-  InstitutionLocation,
-  EducationProgram,
   PIRDeniedReason,
   MSFAANumber,
   OfferingIntensity,
@@ -32,7 +30,6 @@ import {
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
-  ApplicationOverriddenResult,
   ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
   ApplicationSubmissionResult,
 } from "./application.models";
@@ -42,8 +39,6 @@ import {
   CustomNamedError,
   getUTCNow,
   dateDifference,
-  getPSTPDTDate,
-  setToStartOfTheDayInPSTPDT,
   COE_WINDOW,
   PIR_DENIED_REASON_OTHER_ID,
   sortApplicationsColumnMap,
@@ -52,6 +47,7 @@ import {
   PaginationOptions,
   PaginatedResults,
   FieldSortOrder,
+  OrderByCondition,
 } from "../../utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
@@ -81,7 +77,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   private readonly config: IConfig;
   constructor(
     configService: ConfigService,
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
@@ -90,7 +86,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {
-    super(connection.getRepository(Application));
+    super(dataSource.getRepository(Application));
     this.config = configService.getConfig();
     this.logger.log("[Created]");
   }
@@ -222,7 +218,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // and the assessment cannot be create at the same moment what causes a
     // "cyclic dependency error" on Typeorm. Saving the application record and later
     // having it associated with the assessment solves the issue.
-    await this.connection.transaction(async (transactionalEntityManager) => {
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationRepository =
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
@@ -293,7 +289,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ApplicationStatus.draft,
     );
     // If an application id is provided it means that an update is supposed to happen,
-    // so an application draft is expected to be find. If not found, thown an error.
+    // so an application draft is expected to be find. If not found, thrown an error.
     if (applicationId && !draftApplication) {
       throw new CustomNamedError(
         "Not able to find the draft application associated with the student.",
@@ -572,7 +568,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     } else {
       applicationQuery.orderBy(
-        `CASE application.applicationStatus
+        // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
+        `CASE application.application_status
               WHEN '${ApplicationStatus.draft}' THEN 1
               WHEN '${ApplicationStatus.submitted}' THEN 2
               WHEN '${ApplicationStatus.inProgress}' THEN 3
@@ -667,7 +664,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     offering: EducationProgramOffering,
     auditUserId: number,
   ): Promise<Application> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationRepo =
         transactionalEntityManager.getRepository(Application);
       const application = await applicationRepo
@@ -840,40 +837,43 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @returns student Application list.
    */
   async getPIRApplications(locationId: number): Promise<Application[]> {
-    return this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.applicationNumber",
-        "application.id",
-        "application.pirStatus",
-        "currentAssessment.id",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "student",
-      ])
-      .leftJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
-      .innerJoin("application.student", "student")
-      .innerJoinAndSelect("student.user", "user")
-      .where("application.location.id = :locationId", { locationId })
-      .andWhere("application.pirStatus is not null")
-      .andWhere("application.pirStatus != :nonPirStatus", {
-        nonPirStatus: ProgramInfoStatus.notRequired,
-      })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.overwritten,
-      })
-      .orderBy(
-        `CASE application.pirStatus
+    return (
+      this.repo
+        .createQueryBuilder("application")
+        .select([
+          "application.applicationNumber",
+          "application.id",
+          "application.pirStatus",
+          "currentAssessment.id",
+          "offering.studyStartDate",
+          "offering.studyEndDate",
+          "student",
+        ])
+        .leftJoin("application.currentAssessment", "currentAssessment")
+        .leftJoin("currentAssessment.offering", "offering")
+        .innerJoin("application.student", "student")
+        .innerJoinAndSelect("student.user", "user")
+        .where("application.location.id = :locationId", { locationId })
+        .andWhere("application.pirStatus is not null")
+        .andWhere("application.pirStatus != :nonPirStatus", {
+          nonPirStatus: ProgramInfoStatus.notRequired,
+        })
+        .andWhere("application.applicationStatus != :overwrittenStatus", {
+          overwrittenStatus: ApplicationStatus.overwritten,
+        })
+        // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
+        .orderBy(
+          `CASE application.pir_status
             WHEN '${ProgramInfoStatus.required}' THEN 1
             WHEN '${ProgramInfoStatus.submitted}' THEN 2
             WHEN '${ProgramInfoStatus.completed}' THEN 3
             WHEN '${ProgramInfoStatus.declined}' THEN 4
             ELSE 5
           END`,
-      )
-      .addOrderBy("application.applicationNumber")
-      .getMany();
+        )
+        .addOrderBy("application.applicationNumber")
+        .getMany()
+    );
   }
   /**
    * Update Student Application status.
@@ -930,97 +930,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Creates a new Student Application to maintain history,
-   * overriding the current one in order to rollback the
-   * process and start the assessment all over again.
-   * @param locationId location id executing the COE rollback.
-   * @param applicationId application to be rolled back.
-   * @param auditUserId user that should be considered the one
-   * that is causing the changes.
-   * @returns the overridden and the newly created application.
-   */
-  async overrideApplicationForCOE(
-    locationId: number,
-    applicationId: number,
-    auditUserId: number,
-  ): Promise<ApplicationOverriddenResult> {
-    // Only override application when pir status is not "not required".
-    const appToOverride = await this.repo.findOne(
-      {
-        id: applicationId,
-        location: { id: locationId },
-        pirStatus: Not(ProgramInfoStatus.notRequired),
-      },
-      { relations: ["studentFiles", "currentAssessment"] },
-    );
-
-    if (!appToOverride) {
-      throw new CustomNamedError(
-        "Student Application not found or the location does not have access to it or PIR not required Application",
-        APPLICATION_NOT_FOUND,
-      );
-    }
-
-    const now = new Date();
-    const auditUser = { id: auditUserId } as User;
-
-    // Change status of the current application being overwritten.
-    appToOverride.applicationStatus = ApplicationStatus.overwritten;
-    appToOverride.applicationStatusUpdatedOn = now;
-    appToOverride.modifier = auditUser;
-
-    // Create a new application record based off Overwritten
-    // record to rollback state of application.
-    const newApplication = new Application();
-    newApplication.data = appToOverride.data;
-    newApplication.applicationNumber = appToOverride.applicationNumber;
-    newApplication.student = {
-      id: appToOverride.studentId,
-    } as Student;
-    newApplication.location = {
-      id: appToOverride.locationId,
-    } as InstitutionLocation;
-    if (appToOverride.pirProgramId) {
-      newApplication.pirProgram = {
-        id: appToOverride.pirProgramId,
-      } as EducationProgram;
-    }
-    // TODO: SIMS#28 Do we need to clone the assessment?
-    newApplication.programYear = {
-      id: appToOverride.programYearId,
-    } as ProgramYear;
-    newApplication.pirStatus = ProgramInfoStatus.required;
-    newApplication.applicationStatus = ApplicationStatus.submitted;
-    newApplication.applicationStatusUpdatedOn = now;
-    newApplication.studentFiles = appToOverride.studentFiles.map(
-      (applicationFile: ApplicationStudentFile) => {
-        // Recreate file associations for new application.
-        const fileAssociation = new ApplicationStudentFile();
-        fileAssociation.studentFile = {
-          id: applicationFile.studentFileId,
-        } as StudentFile;
-        return fileAssociation;
-      },
-    );
-
-    const originalAssessment = new StudentAssessment();
-    originalAssessment.triggerType = AssessmentTriggerType.OriginalAssessment;
-    originalAssessment.submittedBy = auditUser;
-    originalAssessment.submittedDate = now;
-    originalAssessment.creator = auditUser;
-    newApplication.studentAssessments = [originalAssessment];
-    newApplication.currentAssessment = originalAssessment;
-
-    await this.repo.save([appToOverride, newApplication]);
-
-    return {
-      overriddenApplication: appToOverride,
-      createdApplication: newApplication,
-      createdAssessment: originalAssessment,
-    };
-  }
-
-  /**
    * Deny the Program Info Request (PIR) for an Application.
    * Updates only applications that have the PIR status as required.
    * @param applicationId application id to be updated.
@@ -1072,19 +981,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * checks if current PST/PDT date from offering
-   * start date is inside or equal to COE window
-   * @param offeringStartDate offering start date
-   * @returns True if current to offering
-   * start date is within COE window else False
+   * Checks if the confirmation of enrollment can be executed in the present date.
+   * Institutions can execute confirmation of enrollments not before 21 days of the offering start date.
+   * After the offering start date institutions can still execute the CoE.
+   * @param offeringStartDate offering start date.
+   * @returns true if the confirmation of enrollment can happen, otherwise false.
    */
   withinValidCOEWindow(offeringStartDate: Date): boolean {
-    return (
-      dateDifference(
-        setToStartOfTheDayInPSTPDT(new Date()),
-        getPSTPDTDate(offeringStartDate, true),
-      ) <= COE_WINDOW
-    );
+    return dateDifference(new Date(), offeringStartDate) <= COE_WINDOW;
   }
 
   /**
@@ -1371,7 +1275,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationNumber: applicationNumber,
         student: { id: studentId } as Student,
       },
-      select: ["id"],
+      select: { id: true },
     }));
   }
 
@@ -1390,33 +1294,24 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationNumber?: string,
     applicationId?: number,
   ): Promise<Application> {
-    const applicationQuery = this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.id",
-        "application.applicationNumber",
-        "application.isArchived",
-      ])
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .where("user.id = :userId", { userId })
-      .andWhere("application.applicationStatus = :completed", {
-        completed: ApplicationStatus.completed,
-      });
+    const findQuery: FindOneOptions<Application> = {
+      select: {
+        id: true,
+        applicationNumber: true,
+        isArchived: true,
+      },
+      where: {
+        student: { user: { id: userId } },
+        applicationStatus: ApplicationStatus.completed,
+      },
+    };
     if (applicationId) {
-      applicationQuery.andWhere("application.id = :applicationId", {
-        applicationId,
-      });
+      findQuery.where = {
+        ...findQuery.where,
+        applicationNumber: applicationNumber,
+      };
     }
-    if (applicationNumber) {
-      applicationQuery.andWhere(
-        "application.applicationNumber = :applicationNumber",
-        {
-          applicationNumber,
-        },
-      );
-    }
-    return applicationQuery.getOne();
+    return this.repo.findOne(findQuery);
   }
 
   /**

@@ -1,6 +1,6 @@
 require("../../../env_setup");
 import { closeDB, setupDB } from "../../testHelpers";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 import * as faker from "faker";
 import { SINValidation, Student, User } from "../entities";
 import { SFASIndividualService, StudentService } from "../../services";
@@ -8,9 +8,9 @@ import { SFASIndividualService, StudentService } from "../../services";
 jest.setTimeout(15000);
 
 describe("Test student model", () => {
-  let connection: Connection;
+  let dataSource: DataSource;
   beforeAll(async () => {
-    connection = await setupDB();
+    dataSource = await setupDB();
   });
   afterAll(async () => {
     await closeDB();
@@ -18,8 +18,8 @@ describe("Test student model", () => {
 
   it("should save student model object with user relationship and address jsonb", async () => {
     // Create
-    const sfasIndividualService = new SFASIndividualService(connection);
-    const controller = new StudentService(connection, sfasIndividualService);
+    const sfasIndividualService = new SFASIndividualService(dataSource);
+    const controller = new StudentService(dataSource, sfasIndividualService);
     const sub = new Student();
     sub.birthDate = faker.date.past(18);
     sub.gender = "X";
@@ -48,7 +48,7 @@ describe("Test student model", () => {
     await controller.save(sub);
 
     // Fetch and test
-    const result = await controller.findById(sub.id);
+    const result = await controller.getStudentById(sub.id);
     expect(result.id).toEqual(sub.id);
     expect(result.user).toBeDefined();
     expect(result.user.id).toEqual(sub.user.id);

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Brackets, Connection } from "typeorm";
+import { Brackets, DataSource } from "typeorm";
 import {
   Application,
   AssessmentTriggerType,
@@ -22,8 +22,12 @@ import {
 import { StudentAppealRequestsService } from "../student-appeal-request/student-appeal-request.service";
 import {
   CustomNamedError,
+  FieldSortOrder,
   mapFromRawAndEntities,
+  PaginatedResults,
+  PaginationOptions,
   SortPriority,
+  OrderByCondition,
 } from "../../utilities";
 import {
   STUDENT_APPEAL_INVALID_OPERATION,
@@ -37,11 +41,11 @@ import { StudentAssessmentService } from "../student-assessment/student-assessme
 @Injectable()
 export class StudentAppealService extends RecordDataModelService<StudentAppeal> {
   constructor(
-    private readonly connection: Connection,
+    private readonly dataSource: DataSource,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {
-    super(connection.getRepository(StudentAppeal));
+    super(dataSource.getRepository(StudentAppeal));
   }
 
   /**
@@ -284,7 +288,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     const auditUser = { id: auditUserId } as User;
     const auditDate = new Date();
 
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       appealToUpdate.appealRequests = [];
       for (const approval of approvals) {
         // Create the new note.
@@ -334,5 +338,95 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         .getRepository(StudentAppeal)
         .save(appealToUpdate);
     });
+  }
+
+  /**
+   * Get all pending student appeals.
+   * @param paginationOptions options to execute the pagination.
+   * @param status appeal status.
+   * @returns StudentAppeal list.
+   */
+  async getAppealsByStatus(
+    paginationOptions: PaginationOptions,
+    status: StudentAppealStatus,
+  ): Promise<PaginatedResults<StudentAppeal>> {
+    const studentAppealsQuery = this.repo
+      .createQueryBuilder("studentAppeal")
+      .select([
+        "studentAppeal.id",
+        "application.id",
+        "studentAppeal.submittedDate",
+        "user.firstName",
+        "user.lastName",
+        "application.applicationNumber",
+        "student.id",
+      ])
+      .innerJoin("studentAppeal.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("studentAppeal.appealRequests", "appealRequests")
+      .where(
+        `EXISTS(${this.studentAppealRequestsService
+          .appealsByStatusQueryObject(status)
+          .getSql()})`,
+      );
+    if (paginationOptions.searchCriteria) {
+      studentAppealsQuery
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where(
+              "CONCAT(user.firstName, ' ', user.lastName) Ilike :searchCriteria",
+            ).orWhere("application.applicationNumber Ilike :searchCriteria");
+          }),
+        )
+        .setParameter(
+          "searchCriteria",
+          `%${paginationOptions.searchCriteria.trim()}%`,
+        );
+    }
+
+    studentAppealsQuery
+      .orderBy(
+        this.transformToEntitySortField(
+          paginationOptions.sortField,
+          paginationOptions.sortOrder,
+        ),
+      )
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
+
+    const [result, count] = await studentAppealsQuery.getManyAndCount();
+    return {
+      results: result,
+      count: count,
+    };
+  }
+
+  /**
+   * Transformation to convert the data table column name to database column name.
+   * Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
+   * @param sortField database fields to be sorted.
+   * @param sortOrder sort order of fields (Ascending or Descending order).
+   * @returns OrderByCondition
+   */
+  private transformToEntitySortField(
+    sortField = "submittedDate",
+    sortOrder = FieldSortOrder.ASC,
+  ): OrderByCondition {
+    const orderByCondition = {};
+    if (sortField === "fullName") {
+      orderByCondition["user.firstName"] = sortOrder;
+      orderByCondition["user.lastName"] = sortOrder;
+      return orderByCondition;
+    }
+
+    const fieldSortOptions = {
+      applicationNumber: "application.applicationNumber",
+      submittedDate: "studentAppeal.submittedDate",
+    };
+
+    const dbColumnName = fieldSortOptions[sortField];
+    orderByCondition[dbColumnName] = sortOrder;
+    return orderByCondition;
   }
 }

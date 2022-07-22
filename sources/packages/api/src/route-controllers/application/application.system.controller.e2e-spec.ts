@@ -22,7 +22,7 @@ import {
 } from "../../services";
 import { createFakeApplication } from "../../testHelpers/fake-entities/application-fake";
 import { setGlobalPipes } from "../../utilities/auth-utils";
-import { Connection, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   Application,
   ApplicationStatus,
@@ -81,13 +81,13 @@ describe.skip("Test system-access/application Controller", () => {
       ],
     }).compile();
 
-    const connection = module.get(Connection);
-    applicationRepository = connection.getRepository(Application);
-    locationRepository = connection.getRepository(InstitutionLocation);
-    institutionRepository = connection.getRepository(Institution);
-    programRepository = connection.getRepository(EducationProgram);
-    offeringRepository = connection.getRepository(EducationProgramOffering);
-    userRepository = connection.getRepository(User);
+    const dataSource = module.get(DataSource);
+    applicationRepository = dataSource.getRepository(Application);
+    locationRepository = dataSource.getRepository(InstitutionLocation);
+    institutionRepository = dataSource.getRepository(Institution);
+    programRepository = dataSource.getRepository(EducationProgram);
+    offeringRepository = dataSource.getRepository(EducationProgramOffering);
+    userRepository = dataSource.getRepository(User);
 
     app = module.createNestApplication();
     setGlobalPipes(app);
@@ -219,10 +219,10 @@ describe.skip("Test system-access/application Controller", () => {
           })
           .expect(HttpStatus.OK);
         // Check if the database was updated as expected.
-        const updatedApplication = await applicationRepository.findOne(
-          testApplication.id,
-          { relations: ["pirProgram", "offering", "location"] },
-        );
+        const updatedApplication = await applicationRepository.findOne({
+          where: { id: testApplication.id },
+          relations: { pirProgram: true, location: true },
+        });
         expect(updatedApplication.pirProgram.id).toBe(testProgram.id);
         expect(updatedApplication.location.id).toBe(testLocation.id);
         expect(updatedApplication.pirStatus).toBe("Completed");
@@ -260,9 +260,9 @@ describe.skip("Test system-access/application Controller", () => {
             .send({ status })
             .expect(HttpStatus.OK);
           // Check if the database was updated as expected.
-          const updatedApplication = await applicationRepository.findOne(
-            testApplication.id,
-          );
+          const updatedApplication = await applicationRepository.findOne({
+            where: { id: testApplication.id },
+          });
           expect(updatedApplication.pirStatus).toBe(status);
         } finally {
           await applicationRepository.remove(testApplication);

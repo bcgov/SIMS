@@ -1,15 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionType } from "../../database/entities/institution-type.model";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 
 /**
  * Service layer for Institution type
  */
 @Injectable()
 export class InstitutionTypeService extends RecordDataModelService<InstitutionType> {
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(InstitutionType));
+  constructor(dataSource: DataSource) {
+    super(dataSource.getRepository(InstitutionType));
   }
 
   /**
@@ -18,7 +18,7 @@ export class InstitutionTypeService extends RecordDataModelService<InstitutionTy
    * @returns Location retrieved, if found, otherwise returns null.
    */
   async getById(id: number): Promise<InstitutionType> {
-    return this.repo.findOne(id);
+    return this.repo.findOne({ where: { id } });
   }
 
   /**
@@ -35,6 +35,6 @@ export class InstitutionTypeService extends RecordDataModelService<InstitutionTy
    * @returns InstitutionType object
    */
   async getInstitutionTypeByName(name: string): Promise<InstitutionType> {
-    return this.repo.findOne({ name: name });
+    return this.repo.findOne({ where: { name } });
   }
 }

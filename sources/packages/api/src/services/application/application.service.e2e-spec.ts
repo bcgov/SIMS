@@ -14,7 +14,7 @@ import {
   WorkflowActionsService,
   WorkflowService,
 } from "..";
-import { Connection, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   Application,
   ApplicationStatus,
@@ -72,12 +72,12 @@ describe.skip("ApplicationService", () => {
       ],
     }).compile();
 
-    const connection = module.get(Connection);
+    const dataSource = module.get(DataSource);
     applicationService = module.get(ApplicationService);
     msfaaNumberService = module.get(MSFAANumberService);
-    applicationRepository = connection.getRepository(Application);
-    msfaaNumberRepository = connection.getRepository(MSFAANumber);
-    studentRepository = connection.getRepository(Student);
+    applicationRepository = dataSource.getRepository(Application);
+    msfaaNumberRepository = dataSource.getRepository(MSFAANumber);
+    studentRepository = dataSource.getRepository(Student);
     jest.spyOn(msfaaNumberService, "createMSFAANumber");
   });
 

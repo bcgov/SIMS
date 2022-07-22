@@ -13,7 +13,7 @@ import {
   StudentAssessment,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, UpdateResult } from "typeorm";
+import { DataSource, UpdateResult } from "typeorm";
 import {
   EducationProgramOfferingModel,
   SaveOfferingModel,
@@ -32,8 +32,8 @@ import { OFFERING_NOT_VALID } from "../../constants";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(EducationProgramOffering));
+  constructor(private readonly dataSource: DataSource) {
+    super(dataSource.getRepository(EducationProgramOffering));
   }
 
   /**
@@ -440,7 +440,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     assessmentNotes: string,
     offeringStatus: OfferingStatus,
   ): Promise<void> {
-    return this.connection.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       // create the note for assessment.
       const user = {
         id: userId,
@@ -496,7 +496,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @returns true if an offering has any assessment
    */
   async hasExistingApplication(offeringId: number): Promise<boolean> {
-    const queryResult = await this.connection
+    const queryResult = await this.dataSource
       .getRepository(StudentAssessment)
       .createQueryBuilder("assessment")
       .select("1")

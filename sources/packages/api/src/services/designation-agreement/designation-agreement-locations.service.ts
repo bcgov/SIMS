@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, SelectQueryBuilder } from "typeorm";
+import { DataSource, SelectQueryBuilder } from "typeorm";
 import {
   DesignationAgreementLocation,
   DesignationAgreementStatus,
@@ -11,8 +11,8 @@ import {
  */
 @Injectable()
 export class DesignationAgreementLocationService extends RecordDataModelService<DesignationAgreementLocation> {
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(DesignationAgreementLocation));
+  constructor(dataSource: DataSource) {
+    super(dataSource.getRepository(DesignationAgreementLocation));
   }
 
   /**

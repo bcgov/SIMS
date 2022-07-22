@@ -1,23 +1,15 @@
 require("../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
-import { getConnection } from "typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { closeDB, setupDB } from "./testHelpers";
+import { DatabaseModule } from "./database/database.module";
 
 describe("AppController", () => {
   let appController: AppController;
 
-  beforeAll(async () => {
-    await setupDB();
-  });
-
-  afterAll(async () => {
-    await closeDB();
-  });
-
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
+      imports: [DatabaseModule],
       controllers: [AppController],
       providers: [AppService],
     }).compile();
@@ -27,9 +19,9 @@ describe("AppController", () => {
 
   describe("root", () => {
     it("should return Hello world string with db connection status and version", () => {
-      const expected = `Hello World! The database connection is ${
-        getConnection().isConnected
-      } and version: ${process.env.VERSION ?? "-1"}`;
+      const expected = `Hello World! The database dataSource is true and version: ${
+        process.env.VERSION ?? "-1"
+      }`;
       expect(appController.getHello()).toBe(expected);
     });
   });

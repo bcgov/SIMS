@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { DataModelService } from "../../database/data.model.service";
 import { FederalRestriction } from "../../database/entities";
-import { Connection, EntityManager } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 
 const FEDERAL_RESTRICTIONS_RAW_SQL_FOLDER = "RawSQL/FederalRestrictions";
@@ -20,8 +20,8 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
   private readonly bulkDeactivateRestrictionsSQL: string;
   private readonly bulkUpdateActiveRestrictionsSQL: string;
 
-  constructor(private readonly connection: Connection) {
-    super(connection.getRepository(FederalRestriction));
+  constructor(private readonly dataSource: DataSource) {
+    super(dataSource.getRepository(FederalRestriction));
     this.bulkUpdateStudentIdSQL = getSQLFileData(
       "Bulk-update-students-foreign-key.sql",
       FEDERAL_RESTRICTIONS_RAW_SQL_FOLDER,
@@ -48,7 +48,7 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
   async resetFederalRestrictionsTable(manager: EntityManager): Promise<any> {
     await manager.query(
       `TRUNCATE TABLE ${
-        this.connection.getMetadata(FederalRestriction).tablePath
+        this.dataSource.getMetadata(FederalRestriction).tablePath
       }`,
     );
   }
