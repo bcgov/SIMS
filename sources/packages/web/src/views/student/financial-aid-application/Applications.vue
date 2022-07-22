@@ -22,7 +22,7 @@ import { computed } from "vue";
 export default {
   setup() {
     const router = useRouter();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const store = useStore();
 
     const sinValidStatus = computed(
@@ -35,7 +35,9 @@ export default {
           name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
         });
       } catch (error) {
-        toast.error("An error happened while trying to start an application.");
+        snackBar.error(
+          "An error happened while trying to start an application.",
+        );
       }
     };
     return {

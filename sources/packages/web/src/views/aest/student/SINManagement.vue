@@ -133,7 +133,7 @@ export default {
       {} as ModalDialog<FormIOForm<UpdateSINValidationAPIInDTO> | boolean>,
     );
     const { getISODateOnlyString } = useFormatters();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
     const processingNewSIN = ref(false);
@@ -161,10 +161,12 @@ export default {
           formioForm.data,
         );
 
-        toast.success("New SIN record created and associated to the student.");
+        snackBar.success(
+          "New SIN record created and associated to the student.",
+        );
         await loadSINValidations();
       } catch {
-        toast.error("Unexpected error while creating a new SIN record.");
+        snackBar.error("Unexpected error while creating a new SIN record.");
       } finally {
         processingNewSIN.value = false;
       }
@@ -189,10 +191,10 @@ export default {
           formioForm.data,
         );
 
-        toast.success("Temporary SIN expiry date updated.");
+        snackBar.success("Temporary SIN expiry date updated.");
         await loadSINValidations();
       } catch {
-        toast.error("Unexpected error while updating the expiry date.");
+        snackBar.error("Unexpected error while updating the expiry date.");
       } finally {
         processingEditExpiryDate.value = false;
       }

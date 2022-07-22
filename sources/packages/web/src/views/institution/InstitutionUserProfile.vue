@@ -28,7 +28,7 @@ import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 export default {
   setup() {
     // Hooks
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const router = useRouter();
     // Data-bind
     const initialData = ref({});
@@ -42,12 +42,12 @@ export default {
           institutionUserPersistDto,
         );
 
-        toast.success("Institution User successfully updated!");
+        snackBar.success("Institution User successfully updated!");
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         });
       } catch (excp) {
-        toast.error("An error happened during the update process.");
+        snackBar.error("An error happened during the update process.");
       }
     };
 
@@ -61,7 +61,7 @@ export default {
           userEmail: institutionUser.userEmail,
         };
       } else {
-        toast.error("Unable to fetch Institution user account details.");
+        snackBar.error("Unable to fetch Institution user account details.");
       }
     });
 

@@ -36,7 +36,7 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const institutionProfileModel = ref({} as InstitutionDetailAPIOutDTO);
     const institutionProfileRoute = {
@@ -51,10 +51,10 @@ export default {
           props.institutionId,
         );
 
-        toast.success("Institution successfully updated!");
+        snackBar.success("Institution successfully updated!");
         router.push(institutionProfileRoute);
       } catch (error) {
-        toast.error("Unexpected error while updating the institution.");
+        snackBar.error("Unexpected error while updating the institution.");
       }
     };
 

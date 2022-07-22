@@ -1,10 +1,10 @@
 <template>
   <v-snackbar
-    v-model="showSnackBar"
+    v-model="snackBarChoices.show"
     variant="text"
-    :color="snackBarType"
+    :color="snackBarChoices.type"
     location="top right"
-    :timeout="snackBarTimeOut"
+    :timeout="snackBarChoices.displayTime"
     :class="snackBarClass"
     class="mt-16 mr-8"
   >
@@ -17,7 +17,9 @@
             size="23"
           ></v-icon>
         </v-col>
-        <v-col class="label-bold default-color">{{ snackBarContent }}</v-col>
+        <v-col class="label-bold default-color">{{
+          snackBarChoices.content
+        }}</v-col>
       </v-row>
     </div>
     <template v-slot:actions>
@@ -25,14 +27,15 @@
         icon="fa:fa fa-close"
         size="23"
         class="default-color"
-        @click="showSnackBar = false"
+        @click="snackBarChoices.show = false"
       ></v-icon>
     </template>
   </v-snackbar>
 </template>
 <script lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, reactive, watch } from "vue";
 import { SnackBarOptions, SnackBarType } from "@/types";
+import { useSnackBar } from "@/composables";
 
 export default {
   props: {
@@ -45,10 +48,15 @@ export default {
     },
   },
   setup(props: any) {
-    const showSnackBar = ref(props.snackBarOptions?.show ?? false);
-    const snackBarType = ref(props.snackBarOptions?.type ?? "");
-    const snackBarContent = ref(props.snackBarOptions?.content);
-    const snackBarTimeOut = ref(props.snackBarOptions?.displayTime ?? 5000);
+    const snackBar = useSnackBar();
+    const snackBarChoices = reactive(
+      (props.snackBarOptions as SnackBarOptions) ??
+        ({
+          show: false,
+          displayTime: snackBar.DEFAULT_MESSAGE_DISPLAY_TIME,
+        } as SnackBarOptions),
+    );
+
     const snackBarClass = computed(() => {
       switch (props.snackBarOptions.type) {
         case SnackBarType.success:
@@ -78,21 +86,18 @@ export default {
     watch(
       () => props.snackBarOptions,
       () => {
-        showSnackBar.value = props.snackBarOptions.show;
-        snackBarType.value = props.snackBarOptions.type;
-        snackBarContent.value = props.snackBarOptions.content;
-        snackBarTimeOut.value = props.snackBarOptions.displayTime;
+        snackBarChoices.show = props.snackBarOptions.show;
+        snackBarChoices.type = props.snackBarOptions.type;
+        snackBarChoices.content = props.snackBarOptions.content;
+        snackBarChoices.displayTime = props.snackBarOptions.displayTime;
       },
       { immediate: true },
     );
 
     return {
-      showSnackBar,
-      snackBarType,
-      snackBarContent,
       snackBarClass,
       snackBarIcon,
-      snackBarTimeOut,
+      snackBarChoices,
     };
   },
 };

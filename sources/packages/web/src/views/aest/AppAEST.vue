@@ -25,17 +25,12 @@
           ></v-btn>
         </template>
         <v-list>
-          <template v-for="(item, index) in menuItems" :key="index">
-            <v-list-item :value="index">
-              <v-list-item-title @click="item.command">
-                <span class="label-bold">{{ item.label }}</span>
+          <template>
+            <v-list-item-title :value="menuItems">
+              <v-list-item-title @click="menuItems.command">
+                <span class="label-bold">{{ menuItems.label }}</span>
               </v-list-item-title>
-            </v-list-item>
-            <v-divider
-              v-if="index < menuItems.length - 1"
-              :key="index"
-              inset
-            ></v-divider>
+            </v-list-item-title>
           </template>
         </v-list>
       </v-menu>
@@ -64,12 +59,11 @@ export default {
     const logoff = async () => {
       await executeLogout(ClientIdType.AEST);
     };
-    const menuItems = [
-      {
-        label: "Log Out",
-        command: logoff,
-      },
-    ];
+    const menuItems = {
+      label: "Log Out",
+      command: logoff,
+    };
+
     return {
       menuItems,
       isAuthenticated,

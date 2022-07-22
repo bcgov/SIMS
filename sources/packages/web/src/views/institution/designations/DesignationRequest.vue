@@ -40,7 +40,7 @@ export default {
   setup() {
     const router = useRouter();
 
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const formatter = useFormatters();
     const { institutionState } = useInstitutionState();
     const { userFullName, userEmail, isLegalSigningAuthority } =
@@ -89,10 +89,10 @@ export default {
           ),
         } as SubmitDesignationAgreementDto);
 
-        toast.success("Designation agreement submitted.");
+        snackBar.success("Designation agreement submitted.");
         router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
       } catch (error) {
-        toast.error(
+        snackBar.error(
           "And unexpected error happened during the designation agreement submission.",
         );
       }

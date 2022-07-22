@@ -14,33 +14,33 @@
         <v-col>
           <v-text-field
             density="compact"
-            label="Application Number"
+            label="Application number"
             variant="outlined"
             v-model="applicationNumber"
             data-cy="applicationNumber"
             type="number"
-            :rules="[(v) => /\d+/.test(v) || 'Invalid Application Number']"
+            :rules="[(v) => /\d+/.test(v) || 'Invalid application number']"
           />
         </v-col>
         <v-col>
           <v-text-field
             density="compact"
-            label="Students Last Name"
+            label="Student's last name"
             variant="outlined"
             v-model="studentsLastName"
             data-cy="studentsLastName"
-            :rules="[(v) => !!v || 'Students Last Name Required']"
+            :rules="[(v) => !!v || 'Student\'s last name required']"
           />
         </v-col>
         <v-col>
           <v-text-field
             density="compact"
-            label="Student's Date Of Birth"
+            label="Student's date of birth"
             variant="outlined"
             v-model="studentsDateOfBirth"
             data-cy="studentsDateOfBirth"
             type="date"
-            :rules="[(v) => !!v || 'Student\'s Date Of Birth Required']"
+            :rules="[(v) => !!v || 'Student\'s date of birth required']"
           />
         </v-col>
         <v-col
@@ -82,7 +82,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
     const { bcscParsedToken } = useAuthBCSC();
     const submitting = ref(false);
@@ -119,12 +119,12 @@ export default {
         !studentsLastName.value ||
         !studentsDateOfBirth.value
       ) {
-        toast.warn("Please complete all the mandatory fields.");
+        snackBar.warn("Please complete all the mandatory fields.");
         return;
       }
 
       if (isNaN(Date.parse(studentsDateOfBirth.value))) {
-        toast.warn("Please check the Student's Date Of Birth.");
+        snackBar.warn("Please check the Student's Date Of Birth.");
         return;
       }
 
@@ -140,13 +140,15 @@ export default {
         formName.value = null;
         switch (error.response.data.errorType) {
           case STUDENT_APPLICATION_NOT_FOUND:
-            toast.warn(`Application not found. ${error.response.data.message}`);
+            snackBar.warn(
+              `Application not found. ${error.response.data.message}`,
+            );
             break;
           case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
-            toast.error(
+            snackBar.error(
               `The student cannot act as a supporting user for its own application.
               ${error.response.data.message}`,
-              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
         }
@@ -161,40 +163,40 @@ export default {
           { ...formData, ...getIdentifiedApplication() },
         );
 
-        toast.success("Supporting data submitted with success.");
+        snackBar.success("Supporting data submitted with success.");
         router.push({ name: SupportingUserRoutesConst.DASHBOARD });
       } catch (error) {
         switch (error.response.data.errorType) {
           case STUDENT_APPLICATION_NOT_FOUND:
-            toast.error(
+            snackBar.error(
               error.response.data.message,
-              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
           case SUPPORTING_USER_ALREADY_PROVIDED_DATA:
-            toast.warn(
+            snackBar.warn(
               `User already provided data.
               ${error.response.data.message}`,
-              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
           case SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA:
-            toast.warn(
+            snackBar.warn(
               `Not expecting data for a ${props.supportingUserType}.
               ${error.response.data.message}`,
-              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
           case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
-            toast.error(
+            snackBar.error(
               `The student cannot act as a supporting user for its own application. ${error.response.data.message}`,
-              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
           default:
-            toast.error(
+            snackBar.error(
               "Unexpected error while submitting the supporting data.",
-              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
         }

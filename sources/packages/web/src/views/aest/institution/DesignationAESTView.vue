@@ -84,7 +84,7 @@ export default {
     const { mapDesignationChipStatus } = useDesignationAgreement();
     const designationAgreement = ref({} as GetDesignationAgreementDto);
     const designationFormModel = reactive({} as DesignationModel);
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const showActionButtons = computed(
       () =>
         designationFormModel.designationStatus !==
@@ -189,12 +189,12 @@ export default {
             response as UpdateDesignationDto,
           );
 
-          toast.success(
+          snackBar.success(
             `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
           );
           await loadDesignation();
         } catch (error) {
-          toast.error(
+          snackBar.error(
             "Unexpected error while approving/declining the designation.",
           );
         }

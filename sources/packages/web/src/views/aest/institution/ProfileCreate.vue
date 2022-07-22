@@ -34,7 +34,7 @@ export default {
   components: { InstitutionProfileForm },
   setup() {
     const router = useRouter();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const processing = ref(false);
     const institutionProfileModel = ref({
       clientType: ClientIdType.AEST,
@@ -47,13 +47,13 @@ export default {
         const createdInstitution =
           await InstitutionService.shared.createInstitution(data);
 
-        toast.success("Institution successfully created!");
+        snackBar.success("Institution successfully created!");
         router.push({
           name: AESTRoutesConst.INSTITUTION_PROFILE,
           params: { institutionId: createdInstitution.id },
         });
       } catch (error) {
-        toast.error("Unexpected error while creating the institution.");
+        snackBar.error("Unexpected error while creating the institution.");
       } finally {
         processing.value = false;
       }

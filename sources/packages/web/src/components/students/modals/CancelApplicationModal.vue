@@ -56,7 +56,7 @@ export default {
   },
   emits: ["showHideCancelApplication", "reloadData"],
   setup(props: any, context: any) {
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const updateShowCancelApplicationModal = () => {
       context.emit("showHideCancelApplication");
     };
@@ -72,9 +72,9 @@ export default {
         updateShowCancelApplicationModal();
         context.emit("reloadData", props.applicationId);
 
-        toast.success("Your application is now cancelled!");
+        snackBar.success("Your application is now cancelled!");
       } catch (error) {
-        toast.error("An error happened while cancelling the Application.");
+        snackBar.error("An error happened while cancelling the Application.");
       }
     };
     return {

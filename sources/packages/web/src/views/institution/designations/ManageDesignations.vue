@@ -51,7 +51,7 @@ export default {
   },
   setup() {
     const router = useRouter();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const { isLegalSigningAuthority } = useInstitutionAuth();
     const designations = ref([] as GetDesignationAgreementsDto[]);
 
@@ -65,7 +65,7 @@ export default {
           name: InstitutionRoutesConst.DESIGNATION_REQUEST,
         });
       } else {
-        toast.warn("There is already a pending designation agreement.");
+        snackBar.warn("There is already a pending designation agreement.");
       }
     };
 

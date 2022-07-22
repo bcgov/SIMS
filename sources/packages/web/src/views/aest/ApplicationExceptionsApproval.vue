@@ -88,7 +88,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
     const { mapRequestAssessmentChipStatus } = useAssessment();
     const applicationExceptions = ref({} as ApplicationExceptionFormModel);
@@ -142,13 +142,13 @@ export default {
           approveExceptionPayload,
         );
 
-        toast.success(
+        snackBar.success(
           `Application exception status is now ${approveExceptionPayload.exceptionStatus}.`,
         );
 
         gotToAssessmentsSummary();
       } catch (error: unknown) {
-        toast.error("An unexpected error happened during the approval.");
+        snackBar.error("An unexpected error happened during the approval.");
       } finally {
         processing.value = false;
       }

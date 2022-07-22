@@ -22,7 +22,7 @@ import { useFormioDropdownLoader, useSnackBar } from "@/composables";
 export default {
   setup() {
     const store = useStore();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const formioDataLoader = useFormioDropdownLoader();
     const initialData = ref({});
@@ -34,13 +34,13 @@ export default {
         );
         await store.dispatch("institution/initialize");
 
-        toast.success("Institution and User successfully created!");
+        snackBar.success("Institution and User successfully created!");
         await store.dispatch("institution/getInstitutionDetails");
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         });
       } catch (error) {
-        toast.error("Unexpected error while creating the institution.");
+        snackBar.error("Unexpected error while creating the institution.");
       }
     };
 
@@ -54,7 +54,7 @@ export default {
           institutionLegalName: bceidAccount.institution.legalName,
         };
       } else {
-        toast.error("Unable to fetch account details.");
+        snackBar.error("Unable to fetch account details.");
       }
     });
 

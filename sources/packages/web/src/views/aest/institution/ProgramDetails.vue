@@ -80,7 +80,7 @@ export default {
     const declineProgramModal = ref(
       {} as ModalDialog<DeclineProgram | undefined>,
     );
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
 
     const getEducationProgramAndOffering = async () => {
       educationProgram.value =
@@ -101,10 +101,10 @@ export default {
           approveProgramData,
         );
 
-        toast.success(`${educationProgram.value.name} approved !`);
+        snackBar.success(`${educationProgram.value.name} approved !`);
         await getEducationProgramAndOffering();
       } catch {
-        toast.error("An error happened while approving the program.");
+        snackBar.error("An error happened while approving the program.");
       }
     };
 
@@ -121,10 +121,10 @@ export default {
           declineProgramData,
         );
 
-        toast.success(`${educationProgram.value.name} Decline !`);
+        snackBar.success(`${educationProgram.value.name} Decline !`);
         await getEducationProgramAndOffering();
       } catch {
-        toast.error("An error happened while declining the program.");
+        snackBar.error("An error happened while declining the program.");
       }
     };
 

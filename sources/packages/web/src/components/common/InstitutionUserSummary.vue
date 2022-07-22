@@ -163,7 +163,7 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const { institutionUserRoleToDisplay } = useFormatters();
     const usersListAndCount = ref({} as InstitutionUserSummary);
     const loading = ref(false);
@@ -215,7 +215,7 @@ export default {
         );
         await getAllInstitutionUsers();
 
-        toast.success(
+        snackBar.success(
           `${userDetails.displayName} is ${enabled ? "enabled" : "disabled"}`,
         );
       } catch (error: unknown) {
@@ -223,12 +223,14 @@ export default {
           error instanceof ApiProcessError &&
           error.errorType === INSTITUTION_MUST_HAVE_AN_ADMIN
         ) {
-          toast.warn(`Cannot disable the institution admin. ${error.message}`);
+          snackBar.warn(
+            `Cannot disable the institution admin. ${error.message}`,
+          );
 
           return;
         }
 
-        toast.error("An error happened during the update process.");
+        snackBar.error("An error happened during the update process.");
       }
     };
 

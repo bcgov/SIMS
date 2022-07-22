@@ -1,12 +1,12 @@
 <template>
   <v-row no-gutters>
-    <v-col class="category-header-large color-blue" order="1">
+    <v-col class="category-header-large color-blue">
       {{ fullTitleMessage }}
     </v-col>
-    <v-col class="ml-2" order="2">
+    <v-col class="ml-2">
       <slot name="status-chip"></slot>
     </v-col>
-    <v-col order="3">
+    <v-col>
       <slot name="actions"></slot>
     </v-col>
   </v-row>

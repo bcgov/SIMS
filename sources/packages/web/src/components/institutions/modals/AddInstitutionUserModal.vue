@@ -90,7 +90,7 @@ export default {
       resolvePromise,
       showModal: showModalInternal,
     } = useModalDialog<boolean>();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const processing = ref(false);
     const addUserForm = ref({} as VForm);
     const institutionUserManagement = ref();
@@ -164,13 +164,13 @@ export default {
           userManagementModel.locationAuthorizations,
           props.institutionId,
         );
-        toast.success("User successfully created.");
+        snackBar.success("User successfully created.");
         resolvePromise(true);
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           addUserForm.value.errors.push({ errorMessages: [error.message] });
         } else {
-          toast.error("An unexpected error happen while updating the user.");
+          snackBar.error("An unexpected error happen while updating the user.");
         }
       } finally {
         processing.value = false;

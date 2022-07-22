@@ -52,7 +52,7 @@ export default {
   setup() {
     const initialData = ref({});
     const router = useRouter();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const formioDataLoader = useFormioDropdownLoader();
     const formioUtils = useFormioUtils();
     const { showDialog, showModal } = useModalDialog<void>();
@@ -98,7 +98,7 @@ export default {
           });
         }
       } catch (error) {
-        toast.error(
+        snackBar.error(
           "An error happened while trying to start a new application.",
         );
       }

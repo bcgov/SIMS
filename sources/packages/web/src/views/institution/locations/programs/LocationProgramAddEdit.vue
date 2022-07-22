@@ -56,7 +56,7 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const institutionId = ref();
     const clientType = computed(() => AuthService.shared.authClientType);
@@ -189,15 +189,15 @@ export default {
               data,
             );
 
-            toast.success("Education Program updated successfully!");
+            snackBar.success("Education Program updated successfully!");
           } else {
             await EducationProgramService.shared.createProgram(data);
 
-            toast.success("Education Program created successfully!");
+            snackBar.success("Education Program created successfully!");
           }
           goBack();
         } catch (excp) {
-          toast.error("An error happened during the saving process.");
+          snackBar.error("An error happened during the saving process.");
         }
       }
     };

@@ -97,7 +97,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
@@ -125,7 +125,7 @@ export default {
           payload,
         );
 
-        toast.success("Confirmation of Enrollment Confirmed!");
+        snackBar.success("Confirmation of Enrollment Confirmed!");
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An error happened while confirming the COE.";
@@ -141,7 +141,7 @@ export default {
               break;
           }
         }
-        toast.error(`${errorLabel}. ${errorMsg}`);
+        snackBar.error(`${errorLabel}. ${errorMsg}`);
       }
     };
     const submitCOEDeny = async (
@@ -154,7 +154,7 @@ export default {
           submissionData,
         );
 
-        toast.success("Application Status Has Been Updated.");
+        snackBar.success("Application Status Has Been Updated.");
         router.push({
           name: InstitutionRoutesConst.COE_SUMMARY,
           params: {
@@ -162,7 +162,7 @@ export default {
           },
         });
       } catch {
-        toast.error(
+        snackBar.error(
           "An error happened while denying Confirmation of Enrollment.",
         );
       }

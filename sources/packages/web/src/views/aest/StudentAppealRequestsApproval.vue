@@ -81,7 +81,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
 
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
     const studentAppealRequests = ref([] as StudentAppealRequest[]);
     const appealStatus = ref(StudentAppealStatus.Pending);
@@ -129,18 +129,18 @@ export default {
           approvals,
         );
 
-        toast.success("The request was completed with success.");
+        snackBar.success("The request was completed with success.");
 
         gotToAssessmentsSummary();
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           if (error.errorType === ASSESSMENT_ALREADY_IN_PROGRESS) {
-            toast.warn(error.message);
+            snackBar.warn(error.message);
             return;
           }
         }
 
-        toast.error("An unexpected error happened during the approval.");
+        snackBar.error("An unexpected error happened during the approval.");
       }
     };
 

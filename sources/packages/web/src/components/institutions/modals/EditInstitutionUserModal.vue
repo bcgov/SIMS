@@ -89,7 +89,7 @@ export default {
     } = useModalDialog<boolean, InstitutionUserViewModel>();
     const processing = ref(false);
     const editUserForm = ref({} as VForm);
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const institutionUserManagement = ref();
     const { getFormattedAddress } = useFormatters();
     const initialData = ref(new UserManagementModel());
@@ -177,7 +177,7 @@ export default {
         ) {
           editUserForm.value.errors.push({ errorMessages: [error.message] });
         } else {
-          toast.error("An unexpected error happen while updating the user.");
+          snackBar.error("An unexpected error happen while updating the user.");
         }
       } finally {
         processing.value = false;

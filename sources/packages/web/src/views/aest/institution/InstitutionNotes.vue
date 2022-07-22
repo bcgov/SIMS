@@ -63,7 +63,7 @@ export default {
     const notes = ref();
     const filteredNoteType = ref();
     const { dateOnlyLongString } = useFormatters();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
 
     const filterNotes = async (noteType?: InstitutionNoteType) => {
       filteredNoteType.value = noteType;
@@ -78,9 +78,9 @@ export default {
         await NoteService.shared.addInstitutionNote(props.institutionId, data);
         await filterNotes(filteredNoteType.value);
 
-        toast.success("The note has been added to the institution.");
+        snackBar.success("The note has been added to the institution.");
       } catch (error) {
-        toast.error("Unexpected error while adding the note.");
+        snackBar.error("Unexpected error while adding the note.");
       }
     };
 

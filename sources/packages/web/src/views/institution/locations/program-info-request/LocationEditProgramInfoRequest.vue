@@ -57,7 +57,7 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const initialData = ref({} as GetProgramInfoRequestDto);
@@ -182,7 +182,7 @@ export default {
             data,
           );
 
-          toast.success("Program Information Request denied successfully!");
+          snackBar.success("Program Information Request denied successfully!");
         } else {
           await ProgramInfoRequestService.shared.completeProgramInfoRequest(
             props.locationId,
@@ -190,7 +190,9 @@ export default {
             data,
           );
 
-          toast.success("Program Information Request completed successfully!");
+          snackBar.success(
+            "Program Information Request completed successfully!",
+          );
         }
         router.push({
           name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
@@ -211,7 +213,7 @@ export default {
             errorMsg = error.message;
           }
         }
-        toast.error(`${errorLabel}. ${errorMsg}`);
+        snackBar.error(`${errorLabel}. ${errorMsg}`);
       }
     };
     return {

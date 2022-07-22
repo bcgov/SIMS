@@ -128,7 +128,7 @@ export default {
   },
   //Todo: Change the initialData to a well defined contract.
   setup(props: any) {
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const items = [
       {
@@ -292,7 +292,7 @@ export default {
               data,
             );
 
-            toast.success("Education Offering updated successfully!");
+            snackBar.success("Education Offering updated successfully!");
           } else {
             await EducationProgramOfferingService.shared.createProgramOffering(
               props.locationId,
@@ -300,11 +300,13 @@ export default {
               data,
             );
 
-            toast.success("Education Offering created successfully!");
+            snackBar.success("Education Offering created successfully!");
           }
           router.push(getRouteLocation());
         } catch (excp) {
-          toast.error("An error happened during the Offering saving process.");
+          snackBar.error(
+            "An error happened during the Offering saving process.",
+          );
         }
       }
     };
@@ -319,12 +321,12 @@ export default {
             responseData as OfferingAssessmentAPIInDTO,
           );
 
-          toast.success(
+          snackBar.success(
             `The given offering has been ${offeringStatus.toLowerCase()} and notes added.`,
           );
           await loadFormData();
         } catch (error) {
-          toast.error(
+          snackBar.error(
             "Unexpected error while approving/declining the offering.",
           );
         }

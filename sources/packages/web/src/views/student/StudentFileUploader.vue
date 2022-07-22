@@ -38,7 +38,7 @@ export default {
   setup() {
     const reloadDocuments = ref(false);
     const formioUtils = useFormioUtils();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const submitForm = async (
       submittedForm: StudentFileUploaderInfoAPIInDTO,
       form: any,
@@ -54,13 +54,13 @@ export default {
         form.submission = {};
         reloadDocuments.value = !reloadDocuments.value;
 
-        toast.success("Your documents have been submitted!");
+        snackBar.success("Your documents have been submitted!");
       } catch (error) {
         let errorMessage = "An error happened while submitting your documents.";
         if (error.response.data?.errorType === APPLICATION_NOT_FOUND) {
           errorMessage = error.response.data.message;
         }
-        toast.error(errorMessage);
+        snackBar.error(errorMessage);
       }
     };
     return { submitForm, reloadDocuments };

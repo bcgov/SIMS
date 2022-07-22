@@ -104,7 +104,7 @@ export default {
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
 
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
@@ -136,7 +136,10 @@ export default {
           },
         });
       } catch (error) {
-        toast.error("Unexpected Error", toast.EXTENDED_MESSAGE_DISPLAY_TIME);
+        snackBar.error(
+          "Unexpected Error",
+          snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
+        );
       }
     };
 

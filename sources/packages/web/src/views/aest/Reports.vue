@@ -22,7 +22,7 @@ import { FormIOForm } from "@/types";
 
 export default {
   setup() {
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
     let formData: FormIOForm;
 
@@ -38,7 +38,7 @@ export default {
       try {
         await fileUtils.downloadReports(data);
       } catch {
-        toast.error("Unexpected error while downloading the report.");
+        snackBar.error("Unexpected error while downloading the report.");
       }
     };
     return { exportReport, formLoaded, submitForm };

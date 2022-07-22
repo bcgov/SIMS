@@ -109,7 +109,7 @@ export default {
     const studentFileUploads = ref([] as StudentUploadFileAPIOutDTO[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { dateOnlyLongString } = useFormatters();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
     const formioUtils = useFormioUtils();
     const initialData = ref({ studentId: props.studentId });
@@ -138,12 +138,12 @@ export default {
           payload,
         );
 
-        toast.success(
+        snackBar.success(
           "The documents were submitted and a notification was sent to the student.",
         );
         await loadStudentFileUploads();
       } catch {
-        toast.error("An unexpected error happened.");
+        snackBar.error("An unexpected error happened.");
       }
     };
 

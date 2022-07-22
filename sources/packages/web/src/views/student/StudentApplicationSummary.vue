@@ -48,7 +48,7 @@ export default {
   },
   setup() {
     const router = useRouter();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const showModal = ref(false);
     const selectedApplicationId = ref(0);
@@ -79,7 +79,10 @@ export default {
           },
         });
       } catch (error) {
-        toast.error("Unexpected Error", toast.EXTENDED_MESSAGE_DISPLAY_TIME);
+        snackBar.error(
+          "Unexpected Error",
+          snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
+        );
       }
     };
 

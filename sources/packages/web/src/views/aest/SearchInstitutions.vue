@@ -6,7 +6,7 @@
         <v-col>
           <v-text-field
             density="compact"
-            label="Legal Name"
+            label="Legal name"
             variant="outlined"
             v-model="legalName"
             data-cy="legalName"
@@ -17,7 +17,7 @@
         <v-col>
           <v-text-field
             density="compact"
-            label="Operating Name"
+            label="Operating name"
             variant="outlined"
             v-model="operatingName"
             data-cy="operatingName"
@@ -89,7 +89,7 @@ import { useSnackBar, useFormatters } from "@/composables";
 
 export default {
   setup() {
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const legalName = ref("");
     const operatingName = ref("");
@@ -107,7 +107,7 @@ export default {
         operatingName.value,
       );
       if (institutions.value.length === 0) {
-        toast.warn("No Institutions found for the given search criteria.");
+        snackBar.warn("No Institutions found for the given search criteria.");
       }
     };
     const institutionsFound = computed(() => {

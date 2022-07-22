@@ -74,7 +74,7 @@ export default {
   },
 
   setup(props: any) {
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const initialData = ref(
       {} as Partial<OfferingFormModel & ProgramValidationModel>,
@@ -137,7 +137,7 @@ export default {
           data,
         );
 
-        toast.success("Request for change has been submitted.");
+        snackBar.success("Request for change has been submitted.");
         router.push({
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
           params: {
@@ -146,7 +146,7 @@ export default {
           },
         });
       } catch (error: unknown) {
-        toast.error(
+        snackBar.error(
           "An error happened while requesting a change to the offering.",
         );
       }

@@ -31,7 +31,7 @@ export default {
   setup(props: any) {
     // Hooks
     const store = useStore();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const submitted = async (data: InstitutionLocationFormAPIInDTO) => {
       if (props.createMode) {
@@ -40,9 +40,9 @@ export default {
           router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
           store.dispatch("institution/getUserInstitutionLocationDetails");
 
-          toast.success("Institution Location created Successfully!");
+          snackBar.success("Institution Location created Successfully!");
         } catch (excp) {
-          toast.error("An error happened during the create process.");
+          snackBar.error("An error happened during the create process.");
         }
       }
     };

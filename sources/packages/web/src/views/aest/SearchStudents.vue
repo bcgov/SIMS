@@ -5,7 +5,7 @@
       <v-row
         ><v-col>
           <v-text-field
-            label="Application Number"
+            label="Application number"
             density="compact"
             data-cy="appNumber"
             variant="outlined"
@@ -27,7 +27,7 @@
         </v-col>
         <v-col>
           <v-text-field
-            label="Given Names"
+            label="Given names"
             density="compact"
             data-cy="firstName"
             variant="outlined"
@@ -37,7 +37,7 @@
           /> </v-col
         ><v-col>
           <v-text-field
-            label="Last Name"
+            label="Last name"
             density="compact"
             data-cy="lastName"
             variant="outlined"
@@ -114,8 +114,7 @@ import { useFormatters, useSnackBar, useValidators } from "@/composables";
 
 export default {
   setup() {
-    // todo: ann rename toast to snack bar
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
     const { isSINValid } = useValidators();
     const router = useRouter();
@@ -139,7 +138,7 @@ export default {
       };
       students.value = await StudentService.shared.searchStudents(payload);
       if (students.value.length === 0) {
-        toast.warn("No Students found for the given search criteria. ");
+        snackBar.warn("No Students found for the given search criteria. ");
       }
     };
 

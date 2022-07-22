@@ -66,7 +66,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const showApplyPDButton = ref();
     const initialData = ref({} as StudentFormData);
     const studentAllInfo = ref({} as StudentFormInfo);
@@ -118,11 +118,11 @@ export default {
       try {
         await StudentService.shared.applyForPDStatus();
 
-        toast.success(
+        snackBar.success(
           "Your application is submitted. The outcome will display on your profile",
         );
       } catch (error) {
-        toast.error(
+        snackBar.error(
           "An error happened during the apply PD process. Please try after sometime.",
         );
       }
@@ -142,7 +142,7 @@ export default {
         if (props.editMode) {
           await StudentService.shared.updateStudent(formData);
 
-          toast.success("Student contact information updated!");
+          snackBar.success("Student contact information updated!");
         } else {
           await StudentService.shared.createStudent(
             formData as CreateStudentAPIInDTO,
@@ -152,11 +152,11 @@ export default {
             studentStore.updateProfileData(),
           ]);
 
-          toast.success("Student was successfully created!");
+          snackBar.success("Student was successfully created!");
         }
         router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
       } catch {
-        toast.error("Error while saving student");
+        snackBar.error("Error while saving student");
       }
     };
 

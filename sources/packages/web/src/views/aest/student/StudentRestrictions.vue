@@ -121,7 +121,7 @@ export default {
     const viewRestriction = ref({} as ModalDialog<void>);
     const addRestriction = ref({} as ModalDialog<void>);
     const studentRestriction = ref();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
 
     const loadStudentRestrictions = async () => {
       studentRestrictions.value =
@@ -158,11 +158,11 @@ export default {
         );
         await loadStudentRestrictions();
 
-        toast.success(
+        snackBar.success(
           "The given restriction has been resolved and resolution notes added.",
         );
       } catch (error) {
-        toast.error("Unexpected error while resolving the restriction.");
+        snackBar.error("Unexpected error while resolving the restriction.");
       }
     };
 
@@ -178,9 +178,9 @@ export default {
         );
         await loadStudentRestrictions();
 
-        toast.success("The restriction has been added to student.");
+        snackBar.success("The restriction has been added to student.");
       } catch (error) {
-        toast.error("Unexpected error while adding the restriction.");
+        snackBar.error("Unexpected error while adding the restriction.");
       }
     };
 

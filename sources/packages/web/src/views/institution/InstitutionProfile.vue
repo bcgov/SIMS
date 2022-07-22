@@ -35,7 +35,7 @@ export default {
   setup() {
     // Hooks
     const store = useStore();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const router = useRouter();
     // Data-bind
     const institutionProfileModel = ref({} as InstitutionDetailAPIOutDTO);
@@ -44,13 +44,13 @@ export default {
       try {
         await InstitutionService.shared.updateInstitution(data);
 
-        toast.success("Institution successfully updated!");
+        snackBar.success("Institution successfully updated!");
         await store.dispatch("institution/getInstitutionDetails");
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         });
       } catch (error) {
-        toast.error("Unexpected error while updating the institution.");
+        snackBar.error("Unexpected error while updating the institution.");
       }
     };
 

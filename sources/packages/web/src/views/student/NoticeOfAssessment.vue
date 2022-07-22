@@ -42,16 +42,16 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const confirmAssessment = async () => {
       try {
         await StudentAssessmentsService.shared.confirmAssessmentNOA(
           props.assessmentId,
         );
 
-        toast.success("Confirmation of Assessment completed successfully!");
+        snackBar.success("Confirmation of Assessment completed successfully!");
       } catch (error) {
-        toast.error("An error happened while confirming the assessment.");
+        snackBar.error("An error happened while confirming the assessment.");
       }
     };
 

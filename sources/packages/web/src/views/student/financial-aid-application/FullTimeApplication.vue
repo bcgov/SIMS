@@ -103,7 +103,7 @@ export default {
     const router = useRouter();
     const initialData = ref({});
     const formioUtils = useFormioUtils();
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const savingDraft = ref(false);
     const submittingApplication = ref(false);
     let applicationWizard: any;
@@ -115,15 +115,15 @@ export default {
     const editApplicationModal = ref({} as ModalDialog<boolean>);
 
     const checkProgramYear = async () => {
-      // check program year, if not active allow only readonly mode with a toast
+      // check program year, if not active allow only readonly mode with a snackBar
       const programYearDetails =
         await ApplicationService.shared.getApplicationWithPY(props.id, true);
       if (!programYearDetails.active) {
         isReadOnly.value = true;
 
-        toast.error(
+        snackBar.error(
           "This application can no longer be edited or submitted",
-          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+          snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
         );
       }
     };
@@ -186,9 +186,9 @@ export default {
           associatedFiles,
         });
 
-        toast.success("Application draft saved with success.");
+        snackBar.success("Application draft saved with success.");
       } catch (error) {
-        toast.error("An unexpected error happen.");
+        snackBar.error("An unexpected error happen.");
       } finally {
         savingDraft.value = false;
       }
@@ -208,7 +208,7 @@ export default {
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         });
 
-        toast.success("Thank you, your application has been submitted.");
+        snackBar.success("Thank you, your application has been submitted.");
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An unexpected error happen.";
@@ -224,7 +224,7 @@ export default {
               break;
           }
         }
-        toast.error(`${errorLabel}. ${errorMsg}`);
+        snackBar.error(`${errorLabel}. ${errorMsg}`);
       } finally {
         submittingApplication.value = false;
       }

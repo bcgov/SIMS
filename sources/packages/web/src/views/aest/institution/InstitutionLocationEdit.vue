@@ -35,7 +35,7 @@ export default {
   },
   setup(props: any) {
     const initialData = ref({} as InstitutionLocationEdit);
-    const toast = useSnackBar();
+    const snackBar = useSnackBar();
     const router = useRouter();
     const updateInstitutionLocation = async (
       data: InstitutionLocationAPIInDTO,
@@ -47,11 +47,11 @@ export default {
         );
         router.push(goBackRouteParams.value);
 
-        toast.success(
+        snackBar.success(
           `Your location information for ${data.locationName} have been updated`,
         );
       } catch (excp) {
-        toast.error("An error happened during the update process.");
+        snackBar.error("An error happened during the update process.");
       }
     };
     onMounted(async () => {
