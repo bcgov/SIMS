@@ -75,7 +75,6 @@ import {
   ACTIVE_STUDENT_RESTRICTION,
 } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -100,7 +99,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const formatter = useFormatters();
     const router = useRouter();
     const initialData = ref({});
@@ -122,12 +120,10 @@ export default {
         await ApplicationService.shared.getApplicationWithPY(props.id, true);
       if (!programYearDetails.active) {
         isReadOnly.value = true;
-        emitter.emit(
-          "snackBar",
-          toast.error(
-            "This application can no longer be edited or submitted",
-            toast.EXTENDED_MESSAGE_DISPLAY_TIME,
-          ),
+
+        toast.error(
+          "This application can no longer be edited or submitted",
+          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
         );
       }
     };
@@ -189,12 +185,10 @@ export default {
           data: applicationWizard.submission.data,
           associatedFiles,
         });
-        emitter.emit(
-          "snackBar",
-          toast.success("Application draft saved with success."),
-        );
+
+        toast.success("Application draft saved with success.");
       } catch (error) {
-        emitter.emit("snackBar", toast.error("An unexpected error happen."));
+        toast.error("An unexpected error happen.");
       } finally {
         savingDraft.value = false;
       }
@@ -213,10 +207,8 @@ export default {
         router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         });
-        emitter.emit(
-          "snackBar",
-          toast.success("Thank you, your application has been submitted."),
-        );
+
+        toast.success("Thank you, your application has been submitted.");
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An unexpected error happen.";
@@ -232,7 +224,7 @@ export default {
               break;
           }
         }
-        emitter.emit("snackBar", toast.error(`${errorLabel}. ${errorMsg}`));
+        toast.error(`${errorLabel}. ${errorMsg}`);
       } finally {
         submittingApplication.value = false;
       }

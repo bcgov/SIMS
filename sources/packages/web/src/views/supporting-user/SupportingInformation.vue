@@ -72,7 +72,6 @@ import {
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
 } from "@/types";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   props: {
@@ -82,7 +81,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const router = useRouter();
     const toast = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
@@ -121,18 +119,12 @@ export default {
         !studentsLastName.value ||
         !studentsDateOfBirth.value
       ) {
-        emitter.emit(
-          "snackBar",
-          toast.warn("Please complete all the mandatory fields."),
-        );
+        toast.warn("Please complete all the mandatory fields.");
         return;
       }
 
       if (isNaN(Date.parse(studentsDateOfBirth.value))) {
-        emitter.emit(
-          "snackBar",
-          toast.warn("Please check the Student's Date Of Birth."),
-        );
+        toast.warn("Please check the Student's Date Of Birth.");
         return;
       }
 
@@ -148,21 +140,13 @@ export default {
         formName.value = null;
         switch (error.response.data.errorType) {
           case STUDENT_APPLICATION_NOT_FOUND:
-            emitter.emit(
-              "snackBar",
-              toast.warn(
-                `Application not found. ${error.response.data.message}`,
-              ),
-            );
+            toast.warn(`Application not found. ${error.response.data.message}`);
             break;
           case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
-            emitter.emit(
-              "snackBar",
-              toast.error(
-                `The student cannot act as a supporting user for its own application.
+            toast.error(
+              `The student cannot act as a supporting user for its own application.
               ${error.response.data.message}`,
-                toast.EXTENDED_MESSAGE_DISPLAY_TIME,
-              ),
+              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
         }
@@ -176,40 +160,29 @@ export default {
           props.supportingUserType,
           { ...formData, ...getIdentifiedApplication() },
         );
-        emitter.emit(
-          "snackBar",
-          toast.success("Supporting data submitted with success."),
-        );
+
+        toast.success("Supporting data submitted with success.");
         router.push({ name: SupportingUserRoutesConst.DASHBOARD });
       } catch (error) {
         switch (error.response.data.errorType) {
           case STUDENT_APPLICATION_NOT_FOUND:
-            emitter.emit(
-              "snackBar",
-              toast.error(
-                error.response.data.message,
-                toast.EXTENDED_MESSAGE_DISPLAY_TIME,
-              ),
+            toast.error(
+              error.response.data.message,
+              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
           case SUPPORTING_USER_ALREADY_PROVIDED_DATA:
-            emitter.emit(
-              "snackBar",
-              toast.warn(
-                `User already provided data.
+            toast.warn(
+              `User already provided data.
               ${error.response.data.message}`,
-                toast.EXTENDED_MESSAGE_DISPLAY_TIME,
-              ),
+              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
           case SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA:
-            emitter.emit(
-              "snackBar",
-              toast.warn(
-                `Not expecting data for a ${props.supportingUserType}.
+            toast.warn(
+              `Not expecting data for a ${props.supportingUserType}.
               ${error.response.data.message}`,
-                toast.EXTENDED_MESSAGE_DISPLAY_TIME,
-              ),
+              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
           case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
@@ -219,12 +192,9 @@ export default {
             );
             break;
           default:
-            emitter.emit(
-              "snackBar",
-              toast.error(
-                "Unexpected error while submitting the supporting data.",
-                toast.EXTENDED_MESSAGE_DISPLAY_TIME,
-              ),
+            toast.error(
+              "Unexpected error while submitting the supporting data.",
+              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
         }

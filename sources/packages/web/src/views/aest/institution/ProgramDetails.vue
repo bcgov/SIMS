@@ -51,7 +51,6 @@ import { COLOR_BLUE } from "@/constants";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
 import DeclineProgramModal from "@/components/aest/institution/modals/DeclineProgramModal.vue";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -74,7 +73,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const educationProgram = ref({} as EducationProgramData);
     const approveProgramModal = ref(
       {} as ModalDialog<ApproveProgram | undefined>,
@@ -103,16 +101,10 @@ export default {
           approveProgramData,
         );
 
-        emitter.emit(
-          "snackBar",
-          toast.success(`${educationProgram.value.name} approved !`),
-        );
+        toast.success(`${educationProgram.value.name} approved !`);
         await getEducationProgramAndOffering();
       } catch {
-        emitter.emit(
-          "snackBar",
-          toast.error("An error happened while approving the program."),
-        );
+        toast.error("An error happened while approving the program.");
       }
     };
 
@@ -129,16 +121,10 @@ export default {
           declineProgramData,
         );
 
-        emitter.emit(
-          "snackBar",
-          toast.success(`${educationProgram.value.name} Decline !`),
-        );
+        toast.success(`${educationProgram.value.name} Decline !`);
         await getEducationProgramAndOffering();
       } catch {
-        emitter.emit(
-          "snackBar",
-          toast.error("An error happened while declining the program."),
-        );
+        toast.error("An error happened while declining the program.");
       }
     };
 

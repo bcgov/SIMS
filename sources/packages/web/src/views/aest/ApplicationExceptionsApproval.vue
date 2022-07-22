@@ -38,7 +38,6 @@ import {
 } from "@/services/http/dto";
 import { useAssessment, useFormatters, useSnackBar } from "@/composables";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
-import useEmitter from "@/composables/useEmitter";
 
 /**
  * Model to be used to populate the form.io.
@@ -88,7 +87,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const router = useRouter();
     const toast = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
@@ -143,18 +141,14 @@ export default {
           props.exceptionId,
           approveExceptionPayload,
         );
-        emitter.emit(
-          "snackBar",
-          toast.success(
-            `Application exception status is now ${approveExceptionPayload.exceptionStatus}.`,
-          ),
+
+        toast.success(
+          `Application exception status is now ${approveExceptionPayload.exceptionStatus}.`,
         );
+
         gotToAssessmentsSummary();
       } catch (error: unknown) {
-        emitter.emit(
-          "snackBar",
-          toast.error("An unexpected error happened during the approval."),
-        );
+        toast.error("An unexpected error happened during the approval.");
       } finally {
         processing.value = false;
       }

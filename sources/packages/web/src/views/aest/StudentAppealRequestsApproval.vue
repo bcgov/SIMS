@@ -58,7 +58,6 @@ import {
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -81,7 +80,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const emitter = useEmitter();
+
     const toast = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
     const studentAppealRequests = ref([] as StudentAppealRequest[]);
@@ -129,22 +128,19 @@ export default {
           props.appealId,
           approvals,
         );
-        emitter.emit(
-          "snackBar",
-          toast.success("The request was completed with success."),
-        );
+
+        toast.success("The request was completed with success.");
+
         gotToAssessmentsSummary();
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           if (error.errorType === ASSESSMENT_ALREADY_IN_PROGRESS) {
-            emitter.emit("snackBar", toast.warn(error.message));
+            toast.warn(error.message);
             return;
           }
         }
-        emitter.emit(
-          "snackBar",
-          toast.error("An unexpected error happened during the approval."),
-        );
+
+        toast.error("An unexpected error happened during the approval.");
       }
     };
 

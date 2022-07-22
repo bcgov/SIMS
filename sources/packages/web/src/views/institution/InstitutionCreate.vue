@@ -18,11 +18,9 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { CreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioDropdownLoader, useSnackBar } from "@/composables";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   setup() {
-    const emitter = useEmitter();
     const store = useStore();
     const toast = useSnackBar();
     const router = useRouter();
@@ -35,19 +33,14 @@ export default {
           data,
         );
         await store.dispatch("institution/initialize");
-        emitter.emit(
-          "snackBar",
-          toast.success("Institution and User successfully created!"),
-        );
+
+        toast.success("Institution and User successfully created!");
         await store.dispatch("institution/getInstitutionDetails");
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         });
       } catch (error) {
-        emitter.emit(
-          "snackBar",
-          toast.error("Unexpected error while creating the institution."),
-        );
+        toast.error("Unexpected error while creating the institution.");
       }
     };
 
@@ -61,10 +54,7 @@ export default {
           institutionLegalName: bceidAccount.institution.legalName,
         };
       } else {
-        emitter.emit(
-          "snackBar",
-          toast.error("Unable to fetch account details."),
-        );
+        toast.error("Unable to fetch account details.");
       }
     });
 

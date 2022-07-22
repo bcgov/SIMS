@@ -24,7 +24,6 @@ import { InstitutionLocationEdit } from "@/types";
 import { InstitutionLocationAPIInDTO } from "@/services/http/dto";
 import { useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: { LocationEditForm },
@@ -35,7 +34,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const initialData = ref({} as InstitutionLocationEdit);
     const toast = useSnackBar();
     const router = useRouter();
@@ -48,17 +46,12 @@ export default {
           data,
         );
         router.push(goBackRouteParams.value);
-        emitter.emit(
-          "snackBar",
-          toast.success(
-            `Your location information for ${data.locationName} have been updated`,
-          ),
+
+        toast.success(
+          `Your location information for ${data.locationName} have been updated`,
         );
       } catch (excp) {
-        emitter.emit(
-          "snackBar",
-          toast.error("An error happened during the update process."),
-        );
+        toast.error("An error happened during the update process.");
       }
     };
     onMounted(async () => {

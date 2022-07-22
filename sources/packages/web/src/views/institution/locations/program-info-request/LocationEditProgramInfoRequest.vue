@@ -44,7 +44,6 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   OFFERING_INTENSITY_MISMATCH,
 } from "@/constants";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   props: {
@@ -58,7 +57,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const toast = useSnackBar();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
@@ -183,22 +181,16 @@ export default {
             props.applicationId,
             data,
           );
-          emitter.emit(
-            "snackBar",
-            toast.success("Program Information Request denied successfully!"),
-          );
+
+          toast.success("Program Information Request denied successfully!");
         } else {
           await ProgramInfoRequestService.shared.completeProgramInfoRequest(
             props.locationId,
             props.applicationId,
             data,
           );
-          emitter.emit(
-            "snackBar",
-            toast.success(
-              "Program Information Request completed successfully!",
-            ),
-          );
+
+          toast.success("Program Information Request completed successfully!");
         }
         router.push({
           name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
@@ -219,7 +211,7 @@ export default {
             errorMsg = error.message;
           }
         }
-        emitter.emit("snackBar", toast.error(`${errorLabel}. ${errorMsg}`));
+        toast.error(`${errorLabel}. ${errorMsg}`);
       }
     };
     return {

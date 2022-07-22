@@ -59,7 +59,7 @@ import {
   INSTITUTION_USER_ALREADY_EXISTS,
   LEGAL_SIGNING_AUTHORITY_EXIST,
 } from "@/constants";
-import useEmitter from "@/composables/useEmitter";
+
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 
 const submitKnownErrors = [
@@ -82,7 +82,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const {
       showDialog,
       resolvePromise,
@@ -178,10 +177,7 @@ export default {
         ) {
           editUserForm.value.errors.push({ errorMessages: [error.message] });
         } else {
-          emitter.emit(
-            "snackBar",
-            toast.error("An unexpected error happen while updating the user."),
-          );
+          toast.error("An unexpected error happen while updating the user.");
         }
       } finally {
         processing.value = false;

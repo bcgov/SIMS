@@ -50,7 +50,6 @@ import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
 import { useFormatters, useSnackBar } from "@/composables";
 import { StudentNoteType, NoteBaseDTO, NoteEntityType } from "@/types";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: { Notes },
@@ -61,7 +60,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const notes = ref();
     const filteredNoteType = ref();
     const { dateOnlyLongString } = useFormatters();
@@ -79,15 +77,10 @@ export default {
       try {
         await NoteService.shared.addStudentNote(props.studentId, data);
         await filterNotes(filteredNoteType.value);
-        emitter.emit(
-          "snackBar",
-          toast.success("The note has been added to the student."),
-        );
+
+        toast.success("The note has been added to the student.");
       } catch (error) {
-        emitter.emit(
-          "snackBar",
-          toast.error("Unexpected error while adding the note."),
-        );
+        toast.error("Unexpected error while adding the note.");
       }
     };
 

@@ -58,7 +58,6 @@ import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   INVALID_APPLICATION_NUMBER,
 } from "@/constants";
-import useEmitter from "@/composables/useEmitter";
 
 // Model for student request change form.
 interface StudentRequestSelectedForms {
@@ -71,7 +70,6 @@ export default {
     AppealRequestsForm,
   },
   setup() {
-    const emitter = useEmitter();
     const toast = useSnackBar();
     let requestFormData: any = undefined;
     const appealRequestsForms = ref([] as StudentAppealRequest[]);
@@ -94,15 +92,9 @@ export default {
         const errorMessage = "An error happened while requesting a change.";
         const errorLabel = "Unexpected error";
         if (error.response.data?.errorType === INVALID_APPLICATION_NUMBER) {
-          emitter.emit(
-            "snackBar",
-            toast.warn(`Application not found. ${error.response.data.message}`),
-          );
+          toast.warn(`Application not found. ${error.response.data.message}`);
         } else {
-          emitter.emit(
-            "snackBar",
-            toast.error(`${errorLabel}. ${errorMessage}`),
-          );
+          toast.error(`${errorLabel}. ${errorMessage}`);
         }
       }
     };
@@ -125,11 +117,9 @@ export default {
           applicationId,
           appealRequests,
         );
-        emitter.emit(
-          "snackBar",
-          toast.success(
-            "The request for change has been submitted successfully.",
-          ),
+
+        toast.success(
+          "The request for change has been submitted successfully.",
         );
         //TODO: Redirect to appeal view page once it is developed.
         backToRequestForm();
@@ -141,17 +131,12 @@ export default {
               APPLICATION_CHANGE_NOT_ELIGIBLE,
             ].includes(error.errorType)
           ) {
-            emitter.emit(
-              "snackBar",
-              toast.warn(`Not able to submit. ${error.message}`),
-            );
+            toast.warn(`Not able to submit. ${error.message}`);
             return;
           }
         }
-        emitter.emit(
-          "snackBar",
-          toast.error("An unexpected error happened during the submission."),
-        );
+
+        toast.error("An unexpected error happened during the submission.");
       }
     };
 

@@ -17,7 +17,7 @@ import { useStore } from "vuex";
 import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
-import useEmitter from "@/composables/useEmitter";
+
 import { useSnackBar } from "@/composables";
 
 export default {
@@ -29,7 +29,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     // Hooks
     const store = useStore();
     const toast = useSnackBar();
@@ -40,15 +39,10 @@ export default {
           await InstitutionService.shared.createInstitutionLocation(data);
           router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
           store.dispatch("institution/getUserInstitutionLocationDetails");
-          emitter.emit(
-            "snackBar",
-            toast.success("Institution Location created Successfully!"),
-          );
+
+          toast.success("Institution Location created Successfully!");
         } catch (excp) {
-          emitter.emit(
-            "snackBar",
-            toast.error("An error happened during the create process."),
-          );
+          toast.error("An error happened during the create process.");
         }
       }
     };

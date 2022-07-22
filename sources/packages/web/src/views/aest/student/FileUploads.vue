@@ -94,7 +94,6 @@ import {
   AESTFileUploadToStudentAPIInDTO,
   StudentUploadFileAPIOutDTO,
 } from "@/services/http/dto/Student.dto";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -107,7 +106,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const studentFileUploads = ref([] as StudentUploadFileAPIOutDTO[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { dateOnlyLongString } = useFormatters();
@@ -139,15 +137,13 @@ export default {
           props.studentId,
           payload,
         );
-        emitter.emit(
-          "snackBar",
-          toast.success(
-            "The documents were submitted and a notification was sent to the student.",
-          ),
+
+        toast.success(
+          "The documents were submitted and a notification was sent to the student.",
         );
         await loadStudentFileUploads();
       } catch {
-        emitter.emit("snackBar", toast.error("An unexpected error happened."));
+        toast.error("An unexpected error happened.");
       }
     };
 

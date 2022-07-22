@@ -102,7 +102,6 @@ import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import AssessOfferingModal from "@/components/aest/institution/modals/AssessOfferingModal.vue";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -129,7 +128,6 @@ export default {
   },
   //Todo: Change the initialData to a well defined contract.
   setup(props: any) {
-    const emitter = useEmitter();
     const toast = useSnackBar();
     const router = useRouter();
     const items = [
@@ -293,29 +291,20 @@ export default {
               props.offeringId,
               data,
             );
-            emitter.emit(
-              "snackBar",
-              toast.success("Education Offering updated successfully!"),
-            );
+
+            toast.success("Education Offering updated successfully!");
           } else {
             await EducationProgramOfferingService.shared.createProgramOffering(
               props.locationId,
               props.programId,
               data,
             );
-            emitter.emit(
-              "snackBar",
-              toast.success("Education Offering created successfully!"),
-            );
+
+            toast.success("Education Offering created successfully!");
           }
           router.push(getRouteLocation());
         } catch (excp) {
-          emitter.emit(
-            "snackBar",
-            toast.error(
-              "An error happened during the Offering saving process.",
-            ),
-          );
+          toast.error("An error happened during the Offering saving process.");
         }
       }
     };
@@ -329,19 +318,14 @@ export default {
             props.offeringId,
             responseData as OfferingAssessmentAPIInDTO,
           );
-          emitter.emit(
-            "snackBar",
-            toast.success(
-              `The given offering has been ${offeringStatus.toLowerCase()} and notes added.`,
-            ),
+
+          toast.success(
+            `The given offering has been ${offeringStatus.toLowerCase()} and notes added.`,
           );
           await loadFormData();
         } catch (error) {
-          emitter.emit(
-            "snackBar",
-            toast.error(
-              "Unexpected error while approving/declining the offering.",
-            ),
+          toast.error(
+            "Unexpected error while approving/declining the offering.",
           );
         }
       }

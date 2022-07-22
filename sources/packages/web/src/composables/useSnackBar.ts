@@ -1,33 +1,39 @@
-import { SnackBarOptions, SnackBarType } from "@/types";
+import { SnackBarType } from "@/types";
+import useEmitter from "./useEmitter";
 
 export function useSnackBar() {
-  const success = (content: string, displayTime = 5000): SnackBarOptions => {
-    return {
+  const emitter = useEmitter();
+
+  const success = (content: string, displayTime = 5000): void => {
+    const snackbarOptions = {
       show: true,
       type: SnackBarType.success,
       content: content,
       displayTime: displayTime,
     };
+    emitter.emit("snackBar", snackbarOptions);
   };
 
-  const error = (content: string, displayTime = 5000): SnackBarOptions => {
-    return {
+  const error = (content: string, displayTime = 5000): void => {
+    const snackbarOptions = {
       show: true,
       type: SnackBarType.error,
       content: content,
       displayTime: displayTime,
     };
+    emitter.emit("snackBar", snackbarOptions);
   };
 
-  const warn = (content: string, displayTime = 5000): SnackBarOptions => {
-    return {
+  const warn = (content: string, displayTime = 5000): void => {
+    const snackbarOptions = {
       show: true,
       type: SnackBarType.warn,
       content: content,
       displayTime: `${displayTime}`,
     };
-  };
 
+    emitter.emit("snackBar", snackbarOptions);
+  };
   /**
    * toast display time
    */

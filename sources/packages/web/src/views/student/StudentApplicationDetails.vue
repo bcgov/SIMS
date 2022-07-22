@@ -84,7 +84,6 @@ import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import { GetApplicationDataDto, ApplicationStatus, MenuType } from "@/types";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -99,7 +98,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const router = useRouter();
     const items = ref([] as MenuType[]);
     const { dateString } = useFormatters();
@@ -138,10 +136,7 @@ export default {
           },
         });
       } catch (error) {
-        emitter.emit(
-          "snackBar",
-          toast.error("Unexpected Error", toast.EXTENDED_MESSAGE_DISPLAY_TIME),
-        );
+        toast.error("Unexpected Error", toast.EXTENDED_MESSAGE_DISPLAY_TIME);
       }
     };
 

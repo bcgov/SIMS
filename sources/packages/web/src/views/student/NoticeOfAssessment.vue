@@ -26,7 +26,6 @@ import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFo
 import { useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -43,22 +42,16 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const toast = useSnackBar();
     const confirmAssessment = async () => {
       try {
         await StudentAssessmentsService.shared.confirmAssessmentNOA(
           props.assessmentId,
         );
-        emitter.emit(
-          "snackBar",
-          toast.success("Confirmation of Assessment completed successfully!"),
-        );
+
+        toast.success("Confirmation of Assessment completed successfully!");
       } catch (error) {
-        emitter.emit(
-          "snackBar",
-          toast.error("An error happened while confirming the assessment."),
-        );
+        toast.error("An error happened while confirming the assessment.");
       }
     };
 

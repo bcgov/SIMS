@@ -72,7 +72,7 @@ import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
 } from "@/constants";
-import useEmitter from "@/composables/useEmitter";
+
 import {
   ApplicationDetailsForCOEAPIOutDTO,
   ConfirmationOfEnrollmentAPIInDTO,
@@ -96,7 +96,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const router = useRouter();
     const toast = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
@@ -125,10 +124,8 @@ export default {
           props.disbursementScheduleId,
           payload,
         );
-        emitter.emit(
-          "snackBar",
-          toast.success("Confirmation of Enrollment Confirmed!"),
-        );
+
+        toast.success("Confirmation of Enrollment Confirmed!");
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An error happened while confirming the COE.";
@@ -144,7 +141,7 @@ export default {
               break;
           }
         }
-        emitter.emit("snackBar", toast.error(`${errorLabel}. ${errorMsg}`));
+        toast.error(`${errorLabel}. ${errorMsg}`);
       }
     };
     const submitCOEDeny = async (
@@ -156,10 +153,8 @@ export default {
           props.disbursementScheduleId,
           submissionData,
         );
-        emitter.emit(
-          "snackBar",
-          toast.success("Application Status Has Been Updated."),
-        );
+
+        toast.success("Application Status Has Been Updated.");
         router.push({
           name: InstitutionRoutesConst.COE_SUMMARY,
           params: {
@@ -167,11 +162,8 @@ export default {
           },
         });
       } catch {
-        emitter.emit(
-          "snackBar",
-          toast.error(
-            "An error happened while denying Confirmation of Enrollment.",
-          ),
+        toast.error(
+          "An error happened while denying Confirmation of Enrollment.",
         );
       }
     };

@@ -43,7 +43,6 @@ import { useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   props: {
@@ -57,7 +56,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const toast = useSnackBar();
     const router = useRouter();
     const institutionId = ref();
@@ -190,23 +188,16 @@ export default {
               props.programId,
               data,
             );
-            emitter.emit(
-              "snackBar",
-              toast.success("Education Program updated successfully!"),
-            );
+
+            toast.success("Education Program updated successfully!");
           } else {
             await EducationProgramService.shared.createProgram(data);
-            emitter.emit(
-              "snackBar",
-              toast.success("Education Program created successfully!"),
-            );
+
+            toast.success("Education Program created successfully!");
           }
           goBack();
         } catch (excp) {
-          emitter.emit(
-            "snackBar",
-            toast.error("An error happened during the saving process."),
-          );
+          toast.error("An error happened during the saving process.");
         }
       }
     };

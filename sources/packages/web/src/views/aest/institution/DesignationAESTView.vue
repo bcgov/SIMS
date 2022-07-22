@@ -63,7 +63,6 @@ import {
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ApproveDenyDesignation from "@/views/aest/institution/ApproveDenyDesignation.vue";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -81,7 +80,6 @@ export default {
     },
   },
   setup(props: any) {
-    const emitter = useEmitter();
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
     const designationAgreement = ref({} as GetDesignationAgreementDto);
@@ -190,19 +188,14 @@ export default {
             props.designationId,
             response as UpdateDesignationDto,
           );
-          emitter.emit(
-            "snackBar",
-            toast.success(
-              `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
-            ),
+
+          toast.success(
+            `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
           );
           await loadDesignation();
         } catch (error) {
-          emitter.emit(
-            "snackBar",
-            toast.error(
-              "Unexpected error while approving/declining the designation.",
-            ),
+          toast.error(
+            "Unexpected error while approving/declining the designation.",
           );
         }
       }

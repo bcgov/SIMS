@@ -52,7 +52,6 @@ import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
-import useEmitter from "@/composables/useEmitter";
 
 export default {
   components: {
@@ -75,7 +74,6 @@ export default {
   },
 
   setup(props: any) {
-    const emitter = useEmitter();
     const toast = useSnackBar();
     const router = useRouter();
     const initialData = ref(
@@ -138,10 +136,8 @@ export default {
           props.offeringId,
           data,
         );
-        emitter.emit(
-          "snackBar",
-          toast.success("Request for change has been submitted."),
-        );
+
+        toast.success("Request for change has been submitted.");
         router.push({
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
           params: {
@@ -150,11 +146,8 @@ export default {
           },
         });
       } catch (error: unknown) {
-        emitter.emit(
-          "snackBar",
-          toast.error(
-            "An error happened while requesting a change to the offering.",
-          ),
+        toast.error(
+          "An error happened while requesting a change to the offering.",
         );
       }
     };
