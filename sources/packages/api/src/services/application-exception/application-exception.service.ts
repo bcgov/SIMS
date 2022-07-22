@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Brackets, DataSource, OrderByCondition } from "typeorm";
+import { Brackets, DataSource } from "typeorm";
 import {
   Application,
   ApplicationException,
@@ -14,6 +14,7 @@ import {
 import {
   CustomNamedError,
   FieldSortOrder,
+  OrderByCondition,
   PaginatedResults,
   PaginationOptions,
 } from "../../utilities";

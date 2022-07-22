@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Brackets, DataSource, OrderByCondition } from "typeorm";
+import { Brackets, DataSource } from "typeorm";
 import {
   Application,
   AssessmentTriggerType,
@@ -27,6 +27,7 @@ import {
   PaginatedResults,
   PaginationOptions,
   SortPriority,
+  OrderByCondition,
 } from "../../utilities";
 import {
   STUDENT_APPEAL_INVALID_OPERATION,

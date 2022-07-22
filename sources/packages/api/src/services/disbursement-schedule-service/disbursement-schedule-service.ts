@@ -9,15 +9,9 @@ import {
   FieldSortOrder,
   PaginatedResults,
   mapFromRawAndEntities,
-} from "../../utilities";
-import {
-  DataSource,
-  In,
-  Repository,
-  Brackets,
   OrderByCondition,
-  UpdateResult,
-} from "typeorm";
+} from "../../utilities";
+import { DataSource, In, Repository, UpdateResult, Brackets } from "typeorm";
 import { SequenceControlService, StudentRestrictionService } from "..";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
