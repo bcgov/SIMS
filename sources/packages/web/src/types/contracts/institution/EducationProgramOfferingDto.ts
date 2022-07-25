@@ -44,3 +44,10 @@ export enum OfferingTypes {
    */
   ScholasticStanding = "Scholastic standing",
 }
+
+export interface CourseDetails {
+  courseName: string;
+  courseCode: string;
+  courseStartDate: string;
+  courseEndDate: string;
+}

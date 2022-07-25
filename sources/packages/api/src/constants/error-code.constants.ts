@@ -41,3 +41,9 @@ export const INSTITUTION_MUST_HAVE_AN_ADMIN = "INSTITUTION_MUST_HAVE_AN_ADMIN";
  * The BCeID user id was not able to be retrieved from the BCeID Web Service.
  */
 export const BCEID_ACCOUNT_NOT_FOUND = "BCEID_ACCOUNT_NOT_FOUND";
+/**
+ * Program information request (PIR) errors.
+ */
+export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
+export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
+  "PIR_DENIED_REASON_NOT_FOUND_ERROR";

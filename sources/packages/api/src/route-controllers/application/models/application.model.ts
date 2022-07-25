@@ -93,15 +93,6 @@ export class GetApplicationDataDto extends GetApplicationBaseDTO {
   programYearEndDate: Date;
 }
 
-export interface PIRSummaryDTO {
-  applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  applicationId: number;
-  pirStatus: string;
-  fullName: string;
-}
-
 export interface ApplicationStatusToBeUpdatedDto {
   applicationStatus: ApplicationStatus;
 }
