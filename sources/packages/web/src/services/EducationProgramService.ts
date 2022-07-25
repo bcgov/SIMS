@@ -2,7 +2,6 @@ import {
   SummaryEducationProgramDto,
   OptionItemDto,
   EducationProgramAPIDTO,
-  EducationProgramData,
   DataTableSortOrder,
   ProgramSummaryFields,
   DEFAULT_PAGE_LIMIT,
@@ -12,8 +11,8 @@ import {
   DeclineProgram,
   StudentEducationProgramAPIOutDTO,
 } from "@/types";
-
-import ApiClient from "./http/ApiClient";
+import ApiClient from "@/services/http/ApiClient";
+import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
 export class EducationProgramService {
   // Share Instance
@@ -69,9 +68,14 @@ export class EducationProgramService {
     );
   }
 
+  /**
+   * Get program details for a program id.
+   * @param programId program id
+   * @returns program information.
+   */
   public async getEducationProgram(
     programId: number,
-  ): Promise<EducationProgramData> {
+  ): Promise<EducationProgramAPIOutDTO> {
     return ApiClient.EducationProgram.getEducationProgram(programId);
   }
 
@@ -94,12 +98,12 @@ export class EducationProgramService {
   public async getLocationProgramsOptionList(
     locationId: number,
     programYearId: number,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgram.getLocationProgramsOptionList(
       locationId,
       programYearId,
-      includeInActivePY,
+      isIncludeInActiveProgramYear,
     );
   }
 
@@ -109,17 +113,6 @@ export class EducationProgramService {
    */
   public async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgram.getProgramsListForInstitutions();
-  }
-
-  /**
-   * Education Program Details for ministry users
-   * @param programId program id
-   * @returns Education Program Details
-   */
-  public async getEducationProgramForAEST(
-    programId: number,
-  ): Promise<EducationProgramData> {
-    return ApiClient.EducationProgram.getEducationProgramForAEST(programId);
   }
 
   /**

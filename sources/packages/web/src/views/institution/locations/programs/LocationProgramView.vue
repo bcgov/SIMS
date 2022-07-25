@@ -20,8 +20,8 @@
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
 import { ref, onMounted } from "vue";
-import { EducationProgramData } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
+import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
 export default {
   components: { ManageProgramAndOfferingSummary },
@@ -36,7 +36,7 @@ export default {
     },
   },
   setup(props: any) {
-    const educationProgram = ref({} as EducationProgramData);
+    const educationProgram = ref({} as EducationProgramAPIOutDTO);
     const getEducationProgramAndOffering = async () => {
       educationProgram.value =
         await EducationProgramService.shared.getEducationProgram(

@@ -1,4 +1,11 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  ParseBoolPipe,
+  ParseIntPipe,
+  Query,
+} from "@nestjs/common";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -10,6 +17,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import { credentialTypeToDisplay, deliveryMethod } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { OptionItemAPIOutDTO } from "../models/common.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -27,7 +35,7 @@ export class EducationProgramStudentsController extends BaseController {
    */
   @Get(":programId")
   async getStudentEducationProgram(
-    @Param("programId") programId: number,
+    @Param("programId", ParseIntPipe) programId: number,
   ): Promise<StudentEducationProgramAPIOutDTO> {
     const educationProgram =
       await this.programService.getStudentEducationProgram(programId);
@@ -44,5 +52,34 @@ export class EducationProgramStudentsController extends BaseController {
         educationProgram.deliveredOnSite,
       ),
     };
+  }
+
+  /**
+   * Get a key/value pair list of all programs that have at least one offering for the particular location.
+   * Executes the students-based authorization (students must have access to all programs).
+   * @param locationId location id.
+   * @param programYearId program year that the program belongs to.
+   * @param isIncludeInActiveProgramYear if true, only programs associate with active
+   * program years are considered.
+   * @returns key/value pair list of programs.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Get("location/:locationId/program-year/:programYearId/options-list")
+  async getLocationProgramsOptionList(
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programYearId", ParseIntPipe) programYearId: number,
+    @Query("isIncludeInActiveProgramYear", ParseBoolPipe)
+    isIncludeInActiveProgramYear = false,
+  ): Promise<OptionItemAPIOutDTO[]> {
+    const programs = await this.programService.getProgramsForLocation(
+      locationId,
+      programYearId,
+      isIncludeInActiveProgramYear,
+    );
+
+    return programs.map((program) => ({
+      id: program.id,
+      description: program.name,
+    }));
   }
 }

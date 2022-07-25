@@ -57,6 +57,7 @@ import {
   ScholasticStandingAESTController,
   ScholasticStandingControllerService,
   InstitutionUserAESTController,
+  EducationProgramAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -79,6 +80,7 @@ import { InstitutionUserControllerService } from "./route-controllers/institutio
     ReportAESTController,
     ApplicationExceptionAESTController,
     ScholasticStandingAESTController,
+    EducationProgramAESTController,
   ],
   providers: [
     SupportingUserService,

@@ -8,7 +8,7 @@ export * from "@/types/contracts/ProgramYearContract";
 export * from "@/types/contracts/UserContract";
 export * from "@/types/contracts/institution/InstitutionLocation";
 export * from "@/types/contracts/institution/InstitutionUser";
-export * from "@/types/contracts/institution/EducationProgramDto";
+export * from "@/types/contracts/institution/EducationProgram";
 export * from "@/types/contracts/institution/EducationProgramOfferingDto";
 export * from "@/types/contracts/OfferingContact";
 export * from "@/types/StoreState";

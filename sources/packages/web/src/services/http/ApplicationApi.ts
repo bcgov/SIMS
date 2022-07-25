@@ -100,12 +100,12 @@ export class ApplicationApi extends HttpBaseClient {
 
   async getApplicationWithPY(
     applicationId: number,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<ApplicationWithProgramYearDto> {
     try {
       let url = this.addClientRoot(`application/${applicationId}/program-year`);
-      if (includeInActivePY) {
-        url = `${url}?includeInActivePY=${includeInActivePY}`;
+      if (isIncludeInActiveProgramYear) {
+        url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
       }
       const response = await this.getCall(url);
       return response.data as ApplicationWithProgramYearDto;

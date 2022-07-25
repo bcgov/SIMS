@@ -1,7 +1,6 @@
 import {
   SummaryEducationProgramDto,
   OptionItemDto,
-  EducationProgramData,
   DataTableSortOrder,
   ProgramSummaryFields,
   DEFAULT_PAGE_LIMIT,
@@ -13,9 +12,10 @@ import {
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { addSortOptions } from "@/helpers";
+import { EducationProgramAPIOutDTO } from "./dto";
 
 export class EducationProgramApi extends HttpBaseClient {
-  public async getProgram(programId: number): Promise<any> {
+  async getProgram(programId: number): Promise<any> {
     try {
       const response = await this.apiClient.get(
         `institution/education-program/${programId}`,
@@ -28,7 +28,7 @@ export class EducationProgramApi extends HttpBaseClient {
     }
   }
 
-  public async createProgram(createProgramDto: any): Promise<void> {
+  async createProgram(createProgramDto: any): Promise<void> {
     try {
       await this.apiClient.post(
         "institution/education-program",
@@ -41,10 +41,7 @@ export class EducationProgramApi extends HttpBaseClient {
     }
   }
 
-  public async updateProgram(
-    programId: number,
-    updateProgramDto: any,
-  ): Promise<void> {
+  async updateProgram(programId: number, updateProgramDto: any): Promise<void> {
     try {
       await this.apiClient.put(
         `institution/education-program/${programId}`,
@@ -70,7 +67,7 @@ export class EducationProgramApi extends HttpBaseClient {
    * @param sortOrder, order to be sorted
    * @returns program summary for an institution location.
    */
-  public async getLocationProgramsSummary(
+  async getLocationProgramsSummary(
     locationId: number,
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
@@ -92,19 +89,17 @@ export class EducationProgramApi extends HttpBaseClient {
     }
   }
 
-  public async getEducationProgram(
+  /**
+   * Get program details for a program id.
+   * @param programId program id
+   * @returns program information.
+   */
+  async getEducationProgram(
     programId: number,
-  ): Promise<EducationProgramData> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/education-program/${programId}/details`,
-        this.addAuthHeader(),
-      );
-      return response.data as EducationProgramData;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  ): Promise<EducationProgramAPIOutDTO> {
+    return this.getCallTyped<EducationProgramAPIOutDTO>(
+      this.addClientRoot(`institution/education-program/${programId}/details`),
+    );
   }
 
   /**
@@ -112,7 +107,7 @@ export class EducationProgramApi extends HttpBaseClient {
    * @param programId program id to be returned.
    * @returns education program for a student.
    */
-  public async getStudentEducationProgram(
+  async getStudentEducationProgram(
     programId: number,
   ): Promise<StudentEducationProgramAPIOutDTO> {
     return this.getCallTyped(
@@ -125,15 +120,15 @@ export class EducationProgramApi extends HttpBaseClient {
    * @param locationId location id.
    * @returns location programs option list.
    */
-  public async getLocationProgramsOptionList(
+  async getLocationProgramsOptionList(
     locationId: number,
     programYearId: number,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
     try {
       let url = `institution/education-program/location/${locationId}/program-year/${programYearId}/options-list`;
-      if (includeInActivePY) {
-        url = `${url}?includeInActivePY=${includeInActivePY}`;
+      if (isIncludeInActiveProgramYear) {
+        url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
       }
       const response = await this.getCall(url);
       return response.data;
@@ -147,7 +142,7 @@ export class EducationProgramApi extends HttpBaseClient {
    * Gets location programs list authorized for institutions.
    * @returns location programs list for institutions.
    */
-  public async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
+  async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
     try {
       const response = await this.apiClient.get(
         "institution/education-program/programs-list",
@@ -161,32 +156,12 @@ export class EducationProgramApi extends HttpBaseClient {
   }
 
   /**
-   * Education Program Details for ministry users
-   * @param programId program id
-   * @returns Education Program Details
-   */
-  public async getEducationProgramForAEST(
-    programId: number,
-  ): Promise<EducationProgramData> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/education-program/${programId}/aest`,
-        this.addAuthHeader(),
-      );
-      return response.data as EducationProgramData;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  /**
    * Ministry user approve's a pending program.
    * @param programId program id.
    * @param institutionId institution id.
    * @param payload ApproveProgram.
    */
-  public async approveProgram(
+  async approveProgram(
     programId: number,
     institutionId: number,
     payload: ApproveProgram,
@@ -203,7 +178,7 @@ export class EducationProgramApi extends HttpBaseClient {
    * @param institutionId institution id.
    * @param payload DeclineProgram.
    */
-  public async declineProgram(
+  async declineProgram(
     programId: number,
     institutionId: number,
     payload: DeclineProgram,

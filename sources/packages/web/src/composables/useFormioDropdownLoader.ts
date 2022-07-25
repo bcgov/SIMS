@@ -46,7 +46,7 @@ export function useFormioDropdownLoader() {
     locationId: number,
     dropdownName: string,
     programYearId: number,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ) => {
     return loadDropdown(
       form,
@@ -54,7 +54,7 @@ export function useFormioDropdownLoader() {
       EducationProgramService.shared.getLocationProgramsOptionList(
         locationId,
         programYearId,
-        includeInActivePY,
+        isIncludeInActiveProgramYear,
       ),
     );
   };
@@ -80,7 +80,7 @@ export function useFormioDropdownLoader() {
     dropdownName: string,
     programYearId: number,
     selectedIntensity: OfferingIntensity,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ) => {
     return loadDropdown(
       form,
@@ -90,7 +90,7 @@ export function useFormioDropdownLoader() {
         programId,
         programYearId,
         selectedIntensity,
-        includeInActivePY,
+        isIncludeInActiveProgramYear,
       ),
     );
   };
@@ -103,7 +103,7 @@ export function useFormioDropdownLoader() {
     dropdownName: string,
     programYearId: number,
     selectedOfferingIntensity: OfferingIntensity,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ) => {
     return loadDropdown(
       form,
@@ -113,7 +113,7 @@ export function useFormioDropdownLoader() {
         programId,
         programYearId,
         selectedOfferingIntensity,
-        includeInActivePY,
+        isIncludeInActiveProgramYear,
       ),
     );
   };

@@ -76,11 +76,11 @@ export class ApplicationService {
 
   public async getApplicationWithPY(
     applicationId: number,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<ApplicationWithProgramYearDto> {
     return ApiClient.Application.getApplicationWithPY(
       applicationId,
-      includeInActivePY,
+      isIncludeInActiveProgramYear,
     );
   }
 

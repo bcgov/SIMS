@@ -4,37 +4,23 @@ import {
   Get,
   NotFoundException,
   Param,
-  Patch,
+  ParseIntPipe,
   Post,
   Put,
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import {
-  IInstitutionUserToken,
-  IUserToken,
-} from "../../auth/userToken.interface";
+import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   HasLocationAccess,
   UserToken,
-  Groups,
 } from "../../auth/decorators";
 import {
   EducationProgramDto,
-  EducationProgramDataDto,
-  transformToEducationProgramData,
-  ProgramsSummary,
-  DeclineProgram,
-  ApproveProgram,
   EducationProgramAPIOutDTO,
 } from "./models/save-education-program.dto";
-import {
-  EducationProgramOfferingService,
-  EducationProgramService,
-  FormService,
-} from "../../services";
 import { FormNames } from "../../services/form/constants";
 import {
   SaveEducationProgram,
@@ -42,8 +28,7 @@ import {
 } from "../../services/education-program/education-program.service.models";
 import { SubsetEducationProgramDto } from "./models/education-program.dto";
 import { EducationProgram, OfferingTypes } from "../../database/entities";
-import { OptionItem } from "../../types";
-import { UserGroups } from "../../auth/user-groups.enum";
+import { ClientTypeBaseRoute, OptionItem } from "../../types";
 import {
   credentialTypeToDisplay,
   FieldSortOrder,
@@ -55,10 +40,16 @@ import {
 } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import {
+  EducationProgramService,
+  FormService,
+  EducationProgramOfferingService,
+} from "../../services";
 
-@Controller("institution/education-program")
-@ApiTags("institution")
-export class EducationProgramController extends BaseController {
+@AllowAuthorizedParty(AuthorizedParties.institution)
+@Controller("education-program")
+@ApiTags(`${ClientTypeBaseRoute.Institution}-education-program`)
+export class EducationProgramInstitutionsController extends BaseController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
@@ -82,19 +73,14 @@ export class EducationProgramController extends BaseController {
   @HasLocationAccess("locationId")
   @Get("location/:locationId/summary")
   async getSummary(
-    @Param("locationId") locationId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
     @Query("searchCriteria") searchCriteria: string,
     @Query("sortField") sortField: string,
     @Query("sortOrder") sortOrder: FieldSortOrder,
-    @UserToken() userToken: IInstitutionUserToken,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PaginatedResults<EducationProgramsSummary>> {
-    // [OfferingTypes.applicationSpecific] offerings are
-    // created during PIR, if required, and they are supposed
-    // to be viewed only associated to the application that they
-    // were associated to during the PIR, hence they should not
-    // be displayed alongside with the public offerings.
     return this.programService.getSummaryForLocation(
       userToken.authorizations.institutionId,
       locationId,
@@ -122,8 +108,8 @@ export class EducationProgramController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @Put(":id")
   async update(
+    @Param("id", ParseIntPipe) id: number,
     @Body() payload: EducationProgramDto,
-    @Param("id") id: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
     // Ensures that the user has access to the institution
@@ -184,7 +170,7 @@ export class EducationProgramController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get(":programId/details")
   async getProgramDetails(
-    @Param("programId") programId: number,
+    @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<SubsetEducationProgramDto> {
     const educationProgram = await this.programService.getLocationPrograms(
@@ -216,35 +202,6 @@ export class EducationProgramController extends BaseController {
   }
 
   /**
-   * Get a key/value pair list of all programs that have
-   * at least one offering for the particular location.
-   * Executes the students-based authorization
-   * (students must have access to all programs).
-   * @param locationId location id.
-   * @query includeInActivePY includeInActivePY, if includeInActivePY, then both active
-   * and not active program year is considered
-   * @returns key/value pair list of programs.
-   */
-  @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("location/:locationId/program-year/:programYearId/options-list")
-  async getLocationProgramsOptionList(
-    @Param("locationId") locationId: number,
-    @Param("programYearId") programYearId: number,
-    @Query("includeInActivePY") includeInActivePY = false,
-  ): Promise<OptionItem[]> {
-    const programs = await this.programService.getProgramsForLocation(
-      locationId,
-      programYearId,
-      includeInActivePY,
-    );
-
-    return programs.map((program) => ({
-      id: program.id,
-      description: program.name,
-    }));
-  }
-
-  /**
    * Get a key/value pair list of all programs.
    * @param userToken User token from request.
    * @returns key/value pair list of programs.
@@ -270,10 +227,9 @@ export class EducationProgramController extends BaseController {
   }
 
   /**
-   * Get program details for an program id.
-   * @param userToken User token from request.
+   * Get program details for a program id.
    * @param id program id
-   * @returns programs DTO.
+   * @returns program information.
    * ! This dynamic router will conflict with its similar patter router,
    * ! eg, @Get("programs-list"). so, always move @Get(":id") below all
    * ! router that have similar pattern to @Get(":id"),
@@ -283,8 +239,8 @@ export class EducationProgramController extends BaseController {
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get(":id")
-  async getProgram(
-    @Param("id") id: number,
+  async getEducationProgram(
+    @Param("id", ParseIntPipe) id: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramAPIOutDTO> {
     const programRequest = this.programService.getInstitutionProgram(
@@ -346,110 +302,5 @@ export class EducationProgramController extends BaseController {
       programDeclaration: program.programDeclaration,
       hasOfferings: hasOfferingsResponse,
     };
-  }
-
-  /**
-   * Education Program Details for ministry users
-   * @param programId program id
-   * @returns programs details.
-   * */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Get(":programId/aest")
-  async getProgramForAEST(
-    @Param("programId") programId: number,
-  ): Promise<EducationProgramDataDto> {
-    const program = await this.programService.getEducationProgramDetails(
-      programId,
-    );
-    if (!program) {
-      throw new NotFoundException("Not able to find the requested program.");
-    }
-
-    return transformToEducationProgramData(program);
-  }
-
-  /**
-   * Get all programs of an institution with pagination
-   * for ministry users
-   * @param institutionId id of the institution.
-   * @param pageSize is the number of rows shown in the table
-   * @param page is the number of rows that is skipped/offset from the total list.
-   * For example page 2 the skip would be 10 when we select 10 rows per page.
-   * @param sortColumn the sorting column.
-   * @param sortOrder sorting order.
-   * @param searchCriteria Search the program name in the query
-   * @returns ProgramsSummaryPaginated.
-   */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Get("institution/:institutionId/aest")
-  async getPaginatedProgramsForAEST(
-    @Param("institutionId") institutionId: number,
-    @Query("pageSize") pageSize: number,
-    @Query("page") page: number,
-    @Query("sortColumn") sortColumn: string,
-    @Query("sortOrder") sortOrder: FieldSortOrder,
-    @Query("searchCriteria") searchCriteria: string,
-  ): Promise<PaginatedResults<ProgramsSummary>> {
-    return this.programService.getPaginatedProgramsForAEST(
-      institutionId,
-      [OfferingTypes.Public, OfferingTypes.Private],
-      {
-        searchCriteria: searchCriteria,
-        sortField: sortColumn,
-        sortOrder: sortOrder,
-        page: page,
-        pageLimit: pageSize,
-      },
-    );
-  }
-
-  /**
-   * Ministry user approve's a pending program.
-   * @param programId program id.
-   * @param institutionId institution id.
-   * @UserToken userToken
-   * @Body payload
-   */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Patch(":programId/institution/:institutionId/approve/aest")
-  async approveProgram(
-    @UserToken() userToken: IUserToken,
-    @Param("programId") programId: number,
-    @Param("institutionId") institutionId: number,
-    @Body() payload: ApproveProgram,
-  ): Promise<void> {
-    await this.programService.approveEducationProgram(
-      institutionId,
-      programId,
-      userToken.userId,
-      payload,
-    );
-  }
-
-  /**
-   * Ministry user decline's a pending program.
-   * @param programId program id.
-   * @param institutionId institution id.
-   * @UserToken userToken
-   * @Body payload
-   */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Patch(":programId/institution/:institutionId/decline/aest")
-  async declineProgram(
-    @UserToken() userToken: IUserToken,
-    @Param("programId") programId: number,
-    @Param("institutionId") institutionId: number,
-    @Body() payload: DeclineProgram,
-  ): Promise<void> {
-    await this.programService.declineEducationProgram(
-      institutionId,
-      programId,
-      userToken.userId,
-      payload,
-    );
   }
 }

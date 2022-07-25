@@ -11,3 +11,4 @@ export * from "@/services/http/dto/Pagination.dto";
 export * from "@/services/http/dto/ApplicationException.dto";
 export * from "@/services/http/dto/Institution-user.dto";
 export * from "@/services/http/dto/ConfirmationOfEnrolment.dto";
+export * from "@/services/http/dto/EducationProgram.dto";

@@ -40,17 +40,13 @@
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
 import { ref, onMounted, computed } from "vue";
-import {
-  EducationProgramData,
-  ApproveProgram,
-  DeclineProgram,
-  ProgramStatus,
-} from "@/types";
+import { ApproveProgram, DeclineProgram, ProgramStatus } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { COLOR_BLUE } from "@/constants";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
 import DeclineProgramModal from "@/components/aest/institution/modals/DeclineProgramModal.vue";
+import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
 export default {
   components: {
@@ -73,7 +69,7 @@ export default {
     },
   },
   setup(props: any) {
-    const educationProgram = ref({} as EducationProgramData);
+    const educationProgram = ref({} as EducationProgramAPIOutDTO);
     const approveProgramModal = ref(
       {} as ModalDialog<ApproveProgram | undefined>,
     );
@@ -84,7 +80,7 @@ export default {
 
     const getEducationProgramAndOffering = async () => {
       educationProgram.value =
-        await EducationProgramService.shared.getEducationProgramForAEST(
+        await EducationProgramService.shared.getEducationProgram(
           props.programId,
         );
     };

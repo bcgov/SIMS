@@ -122,13 +122,13 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     programId: number,
     programYearId: number,
     offeringIntensity: OfferingIntensity,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
     try {
       let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/options-list`;
       url = `${url}?offeringIntensity=${offeringIntensity}`;
-      if (includeInActivePY) {
-        url = `${url}&includeInActivePY=${includeInActivePY}`;
+      if (isIncludeInActiveProgramYear) {
+        url = `${url}&isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
       }
       const response = await this.getCall(url);
       return response.data;
@@ -171,12 +171,12 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     programId: number,
     programYearId: number,
     selectedOfferingIntensity: OfferingIntensity,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
     try {
       let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/offerings-list?offeringIntensity=${selectedOfferingIntensity}`;
-      if (includeInActivePY) {
-        url = `${url}&includeInActivePY=${includeInActivePY}`;
+      if (isIncludeInActiveProgramYear) {
+        url = `${url}&isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
       }
       const response = await this.getCall(url);
       return response.data;
