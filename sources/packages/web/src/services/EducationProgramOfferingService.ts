@@ -14,6 +14,7 @@ import {
 import {
   OfferingAssessmentAPIInDTO,
   OfferingChangeRequestAPIOutDTO,
+  PrecedingOfferingSummaryAPIOutDTO,
 } from "@/services/http/dto";
 
 export class EducationProgramOfferingService {
@@ -254,10 +255,10 @@ export class EducationProgramOfferingService {
     return ApiClient.EducationProgramOffering.getOfferingChangeRequests();
   }
 
-  public async getPrecedingOfferingByActualOfferingId(
+  public async getPrecedingOfferingSummary(
     offeringId: number,
-  ): Promise<OfferingDTO> {
-    return ApiClient.EducationProgramOffering.getPrecedingOfferingByActualOfferingId(
+  ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
+    return ApiClient.EducationProgramOffering.getPrecedingOfferingSummary(
       offeringId,
     );
   }

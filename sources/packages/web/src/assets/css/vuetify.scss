@@ -3,6 +3,7 @@
 .v-btn {
   text-transform: none !important;
   white-space: nowrap;
+  outline: none !important;
 }
 
 .alert_banner_radius {
@@ -102,10 +103,6 @@
 .v-divider--inset:not(.v-divider--vertical) {
   max-width: calc(100% - 29px) !important;
   margin-inline-start: 16px !important;
-}
-
-.v-btn {
-  outline: none !important;
 }
 
 .v-slide-group.v-tabs.v-tabs--horizontal {

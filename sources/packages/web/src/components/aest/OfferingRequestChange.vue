@@ -44,34 +44,25 @@ export default {
         await EducationProgramService.shared.getEducationProgramForAEST(
           props.programId,
         );
-      if (props.relationType === OfferingRelationType.ActualOffering) {
-        const offering =
-          await EducationProgramOfferingService.shared.getProgramOfferingForAEST(
-            props.offeringId,
-          );
 
-        initialData.value = {
-          ...offering,
-          programIntensity: program.programIntensity,
-          programDeliveryTypes: program.programDeliveryTypes,
-          hasWILComponent: program.hasWILComponent,
-        };
-      } else {
-        const offering =
-          await EducationProgramOfferingService.shared.getPrecedingOfferingByActualOfferingId(
-            props.offeringId,
-          );
+      const offering =
+        await EducationProgramOfferingService.shared.getProgramOfferingForAEST(
+          props.offeringId,
+        );
 
-        initialData.value = {
-          ...offering,
-          programIntensity: program.programIntensity,
-          programDeliveryTypes: program.programDeliveryTypes,
-          hasWILComponent: program.hasWILComponent,
-        };
-      }
+      initialData.value = {
+        ...offering,
+        programIntensity: program.programIntensity,
+        programDeliveryTypes: program.programDeliveryTypes,
+        hasWILComponent: program.hasWILComponent,
+      };
       context.emit("getHeaderDetails", {
-        ...initialData.value,
-        status: initialData.value.offeringStatus,
+        institutionName: offering.institutionName,
+        submittedDate: offering.submittedDate,
+        status: offering.offeringStatus,
+        assessedBy: offering.assessedBy,
+        assessedDate: offering.assessedDate,
+        locationName: offering.locationName,
       });
     });
 

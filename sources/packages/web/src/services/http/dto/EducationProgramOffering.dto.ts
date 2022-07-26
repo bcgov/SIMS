@@ -20,3 +20,8 @@ export interface OfferingChangeRequestAPIOutDTO {
   locationName: string;
   submittedDate: Date;
 }
+
+export interface PrecedingOfferingSummaryAPIOutDTO {
+  offeringId: number;
+  applicationsCount: number;
+}

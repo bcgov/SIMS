@@ -23,8 +23,7 @@ import BaseController from "../BaseController";
 import {
   OfferingAssessmentAPIInDTO,
   OfferingChangeRequestAPIOutDTO,
-  ProgramOfferingDto,
-  transformToProgramOfferingDto,
+  PrecedingOfferingSummaryAPIOutDTO,
 } from "./models/education-program-offering.dto";
 
 /**
@@ -104,19 +103,12 @@ export class EducationProgramOfferingAESTController extends BaseController {
    * @returns Offering details.
    */
   @Get(":offeringId/precedingOffering")
-  async getPrecedingOfferingByActualOfferingId(
+  async getPrecedingOfferingSummary(
     @Param("offeringId") offeringId: number,
-  ): Promise<ProgramOfferingDto> {
+  ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
     const offering =
-      await this.programOfferingService.getPrecedingOfferingByActualOfferingId(
-        offeringId,
-      );
-    if (!offering) {
-      throw new NotFoundException("Actual offering not found.");
-    }
-    if (!offering.precedingOffering) {
-      throw new NotFoundException("Preceding offering not found.");
-    }
-    return transformToProgramOfferingDto(offering.precedingOffering);
+      await this.programOfferingService.getPrecedingOfferingSummary(offeringId);
+    console.log(offering);
+    return offering;
   }
 }

@@ -137,3 +137,11 @@ export class OfferingChangeRequestAPIOutDTO {
   locationName: string;
   submittedDate: Date;
 }
+
+/**
+ *
+ */
+export class PrecedingOfferingSummaryAPIOutDTO {
+  offeringId: number;
+  applicationsCount: number;
+}

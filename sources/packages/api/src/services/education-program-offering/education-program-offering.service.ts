@@ -11,6 +11,8 @@ import {
   User,
   Institution,
   StudentAssessment,
+  Application,
+  ApplicationStatus,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource, UpdateResult } from "typeorm";
@@ -18,6 +20,7 @@ import {
   EducationProgramOfferingModel,
   SaveOfferingModel,
   OfferingsFilter,
+  PrecedingOfferingSummaryModel,
 } from "./education-program-offering.service.models";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import {
@@ -629,50 +632,34 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param offeringId offering id of actual offering.
    * @returns offering object.
    */
-  async getPrecedingOfferingByActualOfferingId(
+  async getPrecedingOfferingSummary(
     offeringId: number,
-  ): Promise<EducationProgramOffering> {
-    return this.repo
-      .createQueryBuilder("offering")
-      .select([
-        "offering.id",
-        "precedingOffering.id",
-        "precedingOffering.name",
-        "precedingOffering.studyStartDate",
-        "precedingOffering.studyEndDate",
-        "precedingOffering.actualTuitionCosts",
-        "precedingOffering.programRelatedCosts",
-        "precedingOffering.mandatoryFees",
-        "precedingOffering.exceptionalExpenses",
-        "precedingOffering.offeringDelivered",
-        "precedingOffering.lacksStudyBreaks",
-        "precedingOffering.offeringIntensity",
-        "precedingOffering.yearOfStudy",
-        "precedingOffering.showYearOfStudy",
-        "precedingOffering.hasOfferingWILComponent",
-        "precedingOffering.offeringWILType",
-        "precedingOffering.studyBreaks",
-        "precedingOffering.offeringDeclaration",
-        "precedingOffering.offeringType",
-        "precedingOffering.assessedDate",
-        "precedingOffering.submittedDate",
-        "precedingOffering.courseLoad",
-        "precedingOffering.offeringStatus",
-        "assessedBy.firstName",
-        "assessedBy.lastName",
-        "institutionLocation.name",
-        "institution.id",
-        "institution.legalOperatingName",
-        "institution.operatingName",
-      ])
-      .innerJoin("offering.precedingOffering", "precedingOffering")
-      .innerJoin("precedingOffering.educationProgram", "educationProgram")
-      .innerJoin("precedingOffering.institutionLocation", "institutionLocation")
-      .innerJoin("institutionLocation.institution", "institution")
-      .leftJoin("precedingOffering.assessedBy", "assessedBy")
-      .where("offering.id= :offeringId", {
+  ): Promise<PrecedingOfferingSummaryModel> {
+    const query = this.dataSource
+      .getRepository(Application)
+      .createQueryBuilder("application")
+      .select("count(application.id)", "applicationsCount")
+      .addSelect("offering.id", "offeringId")
+      .innerJoin("application.currentAssessment", "assessment")
+      .innerJoin("assessment.offering", "offering")
+      .where("application.applicationStatus != :cancelledStatus", {
+        cancelledStatus: ApplicationStatus.cancelled,
+      })
+      .andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select("precedingOffering.id")
+          .from(EducationProgramOffering, "offering")
+          .innerJoin("offering.precedingOffering", "precedingOffering")
+          .where("offering.id = :offeringId")
+          .getSql();
+        return `offering.id = ${subQuery}`;
+      })
+      .setParameters({
+        cancelledStatus: ApplicationStatus.cancelled,
         offeringId,
       })
-      .getOne();
+      .groupBy("offering.id");
+    return query.getRawOne();
   }
 }

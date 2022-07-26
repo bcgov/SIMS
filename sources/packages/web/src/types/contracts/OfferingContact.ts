@@ -46,6 +46,9 @@ export interface OfferingDTO {
   assessedDate?: Date;
   courseLoad?: number;
   hasExistingApplication?: boolean;
+  institutionName: string;
+  submittedDate: string;
+  locationName: string;
 }
 
 /**
@@ -122,5 +125,4 @@ export interface StudyBreaksAndWeeks {
 export enum OfferingRelationType {
   ActualOffering = "Actual offering",
   PrecedingOffering = "Preceding offering",
-  ParentOffering = "Parent offering",
 }

@@ -15,6 +15,7 @@ import { addSortOptions } from "@/helpers";
 import {
   OfferingAssessmentAPIInDTO,
   OfferingChangeRequestAPIOutDTO,
+  PrecedingOfferingSummaryAPIOutDTO,
 } from "@/services/http/dto";
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
@@ -296,10 +297,10 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
    * Offering details for ministry users
    */
-  public async getPrecedingOfferingByActualOfferingId(
+  public async getPrecedingOfferingSummary(
     offeringId: number,
-  ): Promise<OfferingDTO> {
-    return this.getCallTyped<OfferingDTO>(
+  ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
+    return this.getCallTyped<PrecedingOfferingSummaryAPIOutDTO>(
       this.addClientRoot(
         `institution/offering/${offeringId}/precedingOffering`,
       ),

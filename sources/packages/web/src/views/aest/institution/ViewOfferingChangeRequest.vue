@@ -11,6 +11,9 @@
         :headerDetails="headerDetails"
       />
     </template>
+    <template #alerts>
+      <banner class="mb-2" :type="BannerTypes.Warning" :header="bannerText" />
+    </template>
     <template #tab-header>
       <v-tabs v-model="tab" color="primary">
         <v-tab value="requested-change" :ripple="false">Requested Change</v-tab>
@@ -29,10 +32,8 @@
       <v-window-item value="active-offering">
         <offering-request-change
           v-if="tab === 'active-offering'"
-          :offeringId="offeringId"
+          :offeringId="precedingOffering.offeringId"
           :programId="programId"
-          :relationType="OfferingRelationType.PrecedingOffering"
-          @getHeaderDetails="getHeaderDetails"
         ></offering-request-change>
       </v-window-item>
     </v-window>
@@ -40,12 +41,14 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, computed } from "vue";
 import {
   OfferingStatus,
   OfferingRelationType,
   ProgramOfferingHeader,
 } from "@/types";
+import { PrecedingOfferingSummaryAPIOutDTO } from "@/services/http/dto";
+import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
@@ -67,12 +70,25 @@ export default {
     },
   },
 
-  setup() {
+  setup(props: any) {
     const tab = ref("requested-change");
     const headerDetails = ref({} as ProgramOfferingHeader);
+    const precedingOffering = ref({} as PrecedingOfferingSummaryAPIOutDTO);
+    const bannerText = computed(() =>
+      precedingOffering.value?.applicationsCount
+        ? `There are ${precedingOffering.value.applicationsCount} financial aid applications with this offering`
+        : "There are no financial aid application with this offering",
+    );
     const getHeaderDetails = (data: ProgramOfferingHeader) => {
       headerDetails.value = data;
     };
+
+    onMounted(async () => {
+      precedingOffering.value =
+        await EducationProgramOfferingService.shared.getPrecedingOfferingSummary(
+          props.offeringId,
+        );
+    });
 
     return {
       headerDetails,
@@ -82,6 +98,8 @@ export default {
       tab,
       OfferingRelationType,
       getHeaderDetails,
+      precedingOffering,
+      bannerText,
     };
   },
 };

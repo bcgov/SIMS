@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
@@ -266,6 +267,11 @@ export class EducationProgramOffering extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   precedingOffering?: EducationProgramOffering;
+
+  @RelationId(
+    (offering: EducationProgramOffering) => offering.precedingOffering,
+  )
+  precedingOfferingId: number;
 }
 
 /**
