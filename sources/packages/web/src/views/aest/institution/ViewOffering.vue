@@ -42,7 +42,7 @@
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormModel, OfferingStatus } from "@/types";
+import { OfferingFormEditModel, OfferingStatus } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
@@ -78,7 +78,7 @@ export default {
 
   setup(props: any) {
     const snackBar = useSnackBar();
-    const initialData = ref({} as Partial<OfferingFormModel>);
+    const initialData = ref({} as OfferingFormEditModel);
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
     );

@@ -253,4 +253,12 @@ export class EducationProgramOfferingService {
   async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
     return ApiClient.EducationProgramOffering.getOfferingChangeRequests();
   }
+
+  public async getPrecedingOfferingByActualOfferingId(
+    offeringId: number,
+  ): Promise<OfferingDTO> {
+    return ApiClient.EducationProgramOffering.getPrecedingOfferingByActualOfferingId(
+      offeringId,
+    );
+  }
 }

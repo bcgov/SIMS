@@ -85,7 +85,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
   async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
     const offerings =
       await this.programOfferingService.getOfferingChangeRequests();
-    console.log(offerings);
+
     return offerings.map((offering) => ({
       offeringId: offering.id,
       activeOfferingId: offering.precedingOffering.id,
@@ -100,11 +100,11 @@ export class EducationProgramOfferingAESTController extends BaseController {
 
   /**
    * Get preceding offering details
-   * @param offeringId offering id.
+   * @param offeringId actual offering id.
    * @returns Offering details.
    */
   @Get(":offeringId/precedingOffering")
-  async getPrecedingOffering(
+  async getPrecedingOfferingByActualOfferingId(
     @Param("offeringId") offeringId: number,
   ): Promise<ProgramOfferingDto> {
     const offering =
@@ -114,7 +114,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
     if (!offering) {
       throw new NotFoundException("Actual offering not found.");
     }
-    if (offering.precedingOffering) {
+    if (!offering.precedingOffering) {
       throw new NotFoundException("Preceding offering not found.");
     }
     return transformToProgramOfferingDto(offering.precedingOffering);

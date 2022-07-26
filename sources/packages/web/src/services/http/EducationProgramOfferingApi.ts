@@ -292,4 +292,17 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       this.addClientRoot("institution/offering/change-requests"),
     );
   }
+
+  /**
+   * Offering details for ministry users
+   */
+  public async getPrecedingOfferingByActualOfferingId(
+    offeringId: number,
+  ): Promise<OfferingDTO> {
+    return this.getCallTyped<OfferingDTO>(
+      this.addClientRoot(
+        `institution/offering/${offeringId}/precedingOffering`,
+      ),
+    );
+  }
 }

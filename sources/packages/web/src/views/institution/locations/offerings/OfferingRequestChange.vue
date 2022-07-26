@@ -37,7 +37,7 @@ import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormModel, OfferingStatus, OfferingDTO } from "@/types";
+import { OfferingFormEditModel, OfferingStatus, OfferingDTO } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar } from "@/composables";
 import { BannerTypes } from "@/components/generic/Banner.models";
@@ -67,7 +67,7 @@ export default {
   setup(props: any) {
     const snackBar = useSnackBar();
     const router = useRouter();
-    const initialData = ref({} as Partial<OfferingFormModel>);
+    const initialData = ref({} as OfferingFormEditModel);
     const programDetailRoute = computed(() => ({
       name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
       params: {

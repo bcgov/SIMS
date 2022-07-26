@@ -137,35 +137,3 @@ export class OfferingChangeRequestAPIOutDTO {
   locationName: string;
   submittedDate: Date;
 }
-
-/**
- * DTO Object for preceding offering
- */
-export class PrecedingOfferingAPIOutDTO {
-  id: number;
-  offeringName: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  offeringDelivered: string;
-  lacksStudyBreaks: boolean;
-  offeringIntensity: OfferingIntensity;
-  yearOfStudy: number;
-  showYearOfStudy?: boolean;
-  hasOfferingWILComponent: string;
-  offeringWILType?: string;
-  breaksAndWeeks: StudyBreaksAndWeeks;
-  offeringDeclaration: boolean;
-  assessedBy?: string;
-  assessedDate?: Date;
-  submittedDate: Date;
-  offeringStatus: OfferingStatus;
-  offeringType: OfferingTypes;
-  locationName: string;
-  institutionName: string;
-  courseLoad?: number;
-  hasExistingApplication?: boolean;
-}
