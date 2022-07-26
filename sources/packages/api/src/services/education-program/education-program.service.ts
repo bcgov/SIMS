@@ -18,17 +18,16 @@ import {
 import { ProgramYear } from "../../database/entities/program-year.model";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import {
-  ApproveProgram,
-  DeclineProgram,
-} from "../../route-controllers/education-program/models/save-education-program.dto";
-import {
   getRawCount,
   sortProgramsColumnMap,
   PaginationOptions,
   PaginatedResults,
   SortPriority,
+  CustomNamedError,
 } from "../../utilities";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
+import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
+
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
@@ -89,23 +88,36 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   /**
    * Insert/update an education program at institution level
    * that will be available for all locations.
+   * @param programId if provided will update the record, otherwise will insert a new one.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @param educationProgram Information used to save the program.
-   * @param createProgram a flag, which create or edit program
    * @returns Education program created/updated.
    */
   async saveEducationProgram(
+    institutionId: number,
+    auditUserId: number,
     educationProgram: SaveEducationProgram,
+    programId?: number,
   ): Promise<EducationProgram> {
-    const program = new EducationProgram();
-
-    /** Check if education program has offering(s). This check is required to
-     *  prevent a user from updating fields that are not supposed
-     *  to be updated if the education program has 1 or more offerings.
-     */
-    const hasExistingOffering =
-      await this.educationProgramOfferingService.hasExistingOffering(
-        educationProgram.id,
-      );
+    let hasExistingOffering = false;
+    let program = new EducationProgram();
+    if (programId) {
+      // Ensures that the user has access to the institution associated with the program id being updated.
+      program = await this.getInstitutionProgram(programId, institutionId);
+      if (!program) {
+        throw new CustomNamedError(
+          "Not able to find the education program.",
+          EDUCATION_PROGRAM_NOT_FOUND,
+        );
+      }
+      // Check if education program has offering(s). This check is required to
+      // prevent a user from updating fields that are not supposed
+      // to be updated if the education program has 1 or more offerings.
+      hasExistingOffering =
+        await this.educationProgramOfferingService.hasExistingOffering(
+          programId,
+        );
+    }
 
     // Assign attributes for update from payload only if existing program has no offering(s).
     if (!hasExistingOffering) {
@@ -132,10 +144,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.hasJointInstitution = educationProgram.hasJointInstitution;
       program.hasJointDesignatedInstitution =
         educationProgram.hasJointDesignatedInstitution;
-      program.programStatus = educationProgram.programStatus;
-      program.institution = {
-        id: educationProgram.institutionId,
-      } as Institution;
+      program.programStatus = educationProgram.approvalStatus;
       program.programIntensity = educationProgram.programIntensity;
       program.institutionProgramCode = educationProgram.institutionProgramCode;
       program.minHoursWeek = educationProgram.minHoursWeek;
@@ -158,14 +167,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         educationProgram.intlExchangeProgramEligibility;
       program.programDeclaration = educationProgram.programDeclaration;
     }
-    program.id = educationProgram.id;
+    program.id = programId;
     program.name = educationProgram.name;
     program.description = educationProgram.description;
-    if (!educationProgram.id) {
-      program.submittedBy = { id: educationProgram.userId } as User;
-      program.creator = { id: educationProgram.userId } as User;
+    const auditUser = { id: auditUserId } as User;
+    if (!programId) {
+      // Institution should never be updated after creation.
+      program.institution = { id: institutionId } as Institution;
+      program.submittedBy = auditUser;
+      program.creator = auditUser;
     } else {
-      program.modifier = { id: educationProgram.userId } as User;
+      program.modifier = auditUser;
     }
     return this.repo.save(program);
   }
@@ -442,6 +454,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "institution.id",
         "institution.legalOperatingName",
         "institution.operatingName",
+        "institutionType.id",
         "programs.submittedDate",
         "submittedBy.firstName",
         "submittedBy.lastName",
@@ -453,6 +466,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .leftJoin("programs.submittedBy", "submittedBy")
       .leftJoin("programs.assessedBy", "assessedBy")
       .innerJoin("programs.institution", "institution")
+      .innerJoin("institution.institutionType", "institutionType")
       .where("programs.id = :id", { id: programId })
       .getOne();
   }
@@ -462,21 +476,24 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * this is a db transaction performing
    * 3 functions, creating note, update the
    * program and adding institution notes
+   * @param effectiveEndDate effective end date
+   * of the approved education program.
+   * @param approvalNote approval note.
    * @param institutionId institution id.
    * @param programId program id.
    * @param userId user id.
-   * @param payload ApproveProgram
    */
   async approveEducationProgram(
+    effectiveEndDate: Date,
+    approvalNote: string,
     institutionId: number,
     programId: number,
     userId: number,
-    payload: ApproveProgram,
   ): Promise<void> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       // create Note
       const notes = new Note();
-      notes.description = payload.approvedNote;
+      notes.description = approvalNote;
       notes.noteType = NoteType.Program;
       notes.creator = {
         id: userId,
@@ -485,12 +502,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         .getRepository(Note)
         .save(notes);
 
-      // update program
+      // Update program.
       const program = new EducationProgram();
       program.id = programId;
       program.programStatus = ProgramStatus.Approved;
       program.assessedDate = new Date();
-      program.effectiveEndDate = new Date(payload.effectiveEndDate);
+      program.effectiveEndDate = effectiveEndDate;
       program.assessedBy = { id: userId } as User;
       program.programNote = noteObj;
 
@@ -513,25 +530,25 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * this is a db transaction performing
    * 3 functions, creating note, update the
    * program and adding institution notes
+   * @param declinedNote decline note.
    * @param institutionId institution id.
    * @param programId program id.
-   * @param userId user id.
-   * @param payload DeclineProgram
+   * @param auditUserId user that should be considered
+   * the one that is causing the changes.
    */
   async declineEducationProgram(
+    declinedNote: string,
     institutionId: number,
     programId: number,
-    userId: number,
-    payload: DeclineProgram,
+    auditUserId: number,
   ): Promise<void> {
+    const auditUser = { id: auditUserId } as User;
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       // create Note
       const notes = new Note();
-      notes.description = payload.declinedNote;
+      notes.description = declinedNote;
       notes.noteType = NoteType.Program;
-      notes.creator = {
-        id: userId,
-      } as User;
+      notes.creator = auditUser;
       const noteObj = await transactionalEntityManager
         .getRepository(Note)
         .save(notes);
@@ -541,7 +558,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.id = programId;
       program.programStatus = ProgramStatus.Declined;
       program.assessedDate = new Date();
-      program.assessedBy = { id: userId } as User;
+      program.assessedBy = auditUser;
       program.programNote = noteObj;
       await transactionalEntityManager
         .getRepository(EducationProgram)

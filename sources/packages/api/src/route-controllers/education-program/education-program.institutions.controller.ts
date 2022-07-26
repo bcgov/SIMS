@@ -8,7 +8,6 @@ import {
   Post,
   Put,
   Query,
-  UnprocessableEntityException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -17,18 +16,13 @@ import {
   HasLocationAccess,
   UserToken,
 } from "../../auth/decorators";
-import { EducationProgramDto } from "./models/save-education-program.dto";
-import { FormNames } from "../../services/form/constants";
-import {
-  SaveEducationProgram,
-  EducationProgramsSummary,
-} from "../../services/education-program/education-program.service.models";
+import { EducationProgramAPIInDTO } from "./models/education-program.dto";
+import { EducationProgramsSummary } from "../../services/education-program/education-program.service.models";
 import {
   EducationProgramAPIOutDTO,
   EducationProgramDetailsAPIOutDTO,
 } from "./models/education-program.dto";
-import { EducationProgram } from "../../database/entities";
-import { ClientTypeBaseRoute, OptionItem } from "../../types";
+import { ClientTypeBaseRoute } from "../../types";
 import {
   credentialTypeToDisplay,
   getISODateOnlyString,
@@ -39,7 +33,6 @@ import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import {
   EducationProgramService,
-  FormService,
   EducationProgramOfferingService,
 } from "../../services";
 import {
@@ -47,6 +40,8 @@ import {
   ProgramsPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { EducationProgramControllerService } from "..";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { OptionItemAPIOutDTO } from "../models/common.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
@@ -54,7 +49,6 @@ import { EducationProgramControllerService } from "..";
 export class EducationProgramInstitutionsController extends BaseController {
   constructor(
     private readonly programService: EducationProgramService,
-    private readonly formService: FormService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
   ) {
@@ -62,14 +56,14 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * Get programs for a particular institution with pagination.
+   * Get programs for a particular location with pagination.
    * @param locationId id of the location.
    * @param paginationOptions pagination options.
    * @returns paginated programs summary.
    */
   @HasLocationAccess("locationId")
   @Get("location/:locationId/summary")
-  async getProgramsSummary(
+  async getProgramsSummaryByLocationId(
     @Param("locationId", ParseIntPipe) locationId: number,
     @Query() paginationOptions: ProgramsPaginationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
@@ -82,67 +76,30 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   @Post()
-  async create(
-    @Body() payload: EducationProgramDto,
+  async createEducationProgram(
+    @Body() payload: EducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<number> {
-    const newProgram = await this.saveProgram(userToken, payload);
-    return newProgram.id;
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const newProgram = await this.educationProgramControllerService.saveProgram(
+      payload,
+      userToken.authorizations.institutionId,
+      userToken.userId,
+    );
+    return { id: newProgram.id };
   }
 
-  @Put(":id")
+  @Put(":programId")
   async update(
-    @Param("id", ParseIntPipe) id: number,
-    @Body() payload: EducationProgramDto,
+    @Param("programId", ParseIntPipe) programId: number,
+    @Body() payload: EducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
-    // Ensures that the user has access to the institution
-    // associated with the program id being updated.
-    const program = await this.programService.getInstitutionProgram(
-      id,
-      userToken.authorizations.institutionId,
-    );
-    if (!program) {
-      throw new NotFoundException("Not able to find the requested program.");
-    }
-
-    await this.saveProgram(userToken, payload, id);
-  }
-
-  /**
-   * Saves program (insert/update).
-   * @param userToken User token from request.
-   * @param payload Payload with data to be persisted.
-   * @param [programId] If provided will update the record, otherwise will insert a new one.
-   * @returns program
-   */
-  private async saveProgram(
-    userToken: IInstitutionUserToken,
-    payload: EducationProgramDto,
-    programId?: number,
-  ): Promise<EducationProgram> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.Educationprogram,
+    await this.educationProgramControllerService.saveProgram(
       payload,
+      userToken.authorizations.institutionId,
+      userToken.userId,
+      programId,
     );
-
-    if (!submissionResult.valid) {
-      throw new UnprocessableEntityException(
-        "Not able to a save the program due to an invalid request.",
-      );
-    }
-
-    // The payload returned from form.io contains the approvalStatus as
-    // a calculated server value. If the approvalStatus value is sent
-    // from the client form it will be overridden by the server calculated one.
-    const saveProgramPaylod: SaveEducationProgram = {
-      ...submissionResult.data.data,
-      programDeliveryTypes: submissionResult.data.data.programDeliveryTypes,
-      institutionId: userToken.authorizations.institutionId,
-      id: programId,
-      userId: userToken.userId,
-    };
-    return this.programService.saveEducationProgram(saveProgramPaylod);
   }
 
   /**
@@ -198,7 +155,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   @Get("programs-list")
   async getLocationProgramsOptionListForInstitution(
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<OptionItem[]> {
+  ): Promise<OptionItemAPIOutDTO[]> {
     const programs = await this.programService.getPrograms(
       userToken.authorizations.institutionId,
     );
@@ -210,31 +167,25 @@ export class EducationProgramInstitutionsController extends BaseController {
 
   /**
    * Get program details for a program id.
-   * @param id program id
+   * @param programId program id
    * @returns program information.
-   * ! This dynamic router will conflict with its similar patter router,
-   * ! eg, @Get("programs-list"). so, always move @Get(":id") below all
-   * ! router that have similar pattern to @Get(":id"),
-   * ! i.e , Dynamic api should be on bottom
-   * ! ref: https://stackoverflow.com/questions/58707933/node-js-express-route-conflict-issue
-   * ! https://poopcode.com/how-to-resolve-parameterized-route-conficts-in-express-js/
    */
-  @Get(":id")
+  @Get(":programId")
   async getEducationProgram(
-    @Param("id", ParseIntPipe) id: number,
+    @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramAPIOutDTO> {
-    const programRequest = this.programService.getInstitutionProgram(
-      id,
+    const programPromise = this.programService.getInstitutionProgram(
+      programId,
       userToken.authorizations.institutionId,
     );
 
-    const hasOfferings =
-      this.educationProgramOfferingService.hasExistingOffering(id);
+    const hasOfferingsPromise =
+      this.educationProgramOfferingService.hasExistingOffering(programId);
 
-    const [program, hasOfferingsResponse] = await Promise.all([
-      programRequest,
-      hasOfferings,
+    const [program, hasOfferings] = await Promise.all([
+      programPromise,
+      hasOfferingsPromise,
     ]);
 
     if (!program) {
@@ -242,10 +193,12 @@ export class EducationProgramInstitutionsController extends BaseController {
     }
 
     return {
-      institutionId: program.institution.id,
+      id: program.id,
+      programStatus: program.programStatus,
       name: program.name,
       description: program.description,
       credentialType: program.credentialType,
+      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
       cipCode: program.cipCode,
       nocCode: program.nocCode,
       sabcCode: program.sabcCode,
@@ -282,7 +235,9 @@ export class EducationProgramInstitutionsController extends BaseController {
       hasIntlExchange: program.hasIntlExchange,
       intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
       programDeclaration: program.programDeclaration,
-      hasOfferings: hasOfferingsResponse,
+      hasOfferings: hasOfferings,
+      institutionId: program.institution.id,
+      institutionName: program.institution.operatingName,
       isBCPrivate:
         program.institution.institutionType.id === INSTITUTION_TYPE_BC_PRIVATE,
     };

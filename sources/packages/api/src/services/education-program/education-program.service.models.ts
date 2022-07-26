@@ -1,13 +1,41 @@
-import { EducationProgramDto } from "../../route-controllers/education-program/models/save-education-program.dto";
-import { ProgramStatus } from "../../database/entities";
-/**
- * DTO that is used to persist the eduction programs form data.
- */
-export interface SaveEducationProgram extends EducationProgramDto {
-  id?: number;
-  institutionId: number;
-  programStatus: ProgramStatus;
-  userId: number;
+import {
+  EntranceRequirements,
+  ProgramDeliveryTypes,
+} from "../../route-controllers/education-program/models/education-program.dto";
+import { ProgramIntensity, ProgramStatus } from "../../database/entities";
+
+export interface SaveEducationProgram {
+  name: string;
+  description?: string;
+  credentialType: string;
+  cipCode: string;
+  nocCode: string;
+  sabcCode: string;
+  regulatoryBody: string;
+  programDeliveryTypes: ProgramDeliveryTypes;
+  deliveredOnlineAlsoOnsite?: string;
+  sameOnlineCreditsEarned?: string;
+  earnAcademicCreditsOtherInstitution?: string;
+  courseLoadCalculation: string;
+  completionYears: string;
+  eslEligibility: string;
+  hasJointInstitution: string;
+  hasJointDesignatedInstitution: string;
+  programIntensity: ProgramIntensity;
+  institutionProgramCode?: string;
+  minHoursWeek?: string;
+  isAviationProgram?: string;
+  minHoursWeekAvi?: string;
+  entranceRequirements: EntranceRequirements;
+  hasWILComponent: string;
+  isWILApproved?: string;
+  wilProgramEligibility?: string;
+  hasTravel: string;
+  travelProgramEligibility?: string;
+  hasIntlExchange?: string;
+  intlExchangeProgramEligibility?: string;
+  programDeclaration: boolean;
+  approvalStatus: ProgramStatus;
 }
 
 export class EducationProgramsSummary {

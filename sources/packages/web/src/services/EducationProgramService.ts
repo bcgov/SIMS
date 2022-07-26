@@ -1,11 +1,5 @@
 import {
-  SummaryEducationProgramDto,
   OptionItemDto,
-  DataTableSortOrder,
-  ProgramSummaryFields,
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  PaginatedResults,
   ApproveProgram,
   DeclineProgram,
   StudentEducationProgramAPIOutDTO,
@@ -14,8 +8,8 @@ import {
 } from "@/types";
 import ApiClient from "@/services/http/ApiClient";
 import {
+  AESTEducationProgramAPIOutDTO,
   EducationProgramAPIOutDTO,
-  EducationProgramDetailsAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
@@ -28,6 +22,12 @@ export class EducationProgramService {
     return this.instance || (this.instance = new this());
   }
 
+  /**
+   * Get programs for a particular location with pagination.
+   * @param locationId id of the location.
+   * @param paginationOptions pagination options.
+   * @returns paginated programs summary.
+   */
   async getProgramsSummaryByLocationId(
     locationId: number,
     paginationOptions: PaginationOptions,
@@ -38,6 +38,12 @@ export class EducationProgramService {
     );
   }
 
+  /**
+   * Get the programs summary of an institution with pagination.
+   * @param institutionId id of the institution.
+   * @param paginationOptions pagination options.
+   * @returns paginated programs summary.
+   */
   async getProgramsSummaryByInstitutionId(
     institutionId: number,
     paginationOptions: PaginationOptions,
@@ -53,12 +59,14 @@ export class EducationProgramService {
    * @param programId program id
    * @returns program information.
    */
-  async getProgram(programId: number): Promise<EducationProgramAPIOutDTO> {
-    return ApiClient.EducationProgram.getProgram(programId);
+  async getEducationProgram(
+    programId: number,
+  ): Promise<EducationProgramAPIOutDTO | AESTEducationProgramAPIOutDTO> {
+    return ApiClient.EducationProgram.getEducationProgram(programId);
   }
 
-  async createProgram(data: EducationProgramAPIDTO): Promise<void> {
-    await ApiClient.EducationProgram.createProgram(data);
+  async createEducationProgram(data: EducationProgramAPIDTO): Promise<void> {
+    await ApiClient.EducationProgram.createEducationProgram(data);
   }
 
   async updateProgram(
@@ -66,48 +74,6 @@ export class EducationProgramService {
     data: EducationProgramAPIDTO,
   ): Promise<void> {
     await ApiClient.EducationProgram.updateProgram(programId, data);
-  }
-
-  /**
-   * Method to call the API to fetch all institution
-   * location program.
-   * @param locationId location id
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchCriteria,program name keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns program summary for an institution location.
-   */
-  public async getLocationProgramsSummary(
-    locationId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    searchCriteria?: string,
-    sortField?: ProgramSummaryFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedResults<SummaryEducationProgramDto>> {
-    return ApiClient.EducationProgram.getLocationProgramsSummary(
-      locationId,
-      page,
-      pageCount,
-      searchCriteria,
-      sortField,
-      sortOrder,
-    );
-  }
-
-  /**
-   * Get program details for a program id.
-   * @param programId program id
-   * @returns program information.
-   */
-  async getEducationProgramDetails(
-    programId: number,
-  ): Promise<EducationProgramDetailsAPIOutDTO> {
-    return ApiClient.EducationProgram.getEducationProgramDetails(programId);
   }
 
   /**

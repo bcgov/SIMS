@@ -71,9 +71,11 @@ export default {
 
     const loadFormData = async () => {
       if (props.programId) {
-        programData.value = await EducationProgramService.shared.getProgram(
-          props.programId,
-        );
+        const educationProgram =
+          await EducationProgramService.shared.getEducationProgram(
+            props.programId,
+          );
+        programData.value = educationProgram as EducationProgramAPIOutDTO;
       } else {
         initNewFormData();
       }
@@ -167,7 +169,7 @@ export default {
             );
             snackBar.success("Education Program updated successfully!");
           } else {
-            await EducationProgramService.shared.createProgram(data);
+            await EducationProgramService.shared.createEducationProgram(data);
             snackBar.success("Education Program created successfully!");
           }
           goBack();

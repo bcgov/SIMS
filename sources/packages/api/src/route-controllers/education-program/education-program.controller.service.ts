@@ -1,16 +1,26 @@
-import { Injectable } from "@nestjs/common";
-import { EducationProgramService } from "../../services";
-import { OfferingTypes } from "../../database/entities";
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from "@nestjs/common";
+import { EducationProgramService, FormService } from "../../services";
+import { EducationProgram, OfferingTypes } from "../../database/entities";
 import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { EducationProgramsSummaryAPIOutDTO } from "./models/education-program.dto";
-import { credentialTypeToDisplay } from "src/utilities";
+import { credentialTypeToDisplay, CustomNamedError } from "../../utilities";
+import { EducationProgramAPIInDTO } from "./models/education-program.dto";
+import { FormNames } from "../../services/form/constants";
+import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
 
 @Injectable()
 export class EducationProgramControllerService {
-  constructor(private readonly programService: EducationProgramService) {}
+  constructor(
+    private readonly programService: EducationProgramService,
+    private readonly formService: FormService,
+  ) {}
 
   /**
    * Gets all the programs that are associated with an institution
@@ -51,4 +61,111 @@ export class EducationProgramControllerService {
       count: programs.count,
     };
   }
+
+  /**
+   * Saves an education program (insert/update).
+   * @param payload payload with data to be persisted.
+   * @param institutionId institution to have the program inserted or updated.
+   * @param programId if provided will update the record, otherwise will insert a new one.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns inserted/updated program.
+   */
+  async saveProgram(
+    payload: EducationProgramAPIInDTO,
+    institutionId: number,
+    auditUserId: number,
+    programId?: number,
+  ): Promise<EducationProgram> {
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.EducationProgram,
+      payload,
+    );
+
+    if (!submissionResult.valid) {
+      throw new UnprocessableEntityException(
+        "Not able to a save the program due to an invalid request.",
+      );
+    }
+
+    try {
+      // The payload returned from form.io contains the approvalStatus as
+      // a calculated server value. If the approvalStatus value is sent
+      // from the client form it will be overridden by the server calculated one.
+      return this.programService.saveEducationProgram(
+        institutionId,
+        auditUserId,
+        submissionResult.data.data,
+        programId,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        if (error.name === EDUCATION_PROGRAM_NOT_FOUND) {
+          throw new NotFoundException(error.message);
+        }
+      }
+      throw error;
+    }
+  }
+
+  // /**
+  //  * Transformation util for Program.
+  //  * @param program
+  //  * @returns Application DTO
+  //  */
+  // transformToEducationProgramData = (
+  //   program: EducationProgram,
+  // ): EducationProgramDataDto => {
+  //   const programDetails: EducationProgramDataDto = {
+  //     id: program.id,
+  //     programStatus: program.programStatus,
+  //     name: program.name,
+  //     description: program.description,
+  //     credentialType: program.credentialType,
+  //     cipCode: program.cipCode,
+  //     nocCode: program.nocCode,
+  //     sabcCode: program.sabcCode,
+  //     regulatoryBody: program.regulatoryBody,
+  //     programDeliveryTypes: {
+  //       deliveredOnSite: program.deliveredOnSite,
+  //       deliveredOnline: program.deliveredOnline,
+  //     },
+  //     deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
+  //     sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
+  //     earnAcademicCreditsOtherInstitution:
+  //       program.earnAcademicCreditsOtherInstitution,
+  //     courseLoadCalculation: program.courseLoadCalculation,
+  //     completionYears: program.completionYears,
+  //     eslEligibility: program.eslEligibility,
+  //     hasJointInstitution: program.hasJointInstitution,
+  //     hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
+  //     programIntensity: program.programIntensity,
+  //     institutionProgramCode: program.institutionProgramCode,
+  //     minHoursWeek: program.minHoursWeek,
+  //     isAviationProgram: program.isAviationProgram,
+  //     minHoursWeekAvi: program.minHoursWeekAvi,
+  //     entranceRequirements: {
+  //       hasMinimumAge: program.hasMinimumAge,
+  //       minHighSchool: program.minHighSchool,
+  //       requirementsByInstitution: program.requirementsByInstitution,
+  //       requirementsByBCITA: program.requirementsByBCITA,
+  //     },
+  //     hasWILComponent: program.hasWILComponent,
+  //     isWILApproved: program.isWILApproved,
+  //     wilProgramEligibility: program.wilProgramEligibility,
+  //     hasTravel: program.hasTravel,
+  //     travelProgramEligibility: program.travelProgramEligibility,
+  //     hasIntlExchange: program.hasIntlExchange,
+  //     intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
+  //     programDeclaration: program.programDeclaration,
+  //     credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
+  //     institutionId: program.institution.id,
+  //     institutionName: program.institution.operatingName,
+  //     submittedDate: program.submittedDate,
+  //     submittedBy: getUserFullName(program.submittedBy),
+  //     effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
+  //     assessedDate: program.assessedDate,
+  //     assessedBy: getUserFullName(program.assessedBy),
+  //   };
+  //   return programDetails;
+  // };
 }

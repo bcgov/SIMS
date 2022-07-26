@@ -12,11 +12,9 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken, Groups } from "../../auth/decorators";
 import {
-  EducationProgramDataDto,
-  transformToEducationProgramData,
-  DeclineProgram,
-  ApproveProgram,
-} from "./models/save-education-program.dto";
+  DeclineProgramAPIInDTO,
+  ApproveProgramAPIInDTO,
+} from "./models/education-program.dto";
 import { EducationProgramService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -26,8 +24,17 @@ import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
-import { EducationProgramsSummaryAPIOutDTO } from "./models/education-program.dto";
+import {
+  AESTEducationProgramAPIOutDTO,
+  EducationProgramsSummaryAPIOutDTO,
+} from "./models/education-program.dto";
 import { EducationProgramControllerService } from "./education-program.controller.service";
+import {
+  credentialTypeToDisplay,
+  getISODateOnlyString,
+  getUserFullName,
+  INSTITUTION_TYPE_BC_PRIVATE,
+} from "../../utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -42,14 +49,14 @@ export class EducationProgramAESTController extends BaseController {
   }
 
   /**
-   * Education Program Details for ministry users
-   * @param programId program id
+   * Education Program Details for ministry users.
+   * @param programId program id.
    * @returns programs details.
    * */
   @Get(":programId")
-  async getProgramForAEST(
+  async getEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,
-  ): Promise<EducationProgramDataDto> {
+  ): Promise<AESTEducationProgramAPIOutDTO> {
     const program = await this.programService.getEducationProgramDetails(
       programId,
     );
@@ -57,7 +64,59 @@ export class EducationProgramAESTController extends BaseController {
       throw new NotFoundException("Not able to find the requested program.");
     }
 
-    return transformToEducationProgramData(program);
+    return {
+      id: program.id,
+      programStatus: program.programStatus,
+      name: program.name,
+      description: program.description,
+      credentialType: program.credentialType,
+      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
+      cipCode: program.cipCode,
+      nocCode: program.nocCode,
+      sabcCode: program.sabcCode,
+      regulatoryBody: program.regulatoryBody,
+      programDeliveryTypes: {
+        deliveredOnSite: program.deliveredOnSite,
+        deliveredOnline: program.deliveredOnline,
+      },
+      deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
+      sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
+      earnAcademicCreditsOtherInstitution:
+        program.earnAcademicCreditsOtherInstitution,
+      courseLoadCalculation: program.courseLoadCalculation,
+      completionYears: program.completionYears,
+      eslEligibility: program.eslEligibility,
+      hasJointInstitution: program.hasJointInstitution,
+      hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
+      programIntensity: program.programIntensity,
+      institutionProgramCode: program.institutionProgramCode,
+      minHoursWeek: program.minHoursWeek,
+      isAviationProgram: program.isAviationProgram,
+      minHoursWeekAvi: program.minHoursWeekAvi,
+      entranceRequirements: {
+        hasMinimumAge: program.hasMinimumAge,
+        minHighSchool: program.minHighSchool,
+        requirementsByInstitution: program.requirementsByInstitution,
+        requirementsByBCITA: program.requirementsByBCITA,
+      },
+      hasWILComponent: program.hasWILComponent,
+      isWILApproved: program.isWILApproved,
+      wilProgramEligibility: program.wilProgramEligibility,
+      hasTravel: program.hasTravel,
+      travelProgramEligibility: program.travelProgramEligibility,
+      hasIntlExchange: program.hasIntlExchange,
+      intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
+      programDeclaration: program.programDeclaration,
+      institutionId: program.institution.id,
+      institutionName: program.institution.operatingName,
+      submittedDate: program.submittedDate,
+      submittedBy: getUserFullName(program.submittedBy),
+      effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
+      assessedDate: program.assessedDate,
+      assessedBy: getUserFullName(program.assessedBy),
+      isBCPrivate:
+        program.institution.institutionType.id === INSTITUTION_TYPE_BC_PRIVATE,
+    };
   }
 
   /**
@@ -67,7 +126,7 @@ export class EducationProgramAESTController extends BaseController {
    * @returns paginated programs summary.
    */
   @Get("institution/:institutionId/summary")
-  async getProgramsSummary(
+  async getProgramsSummaryByInstitutionId(
     @Param("institutionId", ParseIntPipe) institutionId: number,
     @Query() paginationOptions: ProgramsPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
@@ -81,21 +140,21 @@ export class EducationProgramAESTController extends BaseController {
    * Ministry user approve's a pending program.
    * @param programId program id.
    * @param institutionId institution id.
-   * @UserToken userToken
-   * @Body payload
+   * @param payload information to approve the program.
    */
   @Patch(":programId/institution/:institutionId/approve")
   async approveProgram(
     @UserToken() userToken: IUserToken,
     @Param("programId", ParseIntPipe) programId: number,
     @Param("institutionId", ParseIntPipe) institutionId: number,
-    @Body() payload: ApproveProgram,
+    @Body() payload: ApproveProgramAPIInDTO,
   ): Promise<void> {
     await this.programService.approveEducationProgram(
+      new Date(payload.effectiveEndDate),
+      payload.approvedNote,
       institutionId,
       programId,
       userToken.userId,
-      payload,
     );
   }
 
@@ -111,13 +170,13 @@ export class EducationProgramAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Param("programId", ParseIntPipe) programId: number,
     @Param("institutionId", ParseIntPipe) institutionId: number,
-    @Body() payload: DeclineProgram,
+    @Body() payload: DeclineProgramAPIInDTO,
   ): Promise<void> {
     await this.programService.declineEducationProgram(
+      payload.declinedNote,
       institutionId,
       programId,
       userToken.userId,
-      payload,
     );
   }
 }

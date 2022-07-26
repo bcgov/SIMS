@@ -186,9 +186,10 @@ export default {
 
     const loadFormData = async () => {
       if (isInstitutionUser.value) {
-        const programDetails = await EducationProgramService.shared.getProgram(
-          props.programId,
-        );
+        const programDetails =
+          await EducationProgramService.shared.getEducationProgram(
+            props.programId,
+          );
         const programValidationDetails = {
           programIntensity: programDetails.programIntensity,
           programDeliveryTypes: programDetails.programDeliveryTypes,
@@ -223,7 +224,7 @@ export default {
               props.offeringId,
             );
           const programDetailsPromise =
-            EducationProgramService.shared.getProgram(props.programId);
+            EducationProgramService.shared.getEducationProgram(props.programId);
           const [programOffering, programDetails] = await Promise.all([
             programOfferingPromise,
             programDetailsPromise,

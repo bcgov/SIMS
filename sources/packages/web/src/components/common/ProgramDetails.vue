@@ -82,7 +82,7 @@ import { ProgramIntensity, ClientIdType } from "@/types";
 import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 import { COLOR_BLUE } from "@/constants";
 import { AuthService } from "@/services/AuthService";
-import { EducationProgramDetailsAPIOutDTO } from "@/services/http/dto";
+import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
 export default {
   components: { ProgramStatusChip },
@@ -98,7 +98,7 @@ export default {
     educationProgram: {
       type: Object,
       required: true,
-      default: {} as EducationProgramDetailsAPIOutDTO,
+      default: {} as EducationProgramAPIOutDTO,
     },
   },
   setup(props: any) {

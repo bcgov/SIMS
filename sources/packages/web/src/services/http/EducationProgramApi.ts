@@ -1,31 +1,31 @@
 import {
-  SummaryEducationProgramDto,
   OptionItemDto,
-  DataTableSortOrder,
-  ProgramSummaryFields,
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  PaginatedResults,
   ApproveProgram,
   DeclineProgram,
   StudentEducationProgramAPIOutDTO,
   PaginationOptions,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { addSortOptions, getPaginationQueryString } from "@/helpers";
+import { getPaginationQueryString } from "@/helpers";
 import {
+  AESTEducationProgramAPIOutDTO,
+  EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
-  EducationProgramDetailsAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class EducationProgramApi extends HttpBaseClient {
+  /**
+   * Get programs summary for a particular location with pagination.
+   * @param locationId id of the location.
+   * @param paginationOptions pagination options.
+   * @returns paginated programs summary.
+   */
   async getProgramsSummaryByLocationId(
     locationId: number,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
-    console.log(paginationOptions);
     const url =
       `education-program/location/${locationId}/summary?` +
       getPaginationQueryString(paginationOptions);
@@ -34,6 +34,12 @@ export class EducationProgramApi extends HttpBaseClient {
     >(this.addClientRoot(url));
   }
 
+  /**
+   * Get the programs summary for a particular institution with pagination.
+   * @param institutionId id of the institution.
+   * @param paginationOptions pagination options.
+   * @returns paginated programs summary.
+   */
   async getProgramsSummaryByInstitutionId(
     institutionId: number,
     paginationOptions: PaginationOptions,
@@ -52,84 +58,25 @@ export class EducationProgramApi extends HttpBaseClient {
    * @param programId program id
    * @returns program information.
    */
-  async getProgram(programId: number): Promise<EducationProgramAPIOutDTO> {
-    return this.getCallTyped<EducationProgramAPIOutDTO>(
-      this.addClientRoot(`education-program/${programId}`),
-    );
-  }
-
-  async createProgram(createProgramDto: any): Promise<void> {
-    try {
-      await this.apiClient.post(
-        "education-program",
-        createProgramDto,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  async updateProgram(programId: number, updateProgramDto: any): Promise<void> {
-    try {
-      await this.apiClient.put(
-        `institution/education-program/${programId}`,
-        updateProgramDto,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  /**
-   * Prepare the API to fetch all institution
-   * location program.
-   * @param locationId location id
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchCriteria, program name keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns program summary for an institution location.
-   */
-  async getLocationProgramsSummary(
-    locationId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    searchCriteria?: string,
-    sortField?: ProgramSummaryFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedResults<SummaryEducationProgramDto>> {
-    try {
-      let url = `institution/education-program/location/${locationId}/summary?page=${page}&pageLimit=${pageCount}`;
-      if (searchCriteria) {
-        url = `${url}&searchCriteria=${searchCriteria}`;
-      }
-      url = addSortOptions(url, sortField, sortOrder);
-      const response = await this.getCall(url);
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get program details for a program id.
-   * @param programId program id
-   * @returns program information.
-   */
-  async getEducationProgramDetails(
+  async getEducationProgram(
     programId: number,
-  ): Promise<EducationProgramDetailsAPIOutDTO> {
-    return this.getCallTyped<EducationProgramDetailsAPIOutDTO>(
-      this.addClientRoot(`education-program/${programId}/details`),
-    );
+  ): Promise<EducationProgramAPIOutDTO | AESTEducationProgramAPIOutDTO> {
+    return this.getCallTyped<
+      EducationProgramAPIOutDTO | AESTEducationProgramAPIOutDTO
+    >(this.addClientRoot(`education-program/${programId}`));
+  }
+
+  async createEducationProgram(
+    payload: EducationProgramAPIInDTO,
+  ): Promise<void> {
+    await this.postCall("education-program", payload);
+  }
+
+  async updateProgram(
+    programId: number,
+    payload: EducationProgramAPIInDTO,
+  ): Promise<void> {
+    await this.putCall(`education-program/${programId}`, payload);
   }
 
   /**
