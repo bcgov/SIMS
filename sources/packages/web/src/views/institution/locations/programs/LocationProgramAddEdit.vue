@@ -163,7 +163,7 @@ export default {
       if (isInstitutionUser.value) {
         try {
           if (props.programId) {
-            await EducationProgramService.shared.updateProgram(
+            await EducationProgramService.shared.updateEducationProgram(
               props.programId,
               data,
             );

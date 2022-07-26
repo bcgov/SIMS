@@ -18,7 +18,7 @@ import {
 import { EducationProgramService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import {
   PaginatedResultsAPIOutDTO,
@@ -44,6 +44,9 @@ export class EducationProgramAESTController extends BaseController {
    * @param programId program id.
    * @returns programs information.
    * */
+  @ApiNotFoundResponse({
+    description: "Not able to find the requested program.",
+  })
   @Get(":programId")
   async getEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,
@@ -71,7 +74,7 @@ export class EducationProgramAESTController extends BaseController {
   }
 
   /**
-   * Ministry user approve's a pending program.
+   * Ministry user approves a pending program.
    * @param programId program id.
    * @param institutionId institution id.
    * @param payload information to approve the program.
@@ -93,11 +96,10 @@ export class EducationProgramAESTController extends BaseController {
   }
 
   /**
-   * Ministry user decline's a pending program.
+   * Ministry user declines a pending program.
    * @param programId program id.
    * @param institutionId institution id.
-   * @UserToken userToken
-   * @Body payload
+   * @payload note to decline the program.
    */
   @Patch(":programId/institution/:institutionId/decline")
   async declineProgram(

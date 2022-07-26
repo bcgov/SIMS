@@ -96,13 +96,11 @@ import {
   PAGINATION_LIST,
   ProgramSummaryFields,
   DataTableSortOrder,
+  EducationProgramsSummary,
+  PaginatedResults,
 } from "@/types";
 import { ref, watch, onMounted } from "vue";
 import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
-import {
-  EducationProgramsSummaryAPIOutDTO,
-  PaginatedResultsAPIOutDTO,
-} from "@/services/http/dto";
 
 export default {
   components: { ProgramStatusChip },
@@ -115,7 +113,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const programAndCount = ref(
-      {} as PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>,
+      {} as PaginatedResults<EducationProgramsSummary>,
     );
     const locationDetails = ref();
     const loading = ref(false);

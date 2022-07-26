@@ -7,6 +7,7 @@ import {
 
 /**
  * Complete education program information needed for the institution.
+ * Shared between the Ministry and the Institution.
  */
 export interface EducationProgramAPIOutDTO {
   id: number;
@@ -46,6 +47,11 @@ export interface EducationProgramAPIOutDTO {
   institutionId: number;
   institutionName: string;
   isBCPrivate: boolean;
+  submittedDate: Date;
+  submittedBy: string;
+  assessedDate?: Date;
+  assessedBy?: string;
+  effectiveEndDate?: string;
 }
 
 /**

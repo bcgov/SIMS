@@ -7,13 +7,14 @@ import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
+  OptionItemAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   StudentEducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 
 export class EducationProgramApi extends HttpBaseClient {
   /**
-   * Get programs summary for a particular location with pagination.
+   * Get programs for a particular location with pagination.
    * @param locationId id of the location.
    * @param paginationOptions pagination options.
    * @returns paginated programs summary.
@@ -31,7 +32,7 @@ export class EducationProgramApi extends HttpBaseClient {
   }
 
   /**
-   * Get the programs summary for a particular institution with pagination.
+   * Get the programs summary of an institution with pagination.
    * @param institutionId id of the institution.
    * @param paginationOptions pagination options.
    * @returns paginated programs summary.
@@ -62,13 +63,23 @@ export class EducationProgramApi extends HttpBaseClient {
     );
   }
 
+  /**
+   * Creates a new education program.
+   * @param payload information to create the new program.
+   * @returns id of the created program.
+   */
   async createEducationProgram(
     payload: EducationProgramAPIInDTO,
   ): Promise<void> {
     await this.postCall(this.addClientRoot("education-program"), payload);
   }
 
-  async updateProgram(
+  /**
+   * Updates the main information for an existing education program.
+   * @param programId program to be updated.
+   * @param payload information to be updated.
+   */
+  async updateEducationProgram(
     programId: number,
     payload: EducationProgramAPIInDTO,
   ): Promise<void> {
@@ -109,20 +120,20 @@ export class EducationProgramApi extends HttpBaseClient {
   }
 
   /**
-   * Gets location programs list authorized for institutions.
-   * @returns location programs list for institutions.
+   * Get a key/value pair list of all approved programs.
+   * @returns key/value pair list of all approved programs.
    */
-  async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
+  async getProgramsListForInstitutions(): Promise<OptionItemAPIOutDTO[]> {
     return this.getCallTyped<OptionItemDto[]>(
       this.addClientRoot("education-program/programs-list"),
     );
   }
 
   /**
-   * Ministry user approve's a pending program.
+   * Ministry user approves a pending program.
    * @param programId program id.
    * @param institutionId institution id.
-   * @param payload ApproveProgram.
+   * @param payload information to approve the program.
    */
   async approveProgram(
     programId: number,
@@ -138,10 +149,10 @@ export class EducationProgramApi extends HttpBaseClient {
   }
 
   /**
-   * Ministry user decline's a pending program.
+   * Ministry user declines a pending program.
    * @param programId program id.
    * @param institutionId institution id.
-   * @param payload DeclineProgram.
+   * @payload note to decline the program.
    */
   async declineProgram(
     programId: number,

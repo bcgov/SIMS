@@ -2,7 +2,7 @@ import { EducationProgramsSummaryAPIOutDTO } from "@/services/http/dto";
 import { OfferingStatus } from "@/types";
 
 /**
- * Program Intensities of the Program.
+ * Program intensities of the education program.
  */
 export enum ProgramIntensity {
   /**

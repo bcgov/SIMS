@@ -38,11 +38,10 @@ export class EducationProgramControllerService {
 
   /**
    * Gets all the programs that are associated with an institution
-   * alongside with the total of offerings on a particular location.
+   * alongside with the total of offerings on locations.
    * @param institutionId id of the institution.
-   * @param paginationOptions pagination options
-   * @param locationId optional location id to filter while
-   * calculating the total of offering.
+   * @param paginationOptions pagination options.
+   * @param locationId optional location id to filter.
    * @returns paginated summary for the institution or location.
    */
   async getProgramsSummary(
@@ -80,7 +79,7 @@ export class EducationProgramControllerService {
    * Saves an education program (insert/update).
    * @param payload payload with data to be persisted.
    * @param institutionId institution to have the program inserted or updated.
-   * @param programId if provided will update the record, otherwise will insert a new one.
+   * @param programId if provided, will update the record, otherwise will insert a new one.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns inserted/updated program.
    */
@@ -122,7 +121,7 @@ export class EducationProgramControllerService {
   }
 
   /**
-   * Education program information shared between Ministry and Institution.
+   * Education program information shared between the Ministry and the Institution.
    * @param programId program id.
    * @param institutionId when provided, ensures the proper authorization
    * checking if the institution has access to the program.

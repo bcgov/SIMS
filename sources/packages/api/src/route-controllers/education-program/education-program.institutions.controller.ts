@@ -2,12 +2,10 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
-  Put,
   Query,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -19,12 +17,13 @@ import {
 } from "../../auth/decorators";
 import { EducationProgramAPIInDTO } from "./models/education-program.dto";
 import { EducationProgramsSummary } from "../../services/education-program/education-program.service.models";
-import {
-  EducationProgramAPIOutDTO,
-  EducationProgramDetailsAPIOutDTO,
-} from "./models/education-program.dto";
+import { EducationProgramAPIOutDTO } from "./models/education-program.dto";
 import { ClientTypeBaseRoute } from "../../types";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { EducationProgramService } from "../../services";
 import {
@@ -66,6 +65,14 @@ export class EducationProgramInstitutionsController extends BaseController {
     );
   }
 
+  /**
+   * Creates a new education program.
+   * @param payload information to create the new program.
+   * @returns id of the created program.
+   */
+  @ApiUnprocessableEntityResponse({
+    description: "Not able to a save the program due to an invalid request.",
+  })
   @Post()
   async createEducationProgram(
     @Body() payload: EducationProgramAPIInDTO,
@@ -79,8 +86,19 @@ export class EducationProgramInstitutionsController extends BaseController {
     return { id: newProgram.id };
   }
 
+  /**
+   * Updates the main information for an existing education program.
+   * @param programId program to be updated.
+   * @param payload information to be updated.
+   */
+  @ApiUnprocessableEntityResponse({
+    description: "Not able to a save the program due to an invalid request.",
+  })
+  @ApiNotFoundResponse({
+    description: "Not able to find the education program.",
+  })
   @Patch(":programId")
-  async update(
+  async updateEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,
     @Body() payload: EducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
@@ -94,12 +112,11 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * Get a key/value pair list of all programs.
-   * @param userToken User token from request.
-   * @returns key/value pair list of programs.
+   * Get a key/value pair list of all approved programs.
+   * @returns key/value pair list of all approved programs.
    */
   @Get("programs-list")
-  async getLocationProgramsOptionListForInstitution(
+  async getProgramsListForInstitutions(
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<OptionItemAPIOutDTO[]> {
     const programs = await this.programService.getPrograms(
@@ -116,6 +133,9 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param programId program id.
    * @returns programs information.
    * */
+  @ApiNotFoundResponse({
+    description: "Not able to find the requested program.",
+  })
   @Get(":programId")
   async getEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,

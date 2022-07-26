@@ -184,12 +184,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
   /**
    * Gets all the programs that are associated with an institution
-   * alongside with the total of offerings on a particular location.
+   * alongside with the total of offerings on locations.
    * @param institutionId id of the institution.
-   * @param offeringTypes offering types to be considered.
-   * @param paginationOptions pagination options
-   * @param locationId optional location id to filter while
-   * calculating the total of offering.
+   * @param paginationOptions pagination options.
+   * @param locationId optional location id to filter.
    * @returns paginated summary for the institution or location.
    */
   async getProgramsSummary(
@@ -267,7 +265,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         paginationOptions.sortOrder,
       );
     } else {
-      // default sort and order
+      // Default sort and order.
       // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
       paginatedProgramQuery.orderBy(
         `CASE programs.program_status

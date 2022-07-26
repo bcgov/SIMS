@@ -38,10 +38,10 @@ export default {
   setup(props: any) {
     const educationProgram = ref({} as EducationProgramAPIOutDTO);
     const getEducationProgramAndOffering = async () => {
-      const program = await EducationProgramService.shared.getEducationProgram(
-        props.programId,
-      );
-      educationProgram.value = program as EducationProgramAPIOutDTO;
+      educationProgram.value =
+        await EducationProgramService.shared.getEducationProgram(
+          props.programId,
+        );
     };
 
     onMounted(getEducationProgramAndOffering);

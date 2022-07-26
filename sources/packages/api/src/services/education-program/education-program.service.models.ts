@@ -1,8 +1,16 @@
-import {
-  EntranceRequirements,
-  ProgramDeliveryTypes,
-} from "../../route-controllers/education-program/models/education-program.dto";
 import { ProgramIntensity, ProgramStatus } from "../../database/entities";
+
+export interface ProgramDeliveryTypes {
+  deliveredOnSite: boolean;
+  deliveredOnline: boolean;
+}
+
+export interface EntranceRequirements {
+  hasMinimumAge: boolean;
+  minHighSchool: boolean;
+  requirementsByInstitution: boolean;
+  requirementsByBCITA: boolean;
+}
 
 export interface SaveEducationProgram {
   name: string;
@@ -38,7 +46,7 @@ export interface SaveEducationProgram {
   programStatus: ProgramStatus;
 }
 
-export class EducationProgramsSummary {
+export interface EducationProgramsSummary {
   programId: number;
   programName: string;
   cipCode: string;

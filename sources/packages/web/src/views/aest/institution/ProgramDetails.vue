@@ -83,10 +83,10 @@ export default {
     const snackBar = useSnackBar();
 
     const getEducationProgramAndOffering = async () => {
-      const program = await EducationProgramService.shared.getEducationProgram(
-        props.programId,
-      );
-      educationProgram.value = program as EducationProgramAPIOutDTO;
+      educationProgram.value =
+        await EducationProgramService.shared.getEducationProgram(
+          props.programId,
+        );
     };
 
     const isPendingProgram = computed(

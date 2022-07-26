@@ -1,5 +1,9 @@
 import { Allow, IsDateString, IsNotEmpty, MaxLength } from "class-validator";
 import {
+  EntranceRequirements,
+  ProgramDeliveryTypes,
+} from "../../../services/education-program/education-program.service.models";
+import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   ProgramStatus,
 } from "../../../database/entities";
@@ -7,6 +11,7 @@ import { ProgramIntensity } from "../../../database/entities/program-intensity.t
 
 /**
  * Education program complete information.
+ * Shared between the Ministry and the Institution.
  */
 export class EducationProgramAPIOutDTO {
   id: number;
@@ -50,32 +55,7 @@ export class EducationProgramAPIOutDTO {
   submittedBy: string;
   assessedDate?: Date;
   assessedBy?: string;
-  effectiveEndDate: string;
-}
-
-/**
- * Subset information of a education program to be used
- * to describe a program without retrieving all the
- * program information.
- */
-export class EducationProgramDetailsAPIOutDTO {
-  id: number;
-  name: string;
-  description: string;
-  credentialType: string;
-  credentialTypeToDisplay: string;
-  cipCode: string;
-  nocCode: string;
-  sabcCode: string;
-  programStatus: string;
-  programIntensity: ProgramIntensity;
-  institutionProgramCode?: string;
-  submittedDate: Date;
-  submittedBy: string;
-  assessedDate?: Date;
-  assessedBy?: string;
-  effectiveEndDate: string;
-  institutionName: string;
+  effectiveEndDate?: string;
 }
 
 export class StudentEducationProgramAPIOutDTO {
@@ -98,18 +78,6 @@ export class EducationProgramsSummaryAPIOutDTO {
   locationName: string;
   locationId: number;
   programStatus: ProgramStatus;
-}
-
-export class ProgramDeliveryTypes {
-  deliveredOnSite: boolean;
-  deliveredOnline: boolean;
-}
-
-export class EntranceRequirements {
-  hasMinimumAge: boolean;
-  minHighSchool: boolean;
-  requirementsByInstitution: boolean;
-  requirementsByBCITA: boolean;
 }
 
 /**
