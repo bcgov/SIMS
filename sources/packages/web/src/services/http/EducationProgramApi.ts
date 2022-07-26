@@ -9,29 +9,59 @@ import {
   ApproveProgram,
   DeclineProgram,
   StudentEducationProgramAPIOutDTO,
+  PaginationOptions,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { addSortOptions } from "@/helpers";
-import { EducationProgramAPIOutDTO } from "./dto";
+import { addSortOptions, getPaginationQueryString } from "@/helpers";
+import {
+  EducationProgramAPIOutDTO,
+  EducationProgramDetailsAPIOutDTO,
+  EducationProgramsSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
 
 export class EducationProgramApi extends HttpBaseClient {
-  async getProgram(programId: number): Promise<any> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/education-program/${programId}`,
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  async getProgramsSummaryByLocationId(
+    locationId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
+    console.log(paginationOptions);
+    const url =
+      `education-program/location/${locationId}/summary?` +
+      getPaginationQueryString(paginationOptions);
+    return this.getCallTyped<
+      PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>
+    >(this.addClientRoot(url));
+  }
+
+  async getProgramsSummaryByInstitutionId(
+    institutionId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
+    console.log(paginationOptions);
+    const url =
+      `education-program/institution/${institutionId}/summary?` +
+      getPaginationQueryString(paginationOptions);
+    return this.getCallTyped<
+      PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>
+    >(this.addClientRoot(url));
+  }
+
+  /**
+   * Get complete program information for a program id.
+   * @param programId program id
+   * @returns program information.
+   */
+  async getProgram(programId: number): Promise<EducationProgramAPIOutDTO> {
+    return this.getCallTyped<EducationProgramAPIOutDTO>(
+      this.addClientRoot(`education-program/${programId}`),
+    );
   }
 
   async createProgram(createProgramDto: any): Promise<void> {
     try {
       await this.apiClient.post(
-        "institution/education-program",
+        "education-program",
         createProgramDto,
         this.addAuthHeader(),
       );
@@ -94,11 +124,11 @@ export class EducationProgramApi extends HttpBaseClient {
    * @param programId program id
    * @returns program information.
    */
-  async getEducationProgram(
+  async getEducationProgramDetails(
     programId: number,
-  ): Promise<EducationProgramAPIOutDTO> {
-    return this.getCallTyped<EducationProgramAPIOutDTO>(
-      this.addClientRoot(`institution/education-program/${programId}/details`),
+  ): Promise<EducationProgramDetailsAPIOutDTO> {
+    return this.getCallTyped<EducationProgramDetailsAPIOutDTO>(
+      this.addClientRoot(`education-program/${programId}/details`),
     );
   }
 

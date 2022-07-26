@@ -3,6 +3,7 @@ export * from "./program-year/program-year.controller";
 export * from "./config/config.controller";
 export * from "./dynamic-form/dynamic-form.controller";
 export * from "./cra-integration/cra-integration.system-access.controller";
+export * from "./education-program/education-program.controller.service";
 export * from "./education-program/education-program.aest.controller";
 export * from "./education-program/education-program.institutions.controller";
 export * from "./education-program/education-program.students.controller";

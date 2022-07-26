@@ -46,7 +46,7 @@ import { COLOR_BLUE } from "@/constants";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
 import DeclineProgramModal from "@/components/aest/institution/modals/DeclineProgramModal.vue";
-import { EducationProgramAPIOutDTO } from "@/services/http/dto";
+import { EducationProgramDetailsAPIOutDTO } from "@/services/http/dto";
 
 export default {
   components: {
@@ -69,7 +69,7 @@ export default {
     },
   },
   setup(props: any) {
-    const educationProgram = ref({} as EducationProgramAPIOutDTO);
+    const educationProgram = ref({} as EducationProgramDetailsAPIOutDTO);
     const approveProgramModal = ref(
       {} as ModalDialog<ApproveProgram | undefined>,
     );
@@ -80,7 +80,7 @@ export default {
 
     const getEducationProgramAndOffering = async () => {
       educationProgram.value =
-        await EducationProgramService.shared.getEducationProgram(
+        await EducationProgramService.shared.getEducationProgramDetails(
           props.programId,
         );
     };

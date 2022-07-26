@@ -90,18 +90,20 @@
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { InstitutionService } from "@/services/InstitutionService";
 import {
   DataTableSortOrder,
   ProgramSummaryFields,
   DEFAULT_PAGE_NUMBER,
   PAGINATION_LIST,
   DEFAULT_PAGE_LIMIT,
-  PaginatedResults,
-  AESTInstitutionProgramsSummaryDto,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
+import { EducationProgramService } from "@/services/EducationProgramService";
+import {
+  EducationProgramsSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
 
 export default {
   components: { ProgramStatusChip },
@@ -114,7 +116,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const institutionProgramsSummary = ref(
-      {} as PaginatedResults<AESTInstitutionProgramsSummaryDto>,
+      {} as PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>,
     );
     const searchProgramName = ref("");
     const currentPageSize = ref();
@@ -132,13 +134,15 @@ export default {
         loading.value = true;
         searchProgramName.value = programName;
         institutionProgramsSummary.value =
-          await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
+          await EducationProgramService.shared.getProgramsSummaryByInstitutionId(
             institutionId,
-            rowsPerPage,
-            page,
-            programName,
-            sortColumn,
-            sortOrder,
+            {
+              searchCriteria: programName,
+              pageLimit: rowsPerPage,
+              page,
+              sortField: sortColumn,
+              sortOrder,
+            },
           );
       } finally {
         loading.value = false;

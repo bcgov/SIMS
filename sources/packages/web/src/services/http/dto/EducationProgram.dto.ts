@@ -2,9 +2,12 @@ import {
   EntranceRequirements,
   ProgramDeliveryTypes,
   ProgramIntensity,
+  ProgramStatus,
 } from "@/types";
 
 export interface EducationProgramAPIOutDTO {
+  institutionId: number;
+  isBCPrivate: boolean;
   name: string;
   description?: string;
   credentialType: string;
@@ -36,4 +39,42 @@ export interface EducationProgramAPIOutDTO {
   intlExchangeProgramEligibility?: string;
   programDeclaration: boolean;
   hasOfferings: boolean;
+}
+
+/**
+ * Subset information of a education program to be used
+ * to describe a program without retrieving all the
+ * program information.
+ */
+export interface EducationProgramDetailsAPIOutDTO {
+  id: number;
+  name: string;
+  description: string;
+  credentialType: string;
+  credentialTypeToDisplay: string;
+  cipCode: string;
+  nocCode: string;
+  sabcCode: string;
+  programStatus: string;
+  programIntensity: ProgramIntensity;
+  institutionProgramCode?: string;
+  submittedDate: Date;
+  submittedBy: string;
+  assessedDate?: Date;
+  assessedBy?: string;
+  effectiveEndDate: string;
+  institutionName: string;
+}
+
+export interface EducationProgramsSummaryAPIOutDTO {
+  programId: number;
+  programName: string;
+  cipCode: string;
+  credentialType: string;
+  totalOfferings: number;
+  credentialTypeToDisplay: string;
+  submittedDate: Date;
+  locationName: string;
+  locationId: number;
+  programStatus: ProgramStatus;
 }

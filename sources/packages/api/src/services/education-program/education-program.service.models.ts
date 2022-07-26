@@ -11,11 +11,13 @@ export interface SaveEducationProgram extends EducationProgramDto {
 }
 
 export class EducationProgramsSummary {
-  id: number;
+  programId: number;
   programName: string;
   cipCode: string;
   credentialType: string;
-  programStatus: string;
+  submittedDate: Date;
+  programStatus: ProgramStatus;
   totalOfferings: number;
-  credentialTypeToDisplay: string;
+  locationId: number;
+  locationName: string;
 }

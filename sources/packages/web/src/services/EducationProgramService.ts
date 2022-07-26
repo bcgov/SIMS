@@ -1,7 +1,6 @@
 import {
   SummaryEducationProgramDto,
   OptionItemDto,
-  EducationProgramAPIDTO,
   DataTableSortOrder,
   ProgramSummaryFields,
   DEFAULT_PAGE_LIMIT,
@@ -10,9 +9,16 @@ import {
   ApproveProgram,
   DeclineProgram,
   StudentEducationProgramAPIOutDTO,
+  EducationProgramAPIDTO,
+  PaginationOptions,
 } from "@/types";
 import ApiClient from "@/services/http/ApiClient";
-import { EducationProgramAPIOutDTO } from "@/services/http/dto";
+import {
+  EducationProgramAPIOutDTO,
+  EducationProgramDetailsAPIOutDTO,
+  EducationProgramsSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
 
 export class EducationProgramService {
   // Share Instance
@@ -22,15 +28,40 @@ export class EducationProgramService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getProgram(programId: number): Promise<EducationProgramAPIDTO> {
+  async getProgramsSummaryByLocationId(
+    locationId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
+    return ApiClient.EducationProgram.getProgramsSummaryByLocationId(
+      locationId,
+      paginationOptions,
+    );
+  }
+
+  async getProgramsSummaryByInstitutionId(
+    institutionId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
+    return ApiClient.EducationProgram.getProgramsSummaryByInstitutionId(
+      institutionId,
+      paginationOptions,
+    );
+  }
+
+  /**
+   * Get complete program information for a program id.
+   * @param programId program id
+   * @returns program information.
+   */
+  async getProgram(programId: number): Promise<EducationProgramAPIOutDTO> {
     return ApiClient.EducationProgram.getProgram(programId);
   }
 
-  public async createProgram(data: EducationProgramAPIDTO): Promise<void> {
+  async createProgram(data: EducationProgramAPIDTO): Promise<void> {
     await ApiClient.EducationProgram.createProgram(data);
   }
 
-  public async updateProgram(
+  async updateProgram(
     programId: number,
     data: EducationProgramAPIDTO,
   ): Promise<void> {
@@ -73,10 +104,10 @@ export class EducationProgramService {
    * @param programId program id
    * @returns program information.
    */
-  public async getEducationProgram(
+  async getEducationProgramDetails(
     programId: number,
-  ): Promise<EducationProgramAPIOutDTO> {
-    return ApiClient.EducationProgram.getEducationProgram(programId);
+  ): Promise<EducationProgramDetailsAPIOutDTO> {
+    return ApiClient.EducationProgram.getEducationProgramDetails(programId);
   }
 
   /**
@@ -84,7 +115,7 @@ export class EducationProgramService {
    * @param programId program id to be returned.
    * @returns education program for a student.
    */
-  public async getStudentEducationProgram(
+  async getStudentEducationProgram(
     programId: number,
   ): Promise<StudentEducationProgramAPIOutDTO> {
     return ApiClient.EducationProgram.getStudentEducationProgram(programId);
@@ -95,7 +126,7 @@ export class EducationProgramService {
    * @param locationId location id.
    * @returns location programs option list.
    */
-  public async getLocationProgramsOptionList(
+  async getLocationProgramsOptionList(
     locationId: number,
     programYearId: number,
     isIncludeInActiveProgramYear?: boolean,
@@ -111,7 +142,7 @@ export class EducationProgramService {
    * Gets location programs list authorized for institutions.
    * @returns location programs list for institutions.
    */
-  public async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
+  async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgram.getProgramsListForInstitutions();
   }
 
@@ -121,7 +152,7 @@ export class EducationProgramService {
    * @param institutionId institution id.
    * @param payload ApproveProgram.
    */
-  public async approveProgram(
+  async approveProgram(
     programId: number,
     institutionId: number,
     payload: ApproveProgram,
@@ -139,7 +170,7 @@ export class EducationProgramService {
    * @param institutionId institution id.
    * @param payload DeclineProgram.
    */
-  public async declineProgram(
+  async declineProgram(
     programId: number,
     institutionId: number,
     payload: DeclineProgram,

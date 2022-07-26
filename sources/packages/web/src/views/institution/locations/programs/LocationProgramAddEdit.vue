@@ -2,12 +2,12 @@
   <header-navigator
     title="Program detail"
     :routeLocation="getRouteLocation"
-    :subTitle="getSubtitle"
+    :subTitle="subTitle"
   >
   </header-navigator>
   <div class="mt-4 mb-2">
     <banner
-      v-if="initialData.hasOfferings"
+      v-if="programData.hasOfferings"
       :type="BannerTypes.Success"
       header="Students have applied financial aid for this program"
       summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you'd like to edit the other fields."
@@ -21,8 +21,8 @@
   </div>
   <full-page-container class="mt-2">
     <formio
-      formName="educationprogram"
-      :data="initialData"
+      formName="educationProgram"
+      :data="programData"
       :readOnly="isReadonly"
       @submitted="submitted"
     ></formio>
@@ -37,12 +37,11 @@ import {
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { onMounted, ref, computed } from "vue";
-import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types";
 import { useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/components/generic/Banner.models";
-import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
+import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
 export default {
   props: {
@@ -58,9 +57,8 @@ export default {
   setup(props: any) {
     const snackBar = useSnackBar();
     const router = useRouter();
-    const institutionId = ref();
     const clientType = computed(() => AuthService.shared.authClientType);
-
+    const programData = ref({} as EducationProgramAPIOutDTO);
     const isInstitutionUser = computed(() => {
       return clientType.value === ClientIdType.Institution;
     });
@@ -70,35 +68,14 @@ export default {
     const isReadonly = computed(() => {
       return isAESTUser.value;
     });
-    // Data-bind
-    const initialData = ref({} as any);
-    let institution = {} as InstitutionDetailAPIOutDTO;
 
     const loadFormData = async () => {
-      if (isInstitutionUser.value) {
-        institution = await InstitutionService.shared.getDetail();
-        if (props.programId) {
-          const program = await EducationProgramService.shared.getProgram(
-            props.programId,
-          );
-          initialData.value = {
-            ...program,
-            ...{ isBCPrivate: institution.isBCPrivate },
-          };
-        } else {
-          initNewFormData();
-        }
-      }
-      if (isAESTUser.value) {
-        const programDetails =
-          await EducationProgramService.shared.getEducationProgramForAEST(
-            props.programId,
-          );
-        institutionId.value = programDetails.institutionId;
-        initialData.value = {
-          ...programDetails,
-          ...{ isBCPrivate: programDetails.regulatoryBody },
-        };
+      if (props.programId) {
+        programData.value = await EducationProgramService.shared.getProgram(
+          props.programId,
+        );
+      } else {
+        initNewFormData();
       }
     };
 
@@ -130,7 +107,7 @@ export default {
           name: AESTRoutesConst.PROGRAM_DETAILS,
           params: {
             programId: props.programId,
-            institutionId: institutionId.value,
+            institutionId: programData.value.institutionId,
             locationId: props.locationId,
           },
         });
@@ -161,7 +138,7 @@ export default {
           name: AESTRoutesConst.PROGRAM_DETAILS,
           params: {
             programId: props.programId,
-            institutionId: institutionId.value,
+            institutionId: programData.value.institutionId,
             locationId: props.locationId,
           },
         };
@@ -169,7 +146,7 @@ export default {
       return {};
     });
 
-    const getSubtitle = computed(() => {
+    const subTitle = computed(() => {
       if (isReadonly.value) {
         return "View Program";
       } else if (props.programId && !isReadonly.value) {
@@ -194,14 +171,14 @@ export default {
             snackBar.success("Education Program created successfully!");
           }
           goBack();
-        } catch (excp) {
+        } catch {
           snackBar.error("An error happened during the saving process.");
         }
       }
     };
 
     const createNewProgram = () => {
-      initialData.value = {};
+      programData.value = {} as EducationProgramAPIOutDTO;
       initNewFormData();
       router.push({
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
@@ -212,22 +189,21 @@ export default {
     };
 
     const initNewFormData = () => {
-      initialData.value = {
-        isBCPrivate: institution.isBCPrivate,
+      programData.value = {
+        isBCPrivate: programData.value.isBCPrivate,
         hasOfferings: false,
-      };
+      } as EducationProgramAPIOutDTO;
     };
 
     return {
-      initialData,
+      programData,
       submitted,
       isReadonly,
       goBack,
       InstitutionRoutesConst,
       createNewProgram,
-      institution,
       getRouteLocation,
-      getSubtitle,
+      subTitle,
       BannerTypes,
     };
   },

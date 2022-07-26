@@ -17,26 +17,23 @@ import {
   HasLocationAccess,
   UserToken,
 } from "../../auth/decorators";
-import {
-  EducationProgramDto,
-  EducationProgramAPIOutDTO,
-} from "./models/save-education-program.dto";
+import { EducationProgramDto } from "./models/save-education-program.dto";
 import { FormNames } from "../../services/form/constants";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
 } from "../../services/education-program/education-program.service.models";
-import { SubsetEducationProgramDto } from "./models/education-program.dto";
-import { EducationProgram, OfferingTypes } from "../../database/entities";
+import {
+  EducationProgramAPIOutDTO,
+  EducationProgramDetailsAPIOutDTO,
+} from "./models/education-program.dto";
+import { EducationProgram } from "../../database/entities";
 import { ClientTypeBaseRoute, OptionItem } from "../../types";
 import {
   credentialTypeToDisplay,
-  FieldSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
-  PaginatedResults,
   getISODateOnlyString,
   getUserFullName,
+  INSTITUTION_TYPE_BC_PRIVATE,
 } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
@@ -45,6 +42,11 @@ import {
   FormService,
   EducationProgramOfferingService,
 } from "../../services";
+import {
+  PaginatedResultsAPIOutDTO,
+  ProgramsPaginationOptionsAPIInDTO,
+} from "../models/pagination.dto";
+import { EducationProgramControllerService } from "..";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
@@ -54,6 +56,7 @@ export class EducationProgramInstitutionsController extends BaseController {
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
+    private readonly educationProgramControllerService: EducationProgramControllerService,
   ) {
     super();
   }
@@ -61,41 +64,23 @@ export class EducationProgramInstitutionsController extends BaseController {
   /**
    * Get programs for a particular institution with pagination.
    * @param locationId id of the location.
-   * @param pageLimit is the number of rows shown in the table
-   * @param page is the number of rows that is skipped/offset from the total list.
-   * For example page 2 the skip would be 10 when we select 10 rows per page.
-   * @param sortField the sorting column.
-   * @param sortOrder sorting order.
-   * @param searchCriteria Search the program name in the query
-   * @returns PaginatedResults<EducationProgramsSummary>.
+   * @param paginationOptions pagination options.
+   * @returns paginated programs summary.
    */
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get("location/:locationId/summary")
-  async getSummary(
+  async getProgramsSummary(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query("searchCriteria") searchCriteria: string,
-    @Query("sortField") sortField: string,
-    @Query("sortOrder") sortOrder: FieldSortOrder,
-    @Query("page") page = DEFAULT_PAGE_NUMBER,
-    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
+    @Query() paginationOptions: ProgramsPaginationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<PaginatedResults<EducationProgramsSummary>> {
-    return this.programService.getSummaryForLocation(
+  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummary>> {
+    return this.educationProgramControllerService.getProgramsSummary(
       userToken.authorizations.institutionId,
+      paginationOptions,
       locationId,
-      [OfferingTypes.Public, OfferingTypes.Private],
-      {
-        searchCriteria: searchCriteria,
-        sortField: sortField,
-        sortOrder: sortOrder,
-        page: page,
-        pageLimit: pageLimit,
-      },
     );
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Post()
   async create(
     @Body() payload: EducationProgramDto,
@@ -105,7 +90,6 @@ export class EducationProgramInstitutionsController extends BaseController {
     return newProgram.id;
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Put(":id")
   async update(
     @Param("id", ParseIntPipe) id: number,
@@ -162,22 +146,21 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * This returns only the subset of the EducationProgram to get
-   * the complete EducationProgram DTO use the @Get(":id") method
-   * @param programId
-   * @returns
+   * Returns only the subset of the education program to get
+   * the complete education program use the @Get(":id") method.
+   * @param programId program id.
+   * @returns subset of the education program.
    */
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get(":programId/details")
-  async getProgramDetails(
+  async getEducationProgramDetails(
     @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<SubsetEducationProgramDto> {
+  ): Promise<EducationProgramDetailsAPIOutDTO> {
     const educationProgram = await this.programService.getLocationPrograms(
       programId,
       userToken.authorizations.institutionId,
     );
-    const programDetails: SubsetEducationProgramDto = {
+    const programDetails: EducationProgramDetailsAPIOutDTO = {
       id: educationProgram.id,
       name: educationProgram.name,
       description: educationProgram.description,
@@ -212,7 +195,6 @@ export class EducationProgramInstitutionsController extends BaseController {
    * ! ref: https://stackoverflow.com/questions/58707933/node-js-express-route-conflict-issue
    * ! https://poopcode.com/how-to-resolve-parameterized-route-conficts-in-express-js/
    */
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get("programs-list")
   async getLocationProgramsOptionListForInstitution(
     @UserToken() userToken: IInstitutionUserToken,
@@ -237,7 +219,6 @@ export class EducationProgramInstitutionsController extends BaseController {
    * ! ref: https://stackoverflow.com/questions/58707933/node-js-express-route-conflict-issue
    * ! https://poopcode.com/how-to-resolve-parameterized-route-conficts-in-express-js/
    */
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get(":id")
   async getEducationProgram(
     @Param("id", ParseIntPipe) id: number,
@@ -261,6 +242,7 @@ export class EducationProgramInstitutionsController extends BaseController {
     }
 
     return {
+      institutionId: program.institution.id,
       name: program.name,
       description: program.description,
       credentialType: program.credentialType,
@@ -301,6 +283,8 @@ export class EducationProgramInstitutionsController extends BaseController {
       intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
       programDeclaration: program.programDeclaration,
       hasOfferings: hasOfferingsResponse,
+      isBCPrivate:
+        program.institution.institutionType.id === INSTITUTION_TYPE_BC_PRIVATE,
     };
   }
 }

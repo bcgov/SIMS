@@ -223,7 +223,7 @@ export default {
               props.offeringId,
             );
           const programDetailsPromise =
-            EducationProgramService.shared.getEducationProgram(props.programId);
+            EducationProgramService.shared.getProgram(props.programId);
           const [programOffering, programDetails] = await Promise.all([
             programOfferingPromise,
             programDetailsPromise,

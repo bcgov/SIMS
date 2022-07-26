@@ -14,23 +14,30 @@ import { AllowAuthorizedParty, UserToken, Groups } from "../../auth/decorators";
 import {
   EducationProgramDataDto,
   transformToEducationProgramData,
-  ProgramsSummary,
   DeclineProgram,
   ApproveProgram,
 } from "./models/save-education-program.dto";
 import { EducationProgramService } from "../../services";
-import { OfferingTypes } from "../../database/entities";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { FieldSortOrder, PaginatedResults } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import {
+  PaginatedResultsAPIOutDTO,
+  ProgramsPaginationOptionsAPIInDTO,
+} from "../models/pagination.dto";
+import { EducationProgramsSummaryAPIOutDTO } from "./models/education-program.dto";
+import { EducationProgramControllerService } from "./education-program.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
+@Groups(UserGroups.AESTUser)
 @Controller("education-program")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-education-program`)
 export class EducationProgramAESTController extends BaseController {
-  constructor(private readonly programService: EducationProgramService) {
+  constructor(
+    private readonly programService: EducationProgramService,
+    private readonly educationProgramControllerService: EducationProgramControllerService,
+  ) {
     super();
   }
 
@@ -39,9 +46,7 @@ export class EducationProgramAESTController extends BaseController {
    * @param programId program id
    * @returns programs details.
    * */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Get(":programId/aest")
+  @Get(":programId")
   async getProgramForAEST(
     @Param("programId", ParseIntPipe) programId: number,
   ): Promise<EducationProgramDataDto> {
@@ -56,38 +61,19 @@ export class EducationProgramAESTController extends BaseController {
   }
 
   /**
-   * Get all programs of an institution with pagination
-   * for ministry users
+   * Get the programs summary of an institution with pagination.
    * @param institutionId id of the institution.
-   * @param pageSize is the number of rows shown in the table
-   * @param page is the number of rows that is skipped/offset from the total list.
-   * For example page 2 the skip would be 10 when we select 10 rows per page.
-   * @param sortColumn the sorting column.
-   * @param sortOrder sorting order.
-   * @param searchCriteria Search the program name in the query
-   * @returns ProgramsSummaryPaginated.
+   * @param paginationOptions pagination options.
+   * @returns paginated programs summary.
    */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Get("institution/:institutionId/aest")
-  async getPaginatedProgramsForAEST(
+  @Get("institution/:institutionId/summary")
+  async getProgramsSummary(
     @Param("institutionId", ParseIntPipe) institutionId: number,
-    @Query("pageSize") pageSize: number,
-    @Query("page") page: number,
-    @Query("sortColumn") sortColumn: string,
-    @Query("sortOrder") sortOrder: FieldSortOrder,
-    @Query("searchCriteria") searchCriteria: string,
-  ): Promise<PaginatedResults<ProgramsSummary>> {
-    return this.programService.getPaginatedProgramsForAEST(
+    @Query() paginationOptions: ProgramsPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
+    return this.educationProgramControllerService.getProgramsSummary(
       institutionId,
-      [OfferingTypes.Public, OfferingTypes.Private],
-      {
-        searchCriteria: searchCriteria,
-        sortField: sortColumn,
-        sortOrder: sortOrder,
-        page: page,
-        pageLimit: pageSize,
-      },
+      paginationOptions,
     );
   }
 
@@ -98,9 +84,7 @@ export class EducationProgramAESTController extends BaseController {
    * @UserToken userToken
    * @Body payload
    */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Patch(":programId/institution/:institutionId/approve/aest")
+  @Patch(":programId/institution/:institutionId/approve")
   async approveProgram(
     @UserToken() userToken: IUserToken,
     @Param("programId", ParseIntPipe) programId: number,
@@ -122,9 +106,7 @@ export class EducationProgramAESTController extends BaseController {
    * @UserToken userToken
    * @Body payload
    */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Patch(":programId/institution/:institutionId/decline/aest")
+  @Patch(":programId/institution/:institutionId/decline")
   async declineProgram(
     @UserToken() userToken: IUserToken,
     @Param("programId", ParseIntPipe) programId: number,

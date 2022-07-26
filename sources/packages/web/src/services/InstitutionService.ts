@@ -1,9 +1,4 @@
-import { AESTInstitutionProgramsSummaryDto } from "@/types";
-import {
-  DataTableSortOrder,
-  PaginatedResults,
-  PaginationOptions,
-} from "../types";
+import { PaginatedResults, PaginationOptions } from "../types";
 import ApiClient from "./http/ApiClient";
 import {
   InstitutionLocationFormAPIInDTO,
@@ -155,29 +150,6 @@ export class InstitutionService {
     institutionId: number,
   ): Promise<InstitutionBasicAPIOutDTO> {
     return ApiClient.Institution.getBasicInstitutionInfoById(institutionId);
-  }
-
-  /**
-   * Get the Institution programs summary for the ministry institution detail page
-   * @param institutionId
-   * @returns PaginatedResults<AESTInstitutionProgramsSummaryDto>
-   */
-  async getPaginatedAESTInstitutionProgramsSummary(
-    institutionId: number,
-    pageSize: number,
-    page: number,
-    searchCriteria: string,
-    sortColumn?: string,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedResults<AESTInstitutionProgramsSummaryDto>> {
-    return ApiClient.Institution.getPaginatedAESTInstitutionProgramsSummary(
-      institutionId,
-      pageSize,
-      page,
-      searchCriteria,
-      sortColumn,
-      sortOrder,
-    );
   }
 
   /**
