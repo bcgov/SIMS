@@ -81,9 +81,18 @@ export interface OfferingFormModel {
 }
 
 /**
- * Properties of program that are used to validate an offering.
+ * Offering form edit model which consists of properties excluding the values derived at client.
  */
-export type ProgramValidationModel = Pick<
+export type OfferingFormEditModel = Omit<
+  OfferingFormModel,
+  "offeringChipStatus" | "offeringStatusToDisplay" | "clientType"
+>;
+
+/**
+ * Offering form create model which consists of program related properties to
+ * validate offering on creation.
+ */
+export type OfferingFormCreateModel = Pick<
   OfferingFormModel,
   "programIntensity" | "programDeliveryTypes" | "hasWILComponent"
 >;
@@ -108,4 +117,10 @@ export interface StudyBreaksAndWeeks {
   totalDays: number;
   totalFundedWeeks: number;
   unfundedStudyPeriodDays: number;
+}
+
+export enum OfferingRelationType {
+  ActualOffering = "Actual offering",
+  PrecedingOffering = "Preceding offering",
+  ParentOffering = "Parent offering",
 }

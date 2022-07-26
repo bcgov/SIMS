@@ -4,7 +4,7 @@
       <header-navigator
         title="Program detail"
         :routeLocation="routeLocation"
-        :subTitle="subTitle"
+        subTitle="Edit Study Period"
       >
         <template #buttons>
           <v-row class="p-0 m-0">
@@ -37,7 +37,6 @@
         </template>
       </header-navigator>
       <program-offering-detail-header
-        v-if="offeringId"
         class="m-4"
         :headerDetails="{
           ...initialData,
@@ -57,7 +56,7 @@
     </template>
     <offering-form
       :data="initialData"
-      :readOnly="false"
+      :readOnly="readOnly"
       @saveOffering="saveOffering"
     ></offering-form>
   </full-page-container>
@@ -68,7 +67,7 @@ import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormModel, OfferingStatus, OfferingDTO } from "@/types";
+import { OfferingFormEditModel, OfferingStatus, OfferingDTO } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
@@ -117,14 +116,11 @@ export default {
         },
       },
     ];
-    const initialData = ref({} as Partial<OfferingFormModel>);
+    const initialData = ref({} as OfferingFormEditModel);
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
     );
 
-    const subTitle = computed(() =>
-      props.offeringId ? "Edit Study Period" : "Add Study Period",
-    );
     const routeLocation = computed(() => ({
       name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
       params: {
@@ -132,37 +128,39 @@ export default {
         locationId: props.locationId,
       },
     }));
+
     const hasExistingApplication = computed(
       () =>
         initialData.value.hasExistingApplication &&
         initialData.value.offeringStatus === OfferingStatus.Approved,
     );
 
+    const readOnly = computed(
+      () =>
+        ![
+          OfferingStatus.Approved,
+          OfferingStatus.Pending,
+          OfferingStatus.Declined,
+        ].includes(initialData.value.offeringStatus),
+    );
+
     const loadFormData = async () => {
       const programDetails = await EducationProgramService.shared.getProgram(
         props.programId,
       );
-      //On create new offering, there won't be any offering details to be set.
-      if (props.offeringId) {
-        const programOffering =
-          await EducationProgramOfferingService.shared.getProgramOffering(
-            props.locationId,
-            props.programId,
-            props.offeringId,
-          );
-        initialData.value = {
-          programIntensity: programDetails.programIntensity,
-          programDeliveryTypes: programDetails.programDeliveryTypes,
-          hasWILComponent: programDetails.hasWILComponent,
-          ...programOffering,
-        };
-      } else {
-        initialData.value = {
-          programIntensity: programDetails.programIntensity,
-          programDeliveryTypes: programDetails.programDeliveryTypes,
-          hasWILComponent: programDetails.hasWILComponent,
-        };
-      }
+
+      const programOffering =
+        await EducationProgramOfferingService.shared.getProgramOffering(
+          props.locationId,
+          props.programId,
+          props.offeringId,
+        );
+      initialData.value = {
+        programIntensity: programDetails.programIntensity,
+        programDeliveryTypes: programDetails.programDeliveryTypes,
+        hasWILComponent: programDetails.hasWILComponent,
+        ...programOffering,
+      };
     };
     onMounted(async () => {
       await loadFormData();
@@ -171,23 +169,13 @@ export default {
     const saveOffering = async (data: OfferingDTO) => {
       try {
         //Update offering
-        if (props.offeringId) {
-          await EducationProgramOfferingService.shared.updateProgramOffering(
-            props.locationId,
-            props.programId,
-            props.offeringId,
-            data,
-          );
-          snackBar.success("Education Offering updated successfully!");
-        } else {
-          //Create new offering
-          await EducationProgramOfferingService.shared.createProgramOffering(
-            props.locationId,
-            props.programId,
-            data,
-          );
-          snackBar.success("Education Offering created successfully!");
-        }
+        await EducationProgramOfferingService.shared.updateProgramOffering(
+          props.locationId,
+          props.programId,
+          props.offeringId,
+          data,
+        );
+        snackBar.success("Education Offering updated successfully!");
         router.push(routeLocation.value);
       } catch (error: unknown) {
         snackBar.error("An error happened during the Offering saving process.");
@@ -198,13 +186,13 @@ export default {
       saveOffering,
       initialData,
       InstitutionRoutesConst,
-      subTitle,
       OfferingStatus,
       assessOfferingModalRef,
       BannerTypes,
       hasExistingApplication,
       items,
       routeLocation,
+      readOnly,
     };
   },
 };

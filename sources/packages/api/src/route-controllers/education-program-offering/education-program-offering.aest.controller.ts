@@ -23,6 +23,8 @@ import BaseController from "../BaseController";
 import {
   OfferingAssessmentAPIInDTO,
   OfferingChangeRequestAPIOutDTO,
+  ProgramOfferingDto,
+  transformToProgramOfferingDto,
 } from "./models/education-program-offering.dto";
 
 /**
@@ -83,13 +85,38 @@ export class EducationProgramOfferingAESTController extends BaseController {
   async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
     const offerings =
       await this.programOfferingService.getOfferingChangeRequests();
+    console.log(offerings);
     return offerings.map((offering) => ({
       offeringId: offering.id,
+      activeOfferingId: offering.precedingOffering.id,
+      programId: offering.educationProgram.id,
       offeringName: offering.name,
       submittedDate: offering.submittedDate,
       locationName: offering.institutionLocation.name,
       institutionName:
         offering.institutionLocation.institution.legalOperatingName,
     }));
+  }
+
+  /**
+   * Get preceding offering details
+   * @param offeringId offering id.
+   * @returns Offering details.
+   */
+  @Get(":offeringId/precedingOffering")
+  async getPrecedingOffering(
+    @Param("offeringId") offeringId: number,
+  ): Promise<ProgramOfferingDto> {
+    const offering =
+      await this.programOfferingService.getPrecedingOfferingByActualOfferingId(
+        offeringId,
+      );
+    if (!offering) {
+      throw new NotFoundException("Actual offering not found.");
+    }
+    if (offering.precedingOffering) {
+      throw new NotFoundException("Preceding offering not found.");
+    }
+    return transformToProgramOfferingDto(offering.precedingOffering);
   }
 }

@@ -1,9 +1,9 @@
 <template>
-  <full-page-container>
+  <full-page-container layout-template="centred-tab">
     <template #header>
       <header-navigator
         title="Study period offerings"
-        :routeLocation="programRoute"
+        :routeLocation="{ name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS }"
         subTitle="View Request"
       >
         <template #buttons v-if="showActionButtons">
@@ -30,7 +30,22 @@
         }"
       />
     </template>
-    <offering-form :data="initialData"></offering-form>
+    <template #tab-header>
+      <v-tabs v-model="tab" color="primary">
+        <v-tab value="requested-change" :ripple="false">Requested Change</v-tab>
+        <v-tab value="active-offering" :ripple="false">Active Offering</v-tab>
+      </v-tabs>
+    </template>
+
+    <v-window v-model="tab">
+      <v-window-item value="requested-change"
+        ><offering-form :data="initialData"></offering-form>
+      </v-window-item>
+      <v-window-item value="active-offering">
+        <offering-form :data="initialData"></offering-form>
+      </v-window-item>
+    </v-window>
+
     <assess-offering-modal
       ref="assessOfferingModalRef"
       :offeringStatus="offeringApprovalStatus"
@@ -39,13 +54,11 @@
 </template>
 
 <script lang="ts">
+import { onMounted, ref } from "vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import { onMounted, ref, computed } from "vue";
-import { OfferingFormModel, OfferingStatus } from "@/types";
+import { OfferingFormEditModel, OfferingStatus } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar, ModalDialog } from "@/composables";
-import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
@@ -58,14 +71,6 @@ export default {
     AssessOfferingModal,
   },
   props: {
-    institutionId: {
-      type: Number,
-      required: true,
-    },
-    locationId: {
-      type: Number,
-      required: true,
-    },
     programId: {
       type: Number,
       required: true,
@@ -77,23 +82,9 @@ export default {
   },
 
   setup(props: any) {
-    const snackBar = useSnackBar();
-    const initialData = ref({} as Partial<OfferingFormModel>);
-    const assessOfferingModalRef = ref(
-      {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
-    );
-    const offeringApprovalStatus = ref(OfferingStatus.Declined);
-    const programRoute = computed(() => ({
-      name: AESTRoutesConst.PROGRAM_DETAILS,
-      params: {
-        programId: props.programId,
-        institutionId: props.institutionId,
-        locationId: props.locationId,
-      },
-    }));
-    const showActionButtons = computed(
-      () => initialData.value.offeringStatus === OfferingStatus.Pending,
-    );
+    const tab = ref("requested-change");
+    const initialData = ref({} as OfferingFormEditModel);
+
     const loadFormData = async () => {
       const programDetails =
         await EducationProgramService.shared.getEducationProgramForAEST(
@@ -112,39 +103,16 @@ export default {
       };
     };
 
-    const assessOffering = async (offeringStatus: OfferingStatus) => {
-      offeringApprovalStatus.value = offeringStatus;
-      const responseData = await assessOfferingModalRef.value.showModal();
-      if (responseData) {
-        try {
-          await EducationProgramOfferingService.shared.assessOffering(
-            props.offeringId,
-            responseData as OfferingAssessmentAPIInDTO,
-          );
-          snackBar.success(
-            `The given offering has been ${offeringStatus.toLowerCase()} and notes added.`,
-          );
-          await loadFormData();
-        } catch (error) {
-          snackBar.error(
-            "Unexpected error while approving/declining the offering.",
-          );
-        }
-      }
-    };
     onMounted(async () => {
       await loadFormData();
     });
+
     return {
       initialData,
       OfferingStatus,
       BannerTypes,
       AESTRoutesConst,
-      assessOffering,
-      assessOfferingModalRef,
-      programRoute,
-      showActionButtons,
-      offeringApprovalStatus,
+      tab,
     };
   },
 };

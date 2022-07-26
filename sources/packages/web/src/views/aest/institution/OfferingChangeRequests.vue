@@ -39,9 +39,10 @@
               <v-btn
                 color="primary"
                 @click="
-                  gotToAssessmentsSummary(
-                    slotProps.data.applicationId,
-                    slotProps.data.studentId,
+                  viewOfferingChangeRequest(
+                    slotProps.data.offeringId,
+                    slotProps.data.activeOfferingId,
+                    slotProps.data.programId,
                   )
                 "
                 >View request</v-btn
@@ -55,17 +56,20 @@
 </template>
 <script lang="ts">
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
   DEFAULT_PAGE_NUMBER,
 } from "@/types";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
 import { OfferingChangeRequestAPIOutDTO } from "@/services/http/dto/EducationProgramOffering.dto";
 
 export default {
   setup() {
+    const router = useRouter();
     const page = ref(DEFAULT_PAGE_NUMBER);
     const pageLimit = ref(DEFAULT_PAGE_LIMIT);
     const searchCriteria = ref();
@@ -77,6 +81,17 @@ export default {
         await EducationProgramOfferingService.shared.getOfferingChangeRequests();
     });
 
+    const viewOfferingChangeRequest = (
+      offeringId: number,
+      activeOfferingId: number,
+      programId: number,
+    ) => {
+      router.push({
+        name: AESTRoutesConst.VIEW_OFFERING_CHANGE_REQUEST,
+        params: { offeringId, activeOfferingId, programId },
+      });
+    };
+
     return {
       page,
       pageLimit,
@@ -84,6 +99,7 @@ export default {
       offeringChangeRequests,
       PAGINATION_LIST,
       dateOnlyLongString,
+      viewOfferingChangeRequest,
     };
   },
 };

@@ -544,11 +544,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       educationProgramOffering,
     );
     const auditUser = { id: userId } as User;
+    const precedingOffering = {
+      id: currentOffering.id,
+    } as EducationProgramOffering;
     //Populating the status, parent offering and audit fields.
     requestedOffering.offeringStatus = OfferingStatus.AwaitingApproval;
     requestedOffering.parentOffering =
-      currentOffering.parentOffering ??
-      ({ id: currentOffering.id } as EducationProgramOffering);
+      currentOffering.parentOffering ?? precedingOffering;
+    requestedOffering.precedingOffering = precedingOffering;
     requestedOffering.creator = auditUser;
 
     //Update the status and audit details of current offering.
@@ -604,16 +607,72 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.id",
         "offerings.name",
         "offerings.submittedDate",
+        "offerings.precedingOffering",
+        "precedingOffering.id",
+        "educationProgram.id",
         "institutionLocation.name",
         "institution.legalOperatingName",
         "institution.operatingName",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
+      .innerJoin("offerings.precedingOffering", "precedingOffering")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
       .where("offerings.offeringStatus = :offeringStatus", {
         offeringStatus: OfferingStatus.AwaitingApproval,
       })
       .getMany();
+  }
+
+  /**
+   * Gets preceding offering details of the actual offering.
+   * @param offeringId offering id of actual offering.
+   * @returns offering object.
+   */
+  async getPrecedingOfferingByActualOfferingId(
+    offeringId: number,
+  ): Promise<EducationProgramOffering> {
+    return this.repo
+      .createQueryBuilder("offering")
+      .select([
+        "offering.id",
+        "precedingOffering.id",
+        "precedingOffering.name",
+        "precedingOffering.studyStartDate",
+        "precedingOffering.studyEndDate",
+        "precedingOffering.actualTuitionCosts",
+        "precedingOffering.programRelatedCosts",
+        "precedingOffering.mandatoryFees",
+        "precedingOffering.exceptionalExpenses",
+        "precedingOffering.offeringDelivered",
+        "precedingOffering.lacksStudyBreaks",
+        "precedingOffering.offeringIntensity",
+        "precedingOffering.yearOfStudy",
+        "precedingOffering.showYearOfStudy",
+        "precedingOffering.hasOfferingWILComponent",
+        "precedingOffering.offeringWILType",
+        "precedingOffering.studyBreaks",
+        "precedingOffering.offeringDeclaration",
+        "precedingOffering.offeringType",
+        "precedingOffering.assessedDate",
+        "precedingOffering.submittedDate",
+        "precedingOffering.courseLoad",
+        "precedingOffering.offeringStatus",
+        "assessedBy.firstName",
+        "assessedBy.lastName",
+        "institutionLocation.name",
+        "institution.id",
+        "institution.legalOperatingName",
+        "institution.operatingName",
+      ])
+      .innerJoin("offering.precedingOffering", "precedingOffering")
+      .innerJoin("precedingOffering.educationProgram", "educationProgram")
+      .innerJoin("precedingOffering.institutionLocation", "institutionLocation")
+      .innerJoin("precedingOffering.institution", "institution")
+      .leftJoin("precedingOffering.assessedBy", "assessedBy")
+      .where("offering.id= :offeringId", {
+        offeringId,
+      })
+      .getOne();
   }
 }

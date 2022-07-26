@@ -47,7 +47,8 @@ import ApplicationExceptionsApproval from "@/views/aest/ApplicationExceptionsApp
 import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
 import SINManagement from "@/views/aest/student/SINManagement.vue";
 import StudentApplicationExceptions from "@/views/aest/student/StudentApplicationExceptions.vue";
-import OfferingRequests from "@/views/aest/institution/OfferingRequests.vue";
+import OfferingChangeRequests from "@/views/aest/institution/OfferingChangeRequests.vue";
+import ViewOfferingChangeRequest from "@/views/aest/institution/ViewOfferingChangeRequest.vue";
 import StudentApplicationAppeals from "@/views/aest/student/StudentApplicationAppeals.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
@@ -453,10 +454,22 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.OfferingRequests,
+        path: AppRoutes.OfferingChangeRequests,
         name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS,
         components: {
-          default: OfferingRequests,
+          default: OfferingChangeRequests,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.ViewOfferingChangeRequest,
+        name: AESTRoutesConst.VIEW_OFFERING_CHANGE_REQUEST,
+        props: true,
+        components: {
+          default: ViewOfferingChangeRequest,
           sidebar: AESTHomeSideBar,
         },
         meta: {

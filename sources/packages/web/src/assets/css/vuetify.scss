@@ -54,12 +54,6 @@
   margin-bottom: 0px !important;
 }
 
-.v-btn {
-  outline: none !important;
-}
-.v-window {
-  border-top: 2px solid #e8e8e8;
-}
 // v-snackbar success style.
 .snackbar-success .v-overlay__content {
   border: 3px solid $banner-color-success;
@@ -108,4 +102,18 @@
 .v-divider--inset:not(.v-divider--vertical) {
   max-width: calc(100% - 29px) !important;
   margin-inline-start: 16px !important;
+}
+
+.v-btn {
+  outline: none !important;
+}
+
+.v-slide-group.v-tabs.v-tabs--horizontal {
+  display: inline-block;
+  border-bottom: 2px solid #e8e8e8;
+  width: 100%;
+}
+
+.v-tab__slider {
+  bottom: 5px !important;
 }
