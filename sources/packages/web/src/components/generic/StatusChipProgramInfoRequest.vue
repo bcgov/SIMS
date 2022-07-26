@@ -1,7 +1,7 @@
 <template>
   <v-chip :color="chipColor" variant="outlined"
     ><v-icon start icon="fa:fa fa-circle" size="18"></v-icon>
-    {{ status }}
+    <span class="label-small default-color">{{ status }}</span>
   </v-chip>
 </template>
 <script lang="ts">

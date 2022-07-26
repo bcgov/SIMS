@@ -1,7 +1,6 @@
 <!-- Student restriction badge. -->
 <template>
-  <!-- todo:ann background color match figma class="v-chip__underlay"-->
-  <v-chip :color="chipColor" variant="outlined"
+  <v-chip :color="chipColor" variant="outlined" class="v-chip--variant-tonal"
     ><v-icon :icon="icon" size="18"></v-icon>
     <span class="mx-1" v-if="label">{{ label }}</span>
   </v-chip>
@@ -30,11 +29,10 @@ export default {
     });
 
     const label = computed(() => {
-      switch (props.status) {
-        case StudentRestrictionStatus.restriction:
-          return StudentRestrictionStatus.restriction;
-        default:
-          return "";
+      if (props.status === StudentRestrictionStatus.restriction) {
+        return StudentRestrictionStatus.restriction;
+      } else {
+        return "";
       }
     });
 

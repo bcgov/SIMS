@@ -13,43 +13,49 @@
       >No notes found. Please click on create new note to add one.</v-col
     ></v-row
   >
-  <!-- Prime vue timeline used here as Vuetify alpha version is not supporting timeline. 
-             TODO: when moving to vuetify change the timeline component to vuetify -->
-  <Timeline :value="notes">
-    <template #content="slotProps">
-      <v-row>
-        <v-col cols="2" class="primary-color marker-text">{{
-          dateOnlyLongString(slotProps.item.createdAt)
-        }}</v-col>
-        <v-col>
-          <div class="content-header">{{ slotProps.item.noteType }}</div>
-          <div v-if="showMoreNotes(slotProps.item)" class="header mt-2">
-            {{ slotProps.item.description.substring(0, 150) }}
-            <a @click="toggleNotes(slotProps.item)" class="primary-color"
+  <v-timeline
+    truncate-line="both"
+    side="end"
+    align="left"
+    class="justify-content-start"
+  >
+    <v-timeline-item
+      v-for="note in notes"
+      :key="note"
+      dot-color="primary"
+      size="x-small"
+      fill-dot
+    >
+      <div class="d-flex">
+        <span class="primary-color marker-text">{{
+          dateOnlyLongString(note.createdAt)
+        }}</span>
+        <div class="mx-8">
+          <div class="content-header">{{ note.noteType }}</div>
+          <div v-if="showMoreNotes(notes)" class="header mt-2">
+            {{ note.description.substring(0, 150) }}
+            <a @click="toggleNotes(notes)" class="primary-color"
               >Show more...</a
             >
           </div>
           <div v-else class="header mt-2">
-            {{ slotProps.item.description }}
+            {{ note.description }}
             <a
-              v-if="slotProps.item.showMore"
-              @click="toggleNotes(slotProps.item)"
+              v-if="note.showMore"
+              @click="toggleNotes(notes)"
               class="primary-color"
               >Show less...</a
             >
           </div>
           <div class="content-footer mt-2 mb-8 secondary-color-light">
-            <span>{{
-              timeOnlyInHoursAndMinutes(slotProps.item.createdAt)
-            }}</span>
-            <span class="ml-6">{{
-              `${slotProps.item.lastName}, ${slotProps.item.firstName}`
-            }}</span>
+            <span>{{ timeOnlyInHoursAndMinutes(note.createdAt) }}</span
+            ><span class="mx-2">|</span>
+            <span>{{ `${note.lastName}, ${note.firstName}` }}</span>
           </div>
-        </v-col>
-      </v-row>
-    </template>
-  </Timeline>
+        </div>
+      </div>
+    </v-timeline-item>
+  </v-timeline>
   <CreateNoteModal
     ref="createNotesModal"
     :entityType="entityType"

@@ -12,6 +12,6 @@ export enum DesignationAndRestrictionStatus {
 }
 // todo: ann check institution designations AEST
 export enum StudentRestrictionStatus {
-  noRestriction = "no restriction",
-  restriction = "Active restriction",
+  noRestriction = "No restrictions",
+  restriction = "Active restrictions",
 }

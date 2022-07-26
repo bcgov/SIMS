@@ -20,7 +20,6 @@ import TabMenu from "primevue/tabmenu";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
 import { AppConfigService } from "./services/AppConfigService";
-import Timeline from "primevue/timeline";
 import Tooltip from "primevue/tooltip";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
@@ -113,7 +112,6 @@ AppConfigService.shared.init().then(() => {
     .component("TabView", TabView)
     .component("TabPanel", TabPanel)
     .component("font-awesome-icon", FontAwesomeIcon)
-    .component("Timeline", Timeline)
     .component("BodyHeader", BodyHeader)
     .component("ContentGroup", ContentGroup)
     .component("FullPageContainer", FullPageContainer)

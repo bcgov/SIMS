@@ -3,6 +3,10 @@
     <v-icon start icon="fa:fa fa-circle" :color="iconColor" size="12" />
     {{ label ?? status }}
   </v-chip>
+  <v-chip color="#EEFFEF" variant="outlined"
+    ><v-icon start icon="fa:fa fa-circle" size="13" color="#16C92E"></v-icon>
+    <span class="label-small default-color">{{ label ?? status }}</span>
+  </v-chip>
 </template>
 <script lang="ts">
 import { computed } from "vue";
@@ -26,6 +30,18 @@ export default {
     },
   },
   setup(props: any) {
+    const chipColor = computed(() => {
+      switch (props.status) {
+        case StatusChipTypes.Success:
+          return "success";
+        case StatusChipTypes.Warning:
+          return "warning";
+        case StatusChipTypes.Error:
+          return "error";
+        default:
+          return "";
+      }
+    });
     const iconColor = computed(() => {
       switch (props.status) {
         case StatusChipTypes.Success:
@@ -60,6 +76,8 @@ export default {
       chipClass,
       textColor,
       iconColor,
+      chipColor,
+      COLOR_BANNER_SUCCESS,
     };
   },
 };
