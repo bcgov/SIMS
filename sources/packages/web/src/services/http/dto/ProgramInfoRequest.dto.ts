@@ -1,13 +1,15 @@
-import { IsOptional, IsPositive } from "class-validator";
-import { OfferingTypes, ProgramInfoStatus } from "../../../database/entities";
-import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
+import {
+  CourseDetails,
+  OfferingIntensity,
+  OfferingTypes,
+  ProgramInfoStatus,
+} from "@/types";
 
-export class CompleteProgramInfoRequestAPIInDTO {
-  @IsPositive()
+export interface CompleteProgramInfoRequestAPIInDTO {
   selectedOffering: number;
 }
 
-export class ProgramInfoRequestAPIOutDTO {
+export interface ProgramInfoRequestAPIOutDTO {
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;
@@ -31,19 +33,12 @@ export class ProgramInfoRequestAPIOutDTO {
   otherReasonDesc?: string;
 }
 
-export class CourseDetails {
-  courseName: string;
-  courseCode: string;
-  courseStartDate: string;
-  courseEndDate: string;
-}
-
-export class PIRDeniedReasonAPIOutDTO {
+export interface PIRDeniedReasonAPIOutDTO {
   id: number;
   description: string;
 }
 
-export class PIRSummaryAPIOutDTO {
+export interface PIRSummaryAPIOutDTO {
   applicationNumber: string;
   studyStartPeriod: string;
   studyEndPeriod: string;
@@ -52,9 +47,7 @@ export class PIRSummaryAPIOutDTO {
   fullName: string;
 }
 
-export class DenyProgramInfoRequestAPIInDTO {
-  @IsPositive()
+export interface DenyProgramInfoRequestAPIInDTO {
   pirDenyReasonId: number;
-  @IsOptional()
   otherReasonDesc?: string;
 }
