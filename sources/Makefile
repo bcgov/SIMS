@@ -31,26 +31,12 @@ export FILE_UPLOAD_ALLOWED_EXTENSIONS := $(or $(FILE_UPLOAD_ALLOWED_EXTENSIONS),
 export SFAS_RECEIVE_FOLDER := $(or $(SFAS_RECEIVE_FOLDER), SFAS-Receive)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
-#QA API, APP and DB Setup
-export QA_API_PORT := $(or $(QA_API_PORT), 3002)
-export QA_APP_PORT := $(or $(QA_APP_PORT), 8082)
-#QA Database
-export QA_POSTGRES_PORT := $(or $(QA_POSTGRES_PORT), 5434)
-export QA_POSTGRES_USER := $(or $(QA_POSTGRES_USER), admin)
-export QA_POSTGRES_PASSWORD := $(or $(QA_POSTGRES_PASSWORD), aest_sim)
-export QA_POSTGRES_DB := $(or $(QA_POSTGRES_DB), qa_aest)
 
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
 local-api-detached: | print-status local-build api-detached
 db: | print-status postgres
 test-api: | print-status local-api-test
-
-qa-local: | qa-print-status qa-local-build-run
-qa-local-api: | qa-print-status qa-local-build qa-api-only
-qa-local-api-detached: | qa-print-status qa-local-build qa-api-detached
-qa-db: | qa-print-status qa-postgres
-qa-test-api: | qa-print-status qa-local-api-test
 
 ####################################################################
 ## Status Output
@@ -78,18 +64,6 @@ print-status:
 	@echo " | E2E_TEST_BCeID_USERNAME: $(E2E_TEST_BCeID_USERNAME) "
 	@echo " | BCeID Web Service"
 	@echo " | BCeID_WEB_SERVICE_WSDL: $(BCeID_WEB_SERVICE_WSDL) "
-
-####################################################################
-## QA Status Output
-####################################################################	
-qa-print-status:
-	@echo " | QA DB, API and APP setup"
-	@echo " | QA_API_PORT: $(QA_API_PORT) "
-	@echo " | QA_APP_PORT: $(QA_APP_PORT) "
-	@echo " | QA_POSTGRES_PORT: $(QA_POSTGRES_PORT) "
-	@echo " | QA_POSTGRES_USER: $(QA_POSTGRES_USER) "
-	@echo " | QA_POSTGRES_PASSWORD: $(QA_POSTGRES_PASSWORD) "
-	@echo " | QA_POSTGRES_DB: $(QA_POSTGRES_DB) "
 	@echo " +---------------------------------------------------------+ "
 
 #################################################################
@@ -151,62 +125,4 @@ local-db:
 	@echo "Make: Shelling into database workspace ..."
 	@docker-compose -f docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) -W $(POSTGRES_DB)
 
-#################################################################
-## QA Local Build/Run 
-#################################################################
-
-#QA Build locally
-qa-local-build:
-	@echo "+\n++ Make: QA Building locally ...\n+"
-	@docker-compose -f qa-docker-compose.yml build
-
-#QA Run locally
-qa-local-run:
-	@echo "+\n++ Make: QA Run locally ...\n+"
-	@docker-compose -f qa-docker-compose.yml up
-
-#QA Build and run locally
-qa-local-build-run:
-	@echo "+\n++ Make: QA Build / Run locally ...\n+"
-	@docker-compose -f qa-docker-compose.yml up --build
-
-#QA Stop locally
-qa-local-stop:
-	@echo "+\n++ Make: QA Stop local app ...\n+"
-	@docker-compose -f qa-docker-compose.yml down
-
-#QA Clean locally
-qa-local-clean:
-	@echo "+\n++ Make: QA Clean local app ...\n+"
-	@docker-compose -f qa-docker-compose.yml down -v
-
-#QA Local DB
-qa-postgres:
-	@echo "+\n++ Make: QA Run local db.\n+"
-	@docker-compose -f qa-docker-compose.yml up postgres
-
-#QA Local API only
-qa-api-only:
-	@echo "+\n++ Make: QA Building and running API only"
-	@docker-compose -f qa-docker-compose.yml up -d postgres
-	@docker-compose -f qa-docker-compose.yml up api
-
-qa-api-detached:
-	@echo "+\n++ Make: QA Running DB and API only"
-	@docker-compose -f qa-docker-compose.yml up -d postgres
-	@docker-compose -f qa-docker-compose.yml up -d api
-
-#QA Local App
-qa-api: ## <Helper> :: Executes into the workspace container.
-	@echo "+\n++ QA Shelling into local workspace ...++\n+"
-	@docker-compose exec api bash
-
-qa-local-api-test: ## Run API tests
-	@echo "+\n++ QA Run API tests+\n++"
-	@docker-compose exec -T api npm run test
-	@docker-compose exec -T api npm run test:e2e
-
-qa-local-db:
-	@echo "Make: QA Shelling into database workspace ..."
-	@docker-compose -f qa-docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) -W $(POSTGRES_DB)
 
