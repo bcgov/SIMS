@@ -15,13 +15,7 @@ import store from "./store";
 import PrimeVue from "primevue/config";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import Message from "primevue/message";
-import Checkbox from "primevue/checkbox";
 import ToastService from "primevue/toastservice";
-import Calendar from "primevue/calendar";
-import Dropdown from "primevue/dropdown";
-import ProgressSpinner from "primevue/progressspinner";
-import Chip from "primevue/chip";
 import TabMenu from "primevue/tabmenu";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
@@ -115,12 +109,6 @@ AppConfigService.shared.init().then(() => {
     .use(ToastService)
     .component("DataTable", DataTable)
     .component("Column", Column)
-    .component("Message", Message)
-    .component("Checkbox", Checkbox)
-    .component("Calendar", Calendar)
-    .component("Dropdown", Dropdown)
-    .component("ProgressSpinner", ProgressSpinner)
-    .component("Chip", Chip)
     .component("TabMenu", TabMenu)
     .component("TabView", TabView)
     .component("TabPanel", TabPanel)

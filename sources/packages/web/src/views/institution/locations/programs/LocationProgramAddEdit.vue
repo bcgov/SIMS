@@ -41,7 +41,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types";
 import { useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
-import { BannerTypes } from "@/components/generic/Banner.models";
+import { BannerTypes } from "@/types/contracts/Banner";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 
 export default {

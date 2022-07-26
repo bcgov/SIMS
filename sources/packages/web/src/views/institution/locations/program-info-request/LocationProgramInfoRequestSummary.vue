@@ -31,10 +31,8 @@
             <Column field="applicationNumber" header="Application #"></Column>
             <Column field="pirStatus" header="Status">
               <template #body="slotProps">
-                <Chip
-                  :label="slotProps.data.pirStatus"
-                  class="p-mr-2 p-mb-2 text-uppercase"
-                  :class="getPirStatusColorClass(slotProps.data.pirStatus)"
+                <status-chip-program-info-request
+                  :status="slotProps.data.pirStatus"
                 />
               </template>
             </Column>
@@ -60,10 +58,12 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { PIRSummaryDTO, ProgramInfoStatus } from "@/types";
+import { PIRSummaryDTO } from "@/types";
 import { useFormatters } from "@/composables";
+import StatusChipProgramInfoRequest from "@/components/generic/StatusChipProgramInfoRequest.vue";
 
 export default {
+  components: { StatusChipProgramInfoRequest },
   props: {
     locationId: {
       type: Number,
@@ -104,26 +104,10 @@ export default {
       await updateSummaryList(props.locationId);
     });
 
-    const getPirStatusColorClass = (status: string) => {
-      switch (status) {
-        case ProgramInfoStatus.submitted:
-          return "bg-info text-white";
-        case ProgramInfoStatus.completed:
-          return "bg-success text-white";
-        case ProgramInfoStatus.required:
-          return "bg-warning text-white";
-        case ProgramInfoStatus.declined:
-          return "bg-danger text-white";
-        default:
-          return "";
-      }
-    };
-
     return {
       applications,
       dateString,
       goToViewApplication,
-      getPirStatusColorClass,
     };
   },
 };

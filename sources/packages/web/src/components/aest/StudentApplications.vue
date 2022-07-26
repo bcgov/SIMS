@@ -62,7 +62,7 @@
         sortable="true"
       >
         <template #body="slotProps">
-          <Status :statusValue="slotProps.data.status" />
+          <status-chip-application :statusValue="slotProps.data.status" />
         </template>
       </Column>
       <Column :field="StudentApplicationFields.Actions" header="Actions">
@@ -132,7 +132,7 @@ import {
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
-import Status from "@/views/student/ApplicationStatus.vue";
+import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import { useStore } from "vuex";
 import { AuthService } from "@/services/AuthService";
 import {
@@ -141,7 +141,7 @@ import {
 } from "@/services/http/dto";
 
 export default {
-  components: { Status },
+  components: { StatusChipApplication },
   emits: ["editApplicationAction", "openConfirmCancel", "goToApplication"],
   props: {
     studentId: {

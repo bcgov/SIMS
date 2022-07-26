@@ -1,9 +1,8 @@
 <template>
-  <Chip
-    :label="statusValue"
-    class="text-uppercase"
-    :class="applicationStatusClass"
-  />
+  <v-chip :color="chipColor" variant="outlined"
+    ><v-icon start icon="fa:fa fa-circle" size="18"></v-icon>
+    {{ statusValue }}
+  </v-chip>
 </template>
 <script lang="ts">
 import { ApplicationStatus } from "@/types";
@@ -15,29 +14,29 @@ export default {
     },
   },
   setup(props: any) {
-    const applicationStatusClass = computed(() => {
+    const chipColor = computed(() => {
       switch (props.statusValue) {
         case ApplicationStatus.draft:
-          return "bg-secondary text-white";
+          return "default";
         case ApplicationStatus.inProgress:
-          return "bg-warning text-white";
+          return "warning";
         case ApplicationStatus.assessment:
-          return "bg-dark text-white";
+          return "warning";
         case ApplicationStatus.enrollment:
-          return "bg-primary text-white";
+          return "warning";
         case ApplicationStatus.completed:
-          return "bg-success text-white";
+          return "success";
         case ApplicationStatus.cancelled:
-          return "bg-danger text-white";
+          return "error";
         case ApplicationStatus.submitted:
-          return "bg-info text-white";
+          return "default";
         default:
           return "";
       }
     });
 
     return {
-      applicationStatusClass,
+      chipColor,
     };
   },
 };

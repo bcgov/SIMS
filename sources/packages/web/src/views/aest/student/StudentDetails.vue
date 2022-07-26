@@ -6,12 +6,12 @@
         :subTitle="studentDetails.fullName"
       >
         <template #sub-title-details>
-          <designation-and-restriction-status-badge
-            class="mb-4 ml-4 mt-4"
+          <student-restriction-chip
+            class="ml-4 mt-1"
             :status="
               studentDetails.hasRestriction
-                ? DesignationAndRestrictionStatus.restriction
-                : DesignationAndRestrictionStatus.noRestriction
+                ? StudentRestrictionStatus.restriction
+                : StudentRestrictionStatus.noRestriction
             "
           />
         </template>
@@ -28,12 +28,12 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
-import { DesignationAndRestrictionStatus } from "@/types";
+import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.vue";
+import { StudentRestrictionStatus } from "@/types";
 import { AESTStudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default {
-  components: { DesignationAndRestrictionStatusBadge },
+  components: { StudentRestrictionChip },
   props: {
     studentId: {
       type: Number,
@@ -124,7 +124,7 @@ export default {
       AESTRoutesConst,
       items,
       studentDetails,
-      DesignationAndRestrictionStatus,
+      StudentRestrictionStatus,
     };
   },
 };

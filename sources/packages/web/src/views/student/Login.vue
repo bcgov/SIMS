@@ -12,13 +12,14 @@
       >We are using BCSC for authentication. Please click on Login/Register
       buttons below to start your sign in/sign up.</v-card-text
     >
-    <v-card-actions>
+    <!-- TODO: v-btn inside v-card-actions is not working properly. try in vuetify 3 stable version -->
+    <div>
       <v-row justify="center" class="m-3">
         <v-btn color="primary" @click="login" prepend-icon="fa:fa fa-user">
           Login / Sign up with BCSC
         </v-btn>
       </v-row>
-    </v-card-actions>
+    </div>
   </v-card>
 </template>
 

@@ -49,7 +49,7 @@ import {
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, useOffering } from "@/composables";
 import { AuthService } from "@/services/AuthService";
-import { BannerTypes } from "@/components/generic/Banner.models";
+import { BannerTypes } from "@/types/contracts/Banner";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 

@@ -1,4 +1,3 @@
-<!-- COE Status Badge -->
 <template>
   <v-chip :color="chipColor" variant="outlined"
     ><v-icon start icon="fa:fa fa-circle" size="18"></v-icon>
@@ -6,29 +5,30 @@
   </v-chip>
 </template>
 <script lang="ts">
+import { ProgramInfoStatus } from "@/types";
 import { computed } from "vue";
-import { COEStatus } from "@/types";
-
 export default {
   props: {
     status: {
       type: String,
-      required: true,
     },
   },
   setup(props: any) {
     const chipColor = computed(() => {
       switch (props.status) {
-        case COEStatus.completed:
+        case ProgramInfoStatus.submitted:
+          return "default";
+        case ProgramInfoStatus.completed:
           return "success";
-        case COEStatus.declined:
-          return "error";
-        case COEStatus.required:
+        case ProgramInfoStatus.required:
           return "warning";
+        case ProgramInfoStatus.declined:
+          return "error";
         default:
           return "";
       }
     });
+
     return {
       chipColor,
     };

@@ -99,7 +99,7 @@ import {
 import { useSnackBar, useOffering, ModalDialog } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
-import { BannerTypes } from "@/components/generic/Banner.models";
+import { BannerTypes } from "@/types/contracts/Banner";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import AssessOfferingModal from "@/components/aest/institution/modals/AssessOfferingModal.vue";
 

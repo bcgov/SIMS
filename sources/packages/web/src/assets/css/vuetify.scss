@@ -27,6 +27,12 @@
   border: 3px solid $banner-color-error;
 }
 
+.v-alert.text-info {
+  @extend .alert_banner_radius;
+  background-color: $banner-background-info;
+  border: 3px solid $banner-color-info;
+}
+
 // Reducing the spacing to looks like more with the UI definitions.
 .v-list-item-icon--start {
   -webkit-margin-end: 10px !important;
