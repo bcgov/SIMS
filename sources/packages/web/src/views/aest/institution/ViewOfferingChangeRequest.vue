@@ -22,19 +22,19 @@
     </template>
     <v-window v-model="tab">
       <v-window-item value="requested-change"
-        ><offering-request-change
+        ><offering-change-request
           v-if="tab === 'requested-change'"
           :offeringId="offeringId"
           :programId="programId"
           @getHeaderDetails="getHeaderDetails"
-        ></offering-request-change>
+        ></offering-change-request>
       </v-window-item>
       <v-window-item value="active-offering">
-        <offering-request-change
+        <offering-change-request
           v-if="tab === 'active-offering'"
           :offeringId="precedingOffering.offeringId"
           :programId="programId"
-        ></offering-request-change>
+        ></offering-change-request>
       </v-window-item>
     </v-window>
   </full-page-container>
@@ -42,22 +42,18 @@
 
 <script lang="ts">
 import { ref, onMounted, computed } from "vue";
-import {
-  OfferingStatus,
-  OfferingRelationType,
-  ProgramOfferingHeader,
-} from "@/types";
+import { OfferingStatus, ProgramOfferingHeader } from "@/types";
 import { PrecedingOfferingSummaryAPIOutDTO } from "@/services/http/dto";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
-import OfferingRequestChange from "@/components/aest/OfferingRequestChange.vue";
+import OfferingChangeRequest from "@/components/aest/OfferingChangeRequest.vue";
 
 export default {
   components: {
     ProgramOfferingDetailHeader,
-    OfferingRequestChange,
+    OfferingChangeRequest,
   },
   props: {
     programId: {
@@ -75,9 +71,11 @@ export default {
     const headerDetails = ref({} as ProgramOfferingHeader);
     const precedingOffering = ref({} as PrecedingOfferingSummaryAPIOutDTO);
     const bannerText = computed(() =>
-      precedingOffering.value?.applicationsCount
+      precedingOffering.value?.applicationsCount > 1
         ? `There are ${precedingOffering.value.applicationsCount} financial aid applications with this offering`
-        : "There are no financial aid application with this offering",
+        : precedingOffering.value?.applicationsCount == 1
+        ? "There is 1 financial aid application with this offering"
+        : "There are no financial aid applications with this offering",
     );
     const getHeaderDetails = (data: ProgramOfferingHeader) => {
       headerDetails.value = data;
@@ -96,7 +94,6 @@ export default {
       BannerTypes,
       AESTRoutesConst,
       tab,
-      OfferingRelationType,
       getHeaderDetails,
       precedingOffering,
       bannerText,

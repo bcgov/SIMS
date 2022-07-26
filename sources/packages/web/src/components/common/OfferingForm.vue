@@ -16,9 +16,8 @@
 </template>
 
 <script lang="ts">
-import { FormIOForm } from "@/types";
+import { FormIOForm, OfferingFormModel } from "@/types";
 import { SetupContext, computed } from "vue";
-import { OfferingFormModel } from "@/types";
 import { useOffering } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 

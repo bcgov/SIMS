@@ -108,7 +108,6 @@ export class EducationProgramOfferingAESTController extends BaseController {
   ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
     const offering =
       await this.programOfferingService.getPrecedingOfferingSummary(offeringId);
-    console.log(offering);
     return offering;
   }
 }

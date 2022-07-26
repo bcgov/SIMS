@@ -121,8 +121,3 @@ export interface StudyBreaksAndWeeks {
   totalFundedWeeks: number;
   unfundedStudyPeriodDays: number;
 }
-
-export enum OfferingRelationType {
-  ActualOffering = "Actual offering",
-  PrecedingOffering = "Preceding offering",
-}

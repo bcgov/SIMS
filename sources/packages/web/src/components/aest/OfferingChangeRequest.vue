@@ -6,11 +6,7 @@
 import { onMounted, ref, SetupContext } from "vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import {
-  OfferingFormEditModel,
-  OfferingStatus,
-  OfferingRelationType,
-} from "@/types";
+import { OfferingFormEditModel, OfferingStatus } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import OfferingForm from "@/components/common/OfferingForm.vue";
@@ -20,12 +16,6 @@ export default {
     OfferingForm,
   },
   props: {
-    relationType: {
-      type: String,
-      required: true,
-      default: OfferingRelationType.ActualOffering,
-      validator: (val: string) => val in OfferingRelationType,
-    },
     programId: {
       type: Number,
       required: true,
