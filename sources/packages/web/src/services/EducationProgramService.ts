@@ -1,18 +1,20 @@
 import {
   OptionItemDto,
-  ApproveProgram,
-  DeclineProgram,
-  StudentEducationProgramAPIOutDTO,
-  EducationProgramAPIDTO,
   PaginationOptions,
+  EducationProgramsSummary,
+  PaginatedResults,
 } from "@/types";
 import ApiClient from "@/services/http/ApiClient";
 import {
-  AESTEducationProgramAPIOutDTO,
+  ApproveProgramAPIInDTO,
+  DeclineProgramAPIInDTO,
+  EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  StudentEducationProgramAPIOutDTO,
 } from "@/services/http/dto";
+import { useFormatters } from "@/composables";
 
 export class EducationProgramService {
   // Share Instance
@@ -31,11 +33,13 @@ export class EducationProgramService {
   async getProgramsSummaryByLocationId(
     locationId: number,
     paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
-    return ApiClient.EducationProgram.getProgramsSummaryByLocationId(
-      locationId,
-      paginationOptions,
-    );
+  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummary>> {
+    const programs =
+      await ApiClient.EducationProgram.getProgramsSummaryByLocationId(
+        locationId,
+        paginationOptions,
+      );
+    return this.formatProgramsSummary(programs);
   }
 
   /**
@@ -47,11 +51,31 @@ export class EducationProgramService {
   async getProgramsSummaryByInstitutionId(
     institutionId: number,
     paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
-    return ApiClient.EducationProgram.getProgramsSummaryByInstitutionId(
-      institutionId,
-      paginationOptions,
-    );
+  ): Promise<PaginatedResults<EducationProgramsSummary>> {
+    const programs =
+      await ApiClient.EducationProgram.getProgramsSummaryByInstitutionId(
+        institutionId,
+        paginationOptions,
+      );
+    return this.formatProgramsSummary(programs);
+  }
+
+  /**
+   * Apply formats to adapt data to be displayed in the UI as needed.
+   * @param programs programs have data formatted as needed.
+   * @returns formatted programs.
+   */
+  private formatProgramsSummary(
+    programs: PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>,
+  ): PaginatedResults<EducationProgramsSummary> {
+    const { dateOnlyLongString } = useFormatters();
+    return {
+      results: programs.results.map((program) => ({
+        ...program,
+        submittedDateFormatted: dateOnlyLongString(program.submittedDate),
+      })),
+      count: programs.count,
+    };
   }
 
   /**
@@ -61,19 +85,21 @@ export class EducationProgramService {
    */
   async getEducationProgram(
     programId: number,
-  ): Promise<EducationProgramAPIOutDTO | AESTEducationProgramAPIOutDTO> {
+  ): Promise<EducationProgramAPIOutDTO> {
     return ApiClient.EducationProgram.getEducationProgram(programId);
   }
 
-  async createEducationProgram(data: EducationProgramAPIDTO): Promise<void> {
-    await ApiClient.EducationProgram.createEducationProgram(data);
+  async createEducationProgram(
+    payload: EducationProgramAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.EducationProgram.createEducationProgram(payload);
   }
 
   async updateProgram(
     programId: number,
-    data: EducationProgramAPIDTO,
+    payload: EducationProgramAPIInDTO,
   ): Promise<void> {
-    await ApiClient.EducationProgram.updateProgram(programId, data);
+    await ApiClient.EducationProgram.updateProgram(programId, payload);
   }
 
   /**
@@ -121,7 +147,7 @@ export class EducationProgramService {
   async approveProgram(
     programId: number,
     institutionId: number,
-    payload: ApproveProgram,
+    payload: ApproveProgramAPIInDTO,
   ): Promise<void> {
     return ApiClient.EducationProgram.approveProgram(
       programId,
@@ -139,7 +165,7 @@ export class EducationProgramService {
   async declineProgram(
     programId: number,
     institutionId: number,
-    payload: DeclineProgram,
+    payload: DeclineProgramAPIInDTO,
   ): Promise<void> {
     await ApiClient.EducationProgram.declineProgram(
       programId,

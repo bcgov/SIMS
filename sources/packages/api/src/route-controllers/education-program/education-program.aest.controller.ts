@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -14,6 +13,7 @@ import { AllowAuthorizedParty, UserToken, Groups } from "../../auth/decorators";
 import {
   DeclineProgramAPIInDTO,
   ApproveProgramAPIInDTO,
+  EducationProgramAPIOutDTO,
 } from "./models/education-program.dto";
 import { EducationProgramService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
@@ -24,17 +24,8 @@ import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
-import {
-  AESTEducationProgramAPIOutDTO,
-  EducationProgramsSummaryAPIOutDTO,
-} from "./models/education-program.dto";
+import { EducationProgramsSummaryAPIOutDTO } from "./models/education-program.dto";
 import { EducationProgramControllerService } from "./education-program.controller.service";
-import {
-  credentialTypeToDisplay,
-  getISODateOnlyString,
-  getUserFullName,
-  INSTITUTION_TYPE_BC_PRIVATE,
-} from "../../utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -56,67 +47,10 @@ export class EducationProgramAESTController extends BaseController {
   @Get(":programId")
   async getEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,
-  ): Promise<AESTEducationProgramAPIOutDTO> {
-    const program = await this.programService.getEducationProgramDetails(
+  ): Promise<EducationProgramAPIOutDTO> {
+    return this.educationProgramControllerService.getEducationProgram(
       programId,
     );
-    if (!program) {
-      throw new NotFoundException("Not able to find the requested program.");
-    }
-
-    return {
-      id: program.id,
-      programStatus: program.programStatus,
-      name: program.name,
-      description: program.description,
-      credentialType: program.credentialType,
-      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
-      cipCode: program.cipCode,
-      nocCode: program.nocCode,
-      sabcCode: program.sabcCode,
-      regulatoryBody: program.regulatoryBody,
-      programDeliveryTypes: {
-        deliveredOnSite: program.deliveredOnSite,
-        deliveredOnline: program.deliveredOnline,
-      },
-      deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
-      sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
-      earnAcademicCreditsOtherInstitution:
-        program.earnAcademicCreditsOtherInstitution,
-      courseLoadCalculation: program.courseLoadCalculation,
-      completionYears: program.completionYears,
-      eslEligibility: program.eslEligibility,
-      hasJointInstitution: program.hasJointInstitution,
-      hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
-      programIntensity: program.programIntensity,
-      institutionProgramCode: program.institutionProgramCode,
-      minHoursWeek: program.minHoursWeek,
-      isAviationProgram: program.isAviationProgram,
-      minHoursWeekAvi: program.minHoursWeekAvi,
-      entranceRequirements: {
-        hasMinimumAge: program.hasMinimumAge,
-        minHighSchool: program.minHighSchool,
-        requirementsByInstitution: program.requirementsByInstitution,
-        requirementsByBCITA: program.requirementsByBCITA,
-      },
-      hasWILComponent: program.hasWILComponent,
-      isWILApproved: program.isWILApproved,
-      wilProgramEligibility: program.wilProgramEligibility,
-      hasTravel: program.hasTravel,
-      travelProgramEligibility: program.travelProgramEligibility,
-      hasIntlExchange: program.hasIntlExchange,
-      intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
-      programDeclaration: program.programDeclaration,
-      institutionId: program.institution.id,
-      institutionName: program.institution.operatingName,
-      submittedDate: program.submittedDate,
-      submittedBy: getUserFullName(program.submittedBy),
-      effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
-      assessedDate: program.assessedDate,
-      assessedBy: getUserFullName(program.assessedBy),
-      isBCPrivate:
-        program.institution.institutionType.id === INSTITUTION_TYPE_BC_PRIVATE,
-    };
   }
 
   /**

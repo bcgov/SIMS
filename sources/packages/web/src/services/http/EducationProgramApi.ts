@@ -1,18 +1,14 @@
-import {
-  OptionItemDto,
-  ApproveProgram,
-  DeclineProgram,
-  StudentEducationProgramAPIOutDTO,
-  PaginationOptions,
-} from "@/types";
+import { OptionItemDto, PaginationOptions } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { getPaginationQueryString } from "@/helpers";
 import {
-  AESTEducationProgramAPIOutDTO,
+  ApproveProgramAPIInDTO,
+  DeclineProgramAPIInDTO,
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  StudentEducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 
 export class EducationProgramApi extends HttpBaseClient {
@@ -60,23 +56,26 @@ export class EducationProgramApi extends HttpBaseClient {
    */
   async getEducationProgram(
     programId: number,
-  ): Promise<EducationProgramAPIOutDTO | AESTEducationProgramAPIOutDTO> {
-    return this.getCallTyped<
-      EducationProgramAPIOutDTO | AESTEducationProgramAPIOutDTO
-    >(this.addClientRoot(`education-program/${programId}`));
+  ): Promise<EducationProgramAPIOutDTO> {
+    return this.getCallTyped<EducationProgramAPIOutDTO>(
+      this.addClientRoot(`education-program/${programId}`),
+    );
   }
 
   async createEducationProgram(
     payload: EducationProgramAPIInDTO,
   ): Promise<void> {
-    await this.postCall("education-program", payload);
+    await this.postCall(this.addClientRoot("education-program"), payload);
   }
 
   async updateProgram(
     programId: number,
     payload: EducationProgramAPIInDTO,
   ): Promise<void> {
-    await this.putCall(`education-program/${programId}`, payload);
+    await this.patchCall(
+      this.addClientRoot(`education-program/${programId}`),
+      payload,
+    );
   }
 
   /**
@@ -102,17 +101,11 @@ export class EducationProgramApi extends HttpBaseClient {
     programYearId: number,
     isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
-    try {
-      let url = `institution/education-program/location/${locationId}/program-year/${programYearId}/options-list`;
-      if (isIncludeInActiveProgramYear) {
-        url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
-      }
-      const response = await this.getCall(url);
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
+    let url = `education-program/location/${locationId}/program-year/${programYearId}/options-list`;
+    if (isIncludeInActiveProgramYear) {
+      url = `${url}?isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
     }
+    return this.getCallTyped<OptionItemDto[]>(this.addClientRoot(url));
   }
 
   /**
@@ -120,16 +113,9 @@ export class EducationProgramApi extends HttpBaseClient {
    * @returns location programs list for institutions.
    */
   async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
-    try {
-      const response = await this.apiClient.get(
-        "institution/education-program/programs-list",
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCallTyped<OptionItemDto[]>(
+      this.addClientRoot("education-program/programs-list"),
+    );
   }
 
   /**
@@ -141,10 +127,12 @@ export class EducationProgramApi extends HttpBaseClient {
   async approveProgram(
     programId: number,
     institutionId: number,
-    payload: ApproveProgram,
+    payload: ApproveProgramAPIInDTO,
   ): Promise<void> {
     await this.patchCall(
-      `institution/education-program/${programId}/institution/${institutionId}/approve/aest`,
+      this.addClientRoot(
+        `education-program/${programId}/institution/${institutionId}/approve`,
+      ),
       payload,
     );
   }
@@ -158,10 +146,12 @@ export class EducationProgramApi extends HttpBaseClient {
   async declineProgram(
     programId: number,
     institutionId: number,
-    payload: DeclineProgram,
+    payload: DeclineProgramAPIInDTO,
   ): Promise<void> {
     await this.patchCall(
-      `institution/education-program/${programId}/institution/${institutionId}/decline/aest`,
+      this.addClientRoot(
+        `education-program/${programId}/institution/${institutionId}/decline`,
+      ),
       payload,
     );
   }

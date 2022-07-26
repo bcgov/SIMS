@@ -1,5 +1,6 @@
 import {
   Controller,
+  DefaultValuePipe,
   Get,
   Param,
   ParseBoolPipe,
@@ -63,13 +64,16 @@ export class EducationProgramStudentsController extends BaseController {
    * program years are considered.
    * @returns key/value pair list of programs.
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("location/:locationId/program-year/:programYearId/options-list")
   async getLocationProgramsOptionList(
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programYearId", ParseIntPipe) programYearId: number,
-    @Query("isIncludeInActiveProgramYear", ParseBoolPipe)
-    isIncludeInActiveProgramYear = false,
+    @Query(
+      "isIncludeInActiveProgramYear",
+      new DefaultValuePipe(false),
+      ParseBoolPipe,
+    )
+    isIncludeInActiveProgramYear,
   ): Promise<OptionItemAPIOutDTO[]> {
     const programs = await this.programService.getProgramsForLocation(
       locationId,

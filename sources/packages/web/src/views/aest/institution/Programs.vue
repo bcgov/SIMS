@@ -39,7 +39,7 @@
         >
           <template #body="slotProps">
             <div class="p-text-capitalize">
-              {{ slotProps.data.formattedSubmittedDate }}
+              {{ slotProps.data.submittedDateFormatted }}
             </div>
           </template>
         </Column>
@@ -96,14 +96,12 @@ import {
   DEFAULT_PAGE_NUMBER,
   PAGINATION_LIST,
   DEFAULT_PAGE_LIMIT,
+  PaginatedResults,
+  EducationProgramsSummary,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import {
-  EducationProgramsSummaryAPIOutDTO,
-  PaginatedResultsAPIOutDTO,
-} from "@/services/http/dto";
 
 export default {
   components: { ProgramStatusChip },
@@ -116,7 +114,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const institutionProgramsSummary = ref(
-      {} as PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>,
+      {} as PaginatedResults<EducationProgramsSummary>,
     );
     const searchProgramName = ref("");
     const currentPageSize = ref();

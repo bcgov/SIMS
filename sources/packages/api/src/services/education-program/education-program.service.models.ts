@@ -35,7 +35,7 @@ export interface SaveEducationProgram {
   hasIntlExchange?: string;
   intlExchangeProgramEligibility?: string;
   programDeclaration: boolean;
-  approvalStatus: ProgramStatus;
+  programStatus: ProgramStatus;
 }
 
 export class EducationProgramsSummary {

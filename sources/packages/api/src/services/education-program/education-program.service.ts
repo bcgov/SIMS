@@ -144,7 +144,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.hasJointInstitution = educationProgram.hasJointInstitution;
       program.hasJointDesignatedInstitution =
         educationProgram.hasJointDesignatedInstitution;
-      program.programStatus = educationProgram.approvalStatus;
+      program.programStatus = educationProgram.programStatus;
       program.programIntensity = educationProgram.programIntensity;
       program.institutionProgramCode = educationProgram.institutionProgramCode;
       program.minHoursWeek = educationProgram.minHoursWeek;
@@ -406,12 +406,15 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   /**
    * Gets program details with program id.
    * @param programId Program id.
-   * @returns program
+   * @param institutionId when provided, ensures the proper authorization
+   * checking if the institution has access to the program.
+   * @returns education program.
    */
   async getEducationProgramDetails(
     programId: number,
+    institutionId?: number,
   ): Promise<EducationProgram> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("programs")
       .select([
         "programs.id",
@@ -467,8 +470,11 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .leftJoin("programs.assessedBy", "assessedBy")
       .innerJoin("programs.institution", "institution")
       .innerJoin("institution.institutionType", "institutionType")
-      .where("programs.id = :id", { id: programId })
-      .getOne();
+      .where("programs.id = :id", { id: programId });
+    if (institutionId) {
+      query.andWhere("institution.id = :institutionId", { institutionId });
+    }
+    return query.getOne();
   }
 
   /**

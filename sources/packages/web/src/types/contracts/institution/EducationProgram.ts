@@ -1,3 +1,4 @@
+import { EducationProgramsSummaryAPIOutDTO } from "@/services/http/dto";
 import { OfferingStatus } from "@/types";
 
 /**
@@ -12,44 +13,6 @@ export enum ProgramIntensity {
    *  Program with ProgramIntensity = Full Time, will be only Full Time
    */
   fullTime = "Full Time",
-}
-/**
- * Education program Base DTO object
- */
-export interface EducationProgramBaseDto {
-  name: string;
-  description: string;
-  credentialType: string;
-  credentialTypeToDisplay: string;
-  cipCode: string;
-  nocCode: string;
-  sabcCode: string;
-  programStatus: ProgramStatus;
-  programIntensity: ProgramIntensity;
-  institutionProgramCode?: string;
-}
-
-export interface SummaryEducationProgramDto {
-  id: number;
-  programName: string;
-  credentialType: string;
-  cipCode: string;
-  totalOfferings: number;
-  programStatus: ProgramStatus;
-  credentialTypeToDisplay: string;
-}
-
-export interface EducationProgramDto extends EducationProgramBaseDto {
-  id: number;
-}
-
-export interface StudentEducationProgramAPIOutDTO {
-  id: number;
-  name: string;
-  description: string;
-  credentialTypeToDisplay: string;
-  credentialType: string;
-  deliveryMethod: string;
 }
 
 export enum ProgramStatus {
@@ -67,38 +30,6 @@ export enum ProgramStatus {
   Declined = "Declined",
 }
 
-/**
- * DTO object which represent the eduction program form object.
- */
-export interface EducationProgramAPIDTO extends EducationProgramBaseDto {
-  institutionId: number;
-  regulatoryBody: string;
-  programDeliveryTypes: ProgramDeliveryTypes;
-  deliveredOnlineAlsoOnsite?: string;
-  sameOnlineCreditsEarned?: string;
-  earnAcademicCreditsOtherInstitution?: string;
-  courseLoadCalculation: string;
-  averageHoursStudy: number;
-  completionYears: string;
-  admissionRequirement: string;
-  eslEligibility: string;
-  hasJointInstitution: string;
-  hasJointDesignatedInstitution: string;
-  minHoursWeek?: string;
-  isAviationProgram?: string;
-  minHoursWeekAvi?: string;
-  entranceRequirements: EntranceRequirements;
-  hasWILComponent: string;
-  isWILApproved?: string;
-  wilProgramEligibility?: string;
-  hasTravel: string;
-  travelProgramEligibility?: string;
-  hasIntlExchange?: string;
-  intlExchangeProgramEligibility?: string;
-  programDeclaration: boolean;
-  hasOfferings: boolean;
-}
-
 export interface ProgramDeliveryTypes {
   deliveredOnSite: boolean;
   deliveredOnline: boolean;
@@ -109,15 +40,6 @@ export interface EntranceRequirements {
   minHighSchool: boolean;
   requirementsByInstitution: boolean;
   requirementsByBCITA: boolean;
-}
-
-export interface ApproveProgram {
-  effectiveEndDate: string;
-  approvedNote: string;
-}
-
-export interface DeclineProgram {
-  declinedNote: string;
 }
 
 export interface ProgramOfferingHeader {
@@ -134,4 +56,13 @@ export interface ProgramOfferingHeader {
 export interface ProgramOfferingApprovalLabels {
   assessedByLabel: string;
   assessedDateLabel: string;
+}
+
+/**
+ * Summary list view of programs shared between
+ * the Ministry and the institutions.
+ */
+export interface EducationProgramsSummary
+  extends EducationProgramsSummaryAPIOutDTO {
+  submittedDateFormatted: string;
 }

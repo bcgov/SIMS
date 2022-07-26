@@ -3,14 +3,27 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { EducationProgramService, FormService } from "../../services";
+import {
+  EducationProgramOfferingService,
+  EducationProgramService,
+  FormService,
+} from "../../services";
 import { EducationProgram, OfferingTypes } from "../../database/entities";
 import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
-import { EducationProgramsSummaryAPIOutDTO } from "./models/education-program.dto";
-import { credentialTypeToDisplay, CustomNamedError } from "../../utilities";
+import {
+  EducationProgramAPIOutDTO,
+  EducationProgramsSummaryAPIOutDTO,
+} from "./models/education-program.dto";
+import {
+  credentialTypeToDisplay,
+  CustomNamedError,
+  getISODateOnlyString,
+  getUserFullName,
+  INSTITUTION_TYPE_BC_PRIVATE,
+} from "../../utilities";
 import { EducationProgramAPIInDTO } from "./models/education-program.dto";
 import { FormNames } from "../../services/form/constants";
 import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
@@ -19,6 +32,7 @@ import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
 export class EducationProgramControllerService {
   constructor(
     private readonly programService: EducationProgramService,
+    private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
   ) {}
 
@@ -107,65 +121,86 @@ export class EducationProgramControllerService {
     }
   }
 
-  // /**
-  //  * Transformation util for Program.
-  //  * @param program
-  //  * @returns Application DTO
-  //  */
-  // transformToEducationProgramData = (
-  //   program: EducationProgram,
-  // ): EducationProgramDataDto => {
-  //   const programDetails: EducationProgramDataDto = {
-  //     id: program.id,
-  //     programStatus: program.programStatus,
-  //     name: program.name,
-  //     description: program.description,
-  //     credentialType: program.credentialType,
-  //     cipCode: program.cipCode,
-  //     nocCode: program.nocCode,
-  //     sabcCode: program.sabcCode,
-  //     regulatoryBody: program.regulatoryBody,
-  //     programDeliveryTypes: {
-  //       deliveredOnSite: program.deliveredOnSite,
-  //       deliveredOnline: program.deliveredOnline,
-  //     },
-  //     deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
-  //     sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
-  //     earnAcademicCreditsOtherInstitution:
-  //       program.earnAcademicCreditsOtherInstitution,
-  //     courseLoadCalculation: program.courseLoadCalculation,
-  //     completionYears: program.completionYears,
-  //     eslEligibility: program.eslEligibility,
-  //     hasJointInstitution: program.hasJointInstitution,
-  //     hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
-  //     programIntensity: program.programIntensity,
-  //     institutionProgramCode: program.institutionProgramCode,
-  //     minHoursWeek: program.minHoursWeek,
-  //     isAviationProgram: program.isAviationProgram,
-  //     minHoursWeekAvi: program.minHoursWeekAvi,
-  //     entranceRequirements: {
-  //       hasMinimumAge: program.hasMinimumAge,
-  //       minHighSchool: program.minHighSchool,
-  //       requirementsByInstitution: program.requirementsByInstitution,
-  //       requirementsByBCITA: program.requirementsByBCITA,
-  //     },
-  //     hasWILComponent: program.hasWILComponent,
-  //     isWILApproved: program.isWILApproved,
-  //     wilProgramEligibility: program.wilProgramEligibility,
-  //     hasTravel: program.hasTravel,
-  //     travelProgramEligibility: program.travelProgramEligibility,
-  //     hasIntlExchange: program.hasIntlExchange,
-  //     intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
-  //     programDeclaration: program.programDeclaration,
-  //     credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
-  //     institutionId: program.institution.id,
-  //     institutionName: program.institution.operatingName,
-  //     submittedDate: program.submittedDate,
-  //     submittedBy: getUserFullName(program.submittedBy),
-  //     effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
-  //     assessedDate: program.assessedDate,
-  //     assessedBy: getUserFullName(program.assessedBy),
-  //   };
-  //   return programDetails;
-  // };
+  /**
+   * Education program details shared between Ministry and Institution.
+   * @param programId program id.
+   * @param institutionId when provided, ensures the proper authorization
+   * checking if the institution has access to the program.
+   * @returns programs details.
+   * */
+  async getEducationProgram(
+    programId: number,
+    institutionId?: number,
+  ): Promise<EducationProgramAPIOutDTO> {
+    const programPromise = this.programService.getEducationProgramDetails(
+      programId,
+      institutionId,
+    );
+    const hasOfferingsPromise =
+      this.educationProgramOfferingService.hasExistingOffering(programId);
+    // Wait for the program and for the offering check to be retrieved.
+    const [program, hasOfferings] = await Promise.all([
+      programPromise,
+      hasOfferingsPromise,
+    ]);
+
+    if (!program) {
+      throw new NotFoundException("Not able to find the requested program.");
+    }
+
+    return {
+      id: program.id,
+      programStatus: program.programStatus,
+      name: program.name,
+      description: program.description,
+      credentialType: program.credentialType,
+      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
+      cipCode: program.cipCode,
+      nocCode: program.nocCode,
+      sabcCode: program.sabcCode,
+      regulatoryBody: program.regulatoryBody,
+      programDeliveryTypes: {
+        deliveredOnSite: program.deliveredOnSite,
+        deliveredOnline: program.deliveredOnline,
+      },
+      deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
+      sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
+      earnAcademicCreditsOtherInstitution:
+        program.earnAcademicCreditsOtherInstitution,
+      courseLoadCalculation: program.courseLoadCalculation,
+      completionYears: program.completionYears,
+      eslEligibility: program.eslEligibility,
+      hasJointInstitution: program.hasJointInstitution,
+      hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
+      programIntensity: program.programIntensity,
+      institutionProgramCode: program.institutionProgramCode,
+      minHoursWeek: program.minHoursWeek,
+      isAviationProgram: program.isAviationProgram,
+      minHoursWeekAvi: program.minHoursWeekAvi,
+      entranceRequirements: {
+        hasMinimumAge: program.hasMinimumAge,
+        minHighSchool: program.minHighSchool,
+        requirementsByInstitution: program.requirementsByInstitution,
+        requirementsByBCITA: program.requirementsByBCITA,
+      },
+      hasWILComponent: program.hasWILComponent,
+      isWILApproved: program.isWILApproved,
+      wilProgramEligibility: program.wilProgramEligibility,
+      hasTravel: program.hasTravel,
+      travelProgramEligibility: program.travelProgramEligibility,
+      hasIntlExchange: program.hasIntlExchange,
+      intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
+      programDeclaration: program.programDeclaration,
+      institutionId: program.institution.id,
+      institutionName: program.institution.operatingName,
+      submittedDate: program.submittedDate,
+      submittedBy: getUserFullName(program.submittedBy),
+      effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
+      assessedDate: program.assessedDate,
+      assessedBy: getUserFullName(program.assessedBy),
+      isBCPrivate:
+        program.institution.institutionType.id === INSTITUTION_TYPE_BC_PRIVATE,
+      hasOfferings,
+    };
+  }
 }

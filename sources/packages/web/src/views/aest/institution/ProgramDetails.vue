@@ -40,13 +40,17 @@
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
 import { ref, onMounted, computed } from "vue";
-import { ApproveProgram, DeclineProgram, ProgramStatus } from "@/types";
+import { ProgramStatus } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { COLOR_BLUE } from "@/constants";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
 import DeclineProgramModal from "@/components/aest/institution/modals/DeclineProgramModal.vue";
-import { EducationProgramAPIOutDTO } from "@/services/http/dto";
+import {
+  ApproveProgramAPIInDTO,
+  DeclineProgramAPIInDTO,
+  EducationProgramAPIOutDTO,
+} from "@/services/http/dto";
 
 export default {
   components: {
@@ -71,10 +75,10 @@ export default {
   setup(props: any) {
     const educationProgram = ref({} as EducationProgramAPIOutDTO);
     const approveProgramModal = ref(
-      {} as ModalDialog<ApproveProgram | undefined>,
+      {} as ModalDialog<ApproveProgramAPIInDTO | undefined>,
     );
     const declineProgramModal = ref(
-      {} as ModalDialog<DeclineProgram | undefined>,
+      {} as ModalDialog<DeclineProgramAPIInDTO | undefined>,
     );
     const snackBar = useSnackBar();
 
@@ -89,14 +93,16 @@ export default {
       () => educationProgram.value.programStatus === ProgramStatus.Pending,
     );
 
-    const submitApproveProgram = async (approveProgramData: ApproveProgram) => {
+    const submitApproveProgram = async (
+      approveProgramData: ApproveProgramAPIInDTO,
+    ) => {
       try {
         await EducationProgramService.shared.approveProgram(
           props.programId,
           props.institutionId,
           approveProgramData,
         );
-        snackBar.success(`${educationProgram.value.name} approved !`);
+        snackBar.success(`${educationProgram.value.name} approved!`);
         await getEducationProgramAndOffering();
       } catch {
         snackBar.error("An error happened while approving the program.");
@@ -108,7 +114,9 @@ export default {
       if (approveProgramData) await submitApproveProgram(approveProgramData);
     };
 
-    const submitDeclineProgram = async (declineProgramData: DeclineProgram) => {
+    const submitDeclineProgram = async (
+      declineProgramData: DeclineProgramAPIInDTO,
+    ) => {
       try {
         await EducationProgramService.shared.declineProgram(
           props.programId,

@@ -49,19 +49,6 @@ export interface EducationProgramAPIOutDTO {
 }
 
 /**
- * Complete education program information for the Ministry that
- * extends the information needed for the institution.
- */
-export interface AESTEducationProgramAPIOutDTO
-  extends Omit<EducationProgramAPIOutDTO, "hasOfferings"> {
-  submittedDate: Date;
-  submittedBy: string;
-  assessedDate?: Date;
-  assessedBy?: string;
-  effectiveEndDate: string;
-}
-
-/**
  * Education program information to be displayed in a summary list.
  */
 export interface EducationProgramsSummaryAPIOutDTO {
@@ -112,4 +99,22 @@ export interface EducationProgramAPIInDTO {
   hasIntlExchange?: string;
   intlExchangeProgramEligibility?: string;
   programDeclaration: boolean;
+}
+
+export interface StudentEducationProgramAPIOutDTO {
+  id: number;
+  name: string;
+  description: string;
+  credentialTypeToDisplay: string;
+  credentialType: string;
+  deliveryMethod: string;
+}
+
+export interface ApproveProgramAPIInDTO {
+  effectiveEndDate: string;
+  approvedNote: string;
+}
+
+export interface DeclineProgramAPIInDTO {
+  declinedNote: string;
 }

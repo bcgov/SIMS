@@ -1,5 +1,4 @@
-import { OmitType } from "@nestjs/swagger";
-import { Allow, IsNotEmpty, MaxLength } from "class-validator";
+import { Allow, IsDateString, IsNotEmpty, MaxLength } from "class-validator";
 import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   ProgramStatus,
@@ -47,12 +46,6 @@ export class EducationProgramAPIOutDTO {
   institutionId: number;
   institutionName: string;
   isBCPrivate: boolean;
-}
-
-export class AESTEducationProgramAPIOutDTO extends OmitType(
-  EducationProgramAPIOutDTO,
-  ["hasOfferings"],
-) {
   submittedDate: Date;
   submittedBy: string;
   assessedDate?: Date;
@@ -188,6 +181,7 @@ export class EducationProgramAPIInDTO {
 }
 
 export class ApproveProgramAPIInDTO {
+  @IsDateString()
   effectiveEndDate: string;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
