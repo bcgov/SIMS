@@ -50,10 +50,10 @@ export class EducationProgramApi extends HttpBaseClient {
   }
 
   /**
-   * Get complete program information for a program id.
-   * @param programId program id
-   * @returns program information.
-   */
+   * Get the education program information.
+   * @param programId program id.
+   * @returns programs information.
+   * */
   async getEducationProgram(
     programId: number,
   ): Promise<EducationProgramAPIOutDTO> {

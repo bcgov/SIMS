@@ -122,11 +122,11 @@ export class EducationProgramControllerService {
   }
 
   /**
-   * Education program details shared between Ministry and Institution.
+   * Education program information shared between Ministry and Institution.
    * @param programId program id.
    * @param institutionId when provided, ensures the proper authorization
    * checking if the institution has access to the program.
-   * @returns programs details.
+   * @returns programs information.
    * */
   async getEducationProgram(
     programId: number,

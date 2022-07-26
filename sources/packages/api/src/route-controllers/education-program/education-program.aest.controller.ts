@@ -40,9 +40,9 @@ export class EducationProgramAESTController extends BaseController {
   }
 
   /**
-   * Education Program Details for ministry users.
+   * Get the education program information.
    * @param programId program id.
-   * @returns programs details.
+   * @returns programs information.
    * */
   @Get(":programId")
   async getEducationProgram(

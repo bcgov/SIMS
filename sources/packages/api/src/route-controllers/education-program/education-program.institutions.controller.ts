@@ -112,10 +112,10 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * Get program details for a program id.
-   * @param programId program id
-   * @returns program information.
-   */
+   * Get the education program information.
+   * @param programId program id.
+   * @returns programs information.
+   * */
   @Get(":programId")
   async getEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,
