@@ -85,7 +85,7 @@ export default {
       programId: number,
     ) => {
       router.push({
-        name: AESTRoutesConst.VIEW_OFFERING_CHANGE_REQUEST,
+        name: AESTRoutesConst.OFFERING_CHANGE_REQUEST_VIEW,
         params: { offeringId, programId },
       });
     };

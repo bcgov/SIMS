@@ -466,7 +466,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.ViewOfferingChangeRequest,
-        name: AESTRoutesConst.VIEW_OFFERING_CHANGE_REQUEST,
+        name: AESTRoutesConst.OFFERING_CHANGE_REQUEST_VIEW,
         props: true,
         components: {
           default: ViewOfferingChangeRequest,
