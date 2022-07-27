@@ -6,7 +6,7 @@
 import { onMounted, ref, SetupContext } from "vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import { OfferingFormEditModel, OfferingStatus } from "@/types";
+import { OfferingFormBaseModel, OfferingStatus } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import OfferingForm from "@/components/common/OfferingForm.vue";
@@ -27,7 +27,7 @@ export default {
   },
   emits: ["getHeaderDetails"],
   setup(props: any, context: SetupContext) {
-    const initialData = ref({} as OfferingFormEditModel);
+    const initialData = ref({} as OfferingFormBaseModel);
 
     onMounted(async () => {
       const program =

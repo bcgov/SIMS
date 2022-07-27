@@ -130,7 +130,6 @@ export class OfferingAssessmentAPIInDTO {
  */
 export class OfferingChangeRequestAPIOutDTO {
   offeringId: number;
-  activeOfferingId: number;
   programId: number;
   offeringName: string;
   institutionName: string;
@@ -139,7 +138,7 @@ export class OfferingChangeRequestAPIOutDTO {
 }
 
 /**
- *
+ * DTO to display the summary of preceding offering details.
  */
 export class PrecedingOfferingSummaryAPIOutDTO {
   offeringId: number;

@@ -70,13 +70,14 @@ export default {
     const tab = ref("requested-change");
     const headerDetails = ref({} as ProgramOfferingHeader);
     const precedingOffering = ref({} as PrecedingOfferingSummaryAPIOutDTO);
-    const bannerText = computed(() =>
-      precedingOffering.value?.applicationsCount > 1
-        ? `There are ${precedingOffering.value.applicationsCount} financial aid applications with this offering`
-        : precedingOffering.value?.applicationsCount == 1
+    const bannerText = computed(() => {
+      if (precedingOffering.value?.applicationsCount > 1) {
+        return `There are ${precedingOffering.value.applicationsCount} financial aid applications with this offering`;
+      }
+      return precedingOffering.value?.applicationsCount == 1
         ? "There is 1 financial aid application with this offering"
-        : "There are no financial aid applications with this offering",
-    );
+        : "There are no financial aid applications with this offering";
+    });
     const getHeaderDetails = (data: ProgramOfferingHeader) => {
       headerDetails.value = data;
     };

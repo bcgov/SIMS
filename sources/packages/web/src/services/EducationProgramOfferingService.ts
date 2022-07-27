@@ -255,7 +255,13 @@ export class EducationProgramOfferingService {
     return ApiClient.EducationProgramOffering.getOfferingChangeRequests();
   }
 
-  public async getPrecedingOfferingSummary(
+  /**
+   * For a given offering which is requested as change
+   * get the summary of it's actual(preceding) offering.
+   * @param offeringId actual offering id.
+   * @returns preceding offering summary.
+   */
+  async getPrecedingOfferingSummary(
     offeringId: number,
   ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
     return ApiClient.EducationProgramOffering.getPrecedingOfferingSummary(

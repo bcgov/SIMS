@@ -611,14 +611,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.name",
         "offerings.submittedDate",
         "offerings.precedingOffering",
-        "precedingOffering.id",
         "educationProgram.id",
         "institutionLocation.name",
         "institution.legalOperatingName",
         "institution.operatingName",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
-      .innerJoin("offerings.precedingOffering", "precedingOffering")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
       .where("offerings.offeringStatus = :offeringStatus", {
@@ -628,9 +626,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * Gets preceding offering details of the actual offering.
+   * For a given offering which is requested as change
+   * get the summary of it's actual(preceding) offering.
    * @param offeringId offering id of actual offering.
-   * @returns offering object.
+   * @returns preceding offering summary.
    */
   async getPrecedingOfferingSummary(
     offeringId: number,

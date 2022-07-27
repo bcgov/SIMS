@@ -67,7 +67,7 @@ import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormEditModel, OfferingStatus, OfferingDTO } from "@/types";
+import { OfferingFormBaseModel, OfferingStatus, OfferingDTO } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
@@ -116,7 +116,7 @@ export default {
         },
       },
     ];
-    const initialData = ref({} as OfferingFormEditModel);
+    const initialData = ref({} as OfferingFormBaseModel);
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
     );
@@ -166,6 +166,7 @@ export default {
       await loadFormData();
     });
 
+    //TODO: OfferingDTO to be refactored as per naming convention.
     const saveOffering = async (data: OfferingDTO) => {
       try {
         //Update offering

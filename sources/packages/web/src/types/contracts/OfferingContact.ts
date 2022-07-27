@@ -84,9 +84,9 @@ export interface OfferingFormModel {
 }
 
 /**
- * Offering form edit model which consists of properties excluding the values derived at client.
+ * Offering form base model which consists of properties excluding the values derived at client.
  */
-export type OfferingFormEditModel = Omit<
+export type OfferingFormBaseModel = Omit<
   OfferingFormModel,
   "offeringChipStatus" | "offeringStatusToDisplay" | "clientType"
 >;

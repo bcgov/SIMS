@@ -295,9 +295,12 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   }
 
   /**
-   * Offering details for ministry users
+   * For a given offering which is requested as change
+   * get the summary of it's actual(preceding) offering.
+   * @param offeringId actual offering id.
+   * @returns preceding offering summary.
    */
-  public async getPrecedingOfferingSummary(
+  async getPrecedingOfferingSummary(
     offeringId: number,
   ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
     return this.getCallTyped<PrecedingOfferingSummaryAPIOutDTO>(

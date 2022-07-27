@@ -77,8 +77,8 @@ export class EducationProgramOfferingAESTController extends BaseController {
     );
   }
   /**
-   * Get all offerings that were were requested for change.
-   * @returns
+   * Get all offerings that were requested for change and waiting to be approved/declined.
+   * @returns offerings.
    */
   @Get("change-requests")
   async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
@@ -87,7 +87,6 @@ export class EducationProgramOfferingAESTController extends BaseController {
 
     return offerings.map((offering) => ({
       offeringId: offering.id,
-      activeOfferingId: offering.precedingOffering.id,
       programId: offering.educationProgram.id,
       offeringName: offering.name,
       submittedDate: offering.submittedDate,
@@ -98,9 +97,10 @@ export class EducationProgramOfferingAESTController extends BaseController {
   }
 
   /**
-   * Get preceding offering details
+   * For a given offering which is requested as change
+   * get the summary of it's actual(preceding) offering.
    * @param offeringId actual offering id.
-   * @returns Offering details.
+   * @returns preceding offering summary.
    */
   @Get(":offeringId/precedingOffering")
   async getPrecedingOfferingSummary(

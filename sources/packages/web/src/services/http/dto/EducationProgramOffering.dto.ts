@@ -13,7 +13,6 @@ export interface OfferingAssessmentAPIInDTO {
  */
 export interface OfferingChangeRequestAPIOutDTO {
   offeringId: number;
-  activeOfferingId: number;
   programId: number;
   offeringName: string;
   institutionName: string;
@@ -21,6 +20,9 @@ export interface OfferingChangeRequestAPIOutDTO {
   submittedDate: Date;
 }
 
+/**
+ * DTO to display the summary of preceding offering details.
+ */
 export interface PrecedingOfferingSummaryAPIOutDTO {
   offeringId: number;
   applicationsCount: number;
