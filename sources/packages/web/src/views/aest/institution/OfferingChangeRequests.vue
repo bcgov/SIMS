@@ -41,7 +41,6 @@
                 @click="
                   viewOfferingChangeRequest(
                     slotProps.data.offeringId,
-                    slotProps.data.activeOfferingId,
                     slotProps.data.programId,
                   )
                 "
@@ -83,12 +82,11 @@ export default {
 
     const viewOfferingChangeRequest = (
       offeringId: number,
-      activeOfferingId: number,
       programId: number,
     ) => {
       router.push({
         name: AESTRoutesConst.VIEW_OFFERING_CHANGE_REQUEST,
-        params: { offeringId, activeOfferingId, programId },
+        params: { offeringId, programId },
       });
     };
 

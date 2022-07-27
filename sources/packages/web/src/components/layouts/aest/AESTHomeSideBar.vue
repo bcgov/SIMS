@@ -45,14 +45,13 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuModel } from "@/types";
 
 export default {
   setup() {
     const router = useRouter();
-    const topItems = ref<MenuModel[]>([
+    const topItems = [
       {
         label: "Dashboard",
         icon: "mdi-home-outline",
@@ -80,9 +79,9 @@ export default {
           });
         },
       },
-    ]);
+    ];
 
-    const exceptionsItem = ref({
+    const exceptionsItem = {
       label: "Exceptions",
       icon: "mdi-alert-circle-outline",
       command: () => {
@@ -90,9 +89,9 @@ export default {
           name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
         });
       },
-    } as MenuModel);
+    } as MenuModel;
 
-    const appealsItem = ref({
+    const appealsItem = {
       label: "Appeals",
       icon: "mdi-folder-open-outline",
       command: () => {
@@ -100,9 +99,9 @@ export default {
           name: AESTRoutesConst.APPLICATION_APPEALS_PENDING,
         });
       },
-    } as MenuModel);
+    } as MenuModel;
 
-    const designations = ref({
+    const designations = {
       label: "Pending designations",
       icon: "mdi-bookmark-outline",
       command: () => {
@@ -110,9 +109,9 @@ export default {
           name: AESTRoutesConst.PENDING_DESIGNATIONS,
         });
       },
-    } as MenuModel);
+    } as MenuModel;
 
-    const reports = ref({
+    const reports = {
       label: "Reports",
       icon: "mdi-home-outline",
       command: () => {
@@ -120,9 +119,9 @@ export default {
           name: AESTRoutesConst.REPORTS,
         });
       },
-    } as MenuModel);
+    } as MenuModel;
 
-    const offerings = ref({
+    const offerings = {
       label: "Offerings",
       icon: "mdi-view-list-outline",
       command: () => {
@@ -130,7 +129,7 @@ export default {
           name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS,
         });
       },
-    } as MenuModel);
+    } as MenuModel;
 
     return {
       appealsItem,

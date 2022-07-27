@@ -1,5 +1,5 @@
 <template>
-  <full-page-container layout-template="centred-tab">
+  <full-page-container layout-template="centered-tab">
     <template #header>
       <header-navigator
         title="Study period offerings"
@@ -23,7 +23,6 @@
     <v-window v-model="tab">
       <v-window-item value="requested-change"
         ><offering-change-request
-          v-if="tab === 'requested-change'"
           :offeringId="offeringId"
           :programId="programId"
           @getHeaderDetails="getHeaderDetails"
@@ -31,7 +30,6 @@
       </v-window-item>
       <v-window-item value="active-offering">
         <offering-change-request
-          v-if="tab === 'active-offering'"
           :offeringId="precedingOffering.offeringId"
           :programId="programId"
         ></offering-change-request>
@@ -72,11 +70,11 @@ export default {
     const precedingOffering = ref({} as PrecedingOfferingSummaryAPIOutDTO);
     const bannerText = computed(() => {
       if (precedingOffering.value?.applicationsCount > 1) {
-        return `There are ${precedingOffering.value.applicationsCount} financial aid applications with this offering`;
+        return `There are ${precedingOffering.value.applicationsCount} financial aid applications with this offering.`;
       }
-      return precedingOffering.value?.applicationsCount == 1
-        ? "There is 1 financial aid application with this offering"
-        : "There are no financial aid applications with this offering";
+      return precedingOffering.value?.applicationsCount === 1
+        ? "There is 1 financial aid application with this offering."
+        : "There are no financial aid applications with this offering.";
     });
     const getHeaderDetails = (data: ProgramOfferingHeader) => {
       headerDetails.value = data;

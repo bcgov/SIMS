@@ -552,6 +552,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     } as EducationProgramOffering;
     //Populating the status, parent offering and audit fields.
     requestedOffering.offeringStatus = OfferingStatus.AwaitingApproval;
+    //The parent offering will be just the preceding offering if
+    //the change is requested only once.
+    //Otherwise parent offering will be the very first offering where change was requested.
     requestedOffering.parentOffering =
       currentOffering.parentOffering ?? precedingOffering;
     requestedOffering.precedingOffering = precedingOffering;
@@ -599,7 +602,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * Get all offerings that were were requested for change
+   * Get all offerings that were requested for change
    * i.e in Awaiting Approval status.
    * @returns all offerings that were requested for change.
    */

@@ -30,15 +30,20 @@ export default {
     const initialData = ref({} as OfferingFormBaseModel);
 
     onMounted(async () => {
-      const program =
-        await EducationProgramService.shared.getEducationProgramForAEST(
+      const programPromise =
+        EducationProgramService.shared.getEducationProgramForAEST(
           props.programId,
         );
 
-      const offering =
-        await EducationProgramOfferingService.shared.getProgramOfferingForAEST(
+      const offeringPromise =
+        EducationProgramOfferingService.shared.getProgramOfferingForAEST(
           props.offeringId,
         );
+
+      const [program, offering] = await Promise.all([
+        programPromise,
+        offeringPromise,
+      ]);
 
       initialData.value = {
         ...offering,

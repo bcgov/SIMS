@@ -45,7 +45,7 @@ export default {
      * The property clientType is populated for institution because
      * the form.io for education program offering has a logic at it's root level panel
      * to disable all the form inputs when clientType is not institution.
-     * The above mentioned logic is added to the panel of the form to display the
+     * The below mentioned logic is added to the panel of the form to display the
      * form as read-only for ministry(AEST) user and also allow the hidden component values
      * to be calculated.
      *! If a form.io is loaded with readOnly attribute set to true, then the restricts

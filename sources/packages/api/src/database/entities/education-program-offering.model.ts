@@ -258,7 +258,7 @@ export class EducationProgramOffering extends RecordDataModel {
 
   /**
    * The immediate previous offering from which the current offering was created
-   *  during request for change.
+   * during request for change.
    */
   @ManyToOne(() => EducationProgramOffering, { eager: false, nullable: true })
   @JoinColumn({

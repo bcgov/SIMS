@@ -75,7 +75,6 @@ export default {
       required: true,
     },
   },
-
   setup(props: any) {
     const snackBar = useSnackBar();
     const initialData = ref({} as OfferingFormBaseModel);
@@ -125,7 +124,7 @@ export default {
             `The given offering has been ${offeringStatus.toLowerCase()} and notes added.`,
           );
           await loadFormData();
-        } catch (error) {
+        } catch {
           snackBar.error(
             "Unexpected error while approving/declining the offering.",
           );

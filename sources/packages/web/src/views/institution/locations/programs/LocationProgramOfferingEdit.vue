@@ -178,7 +178,7 @@ export default {
         );
         snackBar.success("Education Offering updated successfully!");
         router.push(routeLocation.value);
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("An error happened during the Offering saving process.");
       }
     };

@@ -305,7 +305,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
     return this.getCallTyped<PrecedingOfferingSummaryAPIOutDTO>(
       this.addClientRoot(
-        `institution/offering/${offeringId}/precedingOffering`,
+        `institution/offering/${offeringId}/preceding-offering-summary`,
       ),
     );
   }

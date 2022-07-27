@@ -109,7 +109,7 @@
 //CSS class added to match v-tab with figma.
 .v-slide-group.v-tabs.v-tabs--horizontal {
   display: inline-block;
-  border-bottom: 2px solid #e8e8e8;
+  border-bottom: 2px solid $common-border-color;
   width: 100%;
 }
 

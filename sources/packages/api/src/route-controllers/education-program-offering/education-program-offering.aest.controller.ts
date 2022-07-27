@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   UnprocessableEntityException,
+  ParseIntPipe,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
@@ -78,7 +79,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
   }
   /**
    * Get all offerings that were requested for change and waiting to be approved/declined.
-   * @returns offerings.
+   * @returns offerings which were requested for change.
    */
   @Get("change-requests")
   async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
@@ -102,9 +103,9 @@ export class EducationProgramOfferingAESTController extends BaseController {
    * @param offeringId actual offering id.
    * @returns preceding offering summary.
    */
-  @Get(":offeringId/precedingOffering")
+  @Get(":offeringId/preceding-offering-summary")
   async getPrecedingOfferingSummary(
-    @Param("offeringId") offeringId: number,
+    @Param("offeringId", ParseIntPipe) offeringId: number,
   ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
     return this.programOfferingService.getPrecedingOfferingSummary(offeringId);
   }

@@ -88,7 +88,7 @@ export default {
         snackBar.success("Education Offering created successfully!");
 
         router.push(routeLocation.value);
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("An error happened during the Offering create process.");
       }
     };
