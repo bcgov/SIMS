@@ -14,6 +14,7 @@ import {
   DeclineProgramAPIInDTO,
   ApproveProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramsSummaryAPIOutDTO,
 } from "./models/education-program.dto";
 import { EducationProgramService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
@@ -24,7 +25,6 @@ import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
-import { EducationProgramsSummaryAPIOutDTO } from "./models/education-program.dto";
 import { EducationProgramControllerService } from "./education-program.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)

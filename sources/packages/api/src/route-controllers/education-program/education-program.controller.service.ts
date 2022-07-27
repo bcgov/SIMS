@@ -16,6 +16,7 @@ import {
 import {
   EducationProgramAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
+  EducationProgramAPIInDTO,
 } from "./models/education-program.dto";
 import {
   credentialTypeToDisplay,
@@ -24,7 +25,6 @@ import {
   getUserFullName,
   INSTITUTION_TYPE_BC_PRIVATE,
 } from "../../utilities";
-import { EducationProgramAPIInDTO } from "./models/education-program.dto";
 import { FormNames } from "../../services/form/constants";
 import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
 
