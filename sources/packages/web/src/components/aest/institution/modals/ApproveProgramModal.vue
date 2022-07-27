@@ -25,7 +25,7 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { COLOR_BLUE } from "@/constants";
-import { ApproveProgram } from "@/types";
+import { ApproveProgramAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: {
@@ -33,14 +33,14 @@ export default {
   },
   setup() {
     const { showDialog, showModal, resolvePromise } = useModalDialog<
-      ApproveProgram | undefined
+      ApproveProgramAPIInDTO | undefined
     >();
     let approveProgramForm: any = undefined;
 
     const approveProgram = () => {
       return approveProgramForm.submit();
     };
-    const submitForm = (formData: ApproveProgram) => {
+    const submitForm = (formData: ApproveProgramAPIInDTO) => {
       resolvePromise(formData);
     };
 

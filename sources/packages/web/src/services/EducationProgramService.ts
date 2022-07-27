@@ -1,19 +1,21 @@
 import {
-  SummaryEducationProgramDto,
   OptionItemDto,
-  EducationProgramAPIDTO,
-  EducationProgramData,
-  DataTableSortOrder,
-  ProgramSummaryFields,
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
+  PaginationOptions,
+  EducationProgramsSummary,
   PaginatedResults,
-  ApproveProgram,
-  DeclineProgram,
-  StudentEducationProgramAPIOutDTO,
 } from "@/types";
-
-import ApiClient from "./http/ApiClient";
+import ApiClient from "@/services/http/ApiClient";
+import {
+  ApproveProgramAPIInDTO,
+  DeclineProgramAPIInDTO,
+  EducationProgramAPIInDTO,
+  EducationProgramAPIOutDTO,
+  EducationProgramsSummaryAPIOutDTO,
+  OptionItemAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+  StudentEducationProgramAPIOutDTO,
+} from "@/services/http/dto";
+import { useFormatters } from "@/composables";
 
 export class EducationProgramService {
   // Share Instance
@@ -23,56 +25,92 @@ export class EducationProgramService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getProgram(programId: number): Promise<EducationProgramAPIDTO> {
-    return ApiClient.EducationProgram.getProgram(programId);
-  }
-
-  public async createProgram(data: EducationProgramAPIDTO): Promise<void> {
-    await ApiClient.EducationProgram.createProgram(data);
-  }
-
-  public async updateProgram(
-    programId: number,
-    data: EducationProgramAPIDTO,
-  ): Promise<void> {
-    await ApiClient.EducationProgram.updateProgram(programId, data);
+  /**
+   * Get programs for a particular location with pagination.
+   * @param locationId id of the location.
+   * @param paginationOptions pagination options.
+   * @returns paginated programs summary.
+   */
+  async getProgramsSummaryByLocationId(
+    locationId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<EducationProgramsSummary>> {
+    const programs =
+      await ApiClient.EducationProgram.getProgramsSummaryByLocationId(
+        locationId,
+        paginationOptions,
+      );
+    return this.formatProgramsSummary(programs);
   }
 
   /**
-   * Method to call the API to fetch all institution
-   * location program.
-   * @param locationId location id
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchCriteria,program name keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns program summary for an institution location.
+   * Get the programs summary of an institution with pagination.
+   * @param institutionId id of the institution.
+   * @param paginationOptions pagination options.
+   * @returns paginated programs summary.
    */
-  public async getLocationProgramsSummary(
-    locationId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    searchCriteria?: string,
-    sortField?: ProgramSummaryFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedResults<SummaryEducationProgramDto>> {
-    return ApiClient.EducationProgram.getLocationProgramsSummary(
-      locationId,
-      page,
-      pageCount,
-      searchCriteria,
-      sortField,
-      sortOrder,
-    );
+  async getProgramsSummaryByInstitutionId(
+    institutionId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<EducationProgramsSummary>> {
+    const programs =
+      await ApiClient.EducationProgram.getProgramsSummaryByInstitutionId(
+        institutionId,
+        paginationOptions,
+      );
+    return this.formatProgramsSummary(programs);
   }
 
-  public async getEducationProgram(
+  /**
+   * Apply formats to adapt data to be displayed in the UI as needed.
+   * @param programs programs have data formatted as needed.
+   * @returns formatted programs.
+   */
+  private formatProgramsSummary(
+    programs: PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>,
+  ): PaginatedResults<EducationProgramsSummary> {
+    const { dateOnlyLongString } = useFormatters();
+    return {
+      results: programs.results.map((program) => ({
+        ...program,
+        submittedDateFormatted: dateOnlyLongString(program.submittedDate),
+      })),
+      count: programs.count,
+    };
+  }
+
+  /**
+   * Get the education program information.
+   * @param programId program id.
+   * @returns programs information.
+   * */
+  async getEducationProgram(
     programId: number,
-  ): Promise<EducationProgramData> {
+  ): Promise<EducationProgramAPIOutDTO> {
     return ApiClient.EducationProgram.getEducationProgram(programId);
+  }
+
+  /**
+   * Creates a new education program.
+   * @param payload information to create the new program.
+   * @returns id of the created program.
+   */
+  async createEducationProgram(
+    payload: EducationProgramAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.EducationProgram.createEducationProgram(payload);
+  }
+
+  /**
+   * Updates the main information for an existing education program.
+   * @param programId program to be updated.
+   * @param payload information to be updated.
+   */
+  async updateEducationProgram(
+    programId: number,
+    payload: EducationProgramAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.EducationProgram.updateEducationProgram(programId, payload);
   }
 
   /**
@@ -80,7 +118,7 @@ export class EducationProgramService {
    * @param programId program id to be returned.
    * @returns education program for a student.
    */
-  public async getStudentEducationProgram(
+  async getStudentEducationProgram(
     programId: number,
   ): Promise<StudentEducationProgramAPIOutDTO> {
     return ApiClient.EducationProgram.getStudentEducationProgram(programId);
@@ -91,49 +129,38 @@ export class EducationProgramService {
    * @param locationId location id.
    * @returns location programs option list.
    */
-  public async getLocationProgramsOptionList(
+  async getLocationProgramsOptionList(
     locationId: number,
     programYearId: number,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgram.getLocationProgramsOptionList(
       locationId,
       programYearId,
-      includeInActivePY,
+      isIncludeInActiveProgramYear,
     );
   }
 
   /**
-   * Gets location programs list authorized for institutions.
-   * @returns location programs list for institutions.
+   * Get a key/value pair list of all approved programs.
+   * @returns key/value pair list of all approved programs.
    */
-  public async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
+  async getProgramsListForInstitutions(): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.EducationProgram.getProgramsListForInstitutions();
   }
 
   /**
-   * Education Program Details for ministry users
-   * @param programId program id
-   * @returns Education Program Details
-   */
-  public async getEducationProgramForAEST(
-    programId: number,
-  ): Promise<EducationProgramData> {
-    return ApiClient.EducationProgram.getEducationProgramForAEST(programId);
-  }
-
-  /**
-   * Ministry user approve's a pending program.
+   * Ministry user approves a pending program.
    * @param programId program id.
    * @param institutionId institution id.
-   * @param payload ApproveProgram.
+   * @param payload information to approve the program.
    */
-  public async approveProgram(
+  async approveProgram(
     programId: number,
     institutionId: number,
-    payload: ApproveProgram,
+    payload: ApproveProgramAPIInDTO,
   ): Promise<void> {
-    return ApiClient.EducationProgram.approveProgram(
+    await ApiClient.EducationProgram.approveProgram(
       programId,
       institutionId,
       payload,
@@ -141,15 +168,15 @@ export class EducationProgramService {
   }
 
   /**
-   * Ministry user decline's a pending program.
+   * Ministry user declines a pending program.
    * @param programId program id.
    * @param institutionId institution id.
-   * @param payload DeclineProgram.
+   * @payload note to decline the program.
    */
-  public async declineProgram(
+  async declineProgram(
     programId: number,
     institutionId: number,
-    payload: DeclineProgram,
+    payload: DeclineProgramAPIInDTO,
   ): Promise<void> {
     await ApiClient.EducationProgram.declineProgram(
       programId,

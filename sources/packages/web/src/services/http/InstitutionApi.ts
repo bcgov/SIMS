@@ -1,12 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import {
-  DataTableSortOrder,
-  FieldSortOrder,
-  AESTInstitutionProgramsSummaryDto,
-  PaginatedResults,
-  PaginationOptions,
-  PaginationParams,
-} from "@/types";
+import { PaginatedResults, PaginationOptions, PaginationParams } from "@/types";
 import {
   ActiveApplicationSummaryAPIOutDTO,
   InstitutionDetailAPIOutDTO,
@@ -151,46 +144,5 @@ export class InstitutionApi extends HttpBaseClient {
     return this.getCallTyped<InstitutionBasicAPIOutDTO>(
       this.addClientRoot(`institution/${institutionId}/basic-details`),
     );
-  }
-
-  async getPaginatedAESTInstitutionProgramsSummary(
-    institutionId: number,
-    pageSize: number,
-    page: number,
-    searchCriteria: string,
-    sortColumn?: string,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedResults<AESTInstitutionProgramsSummaryDto>> {
-    const sortByOrder =
-      sortOrder === DataTableSortOrder.ASC
-        ? FieldSortOrder.ASC
-        : FieldSortOrder.DESC; //Default sort order
-    try {
-      let queryString = "";
-      if (searchCriteria) {
-        queryString += `searchCriteria=${searchCriteria}&`;
-      }
-      if (sortColumn) {
-        queryString += `sortColumn=${sortColumn}&`;
-      }
-      if (sortByOrder) {
-        queryString += `sortOrder=${sortByOrder}&`;
-      }
-      if (pageSize) {
-        queryString += `pageSize=${pageSize}&`;
-      }
-      queryString += `page=${page}&`;
-      const response = await this.apiClient.get(
-        `institution/education-program/institution/${institutionId}/aest?${queryString.slice(
-          0,
-          -1,
-        )}`,
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
   }
 }
