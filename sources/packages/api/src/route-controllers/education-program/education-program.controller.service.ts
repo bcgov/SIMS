@@ -104,7 +104,7 @@ export class EducationProgramControllerService {
       // The payload returned from form.io contains the approvalStatus as
       // a calculated server value. If the approvalStatus value is sent
       // from the client form it will be overridden by the server calculated one.
-      return this.programService.saveEducationProgram(
+      return await this.programService.saveEducationProgram(
         institutionId,
         auditUserId,
         submissionResult.data.data,
