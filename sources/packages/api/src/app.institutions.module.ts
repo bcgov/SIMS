@@ -27,6 +27,9 @@ import {
   DisbursementScheduleService,
   COEDeniedReasonService,
   InstitutionTypeService,
+  EducationProgramOfferingService,
+  EducationProgramService,
+  PIRDeniedReasonService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -40,6 +43,9 @@ import {
   InstitutionUserInstitutionsController,
   InstitutionUserControllerService,
   ConfirmationOfEnrollmentInstitutionsController,
+  ProgramInfoRequestInstitutionsController,
+  EducationProgramInstitutionsController,
+  EducationProgramControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -53,6 +59,8 @@ import { LoggerModule } from "./logger/logger.module";
     InstitutionLocationInstitutionsController,
     ScholasticStandingInstitutionsController,
     ConfirmationOfEnrollmentInstitutionsController,
+    EducationProgramInstitutionsController,
+    ProgramInfoRequestInstitutionsController,
   ],
   providers: [
     FormService,
@@ -86,6 +94,11 @@ import { LoggerModule } from "./logger/logger.module";
     DisbursementScheduleService,
     COEDeniedReasonService,
     InstitutionTypeService,
+    EducationProgramService,
+    EducationProgramOfferingService,
+    EducationProgramOfferingService,
+    PIRDeniedReasonService,
+    EducationProgramControllerService,
   ],
 })
 export class AppInstitutionsModule {}

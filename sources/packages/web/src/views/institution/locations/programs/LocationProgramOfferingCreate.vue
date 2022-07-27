@@ -64,9 +64,10 @@ export default {
     }));
 
     const loadFormData = async () => {
-      const programDetails = await EducationProgramService.shared.getProgram(
-        props.programId,
-      );
+      const programDetails =
+        await EducationProgramService.shared.getEducationProgram(
+          props.programId,
+        );
       initialData.value = {
         programIntensity: programDetails.programIntensity,
         programDeliveryTypes: programDetails.programDeliveryTypes,

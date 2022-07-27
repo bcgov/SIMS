@@ -60,8 +60,9 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { PIRSummaryDTO, ProgramInfoStatus } from "@/types";
+import { ProgramInfoStatus } from "@/types";
 import { useFormatters } from "@/composables";
+import { PIRSummaryAPIOutDTO } from "@/services/http/dto";
 
 export default {
   props: {
@@ -77,7 +78,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const { dateString } = useFormatters();
-    const applications = ref([] as PIRSummaryDTO[]);
+    const applications = ref([] as PIRSummaryAPIOutDTO[]);
 
     const goToViewApplication = (applicationId: number) => {
       router.push({

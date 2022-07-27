@@ -30,10 +30,9 @@ export default {
     const initialData = ref({} as OfferingFormBaseModel);
 
     onMounted(async () => {
-      const programPromise =
-        EducationProgramService.shared.getEducationProgramForAEST(
-          props.programId,
-        );
+      const programPromise = EducationProgramService.shared.getEducationProgram(
+        props.programId,
+      );
 
       const offeringPromise =
         EducationProgramOfferingService.shared.getProgramOfferingForAEST(

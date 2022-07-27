@@ -95,7 +95,7 @@ export default {
     );
     const loadFormData = async () => {
       const programDetails =
-        await EducationProgramService.shared.getEducationProgramForAEST(
+        await EducationProgramService.shared.getEducationProgram(
           props.programId,
         );
       const programOffering =

@@ -114,14 +114,14 @@ export class EducationProgramOfferingService {
     programId: number,
     programYearId: number,
     selectedIntensity: OfferingIntensity,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgramOffering.getProgramOfferingsForLocation(
       locationId,
       programId,
       programYearId,
       selectedIntensity,
-      includeInActivePY,
+      isIncludeInActiveProgramYear,
     );
   }
 
@@ -151,14 +151,14 @@ export class EducationProgramOfferingService {
     programId: number,
     programYearId: number,
     selectedOfferingIntensity: OfferingIntensity,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgramOffering.getProgramOfferingsForLocationForInstitution(
       locationId,
       programId,
       programYearId,
       selectedOfferingIntensity,
-      includeInActivePY,
+      isIncludeInActiveProgramYear,
     );
   }
 
