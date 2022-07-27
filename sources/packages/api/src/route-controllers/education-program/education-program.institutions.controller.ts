@@ -15,9 +15,11 @@ import {
   HasLocationAccess,
   UserToken,
 } from "../../auth/decorators";
-import { EducationProgramAPIInDTO } from "./models/education-program.dto";
 import { EducationProgramsSummary } from "../../services/education-program/education-program.service.models";
-import { EducationProgramAPIOutDTO } from "./models/education-program.dto";
+import {
+  EducationProgramAPIInDTO,
+  EducationProgramAPIOutDTO,
+} from "./models/education-program.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import {
   ApiNotFoundResponse,

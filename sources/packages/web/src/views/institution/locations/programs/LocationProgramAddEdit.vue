@@ -71,11 +71,10 @@ export default {
 
     const loadFormData = async () => {
       if (props.programId) {
-        const educationProgram =
+        programData.value =
           await EducationProgramService.shared.getEducationProgram(
             props.programId,
           );
-        programData.value = educationProgram as EducationProgramAPIOutDTO;
       } else {
         initNewFormData();
       }
