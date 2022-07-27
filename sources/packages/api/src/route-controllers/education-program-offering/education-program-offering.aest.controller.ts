@@ -106,8 +106,6 @@ export class EducationProgramOfferingAESTController extends BaseController {
   async getPrecedingOfferingSummary(
     @Param("offeringId") offeringId: number,
   ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
-    return await this.programOfferingService.getPrecedingOfferingSummary(
-      offeringId,
-    );
+    return this.programOfferingService.getPrecedingOfferingSummary(offeringId);
   }
 }
