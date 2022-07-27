@@ -23,9 +23,10 @@ export class EducationProgramApi extends HttpBaseClient {
     locationId: number,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
-    const url =
-      `education-program/location/${locationId}/summary?` +
-      getPaginationQueryString(paginationOptions);
+    const url = `education-program/location/${locationId}/summary?${getPaginationQueryString(
+      paginationOptions,
+    )}`;
+
     return this.getCallTyped<
       PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>
     >(this.addClientRoot(url));
@@ -41,10 +42,10 @@ export class EducationProgramApi extends HttpBaseClient {
     institutionId: number,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
-    console.log(paginationOptions);
-    const url =
-      `education-program/institution/${institutionId}/summary?` +
-      getPaginationQueryString(paginationOptions);
+    const url = `education-program/institution/${institutionId}/summary?${getPaginationQueryString(
+      paginationOptions,
+    )}`;
+
     return this.getCallTyped<
       PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>
     >(this.addClientRoot(url));
@@ -66,7 +67,6 @@ export class EducationProgramApi extends HttpBaseClient {
   /**
    * Creates a new education program.
    * @param payload information to create the new program.
-   * @returns id of the created program.
    */
   async createEducationProgram(
     payload: EducationProgramAPIInDTO,
