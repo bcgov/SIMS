@@ -662,6 +662,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         offeringId,
       })
       .groupBy("offering.id");
-    return query.getRawOne();
+    const precedingOffering = await query.getRawOne();
+    return {
+      offeringId: precedingOffering?.offeringId,
+      applicationsCount: +precedingOffering?.applicationsCount,
+    };
   }
 }

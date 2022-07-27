@@ -76,6 +76,8 @@ export default {
         ? "There is 1 financial aid application with this offering."
         : "There are no financial aid applications with this offering.";
     });
+    //TODO: This callback implementation needs to be removed when the program and offering header component
+    //TODO: is enhanced to load header values with it's own API call.
     const getHeaderDetails = (data: ProgramOfferingHeader) => {
       headerDetails.value = data;
     };
