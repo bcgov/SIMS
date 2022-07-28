@@ -64,8 +64,8 @@ jobs:
       - name: Deploy QA API
         working-directory: "./devops/"
         run: |
-          make oc-qa-deploy-api
+          make oc-deploy-api
       - name: Deploy QA APP
         working-directory: "./devops/"
         run: |
-          make oc-qa-deploy-web
+          make oc-deploy-web
