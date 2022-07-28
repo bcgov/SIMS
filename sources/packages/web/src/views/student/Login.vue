@@ -64,7 +64,10 @@
             >Using your BC Services Card to login to StudentAid BC is quick and
             easy. Click on the login button above and follow the steps. For more
             information, please visit
-            <a target="_blank" href="https://id.gov.bc.ca/account/"
+            <a
+              rel="noopener"
+              target="_blank"
+              href="https://id.gov.bc.ca/account/"
               >BC Services Card website</a
             >.</v-expansion-panel-text
           >
@@ -87,6 +90,7 @@
             >There are a few ways you can get a BC Services Card. Learn how to
             get a BC Services Card on the
             <a
+              rel="noopener"
               target="_blank"
               href="https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/get-a-card"
               >BC Government website</a
