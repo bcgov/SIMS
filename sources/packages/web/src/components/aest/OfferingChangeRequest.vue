@@ -6,7 +6,12 @@
 import { onMounted, ref, SetupContext } from "vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import { OfferingFormBaseModel, OfferingStatus } from "@/types";
+import {
+  OfferingFormBaseModel,
+  OfferingStatus,
+  OfferingRelationType,
+  OfferingDTO,
+} from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/components/generic/Banner.models";
 import OfferingForm from "@/components/common/OfferingForm.vue";
@@ -16,6 +21,12 @@ export default {
     OfferingForm,
   },
   props: {
+    relationType: {
+      type: String,
+      required: true,
+      default: OfferingRelationType.ActualOffering,
+      validator: (val: string) => val in OfferingRelationType,
+    },
     programId: {
       type: Number,
       required: true,
@@ -35,11 +46,19 @@ export default {
       const programPromise = EducationProgramService.shared.getEducationProgram(
         props.programId,
       );
+      let offeringPromise: Promise<OfferingDTO>;
 
-      const offeringPromise =
-        EducationProgramOfferingService.shared.getProgramOfferingForAEST(
-          props.offeringId,
-        );
+      if (props.relationType === OfferingRelationType.ActualOffering) {
+        offeringPromise =
+          EducationProgramOfferingService.shared.getProgramOfferingForAEST(
+            props.offeringId,
+          );
+      } else {
+        offeringPromise =
+          EducationProgramOfferingService.shared.getPrecedingOfferingByActualOfferingId(
+            props.offeringId,
+          );
+      }
 
       const [program, offering] = await Promise.all([
         programPromise,

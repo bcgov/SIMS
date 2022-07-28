@@ -141,6 +141,5 @@ export class OfferingChangeRequestAPIOutDTO {
  * DTO to display the summary of preceding offering details.
  */
 export class PrecedingOfferingSummaryAPIOutDTO {
-  offeringId: number;
   applicationsCount: number;
 }

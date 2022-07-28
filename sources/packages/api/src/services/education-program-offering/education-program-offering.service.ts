@@ -381,12 +381,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * Gets location id from an offering.
+   * Get offering details by offering id.
+   * If isPrecedingOffering is supplied then retrieve the preceding offering details.
    * @param offeringId offering id.
+   * @param isPrecedingOffering when true preceding offering details are retrieved.
    * @returns offering object.
    */
-  async getOfferingById(offeringId: number): Promise<EducationProgramOffering> {
-    return this.repo
+  async getOfferingById(
+    offeringId: number,
+    isPrecedingOffering?: boolean,
+  ): Promise<EducationProgramOffering> {
+    const offeringQuery = this.repo
       .createQueryBuilder("offering")
       .select([
         "offering.id",
@@ -421,11 +426,27 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
-      .leftJoin("offering.assessedBy", "assessedBy")
-      .where("offering.id= :offeringId", {
+      .leftJoin("offering.assessedBy", "assessedBy");
+    if (isPrecedingOffering) {
+      offeringQuery
+        .where((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select("precedingOffering.id")
+            .from(EducationProgramOffering, "offering")
+            .innerJoin("offering.precedingOffering", "precedingOffering")
+            .where("offering.id = :offeringId")
+            .getSql();
+          return `offering.id = ${subQuery}`;
+        })
+        .setParameter("offeringId", offeringId);
+    } else {
+      offeringQuery.where("offering.id= :offeringId", {
         offeringId,
-      })
-      .getOne();
+      });
+    }
+
+    return offeringQuery.getOne();
   }
 
   /**
@@ -643,28 +664,24 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .select("count(application.id)", "applicationsCount")
       .addSelect("offering.id", "offeringId")
       .innerJoin("application.currentAssessment", "assessment")
-      .innerJoin("assessment.offering", "offering")
+      .innerJoin(
+        EducationProgramOffering,
+        "offering",
+        "offering.precedingOffering.id = assessment.offering.id",
+      )
       .where("application.applicationStatus != :cancelledStatus", {
         cancelledStatus: ApplicationStatus.cancelled,
       })
-      .andWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select("precedingOffering.id")
-          .from(EducationProgramOffering, "offering")
-          .innerJoin("offering.precedingOffering", "precedingOffering")
-          .where("offering.id = :offeringId")
-          .getSql();
-        return `offering.id = ${subQuery}`;
-      })
+      .andWhere("offering.id = :offeringId")
       .setParameters({
         cancelledStatus: ApplicationStatus.cancelled,
         offeringId,
       })
       .groupBy("offering.id");
+
     const precedingOffering = await query.getRawOne();
+
     return {
-      offeringId: precedingOffering?.offeringId,
       applicationsCount: +precedingOffering?.applicationsCount,
     };
   }

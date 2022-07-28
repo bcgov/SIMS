@@ -25,6 +25,8 @@ import {
   OfferingAssessmentAPIInDTO,
   OfferingChangeRequestAPIOutDTO,
   PrecedingOfferingSummaryAPIOutDTO,
+  transformToProgramOfferingDto,
+  ProgramOfferingDto,
 } from "./models/education-program-offering.dto";
 
 /**
@@ -108,5 +110,27 @@ export class EducationProgramOfferingAESTController extends BaseController {
     @Param("offeringId", ParseIntPipe) offeringId: number,
   ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
     return this.programOfferingService.getPrecedingOfferingSummary(offeringId);
+  }
+
+  /**
+   * Get preceding offering details.
+   * @param offeringId actual offering id.
+   * @returns Preceding offering details.
+   */
+  @ApiNotFoundResponse({
+    description: "Offering not found.",
+  })
+  @Get(":offeringId/preceding-offering")
+  async getPrecedingOfferingByActualOfferingId(
+    @Param("offeringId") offeringId: number,
+  ): Promise<ProgramOfferingDto> {
+    const offering = await this.programOfferingService.getOfferingById(
+      offeringId,
+      true,
+    );
+    if (!offering) {
+      throw new NotFoundException("Offering not found.");
+    }
+    return transformToProgramOfferingDto(offering);
   }
 }

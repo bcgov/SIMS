@@ -268,4 +268,18 @@ export class EducationProgramOfferingService {
       offeringId,
     );
   }
+
+  /**
+   * For a given offering which is requested as change
+   * get the details of it's actual(preceding) offering.
+   * @param offeringId actual offering id.
+   * @returns preceding offering details.
+   */
+  async getPrecedingOfferingByActualOfferingId(
+    offeringId: number,
+  ): Promise<OfferingDTO> {
+    return ApiClient.EducationProgramOffering.getPrecedingOfferingByActualOfferingId(
+      offeringId,
+    );
+  }
 }

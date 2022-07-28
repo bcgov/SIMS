@@ -309,4 +309,20 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       ),
     );
   }
+
+  /**
+   * For a given offering which is requested as change
+   * get the details of it's actual(preceding) offering.
+   * @param offeringId actual offering id.
+   * @returns preceding offering details.
+   */
+  async getPrecedingOfferingByActualOfferingId(
+    offeringId: number,
+  ): Promise<OfferingDTO> {
+    return this.getCallTyped<OfferingDTO>(
+      this.addClientRoot(
+        `institution/offering/${offeringId}/preceding-offering`,
+      ),
+    );
+  }
 }
