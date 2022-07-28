@@ -427,6 +427,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offering.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
       .leftJoin("offering.assessedBy", "assessedBy");
+
     if (isPrecedingOffering) {
       offeringQuery
         .where((qb) => {
