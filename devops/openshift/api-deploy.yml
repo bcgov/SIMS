@@ -325,7 +325,7 @@ parameters:
   - name: REPLICAS
     value: "1"
   - name: PORT
-    value: "3030"
+    required: true
   - name: DB_SERVICE
     value: patroni-master
   - name: DB_SECRET_NAME
@@ -372,7 +372,7 @@ parameters:
   - name: FORMS_URL
     required: true
   - name: DATABASE_NAME_KEY
-    value: database-name
+    required: true
   - name: BUILD_TAG
     value: "0"
   - name: API_SECRET_NAME

@@ -57,7 +57,5 @@ parameters:
     value: image-registry.openshift-image-registry.svc:5000
   - name: BUILD_NAMESPACE
     required: true
-  - name: DATABASE_NAME_KEY
-    value: database-name
   - name: JOB_NAME
     required: true
