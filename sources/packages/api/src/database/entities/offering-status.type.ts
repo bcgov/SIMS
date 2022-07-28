@@ -7,4 +7,6 @@ export enum OfferingStatus {
   Declined = "Declined",
   UnderReview = "Under review",
   AwaitingApproval = "Awaiting approval",
+  ChangeOverwritten = "Change overwritten",
+  ChangeDeclined = "Change declined",
 }
