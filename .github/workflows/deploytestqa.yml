@@ -1,4 +1,4 @@
-name: Deploy to TEST in OpenShift
+name: Deploy QA to TEST in OpenShift
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ on:
 jobs:
   # Deploy API/App images in Test
   deployTest:
-    name: Deploy App, API, and DB to TEST environment
+    name: Deploy QA App, API, and DB to TEST environment
     runs-on: ubuntu-latest
     env:
       BUILD_ID: ${{ github.event.inputs.BUILD_ID }}
@@ -33,8 +33,14 @@ jobs:
       ATBC_LOGIN_ENDPOINT: "https://auth.at-bc.ca/api/login"
       ATBC_ENDPOINT: "https://sabc.at-bc.ca/api"
       SWAGGER_ENABLED: true
-      SWAGGER_NAME: "qaswagger"
       APPLICATION_ARCHIVE_DAYS: 43
+      APP_NAME: sims
+      API_PORT: 7072
+      WEB_PORT: 3032
+      API: ${HOST_PREFIX}api-${APP_NAME}
+      WEB: ${HOST_PREFIX}web-${APP_NAME}
+      SWAGGER_NAME: ${HOST_PREFIX}swagger
+      DATABASE_NAME_KEY: ${HOST_PREFIX}database-name
     steps:
       - name: Print env
         run: |

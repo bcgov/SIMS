@@ -21,6 +21,19 @@ export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION),
 export BYPASS_APPLICATION_SUBMIT_VALIDATIONS := $(or $(BYPASS_APPLICATION_SUBMIT_VALIDATIONS), false)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
+export API := $(or ${API}, api-$(APP_NAME))
+export WEB := $(or ${WEB}, web-$(APP_NAME))
+export API_PORT := $(or ${API_PORT}, 7070)
+export WEB_PORT := $(or ${WEB_PORT}, 3030)
+export DATABASE_NAME_KEY := $(or ${DATABASE_NAME_KEY}, database-name)
+export DB_NAME := $(or ${DB_NAME}, SIMSDB)
+export SWAGGER_NAME := $(or ${SWAGGER_NAME}, swagger)
+export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
+export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
+
+define QA_DB_NAME
+"QASIMSDB"
+endef
 
 define BUILD_TAG
 "$(BUILD_REF)-$(BUILD_ID)"
@@ -30,64 +43,12 @@ define BUILD_TEMPLATE_PATH
 "openshift/docker-build.yml"
 endef
 
-define API
-"api-$(APP_NAME)"
-endef
-
-define WEB
-"web-$(APP_NAME)"
-endef
-
-define WEB_PORT
-7070
-endef
-
-define API_PORT
-3030
-endef
-
-define DATABASE_NAME_KEY
-"database-name"
-endef
-
-define QA_API
-"qa-api-$(APP_NAME)"
-endef
-
-define QA_WEB
-"qa-web-$(APP_NAME)"
-endef
-
-define QA_WEB_PORT
-7072
-endef
-
-define QA_API_PORT
-3032
-endef
-
-define QA_DATABASE_NAME_KEY
-"qa-database-name"
-endef
-
-define QA_DB_NAME
-"QASIMSDB"
-endef
-
-define QA_SWAGGER_NAME
-"qaswagger"
-endef
-
 define HOST
 "$(HOST_PREFIX)aest-sims.$(DOMAIN)"
 endef
 
 define DB_SERVICE_NAME
 "patroni-master"
-endef
-
-define DB_NAME
-"SIMSDB"
 endef
 
 define FORMSFLOW_FORMS_NAME
@@ -387,6 +348,10 @@ deploy-api:
 	test -n "$(FORMS_FLOW_API_URL)"
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
+	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(API)"
+	test -n "$(SWAGGER_NAME)"
+	test -n "$(API_PORT)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -394,7 +359,7 @@ deploy-api:
 		-p PORT=$(API_PORT) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p IMAGE_STREAM_TAG="$(API):$(BUILD_TAG)" \
+		-p IMAGE_STREAM_TAG="$(API_BUILD_REF):$(BUILD_TAG)" \
 		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
 		-p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) \
 		-p BCeID_WEB_SERVICE_WSDL=$(BCeID_WEB_SERVICE_WSDL) \
@@ -410,14 +375,17 @@ deploy-api:
 		-p BYPASS_APPLICATION_SUBMIT_VALIDATIONS=$(BYPASS_APPLICATION_SUBMIT_VALIDATIONS) \
 		-p SWAGGER_ENABLED=$(SWAGGER_ENABLED) \
 		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
+		-p SWAGGER_NAME=$(SWAGGER_NAME) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
 
 deploy-web:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(WEB)"
+	test -n "$(WEB_PORT)"
 	@echo "+\n++ Deploying WEB with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(WEB) -p PORT=$(WEB_PORT) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(WEB):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(WEB) -p PORT=$(WEB_PORT) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WEB))
 
 create-qa-api-db:
@@ -425,52 +393,6 @@ create-qa-api-db:
 	test -n $(NAMESPACE)
 	@echo "+\n++ Creating DB ($(QA_DB_NAME)) in $(NAMESPACE) patroni db cluster"
 	@oc -n $(NAMESPACE) process -f openshift/createdb-job.yml -p DB_NAME=$(QA_DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=qa-api-db | oc -n $(NAMESPACE) apply -f -
-
-qa-deploy-api:
-	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(KEYCLOAK_REALM)"	
-	test -n "$(KEYCLOAK_AUTH_URL)"
-	test -n "$(BCeID_WEB_SERVICE_WSDL)"
-	test -n "$(RULE_ENGINE_URL)"
-	test -n "$(FORMS_URL)"
-	test -n "$(SITE_MINDER_LOGOUT_URL)"
-	test -n "$(FORMS_FLOW_API_URL)"
-	test -n "$(ATBC_LOGIN_ENDPOINT)"
-	test -n "$(ATBC_ENDPOINT)"
-	@echo "+\n++ Deploying QA API with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
-		-p NAME=$(QA_API) \
-		-p HOST_NAME=$(HOST) \
-		-p PORT=$(QA_API_PORT) \
-		-p DB_SERVICE=$(DB_SERVICE_NAME) \
-		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p IMAGE_STREAM_TAG="$(API):$(BUILD_TAG)" \
-		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
-		-p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) \
-		-p BCeID_WEB_SERVICE_WSDL=$(BCeID_WEB_SERVICE_WSDL) \
-		-p RULE_ENGINE_URL=$(RULE_ENGINE_URL) \
-		-p FORMS_URL=$(FORMS_URL) \
-		-p BUILD_TAG=$(BUILD_TAG) \
-		-p DATABASE_NAME_KEY=$(QA_DATABASE_NAME_KEY) \
-		-p SITE_MINDER_LOGOUT_URL=$(SITE_MINDER_LOGOUT_URL) \
-		-p FORMS_FLOW_API_URL=$(FORMS_FLOW_API_URL) \
-		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
-		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
-		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
-		-p BYPASS_APPLICATION_SUBMIT_VALIDATIONS=$(BYPASS_APPLICATION_SUBMIT_VALIDATIONS) \
-		-p SWAGGER_ENABLED=$(SWAGGER_ENABLED) \
-		-p SWAGGER_NAME=$(QA_SWAGGER_NAME) \
-		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
-		| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(QA_API))
-
-qa-deploy-web:
-	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_NAMESPACE)"
-	@echo "+\n++ Deploying QA WEB with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(QA_WEB) -p PORT=$(QA_WEB_PORT) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(WEB):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(QA_WEB))
 
 build-forms-flow-forms:
 	test -n "$(BUILD_NAMESPACE)"
