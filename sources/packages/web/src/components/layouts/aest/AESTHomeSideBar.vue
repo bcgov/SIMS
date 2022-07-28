@@ -25,9 +25,14 @@
     <v-list density="compact" nav>
       <v-list-subheader>Institution requests</v-list-subheader>
       <v-list-item
-        :title="pendingDesignationItem.label"
-        :prepend-icon="pendingDesignationItem.icon"
-        @click="pendingDesignationItem.command"
+        :title="designations.label"
+        :prepend-icon="designations.icon"
+        @click="designations.command"
+      />
+      <v-list-item
+        :title="offerings.label"
+        :prepend-icon="offerings.icon"
+        @click="offerings.command"
       />
     </v-list>
     <template #append>
@@ -40,14 +45,13 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuModel } from "@/types";
 
 export default {
   setup() {
     const router = useRouter();
-    const topItems = ref<MenuModel[]>([
+    const topItems = [
       {
         label: "Dashboard",
         icon: "mdi-home-outline",
@@ -75,9 +79,9 @@ export default {
           });
         },
       },
-    ]);
+    ];
 
-    const exceptionsItem = ref({
+    const exceptionsItem = {
       label: "Exceptions",
       icon: "mdi-alert-circle-outline",
       command: () => {
@@ -85,9 +89,9 @@ export default {
           name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
         });
       },
-    } as MenuModel);
+    } as MenuModel;
 
-    const appealsItem = ref({
+    const appealsItem = {
       label: "Appeals",
       icon: "mdi-folder-open-outline",
       command: () => {
@@ -95,9 +99,9 @@ export default {
           name: AESTRoutesConst.APPLICATION_APPEALS_PENDING,
         });
       },
-    } as MenuModel);
+    } as MenuModel;
 
-    const pendingDesignationItem = ref({
+    const designations = {
       label: "Pending designations",
       icon: "mdi-bookmark-outline",
       command: () => {
@@ -105,9 +109,9 @@ export default {
           name: AESTRoutesConst.PENDING_DESIGNATIONS,
         });
       },
-    } as MenuModel);
+    } as MenuModel;
 
-    const reports = ref({
+    const reports = {
       label: "Reports",
       icon: "mdi-home-outline",
       command: () => {
@@ -115,14 +119,25 @@ export default {
           name: AESTRoutesConst.REPORTS,
         });
       },
-    } as MenuModel);
+    } as MenuModel;
+
+    const offerings = {
+      label: "Offerings",
+      icon: "mdi-view-list-outline",
+      command: () => {
+        router.push({
+          name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS,
+        });
+      },
+    } as MenuModel;
 
     return {
       appealsItem,
       topItems,
-      pendingDesignationItem,
+      designations,
       exceptionsItem,
       reports,
+      offerings,
       AESTRoutesConst,
     };
   },
