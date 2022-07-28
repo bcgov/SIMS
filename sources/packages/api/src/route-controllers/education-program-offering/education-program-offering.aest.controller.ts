@@ -122,7 +122,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
   })
   @Get(":offeringId/preceding-offering")
   async getPrecedingOfferingByActualOfferingId(
-    @Param("offeringId") offeringId: number,
+    @Param("offeringId", ParseIntPipe) offeringId: number,
   ): Promise<ProgramOfferingDto> {
     const offering = await this.programOfferingService.getOfferingById(
       offeringId,
