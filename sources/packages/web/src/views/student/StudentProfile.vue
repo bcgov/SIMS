@@ -2,13 +2,31 @@
   <student-page-container>
     <template #header>
       <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
+      <row v-else align="center">
+        <v-col>
+          <p class="category-header-x-large">Create Your Profile</p>
+          <p>
+            Use your most up-to-date personal information.<br />
+            We'll use the same information to help you apply for financial aid.
+          </p>
+        </v-col>
+      </row>
     </template>
-    <formio
+    <formio-container
       formName="studentinformation"
-      :data="initialData"
+      :formData="initialData"
       @submitted="submitted"
       @customEvent="showPDApplicationModal"
-    ></formio>
+    >
+      <template #actions="{ submit }">
+        <footer-buttons
+          :processing="processing"
+          @primaryClick="submit"
+          :primaryLabel="saveLabel"
+          :showSecondaryButton="false"
+        />
+      </template>
+    </formio-container>
   </student-page-container>
   <PDStatusApplicationModal max-width="600" ref="pdStatusApplicationModal" />
 </template>
@@ -22,6 +40,7 @@ import {
   useAuthBCSC,
   useFormatters,
   useStudentStore,
+  useAuthBCeID,
 } from "@/composables";
 import {
   StudentFormInfo,
@@ -36,6 +55,8 @@ import {
   UpdateStudentAPIInDTO,
 } from "@/services/http/dto/Student.dto";
 import { AddressDetailsFormAPIDTO } from "@/services/http/dto";
+import { AppIDPType, FormIOForm } from "@/types";
+import { AuthService } from "@/services/AuthService";
 
 enum FormModes {
   edit = "edit",
@@ -51,6 +72,7 @@ type StudentFormData = Pick<
     phone: string;
     dateOfBirth: string;
     mode: FormModes;
+    identityProvider?: AppIDPType;
   };
 
 export default {
@@ -71,9 +93,11 @@ export default {
     const initialData = ref({} as StudentFormData);
     const studentAllInfo = ref({} as StudentFormInfo);
     const { bcscParsedToken } = useAuthBCSC();
+    const { bceidParsedToken } = useAuthBCeID();
     const { dateOnlyLongString } = useFormatters();
     const studentStore = useStudentStore();
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
+    const processing = ref(false);
 
     const getStudentInfo = async () => {
       if (studentStore.hasStudentAccount.value) {
@@ -87,6 +111,10 @@ export default {
       () => studentAllInfo.value.pdStatus === StudentPDStatus.Pending,
     );
 
+    const saveLabel = computed(() =>
+      props.editMode ? "Save profile" : "Create profile",
+    );
+
     const getStudentDetails = async () => {
       if (props.editMode) {
         await getStudentInfo();
@@ -97,19 +125,25 @@ export default {
           givenNames: studentAllInfo.value.firstName,
           dateOfBirth: studentAllInfo.value.birthDateFormatted,
           mode: FormModes.edit,
+          identityProvider: AuthService.shared.userToken?.IDP,
         };
         initialData.value = data;
       } else {
-        const data = {} as StudentFormData;
-        initialData.value = {
-          ...data,
-          firstName: bcscParsedToken.givenNames,
-          lastName: bcscParsedToken.lastName,
-          email: bcscParsedToken.email,
-          gender: bcscParsedToken.gender,
-          dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
+        const data = {
           mode: FormModes.create,
-        };
+          identityProvider: AuthService.shared.userToken?.IDP,
+        } as StudentFormData;
+        if (AuthService.shared.userToken?.IDP === AppIDPType.BCSC) {
+          data.firstName = bcscParsedToken.givenNames;
+          data.lastName = bcscParsedToken.lastName;
+          data.email = bcscParsedToken.email;
+          data.gender = bcscParsedToken.gender;
+          data.dateOfBirth = dateOnlyLongString(bcscParsedToken.birthdate);
+        } else {
+          data.email = bceidParsedToken.email;
+        }
+        console.log(data);
+        initialData.value = data;
       }
       await getStudentInfo();
     };
@@ -135,15 +169,16 @@ export default {
     };
 
     const submitted = async (
-      formData: UpdateStudentAPIInDTO | CreateStudentAPIInDTO,
+      form: FormIOForm<UpdateStudentAPIInDTO | CreateStudentAPIInDTO>,
     ) => {
       try {
+        processing.value = true;
         if (props.editMode) {
-          await StudentService.shared.updateStudent(formData);
+          await StudentService.shared.updateStudent(form.data);
           snackBar.success("Student contact information updated!");
         } else {
           await StudentService.shared.createStudent(
-            formData as CreateStudentAPIInDTO,
+            form.data as CreateStudentAPIInDTO,
           );
           await Promise.all([
             studentStore.setHasStudentAccount(true),
@@ -154,6 +189,8 @@ export default {
         router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
       } catch {
         snackBar.error("Error while saving student");
+      } finally {
+        processing.value = false;
       }
     };
 
@@ -170,6 +207,8 @@ export default {
       showPendingStatus,
       pdStatusApplicationModal,
       showPDApplicationModal,
+      processing,
+      saveLabel,
     };
   },
 };

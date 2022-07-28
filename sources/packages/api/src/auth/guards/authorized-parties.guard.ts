@@ -62,6 +62,7 @@ export class AuthorizedPartiesGuard implements CanActivate {
   ): boolean {
     switch (authorizedParty) {
       case AuthorizedParties.student:
+        return [IdentityProviders.BCeID, IdentityProviders.BCSC].includes(idp);
       case AuthorizedParties.supportingUsers:
         return idp === IdentityProviders.BCSC;
       case AuthorizedParties.institution:

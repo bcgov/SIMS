@@ -8,6 +8,7 @@ export * from "./useFormatters";
 export * from "./useSnackBar";
 export * from "./useModalDialog";
 export * from "./useAuthBCSC";
+export * from "./useAuthBCeID";
 export * from "./useStudentStore";
 export * from "./useFormatters";
 export * from "./useDesignationAgreement";
