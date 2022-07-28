@@ -170,8 +170,6 @@ oc-build-web: | print-status build-web
 oc-deploy-web: | print-status deploy-web
 
 oc-create-qa-api-db: | print-status create-qa-api-db
-oc-qa-deploy-api: | print-status qa-deploy-api
-oc-qa-deploy-web: | print-status qa-deploy-web
 
 oc-build-forms-flow-forms: | print-status build-forms-flow-forms
 oc-build-forms-flow-bpm: | print-status build-forms-flow-bpm
