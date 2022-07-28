@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS sims.student_users(
   id SERIAL PRIMARY KEY,
   user_id INT NOT NULL REFERENCES sims.users(id),
   student_id INT NOT NULL REFERENCES sims.students(id),
-  student_user_attestation_is INT REFERENCES sims.student_user_attestation(id),
+  student_account_application_id INT REFERENCES sims.student_account_applications(id),
   -- Audit columns
   created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
@@ -19,7 +19,7 @@ COMMENT ON COLUMN sims.student_users.user_id IS 'User related to the student.';
 
 COMMENT ON COLUMN sims.student_users.student_id IS 'Student related to the user.';
 
-COMMENT ON COLUMN sims.student_users.student_user_attestation_is IS 'Student account attestation in case of this relationship was created after a Ministry attestation process.';
+COMMENT ON COLUMN sims.student_users.student_account_application_id IS 'Optional student account application in case of this relationship was created after a student account application assessed by the Ministry.';
 
 COMMENT ON COLUMN sims.student_users.created_at IS 'Record creation timestamp.';
 
