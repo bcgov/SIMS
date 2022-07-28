@@ -1,43 +1,44 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <v-row class="mb-2 mt-2">
-        <v-col cols="3" class="category-header-large">Notes</v-col>
-        <v-col class="text-center">
-          <div class="float-right">
-            <v-row>
-              <v-col>
-                <v-btn
-                  rounded
-                  :color="!filteredNoteType ? 'primary' : 'secondary'"
-                  data-cy="allNotesButton"
-                  @click="filterNotes()"
-                  >All Notes</v-btn
-                >
-              </v-col>
-              <v-col v-for="item in InstitutionNoteType" :key="item">
-                <v-btn
-                  rounded
-                  :color="filteredNoteType === item ? 'primary' : 'secondary'"
-                  data-cy="noteTypeItem"
-                  @click="filterNotes(item)"
-                  >{{ item }}</v-btn
-                >
-              </v-col>
-            </v-row>
-          </div>
-        </v-col>
-      </v-row>
-      <content-group>
-        <Notes
-          title="Past Notes"
-          :entityType="NoteEntityType.Institution"
-          :notes="notes"
-          @submitData="addNote"
-        ></Notes>
-      </content-group>
-    </div>
-  </v-card>
+  <v-container>
+    <v-row class="my-2 pl-0">
+      <v-col cols="3" class="category-header-large">Notes</v-col>
+      <v-col class="text-center">
+        <div class="float-right">
+          <v-row>
+            <v-col>
+              <v-btn
+                rounded
+                :color="!filteredNoteType ? 'primary' : 'secondary'"
+                data-cy="allNotesButton"
+                @click="filterNotes()"
+                >All Notes</v-btn
+              >
+            </v-col>
+            <v-col v-for="item in InstitutionNoteType" :key="item">
+              <v-btn
+                rounded
+                :color="filteredNoteType === item ? 'primary' : 'secondary'"
+                data-cy="noteTypeItem"
+                @click="filterNotes(item)"
+                >{{ item }}</v-btn
+              >
+            </v-col>
+          </v-row>
+        </div>
+      </v-col>
+    </v-row>
+    <full-page-container
+      :layout-template="LayoutTemplates.CenteredCard"
+      :full-width="true"
+    >
+      <notes
+        title="Past Notes"
+        :entityType="NoteEntityType.Institution"
+        :notes="notes"
+        @submitData="addNote"
+      ></notes>
+    </full-page-container>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -46,6 +47,7 @@ import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
 import { useFormatters, useSnackBar } from "@/composables";
 import { InstitutionNoteType, NoteBaseDTO, NoteEntityType } from "@/types";
+import { LayoutTemplates } from "@/types";
 
 export default {
   components: { Notes },
@@ -90,6 +92,7 @@ export default {
       filteredNoteType,
       addNote,
       NoteEntityType,
+      LayoutTemplates,
     };
   },
 };

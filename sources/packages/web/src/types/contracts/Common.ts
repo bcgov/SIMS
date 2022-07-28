@@ -33,4 +33,5 @@ export interface AddressInfo {
 export enum LayoutTemplates {
   Centered = "centered",
   CenteredCard = "centered-card",
+  Start = "start",
 }

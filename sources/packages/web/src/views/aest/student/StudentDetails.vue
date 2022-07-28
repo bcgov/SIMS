@@ -1,5 +1,5 @@
 <template>
-  <full-page-container layout-template="centered">
+  <full-page-container layout-template="start" :fluid="true">
     <template #header>
       <header-navigator
         title="Student Details"

@@ -19,6 +19,13 @@
         </div>
       </v-row>
     </template>
+    <template v-else-if="layoutTemplate === LayoutTemplates.Start">
+      <v-row>
+        <div class="mt-4 w-100">
+          <slot></slot>
+        </div>
+      </v-row>
+    </template>
   </v-container>
 </template>
 

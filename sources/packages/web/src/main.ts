@@ -17,8 +17,6 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import ToastService from "primevue/toastservice";
 import TabMenu from "primevue/tabmenu";
-import TabView from "primevue/tabview";
-import TabPanel from "primevue/tabpanel";
 import { AppConfigService } from "./services/AppConfigService";
 import Tooltip from "primevue/tooltip";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -109,8 +107,6 @@ AppConfigService.shared.init().then(() => {
     .component("DataTable", DataTable)
     .component("Column", Column)
     .component("TabMenu", TabMenu)
-    .component("TabView", TabView)
-    .component("TabPanel", TabPanel)
     .component("font-awesome-icon", FontAwesomeIcon)
     .component("BodyHeader", BodyHeader)
     .component("ContentGroup", ContentGroup)
