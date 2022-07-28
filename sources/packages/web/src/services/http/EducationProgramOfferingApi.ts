@@ -285,7 +285,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   }
 
   /**
-   * Get all offerings that were were requested for change.
+   * Get all offerings that were requested for change.
    * @returns all offerings that were requested for change.
    */
   async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
