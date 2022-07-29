@@ -11,6 +11,8 @@ import {
   User,
   Institution,
   StudentAssessment,
+  Application,
+  ApplicationStatus,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource, UpdateResult } from "typeorm";
@@ -18,6 +20,7 @@ import {
   EducationProgramOfferingModel,
   SaveOfferingModel,
   OfferingsFilter,
+  PrecedingOfferingSummaryModel,
 } from "./education-program-offering.service.models";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import {
@@ -378,12 +381,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * Gets location id from an offering.
+   * Get offering details by offering id.
+   * If isPrecedingOffering is supplied then retrieve the preceding offering details.
    * @param offeringId offering id.
+   * @param isPrecedingOffering when true preceding offering details are retrieved.
    * @returns offering object.
    */
-  async getOfferingById(offeringId: number): Promise<EducationProgramOffering> {
-    return this.repo
+  async getOfferingById(
+    offeringId: number,
+    isPrecedingOffering?: boolean,
+  ): Promise<EducationProgramOffering> {
+    const offeringQuery = this.repo
       .createQueryBuilder("offering")
       .select([
         "offering.id",
@@ -418,11 +426,28 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
-      .leftJoin("offering.assessedBy", "assessedBy")
-      .where("offering.id= :offeringId", {
+      .leftJoin("offering.assessedBy", "assessedBy");
+
+    if (isPrecedingOffering) {
+      offeringQuery
+        .where((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select("precedingOffering.id")
+            .from(EducationProgramOffering, "offering")
+            .innerJoin("offering.precedingOffering", "precedingOffering")
+            .where("offering.id = :offeringId")
+            .getSql();
+          return `offering.id = ${subQuery}`;
+        })
+        .setParameter("offeringId", offeringId);
+    } else {
+      offeringQuery.where("offering.id= :offeringId", {
         offeringId,
-      })
-      .getOne();
+      });
+    }
+
+    return offeringQuery.getOne();
   }
 
   /**
@@ -544,11 +569,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       educationProgramOffering,
     );
     const auditUser = { id: userId } as User;
+    const precedingOffering = {
+      id: currentOffering.id,
+    } as EducationProgramOffering;
     //Populating the status, parent offering and audit fields.
     requestedOffering.offeringStatus = OfferingStatus.AwaitingApproval;
+    //The parent offering will be just the preceding offering if
+    //the change is requested only once.
+    //Otherwise parent offering will be the very first offering where change was requested.
     requestedOffering.parentOffering =
-      currentOffering.parentOffering ??
-      ({ id: currentOffering.id } as EducationProgramOffering);
+      currentOffering.parentOffering ?? precedingOffering;
+    requestedOffering.precedingOffering = precedingOffering;
     requestedOffering.creator = auditUser;
 
     //Update the status and audit details of current offering.
@@ -590,5 +621,69 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         locationId: locationId,
       })
       .getOne();
+  }
+
+  /**
+   * Get all offerings that were requested for change
+   * i.e in Awaiting Approval status.
+   * @returns all offerings that were requested for change.
+   */
+  async getOfferingChangeRequests(): Promise<EducationProgramOffering[]> {
+    return this.repo
+      .createQueryBuilder("offerings")
+      .select([
+        "offerings.id",
+        "offerings.name",
+        "offerings.submittedDate",
+        "offerings.precedingOffering",
+        "educationProgram.id",
+        "institutionLocation.name",
+        "institution.legalOperatingName",
+        "institution.operatingName",
+      ])
+      .innerJoin("offerings.educationProgram", "educationProgram")
+      .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .innerJoin("institutionLocation.institution", "institution")
+      .where("offerings.offeringStatus = :offeringStatus", {
+        offeringStatus: OfferingStatus.AwaitingApproval,
+      })
+      .getMany();
+  }
+
+  /**
+   * For a given offering which is requested as change
+   * get the summary of it's actual(preceding) offering.
+   * @param offeringId offering id of actual offering.
+   * @returns preceding offering summary.
+   */
+  async getPrecedingOfferingSummary(
+    offeringId: number,
+  ): Promise<PrecedingOfferingSummaryModel> {
+    const query = this.dataSource
+      .getRepository(Application)
+      .createQueryBuilder("application")
+      .select("count(application.id)", "applicationsCount")
+      .addSelect("offering.id", "offeringId")
+      .innerJoin("application.currentAssessment", "assessment")
+      .innerJoin(
+        EducationProgramOffering,
+        "offering",
+        "offering.precedingOffering.id = assessment.offering.id",
+      )
+      .where("application.applicationStatus != :cancelledStatus", {
+        cancelledStatus: ApplicationStatus.cancelled,
+      })
+      .andWhere("offering.id = :offeringId")
+      .setParameters({
+        cancelledStatus: ApplicationStatus.cancelled,
+        offeringId,
+      })
+      .groupBy("offering.id");
+
+    const precedingOffering = await query.getRawOne();
+
+    return {
+      applicationsCount: +precedingOffering?.applicationsCount,
+    };
   }
 }

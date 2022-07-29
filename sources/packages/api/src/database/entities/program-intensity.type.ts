@@ -1,5 +1,5 @@
 /**
- * Program Intensities of the Program.
+ * Program intensities of the education program.
  */
 export enum ProgramIntensity {
   /**

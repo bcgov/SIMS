@@ -1,10 +1,4 @@
-import {
-  IsNotEmpty,
-  IsInt,
-  Min,
-  IsOptional,
-  IsPositive,
-} from "class-validator";
+import { IsOptional, IsPositive } from "class-validator";
 import { OfferingTypes, ProgramInfoStatus } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 
@@ -44,15 +38,22 @@ export class CourseDetails {
   courseEndDate: string;
 }
 
-export interface GetPIRDeniedReasonDto {
+export class PIRDeniedReasonAPIOutDTO {
   id: number;
   description: string;
 }
 
-export class DenyProgramInfoRequestDto {
-  @IsNotEmpty()
-  @IsInt()
-  @Min(1)
+export class PIRSummaryAPIOutDTO {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  applicationId: number;
+  pirStatus: string;
+  fullName: string;
+}
+
+export class DenyProgramInfoRequestAPIInDTO {
+  @IsPositive()
   pirDenyReasonId: number;
   @IsOptional()
   otherReasonDesc?: string;

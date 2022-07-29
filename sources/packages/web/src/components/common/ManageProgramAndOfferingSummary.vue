@@ -30,8 +30,7 @@
 import ProgramDetails from "@/components/common/ProgramDetails.vue";
 import OfferingSummary from "@/components/common/OfferingSummary.vue";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
-
-import { EducationProgramData } from "@/types";
+import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
 export default {
   components: { ProgramDetails, OfferingSummary, ProgramOfferingDetailHeader },
@@ -47,7 +46,7 @@ export default {
     educationProgram: {
       type: Object,
       required: true,
-      default: {} as EducationProgramData,
+      default: {} as EducationProgramAPIOutDTO,
     },
     institutionId: {
       type: Number,

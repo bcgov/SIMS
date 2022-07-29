@@ -63,6 +63,8 @@ export enum AppRoutes {
   Reports = "reports",
   ApplicationExceptionsApproval = "application-exceptions/:exceptionId",
   Exceptions = "exceptions",
+  OfferingChangeRequests = "institution/offering/change-requests",
+  ViewOfferingChangeRequest = "institution/offering-change-request/:offeringId/program/:programId",
   Appeals = "appeals",
   // program
   Programs = "programs",
