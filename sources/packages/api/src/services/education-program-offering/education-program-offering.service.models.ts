@@ -3,6 +3,7 @@ import {
   StudyBreaksAndWeeks,
   OfferingStatus,
   OfferingTypes,
+  Application,
 } from "../../database/entities";
 
 export class EducationProgramOfferingModel {
@@ -59,8 +60,8 @@ export interface PrecedingOfferingSummaryModel {
   applicationsCount: number;
 }
 
-export interface ApplicationAssessmentSummary {
-  applicationId: number;
+export class ApplicationAssessmentSummary extends Application {
   assessmentWorkflowId: string;
   workflowName: string;
+  hasAssessmentData: boolean;
 }

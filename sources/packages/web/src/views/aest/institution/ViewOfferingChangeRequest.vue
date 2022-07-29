@@ -72,7 +72,7 @@ import {
 } from "@/types";
 import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { ModalDialog } from "@/composables";
+import { ModalDialog, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingChangeRequest from "@/components/aest/OfferingChangeRequest.vue";
@@ -104,6 +104,7 @@ export default {
     const assessOfferingChangeModalRef = ref(
       {} as ModalDialog<OfferingChangeAssessmentAPIInDTO | boolean>,
     );
+    const snackBar = useSnackBar();
 
     //TODO: This callback implementation needs to be removed when the program and offering header component
     //TODO: is enhanced to load header values with it's own API call.
@@ -115,13 +116,23 @@ export default {
       offeringChangeApprovalStatus.value = offeringStatus;
       const responseData = await assessOfferingChangeModalRef.value.showModal();
       if (responseData) {
-        await EducationProgramOfferingService.shared.assessOfferingChangeRequest(
-          props.offeringId,
-          responseData as OfferingChangeAssessmentAPIInDTO,
-        );
+        try {
+          await EducationProgramOfferingService.shared.assessOfferingChangeRequest(
+            props.offeringId,
+            responseData as OfferingChangeAssessmentAPIInDTO,
+          );
+          const snackbarMessage =
+            offeringStatus === OfferingStatus.Approved
+              ? "Offering change request has been approved and reassessments have been created for impacted applications."
+              : "Offering change request has been declined.";
+
+          snackBar.success(snackbarMessage);
+        } catch {
+          snackBar.error(
+            "Unexpected error while submitting offering change request.",
+          );
+        }
       }
-      console.log(responseData);
-      console.log(offeringStatus);
     };
 
     return {

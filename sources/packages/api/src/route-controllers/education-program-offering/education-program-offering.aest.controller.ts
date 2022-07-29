@@ -141,11 +141,11 @@ export class EducationProgramOfferingAESTController extends BaseController {
     @Body() payload: OfferingChangeAssessmentAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    const applications =
-      await this.programOfferingService.getApplicationsToSubmitReassessment(
-        offeringId,
-      );
-
-    console.log(applications);
+    await this.programOfferingService.assessOfferingChangeRequest(
+      offeringId,
+      userToken.userId,
+      payload.assessmentNotes,
+      payload.offeringStatus,
+    );
   }
 }
