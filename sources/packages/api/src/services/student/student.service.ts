@@ -123,6 +123,7 @@ export class StudentService extends RecordDataModelService<Student> {
     user.email = userInfo.email;
     user.firstName = userInfo.givenNames;
     user.lastName = userInfo.lastName;
+    user.creator = user;
 
     const student = new Student();
     student.user = user;

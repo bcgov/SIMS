@@ -1,26 +1,18 @@
--- Add new column to save the identity provider type/
+-- Add new column to save the identity provider type.
+-- The column allow nulls to accept also, for instance, service users that are also saved to the
+-- users tables but are not authenticated using an IDP.
 ALTER TABLE
     sims.users
 ADD
-    COLUMN IF NOT EXISTS identity_provider_type sims.identity_provider_types DEFAULT 'BCSC';
+    COLUMN IF NOT EXISTS identity_provider_type sims.identity_provider_types GENERATED ALWAYS AS (
+        CASE
+            WHEN user_name LIKE '%@bceid' THEN 'BCEID' :: sims.identity_provider_types
+            WHEN user_name LIKE '%@idir' THEN 'IDIR' :: sims.identity_provider_types
+            WHEN user_name LIKE '%@bceid' THEN 'BCSC' :: sims.identity_provider_types
+        END
+    ) STORED;
 
 COMMENT ON COLUMN sims.users.identity_provider_type IS 'Identity provider that authenticated the user.';
-
--- Update all existing users based on the user_name suffix.
-UPDATE
-    sims.users
-SET
-    identity_provider_type = CASE
-        WHEN user_name ILIKE '%@bceid' THEN 'BCEID'
-        WHEN user_name ILIKE '%@idir' THEN 'IDIR'
-        ELSE 'BCSC'
-    END :: sims.identity_provider_types;
-
--- Remove the default constraint.
-ALTER TABLE
-    sims.users
-ALTER COLUMN
-    identity_provider_type DROP DEFAULT;
 
 -- Audit columns
 ALTER TABLE
