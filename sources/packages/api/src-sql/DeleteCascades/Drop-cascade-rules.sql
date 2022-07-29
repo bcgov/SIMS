@@ -1,3 +1,7 @@
+-- Delete reference between applications and student_assements --
+ALTER TABLE
+    sims.applications DROP CONSTRAINT IF EXISTS applications_current_assessment_id_fkey;
+
 -- Delete reference between application_exception_requests and application_exceptions --
 ALTER TABLE
     sims.application_exception_requests DROP CONSTRAINT IF EXISTS application_exception_requests_application_exception_id_fkey;
@@ -57,10 +61,6 @@ ALTER TABLE
 -- Delete reference between education_programs_offerings and institution_locations --
 ALTER TABLE
     sims.education_programs_offerings DROP CONSTRAINT IF EXISTS education_programs_offerings_location_id_fkey;
-
--- Delete reference between institution_users and institutions --
-ALTER TABLE
-    sims.institution_users DROP CONSTRAINT IF EXISTS fk_institution_id_202105180002;
 
 -- Delete reference between institution_users and users --
 ALTER TABLE

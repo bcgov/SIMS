@@ -2,19 +2,25 @@
 ALTER TABLE
     sims.application_exception_requests
 ADD
-    CONSTRAINT application_exception_requests_application_exceptions_id_fkey FOREIGN KEY(application_exception_id) REFERENCES sims.application_exceptions(id) ON DELETE CASCADE;
+    CONSTRAINT application_exception_requests_application_exception_id_fkey FOREIGN KEY(application_exception_id) REFERENCES sims.application_exceptions(id) ON DELETE CASCADE;
+
+-- Create reference between applications and students --
+ALTER TABLE
+    sims.applications
+ADD
+    CONSTRAINT applications_student_id_fkey FOREIGN KEY(student_id) REFERENCES sims.students(id) ON DELETE CASCADE;
 
 -- Create reference between applications and student_assessments --
 ALTER TABLE
     sims.applications
 ADD
-    CONSTRAINT applications_student_assessments_id_fkey FOREIGN KEY(current_assessment_id) REFERENCES sims.student_assessments(id) ON DELETE CASCADE;
+    CONSTRAINT applications_current_assessment_id_fkey FOREIGN KEY(current_assessment_id) REFERENCES sims.student_assessments(id) ON DELETE CASCADE;
 
 -- Create reference between student_assessments and applications --
 ALTER TABLE
     sims.student_assessments
 ADD
-    CONSTRAINT student_assessments_applications_id_fkey FOREIGN KEY(application_id) REFERENCES sims.applications(id) ON DELETE CASCADE;
+    CONSTRAINT student_assessments_application_id_fkey FOREIGN KEY(application_id) REFERENCES sims.applications(id) ON DELETE CASCADE;
 
 -- Create reference between application_student_files and applications --
 ALTER TABLE
@@ -74,7 +80,7 @@ ADD
 ALTER TABLE
     sims.education_programs
 ADD
-    CONSTRAINT education_programs_institution_id_fkey FOREIGN KEY(institution_id) REFERENCES sims.institution(id) ON DELETE CASCADE;
+    CONSTRAINT education_programs_institution_id_fkey FOREIGN KEY(institution_id) REFERENCES sims.institutions(id) ON DELETE CASCADE;
 
 -- Create reference between education_programs_offerings and education_programs --
 ALTER TABLE
@@ -92,7 +98,7 @@ ADD
 ALTER TABLE
     sims.institution_users
 ADD
-    CONSTRAINT fk_institution_id_202105180002 FOREIGN KEY(institution_id) REFERENCES sims.institution(id) ON DELETE CASCADE;
+    CONSTRAINT fk_institution_id_202105180002 FOREIGN KEY(institution_id) REFERENCES sims.institutions(id) ON DELETE CASCADE;
 
 -- Create reference between institution_users and users --
 ALTER TABLE
@@ -124,12 +130,6 @@ ALTER TABLE
 ADD
     CONSTRAINT institution_locations_institution_id_fkey FOREIGN KEY(institution_id) REFERENCES sims.institutions(id) ON DELETE CASCADE;
 
--- Create reference between institution_users and institutions --
-ALTER TABLE
-    sims.institution_users
-ADD
-    CONSTRAINT fk_institution_id_202105180002 FOREIGN KEY(institution_id) REFERENCES sims.institutions(id) ON DELETE CASCADE;
-
 -- Create reference between msfaa_numbers and students --
 ALTER TABLE
     sims.msfaa_numbers
@@ -146,7 +146,7 @@ ADD
 ALTER TABLE
     sims.students
 ADD
-    CONSTRAINTstudents_user_id_fkey FOREIGN KEY(user_id) REFERENCES sims.users(id) ON DELETE CASCADE;
+    CONSTRAINT students_user_id_fkey FOREIGN KEY(user_id) REFERENCES sims.users(id) ON DELETE CASCADE;
 
 -- Create reference between student_appeal_requests and student_appeals --
 ALTER TABLE
