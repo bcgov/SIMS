@@ -1,4 +1,3 @@
-require("../../env_setup");
 import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 const directLoad =
