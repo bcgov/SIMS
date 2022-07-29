@@ -5,7 +5,7 @@ import {
   StudyBreaksAndWeeks,
 } from "../../../database/entities/education-program-offering.model";
 import { getUserFullName } from "../../../utilities";
-import { IsEnum, IsNotEmpty } from "class-validator";
+import { Allow, IsEnum, IsNotEmpty } from "class-validator";
 
 export interface SaveOfferingDTO {
   offeringName: string;
@@ -142,4 +142,11 @@ export class OfferingChangeRequestAPIOutDTO {
  */
 export class PrecedingOfferingSummaryAPIOutDTO {
   applicationsCount: number;
+}
+
+export class OfferingChangeAssessmentAPIInDTO {
+  @Allow()
+  offeringStatus: OfferingStatus;
+  @Allow()
+  assessmentNotes: string;
 }

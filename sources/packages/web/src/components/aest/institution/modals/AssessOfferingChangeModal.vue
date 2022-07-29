@@ -32,8 +32,8 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { computed, ref } from "vue";
-import { OfferingStatus } from "@/types";
-import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
+import { OfferingStatus, VForm } from "@/types";
+import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
 export default {
   components: { ModalDialogBase },
   props: {
@@ -44,9 +44,9 @@ export default {
   },
   setup(props: any) {
     const { showDialog, showModal, resolvePromise } = useModalDialog<
-      OfferingAssessmentAPIInDTO | boolean
+      OfferingChangeAssessmentAPIInDTO | boolean
     >();
-    const offeringChangeApprovalForm = ref();
+    const offeringChangeApprovalForm = ref({} as VForm);
     const assessmentNotes = ref();
 
     const title = computed(() =>

@@ -16,7 +16,8 @@ ALTER COLUMN
     offering_status TYPE sims.offering_status_to_rollback USING (
         CASE
             offering_status :: text
-            WHEN 'Overwritten' THEN 'Under review'
+            WHEN 'Change overwritten' THEN 'Under review'
+            WHEN 'Change declined' THEN 'Awaiting approval'
             ELSE offering_status :: text
         END
     ) :: sims.offering_status_to_rollback;

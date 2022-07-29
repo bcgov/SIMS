@@ -58,3 +58,9 @@ export interface OfferingsFilter {
 export interface PrecedingOfferingSummaryModel {
   applicationsCount: number;
 }
+
+export interface ApplicationAssessmentSummary {
+  applicationId: number;
+  assessmentWorkflowId: string;
+  workflowName: string;
+}

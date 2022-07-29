@@ -27,6 +27,7 @@ import {
   PrecedingOfferingSummaryAPIOutDTO,
   transformToProgramOfferingDto,
   ProgramOfferingDto,
+  OfferingChangeAssessmentAPIInDTO,
 } from "./models/education-program-offering.dto";
 
 /**
@@ -132,5 +133,19 @@ export class EducationProgramOfferingAESTController extends BaseController {
       throw new NotFoundException("Offering not found.");
     }
     return transformToProgramOfferingDto(offering);
+  }
+
+  @Patch(":offeringId/assess-change-request")
+  async assessOfferingChangeRequest(
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+    @Body() payload: OfferingChangeAssessmentAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    const applications =
+      await this.programOfferingService.getApplicationsToSubmitReassessment(
+        offeringId,
+      );
+
+    console.log(applications);
   }
 }

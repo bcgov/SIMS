@@ -21,6 +21,7 @@ import {
   SaveOfferingModel,
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
+  ApplicationAssessmentSummary,
 } from "./education-program-offering.service.models";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import {
@@ -663,7 +664,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .getRepository(Application)
       .createQueryBuilder("application")
       .select("count(application.id)", "applicationsCount")
-      .addSelect("offering.id", "offeringId")
       .innerJoin("application.currentAssessment", "assessment")
       .innerJoin(
         EducationProgramOffering,
@@ -673,17 +673,34 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .where("application.applicationStatus != :cancelledStatus", {
         cancelledStatus: ApplicationStatus.cancelled,
       })
-      .andWhere("offering.id = :offeringId")
-      .setParameters({
-        cancelledStatus: ApplicationStatus.cancelled,
-        offeringId,
-      })
-      .groupBy("offering.id");
+      .andWhere("offering.id = :offeringId", { offeringId });
 
     const precedingOffering = await query.getRawOne();
 
     return {
       applicationsCount: +precedingOffering?.applicationsCount,
     };
+  }
+
+  async getApplicationsToSubmitReassessment(
+    offeringId: number,
+  ): Promise<ApplicationAssessmentSummary[]> {
+    return this.dataSource
+      .getRepository(Application)
+      .createQueryBuilder("application")
+      .select("application.id", "applicationId")
+      .addSelect("application.data->>'workflowName'", "workflowName")
+      .addSelect("assessment.assessmentWorkflowId", "assessmentWorkflowId")
+      .innerJoin("application.currentAssessment", "assessment")
+      .innerJoin(
+        EducationProgramOffering,
+        "offering",
+        "offering.precedingOffering.id = assessment.offering.id",
+      )
+      .where("application.applicationStatus != :cancelledStatus", {
+        cancelledStatus: ApplicationStatus.cancelled,
+      })
+      .andWhere("offering.id = :offeringId", { offeringId })
+      .getRawMany();
   }
 }

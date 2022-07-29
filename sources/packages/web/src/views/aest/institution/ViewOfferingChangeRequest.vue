@@ -71,6 +71,7 @@ import {
   OfferingRelationType,
 } from "@/types";
 import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
+import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { ModalDialog } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
@@ -96,7 +97,7 @@ export default {
     },
   },
 
-  setup() {
+  setup(props: any) {
     const tab = ref("requested-change");
     const headerDetails = ref({} as ProgramOfferingHeader);
     const offeringChangeApprovalStatus = ref(OfferingStatus.ChangeDeclined);
@@ -113,6 +114,12 @@ export default {
     const assessOfferingChange = async (offeringStatus: OfferingStatus) => {
       offeringChangeApprovalStatus.value = offeringStatus;
       const responseData = await assessOfferingChangeModalRef.value.showModal();
+      if (responseData) {
+        await EducationProgramOfferingService.shared.assessOfferingChangeRequest(
+          props.offeringId,
+          responseData as OfferingChangeAssessmentAPIInDTO,
+        );
+      }
       console.log(responseData);
       console.log(offeringStatus);
     };

@@ -6,13 +6,13 @@ export class AddOfferingChangeApprovalStatus1659020803003
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Add-offering-change-approval-status.sql", "Types"),
+      getSQLFileData("Add-offering-change-status.sql", "Types"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Drop-offering-change-approval-status.sql", "Types"),
+      getSQLFileData("Drop-offering-change-status.sql", "Types"),
     );
   }
 }
