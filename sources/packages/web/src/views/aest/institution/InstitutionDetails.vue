@@ -7,25 +7,22 @@
       >
         <template #sub-title-details>
           <status-chip-designation-agreement
+            class="ml-4 mt-1"
             :status="institutionBasicDetail.designationStatus"
           />
         </template>
       </header-navigator>
     </template>
-    <!-- todo: ann active class not working -->
-    <v-tabs :model="tab"
+    <v-tabs :model="tab" stacked color="primary"
       ><v-tab
         v-for="item in items"
         :key="item"
         :value="item.value"
         :to="item.command()"
         :ripple="false"
-        :options="{
-          activ: 0.5,
-        }"
         ><div>
           <v-icon start :icon="item.icon" class="px-1"></v-icon>
-          <span class="mx-1 label-bold"> {{ item.label }} </span>
+          <span class="mx-2 label-bold"> {{ item.label }} </span>
         </div>
       </v-tab>
     </v-tabs>
@@ -56,7 +53,7 @@ export default {
       {
         label: "Profile",
         value: "profile-tab",
-        icon: "fa:fa fa-address-book",
+        icon: "fa:far fa-address-book",
         command: () => ({
           name: AESTRoutesConst.INSTITUTION_PROFILE,
           params: { institutionId: props.institutionId },

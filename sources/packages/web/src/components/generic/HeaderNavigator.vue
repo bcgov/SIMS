@@ -4,7 +4,7 @@
       <slot name="title">
         <div v-if="routeLocation" class="header-title">
           <a @click="goBack()">
-            <font-awesome-icon :icon="['fas', 'arrow-left']" class="mr-2" />
+            <v-icon icon="fa:fa fa-arrow-left" size="25"></v-icon>
             {{ title }}</a
           >
         </div>

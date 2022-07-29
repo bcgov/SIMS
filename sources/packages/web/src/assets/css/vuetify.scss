@@ -108,3 +108,10 @@
   max-width: calc(100% - 29px) !important;
   margin-inline-start: 16px !important;
 }
+
+.warning-shade {
+  color: $warning-shade;
+}
+.success-shade {
+  color: $success-shade;
+}

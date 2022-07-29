@@ -1,5 +1,5 @@
 <template>
-  <status-chip :status="chipStatus" :label="status" />
+  <status-chip :status="chipStatus" :label="status" :defaultBadge="false" />
 </template>
 <script lang="ts">
 import { computed } from "vue";

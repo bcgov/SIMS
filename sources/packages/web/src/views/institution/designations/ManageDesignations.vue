@@ -19,10 +19,8 @@
           color="primary"
           data-cy="requestDesignation"
           @click="goToRequestDesignation()"
-          ><font-awesome-icon
-            :icon="['fas', 'concierge-bell']"
-            class="mr-2"
-          />Request designation</v-btn
+          prepend-icon="fa:fa fa-bell-concierge"
+          >Request designation</v-btn
         >
       </template>
     </body-header>

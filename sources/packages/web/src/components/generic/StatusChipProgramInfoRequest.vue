@@ -1,37 +1,22 @@
 <template>
-  <v-chip :color="chipColor" variant="outlined"
-    ><v-icon start icon="fa:fa fa-circle" size="18"></v-icon>
-    <span class="label-small default-color">{{ status }}</span>
-  </v-chip>
+  <status-chip :status="chipStatus" :label="status" />
 </template>
 <script lang="ts">
-import { ProgramInfoStatus } from "@/types";
 import { computed } from "vue";
+import StatusChip from "@/components/generic/StatusChip.vue";
+import { usePIR } from "@/composables";
 export default {
+  components: { StatusChip },
   props: {
     status: {
       type: String,
+      required: true,
     },
   },
   setup(props: any) {
-    const chipColor = computed(() => {
-      switch (props.status) {
-        case ProgramInfoStatus.submitted:
-          return "default";
-        case ProgramInfoStatus.completed:
-          return "success";
-        case ProgramInfoStatus.required:
-          return "warning";
-        case ProgramInfoStatus.declined:
-          return "error";
-        default:
-          return "";
-      }
-    });
-
-    return {
-      chipColor,
-    };
+    const { mapPIRChipStatus } = usePIR();
+    const chipStatus = computed(() => mapPIRChipStatus(props.status));
+    return { chipStatus };
   },
 };
 </script>

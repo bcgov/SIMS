@@ -59,7 +59,7 @@
         >
         <Column field="coeStatus" header="Status" sortable="true">
           <template #body="slotProps">
-            <COEStatusBadge :status="slotProps.data.coeStatus" />
+            <status-chip-c-o-e :status="slotProps.data.coeStatus" />
           </template>
         </Column>
         <Column field="applicationId" header="">
@@ -93,7 +93,7 @@ import {
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { COLOR_BLUE } from "@/constants";
-import COEStatusBadge from "@/components/generic/COEStatusBadge.vue";
+import StatusChipCOE from "@/components/generic/StatusChipCOE.vue";
 import {
   COESummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
@@ -103,7 +103,7 @@ import { LayoutTemplates } from "@/types";
 const DEFAULT_SORT_FIELD = "coeStatus";
 
 export default {
-  components: { COEStatusBadge },
+  components: { StatusChipCOE },
   props: {
     locationId: {
       type: Number,

@@ -20,9 +20,6 @@
           prepend-inner-icon="mdi-magnify"
           hide-details
         >
-          <template v-slot:prependInner>
-            <font-awesome-icon :icon="['fas', 'search']" />
-          </template>
         </v-text-field>
       </template>
     </body-header>

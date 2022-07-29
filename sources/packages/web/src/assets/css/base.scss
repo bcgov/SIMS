@@ -109,7 +109,6 @@ html * {
   margin: 1px;
 }
 
-
 .header-title {
   font-size: $font-header-medium;
   color: $brand-black-light;
@@ -189,4 +188,12 @@ html * {
 
 .v-text-field-search-width {
   width: 305px;
+}
+
+.success-chip-background {
+  background-color: $banner-background-success !important;
+}
+
+.warning-chip-background {
+  background-color: $banner-background-warning !important;
 }

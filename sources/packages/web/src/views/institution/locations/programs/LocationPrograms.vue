@@ -64,9 +64,9 @@
           header="Status"
           :sortable="true"
           ><template #body="slotProps">
-            <program-status-chip
+            <status-chip-program
               :status="slotProps.data.programStatus"
-            ></program-status-chip></template
+            ></status-chip-program></template
         ></Column>
         <Column>
           <template #body="slotProps">
@@ -97,10 +97,10 @@ import {
   SummaryEducationProgramDto,
 } from "@/types";
 import { ref, watch, onMounted } from "vue";
-import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
+import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 
 export default {
-  components: { ProgramStatusChip },
+  components: { StatusChipProgram },
   props: {
     locationId: {
       type: Number,

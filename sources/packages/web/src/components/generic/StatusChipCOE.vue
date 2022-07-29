@@ -4,7 +4,7 @@
 <script lang="ts">
 import { computed } from "vue";
 import StatusChip from "@/components/generic/StatusChip.vue";
-import { useApplication } from "@/composables";
+import { useCOE } from "@/composables";
 export default {
   components: { StatusChip },
   props: {
@@ -14,8 +14,8 @@ export default {
     },
   },
   setup(props: any) {
-    const { mapApplicationChipStatus } = useApplication();
-    const chipStatus = computed(() => mapApplicationChipStatus(props.status));
+    const { mapCOEChipStatus } = useCOE();
+    const chipStatus = computed(() => mapCOEChipStatus(props.status));
     return { chipStatus };
   },
 };

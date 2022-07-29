@@ -1,80 +1,76 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <content-group>
-        <v-row class="m-2">
-          <v-col class="category-header-medium color-blue"
-            >All Restrictions</v-col
-          >
-          <v-col
-            ><v-btn
-              @click="addInstitutionRestriction"
-              class="float-right"
-              color="primary"
-              ><font-awesome-icon :icon="['fas', 'plus']" class="mr-2" />Add
-              restriction</v-btn
-            ></v-col
-          >
-        </v-row>
-        <DataTable
-          :value="institutionRestrictions"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
+  <full-page-container
+    :layout-template="LayoutTemplates.CenteredCard"
+    :full-width="true"
+  >
+    <body-header title="All Restrictions" class="m-1">
+      <template #actions
+        ><v-btn
+          @click="addInstitutionRestriction"
+          class="float-right"
+          color="primary"
+          prepend-icon="fa:fa fa-plus-circle"
+          >Add restriction</v-btn
+        ></template
+      >
+    </body-header>
+    <content-group>
+      <DataTable
+        :value="institutionRestrictions"
+        :paginator="true"
+        :rows="DEFAULT_PAGE_LIMIT"
+        :rowsPerPageOptions="PAGINATION_LIST"
+      >
+        <template #empty>
+          <p class="text-center font-weight-bold">No records found.</p>
+        </template>
+        <Column
+          field="restrictionCategory"
+          header="Category"
+          sortable="true"
+        ></Column>
+        <Column field="description" header="Reason">
+          <template #body="slotProps">{{
+            `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
+          }}</template></Column
         >
-          <template #empty>
-            <p class="text-center font-weight-bold">No records found.</p>
+        <Column field="createdAt" header="Added"
+          ><template #body="slotProps">{{
+            dateOnlyLongString(slotProps.data.createdAt)
+          }}</template></Column
+        >
+        <Column field="updatedAt" header="Resolved">
+          <template #body="slotProps">{{
+            slotProps.data.isActive
+              ? "-"
+              : dateOnlyLongString(slotProps.data.updatedAt)
+          }}</template></Column
+        >
+        <Column field="isActive" header="Status">
+          <template #body="slotProps">
+            <status-chip-restriction
+              :status="
+                slotProps.data.isActive
+                  ? RestrictionStatus.Active
+                  : RestrictionStatus.Resolved
+              "
+            />
           </template>
-          <Column
-            field="restrictionCategory"
-            header="Category"
-            sortable="true"
-          ></Column>
-          <Column field="description" header="Reason">
-            <template #body="slotProps">{{
-              `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
-            }}</template></Column
-          >
-          <Column field="createdAt" header="Added"
-            ><template #body="slotProps">{{
-              dateOnlyLongString(slotProps.data.createdAt)
-            }}</template></Column
-          >
-          <Column field="updatedAt" header="Resolved">
-            <template #body="slotProps">{{
-              slotProps.data.isActive
-                ? "-"
-                : dateOnlyLongString(slotProps.data.updatedAt)
-            }}</template></Column
-          >
-          <Column field="isActive" header="Status">
-            <template #body="slotProps">
-              <StatusBadge
-                :status="
-                  slotProps.data.isActive
-                    ? GeneralStatusForBadge.ActiveRestriction
-                    : GeneralStatusForBadge.ResolvedRestriction
-                "
-              />
-            </template>
-          </Column>
-          <!-- TODO: the color attribute has to come from either global constant or styling needs to be added to added. -->
-          <Column field="restrictionId" header="">
-            <template #body="slotProps">
-              <v-btn
-                color="#2965c5"
-                variant="outlined"
-                @click="
-                  viewIInstitutionRestriction(slotProps.data.restrictionId)
-                "
-                >View</v-btn
-              >
-            </template></Column
-          >
-        </DataTable>
-      </content-group>
-    </div>
-  </v-card>
+        </Column>
+        <!-- TODO: the color attribute has to come from either global constant or styling needs to be added to added. -->
+        <Column field="restrictionId" header="">
+          <template #body="slotProps">
+            <v-btn
+              color="#2965c5"
+              variant="outlined"
+              @click="viewIInstitutionRestriction(slotProps.data.restrictionId)"
+              >View</v-btn
+            >
+          </template></Column
+        >
+      </DataTable>
+    </content-group>
+  </full-page-container>
   <ViewRestrictionModal
     ref="viewRestriction"
     :restrictionData="institutionRestriction"
@@ -94,7 +90,7 @@ import ViewRestrictionModal from "@/components/common/restriction/ViewRestrictio
 import AddInstitutionRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
-  GeneralStatusForBadge,
+  RestrictionStatus,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
   AssignRestrictionDTO,
@@ -102,11 +98,12 @@ import {
   ResolveRestrictionDTO,
   RestrictionEntityType,
 } from "@/types";
-import StatusBadge from "@/components/generic/StatusBadge.vue";
+import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
+import { LayoutTemplates } from "@/types";
 
 export default {
   components: {
-    StatusBadge,
+    StatusChipRestriction,
     ViewRestrictionModal,
     AddInstitutionRestrictionModal,
   },
@@ -192,7 +189,7 @@ export default {
     return {
       dateOnlyLongString,
       institutionRestrictions,
-      GeneralStatusForBadge,
+      RestrictionStatus,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       institutionRestriction,
@@ -204,6 +201,7 @@ export default {
       addInstitutionRestriction,
       createNewRestriction,
       RestrictionEntityType,
+      LayoutTemplates,
     };
   },
 };

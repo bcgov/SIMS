@@ -1,8 +1,12 @@
 <template>
-  <full-page-container>
+  <full-page-container
+    :layout-template="LayoutTemplates.CenteredCard"
+    :full-width="true"
+  >
     <body-header
       title="All Programs"
       :recordsCount="institutionProgramsSummary.count"
+      class="m-1"
     >
       <template #actions>
         <v-text-field
@@ -64,9 +68,9 @@
         </Column>
         <Column :field="ProgramSummaryFields.ProgramStatus" header="Status"
           ><template #body="slotProps">
-            <program-status-chip
+            <status-chip-program
               :status="slotProps.data.programStatus"
-            ></program-status-chip> </template
+            ></status-chip-program> </template
         ></Column>
         <Column>
           <template #body="slotProps">
@@ -101,10 +105,11 @@ import {
   AESTInstitutionProgramsSummaryDto,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
+import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
+import { LayoutTemplates } from "@/types";
 
 export default {
-  components: { ProgramStatusChip },
+  components: { StatusChipProgram },
   props: {
     institutionId: {
       type: Number,
@@ -191,6 +196,7 @@ export default {
       loading,
       ProgramSummaryFields,
       PAGINATION_LIST,
+      LayoutTemplates,
     };
   },
 };

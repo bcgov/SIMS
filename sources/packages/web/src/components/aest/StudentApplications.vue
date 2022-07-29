@@ -62,7 +62,7 @@
         sortable="true"
       >
         <template #body="slotProps">
-          <status-chip-application :statusValue="slotProps.data.status" />
+          <status-chip-application :status="slotProps.data.status" />
         </template>
       </Column>
       <Column :field="StudentApplicationFields.Actions" header="Actions">
@@ -79,29 +79,26 @@
               <v-btn
                 :disabled="sinValidStatus !== SINStatusEnum.VALID"
                 variant="plain"
-              >
-                <font-awesome-icon
-                  :icon="['fas', 'pen']"
-                  class="mr-2"
-                  v-tooltip="'Click To Edit this Application'"
-                  @click="
-                    $emit(
-                      'editApplicationAction',
-                      slotProps.data.status,
-                      slotProps.data.id,
-                    )
-                  "
-                />
+                color="primary"
+                class="label-bold"
+                @click="
+                  $emit(
+                    'editApplicationAction',
+                    slotProps.data.status,
+                    slotProps.data.id,
+                  )
+                "
+                append-icon="mdi-pencil-outline"
+                ><span class="label-bold">Edit</span>
               </v-btn>
+
               <v-btn
                 :disabled="sinValidStatus !== SINStatusEnum.VALID"
                 variant="plain"
-              >
-                <font-awesome-icon
-                  :icon="['fas', 'trash']"
-                  v-tooltip="'Click To Cancel this Application'"
-                  @click="$emit('openConfirmCancel', slotProps.data.id)"
-                />
+                color="primary"
+                class="label-bold"
+                @click="$emit('openConfirmCancel', slotProps.data.id)"
+                ><span class="label-bold">Cancel</span>
               </v-btn>
             </span>
           </span>

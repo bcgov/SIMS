@@ -19,3 +19,10 @@ export * from "./useProgramInfoRequest";
 export * from "./useActiveApplication";
 export * from "./useValidators";
 export * from "./useEmitter";
+export * from "./useProgram";
+export * from "./useRestriction";
+export * from "./useCOE";
+export * from "./usePIR";
+export * from "./useStudentRestriction";
+export * from "./useApplication";
+

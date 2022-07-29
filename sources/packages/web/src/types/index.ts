@@ -22,7 +22,6 @@ export * from "@/types/formio";
 export * from "@/types/contracts/AssessmentStatus";
 export * from "@/types/contracts/Common";
 export * from "@/types/contracts/supporting-user/SupportingUserContracts";
-export * from "@/types/contracts/GeneralStatusForBadge";
 export * from "@/types/contracts/DataTableContract";
 export * from "@/types/contracts/NoteContract";
 export * from "@/types/contracts/RestrictionContract";

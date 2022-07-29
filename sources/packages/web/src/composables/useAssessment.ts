@@ -29,7 +29,7 @@ export function useAssessment() {
   ): StatusChipTypes => {
     switch (status) {
       case StudentAssessmentStatus.Submitted:
-        return StatusChipTypes.Inactive;
+        return StatusChipTypes.Default;
       case StudentAssessmentStatus.InProgress:
         return StatusChipTypes.Warning;
       case StudentAssessmentStatus.Completed:

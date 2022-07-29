@@ -125,7 +125,6 @@ import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue"
 import {
   InstitutionUserViewModel,
   InstitutionUserSummary,
-  GeneralStatusForBadge,
   UserFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
@@ -286,7 +285,6 @@ export default {
       getAllInstitutionUsers,
       institutionUserRoleToDisplay,
       updateUserStatus,
-      GeneralStatusForBadge,
       paginationAndSortEvent,
       loading,
       searchUserTable,

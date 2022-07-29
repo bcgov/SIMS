@@ -1,22 +1,14 @@
 <template>
-  <v-chip :text-color="textColor" :class="chipClass" variant="outlined">
-    <v-icon start icon="fa:fa fa-circle" :color="iconColor" size="12" />
-    {{ label ?? status }}
-  </v-chip>
-  <v-chip color="#EEFFEF" variant="outlined"
-    ><v-icon start icon="fa:fa fa-circle" size="13" color="#16C92E"></v-icon>
-    <span class="label-small default-color">{{ label ?? status }}</span>
+  <v-chip :color="chipColor" variant="outlined" :class="chipBackground"
+    ><v-icon :color="iconColor" :icon="icon" size="18" />
+    <span class="mx-1" :class="textColor" v-if="!(!defaultBadge && !label)">
+      {{ label ?? status }}</span
+    >
   </v-chip>
 </template>
 <script lang="ts">
 import { computed } from "vue";
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import {
-  COLOR_BLACK,
-  COLOR_BANNER_SUCCESS,
-  COLOR_BANNER_WARNING,
-  COLOR_BANNER_ERROR,
-} from "@/constants";
 
 export default {
   props: {
@@ -28,56 +20,116 @@ export default {
       type: String,
       required: false,
     },
+    /**
+     * When property is true its is a normal status like chip
+     *  and when it is false it is a designation or restriction
+     * chip with background color and different icon.
+     */
+    defaultBadge: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
   },
   setup(props: any) {
     const chipColor = computed(() => {
-      switch (props.status) {
-        case StatusChipTypes.Success:
-          return "success";
-        case StatusChipTypes.Warning:
-          return "warning";
-        case StatusChipTypes.Error:
-          return "error";
-        default:
-          return "";
+      if (props.status === StatusChipTypes.Success && props.defaultBadge) {
+        return "success_bg";
       }
-    });
-    const iconColor = computed(() => {
-      switch (props.status) {
-        case StatusChipTypes.Success:
-          return COLOR_BANNER_SUCCESS;
-        case StatusChipTypes.Warning:
-          return COLOR_BANNER_WARNING;
-        case StatusChipTypes.Error:
-          return COLOR_BANNER_ERROR;
-        default:
-          return COLOR_BLACK;
+      if (props.status === StatusChipTypes.Warning && props.defaultBadge) {
+        return "warning_bg";
       }
+      if (props.status === StatusChipTypes.Error && props.defaultBadge) {
+        return "error_bg";
+      }
+      if (props.status === StatusChipTypes.Default && props.defaultBadge) {
+        return "border";
+      }
+      if (props.status === StatusChipTypes.Success && !props.defaultBadge) {
+        return "success";
+      }
+      if (props.status === StatusChipTypes.Warning && !props.defaultBadge) {
+        return "warning";
+      }
+      if (props.status === StatusChipTypes.Error && !props.defaultBadge) {
+        return "error";
+      }
+      if (props.status === StatusChipTypes.Default && !props.defaultBadge) {
+        return "default";
+      }
+      return "";
     });
 
-    const chipClass = computed(() => {
-      switch (props.status) {
-        case StatusChipTypes.Success:
-          return "status-chip-success";
-        case StatusChipTypes.Warning:
-          return "status-chip-warning";
-        case StatusChipTypes.Error:
-          return "status-chip-error";
-        default:
-          return "status-chip-inactive";
+    const iconColor = computed(() => {
+      if (props.status === StatusChipTypes.Success && props.defaultBadge) {
+        return "success";
       }
+      if (props.status === StatusChipTypes.Warning && props.defaultBadge) {
+        return "warning";
+      }
+      if (props.status === StatusChipTypes.Error && props.defaultBadge) {
+        return "error";
+      }
+      if (props.status === StatusChipTypes.Default && props.defaultBadge) {
+        return "default";
+      }
+      if (props.status === StatusChipTypes.Success && !props.defaultBadge) {
+        return "success_shade";
+      }
+      if (props.status === StatusChipTypes.Warning && !props.defaultBadge) {
+        return "warning_shade";
+      }
+      return "";
+    });
+
+    const chipBackground = computed(() => {
+      if (!props.defaultBadge) {
+        switch (props.status) {
+          case StatusChipTypes.Success:
+            return "success-chip-background";
+          case StatusChipTypes.Warning:
+            return "warning-chip-background";
+          default:
+            return "";
+        }
+      }
+      return "";
     });
 
     const textColor = computed(() => {
-      return COLOR_BLACK;
+      if (!props.defaultBadge) {
+        switch (props.status) {
+          case StatusChipTypes.Success:
+            return "success-shade";
+          case StatusChipTypes.Warning:
+            return "warning-shade";
+          default:
+            return "default-color";
+        }
+      }
+      return "default-color";
+    });
+
+    const icon = computed(() => {
+      if (!props.defaultBadge) {
+        switch (props.status) {
+          case StatusChipTypes.Success:
+            return "fa:fa fa-check";
+          case StatusChipTypes.Warning:
+            return "fa:fa fa-xmark";
+          default:
+            return "fa:fa fa-circle";
+        }
+      }
+      return "fa:fa fa-circle";
     });
 
     return {
-      chipClass,
+      chipBackground,
       textColor,
       iconColor,
       chipColor,
-      COLOR_BANNER_SUCCESS,
+      icon,
     };
   },
 };

@@ -13,12 +13,28 @@
                 ? StudentRestrictionStatus.restriction
                 : StudentRestrictionStatus.noRestriction
             "
+            :label="
+              studentDetails.hasRestriction
+                ? StudentRestrictionStatus.restriction
+                : null
+            "
           />
         </template>
       </header-navigator>
     </template>
-    <!-- TODO:replace prime tabMenu with vuetify3-->
-    <TabMenu :model="items" />
+    <v-tabs :model="tab" stacked color="primary"
+      ><v-tab
+        v-for="item in items"
+        :key="item"
+        :value="item.value"
+        :to="item.command()"
+        :ripple="false"
+        ><div>
+          <v-icon start :icon="item.icon" class="px-1"></v-icon>
+          <span class="mx-2 label-bold"> {{ item.label }} </span>
+        </div>
+      </v-tab>
+    </v-tabs>
     <router-view />
   </full-page-container>
 </template>
@@ -47,63 +63,51 @@ export default {
     const items = ref([
       {
         label: "Profile",
-        icon: "fa fa-id-card-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.STUDENT_PROFILE,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:far fa-address-book",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_PROFILE,
+          params: { studentId: props.studentId },
+        }),
       },
       {
         label: "Applications",
-        icon: "fa fa-folder-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.STUDENT_APPLICATIONS,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:far fa-folder-open",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_APPLICATIONS,
+          params: { studentId: props.studentId },
+        }),
       },
       {
         label: "Restrictions",
-        icon: "fa fa-times-circle-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.STUDENT_RESTRICTION,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:far fa-times-circle",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_RESTRICTION,
+          params: { studentId: props.studentId },
+        }),
       },
       {
         label: "File Uploads",
-        icon: "fa fa-file-text-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.STUDENT_FILE_UPLOADS,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:far fa-file-alt",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_FILE_UPLOADS,
+          params: { studentId: props.studentId },
+        }),
       },
       {
         label: "Social insurance number",
-        icon: "fa fa-check-square-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.SIN_MANAGEMENT,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:far fa-check-square",
+        command: () => ({
+          name: AESTRoutesConst.SIN_MANAGEMENT,
+          params: { studentId: props.studentId },
+        }),
       },
       {
         label: "Notes",
-        icon: "fa fa-sticky-note-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.STUDENT_NOTES,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:fa fa-sticky-note",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_NOTES,
+          params: { studentId: props.studentId },
+        }),
       },
     ]);
 

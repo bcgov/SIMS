@@ -1,81 +1,81 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <content-group>
-        <body-header
-          title="File Uploads"
-          :recordsCount="studentFileUploads?.length"
-          class="m-1"
-        >
-          <template #actions>
-            <v-btn
-              color="primary"
-              data-cy="uploadFileButton"
-              @click="uploadFile"
-              ><font-awesome-icon
-                :icon="['fas', 'plus-circle']"
-                class="mr-2"
-              />Upload file</v-btn
-            >
-          </template>
-        </body-header>
-        <DataTable
-          :value="studentFileUploads"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
-        >
-          <template #empty>
-            <p class="text-center font-weight-bold">No records found.</p>
-          </template>
-          <Column
-            field="groupName"
-            header="Document Purpose"
-            sortable="true"
-          ></Column>
-          <Column field="metadata" header="Application #">
-            <template #body="slotProps">{{
-              slotProps.data.metadata?.applicationNumber
-                ? slotProps.data.metadata.applicationNumber
-                : "-"
-            }}</template></Column
-          >
-          <Column field="updatedAt" header="Date Submitted"
-            ><template #body="slotProps">{{
-              dateOnlyLongString(slotProps.data.updatedAt)
-            }}</template></Column
-          >
-          <Column field="updatedAt" header="File">
-            <template #body="slotProps">
-              <div
-                class="file-label"
-                @click="fileUtils.downloadStudentDocument(slotProps.data)"
-              >
-                <span class="mr-4">
-                  <font-awesome-icon :icon="['far', 'file-alt']"
-                /></span>
-                <span>{{ slotProps.data.fileName }}</span>
-              </div>
-            </template></Column
-          >
-        </DataTable>
-      </content-group>
-    </div>
-  </v-card>
-  <formio-modal-dialog
-    max-width="730"
-    ref="fileUploadModal"
-    title="Upload file"
-    :formData="initialData"
-    formName="uploadStudentDocumentsAEST"
+  <full-page-container
+    :layout-template="LayoutTemplates.CenteredCard"
+    :full-width="true"
   >
-    <template #actions="{ cancel, submit }">
-      <v-btn color="primary" variant="outlined" @click="cancel">Cancel</v-btn>
-      <v-btn class="float-right" @click="submit" color="primary"
-        >Upload now</v-btn
+    <body-header
+      title="File Uploads"
+      :recordsCount="studentFileUploads?.length"
+      class="m-1"
+    >
+      <template #actions>
+        <v-btn
+          color="primary"
+          data-cy="uploadFileButton"
+          @click="uploadFile"
+          prepend-icon="fa:fa fa-plus-circle"
+          class="float-right"
+          >Upload file</v-btn
+        >
+      </template>
+    </body-header>
+    <content-group>
+      <DataTable
+        :value="studentFileUploads"
+        :paginator="true"
+        :rows="DEFAULT_PAGE_LIMIT"
+        :rowsPerPageOptions="PAGINATION_LIST"
       >
-    </template>
-  </formio-modal-dialog>
+        <template #empty>
+          <p class="text-center font-weight-bold">No records found.</p>
+        </template>
+        <Column
+          field="groupName"
+          header="Document Purpose"
+          sortable="true"
+        ></Column>
+        <Column field="metadata" header="Application #">
+          <template #body="slotProps">{{
+            slotProps.data.metadata?.applicationNumber
+              ? slotProps.data.metadata.applicationNumber
+              : "-"
+          }}</template></Column
+        >
+        <Column field="updatedAt" header="Date Submitted"
+          ><template #body="slotProps">{{
+            dateOnlyLongString(slotProps.data.updatedAt)
+          }}</template></Column
+        >
+        <Column field="updatedAt" header="File">
+          <template #body="slotProps">
+            <div
+              class="file-label"
+              @click="fileUtils.downloadStudentDocument(slotProps.data)"
+            >
+              <span class="mr-4">
+                <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
+              ></span>
+              <span>{{ slotProps.data.fileName }}</span>
+            </div>
+          </template></Column
+        >
+      </DataTable>
+    </content-group>
+    <formio-modal-dialog
+      max-width="730"
+      ref="fileUploadModal"
+      title="Upload file"
+      :formData="initialData"
+      formName="uploadStudentDocumentsAEST"
+    >
+      <template #actions="{ cancel, submit }">
+        <v-btn color="primary" variant="outlined" @click="cancel">Cancel</v-btn>
+        <v-btn class="float-right" @click="submit" color="primary"
+          >Upload now</v-btn
+        >
+      </template>
+    </formio-modal-dialog>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -94,6 +94,7 @@ import {
   AESTFileUploadToStudentAPIInDTO,
   StudentUploadFileAPIOutDTO,
 } from "@/services/http/dto/Student.dto";
+import { LayoutTemplates } from "@/types";
 
 export default {
   components: {
@@ -155,6 +156,7 @@ export default {
       uploadFile,
       fileUploadModal,
       initialData,
+      LayoutTemplates,
     };
   },
 };

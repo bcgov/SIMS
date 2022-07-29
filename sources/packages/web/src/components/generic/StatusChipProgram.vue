@@ -4,7 +4,7 @@
 <script lang="ts">
 import { computed } from "vue";
 import StatusChip from "@/components/generic/StatusChip.vue";
-import { useApplication } from "@/composables";
+import { useProgram } from "@/composables";
 export default {
   components: { StatusChip },
   props: {
@@ -14,8 +14,8 @@ export default {
     },
   },
   setup(props: any) {
-    const { mapApplicationChipStatus } = useApplication();
-    const chipStatus = computed(() => mapApplicationChipStatus(props.status));
+    const { mapProgramChipStatus } = useProgram();
+    const chipStatus = computed(() => mapProgramChipStatus(props.status));
     return { chipStatus };
   },
 };

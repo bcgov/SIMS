@@ -3,10 +3,10 @@
     <span class="category-header-large color-blue">
       {{ educationProgram.name }}
     </span>
-    <program-status-chip
-      class="ml-2"
+    <status-chip-program
+      class="ml-2 mb-2"
       :status="educationProgram.programStatus"
-    ></program-status-chip>
+    ></status-chip-program>
     <v-btn
       class="float-right"
       variant="outlined"
@@ -79,12 +79,12 @@ import {
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { EducationProgramData, ProgramIntensity, ClientIdType } from "@/types";
-import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
+import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { COLOR_BLUE } from "@/constants";
 import { AuthService } from "@/services/AuthService";
 
 export default {
-  components: { ProgramStatusChip },
+  components: { StatusChipProgram },
   props: {
     programId: {
       type: Number,
