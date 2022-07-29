@@ -27,7 +27,6 @@
     "test:local:win": "SET NODE_ENV=local&&SET ENVIRONMENT=test&&jest",
     "docker:start": "npm run setup:db && node dist/main",
     "migration:create": "cd src/database/migrations && npx typeorm-ts-node-commonjs migration:create",
-    "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d src/database/data-source.ts"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.3",
