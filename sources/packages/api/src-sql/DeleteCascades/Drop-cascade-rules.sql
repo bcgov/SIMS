@@ -198,7 +198,7 @@ ALTER TABLE
 ADD
     CONSTRAINT fk_institution_user_auth_type_role_202105180050 FOREIGN KEY(institution_user_type_role_id) REFERENCES sims.institution_user_type_roles(id);
 
--- Delete reference between institution_locations and institutions --
+-- Delete reference between institution_locations and institutions. --
 ALTER TABLE
     sims.institution_locations DROP CONSTRAINT IF EXISTS institution_locations_institution_id_fkey;
 
