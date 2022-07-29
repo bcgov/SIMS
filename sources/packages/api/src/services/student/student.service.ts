@@ -23,11 +23,12 @@ import {
 import { StudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import * as dayjs from "dayjs";
+import { StudentUser } from "../../database/entities/student-user.model";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
-    dataSource: DataSource,
+    private readonly dataSource: DataSource,
     private readonly sfasIndividualService: SFASIndividualService,
   ) {
     super(dataSource.getRepository(Student));
@@ -148,7 +149,16 @@ export class StudentService extends RecordDataModelService<Student> {
       this.logger.error(error);
       throw error;
     }
-    return this.save(student);
+
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const studentRepo = transactionalEntityManager.getRepository(Student);
+      await studentRepo.save(student);
+      student.activeStudentUser = new StudentUser();
+      student.activeStudentUser.user = user;
+      student.activeStudentUser.student = student;
+      student.activeStudentUser.creator = user;
+      return studentRepo.save(student);
+    });
   }
 
   /**

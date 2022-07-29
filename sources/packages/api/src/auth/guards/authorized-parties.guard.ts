@@ -7,7 +7,7 @@ import {
 import { Reflector } from "@nestjs/core";
 import { AuthorizedParties } from "../authorized-parties.enum";
 import { AUTHORIZED_PARTY_KEY } from "../decorators/authorized-party.decorator";
-import { IdentityProviders } from "../identity-providers.enum";
+import { IdentityProviders } from "../../database/entities/identity-providers.type";
 import { IUserToken } from "../userToken.interface";
 
 /**

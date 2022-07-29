@@ -1,6 +1,6 @@
 import { InstitutionUserAuthorizations } from "../services/institution-user-auth/institution-user-auth.models";
 import { AuthorizedParties } from "./authorized-parties.enum";
-import { IdentityProviders } from "./identity-providers.enum";
+import { IdentityProviders } from "../database/entities/identity-providers.type";
 
 /**
  * User information extracted from the token during the

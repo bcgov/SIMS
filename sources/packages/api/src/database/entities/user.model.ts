@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { BaseModel } from "./base.model";
-import { IdentityProviders } from "../../auth/identity-providers.enum";
+import { IdentityProviders } from "./identity-providers.type";
 
 @Entity({ name: TableNames.User })
 export class User extends BaseModel {

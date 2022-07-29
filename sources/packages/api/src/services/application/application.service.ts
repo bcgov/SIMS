@@ -503,7 +503,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("location.institution", "institution")
       .leftJoin("institution.institutionType", "institutionType")
       .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
+      .innerJoin("student.studentActiveUser", "studentUser")
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirDeniedReasonId", "pirDeniedReasonId")
       .where("application.id = :applicationIdParam", {
