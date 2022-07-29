@@ -80,7 +80,12 @@
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
-import { DEFAULT_PAGE_LIMIT, FormIOForm, PAGINATION_LIST } from "@/types";
+import {
+  DEFAULT_PAGE_LIMIT,
+  FormIOForm,
+  PAGINATION_LIST,
+  LayoutTemplates,
+} from "@/types";
 import { StudentService } from "@/services/StudentService";
 import {
   useFormatters,
@@ -94,7 +99,6 @@ import {
   AESTFileUploadToStudentAPIInDTO,
   StudentUploadFileAPIOutDTO,
 } from "@/services/http/dto/Student.dto";
-import { LayoutTemplates } from "@/types";
 
 export default {
   components: {

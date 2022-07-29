@@ -90,6 +90,7 @@ import {
   PAGINATION_LIST,
   DEFAULT_PAGE_NUMBER,
   PageAndSortEvent,
+  LayoutTemplates,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import StatusChipCOE from "@/components/generic/StatusChipCOE.vue";
@@ -97,7 +98,6 @@ import {
   COESummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
-import { LayoutTemplates } from "@/types";
 
 const DEFAULT_SORT_FIELD = "coeStatus";
 

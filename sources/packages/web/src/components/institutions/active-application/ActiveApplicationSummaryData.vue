@@ -100,11 +100,11 @@ import {
   PageAndSortEvent,
   PaginatedResults,
   ApplicationScholasticStandingStatus,
+  LayoutTemplates,
 } from "@/types";
 import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
 import StatusChipActiveApplication from "@/components/generic/StatusChipActiveApplication.vue";
-import { LayoutTemplates } from "@/types";
 
 const DEFAULT_SORT_FIELD = "applicationNumber";
 

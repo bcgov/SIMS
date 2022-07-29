@@ -97,6 +97,7 @@ import {
   FormIOForm,
   PAGINATION_LIST,
   SINValidations,
+  LayoutTemplates,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import {
@@ -110,7 +111,6 @@ import {
   CreateSINValidationAPIInDTO,
   UpdateSINValidationAPIInDTO,
 } from "@/services/http/dto";
-import { LayoutTemplates } from "@/types";
 
 export default {
   components: {

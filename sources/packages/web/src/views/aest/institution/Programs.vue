@@ -102,10 +102,10 @@ import {
   DEFAULT_PAGE_LIMIT,
   PaginatedResults,
   EducationProgramsSummary,
+  LayoutTemplates,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
-import { LayoutTemplates } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 
 export default {

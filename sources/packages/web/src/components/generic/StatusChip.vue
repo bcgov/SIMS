@@ -33,53 +33,68 @@ export default {
   },
   setup(props: any) {
     const chipColor = computed(() => {
-      if (props.status === StatusChipTypes.Success && props.defaultBadge) {
-        return "success_bg";
+      if (props.defaultBadge) {
+        switch (props.status) {
+          case StatusChipTypes.Success:
+            return "success_bg";
+
+          case StatusChipTypes.Warning:
+            return "warning_bg";
+
+          case StatusChipTypes.Error:
+            return "error_bg";
+
+          case StatusChipTypes.Default:
+            return "border";
+          default:
+            return "";
+        }
+      } else {
+        switch (props.status) {
+          case StatusChipTypes.Success:
+            return "success";
+
+          case StatusChipTypes.Warning:
+            return "warning";
+
+          case StatusChipTypes.Error:
+            return "error";
+
+          case StatusChipTypes.Default:
+            return "default";
+          default:
+            return "";
+        }
       }
-      if (props.status === StatusChipTypes.Warning && props.defaultBadge) {
-        return "warning_bg";
-      }
-      if (props.status === StatusChipTypes.Error && props.defaultBadge) {
-        return "error_bg";
-      }
-      if (props.status === StatusChipTypes.Default && props.defaultBadge) {
-        return "border";
-      }
-      if (props.status === StatusChipTypes.Success && !props.defaultBadge) {
-        return "success";
-      }
-      if (props.status === StatusChipTypes.Warning && !props.defaultBadge) {
-        return "warning";
-      }
-      if (props.status === StatusChipTypes.Error && !props.defaultBadge) {
-        return "error";
-      }
-      if (props.status === StatusChipTypes.Default && !props.defaultBadge) {
-        return "default";
-      }
-      return "";
     });
 
     const iconColor = computed(() => {
-      if (props.status === StatusChipTypes.Success && props.defaultBadge) {
-        return "success";
+      if (props.defaultBadge) {
+        switch (props.status) {
+          case StatusChipTypes.Success:
+            return "success";
+
+          case StatusChipTypes.Warning:
+            return "warning";
+
+          case StatusChipTypes.Error:
+            return "error";
+
+          case StatusChipTypes.Default:
+            return "default";
+          default:
+            return "";
+        }
+      } else {
+        switch (props.status) {
+          case StatusChipTypes.Success:
+            return "success_shade";
+          case StatusChipTypes.Warning:
+            return "warning_shade";
+          default:
+            return "";
+        }
       }
-      if (props.status === StatusChipTypes.Warning && props.defaultBadge) {
-        return "warning";
-      }
-      if (props.status === StatusChipTypes.Error && props.defaultBadge) {
-        return "error";
-      }
-      if (props.status === StatusChipTypes.Default && props.defaultBadge) {
-        return "default";
-      }
-      if (props.status === StatusChipTypes.Success && !props.defaultBadge) {
-        return "success_shade";
-      }
-      if (props.status === StatusChipTypes.Warning && !props.defaultBadge) {
-        return "warning_shade";
-      }
-      return "";
     });
 
     const chipBackground = computed(() => {

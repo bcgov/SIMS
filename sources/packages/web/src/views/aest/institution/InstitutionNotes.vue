@@ -46,8 +46,12 @@ import { onMounted, ref } from "vue";
 import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
 import { useFormatters, useSnackBar } from "@/composables";
-import { InstitutionNoteType, NoteBaseDTO, NoteEntityType } from "@/types";
-import { LayoutTemplates } from "@/types";
+import {
+  InstitutionNoteType,
+  NoteBaseDTO,
+  NoteEntityType,
+  LayoutTemplates,
+} from "@/types";
 
 export default {
   components: { Notes },

@@ -97,9 +97,9 @@ import {
   RestrictionDetailDTO,
   ResolveRestrictionDTO,
   RestrictionEntityType,
+  LayoutTemplates,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
-import { LayoutTemplates } from "@/types";
 
 export default {
   components: {
