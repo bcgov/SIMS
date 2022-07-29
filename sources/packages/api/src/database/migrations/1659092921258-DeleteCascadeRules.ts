@@ -7,6 +7,6 @@ export class DeleteCascadeRules1659092921258 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(getSQLFileData("Add-cascade.sql"));
+    await queryRunner.query(getSQLFileData("Rollback-drop-cascade-rules.sql"));
   }
 }
