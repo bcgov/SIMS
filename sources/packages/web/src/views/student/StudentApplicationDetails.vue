@@ -10,8 +10,11 @@
         ><template #buttons>
           <v-menu>
             <template v-slot:activator="{ props }"
-              ><v-btn color="primary" @click="toggle" v-bind="props"
-                ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon
+              ><v-btn
+                color="primary"
+                @click="toggle"
+                v-bind="props"
+                prepend-icon="fa:fa fa-chevron-circle-down"
                 >Application Options
               </v-btn>
             </template>

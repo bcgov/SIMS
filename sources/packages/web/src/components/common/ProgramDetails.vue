@@ -11,7 +11,7 @@
       class="float-right"
       variant="outlined"
       @click="programButtonAction()"
-      :color="COLOR_BLUE"
+      color="primary"
     >
       {{ programActionLabel }}
     </v-btn>
@@ -80,7 +80,6 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { EducationProgramData, ProgramIntensity, ClientIdType } from "@/types";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
-import { COLOR_BLUE } from "@/constants";
 import { AuthService } from "@/services/AuthService";
 
 export default {
@@ -144,7 +143,6 @@ export default {
       isInstitutionUser,
       isAESTUser,
       programActionLabel,
-      COLOR_BLUE,
     };
   },
 };

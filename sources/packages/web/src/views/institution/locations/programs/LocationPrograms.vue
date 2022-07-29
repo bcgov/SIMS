@@ -19,8 +19,12 @@
             prepend-inner-icon="mdi-magnify"
             hide-details
           />
-          <v-btn class="ml-2" color="primary" @click="goToAddNewProgram()">
-            <v-icon size="25" left> mdi-open-in-new </v-icon>
+          <v-btn
+            class="ml-2"
+            color="primary"
+            @click="goToAddNewProgram()"
+            prepend-icon="fa:fa fa-plus-circle"
+          >
             Create New Program
           </v-btn>
         </v-row>

@@ -24,7 +24,6 @@
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
-import { COLOR_BLUE } from "@/constants";
 import { ApproveProgram } from "@/types";
 
 export default {
@@ -57,7 +56,6 @@ export default {
       approveProgram,
       showModal,
       dialogClosed,
-      COLOR_BLUE,
       formLoaded,
       submitForm,
     };

@@ -81,7 +81,7 @@
             :disabled="!slotProps.data.isActive"
             @click="openEditUserModal(slotProps.data)"
             variant="text"
-            :color="slotProps.data.isActive ? 'primary' : 'gray'"
+            :color="slotProps.data.isActive ? 'primary' : 'secondary'"
             append-icon="mdi-pencil-outline"
           >
             <span class="text-decoration-underline">Edit</span>
@@ -90,7 +90,7 @@
             :disabled="slotProps.data.disableRemove"
             @click="updateUserStatus(slotProps.data)"
             variant="text"
-            :color="slotProps.data.disableRemove ? 'gray' : 'primary'"
+            :color="slotProps.data.disableRemove ? 'secondary' : 'primary'"
             append-icon="mdi-account-remove-outline"
           >
             <span class="text-decoration-underline">{{

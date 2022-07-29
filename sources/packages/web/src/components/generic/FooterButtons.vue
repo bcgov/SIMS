@@ -14,17 +14,21 @@
       :disabled="processing"
       v-if="showPrimaryButton"
       class="ml-2"
+      variant="elevated"
       data-cy="primaryFooterButton"
       color="primary"
       @click="$emit('primaryClick')"
     >
-      {{ primaryLabel }}
       <v-progress-circular
         v-if="processing"
+        bg-color="white"
         indeterminate
+        color="secondary"
         class="ml-2"
-        :size="20" /></v-btn
-  ></v-row>
+        :size="20"
+      />{{ primaryLabel }}</v-btn
+    ></v-row
+  >
 </template>
 <script lang="ts">
 export default {

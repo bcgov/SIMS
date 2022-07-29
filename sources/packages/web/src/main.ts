@@ -17,8 +17,6 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import ToastService from "primevue/toastservice";
 import { AppConfigService } from "./services/AppConfigService";
-import Tooltip from "primevue/tooltip";
-import { library } from "@fortawesome/fontawesome-svg-core";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
@@ -29,72 +27,6 @@ import formio from "@/components/generic/formio.vue";
 import ToggleContent from "@/components/generic/ToggleContent.vue";
 import FormioContainer from "@/components/generic/FormioContainer.vue";
 import FooterButtons from "@/components/generic/FooterButtons.vue";
-
-import {
-  faMapPin,
-  faCheck,
-  faCircle,
-  faSearch,
-  faPlus,
-  faTimes,
-  faExternalLinkSquareAlt,
-  faPen,
-  faCog,
-  faTrash,
-  faUser,
-  faFolderOpen,
-  faArrowLeft,
-  faConciergeBell,
-  faGraduationCap,
-  faHome,
-  faPenNib,
-  faBell,
-  faFileAlt as faFileAltSolid,
-  faHandPaper as faHandPaperSolid,
-  faPlusCircle as faPlusCircleSolid,
-  faExclamationCircle as faExclamationCircleSolid,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  faFileAlt,
-  faUser as farUsers,
-  faCheckSquare,
-  faHandPaper,
-  faCopy as farCopy,
-  faStickyNote,
-  faCheckCircle as farCheckCircle,
-} from "@fortawesome/free-regular-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-library.add(
-  farCheckCircle,
-  faMapPin,
-  faCheck,
-  faCircle,
-  faSearch,
-  faPlus,
-  faTimes,
-  faExternalLinkSquareAlt,
-  faPen,
-  faCog,
-  faTrash,
-  faUser,
-  faFolderOpen,
-  faArrowLeft,
-  faConciergeBell,
-  faGraduationCap,
-  faFileAlt,
-  faHome,
-  faPenNib,
-  farUsers,
-  faCheckSquare,
-  faBell,
-  faFileAltSolid,
-  faHandPaper,
-  faHandPaperSolid,
-  faPlusCircleSolid,
-  farCopy,
-  faStickyNote,
-  faExclamationCircleSolid,
-);
 
 AppConfigService.shared.init().then(() => {
   createApp(App)
@@ -115,6 +47,5 @@ AppConfigService.shared.init().then(() => {
     .component("ToggleContent", ToggleContent)
     .component("FormioContainer", FormioContainer)
     .component("FooterButtons", FooterButtons)
-    .directive("tooltip", Tooltip)
     .mount("#app");
 });

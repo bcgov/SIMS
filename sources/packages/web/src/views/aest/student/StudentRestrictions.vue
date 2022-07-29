@@ -58,11 +58,10 @@
             />
           </template>
         </Column>
-        <!-- TODO: the color attribute has to come from either global constant or styling needs to be added to added. -->
         <Column field="restrictionId" header="">
           <template #body="slotProps">
             <v-btn
-              color="#2965c5"
+              color="primary"
               variant="outlined"
               @click="viewStudentRestriction(slotProps.data.restrictionId)"
               >View</v-btn

@@ -12,8 +12,11 @@
       ><template #buttons>
         <v-menu v-if="initialData.applicationCOEStatus === COEStatus.required">
           <template v-slot:activator="{ props }">
-            <v-btn color="primary" v-bind="props">
-              <v-icon size="25">mdi-arrow-down-bold-circle</v-icon>
+            <v-btn
+              color="primary"
+              v-bind="props"
+              prepend-icon="fa:fa fa-chevron-circle-down"
+            >
               Application Actions
             </v-btn>
           </template>

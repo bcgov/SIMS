@@ -61,7 +61,7 @@
         <Column field="restrictionId" header="">
           <template #body="slotProps">
             <v-btn
-              color="#2965c5"
+              color="primary"
               variant="outlined"
               @click="viewIInstitutionRestriction(slotProps.data.restrictionId)"
               >View</v-btn

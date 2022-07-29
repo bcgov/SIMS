@@ -65,7 +65,7 @@
         <Column field="applicationId" header="">
           <template #body="slotProps">
             <v-btn
-              :color="COLOR_BLUE"
+              color="primary"
               variant="outlined"
               @click="
                 goToViewApplication(slotProps.data.disbursementScheduleId)
@@ -92,7 +92,6 @@ import {
   PageAndSortEvent,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { COLOR_BLUE } from "@/constants";
 import StatusChipCOE from "@/components/generic/StatusChipCOE.vue";
 import {
   COESummaryAPIOutDTO,
@@ -201,7 +200,6 @@ export default {
       goToViewApplication,
       pageLimit,
       rowsPerPageOptions,
-      COLOR_BLUE,
       searchCriteria,
       pageEvent,
       sortEvent,

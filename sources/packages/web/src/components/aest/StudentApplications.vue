@@ -28,14 +28,19 @@
       </Column>
       <Column :field="StudentApplicationFields.ApplicationName" header="Name">
         <template #body="slotProps">
-          <v-btn
-            v-if="clientType === ClientIdType.Student"
-            variant="plain"
-            @click="$emit('goToApplication', slotProps.data.id)"
-            color="primary"
-            v-tooltip="'Click To View this Application'"
-            >{{ slotProps.data.applicationName }}
-          </v-btn>
+          <v-tooltip>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                v-if="clientType === ClientIdType.Student"
+                v-bind="props"
+                variant="plain"
+                @click="$emit('goToApplication', slotProps.data.id)"
+                color="primary"
+                >{{ slotProps.data.applicationName }}
+              </v-btn>
+            </template>
+            <span>Click To View this Application</span>
+          </v-tooltip>
           <span v-if="clientType === ClientIdType.AEST"
             >{{ slotProps.data.applicationName }}
           </span>
@@ -76,30 +81,41 @@
                 )
               "
             >
-              <v-btn
-                :disabled="sinValidStatus !== SINStatusEnum.VALID"
-                variant="plain"
-                color="primary"
-                class="label-bold"
-                @click="
-                  $emit(
-                    'editApplicationAction',
-                    slotProps.data.status,
-                    slotProps.data.id,
-                  )
-                "
-                append-icon="mdi-pencil-outline"
-                ><span class="label-bold">Edit</span>
-              </v-btn>
-
-              <v-btn
-                :disabled="sinValidStatus !== SINStatusEnum.VALID"
-                variant="plain"
-                color="primary"
-                class="label-bold"
-                @click="$emit('openConfirmCancel', slotProps.data.id)"
-                ><span class="label-bold">Cancel</span>
-              </v-btn>
+              <v-tooltip>
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    :disabled="sinValidStatus !== SINStatusEnum.VALID"
+                    variant="plain"
+                    color="primary"
+                    class="label-bold"
+                    v-bind="props"
+                    @click="
+                      $emit(
+                        'editApplicationAction',
+                        slotProps.data.status,
+                        slotProps.data.id,
+                      )
+                    "
+                    append-icon="mdi-pencil-outline"
+                    ><span class="label-bold">Edit</span>
+                  </v-btn>
+                </template>
+                <span>Click To Edit this Application</span>
+              </v-tooltip>
+              <v-tooltip>
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    :disabled="sinValidStatus !== SINStatusEnum.VALID"
+                    variant="plain"
+                    v-bind="props"
+                    color="primary"
+                    class="label-bold"
+                    @click="$emit('openConfirmCancel', slotProps.data.id)"
+                    ><span class="label-bold">Cancel</span>
+                  </v-btn>
+                </template>
+                <span>Click To Cancel this Application</span>
+              </v-tooltip>
             </span>
           </span>
           <span v-if="clientType === ClientIdType.AEST">

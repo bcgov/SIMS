@@ -7,12 +7,11 @@
             color="primary"
             v-if="!notDraft"
             v-show="!isFirstPage && !submittingApplication"
-            variant="text"
+            variant="outlined"
             :loading="savingDraft"
             @click="saveDraft()"
           >
-            <v-icon left :size="20"> mdi-pencil </v-icon
-            >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
+            {{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
           >
           <v-btn
             v-if="!isReadOnly"

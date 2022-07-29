@@ -52,7 +52,7 @@
             icon="fa:fa fa-user"
             variant="outlined"
             elevation="1"
-            color="grey"
+            color="secondary"
             v-bind="props"
           ></v-btn>
         </template>
