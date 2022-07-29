@@ -76,7 +76,7 @@
           <template #body="slotProps">
             <v-btn
               variant="outlined"
-              @click="goToViewProgram(slotProps.data.id)"
+              @click="goToViewProgram(slotProps.data.programId)"
               >View</v-btn
             >
           </template>
@@ -92,13 +92,13 @@ import { EducationProgramService } from "@/services/EducationProgramService";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  PaginatedResults,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   PAGINATION_LIST,
   ProgramSummaryFields,
   DataTableSortOrder,
-  SummaryEducationProgramDto,
+  EducationProgramsSummary,
+  PaginatedResults,
 } from "@/types";
 import { ref, watch, onMounted } from "vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
@@ -114,7 +114,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const programAndCount = ref(
-      {} as PaginatedResults<SummaryEducationProgramDto>,
+      {} as PaginatedResults<EducationProgramsSummary>,
     );
     const locationDetails = ref();
     const loading = ref(false);
@@ -137,13 +137,15 @@ export default {
     ) => {
       loading.value = true;
       programAndCount.value =
-        await EducationProgramService.shared.getLocationProgramsSummary(
+        await EducationProgramService.shared.getProgramsSummaryByLocationId(
           props.locationId,
-          page,
-          pageCount,
-          searchBox.value,
-          sortField,
-          sortOrder,
+          {
+            searchCriteria: searchBox.value,
+            sortField,
+            sortOrder,
+            page,
+            pageLimit: pageCount,
+          },
         );
       loading.value = false;
     };

@@ -51,3 +51,10 @@ export interface OfferingsFilter {
   offeringStatus?: OfferingStatus;
   offeringIntensity?: OfferingIntensity;
 }
+
+/**
+ * Model to display the summary of preceding offering details.
+ */
+export interface PrecedingOfferingSummaryModel {
+  applicationsCount: number;
+}

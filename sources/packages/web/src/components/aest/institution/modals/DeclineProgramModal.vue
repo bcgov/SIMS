@@ -24,7 +24,7 @@
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
-import { DeclineProgram } from "@/types";
+import { DeclineProgramAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: {
@@ -32,14 +32,14 @@ export default {
   },
   setup() {
     const { showDialog, resolvePromise, showModal } = useModalDialog<
-      DeclineProgram | undefined
+      DeclineProgramAPIInDTO | undefined
     >();
     let declineProgramForm: any = undefined;
 
     const declineProgram = () => {
       return declineProgramForm.submit();
     };
-    const submitForm = (formData: DeclineProgram) => {
+    const submitForm = (formData: DeclineProgramAPIInDTO) => {
       resolvePromise(formData);
     };
 

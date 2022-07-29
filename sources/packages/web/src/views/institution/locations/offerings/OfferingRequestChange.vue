@@ -24,12 +24,9 @@
         summary="Please be advised if the request is approved, the students who applied for financial aid for this offering will go through a reassessment and it may change their funding amount."
       />
     </template>
-    <assess-offering-modal
-      ref="assessOfferingModalRef"
-      :offeringStatus="offeringApprovalStatus"
-    />
     <offering-form
       :data="initialData"
+      :readOnly="false"
       @saveOffering="saveOffering"
     ></offering-form>
   </full-page-container>
@@ -40,16 +37,10 @@ import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import {
-  OfferingFormModel,
-  OfferingStatus,
-  ProgramValidationModel,
-  OfferingDTO,
-} from "@/types";
+import { OfferingFormBaseModel, OfferingStatus, OfferingDTO } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar, useOffering } from "@/composables";
-import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/types/contracts/Banner";
+import { useSnackBar } from "@/composables";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 
@@ -76,10 +67,7 @@ export default {
   setup(props: any) {
     const snackBar = useSnackBar();
     const router = useRouter();
-    const initialData = ref(
-      {} as Partial<OfferingFormModel & ProgramValidationModel>,
-    );
-    const { mapOfferingChipStatus } = useOffering();
+    const initialData = ref({} as OfferingFormBaseModel);
     const programDetailRoute = computed(() => ({
       name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
       params: {
@@ -90,38 +78,21 @@ export default {
     }));
 
     const loadFormData = async () => {
-      const programDetails = await EducationProgramService.shared.getProgram(
-        props.programId,
-      );
-      const programValidationDetails = {
-        programIntensity: programDetails.programIntensity,
-        programDeliveryTypes: programDetails.programDeliveryTypes,
-        hasWILComponent: programDetails.hasWILComponent,
-      };
+      const programDetails =
+        await EducationProgramService.shared.getEducationProgram(
+          props.programId,
+        );
       const programOffering =
         await EducationProgramOfferingService.shared.getProgramOffering(
           props.locationId,
           props.programId,
           props.offeringId,
         );
-      /**
-       * The property clientType is populated for institution because
-       * the form.io for education program offering has a logic at it's root level panel
-       * to disable all the form inputs when clientType is not institution.
-       * The above mentioned logic is added to the panel of the form to display the
-       * form as read-only for ministry(AEST) user and also allow the hidden component values
-       * to be calculated.
-       *! If a form.io is loaded with readOnly attribute set to true, then the restricts
-       *! hidden components to calculate it's value by design.
-       */
       initialData.value = {
         ...programOffering,
-        ...programValidationDetails,
-        offeringChipStatus: mapOfferingChipStatus(
-          programOffering.offeringStatus,
-        ),
-        offeringStatusToDisplay: programOffering.offeringStatus,
-        clientType: AuthService.shared.authClientType,
+        programIntensity: programDetails.programIntensity,
+        programDeliveryTypes: programDetails.programDeliveryTypes,
+        hasWILComponent: programDetails.hasWILComponent,
         hasExistingApplication: false,
       };
     };

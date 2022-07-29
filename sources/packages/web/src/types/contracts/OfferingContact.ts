@@ -46,6 +46,9 @@ export interface OfferingDTO {
   assessedDate?: Date;
   courseLoad?: number;
   hasExistingApplication?: boolean;
+  institutionName: string;
+  submittedDate: string;
+  locationName: string;
 }
 
 /**
@@ -54,6 +57,9 @@ export interface OfferingDTO {
  ** Whenever the DTO is enhanced please make sure this model is sync with DTO.
  */
 export interface OfferingFormModel {
+  programIntensity: ProgramIntensity;
+  programDeliveryTypes: ProgramDeliveryTypes;
+  hasWILComponent: string;
   offeringName: string;
   studyStartDate?: Date;
   studyEndDate?: Date;
@@ -77,11 +83,22 @@ export interface OfferingFormModel {
   hasExistingApplication?: boolean;
 }
 
-export interface ProgramValidationModel {
-  programIntensity: ProgramIntensity;
-  programDeliveryTypes: ProgramDeliveryTypes;
-  hasWILComponent: string;
-}
+/**
+ * Offering form base model which consists of properties excluding the values derived at client.
+ */
+export type OfferingFormBaseModel = Omit<
+  OfferingFormModel,
+  "offeringChipStatus" | "offeringStatusToDisplay" | "clientType"
+>;
+
+/**
+ * Offering form create model which consists of program related properties to
+ * validate offering on creation.
+ */
+export type OfferingFormCreateModel = Pick<
+  OfferingFormModel,
+  "programIntensity" | "programDeliveryTypes" | "hasWILComponent"
+>;
 
 export interface ProgramOfferingDetailsDto {
   studyStartDate?: Date;
@@ -103,4 +120,9 @@ export interface StudyBreaksAndWeeks {
   totalDays: number;
   totalFundedWeeks: number;
   unfundedStudyPeriodDays: number;
+}
+
+export enum OfferingRelationType {
+  ActualOffering = "Actual offering",
+  PrecedingOffering = "Preceding offering",
 }

@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Get,
   NotFoundException,
   Param,
   Patch,
   UnprocessableEntityException,
+  ParseIntPipe,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
@@ -19,7 +21,13 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { EducationProgramOfferingService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
-import { OfferingAssessmentAPIInDTO } from "./models/education-program-offering.dto";
+import {
+  OfferingAssessmentAPIInDTO,
+  OfferingChangeRequestAPIOutDTO,
+  PrecedingOfferingSummaryAPIOutDTO,
+  transformToProgramOfferingDto,
+  ProgramOfferingDto,
+} from "./models/education-program-offering.dto";
 
 /**
  * Institution location controller for institutions Client.
@@ -70,5 +78,59 @@ export class EducationProgramOfferingAESTController extends BaseController {
       payload.assessmentNotes,
       payload.offeringStatus,
     );
+  }
+  /**
+   * Get all offerings that were requested for change and waiting to be approved/declined.
+   * @returns offerings which were requested for change.
+   */
+  @Get("change-requests")
+  async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
+    const offerings =
+      await this.programOfferingService.getOfferingChangeRequests();
+
+    return offerings.map((offering) => ({
+      offeringId: offering.id,
+      programId: offering.educationProgram.id,
+      offeringName: offering.name,
+      submittedDate: offering.submittedDate,
+      locationName: offering.institutionLocation.name,
+      institutionName:
+        offering.institutionLocation.institution.legalOperatingName,
+    }));
+  }
+
+  /**
+   * For a given offering which is requested as change
+   * get the summary of it's actual(preceding) offering.
+   * @param offeringId actual offering id.
+   * @returns preceding offering summary.
+   */
+  @Get(":offeringId/preceding-offering-summary")
+  async getPrecedingOfferingSummary(
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+  ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
+    return this.programOfferingService.getPrecedingOfferingSummary(offeringId);
+  }
+
+  /**
+   * Get preceding offering details.
+   * @param offeringId actual offering id.
+   * @returns Preceding offering details.
+   */
+  @ApiNotFoundResponse({
+    description: "Offering not found.",
+  })
+  @Get(":offeringId/preceding-offering")
+  async getPrecedingOfferingByActualOfferingId(
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+  ): Promise<ProgramOfferingDto> {
+    const offering = await this.programOfferingService.getOfferingById(
+      offeringId,
+      true,
+    );
+    if (!offering) {
+      throw new NotFoundException("Offering not found.");
+    }
+    return transformToProgramOfferingDto(offering);
   }
 }

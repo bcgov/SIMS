@@ -120,10 +120,12 @@ export default {
       ].includes(applicationDetails.value?.applicationStatus),
     );
 
-    const getApplicationWithPY = async (includeInActivePY?: boolean) => {
+    const getApplicationWithPY = async (
+      isIncludeInActiveProgramYear?: boolean,
+    ) => {
       return ApplicationService.shared.getApplicationWithPY(
         props.id,
-        includeInActivePY,
+        isIncludeInActiveProgramYear,
       );
     };
 

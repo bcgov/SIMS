@@ -22,7 +22,13 @@
     <template v-else-if="layoutTemplate === LayoutTemplates.Start">
       <v-row>
         <div class="mt-4 w-100">
-          <slot></slot>
+          <slot></slot></div></v-row
+    ></template>
+    <template v-else-if="layoutTemplate === LayoutTemplates.CenteredTab">
+      <v-row justify="center">
+        <div class="mt-4 p-4 w-100" :class="widthClass">
+          <slot name="tab-header"></slot>
+          <v-card class="mt-4 p-4"><slot></slot></v-card>
         </div>
       </v-row>
     </template>

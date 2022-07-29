@@ -1,19 +1,15 @@
-import { Allow, IsDateString, IsNotEmpty, MaxLength } from "class-validator";
 import {
   EntranceRequirements,
   ProgramDeliveryTypes,
-} from "../../../services/education-program/education-program.service.models";
-import {
-  NOTE_DESCRIPTION_MAX_LENGTH,
+  ProgramIntensity,
   ProgramStatus,
-} from "../../../database/entities";
-import { ProgramIntensity } from "../../../database/entities/program-intensity.type";
+} from "@/types";
 
 /**
- * Education program complete information.
+ * Complete education program information needed for the institution.
  * Shared between the Ministry and the Institution.
  */
-export class EducationProgramAPIOutDTO {
+export interface EducationProgramAPIOutDTO {
   id: number;
   name: string;
   description: string;
@@ -58,16 +54,10 @@ export class EducationProgramAPIOutDTO {
   effectiveEndDate?: string;
 }
 
-export class StudentEducationProgramAPIOutDTO {
-  id: number;
-  name: string;
-  description: string;
-  credentialType: string;
-  credentialTypeToDisplay: string;
-  deliveryMethod: string;
-}
-
-export class EducationProgramsSummaryAPIOutDTO {
+/**
+ * Education program information to be displayed in a summary list.
+ */
+export interface EducationProgramsSummaryAPIOutDTO {
   programId: number;
   programName: string;
   cipCode: string;
@@ -83,81 +73,54 @@ export class EducationProgramsSummaryAPIOutDTO {
 /**
  * Complete program information used to create or
  * update an education program.
- **The validations will be applied during a form.io dryRun.
  */
-export class EducationProgramAPIInDTO {
-  @Allow()
+export interface EducationProgramAPIInDTO {
   name: string;
-  @Allow()
   description?: string;
-  @Allow()
   credentialType: string;
-  @Allow()
   cipCode: string;
-  @Allow()
   nocCode: string;
-  @Allow()
   sabcCode: string;
-  @Allow()
   regulatoryBody: string;
-  @Allow()
   programDeliveryTypes: ProgramDeliveryTypes;
-  @Allow()
   deliveredOnlineAlsoOnsite?: string;
-  @Allow()
   sameOnlineCreditsEarned?: string;
-  @Allow()
   earnAcademicCreditsOtherInstitution?: string;
-  @Allow()
   courseLoadCalculation: string;
-  @Allow()
   completionYears: string;
-  @Allow()
   eslEligibility: string;
-  @Allow()
   hasJointInstitution: string;
-  @Allow()
   hasJointDesignatedInstitution: string;
-  @Allow()
   programIntensity: ProgramIntensity;
-  @Allow()
   institutionProgramCode?: string;
-  @Allow()
   minHoursWeek?: string;
-  @Allow()
   isAviationProgram?: string;
-  @Allow()
   minHoursWeekAvi?: string;
-  @Allow()
   entranceRequirements: EntranceRequirements;
-  @Allow()
   hasWILComponent: string;
-  @Allow()
   isWILApproved?: string;
-  @Allow()
   wilProgramEligibility?: string;
-  @Allow()
   hasTravel: string;
-  @Allow()
   travelProgramEligibility?: string;
-  @Allow()
   hasIntlExchange?: string;
-  @Allow()
   intlExchangeProgramEligibility?: string;
-  @Allow()
   programDeclaration: boolean;
 }
 
-export class ApproveProgramAPIInDTO {
-  @IsDateString()
+export interface StudentEducationProgramAPIOutDTO {
+  id: number;
+  name: string;
+  description: string;
+  credentialTypeToDisplay: string;
+  credentialType: string;
+  deliveryMethod: string;
+}
+
+export interface ApproveProgramAPIInDTO {
   effectiveEndDate: string;
-  @IsNotEmpty()
-  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   approvedNote: string;
 }
 
-export class DeclineProgramAPIInDTO {
-  @IsNotEmpty()
-  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+export interface DeclineProgramAPIInDTO {
   declinedNote: string;
 }

@@ -124,3 +124,22 @@ export class OfferingAssessmentAPIInDTO {
   @IsNotEmpty()
   assessmentNotes: string;
 }
+
+/**
+ * DTO to display offering which is requested for change.
+ */
+export class OfferingChangeRequestAPIOutDTO {
+  offeringId: number;
+  programId: number;
+  offeringName: string;
+  institutionName: string;
+  locationName: string;
+  submittedDate: Date;
+}
+
+/**
+ * DTO to display the summary of preceding offering details.
+ */
+export class PrecedingOfferingSummaryAPIOutDTO {
+  applicationsCount: number;
+}

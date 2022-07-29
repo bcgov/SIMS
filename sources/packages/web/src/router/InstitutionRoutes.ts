@@ -29,7 +29,8 @@ import InstitutionHomeSideBar from "@/components/layouts/Institution/sidebar/Hom
 import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
 import LocationCOERequest from "@/views/institution/locations/confirmation-of-enrollment/ApplicationDetailsForCOE.vue";
 import LocationProgramView from "@/views/institution/locations/programs/LocationProgramView.vue";
-import LocationProgramOffering from "@/views/institution/locations/programs/LocationProgramOffering.vue";
+import LocationProgramOfferingCreate from "@/views/institution/locations/programs/LocationProgramOfferingCreate.vue";
+import LocationProgramOfferingEdit from "@/views/institution/locations/programs/LocationProgramOfferingEdit.vue";
 import LocationEditProgramInfoRequest from "@/views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
@@ -371,7 +372,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.LocationProgramsOfferingsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
-        component: LocationProgramOffering,
+        component: LocationProgramOfferingCreate,
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
@@ -383,7 +384,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.LocationOfferingsEdit,
         name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
-        component: LocationProgramOffering,
+        component: LocationProgramOfferingEdit,
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
