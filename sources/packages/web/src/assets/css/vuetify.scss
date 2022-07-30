@@ -126,7 +126,8 @@
   width: 100%;
 }
 
-//CSS class added to match v-tab with figma.
-.v-tab__slider {
-  bottom: 5px !important;
-}
+// todo: This style is affecting all tabs expect offering tab, under investigation.
+// //CSS class added to match v-tab with figma.
+// .v-tab__slider {
+//   bottom: 5px !important;
+// }

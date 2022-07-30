@@ -1,26 +1,28 @@
 <template>
-  <full-page-container layout-template="start" :fluid="false">
+  <full-page-container layout-template="centered-tab" :fullWidth="true">
     <template #header>
       <header-navigator
         :title="locationName"
         subTitle="Confirmation Of Enrollment"
       />
     </template>
-    <v-tabs v-model="tab" stacked color="primary">
-      <v-tab :value="COETab.ConfirmEnrollmentTab" :ripple="false">
-        <div>
-          <v-icon start icon="fa:far fa-check-square"></v-icon>
-          <span class="mx-1 label-bold"> Confirm enrollment </span>
-        </div>
-      </v-tab>
+    <template #tab-header>
+      <v-tabs v-model="tab" stacked color="primary">
+        <v-tab :value="COETab.ConfirmEnrollmentTab" :ripple="false">
+          <div>
+            <v-icon start icon="fa:far fa-check-square"></v-icon>
+            <span class="mx-1 label-bold"> Confirm enrollment </span>
+          </div>
+        </v-tab>
 
-      <v-tab :value="COETab.UpcomingEnrollmentTab" :ripple="false">
-        <div>
-          <v-icon start icon="fa:far fa-folder-open" class="px-1"></v-icon>
-          <span class="mx-1 label-bold"> Upcoming enrollment </span>
-        </div>
-      </v-tab>
-    </v-tabs>
+        <v-tab :value="COETab.UpcomingEnrollmentTab" :ripple="false">
+          <div>
+            <v-icon start icon="fa:far fa-folder-open" class="px-1"></v-icon>
+            <span class="mx-1 label-bold"> Upcoming enrollment </span>
+          </div>
+        </v-tab>
+      </v-tabs></template
+    >
     <v-window v-model="tab">
       <v-window-item :value="COETab.ConfirmEnrollmentTab" :eager="false">
         <c-o-e-summary-data

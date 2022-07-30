@@ -1,5 +1,5 @@
 <template>
-  <full-page-container layout-template="start" :fluid="true"
+  <full-page-container layout-template="centered-tab" :fullWidth="true"
     ><template #header>
       <header-navigator
         title="Institution Details"
@@ -13,19 +13,21 @@
         </template>
       </header-navigator>
     </template>
-    <v-tabs :model="tab" stacked color="primary"
-      ><v-tab
-        v-for="item in items"
-        :key="item"
-        :value="item.value"
-        :to="item.command()"
-        :ripple="false"
-        ><div>
-          <v-icon start :icon="item.icon" class="px-1"></v-icon>
-          <span class="mx-2 label-bold"> {{ item.label }} </span>
-        </div>
-      </v-tab>
-    </v-tabs>
+    <template #tab-header>
+      <v-tabs :model="tab" stacked color="primary"
+        ><v-tab
+          v-for="item in items"
+          :key="item"
+          :value="item.value"
+          :to="item.command()"
+          :ripple="false"
+          ><div>
+            <v-icon start :icon="item.icon" class="px-1"></v-icon>
+            <span class="mx-2 label-bold"> {{ item.label }} </span>
+          </div>
+        </v-tab>
+      </v-tabs>
+    </template>
     <router-view />
   </full-page-container>
 </template>

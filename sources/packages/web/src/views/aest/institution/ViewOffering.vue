@@ -7,17 +7,19 @@
         subTitle="View Request"
       >
         <template #buttons v-if="showActionButtons">
-          <v-btn
-            color="primary"
-            variant="outlined"
-            @click="assessOffering(OfferingStatus.Declined)"
-            >Decline</v-btn
-          >
-          <v-btn
-            class="ml-2"
-            color="primary"
-            @click="assessOffering(OfferingStatus.Approved)"
-            >Approve offering</v-btn
+          <v-row class="m-0 p-0">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              @click="assessOffering(OfferingStatus.Declined)"
+              >Decline</v-btn
+            >
+            <v-btn
+              class="ml-2"
+              color="primary"
+              @click="assessOffering(OfferingStatus.Approved)"
+              >Approve offering</v-btn
+            ></v-row
           >
         </template>
       </header-navigator>

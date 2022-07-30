@@ -1,5 +1,5 @@
 <template>
-  <full-page-container layout-template="centered-tab">
+  <full-page-container layout-template="centered-card-tab">
     <template #header>
       <header-navigator
         title="Study period offerings"

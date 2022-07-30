@@ -1,19 +1,24 @@
 <template>
-  <full-page-container layout-template="start" :fluid="false">
+  <full-page-container layout-template="centered-tab" :fullWidth="true">
     <template #header>
       <header-navigator :title="locationName" subTitle="Report a Change" />
     </template>
-    <v-tabs v-model="tab" stacked color="primary">
-      <v-tab :value="ActiveApplicationTab.AvailableToReportTab" :ripple="false">
-        <span class="mx-1 label-bold"> Available to report </span>
-      </v-tab>
-      <v-tab
-        :value="ActiveApplicationTab.UnavailableToReportTab"
-        :ripple="false"
-      >
-        <span class="mx-1 label-bold"> Unavailable to report </span>
-      </v-tab>
-    </v-tabs>
+    <template #tab-header>
+      <v-tabs v-model="tab" stacked color="primary">
+        <v-tab
+          :value="ActiveApplicationTab.AvailableToReportTab"
+          :ripple="false"
+        >
+          <span class="mx-1 label-bold"> Available to report </span>
+        </v-tab>
+        <v-tab
+          :value="ActiveApplicationTab.UnavailableToReportTab"
+          :ripple="false"
+        >
+          <span class="mx-1 label-bold"> Unavailable to report </span>
+        </v-tab>
+      </v-tabs>
+    </template>
     <v-window v-model="tab">
       <v-window-item
         :value="ActiveApplicationTab.AvailableToReportTab"
