@@ -65,6 +65,7 @@
 
 <script lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import {
   OfferingStatus,
   ProgramOfferingHeader,
@@ -105,6 +106,7 @@ export default {
       {} as ModalDialog<OfferingChangeAssessmentAPIInDTO | boolean>,
     );
     const snackBar = useSnackBar();
+    const router = useRouter();
 
     //TODO: This callback implementation needs to be removed when the program and offering header component
     //TODO: is enhanced to load header values with it's own API call.
@@ -126,6 +128,13 @@ export default {
               ? "Offering change request has been approved and reassessments have been created for impacted applications."
               : "Offering change request has been declined.";
 
+          router.push({
+            name: AESTRoutesConst.OFFERING_CHANGE_REQUEST_COMPLETE,
+            params: {
+              programId: props.programId,
+              offeringId: props.offeringId,
+            },
+          });
           snackBar.success(snackbarMessage);
         } catch {
           snackBar.error(

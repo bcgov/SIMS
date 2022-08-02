@@ -17,6 +17,8 @@ import {
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
+import { WorkflowStartResult } from "../workflow/workflow.models";
+import * as os from "os";
 import { DataSource, UpdateResult } from "typeorm";
 import {
   EducationProgramOfferingModel,
@@ -846,16 +848,32 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   private async startOfferingChangeAssessments(
     applications: ApplicationAssessmentSummary[],
   ): Promise<void> {
+    const promises: Promise<void | WorkflowStartResult>[] = [];
+    // Used to limit the number of asynchronous operations
+    // that will start at the same time based on length of cpus.
+    const maxPromisesAllowed = os.cpus().length;
     for (const application of applications) {
       if (application.assessmentWorkflowId && !application.hasAssessmentData) {
-        await this.workflowActionsService.deleteApplicationAssessment(
-          application.assessmentWorkflowId,
-        );
+        const deleteAssessmentPromise =
+          this.workflowActionsService.deleteApplicationAssessment(
+            application.assessmentWorkflowId,
+          );
+        promises.push(deleteAssessmentPromise);
       }
-      await this.workflowActionsService.startApplicationAssessment(
-        application.workflowName,
-        application.currentAssessment.id,
-      );
+      const startAssessmentPromise =
+        this.workflowActionsService.startApplicationAssessment(
+          application.workflowName,
+          application.currentAssessment.id,
+        );
+      promises.push(startAssessmentPromise);
+      if (promises.length >= maxPromisesAllowed) {
+        //Waits for promises to be process when it reaches maximum allowable parallel
+        //count.
+        await Promise.all(promises);
+        promises.splice(0, promises.length);
+      }
     }
+    //Processing any pending promise if not completed.
+    await Promise.all(promises);
   }
 }
