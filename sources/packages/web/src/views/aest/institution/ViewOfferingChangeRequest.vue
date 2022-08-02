@@ -17,7 +17,7 @@
       ></offering-application-banner>
     </template>
     <template #tab-header>
-      <v-tabs v-model="tab" color="primary">
+      <v-tabs stacked v-model="tab" color="primary">
         <v-tab value="requested-change" :ripple="false">Requested Change</v-tab>
         <v-tab value="active-offering" :ripple="false">Active Offering</v-tab>
       </v-tabs>
