@@ -60,6 +60,7 @@ describe("Test ATBC Controller", () => {
     simsUser.lastName = faker.name.lastName();
     fakeStudent.user = simsUser;
     const sinValidation = new SINValidation();
+    sinValidation.user = simsUser;
     sinValidation.isValidSIN = true;
     fakeStudent.sinValidation = sinValidation;
     sinValidation.sin = "706941291";

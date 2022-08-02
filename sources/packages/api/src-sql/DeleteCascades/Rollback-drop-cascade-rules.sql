@@ -40,13 +40,23 @@ ADD
 
 -- Delete reference between application_student_files and applications. --
 ALTER TABLE
-    sims.application_student_files DROP CONSTRAINT IF EXISTS application_student_files_student_file_id_fkey;
+    sims.application_student_files DROP CONSTRAINT IF EXISTS application_student_files_application_id_fkey;
 
--- Create reference between application_student_files and applications. --
+-- Create reference between application_student_files and applications.--
 ALTER TABLE
     sims.application_student_files
 ADD
-    CONSTRAINT application_student_files_student_file_id_fkey FOREIGN KEY(application_id) REFERENCES sims.applications(id) ON DELETE CASCADE;
+    CONSTRAINT application_student_files_application_id_fkey FOREIGN KEY(application_id) REFERENCES sims.applications(id) ON DELETE CASCADE;
+
+-- Delete reference between application_student_files and student_files. --
+ALTER TABLE
+    sims.application_student_files DROP CONSTRAINT IF EXISTS application_student_files_student_file_id_fkey;
+
+-- Create reference between application_student_files and student_files.--
+ALTER TABLE
+    sims.application_student_files
+ADD
+    CONSTRAINT application_student_files_student_file_id_fkey FOREIGN KEY(student_file_id) REFERENCES sims.student_files(id) ON DELETE CASCADE;
 
 -- Delete reference between cra_income_verifications and supporting_users. --
 ALTER TABLE
