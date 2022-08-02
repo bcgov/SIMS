@@ -27,7 +27,6 @@ import formio from "@/components/generic/formio.vue";
 import ToggleContent from "@/components/generic/ToggleContent.vue";
 import FormioContainer from "@/components/generic/FormioContainer.vue";
 import FooterButtons from "@/components/generic/FooterButtons.vue";
-import SanitizeHTML from "@/directives/SanitizeHTML";
 
 AppConfigService.shared.init().then(() => {
   createApp(App)
@@ -48,6 +47,5 @@ AppConfigService.shared.init().then(() => {
     .component("ToggleContent", ToggleContent)
     .component("FormioContainer", FormioContainer)
     .component("FooterButtons", FooterButtons)
-    .directive("sanitizeHtml", SanitizeHTML)
     .mount("#app");
 });

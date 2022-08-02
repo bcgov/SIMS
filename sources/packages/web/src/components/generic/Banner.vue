@@ -4,10 +4,13 @@
       <div class="label-bold-normal">{{ header }}</div>
     </template>
     <v-row>
-      <v-col sm="10" md="10" lg="10">
-        <div class="label-value-normal" v-sanitize-html="summary"></div>
+      <v-col cols="10">
+        <div class="label-value-normal" v-if="summary">{{ summary }}</div>
+        <div class="label-value-normal"><slot name="content"></slot></div>
       </v-col>
-      <v-col sm="2" md="2" lg="2"><slot name="actions"></slot></v-col>
+      <v-col cols="2"
+        ><div class="float-right"><slot name="actions"></slot></div
+      ></v-col>
     </v-row>
   </v-alert>
 </template>
