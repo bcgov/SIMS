@@ -123,10 +123,6 @@ export default {
             props.offeringId,
             responseData as OfferingChangeAssessmentAPIInDTO,
           );
-          const snackbarMessage =
-            offeringStatus === OfferingStatus.Approved
-              ? "Offering change request has been approved and reassessments have been created for impacted applications."
-              : "Offering change request has been declined.";
 
           router.push({
             name: AESTRoutesConst.OFFERING_CHANGE_REQUEST_COMPLETE,
@@ -135,6 +131,10 @@ export default {
               offeringId: props.offeringId,
             },
           });
+          const snackbarMessage =
+            offeringStatus === OfferingStatus.Approved
+              ? "Offering change request has been approved and reassessments have been created for impacted applications."
+              : "Offering change request has been declined.";
           snackBar.success(snackbarMessage);
         } catch {
           snackBar.error(

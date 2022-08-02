@@ -559,7 +559,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     userId: number,
     educationProgramOffering: SaveOfferingModel,
   ): Promise<EducationProgramOffering> {
-    const currentOffering = await this.getOfferingSummaryToRequestChange(
+    const currentOffering = await this.getOfferingToRequestChange(
       offeringId,
       OfferingStatus.Approved,
       programId,
@@ -611,7 +611,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId location of the offering.
    * @returns offering.
    */
-  async getOfferingSummaryToRequestChange(
+  async getOfferingToRequestChange(
     offeringId: number,
     offeringStatus: OfferingStatus,
     programId?: number,
@@ -704,9 +704,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering",
         "offering.precedingOffering.id = assessment.offering.id",
       )
-      .where("application.applicationStatus != :cancelledStatus", {
-        cancelledStatus: ApplicationStatus.cancelled,
-      })
+      .where(
+        "application.applicationStatus NOT IN (:...invalidOfferingChangeStatus)",
+        {
+          invalidOfferingChangeStatus: [
+            ApplicationStatus.cancelled,
+            ApplicationStatus.overwritten,
+          ],
+        },
+      )
       .andWhere("offering.id = :offeringId", { offeringId });
 
     const precedingOffering = await query.getRawOne();
@@ -772,7 +778,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     assessmentNotes: string,
     offeringStatus: OfferingStatus,
   ): Promise<void> {
-    const requestedOffering = await this.getOfferingSummaryToRequestChange(
+    const requestedOffering = await this.getOfferingToRequestChange(
       offeringId,
       OfferingStatus.AwaitingApproval,
     );
@@ -831,7 +837,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     }
 
     await this.dataSource.transaction(async (transactionalEntityManager) => {
-      // create the note for assessment.
+      // Create the note for assessment.
       const note = new Note();
       note.description = assessmentNotes;
       note.noteType = NoteType.Program;
@@ -840,10 +846,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         .getRepository(Note)
         .save(note);
 
-      // update note.
+      // Update note.
       requestedOffering.offeringNote = noteEntity;
 
-      // update institution note.
+      // Update institution note.
       await transactionalEntityManager
         .getRepository(Institution)
         .createQueryBuilder()
@@ -859,7 +865,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         .save([requestedOffering, precedingOffering]);
 
       // Save applications with new current assessment on approval.
-      if (applications && applications.length > 0) {
+      if (applications?.length > 0) {
         await transactionalEntityManager
           .getRepository(Application)
           .save(applications);
@@ -868,7 +874,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     // Once the impacted applications are updated with new current assessment
     // start the assessment workflows and delete the existing workflow instances.
-    if (applications && applications.length > 0) {
+    if (applications?.length > 0) {
       await this.startOfferingChangeAssessments(applications);
     }
   }
@@ -886,8 +892,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     // that will start at the same time based on length of cpus.
     const maxPromisesAllowed = os.cpus().length;
     for (const application of applications) {
-      //when the assessment data is populated, the workflow is complete.
-      //Only running workflow instances can be deleted.
+      // When the assessment data is populated, the workflow is complete.
+      // Only running workflow instances can be deleted.
       if (application.assessmentWorkflowId && !application.hasAssessmentData) {
         const deleteAssessmentPromise =
           this.workflowActionsService.deleteApplicationAssessment(

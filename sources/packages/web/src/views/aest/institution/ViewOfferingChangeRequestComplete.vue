@@ -63,7 +63,6 @@ export default {
       required: true,
     },
   },
-
   setup() {
     const tab = ref("requested-change");
     const headerDetails = ref({} as ProgramOfferingHeader);

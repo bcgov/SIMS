@@ -7,7 +7,7 @@
   >
     <template v-slot:content>
       <div class="mt-2">
-        <v-form ref="offeringChangeApprovalForm" v-model="isFormValid">
+        <v-form ref="offeringChangeApprovalForm">
           <v-textarea
             v-model="assessmentNotes"
             variant="outlined"
