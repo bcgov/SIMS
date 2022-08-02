@@ -739,9 +739,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering",
         "offering.precedingOffering.id = assessment.offering.id",
       )
-      .where("application.applicationStatus != :cancelledStatus", {
-        cancelledStatus: ApplicationStatus.cancelled,
-      })
+      .where(
+        "application.applicationStatus NOT IN (:...invalidOfferingChangeStatus)",
+        {
+          invalidOfferingChangeStatus: [
+            ApplicationStatus.cancelled,
+            ApplicationStatus.overwritten,
+          ],
+        },
+      )
       .andWhere("offering.id = :offeringId", { offeringId })
       .getRawAndEntities();
     return mapFromRawAndEntities<ApplicationAssessmentSummary>(
@@ -773,21 +779,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     if (!requestedOffering) {
       throw new CustomNamedError(
-        `Either offering not found or the offering not in appropriate status to be approved or declined for change.`,
+        "Either offering not found or the offering not in appropriate status to be approved or declined for change.",
         OFFERING_NOT_VALID,
       );
     }
 
     if (!requestedOffering.precedingOffering) {
       throw new CustomNamedError(
-        `The offering requested for change does not have a preceding offering.`,
+        "The offering requested for change does not have a preceding offering.",
         OFFERING_NOT_VALID,
       );
     }
     const precedingOffering = requestedOffering.precedingOffering;
     const auditUser = { id: userId } as User;
     const currentDate = new Date();
-    //Set audit fields.
+    // Set audit fields.
     requestedOffering.modifier = auditUser;
     requestedOffering.updatedAt = currentDate;
     requestedOffering.assessedBy = auditUser;
@@ -799,7 +805,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     precedingOffering.assessedDate = currentDate;
     let applications: ApplicationAssessmentSummary[] = [];
 
-    //Populate the status accordingly and get impacted applications
+    // Populate the status accordingly and get impacted applications
     // when the offering change is approved.
     if (offeringStatus === OfferingStatus.Approved) {
       requestedOffering.offeringStatus = OfferingStatus.Approved;
@@ -847,12 +853,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         } as Institution)
         .add(noteEntity);
 
-      //Save the requested and preceding offering.
+      // Save the requested and preceding offering.
       await transactionalEntityManager
         .getRepository(EducationProgramOffering)
         .save([requestedOffering, precedingOffering]);
 
-      //Save applications with new current assessment on approval
+      // Save applications with new current assessment on approval.
       if (applications && applications.length > 0) {
         await transactionalEntityManager
           .getRepository(Application)
@@ -860,9 +866,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       }
     });
 
-    //Once the impacted applications are updated with new current assessment
-    //start the assessment workflows and delete the existing workflow instances.
-    await this.startOfferingChangeAssessments(applications);
+    // Once the impacted applications are updated with new current assessment
+    // start the assessment workflows and delete the existing workflow instances.
+    if (applications && applications.length > 0) {
+      await this.startOfferingChangeAssessments(applications);
+    }
   }
 
   /**
@@ -878,6 +886,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     // that will start at the same time based on length of cpus.
     const maxPromisesAllowed = os.cpus().length;
     for (const application of applications) {
+      //when the assessment data is populated, the workflow is complete.
+      //Only running workflow instances can be deleted.
       if (application.assessmentWorkflowId && !application.hasAssessmentData) {
         const deleteAssessmentPromise =
           this.workflowActionsService.deleteApplicationAssessment(
@@ -892,13 +902,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         );
       promises.push(startAssessmentPromise);
       if (promises.length >= maxPromisesAllowed) {
-        //Waits for promises to be process when it reaches maximum allowable parallel
-        //count.
+        // Waits for promises to be process when it reaches maximum allowable parallel
+        // count.
         await Promise.all(promises);
         promises.splice(0, promises.length);
       }
     }
-    //Processing any pending promise if not completed.
+    // Processing any pending promise if not completed.
     await Promise.all(promises);
   }
 }

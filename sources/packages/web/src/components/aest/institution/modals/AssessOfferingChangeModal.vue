@@ -20,7 +20,7 @@
     </template>
     <template v-slot:footer>
       <footer-buttons
-        primaryLabel="Submit Action"
+        :primaryLabel="submitLabel"
         @primaryClick="submitForm"
         @secondaryClick="dialogClosed"
       />
@@ -34,6 +34,7 @@ import { useModalDialog } from "@/composables";
 import { computed, ref } from "vue";
 import { OfferingStatus, VForm } from "@/types";
 import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
+
 export default {
   components: { ModalDialogBase },
   props: {
@@ -53,6 +54,12 @@ export default {
       props.offeringStatus === OfferingStatus.Approved
         ? "Approve for reassessment"
         : "Decline for reassessment",
+    );
+
+    const submitLabel = computed(() =>
+      props.offeringStatus === OfferingStatus.Approved
+        ? "Approve now"
+        : "Decline now",
     );
 
     const subTitle = computed(() =>
@@ -86,6 +93,7 @@ export default {
       offeringChangeApprovalForm,
       assessmentNotes,
       subTitle,
+      submitLabel,
     };
   },
 };
