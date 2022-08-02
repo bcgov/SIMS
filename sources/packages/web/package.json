@@ -26,6 +26,7 @@
     "primevue": "^3.8.2",
     "roboto-fontface": "*",
     "s-vuex-class": "^0.4.1",
+    "sanitize-html": "^2.7.1",
     "ts-jest": "^27.1.4",
     "uuid": "^8.3.2",
     "vee-validate": "^4.5.10",
