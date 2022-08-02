@@ -4,8 +4,8 @@
       <div class="label-bold-normal">{{ header }}</div>
     </template>
     <v-row>
-      <v-col sm="10" md="10" lg="10"
-        ><div class="label-value-normal" v-html="summary"></div>
+      <v-col sm="10" md="10" lg="10">
+        <div class="label-value-normal" v-html="content"></div>
       </v-col>
       <v-col sm="2" md="2" lg="2"><slot name="actions"></slot></v-col>
     </v-row>
@@ -14,6 +14,8 @@
 <script lang="ts">
 import { BannerTypes } from "@/types/contracts/Banner";
 import { computed } from "vue";
+import sanitizeHtml from "sanitize-html";
+
 export default {
   props: {
     type: {
@@ -28,6 +30,10 @@ export default {
     },
   },
   setup(props: any) {
+    const content = computed(() => {
+      return sanitizeHtml(props.summary);
+    });
+
     const bannerIcon = computed(() => {
       switch (props.type) {
         case BannerTypes.Success:
@@ -42,7 +48,7 @@ export default {
           return "";
       }
     });
-    return { bannerIcon };
+    return { bannerIcon, content };
   },
 };
 </script>
