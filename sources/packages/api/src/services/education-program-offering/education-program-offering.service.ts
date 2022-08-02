@@ -605,9 +605,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   /**
    * Get the offering to request change.
    * Offering in Approved status alone can be requested for change.
-   * @param locationId
-   * @param programId
-   * @param offeringId
+   * @param offeringId offering requested for change.
+   * @param offeringStatus status of the approval.
+   * @param programId program of the offering.
+   * @param locationId location of the offering.
    * @returns offering.
    */
   async getOfferingSummaryToRequestChange(
@@ -715,6 +716,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     };
   }
 
+  /**
+   * Get applications that are impacted by an offering change
+   * to submit reassessment.
+   * @param offeringId offering requested for change.
+   * @returns applications.
+   */
   async getApplicationsToSubmitReassessment(
     offeringId: number,
   ): Promise<ApplicationAssessmentSummary[]> {
@@ -745,6 +752,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     );
   }
 
+  /**
+   * Approve or Decline an offering change
+   * requested by institution.
+   * @param offeringId offering that is requested for change.
+   * @param userId User who approves or declines the offering.
+   * @param assessmentNotes Notes added during the process.
+   * @param offeringStatus Approval or Decline status.
+   */
   async assessOfferingChangeRequest(
     offeringId: number,
     userId: number,
@@ -783,6 +798,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     precedingOffering.assessedBy = auditUser;
     precedingOffering.assessedDate = currentDate;
     let applications: ApplicationAssessmentSummary[] = [];
+
+    //Populate the status accordingly and get impacted applications
+    // when the offering change is approved.
     if (offeringStatus === OfferingStatus.Approved) {
       requestedOffering.offeringStatus = OfferingStatus.Approved;
       precedingOffering.offeringStatus = OfferingStatus.ChangeOverwritten;
@@ -800,7 +818,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         } as StudentAssessment;
         application.modifier = auditUser;
         application.updatedAt = currentDate;
-        //this.dataSource.getRepository(Application).save(summaryItem);
       }
     } else {
       requestedOffering.offeringStatus = OfferingStatus.ChangeDeclined;
@@ -820,10 +837,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       // update note.
       requestedOffering.offeringNote = noteEntity;
 
-      await transactionalEntityManager
-        .getRepository(EducationProgramOffering)
-        .save([requestedOffering, precedingOffering]);
-
       // update institution note.
       await transactionalEntityManager
         .getRepository(Institution)
@@ -834,6 +847,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         } as Institution)
         .add(noteEntity);
 
+      //Save the requested and preceding offering.
+      await transactionalEntityManager
+        .getRepository(EducationProgramOffering)
+        .save([requestedOffering, precedingOffering]);
+
       //Save applications with new current assessment on approval
       if (applications && applications.length > 0) {
         await transactionalEntityManager
@@ -842,9 +860,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       }
     });
 
+    //Once the impacted applications are updated with new current assessment
+    //start the assessment workflows and delete the existing workflow instances.
     await this.startOfferingChangeAssessments(applications);
   }
 
+  /**
+   * For an offering change start the assessment workflows for all new assessments
+   * and delete the existing workflow instances of previous assessments.
+   * @param applications applications impacted by offering change.
+   */
   private async startOfferingChangeAssessments(
     applications: ApplicationAssessmentSummary[],
   ): Promise<void> {

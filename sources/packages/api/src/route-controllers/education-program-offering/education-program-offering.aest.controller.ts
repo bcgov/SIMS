@@ -136,6 +136,13 @@ export class EducationProgramOfferingAESTController extends BaseController {
     return transformToProgramOfferingDto(offering);
   }
 
+  /**
+   * Approve or Decline an offering change
+   * requested by institution.
+   * @param offeringId offering that is requested for change.
+   * @param payload offering change payload.
+   * @param userToken User who approves or declines the offering.
+   */
   @Patch(":offeringId/assess-change-request")
   @ApiUnprocessableEntityResponse({
     description:

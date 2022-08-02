@@ -60,6 +60,10 @@ export interface PrecedingOfferingSummaryModel {
   applicationsCount: number;
 }
 
+/** The additional properties which are required
+ * to start the new assessment workflow
+ * and delete the existing workflow instance for an application.
+ */
 export class ApplicationAssessmentSummary extends Application {
   assessmentWorkflowId: string;
   workflowName: string;
