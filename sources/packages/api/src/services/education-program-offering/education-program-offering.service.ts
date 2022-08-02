@@ -890,6 +890,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const promises: Promise<void | WorkflowStartResult>[] = [];
     // Used to limit the number of asynchronous operations
     // that will start at the same time based on length of cpus.
+    // TODO: Currently the parallel processing is limited logical CPU core count but this approach
+    // TODO: needs to be revisited.
     const maxPromisesAllowed = os.cpus().length;
     for (const application of applications) {
       // When the assessment data is populated, the workflow is complete.

@@ -12,7 +12,7 @@
       />
     </template>
     <template #tab-header>
-      <v-tabs v-model="tab" color="primary">
+      <v-tabs v-model="tab" color="primary" stacked>
         <v-tab value="requested-change" :ripple="false">Active Change</v-tab>
         <v-tab value="active-offering" :ripple="false">Previous Offering</v-tab>
       </v-tabs>
