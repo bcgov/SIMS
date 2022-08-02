@@ -18,7 +18,7 @@ ALTER TABLE
 ADD
     CONSTRAINT applications_student_id_fkey FOREIGN KEY(student_id) REFERENCES sims.students(id) ON DELETE CASCADE;
 
--- Delete reference between applications and student_assements. --
+-- Delete reference between applications and student_assessments. --
 ALTER TABLE
     sims.applications DROP CONSTRAINT IF EXISTS applications_current_assessment_id_fkey;
 
