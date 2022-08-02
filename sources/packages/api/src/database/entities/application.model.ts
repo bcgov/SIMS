@@ -259,7 +259,7 @@ export class Application extends RecordDataModel {
    */
   @ManyToOne(() => StudentAssessment, {
     eager: false,
-    cascade: ["update"],
+    cascade: ["insert", "update"],
     nullable: true,
   })
   @JoinColumn({

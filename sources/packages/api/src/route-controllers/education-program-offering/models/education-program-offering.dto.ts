@@ -1,11 +1,15 @@
-import { OfferingTypes, OfferingStatus } from "../../../database/entities";
+import {
+  OfferingTypes,
+  OfferingStatus,
+  NOTE_DESCRIPTION_MAX_LENGTH,
+} from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 import {
   EducationProgramOffering,
   StudyBreaksAndWeeks,
 } from "../../../database/entities/education-program-offering.model";
 import { getUserFullName } from "../../../utilities";
-import { IsEnum, IsNotEmpty } from "class-validator";
+import { IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 
 export interface SaveOfferingDTO {
   offeringName: string;
@@ -142,4 +146,12 @@ export class OfferingChangeRequestAPIOutDTO {
  */
 export class PrecedingOfferingSummaryAPIOutDTO {
   applicationsCount: number;
+}
+
+export class OfferingChangeAssessmentAPIInDTO {
+  @IsIn([OfferingStatus.Approved, OfferingStatus.ChangeDeclined])
+  offeringStatus: OfferingStatus;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  assessmentNotes: string;
 }

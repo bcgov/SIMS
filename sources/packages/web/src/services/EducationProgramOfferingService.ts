@@ -13,6 +13,7 @@ import {
 } from "../types";
 import {
   OfferingAssessmentAPIInDTO,
+  OfferingChangeAssessmentAPIInDTO,
   OfferingChangeRequestAPIOutDTO,
   PrecedingOfferingSummaryAPIOutDTO,
 } from "@/services/http/dto";
@@ -280,6 +281,16 @@ export class EducationProgramOfferingService {
   ): Promise<OfferingDTO> {
     return ApiClient.EducationProgramOffering.getPrecedingOfferingByActualOfferingId(
       offeringId,
+    );
+  }
+
+  async assessOfferingChangeRequest(
+    offeringId: number,
+    payload: OfferingChangeAssessmentAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.EducationProgramOffering.assessOfferingChangeRequest(
+      offeringId,
+      payload,
     );
   }
 }

@@ -5,7 +5,24 @@
         title="Study period offerings"
         :routeLocation="{ name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS }"
         subTitle="View Request"
-      />
+      >
+        <template #buttons>
+          <v-row class="p-0 m-0">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              @click="assessOfferingChange(OfferingStatus.ChangeDeclined)"
+              >Decline reassessment</v-btn
+            >
+            <v-btn
+              class="ml-2"
+              color="primary"
+              @click="assessOfferingChange(OfferingStatus.Approved)"
+              >Approve reassessment</v-btn
+            >
+          </v-row>
+        </template>
+      </header-navigator>
       <program-offering-detail-header
         class="m-4"
         :headerDetails="headerDetails"
@@ -39,26 +56,36 @@
         ></offering-change-request>
       </v-window-item>
     </v-window>
+    <assess-offering-change-modal
+      ref="assessOfferingChangeModalRef"
+      :offeringStatus="offeringChangeApprovalStatus"
+    />
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import {
   OfferingStatus,
   ProgramOfferingHeader,
   OfferingRelationType,
 } from "@/types";
+import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
+import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
+import { ModalDialog, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingChangeRequest from "@/components/aest/OfferingChangeRequest.vue";
 import OfferingApplicationBanner from "@/components/aest/OfferingApplicationBanner.vue";
+import AssessOfferingChangeModal from "@/components/aest/institution/modals/AssessOfferingChangeModal.vue";
 
 export default {
   components: {
     ProgramOfferingDetailHeader,
     OfferingChangeRequest,
     OfferingApplicationBanner,
+    AssessOfferingChangeModal,
   },
   props: {
     programId: {
@@ -71,14 +98,50 @@ export default {
     },
   },
 
-  setup() {
+  setup(props: any) {
     const tab = ref("requested-change");
     const headerDetails = ref({} as ProgramOfferingHeader);
+    const offeringChangeApprovalStatus = ref(OfferingStatus.ChangeDeclined);
+    const assessOfferingChangeModalRef = ref(
+      {} as ModalDialog<OfferingChangeAssessmentAPIInDTO | boolean>,
+    );
+    const snackBar = useSnackBar();
+    const router = useRouter();
 
     //TODO: This callback implementation needs to be removed when the program and offering header component
     //TODO: is enhanced to load header values with it's own API call.
     const getHeaderDetails = (data: ProgramOfferingHeader) => {
       headerDetails.value = data;
+    };
+
+    const assessOfferingChange = async (offeringStatus: OfferingStatus) => {
+      offeringChangeApprovalStatus.value = offeringStatus;
+      const responseData = await assessOfferingChangeModalRef.value.showModal();
+      if (responseData) {
+        try {
+          await EducationProgramOfferingService.shared.assessOfferingChangeRequest(
+            props.offeringId,
+            responseData as OfferingChangeAssessmentAPIInDTO,
+          );
+
+          router.push({
+            name: AESTRoutesConst.OFFERING_CHANGE_REQUEST_COMPLETE,
+            params: {
+              programId: props.programId,
+              offeringId: props.offeringId,
+            },
+          });
+          const snackbarMessage =
+            offeringStatus === OfferingStatus.Approved
+              ? "Offering change request has been approved and reassessments have been created for impacted applications."
+              : "Offering change request has been declined.";
+          snackBar.success(snackbarMessage);
+        } catch {
+          snackBar.error(
+            "Unexpected error while submitting offering change request.",
+          );
+        }
+      }
     };
 
     return {
@@ -88,6 +151,9 @@ export default {
       tab,
       getHeaderDetails,
       OfferingRelationType,
+      assessOfferingChangeModalRef,
+      offeringChangeApprovalStatus,
+      assessOfferingChange,
     };
   },
 };

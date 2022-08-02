@@ -49,6 +49,7 @@ import SINManagement from "@/views/aest/student/SINManagement.vue";
 import StudentApplicationExceptions from "@/views/aest/student/StudentApplicationExceptions.vue";
 import OfferingChangeRequests from "@/views/aest/institution/OfferingChangeRequests.vue";
 import ViewOfferingChangeRequest from "@/views/aest/institution/ViewOfferingChangeRequest.vue";
+import ViewOfferingChangeRequestComplete from "@/views/aest/institution/ViewOfferingChangeRequestComplete.vue";
 import StudentApplicationAppeals from "@/views/aest/student/StudentApplicationAppeals.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
@@ -470,6 +471,18 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         props: true,
         components: {
           default: ViewOfferingChangeRequest,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.ViewOfferingChangeRequestComplete,
+        name: AESTRoutesConst.OFFERING_CHANGE_REQUEST_COMPLETE,
+        props: true,
+        components: {
+          default: ViewOfferingChangeRequestComplete,
           sidebar: AESTHomeSideBar,
         },
         meta: {

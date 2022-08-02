@@ -13,14 +13,19 @@ import {
   StudentAssessment,
   Application,
   ApplicationStatus,
+  AssessmentTriggerType,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
+import { WorkflowActionsService } from "../workflow/workflow-actions.service";
+import { WorkflowStartResult } from "../workflow/workflow.models";
+import * as os from "os";
 import { DataSource, UpdateResult } from "typeorm";
 import {
   EducationProgramOfferingModel,
   SaveOfferingModel,
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
+  ApplicationAssessmentSummary,
 } from "./education-program-offering.service.models";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import {
@@ -30,12 +35,16 @@ import {
   PaginatedResults,
   getISODateOnlyString,
   CustomNamedError,
+  mapFromRawAndEntities,
 } from "../../utilities";
 import { OFFERING_NOT_VALID } from "../../constants";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly workflowActionsService: WorkflowActionsService,
+  ) {
     super(dataSource.getRepository(EducationProgramOffering));
   }
 
@@ -550,10 +559,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     userId: number,
     educationProgramOffering: SaveOfferingModel,
   ): Promise<EducationProgramOffering> {
-    const currentOffering = await this.getApprovedOfferingToRequestChange(
-      locationId,
-      programId,
+    const currentOffering = await this.getOfferingToRequestChange(
       offeringId,
+      OfferingStatus.Approved,
+      programId,
+      locationId,
     );
 
     if (!currentOffering) {
@@ -595,32 +605,57 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   /**
    * Get the offering to request change.
    * Offering in Approved status alone can be requested for change.
-   * @param locationId
-   * @param programId
-   * @param offeringId
+   * @param offeringId offering requested for change.
+   * @param offeringStatus status of the approval.
+   * @param programId program of the offering.
+   * @param locationId location of the offering.
    * @returns offering.
    */
-  async getApprovedOfferingToRequestChange(
-    locationId: number,
-    programId: number,
+  async getOfferingToRequestChange(
     offeringId: number,
+    offeringStatus: OfferingStatus,
+    programId?: number,
+    locationId?: number,
   ): Promise<EducationProgramOffering> {
-    return this.repo
+    const offeringSummaryQuery = this.repo
       .createQueryBuilder("offerings")
-      .select(["offerings.id", "offerings.parentOffering"])
+      .select([
+        "offerings.id",
+        "parentOffering.id",
+        "precedingOffering.id",
+        "location.id",
+        "institution.id",
+      ])
+      .innerJoin("offerings.institutionLocation", "location")
+      .innerJoin("location.institution", "institution")
+      .leftJoin("offerings.parentOffering", "parentOffering")
+      .leftJoin("offerings.precedingOffering", "precedingOffering")
       .where("offerings.id = :offeringId", {
         offeringId: offeringId,
       })
       .andWhere("offerings.offeringStatus = :offeringStatus", {
-        offeringStatus: OfferingStatus.Approved,
-      })
-      .andWhere("offerings.educationProgram.id = :programId", {
-        programId: programId,
-      })
-      .andWhere("offerings.institutionLocation.id = :locationId", {
-        locationId: locationId,
-      })
-      .getOne();
+        offeringStatus,
+      });
+
+    if (programId) {
+      offeringSummaryQuery.andWhere(
+        "offerings.educationProgram.id = :programId",
+        {
+          programId: programId,
+        },
+      );
+    }
+
+    if (locationId) {
+      offeringSummaryQuery.andWhere(
+        "offerings.institutionLocation.id = :locationId",
+        {
+          locationId: locationId,
+        },
+      );
+    }
+
+    return offeringSummaryQuery.getOne();
   }
 
   /**
@@ -663,27 +698,225 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .getRepository(Application)
       .createQueryBuilder("application")
       .select("count(application.id)", "applicationsCount")
-      .addSelect("offering.id", "offeringId")
       .innerJoin("application.currentAssessment", "assessment")
       .innerJoin(
         EducationProgramOffering,
         "offering",
         "offering.precedingOffering.id = assessment.offering.id",
       )
-      .where("application.applicationStatus != :cancelledStatus", {
-        cancelledStatus: ApplicationStatus.cancelled,
-      })
-      .andWhere("offering.id = :offeringId")
-      .setParameters({
-        cancelledStatus: ApplicationStatus.cancelled,
-        offeringId,
-      })
-      .groupBy("offering.id");
+      .where(
+        "application.applicationStatus NOT IN (:...invalidOfferingChangeStatus)",
+        {
+          invalidOfferingChangeStatus: [
+            ApplicationStatus.cancelled,
+            ApplicationStatus.overwritten,
+          ],
+        },
+      )
+      .andWhere("offering.id = :offeringId", { offeringId });
 
     const precedingOffering = await query.getRawOne();
 
     return {
       applicationsCount: +precedingOffering?.applicationsCount,
     };
+  }
+
+  /**
+   * Get applications that are impacted by an offering change
+   * to submit reassessment.
+   * @param offeringId offering requested for change.
+   * @returns applications.
+   */
+  async getApplicationsToSubmitReassessment(
+    offeringId: number,
+  ): Promise<ApplicationAssessmentSummary[]> {
+    const applications = await this.dataSource
+      .getRepository(Application)
+      .createQueryBuilder("application")
+      .select("application.id")
+      .addSelect("assessment.id")
+      .addSelect("assessment.assessmentData IS NULL", "hasAssessmentData")
+      .addSelect("application.data->>'workflowName'", "workflowName")
+      .addSelect("assessment.assessmentWorkflowId", "assessmentWorkflowId")
+      .innerJoin("application.currentAssessment", "assessment")
+      .innerJoin(
+        EducationProgramOffering,
+        "offering",
+        "offering.precedingOffering.id = assessment.offering.id",
+      )
+      .where(
+        "application.applicationStatus NOT IN (:...invalidOfferingChangeStatus)",
+        {
+          invalidOfferingChangeStatus: [
+            ApplicationStatus.cancelled,
+            ApplicationStatus.overwritten,
+          ],
+        },
+      )
+      .andWhere("offering.id = :offeringId", { offeringId })
+      .getRawAndEntities();
+    return mapFromRawAndEntities<ApplicationAssessmentSummary>(
+      applications,
+      "workflowName",
+      "assessmentWorkflowId",
+      "hasAssessmentData",
+    );
+  }
+
+  /**
+   * Approve or Decline an offering change
+   * requested by institution.
+   * @param offeringId offering that is requested for change.
+   * @param userId User who approves or declines the offering.
+   * @param assessmentNotes Notes added during the process.
+   * @param offeringStatus Approval or Decline status.
+   */
+  async assessOfferingChangeRequest(
+    offeringId: number,
+    userId: number,
+    assessmentNotes: string,
+    offeringStatus: OfferingStatus,
+  ): Promise<void> {
+    const requestedOffering = await this.getOfferingToRequestChange(
+      offeringId,
+      OfferingStatus.AwaitingApproval,
+    );
+
+    if (!requestedOffering) {
+      throw new CustomNamedError(
+        "Either offering not found or the offering not in appropriate status to be approved or declined for change.",
+        OFFERING_NOT_VALID,
+      );
+    }
+
+    if (!requestedOffering.precedingOffering) {
+      throw new CustomNamedError(
+        "The offering requested for change does not have a preceding offering.",
+        OFFERING_NOT_VALID,
+      );
+    }
+    const precedingOffering = requestedOffering.precedingOffering;
+    const auditUser = { id: userId } as User;
+    const currentDate = new Date();
+    // Set audit fields.
+    requestedOffering.modifier = auditUser;
+    requestedOffering.updatedAt = currentDate;
+    requestedOffering.assessedBy = auditUser;
+    requestedOffering.assessedDate = currentDate;
+
+    precedingOffering.modifier = auditUser;
+    precedingOffering.updatedAt = currentDate;
+    precedingOffering.assessedBy = auditUser;
+    precedingOffering.assessedDate = currentDate;
+    let applications: ApplicationAssessmentSummary[] = [];
+
+    // Populate the status accordingly and get impacted applications
+    // when the offering change is approved.
+    if (offeringStatus === OfferingStatus.Approved) {
+      requestedOffering.offeringStatus = OfferingStatus.Approved;
+      precedingOffering.offeringStatus = OfferingStatus.ChangeOverwritten;
+      applications = await this.getApplicationsToSubmitReassessment(offeringId);
+
+      for (const application of applications) {
+        application.currentAssessment = {
+          application: { id: application.id } as Application,
+          triggerType: AssessmentTriggerType.OfferingChange,
+          offering: { id: offeringId } as EducationProgramOffering,
+          creator: auditUser,
+          createdAt: currentDate,
+          submittedBy: auditUser,
+          submittedDate: currentDate,
+        } as StudentAssessment;
+        application.modifier = auditUser;
+        application.updatedAt = currentDate;
+      }
+    } else {
+      requestedOffering.offeringStatus = OfferingStatus.ChangeDeclined;
+      precedingOffering.offeringStatus = OfferingStatus.Approved;
+    }
+
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      // Create the note for assessment.
+      const note = new Note();
+      note.description = assessmentNotes;
+      note.noteType = NoteType.Program;
+      note.creator = auditUser;
+      const noteEntity = await transactionalEntityManager
+        .getRepository(Note)
+        .save(note);
+
+      // Update note.
+      requestedOffering.offeringNote = noteEntity;
+
+      // Update institution note.
+      await transactionalEntityManager
+        .getRepository(Institution)
+        .createQueryBuilder()
+        .relation(Institution, "notes")
+        .of({
+          id: requestedOffering.institutionLocation.institution.id,
+        } as Institution)
+        .add(noteEntity);
+
+      // Save the requested and preceding offering.
+      await transactionalEntityManager
+        .getRepository(EducationProgramOffering)
+        .save([requestedOffering, precedingOffering]);
+
+      // Save applications with new current assessment on approval.
+      if (applications?.length > 0) {
+        await transactionalEntityManager
+          .getRepository(Application)
+          .save(applications);
+      }
+    });
+
+    // Once the impacted applications are updated with new current assessment
+    // start the assessment workflows and delete the existing workflow instances.
+    if (applications?.length > 0) {
+      await this.startOfferingChangeAssessments(applications);
+    }
+  }
+
+  /**
+   * For an offering change start the assessment workflows for all new assessments
+   * and delete the existing workflow instances of previous assessments.
+   * @param applications applications impacted by offering change.
+   */
+  private async startOfferingChangeAssessments(
+    applications: ApplicationAssessmentSummary[],
+  ): Promise<void> {
+    const promises: Promise<void | WorkflowStartResult>[] = [];
+    // Used to limit the number of asynchronous operations
+    // that will start at the same time based on length of cpus.
+    // TODO: Currently the parallel processing is limited logical CPU core count but this approach
+    // TODO: needs to be revisited.
+    const maxPromisesAllowed = os.cpus().length;
+    for (const application of applications) {
+      // When the assessment data is populated, the workflow is complete.
+      // Only running workflow instances can be deleted.
+      if (application.assessmentWorkflowId && !application.hasAssessmentData) {
+        const deleteAssessmentPromise =
+          this.workflowActionsService.deleteApplicationAssessment(
+            application.assessmentWorkflowId,
+          );
+        promises.push(deleteAssessmentPromise);
+      }
+      const startAssessmentPromise =
+        this.workflowActionsService.startApplicationAssessment(
+          application.workflowName,
+          application.currentAssessment.id,
+        );
+      promises.push(startAssessmentPromise);
+      if (promises.length >= maxPromisesAllowed) {
+        // Waits for promises to be process when it reaches maximum allowable parallel
+        // count.
+        await Promise.all(promises);
+        promises.splice(0, promises.length);
+      }
+    }
+    // Processing any pending promise if not completed.
+    await Promise.all(promises);
   }
 }
