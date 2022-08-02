@@ -166,7 +166,7 @@ ALTER TABLE
 ALTER TABLE
     sims.institution_users
 ADD
-    CONSTRAINT fk_institution_user_id_202105180001 FOREIGN KEY(user_id) REFERENCES sims.users(id);
+    CONSTRAINT institution_users_user_id_fkey FOREIGN KEY(user_id) REFERENCES sims.users(id);
 
 -- Delete reference between institution_user_auth and institution_users. --
 ALTER TABLE
@@ -176,7 +176,7 @@ ALTER TABLE
 ALTER TABLE
     sims.institution_user_auth
 ADD
-    CONSTRAINT fk_institution_user_auth_user_id_202105180040 FOREIGN KEY(institution_user_id) REFERENCES sims.institution_users(id);
+    CONSTRAINT institution_user_auth_institution_user_id_fkey FOREIGN KEY(institution_user_id) REFERENCES sims.institution_users(id);
 
 -- Delete reference between institution_user_auth and institution_locations. --
 ALTER TABLE
@@ -186,7 +186,7 @@ ALTER TABLE
 ALTER TABLE
     sims.institution_user_auth
 ADD
-    CONSTRAINT fk_institution_user_auth_location_id_202105180045 FOREIGN KEY(institution_location_id) REFERENCES sims.institution_locations(id);
+    CONSTRAINT institution_user_auth_institution_location_id_fkey FOREIGN KEY(institution_location_id) REFERENCES sims.institution_locations(id);
 
 -- Delete reference between institution_user_auth and institution_user_type_roles. --
 ALTER TABLE
@@ -196,7 +196,7 @@ ALTER TABLE
 ALTER TABLE
     sims.institution_user_auth
 ADD
-    CONSTRAINT fk_institution_user_auth_type_role_202105180050 FOREIGN KEY(institution_user_type_role_id) REFERENCES sims.institution_user_type_roles(id);
+    CONSTRAINT institution_user_auth_institution_user_type_role_id_fkey FOREIGN KEY(institution_user_type_role_id) REFERENCES sims.institution_user_type_roles(id);
 
 -- Delete reference between institution_locations and institutions. --
 ALTER TABLE
@@ -216,7 +216,7 @@ ALTER TABLE
 ALTER TABLE
     sims.institution_users
 ADD
-    CONSTRAINT fk_institution_id_202105180002 FOREIGN KEY(institution_id) REFERENCES sims.institutions(id);
+    CONSTRAINT institution_users_institution_id_fkey FOREIGN KEY(institution_id) REFERENCES sims.institutions(id);
 
 -- Delete reference between msfaa_numbers and students. --
 ALTER TABLE

@@ -160,53 +160,53 @@ ADD
 
 -- Delete reference between institution_users and institutions. --
 ALTER TABLE
-    sims.institution_users DROP CONSTRAINT IF EXISTS fk_institution_id_202105180002;
+    sims.institution_users DROP CONSTRAINT IF EXISTS institution_users_institution_id_fkey;
 
 -- Create reference between institution_users and institutions. --
 ALTER TABLE
     sims.institution_users
 ADD
-    CONSTRAINT fk_institution_id_202105180002 FOREIGN KEY(institution_id) REFERENCES sims.institutions(id) ON DELETE CASCADE;
+    CONSTRAINT institution_users_institution_id_fkey FOREIGN KEY(institution_id) REFERENCES sims.institutions(id) ON DELETE CASCADE;
 
 -- Delete reference between institution_users and users. --
 ALTER TABLE
-    sims.institution_users DROP CONSTRAINT IF EXISTS fk_institution_user_id_202105180001;
+    sims.institution_users DROP CONSTRAINT IF EXISTS institution_users_user_id_fkey;
 
 -- Create reference between institution_users and users. --
 ALTER TABLE
     sims.institution_users
 ADD
-    CONSTRAINT fk_institution_user_id_202105180001 FOREIGN KEY(user_id) REFERENCES sims.users(id) ON DELETE CASCADE;
+    CONSTRAINT institution_users_user_id_fkey FOREIGN KEY(user_id) REFERENCES sims.users(id) ON DELETE CASCADE;
 
 -- Delete reference between institution_user_auth and institution_users. --
 ALTER TABLE
-    sims.institution_user_auth DROP CONSTRAINT IF EXISTS fk_institution_user_auth_user_id_202105180040;
+    sims.institution_user_auth DROP CONSTRAINT IF EXISTS institution_user_auth_institution_user_id_fkey;
 
 -- Create reference between institution_user_auth and institution_users. --
 ALTER TABLE
     sims.institution_user_auth
 ADD
-    CONSTRAINT fk_institution_user_auth_user_id_202105180040 FOREIGN KEY(institution_user_id) REFERENCES sims.institution_users(id) ON DELETE CASCADE;
+    CONSTRAINT institution_user_auth_institution_user_id_fkey FOREIGN KEY(institution_user_id) REFERENCES sims.institution_users(id) ON DELETE CASCADE;
 
 -- Delete reference between institution_user_auth and institution_locations. --
 ALTER TABLE
-    sims.institution_user_auth DROP CONSTRAINT IF EXISTS fk_institution_user_auth_location_id_202105180045;
+    sims.institution_user_auth DROP CONSTRAINT IF EXISTS institution_user_auth_institution_location_id_fkey;
 
 -- Create reference between institution_user_auth and institution_locations. --
 ALTER TABLE
     sims.institution_user_auth
 ADD
-    CONSTRAINT fk_institution_user_auth_location_id_202105180045 FOREIGN KEY(institution_location_id) REFERENCES sims.institution_locations(id) ON DELETE CASCADE;
+    CONSTRAINT institution_user_auth_institution_location_id_fkey FOREIGN KEY(institution_location_id) REFERENCES sims.institution_locations(id) ON DELETE CASCADE;
 
 -- Delete reference between institution_user_auth and institution_user_type_roles. --
 ALTER TABLE
-    sims.institution_user_auth DROP CONSTRAINT IF EXISTS fk_institution_user_auth_type_role_202105180050;
+    sims.institution_user_auth DROP CONSTRAINT IF EXISTS institution_user_auth_institution_user_type_role_id_fkey;
 
 -- Create reference between institution_user_auth and institution_user_type_roles. --
 ALTER TABLE
     sims.institution_user_auth
 ADD
-    CONSTRAINT fk_institution_user_auth_type_role_202105180050 FOREIGN KEY(institution_user_type_role_id) REFERENCES sims.institution_user_type_roles(id) ON DELETE CASCADE;
+    CONSTRAINT institution_user_auth_institution_user_type_role_id_fkey FOREIGN KEY(institution_user_type_role_id) REFERENCES sims.institution_user_type_roles(id) ON DELETE CASCADE;
 
 -- Delete reference between institution_locations and institutions. --
 ALTER TABLE
