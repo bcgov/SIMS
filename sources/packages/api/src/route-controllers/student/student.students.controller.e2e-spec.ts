@@ -18,7 +18,6 @@ describe("Test ATBC Controller", () => {
   let app: INestApplication;
   let studentService: StudentService;
   let atbcService: ATBCService;
-  let userService: UserService;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -31,7 +30,6 @@ describe("Test ATBC Controller", () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule, AuthModule, AppStudentsModule],
     }).compile();
-    userService = await moduleFixture.get(UserService);
     atbcService = await moduleFixture.get(ATBCService);
     studentService = await moduleFixture.get(StudentService);
     app = moduleFixture.createNestApplication();
