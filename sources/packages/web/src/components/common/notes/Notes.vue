@@ -75,10 +75,9 @@
 <script lang="ts">
 import { useFormatters, ModalDialog } from "@/composables";
 import CreateNoteModal from "@/components/common/notes/CreateNoteModal.vue";
-import { NoteBaseDTO, NoteDTO } from "@/types";
+import { NoteBaseDTO, NoteDTO, LayoutTemplates } from "@/types";
 import { ref } from "vue";
 import "@/assets/css/notes.scss";
-import { LayoutTemplates } from "@/types";
 
 export default {
   components: { CreateNoteModal },

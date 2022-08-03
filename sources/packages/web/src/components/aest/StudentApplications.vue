@@ -28,19 +28,18 @@
       </Column>
       <Column :field="StudentApplicationFields.ApplicationName" header="Name">
         <template #body="slotProps">
-          <v-tooltip>
-            <template v-slot:activator="{ props }">
-              <v-btn
-                v-if="clientType === ClientIdType.Student"
-                v-bind="props"
-                variant="plain"
-                @click="$emit('goToApplication', slotProps.data.id)"
-                color="primary"
-                >{{ slotProps.data.applicationName }}
-              </v-btn>
-            </template>
-            <span>Click To View this Application</span>
-          </v-tooltip>
+          <v-btn
+            v-if="clientType === ClientIdType.Student"
+            v-bind="props"
+            variant="plain"
+            @click="$emit('goToApplication', slotProps.data.id)"
+            color="primary"
+            >{{ slotProps.data.applicationName }}
+            <v-tooltip activator="parent" location="start"
+              >Click To View this Application</v-tooltip
+            >
+          </v-btn>
+
           <span v-if="clientType === ClientIdType.AEST"
             >{{ slotProps.data.applicationName }}
           </span>
@@ -81,41 +80,38 @@
                 )
               "
             >
-              <v-tooltip>
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    :disabled="sinValidStatus !== SINStatusEnum.VALID"
-                    variant="plain"
-                    color="primary"
-                    class="label-bold"
-                    v-bind="props"
-                    @click="
-                      $emit(
-                        'editApplicationAction',
-                        slotProps.data.status,
-                        slotProps.data.id,
-                      )
-                    "
-                    append-icon="mdi-pencil-outline"
-                    ><span class="label-bold">Edit</span>
-                  </v-btn>
-                </template>
-                <span>Click To Edit this Application</span>
-              </v-tooltip>
-              <v-tooltip>
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    :disabled="sinValidStatus !== SINStatusEnum.VALID"
-                    variant="plain"
-                    v-bind="props"
-                    color="primary"
-                    class="label-bold"
-                    @click="$emit('openConfirmCancel', slotProps.data.id)"
-                    ><span class="label-bold">Cancel</span>
-                  </v-btn>
-                </template>
-                <span>Click To Cancel this Application</span>
-              </v-tooltip>
+              <v-btn
+                :disabled="sinValidStatus !== SINStatusEnum.VALID"
+                variant="plain"
+                color="primary"
+                class="label-bold"
+                v-bind="props"
+                @click="
+                  $emit(
+                    'editApplicationAction',
+                    slotProps.data.status,
+                    slotProps.data.id,
+                  )
+                "
+                append-icon="mdi-pencil-outline"
+                ><span class="label-bold">Edit</span>
+                <v-tooltip activator="parent" location="start"
+                  >Click To Edit this Application</v-tooltip
+                >
+              </v-btn>
+
+              <v-btn
+                :disabled="sinValidStatus !== SINStatusEnum.VALID"
+                variant="plain"
+                v-bind="props"
+                color="primary"
+                class="label-bold"
+                @click="$emit('openConfirmCancel', slotProps.data.id)"
+                ><span class="label-bold">Cancel</span>
+                <v-tooltip activator="parent" location="start"
+                  >Click To Cancel this Application</v-tooltip
+                >
+              </v-btn>
             </span>
           </span>
           <span v-if="clientType === ClientIdType.AEST">
