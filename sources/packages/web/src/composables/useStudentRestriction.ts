@@ -6,9 +6,9 @@ export function useStudentRestriction() {
     status: StudentRestrictionStatus,
   ): StatusChipTypes => {
     switch (status) {
-      case StudentRestrictionStatus.noRestriction:
+      case StudentRestrictionStatus.NoRestriction:
         return StatusChipTypes.Success;
-      case StudentRestrictionStatus.restriction:
+      case StudentRestrictionStatus.Restriction:
         return StatusChipTypes.Warning;
       default:
         return StatusChipTypes.Inactive;
