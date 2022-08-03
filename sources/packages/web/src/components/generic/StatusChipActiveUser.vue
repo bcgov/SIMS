@@ -1,12 +1,12 @@
 <template>
-  <status-chip :status="chipStatus" :label="chipLabel" />
+  <chip-status :status="chipStatus" :label="chipLabel" />
 </template>
 <script lang="ts">
 import { computed } from "vue";
-import StatusChip from "@/components/generic/ChipStatus.vue";
+import ChipStatus from "@/components/generic/ChipStatus.vue";
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 export default {
-  components: { StatusChip },
+  components: { ChipStatus },
   props: {
     isActive: {
       type: String,

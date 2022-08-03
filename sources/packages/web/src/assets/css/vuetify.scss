@@ -126,7 +126,7 @@
   width: 100%;
 }
 
-// v-btn toggle background color.
+// v-btn toggle background color for notes, to match with Figma.
 .btn-toggle button:not(.v-btn--selected) {
   color: $color-white !important;
   background: $brand-grey !important;

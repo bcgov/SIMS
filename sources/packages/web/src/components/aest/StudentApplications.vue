@@ -30,7 +30,6 @@
         <template #body="slotProps">
           <v-btn
             v-if="clientType === ClientIdType.Student"
-            v-bind="props"
             variant="plain"
             @click="$emit('goToApplication', slotProps.data.id)"
             color="primary"
@@ -85,7 +84,6 @@
                 variant="plain"
                 color="primary"
                 class="label-bold"
-                v-bind="props"
                 @click="
                   $emit(
                     'editApplicationAction',
@@ -103,7 +101,6 @@
               <v-btn
                 :disabled="sinValidStatus !== SINStatusEnum.VALID"
                 variant="plain"
-                v-bind="props"
                 color="primary"
                 class="label-bold"
                 @click="$emit('openConfirmCancel', slotProps.data.id)"
