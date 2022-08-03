@@ -27,7 +27,9 @@ import {
   PrecedingOfferingSummaryAPIOutDTO,
   transformToProgramOfferingDto,
   ProgramOfferingDto,
+  OfferingChangeAssessmentAPIInDTO,
 } from "./models/education-program-offering.dto";
+import { CustomNamedError } from "../../utilities";
 
 /**
  * Institution location controller for institutions Client.
@@ -132,5 +134,37 @@ export class EducationProgramOfferingAESTController extends BaseController {
       throw new NotFoundException("Offering not found.");
     }
     return transformToProgramOfferingDto(offering);
+  }
+
+  /**
+   * Approve or Decline an offering change
+   * requested by institution.
+   * @param offeringId offering that is requested for change.
+   * @param payload offering change payload.
+   * @param userToken User who approves or declines the offering.
+   */
+  @Patch(":offeringId/assess-change-request")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Either offering or preceding offering not found or the offering not in appropriate status to be approved or declined for change.",
+  })
+  async assessOfferingChangeRequest(
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+    @Body() payload: OfferingChangeAssessmentAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    try {
+      await this.programOfferingService.assessOfferingChangeRequest(
+        offeringId,
+        userToken.userId,
+        payload.assessmentNotes,
+        payload.offeringStatus,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        throw new UnprocessableEntityException(error.message);
+      }
+      throw error;
+    }
   }
 }

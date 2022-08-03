@@ -16,6 +16,7 @@ import {
   OfferingAssessmentAPIInDTO,
   OfferingChangeRequestAPIOutDTO,
   PrecedingOfferingSummaryAPIOutDTO,
+  OfferingChangeAssessmentAPIInDTO,
 } from "@/services/http/dto";
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
@@ -323,6 +324,18 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       this.addClientRoot(
         `institution/offering/${offeringId}/preceding-offering`,
       ),
+    );
+  }
+
+  async assessOfferingChangeRequest(
+    offeringId: number,
+    payload: OfferingChangeAssessmentAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall<OfferingChangeAssessmentAPIInDTO>(
+      this.addClientRoot(
+        `institution/offering/${offeringId}/assess-change-request`,
+      ),
+      payload,
     );
   }
 }
