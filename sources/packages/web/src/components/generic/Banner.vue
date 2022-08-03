@@ -5,8 +5,9 @@
     </template>
     <v-row>
       <v-col cols="10">
-        <div class="label-value-normal" v-if="summary">{{ summary }}</div>
-        <div class="label-value-normal"><slot name="content"></slot></div>
+        <div class="label-value-normal">
+          <slot name="content">{{ summary }}</slot>
+        </div>
       </v-col>
       <v-col cols="2"
         ><div class="float-right"><slot name="actions"></slot></div

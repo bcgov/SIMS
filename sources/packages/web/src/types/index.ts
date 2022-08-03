@@ -38,3 +38,4 @@ export * from "@/types/contracts/institution/InstitutionUser";
 export * from "@/types/vuetify";
 export * from "@/types/contracts/SnackBar";
 export * from "@/types/contracts/Menu";
+export * from "@/types/contracts/Banner";

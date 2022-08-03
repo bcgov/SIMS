@@ -50,7 +50,6 @@ export default {
   setup(props: any) {
     const tab = ref("institution-tab");
     const institutionBasicDetail = ref({} as InstitutionBasicAPIOutDTO);
-    // TODO: replace all fa isons with fas as per figma with replace with vuetify3
     const items = ref([
       {
         label: "Profile",

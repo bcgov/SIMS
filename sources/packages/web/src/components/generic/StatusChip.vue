@@ -22,7 +22,7 @@ export default {
     },
     /**
      * When property is true its is a normal status like chip
-     *  and when it is false it is a designation or restriction
+     * and when it is false it is a designation or restriction
      * chip with background color and different icon.
      */
     defaultBadge: {

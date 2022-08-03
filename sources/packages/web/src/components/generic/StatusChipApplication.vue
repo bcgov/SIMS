@@ -2,14 +2,16 @@
   <status-chip :status="chipStatus" :label="status" />
 </template>
 <script lang="ts">
-import { computed } from "vue";
+import { computed, PropType } from "vue";
 import StatusChip from "@/components/generic/StatusChip.vue";
 import { useApplication } from "@/composables";
+import { ApplicationStatus } from "@/types";
+
 export default {
   components: { StatusChip },
   props: {
     status: {
-      type: String,
+      type: String as PropType<ApplicationStatus>,
       required: true,
     },
   },

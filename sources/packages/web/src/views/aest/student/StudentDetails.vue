@@ -10,12 +10,12 @@
             class="ml-4 mt-1"
             :status="
               studentDetails.hasRestriction
-                ? StudentRestrictionStatus.restriction
-                : StudentRestrictionStatus.noRestriction
+                ? StudentRestrictionStatus.Restriction
+                : StudentRestrictionStatus.NoRestriction
             "
             :label="
               studentDetails.hasRestriction
-                ? StudentRestrictionStatus.restriction
+                ? StudentRestrictionStatus.Restriction
                 : null
             "
           />
@@ -61,7 +61,6 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const studentDetails = ref({} as AESTStudentProfileAPIOutDTO);
-    // TODO: replace all fa icons with fas as per figma with replace with vuetify3
     const items = ref([
       {
         label: "Profile",

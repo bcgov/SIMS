@@ -31,7 +31,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar } from "@/composables";
 import { useStore } from "vuex";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
-import { BannerTypes } from "@/types/contracts/Banner";
+import { BannerTypes } from "@/types";
 
 export default {
   components: { InstitutionProfileForm },

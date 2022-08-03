@@ -57,7 +57,6 @@
             />
           </template>
         </Column>
-        <!-- TODO: the color attribute has to come from either global constant or styling needs to be added to added. -->
         <Column field="restrictionId" header="">
           <template #body="slotProps">
             <v-btn
