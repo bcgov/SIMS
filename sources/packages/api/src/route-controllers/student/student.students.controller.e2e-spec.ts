@@ -81,7 +81,6 @@ describe("Test ATBC Controller", () => {
         .expect(HttpStatus.OK);
     } finally {
       await studentService.remove(fakeStudent);
-      await userService.remove(simsUser);
     }
   });
 });
