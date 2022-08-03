@@ -1,7 +1,12 @@
 require("../../../env_setup");
 import * as faker from "faker";
 import { SINValidation, Student, User } from "../../database/entities";
-import { StudentService, ATBCService } from "../../services";
+import {
+  StudentService,
+  ATBCService,
+  UserService,
+  SINValidationService,
+} from "../../services";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../../services/auth/keycloak/keycloak.service";
 import { HttpStatus, INestApplication } from "@nestjs/common";
@@ -18,6 +23,8 @@ describe("Test ATBC Controller", () => {
   let app: INestApplication;
   let studentService: StudentService;
   let atbcService: ATBCService;
+  let userService: UserService;
+  let sinValidationService: SINValidationService;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -30,8 +37,10 @@ describe("Test ATBC Controller", () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule, AuthModule, AppStudentsModule],
     }).compile();
+    userService = await moduleFixture.get(UserService);
     atbcService = await moduleFixture.get(ATBCService);
     studentService = await moduleFixture.get(StudentService);
+    sinValidationService = await moduleFixture.get(SINValidationService);
     app = moduleFixture.createNestApplication();
     await app.init();
   });
@@ -79,6 +88,8 @@ describe("Test ATBC Controller", () => {
         .expect(HttpStatus.OK);
     } finally {
       await studentService.remove(fakeStudent);
+      await sinValidationService.remove(sinValidation);
+      await userService.remove(simsUser);
     }
   });
 });
