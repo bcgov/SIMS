@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { computed } from "vue";
-import StatusChip from "@/components/generic/StatusChip.vue";
+import StatusChip from "@/components/generic/ChipStatus.vue";
 import { useRestriction } from "@/composables";
 export default {
   components: { StatusChip },

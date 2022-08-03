@@ -1,5 +1,5 @@
 <template>
-  <full-page-container :full-width="true">
+  <full-page-container :fullWidth="true">
     <template #header>
       <header-navigator title="Manage Users" subTitle="User Summary" />
     </template>

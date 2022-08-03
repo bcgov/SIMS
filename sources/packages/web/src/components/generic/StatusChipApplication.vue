@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { computed, PropType } from "vue";
-import StatusChip from "@/components/generic/StatusChip.vue";
+import StatusChip from "@/components/generic/ChipStatus.vue";
 import { useApplication } from "@/composables";
 import { ApplicationStatus } from "@/types";
 

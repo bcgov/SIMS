@@ -1,7 +1,7 @@
 <template>
   <full-page-container
     :layout-template="LayoutTemplates.CenteredCard"
-    :full-width="true"
+    :fullWidth="true"
   >
     <body-header title="All restrictions" class="m-1">
       <template #actions

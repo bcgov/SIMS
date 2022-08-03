@@ -1,12 +1,12 @@
 <template>
-  <status-chip :status="chipStatus" :label="status" :defaultBadge="false" />
+  <chip-label :status="chipStatus" :label="status" />
 </template>
 <script lang="ts">
 import { computed } from "vue";
-import StatusChip from "@/components/generic/StatusChip.vue";
+import ChipLabel from "@/components/generic/ChipLabel.vue";
 import { useLocation } from "@/composables";
 export default {
-  components: { StatusChip },
+  components: { ChipLabel },
   props: {
     status: {
       type: String,

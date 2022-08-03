@@ -1,8 +1,5 @@
 <template>
-  <full-page-container
-    :layout-template="layoutTemplate"
-    :full-width="fullWidth"
-  >
+  <full-page-container :layout-template="layoutTemplate" :fullWidth="fullWidth">
     <template #header>
       <slot name="header"></slot>
     </template>

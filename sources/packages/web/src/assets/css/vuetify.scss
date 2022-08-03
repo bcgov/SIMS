@@ -125,3 +125,9 @@
   border-bottom: 2px solid $common-border-color;
   width: 100%;
 }
+
+// v-btn toggle background color.
+.btn-toggle button:not(.v-btn--selected) {
+  color: $color-white !important;
+  background: $brand-grey !important;
+}

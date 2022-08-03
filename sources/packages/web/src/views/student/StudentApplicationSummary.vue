@@ -1,5 +1,5 @@
 <template>
-  <student-page-container :full-width="true">
+  <student-page-container :fullWidth="true">
     <template #header>
       <header-navigator title="Applications" subTitle="My Applications">
         <template #buttons>

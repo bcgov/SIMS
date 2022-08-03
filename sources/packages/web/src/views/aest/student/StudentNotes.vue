@@ -1,44 +1,45 @@
 <template>
-  <v-container>
+  <full-page-container
+    :layout-template="LayoutTemplates.Centered"
+    :fullWidth="true"
+  >
     <v-row class="my-2 pl-0">
       <v-col cols="3" class="category-header-large">Notes</v-col>
-      <v-col class="text-center">
-        <div class="float-right">
-          <v-row>
-            <v-col>
-              <v-btn
-                rounded
-                :color="!filteredNoteType ? 'primary' : 'secondary'"
-                data-cy="allNotesButton"
-                @click="filterNotes()"
-                >All Notes</v-btn
-              >
-            </v-col>
-            <v-col v-for="item in StudentNoteType" :key="item">
-              <v-btn
-                rounded
-                :color="filteredNoteType === item ? 'primary' : 'secondary'"
-                data-cy="noteTypeItem"
-                @click="filterNotes(item)"
-                >{{ item }}</v-btn
-              >
-            </v-col>
-          </v-row>
-        </div>
+      <v-col>
+        <v-btn-toggle
+          v-model="toggleNotes"
+          mandatory
+          class="float-right btn-toggle"
+        >
+          <v-btn
+            rounded="xl"
+            color="primary"
+            data-cy="allNotesButton"
+            @click="filterNotes()"
+            value="allNotes"
+            >All Notes</v-btn
+          >
+          <v-btn
+            rounded="xl"
+            v-for="item in StudentNoteType"
+            :key="item"
+            color="primary"
+            :value="item"
+            :data-cy="item"
+            class="ml-2"
+            @click="filterNotes(item)"
+            >{{ item }}</v-btn
+          >
+        </v-btn-toggle>
       </v-col>
     </v-row>
-    <full-page-container
-      :layout-template="LayoutTemplates.CenteredCard"
-      :full-width="true"
-    >
-      <notes
-        title="Past Notes"
-        :entityType="NoteEntityType.Student"
-        :notes="notes"
-        @submitData="addNote"
-      ></notes>
-    </full-page-container>
-  </v-container>
+    <notes
+      title="Past Notes"
+      :entityType="NoteEntityType.Student"
+      :notes="notes"
+      @submitData="addNote"
+    ></notes>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -62,6 +63,7 @@ export default {
     },
   },
   setup(props: any) {
+    const toggleNotes = ref("allNotes");
     const notes = ref();
     const filteredNoteType = ref();
     const { dateOnlyLongString } = useFormatters();
@@ -97,6 +99,7 @@ export default {
       addNote,
       NoteEntityType,
       LayoutTemplates,
+      toggleNotes,
     };
   },
 };

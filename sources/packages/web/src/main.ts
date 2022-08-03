@@ -15,7 +15,6 @@ import store from "./store";
 import PrimeVue from "primevue/config";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import ToastService from "primevue/toastservice";
 import { AppConfigService } from "./services/AppConfigService";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
@@ -34,7 +33,6 @@ AppConfigService.shared.init().then(() => {
     .use(store)
     .use(router)
     .use(PrimeVue)
-    .use(ToastService)
     .component("DataTable", DataTable)
     .component("Column", Column)
     .component("BodyHeader", BodyHeader)
