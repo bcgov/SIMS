@@ -1,7 +1,7 @@
 require("../../../env_setup");
 import * as faker from "faker";
 import { SINValidation, Student, User } from "../../database/entities";
-import { StudentService, ATBCService, UserService } from "../../services";
+import { StudentService, ATBCService } from "../../services";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../../services/auth/keycloak/keycloak.service";
 import { HttpStatus, INestApplication } from "@nestjs/common";
