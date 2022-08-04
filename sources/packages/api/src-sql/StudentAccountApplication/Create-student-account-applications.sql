@@ -30,6 +30,6 @@ COMMENT ON COLUMN sims.student_account_applications.created_at IS 'Record creati
 
 COMMENT ON COLUMN sims.student_account_applications.updated_at IS 'Record update timestamp.';
 
-COMMENT ON COLUMN sims.student_account_applications.creator IS 'Creator of the record. Null specified the record is created by system.';
+COMMENT ON COLUMN sims.student_account_applications.creator IS 'Creator of the record.';
 
-COMMENT ON COLUMN sims.student_account_applications.modifier IS 'Modifier of the record. Null specified the record is modified by system.';
+COMMENT ON COLUMN sims.student_account_applications.modifier IS 'Modifier of the record.';

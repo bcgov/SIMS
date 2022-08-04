@@ -2,7 +2,7 @@
   <student-page-container>
     <template #header>
       <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
-      <row v-else align="center">
+      <v-row v-else class="text-center">
         <v-col>
           <p class="category-header-x-large">Create Your Profile</p>
           <p>
@@ -10,7 +10,7 @@
             We'll use the same information to help you apply for financial aid.
           </p>
         </v-col>
-      </row>
+      </v-row>
     </template>
     <formio-container
       formName="studentinformation"
