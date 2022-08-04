@@ -107,7 +107,7 @@ export class InstitutionUserControllerService {
    * @param institutionId institution to have the user associated.
    * @param payload user and authorization information.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param allowedAccountTypes types of BCeID account that can be created. For instance,
+   * @param allowedAccountTypes types of BCeID accounts that can be created. For instance,
    * basic BCeID accounts are allowed to be created only by the Ministry users.
    * @returns created user id.
    */
