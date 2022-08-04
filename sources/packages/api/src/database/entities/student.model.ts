@@ -78,15 +78,4 @@ export class Student extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   sinValidation: SINValidation;
-
-  @OneToOne(() => StudentUser, {
-    eager: false,
-    nullable: true,
-    cascade: ["insert", "update"],
-  })
-  @JoinColumn({
-    name: "active_student_user_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  activeStudentUser: StudentUser;
 }

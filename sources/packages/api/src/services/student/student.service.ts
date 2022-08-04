@@ -151,13 +151,20 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      const studentRepo = transactionalEntityManager.getRepository(Student);
-      await studentRepo.save(student);
-      student.activeStudentUser = new StudentUser();
-      student.activeStudentUser.user = user;
-      student.activeStudentUser.student = student;
-      student.activeStudentUser.creator = user;
-      return studentRepo.save(student);
+      // Creates the new user and student.
+      const newStudent = await transactionalEntityManager
+        .getRepository(Student)
+        .save(student);
+      // Create the new entry in the student/user history/audit.
+      const studentUser = new StudentUser();
+      studentUser.user = user;
+      studentUser.student = student;
+      studentUser.creator = user;
+      await transactionalEntityManager
+        .getRepository(StudentUser)
+        .save(studentUser);
+      // Returns the newly created student.
+      return newStudent;
     });
   }
 
