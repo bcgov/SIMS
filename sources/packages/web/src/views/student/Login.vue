@@ -20,7 +20,7 @@
                   your BC Services Card.
                 </p>
                 <v-btn
-                  class="primary-btn-background"
+                  color="primary"
                   @click="login(AppIDPType.BCSC)"
                   prepend-icon="fa:fa fa-user"
                 >
@@ -109,7 +109,7 @@
               BC account registration. Click on the button below to login.
             </p>
             <v-btn
-              class="primary-btn-background"
+              color="primary"
               @click="login(AppIDPType.BCeID)"
               prepend-icon="fa:fa fa-user"
             >
