@@ -5,11 +5,11 @@
         <template #actions>
           <v-btn
             class="float-right"
-            text
             @click="editProfile"
-            variant="title"
-            :color="COLOR_BLUE"
-            ><v-icon icon="fa:fa fa-cog" class="mr-1" /> Edit
+            variant="text"
+            color="primary"
+            prepend-icon="fa:fa fa-gear"
+            >Edit
           </v-btn>
         </template>
       </body-header>
@@ -114,7 +114,6 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
-import { COLOR_BLUE } from "@/constants";
 export default {
   components: { TitleValue },
   props: {
@@ -140,7 +139,6 @@ export default {
     return {
       institutionProfileDetail,
       editProfile,
-      COLOR_BLUE,
     };
   },
 };

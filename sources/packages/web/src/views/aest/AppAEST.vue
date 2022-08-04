@@ -7,11 +7,12 @@
       <v-spacer></v-spacer>
       <v-btn
         v-if="isAuthenticated"
-        text
+        variant="text"
+        prepend-icon="fa:fa fa-edit"
         @click="
           $router.push({ name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE })
         "
-        ><v-icon icon="fa:fa fa-edit"></v-icon>Create institution</v-btn
+        >Create institution</v-btn
       >
       <v-menu v-if="isAuthenticated">
         <template v-slot:activator="{ props }">
@@ -20,7 +21,7 @@
             icon="fa:fa fa-user"
             variant="outlined"
             elevation="1"
-            color="grey"
+            color="secondary"
             v-bind="props"
           ></v-btn>
         </template>

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mt-4 p-4">
+  <full-page-container :full-width="true">
     <body-header
       title="Designation agreements"
       :recordsCount="designations?.length"
@@ -11,7 +11,7 @@
       toggleMessage="No designation agreements found"
       @viewDesignation="goToViewDesignation"
     />
-  </v-card>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -21,6 +21,8 @@ import { GetDesignationAgreementsDto } from "@/types/contracts/DesignationAgreem
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
+import { LayoutTemplates } from "@/types";
+
 export default {
   components: { DesignationAgreementSummary },
   props: {
@@ -53,6 +55,7 @@ export default {
     return {
       designations,
       goToViewDesignation,
+      LayoutTemplates,
     };
   },
 };

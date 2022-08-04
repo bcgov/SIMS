@@ -1,47 +1,45 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <v-row class="mb-2 mt-2">
-        <v-col cols="3" class="category-header-large">Notes</v-col>
-        <v-col class="text-center">
-          <div class="float-right">
-            <v-row>
-              <v-col>
-                <v-btn
-                  rounded
-                  variant="tonal"
-                  :class="{ 'primary-btn-background': !filteredNoteType }"
-                  data-cy="allNotesButton"
-                  @click="filterNotes()"
-                  >All Notes</v-btn
-                >
-              </v-col>
-              <v-col v-for="item in StudentNoteType" :key="item">
-                <v-btn
-                  rounded
-                  variant="tonal"
-                  :class="{
-                    'primary-btn-background': filteredNoteType === item,
-                  }"
-                  data-cy="noteTypeItem"
-                  @click="filterNotes(item)"
-                  >{{ item }}</v-btn
-                >
-              </v-col>
-            </v-row>
-          </div>
-        </v-col>
-      </v-row>
-      <content-group>
-        <Notes
-          title="Past Notes"
-          :entityType="NoteEntityType.Student"
-          :notes="notes"
-          @submitData="addNote"
-        ></Notes>
-      </content-group>
-    </div>
-  </v-card>
+  <full-page-container
+    :layout-template="LayoutTemplates.Centered"
+    :full-width="true"
+  >
+    <v-row class="my-2 pl-0">
+      <v-col cols="3" class="category-header-large">Notes</v-col>
+      <v-col>
+        <v-btn-toggle
+          v-model="toggleNotes"
+          mandatory
+          class="float-right btn-toggle"
+        >
+          <v-btn
+            rounded="xl"
+            color="primary"
+            data-cy="allNotesButton"
+            @click="filterNotes()"
+            value="allNotes"
+            >All Notes</v-btn
+          >
+          <v-btn
+            rounded="xl"
+            v-for="item in StudentNoteType"
+            :key="item"
+            color="primary"
+            :value="item"
+            :data-cy="item"
+            class="ml-2"
+            @click="filterNotes(item)"
+            >{{ item }}</v-btn
+          >
+        </v-btn-toggle>
+      </v-col>
+    </v-row>
+    <notes
+      title="Past Notes"
+      :entityType="NoteEntityType.Student"
+      :notes="notes"
+      @submitData="addNote"
+    ></notes>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -49,7 +47,12 @@ import { onMounted, ref } from "vue";
 import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
 import { useFormatters, useSnackBar } from "@/composables";
-import { StudentNoteType, NoteBaseDTO, NoteEntityType } from "@/types";
+import {
+  StudentNoteType,
+  NoteBaseDTO,
+  NoteEntityType,
+  LayoutTemplates,
+} from "@/types";
 
 export default {
   components: { Notes },
@@ -60,6 +63,7 @@ export default {
     },
   },
   setup(props: any) {
+    const toggleNotes = ref("allNotes");
     const notes = ref();
     const filteredNoteType = ref();
     const { dateOnlyLongString } = useFormatters();
@@ -94,6 +98,8 @@ export default {
       filteredNoteType,
       addNote,
       NoteEntityType,
+      LayoutTemplates,
+      toggleNotes,
     };
   },
 };

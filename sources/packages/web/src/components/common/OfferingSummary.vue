@@ -19,10 +19,9 @@
           v-if="isInstitutionUser"
           class="ml-2 float-right"
           @click="goToAddNewOffering()"
-          variant="outlined"
-          color="#2965C5"
+          color="primary"
+          prepend-icon="fa:fa fa-plus-circle"
         >
-          <v-icon size="25" left> mdi-open-in-new </v-icon>
           Add Study Period
         </v-btn>
       </v-row>
@@ -73,9 +72,10 @@
       <Column>
         <template #body="slotProps">
           <v-btn
-            variant="outlined"
+            color="primary"
+            variant="text"
             @click="offeringButtonAction(slotProps.data.id)"
-            color="#2965C5"
+            append-icon="mdi-pencil-outline"
           >
             {{ offeringActionLabel }}
           </v-btn>

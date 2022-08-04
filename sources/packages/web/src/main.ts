@@ -15,20 +15,7 @@ import store from "./store";
 import PrimeVue from "primevue/config";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import Message from "primevue/message";
-import Checkbox from "primevue/checkbox";
-import ToastService from "primevue/toastservice";
-import Calendar from "primevue/calendar";
-import Dropdown from "primevue/dropdown";
-import ProgressSpinner from "primevue/progressspinner";
-import Chip from "primevue/chip";
-import TabMenu from "primevue/tabmenu";
-import TabView from "primevue/tabview";
-import TabPanel from "primevue/tabpanel";
 import { AppConfigService } from "./services/AppConfigService";
-import Timeline from "primevue/timeline";
-import Tooltip from "primevue/tooltip";
-import { library } from "@fortawesome/fontawesome-svg-core";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
@@ -40,92 +27,14 @@ import ToggleContent from "@/components/generic/ToggleContent.vue";
 import FormioContainer from "@/components/generic/FormioContainer.vue";
 import FooterButtons from "@/components/generic/FooterButtons.vue";
 
-import {
-  faMapPin,
-  faCheck,
-  faCircle,
-  faSearch,
-  faPlus,
-  faTimes,
-  faExternalLinkSquareAlt,
-  faPen,
-  faCog,
-  faTrash,
-  faUser,
-  faFolderOpen,
-  faArrowLeft,
-  faConciergeBell,
-  faGraduationCap,
-  faHome,
-  faPenNib,
-  faBell,
-  faFileAlt as faFileAltSolid,
-  faHandPaper as faHandPaperSolid,
-  faPlusCircle as faPlusCircleSolid,
-  faExclamationCircle as faExclamationCircleSolid,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  faFileAlt,
-  faUser as farUsers,
-  faCheckSquare,
-  faHandPaper,
-  faCopy as farCopy,
-  faStickyNote,
-  faCheckCircle as farCheckCircle,
-} from "@fortawesome/free-regular-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-library.add(
-  farCheckCircle,
-  faMapPin,
-  faCheck,
-  faCircle,
-  faSearch,
-  faPlus,
-  faTimes,
-  faExternalLinkSquareAlt,
-  faPen,
-  faCog,
-  faTrash,
-  faUser,
-  faFolderOpen,
-  faArrowLeft,
-  faConciergeBell,
-  faGraduationCap,
-  faFileAlt,
-  faHome,
-  faPenNib,
-  farUsers,
-  faCheckSquare,
-  faBell,
-  faFileAltSolid,
-  faHandPaper,
-  faHandPaperSolid,
-  faPlusCircleSolid,
-  farCopy,
-  faStickyNote,
-  faExclamationCircleSolid,
-);
-
 AppConfigService.shared.init().then(() => {
   createApp(App)
     .use(vuetify)
     .use(store)
     .use(router)
     .use(PrimeVue)
-    .use(ToastService)
     .component("DataTable", DataTable)
     .component("Column", Column)
-    .component("Message", Message)
-    .component("Checkbox", Checkbox)
-    .component("Calendar", Calendar)
-    .component("Dropdown", Dropdown)
-    .component("ProgressSpinner", ProgressSpinner)
-    .component("Chip", Chip)
-    .component("TabMenu", TabMenu)
-    .component("TabView", TabView)
-    .component("TabPanel", TabPanel)
-    .component("font-awesome-icon", FontAwesomeIcon)
-    .component("Timeline", Timeline)
     .component("BodyHeader", BodyHeader)
     .component("ContentGroup", ContentGroup)
     .component("FullPageContainer", FullPageContainer)
@@ -136,6 +45,5 @@ AppConfigService.shared.init().then(() => {
     .component("ToggleContent", ToggleContent)
     .component("FormioContainer", FormioContainer)
     .component("FooterButtons", FooterButtons)
-    .directive("tooltip", Tooltip)
     .mount("#app");
 });

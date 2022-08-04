@@ -38,11 +38,8 @@
                     color="primary"
                     variant="text"
                     class="text-decoration-underline"
+                    prepend-icon="fa:far fa-file-alt"
                   >
-                    <font-awesome-icon
-                      :icon="['far', 'file-alt']"
-                      class="mr-2"
-                    />
                     View request</v-btn
                   ></template
                 ></Column

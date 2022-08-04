@@ -13,7 +13,7 @@ import {
   OfferingDTO,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { BannerTypes } from "@/components/generic/Banner.models";
+import { BannerTypes } from "@/types/contracts/Banner";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 
 export default {

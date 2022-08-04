@@ -1,5 +1,13 @@
 <template>
-  <ProgressSpinner v-if="!hideSpinner" />
+  <div class="text-center p-m-4" v-if="!hideSpinner">
+    <span class="label-bold muted-content-strong text-center"> Loading </span>
+    <v-progress-linear
+      indeterminate
+      color="primary"
+      rounded
+      class="mt-3"
+    ></v-progress-linear>
+  </div>
   <div class="ff-form-container" ref="formioContainerRef"></div>
 </template>
 

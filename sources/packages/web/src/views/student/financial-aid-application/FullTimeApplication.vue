@@ -7,12 +7,11 @@
             color="primary"
             v-if="!notDraft"
             v-show="!isFirstPage && !submittingApplication"
-            variant="text"
+            variant="outlined"
             :loading="savingDraft"
             @click="saveDraft()"
           >
-            <v-icon left :size="20"> mdi-pencil </v-icon
-            >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
+            {{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
           >
           <v-btn
             v-if="!isReadOnly"
@@ -21,15 +20,17 @@
             v-show="!isFirstPage"
             color="primary"
             @click="wizardSubmit()"
-            >{{
-              submittingApplication ? "Submitting..." : "Submit application"
-            }}
-            <span v-if="submittingApplication">
-              &nbsp;&nbsp;
-              <ProgressSpinner
-                style="width: 30px; height: 25px"
-                strokeWidth="10" /></span
-          ></v-btn>
+          >
+            <v-progress-circular
+              v-if="submittingApplication"
+              class="mr-3"
+              bg-color="white"
+              indeterminate
+              color="secondary"
+              size="23"
+            />
+            {{ submittingApplication ? "Submitting..." : "Submit application" }}
+          </v-btn>
         </v-row>
       </template>
     </body-header>

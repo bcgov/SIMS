@@ -86,3 +86,19 @@ export enum RestrictionNotificationType {
    */
   Error = "Error",
 }
+
+/**
+ *  Student restriction badge.
+ */
+export enum StudentRestrictionStatus {
+  NoRestriction = "No restrictions",
+  Restriction = "Active restrictions",
+}
+
+/**
+ *  Restriction chip for datatable.
+ */
+export enum RestrictionStatus {
+  Active = "Active",
+  Resolved = "Resolved",
+}

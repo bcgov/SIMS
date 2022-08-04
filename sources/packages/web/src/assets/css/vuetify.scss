@@ -29,6 +29,12 @@
   border: 3px solid $banner-color-error;
 }
 
+.v-alert.text-info {
+  @extend .alert_banner_radius;
+  background-color: $banner-background-info;
+  border: 3px solid $banner-color-info;
+}
+
 // Reducing the spacing to looks like more with the UI definitions.
 .v-list-item-icon--start {
   -webkit-margin-end: 10px !important;
@@ -106,6 +112,13 @@
   margin-inline-start: 16px !important;
 }
 
+.warning-shade {
+  color: $warning-shade;
+}
+.success-shade {
+  color: $success-shade;
+}
+
 //CSS class added to match v-tab with figma.
 .v-slide-group.v-tabs.v-tabs--horizontal {
   display: inline-block;
@@ -113,9 +126,10 @@
   width: 100%;
 }
 
-//CSS class added to match v-tab with figma.
-.v-tab__slider {
-  bottom: 5px !important;
+// v-btn toggle background color for notes, to match with Figma.
+.btn-toggle button:not(.v-btn--selected) {
+  color: $color-white !important;
+  background: $brand-grey !important;
 }
 
 .v-expansion-panel-title {

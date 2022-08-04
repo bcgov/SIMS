@@ -1,22 +1,10 @@
 @import "./global-style-variables.scss";
 /** Styles for the note component overriding the color and typography of timeline */
 
-.p-timeline-event-marker {
-  background-color: $brand-blue !important;
-}
-
 .content-header {
   color: $brand-black;
   font-weight: 700;
   font-size: 17px;
-  line-height: 22px;
-  font-style: $font-style-normal;
-}
-
-.content-body {
-  color: $brand-black;
-  font-weight: 400;
-  font-size: 16px;
   line-height: 22px;
   font-style: $font-style-normal;
 }
@@ -28,17 +16,10 @@
   line-height: 21px;
   font-style: $font-style-normal;
 }
-div.p-timeline-event-opposite {
-  max-width: 0 !important;
-}
 
 .marker-text {
   font-weight: 700;
   font-size: 17px;
   line-height: 22px;
   font-style: $font-style-normal;
-}
-
-.p-timeline .p-timeline-event-connector {
-  background-color: #e8e8e8;
 }

@@ -3,15 +3,15 @@
     <span class="category-header-large color-blue">
       {{ educationProgram.name }}
     </span>
-    <program-status-chip
-      class="ml-2"
+    <status-chip-program
+      class="ml-2 mb-2"
       :status="educationProgram.programStatus"
-    ></program-status-chip>
+    ></status-chip-program>
     <v-btn
       class="float-right"
       variant="outlined"
       @click="programButtonAction()"
-      :color="COLOR_BLUE"
+      color="primary"
     >
       {{ programActionLabel }}
     </v-btn>
@@ -79,13 +79,12 @@ import {
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { ProgramIntensity, ClientIdType } from "@/types";
-import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
-import { COLOR_BLUE } from "@/constants";
+import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { AuthService } from "@/services/AuthService";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
 export default {
-  components: { ProgramStatusChip },
+  components: { StatusChipProgram },
   props: {
     programId: {
       type: Number,
@@ -145,7 +144,6 @@ export default {
       isInstitutionUser,
       isAESTUser,
       programActionLabel,
-      COLOR_BLUE,
     };
   },
 };

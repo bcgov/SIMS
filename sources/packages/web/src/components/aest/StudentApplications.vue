@@ -33,9 +33,12 @@
             variant="plain"
             @click="$emit('goToApplication', slotProps.data.id)"
             color="primary"
-            v-tooltip="'Click To View this Application'"
             >{{ slotProps.data.applicationName }}
+            <v-tooltip activator="parent" location="start"
+              >Click To View this Application</v-tooltip
+            >
           </v-btn>
+
           <span v-if="clientType === ClientIdType.AEST"
             >{{ slotProps.data.applicationName }}
           </span>
@@ -62,7 +65,7 @@
         sortable="true"
       >
         <template #body="slotProps">
-          <Status :statusValue="slotProps.data.status" />
+          <status-chip-application :status="slotProps.data.status" />
         </template>
       </Column>
       <Column :field="StudentApplicationFields.Actions" header="Actions">
@@ -79,29 +82,32 @@
               <v-btn
                 :disabled="sinValidStatus !== SINStatusEnum.VALID"
                 variant="plain"
-              >
-                <font-awesome-icon
-                  :icon="['fas', 'pen']"
-                  class="mr-2"
-                  v-tooltip="'Click To Edit this Application'"
-                  @click="
-                    $emit(
-                      'editApplicationAction',
-                      slotProps.data.status,
-                      slotProps.data.id,
-                    )
-                  "
-                />
+                color="primary"
+                class="label-bold"
+                @click="
+                  $emit(
+                    'editApplicationAction',
+                    slotProps.data.status,
+                    slotProps.data.id,
+                  )
+                "
+                append-icon="mdi-pencil-outline"
+                ><span class="label-bold">Edit</span>
+                <v-tooltip activator="parent" location="start"
+                  >Click To Edit this Application</v-tooltip
+                >
               </v-btn>
+
               <v-btn
                 :disabled="sinValidStatus !== SINStatusEnum.VALID"
                 variant="plain"
-              >
-                <font-awesome-icon
-                  :icon="['fas', 'trash']"
-                  v-tooltip="'Click To Cancel this Application'"
-                  @click="$emit('openConfirmCancel', slotProps.data.id)"
-                />
+                color="primary"
+                class="label-bold"
+                @click="$emit('openConfirmCancel', slotProps.data.id)"
+                ><span class="label-bold">Cancel</span>
+                <v-tooltip activator="parent" location="start"
+                  >Click To Cancel this Application</v-tooltip
+                >
               </v-btn>
             </span>
           </span>
@@ -132,7 +138,7 @@ import {
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
-import Status from "@/views/student/ApplicationStatus.vue";
+import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import { useStore } from "vuex";
 import { AuthService } from "@/services/AuthService";
 import {
@@ -141,7 +147,7 @@ import {
 } from "@/services/http/dto";
 
 export default {
-  components: { Status },
+  components: { StatusChipApplication },
   emits: ["editApplicationAction", "openConfirmCancel", "goToApplication"],
   props: {
     studentId: {

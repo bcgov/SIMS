@@ -12,7 +12,7 @@
 import { computed } from "vue";
 import { useStudentStore } from "@/composables";
 import { SINStatusEnum } from "@/types";
-import { BannerTypes } from "@/components/generic/Banner.models";
+import { BannerTypes } from "@/types/contracts/Banner";
 export default {
   setup() {
     const { sinValidStatus, hasStudentAccount } = useStudentStore();

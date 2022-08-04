@@ -1,13 +1,15 @@
 <template>
   <v-container>
     <header-navigator title="Manage institutions" subTitle="Manage Profile" />
-    <Message severity="info">
-      Please notice that the read-only information below is retrieved from your
-      BCeID account and it is not possible to change it here. If any read-only
-      information needs to be changed please visit
-      <a href="https://www.bceid.ca/" target="_blank" rel="noopener">bceid.ca</a
-      >.
-    </Message>
+    <banner
+      :type="BannerTypes.Info"
+      header="How to request a change"
+      summary="For the fields you can't change yourself, please email us with the information you'd like to change."
+    >
+      <template #actions>
+        <v-btn color="info">Email studentaidbc@gov.bc.ca</v-btn>
+      </template>
+    </banner>
     <full-page-container>
       <institution-profile-form
         :profileData="institutionProfileModel"
@@ -29,6 +31,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar } from "@/composables";
 import { useStore } from "vuex";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
+import { BannerTypes } from "@/types";
 
 export default {
   components: { InstitutionProfileForm },
@@ -62,6 +65,7 @@ export default {
     return {
       institutionProfileModel,
       updateInstitution,
+      BannerTypes,
     };
   },
 };
