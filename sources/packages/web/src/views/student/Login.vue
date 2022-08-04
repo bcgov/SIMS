@@ -46,20 +46,11 @@
         Frequently asked questions
       </h3>
       <v-expansion-panels>
-        <v-expansion-panel>
-          <v-expansion-panel-title>
-            I have a BC Services Card. How can I use it to login?
-            <template v-slot:actions="{ expanded }">
-              <v-icon
-                color="primary"
-                :icon="
-                  expanded
-                    ? 'fa:fa fa-chevron-circle-up'
-                    : 'fa:fa fa-chevron-circle-down'
-                "
-              ></v-icon>
-            </template>
-          </v-expansion-panel-title>
+        <v-expansion-panel
+          collapse-icon="$expanderCollapseIcon"
+          expand-icon="$expanderExpandIcon"
+          title="I have a BC Services Card. How can I use it to login?"
+        >
           <v-expansion-panel-text
             >Using your BC Services Card to login to StudentAid BC is quick and
             easy. Click on the login button above and follow the steps. For more
@@ -72,20 +63,11 @@
             >.</v-expansion-panel-text
           >
         </v-expansion-panel>
-        <v-expansion-panel>
-          <v-expansion-panel-title>
-            I don't have a BC Services Card. How can I get one?
-            <template v-slot:actions="{ expanded }">
-              <v-icon
-                color="primary"
-                :icon="
-                  expanded
-                    ? 'fa:fa fa-chevron-circle-up'
-                    : 'fa:fa fa-chevron-circle-down'
-                "
-              ></v-icon>
-            </template>
-          </v-expansion-panel-title>
+        <v-expansion-panel
+          collapse-icon="$expanderCollapseIcon"
+          expand-icon="$expanderExpandIcon"
+          title="I don't have a BC Services Card. How can I get one?"
+        >
           <v-expansion-panel-text
             >There are a few ways you can get a BC Services Card. Learn how to
             get a BC Services Card on the
@@ -97,20 +79,11 @@
             >.</v-expansion-panel-text
           >
         </v-expansion-panel>
-        <v-expansion-panel>
-          <v-expansion-panel-title>
-            I can't get a BC Services Card. What can I do?
-            <template v-slot:actions="{ expanded }">
-              <v-icon
-                color="primary"
-                :icon="
-                  expanded
-                    ? 'fa:fa fa-chevron-circle-up'
-                    : 'fa:fa fa-chevron-circle-down'
-                "
-              ></v-icon>
-            </template>
-          </v-expansion-panel-title>
+        <v-expansion-panel
+          collapse-icon="$expanderCollapseIcon"
+          expand-icon="$expanderExpandIcon"
+          title="I can't get a BC Services Card. What can I do?"
+        >
           <v-expansion-panel-text
             ><p>
               Using the BC Services Card is the quickest and easiest way to
@@ -144,21 +117,12 @@
             </v-btn>
           </v-expansion-panel-text>
         </v-expansion-panel>
-        <v-expansion-panel>
-          <v-expansion-panel-title>
-            I have a Basic BCeID account. How can I upgrade my account to use a
-            BC Services Card instead?
-            <template v-slot:actions="{ expanded }">
-              <v-icon
-                color="primary"
-                :icon="
-                  expanded
-                    ? 'fa:fa fa-chevron-circle-up'
-                    : 'fa:fa fa-chevron-circle-down'
-                "
-              ></v-icon>
-            </template>
-          </v-expansion-panel-title>
+        <v-expansion-panel
+          collapse-icon="$expanderCollapseIcon"
+          expand-icon="$expanderExpandIcon"
+          title="I have a Basic BCeID account. How can I upgrade my account to use a
+            BC Services Card instead?"
+        >
           <v-expansion-panel-text
             >When you login using your BC Services Card, your Basic BCeID
             account will be disabled and you can begin using your BC Services
