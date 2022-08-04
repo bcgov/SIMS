@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS sims.student_users(
 );
 
 -- ## Comments
-COMMENT ON TABLE sims.student_users IS 'Students and users relationships, current and past ones. Every time that a student/user association changes this table will receive a new record to keep the audit.';
+COMMENT ON TABLE sims.student_users IS 'Students and users relationships, current and past ones. Every time a student/user association changes this table will receive a new record to keep the audit.';
 
 COMMENT ON COLUMN sims.student_users.id IS 'Auto-generated sequential primary key column.';
 
