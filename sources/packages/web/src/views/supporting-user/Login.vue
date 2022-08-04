@@ -20,14 +20,17 @@
           color="primary"
           @click="login"
           class="float-right"
+          prepend-icon="fa:fa fa-user"
         >
-          <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
           Login with BCSC
         </v-btn>
       </v-col>
       <v-col>
-        <v-btn color="primary" @click="login">
-          <v-icon size="25" class="mr-2">mdi-account-star-outline</v-icon>
+        <v-btn
+          color="primary"
+          @click="login"
+          prepend-icon="mdi-account-star-outline"
+        >
           Sign Up with BCSC
         </v-btn>
       </v-col>

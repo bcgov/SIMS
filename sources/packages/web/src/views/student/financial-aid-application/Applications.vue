@@ -2,11 +2,11 @@
   <v-container>
     <v-btn
       color="primary"
-      class="p-button-raised float-right"
+      class="float-right"
       :disabled="sinValidStatus !== SINStatusEnum.VALID"
       @click="goToStudentApplication()"
+      prepend-icon="fa:fa fa-edit"
     >
-      <v-icon size="25">mdi-text-box-plus</v-icon>
       Start New Application
     </v-btn>
   </v-container>

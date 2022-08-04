@@ -40,8 +40,12 @@ export enum LayoutTemplates {
    */
   CenteredCard = "centered-card",
   /**
+   * Create view with no card tabs.
+   */
+  CenteredTab = "centered-tab",
+  /**
    * Create view to adapt view with tabs.
    ** i.e create the tab header outside v-card and tab-window inside v-card.
    */
-  CenteredTab = "centered-tab",
+  CenteredCardTab = "centered-card-tab",
 }

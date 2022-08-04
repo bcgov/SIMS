@@ -17,7 +17,8 @@
         v-if="hasAuthenticatedStudentAccount"
         text
         @click="$router.push({ name: StudentRoutesConst.NOTIFICATIONS })"
-        ><font-awesome-icon :icon="['fas', 'bell']" class="mr-2" />
+        prepend-icon="fa:far fa-bell"
+      >
         Notifications</v-btn
       >
       <v-btn
@@ -26,8 +27,8 @@
         @click="
           $router.push({ name: StudentRoutesConst.STUDENT_FILE_UPLOADER })
         "
-        ><font-awesome-icon :icon="['fas', 'file-alt']" class="mr-2" />File
-        Uploader</v-btn
+        prepend-icon="fa:far fa-file-alt"
+        >File Uploader</v-btn
       >
       <v-btn
         v-if="hasAuthenticatedStudentAccount"
@@ -35,8 +36,8 @@
         @click="
           $router.push({ name: StudentRoutesConst.STUDENT_REQUEST_CHANGE })
         "
-        ><font-awesome-icon :icon="['fas', 'hand-paper']" class="mr-2" />Request
-        a Change</v-btn
+        prepend-icon="fa:far fa-hand-paper"
+        >Request a Change</v-btn
       >
       <v-btn
         v-if="hasAuthenticatedStudentAccount"
@@ -51,7 +52,7 @@
             icon="fa:fa fa-user"
             variant="outlined"
             elevation="1"
-            color="grey"
+            color="secondary"
             v-bind="props"
           ></v-btn>
         </template>

@@ -8,13 +8,12 @@
     </v-col>
     <v-col cols="4" v-if="clientType === ClientIdType.Institution">
       <v-btn
-        class="float-right primary-btn-background"
+        class="float-right"
+        color="primary"
         @click="goToAddNewLocation()"
+        prepend-icon="fa:fa fa-plus-circle"
       >
-        <font-awesome-icon
-          :icon="['fas', 'external-link-square-alt']"
-          class="mr-2"
-        />Add New Location
+        Add New Location
       </v-btn>
     </v-col>
   </v-row>
@@ -25,19 +24,19 @@
   >
     <v-row>
       <v-col cols="11">
-        <span>
-          <font-awesome-icon :icon="['fas', 'map-pin']" />
+        <div>
+          <v-icon icon="mdi-map-marker-outline"></v-icon>
           <span class="category-header-medium mx-2">{{ item.name }}</span>
           <status-chip-designation-agreement :status="item.designationStatus" />
-        </span>
+        </div>
       </v-col>
       <v-col cols="1">
         <v-btn
           color="primary"
           variant="text"
           @click="$emit('editLocation', item.id)"
+          prepend-icon="fa:fa fa-gear"
         >
-          <font-awesome-icon :icon="['fas', 'cog']" class="mr-2" />
           Edit
         </v-btn>
       </v-col>

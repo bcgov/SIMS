@@ -71,9 +71,9 @@ import { OfferingFormBaseModel, OfferingStatus, OfferingDTO } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
-import { BannerTypes } from "@/components/generic/Banner.models";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
+import { BannerTypes } from "@/types/contracts/Banner";
 
 export default {
   components: {

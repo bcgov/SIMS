@@ -52,7 +52,7 @@
             <template #body="slotProps">
               <v-btn
                 variant="outlined"
-                :color="COLOR_BLUE"
+                color="primary"
                 @click="goToViewDesignation(slotProps.data.designationId)"
                 data-cy="viewPendingDesignation"
               >
@@ -88,7 +88,6 @@ import {
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
-import { COLOR_BLUE } from "@/constants";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
 import ToggleContent from "@/components/generic/ToggleContent.vue";
 export default {
@@ -132,7 +131,6 @@ export default {
       DEFAULT_PAGE_NUMBER,
       PAGINATION_LIST,
       dateOnlyLongString,
-      COLOR_BLUE,
       searchCriteria,
       searchDesignations,
     };

@@ -1,10 +1,17 @@
 <template>
-  <Message severity="info">
-    Please notice that the read-only information below is retrieved from your
-    BCeID account and it is not possible to change it here. If any read-only
-    information needs to be changed please visit
-    <a rel="noopener" href="https://www.bceid.ca/" target="_blank">bceid.ca</a>.
-  </Message>
+  <banner
+    class="mt-2"
+    :type="BannerTypes.Info"
+    header="Updating read-only information"
+  >
+    <template #content>
+      Please notice that the read-only information below is retrieved from your
+      BCeID account and it is not possible to change it here. If any read-only
+      information needs to be changed please visit
+      <a rel="noopener" href="https://www.bceid.ca/" target="_blank">bceid.ca</a
+      >.
+    </template>
+  </banner>
   <full-page-container>
     <formio
       formName="institutionUserProfile"
@@ -24,6 +31,7 @@ import {
   InstitutionUserPersistDto,
 } from "../../types";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+import { BannerTypes } from "@/types/contracts/Banner";
 
 export default {
   setup() {
@@ -67,6 +75,7 @@ export default {
     return {
       initialData,
       submitted,
+      BannerTypes,
     };
   },
 };

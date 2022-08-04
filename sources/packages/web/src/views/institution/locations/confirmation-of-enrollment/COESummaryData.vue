@@ -1,79 +1,83 @@
 <template>
-  <body-header
-    :title="header"
-    :subTitle="subTitle"
-    :recordsCount="disbursements.results?.length"
-  >
-    <template #actions>
-      <v-text-field
-        density="compact"
-        label="Search Name"
-        variant="outlined"
-        v-model="searchCriteria"
-        data-cy="searchCriteria"
-        @keyup.enter="searchCOE"
-        prepend-inner-icon="mdi-magnify"
-        hide-details
-      />
-    </template>
-  </body-header>
-  <content-group>
-    <DataTable
-      :value="disbursements.results"
-      :lazy="true"
-      class="p-m-4"
-      :paginator="true"
-      :rows="pageLimit"
-      :rowsPerPageOptions="rowsPerPageOptions"
-      :totalRecords="disbursements.count"
-      @page="pageEvent"
-      @sort="sortEvent"
+  <full-page-container :full-width="true">
+    <body-header
+      :title="header"
+      :subTitle="subTitle"
+      :recordsCount="disbursements.results?.length"
     >
-      <template #empty>
-        <p class="text-center font-weight-bold">No records found.</p>
+      <template #actions>
+        <v-text-field
+          density="compact"
+          label="Search Name"
+          variant="outlined"
+          v-model="searchCriteria"
+          data-cy="searchCriteria"
+          @keyup.enter="searchCOE"
+          prepend-inner-icon="mdi-magnify"
+          hide-details
+        />
       </template>
-      <Column field="fullName" header="Name" sortable="true">
-        <template #body="slotProps">
-          <span>{{ slotProps.data.fullName }}</span>
-        </template>
-      </Column>
-      <Column field="studyStartPeriod" header="Study Period">
-        <template #body="slotProps">
-          <span>
-            {{ dateString(slotProps.data.studyStartPeriod) }} -
-            {{ dateString(slotProps.data.studyEndPeriod) }}
-          </span>
-        </template></Column
+    </body-header>
+    <content-group>
+      <DataTable
+        :value="disbursements.results"
+        :lazy="true"
+        class="p-m-4"
+        :paginator="true"
+        :rows="pageLimit"
+        :rowsPerPageOptions="rowsPerPageOptions"
+        :totalRecords="disbursements.count"
+        @page="pageEvent"
+        @sort="sortEvent"
       >
-      <Column field="applicationNumber" header="Application #"></Column>
-      <Column field="disbursementDate" header="Disbursement Date">
-        <template #body="slotProps">
-          <span>
-            {{ dateOnlyLongString(slotProps.data.disbursementDate) }}
-          </span>
-        </template></Column
-      >
-      <Column field="coeStatus" header="Status" sortable="true">
-        <template #body="slotProps">
-          <COEStatusBadge :status="slotProps.data.coeStatus" />
+        <template #empty>
+          <p class="text-center font-weight-bold">No records found.</p>
         </template>
-      </Column>
-      <Column field="applicationId" header="">
-        <template #body="slotProps">
-          <v-btn
-            :color="COLOR_BLUE"
-            variant="outlined"
-            @click="goToViewApplication(slotProps.data.disbursementScheduleId)"
-            >view</v-btn
-          >
-        </template>
-      </Column>
-    </DataTable>
-  </content-group>
+        <Column field="fullName" header="Name" sortable="true">
+          <template #body="slotProps">
+            <span>{{ slotProps.data.fullName }}</span>
+          </template>
+        </Column>
+        <Column field="studyStartPeriod" header="Study Period">
+          <template #body="slotProps">
+            <span>
+              {{ dateString(slotProps.data.studyStartPeriod) }} -
+              {{ dateString(slotProps.data.studyEndPeriod) }}
+            </span>
+          </template></Column
+        >
+        <Column field="applicationNumber" header="Application #"></Column>
+        <Column field="disbursementDate" header="Disbursement Date">
+          <template #body="slotProps">
+            <span>
+              {{ dateOnlyLongString(slotProps.data.disbursementDate) }}
+            </span>
+          </template></Column
+        >
+        <Column field="coeStatus" header="Status" sortable="true">
+          <template #body="slotProps">
+            <status-chip-c-o-e :status="slotProps.data.coeStatus" />
+          </template>
+        </Column>
+        <Column field="applicationId" header="">
+          <template #body="slotProps">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              @click="
+                goToViewApplication(slotProps.data.disbursementScheduleId)
+              "
+              >view</v-btn
+            >
+          </template>
+        </Column>
+      </DataTable>
+    </content-group>
+  </full-page-container>
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
@@ -83,10 +87,10 @@ import {
   PAGINATION_LIST,
   DEFAULT_PAGE_NUMBER,
   PageAndSortEvent,
+  LayoutTemplates,
 } from "@/types";
 import { useFormatters } from "@/composables";
-import { COLOR_BLUE } from "@/constants";
-import COEStatusBadge from "@/components/generic/COEStatusBadge.vue";
+import StatusChipCOE from "@/components/generic/StatusChipCOE.vue";
 import {
   COESummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
@@ -95,7 +99,7 @@ import {
 const DEFAULT_SORT_FIELD = "coeStatus";
 
 export default {
-  components: { COEStatusBadge },
+  components: { StatusChipCOE },
   props: {
     locationId: {
       type: Number,
@@ -181,11 +185,10 @@ export default {
         //update the list
         await updateSummaryList(currValue);
       },
+      {
+        immediate: true,
+      },
     );
-
-    onMounted(async () => {
-      await updateSummaryList(props.locationId);
-    });
 
     return {
       disbursements,
@@ -194,11 +197,11 @@ export default {
       goToViewApplication,
       pageLimit,
       rowsPerPageOptions,
-      COLOR_BLUE,
       searchCriteria,
       pageEvent,
       sortEvent,
       searchCOE,
+      LayoutTemplates,
     };
   },
 };

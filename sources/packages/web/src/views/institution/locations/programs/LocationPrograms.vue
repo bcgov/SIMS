@@ -20,10 +20,11 @@
             hide-details
           />
           <v-btn
-            class="ml-2 primary-btn-background"
+            class="ml-2"
+            color="primary"
             @click="goToAddNewProgram()"
+            prepend-icon="fa:fa fa-plus-circle"
           >
-            <v-icon size="25" left> mdi-open-in-new </v-icon>
             Create New Program
           </v-btn>
         </v-row>
@@ -67,9 +68,9 @@
           header="Status"
           :sortable="true"
           ><template #body="slotProps">
-            <program-status-chip
+            <status-chip-program
               :status="slotProps.data.programStatus"
-            ></program-status-chip></template
+            ></status-chip-program></template
         ></Column>
         <Column>
           <template #body="slotProps">
@@ -100,10 +101,10 @@ import {
   PaginatedResults,
 } from "@/types";
 import { ref, watch, onMounted } from "vue";
-import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
+import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 
 export default {
-  components: { ProgramStatusChip },
+  components: { StatusChipProgram },
   props: {
     locationId: {
       type: Number,

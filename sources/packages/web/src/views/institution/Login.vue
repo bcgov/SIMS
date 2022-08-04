@@ -17,7 +17,7 @@
                   For returning users—login using your BCeID.
                 </p>
                 <v-btn
-                  class="primary-btn-background"
+                  color="primary"
                   @click="login"
                   prepend-icon="fa:fa fa-user"
                 >
@@ -30,7 +30,7 @@
                   For new users—sign up using your BCeID.
                 </p>
                 <v-btn
-                  class="primary-btn-background"
+                  color="primary"
                   @click="login"
                   prepend-icon="fa:fa fa-user-plus"
                 >
@@ -47,20 +47,15 @@
             alt="Person standing with laptop"
             src="@/assets/images/person-standing-with-laptop.svg"
         /></v-col>
-        <v-col cols="12" class="my-n3">
-          <Message severity="error" v-if="showBasicBCeIDMessage">
-            No such Business account has been found with BCeID. Please login
-            with your Business BCeId.
-          </Message>
-          <Message severity="error" v-if="showDisabledUserMessage">
-            Disabled user - you don't have access to the system. Please contact
-            Administrator for more information.
-          </Message>
-          <Message severity="error" v-if="showUnknownUserMessage">
-            The user was validated successfully but is not currently allowed to
-            have access to this application. Please contact the Administrator
-            for more information.
-          </Message>
+      </v-row>
+      <v-row>
+        <v-col>
+          <banner
+            v-if="errorMessage"
+            class="mt-2"
+            :type="BannerTypes.Error"
+            :summary="errorMessage"
+          />
         </v-col>
       </v-row>
     </v-card-text>
@@ -70,6 +65,8 @@
 <script lang="ts">
 import { useAuth } from "@/composables";
 import { AppIDPType, ClientIdType } from "@/types";
+import { computed } from "vue";
+import { BannerTypes } from "@/types/contracts/Banner";
 
 export default {
   props: {
@@ -89,12 +86,24 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props: any) {
     const { executeLogin } = useAuth();
     const login = async () => {
       await executeLogin(ClientIdType.Institution, AppIDPType.BCeID);
     };
-    return { login };
+    const errorMessage = computed(() => {
+      switch (true) {
+        case props.showBasicBCeIDMessage:
+          return "No such Business account has been found with BCeID. Please login with your Business BCeId.";
+        case props.showDisabledUserMessage:
+          return "Disabled user - you don't have access to the system. Please contact Administrator for more information.";
+        case props.showUnknownUserMessage:
+          return "The user was validated successfully but is not currently allowed to have access to this application. Please contact the Administrator for more information.";
+        default:
+          return false;
+      }
+    });
+    return { login, errorMessage, BannerTypes };
   },
 };
 </script>
