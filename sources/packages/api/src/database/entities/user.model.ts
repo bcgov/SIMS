@@ -58,6 +58,8 @@ export class User extends BaseModel {
    */
   @Column({
     name: "identity_provider_type",
+    enum: IdentityProviders,
+    enumName: "IdentityProviders",
     nullable: false,
   })
   identityProviderType: IdentityProviders;

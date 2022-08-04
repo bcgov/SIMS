@@ -6,7 +6,7 @@ import { User } from "./user.model";
 
 /**
  * Students and users relationships, current and past ones.
- * Every time that a a student/user association changes this
+ * Every time that a student/user association changes this
  * table will receive a new record to keep the audit.
  */
 @Entity({ name: TableNames.StudentUser })
