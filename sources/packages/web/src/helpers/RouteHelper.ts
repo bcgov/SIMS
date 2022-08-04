@@ -57,6 +57,7 @@ export class RouteHelper {
     let allowedIDP = AppIDPType.UNKNOWN;
     switch (clientType) {
       case ClientIdType.Student:
+        return [AppIDPType.BCeID, AppIDPType.BCSC].includes(idp);
       case ClientIdType.SupportingUsers:
         allowedIDP = AppIDPType.BCSC;
         break;

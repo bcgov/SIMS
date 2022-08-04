@@ -131,3 +131,11 @@
   color: $color-white !important;
   background: $brand-grey !important;
 }
+
+.v-expansion-panel-title {
+  text-align: left;
+}
+
+.v-expansion-panel-title .v-icon {
+  color: $brand-blue;
+}

@@ -23,11 +23,12 @@ import {
 import { StudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import * as dayjs from "dayjs";
+import { StudentUser } from "../../database/entities/student-user.model";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
-    dataSource: DataSource,
+    private readonly dataSource: DataSource,
     private readonly sfasIndividualService: SFASIndividualService,
   ) {
     super(dataSource.getRepository(Student));
@@ -123,6 +124,7 @@ export class StudentService extends RecordDataModelService<Student> {
     user.email = userInfo.email;
     user.firstName = userInfo.givenNames;
     user.lastName = userInfo.lastName;
+    user.creator = user;
 
     const student = new Student();
     student.user = user;
@@ -147,7 +149,26 @@ export class StudentService extends RecordDataModelService<Student> {
       this.logger.error(error);
       throw error;
     }
-    return this.save(student);
+
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      // TODO: Upcoming tickets will change this logic while creating a new user or
+      // switching between BCeID and BCSC user.
+
+      // Creates the new user and student.
+      const newStudent = await transactionalEntityManager
+        .getRepository(Student)
+        .save(student);
+      // Create the new entry in the student/user history/audit.
+      const studentUser = new StudentUser();
+      studentUser.user = user;
+      studentUser.student = student;
+      studentUser.creator = user;
+      await transactionalEntityManager
+        .getRepository(StudentUser)
+        .save(studentUser);
+      // Returns the newly created student.
+      return newStudent;
+    });
   }
 
   /**

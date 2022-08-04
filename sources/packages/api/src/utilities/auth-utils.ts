@@ -60,7 +60,7 @@ export function setGlobalPipes(app: INestApplication) {
  * @returns user full name.
  */
 export function getUserFullName(user: {
-  firstName: string;
+  firstName?: string;
   lastName: string;
 }): string {
   return user
@@ -77,7 +77,7 @@ export function getUserFullName(user: {
  * @returns full name.
  */
 export const getIDIRUserFullName = (user: {
-  firstName: string;
+  firstName?: string;
   lastName: string;
 }): string => {
   const seperator = user && user.firstName && user.lastName ? "," : "";

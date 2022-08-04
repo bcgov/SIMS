@@ -39,7 +39,11 @@ export default createVuetify({
   },
   icons: {
     defaultSet: "mdi",
-    aliases,
+    aliases: {
+      ...aliases,
+      expanderExpandIcon: "fa:fa fa-chevron-circle-down",
+      expanderCollapseIcon: "fa:fa fa-chevron-circle-up",
+    },
     sets: {
       fa,
       mdi,
