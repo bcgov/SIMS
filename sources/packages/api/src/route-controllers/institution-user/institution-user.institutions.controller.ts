@@ -124,6 +124,10 @@ export class InstitutionUserInstitutionsController extends BaseController {
       "or the user already exists " +
       "or a second legal signing authority is trying to be set when one is already in place.",
   })
+  @ApiForbiddenResponse({
+    description:
+      "The user is not allowed to create the requested BCeID account type.",
+  })
   @IsInstitutionAdmin()
   @Post()
   async createInstitutionUserWithAuth(
@@ -134,6 +138,7 @@ export class InstitutionUserInstitutionsController extends BaseController {
       userToken.authorizations.institutionId,
       payload,
       userToken.userId,
+      BCeIDAccountTypeCodes.Business,
     );
   }
 

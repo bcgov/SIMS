@@ -107,12 +107,15 @@ export class InstitutionUserControllerService {
    * @param institutionId institution to have the user associated.
    * @param payload user and authorization information.
    * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param allowedAccountTypes types of BCeID account that can be created. For instance,
+   * basic BCeID accounts are allowed to be created only by the Ministry users.
    * @returns created user id.
    */
   async createInstitutionUserWithAuth(
     institutionId: number,
     payload: CreateInstitutionUserAPIInDTO,
     auditUserId: number,
+    ...allowedAccountTypes: BCeIDAccountTypeCodes[]
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     const institution =
       await this.institutionService.getBasicInstitutionDetailById(
@@ -126,6 +129,12 @@ export class InstitutionUserControllerService {
     const accountType = institution.businessGuid
       ? BCeIDAccountTypeCodes.Business
       : BCeIDAccountTypeCodes.Individual;
+
+    if (!allowedAccountTypes.includes(accountType)) {
+      throw new ForbiddenException(
+        "The user is not allowed to create the requested BCeID account type.",
+      );
+    }
 
     // Find user on BCeID Web Service
     const bceidUserAccount = await this.bceIDService.getAccountDetails(
