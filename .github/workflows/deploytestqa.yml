@@ -1,0 +1,71 @@
+name: Deploy QA to TEST in OpenShift
+
+on:
+  workflow_dispatch:
+    inputs:
+      BUILD_REF:
+        description: "Buildref"
+        required: true
+        default: "main"
+      BUILD_ID:
+        description: "buildid"
+        required: true
+        default: "NULL"
+
+jobs:
+  # Deploy API/App images in Test
+  deployTest:
+    name: Deploy QA App, API, and DB to TEST environment
+    runs-on: ubuntu-latest
+    env:
+      BUILD_ID: ${{ github.event.inputs.BUILD_ID }}
+      NAMESPACE: 0c27fb-test
+      BUILD_NAMESPACE: 0c27fb-tools
+      BUILD_REF: ${{ github.event.inputs.BUILD_REF }}
+      HOST_PREFIX: qa-
+      KEYCLOAK_REALM: "jxoe2o46"
+      KEYCLOAK_AUTH_URL: "https://test.oidc.gov.bc.ca/auth/"
+      BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
+      RULE_ENGINE_URL: "https://test-aest-ffa-bpm.apps.silver.devops.gov.bc.ca/camunda/engine-rest"
+      FORMS_URL: "https://test-aest-ffa-forms.apps.silver.devops.gov.bc.ca"
+      SITE_MINDER_LOGOUT_URL: "https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi"
+      FORMS_FLOW_API_URL: "https://test-aest-ffa-api.apps.silver.devops.gov.bc.ca"
+      ATBC_LOGIN_ENDPOINT: "https://auth.at-bc.ca/api/login"
+      ATBC_ENDPOINT: "https://sabc.at-bc.ca/api"
+      SWAGGER_ENABLED: true
+      APPLICATION_ARCHIVE_DAYS: 43
+      APP_NAME: sims
+      API_PORT: 7072
+      WEB_PORT: 3032
+      API: ${HOST_PREFIX}api-${APP_NAME}
+      WEB: ${HOST_PREFIX}web-${APP_NAME}
+      SWAGGER_NAME: ${HOST_PREFIX}swagger
+      DATABASE_NAME_KEY: ${HOST_PREFIX}database-name
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD ID: $BUILD_ID
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo NAMESPACE: $NAMESPACE
+          echo BRANCH: $BUILD_REF
+          echo HOST_PREFIX: $HOST_PREFIX
+
+      # Checkout the PR branch
+      - name: Checkout Target Branch
+        uses: actions/checkout@v1
+
+      # Log in to OpenShift.
+      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
+      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      # Deploy the api
+      - name: Deploy QA API
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-api
+      - name: Deploy QA APP
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-web

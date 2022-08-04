@@ -21,6 +21,19 @@ export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION),
 export BYPASS_APPLICATION_SUBMIT_VALIDATIONS := $(or $(BYPASS_APPLICATION_SUBMIT_VALIDATIONS), false)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
+export API := $(or ${API}, api-$(APP_NAME))
+export WEB := $(or ${WEB}, web-$(APP_NAME))
+export API_PORT := $(or ${API_PORT}, 7070)
+export WEB_PORT := $(or ${WEB_PORT}, 3030)
+export DATABASE_NAME_KEY := $(or ${DATABASE_NAME_KEY}, database-name)
+export DB_NAME := $(or ${DB_NAME}, SIMSDB)
+export SWAGGER_NAME := $(or ${SWAGGER_NAME}, swagger)
+export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
+export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
+
+define QA_DB_NAME
+"QASIMSDB"
+endef
 
 define BUILD_TAG
 "$(BUILD_REF)-$(BUILD_ID)"
@@ -30,24 +43,12 @@ define BUILD_TEMPLATE_PATH
 "openshift/docker-build.yml"
 endef
 
-define API
-"api-$(APP_NAME)"
-endef
-
-define Web
-"web-$(APP_NAME)"
-endef
-
 define HOST
 "$(HOST_PREFIX)aest-sims.$(DOMAIN)"
 endef
 
 define DB_SERVICE_NAME
 "patroni-master"
-endef
-
-define DB_NAME
-"SIMSDB"
 endef
 
 define FORMSFLOW_FORMS_NAME
@@ -167,6 +168,8 @@ oc-deploy-api: | print-status deploy-api
 oc-create-db: | print-status create-db
 oc-build-web: | print-status build-web
 oc-deploy-web: | print-status deploy-web
+
+oc-create-qa-api-db: | print-status create-qa-api-db
 
 oc-build-forms-flow-forms: | print-status build-forms-flow-forms
 oc-build-forms-flow-bpm: | print-status build-forms-flow-bpm
@@ -307,9 +310,9 @@ build-api:
 build-web:
 	test -n "$(BUILD_REF)"
 	test -n "$(BUILD_NAMESPACE)"
-	@echo "+\n++ BUILDING Web with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/web -p NAME=$(Web) | oc -n $(BUILD_NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) start-build bc/$(Web) --wait
+	@echo "+\n++ BUILDING WEB with tag: $(BUILD_TAG)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/web -p NAME=$(WEB) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WEB) --wait
 
 init-patroni:
 	@echo "++\n Init Patroni in $(NAMESPACE) \n++"
@@ -343,19 +346,25 @@ deploy-api:
 	test -n "$(FORMS_FLOW_API_URL)"
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
+	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(API)"
+	test -n "$(SWAGGER_NAME)"
+	test -n "$(API_PORT)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
 		-p HOST_NAME=$(HOST) \
+		-p PORT=$(API_PORT) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p IMAGE_STREAM_TAG="$(API):$(BUILD_TAG)" \
+		-p IMAGE_STREAM_TAG="$(API_BUILD_REF):$(BUILD_TAG)" \
 		-p KEYCLOAK_REALM=$(KEYCLOAK_REALM) \
 		-p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) \
 		-p BCeID_WEB_SERVICE_WSDL=$(BCeID_WEB_SERVICE_WSDL) \
 		-p RULE_ENGINE_URL=$(RULE_ENGINE_URL) \
 		-p FORMS_URL=$(FORMS_URL) \
 		-p BUILD_TAG=$(BUILD_TAG) \
+		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
 		-p SITE_MINDER_LOGOUT_URL=$(SITE_MINDER_LOGOUT_URL) \
 		-p FORMS_FLOW_API_URL=$(FORMS_FLOW_API_URL) \
 		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
@@ -364,15 +373,24 @@ deploy-api:
 		-p BYPASS_APPLICATION_SUBMIT_VALIDATIONS=$(BYPASS_APPLICATION_SUBMIT_VALIDATIONS) \
 		-p SWAGGER_ENABLED=$(SWAGGER_ENABLED) \
 		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
+		-p SWAGGER_NAME=$(SWAGGER_NAME) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
 
 deploy-web:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	@echo "+\n++ Deploying Web with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(Web) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(Web):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(Web))
+	test -n "$(WEB)"
+	test -n "$(WEB_PORT)"
+	@echo "+\n++ Deploying WEB with tag: $(BUILD_TAG)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(WEB) -p PORT=$(WEB_PORT) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(WEB))
+
+create-qa-api-db:
+	test -n $(QA_DB_NAME)
+	test -n $(NAMESPACE)
+	@echo "+\n++ Creating DB ($(QA_DB_NAME)) in $(NAMESPACE) patroni db cluster"
+	@oc -n $(NAMESPACE) process -f openshift/createdb-job.yml -p DB_NAME=$(QA_DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=qa-api-db | oc -n $(NAMESPACE) apply -f -
 
 build-forms-flow-forms:
 	test -n "$(BUILD_NAMESPACE)"

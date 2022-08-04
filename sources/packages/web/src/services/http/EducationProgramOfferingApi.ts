@@ -12,7 +12,12 @@ import {
   EducationProgramOfferingDto,
 } from "@/types";
 import { addSortOptions } from "@/helpers";
-import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
+import {
+  OfferingAssessmentAPIInDTO,
+  OfferingChangeRequestAPIOutDTO,
+  PrecedingOfferingSummaryAPIOutDTO,
+  OfferingChangeAssessmentAPIInDTO,
+} from "@/services/http/dto";
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
    * Creates program offering and returns the id of the created resource.
@@ -122,13 +127,13 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     programId: number,
     programYearId: number,
     offeringIntensity: OfferingIntensity,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
     try {
       let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/options-list`;
       url = `${url}?offeringIntensity=${offeringIntensity}`;
-      if (includeInActivePY) {
-        url = `${url}&includeInActivePY=${includeInActivePY}`;
+      if (isIncludeInActiveProgramYear) {
+        url = `${url}&isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
       }
       const response = await this.getCall(url);
       return response.data;
@@ -171,12 +176,12 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     programId: number,
     programYearId: number,
     selectedOfferingIntensity: OfferingIntensity,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
     try {
       let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/offerings-list?offeringIntensity=${selectedOfferingIntensity}`;
-      if (includeInActivePY) {
-        url = `${url}&includeInActivePY=${includeInActivePY}`;
+      if (isIncludeInActiveProgramYear) {
+        url = `${url}&isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
       }
       const response = await this.getCall(url);
       return response.data;
@@ -276,6 +281,60 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   ): Promise<void> {
     await this.postCall<OfferingDTO>(
       `institution/offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`,
+      payload,
+    );
+  }
+
+  /**
+   * Get all offerings that were requested for change.
+   * @returns all offerings that were requested for change.
+   */
+  async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
+    return this.getCallTyped<OfferingChangeRequestAPIOutDTO[]>(
+      this.addClientRoot("institution/offering/change-requests"),
+    );
+  }
+
+  /**
+   * For a given offering which is requested as change
+   * get the summary of it's actual(preceding) offering.
+   * @param offeringId actual offering id.
+   * @returns preceding offering summary.
+   */
+  async getPrecedingOfferingSummary(
+    offeringId: number,
+  ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
+    return this.getCallTyped<PrecedingOfferingSummaryAPIOutDTO>(
+      this.addClientRoot(
+        `institution/offering/${offeringId}/preceding-offering-summary`,
+      ),
+    );
+  }
+
+  /**
+   * For a given offering which is requested as change
+   * get the details of it's actual(preceding) offering.
+   * @param offeringId actual offering id.
+   * @returns preceding offering details.
+   */
+  async getPrecedingOfferingByActualOfferingId(
+    offeringId: number,
+  ): Promise<OfferingDTO> {
+    return this.getCallTyped<OfferingDTO>(
+      this.addClientRoot(
+        `institution/offering/${offeringId}/preceding-offering`,
+      ),
+    );
+  }
+
+  async assessOfferingChangeRequest(
+    offeringId: number,
+    payload: OfferingChangeAssessmentAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall<OfferingChangeAssessmentAPIInDTO>(
+      this.addClientRoot(
+        `institution/offering/${offeringId}/assess-change-request`,
+      ),
       payload,
     );
   }

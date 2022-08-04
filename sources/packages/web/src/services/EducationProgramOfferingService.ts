@@ -11,7 +11,12 @@ import {
   EducationProgramOfferingDto,
   PaginatedResults,
 } from "../types";
-import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
+import {
+  OfferingAssessmentAPIInDTO,
+  OfferingChangeAssessmentAPIInDTO,
+  OfferingChangeRequestAPIOutDTO,
+  PrecedingOfferingSummaryAPIOutDTO,
+} from "@/services/http/dto";
 
 export class EducationProgramOfferingService {
   // Share Instance
@@ -110,14 +115,14 @@ export class EducationProgramOfferingService {
     programId: number,
     programYearId: number,
     selectedIntensity: OfferingIntensity,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgramOffering.getProgramOfferingsForLocation(
       locationId,
       programId,
       programYearId,
       selectedIntensity,
-      includeInActivePY,
+      isIncludeInActiveProgramYear,
     );
   }
 
@@ -147,14 +152,14 @@ export class EducationProgramOfferingService {
     programId: number,
     programYearId: number,
     selectedOfferingIntensity: OfferingIntensity,
-    includeInActivePY?: boolean,
+    isIncludeInActiveProgramYear?: boolean,
   ): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgramOffering.getProgramOfferingsForLocationForInstitution(
       locationId,
       programId,
       programYearId,
       selectedOfferingIntensity,
-      includeInActivePY,
+      isIncludeInActiveProgramYear,
     );
   }
 
@@ -238,6 +243,52 @@ export class EducationProgramOfferingService {
     return ApiClient.EducationProgramOffering.requestChange(
       locationId,
       programId,
+      offeringId,
+      payload,
+    );
+  }
+
+  /**
+   * Get all offerings that were requested for change.
+   * @returns all offerings that were requested for change.
+   */
+  async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
+    return ApiClient.EducationProgramOffering.getOfferingChangeRequests();
+  }
+
+  /**
+   * For a given offering which is requested as change
+   * get the summary of it's actual(preceding) offering.
+   * @param offeringId actual offering id.
+   * @returns preceding offering summary.
+   */
+  async getPrecedingOfferingSummary(
+    offeringId: number,
+  ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
+    return ApiClient.EducationProgramOffering.getPrecedingOfferingSummary(
+      offeringId,
+    );
+  }
+
+  /**
+   * For a given offering which is requested as change
+   * get the details of it's actual(preceding) offering.
+   * @param offeringId actual offering id.
+   * @returns preceding offering details.
+   */
+  async getPrecedingOfferingByActualOfferingId(
+    offeringId: number,
+  ): Promise<OfferingDTO> {
+    return ApiClient.EducationProgramOffering.getPrecedingOfferingByActualOfferingId(
+      offeringId,
+    );
+  }
+
+  async assessOfferingChangeRequest(
+    offeringId: number,
+    payload: OfferingChangeAssessmentAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.EducationProgramOffering.assessOfferingChangeRequest(
       offeringId,
       payload,
     );

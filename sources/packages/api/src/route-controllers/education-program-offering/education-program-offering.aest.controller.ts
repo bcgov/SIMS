@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Get,
   NotFoundException,
   Param,
   Patch,
   UnprocessableEntityException,
+  ParseIntPipe,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
@@ -19,7 +21,15 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { EducationProgramOfferingService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
-import { OfferingAssessmentAPIInDTO } from "./models/education-program-offering.dto";
+import {
+  OfferingAssessmentAPIInDTO,
+  OfferingChangeRequestAPIOutDTO,
+  PrecedingOfferingSummaryAPIOutDTO,
+  transformToProgramOfferingDto,
+  ProgramOfferingDto,
+  OfferingChangeAssessmentAPIInDTO,
+} from "./models/education-program-offering.dto";
+import { CustomNamedError } from "../../utilities";
 
 /**
  * Institution location controller for institutions Client.
@@ -70,5 +80,91 @@ export class EducationProgramOfferingAESTController extends BaseController {
       payload.assessmentNotes,
       payload.offeringStatus,
     );
+  }
+  /**
+   * Get all offerings that were requested for change and waiting to be approved/declined.
+   * @returns offerings which were requested for change.
+   */
+  @Get("change-requests")
+  async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
+    const offerings =
+      await this.programOfferingService.getOfferingChangeRequests();
+
+    return offerings.map((offering) => ({
+      offeringId: offering.id,
+      programId: offering.educationProgram.id,
+      offeringName: offering.name,
+      submittedDate: offering.submittedDate,
+      locationName: offering.institutionLocation.name,
+      institutionName:
+        offering.institutionLocation.institution.legalOperatingName,
+    }));
+  }
+
+  /**
+   * For a given offering which is requested as change
+   * get the summary of it's actual(preceding) offering.
+   * @param offeringId actual offering id.
+   * @returns preceding offering summary.
+   */
+  @Get(":offeringId/preceding-offering-summary")
+  async getPrecedingOfferingSummary(
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+  ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
+    return this.programOfferingService.getPrecedingOfferingSummary(offeringId);
+  }
+
+  /**
+   * Get preceding offering details.
+   * @param offeringId actual offering id.
+   * @returns Preceding offering details.
+   */
+  @ApiNotFoundResponse({
+    description: "Offering not found.",
+  })
+  @Get(":offeringId/preceding-offering")
+  async getPrecedingOfferingByActualOfferingId(
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+  ): Promise<ProgramOfferingDto> {
+    const offering = await this.programOfferingService.getOfferingById(
+      offeringId,
+      true,
+    );
+    if (!offering) {
+      throw new NotFoundException("Offering not found.");
+    }
+    return transformToProgramOfferingDto(offering);
+  }
+
+  /**
+   * Approve or Decline an offering change
+   * requested by institution.
+   * @param offeringId offering that is requested for change.
+   * @param payload offering change payload.
+   * @param userToken User who approves or declines the offering.
+   */
+  @Patch(":offeringId/assess-change-request")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Either offering or preceding offering not found or the offering not in appropriate status to be approved or declined for change.",
+  })
+  async assessOfferingChangeRequest(
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+    @Body() payload: OfferingChangeAssessmentAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    try {
+      await this.programOfferingService.assessOfferingChangeRequest(
+        offeringId,
+        userToken.userId,
+        payload.assessmentNotes,
+        payload.offeringStatus,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        throw new UnprocessableEntityException(error.message);
+      }
+      throw error;
+    }
   }
 }

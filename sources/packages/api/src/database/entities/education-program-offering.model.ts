@@ -255,6 +255,17 @@ export class EducationProgramOffering extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   parentOffering?: EducationProgramOffering;
+
+  /**
+   * The immediate previous offering from which the current offering was created
+   * during request for change.
+   */
+  @ManyToOne(() => EducationProgramOffering, { eager: false, nullable: true })
+  @JoinColumn({
+    name: "preceding_offering_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  precedingOffering?: EducationProgramOffering;
 }
 
 /**

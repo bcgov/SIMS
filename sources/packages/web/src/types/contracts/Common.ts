@@ -31,6 +31,17 @@ export interface AddressInfo {
  * Layout template types for page container components.
  */
 export enum LayoutTemplates {
+  /**
+   * Create a the default slot without v-card wrapped to it.
+   */
   Centered = "centered",
+  /**
+   * Create a the default slot inside v-card.
+   */
   CenteredCard = "centered-card",
+  /**
+   * Create view to adapt view with tabs.
+   ** i.e create the tab header outside v-card and tab-window inside v-card.
+   */
+  CenteredTab = "centered-tab",
 }

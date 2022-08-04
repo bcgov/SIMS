@@ -3,6 +3,8 @@
 .v-btn {
   text-transform: none !important;
   white-space: nowrap;
+  //TODO: Remove this style once vuetify is stable and appears without black border on button click.
+  outline: none !important;
 }
 
 .alert_banner_radius {
@@ -53,6 +55,7 @@
 .v-label {
   margin-bottom: 0px !important;
 }
+
 // v-snackbar success style.
 .snackbar-success .v-overlay__content {
   border: 3px solid $banner-color-success;
@@ -101,6 +104,18 @@
 .v-divider--inset:not(.v-divider--vertical) {
   max-width: calc(100% - 29px) !important;
   margin-inline-start: 16px !important;
+}
+
+//CSS class added to match v-tab with figma.
+.v-slide-group.v-tabs.v-tabs--horizontal {
+  display: inline-block;
+  border-bottom: 2px solid $common-border-color;
+  width: 100%;
+}
+
+//CSS class added to match v-tab with figma.
+.v-tab__slider {
+  bottom: 5px !important;
 }
 
 .v-expansion-panel-title {

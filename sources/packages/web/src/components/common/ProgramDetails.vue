@@ -78,10 +78,11 @@ import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { EducationProgramData, ProgramIntensity, ClientIdType } from "@/types";
+import { ProgramIntensity, ClientIdType } from "@/types";
 import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 import { COLOR_BLUE } from "@/constants";
 import { AuthService } from "@/services/AuthService";
+import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
 export default {
   components: { ProgramStatusChip },
@@ -97,7 +98,7 @@ export default {
     educationProgram: {
       type: Object,
       required: true,
-      default: {} as EducationProgramData,
+      default: {} as EducationProgramAPIOutDTO,
     },
   },
   setup(props: any) {

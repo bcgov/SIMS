@@ -100,7 +100,7 @@ parameters:
   - name: REPLICAS
     value: "2"
   - name: PORT
-    value: "7070"
+    required: true
   - name: IMAGE_STREAM_TAG
     required: true
   - name: BUILD_NAMESPACE

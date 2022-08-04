@@ -17,6 +17,7 @@
       </v-card-header>
       <v-divider class="mx-6 mt-1 mb-4"></v-divider>
       <v-card-text class="pt-0 max-dialog-height">
+        <div class="pb-2" v-if="subTitle">{{ subTitle }}</div>
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
       <v-divider class="mx-6 mt-1 mb-0"></v-divider>
@@ -58,6 +59,10 @@ export default {
     },
     maxWidth: {
       type: Number,
+      required: false,
+    },
+    subTitle: {
+      type: String,
       required: false,
     },
   },

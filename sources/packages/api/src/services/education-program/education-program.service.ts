@@ -18,20 +18,16 @@ import {
 import { ProgramYear } from "../../database/entities/program-year.model";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import {
-  ApproveProgram,
-  DeclineProgram,
-  ProgramsSummary,
-} from "../../route-controllers/education-program/models/save-education-program.dto";
-import {
-  credentialTypeToDisplay,
   getRawCount,
-  getDateOnlyFormat,
   sortProgramsColumnMap,
   PaginationOptions,
   PaginatedResults,
   SortPriority,
+  CustomNamedError,
 } from "../../utilities";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
+import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
+
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
@@ -92,23 +88,36 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   /**
    * Insert/update an education program at institution level
    * that will be available for all locations.
+   * @param programId if provided will update the record, otherwise will insert a new one.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    * @param educationProgram Information used to save the program.
-   * @param createProgram a flag, which create or edit program
    * @returns Education program created/updated.
    */
   async saveEducationProgram(
+    institutionId: number,
+    auditUserId: number,
     educationProgram: SaveEducationProgram,
+    programId?: number,
   ): Promise<EducationProgram> {
-    const program = new EducationProgram();
-
-    /** Check if education program has offering(s). This check is required to
-     *  prevent a user from updating fields that are not supposed
-     *  to be updated if the education program has 1 or more offerings.
-     */
-    const hasExistingOffering =
-      await this.educationProgramOfferingService.hasExistingOffering(
-        educationProgram.id,
-      );
+    let hasExistingOffering = false;
+    let program = new EducationProgram();
+    if (programId) {
+      // Ensures that the user has access to the institution associated with the program id being updated.
+      program = await this.getInstitutionProgram(programId, institutionId);
+      if (!program) {
+        throw new CustomNamedError(
+          "Not able to find the education program.",
+          EDUCATION_PROGRAM_NOT_FOUND,
+        );
+      }
+      // Check if education program has offering(s). This check is required to
+      // prevent a user from updating fields that are not supposed
+      // to be updated if the education program has 1 or more offerings.
+      hasExistingOffering =
+        await this.educationProgramOfferingService.hasExistingOffering(
+          programId,
+        );
+    }
 
     // Assign attributes for update from payload only if existing program has no offering(s).
     if (!hasExistingOffering) {
@@ -136,9 +145,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.hasJointDesignatedInstitution =
         educationProgram.hasJointDesignatedInstitution;
       program.programStatus = educationProgram.programStatus;
-      program.institution = {
-        id: educationProgram.institutionId,
-      } as Institution;
       program.programIntensity = educationProgram.programIntensity;
       program.institutionProgramCode = educationProgram.institutionProgramCode;
       program.minHoursWeek = educationProgram.minHoursWeek;
@@ -161,145 +167,48 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         educationProgram.intlExchangeProgramEligibility;
       program.programDeclaration = educationProgram.programDeclaration;
     }
-    program.id = educationProgram.id;
+    program.id = programId;
     program.name = educationProgram.name;
     program.description = educationProgram.description;
-    if (!educationProgram.id) {
-      program.submittedBy = { id: educationProgram.userId } as User;
-      program.creator = { id: educationProgram.userId } as User;
+    const auditUser = { id: auditUserId } as User;
+    if (!programId) {
+      // Institution should never be updated after creation.
+      program.institution = { id: institutionId } as Institution;
+      program.submittedBy = auditUser;
+      program.creator = auditUser;
     } else {
-      program.modifier = { id: educationProgram.userId } as User;
+      program.modifier = auditUser;
     }
     return this.repo.save(program);
   }
 
   /**
    * Gets all the programs that are associated with an institution
-   * alongside with the total of offerings on a particular location.
-   * @param institutionId Id of the institution.
-   * @param locationId Id of the location.
-   * @param offeringTypes OfferingTypes array.
-   * @param paginationOptions pagination options
-   * @returns summary for location
+   * alongside with the total of offerings on locations.
+   * @param institutionId id of the institution.
+   * @param paginationOptions pagination options.
+   * @param locationId optional location id to filter.
+   * @returns paginated summary for the institution or location.
    */
-  async getSummaryForLocation(
+  async getProgramsSummary(
     institutionId: number,
-    locationId: number,
     offeringTypes: OfferingTypes[],
     paginationOptions: PaginationOptions,
+    locationId?: number,
   ): Promise<PaginatedResults<EducationProgramsSummary>> {
-    const summaryResult = this.repo
-      .createQueryBuilder("programs")
-      .select("programs.id", "id")
-      .addSelect("programs.name", "programName")
-      .addSelect("programs.cipCode", "cipCode")
-      .addSelect("programs.credentialType", "credentialType")
-      .addSelect("programs.programStatus", "programStatus")
-      .addSelect(
-        (query) =>
-          query
-            .select("COUNT(*)")
-            .from(EducationProgramOffering, "offerings")
-            .where("offerings.educationProgram.id = programs.id")
-            .andWhere("offerings.offeringType in (:...offeringTypes)", {
-              offeringTypes,
-            })
-            .andWhere("offerings.institutionLocation.id = :locationId", {
-              locationId,
-            }),
-        "totalOfferings",
-      )
-      .where("programs.institution.id = :institutionId", { institutionId });
-
-    // this queryParams is for getRawCount, which is different from the
-    // query parameter assigned to paginatedProgramQuery like
-    // paginationOptions.searchCriteria or institutionId.
-    // queryParams should follow the order/index
-    const queryParams: any[] = [...offeringTypes, locationId, institutionId];
-    // program name search
-    if (paginationOptions.searchCriteria) {
-      summaryResult.andWhere("programs.name Ilike :searchCriteria", {
-        searchCriteria: `%${paginationOptions.searchCriteria}%`,
-      });
-      queryParams.push(`%${paginationOptions.searchCriteria}%`);
-    }
-
-    // for getting total raw count before pagination
-    const sqlQuery = summaryResult.getSql();
-
-    // pagination
-    summaryResult
-      .skip(paginationOptions.page * paginationOptions.pageLimit)
-      .take(paginationOptions.pageLimit);
-
-    // sort
-    if (paginationOptions.sortField && paginationOptions.sortOrder) {
-      summaryResult.orderBy(
-        sortProgramsColumnMap(paginationOptions.sortField),
-        paginationOptions.sortOrder,
-      );
-    } else {
-      // default sort and order
-      // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
-      summaryResult.orderBy(
-        `CASE programs.program_status
-                WHEN '${ProgramStatus.Pending}' THEN ${SortPriority.Priority1}
-                WHEN '${ProgramStatus.Approved}' THEN ${SortPriority.Priority2}
-                WHEN '${ProgramStatus.Declined}' THEN ${SortPriority.Priority3}
-                ELSE ${SortPriority.Priority4}
-              END`,
-      );
-    }
-
-    // total count and summary
-    const [totalCount, programs] = await Promise.all([
-      getRawCount(this.repo, sqlQuery, queryParams),
-      summaryResult.getRawMany(),
-    ]);
-
-    const programSummary = programs.map((summary) => {
-      const summaryItem = new EducationProgramsSummary();
-      summaryItem.id = summary.id;
-      summaryItem.programName = summary.programName;
-      summaryItem.cipCode = summary.cipCode;
-      summaryItem.credentialType = summary.credentialType;
-      summaryItem.credentialTypeToDisplay = credentialTypeToDisplay(
-        summary.credentialType,
-      );
-      summaryItem.programStatus = summary.programStatus;
-      summaryItem.totalOfferings = summary.totalOfferings;
-      return summaryItem;
-    });
-    return {
-      results: programSummary,
-      count: totalCount,
-    };
-  }
-  /**
-   * Gets all the programs that are associated with an institution
-   * alongside with the total of offerings on a particular location.
-   * @param institutionId Id of the institution.
-   * @param offeringTypes OfferingTypes array.
-   * @param paginationOptions pagination options
-   * @returns summary for location
-   */
-  async getPaginatedProgramsForAEST(
-    institutionId: number,
-    offeringTypes: OfferingTypes[],
-    paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResults<ProgramsSummary>> {
-    // default data table sort field
     const paginatedProgramQuery = this.repo
       .createQueryBuilder("programs")
       .select("programs.id", "programId")
       .addSelect("programs.name", "programName")
+      .addSelect("programs.cipCode", "cipCode")
+      .addSelect("programs.credentialType", "credentialType")
       .addSelect("programs.createdAt", "programSubmittedAt")
       .addSelect("location.id", "locationId")
       .addSelect("location.name", "locationName")
       .addSelect("programs.programStatus", "programStatus")
       .addSelect(
-        (query) =>
-          query
+        (qb) =>
+          qb
             .select("COUNT(*)")
             .from(EducationProgramOffering, "offerings")
             .where("offerings.educationProgram.id = programs.id")
@@ -317,11 +226,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       )
       .where("programs.institution.id = :institutionId", { institutionId });
 
-    // this queryParams is for getRawCount, which is different from the
+    // This queryParams is for getRawCount, which is different from the
     // query parameter assigned to paginatedProgramQuery like
     // paginationOptions.searchCriteria or institutionId
-    // queryParams should follow the order/index
+    // queryParams should follow the order/index.
     const queryParams: any[] = [...offeringTypes, institutionId];
+    if (locationId) {
+      queryParams.push(locationId);
+      paginatedProgramQuery.andWhere("location.id = :locationId", {
+        locationId,
+      });
+    }
 
     if (paginationOptions.searchCriteria) {
       paginatedProgramQuery.andWhere("programs.name Ilike :searchCriteria", {
@@ -330,7 +245,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       queryParams.push(`%${paginationOptions.searchCriteria}%`);
     }
 
-    // for getting total raw count before pagination
+    // For getting total raw count before pagination.
     const sqlQuery = paginatedProgramQuery.getSql();
 
     if (paginationOptions.pageLimit) {
@@ -350,7 +265,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         paginationOptions.sortOrder,
       );
     } else {
-      // default sort and order
+      // Default sort and order.
       // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
       paginatedProgramQuery.orderBy(
         `CASE programs.program_status
@@ -362,26 +277,23 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
     }
 
-    // total count and summary
+    // Total count and summary.
     const [totalCount, programsQuery] = await Promise.all([
       getRawCount(this.repo, sqlQuery, queryParams),
       paginatedProgramQuery.getRawMany(),
     ]);
 
-    const programSummary = programsQuery.map((summary) => {
-      const summaryItem = new ProgramsSummary();
-      summaryItem.programId = summary.programId;
-      summaryItem.programName = summary.programName;
-      summaryItem.submittedDate = summary.programSubmittedAt;
-      summaryItem.locationName = summary.locationName;
-      summaryItem.locationId = summary.locationId;
-      summaryItem.programStatus = summary.programStatus;
-      summaryItem.totalOfferings = summary.totalOfferings;
-      summaryItem.formattedSubmittedDate = getDateOnlyFormat(
-        summary.programSubmittedAt,
-      );
-      return summaryItem;
-    });
+    const programSummary = programsQuery.map((program) => ({
+      programId: program.programId,
+      programName: program.programName,
+      cipCode: program.cipCode,
+      credentialType: program.credentialType,
+      submittedDate: program.programSubmittedAt,
+      programStatus: program.programStatus,
+      totalOfferings: program.totalOfferings,
+      locationId: program.locationId,
+      locationName: program.locationName,
+    }));
 
     return {
       results: programSummary,
@@ -492,12 +404,15 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   /**
    * Gets program details with program id.
    * @param programId Program id.
-   * @returns program
+   * @param institutionId when provided, ensures the proper authorization
+   * checking if the institution has access to the program.
+   * @returns education program.
    */
   async getEducationProgramDetails(
     programId: number,
+    institutionId?: number,
   ): Promise<EducationProgram> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("programs")
       .select([
         "programs.id",
@@ -540,6 +455,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "institution.id",
         "institution.legalOperatingName",
         "institution.operatingName",
+        "institutionType.id",
         "programs.submittedDate",
         "submittedBy.firstName",
         "submittedBy.lastName",
@@ -551,8 +467,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .leftJoin("programs.submittedBy", "submittedBy")
       .leftJoin("programs.assessedBy", "assessedBy")
       .innerJoin("programs.institution", "institution")
-      .where("programs.id = :id", { id: programId })
-      .getOne();
+      .innerJoin("institution.institutionType", "institutionType")
+      .where("programs.id = :id", { id: programId });
+    if (institutionId) {
+      query.andWhere("institution.id = :institutionId", { institutionId });
+    }
+    return query.getOne();
   }
 
   /**
@@ -560,21 +480,24 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * this is a db transaction performing
    * 3 functions, creating note, update the
    * program and adding institution notes
+   * @param effectiveEndDate effective end date
+   * of the approved education program.
+   * @param approvalNote approval note.
    * @param institutionId institution id.
    * @param programId program id.
    * @param userId user id.
-   * @param payload ApproveProgram
    */
   async approveEducationProgram(
+    effectiveEndDate: Date,
+    approvalNote: string,
     institutionId: number,
     programId: number,
     userId: number,
-    payload: ApproveProgram,
   ): Promise<void> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       // create Note
       const notes = new Note();
-      notes.description = payload.approvedNote;
+      notes.description = approvalNote;
       notes.noteType = NoteType.Program;
       notes.creator = {
         id: userId,
@@ -583,12 +506,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         .getRepository(Note)
         .save(notes);
 
-      // update program
+      // Update program.
       const program = new EducationProgram();
       program.id = programId;
       program.programStatus = ProgramStatus.Approved;
       program.assessedDate = new Date();
-      program.effectiveEndDate = new Date(payload.effectiveEndDate);
+      program.effectiveEndDate = effectiveEndDate;
       program.assessedBy = { id: userId } as User;
       program.programNote = noteObj;
 
@@ -611,25 +534,25 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * this is a db transaction performing
    * 3 functions, creating note, update the
    * program and adding institution notes
+   * @param declinedNote decline note.
    * @param institutionId institution id.
    * @param programId program id.
-   * @param userId user id.
-   * @param payload DeclineProgram
+   * @param auditUserId user that should be considered
+   * the one that is causing the changes.
    */
   async declineEducationProgram(
+    declinedNote: string,
     institutionId: number,
     programId: number,
-    userId: number,
-    payload: DeclineProgram,
+    auditUserId: number,
   ): Promise<void> {
+    const auditUser = { id: auditUserId } as User;
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       // create Note
       const notes = new Note();
-      notes.description = payload.declinedNote;
+      notes.description = declinedNote;
       notes.noteType = NoteType.Program;
-      notes.creator = {
-        id: userId,
-      } as User;
+      notes.creator = auditUser;
       const noteObj = await transactionalEntityManager
         .getRepository(Note)
         .save(notes);
@@ -639,7 +562,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.id = programId;
       program.programStatus = ProgramStatus.Declined;
       program.assessedDate = new Date();
-      program.assessedBy = { id: userId } as User;
+      program.assessedBy = auditUser;
       program.programNote = noteObj;
       await transactionalEntityManager
         .getRepository(EducationProgram)
