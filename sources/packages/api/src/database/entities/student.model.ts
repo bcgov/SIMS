@@ -13,7 +13,6 @@ import { User } from "./user.model";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { ContactInfo, Note } from ".";
 import { SINValidation } from "./sin-validation.model";
-import { StudentUser } from "./student-user.model";
 
 @Entity({ name: TableNames.Student })
 export class Student extends RecordDataModel {
