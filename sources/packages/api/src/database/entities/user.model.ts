@@ -38,7 +38,7 @@ export class User extends BaseModel {
   })
   firstName: string;
   /**
-   * Last name or the family bane of the user.
+   * Last name or the family name of the user.
    */
   @Column({
     name: "last_name",
@@ -46,7 +46,7 @@ export class User extends BaseModel {
   lastName: string;
   /**
    * Indicates if the user is active in the system or should
-   * be block from executing the login.
+   * be blocked from executing the login.
    */
   @Column({
     name: "is_active",
@@ -61,6 +61,8 @@ export class User extends BaseModel {
     nullable: false,
   })
   identityProviderType: IdentityProviders;
+  // !creator and modifier properties are directly added here(instead of inheriting
+  // !from RecordDataModel) to avoid cyclic dependencies.
   /**
    * User creating this user. The user creation can happen when
    * the user himself logs to the system or can happen through a

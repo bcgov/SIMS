@@ -151,6 +151,9 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     return this.dataSource.transaction(async (transactionalEntityManager) => {
+      // TODO: Upcoming tickets will change this logic while creating a new user or
+      // switching between BCeID and BCSC user.
+
       // Creates the new user and student.
       const newStudent = await transactionalEntityManager
         .getRepository(Student)

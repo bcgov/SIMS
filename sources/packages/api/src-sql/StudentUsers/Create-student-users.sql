@@ -4,14 +4,14 @@ CREATE TABLE IF NOT EXISTS sims.student_users(
   student_id INT NOT NULL REFERENCES sims.students(id),
   student_account_application_id INT REFERENCES sims.student_account_applications(id),
   -- Audit columns
-  created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   creator INT NULL DEFAULT NULL REFERENCES sims.users(id),
   modifier INT NULL DEFAULT NULL REFERENCES sims.users(id)
 );
 
 -- ## Comments
-COMMENT ON TABLE sims.student_users IS 'sims.student_users and users relationships, current and past ones. One of these records will be related directly to the student defining the active one.';
+COMMENT ON TABLE sims.student_users IS 'Students and users relationships, current and past ones. Every time that a a student/user association changes this table will receive a new record to keep the audit.';
 
 COMMENT ON COLUMN sims.student_users.id IS 'Auto-generated sequential primary key column.';
 

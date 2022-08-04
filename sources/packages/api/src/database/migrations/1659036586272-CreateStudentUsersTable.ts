@@ -8,6 +8,9 @@ export class CreateStudentUsersTable1659036586272
     await queryRunner.query(
       getSQLFileData("Create-student-users.sql", "StudentUsers"),
     );
+    await queryRunner.query(
+      getSQLFileData("Populate-student-users-initial-data.sql", "StudentUsers"),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

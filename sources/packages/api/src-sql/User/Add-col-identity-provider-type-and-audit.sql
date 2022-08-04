@@ -14,7 +14,7 @@ ADD
 
 COMMENT ON COLUMN sims.users.identity_provider_type IS 'Identity provider that authenticated the user.';
 
--- Audit columns
+-- Missing audit columns.
 ALTER TABLE
     sims.users
 ADD

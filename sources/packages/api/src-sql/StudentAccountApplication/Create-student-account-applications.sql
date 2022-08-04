@@ -5,14 +5,14 @@ CREATE TABLE IF NOT EXISTS sims.student_account_applications(
   submitted_date TIMESTAMP WITH TIME ZONE NOT NULL,
   assessed_by INT REFERENCES sims.users(id),
   assessed_date TIMESTAMP WITH TIME ZONE,
-  created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   creator INT NULL DEFAULT NULL REFERENCES sims.users(id),
   modifier INT NULL DEFAULT NULL REFERENCES sims.users(id)
 );
 
 -- ## Comments
-COMMENT ON TABLE sims.student_account_applications IS 'Student account information to have the data validated. Upon a successful validation, a new student can be created or the user can be associated with an existing one.';
+COMMENT ON TABLE sims.student_account_applications IS 'Student account information to have the student identity data validated. Upon a successful validation, a new student can be created or the user can be associated with an existing one.';
 
 COMMENT ON COLUMN sims.student_account_applications.id IS 'Auto-generated sequential primary key column.';
 

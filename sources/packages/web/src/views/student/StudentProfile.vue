@@ -139,10 +139,9 @@ export default {
           data.email = bcscParsedToken.email;
           data.gender = bcscParsedToken.gender;
           data.dateOfBirth = dateOnlyLongString(bcscParsedToken.birthdate);
-        } else {
+        } else if (AuthService.shared.userToken?.IDP === AppIDPType.BCeID) {
           data.email = bceidParsedToken.email;
         }
-        console.log(data);
         initialData.value = data;
       }
       await getStudentInfo();
