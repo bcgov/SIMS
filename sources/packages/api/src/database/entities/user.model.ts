@@ -35,8 +35,9 @@ export class User extends BaseModel {
    */
   @Column({
     name: "first_name",
+    nullable: true,
   })
-  firstName: string;
+  firstName?: string;
   /**
    * Last name or the family name of the user.
    */
