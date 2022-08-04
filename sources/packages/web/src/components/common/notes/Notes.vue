@@ -1,8 +1,5 @@
 <template>
-  <full-page-container
-    :layout-template="LayoutTemplates.CenteredCard"
-    :fullWidth="true"
-  >
+  <full-page-container :full-width="true">
     <v-row class="m-2">
       <v-col class="category-header-large color-blue">{{ title }}</v-col>
       <v-col

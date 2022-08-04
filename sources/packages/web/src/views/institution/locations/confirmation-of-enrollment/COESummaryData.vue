@@ -1,8 +1,5 @@
 <template>
-  <full-page-container
-    :layout-template="LayoutTemplates.CenteredCard"
-    :fullWidth="true"
-  >
+  <full-page-container :full-width="true">
     <body-header
       :title="header"
       :subTitle="subTitle"

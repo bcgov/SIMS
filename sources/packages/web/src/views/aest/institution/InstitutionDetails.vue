@@ -7,6 +7,7 @@
       >
         <template #sub-title-details>
           <status-chip-designation-agreement
+            v-if="institutionBasicDetail.designationStatus"
             class="ml-4 mt-1"
             :status="institutionBasicDetail.designationStatus"
           />

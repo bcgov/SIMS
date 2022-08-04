@@ -1,7 +1,7 @@
 <template>
   <full-page-container
     :layout-template="LayoutTemplates.Centered"
-    :fullWidth="true"
+    :full-width="true"
   >
     <v-row class="my-2 pl-0">
       <v-col cols="3" class="category-header-large">Notes</v-col>

@@ -24,13 +24,10 @@ export default {
       switch (props.status) {
         case StatusChipTypes.Success:
           return "success_bg";
-
         case StatusChipTypes.Warning:
           return "warning_bg";
-
         case StatusChipTypes.Error:
           return "error_bg";
-
         case StatusChipTypes.Default:
           return "border";
         default:
@@ -42,13 +39,10 @@ export default {
       switch (props.status) {
         case StatusChipTypes.Success:
           return "success";
-
         case StatusChipTypes.Warning:
           return "warning";
-
         case StatusChipTypes.Error:
           return "error";
-
         case StatusChipTypes.Default:
           return "default";
         default:

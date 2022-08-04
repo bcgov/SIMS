@@ -1,5 +1,5 @@
 <template>
-  <full-page-container layout-template="centered-tab" :fullWidth="true">
+  <full-page-container layout-template="centered-tab" :full-width="true">
     <template #header>
       <header-navigator
         title="Student Details"

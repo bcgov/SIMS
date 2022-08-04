@@ -24,13 +24,10 @@ export default {
       switch (props.status) {
         case StatusChipTypes.Success:
           return "success";
-
         case StatusChipTypes.Warning:
           return "warning";
-
         case StatusChipTypes.Error:
           return "error";
-
         case StatusChipTypes.Default:
           return "default";
         default:
