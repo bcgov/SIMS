@@ -29,6 +29,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import { IUserToken } from "../../auth/userToken.interface";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { InstitutionUserPaginationOptionsAPIInDTO } from "../models/pagination.dto";
+import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
 
 /**
  * Institution user controller for AEST client.
@@ -89,6 +90,8 @@ export class InstitutionUserAESTController extends BaseController {
       institutionId,
       payload,
       token.userId,
+      BCeIDAccountTypeCodes.Individual,
+      BCeIDAccountTypeCodes.Business,
     );
   }
 
