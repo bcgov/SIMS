@@ -68,9 +68,9 @@ export class EducationProgramOfferingAESTController extends BaseController {
     if (!offering) {
       throw new NotFoundException("Offering not found.");
     }
-    if (offering.offeringStatus !== OfferingStatus.Pending) {
+    if (offering.offeringStatus !== OfferingStatus.CreationPending) {
       throw new UnprocessableEntityException(
-        "Offering status is incorrect. Only pending offerings can be approved/declined.",
+        "Offering status is incorrect. Only creation pending offerings can be approved/declined.",
       );
     }
     await this.programOfferingService.assessOffering(

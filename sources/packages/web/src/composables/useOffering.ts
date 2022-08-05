@@ -6,10 +6,11 @@ export function useOffering() {
     switch (status) {
       case OfferingStatus.Approved:
         return StatusChipTypes.Success;
-      case OfferingStatus.Pending:
-      case OfferingStatus.UnderReview:
+      case OfferingStatus.CreationPending:
+      case OfferingStatus.ChangeUnderReview:
         return StatusChipTypes.Warning;
-      case OfferingStatus.Declined:
+      case OfferingStatus.CreationDeclined:
+      case OfferingStatus.ChangeDeclined:
         return StatusChipTypes.Error;
       default:
         return StatusChipTypes.Inactive;

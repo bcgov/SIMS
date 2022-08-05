@@ -139,8 +139,8 @@ export default {
       () =>
         ![
           OfferingStatus.Approved,
-          OfferingStatus.Pending,
-          OfferingStatus.Declined,
+          OfferingStatus.CreationPending,
+          OfferingStatus.CreationDeclined,
         ].includes(initialData.value.offeringStatus),
     );
 
