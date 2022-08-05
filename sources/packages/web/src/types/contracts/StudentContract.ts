@@ -1,7 +1,9 @@
 import {
+  AddressDetailsFormAPIDTO,
   SINValidationsAPIOutDTO,
   StudentProfileAPIOutDTO,
 } from "@/services/http/dto";
+import { AppIDPType } from "../ApplicationToken";
 
 export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;
@@ -48,3 +50,19 @@ export interface SINValidations extends SINValidationsAPIOutDTO {
   validGenderCheckFormatted?: string;
   sinExpiryDateFormatted?: string;
 }
+
+export enum StudentProfileFormModes {
+  Edit = "edit",
+  Create = "create",
+}
+
+export type StudentProfileFormModel = Pick<
+  StudentProfileAPIOutDTO,
+  "firstName" | "lastName" | "gender" | "email"
+> &
+  AddressDetailsFormAPIDTO & {
+    phone: string;
+    dateOfBirth: string;
+    mode: StudentProfileFormModes;
+    identityProvider?: AppIDPType;
+  };

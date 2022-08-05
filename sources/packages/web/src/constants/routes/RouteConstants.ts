@@ -5,7 +5,7 @@ export const StudentRoutesConst = {
   APP_STUDENT: Symbol(),
   STUDENT_DASHBOARD: Symbol(),
   LOGIN: Symbol(),
-  STUDENT_PROFILE: Symbol(),
+  STUDENT_PROFILE_CREATE: Symbol(),
   STUDENT_PROFILE_EDIT: Symbol(),
   FINANCIAL_AID_APPLICATION: Symbol(),
   APPLICATIONS: Symbol(),

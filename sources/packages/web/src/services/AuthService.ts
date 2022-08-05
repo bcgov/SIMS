@@ -132,7 +132,7 @@ export class AuthService {
       // If the student is not present, redirect to student profile
       // for account creation.
       this.priorityRedirect = {
-        name: StudentRoutesConst.STUDENT_PROFILE,
+        name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
       };
     }
   }

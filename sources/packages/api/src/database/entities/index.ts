@@ -65,3 +65,4 @@ export * from "./application-exception-requests.model";
 export * from "./application-exceptions.model";
 export * from "./disbursement-receipts.model";
 export * from "./disbursement-receipt-values.model";
+export * from "./student-account-application.model";

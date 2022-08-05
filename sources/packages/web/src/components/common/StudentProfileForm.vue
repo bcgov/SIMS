@@ -1,0 +1,52 @@
+<template>
+  <formio-container
+    formName="studentProfile"
+    :formData="formModel"
+    @submitted="$emit('submitted', $event)"
+    @customEvent="showPDApplicationModal"
+  >
+    <template #actions="{ submit }">
+      <footer-buttons
+        :processing="processing"
+        @primaryClick="submit"
+        :primaryLabel="saveLabel"
+        :showSecondaryButton="false"
+      />
+    </template>
+  </formio-container>
+</template>
+
+<script lang="ts">
+import { ref, computed, PropType } from "vue";
+import { StudentProfileFormModel, StudentProfileFormModes } from "@/types";
+
+export default {
+  emits: ["submitted"],
+  props: {
+    formModel: {
+      type: Object as PropType<StudentProfileFormModel>,
+      required: true,
+      default: {} as StudentProfileFormModel,
+    },
+    processing: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
+  setup(props: any) {
+    const initialData = ref({} as StudentProfileFormModel);
+
+    const saveLabel = computed(() =>
+      props.formModel.mode === StudentProfileFormModes.Edit
+        ? "Save profile"
+        : "Create profile",
+    );
+
+    return {
+      initialData,
+      saveLabel,
+    };
+  },
+};
+</script>
