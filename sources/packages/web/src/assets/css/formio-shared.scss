@@ -188,7 +188,7 @@
 }
 
 .formio-component .fa {
-  font-family: "BCSans";
+  font-family: "BCSans", sans-serif;
   line-height: $formio-content-lh;
   font-weight: $font-weight-normal;
 }
@@ -344,7 +344,7 @@
   font-weight: 700 !important;
   font-size: 12px !important;
   color: $brand-black;
-  font-family: "BCSans";
+  font-family: "BCSans", sans-serif;
 }
 .formio-status-chip.fa-circle::before {
   margin-right: 6px;
