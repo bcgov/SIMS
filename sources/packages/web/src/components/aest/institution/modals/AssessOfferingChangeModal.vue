@@ -9,7 +9,7 @@
       <div class="mt-2">
         <v-form ref="offeringChangeApprovalForm">
           <v-textarea
-            v-model="assessmentNotes"
+            v-model="assessOfferingData.assessmentNotes"
             variant="outlined"
             label="Notes"
             :rules="[(v) => !!v || 'Notes is required']"
@@ -31,56 +31,54 @@
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
-import { computed, ref } from "vue";
+import { ref, reactive } from "vue";
 import { OfferingStatus, VForm } from "@/types";
 import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: { ModalDialogBase },
-  props: {
-    offeringStatus: {
-      type: String,
-      required: true,
-    },
-  },
-  setup(props: any) {
-    const { showDialog, showModal, resolvePromise } = useModalDialog<
-      OfferingChangeAssessmentAPIInDTO | boolean
-    >();
+  setup() {
+    const {
+      showDialog,
+      showModal: showModalInternal,
+      resolvePromise,
+    } = useModalDialog<OfferingChangeAssessmentAPIInDTO | boolean>();
     const offeringChangeApprovalForm = ref({} as VForm);
-    const assessmentNotes = ref();
-
-    const title = computed(() =>
-      props.offeringStatus === OfferingStatus.Approved
-        ? "Approve for reassessment"
-        : "Decline for reassessment",
-    );
-
-    const submitLabel = computed(() =>
-      props.offeringStatus === OfferingStatus.Approved
-        ? "Approve now"
-        : "Decline now",
-    );
-
-    const subTitle = computed(() =>
-      props.offeringStatus === OfferingStatus.Approved
-        ? "Outline the reasoning for approving this request. This will be stored in the institution profile notes."
-        : "Outline the reasoning for declining this request. This will be stored in the institution profile notes.",
-    );
+    const assessOfferingData = reactive({} as OfferingChangeAssessmentAPIInDTO);
+    const title = ref("");
+    const subTitle = ref("");
+    const submitLabel = ref("");
 
     const dialogClosed = () => {
-      assessmentNotes.value = "";
       resolvePromise(false);
+    };
+
+    //Setting the title values based on the offering status passed to show modal.
+    const showModal = async (modalOfferingStatus: OfferingStatus) => {
+      //TODO: Resetting the form value manually as $ref.form.reset() is not working.
+      assessOfferingData.assessmentNotes = "";
+      assessOfferingData.offeringStatus = modalOfferingStatus;
+      switch (modalOfferingStatus) {
+        case OfferingStatus.Approved:
+          title.value = "Approve for reassessment";
+          subTitle.value =
+            "Outline the reasoning for approving this request. This will be stored in the institution profile notes.";
+          submitLabel.value = "Approve now";
+          break;
+        default:
+          title.value = "Decline for reassessment";
+          subTitle.value =
+            "Outline the reasoning for declining this request. This will be stored in the institution profile notes.";
+          submitLabel.value = "Decline now";
+      }
+      return showModalInternal(modalOfferingStatus);
     };
 
     const submitForm = async () => {
       const formValidationStatus =
         await offeringChangeApprovalForm.value.validate();
       if (formValidationStatus.valid) {
-        resolvePromise({
-          offeringStatus: props.offeringStatus,
-          assessmentNotes: assessmentNotes.value,
-        });
+        resolvePromise(assessOfferingData);
       }
     };
 
@@ -91,7 +89,7 @@ export default {
       submitForm,
       title,
       offeringChangeApprovalForm,
-      assessmentNotes,
+      assessOfferingData,
       subTitle,
       submitLabel,
     };
