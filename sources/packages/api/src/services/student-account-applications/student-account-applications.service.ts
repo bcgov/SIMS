@@ -1,13 +1,40 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { StudentAccountApplication, User } from "../../database/entities";
-import { DataSource } from "typeorm";
+import { DataSource, IsNull } from "typeorm";
 import { StudentAccountApplicationCreateModel } from "./student-account-applications.models";
 
 @Injectable()
 export class StudentAccountApplicationsService extends RecordDataModelService<StudentAccountApplication> {
   constructor(private readonly dataSource: DataSource) {
     super(dataSource.getRepository(StudentAccountApplication));
+  }
+
+  async getStudentAccountApplicationsById(
+    id: number,
+  ): Promise<StudentAccountApplication> {
+    return this.repo.findOne({
+      select: { id: true, submittedData: true },
+      where: { id },
+    });
+  }
+
+  async getPendingStudentAccountApplications(): Promise<
+    StudentAccountApplication[]
+  > {
+    return this.repo.find({
+      select: {
+        id: true,
+        submittedDate: true,
+        user: { firstName: true, lastName: true },
+      },
+      relations: {
+        user: true,
+      },
+      where: {
+        assessedBy: IsNull(),
+      },
+    });
   }
 
   async createStudentAccountApplication(

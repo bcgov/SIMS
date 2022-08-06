@@ -58,7 +58,7 @@ export default {
 
     const getStudentDetails = async () => {
       const data = {
-        mode: StudentProfileFormModes.Create,
+        mode: StudentProfileFormModes.StudentCreate,
         identityProvider: AuthService.shared.userToken?.IDP,
       } as StudentProfileFormModel;
       if (AuthService.shared.userToken?.IDP === AppIDPType.BCSC) {

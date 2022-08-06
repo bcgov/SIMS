@@ -17,11 +17,12 @@ import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { CreateStudentAccountApplicationAPIInDTO } from "./models/student-account-application.dto";
-import { StudentAccountApplicationsService } from "../../services/student-account-applications/student-account-applications.service";
-import { StudentAccountApplicationCreateModel } from "src/services/student-account-applications/student-account-applications.models";
-import { FormService } from "../../services";
-import { FormNames } from "../../services/form/constants";
-
+import {
+  StudentAccountApplicationsService,
+  StudentAccountApplicationCreateModel,
+  FormService,
+  FormNames,
+} from "../../services";
 /**
  * Student account applications when the authentication happens through BCeID
  * and the Ministry needs to confirm the student identity.
@@ -39,6 +40,12 @@ export class StudentAccountApplicationStudentsController extends BaseController 
     super();
   }
 
+  /**
+   * Create a new student account application to be reviewed by
+   * the Ministry to confirm the student's basic BCeID identity.
+   * @param payload information to be assessed by the Ministry.
+   * @returns student account application created id.
+   */
   @ApiBadRequestResponse({
     description:
       "Not able to create a student account application due to an invalid request.",

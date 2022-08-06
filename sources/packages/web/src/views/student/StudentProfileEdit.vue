@@ -1,7 +1,7 @@
 <template>
   <student-page-container>
     <template #header>
-      <header-navigator v-if="editMode" title="Student" subTitle="Profile" />
+      <header-navigator title="Student" subTitle="Profile" />
     </template>
     <student-profile-form
       :processing="processing"
@@ -57,7 +57,7 @@ export default {
         phone: studentInfo.contact.phone,
         firstName: studentInfo.firstName,
         dateOfBirth: studentInfo.birthDateFormatted,
-        mode: StudentProfileFormModes.Edit,
+        mode: StudentProfileFormModes.StudentEdit,
         identityProvider: AuthService.shared.userToken?.IDP,
       };
       initialData.value = data;

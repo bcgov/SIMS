@@ -7,6 +7,7 @@
   >
     <template #actions="{ submit }">
       <footer-buttons
+        v-if="showActionButtons"
         :processing="processing"
         @primaryClick="submit"
         :primaryLabel="saveLabel"
@@ -38,14 +39,20 @@ export default {
     const initialData = ref({} as StudentProfileFormModel);
 
     const saveLabel = computed(() =>
-      props.formModel.mode === StudentProfileFormModes.Edit
+      props.formModel.mode === StudentProfileFormModes.StudentEdit
         ? "Save profile"
         : "Create profile",
+    );
+
+    const showActionButtons = computed(
+      () =>
+        props.formModel.mode !== StudentProfileFormModes.AESTAccountApproval,
     );
 
     return {
       initialData,
       saveLabel,
+      showActionButtons,
     };
   },
 };
