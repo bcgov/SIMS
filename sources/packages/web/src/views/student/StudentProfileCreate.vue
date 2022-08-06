@@ -93,7 +93,7 @@ export default {
           await StudentAccountApplicationService.shared.createStudentAccountApplication(
             { submittedData: form.data },
           );
-          snackBar.success("Student was successfully created!");
+          snackBar.success("student account application request submitted.");
         }
       } catch {
         snackBar.error("Error while saving student.");

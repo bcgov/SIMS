@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { StudentAccountApplication } from "../../database/entities";
+import { StudentAccountApplication, User } from "../../database/entities";
 import { DataSource } from "typeorm";
+import { StudentAccountApplicationCreateModel } from "./student-account-applications.models";
 
 @Injectable()
 export class StudentAccountApplicationsService extends RecordDataModelService<StudentAccountApplication> {
@@ -9,32 +10,22 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     super(dataSource.getRepository(StudentAccountApplication));
   }
 
-  // TODO: Save the request received from the student.
   async createStudentAccountApplication(
     userName: string,
+    studentProfile: StudentAccountApplicationCreateModel,
   ): Promise<StudentAccountApplication> {
-    // const user = new User();
-    // user.userName = userInfo.userName;
-    // user.email = userInfo.email;
-    // user.firstName = userInfo.givenNames;
-    // user.lastName = userInfo.lastName;
-    // user.creator = user;
+    const newUser = new User();
+    newUser.userName = userName;
+    newUser.email = studentProfile.email;
+    newUser.firstName = studentProfile.firstName;
+    newUser.lastName = studentProfile.lastName;
+    newUser.creator = newUser;
 
-    // const newAccountApplication = new StudentAccountApplication();
-    // newAccountApplication.submittedDate = new Date();
-    // const student = await this.repo
-    //   .createQueryBuilder("student")
-    //   .leftJoinAndSelect("student.user", "user")
-    //   .innerJoin("student.sinValidation", "sinValidation")
-    //   .select([
-    //     "student",
-    //     "user",
-    //     "sinValidation.isValidSIN",
-    //     "sinValidation.id",
-    //   ])
-    //   .where("user.userName = :userNameParam", { userNameParam: userName })
-    //   .getOne();
-    // return student;
-    return null;
+    const newAccountApplication = new StudentAccountApplication();
+    newAccountApplication.user = newUser;
+    newAccountApplication.creator = newUser;
+    newAccountApplication.submittedData = studentProfile;
+    newAccountApplication.submittedDate = new Date();
+    return this.repo.save(newAccountApplication);
   }
 }

@@ -3,7 +3,7 @@
     formName="studentProfile"
     :formData="formModel"
     @submitted="$emit('submitted', $event)"
-    @customEvent="showPDApplicationModal"
+    @customEvent="$emit('customEvent', $event)"
   >
     <template #actions="{ submit }">
       <footer-buttons
@@ -21,7 +21,7 @@ import { ref, computed, PropType } from "vue";
 import { StudentProfileFormModel, StudentProfileFormModes } from "@/types";
 
 export default {
-  emits: ["submitted"],
+  emits: ["submitted", "customEvent"],
   props: {
     formModel: {
       type: Object as PropType<StudentProfileFormModel>,

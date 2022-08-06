@@ -19,9 +19,18 @@ export class StudentAccountApplication extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
+   * Student information to be validated.
+   */
+  @Column({
+    name: "submitted_data",
+    type: "jsonb",
+    nullable: false,
+  })
+  submittedData: any;
+  /**
    * User that is requesting the data validation to become a student.
    */
-  @ManyToOne(() => User, { eager: false })
+  @ManyToOne(() => User, { eager: false, cascade: ["insert"] })
   @JoinColumn({
     name: "user_id",
     referencedColumnName: ColumnNames.ID,

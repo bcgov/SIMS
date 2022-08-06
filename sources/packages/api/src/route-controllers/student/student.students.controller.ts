@@ -114,7 +114,7 @@ export class StudentStudentsController extends BaseController {
     }
 
     const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentInformation,
+      FormNames.StudentProfile,
       payload,
     );
     if (!submissionResult.valid) {
@@ -341,7 +341,7 @@ export class StudentStudentsController extends BaseController {
     @Body() payload: UpdateStudentAPIInDTO,
   ): Promise<void> {
     const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentInformation,
+      FormNames.StudentProfile,
       payload,
     );
     if (!submissionResult.valid) {

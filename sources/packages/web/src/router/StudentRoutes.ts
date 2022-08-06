@@ -5,8 +5,8 @@ import AppStudent from "@/views/student/AppStudent.vue";
 import DynamicStudentApp from "@/views/student/financial-aid-application/FullTimeApplication.vue";
 import StudentApplication from "@/views/student/financial-aid-application/StudentApplication.vue";
 import Assessment from "@/views/student/NoticeOfAssessment.vue";
-import StudentProfile from "@/views/student/StudentProfile.vue";
 import StudentProfileCreate from "@/views/student/StudentProfileCreate.vue";
+import StudentProfileEdit from "@/views/student/StudentProfileEdit.vue";
 import Notifications from "@/views/student/Notifications.vue";
 import StudentFileUploader from "@/views/student/StudentFileUploader.vue";
 import NotificationsSettings from "@/views/student/NotificationsSettings.vue";
@@ -58,7 +58,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       {
         path: "student-profile/edit",
         name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
-        component: StudentProfile,
+        component: StudentProfileEdit,
         meta: {
           clientType: ClientIdType.Student,
         },

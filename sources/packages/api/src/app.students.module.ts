@@ -42,6 +42,7 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
+import { StudentAccountApplicationsService } from "./services/student-account-applications/student-account-applications.service";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -84,6 +85,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     StudentControllerService,
     ATBCService,
     RestrictionService,
+    StudentAccountApplicationsService,
   ],
 })
 export class AppStudentsModule {}
