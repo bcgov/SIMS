@@ -10,6 +10,12 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     super(dataSource.getRepository(StudentAccountApplication));
   }
 
+  /**
+   * Get the student account application previously submitted
+   * by the student for the basic BCeID student account creation.
+   * @param id student account application id.
+   * @returns student account application.
+   */
   async getStudentAccountApplicationsById(
     id: number,
   ): Promise<StudentAccountApplication> {
@@ -19,6 +25,11 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     });
   }
 
+  /**
+   * Get the list of all student account applications
+   * waiting to be assessed by the Ministry.
+   * @returns list of pending student account applications.
+   */
   async getPendingStudentAccountApplications(): Promise<
     StudentAccountApplication[]
   > {
@@ -37,6 +48,13 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     });
   }
 
+  /**
+   * Create a new student account application to be reviewed by
+   * the Ministry to confirm the student's basic BCeID identity.
+   * @param userName: user name that uniquely identifies this user.
+   * @param studentProfile information to be assessed by the Ministry.
+   * @returns student account application created id.
+   */
   async createStudentAccountApplication(
     userName: string,
     studentProfile: StudentAccountApplicationCreateModel,
