@@ -380,4 +380,13 @@ export class EducationProgram extends RecordDataModel {
     referencedColumnName: "id",
   })
   submittedBy: User;
+
+  /**
+   * Effective End date of the approved Education program.
+   */
+  @Column({
+    name: "field_of_study_code",
+    nullable: true,
+  })
+  fieldOfStudyCode?: number;
 }
