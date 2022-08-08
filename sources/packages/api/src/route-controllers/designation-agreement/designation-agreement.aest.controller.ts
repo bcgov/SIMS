@@ -18,7 +18,12 @@ import { FormNames } from "../../services/form/constants";
 import { DesignationAgreementStatus } from "../../database/entities";
 import { getISODateOnlyString, PaginationParams } from "../../utilities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
@@ -30,6 +35,7 @@ import {
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { Role } from "../../auth/roles.enum";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -116,6 +122,7 @@ export class DesignationAgreementAESTController extends BaseController {
    * @param payload Designation which is going to be updated.
    * @param userToken
    */
+  @Roles(Role.InstitutionApproveDeclineDesignation)
   @Patch(":designationId")
   async updateDesignationAgreement(
     @Param("designationId") designationId: number,

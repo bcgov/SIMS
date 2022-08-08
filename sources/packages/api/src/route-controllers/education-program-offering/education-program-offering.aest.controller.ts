@@ -15,7 +15,12 @@ import {
 } from "@nestjs/swagger";
 import { OfferingStatus } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { IUserToken } from "../../auth/userToken.interface";
 import { EducationProgramOfferingService } from "../../services";
@@ -30,6 +35,7 @@ import {
   OfferingChangeAssessmentAPIInDTO,
 } from "./models/education-program-offering.dto";
 import { CustomNamedError } from "../../utilities";
+import { Role } from "src/auth/roles.enum";
 
 /**
  * Institution location controller for institutions Client.
@@ -56,6 +62,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
     description:
       "Offering status is incorrect. Only pending offerings can be approved/declined.",
   })
+  @Roles(Role.InstitutionApproveDeclineOffering)
   @Patch(":offeringId/assess")
   async assessOffering(
     @Param("offeringId") offeringId: number,
@@ -143,6 +150,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
    * @param payload offering change payload.
    * @param userToken User who approves or declines the offering.
    */
+  @Roles(Role.InstitutionApproveDeclineOfferingChanges)
   @Patch(":offeringId/assess-change-request")
   @ApiUnprocessableEntityResponse({
     description:

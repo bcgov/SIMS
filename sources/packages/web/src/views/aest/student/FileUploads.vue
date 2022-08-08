@@ -66,9 +66,17 @@
       formName="uploadStudentDocumentsAEST"
     >
       <template #actions="{ cancel, submit }">
-        <v-btn color="primary" variant="outlined" @click="cancel">Cancel</v-btn>
-        <v-btn class="float-right" @click="submit" color="primary"
-          >Upload now</v-btn
+        <v-row class="m-0 p-0">
+          <v-btn color="primary" variant="outlined" @click="cancel"
+            >Cancel</v-btn
+          >
+          <v-btn
+            class="float-right"
+            @click="submit"
+            color="primary"
+            variant="elevated"
+            >Upload now</v-btn
+          ></v-row
         >
       </template>
     </formio-modal-dialog>

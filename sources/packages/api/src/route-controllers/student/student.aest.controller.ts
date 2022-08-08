@@ -28,7 +28,12 @@ import {
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import BaseController from "../BaseController";
 import {
@@ -67,6 +72,7 @@ import {
   SIN_VALIDATION_RECORD_INVALID_OPERATION,
   SIN_VALIDATION_RECORD_NOT_FOUND,
 } from "../../constants";
+import { Role } from "../../auth/roles.enum";
 
 /**
  * Student controller for AEST Client.
@@ -138,6 +144,7 @@ export class StudentAESTController extends BaseController {
    * the value from 'Directory' property from form.IO file component.
    * @returns created file information.
    */
+  @Roles(Role.StudentUploadFile)
   @Post(":studentId/files")
   @ApiNotFoundResponse({ description: "Student was not found." })
   @UseInterceptors(
@@ -177,6 +184,7 @@ export class StudentAESTController extends BaseController {
    * @param studentId student to have the file saved.
    * @param payload list of files to be saved.
    */
+  @Roles(Role.StudentUploadFile)
   @Patch(":studentId/save-uploaded-files")
   @ApiNotFoundResponse({ description: "Student not found." })
   async saveStudentUploadedFiles(
@@ -316,6 +324,7 @@ export class StudentAESTController extends BaseController {
    * @param studentId student to have the SIN validation created.
    * @returns newly created record id.
    */
+  @Roles(Role.StudentAddNewSIN)
   @Post(":studentId/sin-validations")
   @ApiNotFoundResponse({ description: "Student does not exists." })
   async createStudentSINValidation(
@@ -344,6 +353,7 @@ export class StudentAESTController extends BaseController {
    * @param sinValidationId SIN validation record to be updated.
    * @param payload data to be updated.
    */
+  @Roles(Role.StudentAddSINExpiry)
   @Patch(":studentId/sin-validations/:sinValidationId")
   @ApiNotFoundResponse({
     description:

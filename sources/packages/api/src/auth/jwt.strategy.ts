@@ -41,11 +41,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // also as needed to be validate using a decorator/annotation.
     userToken.roles = [];
     if (payload.resource_access) {
-      Object.keys(payload.resource_access).forEach((value) => {
-        payload.resource_access[value].roles.forEach((roleValue: string) => {
+      payload.resource_access[payload.azp].roles.forEach(
+        (roleValue: string) => {
           userToken.roles.push(roleValue);
-        });
-      });
+        },
+      );
     }
 
     // Check if it is expected that a user exists on DB for the specific authorized parties.
