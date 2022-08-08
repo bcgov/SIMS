@@ -183,6 +183,10 @@
   color: $brand-blue;
 }
 
+/** 
+* This to apply the font awesome as font family to the first child only 
+* so that captions doesn't follow the font-awesome font-family. 
+**/
 .formio-component .fa::before {
   font-family: "FontAwesome", "BCSans", sans-serif;
 }
