@@ -222,8 +222,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         {
           offeringStatus: [
             OfferingStatus.Approved,
-            OfferingStatus.Pending,
-            OfferingStatus.Declined,
+            OfferingStatus.CreationPending,
+            OfferingStatus.CreationDeclined,
           ],
         },
       );
@@ -583,7 +583,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       id: currentOffering.id,
     } as EducationProgramOffering;
     //Populating the status, parent offering and audit fields.
-    requestedOffering.offeringStatus = OfferingStatus.AwaitingApproval;
+    requestedOffering.offeringStatus = OfferingStatus.ChangeAwaitingApproval;
     //The parent offering will be just the preceding offering if
     //the change is requested only once.
     //Otherwise parent offering will be the very first offering where change was requested.
@@ -595,7 +595,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     //Update the status and audit details of current offering.
     const underReviewOffering = new EducationProgramOffering();
     underReviewOffering.id = offeringId;
-    underReviewOffering.offeringStatus = OfferingStatus.UnderReview;
+    underReviewOffering.offeringStatus = OfferingStatus.ChangeUnderReview;
     underReviewOffering.modifier = auditUser;
 
     await this.repo.save([underReviewOffering, requestedOffering]);
@@ -680,7 +680,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offerings.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
       .where("offerings.offeringStatus = :offeringStatus", {
-        offeringStatus: OfferingStatus.AwaitingApproval,
+        offeringStatus: OfferingStatus.ChangeAwaitingApproval,
       })
       .getMany();
   }
@@ -780,7 +780,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   ): Promise<void> {
     const requestedOffering = await this.getOfferingToRequestChange(
       offeringId,
-      OfferingStatus.AwaitingApproval,
+      OfferingStatus.ChangeAwaitingApproval,
     );
 
     if (!requestedOffering) {
