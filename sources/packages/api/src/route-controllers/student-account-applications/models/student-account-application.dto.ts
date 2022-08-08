@@ -1,4 +1,5 @@
-import { IsObject } from "class-validator";
+import { Allow, IsObject } from "class-validator";
+import { CreateStudentAPIInDTO } from "../../../route-controllers/student/models/student.dto";
 
 export class CreateStudentAccountApplicationAPIInDTO {
   @IsObject()
@@ -14,4 +15,24 @@ export class StudentAccountApplicationSummaryAPIOutDTO {
 export class StudentAccountApplicationAPIOutDTO {
   id: number;
   submittedData: unknown;
+}
+
+/**
+ * Represents all the data needed to create a student account and user.
+ * Ministry will ensure that all the data is accurate and this payload will
+ * contain the source of truth that must be used to update the existing user
+ * and also create or update the student account as needed.
+ * !The data must be validate for a form.io dry run also.
+ */
+export class StudentAccountApplicationApprovalAPIInDTO extends CreateStudentAPIInDTO {
+  @Allow()
+  firstName: string;
+  @Allow()
+  lastName: string;
+  @Allow()
+  email: string;
+  @Allow()
+  dateOfBirth: string;
+  @Allow()
+  gender: string;
 }

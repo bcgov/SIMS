@@ -2,6 +2,7 @@ import ApiClient from "@/services/http/ApiClient";
 import {
   CreateStudentAccountApplicationAPIInDTO,
   StudentAccountApplicationAPIOutDTO,
+  StudentAccountApplicationApprovalAPIInDTO,
   StudentAccountApplicationSummaryAPIOutDTO,
 } from "@/services/http/dto";
 
@@ -49,6 +50,33 @@ export class StudentAccountApplicationService {
   ): Promise<StudentAccountApplicationAPIOutDTO> {
     return await ApiClient.StudentAccountApplicationApi.getStudentAccountApplicationById(
       id,
+    );
+  }
+
+  /**
+   * Approve the student account application associating the user
+   * with a student account. The Ministry can also adjust any student
+   * data that will then be used to create the student account.
+   * @returns new student id created as a result of the approval.
+   */
+  async approveStudentAccountApplication(
+    studentAccountApplicationId: number,
+    payload: StudentAccountApplicationApprovalAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.StudentAccountApplicationApi.approveStudentAccountApplication(
+      studentAccountApplicationId,
+      payload,
+    );
+  }
+
+  /**
+   * Declines the student account application.
+   */
+  async declineStudentAccountApplication(
+    studentAccountApplicationId: number,
+  ): Promise<void> {
+    await ApiClient.StudentAccountApplicationApi.declineStudentAccountApplication(
+      studentAccountApplicationId,
     );
   }
 }

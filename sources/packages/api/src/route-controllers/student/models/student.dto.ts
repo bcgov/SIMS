@@ -40,13 +40,20 @@ export class CreateStudentAPIInDTO extends AddressDetailsAPIInDTO {
   @Allow()
   sinNumber: string;
   /**
-   * This is used to allow the UI to display or not the SIN during
+   * Used to allow the UI to display or not the SIN during
    * student profile creation. If not present here it will be removed
    * by Nestjs and the Form.io dry run will also remove it from it
    * output considering that the form is not in creation mode.
    */
   @Allow()
   mode: string;
+  /**
+   * Used to adapt the student profile to be used to BCeID and BCSC.
+   * If not present here it will be removed by Nestjs and the Form.io
+   * will produce a different output.
+   */
+  @Allow()
+  identityProvider: string;
 }
 
 /**

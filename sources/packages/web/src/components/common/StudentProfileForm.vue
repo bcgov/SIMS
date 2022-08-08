@@ -2,6 +2,7 @@
   <formio-container
     formName="studentProfile"
     :formData="formModel"
+    @loaded="$emit('loaded', $event)"
     @submitted="$emit('submitted', $event)"
     @customEvent="$emit('customEvent', $event)"
   >

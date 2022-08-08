@@ -1,5 +1,7 @@
+import { StudentInfo } from "../student/student.service.models";
+
 /**
- * Contains the data needed to create the user and also
+ * Data needed to create the user and also
  * the dynamic data that represents the student profile
  * to be assessed by the Ministry.
  * The properties explicity declared represents the
@@ -11,3 +13,13 @@ export interface StudentAccountApplicationCreateModel {
   firstName: string;
   lastName: string;
 }
+
+/**
+ * Data needed to update a user and also a student with the final
+ * Ministry review of the student account application.
+ */
+export type StudentAccountApplicationApprovalModel = StudentInfo &
+  StudentAccountApplicationCreateModel & {
+    dateOfBirth: string;
+    gender: string;
+  };

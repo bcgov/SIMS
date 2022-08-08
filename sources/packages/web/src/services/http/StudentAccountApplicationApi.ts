@@ -2,6 +2,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   CreateStudentAccountApplicationAPIInDTO,
   StudentAccountApplicationAPIOutDTO,
+  StudentAccountApplicationApprovalAPIInDTO,
   StudentAccountApplicationSummaryAPIOutDTO,
 } from "@/services/http/dto";
 
@@ -37,14 +38,48 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
   /**
    * Get the student account application previously submitted
    * by the student for the basic BCeID student account creation.
-   * @param id student account application id.
+   * @param studentAccountApplicationId student account application id.
    * @returns student account application.
    */
   async getStudentAccountApplicationById(
-    id: number,
+    studentAccountApplicationId: number,
   ): Promise<StudentAccountApplicationAPIOutDTO> {
     return await this.getCallTyped<StudentAccountApplicationAPIOutDTO>(
-      this.addClientRoot(`student-account-application/${id}`),
+      this.addClientRoot(
+        `student-account-application/${studentAccountApplicationId}`,
+      ),
+    );
+  }
+
+  /**
+   * Approve the student account application associating the user
+   * with a student account. The Ministry can also adjust any student
+   * data that will then be used to create the student account.
+   * @returns new student id created as a result of the approval.
+   */
+  async approveStudentAccountApplication(
+    studentAccountApplicationId: number,
+    payload: StudentAccountApplicationApprovalAPIInDTO,
+  ): Promise<void> {
+    await this.postCall(
+      this.addClientRoot(
+        `student-account-application/${studentAccountApplicationId}/approve`,
+      ),
+      payload,
+    );
+  }
+
+  /**
+   * Declines the student account application.
+   */
+  async declineStudentAccountApplication(
+    studentAccountApplicationId: number,
+  ): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(
+        `student-account-application/${studentAccountApplicationId}/decline`,
+      ),
+      null,
     );
   }
 }

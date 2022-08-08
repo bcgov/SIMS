@@ -1,12 +1,22 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { StudentAccountApplication, User } from "../../database/entities";
-import { DataSource, IsNull } from "typeorm";
-import { StudentAccountApplicationCreateModel } from "./student-account-applications.models";
+import { DataSource, DeleteResult, IsNull } from "typeorm";
+import {
+  StudentAccountApplicationApprovalModel,
+  StudentAccountApplicationCreateModel,
+} from "./student-account-applications.models";
+import { StudentService } from "../student/student.service";
+import { UserInfo } from "../../types";
+import { CustomNamedError, getISODateOnlyString } from "../../utilities";
+import { STUDENT_ACCOUNT_APPLICATION_NOT_FOUND } from "../../constants";
 
 @Injectable()
 export class StudentAccountApplicationsService extends RecordDataModelService<StudentAccountApplication> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly studentService: StudentService,
+  ) {
     super(dataSource.getRepository(StudentAccountApplication));
   }
 
@@ -72,5 +82,85 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     newAccountApplication.submittedData = studentProfile;
     newAccountApplication.submittedDate = new Date();
     return this.repo.save(newAccountApplication);
+  }
+
+  /**
+   * Approve the student account application associating the user
+   * with a student account. The Ministry can also adjust any student
+   * data that will then be used to create the student account.
+   * @param id student account application id.
+   * @param studentProfile user and student data to be updated.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   */
+  async approveStudentAccountApplication(
+    id: number,
+    studentProfile: StudentAccountApplicationApprovalModel,
+    auditUserId: number,
+  ) {
+    const accountApplication = await this.repo.findOne({
+      select: { id: true, user: { id: true } },
+      relations: { user: true },
+      where: { id },
+    });
+
+    if (!accountApplication) {
+      throw new CustomNamedError(
+        "Student account application not found.",
+        STUDENT_ACCOUNT_APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const userInfo = {
+      userId: accountApplication.user.id,
+      lastName: studentProfile.lastName,
+      givenNames: studentProfile.firstName,
+      email: studentProfile.email,
+      birthdate: getISODateOnlyString(studentProfile.dateOfBirth),
+      gender: studentProfile.gender,
+    } as UserInfo;
+
+    const studentInfo = {
+      phone: studentProfile.phone,
+      sinNumber: studentProfile.sinNumber,
+      addressLine1: studentProfile.addressLine1,
+      addressLine2: studentProfile.addressLine2,
+      provinceState: studentProfile.provinceState,
+      country: studentProfile.country,
+      city: studentProfile.city,
+      postalCode: studentProfile.postalCode,
+      selectedCountry: studentProfile.selectedCountry,
+    };
+
+    return this.dataSource.transaction((entityManager) => {
+      // Update the student account application with the approval.
+      const auditUser = { id: auditUserId } as User;
+      accountApplication.assessedBy = auditUser;
+      accountApplication.modifier = auditUser;
+      accountApplication.assessedDate = new Date();
+      entityManager
+        .getRepository(StudentAccountApplication)
+        .save(accountApplication);
+      // Create the new student and updates the user.
+      return this.studentService.createStudentFromAccountApplication(
+        userInfo,
+        studentInfo,
+        auditUserId,
+        entityManager,
+        accountApplication.id,
+      );
+    });
+  }
+
+  /**
+   * Declines the student account application.
+   * @param id student account application id.
+   */
+  async declineStudentAccountApplication(id: number): Promise<DeleteResult> {
+    return await this.repo
+      .createQueryBuilder()
+      .delete()
+      .from(StudentAccountApplication)
+      .where({ id })
+      .execute();
   }
 }

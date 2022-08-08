@@ -1,5 +1,5 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { RecordDataModel } from ".";
+import { RecordDataModel, StudentAccountApplication } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { Student } from "./student.model";
 import { User } from "./user.model";
@@ -31,4 +31,14 @@ export class StudentUser extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   student: Student;
+  /**
+   * Optional student account application in case of this relationship was
+   * created after a student account application assessed by the Ministry.
+   */
+  @ManyToOne(() => StudentAccountApplication, { eager: false, nullable: true })
+  @JoinColumn({
+    name: "student_account_application_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  accountApplication?: StudentAccountApplication;
 }
