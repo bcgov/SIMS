@@ -58,19 +58,19 @@ export default {
       //TODO: Resetting the form value manually as $ref.form.reset() is not working.
       assessOfferingData.assessmentNotes = "";
       assessOfferingData.offeringStatus = modalOfferingStatus;
-      switch (modalOfferingStatus) {
-        case OfferingStatus.Approved:
-          title.value = "Approve for reassessment";
-          subTitle.value =
-            "Outline the reasoning for approving this request. This will be stored in the institution profile notes.";
-          submitLabel.value = "Approve now";
-          break;
-        default:
-          title.value = "Decline for reassessment";
-          subTitle.value =
-            "Outline the reasoning for declining this request. This will be stored in the institution profile notes.";
-          submitLabel.value = "Decline now";
+
+      if (modalOfferingStatus === OfferingStatus.Approved) {
+        title.value = "Approve for reassessment";
+        subTitle.value =
+          "Outline the reasoning for approving this request. This will be stored in the institution profile notes.";
+        submitLabel.value = "Approve now";
+      } else {
+        title.value = "Decline for reassessment";
+        subTitle.value =
+          "Outline the reasoning for declining this request. This will be stored in the institution profile notes.";
+        submitLabel.value = "Decline now";
       }
+
       return showModalInternal(modalOfferingStatus);
     };
 
