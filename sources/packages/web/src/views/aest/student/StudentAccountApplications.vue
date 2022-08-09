@@ -8,18 +8,6 @@
       subTitle="Make a determination for students requesting to login with a Basic BCeID."
       :recordsCount="accountApplications?.length"
     >
-      <template #actions>
-        <v-text-field
-          label="Search name"
-          density="compact"
-          v-model="searchCriteria"
-          data-cy="searchStudentAccountApplication"
-          variant="outlined"
-          @keyup.enter="search"
-          prepend-inner-icon="mdi-magnify"
-          hide-details
-        />
-      </template>
     </body-header>
     <content-group>
       <toggle-content :toggled="!accountApplications.length">

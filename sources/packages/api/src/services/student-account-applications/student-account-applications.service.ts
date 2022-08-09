@@ -55,6 +55,9 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       where: {
         assessedDate: IsNull(),
       },
+      order: {
+        submittedDate: "ASC",
+      },
     });
   }
 
