@@ -14,7 +14,12 @@ import {
   StudentAssessmentService,
 } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import {
   ApiNotFoundResponse,
   ApiTags,
@@ -39,6 +44,7 @@ import {
   PaginatedResultsAPIOutDTO,
   StudentAppealPendingPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
+import { Role } from "../../auth/roles.enum";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -94,6 +100,7 @@ export class StudentAppealAESTController extends BaseController {
    * @param payload appeal requests to be approved/declined.
    * @param userToken user authentication token.
    */
+  @Roles(Role.StudentApproveDeclineAppeals)
   @Patch(":appealId/requests")
   @ApiNotFoundResponse({
     description: `Not able to find the appeal or the appeal has requests different from '${StudentAppealStatus.Pending}'.`,

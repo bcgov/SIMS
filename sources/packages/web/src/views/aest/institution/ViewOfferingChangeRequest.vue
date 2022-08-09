@@ -56,10 +56,7 @@
         ></offering-change-request>
       </v-window-item>
     </v-window>
-    <assess-offering-change-modal
-      ref="assessOfferingChangeModalRef"
-      :offeringStatus="offeringChangeApprovalStatus"
-    />
+    <assess-offering-change-modal ref="assessOfferingChangeModalRef" />
   </full-page-container>
 </template>
 
@@ -101,7 +98,6 @@ export default {
   setup(props: any) {
     const tab = ref("requested-change");
     const headerDetails = ref({} as ProgramOfferingHeader);
-    const offeringChangeApprovalStatus = ref(OfferingStatus.ChangeDeclined);
     const assessOfferingChangeModalRef = ref(
       {} as ModalDialog<OfferingChangeAssessmentAPIInDTO | boolean>,
     );
@@ -115,8 +111,9 @@ export default {
     };
 
     const assessOfferingChange = async (offeringStatus: OfferingStatus) => {
-      offeringChangeApprovalStatus.value = offeringStatus;
-      const responseData = await assessOfferingChangeModalRef.value.showModal();
+      const responseData = await assessOfferingChangeModalRef.value.showModal(
+        offeringStatus,
+      );
       if (responseData) {
         try {
           await EducationProgramOfferingService.shared.assessOfferingChangeRequest(
@@ -152,7 +149,6 @@ export default {
       getHeaderDetails,
       OfferingRelationType,
       assessOfferingChangeModalRef,
-      offeringChangeApprovalStatus,
       assessOfferingChange,
     };
   },

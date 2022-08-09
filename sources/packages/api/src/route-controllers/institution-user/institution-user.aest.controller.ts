@@ -9,7 +9,12 @@ import {
   Query,
 } from "@nestjs/common";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import BaseController from "../BaseController";
 import { InstitutionUserControllerService } from "./institution-user.controller.service";
@@ -30,6 +35,7 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { InstitutionUserPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { BCeIDAccountTypeCodes } from "../../services/bceid/bceid.models";
+import { Role } from "../../auth/roles.enum";
 
 /**
  * Institution user controller for AEST client.
@@ -80,6 +86,7 @@ export class InstitutionUserAESTController extends BaseController {
       "or the user already exists " +
       "or a second legal signing authority is trying to be set when one is already in place.",
   })
+  @Roles(Role.InstitutionAddNewUser)
   @Post(":institutionId")
   async createInstitutionUserWithAuth(
     @UserToken() token: IUserToken,
@@ -109,6 +116,7 @@ export class InstitutionUserAESTController extends BaseController {
       " or the user permission is being updated in a way that no admin will be present" +
       " or a second legal signing authority is trying to be set and only one is allowed.",
   })
+  @Roles(Role.InstitutionEditUser)
   @Patch(":institutionUserId")
   async updateInstitutionUserWithAuth(
     @UserToken() token: IUserToken,
@@ -148,6 +156,7 @@ export class InstitutionUserAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "User to be updated not found.",
   })
+  @Roles(Role.InstitutionEnableDisableUser)
   @Patch(":institutionUserId/status")
   async updateUserStatus(
     @UserToken() userToken: IUserToken,

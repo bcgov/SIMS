@@ -14,7 +14,7 @@ import {
 import { Response } from "express";
 import { Readable } from "stream";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import { AllowAuthorizedParty, Groups, Roles } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ReportService, FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
@@ -29,6 +29,7 @@ import {
   REPORT_CONFIG_NOT_FOUND,
   FILTER_PARAMS_MISMATCH,
 } from "../../services/report/constants";
+import { Role } from "../../auth/roles.enum";
 
 /**
  * Controller for Reports for AEST Client.
@@ -58,6 +59,7 @@ export class ReportAESTController extends BaseController {
     description:
       "Either report config missing or filter parameters not matching the report config.",
   })
+  @Roles(Role.AESTReports)
   @Post()
   async exportReport(
     @Body() payload: ReportsFilterAPIInDTO,

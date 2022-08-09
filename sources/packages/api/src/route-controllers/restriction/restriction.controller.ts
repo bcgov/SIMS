@@ -21,7 +21,12 @@ import {
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   RestrictionSummaryDTO,
@@ -33,6 +38,7 @@ import {
 import { OptionItem } from "../../types";
 import { getIDIRUserFullName } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
+import { Role } from "../../auth/roles.enum";
 
 /**
  * Controller for Restrictions.
@@ -156,11 +162,11 @@ export class RestrictionController extends BaseController {
    * * Note: Federal restrictions are added/resolved by nightly job not through this API.
    * @param userToken
    * @param studentId
-   * @param restrictionId
    * @param payload
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Roles(Role.StudentAddRestriction)
   @Post("/student/:studentId")
   async addStudentProvincialRestriction(
     @UserToken() userToken: IUserToken,
@@ -201,6 +207,7 @@ export class RestrictionController extends BaseController {
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Roles(Role.StudentResolveRestriction)
   @Patch("/student/:studentId/studentRestriction/:studentRestrictionId/resolve")
   async resolveStudentProvincialRestriction(
     @UserToken() userToken: IUserToken,
@@ -315,11 +322,11 @@ export class RestrictionController extends BaseController {
    * * Note: Only provincial restriction of category Designation can be added to institution.
    * @param userToken
    * @param institutionId
-   * @param restrictionId
    * @param payload
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Roles(Role.InstitutionAddRestriction)
   @Post("/institution/:institutionId")
   async addInstitutionProvincialRestriction(
     @UserToken() userToken: IUserToken,
@@ -360,6 +367,7 @@ export class RestrictionController extends BaseController {
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Roles(Role.InstitutionResolveRestriction)
   @Patch(
     "/institution/:institutionId/institutionRestriction/:institutionRestrictionId/resolve",
   )

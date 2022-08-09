@@ -11,7 +11,7 @@
             <v-btn
               color="primary"
               variant="outlined"
-              @click="assessOffering(OfferingStatus.Declined)"
+              @click="assessOffering(OfferingStatus.CreationDeclined)"
               >Decline</v-btn
             >
             <v-btn
@@ -83,7 +83,7 @@ export default {
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
     );
-    const offeringApprovalStatus = ref(OfferingStatus.Declined);
+    const offeringApprovalStatus = ref(OfferingStatus.CreationDeclined);
     const programRoute = computed(() => ({
       name: AESTRoutesConst.PROGRAM_DETAILS,
       params: {
@@ -93,7 +93,7 @@ export default {
       },
     }));
     const showActionButtons = computed(
-      () => initialData.value.offeringStatus === OfferingStatus.Pending,
+      () => initialData.value.offeringStatus === OfferingStatus.CreationPending,
     );
     const loadFormData = async () => {
       const programDetails =

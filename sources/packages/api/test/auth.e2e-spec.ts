@@ -39,7 +39,6 @@ describe("Authentication (e2e)", () => {
       process.env.E2E_TEST_STUDENT_PASSWORD,
       "aest",
     );
-
     studentAccessToken = studentToken.access_token;
     aestAccessToken = aestToken.access_token;
 
@@ -102,7 +101,7 @@ describe("Authentication (e2e)", () => {
     it("Should return a HttpStatus OK(200) when the Role decorator is present and the role is present and it is the expected one", () => {
       return request(app.getHttpServer())
         .get("/auth-test/authenticated-route-by-role")
-        .auth(studentAccessToken, { type: "bearer" })
+        .auth(aestAccessToken, { type: "bearer" })
         .expect(HttpStatus.OK);
     });
 
@@ -139,8 +138,6 @@ describe("Authentication (e2e)", () => {
           expect(resp.body.userName).toBeTruthy();
           expect(resp.body.email).toBeTruthy();
           expect(resp.body.scope).toBeTruthy();
-          expect(resp.body.roles).toBeTruthy();
-          expect(resp.body.roles.length).toBeGreaterThan(0);
         });
     });
   });

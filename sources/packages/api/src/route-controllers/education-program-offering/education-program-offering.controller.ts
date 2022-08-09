@@ -29,7 +29,6 @@ import {
   EducationProgramOfferingService,
   FormService,
   EducationProgramService,
-  InstitutionLocationService,
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -63,7 +62,6 @@ export class EducationProgramOfferingController extends BaseController {
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
     private readonly programService: EducationProgramService,
-    private readonly institutionLocationService: InstitutionLocationService,
   ) {
     super();
   }
