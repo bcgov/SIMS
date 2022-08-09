@@ -9,7 +9,6 @@ import {
   Post,
   Query,
   Res,
-  UnauthorizedException,
   UnprocessableEntityException,
   UploadedFile,
   UseInterceptors,

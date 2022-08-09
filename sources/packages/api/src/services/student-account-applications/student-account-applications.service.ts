@@ -156,7 +156,8 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
    * @param id student account application id.
    */
   async declineStudentAccountApplication(id: number): Promise<DeleteResult> {
-    return await this.repo
+    // TODO: To be changed to a soft delete and add validations.
+    return this.repo
       .createQueryBuilder()
       .delete()
       .from(StudentAccountApplication)

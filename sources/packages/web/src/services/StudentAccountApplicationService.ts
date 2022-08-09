@@ -36,7 +36,7 @@ export class StudentAccountApplicationService {
   async getPendingStudentAccountApplications(): Promise<
     StudentAccountApplicationSummaryAPIOutDTO[]
   > {
-    return await ApiClient.StudentAccountApplicationApi.getPendingStudentAccountApplications();
+    return ApiClient.StudentAccountApplicationApi.getPendingStudentAccountApplications();
   }
 
   /**
@@ -48,7 +48,7 @@ export class StudentAccountApplicationService {
   async getStudentAccountApplicationById(
     id: number,
   ): Promise<StudentAccountApplicationAPIOutDTO> {
-    return await ApiClient.StudentAccountApplicationApi.getStudentAccountApplicationById(
+    return ApiClient.StudentAccountApplicationApi.getStudentAccountApplicationById(
       id,
     );
   }

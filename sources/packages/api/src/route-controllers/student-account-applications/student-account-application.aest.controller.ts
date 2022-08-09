@@ -17,7 +17,12 @@ import {
 } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import BaseController from "../BaseController";
 import {
@@ -37,6 +42,7 @@ import {
 } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { STUDENT_ACCOUNT_APPLICATION_NOT_FOUND } from "../../constants";
+import { Role } from "../../auth/roles.enum";
 
 /**
  * Student account applications when the authentication happens through BCeID
@@ -110,6 +116,7 @@ export class StudentAccountApplicationAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "Student account application not found.",
   })
+  @Roles(Role.StudentApproveDeclineAccountRequests)
   @Post(":studentAccountApplicationId/approve")
   async approveStudentAccountApplication(
     @Param("studentAccountApplicationId", ParseIntPipe)
@@ -148,6 +155,7 @@ export class StudentAccountApplicationAESTController extends BaseController {
   /**
    * Declines the student account application.
    */
+  @Roles(Role.StudentApproveDeclineAccountRequests)
   @Patch(":studentAccountApplicationId/decline")
   async declineStudentAccountApplication(
     @Param("studentAccountApplicationId", ParseIntPipe)

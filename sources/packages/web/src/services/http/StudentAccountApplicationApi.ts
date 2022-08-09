@@ -31,7 +31,7 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
   async getPendingStudentAccountApplications(): Promise<
     StudentAccountApplicationSummaryAPIOutDTO[]
   > {
-    return await this.getCallTyped<StudentAccountApplicationSummaryAPIOutDTO[]>(
+    return this.getCallTyped<StudentAccountApplicationSummaryAPIOutDTO[]>(
       this.addClientRoot("student-account-application/pending"),
     );
   }
@@ -45,7 +45,7 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
   async getStudentAccountApplicationById(
     studentAccountApplicationId: number,
   ): Promise<StudentAccountApplicationAPIOutDTO> {
-    return await this.getCallTyped<StudentAccountApplicationAPIOutDTO>(
+    return this.getCallTyped<StudentAccountApplicationAPIOutDTO>(
       this.addClientRoot(
         `student-account-application/${studentAccountApplicationId}`,
       ),
