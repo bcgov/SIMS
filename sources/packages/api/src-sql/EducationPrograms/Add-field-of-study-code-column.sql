@@ -2,6 +2,6 @@
 ALTER TABLE
   sims.education_programs
 ADD
-  COLUMN IF NOT EXISTS field_of_study_code INT NULL;
+  COLUMN IF NOT EXISTS field_of_study_code INT DEFAULT NULL;
 
 COMMENT ON COLUMN sims.education_programs.field_of_study_code IS 'Education program field of study code.';

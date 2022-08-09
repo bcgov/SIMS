@@ -386,7 +386,7 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "field_of_study_code",
-    nullable: true,
+    default: null,
   })
   fieldOfStudyCode?: number;
 }
