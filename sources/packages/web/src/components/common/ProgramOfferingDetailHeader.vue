@@ -92,7 +92,7 @@ export default {
         (props.headerDetails.status === ProgramStatus.Approved ||
           props.headerDetails.status === ProgramStatus.Declined ||
           props.headerDetails.status === OfferingStatus.Approved ||
-          props.headerDetails.status === OfferingStatus.Declined),
+          props.headerDetails.status === OfferingStatus.CreationDeclined),
     );
     const approvalLabel = computed((): ProgramOfferingApprovalLabels => {
       if (
@@ -107,7 +107,7 @@ export default {
       }
       if (
         props.headerDetails.status === ProgramStatus.Declined ||
-        props.headerDetails.status === OfferingStatus.Declined
+        props.headerDetails.status === OfferingStatus.CreationDeclined
       ) {
         return {
           assessedByLabel: "Declined By",

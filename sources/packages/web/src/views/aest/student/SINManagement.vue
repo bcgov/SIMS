@@ -1,66 +1,60 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <body-header
-        title="Social Insurance Number"
-        subTitle="The first row will always be the student's current active SIN."
-        :recordsCount="studentSINValidations?.length"
-        class="m-1"
-      >
-        <template #actions>
-          <v-btn
-            color="primary"
-            data-cy="addNewSINButton"
-            :disabled="processingNewSIN"
-            @click="addNewSIN"
-            ><font-awesome-icon
-              :icon="['fas', 'plus-circle']"
-              class="mr-2"
-            />Add new SIN</v-btn
+  <full-page-container :full-width="true">
+    <body-header
+      title="Social Insurance Number"
+      subTitle="The first row will always be the student's current active SIN."
+      :recordsCount="studentSINValidations?.length"
+      class="m-1"
+    >
+      <template #actions>
+        <v-btn
+          class="float-right"
+          color="primary"
+          data-cy="addNewSINButton"
+          :disabled="processingNewSIN"
+          @click="addNewSIN"
+          prepend-icon="fa:fa fa-plus-circle"
+          >Add new SIN</v-btn
+        >
+      </template>
+    </body-header>
+    <content-group>
+      <toggle-content :toggled="!studentSINValidations?.length">
+        <DataTable
+          :value="studentSINValidations"
+          :paginator="true"
+          :rows="DEFAULT_PAGE_LIMIT"
+          :rowsPerPageOptions="PAGINATION_LIST"
+          breakpoint="1380px"
+        >
+          <Column field="createdAtFormatted" header="Date created" />
+          <Column field="sinFormatted" header="SIN" bodyClass="text-nowrap" />
+          <Column field="isValidSINFormatted" header="SIN validated" />
+          <Column field="sinStatus" header="Response code"></Column>
+          <Column field="validSINCheckFormatted" header="SIN accepted" />
+          <Column field="validFirstNameCheckFormatted" header="First name" />
+          <Column field="validLastNameCheckFormatted" header="Last name" />
+          <Column field="validBirthdateCheckFormatted" header="Date of birth" />
+          <Column field="validGenderCheckFormatted" header="Gender" />
+          <Column field="sinExpiryDateFormatted" header="Expiry date" />
+          <Column header="Action">
+            <template #body="slotProps">
+              <v-btn
+                color="primary"
+                :disabled="
+                  !slotProps.data.temporarySIN ||
+                  !!slotProps.data.sinExpiryDate ||
+                  processingEditExpiryDate
+                "
+                @click="addExpiryDate(slotProps.data.id)"
+                >Add expiry date</v-btn
+              >
+            </template></Column
           >
-        </template>
-      </body-header>
-      <content-group>
-        <toggle-content :toggled="!studentSINValidations?.length">
-          <DataTable
-            :value="studentSINValidations"
-            :paginator="true"
-            :rows="DEFAULT_PAGE_LIMIT"
-            :rowsPerPageOptions="PAGINATION_LIST"
-            breakpoint="1380px"
-          >
-            <Column field="createdAtFormatted" header="Date created" />
-            <Column field="sinFormatted" header="SIN" bodyClass="text-nowrap" />
-            <Column field="isValidSINFormatted" header="SIN validated" />
-            <Column field="sinStatus" header="Response code"></Column>
-            <Column field="validSINCheckFormatted" header="SIN accepted" />
-            <Column field="validFirstNameCheckFormatted" header="First name" />
-            <Column field="validLastNameCheckFormatted" header="Last name" />
-            <Column
-              field="validBirthdateCheckFormatted"
-              header="Date of birth"
-            />
-            <Column field="validGenderCheckFormatted" header="Gender" />
-            <Column field="sinExpiryDateFormatted" header="Expiry date" />
-            <Column header="Action">
-              <template #body="slotProps">
-                <v-btn
-                  color="primary"
-                  :disabled="
-                    !slotProps.data.temporarySIN ||
-                    !!slotProps.data.sinExpiryDate ||
-                    processingEditExpiryDate
-                  "
-                  @click="addExpiryDate(slotProps.data.id)"
-                  >Add expiry date</v-btn
-                >
-              </template></Column
-            >
-          </DataTable>
-        </toggle-content>
-      </content-group>
-    </div>
-  </v-card>
+        </DataTable>
+      </toggle-content>
+    </content-group>
+  </full-page-container>
   <formio-modal-dialog
     max-width="730"
     ref="addNewSINModal"
@@ -100,6 +94,7 @@ import {
   FormIOForm,
   PAGINATION_LIST,
   SINValidations,
+  LayoutTemplates,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import {
@@ -210,6 +205,7 @@ export default {
       addExpiryDate,
       processingNewSIN,
       processingEditExpiryDate,
+      LayoutTemplates,
     };
   },
 };

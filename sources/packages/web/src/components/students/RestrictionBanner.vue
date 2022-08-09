@@ -30,7 +30,7 @@ import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStudentStore } from "@/composables";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { BannerTypes } from "@/components/generic/Banner.models";
+import { BannerTypes } from "@/types/contracts/Banner";
 export default {
   setup() {
     const router = useRouter();

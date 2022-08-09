@@ -1,6 +1,6 @@
 /** Brand Colors - Figma **/
 $brand-blue: #2965c5;
-$brand-grey: #8692a4;
+$brand-grey: #69768c;
 $brand-black: #333a47;
 $brand-black-light: #999ca3;
 
@@ -58,10 +58,17 @@ $badge-border-success: rgb(22, 201, 46, 0.2);
 $badge-border-inactive: rgb(51, 58, 71, 0.2);
 $badge-background-color: white;
 
-/** font weight **/
+/** font weight bold**/
 $font-weight-bold: bold;
+
+/** font weight **/
+$font-weight-normal: normal;
 
 /** font style **/
 $font-style-normal: normal;
 
 $color-muted: #69768c;
+
+/** shades **/
+$success-shade: #0f851f;
+$warning-shade: #b35600;

@@ -16,11 +16,6 @@
   color: $button-font-color !important;
 }
 
-.primary-btn-background {
-  background: $brand-blue !important;
-  color: $button-font-color !important;
-}
-
 /**Secondary theme color of the application**/
 .secondary-color {
   color: $secondary-header-color !important;
@@ -72,6 +67,13 @@
   font-style: $font-style-normal;
   font-weight: $font-weight-bold;
   font-size: $font-header-large;
+  line-height: $line-height-header-lg;
+}
+
+.category-header-x-large {
+  font-style: $font-style-normal;
+  font-weight: $font-weight-bold;
+  font-size: $font-header-xlarge;
   line-height: $line-height-header-lg;
 }
 
@@ -181,11 +183,18 @@
   color: $brand-blue;
 }
 
-.formio-component .fa {
+/** 
+* This to apply the font awesome as font family to the first child only 
+* so that captions doesn't follow the font-awesome font-family. 
+**/
+.formio-component .fa::before {
   font-family: "FontAwesome", "BCSans", sans-serif;
-  font-size: $formio-content;
+}
+
+.formio-component .fa {
+  font-family: "BCSans", sans-serif;
   line-height: $formio-content-lh;
-  font-weight: 400;
+  font-weight: $font-weight-normal;
 }
 
 .formio-component-htmlelement.header-lg p,

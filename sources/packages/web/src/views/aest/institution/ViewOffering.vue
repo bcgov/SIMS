@@ -7,17 +7,19 @@
         subTitle="View Request"
       >
         <template #buttons v-if="showActionButtons">
-          <v-btn
-            color="primary"
-            variant="outlined"
-            @click="assessOffering(OfferingStatus.Declined)"
-            >Decline</v-btn
-          >
-          <v-btn
-            class="ml-2"
-            color="primary"
-            @click="assessOffering(OfferingStatus.Approved)"
-            >Approve offering</v-btn
+          <v-row class="m-0 p-0">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              @click="assessOffering(OfferingStatus.CreationDeclined)"
+              >Decline</v-btn
+            >
+            <v-btn
+              class="ml-2"
+              color="primary"
+              @click="assessOffering(OfferingStatus.Approved)"
+              >Approve offering</v-btn
+            ></v-row
           >
         </template>
       </header-navigator>
@@ -46,7 +48,7 @@ import { OfferingFormBaseModel, OfferingStatus } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
-import { BannerTypes } from "@/components/generic/Banner.models";
+import { BannerTypes } from "@/types/contracts/Banner";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 import AssessOfferingModal from "@/components/aest/institution/modals/AssessOfferingModal.vue";
@@ -81,7 +83,7 @@ export default {
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
     );
-    const offeringApprovalStatus = ref(OfferingStatus.Declined);
+    const offeringApprovalStatus = ref(OfferingStatus.CreationDeclined);
     const programRoute = computed(() => ({
       name: AESTRoutesConst.PROGRAM_DETAILS,
       params: {
@@ -91,7 +93,7 @@ export default {
       },
     }));
     const showActionButtons = computed(
-      () => initialData.value.offeringStatus === OfferingStatus.Pending,
+      () => initialData.value.offeringStatus === OfferingStatus.CreationPending,
     );
     const loadFormData = async () => {
       const programDetails =

@@ -7,7 +7,7 @@ import {
 import { Reflector } from "@nestjs/core";
 import { AuthorizedParties } from "../authorized-parties.enum";
 import { AUTHORIZED_PARTY_KEY } from "../decorators/authorized-party.decorator";
-import { IdentityProviders } from "../identity-providers.enum";
+import { IdentityProviders } from "../../database/entities/identity-providers.type";
 import { IUserToken } from "../userToken.interface";
 
 /**
@@ -62,6 +62,7 @@ export class AuthorizedPartiesGuard implements CanActivate {
   ): boolean {
     switch (authorizedParty) {
       case AuthorizedParties.student:
+        return [IdentityProviders.BCeID, IdentityProviders.BCSC].includes(idp);
       case AuthorizedParties.supportingUsers:
         return idp === IdentityProviders.BCSC;
       case AuthorizedParties.institution:

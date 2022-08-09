@@ -53,8 +53,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
    */
   @ApiNotFoundResponse({ description: "Offering not found." })
   @ApiUnprocessableEntityResponse({
-    description:
-      "Offering status is incorrect. Only pending offerings can be approved/declined.",
+    description: `Offering status is incorrect. Only ${OfferingStatus.CreationPending} offerings can be approved/declined.`,
   })
   @Patch(":offeringId/assess")
   async assessOffering(
@@ -68,9 +67,9 @@ export class EducationProgramOfferingAESTController extends BaseController {
     if (!offering) {
       throw new NotFoundException("Offering not found.");
     }
-    if (offering.offeringStatus !== OfferingStatus.Pending) {
+    if (offering.offeringStatus !== OfferingStatus.CreationPending) {
       throw new UnprocessableEntityException(
-        "Offering status is incorrect. Only pending offerings can be approved/declined.",
+        `Offering status is incorrect. Only ${OfferingStatus.CreationPending} offerings can be approved/declined.`,
       );
     }
     await this.programOfferingService.assessOffering(

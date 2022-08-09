@@ -1,85 +1,87 @@
 <template>
-  <body-header
-    title="Applications"
-    :recordsCount="applications.results?.length"
-    class="m-1"
-  >
-    <template #actions>
-      <v-text-field
-        class="v-text-field-search-width"
-        density="compact"
-        label="Search name or application #"
-        variant="outlined"
-        v-model="searchCriteria"
-        @keyup.enter="searchActiveApplications"
-      >
-        <template v-slot:prependInner>
-          <font-awesome-icon :icon="['fas', 'search']" class="m" />
-        </template>
-      </v-text-field>
-    </template>
-  </body-header>
-  <content-group>
-    <toggle-content :toggled="!applications.results?.length">
-      <DataTable
-        :value="applications.results"
-        :lazy="true"
-        class="p-m-4"
-        :paginator="true"
-        :rows="pageLimit"
-        :rowsPerPageOptions="PAGINATION_LIST"
-        :totalRecords="applications.count"
-        @page="pageEvent"
-        @sort="sortEvent"
-      >
-        <Column field="fullName" header="Name" :sortable="true"> </Column>
-        <Column field="studyStartPeriod" header="Study dates">
-          <template #body="slotProps">
-            <span>
-              {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
-              {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
-            </span>
-          </template>
-        </Column>
-        <Column
-          field="applicationNumber"
-          header="Application #"
-          :sortable="true"
-        ></Column>
-        <Column field="applicationStatus" header="Status">
-          <template #body="slotProps">
-            <StatusChipActiveApplication
-              :status="slotProps.data.applicationScholasticStandingStatus"
-            />
-          </template>
-        </Column>
-        <Column header="Action">
-          <template #body="slotProps">
-            <v-btn
-              v-if="
-                slotProps.data.applicationScholasticStandingStatus ===
-                ApplicationScholasticStandingStatus.Available
-              "
-              class="primary-btn-background"
-              @click="goToViewApplication(slotProps.data.applicationId)"
-              >Report a change</v-btn
-            >
-            <v-btn
-              v-if="
-                slotProps.data.applicationScholasticStandingStatus ===
-                ApplicationScholasticStandingStatus.Completed
-              "
-              class="primary-btn-background"
-              @click="
-                goToViewScholasticStanding(slotProps.data.scholasticStandingId)
-              "
-              >View</v-btn
-            >
-          </template>
-        </Column>
-      </DataTable>
-    </toggle-content>
-  </content-group>
+  <full-page-container :full-width="true">
+    <body-header
+      title="Applications"
+      :recordsCount="applications.results?.length"
+      class="m-1"
+    >
+      <template #actions>
+        <v-text-field
+          density="compact"
+          label="Search name or application #"
+          variant="outlined"
+          v-model="searchCriteria"
+          data-cy="searchCriteria"
+          @keyup.enter="searchActiveApplications"
+          prepend-inner-icon="mdi-magnify"
+        >
+        </v-text-field>
+      </template>
+    </body-header>
+    <content-group>
+      <toggle-content :toggled="!applications.results?.length">
+        <DataTable
+          :value="applications.results"
+          :lazy="true"
+          class="p-m-4"
+          :paginator="true"
+          :rows="pageLimit"
+          :rowsPerPageOptions="PAGINATION_LIST"
+          :totalRecords="applications.count"
+          @page="pageEvent"
+          @sort="sortEvent"
+        >
+          <Column field="fullName" header="Name" :sortable="true"> </Column>
+          <Column field="studyStartPeriod" header="Study dates">
+            <template #body="slotProps">
+              <span>
+                {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
+                {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
+              </span>
+            </template>
+          </Column>
+          <Column
+            field="applicationNumber"
+            header="Application #"
+            :sortable="true"
+          ></Column>
+          <Column field="applicationStatus" header="Status">
+            <template #body="slotProps">
+              <StatusChipActiveApplication
+                :status="slotProps.data.applicationScholasticStandingStatus"
+              />
+            </template>
+          </Column>
+          <Column header="Action">
+            <template #body="slotProps">
+              <v-btn
+                v-if="
+                  slotProps.data.applicationScholasticStandingStatus ===
+                  ApplicationScholasticStandingStatus.Available
+                "
+                color="primary"
+                @click="goToViewApplication(slotProps.data.applicationId)"
+                >Report a change</v-btn
+              >
+              <v-btn
+                v-if="
+                  slotProps.data.applicationScholasticStandingStatus ===
+                  ApplicationScholasticStandingStatus.Completed
+                "
+                color="primary"
+                @click="
+                  goToViewScholasticStanding(
+                    slotProps.data.scholasticStandingId,
+                  )
+                "
+                >View</v-btn
+              >
+            </template>
+          </Column>
+        </DataTable>
+      </toggle-content>
+    </content-group>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -95,10 +97,12 @@ import {
   PageAndSortEvent,
   PaginatedResults,
   ApplicationScholasticStandingStatus,
+  LayoutTemplates,
 } from "@/types";
 import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
 import StatusChipActiveApplication from "@/components/generic/StatusChipActiveApplication.vue";
+
 const DEFAULT_SORT_FIELD = "applicationNumber";
 
 export default {
@@ -198,6 +202,7 @@ export default {
       searchCriteria,
       goToViewScholasticStanding,
       PAGINATION_LIST,
+      LayoutTemplates,
     };
   },
 };

@@ -15,9 +15,12 @@
       :data="formData"
       :readOnly="true"
     ></formio>
-    <Message v-else severity="warn" :closable="false">
-      <strong> Supporting User has not submitted the application. </strong>
-    </Message>
+    <banner
+      v-else
+      class="mt-2"
+      :type="BannerTypes.Warning"
+      summary="Supporting User has not submitted the application."
+    />
   </full-page-container>
 </template>
 
@@ -26,6 +29,7 @@ import { ref, onMounted } from "vue";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { BannerTypes } from "@/types/contracts/Banner";
 
 export default {
   props: {
@@ -76,7 +80,7 @@ export default {
         ...contactAddress,
       };
     });
-    return { formName, formData, AESTRoutesConst };
+    return { formName, formData, AESTRoutesConst, BannerTypes };
   },
 };
 </script>

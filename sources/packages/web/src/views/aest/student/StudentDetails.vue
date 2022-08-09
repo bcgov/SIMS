@@ -1,24 +1,42 @@
 <template>
-  <full-page-container layout-template="centered">
+  <full-page-container layout-template="centered-tab" :full-width="true">
     <template #header>
       <header-navigator
         title="Student Details"
         :subTitle="studentDetails.fullName"
       >
         <template #sub-title-details>
-          <designation-and-restriction-status-badge
-            class="mb-4 ml-4 mt-4"
+          <student-restriction-chip
+            class="ml-4 mt-1"
             :status="
               studentDetails.hasRestriction
-                ? DesignationAndRestrictionStatus.restriction
-                : DesignationAndRestrictionStatus.noRestriction
+                ? StudentRestrictionStatus.Restriction
+                : StudentRestrictionStatus.NoRestriction
+            "
+            :label="
+              studentDetails.hasRestriction
+                ? StudentRestrictionStatus.Restriction
+                : null
             "
           />
         </template>
       </header-navigator>
     </template>
-    <!-- TODO:replace prime tabMenu with vuetify3-->
-    <TabMenu :model="items" />
+    <template #tab-header>
+      <v-tabs :model="tab" stacked color="primary"
+        ><v-tab
+          v-for="item in items"
+          :key="item"
+          :value="item.value"
+          :to="item.command()"
+          :ripple="false"
+          ><div>
+            <v-icon start :icon="item.icon" class="px-1"></v-icon>
+            <span class="mx-2 label-bold"> {{ item.label }} </span>
+          </div>
+        </v-tab>
+      </v-tabs>
+    </template>
     <router-view />
   </full-page-container>
 </template>
@@ -28,12 +46,12 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
-import { DesignationAndRestrictionStatus } from "@/types";
+import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.vue";
+import { StudentRestrictionStatus } from "@/types";
 import { AESTStudentProfileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default {
-  components: { DesignationAndRestrictionStatusBadge },
+  components: { StudentRestrictionChip },
   props: {
     studentId: {
       type: Number,
@@ -43,67 +61,54 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const studentDetails = ref({} as AESTStudentProfileAPIOutDTO);
-    // TODO: replace all fa icons with fas as per figma with replace with vuetify3
     const items = ref([
       {
         label: "Profile",
-        icon: "fa fa-id-card-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.STUDENT_PROFILE,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:far fa-address-book",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_PROFILE,
+          params: { studentId: props.studentId },
+        }),
       },
       {
         label: "Applications",
-        icon: "fa fa-folder-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.STUDENT_APPLICATIONS,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:far fa-folder-open",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_APPLICATIONS,
+          params: { studentId: props.studentId },
+        }),
       },
       {
         label: "Restrictions",
-        icon: "fa fa-times-circle-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.STUDENT_RESTRICTION,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:far fa-times-circle",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_RESTRICTION,
+          params: { studentId: props.studentId },
+        }),
       },
       {
         label: "File Uploads",
-        icon: "fa fa-file-text-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.STUDENT_FILE_UPLOADS,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:far fa-file-alt",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_FILE_UPLOADS,
+          params: { studentId: props.studentId },
+        }),
       },
       {
         label: "Social insurance number",
-        icon: "fa fa-check-square-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.SIN_MANAGEMENT,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:far fa-check-square",
+        command: () => ({
+          name: AESTRoutesConst.SIN_MANAGEMENT,
+          params: { studentId: props.studentId },
+        }),
       },
       {
         label: "Notes",
-        icon: "fa fa-sticky-note-o",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.STUDENT_NOTES,
-            params: { studentId: props.studentId },
-          });
-        },
+        icon: "fa:fa fa-sticky-note",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_NOTES,
+          params: { studentId: props.studentId },
+        }),
       },
     ]);
 
@@ -124,7 +129,7 @@ export default {
       AESTRoutesConst,
       items,
       studentDetails,
-      DesignationAndRestrictionStatus,
+      StudentRestrictionStatus,
     };
   },
 };

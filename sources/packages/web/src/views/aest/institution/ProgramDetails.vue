@@ -12,14 +12,12 @@
         <v-row class="p-0 m-0" v-if="isPendingProgram">
           <v-btn
             variant="outlined"
-            :color="COLOR_BLUE"
+            color="primary"
             class="mr-2"
             @click="declineProgram"
             >Decline</v-btn
           >
-          <v-btn class="primary-btn-background" @click="approveProgram"
-            >Approve program</v-btn
-          >
+          <v-btn color="primary" @click="approveProgram">Approve program</v-btn>
         </v-row>
       </template>
     </header-navigator>
@@ -42,7 +40,6 @@ import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAn
 import { ref, onMounted, computed } from "vue";
 import { ProgramStatus } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import { COLOR_BLUE } from "@/constants";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
 import DeclineProgramModal from "@/components/aest/institution/modals/DeclineProgramModal.vue";
@@ -140,7 +137,6 @@ export default {
     return {
       educationProgram,
       AESTRoutesConst,
-      COLOR_BLUE,
       isPendingProgram,
       approveProgramModal,
       approveProgram,

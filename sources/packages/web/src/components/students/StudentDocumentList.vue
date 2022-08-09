@@ -12,8 +12,8 @@
           @click="fileUtils.downloadStudentDocument(ministryDocument)"
         >
           <span class="mr-4">
-            <font-awesome-icon :icon="['far', 'file-alt']"
-          /></span>
+            <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
+          ></span>
           <span>{{ ministryDocument.fileName }}</span>
         </div>
       </div>
@@ -36,8 +36,8 @@
           @click="fileUtils.downloadStudentDocument(studentDocument)"
         >
           <span class="mr-4">
-            <font-awesome-icon :icon="['far', 'file-alt']"
-          /></span>
+            <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
+          ></span>
           <span>{{ studentDocument.fileName }}</span>
         </div>
       </div>

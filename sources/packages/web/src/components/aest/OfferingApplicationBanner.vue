@@ -5,7 +5,7 @@
 import { onMounted, ref, computed } from "vue";
 import { PrecedingOfferingSummaryAPIOutDTO } from "@/services/http/dto";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { BannerTypes } from "@/components/generic/Banner.models";
+import { BannerTypes } from "@/types/contracts/Banner";
 export default {
   props: {
     offeringId: {

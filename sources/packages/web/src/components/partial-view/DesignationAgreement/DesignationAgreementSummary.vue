@@ -33,7 +33,7 @@
           <template #body="slotProps">
             <v-btn
               variant="outlined"
-              :color="COLOR_BLUE"
+              color="primary"
               @click="goToViewDesignation(slotProps.data.designationId)"
             >
               View
@@ -62,7 +62,6 @@ import { useFormatters, useInstitutionAuth } from "@/composables";
 import ToggleContent from "@/components/generic/ToggleContent.vue";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
 import { SetupContext } from "vue";
-import { COLOR_BLUE } from "@/constants";
 
 export default {
   emits: ["viewDesignation"],
@@ -95,7 +94,6 @@ export default {
       DEFAULT_PAGE_LIMIT,
       DEFAULT_PAGE_NUMBER,
       PAGINATION_LIST,
-      COLOR_BLUE,
     };
   },
 };

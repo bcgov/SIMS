@@ -27,3 +27,8 @@ export interface BCSCParsedToken extends ApplicationToken {
   gender: string;
   givenName: string;
 }
+
+export interface BCeIDParsedToken extends ApplicationToken {
+  givenNames: string;
+  email: string;
+}
