@@ -51,12 +51,14 @@ import {
 } from "../../utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
+import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 import { ConfigService } from "../config/config.service";
 import { IConfig } from "../../types";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import {
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
   PIR_REQUEST_NOT_FOUND_ERROR,
+  OFFERING_NOT_VALID,
 } from "../../constants";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
@@ -86,6 +88,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly workflow: WorkflowActionsService,
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly offeringService: EducationProgramOfferingService,
   ) {
     super(dataSource.getRepository(Application));
     this.config = configService.getConfig();
@@ -152,6 +155,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
     originalAssessment.submittedBy = auditUser;
     originalAssessment.submittedDate = now;
     originalAssessment.creator = auditUser;
+    // Offering is assigned to the original assessment if the application is not
+    // required for PIR.
+    if (applicationData.selectedProgram && applicationData.selectedOffering) {
+      const offering = await this.offeringService.getProgramOffering(
+        applicationData.selectedLocation,
+        applicationData.selectedProgram,
+        applicationData.selectedOffering,
+      );
+      if (!offering) {
+        throw new CustomNamedError(
+          "Not able to find the offering associated with the program and location.",
+          OFFERING_NOT_VALID,
+        );
+      }
+      originalAssessment.offering = offering;
+    }
 
     if (application.applicationStatus === ApplicationStatus.draft) {
       /**
@@ -176,7 +195,23 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.studentAssessments = [originalAssessment];
       application.currentAssessment = originalAssessment;
 
-      await this.repo.save(application);
+      // When application and assessment is saved, assess for SIN restriction.
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
+        await transactionalEntityManager
+          .getRepository(Application)
+          .save(application);
+
+        // If the offering will be set in the assessment check for possible SIN restrictions.
+        if (originalAssessment.offering) {
+          await this.studentRestrictionService.assessSINRestrictionForOfferingId(
+            application.student.id,
+            originalAssessment.offering.id,
+            application.id,
+            auditUserId,
+            transactionalEntityManager,
+          );
+        }
+      });
       return { application, createdAssessment: originalAssessment };
     }
     /**

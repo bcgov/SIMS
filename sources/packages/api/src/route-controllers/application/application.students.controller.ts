@@ -47,7 +47,10 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { ApplicationStatus } from "../../database/entities";
 import { PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
-import { INVALID_APPLICATION_NUMBER } from "../../constants";
+import {
+  INVALID_APPLICATION_NUMBER,
+  OFFERING_NOT_VALID,
+} from "../../constants";
 import {
   ApiBadRequestResponse,
   ApiForbiddenResponse,
@@ -214,6 +217,7 @@ export class ApplicationStudentsController extends BaseController {
         case APPLICATION_NOT_VALID:
         case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
         case PIR_OR_DATE_OVERLAP_ERROR:
+        case OFFERING_NOT_VALID:
           throw new UnprocessableEntityException(
             new ApiProcessError(error.message, error.name),
           );
