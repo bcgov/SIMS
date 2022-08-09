@@ -12,7 +12,12 @@ import {
 import { InstitutionService } from "../../services";
 import { AddressInfo, Institution } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   InstitutionProfileAPIInDTO,
@@ -31,6 +36,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import { IUserToken } from "../../auth/userToken.interface";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
+import { Role } from "../../auth/roles.enum";
 
 /**
  * Institution controller for AEST Client.
@@ -115,6 +121,7 @@ export class InstitutionAESTController extends BaseController {
    * @param institutionId
    * @param payload
    */
+  @Roles(Role.InstitutionEditProfile)
   @Patch(":institutionId")
   async updateInstitution(
     @Param("institutionId") institutionId: number,
@@ -174,6 +181,7 @@ export class InstitutionAESTController extends BaseController {
    * @param payload complete information to create the profile.
    * @returns primary identifier of the created resource.
    */
+  @Roles(Role.AESTCreateInstitution)
   @Post()
   async createInstitution(
     @Body() payload: AESTCreateInstitutionFormAPIInDTO,

@@ -13,7 +13,12 @@ import {
   ApplicationExceptionService,
   WorkflowActionsService,
 } from "../../services";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import {
@@ -39,6 +44,7 @@ import {
   ApplicationExceptionPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
+import { Role } from "../../auth/roles.enum";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -89,6 +95,7 @@ export class ApplicationExceptionAESTController extends BaseController {
    * @param exceptionId exception to be approved or denied.
    * @param payload information to approve or deny the exception.
    */
+  @Roles(Role.StudentApproveDeclineExceptions)
   @Patch(":exceptionId")
   @ApiNotFoundResponse({
     description: "Student application exception not found.",
