@@ -146,6 +146,8 @@ export class EducationProgramAPIInDTO {
   intlExchangeProgramEligibility?: string;
   @Allow()
   programDeclaration: boolean;
+  @Allow()
+  fieldOfStudyCode: number;
 }
 
 export class ApproveProgramAPIInDTO {

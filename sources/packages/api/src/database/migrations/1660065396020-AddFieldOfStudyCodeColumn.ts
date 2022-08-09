@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 
-export class AddFieldOfStudyCodeColumn1660000679217
+export class AddFieldOfStudyCodeColumn1660065396020
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {

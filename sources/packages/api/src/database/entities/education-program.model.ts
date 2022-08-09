@@ -382,11 +382,11 @@ export class EducationProgram extends RecordDataModel {
   submittedBy: User;
 
   /**
-   * Effective End date of the approved Education program.
+   * Field of study code for Education Program.
    */
   @Column({
     name: "field_of_study_code",
-    default: null,
+    nullable: true,
   })
   fieldOfStudyCode?: number;
 }
