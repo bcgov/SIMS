@@ -93,7 +93,10 @@ export default {
           await StudentAccountApplicationService.shared.createStudentAccountApplication(
             { submittedData: form.data },
           );
-          snackBar.success("student account application request submitted.");
+          snackBar.success("Your profile was successfully created.");
+          router.push({
+            name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
+          });
         }
       } catch {
         snackBar.error("Error while saving student.");

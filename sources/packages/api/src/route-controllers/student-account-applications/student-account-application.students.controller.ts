@@ -2,11 +2,17 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Injectable,
   Post,
+  UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApiBadRequestResponse, ApiTags } from "@nestjs/swagger";
-import { IUserToken } from "../../auth/userToken.interface";
+import {
+  ApiBadRequestResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
+import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -16,13 +22,17 @@ import {
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { CreateStudentAccountApplicationAPIInDTO } from "./models/student-account-application.dto";
+import {
+  CreateStudentAccountApplicationAPIInDTO,
+  HasPendingStudentAccountApplicationAPIOutDTO,
+} from "./models/student-account-application.dto";
 import {
   StudentAccountApplicationsService,
   StudentAccountApplicationCreateModel,
   FormService,
   FormNames,
 } from "../../services";
+
 /**
  * Student account applications when the authentication happens through BCeID
  * and the Ministry needs to confirm the student identity.
@@ -50,12 +60,29 @@ export class StudentAccountApplicationStudentsController extends BaseController 
     description:
       "Not able to create a student account application due to an invalid request.",
   })
+  @ApiUnprocessableEntityResponse({
+    description: "There is already an student account application in progress.",
+  })
   @Post()
   @RequiresStudentAccount(false)
   async create(
     @UserToken() userToken: IUserToken,
     @Body() payload: CreateStudentAccountApplicationAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
+    if (userToken.userId) {
+      // If a userId is present in the token it means that the user is already present
+      // on DB so check for possible pending student account applications.
+      const hasPendingStudentAccountApplication =
+        await this.studentAccountApplicationsService.hasPendingStudentAccountApplication(
+          userToken.userId,
+        );
+      if (hasPendingStudentAccountApplication) {
+        throw new UnprocessableEntityException(
+          "There is already an student account application in progress.",
+        );
+      }
+    }
+
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.StudentProfile,
       payload.submittedData,
@@ -74,5 +101,22 @@ export class StudentAccountApplicationStudentsController extends BaseController 
       );
 
     return { id: newAccountApplication.id };
+  }
+
+  /**
+   * Checks is a user has a pending student account application.
+   * @returns true if there is a pending student account application
+   * to be assessed by the Ministry, otherwise, false.
+   */
+  @RequiresStudentAccount(false)
+  @Get("has-pending-account-application")
+  async hasPendingAccountApplication(
+    @UserToken() studentUserToken: StudentUserToken,
+  ): Promise<HasPendingStudentAccountApplicationAPIOutDTO> {
+    const hasPendingApplication =
+      await this.studentAccountApplicationsService.hasPendingStudentAccountApplication(
+        studentUserToken.userId,
+      );
+    return { hasPendingApplication };
   }
 }

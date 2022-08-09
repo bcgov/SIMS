@@ -14,7 +14,7 @@ import StudentApplicationSummary from "@/views/student/StudentApplicationSummary
 import StudentApplicationDetails from "@/views/student/StudentApplicationDetails.vue";
 import StudentAppealRequest from "@/views/student/StudentAppealRequest.vue";
 import StudentAccountActivity from "@/views/student/StudentAccountActivity.vue";
-import StudentAccountApplicationIsProgress from "@/views/student/StudentAccountApplicationIsProgress.vue";
+import StudentAccountApplicationInProgress from "@/views/student/StudentAccountApplicationInProgress.vue";
 
 import {
   StudentRoutesConst,
@@ -159,7 +159,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.StudentAccountApplicationIsProgress,
         name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
-        component: StudentAccountApplicationIsProgress,
+        component: StudentAccountApplicationInProgress,
         meta: {
           clientType: ClientIdType.Student,
         },

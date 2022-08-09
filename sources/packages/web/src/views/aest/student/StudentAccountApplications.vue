@@ -30,15 +30,15 @@
           :rowsPerPageOptions="PAGINATION_LIST"
           :totalRecords="accountApplications.length"
         >
-          <Column header="Date submitted"
+          <Column header="Date submitted" headerClass="text-no-wrap"
             ><template #body="slotProps">
               <span>{{
                 dateOnlyLongString(slotProps.data.submittedDate)
               }}</span>
             </template>
           </Column>
-          <Column header="Name" field="fullName"></Column>
-          <Column header="Actions" bodyStyle="text-align: center">
+          <Column header="Name" field="fullName" bodyClass="w-100"></Column>
+          <Column header="Actions">
             <template #body="slotProps">
               <v-btn
                 color="primary"

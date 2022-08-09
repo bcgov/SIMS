@@ -30,28 +30,40 @@ export class ContactInformationAPIOutDTO {
 }
 
 /**
+ * Student profile fields used in the form.io logic (to display hide UI elements)
+ * that must also be present on the payload to proper result of the dry run.
+ */
+interface StudentProfileFormLogicalFields {
+  /**
+   * Used to allow the UI to display or not the SIN during
+   * student profile creation. If not present it will be removed
+   * by Nestjs and the Form.io dry run will also remove it from it
+   * output considering that the form is not in creation mode.
+   */
+  mode: string;
+  /**
+   * Used to adapt the student profile to be used to BCeID and BCSC.
+   * If not present it will be removed by Nestjs and the Form.io
+   * will produce a different dry run output.
+   */
+  identityProvider: string;
+}
+
+/**
  * Data saved while creating the student profile.
  * SIN validation not added to DTO because it is going
  * to be handled by the Form.IO dryRun validation.
  */
-export class CreateStudentAPIInDTO extends AddressDetailsAPIInDTO {
+export class CreateStudentAPIInDTO
+  extends AddressDetailsAPIInDTO
+  implements StudentProfileFormLogicalFields
+{
   @Length(10, 20)
   phone: string;
   @Allow()
   sinNumber: string;
-  /**
-   * Used to allow the UI to display or not the SIN during
-   * student profile creation. If not present here it will be removed
-   * by Nestjs and the Form.io dry run will also remove it from it
-   * output considering that the form is not in creation mode.
-   */
   @Allow()
   mode: string;
-  /**
-   * Used to adapt the student profile to be used to BCeID and BCSC.
-   * If not present here it will be removed by Nestjs and the Form.io
-   * will produce a different output.
-   */
   @Allow()
   identityProvider: string;
 }
@@ -60,9 +72,16 @@ export class CreateStudentAPIInDTO extends AddressDetailsAPIInDTO {
  * Updates the student information that the student is allowed to change
  * in the solution. Other data must be edited externally (e.g. BCSC).
  */
-export class UpdateStudentAPIInDTO extends AddressDetailsAPIInDTO {
+export class UpdateStudentAPIInDTO
+  extends AddressDetailsAPIInDTO
+  implements StudentProfileFormLogicalFields
+{
   @Length(10, 20)
   phone: string;
+  @Allow()
+  mode: string;
+  @Allow()
+  identityProvider: string;
 }
 
 /**

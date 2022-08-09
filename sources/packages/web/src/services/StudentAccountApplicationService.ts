@@ -79,4 +79,15 @@ export class StudentAccountApplicationService {
       studentAccountApplicationId,
     );
   }
+
+  /**
+   * Checks is a user has a pending student account application.
+   * @returns true if there is a pending student account application
+   * to be assessed by the Ministry, otherwise, false.
+   */
+  async hasPendingAccountApplication(): Promise<boolean> {
+    const hasPendingAccountApplication =
+      await ApiClient.StudentAccountApplicationApi.hasPendingAccountApplication();
+    return hasPendingAccountApplication.hasPendingApplication;
+  }
 }

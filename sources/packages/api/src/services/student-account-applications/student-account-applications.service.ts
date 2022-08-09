@@ -28,7 +28,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
    */
   async getStudentAccountApplicationsById(
     id: number,
-  ): Promise<StudentAccountApplication> {
+  ): Promise<StudentAccountApplication | null> {
     return this.repo.findOne({
       select: { id: true, submittedData: true },
       where: { id },
@@ -53,7 +53,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
         user: true,
       },
       where: {
-        assessedBy: IsNull(),
+        assessedDate: IsNull(),
       },
     });
   }
@@ -182,7 +182,6 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
         },
       },
     });
-
     return !!accountApplication;
   }
 }

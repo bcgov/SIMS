@@ -1,6 +1,7 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   CreateStudentAccountApplicationAPIInDTO,
+  HasPendingStudentAccountApplicationAPIOutDTO,
   StudentAccountApplicationAPIOutDTO,
   StudentAccountApplicationApprovalAPIInDTO,
   StudentAccountApplicationSummaryAPIOutDTO,
@@ -80,6 +81,19 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
         `student-account-application/${studentAccountApplicationId}/decline`,
       ),
       null,
+    );
+  }
+
+  /**
+   * Checks is a user has a pending student account application.
+   * @returns true if there is a pending student account application
+   * to be assessed by the Ministry, otherwise, false.
+   */
+  async hasPendingAccountApplication(): Promise<HasPendingStudentAccountApplicationAPIOutDTO> {
+    return this.getCallTyped(
+      this.addClientRoot(
+        "student-account-application/has-pending-account-application",
+      ),
     );
   }
 }

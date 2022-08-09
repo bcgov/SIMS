@@ -1,10 +1,5 @@
 import ApiClient from "@/services/http/ApiClient";
-import {
-  StudentFormInfo,
-  ApiProcessError,
-  AESTStudentForm,
-  SINValidations,
-} from "@/types";
+import { StudentFormInfo, AESTStudentForm, SINValidations } from "@/types";
 import { useFormatters } from "@/composables";
 import {
   AESTFileUploadToStudentAPIInDTO,
@@ -74,9 +69,6 @@ export class StudentService {
    * the user and student data currently on DB.
    * If the user account does not exists an API custom error will be returned
    * from the API with the error code MISSING_STUDENT_ACCOUNT.
-   * If the authentication was executed using a BCeID and the student account application
-   * is still pending the Ministry approval, an API custom error will be returned
-   * with the error code STUDENT_ACCOUNT_APPLICATION_PENDING.
    * @returns true if the student account was found and updated, otherwise false
    * if the student account is missing.
    */

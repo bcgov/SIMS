@@ -15,6 +15,10 @@ export interface StudentAccountApplicationAPIOutDTO {
   submittedData: unknown;
 }
 
+export interface HasPendingStudentAccountApplicationAPIOutDTO {
+  hasPendingApplication: boolean;
+}
+
 /**
  * Represents all the data needed to create a student account and user.
  * Ministry will ensure that all the data is accurate and this payload will
