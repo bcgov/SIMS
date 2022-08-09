@@ -33,7 +33,8 @@ export class GroupsGuard implements CanActivate {
     }
     const userToken = user as IUserToken;
     // Check if the user has any of the groups required to have access to the resource.
-    // UserGroups 'aest/user/x' and 'aest/user' are valid, we are here looking for matches, not the exact string.
+    // UserGroups 'aest/user/x' and 'aest/user' are valid, as they start with 'aest/user'
+    // we are here looking for matches, not the exact string.
     return requiredGroups.some((group: string) =>
       userToken.groups?.some((userGroup) => userGroup.startsWith(group)),
     );

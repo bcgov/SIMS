@@ -35,7 +35,7 @@ import {
   OfferingChangeAssessmentAPIInDTO,
 } from "./models/education-program-offering.dto";
 import { CustomNamedError } from "../../utilities";
-import { Role } from "src/auth/roles.enum";
+import { Role } from "../../auth/roles.enum";
 
 /**
  * Institution location controller for institutions Client.

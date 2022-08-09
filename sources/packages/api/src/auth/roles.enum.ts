@@ -3,10 +3,6 @@
  */
 export enum Role {
   /**
-   * Student roles.
-   */
-  Student = "StudentRole",
-  /**
    * AEST roles.
    */
   AESTReports = "aest-reports",
