@@ -8,8 +8,7 @@ import { Reflector } from "@nestjs/core";
 import { StudentUserToken } from "../userToken.interface";
 import { REQUIRES_STUDENT_ACCOUNT_KEY } from "../decorators";
 import { ApiProcessError } from "../../types";
-
-const MISSING_STUDENT_ACCOUNT = "MISSING_STUDENT_ACCOUNT";
+import { MISSING_STUDENT_ACCOUNT } from "../../constants";
 
 /**
  * Specifies when a student account must be already created in order to access a route.

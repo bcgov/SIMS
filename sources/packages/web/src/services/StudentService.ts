@@ -20,7 +20,6 @@ import {
   SearchStudentAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
-import { MISSING_STUDENT_ACCOUNT } from "@/constants";
 
 export class StudentService {
   // Share Instance
@@ -75,22 +74,14 @@ export class StudentService {
    * the user and student data currently on DB.
    * If the user account does not exists an API custom error will be returned
    * from the API with the error code MISSING_STUDENT_ACCOUNT.
+   * If the authentication was executed using a BCeID and the student account application
+   * is still pending the Ministry approval, an API custom error will be returned
+   * with the error code STUDENT_ACCOUNT_APPLICATION_PENDING.
    * @returns true if the student account was found and updated, otherwise false
    * if the student account is missing.
    */
-  async synchronizeFromUserToken(): Promise<boolean> {
-    try {
-      await ApiClient.Students.synchronizeFromUserToken();
-      return true;
-    } catch (error: unknown) {
-      if (
-        error instanceof ApiProcessError &&
-        error.errorType === MISSING_STUDENT_ACCOUNT
-      ) {
-        return false;
-      }
-      throw error;
-    }
+  async synchronizeFromUserToken(): Promise<void> {
+    await ApiClient.Students.synchronizeFromUserToken();
   }
 
   async applyForPDStatus(): Promise<void> {

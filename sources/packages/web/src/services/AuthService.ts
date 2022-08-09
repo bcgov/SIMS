@@ -4,7 +4,7 @@ import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
-import { ApplicationToken } from "@/types";
+import { ApiProcessError, ApplicationToken } from "@/types";
 import { RouteHelper } from "@/helpers";
 import { LocationAsRelativeRaw } from "vue-router";
 import {
@@ -15,6 +15,10 @@ import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
 import { useStudentStore } from "@/composables";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
+import {
+  MISSING_STUDENT_ACCOUNT,
+  STUDENT_ACCOUNT_APPLICATION_PENDING,
+} from "@/constants";
 
 /**
  * Manages the KeyCloak initialization and authentication methods.
@@ -123,17 +127,31 @@ export class AuthService {
    */
   private async processStudentLogin() {
     const studentStore = useStudentStore(store);
-    const hasStudentAccount =
+    try {
       await StudentService.shared.synchronizeFromUserToken();
-    await studentStore.setHasStudentAccount(hasStudentAccount);
-    if (hasStudentAccount) {
+      await studentStore.setHasStudentAccount(true);
       await studentStore.updateProfileData();
-    } else {
-      // If the student is not present, redirect to student profile
-      // for account creation.
-      this.priorityRedirect = {
-        name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
-      };
+    } catch (error: unknown) {
+      if (error instanceof ApiProcessError) {
+        switch (error.errorType) {
+          case MISSING_STUDENT_ACCOUNT:
+            // If the student is not present, redirect to
+            // student profile for account creation.
+            this.priorityRedirect = {
+              name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
+            };
+            break;
+          case STUDENT_ACCOUNT_APPLICATION_PENDING:
+            // The BCeID student account application is is progress.
+            // The student must be redirected to the below page and
+            // have access only to the below page.
+            this.priorityRedirect = {
+              name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
+            };
+            break;
+        }
+        throw error;
+      }
     }
   }
 

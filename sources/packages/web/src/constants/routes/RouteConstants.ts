@@ -24,6 +24,7 @@ export const StudentRoutesConst = {
   STUDENT_APPLICATION_DETAILS: Symbol(),
   STUDENT_REQUEST_CHANGE: Symbol(),
   STUDENT_ACCOUNT_ACTIVITY: Symbol(),
+  STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS: Symbol(),
 };
 
 /**

@@ -163,4 +163,26 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       .where({ id })
       .execute();
   }
+
+  /**
+   * Checks if the user has a pending student account applications.
+   * @param userId user to be verified.
+   * @returns true, if there is a pending student account application,
+   * otherwise, false.
+   */
+  async hasPendingStudentAccountApplication(userId: number): Promise<boolean> {
+    const accountApplication = await this.repo.findOne({
+      select: {
+        id: true,
+      },
+      where: {
+        assessedDate: IsNull(),
+        user: {
+          id: userId,
+        },
+      },
+    });
+
+    return !!accountApplication;
+  }
 }

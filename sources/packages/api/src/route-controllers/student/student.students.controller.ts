@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   Res,
+  UnauthorizedException,
   UnprocessableEntityException,
   UploadedFile,
   UseInterceptors,
@@ -32,6 +33,7 @@ import {
   ATBCService,
   FormService,
   GCNotifyActionsService,
+  StudentAccountApplicationsService,
   StudentFileService,
   StudentRestrictionService,
   StudentService,
@@ -66,6 +68,8 @@ import { FileCreateAPIOutDTO } from "../models/common.dto";
 import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { FormNames } from "../../services/form/constants";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { STUDENT_ACCOUNT_APPLICATION_PENDING } from "../../constants";
+import { IdentityProviders } from "../../database/entities/identity-providers.type";
 
 /**
  * Student controller for Student Client.
@@ -85,6 +89,7 @@ export class StudentStudentsController extends BaseController {
     private readonly formService: FormService,
     private readonly atbcService: ATBCService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly studentAccountApplicationsService: StudentAccountApplicationsService,
   ) {
     super();
   }
@@ -187,6 +192,24 @@ export class StudentStudentsController extends BaseController {
   async synchronizeFromUserToken(
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
+    if (studentUserToken.IDP === IdentityProviders.BCeID) {
+      // Check for possible pending student account applications for BCeID authenticated users.
+      const hasPendingStudentAccountApplication =
+        await this.studentAccountApplicationsService.hasPendingStudentAccountApplication(
+          studentUserToken.userId,
+        );
+      if (hasPendingStudentAccountApplication) {
+        throw new UnauthorizedException(
+          new ApiProcessError(
+            "The user is not allowed to access the while there is a pending student account application.",
+            STUDENT_ACCOUNT_APPLICATION_PENDING,
+          ),
+        );
+      }
+      // Do not proceed with any further processing for BCeID authenticated users.
+      return;
+    }
+
     await this.studentService.synchronizeFromUserToken(studentUserToken);
   }
 
