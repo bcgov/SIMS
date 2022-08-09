@@ -64,7 +64,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
   /**
    * Create a new student account application to be reviewed by
    * the Ministry to confirm the student's basic BCeID identity.
-   * @param userName: user name that uniquely identifies this user.
+   * @param userName user name that uniquely identifies this user.
    * @param studentProfile information to be assessed by the Ministry.
    * @returns student account application created id.
    */
@@ -158,14 +158,20 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
    * Declines the student account application.
    * @param id student account application id.
    */
-  async declineStudentAccountApplication(id: number): Promise<DeleteResult> {
-    // TODO: To be changed to a soft delete and add validations.
-    return this.repo
+  async declineStudentAccountApplication(id: number): Promise<void> {
+    // TODO: To be changed to a soft delete.
+    const deleteResult = await this.repo
       .createQueryBuilder()
       .delete()
       .from(StudentAccountApplication)
       .where({ id })
       .execute();
+    if (deleteResult.affected === 0) {
+      throw new CustomNamedError(
+        "Student account application not found.",
+        STUDENT_ACCOUNT_APPLICATION_NOT_FOUND,
+      );
+    }
   }
 
   /**

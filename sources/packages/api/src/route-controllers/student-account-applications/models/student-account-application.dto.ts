@@ -9,7 +9,7 @@ export class CreateStudentAccountApplicationAPIInDTO {
 export class StudentAccountApplicationSummaryAPIOutDTO {
   id: number;
   fullName: string;
-  submittedDate: string;
+  submittedDate: Date;
 }
 
 export class StudentAccountApplicationAPIOutDTO {
@@ -26,7 +26,7 @@ export class HasPendingStudentAccountApplicationAPIOutDTO {
  * Ministry will ensure that all the data is accurate and this payload will
  * contain the source of truth that must be used to update the existing user
  * and also create or update the student account as needed.
- * !The data must be validate for a form.io dry run also.
+ * !The data must be validate using a form.io dry run.
  */
 export class StudentAccountApplicationApprovalAPIInDTO extends CreateStudentAPIInDTO {
   @Allow()

@@ -7,7 +7,7 @@ export interface CreateStudentAccountApplicationAPIInDTO {
 export interface StudentAccountApplicationSummaryAPIOutDTO {
   id: number;
   fullName: string;
-  submittedDate: string;
+  submittedDate: Date;
 }
 
 export interface StudentAccountApplicationAPIOutDTO {

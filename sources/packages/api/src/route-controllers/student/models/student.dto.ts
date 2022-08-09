@@ -31,13 +31,13 @@ export class ContactInformationAPIOutDTO {
 
 /**
  * Student profile fields used in the form.io logic (to display hide UI elements)
- * that must also be present on the payload to proper result of the dry run.
+ * that must also be present on the payload to the proper result of the dry run.
  */
 interface StudentProfileFormLogicalFields {
   /**
    * Used to allow the UI to display or not the SIN during
    * student profile creation. If not present it will be removed
-   * by Nestjs and the Form.io dry run will also remove it from it
+   * by Nestjs and the Form.io dry run will also remove it from its
    * output considering that the form is not in creation mode.
    */
   mode: string;

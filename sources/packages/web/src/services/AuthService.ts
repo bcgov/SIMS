@@ -166,7 +166,7 @@ export class AuthService {
    * Process the login for the institution executing the verifications
    * to determine if the user can proceed or must be redirect somewhere.
    */
-  private async processInstitutionLogin() {
+  private async processInstitutionLogin(): Promise<void> {
     const userStatus =
       await InstitutionUserService.shared.getInstitutionUserStatus();
     if (userStatus.isActiveUser === true) {
@@ -217,7 +217,7 @@ export class AuthService {
    * Process the login for AEST verifying if the user belongs to the group that
    * allow an IDIR to have access to the application.
    */
-  private async processAESTLogin() {
+  private async processAESTLogin(): Promise<void> {
     const isAuthorized = await UserService.shared.syncAESTUser();
     if (!isAuthorized) {
       await this.logout(ClientIdType.AEST, { notAllowedUser: true });

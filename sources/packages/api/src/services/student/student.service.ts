@@ -125,8 +125,8 @@ export class StudentService extends RecordDataModelService<Student> {
       user.id = userInfo.userId;
     }
 
-    // If a user id was provided use it as the audit user. It means that the
-    // user is being create by the Ministry on behalf of the student.
+    // If a user id was provided, use it as the audit user. It means that
+    // the user is being created by the Ministry on behalf of the student.
     const auditUser = auditUserId ? ({ id: auditUserId } as User) : user;
 
     const studentSIN = removeWhiteSpaces(studentInfo.sinNumber);
@@ -214,9 +214,9 @@ export class StudentService extends RecordDataModelService<Student> {
    * was authenticated previously on another portal (e.g. parent/partner).
    * @param userInfo information needed to create the user.
    * @param studentInfo information received to create the student.
-   * @param externalEntityManager case provided, should be used to allow the student
+   * @param externalEntityManager should be used to allow the student
    * creation process to happen as part of another process.
-   * @param studentAccountApplicationId: when the student is being created as part of
+   * @param studentAccountApplicationId when the student is being created as part of
    * a student account application this is the submitted application form id.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns created student.

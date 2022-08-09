@@ -33,7 +33,7 @@ export class StudentUser extends RecordDataModel {
   student: Student;
   /**
    * Optional student account application in case of this relationship was
-   * created after a student account application assessed by the Ministry.
+   * created after a student account application was assessed by the Ministry.
    */
   @ManyToOne(() => StudentAccountApplication, { eager: false, nullable: true })
   @JoinColumn({

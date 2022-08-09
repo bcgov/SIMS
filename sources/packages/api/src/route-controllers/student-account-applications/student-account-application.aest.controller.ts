@@ -10,11 +10,7 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
-import {
-  ApiNotAcceptableResponse,
-  ApiNotFoundResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -35,11 +31,7 @@ import {
   StudentAccountApplicationApprovalAPIInDTO,
   StudentAccountApplicationSummaryAPIOutDTO,
 } from "./models/student-account-application.dto";
-import {
-  CustomNamedError,
-  getISODateOnlyString,
-  getUserFullName,
-} from "../../utilities";
+import { CustomNamedError, getUserFullName } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { STUDENT_ACCOUNT_APPLICATION_NOT_FOUND } from "../../constants";
 import { Role } from "../../auth/roles.enum";
@@ -72,11 +64,10 @@ export class StudentAccountApplicationAESTController extends BaseController {
   > {
     const accountApplications =
       await this.studentAccountApplicationsService.getPendingStudentAccountApplications();
-
     return accountApplications.map((accountApplication) => ({
       id: accountApplication.id,
       fullName: getUserFullName(accountApplication.user),
-      submittedDate: getISODateOnlyString(accountApplication.submittedDate),
+      submittedDate: accountApplication.submittedDate,
     }));
   }
 
@@ -86,21 +77,21 @@ export class StudentAccountApplicationAESTController extends BaseController {
    * @param id student account application id.
    * @returns student account application.
    */
-  @ApiNotAcceptableResponse({
+  @ApiNotFoundResponse({
     description: "Student account application not found.",
   })
-  @Get(":id")
+  @Get(":studentAccountApplicationId")
   async getStudentAccountApplicationById(
-    @Param("id") id: number,
+    @Param("studentAccountApplicationId", ParseIntPipe)
+    studentAccountApplicationId: number,
   ): Promise<StudentAccountApplicationAPIOutDTO> {
     const accountApplication =
       await this.studentAccountApplicationsService.getStudentAccountApplicationsById(
-        id,
+        studentAccountApplicationId,
       );
     if (!accountApplication) {
       throw new NotFoundException("Student account application not found.");
     }
-
     return {
       id: accountApplication.id,
       submittedData: accountApplication.submittedData,
@@ -155,6 +146,9 @@ export class StudentAccountApplicationAESTController extends BaseController {
   /**
    * Declines the student account application.
    */
+  @ApiNotFoundResponse({
+    description: "Student account application not found.",
+  })
   @Roles(Role.StudentApproveDeclineAccountRequests)
   @Patch(":studentAccountApplicationId/decline")
   async declineStudentAccountApplication(

@@ -85,7 +85,7 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
   }
 
   /**
-   * Checks is a user has a pending student account application.
+   * Checks if a user has a pending student account application.
    * @returns true if there is a pending student account application
    * to be assessed by the Ministry, otherwise, false.
    */

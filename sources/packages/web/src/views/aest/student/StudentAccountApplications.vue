@@ -63,7 +63,6 @@ export default {
       [] as StudentAccountApplicationSummaryAPIOutDTO[],
     );
     const { dateOnlyLongString } = useFormatters();
-    const searchCriteria = ref();
 
     const goToStudentAccountApplication = (
       studentAccountApplicationId: number,
@@ -86,7 +85,6 @@ export default {
       DEFAULT_PAGE_NUMBER,
       PAGINATION_LIST,
       dateOnlyLongString,
-      searchCriteria,
     };
   },
 };

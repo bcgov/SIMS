@@ -26,11 +26,11 @@ export class StudentAccountApplication extends RecordDataModel {
     type: "jsonb",
     nullable: false,
   })
-  submittedData: any;
+  submittedData: unknown;
   /**
    * User that is requesting the data validation to become a student.
    */
-  @ManyToOne(() => User, { eager: false, cascade: ["insert"] })
+  @ManyToOne(() => User, { eager: false, nullable: false, cascade: ["insert"] })
   @JoinColumn({
     name: "user_id",
     referencedColumnName: ColumnNames.ID,
@@ -55,7 +55,7 @@ export class StudentAccountApplication extends RecordDataModel {
   })
   assessedBy?: User;
   /**
-   * Date that the Ministry user approved the student account application.
+   * Date the Ministry user approved the student account application.
    */
   @Column({
     name: "assessed_date",

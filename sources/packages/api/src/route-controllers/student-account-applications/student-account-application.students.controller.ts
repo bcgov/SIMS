@@ -61,7 +61,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
       "Not able to create a student account application due to an invalid request.",
   })
   @ApiUnprocessableEntityResponse({
-    description: "There is already an student account application in progress.",
+    description: "There is already a student account application in progress.",
   })
   @Post()
   @RequiresStudentAccount(false)
@@ -78,7 +78,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
         );
       if (hasPendingStudentAccountApplication) {
         throw new UnprocessableEntityException(
-          "There is already an student account application in progress.",
+          "There is already a student account application in progress.",
         );
       }
     }
@@ -104,7 +104,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
   }
 
   /**
-   * Checks is a user has a pending student account application.
+   * Checks if a user has a pending student account application.
    * @returns true if there is a pending student account application
    * to be assessed by the Ministry, otherwise, false.
    */

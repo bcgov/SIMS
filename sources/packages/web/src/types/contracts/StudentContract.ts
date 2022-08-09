@@ -51,6 +51,10 @@ export interface SINValidations extends SINValidationsAPIOutDTO {
   sinExpiryDateFormatted?: string;
 }
 
+/**
+ * Possible modes that the student profile form
+ * can be adapted for different scenarios supported.
+ */
 export enum StudentProfileFormModes {
   /**
    * Student is editing his profile.
