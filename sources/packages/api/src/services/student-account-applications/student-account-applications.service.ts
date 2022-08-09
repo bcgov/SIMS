@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { StudentAccountApplication, User } from "../../database/entities";
-import { DataSource, DeleteResult, IsNull } from "typeorm";
+import { DataSource, IsNull } from "typeorm";
 import {
   StudentAccountApplicationApprovalModel,
   StudentAccountApplicationCreateModel,
