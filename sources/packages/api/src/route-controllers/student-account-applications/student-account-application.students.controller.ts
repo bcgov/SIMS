@@ -61,7 +61,8 @@ export class StudentAccountApplicationStudentsController extends BaseController 
       "Not able to create a student account application due to an invalid request.",
   })
   @ApiUnprocessableEntityResponse({
-    description: "There is already a student account application in progress.",
+    description:
+      "There is already a student account application in progress or the user is already present.",
   })
   @Post()
   @RequiresStudentAccount(false)
@@ -81,6 +82,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
           "There is already a student account application in progress.",
         );
       }
+      throw new UnprocessableEntityException("The user is already present.");
     }
 
     const submissionResult = await this.formService.dryRunSubmission(
