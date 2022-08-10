@@ -17,8 +17,8 @@
             "
             >Create institution</v-btn
           >
-        </template></check-a-e-s-t-permission-role
-      >
+        </template>
+      </check-a-e-s-t-permission-role>
       <v-menu v-if="isAuthenticated">
         <template v-slot:activator="{ props }">
           <v-btn
