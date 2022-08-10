@@ -44,12 +44,9 @@ export default {
     const initialData = ref({} as StudentProfileFormModel);
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
     const processing = ref(false);
-    const showPendingStatus = ref(false);
 
     const getStudentDetails = async () => {
       const studentInfo = await StudentService.shared.getStudentProfile();
-      showPendingStatus.value =
-        studentInfo.pdStatus === StudentPDStatus.Pending;
       const data: StudentProfileFormModel = {
         ...studentInfo,
         ...studentInfo.contact.address,
@@ -101,7 +98,6 @@ export default {
       submitted,
       initialData,
       applyPDStatus,
-      showPendingStatus,
       pdStatusApplicationModal,
       showPDApplicationModal,
       processing,
