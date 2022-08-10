@@ -56,6 +56,7 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
    * Approve the student account application associating the user
    * with a student account. The Ministry can also adjust any student
    * data that will then be used to create the student account.
+   * @param studentAccountApplicationId student account application id.
    * @returns new student id created as a result of the approval.
    */
   async approveStudentAccountApplication(
@@ -72,6 +73,7 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
 
   /**
    * Declines the student account application.
+   * @param studentAccountApplicationId student account application id.
    */
   async declineStudentAccountApplication(
     studentAccountApplicationId: number,

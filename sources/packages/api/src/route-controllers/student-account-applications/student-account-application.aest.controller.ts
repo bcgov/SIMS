@@ -74,7 +74,7 @@ export class StudentAccountApplicationAESTController extends BaseController {
   /**
    * Get the student account application previously submitted
    * by the student for the basic BCeID student account creation.
-   * @param id student account application id.
+   * @param studentAccountApplicationId student account application id.
    * @returns student account application.
    */
   @ApiNotFoundResponse({
@@ -102,6 +102,7 @@ export class StudentAccountApplicationAESTController extends BaseController {
    * Approve the student account application associating the user
    * with a student account. The Ministry can also adjust any student
    * data that will then be used to create the student account.
+   * @param studentAccountApplicationId student account application id.
    * @returns new student id created as a result of the approval.
    */
   @ApiNotFoundResponse({
@@ -145,6 +146,7 @@ export class StudentAccountApplicationAESTController extends BaseController {
 
   /**
    * Declines the student account application.
+   * @param studentAccountApplicationId student account application id.
    */
   @ApiNotFoundResponse({
     description: "Student account application not found.",
