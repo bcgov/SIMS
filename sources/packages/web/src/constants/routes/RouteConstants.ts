@@ -5,7 +5,7 @@ export const StudentRoutesConst = {
   APP_STUDENT: Symbol(),
   STUDENT_DASHBOARD: Symbol(),
   LOGIN: Symbol(),
-  STUDENT_PROFILE: Symbol(),
+  STUDENT_PROFILE_CREATE: Symbol(),
   STUDENT_PROFILE_EDIT: Symbol(),
   FINANCIAL_AID_APPLICATION: Symbol(),
   APPLICATIONS: Symbol(),
@@ -24,6 +24,7 @@ export const StudentRoutesConst = {
   STUDENT_APPLICATION_DETAILS: Symbol(),
   STUDENT_REQUEST_CHANGE: Symbol(),
   STUDENT_ACCOUNT_ACTIVITY: Symbol(),
+  STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS: Symbol(),
 };
 
 /**
@@ -111,6 +112,8 @@ export const AESTRoutesConst = {
   OFFERING_CHANGE_REQUEST_VIEW: Symbol(),
   OFFERING_CHANGE_REQUEST_COMPLETE: Symbol(),
   APPLICATION_APPEALS_PENDING: Symbol(),
+  STUDENT_ACCOUNT_APPLICATIONS: Symbol(),
+  STUDENT_ACCOUNT_APPLICATIONS_APPROVAL: Symbol(),
 };
 
 /**

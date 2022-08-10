@@ -36,6 +36,7 @@ import {
   SINValidationService,
   InstitutionUserAuthService,
   InstitutionTypeService,
+  StudentAccountApplicationsService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -59,6 +60,7 @@ import {
   InstitutionUserAESTController,
   EducationProgramAESTController,
   EducationProgramControllerService,
+  StudentAccountApplicationAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -82,6 +84,7 @@ import { InstitutionUserControllerService } from "./route-controllers/institutio
     ApplicationExceptionAESTController,
     ScholasticStandingAESTController,
     EducationProgramAESTController,
+    StudentAccountApplicationAESTController,
   ],
   providers: [
     SupportingUserService,
@@ -128,6 +131,7 @@ import { InstitutionUserControllerService } from "./route-controllers/institutio
     InstitutionUserControllerService,
     InstitutionTypeService,
     EducationProgramControllerService,
+    StudentAccountApplicationsService,
   ],
 })
 export class AppAESTModule {}

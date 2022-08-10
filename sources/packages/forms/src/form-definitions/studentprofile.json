@@ -2,8 +2,8 @@
   "title": "Student Profile",
   "display": "form",
   "type": "form",
-  "name": "studentInformation",
-  "path": "studentinformation",
+  "name": "studentProfile",
+  "path": "studentprofile",
   "tags": [
     "common"
   ],
@@ -111,12 +111,12 @@
       "tags": [],
       "properties": {},
       "conditional": {
-        "show": true,
-        "when": "identityProvider",
-        "eq": "BCEID",
+        "show": "",
+        "when": "",
+        "eq": "",
         "json": ""
       },
-      "customConditional": "",
+      "customConditional": "show = data.identityProvider === \"BCEID\" && data.mode !== \"student-edit\";",
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -170,7 +170,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "e0fruvh"
+      "id": "elk7map"
     },
     {
       "title": "Student Information",
@@ -260,7 +260,7 @@
           "key": "bcscReadOnlyFieldsForBCeIdAllMustBeEditableForCreation",
           "tags": [],
           "properties": {},
-          "customConditional": "show =\n  data.identityProvider === \"BCSC\"\n  || (data.identityProvider === \"BCEID\" && data.mode === \"edit\");",
+          "customConditional": "show = data.identityProvider === \"BCSC\" || data.mode === \"student-edit\";",
           "conditional": {
             "json": "",
             "show": null,
@@ -367,7 +367,7 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "e1m44b4"
+                      "id": "eugjl0x"
                     }
                   ],
                   "width": 6,
@@ -457,7 +457,7 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "epqq1p"
+                      "id": "elsah9"
                     }
                   ],
                   "width": 6,
@@ -547,7 +547,7 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "eqdxxyg"
+                      "id": "ervzqzj"
                     }
                   ],
                   "size": "md",
@@ -637,7 +637,7 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "ekyyn8l"
+                      "id": "eiuy5m"
                     }
                   ],
                   "size": "md",
@@ -712,7 +712,7 @@
               "tree": false,
               "lazyLoad": false,
               "autoAdjust": false,
-              "id": "eq33nb"
+              "id": "e62yoa9"
             },
             {
               "label": "Email",
@@ -794,7 +794,7 @@
               "kickbox": {
                 "enabled": false
               },
-              "id": "e185qza"
+              "id": "esziqxx"
             }
           ],
           "placeholder": "",
@@ -835,7 +835,7 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "ebsmrdq"
+          "id": "ek7md39"
         },
         {
           "title": "BCeID create mode when the user must provide all the data.",
@@ -852,7 +852,7 @@
           "key": "bceidCreateModeWhenTheUserMustProvideAllTheData",
           "tags": [],
           "properties": {},
-          "customConditional": "show = (data.identityProvider === \"BCEID\" && data.mode === \"create\");",
+          "customConditional": "show = data.identityProvider === \"BCEID\" && data.mode !== \"student-edit\";",
           "conditional": {
             "json": "",
             "show": null,
@@ -959,7 +959,7 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "en42546"
+                      "id": "ej0fbbi"
                     }
                   ],
                   "width": 6,
@@ -1049,7 +1049,7 @@
                       "displayMask": "",
                       "spellcheck": true,
                       "truncateMultipleSpaces": false,
-                      "id": "e4x93hl"
+                      "id": "eeav8dr"
                     }
                   ],
                   "width": 6,
@@ -1063,31 +1063,11 @@
                   "components": [
                     {
                       "label": "Date of birth",
-                      "labelPosition": "top",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "displayInTimezone": "viewer",
-                      "useLocaleSettings": false,
-                      "allowInput": true,
                       "format": "yyyy-MM-dd",
-                      "placeholder": "",
-                      "description": "",
-                      "tooltip": "",
-                      "customClass": "",
-                      "tabindex": "",
-                      "hidden": false,
-                      "hideLabel": false,
-                      "autofocus": false,
-                      "disabled": false,
                       "tableView": false,
-                      "modalEdit": false,
-                      "shortcutButtons": [],
-                      "enableDate": true,
                       "enableMinDateInput": false,
                       "datePicker": {
                         "maxDate": "moment()",
-                        "disable": "",
-                        "disableFunction": "",
                         "disableWeekends": false,
                         "disableWeekdays": false,
                         "showWeeks": true,
@@ -1097,68 +1077,20 @@
                         "maxMode": "year",
                         "yearRows": 4,
                         "yearColumns": 5,
-                        "minDate": ""
+                        "minDate": null
                       },
                       "enableMaxDateInput": true,
                       "enableTime": false,
-                      "timePicker": {
-                        "hourStep": 1,
-                        "minuteStep": 1,
-                        "showMeridian": true,
-                        "readonlyInput": false,
-                        "mousewheel": true,
-                        "arrowkeys": true
-                      },
-                      "multiple": false,
-                      "defaultValue": "",
-                      "defaultDate": "",
-                      "customOptions": {},
-                      "persistent": true,
-                      "protected": false,
-                      "dbIndex": false,
-                      "encrypted": false,
-                      "redrawOn": "",
-                      "clearOnHide": true,
-                      "customDefaultValue": "",
-                      "calculateValue": "",
-                      "calculateServer": false,
-                      "allowCalculateOverride": false,
                       "validate": {
                         "required": true,
-                        "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
-                        "json": "",
                         "strictDateValidation": false,
                         "multiple": false,
                         "unique": false
                       },
-                      "unique": false,
-                      "validateOn": "change",
-                      "errorLabel": "",
-                      "errors": "",
                       "key": "dateOfBirth",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "datetime",
-                      "timezone": "",
                       "input": true,
                       "widget": {
                         "type": "calendar",
@@ -1173,23 +1105,76 @@
                         "hourIncrement": 1,
                         "minuteIncrement": 1,
                         "time_24hr": false,
-                        "minDate": "",
-                        "disabledDates": "",
+                        "minDate": null,
                         "disableWeekends": false,
                         "disableWeekdays": false,
-                        "disableFunction": "",
                         "maxDate": "moment()"
                       },
+                      "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
+                      "multiple": false,
+                      "defaultValue": "",
+                      "protected": false,
+                      "unique": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "clearOnHide": true,
                       "refreshOn": "",
+                      "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "hideLabel": false,
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "attributes": {},
+                      "validateOn": "change",
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
+                      "useLocaleSettings": false,
+                      "allowInput": true,
+                      "enableDate": true,
+                      "defaultDate": "",
+                      "displayInTimezone": "viewer",
+                      "timezone": "",
                       "datepickerMode": "day",
-                      "id": "e374osz"
+                      "timePicker": {
+                        "hourStep": 1,
+                        "minuteStep": 1,
+                        "showMeridian": true,
+                        "readonlyInput": false,
+                        "mousewheel": true,
+                        "arrowkeys": true
+                      },
+                      "customOptions": {},
+                      "id": "e12a7te"
                     }
                   ],
                   "size": "md",
@@ -1312,7 +1297,7 @@
                       },
                       "customOptions": {},
                       "useExactSearch": false,
-                      "id": "ejsukz"
+                      "id": "etuq3h"
                     }
                   ],
                   "size": "md",
@@ -1387,7 +1372,7 @@
               "tree": false,
               "lazyLoad": false,
               "autoAdjust": false,
-              "id": "e7kcejo"
+              "id": "eyv7kos"
             },
             {
               "label": "Email",
@@ -1406,7 +1391,7 @@
               "kickbox": {
                 "enabled": true
               },
-              "key": "email1",
+              "key": "email",
               "attributes": {
                 "data-cy": "email"
               },
@@ -1469,7 +1454,7 @@
               "displayMask": "",
               "spellcheck": true,
               "truncateMultipleSpaces": false,
-              "id": "ee7ajw"
+              "id": "e8p07ds"
             }
           ],
           "placeholder": "",
@@ -1510,86 +1495,100 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "eu75xa"
+          "id": "e0n4gc"
         },
         {
           "label": "Permanent disability (PD) status",
-          "disabled": true,
-          "tableView": true,
-          "key": "pdStatus",
-          "conditional": {
-            "show": false,
-            "when": "mode",
-            "eq": "create"
-          },
-          "attributes": {
-            "data-cy": "pdStatus"
-          },
-          "type": "textfield",
-          "input": true,
-          "placeholder": "",
-          "prefix": "",
-          "customClass": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "hidden": false,
-          "clearOnHide": true,
-          "refreshOn": "",
-          "redrawOn": "",
-          "modalEdit": false,
-          "dataGridLabel": false,
           "labelPosition": "top",
+          "labelWidth": "",
+          "labelMargin": "",
+          "placeholder": "",
           "description": "",
-          "errorLabel": "",
           "tooltip": "",
-          "hideLabel": false,
-          "tabindex": "",
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
+          "prefix": "",
+          "suffix": "",
           "widget": {
             "type": "input"
           },
+          "inputMask": "",
+          "displayMask": "",
+          "allowMultipleMasks": false,
+          "customClass": "",
+          "tabindex": "",
+          "autocomplete": "",
+          "hidden": false,
+          "hideLabel": false,
+          "showWordCount": false,
+          "showCharCount": false,
+          "mask": false,
+          "autofocus": false,
+          "spellcheck": true,
+          "disabled": true,
+          "tableView": true,
+          "modalEdit": false,
+          "multiple": false,
+          "persistent": true,
+          "inputFormat": "plain",
+          "protected": false,
+          "dbIndex": false,
+          "case": "",
+          "truncateMultipleSpaces": false,
+          "encrypted": false,
+          "redrawOn": "",
+          "clearOnHide": true,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "allowCalculateOverride": false,
           "validateOn": "change",
           "validate": {
             "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false,
             "minLength": "",
             "maxLength": "",
-            "pattern": ""
+            "minWords": "",
+            "maxWords": "",
+            "pattern": "",
+            "customMessage": "",
+            "custom": "",
+            "customPrivate": false,
+            "json": "",
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "unique": false,
+          "errorLabel": "",
+          "errors": "",
+          "key": "pdStatus",
+          "tags": [],
+          "properties": {},
+          "conditional": {
+            "show": "",
+            "when": "",
+            "eq": "",
+            "json": ""
+          },
+          "customConditional": "show = data.mode === \"student-edit\";",
+          "logic": [],
+          "attributes": {
+            "data-cy": "pdStatus"
           },
           "overlay": {
             "style": "",
+            "page": "",
             "left": "",
             "top": "",
             "width": "",
             "height": ""
           },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "properties": {},
-          "allowMultipleMasks": false,
+          "type": "textfield",
+          "input": true,
+          "refreshOn": "",
+          "dataGridLabel": false,
           "addons": [],
-          "mask": false,
           "inputType": "text",
-          "inputFormat": "plain",
-          "inputMask": "",
-          "displayMask": "",
-          "spellcheck": true,
-          "truncateMultipleSpaces": false,
-          "id": "enk8vyr"
+          "id": "e014qyj",
+          "defaultValue": ""
         },
         {
           "label": "HTML",
@@ -1761,7 +1760,7 @@
           "event": ""
         },
         {
-          "title": "SIN related information (displayed only when on create mode)",
+          "title": "SIN related information (hides for student-edit)",
           "labelWidth": "",
           "labelMargin": "",
           "theme": "default",
@@ -1778,9 +1777,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": true,
+            "show": false,
             "when": "mode",
-            "eq": "create"
+            "eq": "student-edit"
           },
           "logic": [],
           "attributes": {},
@@ -1871,108 +1870,92 @@
               "allowMultipleMasks": false,
               "addons": [],
               "content": "",
-              "id": "ewdpsaq"
+              "id": "edc3hbj"
             },
             {
               "label": "Social insurance number (SIN)",
-              "labelPosition": "top",
-              "labelWidth": "",
-              "labelMargin": "",
-              "placeholder": "",
-              "description": "",
-              "tooltip": "",
-              "prefix": "",
-              "suffix": "",
-              "widget": {
-                "type": "input"
-              },
               "inputMask": "999 999 999",
-              "displayMask": "",
-              "allowMultipleMasks": false,
-              "customClass": "",
-              "tabindex": "",
-              "autocomplete": "",
-              "hidden": false,
-              "hideLabel": false,
-              "showWordCount": false,
-              "showCharCount": false,
-              "mask": false,
-              "autofocus": false,
-              "spellcheck": true,
-              "disabled": false,
               "tableView": true,
-              "modalEdit": false,
-              "multiple": false,
-              "persistent": true,
-              "inputFormat": "plain",
-              "protected": false,
-              "dbIndex": false,
-              "case": "",
-              "truncateMultipleSpaces": false,
-              "encrypted": false,
-              "redrawOn": "",
-              "clearOnHide": true,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "allowCalculateOverride": false,
-              "validateOn": "change",
               "validate": {
                 "required": true,
                 "minLength": 9,
                 "maxLength": 11,
-                "minWords": "",
-                "maxWords": "",
-                "pattern": "",
                 "customMessage": "Invalid Social Insurance Number",
                 "custom": "// Common SIN validation algorithm (Luhn algorithm).\r\nvalid = false;\r\nif (input) {\r\n  input = input.replace(/\\s/g, \"\");\r\n  if (input.length === 9) {\r\n    var checksum = 0;\r\n    for (var i = 0; i < input.length; i++) {\r\n      const currentDigit = parseInt(input.charAt(i));\r\n      if ((i + 1) % 2 === 0) {\r\n        const digitTimes2 = currentDigit * 2;\r\n        checksum += digitTimes2 < 10 ? digitTimes2 : digitTimes2 - 9;\r\n      } else {\r\n        checksum += parseInt(input.charAt(i));\r\n      }\r\n    } \r\n    if (checksum % 10 === 0) {\r\n      valid = true;\r\n    }\r\n  }\r\n}",
                 "customPrivate": false,
-                "json": "",
                 "strictDateValidation": false,
                 "multiple": false,
-                "unique": false
+                "unique": false,
+                "pattern": ""
               },
-              "unique": false,
-              "errorLabel": "",
-              "errors": "",
               "key": "sinNumber",
-              "tags": [],
-              "properties": {},
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
-                "json": ""
-              },
-              "customConditional": "",
-              "logic": [],
               "attributes": {
                 "data-cy": "sinNumber"
-              },
-              "overlay": {
-                "style": "",
-                "page": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
               },
               "type": "textfield",
               "inputMaskPlaceholderChar": "_",
               "input": true,
               "hideOnChildrenHidden": false,
+              "placeholder": "",
+              "prefix": "",
+              "customClass": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": null,
+              "protected": false,
+              "unique": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
               "refreshOn": "",
+              "redrawOn": "",
+              "modalEdit": false,
               "dataGridLabel": false,
+              "labelPosition": "top",
+              "description": "",
+              "errorLabel": "",
+              "tooltip": "",
+              "hideLabel": false,
+              "tabindex": "",
+              "disabled": false,
+              "autofocus": false,
+              "dbIndex": false,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "widget": {
+                "type": "input"
+              },
+              "validateOn": "change",
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              },
+              "overlay": {
+                "style": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "allowCalculateOverride": false,
+              "encrypted": false,
+              "showCharCount": false,
+              "showWordCount": false,
+              "properties": {},
+              "allowMultipleMasks": false,
               "addons": [],
+              "mask": false,
               "inputType": "text",
-              "id": "eq1dcyr",
-              "defaultValue": ""
+              "inputFormat": "plain",
+              "displayMask": "",
+              "spellcheck": true,
+              "truncateMultipleSpaces": false,
+              "id": "evwgd2j"
             },
             {
               "label": "HTML",
-              "labelWidth": "",
-              "labelMargin": "",
-              "tag": "p",
               "className": "alert alert-warning fa fa-exclamation-triangle",
               "attrs": [
                 {
@@ -1984,27 +1967,8 @@
               "refreshOnChange": true,
               "customClass": "banner-warning",
               "hidden": true,
-              "modalEdit": false,
               "key": "html4",
-              "tags": [],
-              "properties": {},
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
-                "json": ""
-              },
               "customConditional": "// If the SIN starts with a 9 it indicates a temporary SIN.\nshow = !!data.sinNumber && data.sinNumber.charAt(0) === \"9\";\n",
-              "logic": [],
-              "attributes": {},
-              "overlay": {
-                "style": "",
-                "page": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
               "type": "htmlelement",
               "input": false,
               "tableView": false,
@@ -2021,6 +1985,7 @@
               "persistent": false,
               "clearOnHide": true,
               "refreshOn": "",
+              "modalEdit": false,
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
@@ -2035,6 +2000,7 @@
               "calculateValue": "",
               "calculateServer": false,
               "widget": null,
+              "attributes": {},
               "validateOn": "change",
               "validate": {
                 "required": false,
@@ -2044,13 +2010,27 @@
                 "multiple": false,
                 "unique": false
               },
+              "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+              },
+              "overlay": {
+                "style": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
               "allowCalculateOverride": false,
               "encrypted": false,
               "showCharCount": false,
               "showWordCount": false,
+              "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "e1tpmdm"
+              "tag": "p",
+              "id": "elv5ub"
             }
           ],
           "placeholder": "",
@@ -2091,7 +2071,7 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "eosahf9"
+          "id": "eqfec59"
         }
       ],
       "id": "e0mouha",
@@ -3566,7 +3546,7 @@
       "customDefaultValue": "",
       "calculateValue": "",
       "calculateServer": false,
-      "key": "identityProviderIdp",
+      "key": "identityProvider",
       "tags": [],
       "properties": {},
       "logic": [],
@@ -3581,6 +3561,7 @@
       },
       "type": "hidden",
       "input": true,
+      "tableView": false,
       "placeholder": "",
       "prefix": "",
       "suffix": "",
@@ -3589,7 +3570,6 @@
       "hidden": false,
       "clearOnHide": true,
       "refreshOn": "",
-      "tableView": false,
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
@@ -3622,10 +3602,12 @@
       "allowMultipleMasks": false,
       "addons": [],
       "inputType": "hidden",
-      "id": "e1a0z4"
+      "id": "e9lmgbe"
     },
     {
-      "label": "mode",
+      "label": "Mode (student-edit | student-create | aest-account-approval)",
+      "labelWidth": "",
+      "labelMargin": "",
       "customClass": "",
       "modalEdit": false,
       "defaultValue": null,
@@ -3652,6 +3634,7 @@
       },
       "type": "hidden",
       "input": true,
+      "tableView": false,
       "placeholder": "",
       "prefix": "",
       "suffix": "",
@@ -3660,7 +3643,7 @@
       "hidden": false,
       "clearOnHide": true,
       "refreshOn": "",
-      "tableView": false,
+      "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
       "errorLabel": "",
@@ -3690,10 +3673,9 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
+      "addons": [],
       "inputType": "hidden",
-      "id": "ewvpcmt",
-      "dataGridLabel": false,
-      "addons": []
+      "id": "e811ksf"
     },
     {
       "label": "applicationId",

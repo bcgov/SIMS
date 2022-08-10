@@ -1,0 +1,168 @@
+<template>
+  <full-page-container>
+    <template #header>
+      <header-navigator
+        title="Accounts"
+        subTitle="View request"
+        :routeLocation="pendingAccountsRoute"
+      >
+        <template #buttons>
+          <v-row class="p-0 m-0">
+            <v-btn
+              color="primary"
+              class="mr-2"
+              variant="outlined"
+              @click="declineStudentAccount"
+              >Deny request</v-btn
+            >
+            <v-btn color="primary" @click="createStudentAccount"
+              >Create account for student</v-btn
+            >
+          </v-row>
+        </template>
+      </header-navigator>
+    </template>
+    <student-profile-form
+      :processing="processing"
+      :formModel="initialData"
+      @loaded="formLoaded"
+    />
+  </full-page-container>
+  <confirm-modal
+    title="Create account for student"
+    text="This will allow the student to access the system using a Basic BCeID account instead of a BC Services Card. Please note that their SIN will be validated with ESDC (Employment and Social Development Canada)."
+    okLabel="Create account now"
+    ref="createStudentAccountModal"
+    :max-width="730"
+  ></confirm-modal>
+  <confirm-modal
+    title="Deny request for a student account"
+    text="Denying the request means that the student will not be able to access the system using a Basic BCeID."
+    ref="declineStudentAccountModal"
+    okLabel="Deny request now"
+    :max-width="730"
+  ></confirm-modal>
+</template>
+
+<script lang="ts">
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import {
+  StudentProfileFormModel,
+  StudentProfileFormModes,
+} from "@/types/contracts/StudentContract";
+import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
+import { StudentAccountApplicationService } from "@/services/StudentAccountApplicationService";
+import { AppIDPType, FormIOForm } from "@/types";
+import { StudentAccountApplicationApprovalAPIInDTO } from "@/services/http/dto";
+import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
+import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+
+export default {
+  components: {
+    StudentProfileForm,
+    ConfirmModal,
+  },
+  props: {
+    studentAccountApplicationId: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup(props: any) {
+    const snackBar = useSnackBar();
+    const router = useRouter();
+    let formIOForm: FormIOForm<StudentAccountApplicationApprovalAPIInDTO>;
+    const { checkFormioValidity } = useFormioUtils();
+    const initialData = ref({} as StudentProfileFormModel);
+    const processing = ref(false);
+    const createStudentAccountModal = ref({} as ModalDialog<boolean>);
+    const declineStudentAccountModal = ref({} as ModalDialog<boolean>);
+
+    const pendingAccountsRoute = {
+      name: AESTRoutesConst.STUDENT_ACCOUNT_APPLICATIONS,
+    };
+
+    const getStudentDetails = async () => {
+      const accountApplication =
+        await StudentAccountApplicationService.shared.getStudentAccountApplicationById(
+          props.studentAccountApplicationId,
+        );
+      const studentProfileFormModel =
+        accountApplication.submittedData as StudentProfileFormModel;
+      studentProfileFormModel.identityProvider = AppIDPType.BCeID;
+      studentProfileFormModel.mode =
+        StudentProfileFormModes.AESTAccountApproval;
+      initialData.value = studentProfileFormModel;
+    };
+
+    onMounted(getStudentDetails);
+
+    const formLoaded = (
+      form: FormIOForm<StudentAccountApplicationApprovalAPIInDTO>,
+    ) => {
+      // Saves the form.io reference for later use.
+      formIOForm = form;
+    };
+
+    const createStudentAccount = async () => {
+      if (checkFormioValidity([formIOForm])) {
+        try {
+          const create = await createStudentAccountModal.value.showModal();
+          if (!create) {
+            return;
+          }
+          processing.value = true;
+          await StudentAccountApplicationService.shared.approveStudentAccountApplication(
+            props.studentAccountApplicationId,
+            formIOForm.data,
+          );
+          snackBar.success(
+            "Student account application approved and student account created.",
+          );
+          router.push(pendingAccountsRoute);
+        } catch {
+          snackBar.error(
+            "Unexpected error while approving the student account application.",
+          );
+        } finally {
+          processing.value = false;
+        }
+      }
+    };
+
+    const declineStudentAccount = async () => {
+      try {
+        const decline = await declineStudentAccountModal.value.showModal();
+        if (!decline) {
+          return;
+        }
+        processing.value = true;
+        await StudentAccountApplicationService.shared.declineStudentAccountApplication(
+          props.studentAccountApplicationId,
+        );
+        snackBar.success("Student account application declined.");
+        router.push(pendingAccountsRoute);
+      } catch {
+        snackBar.error(
+          "Unexpected error while declining the student account application.",
+        );
+      } finally {
+        processing.value = false;
+      }
+    };
+
+    return {
+      initialData,
+      processing,
+      formLoaded,
+      createStudentAccount,
+      declineStudentAccount,
+      createStudentAccountModal,
+      declineStudentAccountModal,
+      pendingAccountsRoute,
+    };
+  },
+};
+</script>
