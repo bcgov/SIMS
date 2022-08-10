@@ -12,12 +12,12 @@ export class StudentAccountApplicationSummaryAPIOutDTO {
   submittedDate: Date;
 }
 
-export class StudentAccountApplicationAPIOutDTO {
+export class AESTStudentAccountApplicationAPIOutDTO {
   id: number;
   submittedData: unknown;
 }
 
-export class HasPendingStudentAccountApplicationAPIOutDTO {
+export class StudentAccountApplicationAPIOutDTO {
   hasPendingApplication: boolean;
 }
 

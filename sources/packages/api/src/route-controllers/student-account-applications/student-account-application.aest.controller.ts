@@ -27,7 +27,7 @@ import {
   StudentAccountApplicationsService,
 } from "../../services";
 import {
-  StudentAccountApplicationAPIOutDTO,
+  AESTStudentAccountApplicationAPIOutDTO,
   StudentAccountApplicationApprovalAPIInDTO,
   StudentAccountApplicationSummaryAPIOutDTO,
 } from "./models/student-account-application.dto";
@@ -85,7 +85,7 @@ export class StudentAccountApplicationAESTController extends BaseController {
   async getStudentAccountApplicationById(
     @Param("studentAccountApplicationId", ParseIntPipe)
     studentAccountApplicationId: number,
-  ): Promise<StudentAccountApplicationAPIOutDTO> {
+  ): Promise<AESTStudentAccountApplicationAPIOutDTO> {
     const accountApplication =
       await this.studentAccountApplicationsService.getStudentAccountApplicationsById(
         studentAccountApplicationId,

@@ -10,12 +10,12 @@ export interface StudentAccountApplicationSummaryAPIOutDTO {
   submittedDate: Date;
 }
 
-export interface StudentAccountApplicationAPIOutDTO {
+export interface AESTStudentAccountApplicationAPIOutDTO {
   id: number;
   submittedData: unknown;
 }
 
-export interface HasPendingStudentAccountApplicationAPIOutDTO {
+export interface StudentAccountApplicationAPIOutDTO {
   hasPendingApplication: boolean;
 }
 

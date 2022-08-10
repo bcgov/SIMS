@@ -1,7 +1,7 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   CreateStudentAccountApplicationAPIInDTO,
-  StudentAccountApplicationAPIOutDTO,
+  AESTStudentAccountApplicationAPIOutDTO,
   StudentAccountApplicationApprovalAPIInDTO,
   StudentAccountApplicationSummaryAPIOutDTO,
 } from "@/services/http/dto";
@@ -47,7 +47,7 @@ export class StudentAccountApplicationService {
    */
   async getStudentAccountApplicationById(
     id: number,
-  ): Promise<StudentAccountApplicationAPIOutDTO> {
+  ): Promise<AESTStudentAccountApplicationAPIOutDTO> {
     return ApiClient.StudentAccountApplicationApi.getStudentAccountApplicationById(
       id,
     );

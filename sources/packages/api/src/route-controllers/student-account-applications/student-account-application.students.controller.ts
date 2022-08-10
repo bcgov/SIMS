@@ -24,7 +24,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
   CreateStudentAccountApplicationAPIInDTO,
-  HasPendingStudentAccountApplicationAPIOutDTO,
+  StudentAccountApplicationAPIOutDTO,
 } from "./models/student-account-application.dto";
 import {
   StudentAccountApplicationsService,
@@ -114,7 +114,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
   @Get("has-pending-account-application")
   async hasPendingAccountApplication(
     @UserToken() studentUserToken: StudentUserToken,
-  ): Promise<HasPendingStudentAccountApplicationAPIOutDTO> {
+  ): Promise<StudentAccountApplicationAPIOutDTO> {
     const hasPendingApplication =
       await this.studentAccountApplicationsService.hasPendingStudentAccountApplication(
         studentUserToken.userId,
