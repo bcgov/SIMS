@@ -28,20 +28,20 @@
       @loaded="formLoaded"
     />
   </full-page-container>
-  <ok-cancel-modal
+  <confirm-modal
     title="Create account for student"
     text="This will allow the student to access the system using a Basic BCeID account instead of a BC Services Card. Please note that their SIN will be validated with ESDC (Employment and Social Development Canada)."
     okLabel="Create account now"
     ref="createStudentAccountModal"
     :max-width="730"
-  ></ok-cancel-modal>
-  <ok-cancel-modal
+  ></confirm-modal>
+  <confirm-modal
     title="Deny request for a student account"
     text="Denying the request means that the student will not be able to access the system using a Basic BCeID."
     ref="declineStudentAccountModal"
     okLabel="Deny request now"
     :max-width="730"
-  ></ok-cancel-modal>
+  ></confirm-modal>
 </template>
 
 <script lang="ts">
@@ -56,13 +56,13 @@ import { StudentAccountApplicationService } from "@/services/StudentAccountAppli
 import { AppIDPType, FormIOForm } from "@/types";
 import { StudentAccountApplicationApprovalAPIInDTO } from "@/services/http/dto";
 import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
-import OkCancelModal from "@/components/common/modals/OkCancelModal.vue";
+import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: {
     StudentProfileForm,
-    OkCancelModal,
+    ConfirmModal,
   },
   props: {
     studentAccountApplicationId: {
