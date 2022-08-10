@@ -7,7 +7,6 @@ import {
   StudentAccountApplicationCreateModel,
 } from "./student-account-applications.models";
 import { StudentService } from "../student/student.service";
-import { UserInfo } from "../../types";
 import { CustomNamedError, getISODateOnlyString } from "../../utilities";
 import { STUDENT_ACCOUNT_APPLICATION_NOT_FOUND } from "../../constants";
 

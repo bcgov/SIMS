@@ -1,4 +1,4 @@
-import { CreateStudentAPIInDTO } from "./Student.dto";
+import { CreateStudentAPIInDTO } from "@/services/http/dto";
 
 export interface CreateStudentAccountApplicationAPIInDTO {
   submittedData: unknown;
