@@ -58,7 +58,7 @@ export class StudentAccountApplicationService {
    * with a student account. The Ministry can also adjust any student
    * data that will then be used to create the student account.
    * @param studentAccountApplicationId student account application id.
-   * @returns new student id created as a result of the approval.
+   * @param payload data to approve the student account application.
    */
   async approveStudentAccountApplication(
     studentAccountApplicationId: number,

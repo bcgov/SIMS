@@ -12,7 +12,6 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
    * Create a new student account application to be reviewed by
    * the Ministry to confirm the student's basic BCeID identity.
    * @param payload information to be assessed by the Ministry.
-   * @returns student account application created id.
    */
   async createStudentAccountApplication(
     payload: CreateStudentAccountApplicationAPIInDTO,
@@ -57,7 +56,7 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
    * with a student account. The Ministry can also adjust any student
    * data that will then be used to create the student account.
    * @param studentAccountApplicationId student account application id.
-   * @returns new student id created as a result of the approval.
+   * @param payload data to approve the student account application.
    */
   async approveStudentAccountApplication(
     studentAccountApplicationId: number,

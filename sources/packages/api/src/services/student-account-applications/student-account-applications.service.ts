@@ -120,7 +120,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       email: studentProfile.email,
       birthdate: getISODateOnlyString(studentProfile.dateOfBirth),
       gender: studentProfile.gender,
-    } as UserInfo;
+    };
 
     const studentInfo = {
       phone: studentProfile.phone,
@@ -134,13 +134,13 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       selectedCountry: studentProfile.selectedCountry,
     };
 
-    return this.dataSource.transaction((entityManager) => {
+    return this.dataSource.transaction(async (entityManager) => {
       // Update the student account application with the approval.
       const auditUser = { id: auditUserId } as User;
       accountApplication.assessedBy = auditUser;
       accountApplication.modifier = auditUser;
       accountApplication.assessedDate = new Date();
-      entityManager
+      await entityManager
         .getRepository(StudentAccountApplication)
         .save(accountApplication);
       // Create the new student and updates the user.

@@ -35,6 +35,7 @@ import { CustomNamedError, getUserFullName } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { STUDENT_ACCOUNT_APPLICATION_NOT_FOUND } from "../../constants";
 import { Role } from "../../auth/roles.enum";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /**
  * Student account applications when the authentication happens through BCeID
@@ -103,6 +104,7 @@ export class StudentAccountApplicationAESTController extends BaseController {
    * with a student account. The Ministry can also adjust any student
    * data that will then be used to create the student account.
    * @param studentAccountApplicationId student account application id.
+   * @param payload data to approve the student account application.
    * @returns new student id created as a result of the approval.
    */
   @ApiNotFoundResponse({
@@ -115,7 +117,7 @@ export class StudentAccountApplicationAESTController extends BaseController {
     studentAccountApplicationId: number,
     @Body() payload: StudentAccountApplicationApprovalAPIInDTO,
     @UserToken() userToken: IUserToken,
-  ): Promise<void> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.StudentProfile,
       payload,
@@ -128,11 +130,13 @@ export class StudentAccountApplicationAESTController extends BaseController {
     }
 
     try {
-      await this.studentAccountApplicationsService.approveStudentAccountApplication(
-        studentAccountApplicationId,
-        submissionResult.data.data,
-        userToken.userId,
-      );
+      const createdStudent =
+        await this.studentAccountApplicationsService.approveStudentAccountApplication(
+          studentAccountApplicationId,
+          submissionResult.data.data,
+          userToken.userId,
+        );
+      return { id: createdStudent.id };
     } catch (error: unknown) {
       if (
         error instanceof CustomNamedError &&

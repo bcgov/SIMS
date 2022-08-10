@@ -15,7 +15,10 @@
               @click="declineStudentAccount"
               >Deny request</v-btn
             >
-            <v-btn color="primary" outline @click="createStudentAccount"
+            <v-btn
+              color="primary"
+              variant="outlined"
+              @click="createStudentAccount"
               >Create account for student</v-btn
             >
           </v-row>

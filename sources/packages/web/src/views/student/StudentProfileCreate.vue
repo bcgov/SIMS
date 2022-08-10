@@ -1,15 +1,13 @@
 <template>
   <student-page-container>
     <template #header>
-      <v-row class="text-center">
-        <v-col>
-          <p class="category-header-x-large">Create Your Profile</p>
-          <p>
-            Use your most up-to-date personal information.<br />
-            We'll use the same information to help you apply for financial aid.
-          </p>
-        </v-col>
-      </v-row>
+      <div class="text-center">
+        <p class="category-header-x-large">Create Your Profile</p>
+        <p>
+          Use your most up-to-date personal information.<br />
+          We'll use the same information to help you apply for financial aid.
+        </p>
+      </div>
     </template>
     <student-profile-form
       :formModel="initialData"

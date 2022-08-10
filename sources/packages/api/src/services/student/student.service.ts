@@ -11,7 +11,6 @@ import {
   StudentAccountApplication,
 } from "../../database/entities";
 import { DataSource, EntityManager } from "typeorm";
-import { UserInfo } from "../../types";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
@@ -21,7 +20,7 @@ import {
   removeWhiteSpaces,
   transformAddressDetails,
 } from "../../utilities";
-import { StudentInfo } from "./student.service.models";
+import { CreateStudentUserInfo, StudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import * as dayjs from "dayjs";
 import { StudentUser } from "../../database/entities/student-user.model";
@@ -114,7 +113,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns created student.
    */
   private async internalCreateStudent(
-    userInfo: UserInfo,
+    userInfo: CreateStudentUserInfo,
     studentInfo: StudentInfo,
     auditUserId?: number,
     externalEntityManager?: EntityManager,
@@ -193,14 +192,14 @@ export class StudentService extends RecordDataModelService<Student> {
    * Creates the student after a student account application was submitted by the
    * student and approved by the Ministry. User information will be updated and
    * the student will be created.
-   * @param userInfo information needed to create the user.
+   * @param userInfo information needed to create or update the user.
    * @param studentInfo information received to create the student.
    * a student account application this is the submitted application form id.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns created student.
    */
   async createStudent(
-    userInfo: UserInfo,
+    userInfo: CreateStudentUserInfo,
     studentInfo: StudentInfo,
     auditUserId?: number,
   ): Promise<Student> {
@@ -212,7 +211,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * creating a new one in case the user id is not provided.
    * The user could be already available in the case of the same user
    * was authenticated previously on another portal (e.g. parent/partner).
-   * @param userInfo information needed to create the user.
+   * @param userInfo information needed to create or update the user.
    * @param studentInfo information received to create the student.
    * @param externalEntityManager should be used to allow the student
    * creation process to happen as part of another process.
@@ -222,7 +221,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns created student.
    */
   async createStudentFromAccountApplication(
-    userInfo: UserInfo,
+    userInfo: CreateStudentUserInfo,
     studentInfo: StudentInfo,
     auditUserId: number,
     externalEntityManager: EntityManager,

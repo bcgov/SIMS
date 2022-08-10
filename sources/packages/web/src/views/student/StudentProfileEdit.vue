@@ -41,7 +41,6 @@ export default {
   setup() {
     const router = useRouter();
     const snackBar = useSnackBar();
-    const showApplyPDButton = ref();
     const initialData = ref({} as StudentProfileFormModel);
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
     const processing = ref(false);
@@ -102,7 +101,6 @@ export default {
       submitted,
       initialData,
       applyPDStatus,
-      showApplyPDButton,
       showPendingStatus,
       pdStatusApplicationModal,
       showPDApplicationModal,
