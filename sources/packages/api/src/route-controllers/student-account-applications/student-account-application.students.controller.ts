@@ -71,7 +71,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
     @Body() payload: CreateStudentAccountApplicationAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     if (userToken.userId) {
-      // If a userId is present in the token it means that the user is already present
+      // If a userId is present in the token it means the user is already present
       // on DB so check for possible pending student account applications.
       const hasPendingStudentAccountApplication =
         await this.studentAccountApplicationsService.hasPendingStudentAccountApplication(
