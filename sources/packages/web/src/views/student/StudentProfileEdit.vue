@@ -21,7 +21,6 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { ModalDialog, useSnackBar } from "@/composables";
 import {
-  StudentPDStatus,
   StudentProfileFormModel,
   StudentProfileFormModes,
 } from "@/types/contracts/StudentContract";
