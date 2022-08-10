@@ -7,15 +7,19 @@
       class="m-1"
     >
       <template #actions>
-        <v-btn
-          class="float-right"
-          color="primary"
-          data-cy="addNewSINButton"
-          :disabled="processingNewSIN"
-          @click="addNewSIN"
-          prepend-icon="fa:fa fa-plus-circle"
-          >Add new SIN</v-btn
-        >
+        <check-a-e-s-t-permission-role :role="Role.StudentAddNewSIN">
+          <template v-slot="{ isReadonly }">
+            <v-btn
+              class="float-right"
+              color="primary"
+              data-cy="addNewSINButton"
+              :disabled="processingNewSIN || isReadonly"
+              @click="addNewSIN"
+              prepend-icon="fa:fa fa-plus-circle"
+              >Add new SIN</v-btn
+            >
+          </template>
+        </check-a-e-s-t-permission-role>
       </template>
     </body-header>
     <content-group>
@@ -39,16 +43,21 @@
           <Column field="sinExpiryDateFormatted" header="Expiry date" />
           <Column header="Action">
             <template #body="slotProps">
-              <v-btn
-                color="primary"
-                :disabled="
-                  !slotProps.data.temporarySIN ||
-                  !!slotProps.data.sinExpiryDate ||
-                  processingEditExpiryDate
-                "
-                @click="addExpiryDate(slotProps.data.id)"
-                >Add expiry date</v-btn
-              >
+              <check-a-e-s-t-permission-role :role="Role.StudentAddSINExpiry">
+                <template v-slot="{ isReadonly }">
+                  <v-btn
+                    color="primary"
+                    :disabled="
+                      !slotProps.data.temporarySIN ||
+                      !!slotProps.data.sinExpiryDate ||
+                      processingEditExpiryDate ||
+                      isReadonly
+                    "
+                    @click="addExpiryDate(slotProps.data.id)"
+                    >Add expiry date</v-btn
+                  >
+                </template>
+              </check-a-e-s-t-permission-role>
             </template></Column
           >
         </DataTable>
@@ -62,12 +71,17 @@
     formName="aestAddNewSIN"
   >
     <template #actions="{ cancel, submit }">
-      <footer-buttons
-        justify="end"
-        primaryLabel="Add SIN now"
-        @secondaryClick="cancel"
-        @primaryClick="submit"
-      />
+      <check-a-e-s-t-permission-role :role="Role.StudentAddNewSIN">
+        <template v-slot="{ isReadonly }">
+          <footer-buttons
+            justify="end"
+            primaryLabel="Add SIN now"
+            @secondaryClick="cancel"
+            @primaryClick="submit"
+            :disablePrimaryButton="isReadonly"
+          />
+        </template>
+      </check-a-e-s-t-permission-role>
     </template>
   </formio-modal-dialog>
   <formio-modal-dialog
@@ -77,12 +91,17 @@
     formName="aestAddSINExpiryDate"
   >
     <template #actions="{ cancel, submit }">
-      <footer-buttons
-        justify="end"
-        primaryLabel="Add expiry date now"
-        @secondaryClick="cancel"
-        @primaryClick="submit"
-      />
+      <check-a-e-s-t-permission-role :role="Role.StudentAddSINExpiry">
+        <template v-slot="{ isReadonly }">
+          <footer-buttons
+            justify="end"
+            primaryLabel="Add expiry date now"
+            @secondaryClick="cancel"
+            @primaryClick="submit"
+            :disablePrimaryButton="isReadonly"
+          />
+        </template>
+      </check-a-e-s-t-permission-role>
     </template>
   </formio-modal-dialog>
 </template>
@@ -95,6 +114,7 @@ import {
   PAGINATION_LIST,
   SINValidations,
   LayoutTemplates,
+  Role,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import {
@@ -108,10 +128,12 @@ import {
   CreateSINValidationAPIInDTO,
   UpdateSINValidationAPIInDTO,
 } from "@/services/http/dto";
+import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
 
 export default {
   components: {
     FormioModalDialog,
+    CheckAESTPermissionRole,
   },
   props: {
     studentId: {
@@ -206,6 +228,7 @@ export default {
       processingNewSIN,
       processingEditExpiryDate,
       LayoutTemplates,
+      Role,
     };
   },
 };

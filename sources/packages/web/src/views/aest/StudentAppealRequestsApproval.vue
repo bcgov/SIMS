@@ -30,14 +30,21 @@
               @click="gotToAssessmentsSummary"
               >Cancel</v-btn
             >
-            <v-btn
-              color="primary"
-              class="ml-2"
-              data-cy="completeStudentRequest"
-              @click="submit"
-              >Complete student request</v-btn
-            ></v-row
-          >
+            <check-a-e-s-t-permission-role
+              :role="Role.StudentApproveDeclineAppeals"
+            >
+              <template v-slot="{ isReadonly }">
+                <v-btn
+                  color="primary"
+                  class="ml-2"
+                  data-cy="completeStudentRequest"
+                  @click="submit"
+                  :disabled="isReadonly"
+                  >Complete student request
+                </v-btn>
+              </template>
+            </check-a-e-s-t-permission-role>
+          </v-row>
         </template>
       </appeal-requests-approval-form>
     </full-page-container>
@@ -54,15 +61,18 @@ import {
   StudentAppealApproval,
   StudentAppealStatus,
   ApiProcessError,
+  Role,
 } from "@/types";
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
+import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
 
 export default {
   components: {
     AppealRequestsApprovalForm,
     StatusChipRequestedAssessment,
+    CheckAESTPermissionRole,
   },
   props: {
     studentId: {
@@ -149,6 +159,7 @@ export default {
       submitted,
       appealStatus,
       readOnly,
+      Role,
     };
   },
 };

@@ -8,19 +8,27 @@
       >
         <template #buttons v-if="showActionButtons">
           <v-row class="m-0 p-0">
-            <v-btn
-              color="primary"
-              variant="outlined"
-              @click="assessOffering(OfferingStatus.CreationDeclined)"
-              >Decline</v-btn
+            <check-a-e-s-t-permission-role
+              :role="Role.InstitutionApproveDeclineOffering"
             >
-            <v-btn
-              class="ml-2"
-              color="primary"
-              @click="assessOffering(OfferingStatus.Approved)"
-              >Approve offering</v-btn
-            ></v-row
-          >
+              <template v-slot="{ isReadonly }">
+                <v-btn
+                  variant="outlined"
+                  :disabled="isReadonly"
+                  :color="!isReadonly ? 'primary' : 'secondary'"
+                  @click="assessOffering(OfferingStatus.CreationDeclined)"
+                  >Decline</v-btn
+                >
+                <v-btn
+                  class="ml-2"
+                  color="primary"
+                  :disabled="isReadonly"
+                  @click="assessOffering(OfferingStatus.Approved)"
+                  >Approve offering</v-btn
+                >
+              </template>
+            </check-a-e-s-t-permission-role>
+          </v-row>
         </template>
       </header-navigator>
       <program-offering-detail-header
@@ -44,7 +52,7 @@
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormBaseModel, OfferingStatus } from "@/types";
+import { OfferingFormBaseModel, OfferingStatus, Role } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
@@ -52,12 +60,14 @@ import { BannerTypes } from "@/types/contracts/Banner";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 import AssessOfferingModal from "@/components/aest/institution/modals/AssessOfferingModal.vue";
+import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
 
 export default {
   components: {
     ProgramOfferingDetailHeader,
     OfferingForm,
     AssessOfferingModal,
+    CheckAESTPermissionRole,
   },
   props: {
     institutionId: {
@@ -146,6 +156,7 @@ export default {
       programRoute,
       showActionButtons,
       offeringApprovalStatus,
+      Role,
     };
   },
 };

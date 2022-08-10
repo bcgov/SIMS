@@ -1,15 +1,20 @@
 <template>
   <full-page-container :full-width="true">
     <body-header title="All Restrictions" class="m-1">
-      <template #actions
-        ><v-btn
-          @click="addInstitutionRestriction"
-          class="float-right"
-          color="primary"
-          prepend-icon="fa:fa fa-plus-circle"
-          >Add restriction</v-btn
-        ></template
-      >
+      <template #actions>
+        <check-a-e-s-t-permission-role :role="Role.InstitutionAddRestriction">
+          <template v-slot="{ isReadonly }">
+            <v-btn
+              @click="addInstitutionRestriction"
+              class="float-right"
+              color="primary"
+              prepend-icon="fa:fa fa-plus-circle"
+              :disabled="isReadonly"
+              >Add restriction</v-btn
+            ></template
+          >
+        </check-a-e-s-t-permission-role>
+      </template>
     </body-header>
     <content-group>
       <DataTable
@@ -71,11 +76,13 @@
     ref="viewRestriction"
     :restrictionData="institutionRestriction"
     @submitResolutionData="resolveRestriction"
+    :allowedRole="Role.InstitutionResolveRestriction"
   />
   <AddInstitutionRestrictionModal
     ref="addRestriction"
     :entityType="RestrictionEntityType.Institution"
     @submitRestrictionData="createNewRestriction"
+    :allowedRole="Role.InstitutionAddRestriction"
   />
 </template>
 
@@ -94,14 +101,17 @@ import {
   ResolveRestrictionDTO,
   RestrictionEntityType,
   LayoutTemplates,
+  Role,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
+import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
 
 export default {
   components: {
     StatusChipRestriction,
     ViewRestrictionModal,
     AddInstitutionRestrictionModal,
+    CheckAESTPermissionRole,
   },
   props: {
     institutionId: {
@@ -198,6 +208,7 @@ export default {
       createNewRestriction,
       RestrictionEntityType,
       LayoutTemplates,
+      Role,
     };
   },
 };

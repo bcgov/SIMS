@@ -16,12 +16,19 @@
       @submitted="submitted"
     >
       <template #actions="{ submit }" v-if="!readOnly">
-        <footer-buttons
-          :processing="processing"
-          primaryLabel="Complete student request"
-          @primaryClick="submit"
-          @secondaryClick="gotToAssessmentsSummary"
-        />
+        <check-a-e-s-t-permission-role
+          :role="Role.StudentApproveDeclineExceptions"
+        >
+          <template v-slot="{ isReadonly }">
+            <footer-buttons
+              :processing="processing"
+              primaryLabel="Complete student request"
+              :disablePrimaryButton="isReadonly"
+              @primaryClick="submit"
+              @secondaryClick="gotToAssessmentsSummary"
+            />
+          </template>
+        </check-a-e-s-t-permission-role>
       </template>
     </formio-container>
   </full-page-container>
@@ -31,13 +38,14 @@ import { ref, onMounted } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
-import { ApplicationExceptionStatus, FormIOForm } from "@/types";
+import { ApplicationExceptionStatus, FormIOForm, Role } from "@/types";
 import {
   ApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
 import { useAssessment, useFormatters, useSnackBar } from "@/composables";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
+import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
 
 /**
  * Model to be used to populate the form.io.
@@ -71,7 +79,7 @@ type ApplicationExceptionFormModel = Omit<
 };
 
 export default {
-  components: { HeaderTitleValue },
+  components: { HeaderTitleValue, CheckAESTPermissionRole },
   props: {
     studentId: {
       type: Number,
@@ -160,6 +168,7 @@ export default {
       submittedDate,
       processing,
       readOnly,
+      Role,
     };
   },
 };

@@ -18,15 +18,20 @@
           hide-details
         >
         </v-text-field>
-        <v-btn
-          v-if="hasBusinessGuid || allowBasicBCeIDCreation"
-          class="ml-2"
-          color="primary"
-          @click="openNewUserModal"
-          prepend-icon="fa:fa fa-plus-circle"
-        >
-          Add new user
-        </v-btn>
+        <check-a-e-s-t-permission-role :role="Role.InstitutionAddNewUser">
+          <template v-slot="{ isReadonly }">
+            <v-btn
+              v-if="hasBusinessGuid || allowBasicBCeIDCreation"
+              class="ml-2"
+              color="primary"
+              :disabled="isReadonly"
+              @click="openNewUserModal"
+              prepend-icon="fa:fa fa-plus-circle"
+            >
+              Add new user
+            </v-btn>
+          </template>
+        </check-a-e-s-t-permission-role>
       </v-row>
     </template>
   </body-header>
@@ -77,26 +82,44 @@
       ></Column>
       <Column header="Actions"
         ><template #body="slotProps">
-          <v-btn
-            :disabled="!slotProps.data.isActive"
-            @click="openEditUserModal(slotProps.data)"
-            variant="text"
-            :color="slotProps.data.isActive ? 'primary' : 'secondary'"
-            append-icon="mdi-pencil-outline"
+          <check-a-e-s-t-permission-role :role="Role.InstitutionEditUser">
+            <template v-slot="{ isReadonly }">
+              <v-btn
+                :disabled="!slotProps.data.isActive || isReadonly"
+                @click="openEditUserModal(slotProps.data)"
+                variant="text"
+                :color="
+                  slotProps.data.isActive && !isReadonly
+                    ? 'primary'
+                    : 'secondary'
+                "
+                append-icon="mdi-pencil-outline"
+              >
+                <span class="text-decoration-underline">Edit</span>
+              </v-btn>
+            </template>
+          </check-a-e-s-t-permission-role>
+          <check-a-e-s-t-permission-role
+            :role="Role.InstitutionEnableDisableUser"
           >
-            <span class="text-decoration-underline">Edit</span>
-          </v-btn>
-          <v-btn
-            :disabled="slotProps.data.disableRemove"
-            @click="updateUserStatus(slotProps.data)"
-            variant="text"
-            :color="slotProps.data.disableRemove ? 'secondary' : 'primary'"
-            append-icon="mdi-account-remove-outline"
-          >
-            <span class="text-decoration-underline">{{
-              slotProps.data.isActive ? "Disable User" : "Enable User"
-            }}</span>
-          </v-btn>
+            <template v-slot="{ isReadonly }">
+              <v-btn
+                :disabled="slotProps.data.disableRemove || isReadonly"
+                @click="updateUserStatus(slotProps.data)"
+                variant="text"
+                :color="
+                  slotProps.data.disableRemove || isReadonly
+                    ? 'secondary'
+                    : 'primary'
+                "
+                append-icon="mdi-account-remove-outline"
+              >
+                <span class="text-decoration-underline">{{
+                  slotProps.data.isActive ? "Disable User" : "Enable User"
+                }}</span>
+              </v-btn>
+            </template>
+          </check-a-e-s-t-permission-role>
         </template>
       </Column>
     </DataTable>
@@ -131,16 +154,18 @@ import {
   DataTableSortOrder,
   PAGINATION_LIST,
   ApiProcessError,
+  Role,
 } from "@/types";
 import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
-
 import { InstitutionUserService } from "@/services/InstitutionUserService";
+import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
 
 export default {
   components: {
     AddInstitutionUser,
     EditInstitutionUser,
     StatusChipActiveUser,
+    CheckAESTPermissionRole,
   },
   props: {
     institutionId: {
@@ -293,6 +318,7 @@ export default {
       usersListAndCount,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
+      Role,
     };
   },
 };

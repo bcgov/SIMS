@@ -1,16 +1,21 @@
 <template>
   <full-page-container :full-width="true">
     <body-header title="All restrictions" class="m-1">
-      <template #actions
-        ><v-btn
-          @click="addStudentRestriction"
-          class="float-right"
-          color="primary"
-          data-cy="addRestrictionButton"
-          prepend-icon="fa:fa fa-plus-circle"
-          >Add restriction</v-btn
-        ></template
-      >
+      <template #actions>
+        <check-a-e-s-t-permission-role :role="Role.StudentAddRestriction">
+          <template v-slot="{ isReadonly }">
+            <v-btn
+              @click="addStudentRestriction"
+              class="float-right"
+              color="primary"
+              data-cy="addRestrictionButton"
+              prepend-icon="fa:fa fa-plus-circle"
+              :disabled="isReadonly"
+              >Add restriction</v-btn
+            >
+          </template>
+        </check-a-e-s-t-permission-role>
+      </template>
     </body-header>
     <content-group>
       <DataTable
@@ -72,11 +77,13 @@
     ref="viewRestriction"
     :restrictionData="studentRestriction"
     @submitResolutionData="resolveRestriction"
+    :allowedRole="Role.StudentResolveRestriction"
   />
   <AddStudentRestrictionModal
     ref="addRestriction"
     :entityType="RestrictionEntityType.Student"
     @submitRestrictionData="createNewRestriction"
+    :allowedRole="Role.StudentAddRestriction"
   />
 </template>
 
@@ -95,14 +102,17 @@ import {
   ResolveRestrictionDTO,
   RestrictionEntityType,
   LayoutTemplates,
+  Role,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
+import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
 
 export default {
   components: {
     StatusChipRestriction,
     ViewRestrictionModal,
     AddStudentRestrictionModal,
+    CheckAESTPermissionRole,
   },
   props: {
     studentId: {
@@ -197,6 +207,7 @@ export default {
       createNewRestriction,
       RestrictionEntityType,
       LayoutTemplates,
+      Role,
     };
   },
 };

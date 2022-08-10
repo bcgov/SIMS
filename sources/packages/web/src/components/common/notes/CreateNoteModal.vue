@@ -10,17 +10,22 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <footer-buttons
-        primaryLabel="Add note"
-        @primaryClick="addNewNote"
-        @secondaryClick="dialogClosed"
-      />
+      <check-a-e-s-t-permission-role :role="allowedRole">
+        <template v-slot="{ isReadonly }">
+          <footer-buttons
+            :disablePrimaryButton="isReadonly"
+            primaryLabel="Add note"
+            @primaryClick="addNewNote"
+            @secondaryClick="dialogClosed"
+          />
+        </template>
+      </check-a-e-s-t-permission-role>
     </template>
   </modal-dialog-base>
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { PropType, ref } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useFormioUtils } from "@/composables";
 import {
@@ -28,12 +33,19 @@ import {
   InstitutionNoteType,
   StudentNoteType,
   NoteEntityType,
+  Role,
 } from "@/types";
+import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+
 export default {
-  components: { ModalDialogBase },
+  components: { ModalDialogBase, CheckAESTPermissionRole },
   props: {
     entityType: {
       type: String,
+      required: true,
+    },
+    allowedRole: {
+      type: String as PropType<Role>,
       required: true,
     },
   },
@@ -81,6 +93,7 @@ export default {
       formLoaded,
       submitNote,
       addNewNote,
+      Role,
     };
   },
 };

@@ -19,11 +19,18 @@
       </div>
     </template>
     <template v-slot:footer>
-      <footer-buttons
-        :primaryLabel="submitLabel"
-        @primaryClick="submitForm"
-        @secondaryClick="dialogClosed"
-      />
+      <check-a-e-s-t-permission-role
+        :role="Role.InstitutionApproveDeclineOfferingChanges"
+      >
+        <template v-slot="{ isReadonly }">
+          <footer-buttons
+            :primaryLabel="submitLabel"
+            @primaryClick="submitForm"
+            @secondaryClick="dialogClosed"
+            :disablePrimaryButton="isReadonly"
+          />
+        </template>
+      </check-a-e-s-t-permission-role>
     </template>
   </modal-dialog-base>
 </template>
@@ -32,11 +39,12 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { ref, reactive } from "vue";
-import { OfferingStatus, VForm } from "@/types";
+import { OfferingStatus, VForm, Role } from "@/types";
 import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
+import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
 
 export default {
-  components: { ModalDialogBase },
+  components: { ModalDialogBase, CheckAESTPermissionRole },
   setup() {
     const {
       showDialog,
@@ -92,6 +100,7 @@ export default {
       assessOfferingData,
       subTitle,
       submitLabel,
+      Role,
     };
   },
 };

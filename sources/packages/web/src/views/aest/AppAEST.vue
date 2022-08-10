@@ -51,13 +51,12 @@
 </template>
 
 <script lang="ts">
-import { ClientIdType } from "@/types";
+import { ClientIdType, Role } from "@/types";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
-import { Role } from "@/types";
 
 export default {
   components: { BCLogo, IdleTimeChecker, CheckAESTPermissionRole },

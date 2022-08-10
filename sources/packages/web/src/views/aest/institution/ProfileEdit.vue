@@ -9,6 +9,7 @@
       <institution-profile-form
         :profileData="institutionProfileModel"
         @submitInstitutionProfile="updateInstitution"
+        :allowedRole="Role.InstitutionEditProfile"
       ></institution-profile-form>
     </full-page-container>
   </v-container>
@@ -17,7 +18,7 @@
 <script lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { ClientIdType } from "@/types";
+import { ClientIdType, Role } from "@/types";
 import {
   InstitutionDetailAPIOutDTO,
   InstitutionContactAPIInDTO,
@@ -67,7 +68,7 @@ export default {
     return {
       institutionProfileModel,
       updateInstitution,
-      institutionProfileRoute,
+      institutionProfileRoute,Role
     };
   },
 };
