@@ -97,7 +97,9 @@ export default {
           });
         }
       } catch {
-        snackBar.error("Error while saving student.");
+        snackBar.error(
+          "Error while saving student. Please contact StudentAid BC.",
+        );
       } finally {
         processing.value = false;
       }

@@ -236,7 +236,7 @@ export class StudentService extends RecordDataModelService<Student> {
     studentSIN: string,
     userInfo: UserInfoMatchData,
   ): Promise<Student> {
-    // Check if multiple students exists with the same SIN.
+    // Check if there are students with the same SIN.
     const existingStudents = await this.getStudentsBySIN(studentSIN);
     if (existingStudents.length > 1) {
       const logMessage = "More than one student found for the provided SIN.";
@@ -251,7 +251,8 @@ export class StudentService extends RecordDataModelService<Student> {
       this.logger.warn("Found one student with the same SIN.");
       const [studentFound] = existingStudents;
       if (!this.studentMatchesUserInfo(studentFound, userInfo)) {
-        const logMessage = "Student personal data does not match.";
+        const logMessage =
+          "Student personal data does not match while trying to link the user to an existing student account.";
         this.logger.warn(logMessage);
         throw new CustomNamedError(
           logMessage,
