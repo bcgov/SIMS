@@ -42,7 +42,7 @@ export class AuthTestController {
   /**
    * Only authenticated users with specific role will have access to this endpoint.
    */
-  @Roles(Role.Student)
+  @Roles(Role.AESTReports)
   @Get("/authenticated-route-by-role")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   authenticatedRouteByRole(): void {

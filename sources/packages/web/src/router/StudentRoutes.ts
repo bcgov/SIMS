@@ -5,7 +5,8 @@ import AppStudent from "@/views/student/AppStudent.vue";
 import DynamicStudentApp from "@/views/student/financial-aid-application/FullTimeApplication.vue";
 import StudentApplication from "@/views/student/financial-aid-application/StudentApplication.vue";
 import Assessment from "@/views/student/NoticeOfAssessment.vue";
-import StudentProfile from "@/views/student/StudentProfile.vue";
+import StudentProfileCreate from "@/views/student/StudentProfileCreate.vue";
+import StudentProfileEdit from "@/views/student/StudentProfileEdit.vue";
 import Notifications from "@/views/student/Notifications.vue";
 import StudentFileUploader from "@/views/student/StudentFileUploader.vue";
 import NotificationsSettings from "@/views/student/NotificationsSettings.vue";
@@ -13,6 +14,7 @@ import StudentApplicationSummary from "@/views/student/StudentApplicationSummary
 import StudentApplicationDetails from "@/views/student/StudentApplicationDetails.vue";
 import StudentAppealRequest from "@/views/student/StudentAppealRequest.vue";
 import StudentAccountActivity from "@/views/student/StudentAccountActivity.vue";
+import StudentAccountApplicationInProgress from "@/views/student/StudentAccountApplicationInProgress.vue";
 
 import {
   StudentRoutesConst,
@@ -48,9 +50,8 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: "student-profile",
-        name: StudentRoutesConst.STUDENT_PROFILE,
-        component: StudentProfile,
-        props: { editMode: false },
+        name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
+        component: StudentProfileCreate,
         meta: {
           clientType: ClientIdType.Student,
         },
@@ -58,7 +59,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       {
         path: "student-profile/edit",
         name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
-        component: StudentProfile,
+        component: StudentProfileEdit,
         meta: {
           clientType: ClientIdType.Student,
         },
@@ -151,6 +152,14 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.StudentAccountActivity,
         name: StudentRoutesConst.STUDENT_ACCOUNT_ACTIVITY,
         component: StudentAccountActivity,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentAccountApplicationIsProgress,
+        name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
+        component: StudentAccountApplicationInProgress,
         meta: {
           clientType: ClientIdType.Student,
         },

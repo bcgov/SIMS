@@ -1,7 +1,9 @@
 import {
+  AddressDetailsFormAPIDTO,
   SINValidationsAPIOutDTO,
   StudentProfileAPIOutDTO,
 } from "@/services/http/dto";
+import { AppIDPType } from "../ApplicationToken";
 
 export interface StudentFormInfo extends StudentProfileAPIOutDTO {
   birthDateFormatted: string;
@@ -48,3 +50,34 @@ export interface SINValidations extends SINValidationsAPIOutDTO {
   validGenderCheckFormatted?: string;
   sinExpiryDateFormatted?: string;
 }
+
+/**
+ * Possible modes that the student profile form
+ * can be adapted for different scenarios supported.
+ */
+export enum StudentProfileFormModes {
+  /**
+   * Student is editing his profile.
+   */
+  StudentEdit = "student-edit",
+  /**
+   * Student is creating his profile.
+   */
+  StudentCreate = "student-create",
+  /**
+   * Ministry is assessing a submitted basic BCeID
+   * profile to confirm the student identity.
+   */
+  AESTAccountApproval = "aest-account-approval",
+}
+
+export type StudentProfileFormModel = Pick<
+  StudentProfileAPIOutDTO,
+  "firstName" | "lastName" | "gender" | "email" | "pdStatus"
+> &
+  AddressDetailsFormAPIDTO & {
+    phone: string;
+    dateOfBirth: string;
+    mode: StudentProfileFormModes;
+    identityProvider?: AppIDPType;
+  };

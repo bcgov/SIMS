@@ -17,6 +17,8 @@ import { DatabaseModule } from "../../database/database.module";
 import { AuthModule } from "../../auth/auth.module";
 import { AppStudentsModule } from "../../app.students.module";
 
+jest.setTimeout(15000);
+
 describe("Test ATBC Controller", () => {
   const clientId = "student";
   let accesstoken: string;

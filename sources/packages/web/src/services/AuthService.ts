@@ -4,7 +4,7 @@ import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
-import { ApplicationToken } from "@/types";
+import { ApiProcessError, AppIDPType, ApplicationToken } from "@/types";
 import { RouteHelper } from "@/helpers";
 import { LocationAsRelativeRaw } from "vue-router";
 import {
@@ -15,6 +15,8 @@ import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
 import { useStudentStore } from "@/composables";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
+import { MISSING_STUDENT_ACCOUNT } from "@/constants";
+import { StudentAccountApplicationService } from "./StudentAccountApplicationService";
 
 /**
  * Manages the KeyCloak initialization and authentication methods.
@@ -121,19 +123,42 @@ export class AuthService {
    * Process the login for the student redirecting to the student profile
    * creation case it is the first access.
    */
-  private async processStudentLogin() {
+  private async processStudentLogin(): Promise<void> {
     const studentStore = useStudentStore(store);
-    const hasStudentAccount =
+    try {
+      // This method will result in a success call only when the
+      // student account is present. This is the usual flow.
       await StudentService.shared.synchronizeFromUserToken();
-    await studentStore.setHasStudentAccount(hasStudentAccount);
-    if (hasStudentAccount) {
+      // When the above method returns a success result we can also
+      // assume that the student account is present and valid.
+      await studentStore.setHasStudentAccount(true);
       await studentStore.updateProfileData();
-    } else {
-      // If the student is not present, redirect to student profile
-      // for account creation.
-      this.priorityRedirect = {
-        name: StudentRoutesConst.STUDENT_PROFILE,
-      };
+    } catch (error: unknown) {
+      if (
+        error instanceof ApiProcessError &&
+        error.errorType === MISSING_STUDENT_ACCOUNT
+      ) {
+        if (this.userToken?.IDP === AppIDPType.BCeID) {
+          const hasPendingAccountApplication =
+            await StudentAccountApplicationService.shared.hasPendingAccountApplication();
+          if (hasPendingAccountApplication) {
+            // The BCeID student account application is in progress.
+            // The student must be redirected to the below page and
+            // have access only to the below page.
+            this.priorityRedirect = {
+              name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
+            };
+            return;
+          }
+        }
+        // If the student is not present, redirect to
+        // student profile for account creation.
+        this.priorityRedirect = {
+          name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
+        };
+        return;
+      }
+      throw error;
     }
   }
 
@@ -141,7 +166,7 @@ export class AuthService {
    * Process the login for the institution executing the verifications
    * to determine if the user can proceed or must be redirect somewhere.
    */
-  private async processInstitutionLogin() {
+  private async processInstitutionLogin(): Promise<void> {
     const userStatus =
       await InstitutionUserService.shared.getInstitutionUserStatus();
     if (userStatus.isActiveUser === true) {
@@ -192,7 +217,7 @@ export class AuthService {
    * Process the login for AEST verifying if the user belongs to the group that
    * allow an IDIR to have access to the application.
    */
-  private async processAESTLogin() {
+  private async processAESTLogin(): Promise<void> {
     const isAuthorized = await UserService.shared.syncAESTUser();
     if (!isAuthorized) {
       await this.logout(ClientIdType.AEST, { notAllowedUser: true });

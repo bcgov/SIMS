@@ -9,7 +9,12 @@ import {
 } from "@nestjs/common";
 import { IUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, UserToken, Groups } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  UserToken,
+  Groups,
+  Roles,
+} from "../../auth/decorators";
 import {
   DeclineProgramAPIInDTO,
   ApproveProgramAPIInDTO,
@@ -26,6 +31,7 @@ import {
   ProgramsPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { EducationProgramControllerService } from "./education-program.controller.service";
+import { Role } from "../../auth/roles.enum";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -79,6 +85,7 @@ export class EducationProgramAESTController extends BaseController {
    * @param institutionId institution id.
    * @param payload information to approve the program.
    */
+  @Roles(Role.InstitutionApproveDeclineProgram)
   @Patch(":programId/institution/:institutionId/approve")
   async approveProgram(
     @UserToken() userToken: IUserToken,
@@ -101,6 +108,7 @@ export class EducationProgramAESTController extends BaseController {
    * @param institutionId institution id.
    * @payload note to decline the program.
    */
+  @Roles(Role.InstitutionApproveDeclineProgram)
   @Patch(":programId/institution/:institutionId/decline")
   async declineProgram(
     @UserToken() userToken: IUserToken,

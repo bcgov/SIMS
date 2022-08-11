@@ -5,10 +5,16 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { NoteType } from "../../database/entities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { NoteDTO, NoteBaseDTO } from "./models/note.dto";
-import { AllowAuthorizedParty, UserToken, Groups } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  UserToken,
+  Groups,
+  Roles,
+} from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
 import { transformToNoteDTO, transformToNoteEntity } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
+import { Role } from "../../auth/roles.enum";
 /**
  * Controller for Notes.
  * This consists of all Rest APIs for notes.
@@ -71,6 +77,7 @@ export class NotesController extends BaseController {
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Roles(Role.InstitutionCreateNote)
   @Post("/institution/:institutionId")
   async addInstitutionNote(
     @UserToken() userToken: IUserToken,
@@ -92,6 +99,7 @@ export class NotesController extends BaseController {
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Roles(Role.StudentCreateNote)
   @Post("/student/:studentId")
   async addStudentNote(
     @UserToken() userToken: IUserToken,

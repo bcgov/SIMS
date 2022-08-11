@@ -3,6 +3,22 @@ import { AuthorizedParties } from "./authorized-parties.enum";
 import { IdentityProviders } from "../database/entities/identity-providers.type";
 
 /**
+ * User Roles extracted from the token during the
+ * authentication process on JwtStrategy validate method.
+ */
+export interface Roles {
+  roles: string[];
+}
+
+/**
+ * Resource Access extracted from the token during the
+ * authentication process on JwtStrategy validate method.
+ */
+export interface ResourceAccess {
+  aest: Roles;
+}
+
+/**
  * User information extracted from the token during the
  * authentication process on JwtStrategy validate method.
  */
@@ -19,6 +35,7 @@ export interface IUserToken {
   displayName: string;
   givenNames: string;
   identity_assurance_level: string;
+  resource_access: ResourceAccess;
   roles: string[];
   groups: string[];
   idp_user_name: string;

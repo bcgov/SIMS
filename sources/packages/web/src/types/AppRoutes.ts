@@ -11,6 +11,7 @@ export enum AppRoutes {
   Assessment = "application/:applicationId/assessment/:assessmentId",
   RequestChange = "request-change",
   StudentAccountActivity = "student-account-activity",
+  StudentAccountApplicationIsProgress = "student-account-application-in-progress",
   // Institution
   InstitutionRoot = "/institution",
   InstitutionDashboard = "dashboard",
@@ -67,6 +68,8 @@ export enum AppRoutes {
   ViewOfferingChangeRequest = "institution/offering-change-request/:offeringId/program/:programId",
   ViewOfferingChangeRequestComplete = "institution/offering-change-request-complete/:offeringId/program/:programId",
   Appeals = "appeals",
+  StudentAccountApplications = "student-account-applications",
+  StudentAccountApplicationsApproval = "student-account-applications/:studentAccountApplicationId/approval",
   // program
   Programs = "programs",
   ViewProgram = "institution/:institutionId/location/:locationId/program/:programId",

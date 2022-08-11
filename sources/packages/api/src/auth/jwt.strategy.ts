@@ -33,20 +33,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     const userToken = payload as IUserToken;
     userToken.authorizedParty = payload.azp;
-    // For now we are adding all the roles from the different clients into one single array.
-    // In the future we can decide how to proper handle roles, but the only issue to have
-    // then flatten for now is if we create a role with the same name in 2 different
-    // clients on Keycloak. For now we just have the Student client and in the future
-    // it would be pretty easy to adapt this method as needed to expose the roles
-    // also as needed to be validate using a decorator/annotation.
-    userToken.roles = [];
-    if (payload.resource_access) {
-      Object.keys(payload.resource_access).forEach((value) => {
-        payload.resource_access[value].roles.forEach((roleValue: string) => {
-          userToken.roles.push(roleValue);
-        });
-      });
-    }
 
     // Check if it is expected that a user exists on DB for the specific authorized parties.
     const authorizedParties = [

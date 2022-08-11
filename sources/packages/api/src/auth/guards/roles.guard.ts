@@ -2,6 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { ROLES_KEY } from "../decorators/roles.decorator";
 import { Role } from "../roles.enum";
+import { IUserToken } from "../userToken.interface";
 
 /**
  * Allow the authorization based on roles making use
@@ -21,6 +22,12 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const { user } = context.switchToHttp().getRequest();
-    return requiredRoles.some((role) => user.roles?.includes(role));
+    const userToken = user as IUserToken;
+    if (userToken.resource_access && userToken.authorizedParty) {
+      const userRoles =
+        userToken.resource_access[userToken.authorizedParty].roles;
+      return requiredRoles.some((role) => userRoles?.includes(role));
+    }
+    return false;
   }
 }

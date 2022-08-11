@@ -2,7 +2,7 @@ export const FormNames = {
   EducationProgram: "educationprogram",
   EducationProgramOffering: "educationprogramoffering",
   ProgramInformationRequest: "programinformationrequest",
-  StudentInformation: "studentinformation",
+  StudentProfile: "studentProfile",
   DesignationAgreementDetails: "designationagreementdetails",
   ApproveDenyDesignations: "approvedenydesignation",
   InstitutionProfile: "institutionprofile",
