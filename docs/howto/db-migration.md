@@ -1,3 +1,4 @@
+
 # Database Migration
 
 ## Path symbols
@@ -13,20 +14,20 @@
 
 - To create new migration runner file. Run the command
 
-  ```bash
-  npm run migration:create -n "<Migration File Name>"
-  ```
+   ```bash
+   npm run migration:create -n "<Migration File Name>"
+   ```
 
 - The above command will generate a migration file containing method stubs for async up and async down methods under the following package
-  `sources/packages/api/src/database/migrations`
+   `sources/packages/api/src/database/migrations`
 
 - Add the sql that is intended to be run using
-  `queryRunner.query()` method inside up method.
-  See e.g. in `SIMS\sources\packages\api\src\database\migrations\1614107103138-StudentPDVerified.ts\1614107103138-StudentPDVerified.ts`
+   `queryRunner.query()` method inside up method.
+   See e.g. in `SIMS\sources\packages\api\src\database\migrations\1614107103138-StudentPDVerified.ts\1614107103138-StudentPDVerified.ts`
 
 - Add the sql that is intended to be run using
-  queryRunner.query() method inside down method. This will be run when database is going to be rolled back and/or database cleanup.
-  See e.g. in `SIMS\sources\packages\api\src\database\migrations\1614107103138-StudentPDVerified.ts\1614107103138-StudentPDVerified.ts`
+   queryRunner.query() method inside down method. This will be run when database is going to be rolled back and/or database cleanup.
+   See e.g. in `SIMS\sources\packages\api\src\database\migrations\1614107103138-StudentPDVerified.ts\1614107103138-StudentPDVerified.ts`
 
 - Run migration: The following `npm` command will run migration scripts, but make sure db exists in environment, if you are not executing in docker container, please add `NODE_ENV=local`. Run this command inside `$API_ROOT`
 
@@ -40,23 +41,17 @@
   NODE_ENV=local npm run setup:db
   ```
 
-- To test the migration rollback we can use the below command.
-
-  ```bash
-  npm run migration:revert
-  ```
-
 - The migration process is build into api container entry command, so executing api container will automatically run migration
 
-  ```bash
-  make local
-  ```
+   ```bash
+   make local
+   ```
 
-  or
+   or
 
-  ```bash
-  make local-api
-  ```
+   ```bash
+   make local-api
+   ```
 
 - Cleaning existing database
 
@@ -68,14 +63,14 @@
 
 example:
 
-```ts
-export class User1610712571660 implements MigrationInterface {
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(getSQLFileData("Create-User.sql", "User"));
-  }
+  ```ts
+  export class User1610712571660 implements MigrationInterface {
+    public async up(queryRunner: QueryRunner): Promise<void> {
+      await queryRunner.query(getSQLFileData("Create-User.sql", "User"));
+    }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(getSQLFileData("Drop-User.sql", "User"));
+    public async down(queryRunner: QueryRunner): Promise<void> {
+      await queryRunner.query(getSQLFileData("Drop-User.sql", "User"));
+    }
   }
-}
-```
+  ```
