@@ -29,3 +29,11 @@ export const INSTITUTION_MUST_HAVE_AN_ADMIN = "INSTITUTION_MUST_HAVE_AN_ADMIN";
  * The BCeID user id was not able to be retrieved from the BCeID Web Service.
  */
 export const BCEID_ACCOUNT_NOT_FOUND = "BCEID_ACCOUNT_NOT_FOUND";
+/**
+ * The user is already present on DB, either because the same BCeID user is
+ * trying to create an account application when it was already denied on the
+ * past or because it is already added as another user, for instance,
+ * an institution user.
+ */
+export const STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXITS =
+  "STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXITS";

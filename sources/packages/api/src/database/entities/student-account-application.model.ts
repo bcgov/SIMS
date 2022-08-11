@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -63,4 +64,13 @@ export class StudentAccountApplication extends RecordDataModel {
     nullable: true,
   })
   assessedDate?: Date;
+  /**
+   * Set the record as deleted.
+   */
+  @DeleteDateColumn({
+    name: "deleted_at",
+    type: "timestamptz",
+    nullable: true,
+  })
+  deletedAt?: Date;
 }

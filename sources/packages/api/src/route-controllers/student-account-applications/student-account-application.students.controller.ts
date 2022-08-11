@@ -20,7 +20,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
   CreateStudentAccountApplicationAPIInDTO,
@@ -32,6 +32,7 @@ import {
   FormService,
   FormNames,
 } from "../../services";
+import { STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXITS } from "../../constants";
 
 /**
  * Student account applications when the authentication happens through BCeID
@@ -82,7 +83,12 @@ export class StudentAccountApplicationStudentsController extends BaseController 
           "There is already a student account application in progress.",
         );
       }
-      throw new UnprocessableEntityException("The user is already present.");
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "The user is already present.",
+          STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXITS,
+        ),
+      );
     }
 
     const submissionResult = await this.formService.dryRunSubmission(

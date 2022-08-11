@@ -156,16 +156,18 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
   /**
    * Declines the student account application.
    * @param id student account application id.
+   * @param auditUserId user that should be considered the one that is causing the changes.
    */
-  async declineStudentAccountApplication(id: number): Promise<void> {
-    // TODO: To be changed to a soft delete.
-    const deleteResult = await this.repo
-      .createQueryBuilder()
-      .delete()
-      .from(StudentAccountApplication)
-      .where({ id })
-      .execute();
-    if (deleteResult.affected === 0) {
+  async declineStudentAccountApplication(
+    id: number,
+    auditUserId: number,
+  ): Promise<void> {
+    // Soft-delete the account application and associate the modifier.
+    const updateResult = await this.repo.update(id, {
+      deletedAt: new Date(),
+      modifier: { id: auditUserId },
+    });
+    if (!updateResult.affected) {
       throw new CustomNamedError(
         "Student account application not found.",
         STUDENT_ACCOUNT_APPLICATION_NOT_FOUND,
