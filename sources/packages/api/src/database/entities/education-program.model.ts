@@ -382,11 +382,10 @@ export class EducationProgram extends RecordDataModel {
   submittedBy: User;
 
   /**
-   * Field of study code for Education Program.
+   * Federal field of study code calculated based on the CIP code and the credential type.
    */
   @Column({
     name: "field_of_study_code",
-    nullable: true,
   })
-  fieldOfStudyCode?: number;
+  fieldOfStudyCode: number;
 }
