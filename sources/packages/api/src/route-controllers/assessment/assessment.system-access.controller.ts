@@ -148,19 +148,6 @@ export class AssessmentSystemAccessController extends BaseController {
     @Body() payload: UpdateProgramInfoDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    if (payload.offeringId) {
-      const offering = await this.offeringService.getProgramOffering(
-        payload.locationId,
-        payload.programId,
-        payload.offeringId,
-      );
-      if (!offering) {
-        throw new UnprocessableEntityException(
-          "Not able to find the offering associated with the program and location.",
-        );
-      }
-    }
-
     try {
       await this.assessmentService.updateProgramInfo(
         assessmentId,
@@ -168,7 +155,6 @@ export class AssessmentSystemAccessController extends BaseController {
         payload.locationId,
         payload.status,
         payload.programId,
-        payload.offeringId,
       );
     } catch (error) {
       if (error.name === ASSESSMENT_NOT_FOUND) {
