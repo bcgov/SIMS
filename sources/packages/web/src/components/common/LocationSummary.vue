@@ -31,21 +31,19 @@
         </div>
       </v-col>
       <v-col cols="1">
-        <check-a-e-s-t-permission-role
-          :role="Role.InstitutionEditLocationDetails"
-        >
-          <template v-slot="{ isReadonly }">
+        <check-permission-role :role="Role.InstitutionEditLocationDetails">
+          <template #="{ notAllowed }">
             <v-btn
-              :color="!isReadonly ? 'primary' : 'secondary'"
+              :color="!notAllowed ? 'primary' : 'secondary'"
               variant="text"
-              :disabled="isReadonly"
+              :disabled="notAllowed"
               @click="$emit('editLocation', item.id)"
               prepend-icon="fa:fa fa-gear"
             >
               Edit
             </v-btn>
           </template>
-        </check-a-e-s-t-permission-role>
+        </check-permission-role>
       </v-col>
     </v-row>
     <v-row>
@@ -100,14 +98,14 @@ import { AuthService } from "@/services/AuthService";
 import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
 import { InstitutionLocationAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   emits: ["editLocation"],
   components: {
     TitleValue,
     StatusChipDesignationAgreement,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     institutionId: {

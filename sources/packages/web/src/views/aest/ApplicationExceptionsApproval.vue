@@ -16,19 +16,17 @@
       @submitted="submitted"
     >
       <template #actions="{ submit }" v-if="!readOnly">
-        <check-a-e-s-t-permission-role
-          :role="Role.StudentApproveDeclineExceptions"
-        >
-          <template v-slot="{ isReadonly }">
+        <check-permission-role :role="Role.StudentApproveDeclineExceptions">
+          <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
               primaryLabel="Complete student request"
-              :disablePrimaryButton="isReadonly"
+              :disablePrimaryButton="notAllowed"
               @primaryClick="submit"
               @secondaryClick="gotToAssessmentsSummary"
             />
           </template>
-        </check-a-e-s-t-permission-role>
+        </check-permission-role>
       </template>
     </formio-container>
   </full-page-container>
@@ -45,7 +43,7 @@ import {
 } from "@/services/http/dto";
 import { useAssessment, useFormatters, useSnackBar } from "@/composables";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 /**
  * Model to be used to populate the form.io.
@@ -79,7 +77,7 @@ type ApplicationExceptionFormModel = Omit<
 };
 
 export default {
-  components: { HeaderTitleValue, CheckAESTPermissionRole },
+  components: { HeaderTitleValue, CheckPermissionRole },
   props: {
     studentId: {
       type: Number,

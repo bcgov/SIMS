@@ -18,20 +18,20 @@
           hide-details
         >
         </v-text-field>
-        <check-a-e-s-t-permission-role :role="Role.InstitutionAddNewUser">
-          <template v-slot="{ isReadonly }">
+        <check-permission-role :role="Role.InstitutionAddNewUser">
+          <template #="{ notAllowed }">
             <v-btn
               v-if="hasBusinessGuid || allowBasicBCeIDCreation"
               class="ml-2"
               color="primary"
-              :disabled="isReadonly"
+              :disabled="notAllowed"
               @click="openNewUserModal"
               prepend-icon="fa:fa fa-plus-circle"
             >
               Add new user
             </v-btn>
           </template>
-        </check-a-e-s-t-permission-role>
+        </check-permission-role>
       </v-row>
     </template>
   </body-header>
@@ -82,14 +82,14 @@
       ></Column>
       <Column header="Actions"
         ><template #body="slotProps">
-          <check-a-e-s-t-permission-role :role="Role.InstitutionEditUser">
-            <template v-slot="{ isReadonly }">
+          <check-permission-role :role="Role.InstitutionEditUser">
+            <template #="{ notAllowed }">
               <v-btn
-                :disabled="!slotProps.data.isActive || isReadonly"
+                :disabled="!slotProps.data.isActive || notAllowed"
                 @click="openEditUserModal(slotProps.data)"
                 variant="text"
                 :color="
-                  slotProps.data.isActive && !isReadonly
+                  slotProps.data.isActive && !notAllowed
                     ? 'primary'
                     : 'secondary'
                 "
@@ -98,17 +98,15 @@
                 <span class="text-decoration-underline">Edit</span>
               </v-btn>
             </template>
-          </check-a-e-s-t-permission-role>
-          <check-a-e-s-t-permission-role
-            :role="Role.InstitutionEnableDisableUser"
-          >
-            <template v-slot="{ isReadonly }">
+          </check-permission-role>
+          <check-permission-role :role="Role.InstitutionEnableDisableUser">
+            <template #="{ notAllowed }">
               <v-btn
-                :disabled="slotProps.data.disableRemove || isReadonly"
+                :disabled="slotProps.data.disableRemove || notAllowed"
                 @click="updateUserStatus(slotProps.data)"
                 variant="text"
                 :color="
-                  slotProps.data.disableRemove || isReadonly
+                  slotProps.data.disableRemove || notAllowed
                     ? 'secondary'
                     : 'primary'
                 "
@@ -119,7 +117,7 @@
                 }}</span>
               </v-btn>
             </template>
-          </check-a-e-s-t-permission-role>
+          </check-permission-role>
         </template>
       </Column>
     </DataTable>
@@ -158,14 +156,14 @@ import {
 } from "@/types";
 import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     AddInstitutionUser,
     EditInstitutionUser,
     StatusChipActiveUser,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     institutionId: {

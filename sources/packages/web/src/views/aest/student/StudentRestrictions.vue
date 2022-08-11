@@ -2,19 +2,19 @@
   <full-page-container :full-width="true">
     <body-header title="All restrictions" class="m-1">
       <template #actions>
-        <check-a-e-s-t-permission-role :role="Role.StudentAddRestriction">
-          <template v-slot="{ isReadonly }">
+        <check-permission-role :role="Role.StudentAddRestriction">
+          <template #="{ notAllowed }">
             <v-btn
               @click="addStudentRestriction"
               class="float-right"
               color="primary"
               data-cy="addRestrictionButton"
               prepend-icon="fa:fa fa-plus-circle"
-              :disabled="isReadonly"
+              :disabled="notAllowed"
               >Add restriction</v-btn
             >
           </template>
-        </check-a-e-s-t-permission-role>
+        </check-permission-role>
       </template>
     </body-header>
     <content-group>
@@ -105,14 +105,14 @@ import {
   Role,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     StatusChipRestriction,
     ViewRestrictionModal,
     AddStudentRestrictionModal,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     studentId: {

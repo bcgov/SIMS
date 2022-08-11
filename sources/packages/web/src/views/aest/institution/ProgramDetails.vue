@@ -10,26 +10,24 @@
     >
       <template #buttons>
         <v-row class="p-0 m-0" v-if="isPendingProgram">
-          <check-a-e-s-t-permission-role
-            :role="Role.InstitutionApproveDeclineProgram"
-          >
-            <template v-slot="{ isReadonly }">
+          <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
+            <template #="{ notAllowed }">
               <v-btn
                 variant="outlined"
-                :color="!isReadonly ? 'primary' : 'secondary'"
+                :color="!notAllowed ? 'primary' : 'secondary'"
                 class="mr-2"
                 @click="declineProgram"
-                :disabled="isReadonly"
+                :disabled="notAllowed"
                 >Decline</v-btn
               >
               <v-btn
                 color="primary"
                 @click="approveProgram"
-                :disabled="isReadonly"
+                :disabled="notAllowed"
                 >Approve program</v-btn
               >
             </template>
-          </check-a-e-s-t-permission-role>
+          </check-permission-role>
         </v-row>
       </template>
     </header-navigator>
@@ -60,14 +58,14 @@ import {
   DeclineProgramAPIInDTO,
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     ManageProgramAndOfferingSummary,
     ApproveProgramModal,
     DeclineProgramModal,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     programId: {

@@ -3,19 +3,19 @@
     <v-row class="m-2">
       <v-col class="category-header-large color-blue">{{ title }}</v-col>
       <v-col>
-        <check-a-e-s-t-permission-role :role="allowedRole">
-          <template v-slot="{ isReadonly }">
+        <check-permission-role :role="allowedRole">
+          <template #="{ notAllowed }">
             <v-btn
               @click="addNewNote()"
               class="float-right"
               color="primary"
               prepend-icon="fa:far fa-edit"
-              :disabled="isReadonly"
+              :disabled="notAllowed"
             >
               Create new note
             </v-btn>
           </template>
-        </check-a-e-s-t-permission-role>
+        </check-permission-role>
       </v-col>
     </v-row>
     <v-row class="m-2" v-if="!notes || notes.length === 0"
@@ -81,10 +81,10 @@ import CreateNoteModal from "@/components/common/notes/CreateNoteModal.vue";
 import { NoteBaseDTO, NoteDTO, LayoutTemplates, Role } from "@/types";
 import { PropType, ref } from "vue";
 import "@/assets/css/notes.scss";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
-  components: { CreateNoteModal, CheckAESTPermissionRole },
+  components: { CreateNoteModal, CheckPermissionRole },
   props: {
     notes: {
       type: Array,

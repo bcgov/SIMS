@@ -8,26 +8,26 @@
       >
         <template #buttons>
           <v-row class="p-0 m-0">
-            <check-a-e-s-t-permission-role
+            <check-permission-role
               :role="Role.InstitutionApproveDeclineOfferingChanges"
             >
-              <template v-slot="{ isReadonly }">
+              <template #="{ notAllowed }">
                 <v-btn
                   color="primary"
                   variant="outlined"
                   @click="assessOfferingChange(OfferingStatus.ChangeDeclined)"
-                  :disabled="isReadonly"
+                  :disabled="notAllowed"
                   >Decline reassessment</v-btn
                 >
                 <v-btn
                   class="ml-2"
                   color="primary"
                   @click="assessOfferingChange(OfferingStatus.Approved)"
-                  :disabled="isReadonly"
+                  :disabled="notAllowed"
                   >Approve reassessment</v-btn
                 >
               </template>
-            </check-a-e-s-t-permission-role>
+            </check-permission-role>
           </v-row>
         </template>
       </header-navigator>
@@ -85,7 +85,7 @@ import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDeta
 import OfferingChangeRequest from "@/components/aest/OfferingChangeRequest.vue";
 import OfferingApplicationBanner from "@/components/aest/OfferingApplicationBanner.vue";
 import AssessOfferingChangeModal from "@/components/aest/institution/modals/AssessOfferingChangeModal.vue";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
@@ -93,7 +93,7 @@ export default {
     OfferingChangeRequest,
     OfferingApplicationBanner,
     AssessOfferingChangeModal,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     programId: {

@@ -5,20 +5,20 @@
         subtitle="Ministry of Advanced Education and Skills Training"
       ></BCLogo>
       <v-spacer></v-spacer>
-      <check-a-e-s-t-permission-role :role="Role.AESTCreateInstitution">
-        <template v-slot="{ isReadonly }">
+      <check-permission-role :role="Role.AESTCreateInstitution">
+        <template #="{ notAllowed }">
           <v-btn
             v-if="isAuthenticated"
             variant="text"
             prepend-icon="fa:fa fa-edit"
-            :disabled="isReadonly"
+            :disabled="notAllowed"
             @click="
               $router.push({ name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE })
             "
             >Create institution</v-btn
           >
         </template>
-      </check-a-e-s-t-permission-role>
+      </check-permission-role>
       <v-menu v-if="isAuthenticated">
         <template v-slot:activator="{ props }">
           <v-btn
@@ -56,10 +56,10 @@ import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
-  components: { BCLogo, IdleTimeChecker, CheckAESTPermissionRole },
+  components: { BCLogo, IdleTimeChecker, CheckPermissionRole },
   setup() {
     const { executeLogout } = useAuth();
     const { isAuthenticated } = useAuth();

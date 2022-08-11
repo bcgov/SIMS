@@ -6,19 +6,19 @@
       class="m-1"
     >
       <template #actions>
-        <check-a-e-s-t-permission-role :role="Role.StudentUploadFile">
-          <template v-slot="{ isReadonly }">
+        <check-permission-role :role="Role.StudentUploadFile">
+          <template #="{ notAllowed }">
             <v-btn
               color="primary"
               data-cy="uploadFileButton"
               @click="uploadFile"
               prepend-icon="fa:fa fa-plus-circle"
               class="float-right"
-              :disabled="isReadonly"
+              :disabled="notAllowed"
               >Upload file</v-btn
             >
           </template>
-        </check-a-e-s-t-permission-role>
+        </check-permission-role>
       </template>
     </body-header>
     <content-group>
@@ -75,18 +75,18 @@
           <v-btn color="primary" variant="outlined" @click="cancel"
             >Cancel</v-btn
           >
-          <check-a-e-s-t-permission-role :role="Role.StudentUploadFile">
-            <template v-slot="{ isReadonly }">
+          <check-permission-role :role="Role.StudentUploadFile">
+            <template #="{ notAllowed }">
               <v-btn
                 class="float-right"
                 @click="submit"
                 color="primary"
                 variant="elevated"
-                :disabled="isReadonly"
+                :disabled="notAllowed"
                 >Upload now</v-btn
               >
             </template>
-          </check-a-e-s-t-permission-role></v-row
+          </check-permission-role></v-row
         >
       </template>
     </formio-modal-dialog>
@@ -115,12 +115,12 @@ import {
   AESTFileUploadToStudentAPIInDTO,
   StudentUploadFileAPIOutDTO,
 } from "@/services/http/dto/Student.dto";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     FormioModalDialog,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     studentId: {

@@ -26,17 +26,17 @@
         </institution-user-management>
       </template>
       <template #footer>
-        <check-a-e-s-t-permission-role :role="Role.InstitutionEditUser">
-          <template v-slot="{ isReadonly }">
+        <check-permission-role :role="Role.InstitutionEditUser">
+          <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
               primaryLabel="Edit user now"
               @primaryClick="submit"
               @secondaryClick="cancel"
-              :disablePrimaryButton="isReadonly"
+              :disablePrimaryButton="notAllowed"
             />
           </template>
-        </check-a-e-s-t-permission-role>
+        </check-permission-role>
       </template>
     </modal-dialog-base>
   </v-form>
@@ -66,7 +66,7 @@ import {
   LEGAL_SIGNING_AUTHORITY_EXIST,
 } from "@/constants";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 const submitKnownErrors = [
   INSTITUTION_USER_ALREADY_EXISTS,
@@ -79,7 +79,7 @@ export default {
   components: {
     ModalDialogBase,
     InstitutionUserManagement,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     institutionId: {

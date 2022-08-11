@@ -10,13 +10,13 @@
       @submitted="exportReport"
     ></formio>
     <v-row class="justify-center m-4">
-      <check-a-e-s-t-permission-role :role="Role.AESTReports">
-        <template v-slot="{ isReadonly }">
-          <v-btn color="primary" @click="submitForm" :disabled="isReadonly"
+      <check-permission-role :role="Role.AESTReports">
+        <template #="{ notAllowed }">
+          <v-btn color="primary" @click="submitForm" :disabled="notAllowed"
             >Export CSV file</v-btn
           >
         </template>
-      </check-a-e-s-t-permission-role></v-row
+      </check-permission-role></v-row
     >
   </full-page-container>
 </template>
@@ -25,11 +25,11 @@
 import { ReportsFilterAPIInDTO } from "@/services/http/dto";
 import { useSnackBar, useFileUtils } from "@/composables";
 import { FormIOForm, Role } from "@/types";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   setup() {
     const snackBar = useSnackBar();

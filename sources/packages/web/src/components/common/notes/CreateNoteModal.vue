@@ -10,16 +10,16 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <check-a-e-s-t-permission-role :role="allowedRole">
-        <template v-slot="{ isReadonly }">
+      <check-permission-role :role="allowedRole">
+        <template #="{ notAllowed }">
           <footer-buttons
-            :disablePrimaryButton="isReadonly"
+            :disablePrimaryButton="notAllowed"
             primaryLabel="Add note"
             @primaryClick="addNewNote"
             @secondaryClick="dialogClosed"
           />
         </template>
-      </check-a-e-s-t-permission-role>
+      </check-permission-role>
     </template>
   </modal-dialog-base>
 </template>
@@ -35,10 +35,10 @@ import {
   NoteEntityType,
   Role,
 } from "@/types";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
-  components: { ModalDialogBase, CheckAESTPermissionRole },
+  components: { ModalDialogBase, CheckPermissionRole },
   props: {
     entityType: {
       type: String,

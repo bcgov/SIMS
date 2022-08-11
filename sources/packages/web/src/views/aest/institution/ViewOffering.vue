@@ -8,26 +8,26 @@
       >
         <template #buttons v-if="showActionButtons">
           <v-row class="m-0 p-0">
-            <check-a-e-s-t-permission-role
+            <check-permission-role
               :role="Role.InstitutionApproveDeclineOffering"
             >
-              <template v-slot="{ isReadonly }">
+              <template #="{ notAllowed }">
                 <v-btn
                   variant="outlined"
-                  :disabled="isReadonly"
-                  :color="!isReadonly ? 'primary' : 'secondary'"
+                  :disabled="notAllowed"
+                  :color="!notAllowed ? 'primary' : 'secondary'"
                   @click="assessOffering(OfferingStatus.CreationDeclined)"
                   >Decline</v-btn
                 >
                 <v-btn
                   class="ml-2"
                   color="primary"
-                  :disabled="isReadonly"
+                  :disabled="notAllowed"
                   @click="assessOffering(OfferingStatus.Approved)"
                   >Approve offering</v-btn
                 >
               </template>
-            </check-a-e-s-t-permission-role>
+            </check-permission-role>
           </v-row>
         </template>
       </header-navigator>
@@ -60,14 +60,14 @@ import { BannerTypes } from "@/types/contracts/Banner";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 import AssessOfferingModal from "@/components/aest/institution/modals/AssessOfferingModal.vue";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     ProgramOfferingDetailHeader,
     OfferingForm,
     AssessOfferingModal,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     institutionId: {

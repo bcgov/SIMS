@@ -68,7 +68,8 @@ export default {
     return {
       institutionProfileModel,
       updateInstitution,
-      institutionProfileRoute,Role
+      institutionProfileRoute,
+      Role,
     };
   },
 };

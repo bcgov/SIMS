@@ -7,19 +7,19 @@
       class="m-1"
     >
       <template #actions>
-        <check-a-e-s-t-permission-role :role="Role.StudentAddNewSIN">
-          <template v-slot="{ isReadonly }">
+        <check-permission-role :role="Role.StudentAddNewSIN">
+          <template #="{ notAllowed }">
             <v-btn
               class="float-right"
               color="primary"
               data-cy="addNewSINButton"
-              :disabled="processingNewSIN || isReadonly"
+              :disabled="processingNewSIN || notAllowed"
               @click="addNewSIN"
               prepend-icon="fa:fa fa-plus-circle"
               >Add new SIN</v-btn
             >
           </template>
-        </check-a-e-s-t-permission-role>
+        </check-permission-role>
       </template>
     </body-header>
     <content-group>
@@ -43,21 +43,21 @@
           <Column field="sinExpiryDateFormatted" header="Expiry date" />
           <Column header="Action">
             <template #body="slotProps">
-              <check-a-e-s-t-permission-role :role="Role.StudentAddSINExpiry">
-                <template v-slot="{ isReadonly }">
+              <check-permission-role :role="Role.StudentAddSINExpiry">
+                <template #="{ notAllowed }">
                   <v-btn
                     color="primary"
                     :disabled="
                       !slotProps.data.temporarySIN ||
                       !!slotProps.data.sinExpiryDate ||
                       processingEditExpiryDate ||
-                      isReadonly
+                      notAllowed
                     "
                     @click="addExpiryDate(slotProps.data.id)"
                     >Add expiry date</v-btn
                   >
                 </template>
-              </check-a-e-s-t-permission-role>
+              </check-permission-role>
             </template></Column
           >
         </DataTable>
@@ -71,17 +71,17 @@
     formName="aestAddNewSIN"
   >
     <template #actions="{ cancel, submit }">
-      <check-a-e-s-t-permission-role :role="Role.StudentAddNewSIN">
-        <template v-slot="{ isReadonly }">
+      <check-permission-role :role="Role.StudentAddNewSIN">
+        <template #="{ notAllowed }">
           <footer-buttons
             justify="end"
             primaryLabel="Add SIN now"
             @secondaryClick="cancel"
             @primaryClick="submit"
-            :disablePrimaryButton="isReadonly"
+            :disablePrimaryButton="notAllowed"
           />
         </template>
-      </check-a-e-s-t-permission-role>
+      </check-permission-role>
     </template>
   </formio-modal-dialog>
   <formio-modal-dialog
@@ -91,17 +91,17 @@
     formName="aestAddSINExpiryDate"
   >
     <template #actions="{ cancel, submit }">
-      <check-a-e-s-t-permission-role :role="Role.StudentAddSINExpiry">
-        <template v-slot="{ isReadonly }">
+      <check-permission-role :role="Role.StudentAddSINExpiry">
+        <template #="{ notAllowed }">
           <footer-buttons
             justify="end"
             primaryLabel="Add expiry date now"
             @secondaryClick="cancel"
             @primaryClick="submit"
-            :disablePrimaryButton="isReadonly"
+            :disablePrimaryButton="notAllowed"
           />
         </template>
-      </check-a-e-s-t-permission-role>
+      </check-permission-role>
     </template>
   </formio-modal-dialog>
 </template>
@@ -128,12 +128,12 @@ import {
   CreateSINValidationAPIInDTO,
   UpdateSINValidationAPIInDTO,
 } from "@/services/http/dto";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     FormioModalDialog,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     studentId: {

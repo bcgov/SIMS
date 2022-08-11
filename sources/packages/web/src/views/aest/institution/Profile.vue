@@ -3,19 +3,19 @@
     <div class="mx-5 py-4">
       <body-header title="Profile" class="m-1">
         <template #actions>
-          <check-a-e-s-t-permission-role :role="Role.InstitutionEditProfile">
-            <template v-slot="{ isReadonly }">
+          <check-permission-role :role="Role.InstitutionEditProfile">
+            <template #="{ notAllowed }">
               <v-btn
                 class="float-right"
                 @click="editProfile"
                 variant="text"
-                :color="!isReadonly ? 'primary' : 'secondary'"
+                :color="!notAllowed ? 'primary' : 'secondary'"
                 prepend-icon="fa:fa fa-gear"
-                :disabled="isReadonly"
+                :disabled="notAllowed"
                 >Edit
               </v-btn>
             </template>
-          </check-a-e-s-t-permission-role>
+          </check-permission-role>
         </template>
       </body-header>
       <content-group>
@@ -119,11 +119,11 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
 
 export default {
-  components: { TitleValue, CheckAESTPermissionRole },
+  components: { TitleValue, CheckPermissionRole },
   props: {
     institutionId: {
       type: Number,

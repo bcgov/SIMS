@@ -2,18 +2,18 @@
   <full-page-container :full-width="true">
     <body-header title="All Restrictions" class="m-1">
       <template #actions>
-        <check-a-e-s-t-permission-role :role="Role.InstitutionAddRestriction">
-          <template v-slot="{ isReadonly }">
+        <check-permission-role :role="Role.InstitutionAddRestriction">
+          <template #="{ notAllowed }">
             <v-btn
               @click="addInstitutionRestriction"
               class="float-right"
               color="primary"
               prepend-icon="fa:fa fa-plus-circle"
-              :disabled="isReadonly"
+              :disabled="notAllowed"
               >Add restriction</v-btn
             ></template
           >
-        </check-a-e-s-t-permission-role>
+        </check-permission-role>
       </template>
     </body-header>
     <content-group>
@@ -104,14 +104,14 @@ import {
   Role,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     StatusChipRestriction,
     ViewRestrictionModal,
     AddInstitutionRestrictionModal,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     institutionId: {

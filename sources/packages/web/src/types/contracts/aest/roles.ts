@@ -1,5 +1,5 @@
 /**
- * Application roles to be used in alongside with RolesGuard.
+ * Roles to be used in alongside with CheckPermissionRole component to check permissions.
  */
 export enum Role {
   /**

@@ -11,16 +11,16 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <check-a-e-s-t-permission-role :role="allowedRole">
-        <template v-slot="{ isReadonly }">
+      <check-permission-role :role="allowedRole">
+        <template #="{ notAllowed }">
           <footer-buttons
             primaryLabel="Resolve Restriction"
-            :disablePrimaryButton="isReadonly"
+            :disablePrimaryButton="notAllowed"
             @primaryClick="resolveRestriction"
             @secondaryClick="dialogClosed"
           />
         </template>
-      </check-a-e-s-t-permission-role>
+      </check-permission-role>
     </template>
   </modal-dialog-base>
 </template>
@@ -30,10 +30,10 @@ import { PropType, ref } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { RestrictionType, Role } from "@/types";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
-  components: { ModalDialogBase, CheckAESTPermissionRole },
+  components: { ModalDialogBase, CheckPermissionRole },
   props: {
     restrictionData: {
       type: Object,

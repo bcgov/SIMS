@@ -12,18 +12,16 @@
       ></formio>
     </template>
     <template v-slot:footer>
-      <check-a-e-s-t-permission-role
-        :role="Role.InstitutionApproveDeclineProgram"
-      >
-        <template v-slot="{ isReadonly }">
+      <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
+        <template #="{ notAllowed }">
           <footer-buttons
             primaryLabel="Decline now"
             @primaryClick="declineProgram"
             @secondaryClick="dialogClosed"
-            :disablePrimaryButton="isReadonly"
+            :disablePrimaryButton="notAllowed"
           />
         </template>
-      </check-a-e-s-t-permission-role>
+      </check-permission-role>
     </template>
   </modal-dialog-base>
 </template>
@@ -32,13 +30,13 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { DeclineProgramAPIInDTO } from "@/services/http/dto";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
 
 export default {
   components: {
     ModalDialogBase,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   setup() {
     const { showDialog, resolvePromise, showModal } = useModalDialog<

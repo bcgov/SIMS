@@ -37,15 +37,15 @@
     </v-list>
     <template #append>
       <v-list density="compact" nav>
-        <check-a-e-s-t-permission-role :role="Role.AESTReports">
-          <template v-slot="{ isReadonly }">
+        <check-permission-role :role="Role.AESTReports">
+          <template #="{ notAllowed }">
             <v-list-item
               @click="reports.command"
               :title="reports.label"
-              :disabled="isReadonly"
+              :disabled="notAllowed"
             />
           </template>
-        </check-a-e-s-t-permission-role>
+        </check-permission-role>
       </v-list>
     </template>
   </v-navigation-drawer>
@@ -54,10 +54,10 @@
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuModel, Role } from "@/types";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
-  components: { CheckAESTPermissionRole },
+  components: { CheckPermissionRole },
   setup() {
     const router = useRouter();
     const topItems = [

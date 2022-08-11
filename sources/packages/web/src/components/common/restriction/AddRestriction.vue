@@ -11,15 +11,15 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <check-a-e-s-t-permission-role :role="allowedRole">
-        <template v-slot="{ isReadonly }">
+      <check-permission-role :role="allowedRole">
+        <template #="{ notAllowed }">
           <footer-buttons
             primaryLabel="Add Restriction"
             @primaryClick="addRestriction"
             @secondaryClick="dialogClosed"
-            :disablePrimaryButton="isReadonly"
+            :disablePrimaryButton="notAllowed"
         /></template>
-      </check-a-e-s-t-permission-role>
+      </check-permission-role>
     </template>
   </modal-dialog-base>
 </template>
@@ -34,11 +34,11 @@ import {
   useFormioDropdownLoader,
 } from "@/composables";
 import { AssignRestrictionDTO, RestrictionEntityType, Role } from "@/types";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export const CATEGORY_KEY = "category";
 export default {
-  components: { ModalDialogBase, CheckAESTPermissionRole },
+  components: { ModalDialogBase, CheckPermissionRole },
   emits: ["submitRestrictionData"],
   props: {
     entityType: {

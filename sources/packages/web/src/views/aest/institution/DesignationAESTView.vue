@@ -7,30 +7,30 @@
     >
       <template #buttons>
         <v-row class="p-0 m-0">
-          <check-a-e-s-t-permission-role
+          <check-permission-role
             :role="Role.InstitutionApproveDeclineDesignation"
           >
-            <template v-slot="{ isReadonly }">
+            <template #="{ notAllowed }">
               <v-btn
                 v-if="showActionButtons"
                 color="primary"
                 variant="outlined"
                 data-cy="declinedDesignationAgreementButton"
-                :disabled="isReadonly"
+                :disabled="notAllowed"
                 @click="updateDesignation(DesignationAgreementStatus.Declined)"
                 >Decline</v-btn
               >
               <v-btn
                 class="ml-2"
                 color="primary"
-                :disabled="isReadonly"
+                :disabled="notAllowed"
                 v-if="showActionButtons"
                 data-cy="approvedDesignationAgreementButton"
                 @click="updateDesignation(DesignationAgreementStatus.Approved)"
                 >Approve designation</v-btn
               >
             </template>
-          </check-a-e-s-t-permission-role>
+          </check-permission-role>
         </v-row>
       </template>
     </header-navigator>
@@ -72,14 +72,14 @@ import {
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ApproveDenyDesignation from "@/views/aest/institution/ApproveDenyDesignation.vue";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
 
 export default {
   components: {
     DesignationAgreementForm,
     ApproveDenyDesignation,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     designationId: {

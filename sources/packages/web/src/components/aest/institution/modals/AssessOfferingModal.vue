@@ -15,18 +15,16 @@
       </div>
     </template>
     <template v-slot:footer>
-      <check-a-e-s-t-permission-role
-        :role="Role.InstitutionApproveDeclineOffering"
-      >
-        <template v-slot="{ isReadonly }">
+      <check-permission-role :role="Role.InstitutionApproveDeclineOffering">
+        <template #="{ notAllowed }">
           <footer-buttons
             primaryLabel="Submit Action"
             @primaryClick="submitForm"
             @secondaryClick="dialogClosed"
-            :disablePrimaryButton="isReadonly"
+            :disablePrimaryButton="notAllowed"
           />
         </template>
-      </check-a-e-s-t-permission-role>
+      </check-permission-role>
     </template>
   </modal-dialog-base>
 </template>
@@ -37,10 +35,10 @@ import { useModalDialog } from "@/composables";
 import { computed } from "vue";
 import { OfferingStatus, Role } from "@/types";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
-  components: { ModalDialogBase, CheckAESTPermissionRole },
+  components: { ModalDialogBase, CheckPermissionRole },
   props: {
     offeringStatus: {
       type: String,

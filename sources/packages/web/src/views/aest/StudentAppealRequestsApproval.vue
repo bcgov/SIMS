@@ -30,20 +30,18 @@
               @click="gotToAssessmentsSummary"
               >Cancel</v-btn
             >
-            <check-a-e-s-t-permission-role
-              :role="Role.StudentApproveDeclineAppeals"
-            >
-              <template v-slot="{ isReadonly }">
+            <check-permission-role :role="Role.StudentApproveDeclineAppeals">
+              <template #="{ notAllowed }">
                 <v-btn
                   color="primary"
                   class="ml-2"
                   data-cy="completeStudentRequest"
                   @click="submit"
-                  :disabled="isReadonly"
+                  :disabled="notAllowed"
                   >Complete student request
                 </v-btn>
               </template>
-            </check-a-e-s-t-permission-role>
+            </check-permission-role>
           </v-row>
         </template>
       </appeal-requests-approval-form>
@@ -66,13 +64,13 @@ import {
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
-import CheckAESTPermissionRole from "@/components/generic/CheckAESTPermissionRole.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     AppealRequestsApprovalForm,
     StatusChipRequestedAssessment,
-    CheckAESTPermissionRole,
+    CheckPermissionRole,
   },
   props: {
     studentId: {
