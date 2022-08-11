@@ -8,16 +8,26 @@
       >
         <template #buttons>
           <v-row class="p-0 m-0">
-            <v-btn
-              color="primary"
-              class="mr-2"
-              variant="outlined"
-              @click="declineStudentAccount"
-              >Deny request</v-btn
+            <check-permission-role
+              :role="Role.StudentApproveDeclineAccountRequests"
             >
-            <v-btn color="primary" @click="createStudentAccount"
-              >Create account for student</v-btn
-            >
+              <template #="{ notAllowed, isAllowed }">
+                <v-btn
+                  :color="isAllowed ? 'primary' : 'secondary'"
+                  class="mr-2"
+                  variant="outlined"
+                  @click="declineStudentAccount"
+                  :disabled="notAllowed"
+                  >Deny request</v-btn
+                >
+                <v-btn
+                  color="primary"
+                  @click="createStudentAccount"
+                  :disabled="notAllowed"
+                  >Create account for student</v-btn
+                >
+              </template>
+            </check-permission-role>
           </v-row>
         </template>
       </header-navigator>
@@ -28,20 +38,27 @@
       @loaded="formLoaded"
     />
   </full-page-container>
-  <confirm-modal
-    title="Create account for student"
-    text="This will allow the student to access the system using a Basic BCeID account instead of a BC Services Card. Please note that their SIN will be validated with ESDC (Employment and Social Development Canada)."
-    okLabel="Create account now"
-    ref="createStudentAccountModal"
-    :max-width="730"
-  ></confirm-modal>
-  <confirm-modal
-    title="Deny request for a student account"
-    text="Denying the request means that the student will not be able to access the system using a Basic BCeID."
-    ref="declineStudentAccountModal"
-    okLabel="Deny request now"
-    :max-width="730"
-  ></confirm-modal>
+
+  <check-permission-role :role="Role.StudentApproveDeclineAccountRequests">
+    <template #="{ notAllowed }">
+      <confirm-modal
+        title="Create account for student"
+        text="This will allow the student to access the system using a Basic BCeID account instead of a BC Services Card. Please note that their SIN will be validated with ESDC (Employment and Social Development Canada)."
+        okLabel="Create account now"
+        ref="createStudentAccountModal"
+        :max-width="730"
+        :disablePrimaryButton="notAllowed"
+      ></confirm-modal>
+      <confirm-modal
+        title="Deny request for a student account"
+        text="Denying the request means that the student will not be able to access the system using a Basic BCeID."
+        ref="declineStudentAccountModal"
+        okLabel="Deny request now"
+        :max-width="730"
+        :disablePrimaryButton="notAllowed"
+      ></confirm-modal>
+    </template>
+  </check-permission-role>
 </template>
 
 <script lang="ts">
@@ -53,16 +70,18 @@ import {
 } from "@/types/contracts/StudentContract";
 import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
 import { StudentAccountApplicationService } from "@/services/StudentAccountApplicationService";
-import { AppIDPType, FormIOForm } from "@/types";
+import { AppIDPType, FormIOForm, Role } from "@/types";
 import { StudentAccountApplicationApprovalAPIInDTO } from "@/services/http/dto";
 import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     StudentProfileForm,
     ConfirmModal,
+    CheckPermissionRole,
   },
   props: {
     studentAccountApplicationId: {
@@ -162,6 +181,7 @@ export default {
       createStudentAccountModal,
       declineStudentAccountModal,
       pendingAccountsRoute,
+      Role,
     };
   },
 };
