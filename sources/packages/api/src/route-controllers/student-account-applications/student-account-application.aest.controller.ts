@@ -9,9 +9,15 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { ClientTypeBaseRoute } from "../../types";
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -33,7 +39,11 @@ import {
 } from "./models/student-account-application.dto";
 import { CustomNamedError, getUserFullName } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
-import { STUDENT_ACCOUNT_APPLICATION_NOT_FOUND } from "../../constants";
+import {
+  STUDENT_ACCOUNT_APPLICATION_NOT_FOUND,
+  STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
+  STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
+} from "../../constants";
 import { Role } from "../../auth/roles.enum";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
@@ -110,6 +120,14 @@ export class StudentAccountApplicationAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "Student account application not found.",
   })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Error while trying to associate the student to an existing student account. The same SIN was found but there is a data mismatch.",
+  })
+  @ApiBadRequestResponse({
+    description:
+      "Not able to approved the student account application due to an invalid request.",
+  })
   @Roles(Role.StudentApproveDeclineAccountRequests)
   @Post(":studentAccountApplicationId/approve")
   async approveStudentAccountApplication(
@@ -138,11 +156,18 @@ export class StudentAccountApplicationAESTController extends BaseController {
         );
       return { id: createdStudent.id };
     } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === STUDENT_ACCOUNT_APPLICATION_NOT_FOUND
-      ) {
-        throw new NotFoundException(error.message);
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case STUDENT_ACCOUNT_APPLICATION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND:
+          case STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA:
+            // Ministry can have access to the specific SIN errors, so
+            // send the complete error and description.
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
       }
       throw error;
     }

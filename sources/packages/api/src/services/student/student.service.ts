@@ -15,6 +15,7 @@ import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
+  CustomNamedError,
   getDateOnly,
   getUTCNow,
   removeWhiteSpaces,
@@ -28,6 +29,10 @@ import {
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import * as dayjs from "dayjs";
 import { StudentUser } from "../../database/entities/student-user.model";
+import {
+  STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
+  STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
+} from "../../constants";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -123,31 +128,17 @@ export class StudentService extends RecordDataModelService<Student> {
     externalEntityManager?: EntityManager,
     studentAccountApplicationId?: number,
   ): Promise<Student> {
-    let student = new Student();
-    // SIN to be save and used for comparisons.
+    // SIN to be saved and used for comparisons.
     const studentSIN = removeWhiteSpaces(studentInfo.sinNumber);
-    // Check if a student with the same SIN already exists.
-    const existingStudents = await this.getStudentsBySIN(studentSIN);
-    if (existingStudents.length > 1) {
-      this.logger.warn("More than one student found for the provided SIN.");
-    } else if (existingStudents.length === 1) {
-      this.logger.warn("Found one student with the same SIN.");
-      const [studentFound] = existingStudents;
-      if (this.studentMatchesUserInfo(studentFound, userInfo)) {
-        this.logger.warn(
-          "Student personal data matches. The student will be associated with the user.",
-        );
-        student = studentFound;
-      } else {
-        this.logger.warn("Student personal data does not match.");
-      }
-    }
+    const student =
+      (await this.getExistingStudentForAccountCreation(studentSIN, userInfo)) ??
+      new Student();
 
+    // Checks if a new user must be created or only updated.
     const user = new User();
     if (userInfo.userId) {
       user.id = userInfo.userId;
     }
-
     // If a user id was provided, use it as the audit user. It means that
     // the user is being created by the Ministry on behalf of the student.
     const auditUser = auditUserId ? ({ id: auditUserId } as User) : user;
@@ -230,6 +221,51 @@ export class StudentService extends RecordDataModelService<Student> {
     auditUserId?: number,
   ): Promise<Student> {
     return this.internalCreateStudent(userInfo, studentInfo, auditUserId);
+  }
+
+  /**
+   * Search by an existing student using the SIN number and validates
+   * if the student has valid personal data that ensures the same identity.
+   * Case the SIN is present but it is not considered valid, exceptions will
+   * be thrown with the specific error types.
+   * @param studentSIN SIN to be searched.
+   * @param userInfo personal student data to be validated.
+   * @returns existing and validated student.
+   */
+  private async getExistingStudentForAccountCreation(
+    studentSIN: string,
+    userInfo: UserInfoMatchData,
+  ): Promise<Student> {
+    // Check if multiple students exists with the same SIN.
+    const existingStudents = await this.getStudentsBySIN(studentSIN);
+    if (existingStudents.length > 1) {
+      const logMessage = "More than one student found for the provided SIN.";
+      this.logger.warn(logMessage);
+      throw new CustomNamedError(
+        logMessage,
+        STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
+      );
+    }
+    // Check if a student with the same SIN exists and has the same personal data.
+    if (existingStudents.length === 1) {
+      this.logger.warn("Found one student with the same SIN.");
+      const [studentFound] = existingStudents;
+      if (!this.studentMatchesUserInfo(studentFound, userInfo)) {
+        const logMessage = "Student personal data does not match.";
+        this.logger.warn(logMessage);
+        throw new CustomNamedError(
+          logMessage,
+          STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
+        );
+      }
+      // Found the student with same SIN and personal data.
+      this.logger.warn(
+        "Student personal data matches. The student will be associated with the user.",
+      );
+      return studentFound;
+    }
+
+    return null;
   }
 
   /**
