@@ -131,14 +131,14 @@
                     "labelMargin": "",
                     "customClass": "",
                     "modalEdit": false,
-                    "defaultValue": "levelOfStudyCodes",
+                    "defaultValue": null,
                     "persistent": true,
                     "protected": false,
                     "dbIndex": false,
                     "encrypted": false,
                     "redrawOn": "",
                     "customDefaultValue": "",
-                    "calculateValue": "value = [\r\n{credentialType: \"undergraduateCertificate\", levelOfStudyCode: \"8\"},\r\n{credentialType: \"undergraduateDiploma\", levelOfStudyCode: \"7\"},\r\n{credentialType: \"undergraduateDegree\", levelOfStudyCode: \"3\"},\r\n{credentialType: \"graduateCertificate\", levelOfStudyCode: \"5\"},\r\n{credentialType: \"graduateDiploma\", levelOfStudyCode: \"5\"},\r\n{credentialType: \"graduateDegreeOrMasters\", levelOfStudyCode: \"5\"},\r\n{credentialType: \"postGraduateOrDoctorate\", levelOfStudyCode: \"6\"},\r\n{credentialType: \"qualifyingStudies\", levelOfStudyCode: \"1\"}\r\n];",
+                    "calculateValue": "value = {\r\n    \"undergraduateCertificate\": \"8\",\r\n    \"undergraduateDiploma\": \"7\",\r\n    \"undergraduateDegree\": \"3\",\r\n    \"graduateCertificate\": \"5\",\r\n    \"graduateDiploma\": \"5\",\r\n    \"graduateDegreeOrMasters\": \"5\",\r\n    \"postGraduateOrDoctorate\": \"6\",\r\n    \"qualifyingStudies\": \"1\",\r\n};",
                     "calculateServer": true,
                     "key": "levelOfStudyCodes",
                     "tags": [],
@@ -196,7 +196,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "esmrmn"
+                    "id": "ey34f1"
                 },
                 {
                     "label": "Field Of Study Codes",
@@ -204,14 +204,14 @@
                     "labelMargin": "",
                     "customClass": "",
                     "modalEdit": false,
-                    "defaultValue": "fieldOfStudyCodes",
+                    "defaultValue": null,
                     "persistent": true,
                     "protected": false,
                     "dbIndex": false,
                     "encrypted": false,
                     "redrawOn": "",
                     "customDefaultValue": "",
-                    "calculateValue": "value = [\r\n  {\r\n    sabcCode: \"P\",\r\n\tlevelOfStudyCode: \"7\",\r\n\tfederalStudyCode: \"25\"\r\n  },\r\n  {\r\n    sabcCode: \"P\",\r\n\tlevelOfStudyCode: \"5\",\r\n\tfederalStudyCode: \"55\"\r\n  },\r\n  {\r\n    sabcCode: \"P\",\r\n\tlevelOfStudyCode: \"8\",\r\n\tfederalStudyCode: \"25\"\r\n  },\r\n  {\r\n    sabcCode: \"P\",\r\n\tlevelOfStudyCode: \"3\",\r\n\tfederalStudyCode: \"40\"\r\n  },\r\n  {\r\n    sabcCode: \"P\",\r\n\tlevelOfStudyCode: \"6\",\r\n\tfederalStudyCode: \"70\"\r\n  },\r\n  {\r\n    sabcCode: \"P\",\r\n\tlevelOfStudyCode: \"4\",\r\n\tfederalStudyCode: \"40\"\r\n  },\r\n  {\r\n    sabcCode: \"P\",\r\n\tlevelOfStudyCode: \"2\",\r\n\tfederalStudyCode: \"25\"\r\n  },\r\n  {\r\n    sabcCode: \"P\",\r\n\tlevelOfStudyCode: \"1\",\r\n\tfederalStudyCode: \"25\"\r\n  },\r\n  {\r\n    sabcCode: \"Q\",\r\n\tlevelOfStudyCode: \"4\",\r\n\tfederalStudyCode: \"39\"\r\n  },\r\n  {\r\n    sabcCode: \"Q\",\r\n\tlevelOfStudyCode: \"7\",\r\n\tfederalStudyCode: \"24\"\r\n  },\r\n  {\r\n    sabcCode: \"Q\",\r\n\tlevelOfStudyCode: \"5\",\r\n\tfederalStudyCode: \"54\"\r\n  },\r\n  {\r\n    sabcCode: \"Q\",\r\n\tlevelOfStudyCode: \"1\",\r\n\tfederalStudyCode: \"24\"\r\n  },\r\n  {\r\n    sabcCode: \"Q\",\r\n\tlevelOfStudyCode: \"6\",\r\n\tfederalStudyCode: \"69\"\r\n  },\r\n  {\r\n    sabcCode: \"Q\",\r\n\tlevelOfStudyCode: \"2\",\r\n\tfederalStudyCode: \"24\"\r\n  },\r\n  {\r\n    sabcCode: \"Q\",\r\n\tlevelOfStudyCode: \"8\",\r\n\tfederalStudyCode: \"24\"\r\n  },\r\n  {\r\n    sabcCode: \"Q\",\r\n\tlevelOfStudyCode: \"3\",\r\n\tfederalStudyCode: \"39\"\r\n  },\r\n  {\r\n    sabcCode: \"R\",\r\n\tlevelOfStudyCode: \"7\",\r\n\tfederalStudyCode: \"23\"\r\n  },\r\n  {\r\n    sabcCode: \"R\",\r\n\tlevelOfStudyCode: \"6\",\r\n\tfederalStudyCode: \"68\"\r\n  },\r\n  {\r\n    sabcCode: \"R\",\r\n\tlevelOfStudyCode: \"4\",\r\n\tfederalStudyCode: \"38\"\r\n  },\r\n  {\r\n    sabcCode: \"R\",\r\n\tlevelOfStudyCode: \"5\",\r\n\tfederalStudyCode: \"53\"\r\n  },\r\n  {\r\n    sabcCode: \"R\",\r\n\tlevelOfStudyCode: \"2\",\r\n\tfederalStudyCode: \"23\"\r\n  },\r\n  {\r\n    sabcCode: \"R\",\r\n\tlevelOfStudyCode: \"3\",\r\n\tfederalStudyCode: \"38\"\r\n  },\r\n  {\r\n    sabcCode: \"R\",\r\n\tlevelOfStudyCode: \"8\",\r\n\tfederalStudyCode: \"23\"\r\n  },\r\n  {\r\n    sabcCode: \"R\",\r\n\tlevelOfStudyCode: \"1\",\r\n\tfederalStudyCode: \"23\"\r\n  }\r\n  ,\r\n  {\r\n    sabcCode: \"S\",\r\n\tlevelOfStudyCode: \"8\",\r\n\tfederalStudyCode: \"22\"\r\n  }\r\n  ,\r\n  {\r\n    sabcCode: \"S\",\r\n\tlevelOfStudyCode: \"1\",\r\n\tfederalStudyCode: \"22\"\r\n  }\r\n  ,\r\n  {\r\n    sabcCode: \"S\",\r\n\tlevelOfStudyCode: \"4\",\r\n\tfederalStudyCode: \"37\"\r\n  },\r\n  {\r\n    sabcCode: \"S\",\r\n\tlevelOfStudyCode: \"3\",\r\n\tfederalStudyCode: \"37\"\r\n  },\r\n  {\r\n    sabcCode: \"S\",\r\n\tlevelOfStudyCode: \"2\",\r\n\tfederalStudyCode: \"22\"\r\n  },\r\n  {\r\n    sabcCode: \"S\",\r\n\tlevelOfStudyCode: \"5\",\r\n\tfederalStudyCode: \"52\"\r\n  },\r\n  {\r\n    sabcCode: \"S\",\r\n\tlevelOfStudyCode: \"7\",\r\n\tfederalStudyCode: \"22\"\r\n  },\r\n  {\r\n    sabcCode: \"S\",\r\n\tlevelOfStudyCode: \"6\",\r\n\tfederalStudyCode: \"67\"\r\n  }\r\n  ,\r\n  {\r\n    sabcCode: \"T\",\r\n\tlevelOfStudyCode: \"1\",\r\n\tfederalStudyCode: \"21\"\r\n  },\r\n  {\r\n    sabcCode: \"T\",\r\n\tlevelOfStudyCode: \"7\",\r\n\tfederalStudyCode: \"21\"\r\n  },\r\n  {\r\n    sabcCode: \"T\",\r\n\tlevelOfStudyCode: \"4\",\r\n\tfederalStudyCode: \"36\"\r\n  },\r\n  {\r\n    sabcCode: \"T\",\r\n\tlevelOfStudyCode: \"5\",\r\n\tfederalStudyCode: \"51\"\r\n  },\r\n  {\r\n    sabcCode: \"T\",\r\n\tlevelOfStudyCode: \"3\",\r\n\tfederalStudyCode: \"36\"\r\n  },\r\n  {\r\n    sabcCode: \"T\",\r\n\tlevelOfStudyCode: \"8\",\r\n\tfederalStudyCode: \"21\"\r\n  },\r\n  {\r\n    sabcCode: \"T\",\r\n\tlevelOfStudyCode: \"6\",\r\n\tfederalStudyCode: \"66\"\r\n  },\r\n  {\r\n    sabcCode: \"T\",\r\n\tlevelOfStudyCode: \"2\",\r\n\tfederalStudyCode: \"21\"\r\n  },\r\n  {\r\n    sabcCode: \"U\",\r\n\tlevelOfStudyCode: \"8\",\r\n\tfederalStudyCode: \"20\"\r\n  },\r\n  {\r\n    sabcCode: \"U\",\r\n\tlevelOfStudyCode: \"3\",\r\n\tfederalStudyCode: \"35\"\r\n  },\r\n  {\r\n    sabcCode: \"U\",\r\n\tlevelOfStudyCode: \"2\",\r\n\tfederalStudyCode: \"20\"\r\n  },\r\n  {\r\n    sabcCode: \"U\",\r\n\tlevelOfStudyCode: \"4\",\r\n\tfederalStudyCode: \"35\"\r\n  },\r\n  {\r\n    sabcCode: \"U\",\r\n\tlevelOfStudyCode: \"7\",\r\n\tfederalStudyCode: \"20\"\r\n  },\r\n  {\r\n    sabcCode: \"U\",\r\n\tlevelOfStudyCode: \"5\",\r\n\tfederalStudyCode: \"50\"\r\n  },\r\n  {\r\n    sabcCode: \"U\",\r\n\tlevelOfStudyCode: \"1\",\r\n\tfederalStudyCode: \"20\"\r\n  },\r\n  {\r\n    sabcCode: \"U\",\r\n\tlevelOfStudyCode: \"6\",\r\n\tfederalStudyCode: \"65\"\r\n  },\r\n  {\r\n    sabcCode: \"V\",\r\n\tlevelOfStudyCode: \"1\",\r\n\tfederalStudyCode: \"19\"\r\n  },\r\n  {\r\n    sabcCode: \"V\",\r\n\tlevelOfStudyCode: \"3\",\r\n\tfederalStudyCode: \"34\"\r\n  },\r\n  {\r\n    sabcCode: \"V\",\r\n\tlevelOfStudyCode: \"6\",\r\n\tfederalStudyCode: \"64\"\r\n  },\r\n  {\r\n    sabcCode: \"V\",\r\n\tlevelOfStudyCode: \"5\",\r\n\tfederalStudyCode: \"49\"\r\n  },\r\n  {\r\n    sabcCode: \"V\",\r\n\tlevelOfStudyCode: \"2\",\r\n\tfederalStudyCode: \"19\"\r\n  },\r\n  {\r\n    sabcCode: \"V\",\r\n\tlevelOfStudyCode: \"7\",\r\n\tfederalStudyCode: \"19\"\r\n  },\r\n  {\r\n    sabcCode: \"V\",\r\n\tlevelOfStudyCode: \"4\",\r\n\tfederalStudyCode: \"34\"\r\n  },\r\n  {\r\n    sabcCode: \"V\",\r\n\tlevelOfStudyCode: \"8\",\r\n\tfederalStudyCode: \"19\"\r\n  },\r\n  {\r\n    sabcCode: \"W\",\r\n\tlevelOfStudyCode: \"8\",\r\n\tfederalStudyCode: \"18\"\r\n  },\r\n  {\r\n    sabcCode: \"W\",\r\n\tlevelOfStudyCode: \"4\",\r\n\tfederalStudyCode: \"33\"\r\n  },\r\n  {\r\n    sabcCode: \"W\",\r\n\tlevelOfStudyCode: \"2\",\r\n\tfederalStudyCode: \"18\"\r\n  },\r\n  {\r\n    sabcCode: \"W\",\r\n\tlevelOfStudyCode: \"7\",\r\n\tfederalStudyCode: \"18\"\r\n  },\r\n  {\r\n    sabcCode: \"W\",\r\n\tlevelOfStudyCode: \"5\",\r\n\tfederalStudyCode: \"48\"\r\n  },\r\n  {\r\n    sabcCode: \"W\",\r\n\tlevelOfStudyCode: \"1\",\r\n\tfederalStudyCode: \"18\"\r\n  },\r\n  {\r\n    sabcCode: \"W\",\r\n\tlevelOfStudyCode: \"6\",\r\n\tfederalStudyCode: \"63\"\r\n  },\r\n  {\r\n    sabcCode: \"X\",\r\n\tlevelOfStudyCode: \"5\",\r\n\tfederalStudyCode: \"47\"\r\n  },\r\n  {\r\n    sabcCode: \"X\",\r\n\tlevelOfStudyCode: \"2\",\r\n\tfederalStudyCode: \"17\"\r\n  },\r\n  {\r\n    sabcCode: \"X\",\r\n\tlevelOfStudyCode: \"1\",\r\n\tfederalStudyCode: \"17\"\r\n  },\r\n  {\r\n    sabcCode: \"X\",\r\n\tlevelOfStudyCode: \"4\",\r\n\tfederalStudyCode: \"32\"\r\n  },\r\n  {\r\n    sabcCode: \"X\",\r\n\tlevelOfStudyCode: \"8\",\r\n\tfederalStudyCode: \"17\"\r\n  },\r\n  {\r\n    sabcCode: \"X\",\r\n\tlevelOfStudyCode: \"3\",\r\n\tfederalStudyCode: \"32\"\r\n  },\r\n  {\r\n    sabcCode: \"X\",\r\n\tlevelOfStudyCode: \"6\",\r\n\tfederalStudyCode: \"62\"\r\n  },\r\n  {\r\n    sabcCode: \"X\",\r\n\tlevelOfStudyCode: \"7\",\r\n\tfederalStudyCode: \"17\"\r\n  },\r\n  {\r\n    sabcCode: \"Y\",\r\n\tlevelOfStudyCode: \"4\",\r\n\tfederalStudyCode: \"31\"\r\n  },\r\n  {\r\n    sabcCode: \"Y\",\r\n\tlevelOfStudyCode: \"8\",\r\n\tfederalStudyCode: \"16\"\r\n  },\r\n  {\r\n    sabcCode: \"Y\",\r\n\tlevelOfStudyCode: \"5\",\r\n\tfederalStudyCode: \"46\"\r\n  },\r\n  {\r\n    sabcCode: \"Y\",\r\n\tlevelOfStudyCode: \"6\",\r\n\tfederalStudyCode: \"61\"\r\n  },\r\n  {\r\n    sabcCode: \"Y\",\r\n\tlevelOfStudyCode: \"2\",\r\n\tfederalStudyCode: \"16\"\r\n  },\r\n  {\r\n    sabcCode: \"Y\",\r\n\tlevelOfStudyCode: \"3\",\r\n\tfederalStudyCode: \"31\"\r\n  },\r\n  {\r\n    sabcCode: \"Y\",\r\n\tlevelOfStudyCode: \"1\",\r\n\tfederalStudyCode: \"16\"\r\n  },\r\n  {\r\n    sabcCode: \"Y\",\r\n\tlevelOfStudyCode: \"7\",\r\n\tfederalStudyCode: \"16\"\r\n  },\r\n  {\r\n    sabcCode: \"Z\",\r\n\tlevelOfStudyCode: \"7\",\r\n\tfederalStudyCode: \"15\"\r\n  },\r\n  {\r\n    sabcCode: \"Z\",\r\n\tlevelOfStudyCode: \"8\",\r\n\tfederalStudyCode: \"15\"\r\n  },\r\n  {\r\n    sabcCode: \"Z\",\r\n\tlevelOfStudyCode: \"5\",\r\n\tfederalStudyCode: \"45\"\r\n  },\r\n  {\r\n    sabcCode: \"Z\",\r\n\tlevelOfStudyCode: \"4\",\r\n\tfederalStudyCode: \"30\"\r\n  },\r\n  {\r\n    sabcCode: \"Z\",\r\n\tlevelOfStudyCode: \"2\",\r\n\tfederalStudyCode: \"15\"\r\n  },\r\n  {\r\n    sabcCode: \"Z\",\r\n\tlevelOfStudyCode: \"3\",\r\n\tfederalStudyCode: \"30\"\r\n  },\r\n  {\r\n    sabcCode: \"Z\",\r\n\tlevelOfStudyCode: \"1\",\r\n\tfederalStudyCode: \"15\"\r\n  },\r\n  {\r\n    sabcCode: \"Z\",\r\n\tlevelOfStudyCode: \"6\",\r\n\tfederalStudyCode: \"6\"\r\n  }\r\n]",
+                    "calculateValue": "value = [\r\n    {\r\n      sabcCode: \"P\",\r\n      levelOfStudyCode: \"7\",\r\n      federalStudyCode: \"25\"\r\n    },\r\n    {\r\n      sabcCode: \"P\",\r\n      levelOfStudyCode: \"5\",\r\n      federalStudyCode: \"55\"\r\n    },\r\n    {\r\n      sabcCode: \"P\",\r\n      levelOfStudyCode: \"8\",\r\n      federalStudyCode: \"25\"\r\n    },\r\n    {\r\n      sabcCode: \"P\",\r\n      levelOfStudyCode: \"3\",\r\n      federalStudyCode: \"40\"\r\n    },\r\n    {\r\n      sabcCode: \"P\",\r\n      levelOfStudyCode: \"6\",\r\n      federalStudyCode: \"70\"\r\n    },\r\n    {\r\n      sabcCode: \"P\",\r\n      levelOfStudyCode: \"4\",\r\n      federalStudyCode: \"40\"\r\n    },\r\n    {\r\n      sabcCode: \"P\",\r\n      levelOfStudyCode: \"2\",\r\n      federalStudyCode: \"25\"\r\n    },\r\n    {\r\n      sabcCode: \"P\",\r\n      levelOfStudyCode: \"1\",\r\n      federalStudyCode: \"25\"\r\n    },\r\n    {\r\n      sabcCode: \"Q\",\r\n      levelOfStudyCode: \"4\",\r\n      federalStudyCode: \"39\"\r\n    },\r\n    {\r\n      sabcCode: \"Q\",\r\n      levelOfStudyCode: \"7\",\r\n      federalStudyCode: \"24\"\r\n    },\r\n    {\r\n      sabcCode: \"Q\",\r\n      levelOfStudyCode: \"5\",\r\n      federalStudyCode: \"54\"\r\n    },\r\n    {\r\n      sabcCode: \"Q\",\r\n      levelOfStudyCode: \"1\",\r\n      federalStudyCode: \"24\"\r\n    },\r\n    {\r\n      sabcCode: \"Q\",\r\n      levelOfStudyCode: \"6\",\r\n      federalStudyCode: \"69\"\r\n    },\r\n    {\r\n      sabcCode: \"Q\",\r\n      levelOfStudyCode: \"2\",\r\n      federalStudyCode: \"24\"\r\n    },\r\n    {\r\n      sabcCode: \"Q\",\r\n      levelOfStudyCode: \"8\",\r\n      federalStudyCode: \"24\"\r\n    },\r\n    {\r\n      sabcCode: \"Q\",\r\n      levelOfStudyCode: \"3\",\r\n      federalStudyCode: \"39\"\r\n    },\r\n    {\r\n      sabcCode: \"R\",\r\n      levelOfStudyCode: \"7\",\r\n      federalStudyCode: \"23\"\r\n    },\r\n    {\r\n      sabcCode: \"R\",\r\n      levelOfStudyCode: \"6\",\r\n      federalStudyCode: \"68\"\r\n    },\r\n    {\r\n      sabcCode: \"R\",\r\n      levelOfStudyCode: \"4\",\r\n      federalStudyCode: \"38\"\r\n    },\r\n    {\r\n      sabcCode: \"R\",\r\n      levelOfStudyCode: \"5\",\r\n      federalStudyCode: \"53\"\r\n    },\r\n    {\r\n      sabcCode: \"R\",\r\n      levelOfStudyCode: \"2\",\r\n      federalStudyCode: \"23\"\r\n    },\r\n    {\r\n      sabcCode: \"R\",\r\n      levelOfStudyCode: \"3\",\r\n      federalStudyCode: \"38\"\r\n    },\r\n    {\r\n      sabcCode: \"R\",\r\n      levelOfStudyCode: \"8\",\r\n      federalStudyCode: \"23\"\r\n    },\r\n    {\r\n      sabcCode: \"R\",\r\n      levelOfStudyCode: \"1\",\r\n      federalStudyCode: \"23\"\r\n    },\r\n    {\r\n      sabcCode: \"S\",\r\n      levelOfStudyCode: \"8\",\r\n      federalStudyCode: \"22\"\r\n    },\r\n    {\r\n      sabcCode: \"S\",\r\n      levelOfStudyCode: \"1\",\r\n      federalStudyCode: \"22\"\r\n    },\r\n    {\r\n      sabcCode: \"S\",\r\n      levelOfStudyCode: \"4\",\r\n      federalStudyCode: \"37\"\r\n    },\r\n    {\r\n      sabcCode: \"S\",\r\n      levelOfStudyCode: \"3\",\r\n      federalStudyCode: \"37\"\r\n    },\r\n    {\r\n      sabcCode: \"S\",\r\n      levelOfStudyCode: \"2\",\r\n      federalStudyCode: \"22\"\r\n    },\r\n    {\r\n      sabcCode: \"S\",\r\n      levelOfStudyCode: \"5\",\r\n      federalStudyCode: \"52\"\r\n    },\r\n    {\r\n      sabcCode: \"S\",\r\n      levelOfStudyCode: \"7\",\r\n      federalStudyCode: \"22\"\r\n    },\r\n    {\r\n      sabcCode: \"S\",\r\n      levelOfStudyCode: \"6\",\r\n      federalStudyCode: \"67\"\r\n    },\r\n    {\r\n      sabcCode: \"T\",\r\n      levelOfStudyCode: \"1\",\r\n      federalStudyCode: \"21\"\r\n    },\r\n    {\r\n      sabcCode: \"T\",\r\n      levelOfStudyCode: \"7\",\r\n      federalStudyCode: \"21\"\r\n    },\r\n    {\r\n      sabcCode: \"T\",\r\n      levelOfStudyCode: \"4\",\r\n      federalStudyCode: \"36\"\r\n    },\r\n    {\r\n      sabcCode: \"T\",\r\n      levelOfStudyCode: \"5\",\r\n      federalStudyCode: \"51\"\r\n    },\r\n    {\r\n      sabcCode: \"T\",\r\n      levelOfStudyCode: \"3\",\r\n      federalStudyCode: \"36\"\r\n    },\r\n    {\r\n      sabcCode: \"T\",\r\n      levelOfStudyCode: \"8\",\r\n      federalStudyCode: \"21\"\r\n    },\r\n    {\r\n      sabcCode: \"T\",\r\n      levelOfStudyCode: \"6\",\r\n      federalStudyCode: \"66\"\r\n    },\r\n    {\r\n      sabcCode: \"T\",\r\n      levelOfStudyCode: \"2\",\r\n      federalStudyCode: \"21\"\r\n    },\r\n    {\r\n      sabcCode: \"U\",\r\n      levelOfStudyCode: \"8\",\r\n      federalStudyCode: \"20\"\r\n    },\r\n    {\r\n      sabcCode: \"U\",\r\n      levelOfStudyCode: \"3\",\r\n      federalStudyCode: \"35\"\r\n    },\r\n    {\r\n      sabcCode: \"U\",\r\n      levelOfStudyCode: \"2\",\r\n      federalStudyCode: \"20\"\r\n    },\r\n    {\r\n      sabcCode: \"U\",\r\n      levelOfStudyCode: \"4\",\r\n      federalStudyCode: \"35\"\r\n    },\r\n    {\r\n      sabcCode: \"U\",\r\n      levelOfStudyCode: \"7\",\r\n      federalStudyCode: \"20\"\r\n    },\r\n    {\r\n      sabcCode: \"U\",\r\n      levelOfStudyCode: \"5\",\r\n      federalStudyCode: \"50\"\r\n    },\r\n    {\r\n      sabcCode: \"U\",\r\n      levelOfStudyCode: \"1\",\r\n      federalStudyCode: \"20\"\r\n    },\r\n    {\r\n      sabcCode: \"U\",\r\n      levelOfStudyCode: \"6\",\r\n      federalStudyCode: \"65\"\r\n    },\r\n    {\r\n      sabcCode: \"V\",\r\n      levelOfStudyCode: \"1\",\r\n      federalStudyCode: \"19\"\r\n    },\r\n    {\r\n      sabcCode: \"V\",\r\n      levelOfStudyCode: \"3\",\r\n      federalStudyCode: \"34\"\r\n    },\r\n    {\r\n      sabcCode: \"V\",\r\n      levelOfStudyCode: \"6\",\r\n      federalStudyCode: \"64\"\r\n    },\r\n    {\r\n      sabcCode: \"V\",\r\n      levelOfStudyCode: \"5\",\r\n      federalStudyCode: \"49\"\r\n    },\r\n    {\r\n      sabcCode: \"V\",\r\n      levelOfStudyCode: \"2\",\r\n      federalStudyCode: \"19\"\r\n    },\r\n    {\r\n      sabcCode: \"V\",\r\n      levelOfStudyCode: \"7\",\r\n      federalStudyCode: \"19\"\r\n    },\r\n    {\r\n      sabcCode: \"V\",\r\n      levelOfStudyCode: \"4\",\r\n      federalStudyCode: \"34\"\r\n    },\r\n    {\r\n      sabcCode: \"V\",\r\n      levelOfStudyCode: \"8\",\r\n      federalStudyCode: \"19\"\r\n    },\r\n    {\r\n      sabcCode: \"W\",\r\n      levelOfStudyCode: \"8\",\r\n      federalStudyCode: \"18\"\r\n    },\r\n    {\r\n      sabcCode: \"W\",\r\n      levelOfStudyCode: \"4\",\r\n      federalStudyCode: \"33\"\r\n    },\r\n    {\r\n      sabcCode: \"W\",\r\n      levelOfStudyCode: \"2\",\r\n      federalStudyCode: \"18\"\r\n    },\r\n    {\r\n      sabcCode: \"W\",\r\n      levelOfStudyCode: \"7\",\r\n      federalStudyCode: \"18\"\r\n    },\r\n    {\r\n      sabcCode: \"W\",\r\n      levelOfStudyCode: \"5\",\r\n      federalStudyCode: \"48\"\r\n    },\r\n    {\r\n      sabcCode: \"W\",\r\n      levelOfStudyCode: \"1\",\r\n      federalStudyCode: \"18\"\r\n    },\r\n    {\r\n      sabcCode: \"W\",\r\n      levelOfStudyCode: \"6\",\r\n      federalStudyCode: \"63\"\r\n    },\r\n    {\r\n      sabcCode: \"X\",\r\n      levelOfStudyCode: \"5\",\r\n      federalStudyCode: \"47\"\r\n    },\r\n    {\r\n      sabcCode: \"X\",\r\n      levelOfStudyCode: \"2\",\r\n      federalStudyCode: \"17\"\r\n    },\r\n    {\r\n      sabcCode: \"X\",\r\n      levelOfStudyCode: \"1\",\r\n      federalStudyCode: \"17\"\r\n    },\r\n    {\r\n      sabcCode: \"X\",\r\n      levelOfStudyCode: \"4\",\r\n      federalStudyCode: \"32\"\r\n    },\r\n    {\r\n      sabcCode: \"X\",\r\n      levelOfStudyCode: \"8\",\r\n      federalStudyCode: \"17\"\r\n    },\r\n    {\r\n      sabcCode: \"X\",\r\n      levelOfStudyCode: \"3\",\r\n      federalStudyCode: \"32\"\r\n    },\r\n    {\r\n      sabcCode: \"X\",\r\n      levelOfStudyCode: \"6\",\r\n      federalStudyCode: \"62\"\r\n    },\r\n    {\r\n      sabcCode: \"X\",\r\n      levelOfStudyCode: \"7\",\r\n      federalStudyCode: \"17\"\r\n    },\r\n    {\r\n      sabcCode: \"Y\",\r\n      levelOfStudyCode: \"4\",\r\n      federalStudyCode: \"31\"\r\n    },\r\n    {\r\n      sabcCode: \"Y\",\r\n      levelOfStudyCode: \"8\",\r\n      federalStudyCode: \"16\"\r\n    },\r\n    {\r\n      sabcCode: \"Y\",\r\n      levelOfStudyCode: \"5\",\r\n      federalStudyCode: \"46\"\r\n    },\r\n    {\r\n      sabcCode: \"Y\",\r\n      levelOfStudyCode: \"6\",\r\n      federalStudyCode: \"61\"\r\n    },\r\n    {\r\n      sabcCode: \"Y\",\r\n      levelOfStudyCode: \"2\",\r\n      federalStudyCode: \"16\"\r\n    },\r\n    {\r\n      sabcCode: \"Y\",\r\n      levelOfStudyCode: \"3\",\r\n      federalStudyCode: \"31\"\r\n    },\r\n    {\r\n      sabcCode: \"Y\",\r\n      levelOfStudyCode: \"1\",\r\n      federalStudyCode: \"16\"\r\n    },\r\n    {\r\n      sabcCode: \"Y\",\r\n      levelOfStudyCode: \"7\",\r\n      federalStudyCode: \"16\"\r\n    },\r\n    {\r\n      sabcCode: \"Z\",\r\n      levelOfStudyCode: \"7\",\r\n      federalStudyCode: \"15\"\r\n    },\r\n    {\r\n      sabcCode: \"Z\",\r\n      levelOfStudyCode: \"8\",\r\n      federalStudyCode: \"15\"\r\n    },\r\n    {\r\n      sabcCode: \"Z\",\r\n      levelOfStudyCode: \"5\",\r\n      federalStudyCode: \"45\"\r\n    },\r\n    {\r\n      sabcCode: \"Z\",\r\n      levelOfStudyCode: \"4\",\r\n      federalStudyCode: \"30\"\r\n    },\r\n    {\r\n      sabcCode: \"Z\",\r\n      levelOfStudyCode: \"2\",\r\n      federalStudyCode: \"15\"\r\n    },\r\n    {\r\n      sabcCode: \"Z\",\r\n      levelOfStudyCode: \"3\",\r\n      federalStudyCode: \"30\"\r\n    },\r\n    {\r\n      sabcCode: \"Z\",\r\n      levelOfStudyCode: \"1\",\r\n      federalStudyCode: \"15\"\r\n    },\r\n    {\r\n      sabcCode: \"Z\",\r\n      levelOfStudyCode: \"6\",\r\n      federalStudyCode: \"6\"\r\n    }\r\n];",
                     "calculateServer": true,
                     "key": "fieldOfStudyCodes",
                     "tags": [],
@@ -269,7 +269,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "e00y2im"
+                    "id": "e9o7iwg"
                 },
                 {
                     "label": "SABC Codes",
@@ -277,14 +277,14 @@
                     "labelMargin": "",
                     "customClass": "",
                     "modalEdit": false,
-                    "defaultValue": "sabcCodes",
+                    "defaultValue": null,
                     "persistent": true,
                     "protected": false,
                     "dbIndex": false,
                     "encrypted": false,
                     "redrawOn": "",
                     "customDefaultValue": "",
-                    "calculateValue": "value = [\r\n{\r\n\tcipDigit: \"11\",\r\n\tsabcCode: \"Z\"\r\n},\r\n{\r\n\tcipDigit: \"09\",\r\n\tsabcCode: \"Z\"\r\n},\r\n{\r\n\tcipDigit: \"52\",\r\n\tsabcCode: \"Z\"\r\n},\r\n{\r\n\tcipDigit: \"01\",\r\n\tsabcCode: \"Z\"\r\n},\r\n{\r\n\tcipDigit: \"03\",\r\n\tsabcCode: \"Z\"\r\n},\r\n{\r\n\tcipDigit: \"05\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"16\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"23\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"24\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"25\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"42\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"27\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"30\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"38\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"40\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"45\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"50\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"54\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"55\",\r\n\tsabcCode: \"X\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"13\",\r\n\tsabcCode: \"W\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"19\",\r\n\tsabcCode: \"W\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"28\",\r\n\tsabcCode: \"W\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"31\",\r\n\tsabcCode: \"W\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"44\",\r\n\tsabcCode: \"W\"\r\n},\r\n{\r\n\tcipDigit: \"60\",\r\n\tsabcCode: \"V\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"04\",\r\n\tsabcCode: \"U\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"10\",\r\n\tsabcCode: \"U\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"14\",\r\n\tsabcCode: \"U\"\r\n}\r\n,\r\n{\r\n\tcipDigit: \"15\",\r\n\tsabcCode: \"U\"\r\n},\r\n{\r\n\tcipDigit: \"29\",\r\n\tsabcCode: \"U\"\r\n},\r\n{\r\n\tcipDigit: \"41\",\r\n\tsabcCode: \"U\"\r\n},\r\n{\r\n\tcipDigit: \"26\",\r\n\tsabcCode: \"U\"\r\n},\r\n{\r\n\tcipDigit: \"22\",\r\n\tsabcCode: \"S\"\r\n},\r\n{\r\n\tcipDigit: \"43\",\r\n\tsabcCode: \"S\"\r\n},\r\n{\r\n\tcipDigit: \"51\",\r\n\tsabcCode: \"R\"\r\n},\r\n{\r\n\tcipDigit: \"39\",\r\n\tsabcCode: \"Q\"\r\n},\r\n{\r\n\tcipDigit: \"12\",\r\n\tsabcCode: \"P\"\r\n},\r\n{\r\n\tcipDigit: \"21\",\r\n\tsabcCode: \"P\"\r\n},\r\n{\r\n\tcipDigit: \"46\",\r\n\tsabcCode: \"P\"\r\n},\r\n{\r\n\tcipDigit: \"47\",\r\n\tsabcCode: \"P\"\r\n},\r\n{\r\n\tcipDigit: \"48\",\r\n\tsabcCode: \"P\"\r\n},\r\n{\r\n\tcipDigit: \"49\",\r\n\tsabcCode: \"P\"\r\n}\r\n];",
+                    "calculateValue": "value = [\r\n    {\r\n        cipDigit: \"11\",\r\n        sabcCode: \"Z\"\r\n    },\r\n    {\r\n        cipDigit: \"09\",\r\n        sabcCode: \"Z\"\r\n    },\r\n    {\r\n        cipDigit: \"52\",\r\n        sabcCode: \"Z\"\r\n    },\r\n    {\r\n        cipDigit: \"01\",\r\n        sabcCode: \"Z\"\r\n    },\r\n    {\r\n        cipDigit: \"03\",\r\n        sabcCode: \"Z\"\r\n    },\r\n    {\r\n        cipDigit: \"05\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"16\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"23\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"24\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"25\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"42\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"27\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"30\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"38\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"40\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"45\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"50\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"54\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"55\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"13\",\r\n        sabcCode: \"W\"\r\n    },\r\n    {\r\n        cipDigit: \"19\",\r\n        sabcCode: \"W\"\r\n    },\r\n    {\r\n        cipDigit: \"28\",\r\n        sabcCode: \"W\"\r\n    },\r\n    {\r\n        cipDigit: \"31\",\r\n        sabcCode: \"W\"\r\n    },\r\n    {\r\n        cipDigit: \"44\",\r\n        sabcCode: \"W\"\r\n    },\r\n    {\r\n        cipDigit: \"60\",\r\n        sabcCode: \"V\"\r\n    },\r\n    {\r\n        cipDigit: \"04\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"10\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"14\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"15\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"29\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"41\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"26\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"22\",\r\n        sabcCode: \"S\"\r\n    },\r\n    {\r\n        cipDigit: \"43\",\r\n        sabcCode: \"S\"\r\n    },\r\n    {\r\n        cipDigit: \"51\",\r\n        sabcCode: \"R\"\r\n    },\r\n    {\r\n        cipDigit: \"39\",\r\n        sabcCode: \"Q\"\r\n    },\r\n    {\r\n        cipDigit: \"12\",\r\n        sabcCode: \"P\"\r\n    },\r\n    {\r\n        cipDigit: \"21\",\r\n        sabcCode: \"P\"\r\n    },\r\n    {\r\n        cipDigit: \"46\",\r\n        sabcCode: \"P\"\r\n    },\r\n    {\r\n        cipDigit: \"47\",\r\n        sabcCode: \"P\"\r\n    },\r\n    {\r\n        cipDigit: \"48\",\r\n        sabcCode: \"P\"\r\n    },\r\n    {\r\n        cipDigit: \"49\",\r\n        sabcCode: \"P\"\r\n    }\r\n];",
                     "calculateServer": true,
                     "key": "sabcCodes",
                     "tags": [],
@@ -342,7 +342,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "ej73vqb"
+                    "id": "eopncid"
                 },
                 {
                     "label": "Program name",
@@ -674,7 +674,7 @@
                     "encrypted": false,
                     "redrawOn": "",
                     "customDefaultValue": "",
-                    "calculateValue": "value = data.levelOfStudyCodes.filter((d) => d.credentialType === data.credentialType)[0][\"levelOfStudyCode\"];\n",
+                    "calculateValue": "value = data.levelOfStudyCodes[data.credentialType];\n",
                     "calculateServer": true,
                     "key": "levelOfStudyCode",
                     "tags": [],
@@ -732,7 +732,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "ez16imf"
+                    "id": "eopw1wk"
                 },
                 {
                     "label": "CIP code",
@@ -786,7 +786,7 @@
                         "maxWords": "",
                         "pattern": "",
                         "customMessage": "",
-                        "custom": "valid = (/^[0-9]{2}\\.[a-zA-Z]{4}$/.test(input) && [\"11\", \"09\", \"52\",\"01\",\"03\",\"05\", \"16\", \"23\", \"24\", \"25\", \"42\",\"27\", \"30\", \"38\", \"40\", \"45\", \"50\", \"54\", \"55\",\"13\", \"19\", \"28\", \"31\", \"44\", \"60\", \"04\", \"10\", \"14\", \"15\", \"29\", \"41\", \"26\", \"22\", \"43\", \"51\", \"39\", \"12\", \"21\", \"46\", \"47\", \"48\"].includes(input.substring(0, 2))) ? true : 'Incorrect Format';",
+                        "custom": "valid = /^(11|09|52|01|03|05|16|23|24|25|42|27|30|38|40|45|50|54|55|13|28|31|44|60|04|10|14|15|29|41|26|22|43|51|39|12|21|46|47|48){1}\\.[a-zA-Z]{4}$/.test(input) ? true : 'Incorrect Format';",
                         "customPrivate": false,
                         "json": "",
                         "strictDateValidation": false,
@@ -842,7 +842,7 @@
                     "dataGridLabel": false,
                     "addons": [],
                     "inputType": "text",
-                    "id": "eauv228",
+                    "id": "eeodhl7",
                     "defaultValue": ""
                 },
                 {
@@ -851,7 +851,7 @@
                     "labelMargin": "",
                     "customClass": "",
                     "modalEdit": false,
-                    "defaultValue": "cipDigit",
+                    "defaultValue": "",
                     "persistent": true,
                     "protected": false,
                     "dbIndex": false,
@@ -916,7 +916,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "ezwatv"
+                    "id": "ee3hj6"
                 },
                 {
                     "label": "SABC Code Selected",
@@ -6025,79 +6025,6 @@
             "dataGridLabel": true,
             "id": "eept44e",
             "addons": []
-        },
-        {
-            "label": "Field of Study Code2",
-            "labelWidth": "",
-            "labelMargin": "",
-            "customClass": "",
-            "modalEdit": false,
-            "defaultValue": "fieldOfStudyCode",
-            "persistent": true,
-            "protected": false,
-            "dbIndex": false,
-            "encrypted": false,
-            "redrawOn": "",
-            "customDefaultValue": "",
-            "calculateValue": "// // value = data.cipCode.substring(0, 2)\n\n// value = [\n// {\n// \tcipDigit: \"11\",\n// \tsabcCode: \"Z\"\n// },\n// {\n// \tcipDigit: \"09\",\n// \tsabcCode: \"Z\"\n// },\n// {\n// \tcipDigit: \"52\",\n// \tsabcCode: \"Z\"\n// },\n// {\n// \tcipDigit: \"01\",\n// \tsabcCode: \"Z\"\n// },\n// {\n// \tcipDigit: \"03\",\n// \tsabcCode: \"Z\"\n// },\n// {\n// \tcipDigit: \"05\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"16\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"23\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"24\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"25\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"42\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"27\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"30\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"38\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"40\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"45\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"50\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"54\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"55\",\n// \tsabcCode: \"X\"\n// }\n// ,\n// {\n// \tcipDigit: \"13\",\n// \tsabcCode: \"W\"\n// }\n// ,\n// {\n// \tcipDigit: \"19\",\n// \tsabcCode: \"W\"\n// }\n// ,\n// {\n// \tcipDigit: \"28\",\n// \tsabcCode: \"W\"\n// }\n// ,\n// {\n// \tcipDigit: \"31\",\n// \tsabcCode: \"W\"\n// }\n// ,\n// {\n// \tcipDigit: \"44\",\n// \tsabcCode: \"W\"\n// },\n// {\n// \tcipDigit: \"60\",\n// \tsabcCode: \"V\"\n// }\n// ,\n// {\n// \tcipDigit: \"04\",\n// \tsabcCode: \"U\"\n// }\n// ,\n// {\n// \tcipDigit: \"10\",\n// \tsabcCode: \"U\"\n// }\n// ,\n// {\n// \tcipDigit: \"14\",\n// \tsabcCode: \"U\"\n// }\n// ,\n// {\n// \tcipDigit: \"15\",\n// \tsabcCode: \"U\"\n// },\n// {\n// \tcipDigit: \"29\",\n// \tsabcCode: \"U\"\n// },\n// {\n// \tcipDigit: \"41\",\n// \tsabcCode: \"U\"\n// },\n// {\n// \tcipDigit: \"26\",\n// \tsabcCode: \"U\"\n// },\n// {\n// \tcipDigit: \"22\",\n// \tsabcCode: \"S\"\n// },\n// {\n// \tcipDigit: \"43\",\n// \tsabcCode: \"S\"\n// },\n// {\n// \tcipDigit: \"51\",\n// \tsabcCode: \"R\"\n// },\n// {\n// \tcipDigit: \"39\",\n// \tsabcCode: \"Q\"\n// },\n// {\n// \tcipDigit: \"12\",\n// \tsabcCode: \"P\"\n// },\n// {\n// \tcipDigit: \"12\",\n// \tsabcCode: \"21\"\n// },\n// {\n// \tcipDigit: \"46\",\n// \tsabcCode: \"P\"\n// },\n// {\n// \tcipDigit: \"47\",\n// \tsabcCode: \"P\"\n// },\n// {\n// \tcipDigit: \"48\",\n// \tsabcCode: \"P\"\n// },\n// {\n// \tcipDigit: \"49\",\n// \tsabcCode: \"P\"\n// }\n// ];\n\n// alert(value.filter((d) => d.cipDigit === \"09\")[0][\"sabcCode\"]);\n",
-            "calculateServer": false,
-            "key": "fieldOfStudyCode2",
-            "tags": [],
-            "properties": {},
-            "logic": [],
-            "attributes": {},
-            "overlay": {
-                "style": "",
-                "page": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-            },
-            "type": "hidden",
-            "input": true,
-            "tableView": false,
-            "placeholder": "",
-            "prefix": "",
-            "suffix": "",
-            "multiple": false,
-            "unique": false,
-            "hidden": false,
-            "clearOnHide": true,
-            "refreshOn": "",
-            "dataGridLabel": false,
-            "labelPosition": "top",
-            "description": "",
-            "errorLabel": "",
-            "tooltip": "",
-            "hideLabel": false,
-            "tabindex": "",
-            "disabled": false,
-            "autofocus": false,
-            "widget": {
-                "type": "input"
-            },
-            "validateOn": "change",
-            "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-            },
-            "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-            },
-            "allowCalculateOverride": false,
-            "showCharCount": false,
-            "showWordCount": false,
-            "allowMultipleMasks": false,
-            "addons": [],
-            "inputType": "hidden",
-            "id": "ed9rf1k"
         },
         {
             "label": "hasOfferings",
