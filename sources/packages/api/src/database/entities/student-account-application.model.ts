@@ -65,7 +65,7 @@ export class StudentAccountApplication extends RecordDataModel {
   })
   assessedDate?: Date;
   /**
-   * Set the record as deleted.
+   * When set indicates that the record is considered deleted.
    */
   @DeleteDateColumn({
     name: "deleted_at",
