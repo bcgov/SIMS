@@ -32,7 +32,7 @@ import {
   FormService,
   FormNames,
 } from "../../services";
-import { STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXITS } from "../../constants";
+import { STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS } from "../../constants";
 
 /**
  * Student account applications when the authentication happens through BCeID
@@ -86,7 +86,7 @@ export class StudentAccountApplicationStudentsController extends BaseController 
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "The user is already present.",
-          STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXITS,
+          STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS,
         ),
       );
     }

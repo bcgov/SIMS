@@ -40,7 +40,7 @@ import {
 } from "@/types";
 import { AuthService } from "@/services/AuthService";
 import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
-import { STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXITS } from "@/constants";
+import { STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS } from "@/constants";
 
 export default {
   components: {
@@ -101,7 +101,7 @@ export default {
       } catch (error: unknown) {
         if (
           error instanceof ApiProcessError &&
-          error.errorType === STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXITS
+          error.errorType === STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS
         ) {
           snackBar.error("The user has been used in a previous request.");
         } else {

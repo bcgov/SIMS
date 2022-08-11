@@ -31,9 +31,9 @@ export const INSTITUTION_MUST_HAVE_AN_ADMIN = "INSTITUTION_MUST_HAVE_AN_ADMIN";
 export const BCEID_ACCOUNT_NOT_FOUND = "BCEID_ACCOUNT_NOT_FOUND";
 /**
  * The user is already present on DB, either because the same BCeID user is
- * trying to create an account application when it was already denied on the
+ * trying to create an account application when it was already denied in the
  * past or because it is already added as another user, for instance,
  * an institution user.
  */
-export const STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXITS =
-  "STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXITS";
+export const STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS =
+  "STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS";
