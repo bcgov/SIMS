@@ -40,6 +40,12 @@
   NODE_ENV=local npm run setup:db
   ```
 
+- To test the migration rollback we can use the below command.
+
+  ```bash
+  npm run migration:revert
+  ```
+
 - The migration process is build into api container entry command, so executing api container will automatically run migration
 
   ```bash
