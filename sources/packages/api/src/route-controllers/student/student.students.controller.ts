@@ -32,6 +32,7 @@ import {
   ATBCService,
   FormService,
   GCNotifyActionsService,
+  StudentAccountApplicationsService,
   StudentFileService,
   StudentRestrictionService,
   StudentService,
@@ -66,6 +67,7 @@ import { FileCreateAPIOutDTO } from "../models/common.dto";
 import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { FormNames } from "../../services/form/constants";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { IdentityProviders } from "../../database/entities/identity-providers.type";
 
 /**
  * Student controller for Student Client.
@@ -85,6 +87,7 @@ export class StudentStudentsController extends BaseController {
     private readonly formService: FormService,
     private readonly atbcService: ATBCService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly studentAccountApplicationsService: StudentAccountApplicationsService,
   ) {
     super();
   }
@@ -114,7 +117,7 @@ export class StudentStudentsController extends BaseController {
     }
 
     const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentInformation,
+      FormNames.StudentProfile,
       payload,
     );
     if (!submissionResult.valid) {
@@ -187,7 +190,9 @@ export class StudentStudentsController extends BaseController {
   async synchronizeFromUserToken(
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
-    await this.studentService.synchronizeFromUserToken(studentUserToken);
+    if (studentUserToken.IDP === IdentityProviders.BCSC) {
+      await this.studentService.synchronizeFromUserToken(studentUserToken);
+    }
   }
 
   /**
@@ -341,7 +346,7 @@ export class StudentStudentsController extends BaseController {
     @Body() payload: UpdateStudentAPIInDTO,
   ): Promise<void> {
     const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.StudentInformation,
+      FormNames.StudentProfile,
       payload,
     );
     if (!submissionResult.valid) {

@@ -52,3 +52,5 @@ export * from "./student-scholastic-standings/student-scholastic-standings.contr
 export * from "./institution-user/institution-user.aest.controller";
 export * from "./institution-user/institution-user.institutions.controller";
 export * from "./institution-user/institution-user.controller.service";
+export * from "./student-account-applications/student-account-application.aest.controller";
+export * from "./student-account-applications/student-account-application.students.controller";

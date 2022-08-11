@@ -8,9 +8,9 @@ import {
   Note,
   NoteType,
   SINValidation,
+  StudentAccountApplication,
 } from "../../database/entities";
 import { DataSource, EntityManager } from "typeorm";
-import { UserInfo } from "../../types";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
@@ -20,7 +20,7 @@ import {
   removeWhiteSpaces,
   transformAddressDetails,
 } from "../../utilities";
-import { StudentInfo } from "./student.service.models";
+import { CreateStudentUserInfo, StudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import * as dayjs from "dayjs";
 import { StudentUser } from "../../database/entities/student-user.model";
@@ -104,35 +104,53 @@ export class StudentService extends RecordDataModelService<Student> {
    * The user could be already available in the case of the same user
    * was authenticated previously on another portal (e.g. parent/partner).
    * @param userInfo information needed to create the user.
-   * @param otherInfo information received to create the student.
+   * @param studentInfo information received to create the student.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param externalEntityManager case provided, should be used to allow the student
+   * creation process to happen as part of another process.
+   * @param studentAccountApplicationId: when the student is being created as part of
+   * a student account application this is the submitted application form id.
    * @returns created student.
    */
-  async createStudent(
-    userInfo: UserInfo,
-    otherInfo: StudentInfo,
+  private async internalCreateStudent(
+    userInfo: CreateStudentUserInfo,
+    studentInfo: StudentInfo,
+    auditUserId?: number,
+    externalEntityManager?: EntityManager,
+    studentAccountApplicationId?: number,
   ): Promise<Student> {
     const user = new User();
     if (userInfo.userId) {
       user.id = userInfo.userId;
     }
 
-    const studentSIN = removeWhiteSpaces(otherInfo.sinNumber);
+    // If a user id was provided, use it as the audit user. It means that
+    // the user is being created by the Ministry on behalf of the student.
+    const auditUser = auditUserId ? ({ id: auditUserId } as User) : user;
+
+    const studentSIN = removeWhiteSpaces(studentInfo.sinNumber);
     const sinValidation = new SINValidation();
     sinValidation.sin = studentSIN;
     sinValidation.user = user;
-    user.userName = userInfo.userName;
     user.email = userInfo.email;
     user.firstName = userInfo.givenNames;
     user.lastName = userInfo.lastName;
-    user.creator = user;
+    if (userInfo.userId) {
+      // User id is present and the user wil be updated.
+      user.modifier = auditUser;
+    } else {
+      // User will be create alongside with the student.
+      user.userName = userInfo.userName;
+      user.creator = auditUser;
+    }
 
     const student = new Student();
     student.user = user;
     student.birthDate = getDateOnly(userInfo.birthdate);
     student.gender = userInfo.gender;
     student.contactInfo = {
-      address: transformAddressDetails(otherInfo),
-      phone: otherInfo.phone,
+      address: transformAddressDetails(studentInfo),
+      phone: studentInfo.phone,
     };
     student.user = user;
     student.sinValidation = sinValidation;
@@ -150,25 +168,72 @@ export class StudentService extends RecordDataModelService<Student> {
       throw error;
     }
 
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
-      // TODO: Upcoming tickets will change this logic while creating a new user or
-      // switching between BCeID and BCSC user.
-
+    return this.dataSource.transaction(async (localEntityManager) => {
+      const entityManager = externalEntityManager ?? localEntityManager;
       // Creates the new user and student.
-      const newStudent = await transactionalEntityManager
+      const newStudent = await entityManager
         .getRepository(Student)
         .save(student);
       // Create the new entry in the student/user history/audit.
       const studentUser = new StudentUser();
       studentUser.user = user;
       studentUser.student = student;
-      studentUser.creator = user;
-      await transactionalEntityManager
-        .getRepository(StudentUser)
-        .save(studentUser);
+      studentUser.creator = auditUser;
+      studentUser.accountApplication = {
+        id: studentAccountApplicationId,
+      } as StudentAccountApplication;
+      await entityManager.getRepository(StudentUser).save(studentUser);
       // Returns the newly created student.
       return newStudent;
     });
+  }
+
+  /**
+   * Creates the student after a student account application was submitted by the
+   * student and approved by the Ministry. User information will be updated and
+   * the student will be created.
+   * @param userInfo information needed to create or update the user.
+   * @param studentInfo information received to create the student.
+   * a student account application this is the submitted application form id.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns created student.
+   */
+  async createStudent(
+    userInfo: CreateStudentUserInfo,
+    studentInfo: StudentInfo,
+    auditUserId?: number,
+  ): Promise<Student> {
+    return this.internalCreateStudent(userInfo, studentInfo, auditUserId);
+  }
+
+  /**
+   * Creates the student checking for an existing user to be used or
+   * creating a new one in case the user id is not provided.
+   * The user could be already available in the case of the same user
+   * was authenticated previously on another portal (e.g. parent/partner).
+   * @param userInfo information needed to create or update the user.
+   * @param studentInfo information received to create the student.
+   * @param externalEntityManager should be used to allow the student
+   * creation process to happen as part of another process.
+   * @param studentAccountApplicationId when the student is being created as part of
+   * a student account application this is the submitted application form id.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns created student.
+   */
+  async createStudentFromAccountApplication(
+    userInfo: CreateStudentUserInfo,
+    studentInfo: StudentInfo,
+    auditUserId: number,
+    externalEntityManager: EntityManager,
+    studentAccountApplicationId: number,
+  ): Promise<Student> {
+    return this.internalCreateStudent(
+      userInfo,
+      studentInfo,
+      auditUserId,
+      externalEntityManager,
+      studentAccountApplicationId,
+    );
   }
 
   /**

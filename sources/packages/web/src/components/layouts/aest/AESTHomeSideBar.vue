@@ -12,6 +12,11 @@
     <v-list density="compact" nav>
       <v-list-subheader>Student requests</v-list-subheader>
       <v-list-item
+        :prepend-icon="studentAccountApplicationItem.icon"
+        :title="studentAccountApplicationItem.label"
+        @click="studentAccountApplicationItem.command"
+      />
+      <v-list-item
         :prepend-icon="exceptionsItem.icon"
         :title="exceptionsItem.label"
         @click="exceptionsItem.command"
@@ -90,6 +95,16 @@ export default {
       },
     ];
 
+    const studentAccountApplicationItem = {
+      label: "Accounts",
+      icon: "mdi-account-outline",
+      command: () => {
+        router.push({
+          name: AESTRoutesConst.STUDENT_ACCOUNT_APPLICATIONS,
+        });
+      },
+    } as MenuModel;
+
     const exceptionsItem = {
       label: "Exceptions",
       icon: "mdi-alert-circle-outline",
@@ -144,6 +159,7 @@ export default {
       appealsItem,
       topItems,
       designations,
+      studentAccountApplicationItem,
       exceptionsItem,
       reports,
       offerings,
