@@ -36,7 +36,7 @@ import {
   ConfigController,
   DynamicFormController,
   EducationProgramOfferingController,
-  ATBCController,
+  ATBCSystemAccessController,
   NotesAESTController,
   RestrictionAESTController,
 } from "./route-controllers";
@@ -101,7 +101,7 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     ConfigController,
     DynamicFormController,
     EducationProgramOfferingController,
-    ATBCController,
+    ATBCSystemAccessController,
     NotesAESTController,
     RestrictionAESTController,
   ],
