@@ -144,9 +144,9 @@ export class StudentService extends RecordDataModelService<Student> {
     // If a user id was provided, use it as the audit user. It means that
     // the user is being created by the Ministry on behalf of the student.
     const auditUser = auditUserId ? ({ id: auditUserId } as User) : user;
-    user.email = userInfo.email;
-    user.firstName = userInfo.givenNames;
-    user.lastName = userInfo.lastName;
+    user.email = userInfo.email.trim();
+    user.firstName = userInfo.givenNames?.trim();
+    user.lastName = userInfo.lastName.trim();
     if (userInfo.userId) {
       // User id is present and the user wil be updated.
       user.modifier = auditUser;
