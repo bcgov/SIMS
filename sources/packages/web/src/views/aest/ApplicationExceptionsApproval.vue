@@ -16,12 +16,17 @@
       @submitted="submitted"
     >
       <template #actions="{ submit }" v-if="!readOnly">
-        <footer-buttons
-          :processing="processing"
-          primaryLabel="Complete student request"
-          @primaryClick="submit"
-          @secondaryClick="gotToAssessmentsSummary"
-        />
+        <check-permission-role :role="Role.StudentApproveDeclineExceptions">
+          <template #="{ notAllowed }">
+            <footer-buttons
+              :processing="processing"
+              primaryLabel="Complete student request"
+              :disablePrimaryButton="notAllowed"
+              @primaryClick="submit"
+              @secondaryClick="gotToAssessmentsSummary"
+            />
+          </template>
+        </check-permission-role>
       </template>
     </formio-container>
   </full-page-container>
@@ -31,13 +36,14 @@ import { ref, onMounted } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
-import { ApplicationExceptionStatus, FormIOForm } from "@/types";
+import { ApplicationExceptionStatus, FormIOForm, Role } from "@/types";
 import {
   ApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
 import { useAssessment, useFormatters, useSnackBar } from "@/composables";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 /**
  * Model to be used to populate the form.io.
@@ -71,7 +77,7 @@ type ApplicationExceptionFormModel = Omit<
 };
 
 export default {
-  components: { HeaderTitleValue },
+  components: { HeaderTitleValue, CheckPermissionRole },
   props: {
     studentId: {
       type: Number,
@@ -160,6 +166,7 @@ export default {
       submittedDate,
       processing,
       readOnly,
+      Role,
     };
   },
 };

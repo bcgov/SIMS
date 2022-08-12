@@ -38,6 +38,7 @@
       :entityType="NoteEntityType.Institution"
       :notes="notes"
       @submitData="addNote"
+      :allowedRole="Role.InstitutionCreateNote"
     ></notes>
   </full-page-container>
 </template>
@@ -52,6 +53,7 @@ import {
   NoteBaseDTO,
   NoteEntityType,
   LayoutTemplates,
+  Role,
 } from "@/types";
 
 export default {
@@ -101,6 +103,7 @@ export default {
       NoteEntityType,
       LayoutTemplates,
       toggleNotes,
+      Role,
     };
   },
 };

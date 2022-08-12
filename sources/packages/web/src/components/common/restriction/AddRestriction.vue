@@ -11,17 +11,21 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <footer-buttons
-        primaryLabel="Add Restriction"
-        @primaryClick="addRestriction"
-        @secondaryClick="dialogClosed"
-      />
+      <check-permission-role :role="allowedRole">
+        <template #="{ notAllowed }">
+          <footer-buttons
+            primaryLabel="Add Restriction"
+            @primaryClick="addRestriction"
+            @secondaryClick="dialogClosed"
+            :disablePrimaryButton="notAllowed"
+        /></template>
+      </check-permission-role>
     </template>
   </modal-dialog-base>
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { PropType, ref } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { RestrictionService } from "@/services/RestrictionService";
 import {
@@ -29,14 +33,20 @@ import {
   useFormioUtils,
   useFormioDropdownLoader,
 } from "@/composables";
-import { AssignRestrictionDTO, RestrictionEntityType } from "@/types";
+import { AssignRestrictionDTO, RestrictionEntityType, Role } from "@/types";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+
 export const CATEGORY_KEY = "category";
 export default {
-  components: { ModalDialogBase },
+  components: { ModalDialogBase, CheckPermissionRole },
   emits: ["submitRestrictionData"],
   props: {
     entityType: {
       type: String,
+      required: true,
+    },
+    allowedRole: {
+      type: String as PropType<Role>,
       required: true,
     },
   },
@@ -107,6 +117,7 @@ export default {
       submitForm,
       addRestriction,
       formChanged,
+      Role,
     };
   },
 };
