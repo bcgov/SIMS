@@ -23,7 +23,9 @@ export default {
       if (userToken?.azp === ClientIdType.AEST) {
         return !hasRole(props.role);
       }
-      // Non aest client will come here. for eg, common components used in non AEST client like institution/student/supporting-user
+      // Non-AEST client will come here, for instance,
+      // for common components used in a non-AEST client,
+      // like institution/student/supporting-user,
       // this permission check doesn't matter.
       return false;
     });

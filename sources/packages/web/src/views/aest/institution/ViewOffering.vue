@@ -11,11 +11,11 @@
             <check-permission-role
               :role="Role.InstitutionApproveDeclineOffering"
             >
-              <template #="{ notAllowed }">
+              <template #="{ notAllowed, isAllowed }">
                 <v-btn
                   variant="outlined"
                   :disabled="notAllowed"
-                  :color="!notAllowed ? 'primary' : 'secondary'"
+                  :color="isAllowed ? 'primary' : 'secondary'"
                   @click="assessOffering(OfferingStatus.CreationDeclined)"
                   >Decline</v-btn
                 >
