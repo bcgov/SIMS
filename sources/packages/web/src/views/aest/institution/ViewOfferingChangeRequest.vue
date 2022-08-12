@@ -8,18 +8,26 @@
       >
         <template #buttons>
           <v-row class="p-0 m-0">
-            <v-btn
-              color="primary"
-              variant="outlined"
-              @click="assessOfferingChange(OfferingStatus.ChangeDeclined)"
-              >Decline reassessment</v-btn
+            <check-permission-role
+              :role="Role.InstitutionApproveDeclineOfferingChanges"
             >
-            <v-btn
-              class="ml-2"
-              color="primary"
-              @click="assessOfferingChange(OfferingStatus.Approved)"
-              >Approve reassessment</v-btn
-            >
+              <template #="{ notAllowed }">
+                <v-btn
+                  color="primary"
+                  variant="outlined"
+                  @click="assessOfferingChange(OfferingStatus.ChangeDeclined)"
+                  :disabled="notAllowed"
+                  >Decline reassessment</v-btn
+                >
+                <v-btn
+                  class="ml-2"
+                  color="primary"
+                  @click="assessOfferingChange(OfferingStatus.Approved)"
+                  :disabled="notAllowed"
+                  >Approve reassessment</v-btn
+                >
+              </template>
+            </check-permission-role>
           </v-row>
         </template>
       </header-navigator>
@@ -67,6 +75,7 @@ import {
   OfferingStatus,
   ProgramOfferingHeader,
   OfferingRelationType,
+  Role,
 } from "@/types";
 import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
@@ -76,6 +85,7 @@ import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDeta
 import OfferingChangeRequest from "@/components/aest/OfferingChangeRequest.vue";
 import OfferingApplicationBanner from "@/components/aest/OfferingApplicationBanner.vue";
 import AssessOfferingChangeModal from "@/components/aest/institution/modals/AssessOfferingChangeModal.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
@@ -83,6 +93,7 @@ export default {
     OfferingChangeRequest,
     OfferingApplicationBanner,
     AssessOfferingChangeModal,
+    CheckPermissionRole,
   },
   props: {
     programId: {
@@ -150,6 +161,7 @@ export default {
       OfferingRelationType,
       assessOfferingChangeModalRef,
       assessOfferingChange,
+      Role,
     };
   },
 };

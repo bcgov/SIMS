@@ -18,15 +18,20 @@
           hide-details
         >
         </v-text-field>
-        <v-btn
-          v-if="hasBusinessGuid || allowBasicBCeIDCreation"
-          class="ml-2"
-          color="primary"
-          @click="openNewUserModal"
-          prepend-icon="fa:fa fa-plus-circle"
-        >
-          Add new user
-        </v-btn>
+        <check-permission-role :role="Role.InstitutionAddNewUser">
+          <template #="{ notAllowed }">
+            <v-btn
+              v-if="hasBusinessGuid || allowBasicBCeIDCreation"
+              class="ml-2"
+              color="primary"
+              :disabled="notAllowed"
+              @click="openNewUserModal"
+              prepend-icon="fa:fa fa-plus-circle"
+            >
+              Add new user
+            </v-btn>
+          </template>
+        </check-permission-role>
       </v-row>
     </template>
   </body-header>
@@ -77,26 +82,42 @@
       ></Column>
       <Column header="Actions"
         ><template #body="slotProps">
-          <v-btn
-            :disabled="!slotProps.data.isActive"
-            @click="openEditUserModal(slotProps.data)"
-            variant="text"
-            :color="slotProps.data.isActive ? 'primary' : 'secondary'"
-            append-icon="mdi-pencil-outline"
-          >
-            <span class="text-decoration-underline">Edit</span>
-          </v-btn>
-          <v-btn
-            :disabled="slotProps.data.disableRemove"
-            @click="updateUserStatus(slotProps.data)"
-            variant="text"
-            :color="slotProps.data.disableRemove ? 'secondary' : 'primary'"
-            append-icon="mdi-account-remove-outline"
-          >
-            <span class="text-decoration-underline">{{
-              slotProps.data.isActive ? "Disable User" : "Enable User"
-            }}</span>
-          </v-btn>
+          <check-permission-role :role="Role.InstitutionEditUser">
+            <template #="{ notAllowed }">
+              <v-btn
+                :disabled="!slotProps.data.isActive || notAllowed"
+                @click="openEditUserModal(slotProps.data)"
+                variant="text"
+                :color="
+                  slotProps.data.isActive && !notAllowed
+                    ? 'primary'
+                    : 'secondary'
+                "
+                append-icon="mdi-pencil-outline"
+              >
+                <span class="text-decoration-underline">Edit</span>
+              </v-btn>
+            </template>
+          </check-permission-role>
+          <check-permission-role :role="Role.InstitutionEnableDisableUser">
+            <template #="{ notAllowed }">
+              <v-btn
+                :disabled="slotProps.data.disableRemove || notAllowed"
+                @click="updateUserStatus(slotProps.data)"
+                variant="text"
+                :color="
+                  slotProps.data.disableRemove || notAllowed
+                    ? 'secondary'
+                    : 'primary'
+                "
+                append-icon="mdi-account-remove-outline"
+              >
+                <span class="text-decoration-underline">{{
+                  slotProps.data.isActive ? "Disable User" : "Enable User"
+                }}</span>
+              </v-btn>
+            </template>
+          </check-permission-role>
         </template>
       </Column>
     </DataTable>
@@ -131,16 +152,18 @@ import {
   DataTableSortOrder,
   PAGINATION_LIST,
   ApiProcessError,
+  Role,
 } from "@/types";
 import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
-
 import { InstitutionUserService } from "@/services/InstitutionUserService";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     AddInstitutionUser,
     EditInstitutionUser,
     StatusChipActiveUser,
+    CheckPermissionRole,
   },
   props: {
     institutionId: {
@@ -293,6 +316,7 @@ export default {
       usersListAndCount,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
+      Role,
     };
   },
 };

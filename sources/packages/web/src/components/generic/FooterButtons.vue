@@ -11,7 +11,7 @@
       >{{ secondaryLabel }}</v-btn
     >
     <v-btn
-      :disabled="processing"
+      :disabled="processing || disablePrimaryButton"
       v-if="showPrimaryButton"
       class="ml-2"
       variant="elevated"
@@ -63,6 +63,11 @@ export default {
       type: String,
       required: true,
       default: "center",
+    },
+    disablePrimaryButton: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
   },
 };

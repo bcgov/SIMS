@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Injectable,
   Param,
@@ -15,6 +16,7 @@ import {
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -56,6 +58,7 @@ import { Response } from "express";
 import { StudentControllerService } from "..";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
+  CustomNamedError,
   defaultFileFilter,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
@@ -68,6 +71,10 @@ import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { FormNames } from "../../services/form/constants";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IdentityProviders } from "../../database/entities/identity-providers.type";
+import {
+  STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
+  STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
+} from "../../constants";
 
 /**
  * Student controller for Student Client.
@@ -104,6 +111,9 @@ export class StudentStudentsController extends BaseController {
     description:
       "There is already a student associated with the user or the request is invalid.",
   })
+  @ApiForbiddenResponse({
+    description: "User is not allowed to create a student account.",
+  })
   @RequiresStudentAccount(false)
   async create(
     @UserToken() studentUserToken: StudentUserToken,
@@ -113,6 +123,14 @@ export class StudentStudentsController extends BaseController {
     if (studentUserToken.studentId) {
       throw new UnprocessableEntityException(
         "There is already a student associated with the user.",
+      );
+    }
+
+    // Ensure that only BCSC authenticate users can have access
+    // to the student account creation.
+    if (studentUserToken.IDP !== IdentityProviders.BCSC) {
+      throw new ForbiddenException(
+        "User is not allowed to create a student account.",
       );
     }
 
@@ -126,12 +144,26 @@ export class StudentStudentsController extends BaseController {
       );
     }
 
-    const createdStudent = await this.studentService.createStudent(
-      studentUserToken,
-      submissionResult.data.data,
-    );
-
-    return { id: createdStudent.id };
+    try {
+      const createdStudent = await this.studentService.createStudent(
+        studentUserToken,
+        submissionResult.data.data,
+      );
+      return { id: createdStudent.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND:
+          case STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA:
+            // The error must be generic to not expose the cause of the failure to the student.
+            // Only Ministry should be aware of the real cause of the account creation failure for security reasons.
+            throw new UnprocessableEntityException(
+              "Error while creating the account.",
+            );
+        }
+      }
+      throw error;
+    }
   }
 
   /**

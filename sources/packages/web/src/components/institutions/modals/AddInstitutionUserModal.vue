@@ -39,12 +39,17 @@
         </institution-user-management>
       </template>
       <template #footer>
-        <footer-buttons
-          :processing="processing"
-          primaryLabel="Add user now"
-          @primaryClick="submit"
-          @secondaryClick="cancel"
-        />
+        <check-permission-role :role="Role.InstitutionAddNewUser">
+          <template #="{ notAllowed }">
+            <footer-buttons
+              :processing="processing"
+              primaryLabel="Add user now"
+              @primaryClick="submit"
+              @secondaryClick="cancel"
+              :disablePrimaryButton="notAllowed"
+            />
+          </template>
+        </check-permission-role>
       </template>
     </modal-dialog-base>
   </v-form>
@@ -62,13 +67,18 @@ import {
   LocationUserAccess,
   UserManagementModel,
   VForm,
+  Role,
 } from "@/types";
 import InstitutionUserManagement from "@/components/institutions/modals/InstitutionUserManagement.vue";
-
 import { InstitutionUserService } from "@/services/InstitutionUserService";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
-  components: { ModalDialogBase, InstitutionUserManagement },
+  components: {
+    ModalDialogBase,
+    InstitutionUserManagement,
+    CheckPermissionRole,
+  },
   props: {
     institutionId: {
       type: Number,
@@ -199,6 +209,7 @@ export default {
       initialData,
       bceidUsers,
       institutionUserManagement,
+      Role,
     };
   },
 };
