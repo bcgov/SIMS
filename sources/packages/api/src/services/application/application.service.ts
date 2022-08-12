@@ -108,6 +108,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Application and with newly submitted payload. And starts a new workflow for the newly created
    * Application.
    * a new application with status 'Submitted'
+   * If the PIR is not required, then offering is assigned to the assessment on submission
+   * and the applicant student is assessed for SIN restriction.
    * @param applicationId application id that must be updated to submitted.
    * @param auditUserId user that should be considered the one that is
    * causing the changes.

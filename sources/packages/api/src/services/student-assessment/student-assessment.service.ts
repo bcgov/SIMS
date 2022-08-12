@@ -189,10 +189,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param status status of the program information request.
 
    * @param programId program id related to the application.
-   * When the application do not have an offering, this is used
-   * to determine the associated program.
-   * @param offeringId offering id, when available, otherwise
-   * a PIR request need happen to an offering id be provided.
+   * When the application is required for PIR this program is used to assign
+   * offering on PIR confirmation.
    * @returns program info update result.
    */
   async updateProgramInfo(

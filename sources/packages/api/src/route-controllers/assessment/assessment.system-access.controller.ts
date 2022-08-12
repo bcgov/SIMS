@@ -130,8 +130,6 @@ export class AssessmentSystemAccessController extends BaseController {
    * Updates Program Information Request (PIR) related data.
    * @param assessmentId assessment id to be updated.
    * @param payload data to be updated.
-   * @returns updates the assessment offering and/or the PIR
-   * (Program Info Request) related application data.
    */
   @ApiOkResponse({
     description:
