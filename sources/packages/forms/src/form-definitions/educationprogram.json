@@ -931,7 +931,7 @@
                     "encrypted": false,
                     "redrawOn": "",
                     "customDefaultValue": "",
-                    "calculateValue": "value = data.sabcCodes.filter((d) => d.cipDigit === data.cipDigit)[0][\"sabcCode\"];",
+                    "calculateValue": "value = data.sabcCodes.find((d) => d.cipDigit === data.cipDigit)[\"sabcCode\"];",
                     "calculateServer": true,
                     "key": "sabcCodeSelected",
                     "tags": [],
@@ -989,7 +989,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "el0vre7"
+                    "id": "es2q49w"
                 },
                 {
                     "label": "Field of study code",
@@ -1031,7 +1031,7 @@
                     "redrawOn": "",
                     "clearOnHide": true,
                     "customDefaultValue": "",
-                    "calculateValue": "value = data.fieldOfStudyCodes.filter((d) => d.sabcCode === data.sabcCodeSelected && d.levelOfStudyCode === data.levelOfStudyCode)[0][\"federalStudyCode\"];",
+                    "calculateValue": "value = data.fieldOfStudyCodes.find((d) => d.sabcCode === data.sabcCodeSelected && d.levelOfStudyCode === data.levelOfStudyCode)[\"federalStudyCode\"];",
                     "calculateServer": true,
                     "allowCalculateOverride": false,
                     "validateOn": "change",
@@ -1079,7 +1079,7 @@
                     "dataGridLabel": false,
                     "addons": [],
                     "inputType": "text",
-                    "id": "e9zspn8",
+                    "id": "ek7pzh",
                     "defaultValue": ""
                 },
                 {
