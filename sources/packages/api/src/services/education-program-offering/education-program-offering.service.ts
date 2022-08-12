@@ -818,7 +818,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       requestedOffering.offeringStatus = OfferingStatus.Approved;
       precedingOffering.offeringStatus = OfferingStatus.ChangeOverwritten;
       applications = await this.getApplicationsToSubmitReassessment(offeringId);
-      console.log(applications);
 
       for (const application of applications) {
         application.currentAssessment = {
