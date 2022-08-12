@@ -10,10 +10,9 @@ export class NoteApi extends HttpBaseClient {
     note: NoteBaseDTO,
   ): Promise<void> {
     try {
-      await this.apiClient.post(
-        `notes/institution/${institutionId}`,
+      await this.postCall(
+        this.addClientRoot(`notes/institution/${institutionId}`),
         note,
-        this.addAuthHeader(),
       );
     } catch (error) {
       this.handleRequestError(error);
@@ -27,9 +26,8 @@ export class NoteApi extends HttpBaseClient {
   ): Promise<void> {
     try {
       await this.apiClient.post(
-        `notes/student/${studentId}`,
+        this.addClientRoot(`notes/student/${studentId}`),
         note,
-        this.addAuthHeader(),
       );
     } catch (error) {
       this.handleRequestError(error);
@@ -42,10 +40,9 @@ export class NoteApi extends HttpBaseClient {
     noteType?: string,
   ): Promise<NoteDTO[]> {
     const queryString = noteType ? `?noteType=${noteType}` : ``;
-    const institutionNotes = await this.getCall(
-      `notes/institution/${institutionId}${queryString}`,
+    return this.getCallTyped<NoteDTO[]>(
+      this.addClientRoot(`notes/institution/${institutionId}${queryString}`),
     );
-    return institutionNotes.data as NoteDTO[];
   }
 
   public async getStudentNotes(
@@ -53,9 +50,8 @@ export class NoteApi extends HttpBaseClient {
     noteType?: string,
   ): Promise<NoteDTO[]> {
     const queryString = noteType ? `?noteType=${noteType}` : ``;
-    const studentNotes = await this.getCall(
-      `notes/student/${studentId}${queryString}`,
+    return this.getCallTyped<NoteDTO[]>(
+      this.addClientRoot(`notes/student/${studentId}${queryString}`),
     );
-    return studentNotes.data as NoteDTO[];
   }
 }

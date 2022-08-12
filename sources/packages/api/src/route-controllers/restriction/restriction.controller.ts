@@ -35,7 +35,7 @@ import {
   AssignRestrictionDTO,
   RestrictionStatus,
 } from "./models/restriction.dto";
-import { OptionItem } from "../../types";
+import { ClientTypeBaseRoute, OptionItem } from "../../types";
 import { getIDIRUserFullName } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
@@ -44,9 +44,11 @@ import { Role } from "../../auth/roles.enum";
  * Controller for Restrictions.
  * This consists of all Rest APIs for restrictions.
  */
+@AllowAuthorizedParty(AuthorizedParties.aest)
+@Groups(UserGroups.AESTUser)
 @Controller("restrictions")
-@ApiTags("restrictions")
-export class RestrictionController extends BaseController {
+@ApiTags(`${ClientTypeBaseRoute.AEST}-restrictions`)
+export class RestrictionAESTController extends BaseController {
   constructor(
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
@@ -62,8 +64,7 @@ export class RestrictionController extends BaseController {
    * @param studentId
    * @returns Student Restrictions.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Get("/student/:studentId")
   async getStudentRestrictions(
     @Param("studentId") studentId: number,
@@ -87,8 +88,7 @@ export class RestrictionController extends BaseController {
    * REST API to provide the list of restriction categories for drop-down.
    * @returns Categories option list.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Get("/categories/options-list")
   async getCategoriesOptionsList(): Promise<OptionItem[]> {
     const categories =
@@ -104,8 +104,7 @@ export class RestrictionController extends BaseController {
    * @param restrictionCategory Selected Category from category list.
    * @returns Reasons option list.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Get("/reasons/options-list/category/:restrictionCategory")
   async getReasonsOptionsList(
     @Param("restrictionCategory") restrictionCategory: string,
@@ -126,8 +125,7 @@ export class RestrictionController extends BaseController {
    * @param studentRestrictionId
    * @returns Student restriction detail view.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Get("/student/:studentId/studentRestriction/:studentRestrictionId")
   async getStudentRestrictionDetail(
     @Param("studentId") studentId: number,
@@ -164,8 +162,7 @@ export class RestrictionController extends BaseController {
    * @param studentId
    * @param payload
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Roles(Role.StudentAddRestriction)
   @Post("/student/:studentId")
   async addStudentProvincialRestriction(
@@ -205,8 +202,7 @@ export class RestrictionController extends BaseController {
    * @param studentRestrictionId
    * @param payload
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Roles(Role.StudentResolveRestriction)
   @Patch("/student/:studentId/studentRestriction/:studentRestrictionId/resolve")
   async resolveStudentProvincialRestriction(
@@ -252,8 +248,7 @@ export class RestrictionController extends BaseController {
    * @param institutionId
    * @returns Institution Restrictions.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Get("/institution/:institutionId")
   async getInstitutionRestrictions(
     @Param("institutionId") institutionId: number,
@@ -281,8 +276,7 @@ export class RestrictionController extends BaseController {
    * @param institutionRestrictionId
    * @returns Institution restriction detail view.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Get(
     "/institution/:institutionId/institutionRestriction/:institutionRestrictionId",
   )
@@ -324,8 +318,7 @@ export class RestrictionController extends BaseController {
    * @param institutionId
    * @param payload
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Roles(Role.InstitutionAddRestriction)
   @Post("/institution/:institutionId")
   async addInstitutionProvincialRestriction(
@@ -365,8 +358,7 @@ export class RestrictionController extends BaseController {
    * @param institutionRestrictionId
    * @param payload
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Roles(Role.InstitutionResolveRestriction)
   @Patch(
     "/institution/:institutionId/institutionRestriction/:institutionRestrictionId/resolve",
@@ -411,8 +403,7 @@ export class RestrictionController extends BaseController {
    * @param institutionId
    * @returns Institution Restriction.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Get("/institution/:institutionId/status")
   async getRestrictionStatusById(
     @Param("institutionId") institutionId: number,

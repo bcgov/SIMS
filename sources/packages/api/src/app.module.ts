@@ -37,8 +37,8 @@ import {
   DynamicFormController,
   EducationProgramOfferingController,
   ATBCController,
-  NotesController,
-  RestrictionController,
+  NotesAESTController,
+  RestrictionAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -102,8 +102,8 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     DynamicFormController,
     EducationProgramOfferingController,
     ATBCController,
-    NotesController,
-    RestrictionController,
+    NotesAESTController,
+    RestrictionAESTController,
   ],
   providers: [
     AppService,

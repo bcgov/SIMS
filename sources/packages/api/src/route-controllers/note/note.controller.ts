@@ -15,13 +15,16 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { transformToNoteDTO, transformToNoteEntity } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
+import { ClientTypeBaseRoute } from "../../types";
 /**
  * Controller for Notes.
  * This consists of all Rest APIs for notes.
  */
+@AllowAuthorizedParty(AuthorizedParties.aest)
+@Groups(UserGroups.AESTUser)
 @Controller("notes")
-@ApiTags("notes")
-export class NotesController extends BaseController {
+@ApiTags(`${ClientTypeBaseRoute.AEST}-notes`)
+export class NotesAESTController extends BaseController {
   constructor(
     private readonly studentService: StudentService,
     private readonly institutionService: InstitutionService,
@@ -35,8 +38,6 @@ export class NotesController extends BaseController {
    * @param noteType Note type(General|Restriction|System Actions|Program) which is passed to filter the notes.
    * @returns Student Notes.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("/student/:studentId")
   async getStudentDetails(
     @Param("studentId") studentId: number,
@@ -55,8 +56,7 @@ export class NotesController extends BaseController {
    * @param noteType Note type(General|Restriction|System Actions|Program) which is passed to filter the notes.
    * @returns Institution Notes.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Get("/institution/:institutionId")
   async getInstitutionDetails(
     @Param("institutionId") institutionId: number,
@@ -75,8 +75,7 @@ export class NotesController extends BaseController {
    * @param institutionId
    * @param payload Note create object.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Roles(Role.InstitutionCreateNote)
   @Post("/institution/:institutionId")
   async addInstitutionNote(
@@ -97,8 +96,7 @@ export class NotesController extends BaseController {
    * @param studentId
    * @param payload Note create object.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+
   @Roles(Role.StudentCreateNote)
   @Post("/student/:studentId")
   async addStudentNote(
