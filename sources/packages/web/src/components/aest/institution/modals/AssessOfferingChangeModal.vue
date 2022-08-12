@@ -4,9 +4,15 @@
     @dialogClosed="dialogClosed"
     :title="title"
     :subTitle="subTitle"
+    maxWidth="730"
   >
     <template v-slot:content>
-      <div class="mt-2">
+      <div v-if="showWarning">
+        <span class="font-weight-bold">Note:</span> All applications that are
+        still in progress will be cancelled and the applicant must start a new
+        application.
+      </div>
+      <div class="mt-4">
         <v-form ref="offeringChangeApprovalForm">
           <v-textarea
             v-model="assessOfferingData.assessmentNotes"
@@ -48,6 +54,7 @@ export default {
     const title = ref("");
     const subTitle = ref("");
     const submitLabel = ref("");
+    const showWarning = ref(false);
 
     const dialogClosed = () => {
       resolvePromise(false);
@@ -64,11 +71,13 @@ export default {
         subTitle.value =
           "Outline the reasoning for approving this request. This will be stored in the institution profile notes.";
         submitLabel.value = "Approve now";
+        showWarning.value = true;
       } else {
         title.value = "Decline for reassessment";
         subTitle.value =
           "Outline the reasoning for declining this request. This will be stored in the institution profile notes.";
         submitLabel.value = "Decline now";
+        showWarning.value = false;
       }
 
       return showModalInternal(modalOfferingStatus);
@@ -92,6 +101,7 @@ export default {
       assessOfferingData,
       subTitle,
       submitLabel,
+      showWarning,
     };
   },
 };

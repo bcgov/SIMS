@@ -829,12 +829,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           submittedBy: auditUser,
           submittedDate: currentDate,
         } as StudentAssessment;
+
         // If the application which is affected by offering change is not completed
         // then set the application as cancelled as it cannot be re-assessed.
-        application.applicationStatus =
-          application.applicationStatus === ApplicationStatus.completed
-            ? application.applicationStatus
-            : ApplicationStatus.cancelled;
+        if (application.applicationStatus !== ApplicationStatus.completed) {
+          application.applicationStatus = ApplicationStatus.cancelled;
+        }
+
         application.modifier = auditUser;
         application.updatedAt = currentDate;
       }

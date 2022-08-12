@@ -197,7 +197,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.studentAssessments = [originalAssessment];
       application.currentAssessment = originalAssessment;
 
-      // When application and assessment is saved, assess for SIN restriction.
+      // When application and assessment are saved, assess for SIN restriction.
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         await transactionalEntityManager
           .getRepository(Application)
