@@ -16,10 +16,14 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
   async createStudentAccountApplication(
     payload: CreateStudentAccountApplicationAPIInDTO,
   ): Promise<void> {
-    await this.postCall(
-      this.addClientRoot("student-account-application"),
-      payload,
-    );
+    try {
+      await this.postCall(
+        this.addClientRoot("student-account-application"),
+        payload,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   /**
@@ -62,12 +66,16 @@ export class StudentAccountApplicationApi extends HttpBaseClient {
     studentAccountApplicationId: number,
     payload: StudentAccountApplicationApprovalAPIInDTO,
   ): Promise<void> {
-    await this.postCall(
-      this.addClientRoot(
-        `student-account-application/${studentAccountApplicationId}/approve`,
-      ),
-      payload,
-    );
+    try {
+      await this.postCall(
+        this.addClientRoot(
+          `student-account-application/${studentAccountApplicationId}/approve`,
+        ),
+        payload,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   /**

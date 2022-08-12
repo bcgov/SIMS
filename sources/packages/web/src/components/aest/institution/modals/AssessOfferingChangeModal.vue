@@ -25,11 +25,18 @@
       </div>
     </template>
     <template v-slot:footer>
-      <footer-buttons
-        :primaryLabel="submitLabel"
-        @primaryClick="submitForm"
-        @secondaryClick="dialogClosed"
-      />
+      <check-permission-role
+        :role="Role.InstitutionApproveDeclineOfferingChanges"
+      >
+        <template #="{ notAllowed }">
+          <footer-buttons
+            :primaryLabel="submitLabel"
+            @primaryClick="submitForm"
+            @secondaryClick="dialogClosed"
+            :disablePrimaryButton="notAllowed"
+          />
+        </template>
+      </check-permission-role>
     </template>
   </modal-dialog-base>
 </template>
@@ -38,11 +45,12 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { ref, reactive } from "vue";
-import { OfferingStatus, VForm } from "@/types";
+import { OfferingStatus, VForm, Role } from "@/types";
 import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
-  components: { ModalDialogBase },
+  components: { ModalDialogBase, CheckPermissionRole },
   setup() {
     const {
       showDialog,
@@ -102,6 +110,7 @@ export default {
       subTitle,
       submitLabel,
       showWarning,
+      Role,
     };
   },
 };

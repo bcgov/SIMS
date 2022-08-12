@@ -7,22 +7,30 @@
     >
       <template #buttons>
         <v-row class="p-0 m-0">
-          <v-btn
-            v-if="showActionButtons"
-            color="primary"
-            variant="outlined"
-            data-cy="declinedDesignationAgreementButton"
-            @click="updateDesignation(DesignationAgreementStatus.Declined)"
-            >Decline</v-btn
+          <check-permission-role
+            :role="Role.InstitutionApproveDeclineDesignation"
           >
-          <v-btn
-            class="ml-2"
-            color="primary"
-            v-if="showActionButtons"
-            data-cy="approvedDesignationAgreementButton"
-            @click="updateDesignation(DesignationAgreementStatus.Approved)"
-            >Approve designation</v-btn
-          >
+            <template #="{ notAllowed }">
+              <v-btn
+                v-if="showActionButtons"
+                color="primary"
+                variant="outlined"
+                data-cy="declinedDesignationAgreementButton"
+                :disabled="notAllowed"
+                @click="updateDesignation(DesignationAgreementStatus.Declined)"
+                >Decline</v-btn
+              >
+              <v-btn
+                class="ml-2"
+                color="primary"
+                :disabled="notAllowed"
+                v-if="showActionButtons"
+                data-cy="approvedDesignationAgreementButton"
+                @click="updateDesignation(DesignationAgreementStatus.Approved)"
+                >Approve designation</v-btn
+              >
+            </template>
+          </check-permission-role>
         </v-row>
       </template>
     </header-navigator>
@@ -64,11 +72,14 @@ import {
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ApproveDenyDesignation from "@/views/aest/institution/ApproveDenyDesignation.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { Role } from "@/types";
 
 export default {
   components: {
     DesignationAgreementForm,
     ApproveDenyDesignation,
+    CheckPermissionRole,
   },
   props: {
     designationId: {
@@ -213,6 +224,7 @@ export default {
       updateDesignation,
       showActionButtons,
       modelLoaded,
+      Role,
     };
   },
 };

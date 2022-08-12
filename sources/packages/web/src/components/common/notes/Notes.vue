@@ -2,16 +2,21 @@
   <full-page-container :full-width="true">
     <v-row class="m-2">
       <v-col class="category-header-large color-blue">{{ title }}</v-col>
-      <v-col
-        ><v-btn
-          @click="addNewNote()"
-          class="float-right"
-          color="primary"
-          prepend-icon="fa:far fa-edit"
-        >
-          Create new note</v-btn
-        ></v-col
-      >
+      <v-col>
+        <check-permission-role :role="allowedRole">
+          <template #="{ notAllowed }">
+            <v-btn
+              @click="addNewNote()"
+              class="float-right"
+              color="primary"
+              prepend-icon="fa:far fa-edit"
+              :disabled="notAllowed"
+            >
+              Create new note
+            </v-btn>
+          </template>
+        </check-permission-role>
+      </v-col>
     </v-row>
     <v-row class="m-2" v-if="!notes || notes.length === 0"
       ><v-col
@@ -65,6 +70,7 @@
       ref="createNotesModal"
       :entityType="entityType"
       @submitData="emitToParent"
+      :allowedRole="allowedRole"
     />
   </full-page-container>
 </template>
@@ -72,12 +78,13 @@
 <script lang="ts">
 import { useFormatters, ModalDialog } from "@/composables";
 import CreateNoteModal from "@/components/common/notes/CreateNoteModal.vue";
-import { NoteBaseDTO, NoteDTO, LayoutTemplates } from "@/types";
-import { ref } from "vue";
+import { NoteBaseDTO, NoteDTO, LayoutTemplates, Role } from "@/types";
+import { PropType, ref } from "vue";
 import "@/assets/css/notes.scss";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
-  components: { CreateNoteModal },
+  components: { CreateNoteModal, CheckPermissionRole },
   props: {
     notes: {
       type: Array,
@@ -89,6 +96,10 @@ export default {
     },
     entityType: {
       type: String,
+      required: true,
+    },
+    allowedRole: {
+      type: String as PropType<Role>,
       required: true,
     },
   },
@@ -124,6 +135,7 @@ export default {
       toggleNotes,
       showMoreNotes,
       LayoutTemplates,
+      Role,
     };
   },
 };

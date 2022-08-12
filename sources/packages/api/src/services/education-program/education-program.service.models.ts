@@ -44,6 +44,7 @@ export interface SaveEducationProgram {
   intlExchangeProgramEligibility?: string;
   programDeclaration: boolean;
   programStatus: ProgramStatus;
+  fieldOfStudyCode: number;
 }
 
 export interface EducationProgramsSummary {

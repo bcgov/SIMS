@@ -15,6 +15,7 @@
         :secondaryLabel="cancelLabel"
         @primaryClick="resolvePromise(true)"
         @secondaryClick="resolvePromise(false)"
+        :disablePrimaryButton="disablePrimaryButton"
       />
     </template>
   </modal-dialog-base>
@@ -50,6 +51,11 @@ export default {
     maxWidth: {
       type: Number,
       required: false,
+    },
+    disablePrimaryButton: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup() {

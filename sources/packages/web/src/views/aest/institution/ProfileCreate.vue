@@ -11,6 +11,7 @@
       @submitInstitutionProfile="createInstitution"
       :processing="processing"
       submitLabel="Create profile"
+      :allowedRole="Role.AESTCreateInstitution"
     ></institution-profile-form>
   </full-page-container>
 </template>
@@ -18,7 +19,7 @@
 <script lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { ClientIdType } from "@/types";
+import { ClientIdType, Role } from "@/types";
 import { AESTCreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { useSnackBar } from "@/composables";
@@ -61,6 +62,7 @@ export default {
     return {
       institutionProfileModel,
       createInstitution,
+      Role,
     };
   },
 };

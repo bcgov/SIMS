@@ -31,14 +31,19 @@
         </div>
       </v-col>
       <v-col cols="1">
-        <v-btn
-          color="primary"
-          variant="text"
-          @click="$emit('editLocation', item.id)"
-          prepend-icon="fa:fa fa-gear"
-        >
-          Edit
-        </v-btn>
+        <check-permission-role :role="Role.InstitutionEditLocationDetails">
+          <template #="{ notAllowed, isAllowed }">
+            <v-btn
+              :color="isAllowed ? 'primary' : 'secondary'"
+              variant="text"
+              :disabled="notAllowed"
+              @click="$emit('editLocation', item.id)"
+              prepend-icon="fa:fa fa-gear"
+            >
+              Edit
+            </v-btn>
+          </template>
+        </check-permission-role>
       </v-col>
     </v-row>
     <v-row>
@@ -88,17 +93,19 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 import TitleValue from "@/components/generic/TitleValue.vue";
-import { InstitutionLocationsDetails } from "@/types";
+import { InstitutionLocationsDetails, Role } from "@/types";
 import { AuthService } from "@/services/AuthService";
 import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
 import { InstitutionLocationAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   emits: ["editLocation"],
   components: {
     TitleValue,
     StatusChipDesignationAgreement,
+    CheckPermissionRole,
   },
   props: {
     institutionId: {
@@ -152,6 +159,7 @@ export default {
       addressList1,
       primaryContactList,
       clientType,
+      Role,
     };
   },
 };
