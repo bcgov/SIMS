@@ -284,7 +284,7 @@
                     "encrypted": false,
                     "redrawOn": "",
                     "customDefaultValue": "",
-                    "calculateValue": "value =\r\n{\r\n    11: \"Z\",\r\n    09: \"Z\",\r\n    52: \"Z\",\r\n    01: \"Z\",\r\n    03: \"Z\",\r\n    05: \"X\",\r\n    16: \"X\",\r\n    23: \"X\",\r\n    24: \"X\",\r\n    25: \"X\",\r\n    42: \"X\",\r\n    27: \"X\",\r\n    30: \"X\",\r\n    38: \"X\",\r\n    40: \"X\",\r\n    45: \"X\",\r\n    50: \"X\",\r\n    54: \"X\",\r\n    55: \"X\",\r\n    13: \"W\",\r\n    19: \"W\",\r\n    28: \"W\",\r\n    31: \"W\",\r\n    44: \"W\",\r\n    60: \"V\",\r\n    04: \"U\",\r\n    10: \"U\",\r\n    14: \"U\",\r\n    15: \"U\",\r\n    29: \"U\",\r\n    41: \"U\",\r\n    26: \"U\",\r\n    22: \"S\",\r\n    43: \"S\",\r\n    51: \"R\",\r\n    39: \"Q\",\r\n    12: \"P\",\r\n    21: \"P\",\r\n    46: \"P\",\r\n    47: \"P\",\r\n    48: \"P\",\r\n    49: \"P\"\r\n};",
+                    "calculateValue": "value =\r\n{\r\n    11: \"Z\",\r\n    \"09\": \"Z\",\r\n    52: \"Z\",\r\n    \"01\": \"Z\",\r\n    \"03\": \"Z\",\r\n    \"05\": \"X\",\r\n    16: \"X\",\r\n    23: \"X\",\r\n    24: \"X\",\r\n    25: \"X\",\r\n    42: \"X\",\r\n    27: \"X\",\r\n    30: \"X\",\r\n    38: \"X\",\r\n    40: \"X\",\r\n    45: \"X\",\r\n    50: \"X\",\r\n    54: \"X\",\r\n    55: \"X\",\r\n    13: \"W\",\r\n    19: \"W\",\r\n    28: \"W\",\r\n    31: \"W\",\r\n    44: \"W\",\r\n    60: \"V\",\r\n    \"04\": \"U\",\r\n    10: \"U\",\r\n    14: \"U\",\r\n    15: \"U\",\r\n    29: \"U\",\r\n    41: \"U\",\r\n    26: \"U\",\r\n    22: \"S\",\r\n    43: \"S\",\r\n    51: \"R\",\r\n    39: \"Q\",\r\n    12: \"P\",\r\n    21: \"P\",\r\n    46: \"P\",\r\n    47: \"P\",\r\n    48: \"P\",\r\n    49: \"P\"\r\n};",
                     "calculateServer": true,
                     "key": "sabcCodes",
                     "tags": [],
@@ -342,7 +342,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "e3vdgk"
+                    "id": "ej7k78of"
                 },
                 {
                     "label": "Program name",
