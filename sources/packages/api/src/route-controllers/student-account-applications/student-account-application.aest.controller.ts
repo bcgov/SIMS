@@ -185,10 +185,12 @@ export class StudentAccountApplicationAESTController extends BaseController {
   async declineStudentAccountApplication(
     @Param("studentAccountApplicationId", ParseIntPipe)
     studentAccountApplicationId: number,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
       await this.studentAccountApplicationsService.declineStudentAccountApplication(
         studentAccountApplicationId,
+        userToken.userId,
       );
     } catch (error: unknown) {
       if (
