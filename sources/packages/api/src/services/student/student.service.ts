@@ -130,9 +130,11 @@ export class StudentService extends RecordDataModelService<Student> {
   ): Promise<Student> {
     // SIN to be saved and used for comparisons.
     const studentSIN = removeWhiteSpaces(studentInfo.sinNumber);
-    const student =
-      (await this.getExistingStudentForAccountCreation(studentSIN, userInfo)) ??
-      new Student();
+    const existingStudent = await this.getExistingStudentForAccountCreation(
+      studentSIN,
+      userInfo,
+    );
+    const student = existingStudent ?? new Student();
 
     // Checks if a new user must be created or only updated.
     const user = new User();
