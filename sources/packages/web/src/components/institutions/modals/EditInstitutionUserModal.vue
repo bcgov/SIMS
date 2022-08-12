@@ -26,12 +26,17 @@
         </institution-user-management>
       </template>
       <template #footer>
-        <footer-buttons
-          :processing="processing"
-          primaryLabel="Edit user now"
-          @primaryClick="submit"
-          @secondaryClick="cancel"
-        />
+        <check-permission-role :role="Role.InstitutionEditUser">
+          <template #="{ notAllowed }">
+            <footer-buttons
+              :processing="processing"
+              primaryLabel="Edit user now"
+              @primaryClick="submit"
+              @secondaryClick="cancel"
+              :disablePrimaryButton="notAllowed"
+            />
+          </template>
+        </check-permission-role>
       </template>
     </modal-dialog-base>
   </v-form>
@@ -50,6 +55,7 @@ import {
   LocationUserAccess,
   UserManagementModel,
   VForm,
+  Role,
 } from "@/types";
 import InstitutionUserManagement from "@/components/institutions/modals/InstitutionUserManagement.vue";
 import { InstitutionUserAPIOutDTO } from "@/services/http/dto";
@@ -59,8 +65,8 @@ import {
   INSTITUTION_USER_ALREADY_EXISTS,
   LEGAL_SIGNING_AUTHORITY_EXIST,
 } from "@/constants";
-
 import { InstitutionUserService } from "@/services/InstitutionUserService";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 const submitKnownErrors = [
   INSTITUTION_USER_ALREADY_EXISTS,
@@ -70,7 +76,11 @@ const submitKnownErrors = [
 ];
 
 export default {
-  components: { ModalDialogBase, InstitutionUserManagement },
+  components: {
+    ModalDialogBase,
+    InstitutionUserManagement,
+    CheckPermissionRole,
+  },
   props: {
     institutionId: {
       type: Number,
@@ -206,6 +216,7 @@ export default {
       userInfo,
       institutionUserManagement,
       initialData,
+      Role,
     };
   },
 };

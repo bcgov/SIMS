@@ -6,22 +6,31 @@
     @submitted="submitInstitutionProfile"
   >
     <template #actions="{ submit }">
-      <footer-buttons
-        :processing="processing"
-        :primaryLabel="submitLabel"
-        @primaryClick="submit"
-        :showSecondaryButton="false"
-      />
+      <check-permission-role :role="allowedRole">
+        <template #="{ notAllowed }">
+          <footer-buttons
+            :processing="processing"
+            :primaryLabel="submitLabel"
+            @primaryClick="submit"
+            :showSecondaryButton="false"
+            :disablePrimaryButton="notAllowed"
+          />
+        </template>
+      </check-permission-role>
     </template>
   </formio-container>
 </template>
 
 <script lang="ts">
 import { useFormioDropdownLoader } from "@/composables";
-import { SetupContext } from "vue";
-import { FormIOForm, InstitutionProfileForm } from "@/types";
+import { PropType, SetupContext } from "vue";
+import { FormIOForm, InstitutionProfileForm, Role } from "@/types";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
+  components: {
+    CheckPermissionRole,
+  },
   props: {
     profileData: {
       type: Object,
@@ -35,6 +44,10 @@ export default {
     processing: {
       type: Boolean,
       default: false,
+    },
+    allowedRole: {
+      type: String as PropType<Role>,
+      required: true,
     },
   },
   emits: ["submitInstitutionProfile"],
@@ -54,6 +67,7 @@ export default {
     return {
       submitInstitutionProfile,
       formLoaded,
+      Role,
     };
   },
 };

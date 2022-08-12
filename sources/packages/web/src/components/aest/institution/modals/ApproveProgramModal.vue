@@ -12,11 +12,16 @@
       ></formio>
     </template>
     <template v-slot:footer>
-      <footer-buttons
-        primaryLabel="Approve now"
-        @primaryClick="approveProgram"
-        @secondaryClick="dialogClosed"
-      />
+      <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
+        <template #="{ notAllowed }">
+          <footer-buttons
+            primaryLabel="Approve now"
+            @primaryClick="approveProgram"
+            @secondaryClick="dialogClosed"
+            :disablePrimaryButton="notAllowed"
+          />
+        </template>
+      </check-permission-role>
     </template>
   </modal-dialog-base>
 </template>
@@ -25,10 +30,13 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { ApproveProgramAPIInDTO } from "@/services/http/dto";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { Role } from "@/types";
 
 export default {
   components: {
     ModalDialogBase,
+    CheckPermissionRole,
   },
   setup() {
     const { showDialog, showModal, resolvePromise } = useModalDialog<
@@ -58,6 +66,7 @@ export default {
       dialogClosed,
       formLoaded,
       submitForm,
+      Role,
     };
   },
 };
