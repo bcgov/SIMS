@@ -70,7 +70,7 @@ import {
 } from "@/types/contracts/StudentContract";
 import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
 import { StudentAccountApplicationService } from "@/services/StudentAccountApplicationService";
-import { AppIDPType, FormIOForm, Role } from "@/types";
+import { ApiProcessError, AppIDPType, FormIOForm, Role } from "@/types";
 import { StudentAccountApplicationApprovalAPIInDTO } from "@/services/http/dto";
 import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
@@ -141,10 +141,14 @@ export default {
             "Student account application approved and student account created.",
           );
           router.push(pendingAccountsRoute);
-        } catch {
-          snackBar.error(
-            "Unexpected error while approving the student account application.",
-          );
+        } catch (error: unknown) {
+          if (error instanceof ApiProcessError) {
+            snackBar.error(error.message);
+          } else {
+            snackBar.error(
+              "Unexpected error while approving the student account application.",
+            );
+          }
         } finally {
           processing.value = false;
         }

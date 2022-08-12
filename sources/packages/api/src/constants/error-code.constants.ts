@@ -61,3 +61,17 @@ export const STUDENT_ACCOUNT_APPLICATION_NOT_FOUND =
  */
 export const STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS =
   "STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS";
+
+/**
+ * While creating the student account, the same SIN was already associated
+ * with other students.
+ */
+export const STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND =
+  "STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND";
+/**
+ * While creating the student account, the same SIN was found associated with
+ * an existing student and the personal data (e.g. first name, last name,
+ * date of birth) does not match.
+ */
+export const STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA =
+  "STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA";

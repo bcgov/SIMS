@@ -25,3 +25,12 @@ export type CreateStudentUserInfo = Pick<
    */
   userName?: string;
 };
+
+/**
+ * Information needed to compare students data to determined
+ * if they are potentially the same student.
+ */
+export type UserInfoMatchData = Pick<
+  CreateStudentUserInfo,
+  "lastName" | "givenNames" | "birthdate"
+>;
