@@ -735,6 +735,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .getRepository(Application)
       .createQueryBuilder("application")
       .select("application.id")
+      .addSelect("application.applicationStatus")
       .addSelect("assessment.id")
       .addSelect("assessment.assessmentData IS NULL", "hasAssessmentData")
       .addSelect("application.data->>'workflowName'", "workflowName")
@@ -817,6 +818,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       requestedOffering.offeringStatus = OfferingStatus.Approved;
       precedingOffering.offeringStatus = OfferingStatus.ChangeOverwritten;
       applications = await this.getApplicationsToSubmitReassessment(offeringId);
+      console.log(applications);
 
       for (const application of applications) {
         application.currentAssessment = {
@@ -828,6 +830,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           submittedBy: auditUser,
           submittedDate: currentDate,
         } as StudentAssessment;
+        // If the application which is affected by offering change is not completed
+        // then set the application as cancelled as it cannot be re-assessed.
+        application.applicationStatus =
+          application.applicationStatus === ApplicationStatus.completed
+            ? application.applicationStatus
+            : ApplicationStatus.cancelled;
         application.modifier = auditUser;
         application.updatedAt = currentDate;
       }
@@ -903,12 +911,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           );
         promises.push(deleteAssessmentPromise);
       }
-      const startAssessmentPromise =
-        this.workflowActionsService.startApplicationAssessment(
-          application.workflowName,
-          application.currentAssessment.id,
-        );
-      promises.push(startAssessmentPromise);
+      if (application.applicationStatus === ApplicationStatus.completed) {
+        const startAssessmentPromise =
+          this.workflowActionsService.startApplicationAssessment(
+            application.workflowName,
+            application.currentAssessment.id,
+          );
+        promises.push(startAssessmentPromise);
+      }
       if (promises.length >= maxPromisesAllowed) {
         // Waits for promises to be process when it reaches maximum allowable parallel
         // count.

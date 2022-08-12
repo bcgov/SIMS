@@ -127,13 +127,10 @@ export class ApplicationAssessmentAPIOutDTO {
   appeals: DynamicAPIOutDTO<StudentAppealRequestAPIOutDTO>;
 }
 
-export class UpdateProgramInfoDTO {
+export class UpdateProgramInfoAPIInDTO {
   @IsOptional()
   @IsPositive()
   programId?: number;
-  @IsOptional()
-  @IsPositive()
-  offeringId?: number;
   @IsPositive()
   locationId: number;
   @IsEnum(ProgramInfoStatus)
