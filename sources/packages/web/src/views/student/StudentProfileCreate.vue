@@ -32,6 +32,7 @@ import { StudentService } from "@/services/StudentService";
 import { StudentAccountApplicationService } from "@/services/StudentAccountApplicationService";
 import { CreateStudentAPIInDTO } from "@/services/http/dto/Student.dto";
 import {
+  ApiProcessError,
   AppIDPType,
   FormIOForm,
   StudentProfileFormModel,
@@ -39,6 +40,7 @@ import {
 } from "@/types";
 import { AuthService } from "@/services/AuthService";
 import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
+import { STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS } from "@/constants";
 
 export default {
   components: {
@@ -96,8 +98,15 @@ export default {
             name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
           });
         }
-      } catch {
-        snackBar.error("Error while saving student.");
+      } catch (error: unknown) {
+        if (
+          error instanceof ApiProcessError &&
+          error.errorType === STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS
+        ) {
+          snackBar.error("The user has been used in a previous request.");
+        } else {
+          snackBar.error("Error while saving student.");
+        }
       } finally {
         processing.value = false;
       }
