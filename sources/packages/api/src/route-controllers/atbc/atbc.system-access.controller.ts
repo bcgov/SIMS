@@ -10,7 +10,7 @@ import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-@Controller("system-access/atbc")
+@Controller("atbc")
 @ApiTags(`${ClientTypeBaseRoute.SystemAccess}-atbc`)
 export class ATBCSystemAccessController extends BaseController {
   constructor(

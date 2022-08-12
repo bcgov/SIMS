@@ -37,6 +37,7 @@ import {
   InstitutionUserAuthService,
   InstitutionTypeService,
   StudentAccountApplicationsService,
+  InstitutionRestrictionService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -61,6 +62,8 @@ import {
   EducationProgramAESTController,
   EducationProgramControllerService,
   StudentAccountApplicationAESTController,
+  NotesAESTController,
+  RestrictionAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -85,8 +88,11 @@ import { InstitutionUserControllerService } from "./route-controllers/institutio
     ScholasticStandingAESTController,
     EducationProgramAESTController,
     StudentAccountApplicationAESTController,
+    NotesAESTController,
+    RestrictionAESTController,
   ],
   providers: [
+    InstitutionRestrictionService,
     SupportingUserService,
     ApplicationService,
     SequenceControlService,

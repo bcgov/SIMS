@@ -27,6 +27,8 @@ import {
   DisbursementReceiptService,
   ReportService,
   FederalRestrictionService,
+  ATBCService,
+  StudentService,
 } from "./services";
 import {
   ApplicationExceptionSystemAccessController,
@@ -38,6 +40,7 @@ import {
   SFASIntegrationSystemAccessController,
   ECertIntegrationSystemAccessController,
   FedRestrictionsIntegrationSystemAccessController,
+  ATBCSystemAccessController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -66,6 +69,7 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
   controllers: [
     AssessmentSystemAccessController,
     ApplicationExceptionSystemAccessController,
+    ATBCSystemAccessController,
     SINValidationSystemAccessController,
     ApplicationSystemAccessController,
     CRAIntegrationSystemAccessController,
@@ -75,6 +79,8 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
     FedRestrictionsIntegrationSystemAccessController,
   ],
   providers: [
+    ATBCService,
+    StudentService,
     ConfigService,
     WorkflowActionsService,
     WorkflowService,
