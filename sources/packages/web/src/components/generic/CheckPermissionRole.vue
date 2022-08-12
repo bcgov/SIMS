@@ -19,8 +19,7 @@ export default {
     const { hasRole } = useAuth();
 
     const notAllowed = computed(() => {
-      const userToken = AuthService.shared.userToken;
-      if (userToken?.azp === ClientIdType.AEST) {
+      if (AuthService.shared.authClientType === ClientIdType.AEST) {
         return !hasRole(props.role);
       }
       // Non-AEST client will come here, for instance,
