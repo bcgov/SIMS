@@ -284,7 +284,7 @@
                     "encrypted": false,
                     "redrawOn": "",
                     "customDefaultValue": "",
-                    "calculateValue": "value = [\r\n    {\r\n        cipDigit: \"11\",\r\n        sabcCode: \"Z\"\r\n    },\r\n    {\r\n        cipDigit: \"09\",\r\n        sabcCode: \"Z\"\r\n    },\r\n    {\r\n        cipDigit: \"52\",\r\n        sabcCode: \"Z\"\r\n    },\r\n    {\r\n        cipDigit: \"01\",\r\n        sabcCode: \"Z\"\r\n    },\r\n    {\r\n        cipDigit: \"03\",\r\n        sabcCode: \"Z\"\r\n    },\r\n    {\r\n        cipDigit: \"05\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"16\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"23\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"24\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"25\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"42\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"27\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"30\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"38\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"40\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"45\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"50\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"54\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"55\",\r\n        sabcCode: \"X\"\r\n    },\r\n    {\r\n        cipDigit: \"13\",\r\n        sabcCode: \"W\"\r\n    },\r\n    {\r\n        cipDigit: \"19\",\r\n        sabcCode: \"W\"\r\n    },\r\n    {\r\n        cipDigit: \"28\",\r\n        sabcCode: \"W\"\r\n    },\r\n    {\r\n        cipDigit: \"31\",\r\n        sabcCode: \"W\"\r\n    },\r\n    {\r\n        cipDigit: \"44\",\r\n        sabcCode: \"W\"\r\n    },\r\n    {\r\n        cipDigit: \"60\",\r\n        sabcCode: \"V\"\r\n    },\r\n    {\r\n        cipDigit: \"04\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"10\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"14\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"15\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"29\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"41\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"26\",\r\n        sabcCode: \"U\"\r\n    },\r\n    {\r\n        cipDigit: \"22\",\r\n        sabcCode: \"S\"\r\n    },\r\n    {\r\n        cipDigit: \"43\",\r\n        sabcCode: \"S\"\r\n    },\r\n    {\r\n        cipDigit: \"51\",\r\n        sabcCode: \"R\"\r\n    },\r\n    {\r\n        cipDigit: \"39\",\r\n        sabcCode: \"Q\"\r\n    },\r\n    {\r\n        cipDigit: \"12\",\r\n        sabcCode: \"P\"\r\n    },\r\n    {\r\n        cipDigit: \"21\",\r\n        sabcCode: \"P\"\r\n    },\r\n    {\r\n        cipDigit: \"46\",\r\n        sabcCode: \"P\"\r\n    },\r\n    {\r\n        cipDigit: \"47\",\r\n        sabcCode: \"P\"\r\n    },\r\n    {\r\n        cipDigit: \"48\",\r\n        sabcCode: \"P\"\r\n    },\r\n    {\r\n        cipDigit: \"49\",\r\n        sabcCode: \"P\"\r\n    }\r\n];",
+                    "calculateValue": "value =\r\n{\r\n    \"11\": \"Z\",\r\n    \"09\": \"Z\",\r\n    \"52\": \"Z\",\r\n    \"01\": \"Z\",\r\n    \"03\": \"Z\",\r\n    \"05\": \"X\",\r\n    \"16\": \"X\",\r\n    \"23\": \"X\",\r\n    \"24\": \"X\",\r\n    \"25\": \"X\",\r\n    \"42\": \"X\",\r\n    \"27\": \"X\",\r\n    \"30\": \"X\",\r\n    \"38\": \"X\",\r\n    \"40\": \"X\",\r\n    \"45\": \"X\",\r\n    \"50\": \"X\",\r\n    \"54\": \"X\",\r\n    \"55\": \"X\",\r\n    \"13\": \"W\",\r\n    \"19\": \"W\",\r\n    \"28\": \"W\",\r\n    \"31\": \"W\",\r\n    \"44\": \"W\",\r\n    \"60\": \"V\",\r\n    \"04\": \"U\",\r\n    \"10\": \"U\",\r\n    \"14\": \"U\",\r\n    \"15\": \"U\",\r\n    \"29\": \"U\",\r\n    \"41\": \"U\",\r\n    \"26\": \"U\",\r\n    \"22\": \"S\",\r\n    \"43\": \"S\",\r\n    \"51\": \"R\",\r\n    \"39\": \"Q\",\r\n    \"12\": \"P\",\r\n    \"21\": \"P\",\r\n    \"46\": \"P\",\r\n    \"47\": \"P\",\r\n    \"48\": \"P\",\r\n    \"49\": \"P\"\r\n};",
                     "calculateServer": true,
                     "key": "sabcCodes",
                     "tags": [],
@@ -342,7 +342,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "eopncid"
+                    "id": "eqbdpa"
                 },
                 {
                     "label": "Program name",
@@ -931,7 +931,7 @@
                     "encrypted": false,
                     "redrawOn": "",
                     "customDefaultValue": "",
-                    "calculateValue": "value = data.sabcCodes.find((d) => d.cipDigit === data.cipDigit)[\"sabcCode\"];",
+                    "calculateValue": "value = data.sabcCodes[data.cipDigit];",
                     "calculateServer": true,
                     "key": "sabcCodeSelected",
                     "tags": [],
@@ -989,7 +989,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "es2q49w"
+                    "id": "eh5cdwd"
                 },
                 {
                     "label": "Field of study code",
