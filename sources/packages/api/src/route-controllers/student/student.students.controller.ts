@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Injectable,
   Param,
@@ -15,6 +16,7 @@ import {
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -109,6 +111,9 @@ export class StudentStudentsController extends BaseController {
     description:
       "There is already a student associated with the user or the request is invalid.",
   })
+  @ApiForbiddenResponse({
+    description: "User is not allowed to create a student account.",
+  })
   @RequiresStudentAccount(false)
   async create(
     @UserToken() studentUserToken: StudentUserToken,
@@ -118,6 +123,14 @@ export class StudentStudentsController extends BaseController {
     if (studentUserToken.studentId) {
       throw new UnprocessableEntityException(
         "There is already a student associated with the user.",
+      );
+    }
+
+    // Ensure that only BCSC authenticate users can have access
+    // to the student account creation.
+    if (studentUserToken.IDP !== IdentityProviders.BCSC) {
+      throw new ForbiddenException(
+        "User is not allowed to create a student account.",
       );
     }
 
