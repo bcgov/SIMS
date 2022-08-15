@@ -1,11 +1,11 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
-  RestrictionSummaryDTO,
-  RestrictionDetailDTO,
-  ResolveRestrictionDTO,
-  OptionItemDto,
-  AssignRestrictionDTO,
-} from "@/types";
+  AssignRestrictionAPIInDTO,
+  OptionItemAPIOutDTO,
+  ResolveRestrictionAPIInDTO,
+  RestrictionDetailAPIOutDTO,
+  RestrictionSummaryAPIOutDTO,
+} from "@/services/http/dto";
 
 /**
  * Http API client for Restrictions.
@@ -13,22 +13,22 @@ import {
 export class RestrictionApi extends HttpBaseClient {
   public async getStudentRestrictions(
     studentId: number,
-  ): Promise<RestrictionSummaryDTO[]> {
-    return this.getCallTyped<RestrictionSummaryDTO[]>(
+  ): Promise<RestrictionSummaryAPIOutDTO[]> {
+    return this.getCallTyped<RestrictionSummaryAPIOutDTO[]>(
       this.addClientRoot(`restrictions/student/${studentId}`),
     );
   }
 
-  public async getRestrictionCategories(): Promise<OptionItemDto[]> {
-    return this.getCallTyped<OptionItemDto[]>(
+  public async getRestrictionCategories(): Promise<OptionItemAPIOutDTO[]> {
+    return this.getCallTyped<OptionItemAPIOutDTO[]>(
       this.addClientRoot("restrictions/categories/options-list"),
     );
   }
 
   public async getRestrictionReasons(
     restrictionCategory: string,
-  ): Promise<OptionItemDto[]> {
-    return this.getCallTyped<OptionItemDto[]>(
+  ): Promise<OptionItemAPIOutDTO[]> {
+    return this.getCallTyped<OptionItemAPIOutDTO[]>(
       this.addClientRoot(
         `restrictions/reasons/options-list/category/${restrictionCategory}`,
       ),
@@ -38,8 +38,8 @@ export class RestrictionApi extends HttpBaseClient {
   public async getStudentRestrictionDetail(
     studentId: number,
     studentRestrictionId: number,
-  ): Promise<RestrictionDetailDTO> {
-    return this.getCallTyped<RestrictionDetailDTO>(
+  ): Promise<RestrictionDetailAPIOutDTO> {
+    return this.getCallTyped<RestrictionDetailAPIOutDTO>(
       this.addClientRoot(
         `restrictions/student/${studentId}/studentRestriction/${studentRestrictionId}`,
       ),
@@ -48,7 +48,7 @@ export class RestrictionApi extends HttpBaseClient {
 
   public async addStudentRestriction(
     studentId: number,
-    payload: AssignRestrictionDTO,
+    payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
     try {
       await this.postCall(
@@ -64,7 +64,7 @@ export class RestrictionApi extends HttpBaseClient {
   public async resolveStudentRestriction(
     studentId: number,
     studentRestrictionId: number,
-    payload: ResolveRestrictionDTO,
+    payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
     try {
       await this.patchCall(
@@ -81,8 +81,8 @@ export class RestrictionApi extends HttpBaseClient {
 
   public async getInstitutionRestrictions(
     institutionId: number,
-  ): Promise<RestrictionSummaryDTO[]> {
-    return this.getCallTyped<RestrictionSummaryDTO[]>(
+  ): Promise<RestrictionSummaryAPIOutDTO[]> {
+    return this.getCallTyped<RestrictionSummaryAPIOutDTO[]>(
       this.addClientRoot(`restrictions/institution/${institutionId}`),
     );
   }
@@ -90,8 +90,8 @@ export class RestrictionApi extends HttpBaseClient {
   public async getInstitutionRestrictionDetail(
     institutionId: number,
     institutionRestrictionId: number,
-  ): Promise<RestrictionDetailDTO> {
-    return this.getCallTyped<RestrictionDetailDTO>(
+  ): Promise<RestrictionDetailAPIOutDTO> {
+    return this.getCallTyped<RestrictionDetailAPIOutDTO>(
       this.addClientRoot(
         `restrictions/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}`,
       ),
@@ -100,9 +100,9 @@ export class RestrictionApi extends HttpBaseClient {
 
   public async addInstitutionRestriction(
     institutionId: number,
-    payload: AssignRestrictionDTO,
+    payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
-    await this.postCall<AssignRestrictionDTO>(
+    await this.postCall<AssignRestrictionAPIInDTO>(
       this.addClientRoot(`restrictions/institution/${institutionId}`),
       payload,
     );
@@ -111,9 +111,9 @@ export class RestrictionApi extends HttpBaseClient {
   public async resolveInstitutionRestriction(
     institutionId: number,
     institutionRestrictionId: number,
-    payload: ResolveRestrictionDTO,
+    payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
-    await this.patchCall<ResolveRestrictionDTO>(
+    await this.patchCall<ResolveRestrictionAPIInDTO>(
       this.addClientRoot(
         `restrictions/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}/resolve`,
       ),

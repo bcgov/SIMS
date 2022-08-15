@@ -97,15 +97,17 @@ import {
   RestrictionStatus,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
-  AssignRestrictionDTO,
-  RestrictionDetailDTO,
-  ResolveRestrictionDTO,
   RestrictionEntityType,
   LayoutTemplates,
   Role,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import {
+  AssignRestrictionAPIInDTO,
+  ResolveRestrictionAPIInDTO,
+  RestrictionDetailAPIOutDTO,
+} from "@/services/http/dto";
 
 export default {
   components: {
@@ -152,11 +154,11 @@ export default {
       await viewRestriction.value.showModal();
     };
 
-    const resolveRestriction = async (data: RestrictionDetailDTO) => {
+    const resolveRestriction = async (data: RestrictionDetailAPIOutDTO) => {
       try {
         const payload = {
           noteDescription: data.resolutionNote,
-        } as ResolveRestrictionDTO;
+        } as ResolveRestrictionAPIInDTO;
         await RestrictionService.shared.resolveStudentRestriction(
           props.studentId,
           data.restrictionId,
@@ -175,7 +177,7 @@ export default {
       await addRestriction.value.showModal();
     };
 
-    const createNewRestriction = async (data: AssignRestrictionDTO) => {
+    const createNewRestriction = async (data: AssignRestrictionAPIInDTO) => {
       try {
         await RestrictionService.shared.addStudentRestriction(
           props.studentId,

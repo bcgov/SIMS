@@ -33,8 +33,9 @@ import {
   useFormioUtils,
   useFormioDropdownLoader,
 } from "@/composables";
-import { AssignRestrictionDTO, RestrictionEntityType, Role } from "@/types";
+import { RestrictionEntityType, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { AssignRestrictionAPIInDTO } from "@/services/http/dto";
 
 export const CATEGORY_KEY = "category";
 export default {
@@ -98,7 +99,7 @@ export default {
     const submitForm = async () => {
       return formData.value.submit();
     };
-    const submitRestriction = async (data: AssignRestrictionDTO) => {
+    const submitRestriction = async (data: AssignRestrictionAPIInDTO) => {
       context.emit("submitRestrictionData", data);
     };
     const addRestriction = async () => {

@@ -1,11 +1,11 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
-  RestrictionSummaryDTO,
-  RestrictionDetailDTO,
-  ResolveRestrictionDTO,
-  OptionItemDto,
-  AssignRestrictionDTO,
-} from "@/types";
+  AssignRestrictionAPIInDTO,
+  OptionItemAPIOutDTO,
+  ResolveRestrictionAPIInDTO,
+  RestrictionDetailAPIOutDTO,
+  RestrictionSummaryAPIOutDTO,
+} from "@/services/http/dto";
 
 /**
  * Client service layer for Restrictions.
@@ -20,33 +20,33 @@ export class RestrictionService {
 
   public async getStudentRestrictions(
     studentId: number,
-  ): Promise<RestrictionSummaryDTO[]> {
+  ): Promise<RestrictionSummaryAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getStudentRestrictions(studentId);
   }
 
   public async getStudentRestrictionDetail(
     studentId: number,
     studentRestrictionId: number,
-  ): Promise<RestrictionDetailDTO> {
+  ): Promise<RestrictionDetailAPIOutDTO> {
     return ApiClient.RestrictionApi.getStudentRestrictionDetail(
       studentId,
       studentRestrictionId,
     );
   }
 
-  public async getRestrictionCategories(): Promise<OptionItemDto[]> {
+  public async getRestrictionCategories(): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getRestrictionCategories();
   }
 
   public async getRestrictionReasons(
     restrictionCategory: string,
-  ): Promise<OptionItemDto[]> {
+  ): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getRestrictionReasons(restrictionCategory);
   }
 
   public async addStudentRestriction(
     studentId: number,
-    payload: AssignRestrictionDTO,
+    payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
     await ApiClient.RestrictionApi.addStudentRestriction(studentId, payload);
   }
@@ -54,7 +54,7 @@ export class RestrictionService {
   public async resolveStudentRestriction(
     studentId: number,
     studentRestrictionId: number,
-    payload: ResolveRestrictionDTO,
+    payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
     await ApiClient.RestrictionApi.resolveStudentRestriction(
       studentId,
@@ -65,14 +65,14 @@ export class RestrictionService {
 
   public async getInstitutionRestrictions(
     institutionId: number,
-  ): Promise<RestrictionSummaryDTO[]> {
+  ): Promise<RestrictionSummaryAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getInstitutionRestrictions(institutionId);
   }
 
   public async getInstitutionRestrictionDetail(
     institutionId: number,
     institutionRestrictionId: number,
-  ): Promise<RestrictionDetailDTO> {
+  ): Promise<RestrictionDetailAPIOutDTO> {
     return ApiClient.RestrictionApi.getInstitutionRestrictionDetail(
       institutionId,
       institutionRestrictionId,
@@ -81,7 +81,7 @@ export class RestrictionService {
 
   public async addInstitutionRestriction(
     institutionId: number,
-    payload: AssignRestrictionDTO,
+    payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
     await ApiClient.RestrictionApi.addInstitutionRestriction(
       institutionId,
@@ -92,7 +92,7 @@ export class RestrictionService {
   public async resolveInstitutionRestriction(
     institutionId: number,
     institutionRestrictionId: number,
-    payload: ResolveRestrictionDTO,
+    payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
     await ApiClient.RestrictionApi.resolveInstitutionRestriction(
       institutionId,
