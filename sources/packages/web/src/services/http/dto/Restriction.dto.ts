@@ -1,4 +1,4 @@
-import { RestrictionType } from "@/types";
+import { RestrictionNotificationType, RestrictionType } from "@/types";
 
 /**
  * Base DTO for restriction
@@ -43,4 +43,19 @@ export interface ResolveRestrictionAPIInDTO {
  */
 export interface AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
   restrictionId: number;
+}
+
+/**
+ * Student restriction DTO.
+ * This object is returned by controller.
+ */
+export interface StudentRestrictionAPIOutDTO {
+  /**
+   * code is the restriction code.
+   */
+  code: string;
+  /**
+   * type is the notification type.
+   */
+  type: RestrictionNotificationType;
 }

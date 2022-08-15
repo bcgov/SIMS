@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsPositive } from "class-validator";
+import { IsOptional, IsPositive } from "class-validator";
+import { RestrictionNotificationType } from "../../../database/entities/restriction-notification-type.type";
 import { RestrictionType } from "../../../database/entities";
 
 /**
@@ -35,7 +36,7 @@ export class RestrictionDetailAPIOutDTO extends RestrictionSummaryAPIOutDTO {
  * DTO to resolve restriction to a student/institution.
  */
 export class ResolveRestrictionAPIInDTO {
-  @IsNotEmpty()
+  @IsOptional()
   noteDescription: string;
 }
 
@@ -52,4 +53,19 @@ export class AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
  */
 export class RestrictionStatusAPIOutDTO {
   isActive: boolean;
+}
+
+/**
+ * DTO for student restriction.
+ * This object is returned by controller.
+ */
+export class StudentRestrictionAPIOutDTO {
+  /**
+   * code is the restriction code.
+   */
+  code: string;
+  /**
+   * type is the notification type.
+   */
+  type: RestrictionNotificationType;
 }

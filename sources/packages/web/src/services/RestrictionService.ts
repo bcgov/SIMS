@@ -5,6 +5,7 @@ import {
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
   RestrictionSummaryAPIOutDTO,
+  StudentRestrictionAPIOutDTO,
 } from "@/services/http/dto";
 
 /**
@@ -99,5 +100,13 @@ export class RestrictionService {
       institutionRestrictionId,
       payload,
     );
+  }
+
+  /**
+   * API client to call the student restriction rest API.
+   * @returns student restriction(wrapped by promise).
+   */
+  async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
+    return ApiClient.RestrictionApi.getStudentRestriction();
   }
 }

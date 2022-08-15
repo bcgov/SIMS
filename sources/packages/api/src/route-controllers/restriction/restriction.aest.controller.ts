@@ -46,8 +46,8 @@ import { Role } from "../../auth/roles.enum";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 
 /**
- * Controller for Restrictions.
- * This consists of all Rest APIs for restrictions.
+ * Controller for AEST Restrictions.
+ * This consists of all Rest APIs for AEST restrictions.
  */
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)

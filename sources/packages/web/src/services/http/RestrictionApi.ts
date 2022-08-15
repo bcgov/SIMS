@@ -5,6 +5,7 @@ import {
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
   RestrictionSummaryAPIOutDTO,
+  StudentRestrictionAPIOutDTO,
 } from "@/services/http/dto";
 
 /**
@@ -118,6 +119,16 @@ export class RestrictionApi extends HttpBaseClient {
         `restrictions/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}/resolve`,
       ),
       payload,
+    );
+  }
+
+  /**
+   * API client to call the student restriction rest API.
+   * @returns student restriction(wrapped by promise).
+   */
+  async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
+    return this.getCallTyped<StudentRestrictionAPIOutDTO[]>(
+      this.addClientRoot("restrictions"),
     );
   }
 }

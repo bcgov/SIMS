@@ -38,6 +38,7 @@ import {
   StudentControllerService,
   EducationProgramStudentsController,
   StudentAccountApplicationStudentsController,
+  RestrictionStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -54,6 +55,7 @@ import { StudentAccountApplicationsService } from "./services/student-account-ap
     AssessmentStudentsController,
     EducationProgramStudentsController,
     StudentAccountApplicationStudentsController,
+    RestrictionStudentsController,
   ],
   providers: [
     ApplicationService,

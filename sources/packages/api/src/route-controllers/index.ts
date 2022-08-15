@@ -19,6 +19,7 @@ export * from "./esdc-integration/e-cert-integration.system-access.controller";
 export * from "./esdc-integration/fed-restrictions-integration.system-access.controller";
 export * from "./note/note.aest.controller";
 export * from "./restriction/restriction.aest.controller";
+export * from "./restriction/restriction.students.controller";
 export * from "./designation-agreement/designation-agreement.institutions.controller";
 export * from "./supporting-user/supporting-user.aest.controller";
 export * from "./designation-agreement/designation-agreement.controller.service";

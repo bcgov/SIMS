@@ -34,9 +34,7 @@ import {
   ATBCService,
   FormService,
   GCNotifyActionsService,
-  StudentAccountApplicationsService,
   StudentFileService,
-  StudentRestrictionService,
   StudentService,
 } from "../../services";
 import BaseController from "../BaseController";
@@ -45,7 +43,6 @@ import {
   CreateStudentAPIInDTO,
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
-  StudentRestrictionAPIOutDTO,
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
 } from "./models/student.dto";
@@ -93,8 +90,6 @@ export class StudentStudentsController extends BaseController {
     private readonly studentService: StudentService,
     private readonly formService: FormService,
     private readonly atbcService: ATBCService,
-    private readonly studentRestrictionService: StudentRestrictionService,
-    private readonly studentAccountApplicationsService: StudentAccountApplicationsService,
   ) {
     super();
   }
@@ -406,27 +401,6 @@ export class StudentStudentsController extends BaseController {
       studentUserToken.studentId,
       pagination,
     );
-  }
-
-  /**
-   * GET API which returns student restriction details.
-   * @param studentToken student token.
-   * @returns Student restriction code and notification type, if any.
-   */
-  @Get("restriction")
-  async getStudentRestrictions(
-    @UserToken() studentToken: StudentUserToken,
-  ): Promise<StudentRestrictionAPIOutDTO[]> {
-    const studentRestrictions =
-      await this.studentRestrictionService.getStudentRestrictionsById(
-        studentToken.studentId,
-        true,
-      );
-
-    return studentRestrictions?.map((studentRestriction) => ({
-      code: studentRestriction.restriction.restrictionCode,
-      type: studentRestriction.restriction.notificationType,
-    }));
   }
 
   /**
