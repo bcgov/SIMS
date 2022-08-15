@@ -51,19 +51,6 @@ export function getTotalDisbursementAmount(
 }
 
 /**
- * Field of study is present on the first 2 numbers of the CIP code.
- * The format is enforced to have the first 2 characters as numbers.
- * @param cipCode CIP code to extract the field of study.
- * @returns field of study extracted from the CIP code.
- */
-export function getFieldOfStudyFromCIPCode(cipCode: string): number | null {
-  if (cipCode?.length >= FIELD_OF_STUDY_LENGTH) {
-    return +cipCode.substr(0, FIELD_OF_STUDY_LENGTH);
-  }
-  return null;
-}
-
-/**
  * Round a number or string to the nearest integer (0.5 rounds up).
  * @param decimalValue decimal value as number or string.
  * @returns if a valid number, returns the rounded number, otherwise null.
