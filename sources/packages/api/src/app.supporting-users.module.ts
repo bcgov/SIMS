@@ -17,6 +17,7 @@ import {
   GCNotifyActionsService,
   StudentRestrictionService,
   RestrictionService,
+  EducationProgramOfferingService,
 } from "./services";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -43,6 +44,7 @@ import { LoggerModule } from "./logger/logger.module";
     GCNotifyActionsService,
     RestrictionService,
     StudentRestrictionService,
+    EducationProgramOfferingService,
   ],
 })
 export class AppSupportingUsersModule {}
