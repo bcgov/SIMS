@@ -14,3 +14,4 @@ export * from "@/services/http/dto/ConfirmationOfEnrolment.dto";
 export * from "@/services/http/dto/EducationProgram.dto";
 export * from "@/services/http/dto/ProgramInfoRequest.dto";
 export * from "@/services/http/dto/StudentAccountApplication.dto";
+export * from "@/services/http/dto/Note.dto";

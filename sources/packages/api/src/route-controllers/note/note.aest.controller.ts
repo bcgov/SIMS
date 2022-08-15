@@ -4,7 +4,7 @@ import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { NoteType } from "../../database/entities";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { NoteDTO, NoteBaseDTO } from "./models/note.dto";
+import { NoteAPIOutDTO, NoteBaseAPIInDTO } from "./models/note.dto";
 import {
   AllowAuthorizedParty,
   UserToken,
@@ -42,7 +42,7 @@ export class NotesAESTController extends BaseController {
   async getStudentDetails(
     @Param("studentId") studentId: number,
     @Query("noteType") noteType: string,
-  ): Promise<NoteDTO[]> {
+  ): Promise<NoteAPIOutDTO[]> {
     const studentNotes = await this.studentService.getStudentNotes(
       studentId,
       noteType as NoteType,
@@ -61,7 +61,7 @@ export class NotesAESTController extends BaseController {
   async getInstitutionDetails(
     @Param("institutionId") institutionId: number,
     @Query("noteType") noteType: string,
-  ): Promise<NoteDTO[]> {
+  ): Promise<NoteAPIOutDTO[]> {
     const institutionNotes = await this.institutionService.getInstitutionNotes(
       institutionId,
       noteType as NoteType,
@@ -81,7 +81,7 @@ export class NotesAESTController extends BaseController {
   async addInstitutionNote(
     @UserToken() userToken: IUserToken,
     @Param("institutionId") institutionId: number,
-    @Body() payload: NoteBaseDTO,
+    @Body() payload: NoteBaseAPIInDTO,
   ): Promise<void> {
     const institutionNote = transformToNoteEntity(payload, userToken.userId);
     await this.institutionService.saveInstitutionNote(
@@ -102,7 +102,7 @@ export class NotesAESTController extends BaseController {
   async addStudentNote(
     @UserToken() userToken: IUserToken,
     @Param("studentId") studentId: number,
-    @Body() payload: NoteBaseDTO,
+    @Body() payload: NoteBaseAPIInDTO,
   ): Promise<void> {
     const studentNote = transformToNoteEntity(payload, userToken.userId);
     await this.studentService.saveStudentNote(studentId, studentNote);

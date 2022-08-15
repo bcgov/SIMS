@@ -78,10 +78,11 @@
 <script lang="ts">
 import { useFormatters, ModalDialog } from "@/composables";
 import CreateNoteModal from "@/components/common/notes/CreateNoteModal.vue";
-import { NoteBaseDTO, NoteDTO, LayoutTemplates, Role } from "@/types";
+import { LayoutTemplates, Role } from "@/types";
 import { PropType, ref } from "vue";
 import "@/assets/css/notes.scss";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { NoteAPIOutDTO, NoteBaseAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: { CreateNoteModal, CheckPermissionRole },
@@ -111,15 +112,15 @@ export default {
     const addNewNote = async () => {
       await createNotesModal.value.showModal();
     };
-    const emitToParent = async (data: NoteBaseDTO) => {
+    const emitToParent = async (data: NoteBaseAPIInDTO) => {
       context.emit("submitData", data);
     };
 
-    const toggleNotes = (item: NoteDTO) => {
+    const toggleNotes = (item: NoteAPIOutDTO) => {
       item.showMore = !item.showMore;
     };
 
-    const showMoreNotes = (item: NoteDTO) => {
+    const showMoreNotes = (item: NoteAPIOutDTO) => {
       return (
         item.description && item.description.length > 150 && !item.showMore
       );

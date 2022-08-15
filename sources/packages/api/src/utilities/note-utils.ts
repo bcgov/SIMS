@@ -1,15 +1,15 @@
 import {
-  NoteDTO,
-  NoteBaseDTO,
+  NoteAPIOutDTO,
+  NoteBaseAPIInDTO,
 } from "../route-controllers/note/models/note.dto";
 import { Note, User } from "../database/entities";
 
 /**
  * Util to transform note entity model to DTO.
  * @param Entity
- * @returns NoteDTO
+ * @returns notes
  */
-export const transformToNoteDTO = (note: Note): NoteDTO => {
+export const transformToNoteDTO = (note: Note): NoteAPIOutDTO => {
   return {
     noteType: note.noteType,
     description: note.description,
@@ -22,10 +22,10 @@ export const transformToNoteDTO = (note: Note): NoteDTO => {
 /**
  * Util to transform note entity model to DTO.
  * @param Entity
- * @returns NoteDTO
+ * @returns notes
  */
 export const transformToNoteEntity = (
-  note: NoteBaseDTO,
+  note: NoteBaseAPIInDTO,
   userId: number,
 ): Note => {
   return {

@@ -1,5 +1,5 @@
 import ApiClient from "@/services/http/ApiClient";
-import { NoteDTO, NoteBaseDTO } from "@/types/contracts/NoteContract";
+import { NoteAPIOutDTO, NoteBaseAPIInDTO } from "@/services/http/dto";
 
 /**
  * Client service layer for Notes.
@@ -14,7 +14,7 @@ export class NoteService {
 
   async addInstitutionNote(
     institutionId: number,
-    note: NoteBaseDTO,
+    note: NoteBaseAPIInDTO,
   ): Promise<void> {
     await ApiClient.NoteApi.addInstitutionNote(institutionId, note);
   }
@@ -22,18 +22,21 @@ export class NoteService {
   public async getInstitutionNotes(
     institutionId: number,
     noteType?: string,
-  ): Promise<NoteDTO[]> {
+  ): Promise<NoteAPIOutDTO[]> {
     return ApiClient.NoteApi.getInstitutionNotes(institutionId, noteType);
   }
 
-  async addStudentNote(studentId: number, note: NoteBaseDTO): Promise<void> {
+  async addStudentNote(
+    studentId: number,
+    note: NoteBaseAPIInDTO,
+  ): Promise<void> {
     await ApiClient.NoteApi.addStudentNote(studentId, note);
   }
 
   public async getStudentNotes(
     studentId: number,
     noteType?: string,
-  ): Promise<NoteDTO[]> {
+  ): Promise<NoteAPIOutDTO[]> {
     return ApiClient.NoteApi.getStudentNotes(studentId, noteType);
   }
 }
