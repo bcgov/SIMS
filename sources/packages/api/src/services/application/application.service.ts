@@ -206,7 +206,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         // If the offering will be set in the assessment check for possible SIN restrictions.
         if (originalAssessment.offering) {
           await this.studentRestrictionService.assessSINRestrictionForOfferingId(
-            application.student.id,
+            studentId,
             originalAssessment.offering.id,
             application.id,
             auditUserId,
