@@ -12,8 +12,9 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
   DisbursementScheduleService,
-  EducationProgramOfferingService,
   StudentAssessmentService,
+  InstitutionLocationService,
+  EducationProgramService,
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -29,7 +30,7 @@ import {
   UpdateAssessmentDataDTO,
   UpdateAssessmentStatusDTO,
   UpdateAssessmentWorkflowIdDTO,
-  UpdateProgramInfoDTO,
+  UpdateProgramInfoAPIInDTO,
 } from "./models/assessment.system-access.dto";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
@@ -42,9 +43,10 @@ import { IUserToken } from "../../auth/userToken.interface";
 export class AssessmentSystemAccessController extends BaseController {
   constructor(
     private readonly assessmentService: StudentAssessmentService,
-    private readonly offeringService: EducationProgramOfferingService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly assessmentControllerService: AssessmentControllerService,
+    private readonly locationService: InstitutionLocationService,
+    private readonly programService: EducationProgramService,
   ) {
     super();
   }
@@ -128,16 +130,13 @@ export class AssessmentSystemAccessController extends BaseController {
    * Updates Program Information Request (PIR) related data.
    * @param assessmentId assessment id to be updated.
    * @param payload data to be updated.
-   * @returns updates the assessment offering and/or the PIR
-   * (Program Info Request) related application data.
    */
   @ApiOkResponse({
     description:
       "Assessment offering and/or the PIR (Program Info Request) related application data updated.",
   })
   @ApiUnprocessableEntityResponse({
-    description:
-      "Not able to find the offering associated with the program and location.",
+    description: "Location not valid or program not valid for given location",
   })
   @ApiNotFoundResponse({
     description: "Assessment id was not found.",
@@ -145,22 +144,28 @@ export class AssessmentSystemAccessController extends BaseController {
   @Patch(":id/program-info")
   async updateProgramInfoRequest(
     @Param("id") assessmentId: number,
-    @Body() payload: UpdateProgramInfoDTO,
+    @Body() payload: UpdateProgramInfoAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    if (payload.offeringId) {
-      const offering = await this.offeringService.getProgramOffering(
-        payload.locationId,
+    const location = await this.locationService.getInstitutionLocationById(
+      payload.locationId,
+    );
+    if (!location) {
+      throw new UnprocessableEntityException("Location not valid.");
+    }
+    // Validating the program when program id is present.
+    // Program id may not be available when PIR is required.
+    if (payload.programId) {
+      const program = await this.programService.getInstitutionProgram(
         payload.programId,
-        payload.offeringId,
+        location.institution.id,
       );
-      if (!offering) {
+      if (!program) {
         throw new UnprocessableEntityException(
-          "Not able to find the offering associated with the program and location.",
+          "Program not valid for given location.",
         );
       }
     }
-
     try {
       await this.assessmentService.updateProgramInfo(
         assessmentId,
@@ -168,7 +173,6 @@ export class AssessmentSystemAccessController extends BaseController {
         payload.locationId,
         payload.status,
         payload.programId,
-        payload.offeringId,
       );
     } catch (error) {
       if (error.name === ASSESSMENT_NOT_FOUND) {

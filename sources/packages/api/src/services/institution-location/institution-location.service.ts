@@ -20,16 +20,16 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
 
   async getInstitutionLocationById(id: number): Promise<InstitutionLocation> {
     return this.repo
-      .createQueryBuilder("institution_location")
+      .createQueryBuilder("location")
       .select([
-        "institution_location.name",
-        "institution_location.data",
-        "institution_location.id",
+        "location.name",
+        "location.data",
+        "location.id",
         "institution.id",
       ])
-      .leftJoin("institution_location.institution", "institution")
-      .where("institution_location.id = :id", { id })
-      .getOneOrFail();
+      .innerJoin("location.institution", "institution")
+      .where("location.id = :id", { id })
+      .getOne();
   }
 
   async saveLocation(

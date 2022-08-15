@@ -27,8 +27,6 @@ import {
   DisbursementReceiptService,
   ReportService,
   FederalRestrictionService,
-  ATBCService,
-  StudentService,
 } from "./services";
 import {
   ApplicationExceptionSystemAccessController,
@@ -125,6 +123,9 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
     FedRestrictionProcessingService,
     FederalRestrictionService,
     FedRestrictionIntegrationService,
+    InstitutionLocationService,
+    DesignationAgreementLocationService,
+    EducationProgramService,
   ],
 })
 export class AppSystemAccessModule {}
