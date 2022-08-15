@@ -12,8 +12,8 @@ import {
   Institution,
 } from "../../database/entities";
 import {
-  AssignRestrictionDTO,
-  ResolveRestrictionDTO,
+  AssignRestrictionAPIInDTO,
+  ResolveRestrictionAPIInDTO,
 } from "../../route-controllers/restriction/models/restriction.dto";
 import { CustomNamedError } from "../../utilities";
 
@@ -104,7 +104,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
   async addProvincialRestriction(
     institutionId: number,
     userId: number,
-    assignRestrictionDTO: AssignRestrictionDTO,
+    assignRestrictionDTO: AssignRestrictionAPIInDTO,
   ): Promise<InstitutionRestriction> {
     const institutionRestriction = new InstitutionRestriction();
     institutionRestriction.institution = { id: institutionId } as Institution;
@@ -136,7 +136,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
     institutionId: number,
     institutionRestrictionId: number,
     userId: number,
-    resolveRestrictionDTO: ResolveRestrictionDTO,
+    resolveRestrictionDTO: ResolveRestrictionAPIInDTO,
   ): Promise<InstitutionRestriction> {
     const institutionRestrictionEntity = await this.repo.findOne({
       where: {

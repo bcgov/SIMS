@@ -1,9 +1,10 @@
+import { IsNotEmpty, IsPositive } from "class-validator";
 import { RestrictionType } from "../../../database/entities";
 
 /**
  * Base DTO for restriction
  */
-export interface RestrictionBaseDTO {
+export class RestrictionBaseDTO {
   restrictionId: number;
   restrictionType: RestrictionType;
   restrictionCategory: string;
@@ -12,18 +13,18 @@ export interface RestrictionBaseDTO {
 }
 
 /**
- * DTO interface for student/institution restriction summary.
+ * DTO class for student/institution restriction summary.
  */
-export interface RestrictionSummaryDTO extends RestrictionBaseDTO {
+export class RestrictionSummaryAPIOutDTO extends RestrictionBaseDTO {
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;
 }
 
 /**
- * DTO interface for student/institution restriction details.
+ * DTO class for student/institution restriction details.
  */
-export interface RestrictionDetailDTO extends RestrictionSummaryDTO {
+export class RestrictionDetailAPIOutDTO extends RestrictionSummaryAPIOutDTO {
   createdBy: string;
   updatedBy: string;
   restrictionNote: string;
@@ -33,20 +34,22 @@ export interface RestrictionDetailDTO extends RestrictionSummaryDTO {
 /**
  * DTO to resolve restriction to a student/institution.
  */
-export interface ResolveRestrictionDTO {
+export class ResolveRestrictionAPIInDTO {
+  @IsNotEmpty()
   noteDescription: string;
 }
 
 /**
  * DTO to add restriction to a student/institution.
  */
-export interface AssignRestrictionDTO extends ResolveRestrictionDTO {
+export class AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
+  @IsPositive()
   restrictionId: number;
 }
 
 /**
  * DTO to identify if a student/institution has valid restriction assigned.
  */
-export interface RestrictionStatus {
+export class RestrictionStatusAPIOutDTO {
   isActive: boolean;
 }
