@@ -25,7 +25,7 @@ export class NoteApi extends HttpBaseClient {
     note: NoteBaseAPIInDTO,
   ): Promise<void> {
     try {
-      await this.apiClient.post(
+      await this.postCall(
         this.addClientRoot(`notes/student/${studentId}`),
         note,
       );
