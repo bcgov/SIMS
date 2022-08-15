@@ -54,6 +54,7 @@ import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
+import { EducationProgramOfferingBenchmarkController } from "./route-controllers/education-program-offering/bulk-upload-benchmark/education-program-offering-benchmark.controller";
 
 @Module({
   imports: [
@@ -104,6 +105,7 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     ATBCController,
     NotesController,
     RestrictionController,
+    EducationProgramOfferingBenchmarkController,
   ],
   providers: [
     AppService,
