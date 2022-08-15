@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 import { DatabaseModule } from "./database/database.module";
 import {
+  ATBCService,
+  StudentService,
   ApplicationExceptionService,
   ConfigService,
   DisbursementScheduleService,
@@ -27,6 +29,9 @@ import {
   DisbursementReceiptService,
   ReportService,
   FederalRestrictionService,
+  InstitutionLocationService,
+  DesignationAgreementLocationService,
+  EducationProgramService,
 } from "./services";
 import {
   ApplicationExceptionSystemAccessController,
