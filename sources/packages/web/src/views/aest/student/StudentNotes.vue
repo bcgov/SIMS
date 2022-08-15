@@ -50,11 +50,11 @@ import { NoteService } from "@/services/NoteService";
 import { useFormatters, useSnackBar } from "@/composables";
 import {
   StudentNoteType,
-  NoteBaseDTO,
   NoteEntityType,
   LayoutTemplates,
   Role,
 } from "@/types";
+import { NoteBaseAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: { Notes },
@@ -79,7 +79,7 @@ export default {
       );
     };
 
-    const addNote = async (data: NoteBaseDTO) => {
+    const addNote = async (data: NoteBaseAPIInDTO) => {
       try {
         await NoteService.shared.addStudentNote(props.studentId, data);
         await filterNotes(filteredNoteType.value);

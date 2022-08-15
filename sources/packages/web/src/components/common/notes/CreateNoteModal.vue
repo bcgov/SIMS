@@ -29,13 +29,13 @@ import { PropType, ref } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useFormioUtils } from "@/composables";
 import {
-  NoteBaseDTO,
   InstitutionNoteType,
   StudentNoteType,
   NoteEntityType,
   Role,
 } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { NoteBaseAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: { ModalDialogBase, CheckPermissionRole },
@@ -77,7 +77,7 @@ export default {
     const submitForm = async () => {
       return formData.value.submit();
     };
-    const submitNote = async (data: NoteBaseDTO) => {
+    const submitNote = async (data: NoteBaseAPIInDTO) => {
       context.emit("submitData", data);
     };
     const addNewNote = async () => {
