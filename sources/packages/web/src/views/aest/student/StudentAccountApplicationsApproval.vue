@@ -11,9 +11,9 @@
             <check-permission-role
               :role="Role.StudentApproveDeclineAccountRequests"
             >
-              <template #="{ notAllowed, isAllowed }">
+              <template #="{ notAllowed }">
                 <v-btn
-                  :color="isAllowed ? 'primary' : 'secondary'"
+                  color="primary"
                   class="mr-2"
                   variant="outlined"
                   @click="declineStudentAccount"

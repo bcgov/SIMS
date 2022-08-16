@@ -32,9 +32,9 @@
       </v-col>
       <v-col cols="1">
         <check-permission-role :role="Role.InstitutionEditLocationDetails">
-          <template #="{ notAllowed, isAllowed }">
+          <template #="{ notAllowed }">
             <v-btn
-              :color="isAllowed ? 'primary' : 'secondary'"
+              color="primary"
               variant="text"
               :disabled="notAllowed"
               @click="$emit('editLocation', item.id)"

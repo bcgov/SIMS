@@ -1,12 +1,14 @@
 <template>
-  <v-navigation-drawer app class="body-background" permanent>
-    <v-list density="compact" nav>
+  <v-navigation-drawer permanent v-model="drawer" color="background">
+    <v-list density="compact" bg-color="background">
       <v-list-item
         v-for="item in items"
         :key="item.label"
+        :value="item"
         @click="item.command"
         :prepend-icon="item.icon"
         :title="item.label"
+        active-color="primary"
       />
     </v-list>
   </v-navigation-drawer>
@@ -20,11 +22,12 @@ import { MenuModel } from "@/types";
 export default {
   components: {},
   setup() {
+    const drawer = ref(true);
     const router = useRouter();
     const items = ref<MenuModel[]>([
       {
-        label: "Institution Details",
-        icon: "mdi-alert-circle-outline",
+        label: "Manage Profile",
+        icon: "fa:far fa-address-card-o",
         command: () => {
           router.push({
             name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
@@ -33,7 +36,7 @@ export default {
       },
       {
         label: "Manage Locations",
-        icon: "mdi-office-building-outline",
+        icon: "fa:far fa-compass",
         command: () => {
           router.push({
             name: InstitutionRoutesConst.MANAGE_LOCATIONS,
@@ -42,7 +45,7 @@ export default {
       },
       {
         label: "Manage Designation",
-        icon: "mdi-certificate-outline",
+        icon: "fa:far fa-bookmark-o",
         command: () => {
           router.push({
             name: InstitutionRoutesConst.MANAGE_DESIGNATION,
@@ -51,7 +54,7 @@ export default {
       },
       {
         label: "Manage Users",
-        icon: "mdi-account-group",
+        icon: "fa:far fa-user-o",
         command: () => {
           router.push({
             name: InstitutionRoutesConst.MANAGE_USERS,
@@ -62,6 +65,7 @@ export default {
 
     return {
       items,
+      drawer,
     };
   },
 };

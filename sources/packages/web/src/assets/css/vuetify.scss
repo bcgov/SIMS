@@ -144,3 +144,8 @@
 .v-btn--variant-outlined {
   background-color: white !important;
 }
+
+// v-field label adjustment.Remove below style if its fixed in vuetify3.
+.v-field {
+  overflow: inherit !important;
+}
