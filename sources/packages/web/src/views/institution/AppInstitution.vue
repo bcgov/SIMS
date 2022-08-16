@@ -1,13 +1,17 @@
 <template>
   <IdleTimeChecker :clientIdType="ClientIdType.Institution">
     <v-app-bar color="white">
-      <BCLogo subtitle="Institution Application"></BCLogo>
-      <!-- todo: ann selected pr active class and submit btn inside vue, check container -->
-      <v-btn-toggle v-model="toggleNav" class="nav-btn-padding">
+      <b-c-logo subtitle="Institution Application" />
+      <v-btn-toggle
+        selected-class="active-btn label-bold"
+        v-model="toggleNav"
+        class="navigation-btn float-left"
+      >
         <v-btn
           v-if="isAuthenticated"
+          class="nav-item-label"
           value="homeBtn"
-          text
+          variant="text"
           @click="
             $router.push({
               name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
@@ -16,8 +20,9 @@
           >Home</v-btn
         >
         <v-btn
+          class="nav-item-label"
           v-if="isAuthenticated && isAdmin"
-          text
+          variant="text"
           value="manageInstitutionBtn"
           @click="
             $router.push({
@@ -28,8 +33,9 @@
         >
 
         <v-btn
+          class="nav-item-label"
           v-if="isAuthenticated"
-          text
+          variant="text"
           value="myProfileBtn"
           @click="
             $router.push({
@@ -41,8 +47,8 @@
         <v-menu v-if="isAuthenticated">
           <template v-slot:activator="{ props }">
             <v-btn
+              class="nav-item-label"
               rounded="xl"
-              class="mr-5"
               icon="fa:fa fa-user"
               variant="outlined"
               elevation="1"
@@ -118,8 +124,3 @@ export default {
   },
 };
 </script>
-<style>
-.nav-btn-padding {
-  margin-left: -20%;
-}
-</style>

@@ -128,9 +128,9 @@ html * {
 }
 
 .label-bold {
-  font-size: $font-size-content;
-  line-height: $line-height-header-sm;
-  font-weight: $font-weight-bold;
+  font-size: $font-size-content !important;
+  line-height: $line-height-header-sm !important;
+  font-weight: $font-weight-bold !important;
 }
 
 // normal label bold
@@ -155,6 +155,11 @@ html * {
   font-size: $font-size-content;
   line-height: $line-height-header-sm;
   font-weight: $font-style-normal;
+}
+
+// Navigation bar labels.
+.nav-item-label:not(.label-bold) {
+  @extend .label-value;
 }
 
 // normal value bold

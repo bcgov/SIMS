@@ -1,4 +1,4 @@
-@import "./global-style-variables.scss";
+@import "./base.scss";
 
 .v-btn {
   text-transform: none !important;
@@ -148,4 +148,29 @@
 // v-field label adjustment.Remove below style if its fixed in vuetify3.
 .v-field {
   overflow: inherit !important;
+}
+
+// Active class for nav bar.
+.navigation-btn .active-btn {
+  color: $brand-blue !important;
+  background-color: $color-white !important;
+}
+// Btn toggle groups for nav bar adjustment.
+.navigation-btn.v-btn-group {
+  margin-left: -99vh;
+}
+
+// Active sidebar class to match with Figma.
+.active-sidebar-item.v-list-item--active > .v-list-item__overlay {
+  opacity: 0 !important;
+}
+
+// Active sidebar class to match with Figma.
+.active-sidebar-item .v-list-item-title {
+  @extend .label-bold;
+}
+
+// Sidebar class to match with Figma.
+.sidebar-item .v-list-item-title {
+  @extend .nav-item-label;
 }

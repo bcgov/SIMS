@@ -1,14 +1,15 @@
 <template>
   <v-navigation-drawer permanent v-model="drawer" color="background">
-    <v-list density="compact" bg-color="background">
+    <v-list density="compact" bg-color="background" active-color="primary">
       <v-list-item
+        class="sidebar-item"
+        active-class="active-sidebar-item"
         v-for="item in items"
         :key="item.label"
         :value="item"
         @click="item.command"
         :prepend-icon="item.icon"
         :title="item.label"
-        active-color="primary"
       />
     </v-list>
   </v-navigation-drawer>

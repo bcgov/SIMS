@@ -1,22 +1,22 @@
 <template>
-  <v-container>
-    <header-navigator title="Manage institutions" subTitle="Manage Profile" />
-    <banner
-      :type="BannerTypes.Info"
-      header="How to request a change"
-      summary="For the fields you can't change yourself, please email us with the information you'd like to change."
-    >
-      <template #actions>
-        <v-btn color="info">Email studentaidbc@gov.bc.ca</v-btn>
-      </template>
-    </banner>
-    <full-page-container>
-      <institution-profile-form
-        :profileData="institutionProfileModel"
-        @submitInstitutionProfile="updateInstitution"
-      ></institution-profile-form>
-    </full-page-container>
-  </v-container>
+  <full-page-container>
+    <template #header>
+      <header-navigator title="Manage institutions" subTitle="Manage Profile" />
+      <banner
+        :type="BannerTypes.Info"
+        header="How to request a change"
+        summary="For the fields you can't change yourself, please email us with the information you'd like to change."
+      >
+        <template #actions>
+          <v-btn color="info">Email studentaidbc@gov.bc.ca</v-btn>
+        </template>
+      </banner>
+    </template>
+    <institution-profile-form
+      :profileData="institutionProfileModel"
+      @submitInstitutionProfile="updateInstitution"
+    ></institution-profile-form>
+  </full-page-container>
 </template>
 
 <script lang="ts">
