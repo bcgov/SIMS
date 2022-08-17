@@ -30,6 +30,7 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
 import { ClientTypeBaseRoute } from "../../types";
+
 /**
  * Controller for Notes.
  * This consists of all Rest APIs for notes.
