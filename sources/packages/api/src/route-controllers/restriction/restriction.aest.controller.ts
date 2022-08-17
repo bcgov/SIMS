@@ -359,7 +359,7 @@ export class RestrictionAESTController extends BaseController {
         payload.noteDescription,
       );
     let institutionNote;
-    /**mapping the note added for restriction to institution notes**/
+    // Mapping the note added for restriction to institution notes
     if (updatedRestriction.restrictionNote) {
       institutionNote = await this.institutionService.saveInstitutionNote(
         institutionId,

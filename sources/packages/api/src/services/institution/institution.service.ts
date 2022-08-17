@@ -709,7 +709,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * Service to get notes for a student.
    * @param institutionId
    * @param noteType
-   * @returns Notes
+   * @returns Notes.
    */
   async getInstitutionNotes(
     institutionId: number,
@@ -742,6 +742,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * Service to add note for an Institution.
    * @param institutionId
    * @param note
+   * @returns saved Note.
    */
   async saveInstitutionNote(institutionId: number, note: Note): Promise<Note> {
     await this.repo

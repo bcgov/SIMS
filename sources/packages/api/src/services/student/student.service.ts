@@ -563,7 +563,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * Service to get notes for a student.
    * @param studentId
    * @param noteType
-   * @returns Notes
+   * @returns Notes.
    */
   async getStudentNotes(
     studentId: number,
@@ -594,6 +594,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * ! Deprecated, please use the alternative method createStudentNote.
    * @param studentId
    * @param note
+   *  @returns saved Note.
    */
   async saveStudentNote(studentId: number, note: Note): Promise<Note> {
     const student = await this.repo.findOne({
