@@ -711,7 +711,7 @@
                         "maxLength": "",
                         "minWords": "",
                         "maxWords": "",
-                        "pattern": "^(11|09|52|01|03|05|16|23|24|25|42|27|30|38|40|45|50|54|55|13|28|31|44|60|04|10|14|15|29|41|26|22|43|51|39|12|21|46|47|48){1}\\.[0-9]{4}",
+                        "pattern": "^(11|09|52|01|03|05|16|23|24|25|42|27|30|38|40|45|50|54|55|13|28|31|44|60|04|10|14|15|29|41|26|22|43|51|39|12|21|46|47|48){1}\\.[0-9]{4}$",
                         "customMessage": "Invalid format",
                         "custom": "",
                         "customPrivate": false,
@@ -769,8 +769,8 @@
                     "dataGridLabel": false,
                     "addons": [],
                     "inputType": "text",
-                    "id": "es46ypq",
-                    "defaultValue": null
+                    "id": "eo5mjp5",
+                    "defaultValue": ""
                 },
                 {
                     "label": "Field of study code",
