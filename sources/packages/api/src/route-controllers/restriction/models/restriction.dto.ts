@@ -61,7 +61,7 @@ export class RestrictionStatusAPIOutDTO {
 
 /**
  * DTO for student restriction.
- * This object is returned by controller.
+ * This object is returned by api.
  */
 export class StudentRestrictionAPIOutDTO {
   /**

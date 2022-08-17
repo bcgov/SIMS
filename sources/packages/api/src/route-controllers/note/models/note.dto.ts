@@ -11,7 +11,7 @@ import {
  */
 export class NoteAPIInDTO {
   @IsEnum(NoteType)
-  noteType: string;
+  noteType: NoteType;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   description: string;
@@ -21,7 +21,7 @@ export class NoteAPIInDTO {
  * Notes detail DTO. This is used for view only purpose.
  */
 export class NoteAPIOutDTO {
-  noteType: string;
+  noteType: NoteType;
   description: string;
   firstName: string;
   lastName: string;

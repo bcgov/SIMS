@@ -47,15 +47,15 @@ export interface AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
 
 /**
  * Student restriction DTO.
- * This object is returned by controller.
+ * This object is returned by api.
  */
 export interface StudentRestrictionAPIOutDTO {
   /**
-   * code is the restriction code.
+   * Restriction code.
    */
   code: string;
   /**
-   * type is the notification type.
+   * Notification type.
    */
   type: RestrictionNotificationType;
 }

@@ -1,8 +1,10 @@
+import { StudentNoteType } from "@/types";
+
 /**
  * Base DTO for note.
  */
 export interface NoteAPIInDTO {
-  noteType: string;
+  noteType: StudentNoteType;
   description: string;
 }
 
@@ -10,7 +12,7 @@ export interface NoteAPIInDTO {
  * Notes detail DTO. This is used for view only purpose.
  */
 export interface NoteAPIOutDTO {
-  noteType: string;
+  noteType: StudentNoteType;
   description: string;
   firstName: string;
   lastName: string;
