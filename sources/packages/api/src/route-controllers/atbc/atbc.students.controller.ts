@@ -70,7 +70,7 @@ export class ATBCStudentController extends BaseController {
     // API to create student profile in ATBC.
     const response = await this.atbcService.ATBCCreateClient(payload);
     if (response) {
-      // Update PD Sent Date.
+      // Update PD sent date.
       await this.studentService.updatePDSentDate(student.id);
     }
   }
