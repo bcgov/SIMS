@@ -10,7 +10,6 @@ import {
  * Base DTO for note.
  */
 export class NoteAPIInDTO {
-  @IsNotEmpty()
   @IsEnum(NoteType)
   noteType: string;
   @IsNotEmpty()
