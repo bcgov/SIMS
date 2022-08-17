@@ -11,10 +11,6 @@ import {
   Application,
   EducationProgramOffering,
 } from "../../database/entities";
-import {
-  AssignRestrictionAPIInDTO,
-  ResolveRestrictionAPIInDTO,
-} from "../../route-controllers/restriction/models/restriction.dto";
 import { DataSource, EntityManager, SelectQueryBuilder } from "typeorm";
 import { CustomNamedError } from "../../utilities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
@@ -172,17 +168,18 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   async addProvincialRestriction(
     studentId: number,
     userId: number,
-    addStudentRestrictionDTO: AssignRestrictionAPIInDTO,
+    restrictionId: number,
+    noteDescription: string,
   ): Promise<StudentRestriction> {
     const studentRestriction = new StudentRestriction();
     studentRestriction.student = { id: studentId } as Student;
     studentRestriction.restriction = {
-      id: addStudentRestrictionDTO.restrictionId,
+      id: restrictionId,
     } as Restriction;
     studentRestriction.creator = { id: userId } as User;
-    if (addStudentRestrictionDTO.noteDescription) {
+    if (noteDescription) {
       studentRestriction.restrictionNote = {
-        description: addStudentRestrictionDTO.noteDescription,
+        description: noteDescription,
         noteType: NoteType.Restriction,
         creator: {
           id: studentRestriction.creator.id,
@@ -204,7 +201,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     studentId: number,
     studentRestrictionId: number,
     userId: number,
-    updateRestrictionDTO: ResolveRestrictionAPIInDTO,
+    noteDescription: string,
   ): Promise<StudentRestriction> {
     const studentRestrictionEntity = await this.repo.findOne({
       where: {
@@ -234,7 +231,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     studentRestrictionEntity.isActive = false;
     studentRestrictionEntity.modifier = { id: userId } as User;
     studentRestrictionEntity.resolutionNote = {
-      description: updateRestrictionDTO.noteDescription,
+      description: noteDescription,
       noteType: NoteType.Restriction,
       creator: {
         id: studentRestrictionEntity.modifier.id,
