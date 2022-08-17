@@ -8,18 +8,14 @@ export default defineConfig({
     runMode: 1,
     openMode: 1,
   },
-  reporter: "cypress-multi-reporters",
+  reporter: "junit",
   screenshotOnRunFailure: true,
   reporterOptions: {
     reporterEnabled: "mochawesome",
-    mochawesomeReporterOptions: {
-      reportDir: "cypress/reports/mocha",
-      quite: true,
-      overwrite: false,
-      html: false,
-      json: true,
-      embeddedScreenshots: true,
-    },
+    reporterOptions: {
+      mochaFile: 'results/test-results.xml',
+      toConsole: true
+    }
   },
   video: false,
   chromeWebSecurity: false,
@@ -34,5 +30,8 @@ export default defineConfig({
     token_url:
       "https://dev.oidc.gov.bc.ca/auth/realms/jxoe2o46/protocol/openid-connect/token",
     update_institution_url: "/api/institutions/institution",
+    studentURL: "https://test-aest-sims.apps.silver.devops.gov.bc.ca/student/login",
+    username: "",
+    password: ""
   },
 });

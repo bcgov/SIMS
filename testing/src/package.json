@@ -15,7 +15,8 @@
     "generate-report": "marge cypress/reports/mochareports/report.json -f report -o cypress/reports/mochareports",
     "posttest": "npm run combine-reports && npm run generate-report",
     "test": "npm run scripts || npm run posttest",
-    "Run headless for all modes": "npm run test"
+    "Run headless for all modes": "npm run test",
+    "uploadResultTQ" : "node uploadResultTQ.js"
   },
   "devDependencies": {
     "@types/jest": "^28.1.0",
