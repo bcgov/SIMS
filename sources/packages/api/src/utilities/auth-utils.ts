@@ -19,7 +19,7 @@ export function extractRawUserName(userName: string): string {
  */
 export function needRenewJwtToken(
   jwtExp: number,
-  maxSecondsToExpired: number = 0,
+  maxSecondsToExpired = 0,
 ): boolean {
   const jwtExpMiliseconds = jwtExp * 1000; // Convert to miliseconds.
   const maxSecondsToExpiredMiliseconds = maxSecondsToExpired * 1000; // Convert to miliseconds.
@@ -67,23 +67,3 @@ export function getUserFullName(user: {
     ? `${(user.firstName ?? "").trim()} ${(user.lastName ?? "").trim()}`.trim()
     : "";
 }
-
-/**
- * Convert a given username to following pattern.
- * [lastName], [firstName]
- * Null checks are done as name can be Mononymous.
- * @param firstName
- * @param lastName
- * @returns full name.
- */
-export const getIDIRUserFullName = (user: {
-  firstName?: string;
-  lastName: string;
-}): string => {
-  const seperator = user && user.firstName && user.lastName ? "," : "";
-  return user
-    ? `${(user.lastName ?? "").trim()}${seperator} ${(
-        user.firstName ?? ""
-      ).trim()}`
-    : "";
-};
