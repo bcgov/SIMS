@@ -15,5 +15,4 @@ export interface NoteAPIOutDTO {
   firstName: string;
   lastName: string;
   createdAt: Date;
-  showMore?: boolean;
 }

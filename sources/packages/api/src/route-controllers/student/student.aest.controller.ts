@@ -193,7 +193,7 @@ export class StudentAESTController extends BaseController {
     @Body() payload: AESTFileUploadToStudentAPIInDTO,
   ): Promise<void> {
     const student = await this.studentService.getStudentById(studentId);
-    if (!studentId) {
+    if (!student) {
       throw new NotFoundException("Student not found.");
     }
 

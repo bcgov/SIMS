@@ -108,7 +108,7 @@ export class RestrictionAESTController extends BaseController {
    * @param restrictionCategory Selected Category from category list.
    * @returns Reasons option list.
    */
-  @Get("reasons/options-list/category/:restrictionCategory")
+  @Get("category/:restrictionCategory/reasons")
   async getReasonsOptionsList(
     @Param("restrictionCategory") restrictionCategory: string,
   ): Promise<OptionItemAPIOutDTO[]> {
@@ -161,7 +161,7 @@ export class RestrictionAESTController extends BaseController {
   }
 
   /**
-   *Add a new provincial restriction to Student.
+   * Add a new provincial restriction to Student.
    * * Note: Federal restrictions are added/resolved by nightly job not through this API.
    * @param studentId
    * @param payload
@@ -223,11 +223,6 @@ export class RestrictionAESTController extends BaseController {
     @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
     @Body() payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
-    if (!payload.noteDescription) {
-      throw new UnprocessableEntityException(
-        "Resolution Notes are mandatory to resolve the restriction.",
-      );
-    }
     try {
       // TODO Use transaction to update the restriction and save student note alongside.
       const updatedRestriction =
@@ -357,7 +352,8 @@ export class RestrictionAESTController extends BaseController {
       await this.institutionRestrictionService.addProvincialRestriction(
         institutionId,
         userToken.userId,
-        payload,
+        payload.restrictionId,
+        payload.noteDescription,
       );
     /**mapping the note added for restriction to institution notes**/
     if (updatedRestriction.restrictionNote) {
@@ -401,7 +397,7 @@ export class RestrictionAESTController extends BaseController {
           institutionId,
           institutionRestrictionId,
           userToken.userId,
-          payload,
+          payload.noteDescription,
         );
 
       /**mapping the note added for resolution to student notes**/

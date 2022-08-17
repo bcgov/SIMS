@@ -1,5 +1,6 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { NoteAPIOutDTO, NoteBaseAPIInDTO } from "@/services/http/dto";
+import { NoteBaseAPIInDTO } from "@/services/http/dto";
+import { NoteItemModel } from "@/types";
 
 /**
  * Http API client for Notes.
@@ -9,38 +10,25 @@ export class NoteApi extends HttpBaseClient {
     institutionId: number,
     note: NoteBaseAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.postCall(
-        this.addClientRoot(`note/institution/${institutionId}`),
-        note,
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.postCall(
+      this.addClientRoot(`note/institution/${institutionId}`),
+      note,
+    );
   }
 
   public async addStudentNote(
     studentId: number,
     note: NoteBaseAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.postCall(
-        this.addClientRoot(`note/student/${studentId}`),
-        note,
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.postCall(this.addClientRoot(`note/student/${studentId}`), note);
   }
 
   public async getInstitutionNotes(
     institutionId: number,
     noteType?: string,
-  ): Promise<NoteAPIOutDTO[]> {
+  ): Promise<NoteItemModel[]> {
     const queryString = noteType ? `?noteType=${noteType}` : ``;
-    return this.getCallTyped<NoteAPIOutDTO[]>(
+    return this.getCallTyped<NoteItemModel[]>(
       this.addClientRoot(`note/institution/${institutionId}${queryString}`),
     );
   }
@@ -48,9 +36,9 @@ export class NoteApi extends HttpBaseClient {
   public async getStudentNotes(
     studentId: number,
     noteType?: string,
-  ): Promise<NoteAPIOutDTO[]> {
+  ): Promise<NoteItemModel[]> {
     const queryString = noteType ? `?noteType=${noteType}` : ``;
-    return this.getCallTyped<NoteAPIOutDTO[]>(
+    return this.getCallTyped<NoteItemModel[]>(
       this.addClientRoot(`note/student/${studentId}${queryString}`),
     );
   }

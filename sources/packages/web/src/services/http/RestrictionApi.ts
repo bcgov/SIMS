@@ -30,9 +30,7 @@ export class RestrictionApi extends HttpBaseClient {
     restrictionCategory: string,
   ): Promise<OptionItemAPIOutDTO[]> {
     return this.getCallTyped<OptionItemAPIOutDTO[]>(
-      this.addClientRoot(
-        `restriction/reasons/options-list/category/${restrictionCategory}`,
-      ),
+      this.addClientRoot(`restriction/category/${restrictionCategory}/reasons`),
     );
   }
 

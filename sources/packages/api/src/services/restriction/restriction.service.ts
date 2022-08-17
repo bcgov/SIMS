@@ -138,7 +138,9 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
       .createQueryBuilder("restriction")
       .select(["restriction.id"])
       .where("restriction.id = :restrictionId", { restrictionId })
-      .andWhere("restriction.restrictionType = 'Provincial'");
+      .andWhere("restriction.restrictionType = :restrictionType", {
+        restrictionType: RestrictionType.Provincial,
+      });
     if (isInstitutionRestriction) {
       restrictionQuery.andWhere(
         "restriction.restrictionCategory = 'Designation'",

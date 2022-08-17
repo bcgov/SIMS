@@ -47,16 +47,21 @@ export class NoteAESTController extends BaseController {
   }
 
   /**
-   * Rest API to get notes for a student.
+   * Get notes for a student.
    * @param studentId Student id.
    * @param noteType Note type enum which is passed to filter the notes.
    * @returns Student Notes.
    */
+  @ApiNotFoundResponse({ description: "Student not found." })
   @Get("student/:studentId")
   async getStudentDetails(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Query("noteTypem", new ParseEnumPipe(NoteType)) noteType: NoteType,
   ): Promise<NoteAPIOutDTO[]> {
+    const student = await this.studentService.getStudentById(studentId);
+    if (!student) {
+      throw new NotFoundException("Student not found.");
+    }
     const studentNotes = await this.studentService.getStudentNotes(
       studentId,
       noteType,
@@ -65,7 +70,7 @@ export class NoteAESTController extends BaseController {
   }
 
   /**
-   * Rest API to gets notes for an Institution.
+   * Gets notes for an Institution.
    * @param institutionId Institution id.
    * @param noteType Note type enum which is passed to filter the notes.
    * @returns Institution Notes.
@@ -89,7 +94,7 @@ export class NoteAESTController extends BaseController {
   }
 
   /**
-   * Rest API to add note for an Institution.
+   * Add note for an Institution.
    * @param institutionId Institution id.
    * @param payload Note create object.
    */
@@ -115,18 +120,23 @@ export class NoteAESTController extends BaseController {
   }
 
   /**
-   * Rest API to add note for a Student.
+   * Add note for a Student.
    * @param studentId student id.
    * @param payload Note create object.
    */
 
   @Roles(Role.StudentCreateNote)
+  @ApiNotFoundResponse({ description: "Student not found." })
   @Post("student/:studentId")
   async addStudentNote(
     @UserToken() userToken: IUserToken,
     @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: NoteBaseAPIInDTO,
   ): Promise<void> {
+    const student = await this.studentService.getStudentById(studentId);
+    if (!student) {
+      throw new NotFoundException("Student not found.");
+    }
     const studentNote = transformToNoteEntity(payload, userToken.userId);
     await this.studentService.saveStudentNote(studentId, studentNote);
   }

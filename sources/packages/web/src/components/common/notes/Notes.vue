@@ -78,11 +78,11 @@
 <script lang="ts">
 import { useFormatters, ModalDialog } from "@/composables";
 import CreateNoteModal from "@/components/common/notes/CreateNoteModal.vue";
-import { LayoutTemplates, Role } from "@/types";
+import { LayoutTemplates, NoteItemModel, Role } from "@/types";
 import { PropType, ref } from "vue";
 import "@/assets/css/notes.scss";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { NoteAPIOutDTO, NoteBaseAPIInDTO } from "@/services/http/dto";
+import { NoteBaseAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: { CreateNoteModal, CheckPermissionRole },
@@ -116,11 +116,11 @@ export default {
       context.emit("submitData", data);
     };
 
-    const toggleNotes = (item: NoteAPIOutDTO) => {
+    const toggleNotes = (item: NoteItemModel) => {
       item.showMore = !item.showMore;
     };
 
-    const showMoreNotes = (item: NoteAPIOutDTO) => {
+    const showMoreNotes = (item: NoteItemModel) => {
       return (
         item.description && item.description.length > 150 && !item.showMore
       );

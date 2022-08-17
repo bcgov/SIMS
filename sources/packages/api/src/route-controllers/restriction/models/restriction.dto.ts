@@ -1,4 +1,4 @@
-import { IsOptional, IsPositive, MaxLength } from "class-validator";
+import { IsNotEmpty, IsOptional, IsPositive, MaxLength } from "class-validator";
 import { RestrictionNotificationType } from "../../../database/entities/restriction-notification-type.type";
 import {
   NOTE_DESCRIPTION_MAX_LENGTH,
@@ -39,7 +39,7 @@ export class RestrictionDetailAPIOutDTO extends RestrictionSummaryAPIOutDTO {
  * DTO to resolve restriction to a student/institution.
  */
 export class ResolveRestrictionAPIInDTO {
-  @IsOptional()
+  @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
 }
@@ -61,7 +61,7 @@ export class RestrictionStatusAPIOutDTO {
 
 /**
  * DTO for student restriction.
- * This object is returned by api.
+ * This object is returned by controller.
  */
 export class StudentRestrictionAPIOutDTO {
   /**

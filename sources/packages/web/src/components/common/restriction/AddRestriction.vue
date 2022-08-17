@@ -66,7 +66,7 @@ export default {
       const categories =
         await RestrictionService.shared.getRestrictionCategories();
       const options = [{}];
-      /** Restriction category Designation is exclusively for Institution. Rest of them are for Student. */
+      // Restriction category Designation is exclusively for Institution. Rest of them are for Student.
       if (props.entityType === RestrictionEntityType.Student) {
         for (const category of categories) {
           options.push({

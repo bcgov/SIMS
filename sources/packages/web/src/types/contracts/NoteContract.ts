@@ -1,3 +1,5 @@
+import { NoteAPIOutDTO } from "@/services/http/dto";
+
 /**
  * Enumeration types for Institution Notes.
  */
@@ -54,4 +56,8 @@ export enum StudentNoteType {
    * Note type System.
    */
   System = "System Actions",
+}
+
+export interface NoteItemModel extends NoteAPIOutDTO {
+  showMore: boolean;
 }
