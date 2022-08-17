@@ -16,7 +16,7 @@ import { NoteType } from "../../database/entities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   NoteAPIOutDTO,
-  NoteBaseAPIInDTO,
+  NoteAPIInDTO,
   transformToNoteDTO,
   transformToNoteEntity,
 } from "./models/note.dto";
@@ -105,7 +105,7 @@ export class NoteAESTController extends BaseController {
   async addInstitutionNote(
     @UserToken() userToken: IUserToken,
     @Param("institutionId", ParseIntPipe) institutionId: number,
-    @Body() payload: NoteBaseAPIInDTO,
+    @Body() payload: NoteAPIInDTO,
   ): Promise<void> {
     const institution =
       this.institutionService.getBasicInstitutionDetailById(institutionId);
@@ -131,7 +131,7 @@ export class NoteAESTController extends BaseController {
   async addStudentNote(
     @UserToken() userToken: IUserToken,
     @Param("studentId", ParseIntPipe) studentId: number,
-    @Body() payload: NoteBaseAPIInDTO,
+    @Body() payload: NoteAPIInDTO,
   ): Promise<void> {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {

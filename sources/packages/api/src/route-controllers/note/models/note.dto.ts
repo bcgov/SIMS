@@ -8,7 +8,7 @@ import {
 /**
  * Base DTO for note.
  */
-export class NoteBaseAPIInDTO {
+export class NoteAPIInDTO {
   @IsNotEmpty()
   noteType: string;
   @IsNotEmpty()
@@ -56,7 +56,7 @@ export const transformToNoteDTO = (note: Note): NoteAPIOutDTO => {
  * @returns notes
  */
 export const transformToNoteEntity = (
-  note: NoteBaseAPIInDTO,
+  note: NoteAPIInDTO,
   userId: number,
 ): Note => {
   return {

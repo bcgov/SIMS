@@ -1,7 +1,7 @@
 /**
  * Base DTO for note.
  */
-export interface NoteBaseAPIInDTO {
+export interface NoteAPIInDTO {
   noteType: string;
   description: string;
 }

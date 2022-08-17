@@ -11,10 +11,6 @@ import {
   NoteType,
   Institution,
 } from "../../database/entities";
-import {
-  AssignRestrictionAPIInDTO,
-  ResolveRestrictionAPIInDTO,
-} from "../../route-controllers/restriction/models/restriction.dto";
 import { CustomNamedError } from "../../utilities";
 
 /**

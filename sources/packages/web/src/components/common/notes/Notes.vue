@@ -82,7 +82,7 @@ import { LayoutTemplates, NoteItemModel, Role } from "@/types";
 import { PropType, ref } from "vue";
 import "@/assets/css/notes.scss";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { NoteBaseAPIInDTO } from "@/services/http/dto";
+import { NoteAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: { CreateNoteModal, CheckPermissionRole },
@@ -112,7 +112,7 @@ export default {
     const addNewNote = async () => {
       await createNotesModal.value.showModal();
     };
-    const emitToParent = async (data: NoteBaseAPIInDTO) => {
+    const emitToParent = async (data: NoteAPIInDTO) => {
       context.emit("submitData", data);
     };
 

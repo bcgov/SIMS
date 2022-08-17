@@ -35,7 +35,7 @@ import {
   Role,
 } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { NoteBaseAPIInDTO } from "@/services/http/dto";
+import { NoteAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: { ModalDialogBase, CheckPermissionRole },
@@ -77,7 +77,7 @@ export default {
     const submitForm = async () => {
       return formData.value.submit();
     };
-    const submitNote = async (data: NoteBaseAPIInDTO) => {
+    const submitNote = async (data: NoteAPIInDTO) => {
       context.emit("submitData", data);
     };
     const addNewNote = async () => {

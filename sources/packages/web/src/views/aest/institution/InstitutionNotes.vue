@@ -54,7 +54,7 @@ import {
   LayoutTemplates,
   Role,
 } from "@/types";
-import { NoteBaseAPIInDTO } from "@/services/http/dto";
+import { NoteAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: { Notes },
@@ -79,7 +79,7 @@ export default {
       );
     };
 
-    const addNote = async (data: NoteBaseAPIInDTO) => {
+    const addNote = async (data: NoteAPIInDTO) => {
       try {
         await NoteService.shared.addInstitutionNote(props.institutionId, data);
         await filterNotes(filteredNoteType.value);

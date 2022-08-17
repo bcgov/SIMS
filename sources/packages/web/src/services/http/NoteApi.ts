@@ -1,5 +1,5 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { NoteBaseAPIInDTO } from "@/services/http/dto";
+import { NoteAPIInDTO } from "@/services/http/dto";
 import { NoteItemModel } from "@/types";
 
 /**
@@ -8,7 +8,7 @@ import { NoteItemModel } from "@/types";
 export class NoteApi extends HttpBaseClient {
   public async addInstitutionNote(
     institutionId: number,
-    note: NoteBaseAPIInDTO,
+    note: NoteAPIInDTO,
   ): Promise<void> {
     await this.postCall(
       this.addClientRoot(`note/institution/${institutionId}`),
@@ -18,7 +18,7 @@ export class NoteApi extends HttpBaseClient {
 
   public async addStudentNote(
     studentId: number,
-    note: NoteBaseAPIInDTO,
+    note: NoteAPIInDTO,
   ): Promise<void> {
     await this.postCall(this.addClientRoot(`note/student/${studentId}`), note);
   }

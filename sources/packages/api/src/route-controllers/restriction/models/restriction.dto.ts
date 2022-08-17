@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsPositive, MaxLength } from "class-validator";
+import { IsNotEmpty, IsPositive, MaxLength } from "class-validator";
 import { RestrictionNotificationType } from "../../../database/entities/restriction-notification-type.type";
 import {
   NOTE_DESCRIPTION_MAX_LENGTH,
