@@ -1,6 +1,7 @@
-import { IsIn, IsNotEmpty, MaxLength } from "class-validator";
+import { IsEnum, IsNotEmpty, MaxLength } from "class-validator";
 import {
   Note,
+  NoteType,
   NOTE_DESCRIPTION_MAX_LENGTH,
   User,
 } from "../../../database/entities";
@@ -10,16 +11,9 @@ import {
  */
 export class NoteAPIInDTO {
   @IsNotEmpty()
+  @IsEnum(NoteType)
   noteType: string;
   @IsNotEmpty()
-  @IsIn([
-    "General",
-    "Application",
-    "Program",
-    "Restriction",
-    "Designation",
-    "System Actions",
-  ])
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   description: string;
 }

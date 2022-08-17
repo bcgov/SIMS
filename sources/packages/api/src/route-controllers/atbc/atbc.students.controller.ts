@@ -6,12 +6,17 @@ import {
 import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { ATBCService, StudentService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  RequiresStudentAccount,
+  UserToken,
+} from "../../auth/decorators";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { ATBCCreateClientPayload, ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
+@RequiresStudentAccount()
 @Controller("atbc")
 @ApiTags(`${ClientTypeBaseRoute.Student}-atbc`)
 export class ATBCStudentController extends BaseController {

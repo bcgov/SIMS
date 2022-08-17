@@ -85,7 +85,7 @@ describe("Test ATBC Controller", () => {
     try {
       // call to the controller, to apply for the PD
       await request(app.getHttpServer())
-        .patch("/students/atbc/apply-pd-status")
+        .patch("/atbc/apply-pd-status")
         .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK);
     } finally {
