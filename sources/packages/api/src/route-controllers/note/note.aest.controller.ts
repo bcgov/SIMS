@@ -1,10 +1,25 @@
-import { Controller, Get, Param, Post, Body, Query } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Query,
+  ParseIntPipe,
+  NotFoundException,
+  ParseEnumPipe,
+} from "@nestjs/common";
 import { StudentService, InstitutionService } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { NoteType } from "../../database/entities";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { NoteAPIOutDTO, NoteBaseAPIInDTO } from "./models/note.dto";
+import {
+  NoteAPIOutDTO,
+  NoteBaseAPIInDTO,
+  transformToNoteDTO,
+  transformToNoteEntity,
+} from "./models/note.dto";
 import {
   AllowAuthorizedParty,
   UserToken,
@@ -12,8 +27,7 @@ import {
   Roles,
 } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
-import { transformToNoteDTO, transformToNoteEntity } from "../../utilities";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
 import { ClientTypeBaseRoute } from "../../types";
 /**
@@ -22,9 +36,9 @@ import { ClientTypeBaseRoute } from "../../types";
  */
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
-@Controller("notes")
-@ApiTags(`${ClientTypeBaseRoute.AEST}-notes`)
-export class NotesAESTController extends BaseController {
+@Controller("note")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-note`)
+export class NoteAESTController extends BaseController {
   constructor(
     private readonly studentService: StudentService,
     private readonly institutionService: InstitutionService,
@@ -34,55 +48,65 @@ export class NotesAESTController extends BaseController {
 
   /**
    * Rest API to get notes for a student.
-   * @param studentId
-   * @param noteType Note type(General|Restriction|System Actions|Program) which is passed to filter the notes.
+   * @param studentId Student id.
+   * @param noteType Note type enum which is passed to filter the notes.
    * @returns Student Notes.
    */
-  @Get("/student/:studentId")
+  @Get("student/:studentId")
   async getStudentDetails(
-    @Param("studentId") studentId: number,
-    @Query("noteType") noteType: string,
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Query("noteTypem", new ParseEnumPipe(NoteType)) noteType: NoteType,
   ): Promise<NoteAPIOutDTO[]> {
     const studentNotes = await this.studentService.getStudentNotes(
       studentId,
-      noteType as NoteType,
+      noteType,
     );
     return studentNotes?.map((note) => transformToNoteDTO(note));
   }
 
   /**
    * Rest API to gets notes for an Institution.
-   * @param institutionId
-   * @param noteType Note type(General|Restriction|System Actions|Program) which is passed to filter the notes.
+   * @param institutionId Institution id.
+   * @param noteType Note type enum which is passed to filter the notes.
    * @returns Institution Notes.
    */
-
+  @ApiNotFoundResponse({ description: "Institution not found." })
   @Get("/institution/:institutionId")
   async getInstitutionDetails(
-    @Param("institutionId") institutionId: number,
-    @Query("noteType") noteType: string,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
+    @Query("noteType", new ParseEnumPipe(NoteType)) noteType: NoteType,
   ): Promise<NoteAPIOutDTO[]> {
+    const institution =
+      this.institutionService.getBasicInstitutionDetailById(institutionId);
+    if (!institution) {
+      throw new NotFoundException("Institution not found.");
+    }
     const institutionNotes = await this.institutionService.getInstitutionNotes(
       institutionId,
-      noteType as NoteType,
+      noteType,
     );
     return institutionNotes?.map((note) => transformToNoteDTO(note));
   }
 
   /**
    * Rest API to add note for an Institution.
-   * @param userToken
-   * @param institutionId
+   * @param institutionId Institution id.
    * @param payload Note create object.
    */
 
   @Roles(Role.InstitutionCreateNote)
-  @Post("/institution/:institutionId")
+  @ApiNotFoundResponse({ description: "Institution not found." })
+  @Post("institution/:institutionId")
   async addInstitutionNote(
     @UserToken() userToken: IUserToken,
-    @Param("institutionId") institutionId: number,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
     @Body() payload: NoteBaseAPIInDTO,
   ): Promise<void> {
+    const institution =
+      this.institutionService.getBasicInstitutionDetailById(institutionId);
+    if (!institution) {
+      throw new NotFoundException("Institution not found.");
+    }
     const institutionNote = transformToNoteEntity(payload, userToken.userId);
     await this.institutionService.saveInstitutionNote(
       institutionId,
@@ -92,16 +116,15 @@ export class NotesAESTController extends BaseController {
 
   /**
    * Rest API to add note for a Student.
-   * @param userToken
-   * @param studentId
+   * @param studentId student id.
    * @param payload Note create object.
    */
 
   @Roles(Role.StudentCreateNote)
-  @Post("/student/:studentId")
+  @Post("student/:studentId")
   async addStudentNote(
     @UserToken() userToken: IUserToken,
-    @Param("studentId") studentId: number,
+    @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: NoteBaseAPIInDTO,
   ): Promise<void> {
     const studentNote = transformToNoteEntity(payload, userToken.userId);

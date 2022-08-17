@@ -62,7 +62,7 @@ import {
   EducationProgramAESTController,
   EducationProgramControllerService,
   StudentAccountApplicationAESTController,
-  NotesAESTController,
+  NoteAESTController,
   RestrictionAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -88,7 +88,7 @@ import { InstitutionUserControllerService } from "./route-controllers/institutio
     ScholasticStandingAESTController,
     EducationProgramAESTController,
     StudentAccountApplicationAESTController,
-    NotesAESTController,
+    NoteAESTController,
     RestrictionAESTController,
   ],
   providers: [

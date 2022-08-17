@@ -19,13 +19,13 @@ export class RestrictionService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getStudentRestrictions(
+  async getStudentRestrictions(
     studentId: number,
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getStudentRestrictions(studentId);
   }
 
-  public async getStudentRestrictionDetail(
+  async getStudentRestrictionDetail(
     studentId: number,
     studentRestrictionId: number,
   ): Promise<RestrictionDetailAPIOutDTO> {
@@ -35,24 +35,24 @@ export class RestrictionService {
     );
   }
 
-  public async getRestrictionCategories(): Promise<OptionItemAPIOutDTO[]> {
+  async getRestrictionCategories(): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getRestrictionCategories();
   }
 
-  public async getRestrictionReasons(
+  async getRestrictionReasons(
     restrictionCategory: string,
   ): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getRestrictionReasons(restrictionCategory);
   }
 
-  public async addStudentRestriction(
+  async addStudentRestriction(
     studentId: number,
     payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
     await ApiClient.RestrictionApi.addStudentRestriction(studentId, payload);
   }
 
-  public async resolveStudentRestriction(
+  async resolveStudentRestriction(
     studentId: number,
     studentRestrictionId: number,
     payload: ResolveRestrictionAPIInDTO,
@@ -64,13 +64,13 @@ export class RestrictionService {
     );
   }
 
-  public async getInstitutionRestrictions(
+  async getInstitutionRestrictions(
     institutionId: number,
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getInstitutionRestrictions(institutionId);
   }
 
-  public async getInstitutionRestrictionDetail(
+  async getInstitutionRestrictionDetail(
     institutionId: number,
     institutionRestrictionId: number,
   ): Promise<RestrictionDetailAPIOutDTO> {
@@ -80,7 +80,7 @@ export class RestrictionService {
     );
   }
 
-  public async addInstitutionRestriction(
+  async addInstitutionRestriction(
     institutionId: number,
     payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
@@ -90,7 +90,7 @@ export class RestrictionService {
     );
   }
 
-  public async resolveInstitutionRestriction(
+  async resolveInstitutionRestriction(
     institutionId: number,
     institutionRestrictionId: number,
     payload: ResolveRestrictionAPIInDTO,

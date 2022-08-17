@@ -9,7 +9,9 @@ export interface NoteBaseAPIInDTO {
 /**
  * Notes detail DTO. This is used for view only purpose.
  */
-export interface NoteAPIOutDTO extends NoteBaseAPIInDTO {
+export interface NoteAPIOutDTO {
+  noteType: string;
+  description: string;
   firstName: string;
   lastName: string;
   createdAt: Date;

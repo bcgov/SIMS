@@ -1,9 +1,12 @@
-import { IsOptional, IsPositive } from "class-validator";
+import { IsOptional, IsPositive, MaxLength } from "class-validator";
 import { RestrictionNotificationType } from "../../../database/entities/restriction-notification-type.type";
-import { RestrictionType } from "../../../database/entities";
+import {
+  NOTE_DESCRIPTION_MAX_LENGTH,
+  RestrictionType,
+} from "../../../database/entities";
 
 /**
- * Base DTO for restriction
+ * Base DTO for restriction.
  */
 export class RestrictionBaseDTO {
   restrictionId: number;
@@ -37,6 +40,7 @@ export class RestrictionDetailAPIOutDTO extends RestrictionSummaryAPIOutDTO {
  */
 export class ResolveRestrictionAPIInDTO {
   @IsOptional()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
 }
 
@@ -61,11 +65,11 @@ export class RestrictionStatusAPIOutDTO {
  */
 export class StudentRestrictionAPIOutDTO {
   /**
-   * code is the restriction code.
+   * code is the Restriction code.
    */
   code: string;
   /**
-   * type is the notification type.
+   * type is the Notification type.
    */
   type: RestrictionNotificationType;
 }

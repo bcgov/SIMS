@@ -13,8 +13,8 @@ import { StudentRestrictionAPIOutDTO } from "./models/restriction.dto";
  * This consists of all Rest APIs for Student restrictions.
  */
 @AllowAuthorizedParty(AuthorizedParties.student)
-@Controller("restrictions")
-@ApiTags(`${ClientTypeBaseRoute.Student}-restrictions`)
+@Controller("restriction")
+@ApiTags(`${ClientTypeBaseRoute.Student}-restriction`)
 export class RestrictionStudentsController extends BaseController {
   constructor(
     private readonly studentRestrictionService: StudentRestrictionService,
@@ -23,7 +23,6 @@ export class RestrictionStudentsController extends BaseController {
   }
   /**
    * GET API which returns student restriction details.
-   * @param studentToken student token.
    * @returns Student restriction code and notification type, if any.
    */
   @Get()
@@ -36,7 +35,7 @@ export class RestrictionStudentsController extends BaseController {
         true,
       );
 
-    return studentRestrictions?.map((studentRestriction) => ({
+    return studentRestrictions.map((studentRestriction) => ({
       code: studentRestriction.restriction.restrictionCode,
       type: studentRestriction.restriction.notificationType,
     }));

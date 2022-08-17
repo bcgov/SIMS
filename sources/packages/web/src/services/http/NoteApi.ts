@@ -11,7 +11,7 @@ export class NoteApi extends HttpBaseClient {
   ): Promise<void> {
     try {
       await this.postCall(
-        this.addClientRoot(`notes/institution/${institutionId}`),
+        this.addClientRoot(`note/institution/${institutionId}`),
         note,
       );
     } catch (error) {
@@ -26,7 +26,7 @@ export class NoteApi extends HttpBaseClient {
   ): Promise<void> {
     try {
       await this.postCall(
-        this.addClientRoot(`notes/student/${studentId}`),
+        this.addClientRoot(`note/student/${studentId}`),
         note,
       );
     } catch (error) {
@@ -41,7 +41,7 @@ export class NoteApi extends HttpBaseClient {
   ): Promise<NoteAPIOutDTO[]> {
     const queryString = noteType ? `?noteType=${noteType}` : ``;
     return this.getCallTyped<NoteAPIOutDTO[]>(
-      this.addClientRoot(`notes/institution/${institutionId}${queryString}`),
+      this.addClientRoot(`note/institution/${institutionId}${queryString}`),
     );
   }
 
@@ -51,7 +51,7 @@ export class NoteApi extends HttpBaseClient {
   ): Promise<NoteAPIOutDTO[]> {
     const queryString = noteType ? `?noteType=${noteType}` : ``;
     return this.getCallTyped<NoteAPIOutDTO[]>(
-      this.addClientRoot(`notes/student/${studentId}${queryString}`),
+      this.addClientRoot(`note/student/${studentId}${queryString}`),
     );
   }
 }
