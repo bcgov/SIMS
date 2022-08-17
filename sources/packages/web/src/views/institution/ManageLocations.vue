@@ -2,7 +2,7 @@
   <full-page-container :full-width="true">
     <template #header>
       <header-navigator
-        title="Manage institutions"
+        title="Manage institution"
         subTitle="Manage Locations"
       />
     </template>

@@ -1,7 +1,9 @@
 <template>
   <full-page-container>
     <template #header>
-      <header-navigator title="Manage institutions" subTitle="Manage Profile" />
+      <header-navigator title="Manage institution" subTitle="Manage Profile" />
+    </template>
+    <template #alerts>
       <banner
         :type="BannerTypes.Info"
         header="How to request a change"
