@@ -45,6 +45,7 @@ import {
 } from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /**
  * Controller for AEST Restrictions.
@@ -176,7 +177,7 @@ export class RestrictionAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: AssignRestrictionAPIInDTO,
-  ): Promise<void> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const restriction =
       await this.restrictionService.getProvincialRestrictionById(
         payload.restrictionId,
@@ -193,13 +194,15 @@ export class RestrictionAESTController extends BaseController {
         userToken.userId,
         payload,
       );
+    let institutionNote;
     /**mapping the note added for restriction to student notes**/
     if (updatedRestriction.restrictionNote) {
-      await this.studentService.saveStudentNote(
+      institutionNote = await this.studentService.saveStudentNote(
         studentId,
         updatedRestriction.restrictionNote,
       );
     }
+    return { id: institutionNote.id };
   }
 
   /**
@@ -337,7 +340,7 @@ export class RestrictionAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Param("institutionId", ParseIntPipe) institutionId: number,
     @Body() payload: AssignRestrictionAPIInDTO,
-  ): Promise<void> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const restriction =
       await this.restrictionService.getProvincialRestrictionById(
         payload.restrictionId,
@@ -355,13 +358,15 @@ export class RestrictionAESTController extends BaseController {
         payload.restrictionId,
         payload.noteDescription,
       );
+    let institutionNote;
     /**mapping the note added for restriction to institution notes**/
     if (updatedRestriction.restrictionNote) {
-      await this.institutionService.saveInstitutionNote(
+      institutionNote = await this.institutionService.saveInstitutionNote(
         institutionId,
         updatedRestriction.restrictionNote,
       );
     }
+    return { id: institutionNote.id };
   }
 
   /**

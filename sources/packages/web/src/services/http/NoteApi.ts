@@ -6,7 +6,7 @@ import { NoteItemModel } from "@/types";
  * Http API client for Notes.
  */
 export class NoteApi extends HttpBaseClient {
-  public async addInstitutionNote(
+  async addInstitutionNote(
     institutionId: number,
     note: NoteAPIInDTO,
   ): Promise<void> {
@@ -16,14 +16,11 @@ export class NoteApi extends HttpBaseClient {
     );
   }
 
-  public async addStudentNote(
-    studentId: number,
-    note: NoteAPIInDTO,
-  ): Promise<void> {
+  async addStudentNote(studentId: number, note: NoteAPIInDTO): Promise<void> {
     await this.postCall(this.addClientRoot(`note/student/${studentId}`), note);
   }
 
-  public async getInstitutionNotes(
+  async getInstitutionNotes(
     institutionId: number,
     noteType?: string,
   ): Promise<NoteItemModel[]> {
@@ -33,7 +30,7 @@ export class NoteApi extends HttpBaseClient {
     );
   }
 
-  public async getStudentNotes(
+  async getStudentNotes(
     studentId: number,
     noteType?: string,
   ): Promise<NoteItemModel[]> {

@@ -12,7 +12,7 @@ import {
  * Http API client for Restrictions.
  */
 export class RestrictionApi extends HttpBaseClient {
-  public async getStudentRestrictions(
+  async getStudentRestrictions(
     studentId: number,
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
     return this.getCallTyped<RestrictionSummaryAPIOutDTO[]>(
@@ -20,13 +20,13 @@ export class RestrictionApi extends HttpBaseClient {
     );
   }
 
-  public async getRestrictionCategories(): Promise<OptionItemAPIOutDTO[]> {
+  async getRestrictionCategories(): Promise<OptionItemAPIOutDTO[]> {
     return this.getCallTyped<OptionItemAPIOutDTO[]>(
       this.addClientRoot("restriction/categories/options-list"),
     );
   }
 
-  public async getRestrictionReasons(
+  async getRestrictionReasons(
     restrictionCategory: string,
   ): Promise<OptionItemAPIOutDTO[]> {
     return this.getCallTyped<OptionItemAPIOutDTO[]>(
@@ -34,7 +34,7 @@ export class RestrictionApi extends HttpBaseClient {
     );
   }
 
-  public async getStudentRestrictionDetail(
+  async getStudentRestrictionDetail(
     studentId: number,
     studentRestrictionId: number,
   ): Promise<RestrictionDetailAPIOutDTO> {
@@ -45,7 +45,7 @@ export class RestrictionApi extends HttpBaseClient {
     );
   }
 
-  public async addStudentRestriction(
+  async addStudentRestriction(
     studentId: number,
     payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
@@ -60,7 +60,7 @@ export class RestrictionApi extends HttpBaseClient {
     }
   }
 
-  public async resolveStudentRestriction(
+  async resolveStudentRestriction(
     studentId: number,
     studentRestrictionId: number,
     payload: ResolveRestrictionAPIInDTO,
@@ -78,7 +78,7 @@ export class RestrictionApi extends HttpBaseClient {
     }
   }
 
-  public async getInstitutionRestrictions(
+  async getInstitutionRestrictions(
     institutionId: number,
   ): Promise<RestrictionSummaryAPIOutDTO[]> {
     return this.getCallTyped<RestrictionSummaryAPIOutDTO[]>(
@@ -86,7 +86,7 @@ export class RestrictionApi extends HttpBaseClient {
     );
   }
 
-  public async getInstitutionRestrictionDetail(
+  async getInstitutionRestrictionDetail(
     institutionId: number,
     institutionRestrictionId: number,
   ): Promise<RestrictionDetailAPIOutDTO> {
@@ -97,7 +97,7 @@ export class RestrictionApi extends HttpBaseClient {
     );
   }
 
-  public async addInstitutionRestriction(
+  async addInstitutionRestriction(
     institutionId: number,
     payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
@@ -107,7 +107,7 @@ export class RestrictionApi extends HttpBaseClient {
     );
   }
 
-  public async resolveInstitutionRestriction(
+  async resolveInstitutionRestriction(
     institutionId: number,
     institutionRestrictionId: number,
     payload: ResolveRestrictionAPIInDTO,
