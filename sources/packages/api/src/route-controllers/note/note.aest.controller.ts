@@ -99,6 +99,7 @@ export class NoteAESTController extends BaseController {
    * Add note for an Institution.
    * @param institutionId Institution id.
    * @param payload Note create object.
+   * @returns note id.
    */
   @Roles(Role.InstitutionCreateNote)
   @ApiNotFoundResponse({ description: "Institution not found." })
@@ -125,6 +126,7 @@ export class NoteAESTController extends BaseController {
    * Add note for a Student.
    * @param studentId student id.
    * @param payload Note create object.
+   * @returns note id.
    */
   @Roles(Role.StudentCreateNote)
   @ApiNotFoundResponse({ description: "Student not found." })
