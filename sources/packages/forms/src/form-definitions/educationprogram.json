@@ -713,7 +713,7 @@
                         "maxWords": "",
                         "pattern": "",
                         "customMessage": "",
-                        "custom": "valid = /^(11|09|52|01|03|05|16|23|24|25|42|27|30|38|40|45|50|54|55|13|28|31|44|60|04|10|14|15|29|41|26|22|43|51|39|12|21|46|47|48){1}\\.[a-zA-Z]{4}$/.test(input) ? true : 'Incorrect Format';",
+                        "custom": "valid = /^(11|09|52|01|03|05|16|23|24|25|42|27|30|38|40|45|50|54|55|13|28|31|44|60|04|10|14|15|29|41|26|22|43|51|39|12|21|46|47|48){1}\\.[0-9]{4}$/.test(input) ? true : 'Incorrect Format';",
                         "customPrivate": false,
                         "json": "",
                         "strictDateValidation": false,
@@ -769,7 +769,7 @@
                     "dataGridLabel": false,
                     "addons": [],
                     "inputType": "text",
-                    "id": "eeodhl7",
+                    "id": "ee1mppb",
                     "defaultValue": ""
                 },
                 {
@@ -812,7 +812,7 @@
                     "redrawOn": "",
                     "clearOnHide": true,
                     "customDefaultValue": "",
-                    "calculateValue": "//value = data.fieldOfStudyCodes.find((d) => d.sabcCode === data.sabcCodes[data.cipCode.substring(0, 2)] && d.levelOfStudyCode === data.levelOfStudyCodes[data.credentialType])[\"federalStudyCode\"];\nvalue = data.fieldOfStudyCodes[data.sabcCodes[data.cipCode.substring(0, 2)] + data.levelOfStudyCodes[data.credentialType]];",
+                    "calculateValue": "value = data.fieldOfStudyCodes[data.sabcCodes[data.cipCode.substring(0, 2)] + data.levelOfStudyCodes[data.credentialType]];",
                     "calculateServer": true,
                     "allowCalculateOverride": false,
                     "validateOn": "change",
@@ -860,7 +860,7 @@
                     "dataGridLabel": false,
                     "addons": [],
                     "inputType": "text",
-                    "id": "ekvx8j9",
+                    "id": "e4rq9we",
                     "defaultValue": ""
                 },
                 {
