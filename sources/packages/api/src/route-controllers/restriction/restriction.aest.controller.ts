@@ -192,7 +192,8 @@ export class RestrictionAESTController extends BaseController {
       await this.studentRestrictionService.addProvincialRestriction(
         studentId,
         userToken.userId,
-        payload,
+        payload.restrictionId,
+        payload.noteDescription,
       );
     let institutionNote;
     /**mapping the note added for restriction to student notes**/
@@ -233,7 +234,7 @@ export class RestrictionAESTController extends BaseController {
           studentId,
           studentRestrictionId,
           userToken.userId,
-          payload,
+          payload.noteDescription,
         );
 
       /**mapping the note added for resolution to student notes**/
