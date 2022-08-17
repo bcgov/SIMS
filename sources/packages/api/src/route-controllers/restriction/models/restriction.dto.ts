@@ -61,15 +61,15 @@ export class RestrictionStatusAPIOutDTO {
 
 /**
  * DTO for student restriction.
- * This object is returned by controller.
+ * This object is returned by api.
  */
 export class StudentRestrictionAPIOutDTO {
   /**
-   * code is the Restriction code.
+   * Code is the Restriction code.
    */
   code: string;
   /**
-   * type is the Notification type.
+   * Type is the Notification type.
    */
   type: RestrictionNotificationType;
 }

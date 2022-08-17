@@ -51,7 +51,7 @@ export const transformToNoteDTO = (note: Note): NoteAPIOutDTO => {
 };
 
 /**
- * Util to transform note entity model to DTO.
+ * Util to transform DTO to note entity model.
  * @param Entity
  * @returns notes
  */
