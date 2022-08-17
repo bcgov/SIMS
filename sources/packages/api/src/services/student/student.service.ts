@@ -595,13 +595,14 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param studentId
    * @param note
    */
-  async saveStudentNote(studentId: number, note: Note): Promise<void> {
+  async saveStudentNote(studentId: number, note: Note): Promise<Note> {
     const student = await this.repo.findOne({
       where: { id: studentId },
       relations: { notes: true },
     });
     student.notes.push(note);
     await this.repo.save(student);
+    return note;
   }
 
   /**

@@ -15,7 +15,7 @@ export class RestrictionService {
   // Shared Instance
   private static instance: RestrictionService;
 
-  public static get shared(): RestrictionService {
+  static get shared(): RestrictionService {
     return this.instance || (this.instance = new this());
   }
 

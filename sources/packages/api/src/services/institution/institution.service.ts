@@ -743,12 +743,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param institutionId
    * @param note
    */
-  async saveInstitutionNote(institutionId: number, note: Note): Promise<void> {
+  async saveInstitutionNote(institutionId: number, note: Note): Promise<Note> {
     await this.repo
       .createQueryBuilder()
       .relation(Institution, "notes")
       .of({ id: institutionId } as Institution)
       .add(note);
+    return note;
   }
 
   /**

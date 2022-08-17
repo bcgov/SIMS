@@ -65,11 +65,11 @@ export class RestrictionStatusAPIOutDTO {
  */
 export class StudentRestrictionAPIOutDTO {
   /**
-   * Code is the Restriction code.
+   * Restriction code.
    */
   code: string;
   /**
-   * Type is the Notification type.
+   * Notification type.
    */
   type: RestrictionNotificationType;
 }

@@ -30,6 +30,7 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
 import { ClientTypeBaseRoute } from "../../types";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /**
  * Controller for Notes.
@@ -57,7 +58,7 @@ export class NoteAESTController extends BaseController {
   @Get("student/:studentId")
   async getStudentDetails(
     @Param("studentId", ParseIntPipe) studentId: number,
-    @Query("noteTypem", new ParseEnumPipe(NoteType)) noteType: NoteType,
+    @Query("noteType", new ParseEnumPipe(NoteType)) noteType: NoteType,
   ): Promise<NoteAPIOutDTO[]> {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
@@ -99,7 +100,6 @@ export class NoteAESTController extends BaseController {
    * @param institutionId Institution id.
    * @param payload Note create object.
    */
-
   @Roles(Role.InstitutionCreateNote)
   @ApiNotFoundResponse({ description: "Institution not found." })
   @Post("institution/:institutionId")
@@ -107,17 +107,18 @@ export class NoteAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Param("institutionId", ParseIntPipe) institutionId: number,
     @Body() payload: NoteAPIInDTO,
-  ): Promise<void> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const institution =
       this.institutionService.getBasicInstitutionDetailById(institutionId);
     if (!institution) {
       throw new NotFoundException("Institution not found.");
     }
     const institutionNote = transformToNoteEntity(payload, userToken.userId);
-    await this.institutionService.saveInstitutionNote(
+    const note = await this.institutionService.saveInstitutionNote(
       institutionId,
       institutionNote,
     );
+    return { id: note.id };
   }
 
   /**
@@ -125,7 +126,6 @@ export class NoteAESTController extends BaseController {
    * @param studentId student id.
    * @param payload Note create object.
    */
-
   @Roles(Role.StudentCreateNote)
   @ApiNotFoundResponse({ description: "Student not found." })
   @Post("student/:studentId")
@@ -133,12 +133,16 @@ export class NoteAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: NoteAPIInDTO,
-  ): Promise<void> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
       throw new NotFoundException("Student not found.");
     }
     const studentNote = transformToNoteEntity(payload, userToken.userId);
-    await this.studentService.saveStudentNote(studentId, studentNote);
+    const note = await this.studentService.saveStudentNote(
+      studentId,
+      studentNote,
+    );
+    return { id: note.id };
   }
 }

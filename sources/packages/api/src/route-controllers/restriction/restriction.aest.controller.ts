@@ -429,7 +429,7 @@ export class RestrictionAESTController extends BaseController {
         institutionId,
       );
     return {
-      isActive: institutionRestrictions?.length <= 0,
+      isActive: !!institutionRestrictions?.length,
     };
   }
 }
