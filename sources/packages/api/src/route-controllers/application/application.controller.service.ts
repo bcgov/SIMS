@@ -12,7 +12,7 @@ import {
 } from "./models/application.model";
 import {
   credentialTypeToDisplay,
-  dateString,
+  getDateOnlyFormat,
   deliveryMethod,
   getCOEDeniedReason,
   getOfferingNameAndPeriod,
@@ -152,8 +152,8 @@ export class ApplicationControllerService {
       applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,
       applicationNumber: applicationDetail.applicationNumber,
       applicationOfferingIntensity: offering?.offeringIntensity,
-      applicationStartDate: dateString(offering?.studyStartDate),
-      applicationEndDate: dateString(offering?.studyEndDate),
+      applicationStartDate: getDateOnlyFormat(offering?.studyStartDate),
+      applicationEndDate: getDateOnlyFormat(offering?.studyEndDate),
       applicationInstitutionName: applicationDetail?.location?.name,
       applicationPIRStatus: applicationDetail.pirStatus,
       applicationAssessmentStatus:

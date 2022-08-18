@@ -13,7 +13,7 @@ dayjs.extend(timezone);
 dayjs.extend(dayOfYear);
 
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
-export const DATE_ONLY_FORMAT = "YYYY MMM DD";
+export const DATE_ONLY_FORMAT = "MMM DD YYYY";
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 export const TIMESTAMP_CONTINUOUS_FORMAT = "YYYY-MM-DD_HH.mm.ss";
 export const PST_TIMEZONE = "America/Vancouver";
@@ -32,21 +32,6 @@ export const getUTCNow = (): Date => {
  */
 export const getUTC = (localDate: Date): Date => {
   return dayjs(localDate).utc().toDate();
-};
-
-/**
- * Convert a string or date to a string format like "Thu Aug 05 2021".
- * @param date string or date to be converted.
- * @returns string representation (e.g. Thu Aug 05 2021).
- */
-export const dateString = (date: string | Date): string => {
-  if (date) {
-    if (date instanceof Date) {
-      return date.toDateString();
-    }
-    return new Date(date).toDateString();
-  }
-  return "";
 };
 
 /**
@@ -145,15 +130,6 @@ export function getISODateOnlyString(date?: Date | string): string | null {
 }
 
 /**
- * Get the day of the year (1-366), considering the leap year.
- * @param day day to retrieve the number.
- * @returns day of the year (1-366), considering the leap year.
- */
-export function getDayOfTheYear(day: Date): number {
-  return dayjs(day).dayOfYear();
-}
-
-/**
  * Get the extended date format(March, 22 2021) for the date given
  * @param date date to be retrieved as Extended date format
  * @returns extended date format like March, 22 2021
@@ -165,9 +141,9 @@ export function getExtendedDateFormat(date: Date): string {
 /**
  * Get the extended date format(2021 Mar 22) for the date given
  * @param date date to be retrieved as Extended date format
- * @returns extended date format like March, 22 2021
+ * @returns extended date format like Mar 22 2021
  */
-export function getDateOnlyFormat(date: Date): string {
+export function getDateOnlyFormat(date?: string | Date): string {
   return dayjs(date).format(DATE_ONLY_FORMAT);
 }
 
