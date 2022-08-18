@@ -31,7 +31,6 @@ import {
   StudentApplicationDetails,
   StudentApplicationDetailsForTracking,
 } from "@/types";
-
 import { useFormatters } from "@/composables";
 
 export default {
