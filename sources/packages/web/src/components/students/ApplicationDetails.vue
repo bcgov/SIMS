@@ -32,6 +32,8 @@ import {
   StudentApplicationDetailsForTracking,
 } from "@/types";
 
+import { useFormatters } from "@/composables";
+
 export default {
   components: {
     ApplicationProgressBar,
@@ -44,6 +46,7 @@ export default {
     },
   },
   setup(props: any) {
+    const { dateOnlyLongString } = useFormatters();
     const initialData = ref({} as StudentApplicationDetails);
     const dataForTracking = ref({} as StudentApplicationDetailsForTracking);
     const router = useRouter();
@@ -93,8 +96,12 @@ export default {
         applicationNumber: props.applicationDetails.applicationNumber ?? "-",
         applicationOfferingIntensity:
           props.applicationDetails.applicationOfferingIntensity ?? "-",
-        applicationStartDate: props.applicationDetails.applicationStartDate,
-        applicationEndDate: props.applicationDetails.applicationEndDate,
+        applicationStartDate: dateOnlyLongString(
+          props.applicationDetails.applicationStartDate,
+        ),
+        applicationEndDate: dateOnlyLongString(
+          props.applicationDetails.applicationEndDate,
+        ),
         applicationInstitutionName:
           props.applicationDetails.applicationInstitutionName ?? "-",
         applicationStatus: props.applicationDetails.applicationStatus,
@@ -118,6 +125,7 @@ export default {
       initialData,
       dataForTracking,
       customEventCallback,
+      dateOnlyLongString,
     };
   },
 };

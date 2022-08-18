@@ -149,7 +149,7 @@ export default {
     const addExpiryDateModal = ref(
       {} as ModalDialog<FormIOForm<UpdateSINValidationAPIInDTO> | boolean>,
     );
-    const { getISODateOnlyString } = useFormatters();
+    const { dateOnlyLongString } = useFormatters();
     const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
@@ -198,7 +198,7 @@ export default {
         processingEditExpiryDate.value = true;
         const formioForm =
           modalResult as FormIOForm<UpdateSINValidationAPIInDTO>;
-        formioForm.data.expiryDate = getISODateOnlyString(
+        formioForm.data.expiryDate = dateOnlyLongString(
           formioForm.data.expiryDate,
         );
         await StudentService.shared.updateStudentSINValidation(

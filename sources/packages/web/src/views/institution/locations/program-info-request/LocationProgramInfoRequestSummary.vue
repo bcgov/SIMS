@@ -23,8 +23,8 @@
             <Column field="studyStartPeriod" header="Study Period">
               <template #body="slotProps">
                 <span>
-                  {{ dateString(slotProps.data.studyStartPeriod) }} -
-                  {{ dateString(slotProps.data.studyEndPeriod) }}
+                  {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
+                  {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
                 </span>
               </template></Column
             >
@@ -76,7 +76,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const { dateString } = useFormatters();
+    const { dateOnlyLongString } = useFormatters();
     const applications = ref([] as PIRSummaryAPIOutDTO[]);
 
     const goToViewApplication = (applicationId: number) => {
@@ -106,7 +106,7 @@ export default {
 
     return {
       applications,
-      dateString,
+      dateOnlyLongString,
       goToViewApplication,
     };
   },
