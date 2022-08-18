@@ -2,6 +2,7 @@ import { ActionContext, ActionTree } from "vuex";
 import { RootState } from "@/types";
 import { StudentState, StudentRestriction } from "./student";
 import { StudentService } from "@/services/StudentService";
+import { RestrictionService } from "@/services/RestrictionService";
 
 export const actions: ActionTree<StudentState, RootState> = {
   async updateProfileData(
@@ -21,7 +22,7 @@ export const actions: ActionTree<StudentState, RootState> = {
   async updateStudentRestrictions(
     context: ActionContext<StudentState, RootState>,
   ) {
-    const response = await StudentService.shared.getStudentRestriction();
+    const response = await RestrictionService.shared.getStudentRestriction();
     const restrictions = response
       ? response.map<StudentRestriction>((restriction) => ({
           code: restriction.code,

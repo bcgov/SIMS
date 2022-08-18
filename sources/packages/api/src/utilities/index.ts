@@ -14,7 +14,6 @@ export * from "./esdc-utils";
 export * from "./string-utils";
 export * from "./disbursements-utils";
 export * from "./datatable-database-mapping-utils";
-export * from "./note-utils";
 export * from "./datatable-config";
 export * from "./database";
 export * from "./pagination-utils";
