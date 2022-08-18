@@ -55,6 +55,7 @@ export default {
       required: false,
       default: false,
     },
+    // Set noSidebar to true, when the page does not have a sidebar.
     noSidebar: {
       type: Boolean,
       required: false,
@@ -71,6 +72,7 @@ export default {
 </script>
 <style scoped>
 /* todo: ann move the style */
+/* todo: ann for consistency safe create a const and use in all n-nav-drawer and style */
 .no-sidebar {
   /* 256px is the default width of v-navigation-drawer, if its changes, adjust here too */
   margin-inline-start: 256px;

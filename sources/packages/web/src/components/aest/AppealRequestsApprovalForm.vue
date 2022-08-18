@@ -46,8 +46,8 @@ export default {
       approvalForms.push(form);
     };
 
-    const submit = () => {
-      if (checkFormioValidity(approvalForms)) {
+    const submit = async () => {
+      if (await checkFormioValidity(approvalForms)) {
         const approvals = approvalForms.map(
           (form) =>
             ({

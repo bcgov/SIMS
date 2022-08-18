@@ -1,10 +1,10 @@
 <template>
-  <full-page-container>
+  <full-page-container :noSidebar="true">
     <template #header>
       <header-navigator
-        title="All Locations"
+        title="Manage locations"
         :routeLocation="goBackRouteParams"
-        subTitle="Edit Locations"
+        subTitle="Edit Location"
       />
     </template>
     <location-edit-form

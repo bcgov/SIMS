@@ -150,14 +150,17 @@ export function useFormioUtils() {
    * @param forms forms to have the validation executed.
    * @returns false if any form is not valid.
    */
-  const checkFormioValidity = (forms: any[] | FormIOForm[]) => {
-    let isValid = true;
-    forms.forEach((form: any) => {
-      if (!form.checkValidity(undefined, true, undefined, false)) {
-        isValid = false;
+  // todo: ann test appeals - multiple forms
+  const checkFormioValidity = async (forms: any[] | FormIOForm[]) => {
+    const promises = forms.concat(forms).map(async (form: any) => {
+      try {
+        await form.submit();
+        return true;
+      } catch {
+        return false;
       }
     });
-    return isValid;
+    return !(await Promise.all(promises)).some((eachForm) => !eachForm);
   };
 
   return {

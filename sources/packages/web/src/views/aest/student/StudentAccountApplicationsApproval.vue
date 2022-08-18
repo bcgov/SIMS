@@ -126,7 +126,7 @@ export default {
     };
 
     const createStudentAccount = async () => {
-      if (checkFormioValidity([formIOForm])) {
+      if (await checkFormioValidity([formIOForm])) {
         try {
           const create = await createStudentAccountModal.value.showModal();
           if (!create) {
