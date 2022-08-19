@@ -22,22 +22,6 @@ export function useFormatters() {
   const getISODateOnlyString = (date: Date | string): string => {
     return dayjs(date).format(DATE_ONLY_ISO_FORMAT);
   };
-
-  /**
-   * Convert a string or date to a string format like "Thu Aug 05 2021".
-   * @param date string or date to be converted.
-   * @returns string representation (e.g. Thu Aug 05 2021).
-   */
-  const dateString = (date: string | Date): string => {
-    if (date) {
-      if (date instanceof Date) {
-        return date.toDateString();
-      }
-      return new Date(date).toDateString();
-    }
-    return "";
-  };
-
   /**
    * Convert a string or date to a string format like "Aug 05 2021".
    * @param date string or date to be converted.
@@ -45,7 +29,7 @@ export function useFormatters() {
    */
   const dateOnlyLongString = (date?: string | Date): string => {
     if (date) {
-      return dayjs(date).format("MMM D YYYY");
+      return dayjs(date).format("MMM DD YYYY");
     }
     return "";
   };
@@ -197,7 +181,6 @@ export function useFormatters() {
   };
 
   return {
-    dateString,
     dateOnlyLongString,
     getDatesDiff,
     getFormattedAddress,
