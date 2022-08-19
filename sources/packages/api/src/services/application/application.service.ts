@@ -26,6 +26,7 @@ import {
   AssessmentTriggerType,
   User,
   ApplicationData,
+  OfferingStatus,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
@@ -1441,5 +1442,34 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .setParameter("isApplicationArchived", true)
       .execute();
+  }
+
+  /**
+   * Get offering request change for a particular application id.
+   * @param applicationId
+   * @returns Offering id and submitted date.
+   */
+  async getOfferingChangeRequestsByApplicationId(
+    applicationId: number,
+  ): Promise<Application> {
+    return this.repo.findOne({
+      select: {
+        currentAssessment: {
+          id: true,
+          offering: {
+            id: true,
+          },
+        },
+      },
+      relations: {
+        currentAssessment: { offering: { educationProgram: true } },
+      },
+      where: {
+        id: applicationId,
+        currentAssessment: {
+          offering: { offeringStatus: OfferingStatus.ChangeUnderReview },
+        },
+      },
+    });
   }
 }

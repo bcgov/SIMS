@@ -6,6 +6,8 @@ import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   ApplicationExceptionService,
+  ApplicationService,
+  EducationProgramOfferingService,
   StudentAppealService,
   StudentAssessmentService,
   StudentScholasticStandingsService,
@@ -25,6 +27,7 @@ import { AssessmentControllerService } from "./assessment.controller.service";
 import {
   ApplicationExceptionStatus,
   AssessmentTriggerType,
+  OfferingStatus,
 } from "../../database/entities";
 import { StudentAssessmentStatus } from "../../services/student-assessment/student-assessment.models";
 
@@ -39,6 +42,8 @@ export class AssessmentAESTController extends BaseController {
     private readonly assessmentControllerService: AssessmentControllerService,
     private readonly applicationExceptionService: ApplicationExceptionService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
+    private readonly applicationService: ApplicationService,
+    private readonly educationProgramOfferingService: EducationProgramOfferingService,
   ) {
     super();
   }
@@ -57,6 +62,28 @@ export class AssessmentAESTController extends BaseController {
   async getRequestedAssessmentSummary(
     @Param("applicationId") applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
+    let requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO;
+    const precedingOfferingRequest =
+      await this.applicationService.getOfferingChangeRequestsByApplicationId(
+        applicationId,
+      );
+
+    if (precedingOfferingRequest) {
+      const changedOffering =
+        await this.educationProgramOfferingService.getOfferingRequestsByPrecedingOfferingRequest(
+          precedingOfferingRequest.currentAssessment.offering.id,
+        );
+      if (changedOffering) {
+        requestAssessmentSummary = {
+          id: changedOffering.id,
+          submittedDate: changedOffering.submittedDate,
+          status: OfferingStatus.ChangeAwaitingApproval,
+          requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
+          programId: changedOffering.educationProgram.id,
+        };
+      }
+    }
+
     const applicationExceptions =
       await this.applicationExceptionService.getExceptionsByApplicationId(
         applicationId,
@@ -65,22 +92,28 @@ export class AssessmentAESTController extends BaseController {
       );
 
     if (applicationExceptions.length > 0) {
-      return applicationExceptions.map((applicationException) => ({
-        id: applicationException.id,
-        submittedDate: applicationException.createdAt,
-        status: applicationException.exceptionStatus,
-        requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
-      }));
+      return [].concat(
+        requestAssessmentSummary,
+        applicationExceptions.map((applicationException) => ({
+          id: applicationException.id,
+          submittedDate: applicationException.createdAt,
+          status: applicationException.exceptionStatus,
+          requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
+        })),
+      );
     }
 
     const studentAppeal =
       await this.studentAppealService.getPendingAndDeniedAppeals(applicationId);
-    return studentAppeal.map((appeals) => ({
-      id: appeals.id,
-      submittedDate: appeals.submittedDate,
-      status: appeals.status,
-      requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
-    }));
+    return [].concat(
+      requestAssessmentSummary,
+      studentAppeal.map((appeals) => ({
+        id: appeals.id,
+        submittedDate: appeals.submittedDate,
+        status: appeals.status,
+        requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
+      })),
+    );
   }
 
   /**
@@ -109,6 +142,8 @@ export class AssessmentAESTController extends BaseController {
         triggerType: assessment.triggerType,
         assessmentDate: assessment.assessmentDate,
         status: assessment.status,
+        offeringId: assessment.offering.id,
+        programId: assessment.offering.educationProgram.id,
         studentAppealId: assessment.studentAppeal?.id,
         applicationExceptionId: assessment.application.applicationException?.id,
         studentScholasticStandingId: assessment.studentScholasticStanding?.id,

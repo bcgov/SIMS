@@ -4,6 +4,7 @@ import {
   Assessment,
   AssessmentTriggerType,
   OfferingIntensity,
+  OfferingStatus,
   StudentAppealStatus,
 } from "../../../database/entities";
 import { ApiProperty } from "@nestjs/swagger";
@@ -11,13 +12,15 @@ import { ApiProperty } from "@nestjs/swagger";
 export enum RequestAssessmentTypeAPIOutDTO {
   StudentException = "Student exceptions",
   StudentAppeal = "Student appeal",
+  OfferingRequest = "Offering request",
 }
 
 export class RequestAssessmentSummaryAPIOutDTO {
   id: number;
   submittedDate: Date;
-  status: StudentAppealStatus | ApplicationExceptionStatus;
+  status: StudentAppealStatus | ApplicationExceptionStatus | OfferingStatus;
   requestType: RequestAssessmentTypeAPIOutDTO;
+  programId?: number;
 }
 
 export class AssessmentHistorySummaryAPIOutDTO {
@@ -26,6 +29,8 @@ export class AssessmentHistorySummaryAPIOutDTO {
   triggerType: AssessmentTriggerType;
   assessmentDate?: Date;
   status: StudentAssessmentStatus;
+  offeringId?: number;
+  programId?: number;
   studentAppealId?: number;
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;

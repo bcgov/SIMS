@@ -12,6 +12,7 @@ export const ASSESSMENT_ALREADY_IN_PROGRESS = "ASSESSMENT_ALREADY_IN_PROGRESS";
 export enum RequestAssessmentTypeAPIOutDTO {
   StudentException = "Student exceptions",
   StudentAppeal = "Student appeal",
+  OfferingRequest = "Offering request",
 }
 
 export interface RequestAssessmentSummaryAPIOutDTO {
@@ -19,6 +20,7 @@ export interface RequestAssessmentSummaryAPIOutDTO {
   submittedDate: Date;
   status: StudentAppealStatus | ApplicationExceptionStatus;
   requestType: RequestAssessmentTypeAPIOutDTO;
+  programId?: number;
 }
 
 export interface AssessmentHistorySummaryAPIOutDTO {
@@ -27,6 +29,8 @@ export interface AssessmentHistorySummaryAPIOutDTO {
   triggerType: AssessmentTriggerType;
   assessmentDate?: Date;
   status: StudentAssessmentStatus;
+  offeringId?: number;
+  programId?: number;
   studentAppealId?: number;
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;

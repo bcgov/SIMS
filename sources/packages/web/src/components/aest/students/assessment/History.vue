@@ -128,6 +128,9 @@ export default {
             data.studentScholasticStandingId,
           );
           break;
+        case AssessmentTriggerType.OfferingChange:
+          context.emit("viewOfferingRequest", data.offeringId, data.programId);
+          break;
         case AssessmentTriggerType.OriginalAssessment:
           if (data.applicationExceptionId) {
             context.emit(

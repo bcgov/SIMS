@@ -929,4 +929,19 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     // Processing any pending promise if not completed.
     await Promise.all(promises);
   }
+
+  /**
+   * Get changed offering change for a preceding offering id.
+   * @param offeringId
+   * @returns Offering id and submitted date.
+   */
+  async getOfferingRequestsByPrecedingOfferingRequest(
+    offeringId: number,
+  ): Promise<EducationProgramOffering> {
+    return this.repo.findOne({
+      select: { id: true, submittedDate: true, educationProgram: { id: true } },
+      relations: { educationProgram: true },
+      where: { precedingOffering: { id: offeringId } },
+    });
+  }
 }
