@@ -28,7 +28,7 @@ export default defineConfig({
   },
   env: {
     token_url:
-      "https://dev.oidc.gov.bc.ca/auth/realms/jxoe2o46/protocol/openid-connect/token",
+      "https://test.oidc.gov.bc.ca/auth/realms/jxoe2o46/protocol/openid-connect/token",
     update_institution_url: "/api/institutions/institution",
     studentURL: "https://test-aest-sims.apps.silver.devops.gov.bc.ca/student/login",
     username: "",

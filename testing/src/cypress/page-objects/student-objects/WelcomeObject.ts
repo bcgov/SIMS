@@ -16,9 +16,9 @@ export default class WelcomeObject {
   signUpWithBCSCButton() {
     return cy.contains("Sign Up with BCSC");
   }
-  
-  loginSignUpButton(){
-    return cy.contains(" Login / Sign up with BCSC ")
+
+  loginSignUpButton() {
+    return cy.contains("Login / Sign up with BCSC");
   }
 
   getSetupButton() {
