@@ -1,9 +1,7 @@
 import ApiClient from "./http/ApiClient";
 import {
-  OptionItemDto,
   OfferingIntensity,
   OfferingDTO,
-  ProgramOfferingDetailsDto,
   PaginatedResults,
   PaginationOptions,
 } from "@/types";
@@ -15,6 +13,8 @@ import {
   EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   EducationProgramOfferingAPIInDTO,
+  OfferingStartDateAPIOutDTO,
+  OptionItemAPIOutDTO,
 } from "@/services/http/dto";
 
 export class EducationProgramOfferingService {
@@ -34,7 +34,7 @@ export class EducationProgramOfferingService {
   public async createProgramOffering(
     locationId: number,
     programId: number,
-    payload: EducationProgramOfferingAPIOutDTO,
+    payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
     return ApiClient.EducationProgramOffering.createOffering(
       locationId,
@@ -63,12 +63,19 @@ export class EducationProgramOfferingService {
     );
   }
 
-  public async getProgramOffering(
+  /**
+   * Get offering details.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param offeringId offering.
+   * @returns offering details.
+   */
+  public async getOfferingDetailsByLocationAndProgram(
     locationId: number,
     programId: number,
     offeringId: number,
-  ): Promise<OfferingDTO> {
-    return ApiClient.EducationProgramOffering.getProgramOffering(
+  ): Promise<EducationProgramOfferingAPIOutDTO> {
+    return ApiClient.EducationProgramOffering.getOfferingDetailsByLocationAndProgram(
       locationId,
       programId,
       offeringId,
@@ -100,19 +107,24 @@ export class EducationProgramOfferingService {
   }
 
   /**
-   * Gets program offerings for location authorized for students.
-   * @param locationId location id.
-   * @param programId program id.
-   * @returns program offerings for location.
+   * Get offerings for the given program and location
+   * in client lookup format.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param programYearId program year of the offering program.
+   * @param selectedIntensity offering intensity.
+   * @param isIncludeInActiveProgramYear if isIncludeInActiveProgramYear is true/supplied then both active
+   * and not active program year are considered.
+   * @returns offerings in client lookup format.
    */
-  public async getProgramOfferingsForLocation(
+  public async getProgramOfferingsOptionsList(
     locationId: number,
     programId: number,
     programYearId: number,
     selectedIntensity: OfferingIntensity,
     isIncludeInActiveProgramYear?: boolean,
-  ): Promise<OptionItemDto[]> {
-    return ApiClient.EducationProgramOffering.getProgramOfferingsForLocation(
+  ): Promise<OptionItemAPIOutDTO[]> {
+    return ApiClient.EducationProgramOffering.getProgramOfferingsOptionsList(
       locationId,
       programId,
       programYearId,
@@ -122,39 +134,15 @@ export class EducationProgramOfferingService {
   }
 
   /**
-   * Gets program offering details
+   * Get offering start date of a given offering.
    * @param offeringId offering id
-   * @returns offering details for the given offering
+   * @returns offering with start date value.
    */
-  public async getProgramOfferingDetails(
+  public async getProgramOfferingStartDate(
     offeringId: number,
-  ): Promise<ProgramOfferingDetailsDto> {
-    return ApiClient.EducationProgramOffering.getProgramOfferingDetails(
+  ): Promise<OfferingStartDateAPIOutDTO> {
+    return ApiClient.EducationProgramOffering.getProgramOfferingStartDate(
       offeringId,
-    );
-  }
-
-  /**
-   * Gets program offerings for location authorized
-   * for a particular institution.
-   * @param locationId location id.
-   * @param programId program id.
-   * @returns program offerings for location authorized
-   * for a particular institution.
-   */
-  public async getProgramOfferingsForLocationForInstitution(
-    locationId: number,
-    programId: number,
-    programYearId: number,
-    selectedOfferingIntensity: OfferingIntensity,
-    isIncludeInActiveProgramYear?: boolean,
-  ): Promise<OptionItemDto[]> {
-    return ApiClient.EducationProgramOffering.getProgramOfferingsForLocationForInstitution(
-      locationId,
-      programId,
-      programYearId,
-      selectedOfferingIntensity,
-      isIncludeInActiveProgramYear,
     );
   }
 
@@ -200,7 +188,7 @@ export class EducationProgramOfferingService {
     locationId: number,
     programId: number,
     offeringId: number,
-    payload: OfferingDTO,
+    payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
     return ApiClient.EducationProgramOffering.requestChange(
       locationId,

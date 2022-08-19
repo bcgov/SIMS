@@ -154,7 +154,7 @@ export default {
         );
 
       const programOffering =
-        await EducationProgramOfferingService.shared.getProgramOffering(
+        await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
           props.locationId,
           props.programId,
           props.offeringId,

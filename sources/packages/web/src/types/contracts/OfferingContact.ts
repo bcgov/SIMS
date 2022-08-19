@@ -100,10 +100,6 @@ export type OfferingFormCreateModel = Pick<
   "programIntensity" | "programDeliveryTypes" | "hasWILComponent"
 >;
 
-export interface ProgramOfferingDetailsDto {
-  studyStartDate?: Date;
-}
-
 /**
  * Dto for study break item.
  */

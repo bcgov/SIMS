@@ -95,6 +95,35 @@ export class EducationProgramOfferingAPIInDTO {
   courseLoad?: number;
 }
 
+export class EducationProgramOfferingAPIOutDTO {
+  id: number;
+  offeringName: string;
+  studyStartDate: Date;
+  studyEndDate: Date;
+  actualTuitionCosts: number;
+  programRelatedCosts: number;
+  mandatoryFees: number;
+  exceptionalExpenses: number;
+  offeringDelivered: string;
+  lacksStudyBreaks: boolean;
+  offeringIntensity: OfferingIntensity;
+  yearOfStudy: number;
+  hasOfferingWILComponent: string;
+  offeringDeclaration: boolean;
+  offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
+  offeringWILType?: string;
+  showYearOfStudy?: boolean;
+  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
+  assessedBy?: string;
+  assessedDate?: Date;
+  submittedDate: Date;
+  courseLoad?: number;
+  hasExistingApplication?: boolean;
+  locationName?: string;
+  institutionName?: string;
+}
+
 export class EducationProgramOfferingSummaryAPIOutDTO {
   id: number;
   name: string;
@@ -149,8 +178,8 @@ export interface ProgramOfferingDto {
   hasExistingApplication?: boolean;
 }
 
-export interface ProgramOfferingDetailsDto {
-  studyStartDate?: Date;
+export class OfferingStartDateAPIOutDTO {
+  studyStartDate: Date;
 }
 
 /**
@@ -159,10 +188,10 @@ export interface ProgramOfferingDetailsDto {
  * @param hasExistingApplication is the offering linked to any application.
  * @returns ProgramOfferingDto
  */
-export const transformToProgramOfferingDto = (
+export const transformToProgramOfferingDTO = (
   offering: EducationProgramOffering,
   hasExistingApplication?: boolean,
-): ProgramOfferingDto => {
+): EducationProgramOfferingAPIOutDTO => {
   return {
     id: offering.id,
     offeringName: offering.name,

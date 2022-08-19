@@ -51,7 +51,7 @@ export interface StudyBreaksAndWeeksOutDTO {
 }
 
 export interface StudyBreaksAndWeeksInDTO {
-  studyBreaks: StudyBreakOutDTO[];
+  studyBreaks: StudyBreakInDTO[];
   fundedStudyPeriodDays: number;
   totalDays: number;
   totalFundedWeeks: number;
@@ -76,13 +76,14 @@ export interface EducationProgramOfferingAPIInDTO {
   offeringType: OfferingTypes;
   offeringWILType?: string;
   showYearOfStudy?: boolean;
-  studyBreaks?: StudyBreaksAndWeeksInDTO;
+  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
   assessedBy?: string;
   assessedDate?: Date;
   courseLoad?: number;
 }
 
 export interface EducationProgramOfferingAPIOutDTO {
+  id: number;
   offeringName: string;
   studyStartDate: Date;
   studyEndDate: Date;
@@ -100,11 +101,14 @@ export interface EducationProgramOfferingAPIOutDTO {
   offeringType: OfferingTypes;
   offeringWILType?: string;
   showYearOfStudy?: boolean;
-  studyBreaks?: StudyBreaksAndWeeksOutDTO;
+  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
   assessedBy?: string;
   assessedDate?: Date;
+  submittedDate: Date;
   courseLoad?: number;
   hasExistingApplication?: boolean;
+  locationName?: string;
+  institutionName?: string;
 }
 
 export interface EducationProgramOfferingSummaryAPIOutDTO {
@@ -116,4 +120,8 @@ export interface EducationProgramOfferingSummaryAPIOutDTO {
   offeringIntensity: OfferingIntensity;
   offeringType: OfferingTypes;
   offeringStatus: OfferingStatus;
+}
+
+export interface OfferingStartDateAPIOutDTO {
+  studyStartDate: Date;
 }

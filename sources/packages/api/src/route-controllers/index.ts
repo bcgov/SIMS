@@ -7,7 +7,6 @@ export * from "./education-program/education-program.controller.service";
 export * from "./education-program/education-program.aest.controller";
 export * from "./education-program/education-program.institutions.controller";
 export * from "./education-program/education-program.students.controller";
-export * from "./education-program-offering/education-program-offering.controller";
 export * from "./application/application.system-access.controller";
 export * from "./atbc/atbc.system.controller";
 export * from "./program-info-request/program-info-request.institutions.controller";
@@ -56,3 +55,4 @@ export * from "./student-account-applications/student-account-application.aest.c
 export * from "./student-account-applications/student-account-application.students.controller";
 export * from "./education-program-offering/education-program-offering.institutions.controller";
 export * from "./education-program-offering/education-program-offering.controller.service";
+export * from "./education-program-offering/education-program-offering.students.controller";

@@ -1,7 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { OfferingTypes } from "../../database/entities";
+import { Injectable, UnprocessableEntityException } from "@nestjs/common";
+import {
+  OfferingIntensity,
+  OfferingStatus,
+  OfferingTypes,
+} from "../../database/entities";
 import { EducationProgramOfferingService } from "../../services";
-import { getISODateOnlyString } from "../../utilities";
+import {
+  getISODateOnlyString,
+  getOfferingNameAndPeriod,
+} from "../../utilities";
+import { OptionItemAPIOutDTO } from "../models/common.dto";
 import {
   OfferingsPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
@@ -55,5 +63,49 @@ export class EducationProgramOfferingControllerService {
       })),
       count: offerings.count,
     };
+  }
+
+  /**
+   * Get offerings for the given program and location
+   * in client lookup format.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param programYearId program year of the offering program.
+   * @param offeringTypes offering types to be filtered.
+   * @param offeringIntensity offering intensity.
+   * @param includeInActivePY if includeInActivePY is true/supplied then both active
+   * and not active program year are considered.
+   * @returns offerings in client lookup format.
+   */
+  async getProgramOfferingsOptionsList(
+    locationId: number,
+    programId: number,
+    programYearId: number,
+    offeringTypes: OfferingTypes[],
+    includeInActivePY: boolean,
+    offeringIntensity?: OfferingIntensity,
+  ): Promise<OptionItemAPIOutDTO[]> {
+    if (
+      offeringIntensity &&
+      !Object.values(OfferingIntensity).includes(offeringIntensity)
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
+    const offeringsFilter = {
+      offeringIntensity,
+      offeringStatus: OfferingStatus.Approved,
+      offeringTypes,
+    };
+    const offerings = await this.offeringService.getProgramOfferingsForLocation(
+      locationId,
+      programId,
+      programYearId,
+      offeringsFilter,
+      includeInActivePY,
+    );
+    return offerings.map((offering) => ({
+      id: offering.id,
+      description: getOfferingNameAndPeriod(offering),
+    }));
   }
 }

@@ -1,11 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import {
-  OptionItemDto,
-  OfferingIntensity,
-  OfferingDTO,
-  ProgramOfferingDetailsDto,
-  PaginationOptions,
-} from "@/types";
+import { OfferingIntensity, OfferingDTO, PaginationOptions } from "@/types";
 import { getPaginationQueryString } from "@/helpers";
 import {
   OfferingAssessmentAPIInDTO,
@@ -15,6 +9,9 @@ import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  OfferingStartDateAPIOutDTO,
+  OptionItemAPIOutDTO,
+  EducationProgramOfferingAPIOutDTO,
 } from "@/services/http/dto";
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
@@ -56,21 +53,22 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     return this.getCallTyped(this.addClientRoot(url));
   }
 
-  public async getProgramOffering(
+  /**
+   * Get offering details.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param offeringId offering.
+   * @returns offering details.
+   */
+  public async getOfferingDetailsByLocationAndProgram(
     locationId: number,
     programId: number,
     offeringId: number,
-  ): Promise<OfferingDTO> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`,
-        this.addAuthHeader(),
-      );
-      return response.data as OfferingDTO;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  ): Promise<EducationProgramOfferingAPIOutDTO> {
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
+    return this.getCallTyped<EducationProgramOfferingAPIOutDTO>(
+      this.addClientRoot(url),
+    );
   }
 
   /**
@@ -97,78 +95,43 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   }
 
   /**
-   * Gets program offerings for location authorized for students.
-   * @param locationId location id.
-   * @param programId program id.
-   * @returns program offerings for location.
+   * Get offerings for the given program and location
+   * in client lookup format.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param programYearId program year of the offering program.
+   * @param offeringIntensity offering intensity.
+   * @param isIncludeInActiveProgramYear if isIncludeInActiveProgramYear is true/supplied then both active
+   * and not active program year are considered.
+   * @returns offerings in client lookup format.
    */
-  public async getProgramOfferingsForLocation(
+  public async getProgramOfferingsOptionsList(
     locationId: number,
     programId: number,
     programYearId: number,
     offeringIntensity: OfferingIntensity,
     isIncludeInActiveProgramYear?: boolean,
-  ): Promise<OptionItemDto[]> {
-    try {
-      let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/options-list`;
-      url = `${url}?offeringIntensity=${offeringIntensity}`;
-      if (isIncludeInActiveProgramYear) {
-        url = `${url}&isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
-      }
-      const response = await this.getCall(url);
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
+  ): Promise<OptionItemAPIOutDTO[]> {
+    let url = `education-program-offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}`;
+    url = `${url}?offeringIntensity=${offeringIntensity}`;
+    if (isIncludeInActiveProgramYear) {
+      url = `${url}&isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
     }
+    return this.getCallTyped<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
   }
 
   /**
-   * Gets program offering details
+   * Get offering start date of a given offering.
    * @param offeringId offering id
-   * @returns offering details for the given offering
+   * @returns offering with start date value.
    */
-  public async getProgramOfferingDetails(
+  public async getProgramOfferingStartDate(
     offeringId: number,
-  ): Promise<ProgramOfferingDetailsDto> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/offering/${offeringId}`,
-        this.addAuthHeader(),
-      );
-      return response.data as ProgramOfferingDetailsDto;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  /**
-   * Gets program offerings for location authorized
-   * for a particular institution.
-   * @param locationId location id.
-   * @param programId program id.
-   * @returns program offerings for location authorized
-   * for a particular institution.
-   */
-  public async getProgramOfferingsForLocationForInstitution(
-    locationId: number,
-    programId: number,
-    programYearId: number,
-    selectedOfferingIntensity: OfferingIntensity,
-    isIncludeInActiveProgramYear?: boolean,
-  ): Promise<OptionItemDto[]> {
-    try {
-      let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/offerings-list?offeringIntensity=${selectedOfferingIntensity}`;
-      if (isIncludeInActiveProgramYear) {
-        url = `${url}&isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
-      }
-      const response = await this.getCall(url);
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  ): Promise<OfferingStartDateAPIOutDTO> {
+    const url = `education-program-offering/${offeringId}`;
+    return this.getCallTyped<OfferingStartDateAPIOutDTO>(
+      this.addClientRoot(url),
+    );
   }
 
   /**
@@ -220,9 +183,9 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     locationId: number,
     programId: number,
     offeringId: number,
-    payload: OfferingDTO,
+    payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    await this.postCall<OfferingDTO>(
+    await this.postCall<EducationProgramOfferingAPIInDTO>(
       `institution/offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`,
       payload,
     );
