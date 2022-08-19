@@ -1,7 +1,7 @@
 <template>
   <IdleTimeChecker :clientIdType="ClientIdType.Institution">
     <v-app-bar color="white">
-      <b-c-logo subtitle="Institution Application" />
+      <b-c-logo subtitle="Institutions" />
       <v-btn-toggle
         selected-class="active-btn label-bold"
         v-model="toggleNav"
@@ -54,7 +54,8 @@
               elevation="1"
               color="secondary"
               v-bind="props"
-              value="moreBtn"
+              value="settingsBtn"
+              aria-label="settings"
             ></v-btn>
           </template>
           <v-list>

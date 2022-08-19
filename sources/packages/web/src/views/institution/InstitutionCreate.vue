@@ -1,11 +1,30 @@
 <template>
-  <full-page-container>
-    <formio
-      formName="institutionProfileCreation"
-      :data="initialData"
-      @loaded="formLoaded"
-      @submitted="submitted"
-    ></formio>
+  <full-page-container :no-sidebar="true" layout-template="centered">
+    <div class="text-center">
+      <h1 class="heading-x-large">Create Your Institution Profile</h1>
+      <p class="label-value m-4">
+        Please confirm your email and add your institution details below. An
+        account will be created for
+        <br />
+        your institution and you will be assigned an admin.
+      </p>
+    </div>
+    <full-page-container>
+      <formio-container
+        formName="institutionProfileCreation"
+        :formData="initialData"
+        @loaded="formLoaded"
+        @submitted="submitted"
+      >
+        <template #actions="{ submit }">
+          <footer-buttons
+            :processing="processing"
+            primaryLabel="Create profile"
+            @primaryClick="submit"
+            :showSecondaryButton="false"
+          /> </template
+      ></formio-container>
+    </full-page-container>
   </full-page-container>
 </template>
 
@@ -18,17 +37,21 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { CreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioDropdownLoader, useSnackBar } from "@/composables";
+import { FormIOForm } from "@/types";
 
 export default {
   setup() {
+    const processing = ref(false);
     const store = useStore();
     const snackBar = useSnackBar();
     const router = useRouter();
     const formioDataLoader = useFormioDropdownLoader();
     const initialData = ref({});
 
-    const submitted = async (data: CreateInstitutionAPIInDTO) => {
+    const submitted = async (form: FormIOForm) => {
       try {
+        processing.value = true;
+        const data = form.data as CreateInstitutionAPIInDTO;
         await InstitutionService.shared.createInstitutionWithAssociatedUser(
           data,
         );
@@ -40,6 +63,8 @@ export default {
         });
       } catch (error) {
         snackBar.error("Unexpected error while creating the institution.");
+      } finally {
+        processing.value = false;
       }
     };
 
@@ -65,6 +90,7 @@ export default {
       initialData,
       submitted,
       formLoaded,
+      processing,
     };
   },
 };

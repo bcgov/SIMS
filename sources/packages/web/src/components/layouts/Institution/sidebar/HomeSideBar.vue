@@ -1,14 +1,21 @@
 <template>
-  <v-navigation-drawer app class="body-background" permanent>
-    <v-list density="compact" nav>
+  <v-navigation-drawer app v-model="drawer" color="background" permanent>
+    <v-list
+      active-class="active-sidebar-item"
+      density="compact"
+      bg-color="background"
+      active-color="primary"
+      :bind="drawer"
+    >
       <v-list-item
         v-for="item in items"
         :key="item.label"
         @click="item.command"
         :prepend-icon="item.icon"
         :title="item.label"
+        :value="item.value"
       />
-      <v-list-subheader>Locations</v-list-subheader>
+      <v-list-subheader class="nav-subtitle">Locations</v-list-subheader>
       <v-list-group
         v-for="location in locationsMenu"
         :key="location.label"
@@ -20,15 +27,23 @@
             v-bind="props"
             :title="location.label"
             :prepend-icon="location.icon"
-          ></v-list-item>
+            :value="location.value"
+          >
+            <v-tooltip activator="parent">{{ location.label }}</v-tooltip>
+          </v-list-item>
         </template>
         <v-list-item
+          class="mx-4"
           v-for="locationItem in location?.items"
           :key="locationItem"
-          :prepend-icon="locationItem.icon"
           :title="locationItem.label"
           @click="locationItem.command"
-        />
+          :value="locationItem.value"
+          ><template v-slot:prepend>
+            <v-icon :icon="locationItem.icon" size="20"
+          /></template>
+          <v-tooltip activator="parent">{{ locationItem.label }}</v-tooltip>
+        </v-list-item>
       </v-list-group>
     </v-list>
   </v-navigation-drawer>
@@ -44,6 +59,7 @@ import { MenuModel } from "@/types";
 
 export default {
   setup() {
+    const drawer = ref("drawer");
     const store = useStore();
     const router = useRouter();
     const { isAdmin, userAuth } = useInstitutionAuth();
@@ -58,16 +74,13 @@ export default {
       items.value = [
         {
           label: "Dashboard",
+          value: "dashboard",
           icon: "mdi-home-outline",
           command: () => {
             router.push({
               name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
             });
           },
-        },
-        {
-          label: "Notifications",
-          icon: "mdi-bell-outline",
         },
       ];
       for (const data of userLocationList.value) {
@@ -79,11 +92,13 @@ export default {
           )
             ? {
                 label: data.name,
+                value: data.id,
                 icon: "mdi-map-marker-outline",
                 items: [
                   {
                     label: "Programs",
-                    icon: "mdi-account-details-outline",
+                    value: `programs-${data.id}`,
+                    icon: "fa:far fa-folder-open",
                     command: () => {
                       router.push({
                         name: InstitutionRoutesConst.LOCATION_PROGRAMS,
@@ -94,21 +109,9 @@ export default {
                     },
                   },
                   {
-                    label: "Report a change",
-                    icon: "mdi-account-tie-outline",
-                    command: () => {
-                      router.push({
-                        name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
-                        params: {
-                          locationId: data.id,
-                          locationName: data.name,
-                        },
-                      });
-                    },
-                  },
-                  {
                     label: "Program Info Requests",
-                    icon: "mdi-account-tie-outline",
+                    value: `program-info-requests-${data.id}`,
+                    icon: "fa:far fa-paper-plane",
                     command: () => {
                       router.push({
                         name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
@@ -120,11 +123,26 @@ export default {
                     },
                   },
                   {
-                    label: "Confirmation of Enrollment",
-                    icon: "mdi-account-tie-outline",
+                    label: "Confirm Enrolment",
+                    value: `confirm-enrolment-${data.id}`,
+                    icon: "fa:far fa-check-square",
                     command: () => {
                       router.push({
                         name: InstitutionRoutesConst.COE_SUMMARY,
+                        params: {
+                          locationId: data.id,
+                          locationName: data.name,
+                        },
+                      });
+                    },
+                  },
+                  {
+                    label: "Report a Change",
+                    value: `report-a-change-${data.id}`,
+                    icon: "fa:far fa-hand-paper",
+                    command: () => {
+                      router.push({
+                        name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
                         params: {
                           locationId: data.id,
                           locationName: data.name,
@@ -158,7 +176,19 @@ export default {
       store,
       userLocationList,
       locationsMenu,
+      drawer,
     };
   },
 };
 </script>
+<style>
+/* todo: ann move the css */
+.nav-subtitle {
+  font-style: normal;
+  /* font-size: 12px; */
+  line-height: 16px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  mix-blend-mode: normal;
+}
+</style>
