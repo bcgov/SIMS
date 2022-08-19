@@ -6,7 +6,7 @@ import {
   Application,
 } from "../../database/entities";
 
-export class EducationProgramOfferingModel {
+export class EducationProgramOfferingSummaryModel {
   id: number;
   name: string;
   studyStartDate: string;
@@ -17,7 +17,7 @@ export class EducationProgramOfferingModel {
   offeringStatus: OfferingStatus;
 }
 
-export interface SaveOfferingModel {
+export interface EducationProgramOfferingModel {
   offeringName: string;
   studyStartDate: Date;
   studyEndDate: Date;

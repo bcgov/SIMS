@@ -7,12 +7,14 @@ import {
   Patch,
   UnprocessableEntityException,
   ParseIntPipe,
+  Query,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
+import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
 import { OfferingStatus } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -33,7 +35,12 @@ import {
   transformToProgramOfferingDto,
   ProgramOfferingDto,
   OfferingChangeAssessmentAPIInDTO,
+  EducationProgramOfferingSummaryAPIOutDTO,
 } from "./models/education-program-offering.dto";
+import {
+  OfferingsPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
 import { CustomNamedError } from "../../utilities";
 import { Role } from "../../auth/roles.enum";
 
@@ -42,13 +49,37 @@ import { Role } from "../../auth/roles.enum";
  */
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
-@Controller("institution/offering")
-@ApiTags(`${ClientTypeBaseRoute.AEST}-institution/offering`)
+@Controller("education-program-offering")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-education-program-offering`)
 export class EducationProgramOfferingAESTController extends BaseController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,
+    private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
   ) {
     super();
+  }
+
+  /**
+   * Get summary of offerings for a program and location.
+   * Pagination, sort and search are available on results.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param paginationOptions pagination options.
+   * @returns offering summary results.
+   */
+  @Get("location/:locationId/education-program/:programId")
+  async getOfferingSummary(
+    @Param("locationId") locationId: number,
+    @Param("programId") programId: number,
+    @Query() paginationOptions: OfferingsPaginationOptionsAPIInDTO,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<EducationProgramOfferingSummaryAPIOutDTO>
+  > {
+    return this.educationProgramOfferingControllerService.getOfferingsSummary(
+      locationId,
+      programId,
+      paginationOptions,
+    );
   }
 
   /**

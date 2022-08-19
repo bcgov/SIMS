@@ -54,3 +54,5 @@ export * from "./institution-user/institution-user.institutions.controller";
 export * from "./institution-user/institution-user.controller.service";
 export * from "./student-account-applications/student-account-application.aest.controller";
 export * from "./student-account-applications/student-account-application.students.controller";
+export * from "./education-program-offering/education-program-offering.institutions.controller";
+export * from "./education-program-offering/education-program-offering.controller.service";

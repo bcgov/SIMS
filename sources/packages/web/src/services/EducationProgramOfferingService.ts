@@ -4,18 +4,17 @@ import {
   OfferingIntensity,
   OfferingDTO,
   ProgramOfferingDetailsDto,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
-  DataTableSortOrder,
-  OfferingSummaryFields,
-  EducationProgramOfferingDto,
   PaginatedResults,
-} from "../types";
+  PaginationOptions,
+} from "@/types";
 import {
   OfferingAssessmentAPIInDTO,
   OfferingChangeAssessmentAPIInDTO,
   OfferingChangeRequestAPIOutDTO,
   PrecedingOfferingSummaryAPIOutDTO,
+  EducationProgramOfferingAPIOutDTO,
+  EducationProgramOfferingSummaryAPIOutDTO,
+  EducationProgramOfferingAPIInDTO,
 } from "@/services/http/dto";
 
 export class EducationProgramOfferingService {
@@ -27,54 +26,40 @@ export class EducationProgramOfferingService {
   }
 
   /**
-   * Creates program offering and returns the id of the created resource.
-   * @param locationId location id.
-   * @param programId program id.
-   * @param createProgramOfferingDto
-   * @returns program offering id created.
+   * Creates offering.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param payload offering data.
    */
   public async createProgramOffering(
     locationId: number,
     programId: number,
-    data: OfferingDTO,
-  ): Promise<number> {
-    return ApiClient.EducationProgramOffering.createProgramOffering(
+    payload: EducationProgramOfferingAPIOutDTO,
+  ): Promise<void> {
+    return ApiClient.EducationProgramOffering.createOffering(
       locationId,
       programId,
-      data,
+      payload,
     );
   }
 
   /**
-   * To get the offering summary
-   * @param locationId, location id
-   * @param programId, program id
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchCriteria, keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns offering summary.
+   * Get summary of offerings for a program and location.
+   * Pagination, sort and search are available on results.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param paginationOptions pagination options.
+   * @returns offering summary results.
    */
-  public async getAllEducationProgramOffering(
+  public async getOfferingsSummary(
     locationId: number,
     programId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    searchCriteria?: string,
-    sortField?: OfferingSummaryFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
-    return ApiClient.EducationProgramOffering.getAllEducationProgramOffering(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<EducationProgramOfferingSummaryAPIOutDTO>> {
+    return ApiClient.EducationProgramOffering.getOfferingsSummary(
       locationId,
       programId,
-      page,
-      pageCount,
-      searchCriteria,
-      sortField,
-      sortOrder,
+      paginationOptions,
     );
   }
 
@@ -90,17 +75,27 @@ export class EducationProgramOfferingService {
     );
   }
 
+  /**
+   * Update offering.
+   ** An offering which has at least one student aid application submitted
+   ** cannot be modified further except the offering name. In such cases
+   ** the offering must be requested for change.
+   * @param payload offering data to be updated.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param offeringId offering to be modified.
+   */
   public async updateProgramOffering(
     locationId: number,
     programId: number,
     offeringId: number,
-    data: OfferingDTO,
+    payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
     return ApiClient.EducationProgramOffering.updateProgramOffering(
       locationId,
       programId,
       offeringId,
-      data,
+      payload,
     );
   }
 
@@ -160,39 +155,6 @@ export class EducationProgramOfferingService {
       programYearId,
       selectedOfferingIntensity,
       isIncludeInActiveProgramYear,
-    );
-  }
-
-  /**
-   * To get the offering summary for ministry
-   * @param locationId, location id
-   * @param programId, program id
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchCriteria, keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns offering summary.
-   */
-  public async getOfferingSummaryForAEST(
-    locationId: number,
-    programId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    searchCriteria?: string,
-    sortField?: OfferingSummaryFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
-    return ApiClient.EducationProgramOffering.getOfferingSummaryForAEST(
-      locationId,
-      programId,
-      page,
-      pageCount,
-      searchCriteria,
-      sortField,
-      sortOrder,
     );
   }
 

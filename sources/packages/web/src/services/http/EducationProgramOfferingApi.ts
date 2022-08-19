@@ -4,81 +4,56 @@ import {
   OfferingIntensity,
   OfferingDTO,
   ProgramOfferingDetailsDto,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
-  OfferingSummaryFields,
-  DataTableSortOrder,
-  PaginatedResults,
-  EducationProgramOfferingDto,
+  PaginationOptions,
 } from "@/types";
-import { addSortOptions } from "@/helpers";
+import { getPaginationQueryString } from "@/helpers";
 import {
   OfferingAssessmentAPIInDTO,
   OfferingChangeRequestAPIOutDTO,
   PrecedingOfferingSummaryAPIOutDTO,
   OfferingChangeAssessmentAPIInDTO,
+  EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
-   * Creates program offering and returns the id of the created resource.
-   * @param locationId location id.
-   * @param programId program id.
-   * @param createProgramOfferingDto
-   * @returns program offering id created.
+   * Creates offering.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param payload offering data.
    */
-  public async createProgramOffering(
+  public async createOffering(
     locationId: number,
     programId: number,
-    createProgramOfferingDto: OfferingDTO,
-  ): Promise<number> {
-    try {
-      const response = await this.apiClient.post(
-        `institution/offering/location/${locationId}/education-program/${programId}`,
-        createProgramOfferingDto,
-        this.addAuthHeader(),
-      );
-      return +response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    payload: EducationProgramOfferingAPIInDTO,
+  ): Promise<void> {
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}`;
+    await this.postCall<EducationProgramOfferingAPIInDTO>(
+      this.addClientRoot(url),
+      payload,
+    );
   }
 
   /**
-   * To get the offering summary
-   * @param locationId, location id
-   * @param programId, program id
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchCriteria, keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns offering summary.
+   * Get summary of offerings for a program and location.
+   * Pagination, sort and search are available on results.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param paginationOptions pagination options.
+   * @returns offering summary results.
    */
-  public async getAllEducationProgramOffering(
+  public async getOfferingsSummary(
     locationId: number,
     programId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    searchCriteria?: string,
-    sortField?: OfferingSummaryFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
-    try {
-      let url = `institution/offering/location/${locationId}/education-program/${programId}?page=${page}&pageLimit=${pageCount}`;
-      if (searchCriteria) {
-        url = `${url}&searchCriteria=${searchCriteria}`;
-      }
-      url = addSortOptions(url, sortField, sortOrder);
-
-      const response = await this.getCall(url);
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    paginationOptions: PaginationOptions,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<EducationProgramOfferingSummaryAPIOutDTO>
+  > {
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}?${getPaginationQueryString(
+      paginationOptions,
+    )}`;
+    return this.getCallTyped(this.addClientRoot(url));
   }
 
   public async getProgramOffering(
@@ -98,22 +73,27 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * Update offering.
+   ** An offering which has at least one student aid application submitted
+   ** cannot be modified further except the offering name. In such cases
+   ** the offering must be requested for change.
+   * @param payload offering data to be updated.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param offeringId offering to be modified.
+   */
   public async updateProgramOffering(
     locationId: number,
     programId: number,
     offeringId: number,
-    updateProgramOfferingDto: OfferingDTO,
+    payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.apiClient.patch(
-        `institution/offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`,
-        updateProgramOfferingDto,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
+    await this.patchCall<EducationProgramOfferingAPIInDTO>(
+      this.addClientRoot(url),
+      payload,
+    );
   }
 
   /**
@@ -183,43 +163,6 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       if (isIncludeInActiveProgramYear) {
         url = `${url}&isIncludeInActiveProgramYear=${isIncludeInActiveProgramYear}`;
       }
-      const response = await this.getCall(url);
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  /**
-   * To get the offering summary for ministry users
-   * @param locationId, location id
-   * @param programId, program id
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchCriteria,keyword to be searched
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @returns offering summary.
-   */
-  public async getOfferingSummaryForAEST(
-    locationId: number,
-    programId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    searchCriteria?: string,
-    sortField?: OfferingSummaryFields,
-    sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
-    try {
-      let url = `institution/offering/location/${locationId}/education-program/${programId}/aest?page=${page}&pageLimit=${pageCount}`;
-      if (searchCriteria) {
-        url = `${url}&searchCriteria=${searchCriteria}`;
-      }
-
-      url = addSortOptions(url, sortField, sortOrder);
       const response = await this.getCall(url);
       return response.data;
     } catch (error) {

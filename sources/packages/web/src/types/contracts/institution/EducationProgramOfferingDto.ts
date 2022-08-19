@@ -8,7 +8,6 @@ export interface EducationProgramOfferingDto {
   name: string;
   studyStartDate: string;
   studyEndDate: string;
-  studyDates: string;
   offeringDelivered: string;
   offeringIntensity: OfferingIntensity;
   offeringStatus: OfferingStatus;

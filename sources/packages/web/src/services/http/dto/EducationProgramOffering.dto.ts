@@ -1,4 +1,4 @@
-import { OfferingStatus } from "@/types";
+import { OfferingIntensity, OfferingStatus, OfferingTypes } from "@/types";
 
 /**
  * Payload DTO to assess an offering.
@@ -30,4 +30,90 @@ export interface PrecedingOfferingSummaryAPIOutDTO {
 export interface OfferingChangeAssessmentAPIInDTO {
   offeringStatus: OfferingStatus;
   assessmentNotes: string;
+}
+
+export interface StudyBreakOutDTO {
+  breakStartDate: Date;
+  breakEndDate: Date;
+}
+
+export interface StudyBreakInDTO {
+  breakStartDate: Date;
+  breakEndDate: Date;
+}
+
+export interface StudyBreaksAndWeeksOutDTO {
+  studyBreaks: StudyBreakOutDTO[];
+  fundedStudyPeriodDays: number;
+  totalDays: number;
+  totalFundedWeeks: number;
+  unfundedStudyPeriodDays: number;
+}
+
+export interface StudyBreaksAndWeeksInDTO {
+  studyBreaks: StudyBreakOutDTO[];
+  fundedStudyPeriodDays: number;
+  totalDays: number;
+  totalFundedWeeks: number;
+  unfundedStudyPeriodDays: number;
+}
+
+export interface EducationProgramOfferingAPIInDTO {
+  offeringName: string;
+  studyStartDate: Date;
+  studyEndDate: Date;
+  actualTuitionCosts: number;
+  programRelatedCosts: number;
+  mandatoryFees: number;
+  exceptionalExpenses: number;
+  offeringDelivered: string;
+  lacksStudyBreaks: boolean;
+  offeringIntensity: OfferingIntensity;
+  yearOfStudy: number;
+  hasOfferingWILComponent: string;
+  offeringDeclaration: boolean;
+  offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
+  offeringWILType?: string;
+  showYearOfStudy?: boolean;
+  studyBreaks?: StudyBreaksAndWeeksInDTO;
+  assessedBy?: string;
+  assessedDate?: Date;
+  courseLoad?: number;
+}
+
+export interface EducationProgramOfferingAPIOutDTO {
+  offeringName: string;
+  studyStartDate: Date;
+  studyEndDate: Date;
+  actualTuitionCosts: number;
+  programRelatedCosts: number;
+  mandatoryFees: number;
+  exceptionalExpenses: number;
+  offeringDelivered: string;
+  lacksStudyBreaks: boolean;
+  offeringIntensity: OfferingIntensity;
+  yearOfStudy: number;
+  hasOfferingWILComponent: string;
+  offeringDeclaration: boolean;
+  offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
+  offeringWILType?: string;
+  showYearOfStudy?: boolean;
+  studyBreaks?: StudyBreaksAndWeeksOutDTO;
+  assessedBy?: string;
+  assessedDate?: Date;
+  courseLoad?: number;
+  hasExistingApplication?: boolean;
+}
+
+export interface EducationProgramOfferingSummaryAPIOutDTO {
+  id: number;
+  name: string;
+  studyStartDate: string;
+  studyEndDate: string;
+  offeringDelivered: string;
+  offeringIntensity: OfferingIntensity;
+  offeringType: OfferingTypes;
+  offeringStatus: OfferingStatus;
 }

@@ -61,6 +61,7 @@ import {
   EducationProgramAESTController,
   EducationProgramControllerService,
   StudentAccountApplicationAESTController,
+  EducationProgramOfferingControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -132,6 +133,7 @@ import { InstitutionUserControllerService } from "./route-controllers/institutio
     InstitutionTypeService,
     EducationProgramControllerService,
     StudentAccountApplicationsService,
+    EducationProgramOfferingControllerService,
   ],
 })
 export class AppAESTModule {}

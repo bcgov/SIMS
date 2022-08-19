@@ -4,35 +4,106 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
 } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
-import {
-  EducationProgramOffering,
-  StudyBreaksAndWeeks,
-} from "../../../database/entities/education-program-offering.model";
+import { EducationProgramOffering } from "../../../database/entities/education-program-offering.model";
 import { getUserFullName } from "../../../utilities";
-import { IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
+import {
+  Allow,
+  IsEnum,
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  MaxLength,
+} from "class-validator";
+import { Type } from "class-transformer";
 
-export interface SaveOfferingDTO {
+export class StudyBreakOutDTO {
+  breakStartDate: Date;
+  breakEndDate: Date;
+}
+
+export class StudyBreakInDTO {
+  @Allow()
+  breakStartDate: Date;
+  @Allow()
+  breakEndDate: Date;
+}
+
+export interface StudyBreaksAndWeeksOutDTO {
+  studyBreaks: StudyBreakOutDTO[];
+  fundedStudyPeriodDays: number;
+  totalDays: number;
+  totalFundedWeeks: number;
+  unfundedStudyPeriodDays: number;
+}
+
+export class StudyBreaksAndWeeksInDTO {
+  @Allow()
+  @Type(() => StudyBreakInDTO)
+  studyBreaks: StudyBreakInDTO[];
+  @Allow()
+  fundedStudyPeriodDays: number;
+  @Allow()
+  totalDays: number;
+  @Allow()
+  totalFundedWeeks: number;
+  @Allow()
+  unfundedStudyPeriodDays: number;
+}
+
+export class EducationProgramOfferingAPIInDTO {
+  @Allow()
   offeringName: string;
+  @Allow()
   studyStartDate: Date;
+  @Allow()
   studyEndDate: Date;
+  @Allow()
   actualTuitionCosts: number;
+  @Allow()
   programRelatedCosts: number;
+  @Allow()
   mandatoryFees: number;
+  @Allow()
   exceptionalExpenses: number;
+  @Allow()
   offeringDelivered: string;
+  @Allow()
   lacksStudyBreaks: boolean;
+  @Allow()
   offeringIntensity: OfferingIntensity;
+  @Allow()
   yearOfStudy: number;
-  showYearOfStudy?: boolean;
+  @Allow()
   hasOfferingWILComponent: string;
-  offeringWILType?: string;
-  studyBreaks?: StudyBreaksAndWeeks;
+  @Allow()
   offeringDeclaration: boolean;
-  assessedBy?: string;
-  assessedDate?: Date;
+  @Allow()
   offeringStatus: OfferingStatus;
+  @Allow()
   offeringType: OfferingTypes;
+  @IsOptional()
+  offeringWILType?: string;
+  @IsOptional()
+  showYearOfStudy?: boolean;
+  @IsOptional()
+  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
+  @IsOptional()
+  assessedBy?: string;
+  @IsOptional()
+  assessedDate?: Date;
+  @IsOptional()
   courseLoad?: number;
+}
+
+export class EducationProgramOfferingSummaryAPIOutDTO {
+  id: number;
+  name: string;
+  studyStartDate: string;
+  studyEndDate: string;
+  offeringDelivered: string;
+  offeringIntensity: OfferingIntensity;
+  offeringType: OfferingTypes;
+  offeringStatus: OfferingStatus;
 }
 
 /**
@@ -65,7 +136,7 @@ export interface ProgramOfferingDto {
   showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
-  breaksAndWeeks: StudyBreaksAndWeeks;
+  breaksAndWeeks: StudyBreaksAndWeeksOutDTO;
   offeringDeclaration: boolean;
   assessedBy?: string;
   assessedDate?: Date;
