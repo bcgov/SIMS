@@ -54,8 +54,8 @@
       >
         <template #body="slotProps">
           <span>
-            {{ dateString(slotProps.data.studyStartPeriod) }} -
-            {{ dateString(slotProps.data.studyEndPeriod) }}
+            {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
+            {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
           </span>
         </template></Column
       >
@@ -167,7 +167,7 @@ export default {
     const defaultSortOrder = -1;
     const currentPage = ref();
     const currentPageLimit = ref();
-    const { dateString } = useFormatters();
+    const { dateOnlyLongString } = useFormatters();
     const store = useStore();
 
     const clientType = computed(() => AuthService.shared.authClientType);
@@ -229,7 +229,7 @@ export default {
     );
 
     return {
-      dateString,
+      dateOnlyLongString,
       ApplicationStatus,
       applicationsAndCount,
       DEFAULT_PAGE_LIMIT,
