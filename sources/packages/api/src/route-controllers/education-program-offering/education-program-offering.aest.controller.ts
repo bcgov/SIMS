@@ -69,8 +69,8 @@ export class EducationProgramOfferingAESTController extends BaseController {
    */
   @Get("location/:locationId/education-program/:programId")
   async getOfferingSummary(
-    @Param("locationId") locationId: number,
-    @Param("programId") programId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
     @Query() paginationOptions: OfferingsPaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<EducationProgramOfferingSummaryAPIOutDTO>
@@ -107,17 +107,16 @@ export class EducationProgramOfferingAESTController extends BaseController {
    * @param offeringId offering id
    * @returns offering details.
    */
+  @ApiNotFoundResponse({ description: "Offering not found." })
   @Get(":offeringId")
   async getOfferingDetails(
-    @Param("offeringId") offeringId: number,
+    @Param("offeringId", ParseIntPipe) offeringId: number,
   ): Promise<EducationProgramOfferingAPIOutDTO> {
     const offering = await this.programOfferingService.getOfferingById(
       offeringId,
     );
     if (!offering) {
-      throw new NotFoundException(
-        "offering not found because the id does not exist.",
-      );
+      throw new NotFoundException("Offering not found.");
     }
     return transformToProgramOfferingDTO(offering);
   }
@@ -135,7 +134,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
   @Roles(Role.InstitutionApproveDeclineOffering)
   @Patch(":offeringId/assess")
   async assessOffering(
-    @Param("offeringId") offeringId: number,
+    @Param("offeringId", ParseIntPipe) offeringId: number,
     @Body() payload: OfferingAssessmentAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {

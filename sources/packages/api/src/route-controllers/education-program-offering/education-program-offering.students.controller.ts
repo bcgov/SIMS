@@ -5,7 +5,11 @@ import {
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { OfferingIntensity, OfferingTypes } from "../../database/entities";
@@ -38,6 +42,9 @@ export class EducationProgramOfferingStudentsController extends BaseController {
    * and not active program year are considered.
    * @returns offerings in client lookup format.
    */
+  @ApiUnprocessableEntityResponse({
+    description: "Invalid offering intensity.",
+  })
   @Get(
     "location/:locationId/education-program/:programId/program-year/:programYearId",
   )
@@ -63,6 +70,7 @@ export class EducationProgramOfferingStudentsController extends BaseController {
    * @param offeringId offering id
    * @returns offering with start date value.
    */
+  @ApiNotFoundResponse({ description: "Offering not found." })
   @Get(":offeringId")
   async getProgramOfferingDetails(
     @Param("offeringId") offeringId: number,
@@ -72,9 +80,7 @@ export class EducationProgramOfferingStudentsController extends BaseController {
       offeringId,
     );
     if (!offering) {
-      throw new UnprocessableEntityException(
-        "Education Program Offering not found.",
-      );
+      throw new UnprocessableEntityException("Offering not found.");
     }
     return {
       studyStartDate: offering.studyStartDate,

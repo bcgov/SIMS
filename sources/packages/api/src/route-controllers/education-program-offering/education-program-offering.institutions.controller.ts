@@ -64,7 +64,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param payload offering data.
    * @param locationId offering location.
    * @param programId offering program.
-   * @param userToken
    * @returns primary identifier of the created offering.
    */
   @HasLocationAccess("locationId")
@@ -77,8 +76,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @Post("location/:locationId/education-program/:programId")
   async createOffering(
     @Body() payload: EducationProgramOfferingAPIInDTO,
-    @Param("locationId") locationId: number,
-    @Param("programId") programId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Location id in the param is validated by the decorator.
@@ -124,15 +123,21 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param offeringId offering to be modified.
    */
   @HasLocationAccess("locationId")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Either offering for the program and location not found" +
+      "or the offering not in appropriate status to be updated." +
+      "or the request is invalid.",
+  })
   @Patch(
     "location/:locationId/education-program/:programId/offering/:offeringId",
   )
   async updateProgramOffering(
     @Body() payload: EducationProgramOfferingAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
-    @Param("locationId") locationId: number,
-    @Param("programId") programId: number,
-    @Param("offeringId") offeringId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
+    @Param("offeringId", ParseIntPipe) offeringId: number,
   ): Promise<void> {
     const offering = await this.programOfferingService.getProgramOffering(
       locationId,
@@ -175,8 +180,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @HasLocationAccess("locationId")
   @Get("location/:locationId/education-program/:programId")
   async getOfferingsSummary(
-    @Param("locationId") locationId: number,
-    @Param("programId") programId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
     @Query() paginationOptions: OfferingsPaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<EducationProgramOfferingSummaryAPIOutDTO>
@@ -196,6 +201,11 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @returns offering details.
    */
   @HasLocationAccess("locationId")
+  @ApiNotFoundResponse({
+    description:
+      "Not able to find an Education Program Offering" +
+      "associated with the current Education Program, Location and offering.",
+  })
   @Get("location/:locationId/education-program/:programId/offering/:offeringId")
   async getOfferingDetails(
     @Param("locationId", ParseIntPipe) locationId: number,
@@ -237,10 +247,13 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @Get(
     "location/:locationId/education-program/:programId/program-year/:programYearId",
   )
+  @ApiUnprocessableEntityResponse({
+    description: "Invalid offering intensity.",
+  })
   async getProgramOfferingsOptionsList(
-    @Param("locationId") locationId: number,
-    @Param("programId") programId: number,
-    @Param("programYearId") programYearId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
+    @Param("programYearId", ParseIntPipe) programYearId: number,
     @Query("includeInActivePY") includeInActivePY = false,
     @Query("offeringIntensity") offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
