@@ -802,19 +802,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       applications = await this.getApplicationsToSubmitReassessment(offeringId);
 
       for (const application of applications) {
-        application.currentAssessment = {
-          application: { id: application.id } as Application,
-          triggerType: AssessmentTriggerType.OfferingChange,
-          offering: { id: offeringId } as EducationProgramOffering,
-          creator: auditUser,
-          createdAt: currentDate,
-          submittedBy: auditUser,
-          submittedDate: currentDate,
-        } as StudentAssessment;
+        if (application.applicationStatus === ApplicationStatus.completed) {
+          application.currentAssessment = {
+            application: { id: application.id } as Application,
+            triggerType: AssessmentTriggerType.OfferingChange,
+            offering: { id: offeringId } as EducationProgramOffering,
+            creator: auditUser,
+            createdAt: currentDate,
+            submittedBy: auditUser,
+            submittedDate: currentDate,
+          } as StudentAssessment;
+        }
 
         // If the application which is affected by offering change is not completed
         // then set the application as cancelled as it cannot be re-assessed.
-        if (application.applicationStatus !== ApplicationStatus.completed) {
+        else {
           application.applicationStatus = ApplicationStatus.cancelled;
         }
 
