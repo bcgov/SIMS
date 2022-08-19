@@ -83,6 +83,26 @@ export class EducationProgramOfferingAESTController extends BaseController {
   }
 
   /**
+   * Get offering details.
+   * @param offeringId offering id
+   * @returns offering details.
+   */
+  @Get(":offeringId")
+  async getOfferingDetails(
+    @Param("offeringId") offeringId: number,
+  ): Promise<EducationProgramOfferingAPIOutDTO> {
+    const offering = await this.programOfferingService.getOfferingById(
+      offeringId,
+    );
+    if (!offering) {
+      throw new NotFoundException(
+        "offering not found because the id does not exist.",
+      );
+    }
+    return transformToProgramOfferingDTO(offering);
+  }
+
+  /**
    * API to assess and update the status of a pending offering.
    * @param offeringId
    * @param payload
@@ -204,27 +224,5 @@ export class EducationProgramOfferingAESTController extends BaseController {
       }
       throw error;
     }
-  }
-
-  /**
-   * Get offering details.
-   * @param offeringId offering id
-   * @returns offering details.
-   */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Get(":offeringId/aest")
-  async getProgramOfferingForAEST(
-    @Param("offeringId") offeringId: number,
-  ): Promise<EducationProgramOfferingAPIOutDTO> {
-    const offering = await this.programOfferingService.getOfferingById(
-      offeringId,
-    );
-    if (!offering) {
-      throw new NotFoundException(
-        "offering not found because the id does not exist.",
-      );
-    }
-    return transformToProgramOfferingDTO(offering);
   }
 }

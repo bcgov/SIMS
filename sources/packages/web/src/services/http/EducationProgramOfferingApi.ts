@@ -1,5 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { OfferingIntensity, OfferingDTO, PaginationOptions } from "@/types";
+import { OfferingIntensity, PaginationOptions } from "@/types";
 import { getPaginationQueryString } from "@/helpers";
 import {
   OfferingAssessmentAPIInDTO,
@@ -72,6 +72,20 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   }
 
   /**
+   * Get offering details.
+   * @param offeringId offering.
+   * @returns offering details.
+   */
+  public async getOfferingDetails(
+    offeringId: number,
+  ): Promise<EducationProgramOfferingAPIOutDTO> {
+    const url = `education-program-offering/${offeringId}`;
+    return this.getCallTyped<EducationProgramOfferingAPIOutDTO>(
+      this.addClientRoot(url),
+    );
+  }
+
+  /**
    * Update offering.
    ** An offering which has at least one student aid application submitted
    ** cannot be modified further except the offering name. In such cases
@@ -135,26 +149,6 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   }
 
   /**
-   * Offering details for ministry users
-   * @param offeringId offering id
-   * @returns Offering details
-   */
-  public async getProgramOfferingForAEST(
-    offeringId: number,
-  ): Promise<OfferingDTO> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/offering/${offeringId}/aest`,
-        this.addAuthHeader(),
-      );
-      return response.data as OfferingDTO;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  /**
    * Assess an offering to approve or decline.
    * @param offeringId
    * @param payload
@@ -164,7 +158,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     payload: OfferingAssessmentAPIInDTO,
   ): Promise<void> {
     await this.patchCall<OfferingAssessmentAPIInDTO>(
-      this.addClientRoot(`institution/offering/${offeringId}/assess`),
+      this.addClientRoot(`education-program-offering/${offeringId}/assess`),
       payload,
     );
   }
@@ -185,8 +179,9 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
+    const url = `education-program-offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`;
     await this.postCall<EducationProgramOfferingAPIInDTO>(
-      `institution/offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`,
+      this.addClientRoot(url),
       payload,
     );
   }
@@ -197,7 +192,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    */
   async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
     return this.getCallTyped<OfferingChangeRequestAPIOutDTO[]>(
-      this.addClientRoot("institution/offering/change-requests"),
+      this.addClientRoot("education-program-offering/change-requests"),
     );
   }
 
@@ -212,7 +207,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   ): Promise<PrecedingOfferingSummaryAPIOutDTO> {
     return this.getCallTyped<PrecedingOfferingSummaryAPIOutDTO>(
       this.addClientRoot(
-        `institution/offering/${offeringId}/preceding-offering-summary`,
+        `education-program-offering/${offeringId}/preceding-offering-summary`,
       ),
     );
   }
@@ -225,10 +220,10 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    */
   async getPrecedingOfferingByActualOfferingId(
     offeringId: number,
-  ): Promise<OfferingDTO> {
-    return this.getCallTyped<OfferingDTO>(
+  ): Promise<EducationProgramOfferingAPIOutDTO> {
+    return this.getCallTyped<EducationProgramOfferingAPIOutDTO>(
       this.addClientRoot(
-        `institution/offering/${offeringId}/preceding-offering`,
+        `education-program-offering/${offeringId}/preceding-offering`,
       ),
     );
   }
@@ -239,7 +234,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   ): Promise<void> {
     await this.patchCall<OfferingChangeAssessmentAPIInDTO>(
       this.addClientRoot(
-        `institution/offering/${offeringId}/assess-change-request`,
+        `education-program-offering/${offeringId}/assess-change-request`,
       ),
       payload,
     );

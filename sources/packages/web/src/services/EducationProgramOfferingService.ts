@@ -1,7 +1,6 @@
 import ApiClient from "./http/ApiClient";
 import {
   OfferingIntensity,
-  OfferingDTO,
   PaginatedResults,
   PaginationOptions,
 } from "@/types";
@@ -147,16 +146,14 @@ export class EducationProgramOfferingService {
   }
 
   /**
-   * Offering details for ministry users
-   * @param offeringId offering id
-   * @returns Offering details
+   * Get offering details.
+   * @param offeringId offering.
+   * @returns offering details.
    */
-  public async getProgramOfferingForAEST(
+  public async getOfferingDetails(
     offeringId: number,
-  ): Promise<OfferingDTO> {
-    return ApiClient.EducationProgramOffering.getProgramOfferingForAEST(
-      offeringId,
-    );
+  ): Promise<EducationProgramOfferingAPIOutDTO> {
+    return ApiClient.EducationProgramOffering.getOfferingDetails(offeringId);
   }
 
   /**
@@ -228,7 +225,7 @@ export class EducationProgramOfferingService {
    */
   async getPrecedingOfferingByActualOfferingId(
     offeringId: number,
-  ): Promise<OfferingDTO> {
+  ): Promise<EducationProgramOfferingAPIOutDTO> {
     return ApiClient.EducationProgramOffering.getPrecedingOfferingByActualOfferingId(
       offeringId,
     );
