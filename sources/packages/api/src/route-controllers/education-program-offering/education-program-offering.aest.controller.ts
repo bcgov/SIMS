@@ -83,6 +83,26 @@ export class EducationProgramOfferingAESTController extends BaseController {
   }
 
   /**
+   * Get all offerings that were requested for change and waiting to be approved/declined.
+   * @returns offerings which were requested for change.
+   */
+  @Get("change-requests")
+  async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
+    const offerings =
+      await this.programOfferingService.getOfferingChangeRequests();
+
+    return offerings.map((offering) => ({
+      offeringId: offering.id,
+      programId: offering.educationProgram.id,
+      offeringName: offering.name,
+      submittedDate: offering.submittedDate,
+      locationName: offering.institutionLocation.name,
+      institutionName:
+        offering.institutionLocation.institution.legalOperatingName,
+    }));
+  }
+
+  /**
    * Get offering details.
    * @param offeringId offering id
    * @returns offering details.
@@ -137,25 +157,6 @@ export class EducationProgramOfferingAESTController extends BaseController {
       payload.assessmentNotes,
       payload.offeringStatus,
     );
-  }
-  /**
-   * Get all offerings that were requested for change and waiting to be approved/declined.
-   * @returns offerings which were requested for change.
-   */
-  @Get("change-requests")
-  async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
-    const offerings =
-      await this.programOfferingService.getOfferingChangeRequests();
-
-    return offerings.map((offering) => ({
-      offeringId: offering.id,
-      programId: offering.educationProgram.id,
-      offeringName: offering.name,
-      submittedDate: offering.submittedDate,
-      locationName: offering.institutionLocation.name,
-      institutionName:
-        offering.institutionLocation.institution.legalOperatingName,
-    }));
   }
 
   /**
