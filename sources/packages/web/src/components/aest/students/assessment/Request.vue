@@ -6,17 +6,31 @@
           title="Requests"
           class="m-1"
           subTitle="Requests for application changes that may require reassessments"
-          :recordsCount="requestedAssessment.length"
+          :recordsCount="
+            requestedAssessment.every((element) => element === null)
+              ? 0
+              : requestedAssessment.length
+          "
         >
         </body-header>
         <content-group class="mt-4">
-          <toggle-content :toggled="!requestedAssessment.length">
+          <toggle-content
+            :toggled="
+              !requestedAssessment.every((element) => element === null)
+                ? 0
+                : requestedAssessment.length
+            "
+          >
             <DataTable
               :value="requestedAssessment"
               :paginator="true"
               :rows="DEFAULT_PAGE_LIMIT"
               :rowsPerPageOptions="PAGINATION_LIST"
-              :totalRecords="requestedAssessment.length"
+              :totalRecords="
+                requestedAssessment.every((element) => element === null)
+                  ? 0
+                  : requestedAssessment.length
+              "
             >
               <Column
                 field="submittedDate"

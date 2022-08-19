@@ -151,6 +151,8 @@ export default {
           return true;
         case AssessmentTriggerType.OriginalAssessment:
           return !!data.applicationExceptionId;
+        case AssessmentTriggerType.OfferingChange:
+          return true;
         default:
           return false;
       }
