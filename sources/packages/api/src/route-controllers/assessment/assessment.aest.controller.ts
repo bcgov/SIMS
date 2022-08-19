@@ -70,7 +70,7 @@ export class AssessmentAESTController extends BaseController {
 
     if (precedingOfferingRequest) {
       const changedOffering =
-        await this.educationProgramOfferingService.getOfferingRequestsByPrecedingOfferingRequest(
+        await this.educationProgramOfferingService.getOfferingRequestsByPrecedingOfferingId(
           precedingOfferingRequest.currentAssessment.offering.id,
         );
       if (changedOffering) {

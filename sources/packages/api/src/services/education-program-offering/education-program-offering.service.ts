@@ -935,7 +935,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param offeringId
    * @returns Offering id and submitted date.
    */
-  async getOfferingRequestsByPrecedingOfferingRequest(
+  async getOfferingRequestsByPrecedingOfferingId(
     offeringId: number,
   ): Promise<EducationProgramOffering> {
     return this.repo.findOne({
