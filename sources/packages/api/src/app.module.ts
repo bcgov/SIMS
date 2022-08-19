@@ -4,10 +4,8 @@ import { AppService } from "./app.service";
 import { DatabaseModule } from "./database/database.module";
 import { RouterModule } from "@nestjs/core";
 import {
-  StudentService,
   UserService,
   ConfigService,
-  InstitutionService,
   ApplicationService,
   BCeIDServiceProvider,
   InstitutionUserAuthService,
@@ -17,7 +15,6 @@ import {
   WorkflowService,
   FormService,
   InstitutionLocationService,
-  ATBCService,
   StudentFileService,
   ProgramYearService,
   SequenceControlService,
@@ -25,7 +22,6 @@ import {
   MSFAANumberService,
   StudentRestrictionService,
   RestrictionService,
-  InstitutionRestrictionService,
   DesignationAgreementLocationService,
   GCNotifyService,
   GCNotifyActionsService,
@@ -35,9 +31,6 @@ import {
   ProgramYearController,
   ConfigController,
   DynamicFormController,
-  ATBCController,
-  NotesController,
-  RestrictionController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -99,15 +92,10 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     ProgramYearController,
     ConfigController,
     DynamicFormController,
-    ATBCController,
-    NotesController,
-    RestrictionController,
   ],
   providers: [
     AppService,
     UserService,
-    StudentService,
-    InstitutionService,
     ConfigService,
     BCeIDServiceProvider,
     WorkflowService,
@@ -118,7 +106,6 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     InstitutionUserAuthService,
     EducationProgramService,
     EducationProgramOfferingService,
-    ATBCService,
     StudentFileService,
     ProgramYearService,
     SequenceControlService,
@@ -126,7 +113,6 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     MSFAANumberService,
     StudentRestrictionService,
     RestrictionService,
-    InstitutionRestrictionService,
     DesignationAgreementLocationService,
     GCNotifyService,
     GCNotifyActionsService,

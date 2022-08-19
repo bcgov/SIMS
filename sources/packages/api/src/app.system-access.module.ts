@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 import { DatabaseModule } from "./database/database.module";
 import {
+  ATBCService,
+  StudentService,
   ApplicationExceptionService,
   ConfigService,
   DisbursementScheduleService,
@@ -41,6 +43,7 @@ import {
   SFASIntegrationSystemAccessController,
   ECertIntegrationSystemAccessController,
   FedRestrictionsIntegrationSystemAccessController,
+  ATBCSystemAccessController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -69,6 +72,7 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
   controllers: [
     AssessmentSystemAccessController,
     ApplicationExceptionSystemAccessController,
+    ATBCSystemAccessController,
     SINValidationSystemAccessController,
     ApplicationSystemAccessController,
     CRAIntegrationSystemAccessController,
@@ -78,6 +82,8 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
     FedRestrictionsIntegrationSystemAccessController,
   ],
   providers: [
+    ATBCService,
+    StudentService,
     ConfigService,
     WorkflowActionsService,
     WorkflowService,

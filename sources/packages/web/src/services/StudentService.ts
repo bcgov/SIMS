@@ -9,7 +9,6 @@ import {
   StudentFileUploaderAPIInDTO,
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
-  StudentRestrictionAPIOutDTO,
   CreateSINValidationAPIInDTO,
   UpdateSINValidationAPIInDTO,
   SearchStudentAPIInDTO,
@@ -78,14 +77,6 @@ export class StudentService {
 
   async applyForPDStatus(): Promise<void> {
     return ApiClient.Students.applyForPDStatus();
-  }
-
-  /**
-   * API client to call the student restriction rest API.
-   * @returns student restriction(wrapped by promise).
-   */
-  async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
-    return ApiClient.Students.getStudentRestriction();
   }
 
   /**

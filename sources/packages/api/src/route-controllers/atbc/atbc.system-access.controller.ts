@@ -7,11 +7,12 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { Student } from "../../database/entities";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-@Controller("system-access/atbc")
-@ApiTags("system-access")
-export class ATBCController extends BaseController {
+@Controller("atbc")
+@ApiTags(`${ClientTypeBaseRoute.SystemAccess}-atbc`)
+export class ATBCSystemAccessController extends BaseController {
   constructor(
     private readonly atbcService: ATBCService,
     private readonly studentService: StudentService,

@@ -8,7 +8,6 @@ import {
   StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
-  StudentRestrictionAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
   SINValidationsAPIOutDTO,
   CreateSINValidationAPIInDTO,
@@ -73,17 +72,7 @@ export class StudentApi extends HttpBaseClient {
    * SIN validation must be already done with a successful result.
    */
   async applyForPDStatus(): Promise<void> {
-    await this.patchCall(this.addClientRoot("students/apply-pd-status"), null);
-  }
-
-  /**
-   * API client to call the student restriction rest API.
-   * @returns student restriction(wrapped by promise).
-   */
-  async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
-    return this.getCallTyped<StudentRestrictionAPIOutDTO[]>(
-      this.addClientRoot("students/restriction"),
-    );
+    await this.patchCall(this.addClientRoot("/atbc/apply-pd-status"), null);
   }
 
   /**

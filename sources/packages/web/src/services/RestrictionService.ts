@@ -1,11 +1,12 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
-  RestrictionSummaryDTO,
-  RestrictionDetailDTO,
-  ResolveRestrictionDTO,
-  OptionItemDto,
-  AssignRestrictionDTO,
-} from "@/types";
+  AssignRestrictionAPIInDTO,
+  OptionItemAPIOutDTO,
+  ResolveRestrictionAPIInDTO,
+  RestrictionDetailAPIOutDTO,
+  RestrictionSummaryAPIOutDTO,
+  StudentRestrictionAPIOutDTO,
+} from "@/services/http/dto";
 
 /**
  * Client service layer for Restrictions.
@@ -14,47 +15,47 @@ export class RestrictionService {
   // Shared Instance
   private static instance: RestrictionService;
 
-  public static get shared(): RestrictionService {
+  static get shared(): RestrictionService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getStudentRestrictions(
+  async getStudentRestrictions(
     studentId: number,
-  ): Promise<RestrictionSummaryDTO[]> {
+  ): Promise<RestrictionSummaryAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getStudentRestrictions(studentId);
   }
 
-  public async getStudentRestrictionDetail(
+  async getStudentRestrictionDetail(
     studentId: number,
     studentRestrictionId: number,
-  ): Promise<RestrictionDetailDTO> {
+  ): Promise<RestrictionDetailAPIOutDTO> {
     return ApiClient.RestrictionApi.getStudentRestrictionDetail(
       studentId,
       studentRestrictionId,
     );
   }
 
-  public async getRestrictionCategories(): Promise<OptionItemDto[]> {
+  async getRestrictionCategories(): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getRestrictionCategories();
   }
 
-  public async getRestrictionReasons(
+  async getRestrictionReasons(
     restrictionCategory: string,
-  ): Promise<OptionItemDto[]> {
+  ): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getRestrictionReasons(restrictionCategory);
   }
 
-  public async addStudentRestriction(
+  async addStudentRestriction(
     studentId: number,
-    payload: AssignRestrictionDTO,
+    payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
     await ApiClient.RestrictionApi.addStudentRestriction(studentId, payload);
   }
 
-  public async resolveStudentRestriction(
+  async resolveStudentRestriction(
     studentId: number,
     studentRestrictionId: number,
-    payload: ResolveRestrictionDTO,
+    payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
     await ApiClient.RestrictionApi.resolveStudentRestriction(
       studentId,
@@ -63,25 +64,25 @@ export class RestrictionService {
     );
   }
 
-  public async getInstitutionRestrictions(
+  async getInstitutionRestrictions(
     institutionId: number,
-  ): Promise<RestrictionSummaryDTO[]> {
+  ): Promise<RestrictionSummaryAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getInstitutionRestrictions(institutionId);
   }
 
-  public async getInstitutionRestrictionDetail(
+  async getInstitutionRestrictionDetail(
     institutionId: number,
     institutionRestrictionId: number,
-  ): Promise<RestrictionDetailDTO> {
+  ): Promise<RestrictionDetailAPIOutDTO> {
     return ApiClient.RestrictionApi.getInstitutionRestrictionDetail(
       institutionId,
       institutionRestrictionId,
     );
   }
 
-  public async addInstitutionRestriction(
+  async addInstitutionRestriction(
     institutionId: number,
-    payload: AssignRestrictionDTO,
+    payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
     await ApiClient.RestrictionApi.addInstitutionRestriction(
       institutionId,
@@ -89,15 +90,23 @@ export class RestrictionService {
     );
   }
 
-  public async resolveInstitutionRestriction(
+  async resolveInstitutionRestriction(
     institutionId: number,
     institutionRestrictionId: number,
-    payload: ResolveRestrictionDTO,
+    payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
     await ApiClient.RestrictionApi.resolveInstitutionRestriction(
       institutionId,
       institutionRestrictionId,
       payload,
     );
+  }
+
+  /**
+   * API client to call the student restriction rest API.
+   * @returns student restriction(wrapped by promise).
+   */
+  async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
+    return ApiClient.RestrictionApi.getStudentRestriction();
   }
 }
