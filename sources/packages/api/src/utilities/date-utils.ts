@@ -6,11 +6,13 @@ import * as utc from "dayjs/plugin/utc";
 import * as localizedFormat from "dayjs/plugin/localizedFormat";
 import * as timezone from "dayjs/plugin/timezone";
 import * as dayOfYear from "dayjs/plugin/dayOfYear";
+import * as isBetween from "dayjs/plugin/isBetween";
 import { EXTENDED_DATE_FORMAT } from "../utilities";
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
 dayjs.extend(dayOfYear);
+dayjs.extend(isBetween);
 
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "YYYY MMM DD";
@@ -187,6 +189,7 @@ export function getDateDifferenceInMonth(
   }
   return NaN;
 }
+
 /**
  *
  * @param date Add days to a given date.
@@ -204,4 +207,51 @@ export const addDays = (date: Date | string, daysToAdd: number): Date => {
  */
 export function getFileNameAsCurrentTimestamp(): string {
   return dayjs(new Date()).tz(PST_TIMEZONE).format(TIMESTAMP_CONTINUOUS_FORMAT);
+}
+
+export function isBefore(
+  firstDate: Date | string,
+  secondDate: Date | string,
+): boolean {
+  return dayjs(firstDate).isBefore(secondDate);
+}
+
+export interface Period {
+  startDate: Date | string;
+  endDate: Date | string;
+}
+
+export function isBetween(date: Date | string, period: Period): boolean {
+  return dayjs(date).isBetween(period.startDate, period.endDate, "days", "[]");
+}
+
+export function hasIntersection(periodA: Period, periodB: Period): boolean {
+  return (
+    // Start date in between the periodB (inclusive check).
+    isBetween(periodA.startDate, periodB) ||
+    // End date in between the periodB (inclusive check).
+    isBetween(periodA.endDate, periodB) ||
+    // PeriodA fully contains period B.
+    (dayjs(periodA.startDate).isBefore(periodB.startDate) &&
+      dayjs(periodA.endDate).isAfter(periodB.endDate))
+  );
+}
+
+/**
+ * Checks if there is any intersection between all the periods provided.
+ * @param periods periods to check for intersections.
+ * @returns true if any period has a intersection with any other period.
+ */
+export function hasSomeIntersection(periods: Period[]): boolean {
+  for (let i = 0; i < periods.length; i++) {
+    const currentPeriod = periods[i];
+    const testPeriods = periods.splice(i);
+    const hasSomeIntersection = testPeriods.some((testPeriod) =>
+      hasIntersection(currentPeriod, testPeriod),
+    );
+    if (hasSomeIntersection) {
+      return true;
+    }
+  }
+  return false;
 }

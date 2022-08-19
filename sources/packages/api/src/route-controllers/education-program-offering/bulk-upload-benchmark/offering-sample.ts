@@ -1,19 +1,20 @@
 export const OFFERING_SAMPLE = {
-  offeringName: "Sample test",
-  yearOfStudy: 1,
-  showYearOfStudy: true,
-  offeringIntensity: "Full Time",
+  offeringName: "Sample test", // ok
+  yearOfStudy: 1, // ok
+  showYearOfStudy: true, // ok
+  offeringIntensity: "Full Time", // ok
   programOfferingIntensityMismatch: false,
-  offeringDelivered: "blended",
+  offeringDelivered: "blended", // ok
   programOfferingDeliveryMismatch: false,
-  hasOfferingWILComponent: "no",
+  hasOfferingWILComponent: "no", // ok
   programOfferingWILMismatch: false,
-  studyStartDate: "2022-08-01T00:00:00-07:00",
-  studyEndDate: "2022-11-19T00:00:00-08:00",
+  studyStartDate: "2022-08-01T00:00:00-07:00", // ok
+  studyEndDate: "2022-11-19T00:00:00-08:00", // ok
   ineligibleDaysForFundingAfter10PercentageCalculation: 20,
   allowable10Percentage: 11,
   invalidStudyDates: false,
-  lacksStudyBreaks: false,
+  lacksStudyBreaks: false, // ok
+  // ok
   breaksAndWeeks: {
     studyBreaks: [
       {
@@ -47,21 +48,59 @@ export const OFFERING_SAMPLE = {
   sumOfTotalInEligibleBreakDays: 0,
   invalidStudyBreaks: true,
   studyBreaksOverlappingDetection: false,
-  actualTuitionCosts: 123,
-  programRelatedCosts: 456,
-  mandatoryFees: 789,
-  exceptionalExpenses: 10,
-  offeringType: "Public",
-  offeringDeclaration: true,
+  actualTuitionCosts: 123, // ok
+  programRelatedCosts: 456, // ok
+  mandatoryFees: 789, // ok
+  exceptionalExpenses: 10, // ok
+  offeringType: "Public", // ok
+  offeringDeclaration: true, //  ok
   clientType: "institution",
   applicationId: "",
   applicationStatus: "",
-  offeringStatus: "Creation pending",
+  offeringStatus: "Creation pending", // ok
   offeringStatusToDisplay: "",
   programIntensity: "Full Time and Part Time",
   programDeliveryTypes: {
     deliveredOnSite: true,
     deliveredOnline: true,
   },
-  hasWILComponent: "no",
+  hasWILComponent: "no", // ok - hasOfferingWILComponent
+};
+
+export const OFFERING_SAMPLE_NO_DRY_RUN = {
+  offeringName: "Test", // ok
+  yearOfStudy: 1, // ok
+  showYearOfStudy: true, // ok
+  offeringIntensity: "Full Time", // ok
+  offeringDelivered: "blended", // ok
+  hasOfferingWILComponent: "no", // ok
+  programOfferingWILMismatch: false,
+  studyStartDate: "2022-08-01", // ok
+  studyEndDate: "2022-11-19", // ok
+  lacksStudyBreaks: false, // ok
+  // ok
+  studyBreaks: [
+    {
+      breakStartDate: "2022-08-11",
+      breakEndDate: "2022-08-20",
+    },
+    {
+      breakStartDate: "2022-08-28",
+      breakEndDate: "2022-09-10",
+    },
+    {
+      breakStartDate: "2022-09-25",
+      breakEndDate: "2022-10-04",
+    },
+  ],
+  actualTuitionCosts: 123, // ok
+  programRelatedCosts: 456, // ok
+  mandatoryFees: 789, // ok
+  exceptionalExpenses: 10, // ok
+  programIntensity: "Full Time and Part Time",
+  programDeliveryTypes: {
+    deliveredOnSite: true,
+    deliveredOnline: true,
+  },
+  hasWILComponent: "no", // ok - hasOfferingWILComponent
 };

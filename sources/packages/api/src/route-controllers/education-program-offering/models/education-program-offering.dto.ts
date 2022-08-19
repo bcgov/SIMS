@@ -12,26 +12,26 @@ import { getUserFullName } from "../../../utilities";
 import { IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 
 export interface SaveOfferingDTO {
-  offeringName: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  offeringDelivered: string;
-  lacksStudyBreaks: boolean;
-  offeringIntensity: OfferingIntensity;
-  yearOfStudy: number;
-  showYearOfStudy?: boolean;
-  hasOfferingWILComponent: string;
+  offeringName: string; // ok
+  studyStartDate: Date; // ok
+  studyEndDate: Date; // ok
+  actualTuitionCosts: number; //ok
+  programRelatedCosts: number; // ok
+  mandatoryFees: number; // ok
+  exceptionalExpenses: number; // ok
+  offeringDelivered: string; // ok
+  lacksStudyBreaks: boolean; // ok
+  offeringIntensity: OfferingIntensity; // ok
+  yearOfStudy: number; // ok
+  showYearOfStudy?: boolean; // ok
+  hasOfferingWILComponent: string; // ok - hasWILComponent
   offeringWILType?: string;
-  studyBreaks?: StudyBreaksAndWeeks;
+  studyBreaks?: StudyBreaksAndWeeks; // ok - complex
   offeringDeclaration: boolean;
-  assessedBy?: string;
-  assessedDate?: Date;
-  offeringStatus: OfferingStatus;
-  offeringType: OfferingTypes;
+  assessedBy?: string; // NOPE
+  assessedDate?: Date; // NOPE
+  offeringStatus: OfferingStatus; // ok
+  offeringType: OfferingTypes; // ok
   courseLoad?: number;
 }
 

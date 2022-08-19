@@ -55,6 +55,7 @@ import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
 import { EducationProgramOfferingBenchmarkController } from "./route-controllers/education-program-offering/bulk-upload-benchmark/education-program-offering-benchmark.controller";
+import { EducationProgramOfferingBulkService } from "./services/education-program-offering/education-program-offering-bulk.service";
 
 @Module({
   imports: [
@@ -134,6 +135,7 @@ import { EducationProgramOfferingBenchmarkController } from "./route-controllers
     DesignationAgreementLocationService,
     GCNotifyService,
     GCNotifyActionsService,
+    EducationProgramOfferingBulkService,
   ],
 })
 export class AppModule {}
