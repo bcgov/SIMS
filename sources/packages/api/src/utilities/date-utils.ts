@@ -209,11 +209,11 @@ export function getFileNameAsCurrentTimestamp(): string {
   return dayjs(new Date()).tz(PST_TIMEZONE).format(TIMESTAMP_CONTINUOUS_FORMAT);
 }
 
-export function isBefore(
+export function isBeforeByDay(
   firstDate: Date | string,
   secondDate: Date | string,
 ): boolean {
-  return dayjs(firstDate).isBefore(secondDate);
+  return dayjs(firstDate).isBefore(secondDate, "day");
 }
 
 export interface Period {
@@ -221,16 +221,16 @@ export interface Period {
   endDate: Date | string;
 }
 
-export function isBetween(date: Date | string, period: Period): boolean {
+export function isBetweenPeriod(date: Date | string, period: Period): boolean {
   return dayjs(date).isBetween(period.startDate, period.endDate, "days", "[]");
 }
 
 export function hasIntersection(periodA: Period, periodB: Period): boolean {
   return (
     // Start date in between the periodB (inclusive check).
-    isBetween(periodA.startDate, periodB) ||
+    isBetweenPeriod(periodA.startDate, periodB) ||
     // End date in between the periodB (inclusive check).
-    isBetween(periodA.endDate, periodB) ||
+    isBetweenPeriod(periodA.endDate, periodB) ||
     // PeriodA fully contains period B.
     (dayjs(periodA.startDate).isBefore(periodB.startDate) &&
       dayjs(periodA.endDate).isAfter(periodB.endDate))

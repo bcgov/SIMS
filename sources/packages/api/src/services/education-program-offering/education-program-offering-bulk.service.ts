@@ -3,34 +3,17 @@ import {
   EducationProgram,
   EducationProgramOffering,
   InstitutionLocation,
-  OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
-  ProgramIntensity,
   StudyBreak,
   StudyBreaksAndWeeks,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource } from "typeorm";
 import { SaveOfferingModel } from "./education-program-offering-bulk.models";
-import {
-  isBoolean,
-  isDate,
-  isDateString,
-  isEnum,
-  isIn,
-  isNotEmpty,
-  max,
-  maxLength,
-  min,
-} from "class-validator";
-import {
-  dateDifference,
-  hasSomeIntersection,
-  isBefore,
-  isBetween,
-  Period,
-} from "../../utilities";
+import { validate } from "class-validator";
+import { dateDifference } from "../../utilities";
+import { plainToClass } from "class-transformer";
 
 @Injectable()
 export class EducationProgramOfferingBulkService extends RecordDataModelService<EducationProgramOffering> {
@@ -41,7 +24,10 @@ export class EducationProgramOfferingBulkService extends RecordDataModelService<
   async createOffering(
     offering: SaveOfferingModel,
   ): Promise<EducationProgramOffering> {
-    const validationResults = this.validateInputModel(offering);
+    // Needed to generate the proper metadata when 'new Class' is not used.
+    const saveOfferingModelClass = plainToClass(SaveOfferingModel, offering);
+    // TODO: Create custom validators for dates and study breaks static data.
+    const result = await validate(saveOfferingModelClass);
 
     const newOffering = new EducationProgramOffering();
     newOffering.name = offering.offeringName;
@@ -126,147 +112,163 @@ export class EducationProgramOfferingBulkService extends RecordDataModelService<
     return studyBreaksAndWeeks;
   }
 
-  private validateInputModel(offering: SaveOfferingModel): string[] {
-    const validationsMassages = [];
-    // Name.
-    if (!isNotEmpty(offering.offeringName)) {
-      validationsMassages.push("Offering name is required.");
-    }
-    // Year of study.
-    if (!min(offering.yearOfStudy, 1) && !max(offering.yearOfStudy, 9)) {
-      validationsMassages.push("Year of study must be between 0 and 9.");
-    }
-    // Display this to students.
-    if (!isBoolean(offering.showYearOfStudy)) {
-      validationsMassages.push(
-        "Show year of study is not in the expected format.",
-      );
-    }
-    // How will this be offered?
-    if (!isEnum(offering.offeringIntensity, OfferingIntensity)) {
-      validationsMassages.push("Offering intensity has an unexpected value.");
-    }
+  // private validateInputModel(offering: SaveOfferingModel): string[] {
+  //   const validationsMassages = [];
+  //   // Name.
+  //   if (!isNotEmpty(offering.offeringName)) {
+  //     validationsMassages.push("Offering name is required.");
+  //   }
+  //   // Year of study.
+  //   if (!min(offering.yearOfStudy, 1) && !max(offering.yearOfStudy, 9)) {
+  //     validationsMassages.push("Year of study must be between 0 and 9.");
+  //   }
+  //   // Display this to students.
+  //   if (!isBoolean(offering.showYearOfStudy)) {
+  //     validationsMassages.push(
+  //       "Show year of study is not in the expected format.",
+  //     );
+  //   }
+  //   // How will this be offered?
+  //   if (!isEnum(offering.offeringIntensity, OfferingIntensity)) {
+  //     validationsMassages.push("Offering intensity has an unexpected value.");
+  //   }
 
-    // TODO: WARNING Program Offering Intensity Mismatch (Your program must have the correct program intensity to be able to select the offering intensity here.)
+  //   // TODO: WARNING Program Offering Intensity Mismatch (Your program must have the correct program intensity to be able to select the offering intensity here.)
 
-    // What is the course load for this offering?
-    if (!min(offering.yearOfStudy, 20) && !max(offering.yearOfStudy, 59)) {
-      validationsMassages.push("Course load must be between 20 and 59.");
-    }
-    // How will this offering be delivered?
-    if (!isIn(offering.offeringDelivered, ["onsite", "online", "blended"])) {
-      validationsMassages.push("Offering delivery has an unexpected value.");
-    }
+  //   // What is the course load for this offering?
+  //   if (!min(offering.yearOfStudy, 20) && !max(offering.yearOfStudy, 59)) {
+  //     validationsMassages.push("Course load must be between 20 and 59.");
+  //   }
+  //   // How will this offering be delivered?
+  //   if (!isIn(offering.offeringDelivered, ["onsite", "online", "blended"])) {
+  //     validationsMassages.push("Offering delivery has an unexpected value.");
+  //   }
 
-    // TODO: WARNING Program Offering Delivery Mismatch (Your program must have the correct delivery method(s) to be able to select the offering delivery here.)
+  //   // TODO: WARNING Program Offering Delivery Mismatch (Your program must have the correct delivery method(s) to be able to select the offering delivery here.)
 
-    // Does this contain a work-integrated learning component?
-    if (
-      !isNotEmpty(offering.hasOfferingWILComponent) &&
-      !maxLength(offering.hasOfferingWILComponent, 10)
-    ) {
-      validationsMassages.push(
-        "Has offering WIL component must be provided and be less than 10 characters long.",
-      );
-    }
+  //   // Does this contain a work-integrated learning component?
+  //   if (
+  //     !isNotEmpty(offering.hasOfferingWILComponent) &&
+  //     !maxLength(offering.hasOfferingWILComponent, 10)
+  //   ) {
+  //     validationsMassages.push(
+  //       "Has offering WIL component must be provided and be less than 10 characters long.",
+  //     );
+  //   }
 
-    // TODO: WANING Program Offering WIL Mismatch (Your program must be approved with a work-integrated component first).
+  //   // TODO: WANING Program Offering WIL Mismatch (Your program must be approved with a work-integrated component first).
 
-    // What work-integrated learning type is contained within this study period????
+  //   // What work-integrated learning type is contained within this study period????
 
-    // Start date.
-    if (
-      !isDate(offering.studyStartDate) &&
-      !isDateString(offering.studyStartDate)
-    ) {
-      validationsMassages.push("Study start is not a valid date.");
-    }
-    // End date.
-    if (
-      !isDate(offering.studyEndDate) &&
-      !isDateString(offering.studyEndDate)
-    ) {
-      validationsMassages.push("Study end is not a valid date.");
-    }
-    // Start date and end date.
-    if (!isBefore(offering.studyStartDate, offering.studyEndDate)) {
-      validationsMassages.push(
-        "Study end date must be greater than study start date.",
-      );
-    }
-    // Breaks and weeks.
-    if (!isBoolean(offering.lacksStudyBreaks)) {
-      validationsMassages.push(
-        "Lacks study breaks is not in the expected format.",
-      );
-    }
-    if (offering.lacksStudyBreaks === true) {
-      if (!offering.studyBreaks?.length) {
-        validationsMassages.push(
-          "Study breaks are required when 'Lacks study breaks' is true.",
-        );
-      } else {
-        const hasEndDateBeforeStart = offering.studyBreaks.some(
-          (studyBreak) =>
-            !isBefore(studyBreak.breakStartDate, studyBreak.breakEndDate),
-        );
-        if (hasEndDateBeforeStart) {
-          validationsMassages.push(
-            "Study breaks start and end dates are not provided in the proper order.",
-          );
-        }
-        // Check for overlaps.
-        const periods = offering.studyBreaks.map(
-          (studyBreak) =>
-            ({
-              startDate: studyBreak.breakStartDate,
-              endDate: studyBreak.breakEndDate,
-            } as Period),
-        );
-        if (hasSomeIntersection(periods)) {
-          validationsMassages.push(
-            "Study breaks have some periods overlapping.",
-          );
-        }
-        offering.studyBreaks.some((studyBreak) => !isBetween());
-      }
-    }
-    if (!min(offering.actualTuitionCosts, 0)) {
-      validationsMassages.push(
-        "Actual tuition costs must be equal to or greater than 0(zero).",
-      );
-    }
-    if (!min(offering.programRelatedCosts, 0)) {
-      validationsMassages.push(
-        "Program related costs must be equal to or greater than 0(zero).",
-      );
-    }
-    if (!min(offering.mandatoryFees, 0)) {
-      validationsMassages.push(
-        "Mandatory fees costs must be equal to or greater than 0(zero).",
-      );
-    }
-    if (!min(offering.exceptionalExpenses, 0)) {
-      validationsMassages.push(
-        "Exceptional expenses must be equal to or greater than 0(zero).",
-      );
-    }
-    if (!isEnum(offering.programIntensity, ProgramIntensity)) {
-      validationsMassages.push("Program intensity has an unexpected value.");
-    }
-    if (!isBoolean(offering.programDeliveryTypes?.deliveredOnSite)) {
-      validationsMassages.push(
-        "Delivery type, delivered on site has an unexpected value.",
-      );
-    }
-    if (!isBoolean(offering.programDeliveryTypes?.deliveredOnline)) {
-      validationsMassages.push(
-        "Delivery type, delivered online has an unexpected value.",
-      );
-    }
-    if (!isIn(offering.hasWILComponent, ["no"])) {
-      validationsMassages.push("Has WIL component has an unexpected value.");
-    }
-    return validationsMassages;
-  }
+  //   // Start date.
+  //   if (
+  //     !isDate(offering.studyStartDate) &&
+  //     !isDateString(offering.studyStartDate)
+  //   ) {
+  //     validationsMassages.push("Study start is not a valid date.");
+  //   }
+  //   // End date.
+  //   if (
+  //     !isDate(offering.studyEndDate) &&
+  //     !isDateString(offering.studyEndDate)
+  //   ) {
+  //     validationsMassages.push("Study end is not a valid date.");
+  //   }
+  //   // Start date and end date.
+  //   if (!isBeforeByDay(offering.studyStartDate, offering.studyEndDate)) {
+  //     validationsMassages.push(
+  //       "Study end date must be greater than study start date.",
+  //     );
+  //   }
+  //   // Breaks and weeks.
+  //   if (!isBoolean(offering.lacksStudyBreaks)) {
+  //     validationsMassages.push(
+  //       "Lacks study breaks is not in the expected format.",
+  //     );
+  //   }
+  //   if (offering.lacksStudyBreaks === true) {
+  //     if (!offering.studyBreaks?.length) {
+  //       validationsMassages.push(
+  //         "Study breaks are required when 'Lacks study breaks' is true.",
+  //       );
+  //     } else {
+  //       // Check is all end dates are greater that the start dates.
+  //       const hasEndDateBeforeStart = offering.studyBreaks.some(
+  //         (studyBreak) =>
+  //           !isBeforeByDay(studyBreak.breakStartDate, studyBreak.breakEndDate),
+  //       );
+  //       if (hasEndDateBeforeStart) {
+  //         validationsMassages.push(
+  //           "Study breaks start and end dates are not provided in the proper order.",
+  //         );
+  //       }
+  //       // Check for overlaps.
+  //       const periods = offering.studyBreaks.map(
+  //         (studyBreak) =>
+  //           ({
+  //             startDate: studyBreak.breakStartDate,
+  //             endDate: studyBreak.breakEndDate,
+  //           } as Period),
+  //       );
+  //       if (hasSomeIntersection(periods)) {
+  //         validationsMassages.push(
+  //           "Study breaks have some periods overlapping.",
+  //         );
+  //       }
+  //       // TODO: Are the study breaks continuous or they can have a break between the periods???
+  //       // Check if all periods are contained by the offering period.
+  //       const offeringPeriod = {
+  //         startDate: offering.studyStartDate,
+  //         endDate: offering.studyEndDate,
+  //       };
+  //       const hasStudyBreaksOutSideOfferingPeriod = offering.studyBreaks.some(
+  //         (studyBreak) =>
+  //           !isBetweenPeriod(studyBreak.breakStartDate, offeringPeriod) ||
+  //           !isBetweenPeriod(studyBreak.breakEndDate, offeringPeriod),
+  //       );
+  //       if (hasStudyBreaksOutSideOfferingPeriod) {
+  //         validationsMassages.push(
+  //           "Study breaks must be all contained in the offering period.",
+  //         );
+  //       }
+  //     }
+  //   }
+  //   if (!min(offering.actualTuitionCosts, 0)) {
+  //     validationsMassages.push(
+  //       "Actual tuition costs must be equal to or greater than 0(zero).",
+  //     );
+  //   }
+  //   if (!min(offering.programRelatedCosts, 0)) {
+  //     validationsMassages.push(
+  //       "Program related costs must be equal to or greater than 0(zero).",
+  //     );
+  //   }
+  //   if (!min(offering.mandatoryFees, 0)) {
+  //     validationsMassages.push(
+  //       "Mandatory fees costs must be equal to or greater than 0(zero).",
+  //     );
+  //   }
+  //   if (!min(offering.exceptionalExpenses, 0)) {
+  //     validationsMassages.push(
+  //       "Exceptional expenses must be equal to or greater than 0(zero).",
+  //     );
+  //   }
+  //   if (!isEnum(offering.programIntensity, ProgramIntensity)) {
+  //     validationsMassages.push("Program intensity has an unexpected value.");
+  //   }
+  //   if (!isBoolean(offering.programDeliveryTypes?.deliveredOnSite)) {
+  //     validationsMassages.push(
+  //       "Delivery type, delivered on site has an unexpected value.",
+  //     );
+  //   }
+  //   if (!isBoolean(offering.programDeliveryTypes?.deliveredOnline)) {
+  //     validationsMassages.push(
+  //       "Delivery type, delivered online has an unexpected value.",
+  //     );
+  //   }
+  //   if (!isIn(offering.hasWILComponent, ["no"])) {
+  //     validationsMassages.push("Has WIL component has an unexpected value.");
+  //   }
+  //   return validationsMassages;
+  // }
 }
