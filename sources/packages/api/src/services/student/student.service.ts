@@ -456,16 +456,22 @@ export class StudentService extends RecordDataModelService<Student> {
 
   /**
    * Update the PD Sent Date
-   * @param studentId
+   * @param studentId student who's PD status is to be updated.
+   * @param auditUserId user who is making the changes.
    */
-  async updatePDSentDate(studentId: number): Promise<Student> {
+  async updatePDSentDate(
+    studentId: number,
+    auditUserId: number,
+  ): Promise<Student> {
     // get the Student Object
     const studentToUpdate = await this.repo.findOneOrFail({
       where: { id: studentId },
     });
     if (studentToUpdate) {
-      // Date in UTC
-      studentToUpdate.studentPDSentAt = getUTCNow();
+      const now = new Date();
+      studentToUpdate.studentPDSentAt = now;
+      studentToUpdate.modifier = { id: auditUserId } as User;
+      studentToUpdate.updatedAt = now;
       return this.repo.save(studentToUpdate);
     }
   }

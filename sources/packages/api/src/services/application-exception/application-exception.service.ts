@@ -160,11 +160,13 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       }
 
       const auditUser = { id: auditUserId } as User;
+      const now = new Date();
       // Create the note to be associated with the update.
       const newNote = new Note();
       newNote.description = noteDescription;
       newNote.noteType = NoteType.Application;
       newNote.creator = auditUser;
+      newNote.createdAt = now;
       const savedNote = await transactionalEntityManager
         .getRepository(Note)
         .save(newNote);
@@ -179,8 +181,9 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       exceptionToUpdate.exceptionStatus = exceptionStatus;
       exceptionToUpdate.exceptionNote = savedNote;
       exceptionToUpdate.assessedBy = auditUser;
-      exceptionToUpdate.assessedDate = new Date();
+      exceptionToUpdate.assessedDate = now;
       exceptionToUpdate.modifier = auditUser;
+      exceptionToUpdate.updatedAt = now;
       return applicationExceptionRepo.save(exceptionToUpdate);
     });
   }

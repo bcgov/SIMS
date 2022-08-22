@@ -71,7 +71,10 @@ export class ATBCStudentController extends BaseController {
     const response = await this.atbcService.ATBCCreateClient(payload);
     if (response) {
       // Update PD sent date.
-      await this.studentService.updatePDSentDate(student.id);
+      await this.studentService.updatePDSentDate(
+        student.id,
+        studentUserToken.userId,
+      );
     }
   }
 }
