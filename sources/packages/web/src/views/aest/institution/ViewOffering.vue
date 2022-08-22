@@ -111,7 +111,7 @@ export default {
           props.programId,
         );
       const programOffering =
-        await EducationProgramOfferingService.shared.getProgramOfferingForAEST(
+        await EducationProgramOfferingService.shared.getOfferingDetails(
           props.offeringId,
         );
 

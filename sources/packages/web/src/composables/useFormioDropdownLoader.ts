@@ -85,7 +85,7 @@ export function useFormioDropdownLoader() {
     return loadDropdown(
       form,
       dropdownName,
-      EducationProgramOfferingService.shared.getProgramOfferingsForLocation(
+      EducationProgramOfferingService.shared.getProgramOfferingsOptionsList(
         locationId,
         programId,
         programYearId,
@@ -108,7 +108,7 @@ export function useFormioDropdownLoader() {
     return loadDropdown(
       form,
       dropdownName,
-      EducationProgramOfferingService.shared.getProgramOfferingsForLocationForInstitution(
+      EducationProgramOfferingService.shared.getProgramOfferingsOptionsList(
         locationId,
         programId,
         programYearId,

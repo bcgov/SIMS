@@ -31,7 +31,6 @@ import {
   ProgramYearController,
   ConfigController,
   DynamicFormController,
-  EducationProgramOfferingController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -93,7 +92,6 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     ProgramYearController,
     ConfigController,
     DynamicFormController,
-    EducationProgramOfferingController,
   ],
   providers: [
     AppService,

@@ -46,6 +46,8 @@ import {
   ProgramInfoRequestInstitutionsController,
   EducationProgramInstitutionsController,
   EducationProgramControllerService,
+  EducationProgramOfferingInstitutionsController,
+  EducationProgramOfferingControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -61,6 +63,7 @@ import { LoggerModule } from "./logger/logger.module";
     ConfirmationOfEnrollmentInstitutionsController,
     EducationProgramInstitutionsController,
     ProgramInfoRequestInstitutionsController,
+    EducationProgramOfferingInstitutionsController,
   ],
   providers: [
     FormService,
@@ -99,6 +102,7 @@ import { LoggerModule } from "./logger/logger.module";
     EducationProgramOfferingService,
     PIRDeniedReasonService,
     EducationProgramControllerService,
+    EducationProgramOfferingControllerService,
   ],
 })
 export class AppInstitutionsModule {}
