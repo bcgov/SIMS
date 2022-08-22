@@ -49,7 +49,7 @@
 </template>
 <script lang="ts">
 import { useStore } from "vuex";
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
 import { useInstitutionAuth } from "@/composables/institution/useInstitutionAuth";
