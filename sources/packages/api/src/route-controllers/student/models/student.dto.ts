@@ -17,7 +17,6 @@ import {
   FileOriginType,
   NOTE_DESCRIPTION_MAX_LENGTH,
 } from "../../../database/entities";
-import { RestrictionNotificationType } from "../../../database/entities/restriction-notification-type.type";
 import {
   AddressAPIOutDTO,
   AddressDetailsAPIInDTO,
@@ -110,21 +109,6 @@ export class SearchStudentAPIOutDTO {
   lastName: string;
   birthDate: string;
   sin: string;
-}
-
-/**
- * DTO for student restriction.
- * This object is returned by controller.
- */
-export class StudentRestrictionAPIOutDTO {
-  /**
-   * code is the restriction code.
-   */
-  code: string;
-  /**
-   * type is the notification type.
-   */
-  type: RestrictionNotificationType;
 }
 
 /**

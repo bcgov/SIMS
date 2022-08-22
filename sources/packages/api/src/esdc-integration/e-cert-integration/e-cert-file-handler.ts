@@ -16,7 +16,6 @@ import {
   ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
   ECERT_PART_TIME_FEEDBACK_FILE_CODE,
   getISODateOnlyString,
-  getFieldOfStudyFromCIPCode,
 } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
@@ -209,9 +208,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     const application = disbursement.studentAssessment.application;
     const addressInfo = application.student.contactInfo.address;
     const offering = application.currentAssessment.offering;
-    const fieldOfStudy = getFieldOfStudyFromCIPCode(
-      offering.educationProgram.cipCode,
-    );
+
     const awards = disbursement.disbursementValues.map(
       (disbursementValue) =>
         ({
@@ -235,7 +232,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       educationalEndDate: offering.studyEndDate,
       federalInstitutionCode: offering.institutionLocation.institutionCode,
       weeksOfStudy: application.currentAssessment.assessmentData.weeks,
-      fieldOfStudy,
+      fieldOfStudy: offering.educationProgram.fieldOfStudyCode,
       yearOfStudy: offering.yearOfStudy,
       completionYears: offering.educationProgram.completionYears,
       enrollmentConfirmationDate: disbursement.coeUpdatedAt,

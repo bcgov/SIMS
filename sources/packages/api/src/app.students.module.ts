@@ -38,11 +38,13 @@ import {
   StudentControllerService,
   EducationProgramStudentsController,
   StudentAccountApplicationStudentsController,
+  RestrictionStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
 import { StudentAccountApplicationsService } from "./services/student-account-applications/student-account-applications.service";
+import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -54,6 +56,8 @@ import { StudentAccountApplicationsService } from "./services/student-account-ap
     AssessmentStudentsController,
     EducationProgramStudentsController,
     StudentAccountApplicationStudentsController,
+    RestrictionStudentsController,
+    ATBCStudentController,
   ],
   providers: [
     ApplicationService,

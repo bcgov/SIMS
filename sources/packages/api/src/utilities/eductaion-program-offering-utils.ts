@@ -1,5 +1,5 @@
 import { EducationProgramOffering } from "../database/entities";
-import { dateString } from ".";
+import { getDateOnlyFormat } from ".";
 
 /**
  * Utility to get year of study label.
@@ -18,9 +18,9 @@ export const getYearOfStudyLabel = (yearId: number): string => {
 export function getOfferingNameAndPeriod(
   offering: Partial<EducationProgramOffering>,
 ): string {
-  return `${offering.name} (${dateString(
+  return `${offering.name} (${getDateOnlyFormat(
     offering.studyStartDate,
-  )} - ${dateString(offering.studyEndDate)})${
+  )} - ${getDateOnlyFormat(offering.studyEndDate)})${
     offering.showYearOfStudy
       ? " - " + getYearOfStudyLabel(offering.yearOfStudy)
       : ""

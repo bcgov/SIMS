@@ -41,8 +41,8 @@
         <Column field="studyStartPeriod" header="Study Period">
           <template #body="slotProps">
             <span>
-              {{ dateString(slotProps.data.studyStartPeriod) }} -
-              {{ dateString(slotProps.data.studyEndPeriod) }}
+              {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
+              {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
             </span>
           </template></Column
         >
@@ -120,7 +120,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const { dateString, dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString } = useFormatters();
     const disbursements = ref(
       {} as PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>,
     );
@@ -192,7 +192,7 @@ export default {
 
     return {
       disbursements,
-      dateString,
+
       dateOnlyLongString,
       goToViewApplication,
       pageLimit,

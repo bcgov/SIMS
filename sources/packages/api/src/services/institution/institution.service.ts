@@ -709,7 +709,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * Service to get notes for a student.
    * @param institutionId
    * @param noteType
-   * @returns Notes
+   * @returns Notes.
    */
   async getInstitutionNotes(
     institutionId: number,
@@ -742,14 +742,15 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * Service to add note for an Institution.
    * @param institutionId
    * @param note
+   * @returns saved Note.
    */
-  async saveInstitutionNote(institutionId: number, note: Note): Promise<void> {
-    const institution = await this.repo.findOne({
-      where: { id: institutionId },
-      relations: { notes: true },
-    });
-    institution.notes.push(note);
-    await this.repo.save(institution);
+  async saveInstitutionNote(institutionId: number, note: Note): Promise<Note> {
+    await this.repo
+      .createQueryBuilder()
+      .relation(Institution, "notes")
+      .of({ id: institutionId } as Institution)
+      .add(note);
+    return note;
   }
 
   /**

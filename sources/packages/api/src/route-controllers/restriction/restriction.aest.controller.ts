@@ -8,6 +8,7 @@ import {
   UnprocessableEntityException,
   NotFoundException,
   InternalServerErrorException,
+  ParseIntPipe,
 } from "@nestjs/common";
 import {
   StudentRestrictionService,
@@ -29,24 +30,32 @@ import {
 } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
-  RestrictionSummaryDTO,
-  RestrictionDetailDTO,
-  ResolveRestrictionDTO,
-  AssignRestrictionDTO,
-  RestrictionStatus,
+  RestrictionSummaryAPIOutDTO,
+  RestrictionDetailAPIOutDTO,
+  ResolveRestrictionAPIInDTO,
+  AssignRestrictionAPIInDTO,
+  RestrictionStatusAPIOutDTO,
 } from "./models/restriction.dto";
-import { OptionItem } from "../../types";
-import { getIDIRUserFullName } from "../../utilities";
-import { ApiTags } from "@nestjs/swagger";
+import { ClientTypeBaseRoute } from "../../types";
+import { getUserFullName } from "../../utilities";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
+import { OptionItemAPIOutDTO } from "../models/common.dto";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /**
- * Controller for Restrictions.
- * This consists of all Rest APIs for restrictions.
+ * Controller for AEST Restrictions.
+ * This consists of all Rest APIs for AEST restrictions.
  */
-@Controller("restrictions")
-@ApiTags("restrictions")
-export class RestrictionController extends BaseController {
+@AllowAuthorizedParty(AuthorizedParties.aest)
+@Groups(UserGroups.AESTUser)
+@Controller("restriction")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-restriction`)
+export class RestrictionAESTController extends BaseController {
   constructor(
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
@@ -58,16 +67,14 @@ export class RestrictionController extends BaseController {
   }
 
   /**
-   * Rest API to get restrictions for a student.
+   * Get restrictions for a student.
    * @param studentId
    * @returns Student Restrictions.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("/student/:studentId")
+  @Get("student/:studentId")
   async getStudentRestrictions(
-    @Param("studentId") studentId: number,
-  ): Promise<RestrictionSummaryDTO[]> {
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<RestrictionSummaryAPIOutDTO[]> {
     const studentRestrictions =
       await this.studentRestrictionService.getStudentRestrictionsById(
         studentId,
@@ -84,13 +91,11 @@ export class RestrictionController extends BaseController {
     }));
   }
   /**
-   * REST API to provide the list of restriction categories for drop-down.
+   * Provide the list of restriction categories for drop-down.
    * @returns Categories option list.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("/categories/options-list")
-  async getCategoriesOptionsList(): Promise<OptionItem[]> {
+  @Get("categories/options-list")
+  async getCategoriesOptionsList(): Promise<OptionItemAPIOutDTO[]> {
     const categories =
       await this.restrictionService.getAllRestrictionCategories();
     return categories.map((category) => ({
@@ -100,16 +105,14 @@ export class RestrictionController extends BaseController {
   }
 
   /**
-   * REST API to provide the list of restriction reasons for selected category.
+   * Provide the list of restriction reasons for selected category.
    * @param restrictionCategory Selected Category from category list.
    * @returns Reasons option list.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("/reasons/options-list/category/:restrictionCategory")
+  @Get("category/:restrictionCategory/reasons")
   async getReasonsOptionsList(
     @Param("restrictionCategory") restrictionCategory: string,
-  ): Promise<OptionItem[]> {
+  ): Promise<OptionItemAPIOutDTO[]> {
     const reasons =
       await this.restrictionService.getRestrictionReasonsByCategory(
         restrictionCategory,
@@ -121,18 +124,19 @@ export class RestrictionController extends BaseController {
   }
 
   /**
-   * Rest API to get the details for view student restriction.
+   * Get the details for view student restriction.
    * @param studentId
    * @param studentRestrictionId
    * @returns Student restriction detail view.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("/student/:studentId/studentRestriction/:studentRestrictionId")
+  @ApiNotFoundResponse({
+    description: "The student restriction does not exist.",
+  })
+  @Get("student/:studentId/studentRestriction/:studentRestrictionId")
   async getStudentRestrictionDetail(
-    @Param("studentId") studentId: number,
-    @Param("studentRestrictionId") studentRestrictionId: number,
-  ): Promise<RestrictionDetailDTO> {
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
+  ): Promise<RestrictionDetailAPIOutDTO> {
     const studentRestriction =
       await this.studentRestrictionService.getStudentRestrictionDetailsById(
         studentId,
@@ -149,8 +153,8 @@ export class RestrictionController extends BaseController {
       description: studentRestriction.restriction.description,
       createdAt: studentRestriction.createdAt,
       updatedAt: studentRestriction.updatedAt,
-      createdBy: getIDIRUserFullName(studentRestriction.creator),
-      updatedBy: getIDIRUserFullName(studentRestriction.modifier),
+      createdBy: getUserFullName(studentRestriction.creator),
+      updatedBy: getUserFullName(studentRestriction.modifier),
       isActive: studentRestriction.isActive,
       restrictionNote: studentRestriction.restrictionNote?.description,
       resolutionNote: studentRestriction.resolutionNote?.description,
@@ -158,21 +162,22 @@ export class RestrictionController extends BaseController {
   }
 
   /**
-   * Rest API to add a new provincial restriction to Student.
+   * Add a new provincial restriction to Student.
    * * Note: Federal restrictions are added/resolved by nightly job not through this API.
-   * @param userToken
    * @param studentId
    * @param payload
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
   @Roles(Role.StudentAddRestriction)
-  @Post("/student/:studentId")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "The given restriction type is not Provincial. Only provincial restrictions can be added.",
+  })
+  @Post("student/:studentId")
   async addStudentProvincialRestriction(
     @UserToken() userToken: IUserToken,
-    @Param("studentId") studentId: number,
-    @Body() payload: AssignRestrictionDTO,
-  ): Promise<void> {
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Body() payload: AssignRestrictionAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const restriction =
       await this.restrictionService.getProvincialRestrictionById(
         payload.restrictionId,
@@ -182,51 +187,54 @@ export class RestrictionController extends BaseController {
         "The given restriction type is not Provincial. Only provincial restrictions can be added.",
       );
     }
+    // TODO Use transaction to save the restriction and save student note alongside.
     const updatedRestriction =
       await this.studentRestrictionService.addProvincialRestriction(
         studentId,
         userToken.userId,
-        payload,
+        payload.restrictionId,
+        payload.noteDescription,
       );
+    let institutionNote;
     /**mapping the note added for restriction to student notes**/
     if (updatedRestriction.restrictionNote) {
-      await this.studentService.saveStudentNote(
+      institutionNote = await this.studentService.saveStudentNote(
         studentId,
         updatedRestriction.restrictionNote,
       );
     }
+    return { id: institutionNote.id };
   }
 
   /**
-   * Rest API to resolve a provincial restriction.
+   * Resolve a provincial restriction.
    * * Note: Federal restrictions are added/resolved by nightly job not through this API.
-   * @param userToken
    * @param studentId
    * @param studentRestrictionId
    * @param payload
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
   @Roles(Role.StudentResolveRestriction)
-  @Patch("/student/:studentId/studentRestriction/:studentRestrictionId/resolve")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Resolution Notes are mandatory to resolve the restriction." +
+      "The restriction neither assigned to student nor active. Only active restrictions can be resolved." +
+      "The given restriction type is not Provincial. Only provincial restrictions can be resolved by application user.",
+  })
+  @Patch("student/:studentId/studentRestriction/:studentRestrictionId/resolve")
   async resolveStudentProvincialRestriction(
     @UserToken() userToken: IUserToken,
-    @Param("studentId") studentId: number,
-    @Param("studentRestrictionId") studentRestrictionId: number,
-    @Body() payload: ResolveRestrictionDTO,
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
+    @Body() payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
-    if (!payload.noteDescription) {
-      throw new UnprocessableEntityException(
-        "Resolution Notes are mandatory to resolve the restriction.",
-      );
-    }
     try {
+      // TODO Use transaction to update the restriction and save student note alongside.
       const updatedRestriction =
         await this.studentRestrictionService.resolveProvincialRestriction(
           studentId,
           studentRestrictionId,
           userToken.userId,
-          payload,
+          payload.noteDescription,
         );
 
       /**mapping the note added for resolution to student notes**/
@@ -248,21 +256,19 @@ export class RestrictionController extends BaseController {
   }
 
   /**
-   * Rest API to get restrictions for an institution.
+   * Get restrictions for an institution.
    * @param institutionId
    * @returns Institution Restrictions.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("/institution/:institutionId")
+  @Get("institution/:institutionId")
   async getInstitutionRestrictions(
-    @Param("institutionId") institutionId: number,
-  ): Promise<RestrictionSummaryDTO[]> {
+    @Param("institutionId", ParseIntPipe) institutionId: number,
+  ): Promise<RestrictionSummaryAPIOutDTO[]> {
     const institutionRestrictions =
       await this.institutionRestrictionService.getInstitutionRestrictionsById(
         institutionId,
       );
-    return institutionRestrictions?.map((institutionRestriction) => ({
+    return institutionRestrictions.map((institutionRestriction) => ({
       restrictionId: institutionRestriction.id,
       restrictionType: institutionRestriction.restriction.restrictionType,
       restrictionCategory:
@@ -276,20 +282,22 @@ export class RestrictionController extends BaseController {
   }
 
   /**
-   * Rest API to get the details for view institution restriction.
+   * Get the details for view institution restriction.
    * @param institutionId
    * @param institutionRestrictionId
    * @returns Institution restriction detail view.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @ApiNotFoundResponse({
+    description: "The institution restriction does not exist.",
+  })
   @Get(
-    "/institution/:institutionId/institutionRestriction/:institutionRestrictionId",
+    "institution/:institutionId/institutionRestriction/:institutionRestrictionId",
   )
   async getInstitutionRestrictionDetail(
-    @Param("institutionId") institutionId: number,
-    @Param("institutionRestrictionId") institutionRestrictionId: number,
-  ): Promise<RestrictionDetailDTO> {
+    @Param("institutionId", ParseIntPipe) institutionId: number,
+    @Param("institutionRestrictionId", ParseIntPipe)
+    institutionRestrictionId: number,
+  ): Promise<RestrictionDetailAPIOutDTO> {
     const institutionRestriction =
       await this.institutionRestrictionService.getInstitutionRestrictionDetailsById(
         institutionId,
@@ -309,8 +317,8 @@ export class RestrictionController extends BaseController {
       description: institutionRestriction.restriction.description,
       createdAt: institutionRestriction.createdAt,
       updatedAt: institutionRestriction.updatedAt,
-      createdBy: getIDIRUserFullName(institutionRestriction.creator),
-      updatedBy: getIDIRUserFullName(institutionRestriction.modifier),
+      createdBy: getUserFullName(institutionRestriction.creator),
+      updatedBy: getUserFullName(institutionRestriction.modifier),
       isActive: institutionRestriction.isActive,
       restrictionNote: institutionRestriction.restrictionNote?.description,
       resolutionNote: institutionRestriction.resolutionNote?.description,
@@ -318,21 +326,22 @@ export class RestrictionController extends BaseController {
   }
 
   /**
-   * Rest API to add a new provincial restriction to Institution.
+   * Add a new provincial restriction to Institution.
    * * Note: Only provincial restriction of category Designation can be added to institution.
-   * @param userToken
    * @param institutionId
    * @param payload
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
   @Roles(Role.InstitutionAddRestriction)
-  @Post("/institution/:institutionId")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "The given restriction type is either not Provincial or not Institution.",
+  })
+  @Post("institution/:institutionId")
   async addInstitutionProvincialRestriction(
     @UserToken() userToken: IUserToken,
-    @Param("institutionId") institutionId: number,
-    @Body() payload: AssignRestrictionDTO,
-  ): Promise<void> {
+    @Param("institutionId", ParseIntPipe) institutionId: number,
+    @Body() payload: AssignRestrictionAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const restriction =
       await this.restrictionService.getProvincialRestrictionById(
         payload.restrictionId,
@@ -347,35 +356,41 @@ export class RestrictionController extends BaseController {
       await this.institutionRestrictionService.addProvincialRestriction(
         institutionId,
         userToken.userId,
-        payload,
+        payload.restrictionId,
+        payload.noteDescription,
       );
-    /**mapping the note added for restriction to institution notes**/
+    let institutionNote;
+    // Mapping the note added for restriction to institution notes
     if (updatedRestriction.restrictionNote) {
-      await this.institutionService.saveInstitutionNote(
+      institutionNote = await this.institutionService.saveInstitutionNote(
         institutionId,
         updatedRestriction.restrictionNote,
       );
     }
+    return { id: institutionNote.id };
   }
 
   /**
-   * Rest API to resolve a provincial restriction for Institution.
-   * @param userToken
+   * Resolve a provincial restriction for Institution.
    * @param institutionId
    * @param institutionRestrictionId
    * @param payload
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
   @Roles(Role.InstitutionResolveRestriction)
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Resolution Notes are mandatory to resolve the restriction." +
+      "The restriction neither assigned to student nor active. Only active restrictions can be resolved.",
+  })
   @Patch(
-    "/institution/:institutionId/institutionRestriction/:institutionRestrictionId/resolve",
+    "institution/:institutionId/institutionRestriction/:institutionRestrictionId/resolve",
   )
   async resolveInstitutionProvincialRestriction(
     @UserToken() userToken: IUserToken,
-    @Param("institutionId") institutionId: number,
-    @Param("institutionRestrictionId") institutionRestrictionId: number,
-    @Body() payload: ResolveRestrictionDTO,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
+    @Param("institutionRestrictionId", ParseIntPipe)
+    institutionRestrictionId: number,
+    @Body() payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
     if (!payload.noteDescription) {
       throw new UnprocessableEntityException(
@@ -388,7 +403,7 @@ export class RestrictionController extends BaseController {
           institutionId,
           institutionRestrictionId,
           userToken.userId,
-          payload,
+          payload.noteDescription,
         );
 
       /**mapping the note added for resolution to student notes**/
@@ -407,24 +422,20 @@ export class RestrictionController extends BaseController {
   }
 
   /**
-   * Rest API to get restriction status for an institution.
+   * Get restriction status for an institution.
    * @param institutionId
    * @returns Institution Restriction.
    */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("/institution/:institutionId/status")
+  @Get("institution/:institutionId/status")
   async getRestrictionStatusById(
-    @Param("institutionId") institutionId: number,
-  ): Promise<RestrictionStatus> {
+    @Param("institutionId", ParseIntPipe) institutionId: number,
+  ): Promise<RestrictionStatusAPIOutDTO> {
     const institutionRestrictions =
       await this.institutionRestrictionService.getRestrictionStatusById(
         institutionId,
       );
     return {
-      isActive: !!(
-        institutionRestrictions && institutionRestrictions.length > 0
-      ),
-    } as RestrictionStatus;
+      isActive: !!institutionRestrictions?.length,
+    };
   }
 }
