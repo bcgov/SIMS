@@ -37,7 +37,8 @@ import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormBaseModel, OfferingStatus, OfferingDTO } from "@/types";
+import { OfferingFormBaseModel, OfferingStatus } from "@/types";
+import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { useSnackBar } from "@/composables";
@@ -83,7 +84,7 @@ export default {
           props.programId,
         );
       const programOffering =
-        await EducationProgramOfferingService.shared.getProgramOffering(
+        await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
           props.locationId,
           props.programId,
           props.offeringId,
@@ -99,7 +100,7 @@ export default {
     onMounted(async () => {
       await loadFormData();
     });
-    const saveOffering = async (data: OfferingDTO) => {
+    const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
         await EducationProgramOfferingService.shared.requestChange(
           props.locationId,

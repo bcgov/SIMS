@@ -10,8 +10,8 @@ import {
   OfferingFormBaseModel,
   OfferingStatus,
   OfferingRelationType,
-  OfferingDTO,
 } from "@/types";
+import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 import OfferingForm from "@/components/common/OfferingForm.vue";
@@ -46,11 +46,11 @@ export default {
       const programPromise = EducationProgramService.shared.getEducationProgram(
         props.programId,
       );
-      let offeringPromise: Promise<OfferingDTO>;
+      let offeringPromise: Promise<EducationProgramOfferingAPIOutDTO>;
 
       if (props.relationType === OfferingRelationType.ActualOffering) {
         offeringPromise =
-          EducationProgramOfferingService.shared.getProgramOfferingForAEST(
+          EducationProgramOfferingService.shared.getOfferingDetails(
             props.offeringId,
           );
       } else {
