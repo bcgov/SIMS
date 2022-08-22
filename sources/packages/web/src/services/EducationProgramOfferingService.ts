@@ -187,7 +187,7 @@ export class EducationProgramOfferingService {
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    return ApiClient.EducationProgramOffering.requestChange(
+    await ApiClient.EducationProgramOffering.requestChange(
       locationId,
       programId,
       offeringId,

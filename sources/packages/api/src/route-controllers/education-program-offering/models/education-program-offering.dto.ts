@@ -135,49 +135,6 @@ export class EducationProgramOfferingSummaryAPIOutDTO {
   offeringStatus: OfferingStatus;
 }
 
-/**
- * Summary DTO of program offering.
- */
-export class EducationProgramOfferingDto {
-  id: number;
-  offeringName: string;
-  studyDates: string;
-  offeringDelivered: string;
-  offeringIntensity: OfferingIntensity;
-}
-
-/**
- * View only DTO for program offering.
- */
-export interface ProgramOfferingDto {
-  id: number;
-  offeringName: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  offeringDelivered: string;
-  lacksStudyBreaks: boolean;
-  offeringIntensity: OfferingIntensity;
-  yearOfStudy: number;
-  showYearOfStudy?: boolean;
-  hasOfferingWILComponent: string;
-  offeringWILType?: string;
-  breaksAndWeeks: StudyBreaksAndWeeksOutDTO;
-  offeringDeclaration: boolean;
-  assessedBy?: string;
-  assessedDate?: Date;
-  submittedDate: Date;
-  offeringStatus: OfferingStatus;
-  offeringType: OfferingTypes;
-  locationName: string;
-  institutionName: string;
-  courseLoad?: number;
-  hasExistingApplication?: boolean;
-}
-
 export class OfferingStartDateAPIOutDTO {
   studyStartDate: Date;
 }

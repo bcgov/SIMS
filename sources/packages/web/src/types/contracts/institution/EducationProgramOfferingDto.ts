@@ -1,19 +1,3 @@
-import { OfferingIntensity } from "@/types/contracts/OfferingContact";
-
-/**
- * Program offering summary DTO for Vue.
- */
-export interface EducationProgramOfferingDto {
-  id: number;
-  name: string;
-  studyStartDate: string;
-  studyEndDate: string;
-  offeringDelivered: string;
-  offeringIntensity: OfferingIntensity;
-  offeringStatus: OfferingStatus;
-  offeringType: OfferingTypes;
-}
-
 /**
  * Represents the status of an offering.
  ** Offering statuses are grouped into the ones which are exclusively for offering creation
