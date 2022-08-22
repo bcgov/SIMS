@@ -86,12 +86,10 @@ export default {
           )
             ? {
                 label: data.name,
-                value: data.id,
                 icon: "mdi-map-marker-outline",
                 items: [
                   {
                     label: "Programs",
-                    value: `programs-${data.id}`,
                     icon: "fa:far fa-folder-open",
                     command: () => ({
                       name: InstitutionRoutesConst.LOCATION_PROGRAMS,
@@ -102,7 +100,6 @@ export default {
                   },
                   {
                     label: "Program Info Requests",
-                    value: `program-info-requests-${data.id}`,
                     icon: "fa:far fa-paper-plane",
                     command: () => ({
                       name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
@@ -114,7 +111,6 @@ export default {
                   },
                   {
                     label: "Confirm Enrolment",
-                    value: `confirm-enrolment-${data.id}`,
                     icon: "fa:far fa-check-square",
                     command: () => ({
                       name: InstitutionRoutesConst.COE_SUMMARY,
@@ -126,7 +122,6 @@ export default {
                   },
                   {
                     label: "Report a Change",
-                    value: `report-a-change-${data.id}`,
                     icon: "fa:far fa-hand-paper",
                     command: () => ({
                       name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
@@ -151,11 +146,8 @@ export default {
         // get user details
         getuserLocationList();
       },
+      { immediate: true },
     );
-    onMounted(() => {
-      // get user details
-      getuserLocationList();
-    });
 
     return {
       items,

@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="2" class="mx-auto mt-12" max-width="620px" outlined>
+  <v-card elevation="2" class="mx-auto mt-12" max-width="95vh" outlined>
     <v-card-text>
       <v-row no-gutters>
         <v-col cols="9">
