@@ -572,18 +572,22 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     coeDeniedReasonId: number,
     otherReasonDesc: string,
   ): Promise<UpdateResult> {
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     const updateResult = await this.repo
       .createQueryBuilder()
       .update(DisbursementSchedule)
       .set({
         coeStatus: COEStatus.declined,
-        coeUpdatedBy: { id: auditUserId },
-        coeUpdatedAt: new Date(),
+        coeUpdatedBy: auditUser,
+        coeUpdatedAt: now,
         coeDeniedReason: { id: coeDeniedReasonId },
         coeDeniedOtherDesc:
           coeDeniedReasonId === COE_DENIED_REASON_OTHER_ID
             ? otherReasonDesc
             : null,
+        modifier: auditUser,
+        updatedAt: now,
       })
       .where("id = :disbursementScheduleId", { disbursementScheduleId })
       .andWhere("coeStatus = :required", { required: COEStatus.required })
