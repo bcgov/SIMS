@@ -72,3 +72,7 @@ $color-muted: #69768c;
 /** shades **/
 $success-shade: #0f851f;
 $warning-shade: #b35600;
+
+// Vuetify navigation drawer default width.
+// ref: https://next.vuetifyjs.com/en/api/v-navigation-drawer/#props-width
+$navigation-drawer-width: 256px;

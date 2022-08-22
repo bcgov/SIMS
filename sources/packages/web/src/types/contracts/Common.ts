@@ -6,7 +6,6 @@ export interface MenuModel {
   icon?: string | string[];
   command?: () => void;
   items?: MenuModel[];
-  value?: string;
 }
 
 export interface Address {

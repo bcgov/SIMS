@@ -7,7 +7,7 @@
         subTitle="Add Location"
       />
     </template>
-    <formio-container formName="institutionlocation" @submitted="submitted">
+    <formio-container formName="institutionLocation" @submitted="submitted">
       <template #actions="{ submit }">
         <footer-buttons
           :processing="processing"

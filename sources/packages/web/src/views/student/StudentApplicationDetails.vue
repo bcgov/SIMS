@@ -21,9 +21,9 @@
             <v-list>
               <template v-for="(item, index) in items" :key="index">
                 <v-list-item :value="index">
-                  <v-list-item-icon class="mr-6" :class="item.textColor">
-                    {{ item.icon }}
-                  </v-list-item-icon>
+                  <template v-slot:prepend>
+                    <v-icon :icon="item.icon"></v-icon>
+                  </template>
                   <v-list-item-title
                     @click="item.command"
                     :class="item.textColor"

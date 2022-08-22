@@ -10,25 +10,19 @@
         <v-btn
           v-if="isAuthenticated"
           class="nav-item-label"
-          value="homeBtn"
           variant="text"
-          @click="
-            $router.push({
-              name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-            })
-          "
+          :to="{
+            name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+          }"
           >Home</v-btn
         >
         <v-btn
           class="nav-item-label"
           v-if="isAuthenticated && isAdmin"
           variant="text"
-          value="manageInstitutionBtn"
-          @click="
-            $router.push({
-              name: InstitutionRoutesConst.MANAGE_LOCATIONS,
-            })
-          "
+          :to="{
+            name: InstitutionRoutesConst.MANAGE_LOCATIONS,
+          }"
           >Manage Institution</v-btn
         >
 
@@ -36,12 +30,9 @@
           class="nav-item-label"
           v-if="isAuthenticated"
           variant="text"
-          value="myProfileBtn"
-          @click="
-            $router.push({
-              name: InstitutionRoutesConst.INSTITUTION_USER_PROFILE,
-            })
-          "
+          :to="{
+            name: InstitutionRoutesConst.INSTITUTION_USER_PROFILE,
+          }"
           >My Profile</v-btn
         >
         <v-menu v-if="isAuthenticated">
@@ -97,7 +88,7 @@ import { ref } from "vue";
 export default {
   components: { BCLogo, IdleTimeChecker },
   setup() {
-    const toggleNav = ref("");
+    const toggleNav = ref("toggle-nav");
     const { executeLogout } = useAuth();
     const { isAdmin, isAuthenticated } = useInstitutionAuth();
     const logoff = async () => {

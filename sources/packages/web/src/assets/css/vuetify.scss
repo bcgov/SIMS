@@ -155,10 +155,11 @@
   color: $brand-blue !important;
   background-color: $color-white !important;
 }
+
 // Btn toggle groups for nav bar adjustment.
-// todo: ann update btn group toggle to btn and check, if its required.
 .navigation-btn.v-btn-group {
-  margin-left: -99vh;
+  min-width: inherit;
+  overflow: inherit;
 }
 
 // Active sidebar class to match with Figma.
@@ -174,4 +175,16 @@
 // Sidebar class to match with Figma.
 .sidebar-item .v-list-item-title {
   @extend .nav-item-label;
+}
+
+//  256px is the default width of v-navigation-drawer,
+//  if its changes, adjust here too.
+// ref: https://next.vuetifyjs.com/en/api/v-navigation-drawer/#props-width
+.no-sidebar {
+  margin-inline-start: $navigation-drawer-width;
+}
+
+.nav-subtitle {
+  text-transform: uppercase;
+  letter-spacing: 3px !important;
 }

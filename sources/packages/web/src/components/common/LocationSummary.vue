@@ -21,7 +21,6 @@
     :key="item"
     class="ma-2"
   >
-    <!-- todo: ann check the styles of label and  text -->
     <v-row>
       <v-col cols="10">
         <div>
@@ -52,7 +51,7 @@
       <v-col>
         <title-value propertyTitle="Address 1" />
         <span
-          class="text-muted clearfix"
+          class="label-value muted-content clearfix"
           v-for="addressLine in addressList1(item)"
           :key="addressLine"
         >
@@ -70,7 +69,7 @@
       <v-col>
         <title-value propertyTitle=" Primary Contact" />
         <span
-          class="text-muted clearfix"
+          class="label-value muted-content clearfix"
           v-for="contactLine in primaryContactList(item)"
           :key="contactLine"
         >
@@ -79,10 +78,10 @@
       </v-col>
       <!-- Institution code -->
       <v-col>
-        <title-value
-          propertyTitle="Institution code"
-          :propertyValue="item.institutionCode"
-        />
+        <title-value propertyTitle="Institution code" />
+        <span class="label-value muted-content clearfix">
+          {{ item.institutionCode }}
+        </span>
       </v-col>
     </v-row>
   </content-group>

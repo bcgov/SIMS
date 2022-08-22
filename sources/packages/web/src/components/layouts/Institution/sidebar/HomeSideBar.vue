@@ -5,12 +5,11 @@
       density="compact"
       bg-color="background"
       active-color="primary"
-      :bind="drawer"
     >
       <v-list-item
         v-for="item in items"
         :key="item.label"
-        @click="item.command"
+        :to="item.command()"
         :prepend-icon="item.icon"
         :title="item.label"
         :value="item.value"
@@ -37,7 +36,7 @@
           v-for="locationItem in location?.items"
           :key="locationItem"
           :title="locationItem.label"
-          @click="locationItem.command"
+          :to="locationItem.command()"
           :value="locationItem.value"
           ><template v-slot:prepend>
             <v-icon :icon="locationItem.icon" size="20"
@@ -49,7 +48,6 @@
   </v-navigation-drawer>
 </template>
 <script lang="ts">
-import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref, onMounted, computed, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -61,7 +59,6 @@ export default {
   setup() {
     const drawer = ref("drawer");
     const store = useStore();
-    const router = useRouter();
     const { isAdmin, userAuth } = useInstitutionAuth();
     const userLocationList = computed(
       () => store.state.institution.locationState,
@@ -74,13 +71,10 @@ export default {
       items.value = [
         {
           label: "Dashboard",
-          value: "dashboard",
           icon: "mdi-home-outline",
-          command: () => {
-            router.push({
-              name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-            });
-          },
+          command: () => ({
+            name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+          }),
         },
       ];
       for (const data of userLocationList.value) {
@@ -99,56 +93,48 @@ export default {
                     label: "Programs",
                     value: `programs-${data.id}`,
                     icon: "fa:far fa-folder-open",
-                    command: () => {
-                      router.push({
-                        name: InstitutionRoutesConst.LOCATION_PROGRAMS,
-                        params: {
-                          locationId: data.id,
-                        },
-                      });
-                    },
+                    command: () => ({
+                      name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+                      params: {
+                        locationId: data.id,
+                      },
+                    }),
                   },
                   {
                     label: "Program Info Requests",
                     value: `program-info-requests-${data.id}`,
                     icon: "fa:far fa-paper-plane",
-                    command: () => {
-                      router.push({
-                        name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
-                        params: {
-                          locationId: data.id,
-                          locationName: data.name,
-                        },
-                      });
-                    },
+                    command: () => ({
+                      name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+                      params: {
+                        locationId: data.id,
+                        locationName: data.name,
+                      },
+                    }),
                   },
                   {
                     label: "Confirm Enrolment",
                     value: `confirm-enrolment-${data.id}`,
                     icon: "fa:far fa-check-square",
-                    command: () => {
-                      router.push({
-                        name: InstitutionRoutesConst.COE_SUMMARY,
-                        params: {
-                          locationId: data.id,
-                          locationName: data.name,
-                        },
-                      });
-                    },
+                    command: () => ({
+                      name: InstitutionRoutesConst.COE_SUMMARY,
+                      params: {
+                        locationId: data.id,
+                        locationName: data.name,
+                      },
+                    }),
                   },
                   {
                     label: "Report a Change",
                     value: `report-a-change-${data.id}`,
                     icon: "fa:far fa-hand-paper",
-                    command: () => {
-                      router.push({
-                        name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
-                        params: {
-                          locationId: data.id,
-                          locationName: data.name,
-                        },
-                      });
-                    },
+                    command: () => ({
+                      name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
+                      params: {
+                        locationId: data.id,
+                        locationName: data.name,
+                      },
+                    }),
                   },
                 ],
               }
@@ -173,7 +159,6 @@ export default {
 
     return {
       items,
-      store,
       userLocationList,
       locationsMenu,
       drawer,
@@ -181,14 +166,3 @@ export default {
   },
 };
 </script>
-<style>
-/* todo: ann move the css */
-.nav-subtitle {
-  font-style: normal;
-  /* font-size: 12px; */
-  line-height: 16px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  mix-blend-mode: normal;
-}
-</style>

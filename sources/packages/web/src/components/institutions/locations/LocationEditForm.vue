@@ -1,6 +1,6 @@
 <template>
   <formio-container
-    formName="institutionlocation"
+    formName="institutionLocation"
     :formData="locationData"
     @submitted="updateInstitutionLocation"
   >
