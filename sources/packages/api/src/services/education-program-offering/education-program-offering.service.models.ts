@@ -6,7 +6,7 @@ import {
   Application,
 } from "../../database/entities";
 
-export class EducationProgramOfferingSummaryModel {
+export interface EducationProgramOfferingSummaryModel {
   id: number;
   name: string;
   studyStartDate: string;

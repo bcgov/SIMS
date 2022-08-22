@@ -35,7 +35,7 @@ export class EducationProgramOfferingService {
     programId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    return ApiClient.EducationProgramOffering.createOffering(
+    await ApiClient.EducationProgramOffering.createOffering(
       locationId,
       programId,
       payload,
@@ -97,7 +97,7 @@ export class EducationProgramOfferingService {
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    return ApiClient.EducationProgramOffering.updateProgramOffering(
+    await ApiClient.EducationProgramOffering.updateProgramOffering(
       locationId,
       programId,
       offeringId,

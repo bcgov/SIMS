@@ -28,7 +28,7 @@ export class StudyBreakInDTO {
   breakEndDate: Date;
 }
 
-export interface StudyBreaksAndWeeksOutDTO {
+export class StudyBreaksAndWeeksOutDTO {
   studyBreaks: StudyBreakOutDTO[];
   fundedStudyPeriodDays: number;
   totalDays: number;
@@ -186,7 +186,7 @@ export class OfferingStartDateAPIOutDTO {
  * Transformation util for Program Offering.
  * @param offering
  * @param hasExistingApplication is the offering linked to any application.
- * @returns ProgramOfferingDto
+ * @returns program offering.
  */
 export const transformToProgramOfferingDTO = (
   offering: EducationProgramOffering,
