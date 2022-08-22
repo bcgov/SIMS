@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
@@ -49,9 +50,9 @@ export class EducationProgramOfferingStudentsController extends BaseController {
     "location/:locationId/education-program/:programId/program-year/:programYearId",
   )
   async getProgramOfferingsOptionsList(
-    @Param("locationId") locationId: number,
-    @Param("programId") programId: number,
-    @Param("programYearId") programYearId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
+    @Param("programYearId", ParseIntPipe) programYearId: number,
     @Query("includeInActivePY") includeInActivePY = false,
     @Query("offeringIntensity") offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
@@ -73,7 +74,7 @@ export class EducationProgramOfferingStudentsController extends BaseController {
   @ApiNotFoundResponse({ description: "Offering not found." })
   @Get(":offeringId")
   async getProgramOfferingDetails(
-    @Param("offeringId") offeringId: number,
+    @Param("offeringId", ParseIntPipe) offeringId: number,
   ): Promise<OfferingStartDateAPIOutDTO> {
     //To retrieve Education program offering corresponding to ProgramId and LocationId
     const offering = await this.educationProgramOfferingService.getOfferingById(
