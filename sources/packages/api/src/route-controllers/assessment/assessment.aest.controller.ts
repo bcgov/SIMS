@@ -67,7 +67,6 @@ export class AssessmentAESTController extends BaseController {
       await this.applicationService.getOfferingChangeRequestsByApplicationId(
         applicationId,
       );
-
     if (precedingOfferingRequest) {
       const changedOffering =
         await this.educationProgramOfferingService.getOfferingRequestsByPrecedingOfferingId(
