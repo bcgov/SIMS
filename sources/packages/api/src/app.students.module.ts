@@ -38,6 +38,8 @@ import {
   StudentControllerService,
   EducationProgramStudentsController,
   StudentAccountApplicationStudentsController,
+  EducationProgramOfferingStudentsController,
+  EducationProgramOfferingControllerService,
   RestrictionStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -56,6 +58,7 @@ import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.co
     AssessmentStudentsController,
     EducationProgramStudentsController,
     StudentAccountApplicationStudentsController,
+    EducationProgramOfferingStudentsController,
     RestrictionStudentsController,
     ATBCStudentController,
   ],
@@ -90,6 +93,7 @@ import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.co
     ATBCService,
     RestrictionService,
     StudentAccountApplicationsService,
+    EducationProgramOfferingControllerService,
   ],
 })
 export class AppStudentsModule {}

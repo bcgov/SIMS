@@ -101,8 +101,8 @@ import {
   DataTableSortOrder,
   PAGINATION_LIST,
   PaginatedResults,
-  EducationProgramOfferingDto,
 } from "@/types";
+import { EducationProgramOfferingSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
@@ -182,7 +182,7 @@ export default {
     };
 
     const offeringsAndCount = ref(
-      {} as PaginatedResults<EducationProgramOfferingDto>,
+      {} as PaginatedResults<EducationProgramOfferingSummaryAPIOutDTO>,
     );
 
     /**
@@ -199,29 +199,18 @@ export default {
       sortOrder = DataTableSortOrder.ASC,
     ) => {
       loading.value = true;
-      if (isInstitutionUser.value) {
-        offeringsAndCount.value =
-          await EducationProgramOfferingService.shared.getAllEducationProgramOffering(
-            props.locationId,
-            props.programId,
-            page,
-            pageCount,
-            searchBox.value,
+      offeringsAndCount.value =
+        await EducationProgramOfferingService.shared.getOfferingsSummary(
+          props.locationId,
+          props.programId,
+          {
+            searchCriteria: searchBox.value,
             sortField,
             sortOrder,
-          );
-      } else if (isAESTUser.value) {
-        offeringsAndCount.value =
-          await EducationProgramOfferingService.shared.getOfferingSummaryForAEST(
-            props.locationId,
-            props.programId,
             page,
-            pageCount,
-            searchBox.value,
-            sortField,
-            sortOrder,
-          );
-      }
+            pageLimit: pageCount,
+          },
+        );
       loading.value = false;
     };
 
