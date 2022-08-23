@@ -151,7 +151,7 @@ export function useFormioUtils() {
    * @returns false if any form is not valid.
    */
   const checkFormioValidity = async (forms: any[] | FormIOForm[]) => {
-    const promises = forms.concat(forms).map(async (form: any) => {
+    const promises = forms.map(async (form: any) => {
       try {
         await form.submit();
         return true;

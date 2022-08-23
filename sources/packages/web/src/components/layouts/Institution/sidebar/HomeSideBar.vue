@@ -12,7 +12,6 @@
         :to="item.command()"
         :prepend-icon="item.icon"
         :title="item.label"
-        :value="item.value"
       />
       <v-list-subheader class="nav-subtitle">Locations</v-list-subheader>
       <v-list-group
@@ -37,7 +36,6 @@
           :key="locationItem"
           :title="locationItem.label"
           :to="locationItem.command()"
-          :value="locationItem.value"
           ><template v-slot:prepend>
             <v-icon :icon="locationItem.icon" size="20"
           /></template>
@@ -67,10 +65,10 @@ export default {
     const items = ref<MenuModel[]>([]);
     const locationsMenu = ref<MenuModel[]>([]);
 
-    const getuserLocationList = () => {
+    const getUserLocationList = () => {
       items.value = [
         {
-          label: "Dashboard",
+          label: "Home",
           icon: "mdi-home-outline",
           command: () => ({
             name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
@@ -144,7 +142,7 @@ export default {
       () => [userLocationList.value, isAdmin.value, userAuth.value],
       () => {
         // get user details
-        getuserLocationList();
+        getUserLocationList();
       },
       { immediate: true },
     );

@@ -49,7 +49,7 @@
     <v-row>
       <!-- Address 1 -->
       <v-col>
-        <title-value propertyTitle="Address 1" />
+        <title-value propertyTitle="Address line 1" />
         <span
           class="label-value muted-content clearfix"
           v-for="addressLine in addressList1(item)"
@@ -61,13 +61,13 @@
 
       <!-- Address 2 -->
       <v-col>
-        <title-value propertyTitle="Address 2" />
+        <title-value propertyTitle="Address line 2" />
         <span>---</span>
       </v-col>
 
       <!-- Primary contact -->
       <v-col>
-        <title-value propertyTitle=" Primary Contact" />
+        <title-value propertyTitle=" Primary contact" />
         <span
           class="label-value muted-content clearfix"
           v-for="contactLine in primaryContactList(item)"

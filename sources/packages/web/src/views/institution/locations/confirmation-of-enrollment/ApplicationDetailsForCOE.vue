@@ -172,7 +172,7 @@ export default {
         });
       } catch {
         snackBar.error(
-          "An error happened while denying Confirmation of Enrollment.",
+          "An error happened while denying Confirmation of Enrolment.",
         );
       }
     };
