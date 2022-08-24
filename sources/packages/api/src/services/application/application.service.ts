@@ -1445,7 +1445,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get offering request change for a particular application id.
+   * Get changed offering which are in status
+   * Change under review for a particular application id.
    * @param applicationId
    * @returns Offering id and submitted date.
    */
