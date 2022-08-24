@@ -916,7 +916,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
   /**
    * Get offering id for a preceding offering id.
-   * @param offeringId
+   * @param offeringId Offering id
    * @returns Offering id and submitted date.
    */
   async getOfferingRequestsByPrecedingOfferingId(
