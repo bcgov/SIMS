@@ -58,7 +58,7 @@ import { onMounted, ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { useFormatters, useInstitutionStore } from "@/composables";
+import { useFormatters, useInstitutionState } from "@/composables";
 import StatusChipProgramInfoRequest from "@/components/generic/StatusChipProgramInfoRequest.vue";
 import { PIRSummaryAPIOutDTO } from "@/services/http/dto";
 
@@ -71,13 +71,13 @@ export default {
     },
   },
   setup(props: any) {
-    const insitutionStore = useInstitutionStore();
+    const insitutionState = useInstitutionState();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const applications = ref([] as PIRSummaryAPIOutDTO[]);
 
     const locationName = computed(() => {
-      return insitutionStore.locationName(parseInt(props.locationId));
+      return insitutionState.getLocationName(parseInt(props.locationId));
     });
 
     const goToViewApplication = (applicationId: number) => {

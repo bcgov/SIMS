@@ -48,7 +48,7 @@
 import COESummaryData from "@/views/institution/locations/confirmation-of-enrollment/COESummaryData.vue";
 import { EnrollmentPeriod } from "@/types";
 import { ref, computed } from "vue";
-import { useInstitutionStore } from "@/composables";
+import { useInstitutionState } from "@/composables";
 
 enum COETab {
   ConfirmEnrollmentTab = "confirm-enrollment-tab",
@@ -64,11 +64,11 @@ export default {
     },
   },
   setup(props: any) {
-    const insitutionStore = useInstitutionStore();
+    const insitutionState = useInstitutionState();
     const tab = ref("coe-tab");
 
     const locationName = computed(() => {
-      return insitutionStore.locationName(parseInt(props.locationId));
+      return insitutionState.getLocationName(parseInt(props.locationId));
     });
     return { EnrollmentPeriod, COETab, tab, locationName };
   },

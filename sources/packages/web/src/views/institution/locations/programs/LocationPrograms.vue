@@ -99,7 +99,7 @@ import {
 } from "@/types";
 import { ref, watch, onMounted, computed } from "vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
-import { useInstitutionStore } from "@/composables";
+import { useInstitutionState } from "@/composables";
 
 export default {
   components: { StatusChipProgram },
@@ -110,7 +110,7 @@ export default {
     },
   },
   setup(props: any) {
-    const insitutionStore = useInstitutionStore();
+    const insitutionState = useInstitutionState();
     const router = useRouter();
     const programAndCount = ref(
       {} as PaginatedResults<EducationProgramsSummary>,
@@ -122,7 +122,7 @@ export default {
     const currentPageLimit = ref();
 
     const locationName = computed(() => {
-      return insitutionStore.locationName(parseInt(props.locationId));
+      return insitutionState.getLocationName(parseInt(props.locationId));
     });
 
     /**

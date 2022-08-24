@@ -8,7 +8,14 @@ export function useInstitutionState() {
     () => store.state.institution.institutionState as InstitutionStateForStore,
   );
 
+  const getLocationName = (locationId: number) => {
+    return store.getters["institution/myInstitutionLocations"].find(
+      (d) => d.id === locationId,
+    ).name;
+  };
+
   return {
     institutionState,
+    getLocationName,
   };
 }
