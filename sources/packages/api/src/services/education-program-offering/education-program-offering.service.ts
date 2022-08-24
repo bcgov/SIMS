@@ -924,7 +924,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   ): Promise<EducationProgramOffering> {
     return this.repo
       .createQueryBuilder("offering")
-      .select(["offering.id", "offering.submittedDate", "educationProgram.id"])
+      .select([
+        "offering.id",
+        "offering.submittedDate",
+        "offering.offeringStatus",
+        "educationProgram.id",
+      ])
       .innerJoin("offering.precedingOffering", "precedingOffering")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin(

@@ -27,7 +27,6 @@ import { AssessmentControllerService } from "./assessment.controller.service";
 import {
   ApplicationExceptionStatus,
   AssessmentTriggerType,
-  OfferingStatus,
 } from "../../database/entities";
 import { StudentAssessmentStatus } from "../../services/student-assessment/student-assessment.models";
 
@@ -71,7 +70,7 @@ export class AssessmentAESTController extends BaseController {
       requestAssessmentSummary = {
         id: offeringChange.id,
         submittedDate: offeringChange.submittedDate,
-        status: OfferingStatus.ChangeAwaitingApproval,
+        status: offeringChange.offeringStatus,
         requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
         programId: offeringChange.educationProgram.id,
       };
