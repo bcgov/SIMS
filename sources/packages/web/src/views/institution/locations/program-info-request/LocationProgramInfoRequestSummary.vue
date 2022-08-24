@@ -54,7 +54,8 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { useStore } from "vuex";
+import { onMounted, ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
@@ -69,15 +70,18 @@ export default {
       type: Number,
       required: true,
     },
-    locationName: {
-      type: String,
-      required: true,
-    },
   },
   setup(props: any) {
+    const store = useStore();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const applications = ref([] as PIRSummaryAPIOutDTO[]);
+
+    const locationName = computed(() => {
+      return store.getters["institution/myInstitutionLocations"].find(
+        (d) => d.id === parseInt(props.locationId),
+      ).name;
+    });
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
@@ -108,6 +112,7 @@ export default {
       applications,
       dateOnlyLongString,
       goToViewApplication,
+      locationName,
     };
   },
 };
