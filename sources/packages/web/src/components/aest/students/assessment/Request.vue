@@ -10,7 +10,7 @@
         >
         </body-header>
         <content-group class="mt-4">
-          <toggle-content :toggled="requestedAssessment.length === 0">
+          <toggle-content :toggled="!requestedAssessment.length">
             <DataTable
               :value="requestedAssessment"
               :paginator="true"
