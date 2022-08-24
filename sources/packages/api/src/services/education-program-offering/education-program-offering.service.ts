@@ -915,17 +915,28 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * Get offering id for a preceding offering id.
+   * Get offering for an changed application Id.
    * @param offeringId Offering id
    * @returns Offering and program details.
    */
-  async getOfferingRequestsByPrecedingOfferingId(
-    offeringId: number,
+  async getOfferingRequestsByApplicationId(
+    applicationId: number,
   ): Promise<EducationProgramOffering> {
-    return this.repo.findOne({
-      select: { id: true, submittedDate: true, educationProgram: { id: true } },
-      relations: { educationProgram: true },
-      where: { precedingOffering: { id: offeringId } },
-    });
+    return this.repo
+      .createQueryBuilder("offering")
+      .select(["offering.id", "offering.submittedDate", "educationProgram.id"])
+      .innerJoin("offering.precedingOffering", "precedingOffering")
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin(
+        StudentAssessment,
+        "studentAssessment",
+        "studentAssessment.offering.id = precedingOffering.id",
+      )
+      .innerJoin("studentAssessment.application", "application")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("precedingOffering.offeringStatus = :offeringStatus", {
+        offeringStatus: OfferingStatus.ChangeUnderReview,
+      })
+      .getOne();
   }
 }

@@ -63,24 +63,18 @@ export class AssessmentAESTController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     let requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO;
-    const precedingOfferingRequest =
-      await this.applicationService.getOfferingChangeRequestsByApplicationId(
+    const offeringChange =
+      await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
         applicationId,
       );
-    if (precedingOfferingRequest) {
-      const changedOffering =
-        await this.educationProgramOfferingService.getOfferingRequestsByPrecedingOfferingId(
-          precedingOfferingRequest.currentAssessment.offering.id,
-        );
-      if (changedOffering) {
-        requestAssessmentSummary = {
-          id: changedOffering.id,
-          submittedDate: changedOffering.submittedDate,
-          status: OfferingStatus.ChangeAwaitingApproval,
-          requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
-          programId: changedOffering.educationProgram.id,
-        };
-      }
+    if (offeringChange) {
+      requestAssessmentSummary = {
+        id: offeringChange.id,
+        submittedDate: offeringChange.submittedDate,
+        status: OfferingStatus.ChangeAwaitingApproval,
+        requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
+        programId: offeringChange.educationProgram.id,
+      };
     }
 
     const applicationExceptions =
