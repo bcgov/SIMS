@@ -1,11 +1,14 @@
 <template>
-  <div :class="noSidebar ? 'no-sidebar' : ''">
+  <div class="mx-5">
     <header>
       <slot name="header"></slot>
       <slot name="sub-header"></slot>
     </header>
     <slot name="alerts"></slot>
-    <v-container :fluid="fullWidth">
+    <v-container
+      :fluid="fullWidth"
+      :class="enableMaxWidth ? 'container-max-width' : ''"
+    >
       <template v-if="layoutTemplate === LayoutTemplates.CenteredCard">
         <v-row justify="center">
           <v-card class="mt-4 p-4 w-100" :class="widthClass">
@@ -55,8 +58,8 @@ export default {
       required: false,
       default: false,
     },
-    // Set noSidebar to true, when the page does not have a sidebar.
-    noSidebar: {
+    // Set enableMaxWidth to true, when container max-width need to be set.
+    enableMaxWidth: {
       type: Boolean,
       required: false,
       default: false,

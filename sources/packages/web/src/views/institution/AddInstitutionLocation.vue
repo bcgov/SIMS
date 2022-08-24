@@ -45,12 +45,13 @@ export default {
     const store = useStore();
     const snackBar = useSnackBar();
     const router = useRouter();
-    const submitted = async (form: FormIOForm) => {
+    const submitted = async (
+      form: FormIOForm<InstitutionLocationFormAPIInDTO>,
+    ) => {
       processing.value = true;
       if (props.createMode) {
         try {
-          const data = form.data as InstitutionLocationFormAPIInDTO;
-          await InstitutionService.shared.createInstitutionLocation(data);
+          await InstitutionService.shared.createInstitutionLocation(form.data);
           router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
           store.dispatch("institution/getUserInstitutionLocationDetails");
           snackBar.success("Institution Location created Successfully!");

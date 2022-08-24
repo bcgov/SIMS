@@ -230,14 +230,12 @@ html * {
   @extend .nav-item-label;
 }
 
-//  256px is the default width of v-navigation-drawer,
-//  if its changes, adjust here too.
-// ref: https://next.vuetifyjs.com/en/api/v-navigation-drawer/#props-width
-.no-sidebar {
-  margin-inline-start: $navigation-drawer-width;
-}
-
 .nav-subtitle {
   text-transform: uppercase;
   letter-spacing: 3px !important;
+}
+
+// This class will restrict the container with max-width.
+.container-max-width {
+  max-width: 730px !important;
 }

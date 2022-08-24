@@ -1,5 +1,5 @@
 <template>
-  <full-page-container :no-sidebar="true" layout-template="centered">
+  <full-page-container layout-template="centered">
     <div class="text-center">
       <h1 class="heading-x-large">Create Your Institution Profile</h1>
       <p class="label-value m-4">
@@ -48,12 +48,11 @@ export default {
     const formioDataLoader = useFormioDropdownLoader();
     const initialData = ref({});
 
-    const submitted = async (form: FormIOForm) => {
+    const submitted = async (form: FormIOForm<CreateInstitutionAPIInDTO>) => {
       try {
         processing.value = true;
-        const data = form.data as CreateInstitutionAPIInDTO;
         await InstitutionService.shared.createInstitutionWithAssociatedUser(
-          data,
+          form.data,
         );
         await store.dispatch("institution/initialize");
         snackBar.success("Institution and User successfully created!");

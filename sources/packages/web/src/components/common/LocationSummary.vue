@@ -5,6 +5,8 @@
     class="m-1"
     :recordsCount="institutionLocationList.length"
     ><template #actions>
+      <!-- Todo: We to eventually eliminate the logic which is based 
+      on the client type on the vue components.-->
       <v-btn
         v-if="clientType === ClientIdType.Institution"
         class="float-right"

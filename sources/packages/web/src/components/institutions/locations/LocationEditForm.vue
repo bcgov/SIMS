@@ -29,10 +29,11 @@ export default {
   emits: ["updateInstitutionLocation"],
   setup(_props: any, context: SetupContext) {
     const processing = ref(false);
-    const updateInstitutionLocation = async (form: FormIOForm) => {
+    const updateInstitutionLocation = async (
+      form: FormIOForm<InstitutionLocationFormAPIOutDTO>,
+    ) => {
       processing.value = true;
-      const data = form.data as InstitutionLocationFormAPIOutDTO;
-      context.emit("updateInstitutionLocation", data);
+      context.emit("updateInstitutionLocation", form.data);
       processing.value = false;
     };
 
