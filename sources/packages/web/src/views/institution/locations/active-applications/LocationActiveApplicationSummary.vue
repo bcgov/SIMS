@@ -45,7 +45,7 @@
 <script lang="ts">
 import ActiveApplicationSummaryData from "@/components/institutions/active-application/ActiveApplicationSummaryData.vue";
 import { ref, computed } from "vue";
-import { useStore } from "vuex";
+import { useInstitutionStore } from "@/composables";
 
 enum ActiveApplicationTab {
   AvailableToReportTab = "available-to-report-tab",
@@ -62,13 +62,11 @@ export default {
   },
 
   setup(props: any) {
-    const store = useStore();
+    const insitutionStore = useInstitutionStore();
     const tab = ref("active-application-tab");
 
     const locationName = computed(() => {
-      return store.getters["institution/myInstitutionLocations"].find(
-        (d) => d.id === parseInt(props.locationId),
-      ).name;
+      return insitutionStore.locationName(parseInt(props.locationId));
     });
 
     return { tab, ActiveApplicationTab, locationName };
