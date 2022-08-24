@@ -60,7 +60,7 @@ export class AssessmentAESTController extends BaseController {
    */
   @Get("application/:applicationId/requests")
   async getRequestedAssessmentSummary(
-    @Param("applicationId") applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     let requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO;
     const precedingOfferingRequest =
@@ -90,29 +90,29 @@ export class AssessmentAESTController extends BaseController {
         ApplicationExceptionStatus.Declined,
       );
 
-    if (applicationExceptions.length > 0) {
-      return [].concat(
-        requestAssessmentSummary,
+    if (applicationExceptions.length > 0 && requestAssessmentSummary) {
+      const applicationExceptionArray: RequestAssessmentSummaryAPIOutDTO[] =
         applicationExceptions.map((applicationException) => ({
           id: applicationException.id,
           submittedDate: applicationException.createdAt,
           status: applicationException.exceptionStatus,
           requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
-        })),
-      );
+        }));
+      return applicationExceptionArray.concat(requestAssessmentSummary);
     }
 
     const studentAppeal =
       await this.studentAppealService.getPendingAndDeniedAppeals(applicationId);
-    return [].concat(
-      requestAssessmentSummary,
+    const studentAppealArray: RequestAssessmentSummaryAPIOutDTO[] =
       studentAppeal.map((appeals) => ({
         id: appeals.id,
         submittedDate: appeals.submittedDate,
         status: appeals.status,
         requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
-      })),
-    );
+      }));
+    return requestAssessmentSummary
+      ? studentAppealArray.concat(requestAssessmentSummary)
+      : studentAppealArray;
   }
 
   /**

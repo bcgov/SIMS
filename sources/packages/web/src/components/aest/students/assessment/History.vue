@@ -97,6 +97,7 @@ export default {
     "viewScholasticStandingChange",
     "viewApplicationException",
     "viewAssessment",
+    "viewOfferingRequest",
   ],
   components: {
     StatusChipAssessmentHistory,
