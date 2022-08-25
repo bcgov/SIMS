@@ -14,11 +14,13 @@
       :applicationId="applicationId"
       @viewStudentAppeal="goToStudentAppeal"
       @viewApplicationException="goToApplicationException"
+      @viewOfferingRequest="goToOfferingRequest"
     />
     <HistoryAssessment
       :applicationId="applicationId"
       @viewStudentAppeal="goToStudentAppeal"
       @viewAssessment="gotToViewAssessment"
+      @viewOfferingRequest="goToOfferingRequest"
       @viewApplicationException="goToApplicationException"
       @viewScholasticStandingChange="goToScholasticStanding"
     />
@@ -92,6 +94,15 @@ export default {
         },
       });
     };
+    const goToOfferingRequest = (offeringId: number, programId: number) => {
+      router.push({
+        name: AESTRoutesConst.OFFERING_CHANGE_REQUEST_VIEW,
+        params: {
+          offeringId,
+          programId,
+        },
+      });
+    };
 
     return {
       AESTRoutesConst,
@@ -99,6 +110,7 @@ export default {
       gotToViewAssessment,
       goToApplicationException,
       goToScholasticStanding,
+      goToOfferingRequest,
     };
   },
 };

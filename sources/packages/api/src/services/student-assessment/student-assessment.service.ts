@@ -416,6 +416,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "assessment.submittedDate",
         "assessment.triggerType",
         "assessment.assessmentDate",
+        "offering.id",
+        "educationProgram.id",
         "studentAppeal.id",
         "studentScholasticStanding.id",
         "application.id",
@@ -442,6 +444,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         END`,
         "status",
       )
+      .innerJoin("assessment.offering", "offering")
+      .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("assessment.application", "application")
       .leftJoin("assessment.studentAppeal", "studentAppeal")
       .leftJoin(

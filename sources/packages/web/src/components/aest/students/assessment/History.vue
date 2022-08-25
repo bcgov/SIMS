@@ -97,6 +97,7 @@ export default {
     "viewScholasticStandingChange",
     "viewApplicationException",
     "viewAssessment",
+    "viewOfferingRequest",
   ],
   components: {
     StatusChipAssessmentHistory,
@@ -128,6 +129,9 @@ export default {
             data.studentScholasticStandingId,
           );
           break;
+        case AssessmentTriggerType.OfferingChange:
+          context.emit("viewOfferingRequest", data.offeringId, data.programId);
+          break;
         case AssessmentTriggerType.OriginalAssessment:
           if (data.applicationExceptionId) {
             context.emit(
@@ -148,6 +152,8 @@ export default {
           return true;
         case AssessmentTriggerType.OriginalAssessment:
           return !!data.applicationExceptionId;
+        case AssessmentTriggerType.OfferingChange:
+          return true;
         default:
           return false;
       }
