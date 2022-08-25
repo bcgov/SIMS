@@ -110,7 +110,7 @@ export default {
     },
   },
   setup(props: any) {
-    const insitutionState = useInstitutionState();
+    const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const programAndCount = ref(
       {} as PaginatedResults<EducationProgramsSummary>,
@@ -122,7 +122,7 @@ export default {
     const currentPageLimit = ref();
 
     const locationName = computed(() => {
-      return insitutionState.getLocationName(parseInt(props.locationId));
+      return getLocationName(parseInt(props.locationId));
     });
 
     /**
