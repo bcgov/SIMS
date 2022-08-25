@@ -67,7 +67,9 @@ export default {
     const { getLocationName } = useInstitutionState();
     const tab = ref("coe-tab");
 
-    const locationName = getLocationName(parseInt(props.locationId));
+    const locationName = computed(() => {
+      return getLocationName(parseInt(props.locationId));
+    });
     return { EnrollmentPeriod, COETab, tab, locationName };
   },
 };
