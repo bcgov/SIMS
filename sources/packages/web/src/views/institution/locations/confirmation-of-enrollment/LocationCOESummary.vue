@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         :title="locationName"
-        subTitle="Confirmation Of Enrollment"
+        subTitle="Confirmation Of Enrolment"
       />
     </template>
     <template #tab-header>
@@ -11,14 +11,14 @@
         <v-tab :value="COETab.ConfirmEnrollmentTab" :ripple="false">
           <div>
             <v-icon start icon="fa:far fa-check-square"></v-icon>
-            <span class="mx-1 label-bold"> Confirm enrollment </span>
+            <span class="mx-1 label-bold"> Confirm enrolment </span>
           </div>
         </v-tab>
 
         <v-tab :value="COETab.UpcomingEnrollmentTab" :ripple="false">
           <div>
             <v-icon start icon="fa:far fa-folder-open" class="px-1"></v-icon>
-            <span class="mx-1 label-bold"> Upcoming enrollment </span>
+            <span class="mx-1 label-bold"> Upcoming enrolment </span>
           </div>
         </v-tab>
       </v-tabs></template
@@ -28,7 +28,7 @@
         <c-o-e-summary-data
           :locationId="locationId"
           :enrollmentPeriod="EnrollmentPeriod.Current"
-          header="Available to confirm enrollment"
+          header="Available to confirm enrolment"
           subTitle="Confirm enrolment so that funding can be dispersed."
         />
       </v-window-item>
@@ -36,7 +36,7 @@
         <c-o-e-summary-data
           :locationId="locationId"
           :enrollmentPeriod="EnrollmentPeriod.Upcoming"
-          header="Upcoming enrollment"
+          header="Upcoming enrolment"
           subTitle="These applications are still outside of the 21 days of the study start date."
         />
       </v-window-item>
@@ -50,8 +50,8 @@ import { EnrollmentPeriod } from "@/types";
 import { ref } from "vue";
 
 enum COETab {
-  ConfirmEnrollmentTab = "confirm-enrollment-tab",
-  UpcomingEnrollmentTab = "upcoming-enrollment-tab",
+  ConfirmEnrollmentTab = "confirm-enrolment-tab",
+  UpcomingEnrollmentTab = "upcoming-enrolment-tab",
 }
 
 export default {

@@ -88,11 +88,7 @@
                 :disabled="!slotProps.data.isActive || notAllowed"
                 @click="openEditUserModal(slotProps.data)"
                 variant="text"
-                :color="
-                  slotProps.data.isActive && !notAllowed
-                    ? 'primary'
-                    : 'secondary'
-                "
+                color="primary"
                 append-icon="mdi-pencil-outline"
               >
                 <span class="text-decoration-underline">Edit</span>
@@ -105,11 +101,7 @@
                 :disabled="slotProps.data.disableRemove || notAllowed"
                 @click="updateUserStatus(slotProps.data)"
                 variant="text"
-                :color="
-                  slotProps.data.disableRemove || notAllowed
-                    ? 'secondary'
-                    : 'primary'
-                "
+                color="primary"
                 append-icon="mdi-account-remove-outline"
               >
                 <span class="text-decoration-underline">{{

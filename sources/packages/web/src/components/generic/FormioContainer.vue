@@ -38,8 +38,8 @@ export default {
       context.emit("loaded", form);
     };
 
-    const submit = () => {
-      if (checkFormioValidity([formioForm])) {
+    const submit = async () => {
+      if (await checkFormioValidity([formioForm])) {
         context.emit("submitted", formioForm);
       }
     };
