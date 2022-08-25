@@ -15,7 +15,8 @@
     "generate-report": "marge cypress/reports/mochareports/report.json -f report -o cypress/reports/mochareports",
     "posttest": "npm run combine-reports && npm run generate-report",
     "test": "npm run scripts || npm run posttest",
-    "Run headless for all modes": "npm run test"
+    "Run headless for all modes": "npm run test",
+    "uploadResultTQ" : "ts-code uploadResult.ts"
   },
   "devDependencies": {
     "@types/jest": "^28.1.0",
@@ -27,6 +28,9 @@
     "mochawesome-report-generator": "^6.2.0",
     "ts-loader": "^9.2.7",
     "typescript": "^4.6.2",
-    "webpack": "^5.70.0"
+    "webpack": "^5.70.0",
+    "form-data": "^4.0.0",
+    "ts-node": "^10.9.1",
+    "axios": "^0.27.2"
   }
 }

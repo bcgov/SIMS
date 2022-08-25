@@ -67,7 +67,7 @@ export default {
     const router = useRouter();
     const topItems = [
       {
-        label: "Dashboard",
+        label: "Home",
         icon: "mdi-home-outline",
         command: () => {
           router.push({

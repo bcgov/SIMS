@@ -56,17 +56,17 @@ export default {
     },
     showPrimaryButton: {
       type: Boolean,
-      required: true,
+      required: false,
       default: true,
     },
     justify: {
       type: String,
-      required: true,
+      required: false,
       default: "center",
     },
     disablePrimaryButton: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
     },
   },

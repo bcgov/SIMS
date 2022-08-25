@@ -4,52 +4,98 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
 } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
-import {
-  EducationProgramOffering,
-  StudyBreaksAndWeeks,
-} from "../../../database/entities/education-program-offering.model";
+import { EducationProgramOffering } from "../../../database/entities/education-program-offering.model";
 import { getUserFullName } from "../../../utilities";
-import { IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
+import {
+  Allow,
+  IsEnum,
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  MaxLength,
+} from "class-validator";
+import { Type } from "class-transformer";
 
-export interface SaveOfferingDTO {
+export class StudyBreakOutDTO {
+  breakStartDate: Date;
+  breakEndDate: Date;
+}
+
+export class StudyBreakInDTO {
+  @Allow()
+  breakStartDate: Date;
+  @Allow()
+  breakEndDate: Date;
+}
+
+export class StudyBreaksAndWeeksOutDTO {
+  studyBreaks: StudyBreakOutDTO[];
+  fundedStudyPeriodDays: number;
+  totalDays: number;
+  totalFundedWeeks: number;
+  unfundedStudyPeriodDays: number;
+}
+
+export class StudyBreaksAndWeeksInDTO {
+  @Allow()
+  @Type(() => StudyBreakInDTO)
+  studyBreaks: StudyBreakInDTO[];
+  @Allow()
+  fundedStudyPeriodDays: number;
+  @Allow()
+  totalDays: number;
+  @Allow()
+  totalFundedWeeks: number;
+  @Allow()
+  unfundedStudyPeriodDays: number;
+}
+
+export class EducationProgramOfferingAPIInDTO {
+  @Allow()
   offeringName: string;
+  @Allow()
   studyStartDate: Date;
+  @Allow()
   studyEndDate: Date;
+  @Allow()
   actualTuitionCosts: number;
+  @Allow()
   programRelatedCosts: number;
+  @Allow()
   mandatoryFees: number;
+  @Allow()
   exceptionalExpenses: number;
+  @Allow()
   offeringDelivered: string;
+  @Allow()
   lacksStudyBreaks: boolean;
+  @Allow()
   offeringIntensity: OfferingIntensity;
+  @Allow()
   yearOfStudy: number;
-  showYearOfStudy?: boolean;
+  @Allow()
   hasOfferingWILComponent: string;
-  offeringWILType?: string;
-  studyBreaks?: StudyBreaksAndWeeks;
+  @Allow()
   offeringDeclaration: boolean;
-  assessedBy?: string;
-  assessedDate?: Date;
+  @Allow()
   offeringStatus: OfferingStatus;
+  @Allow()
   offeringType: OfferingTypes;
+  @IsOptional()
+  offeringWILType?: string;
+  @IsOptional()
+  showYearOfStudy?: boolean;
+  @IsOptional()
+  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
+  @IsOptional()
+  assessedBy?: string;
+  @IsOptional()
+  assessedDate?: Date;
+  @IsOptional()
   courseLoad?: number;
 }
 
-/**
- * Summary DTO of program offering.
- */
-export class EducationProgramOfferingDto {
-  id: number;
-  offeringName: string;
-  studyDates: string;
-  offeringDelivered: string;
-  offeringIntensity: OfferingIntensity;
-}
-
-/**
- * View only DTO for program offering.
- */
-export interface ProgramOfferingDto {
+export class EducationProgramOfferingAPIOutDTO {
   id: number;
   offeringName: string;
   studyStartDate: Date;
@@ -62,36 +108,47 @@ export interface ProgramOfferingDto {
   lacksStudyBreaks: boolean;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;
-  showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
-  offeringWILType?: string;
-  breaksAndWeeks: StudyBreaksAndWeeks;
   offeringDeclaration: boolean;
+  offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
+  offeringWILType?: string;
+  showYearOfStudy?: boolean;
+  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
   assessedBy?: string;
   assessedDate?: Date;
   submittedDate: Date;
-  offeringStatus: OfferingStatus;
-  offeringType: OfferingTypes;
-  locationName: string;
-  institutionName: string;
   courseLoad?: number;
   hasExistingApplication?: boolean;
+  locationName?: string;
+  institutionName?: string;
 }
 
-export interface ProgramOfferingDetailsDto {
-  studyStartDate?: Date;
+export class EducationProgramOfferingSummaryAPIOutDTO {
+  id: number;
+  name: string;
+  studyStartDate: string;
+  studyEndDate: string;
+  offeringDelivered: string;
+  offeringIntensity: OfferingIntensity;
+  offeringType: OfferingTypes;
+  offeringStatus: OfferingStatus;
+}
+
+export class OfferingStartDateAPIOutDTO {
+  studyStartDate: Date;
 }
 
 /**
  * Transformation util for Program Offering.
  * @param offering
  * @param hasExistingApplication is the offering linked to any application.
- * @returns ProgramOfferingDto
+ * @returns program offering.
  */
-export const transformToProgramOfferingDto = (
+export const transformToProgramOfferingDTO = (
   offering: EducationProgramOffering,
   hasExistingApplication?: boolean,
-): ProgramOfferingDto => {
+): EducationProgramOfferingAPIOutDTO => {
   return {
     id: offering.id,
     offeringName: offering.name,

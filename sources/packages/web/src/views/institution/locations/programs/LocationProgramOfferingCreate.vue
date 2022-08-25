@@ -21,10 +21,13 @@ import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormCreateModel, OfferingStatus, OfferingDTO } from "@/types";
+import { OfferingFormCreateModel, OfferingStatus } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
-import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
+import {
+  OfferingAssessmentAPIInDTO,
+  EducationProgramOfferingAPIInDTO,
+} from "@/services/http/dto";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 
@@ -78,8 +81,7 @@ export default {
       await loadFormData();
     });
 
-    //TODO: OfferingDTO to be refactored as per naming convention.
-    const saveOffering = async (data: OfferingDTO) => {
+    const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
         await EducationProgramOfferingService.shared.createProgramOffering(
           props.locationId,

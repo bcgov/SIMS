@@ -62,6 +62,7 @@ import {
   EducationProgramAESTController,
   EducationProgramControllerService,
   StudentAccountApplicationAESTController,
+  EducationProgramOfferingControllerService,
   NoteAESTController,
   RestrictionAESTController,
 } from "./route-controllers";
@@ -138,6 +139,7 @@ import { InstitutionUserControllerService } from "./route-controllers/institutio
     InstitutionTypeService,
     EducationProgramControllerService,
     StudentAccountApplicationsService,
+    EducationProgramOfferingControllerService,
   ],
 })
 export class AppAESTModule {}

@@ -22,7 +22,6 @@ import * as os from "os";
 import { DataSource, UpdateResult } from "typeorm";
 import {
   EducationProgramOfferingModel,
-  SaveOfferingModel,
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
   ApplicationAssessmentSummary,
@@ -33,7 +32,6 @@ import {
   sortOfferingsColumnMap,
   PaginationOptions,
   PaginatedResults,
-  getISODateOnlyString,
   CustomNamedError,
   mapFromRawAndEntities,
 } from "../../utilities";
@@ -59,7 +57,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async createEducationProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: EducationProgramOfferingModel,
     userId: number,
   ): Promise<EducationProgramOffering> {
     const programOffering = this.populateProgramOffering(
@@ -85,7 +83,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     paginationOptions: PaginationOptions,
     offeringTypes?: OfferingTypes[],
-  ): Promise<PaginatedResults<EducationProgramOfferingModel>> {
+  ): Promise<PaginatedResults<EducationProgramOffering>> {
     const DEFAULT_SORT_FIELD = "name";
     const offeringsQuery = this.repo
       .createQueryBuilder("offerings")
@@ -134,23 +132,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     // result
     const [records, count] = await offeringsQuery.getManyAndCount();
-    const offerings = records.map((educationProgramOffering) => {
-      const item = new EducationProgramOfferingModel();
-      item.id = educationProgramOffering.id;
-      item.name = educationProgramOffering.name;
-      item.studyStartDate = getISODateOnlyString(
-        educationProgramOffering.studyStartDate,
-      );
-      item.studyEndDate = getISODateOnlyString(
-        educationProgramOffering.studyEndDate,
-      );
-      item.offeringDelivered = educationProgramOffering.offeringDelivered;
-      item.offeringIntensity = educationProgramOffering.offeringIntensity;
-      item.offeringType = educationProgramOffering.offeringType;
-      item.offeringStatus = educationProgramOffering.offeringStatus;
-      return item;
-    });
-    return { results: offerings, count: count };
+    return { results: records, count: count };
   }
 
   /**
@@ -243,7 +225,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     offeringId: number,
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: EducationProgramOfferingModel,
     userId: number,
   ): Promise<UpdateResult> {
     const hasExistingApplication = await this.hasExistingApplication(
@@ -262,7 +244,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   private populateProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: EducationProgramOfferingModel,
     hasExistingApplication?: boolean,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
@@ -557,7 +539,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     offeringId: number,
     userId: number,
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: EducationProgramOfferingModel,
   ): Promise<EducationProgramOffering> {
     const currentOffering = await this.getOfferingToRequestChange(
       offeringId,
@@ -820,19 +802,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       applications = await this.getApplicationsToSubmitReassessment(offeringId);
 
       for (const application of applications) {
-        application.currentAssessment = {
-          application: { id: application.id } as Application,
-          triggerType: AssessmentTriggerType.OfferingChange,
-          offering: { id: offeringId } as EducationProgramOffering,
-          creator: auditUser,
-          createdAt: currentDate,
-          submittedBy: auditUser,
-          submittedDate: currentDate,
-        } as StudentAssessment;
+        if (application.applicationStatus === ApplicationStatus.completed) {
+          application.currentAssessment = {
+            application: { id: application.id } as Application,
+            triggerType: AssessmentTriggerType.OfferingChange,
+            offering: { id: offeringId } as EducationProgramOffering,
+            creator: auditUser,
+            createdAt: currentDate,
+            submittedBy: auditUser,
+            submittedDate: currentDate,
+          } as StudentAssessment;
+        }
 
         // If the application which is affected by offering change is not completed
         // then set the application as cancelled as it cannot be re-assessed.
-        if (application.applicationStatus !== ApplicationStatus.completed) {
+        else {
           application.applicationStatus = ApplicationStatus.cancelled;
         }
 

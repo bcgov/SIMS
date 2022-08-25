@@ -3,9 +3,9 @@ Used when we need to display title and the value inside a container
 -->
 <template>
   <div class="mb-2">
-    <span class="font-weight-bold">{{ propertyTitle }}</span>
+    <span class="label-bold">{{ propertyTitle }}</span>
   </div>
-  <div class="mb-2 text-muted">
+  <div class="mb-2 label-value">
     {{ propertyValue }}
   </div>
 </template>

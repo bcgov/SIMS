@@ -42,8 +42,8 @@ export default {
       appealForms.push(form);
     };
 
-    const submit = () => {
-      if (checkFormioValidity(appealForms)) {
+    const submit = async () => {
+      if (await checkFormioValidity(appealForms)) {
         const formsData = appealForms.map(
           (appealForm) =>
             ({

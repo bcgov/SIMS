@@ -1,17 +1,17 @@
 <template>
-  <v-container>
-    <header-navigator
-      title="All Locations"
-      :routeLocation="goBackRouteParams"
-      subTitle="Edit Locations"
-    />
-    <full-page-container>
-      <location-edit-form
-        :locationData="initialData"
-        @updateInstitutionLocation="updateInstitutionLocation"
-      ></location-edit-form>
-    </full-page-container>
-  </v-container>
+  <full-page-container :noSidebar="true">
+    <template #header>
+      <header-navigator
+        title="Manage locations"
+        :routeLocation="goBackRouteParams"
+        subTitle="Edit Location"
+      />
+    </template>
+    <location-edit-form
+      :locationData="initialData"
+      @updateInstitutionLocation="updateInstitutionLocation"
+    ></location-edit-form>
+  </full-page-container>
 </template>
 
 <script lang="ts">

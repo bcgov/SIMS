@@ -52,10 +52,18 @@
       formName="confirmcoe"
     >
       <template #actions="{ cancel, submit }">
-        <v-btn color="primary" variant="outlined" @click="cancel">Cancel</v-btn>
-        <v-btn class="float-right" @click="submit" color="primary"
-          >Continue to confirmation</v-btn
-        >
+        <v-row class="m-0 p-0">
+          <v-btn color="primary" variant="outlined" @click="cancel"
+            >Cancel</v-btn
+          >
+          <v-btn
+            class="float-right"
+            @click="submit"
+            color="primary"
+            variant="elevated"
+            >Continue to confirmation</v-btn
+          >
+        </v-row>
       </template>
     </formio-modal-dialog>
     <ConfirmCOEDenyModal ref="denyCOEModal" @submitData="submitCOEDeny" />
@@ -164,7 +172,7 @@ export default {
         });
       } catch {
         snackBar.error(
-          "An error happened while denying Confirmation of Enrollment.",
+          "An error happened while denying Confirmation of Enrolment.",
         );
       }
     };
