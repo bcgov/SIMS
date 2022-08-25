@@ -47,8 +47,8 @@ export default {
       form = loadedForm;
     };
 
-    const submit = () => {
-      if (checkFormioValidity([form])) {
+    const submit = async () => {
+      if (await checkFormioValidity([form])) {
         resolvePromise(form);
       }
     };

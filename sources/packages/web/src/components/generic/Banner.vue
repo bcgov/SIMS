@@ -9,8 +9,8 @@
           <slot name="content">{{ summary }}</slot>
         </div>
       </v-col>
-      <v-col cols="2"
-        ><div class="float-right"><slot name="actions"></slot></div
+      <v-col cols="2">
+        <div class="float-right"><slot name="actions"></slot></div
       ></v-col>
     </v-row>
   </v-alert>

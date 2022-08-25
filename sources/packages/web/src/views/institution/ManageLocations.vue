@@ -1,15 +1,13 @@
 <template>
-  <div class="p-m-4">
-    <header-navigator
-      title="Manage Institution Locations"
-      subTitle="Location Summary"
-    />
-    <v-container>
-      <v-card class="mt-6 py-4 px-4">
-        <LocationSummary @editLocation="gotToEditLocation" />
-      </v-card>
-    </v-container>
-  </div>
+  <full-page-container :full-width="true">
+    <template #header>
+      <header-navigator
+        title="Manage institution"
+        subTitle="Manage Locations"
+      />
+    </template>
+    <location-summary @editLocation="gotToEditLocation" />
+  </full-page-container>
 </template>
 
 <script lang="ts">

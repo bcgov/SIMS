@@ -4,12 +4,12 @@
       <body-header title="Profile" class="m-1">
         <template #actions>
           <check-permission-role :role="Role.InstitutionEditProfile">
-            <template #="{ notAllowed, isAllowed }">
+            <template #="{ notAllowed }">
               <v-btn
                 class="float-right"
                 @click="editProfile"
                 variant="text"
-                :color="isAllowed ? 'primary' : 'secondary'"
+                color="primary"
                 prepend-icon="fa:fa fa-gear"
                 :disabled="notAllowed"
                 >Edit

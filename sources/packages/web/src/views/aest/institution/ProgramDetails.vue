@@ -11,10 +11,10 @@
       <template #buttons>
         <v-row class="p-0 m-0" v-if="isPendingProgram">
           <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
-            <template #="{ notAllowed, isAllowed }">
+            <template #="{ notAllowed }">
               <v-btn
                 variant="outlined"
-                :color="isAllowed ? 'primary' : 'secondary'"
+                color="primary"
                 class="mr-2"
                 @click="declineProgram"
                 :disabled="notAllowed"

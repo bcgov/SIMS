@@ -17,6 +17,10 @@ export default class WelcomeObject {
     return cy.contains("Sign Up with BCSC");
   }
 
+  loginSignUpButton() {
+    return cy.contains("Login / Sign up with BCSC");
+  }
+
   getSetupButton() {
     return cy.get("#cardtap-get-setup-btn");
   }

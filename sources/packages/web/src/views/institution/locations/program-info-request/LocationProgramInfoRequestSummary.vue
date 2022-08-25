@@ -54,11 +54,11 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { useFormatters } from "@/composables";
+import { useFormatters, useInstitutionState } from "@/composables";
 import StatusChipProgramInfoRequest from "@/components/generic/StatusChipProgramInfoRequest.vue";
 import { PIRSummaryAPIOutDTO } from "@/services/http/dto";
 
@@ -69,15 +69,16 @@ export default {
       type: Number,
       required: true,
     },
-    locationName: {
-      type: String,
-      required: true,
-    },
   },
   setup(props: any) {
+    const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const applications = ref([] as PIRSummaryAPIOutDTO[]);
+
+    const locationName = computed(() => {
+      return getLocationName(parseInt(props.locationId));
+    });
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
@@ -108,6 +109,7 @@ export default {
       applications,
       dateOnlyLongString,
       goToViewApplication,
+      locationName,
     };
   },
 };
