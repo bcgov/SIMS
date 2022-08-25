@@ -61,19 +61,19 @@ export class AssessmentAESTController extends BaseController {
   async getRequestedAssessmentSummary(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    let requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO;
+    const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
     const offeringChange =
       await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
         applicationId,
       );
     if (offeringChange) {
-      requestAssessmentSummary = {
+      requestAssessmentSummary.push({
         id: offeringChange.id,
         submittedDate: offeringChange.submittedDate,
         status: offeringChange.offeringStatus,
         requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
         programId: offeringChange.educationProgram.id,
-      };
+      });
     }
 
     const applicationExceptions =
@@ -83,7 +83,7 @@ export class AssessmentAESTController extends BaseController {
         ApplicationExceptionStatus.Declined,
       );
 
-    if (applicationExceptions.length > 0 && requestAssessmentSummary) {
+    if (applicationExceptions.length > 0) {
       const applicationExceptionArray: RequestAssessmentSummaryAPIOutDTO[] =
         applicationExceptions.map((applicationException) => ({
           id: applicationException.id,
@@ -91,7 +91,7 @@ export class AssessmentAESTController extends BaseController {
           status: applicationException.exceptionStatus,
           requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
         }));
-      return applicationExceptionArray.concat(requestAssessmentSummary);
+      return requestAssessmentSummary.concat(applicationExceptionArray);
     }
 
     const studentAppeal =
@@ -103,9 +103,7 @@ export class AssessmentAESTController extends BaseController {
         status: appeals.status,
         requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
       }));
-    return requestAssessmentSummary
-      ? studentAppealArray.concat(requestAssessmentSummary)
-      : studentAppealArray;
+    return requestAssessmentSummary.concat(studentAppealArray);
   }
 
   /**
