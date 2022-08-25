@@ -209,13 +209,17 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
     designationPayload: UpdateDesignation,
     designationLocations: DesignationAgreementLocation[],
   ): Promise<void> {
+    const auditUser = { id: userId } as User;
+    const now = new Date();
     const designation = new DesignationAgreement();
     designation.id = designationId;
     designation.designationStatus = designationPayload.designationStatus;
     designation.startDate = designationPayload.startDate;
     designation.endDate = designationPayload.endDate;
-    designation.assessedBy = { id: userId } as User;
-    designation.assessedDate = new Date();
+    designation.assessedBy = auditUser;
+    designation.assessedDate = now;
+    designation.modifier = auditUser;
+    designation.updatedAt = now;
     if (
       designationPayload.designationStatus ===
       DesignationAgreementStatus.Approved
