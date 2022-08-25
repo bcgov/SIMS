@@ -68,7 +68,11 @@ import {
 } from "@/services/http/dto/Assessment.dto";
 
 export default {
-  emits: ["viewStudentAppeal", "viewApplicationException"],
+  emits: [
+    "viewStudentAppeal",
+    "viewApplicationException",
+    "viewOfferingRequest",
+  ],
   components: {
     StatusChipRequestedAssessment,
   },
@@ -96,6 +100,9 @@ export default {
           break;
         case RequestAssessmentTypeAPIOutDTO.StudentException:
           context.emit("viewApplicationException", data.id);
+          break;
+        case RequestAssessmentTypeAPIOutDTO.OfferingRequest:
+          context.emit("viewOfferingRequest", data.id, data.programId);
           break;
       }
     };

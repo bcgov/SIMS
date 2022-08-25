@@ -913,4 +913,35 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     // Processing any pending promise if not completed.
     await Promise.all(promises);
   }
+
+  /**
+   * Get changed offering for an application Id.
+   * @param applicationId Application id
+   * @returns Offering and program details.
+   */
+  async getOfferingRequestsByApplicationId(
+    applicationId: number,
+  ): Promise<EducationProgramOffering> {
+    return this.repo
+      .createQueryBuilder("offering")
+      .select([
+        "offering.id",
+        "offering.submittedDate",
+        "offering.offeringStatus",
+        "educationProgram.id",
+      ])
+      .innerJoin("offering.precedingOffering", "precedingOffering")
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin(
+        StudentAssessment,
+        "studentAssessment",
+        "studentAssessment.offering.id = precedingOffering.id",
+      )
+      .innerJoin("studentAssessment.application", "application")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("precedingOffering.offeringStatus = :offeringStatus", {
+        offeringStatus: OfferingStatus.ChangeUnderReview,
+      })
+      .getOne();
+  }
 }
