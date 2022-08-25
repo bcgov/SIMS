@@ -15,10 +15,15 @@ export enum RequestAssessmentTypeAPIOutDTO {
   OfferingRequest = "Offering request",
 }
 
+type RequestAssessmentSummaryStatus =
+  | StudentAppealStatus
+  | ApplicationExceptionStatus
+  | OfferingStatus;
+
 export class RequestAssessmentSummaryAPIOutDTO {
   id: number;
   submittedDate: Date;
-  status: StudentAppealStatus | ApplicationExceptionStatus | OfferingStatus;
+  status: RequestAssessmentSummaryStatus;
   requestType: RequestAssessmentTypeAPIOutDTO;
   programId?: number;
 }
