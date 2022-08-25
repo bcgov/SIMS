@@ -1,4 +1,4 @@
-import { InstitutionStateForStore } from "@/types";
+import { InstitutionStateForStore, LocationStateForStore } from "@/types";
 import { computed } from "vue";
 import { useStore } from "vuex";
 
@@ -10,7 +10,7 @@ export function useInstitutionState() {
 
   const getLocationName = (locationId: number) => {
     return store.getters["institution/myInstitutionLocations"].find(
-      (d) => d.id === locationId,
+      (location: LocationStateForStore) => location.id === locationId,
     ).name;
   };
 

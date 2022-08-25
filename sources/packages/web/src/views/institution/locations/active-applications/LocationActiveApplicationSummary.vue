@@ -62,12 +62,10 @@ export default {
   },
 
   setup(props: any) {
-    const insitutionState = useInstitutionState();
+    const { getLocationName } = useInstitutionState();
     const tab = ref("active-application-tab");
 
-    const locationName = computed(() => {
-      return insitutionState.getLocationName(parseInt(props.locationId));
-    });
+    const locationName = getLocationName(parseInt(props.locationId));
 
     return { tab, ActiveApplicationTab, locationName };
   },

@@ -71,13 +71,13 @@ export default {
     },
   },
   setup(props: any) {
-    const insitutionState = useInstitutionState();
+    const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const applications = ref([] as PIRSummaryAPIOutDTO[]);
 
     const locationName = computed(() => {
-      return insitutionState.getLocationName(parseInt(props.locationId));
+      return getLocationName(parseInt(props.locationId));
     });
 
     const goToViewApplication = (applicationId: number) => {
