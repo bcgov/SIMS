@@ -36,7 +36,6 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
    * @param institutionId institution id requesting the designation.
    * @param submittedData dynamic data that represents the designation requested.
    * @param submittedByUserId institution user submitting the designation.
-   * @param submittedDate date that the institution user submitted the designation.
    * @param requestedLocationsIds ids of the locations requested to be designated.
    * @returns the new designation agreement created.
    */
@@ -44,17 +43,18 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
     institutionId: number,
     submittedData: any,
     submittedByUserId: number,
-    submittedDate: Date,
     requestedLocationsIds: number[],
   ): Promise<DesignationAgreement> {
     const submittedByUser = { id: submittedByUserId } as User;
+    const now = new Date();
     const newDesignation = new DesignationAgreement();
     newDesignation.institution = { id: institutionId } as Institution;
     newDesignation.submittedData = submittedData;
     newDesignation.designationStatus = DesignationAgreementStatus.Pending;
     newDesignation.submittedBy = submittedByUser;
-    newDesignation.submittedDate = submittedDate;
+    newDesignation.submittedDate = now;
     newDesignation.creator = submittedByUser;
+    newDesignation.createdAt = now;
     newDesignation.designationAgreementLocations = requestedLocationsIds.map(
       (locationId: number) => {
         const newLocation = new DesignationAgreementLocation();
@@ -63,6 +63,7 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         } as InstitutionLocation;
         newLocation.requested = true;
         newLocation.creator = submittedByUser;
+        newLocation.createdAt = now;
         return newLocation;
       },
     );
@@ -229,6 +230,7 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
           designationPayload.locationsDesignations,
           designationLocations,
           userId,
+          now,
         );
     }
 
@@ -296,16 +298,21 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
   /**
    * Private method to build designation locations for update.
    * This builder is only for designation Approval.
-   * @param locationsDesignations
-   * @param designationLocations
-   * @param userId
+   * @param locationsDesignations designation locations to be added/updated
+   * for a designation agreement.
+   * @param designationLocations existing designation locations
+   * of a designation agreement.
+   * @Param designationUpdatedDate timestamp of designation agreement created/updated.
+   * @param auditUserId user who is making the changes.
    * @returns Designation locations for approval.
    */
   private buildDesignationLocations(
     locationsDesignations: UpdateDesignationLocation[],
     designationLocations: DesignationAgreementLocation[],
-    userId: number,
+    auditUserId: number,
+    designationUpdatedDate: Date,
   ): DesignationAgreementLocation[] {
+    const auditUser = { id: auditUserId } as User;
     return locationsDesignations.map(
       (locationPayload: UpdateDesignationLocation) => {
         const location = new DesignationAgreementLocation();
@@ -314,17 +321,26 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         location.institutionLocation = {
           id: locationPayload.locationId,
         } as InstitutionLocation;
-        location.creator = { id: userId } as User;
-        location.requested = false;
+
         const designationLocation = designationLocations.find(
           (item) => item.institutionLocation.id === locationPayload.locationId,
         );
+        // When a designation location already exist assign the id
+        // and audit properties.
         if (designationLocation) {
           location.id = designationLocation.id;
-          location.creator = undefined;
-          location.requested = undefined;
+          location.modifier = auditUser;
+          location.updatedAt = designationUpdatedDate;
         }
-        location.modifier = { id: userId } as User;
+        // When the designation location is not an existing one
+        // then it is added by the ministry during approval process.
+        // Set requested as false as it was not requested by the institution and
+        // set the audit properties.
+        else {
+          location.creator = auditUser;
+          location.createdAt = designationUpdatedDate;
+          location.requested = false;
+        }
         return location;
       },
     );

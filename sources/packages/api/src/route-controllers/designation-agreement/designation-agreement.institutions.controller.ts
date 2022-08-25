@@ -16,7 +16,6 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { DesignationAgreementService, FormService } from "../../services";
-import { getUTCNow } from "../../utilities";
 import {
   GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
@@ -90,7 +89,6 @@ export class DesignationAgreementInstitutionsController extends BaseController {
         userToken.authorizations.institutionId,
         payload.dynamicData,
         userToken.userId,
-        getUTCNow(),
         payload.locations
           .filter((location) => location.requestForDesignation)
           .map((location) => location.locationId),
