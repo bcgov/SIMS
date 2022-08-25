@@ -103,7 +103,6 @@ export default {
                       name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
                       params: {
                         locationId: data.id,
-                        locationName: data.name,
                       },
                     }),
                   },
@@ -114,7 +113,6 @@ export default {
                       name: InstitutionRoutesConst.COE_SUMMARY,
                       params: {
                         locationId: data.id,
-                        locationName: data.name,
                       },
                     }),
                   },
@@ -125,7 +123,6 @@ export default {
                       name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
                       params: {
                         locationId: data.id,
-                        locationName: data.name,
                       },
                     }),
                   },
