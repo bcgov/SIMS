@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { InstitutionLocation } from "../../database/entities/institution-location.model";
+import { InstitutionLocation, User } from "../../database/entities";
 import { DataSource, In, SelectQueryBuilder } from "typeorm";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
 import {
@@ -9,6 +9,7 @@ import {
   InstitutionLocationPrimaryContactModel,
 } from "./institution-location.models";
 import { transformAddressDetails } from "../../utilities";
+
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
   constructor(
@@ -32,13 +33,25 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .getOne();
   }
 
+  /**
+   * Save institution location.
+   * @param institutionId institution to which the location
+   * belongs.
+   * @param data location data.
+   * @param auditUserId user who is making the changes.
+   * @param locationId location to be updated.
+   * @returns persisted location.
+   */
   async saveLocation(
     institutionId: number,
     data: InstitutionLocationModel,
+    auditUserId: number,
     locationId?: number,
   ): Promise<InstitutionLocation> {
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     const institution = { id: institutionId };
-    const saveLocation = {
+    const saveLocation: InstitutionLocation = {
       name: data.locationName,
       data: {
         address: transformAddressDetails(data),
@@ -52,7 +65,15 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       institution: institution,
       institutionCode: data.institutionCode,
       id: locationId ?? undefined,
-    };
+    } as InstitutionLocation;
+
+    if (locationId) {
+      saveLocation.modifier = auditUser;
+      saveLocation.updatedAt = now;
+    } else {
+      saveLocation.creator = auditUser;
+      saveLocation.createdAt = now;
+    }
 
     return this.repo.save(saveLocation);
   }
@@ -66,8 +87,9 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   async updateLocationPrimaryContact(
     institutionLocationData: InstitutionLocationPrimaryContactModel,
     locationId: number,
+    auditUserId: number,
   ): Promise<InstitutionLocation> {
-    const saveLocation = {
+    const saveLocation: InstitutionLocation = {
       primaryContact: {
         firstName: institutionLocationData.primaryContactFirstName,
         lastName: institutionLocationData.primaryContactLastName,
@@ -75,7 +97,9 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         phone: institutionLocationData.primaryContactPhone,
       },
       id: locationId,
-    };
+      modifier: { id: auditUserId } as User,
+      updatedAt: new Date(),
+    } as InstitutionLocation;
 
     return this.repo.save(saveLocation);
   }
@@ -84,13 +108,15 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * Updating institution location.
    * @param institutionLocationData Payload of updated data.
    * @param locationId Location Id to update.
+   * @param auditUserId user who is making the changes.
    * @returns Updated institution Location.
    */
   async updateLocation(
     institutionLocationData: InstitutionLocationModel,
     locationId: number,
+    auditUserId: number,
   ): Promise<InstitutionLocation> {
-    const saveLocation = {
+    const saveLocation: InstitutionLocation = {
       name: institutionLocationData.locationName,
       data: {
         address: transformAddressDetails(institutionLocationData),
@@ -103,7 +129,9 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       },
       institutionCode: institutionLocationData.institutionCode,
       id: locationId,
-    };
+      modifier: { id: auditUserId } as User,
+      updatedAt: new Date(),
+    } as InstitutionLocation;
 
     return this.repo.save(saveLocation);
   }

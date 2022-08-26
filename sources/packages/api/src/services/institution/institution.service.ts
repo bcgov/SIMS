@@ -175,6 +175,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   ): Promise<Institution> {
     // New user to be associated with the institution. It will also be considered the audit user.
     const user = new User();
+    const now = new Date();
     const institution = this.initializeInstitutionFromFormModel(
       institutionModel,
       user,
@@ -202,10 +203,12 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.businessGuid = account.institution.guid;
     institution.legalOperatingName = account.institution.legalName;
     institution.creator = user;
+    institution.createdAt = now;
     // Institution user that has the association between the institution
     // record and the user record.
     const institutionUser = new InstitutionUser();
     institutionUser.creator = user;
+    institutionUser.createdAt = now;
     institutionUser.user = user;
     institutionUser.institution = institution;
     // Get admin authorization type.
@@ -219,6 +222,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     // Assign the new user with an admin authorization.
     const userAuthorization = new InstitutionUserAuth();
     userAuthorization.creator = user;
+    userAuthorization.createdAt = now;
     userAuthorization.authType = authorizationType;
     userAuthorization.institutionUser = institutionUser;
     // Associates the authorizations.
@@ -768,11 +772,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   /**
    * Update institution.
    * @param institutionId
+   * @param auditUserId user who is making the changes.
    * @param updateInstitution
    * @returns updated Institution
    */
   async updateInstitution(
     institutionId: number,
+    auditUserId: number,
     updateInstitution: Partial<UpdateInstitution>,
   ): Promise<Institution> {
     const institution = new Institution();
@@ -798,6 +804,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.institutionAddress = {
       mailingAddress: transformAddressDetails(updateInstitution.mailingAddress),
     };
+    institution.modifier = { id: auditUserId } as User;
+    institution.updatedAt = new Date();
     return this.repo.save(institution);
   }
 
