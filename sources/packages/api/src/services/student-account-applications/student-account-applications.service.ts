@@ -72,17 +72,20 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     studentProfile: StudentAccountApplicationCreateModel,
   ): Promise<StudentAccountApplication> {
     const newUser = new User();
+    const now = new Date();
     newUser.userName = userName;
     newUser.email = studentProfile.email;
     newUser.firstName = studentProfile.firstName;
     newUser.lastName = studentProfile.lastName;
     newUser.creator = newUser;
+    newUser.createdAt = now;
 
     const newAccountApplication = new StudentAccountApplication();
     newAccountApplication.user = newUser;
     newAccountApplication.creator = newUser;
+    newAccountApplication.createdAt = now;
     newAccountApplication.submittedData = studentProfile;
-    newAccountApplication.submittedDate = new Date();
+    newAccountApplication.submittedDate = now;
     return this.repo.save(newAccountApplication);
   }
 
@@ -136,9 +139,11 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     return this.dataSource.transaction(async (entityManager) => {
       // Update the student account application with the approval.
       const auditUser = { id: auditUserId } as User;
+      const now = new Date();
       accountApplication.assessedBy = auditUser;
       accountApplication.modifier = auditUser;
-      accountApplication.assessedDate = new Date();
+      accountApplication.updatedAt = now;
+      accountApplication.assessedDate = now;
       await entityManager
         .getRepository(StudentAccountApplication)
         .save(accountApplication);
@@ -166,6 +171,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     const updateResult = await this.repo.update(id, {
       deletedAt: new Date(),
       modifier: { id: auditUserId },
+      updatedAt: new Date(),
     });
     if (!updateResult.affected) {
       throw new CustomNamedError(

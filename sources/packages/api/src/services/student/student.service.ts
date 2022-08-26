@@ -150,6 +150,7 @@ export class StudentService extends RecordDataModelService<Student> {
     if (userInfo.userId) {
       // User id is present and the user wil be updated.
       user.modifier = auditUser;
+      user.updatedAt = new Date();
     } else {
       // User will be create alongside with the student.
       user.userName = userInfo.userName;
@@ -350,11 +351,13 @@ export class StudentService extends RecordDataModelService<Student> {
    * Updates the student contact information.
    * @param studentId student to be updated.
    * @param contact contact information to be updated.
+   * @param auditUserId user who is making the changes.
    * @returns updated student.
    */
   async updateStudentContactByStudentId(
     studentId: number,
     contact: StudentInfo,
+    auditUserId: number,
   ): Promise<Student> {
     const student = new Student();
     student.id = studentId;
@@ -362,6 +365,8 @@ export class StudentService extends RecordDataModelService<Student> {
       address: transformAddressDetails(contact),
       phone: contact.phone,
     };
+    student.modifier = { id: auditUserId } as User;
+    student.updatedAt = new Date();
 
     return this.save(student);
   }
@@ -407,6 +412,7 @@ export class StudentService extends RecordDataModelService<Student> {
 
     if (mustSave) {
       studentToSync.modifier = { id: studentToken.userId } as User;
+      studentToSync.updatedAt = new Date();
       return await this.save(studentToSync);
     }
 

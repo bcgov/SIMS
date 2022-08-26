@@ -139,6 +139,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
             fileOrigin,
             metadata,
             modifier: { id: auditUserId } as User,
+            updatedAt: new Date(),
           },
         );
       // Executes the send notification inside the transaction to allow the rollback

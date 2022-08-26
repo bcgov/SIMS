@@ -73,7 +73,10 @@ export class UserService extends DataModelService<User> {
   }
 
   async updateUserEmail(userId: number, email: string) {
-    return this.repo.update({ id: userId }, { email });
+    return this.repo.update(
+      { id: userId },
+      { email, modifier: { id: userId } as User, updatedAt: new Date() },
+    );
   }
 
   async getActiveUser(userName: string): Promise<User> {

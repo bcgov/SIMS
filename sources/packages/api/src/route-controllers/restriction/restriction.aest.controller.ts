@@ -226,7 +226,6 @@ export class RestrictionAESTController extends BaseController {
         payload.noteDescription,
       );
     } catch (error) {
-      console.log(error);
       if (
         error.name === RESTRICTION_NOT_ACTIVE ||
         error.name === RESTRICTION_NOT_PROVINCIAL

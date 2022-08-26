@@ -97,6 +97,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       newSINValidation.sinEditedDate = now;
       newSINValidation.sinEditedNote = savedNote;
       newSINValidation.creator = auditUser;
+      newSINValidation.createdAt = now;
       newSINValidation.user = student.user;
       if (skipValidations) {
         newSINValidation.isValidSIN = true;
@@ -172,6 +173,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       }
 
       const auditUser = { id: auditUserId } as User;
+      const now = new Date();
       const savedNote = await this.studentService.createStudentNote(
         studentId,
         NoteType.General,
@@ -182,9 +184,10 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       // Update the SIN validation record.
       sinToBeUpdated.sinExpiryDate = expiryDate;
       sinToBeUpdated.expiryDateEditedBy = auditUser;
-      sinToBeUpdated.expiryDateEditedDate = new Date();
+      sinToBeUpdated.expiryDateEditedDate = now;
       sinToBeUpdated.expiryDateEditedNote = savedNote;
       sinToBeUpdated.modifier = auditUser;
+      sinToBeUpdated.updatedAt = now;
       return sinValidationRepo.save(sinToBeUpdated);
     });
   }
