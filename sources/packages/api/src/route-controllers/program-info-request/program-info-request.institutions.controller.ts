@@ -163,6 +163,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Body() payload: DenyProgramInfoRequestAPIInDTO,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
       const application =
@@ -170,6 +171,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           applicationId,
           locationId,
           payload.pirDenyReasonId,
+          userToken.userId,
           payload.otherReasonDesc,
         );
       if (application.currentAssessment.assessmentWorkflowId) {

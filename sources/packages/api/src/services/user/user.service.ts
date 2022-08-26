@@ -52,16 +52,22 @@ export class UserService extends DataModelService<User> {
    * Define the user as active or inactive to allow or prevent access to the system.
    * @param userId user to be updated.
    * @param isActive active or inactive value.
+   * @param auditUserId user who is making the changes.
    * @returns update result.
    */
   async updateUserStatus(
     userId: number,
     isActive: boolean,
+    auditUserId: number,
   ): Promise<UpdateResult> {
     return this.repo
       .createQueryBuilder()
       .update(User)
-      .set({ isActive: isActive })
+      .set({
+        isActive: isActive,
+        modifier: { id: auditUserId } as User,
+        updatedAt: new Date(),
+      })
       .where("id = :id", { id: userId })
       .execute();
   }

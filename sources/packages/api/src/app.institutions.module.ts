@@ -30,6 +30,8 @@ import {
   EducationProgramOfferingService,
   EducationProgramService,
   PIRDeniedReasonService,
+  StudentService,
+  SFASIndividualService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -103,6 +105,8 @@ import { LoggerModule } from "./logger/logger.module";
     PIRDeniedReasonService,
     EducationProgramControllerService,
     EducationProgramOfferingControllerService,
+    StudentService,
+    SFASIndividualService,
   ],
 })
 export class AppInstitutionsModule {}

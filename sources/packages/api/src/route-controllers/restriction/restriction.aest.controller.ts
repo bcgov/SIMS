@@ -187,23 +187,14 @@ export class RestrictionAESTController extends BaseController {
         "The given restriction type is not Provincial. Only provincial restrictions can be added.",
       );
     }
-    // TODO Use transaction to save the restriction and save student note alongside.
-    const updatedRestriction =
+    const addedRestriction =
       await this.studentRestrictionService.addProvincialRestriction(
         studentId,
         userToken.userId,
         payload.restrictionId,
         payload.noteDescription,
       );
-    let institutionNote;
-    /**mapping the note added for restriction to student notes**/
-    if (updatedRestriction.restrictionNote) {
-      institutionNote = await this.studentService.saveStudentNote(
-        studentId,
-        updatedRestriction.restrictionNote,
-      );
-    }
-    return { id: institutionNote.id };
+    return { id: addedRestriction.id };
   }
 
   /**
@@ -228,21 +219,14 @@ export class RestrictionAESTController extends BaseController {
     @Body() payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
     try {
-      // TODO Use transaction to update the restriction and save student note alongside.
-      const updatedRestriction =
-        await this.studentRestrictionService.resolveProvincialRestriction(
-          studentId,
-          studentRestrictionId,
-          userToken.userId,
-          payload.noteDescription,
-        );
-
-      /**mapping the note added for resolution to student notes**/
-      await this.studentService.saveStudentNote(
+      await this.studentRestrictionService.resolveProvincialRestriction(
         studentId,
-        updatedRestriction.resolutionNote,
+        studentRestrictionId,
+        userToken.userId,
+        payload.noteDescription,
       );
     } catch (error) {
+      console.log(error);
       if (
         error.name === RESTRICTION_NOT_ACTIVE ||
         error.name === RESTRICTION_NOT_PROVINCIAL
@@ -352,6 +336,7 @@ export class RestrictionAESTController extends BaseController {
         "The given restriction type is either not Provincial or not Institution.",
       );
     }
+    // TODO:Modify this method to add restriction and note in a transaction.
     const updatedRestriction =
       await this.institutionRestrictionService.addProvincialRestriction(
         institutionId,
@@ -359,15 +344,14 @@ export class RestrictionAESTController extends BaseController {
         payload.restrictionId,
         payload.noteDescription,
       );
-    let institutionNote;
     // Mapping the note added for restriction to institution notes
     if (updatedRestriction.restrictionNote) {
-      institutionNote = await this.institutionService.saveInstitutionNote(
+      await this.institutionService.saveInstitutionNote(
         institutionId,
         updatedRestriction.restrictionNote,
       );
     }
-    return { id: institutionNote.id };
+    return { id: updatedRestriction.id };
   }
 
   /**

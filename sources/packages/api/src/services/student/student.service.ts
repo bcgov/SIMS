@@ -596,20 +596,29 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Service to add note for an Institution.
-   * ! Deprecated, please use the alternative method createStudentNote.
-   * @param studentId
-   * @param note
-   *  @returns saved Note.
+   * Add student note independently.
+   * @param studentId student to have the note associated.
+   * @param noteType note type.
+   * @param noteDescription note description.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns saved Note.
    */
-  async saveStudentNote(studentId: number, note: Note): Promise<Note> {
-    const student = await this.repo.findOne({
-      where: { id: studentId },
-      relations: { notes: true },
+  async addStudentNote(
+    studentId: number,
+    noteType: NoteType,
+    noteDescription: string,
+    auditUserId: number,
+  ): Promise<Note> {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const note = await this.createStudentNote(
+        studentId,
+        noteType,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      return note;
     });
-    student.notes.push(note);
-    await this.repo.save(student);
-    return note;
   }
 
   /**

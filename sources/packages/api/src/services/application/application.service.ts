@@ -727,12 +727,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
         );
       }
       const auditUser = { id: auditUserId } as User;
+      const now = new Date();
       application.currentAssessment.offering = {
         id: offeringId,
       } as EducationProgramOffering;
       application.currentAssessment.modifier = auditUser;
+      application.currentAssessment.updatedAt = now;
       application.pirStatus = ProgramInfoStatus.completed;
       application.modifier = auditUser;
+      application.updatedAt = now;
       await this.studentRestrictionService.assessSINRestrictionForOfferingId(
         application.student.id,
         offeringId,
@@ -975,6 +978,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationId application id to be updated.
    * @param locationId location that is setting the offering.
    * @param pirDeniedReasonId Denied reason id for a student application.
+   * @param auditUserId user who is making the changes.
    * @param otherReasonDesc when other is selected as a PIR denied reason, text for the reason
    * is populated.
    * @returns updated application.
@@ -983,6 +987,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     locationId: number,
     pirDeniedReasonId: number,
+    auditUserId: number,
     otherReasonDesc?: string,
   ): Promise<Application> {
     const application = await this.repo
@@ -1017,6 +1022,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
     application.pirDeniedOtherDesc = otherReasonDesc;
     application.pirStatus = ProgramInfoStatus.declined;
+    application.modifier = { id: auditUserId } as User;
+    application.updatedAt = new Date();
     return this.repo.save(application);
   }
 

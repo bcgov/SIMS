@@ -140,10 +140,11 @@ export class NoteAESTController extends BaseController {
     if (!student) {
       throw new NotFoundException("Student not found.");
     }
-    const studentNote = transformToNoteEntity(payload, userToken.userId);
-    const note = await this.studentService.saveStudentNote(
+    const note = await this.studentService.addStudentNote(
       studentId,
-      studentNote,
+      payload.noteType,
+      payload.description,
+      userToken.userId,
     );
     return { id: note.id };
   }

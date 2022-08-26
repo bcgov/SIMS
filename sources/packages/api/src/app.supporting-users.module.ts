@@ -18,6 +18,8 @@ import {
   StudentRestrictionService,
   RestrictionService,
   EducationProgramOfferingService,
+  StudentService,
+  SFASIndividualService,
 } from "./services";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -45,6 +47,8 @@ import { LoggerModule } from "./logger/logger.module";
     RestrictionService,
     StudentRestrictionService,
     EducationProgramOfferingService,
+    StudentService,
+    SFASIndividualService,
   ],
 })
 export class AppSupportingUsersModule {}

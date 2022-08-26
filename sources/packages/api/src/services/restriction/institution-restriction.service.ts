@@ -152,14 +152,17 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       );
     }
 
+    const now = new Date();
     institutionRestrictionEntity.isActive = false;
     institutionRestrictionEntity.modifier = { id: userId } as User;
+    institutionRestrictionEntity.updatedAt = now;
     institutionRestrictionEntity.resolutionNote = {
       description: noteDescription,
       noteType: NoteType.Restriction,
       creator: {
         id: institutionRestrictionEntity.modifier.id,
       } as User,
+      updatedAt: now,
     } as Note;
     return this.repo.save(institutionRestrictionEntity);
   }
