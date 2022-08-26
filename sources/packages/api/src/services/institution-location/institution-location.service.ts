@@ -49,7 +49,6 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     locationId?: number,
   ): Promise<InstitutionLocation> {
     const auditUser = { id: auditUserId } as User;
-    const now = new Date();
     const institution = { id: institutionId };
     const saveLocation: InstitutionLocation = {
       name: data.locationName,
@@ -69,10 +68,8 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
 
     if (locationId) {
       saveLocation.modifier = auditUser;
-      saveLocation.updatedAt = now;
     } else {
       saveLocation.creator = auditUser;
-      saveLocation.createdAt = now;
     }
 
     return this.repo.save(saveLocation);

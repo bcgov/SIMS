@@ -162,7 +162,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       creator: {
         id: institutionRestrictionEntity.modifier.id,
       } as User,
-      updatedAt: now,
+      createdAt: now,
     } as Note;
     return this.repo.save(institutionRestrictionEntity);
   }
