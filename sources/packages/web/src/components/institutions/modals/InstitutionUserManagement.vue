@@ -2,42 +2,40 @@
 <template>
   <error-summary :errors="errors" />
   <content-group>
-    <span>
-      <v-row no-gutters>
-        <v-row align="center" no-gutters>
-          <v-col cols="auto">
-            <!-- This slot holds the BCeID basic(plain text)/business(dropdown) and readonly views(plain readonly text input). -->
-            <slot name="user-name" :formModel="formModel" />
-          </v-col>
-          <v-col cols="auto">
-            <v-switch
-              hide-details
-              label="Admin"
-              color="primary"
-              inset
-              class="mr-3"
-              v-model="formModel.isAdmin"
-            ></v-switch>
-          </v-col>
-          <v-col cols="auto">
-            <v-switch
-              hide-details
-              :disabled="!formModel.isAdmin"
-              label="Legal signing authority"
-              inset
-              color="primary"
-              v-model="formModel.isLegalSigningAuthority"
-            ></v-switch>
-          </v-col>
-        </v-row>
+    <v-row no-gutters>
+      <v-row align="center" no-gutters>
+        <v-col cols="auto">
+          <!-- This slot holds the BCeID basic(plain text)/business(dropdown) and readonly views(plain readonly text input). -->
+          <slot name="user-name" :formModel="formModel" />
+        </v-col>
+        <v-col cols="auto">
+          <v-switch
+            hide-details
+            label="Admin"
+            color="primary"
+            inset
+            class="mr-3"
+            v-model="formModel.isAdmin"
+          ></v-switch>
+        </v-col>
+        <v-col cols="auto">
+          <v-switch
+            hide-details
+            :disabled="!formModel.isAdmin"
+            label="Legal signing authority"
+            inset
+            color="primary"
+            v-model="formModel.isLegalSigningAuthority"
+          ></v-switch>
+        </v-col>
       </v-row>
-      <v-input
-        :rules="[isAdminOrHasLocationAccessValidationRule()]"
-        hide-details="auto"
-        error
-      >
-      </v-input>
-    </span>
+    </v-row>
+    <v-input
+      :rules="[isAdminOrHasLocationAccessValidationRule()]"
+      hide-details="auto"
+      error
+    >
+    </v-input>
   </content-group>
   <h3
     class="category-header-medium primary-color mt-4 mb-2"

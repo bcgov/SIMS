@@ -29,7 +29,7 @@
               :status="slotProps.data.designationStatus"
             /> </template
         ></Column>
-        <Column>
+        <Column header="Action">
           <template #body="slotProps">
             <v-btn
               variant="outlined"

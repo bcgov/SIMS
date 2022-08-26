@@ -1,11 +1,19 @@
 <template>
-  <formio
+  <formio-container
     formName="designationagreementdetails"
-    :data="model"
+    :formData="model"
     :readOnly="readOnly"
     @submitted="submitDesignation"
     @render="formRender"
-  ></formio>
+  >
+    <template #actions="{ submit }">
+      <!-- todo: ann don't show the button for view only mode -->
+      <footer-buttons
+        :processing="processing"
+        primaryLabel="Submit"
+        @primaryClick="submit()"
+      /> </template
+  ></formio-container>
 </template>
 
 <script lang="ts">

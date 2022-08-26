@@ -1,13 +1,12 @@
 <template>
-  <v-container>
-    <v-row justify="center">
-      <div class="pb-4 w-100 full-page-container-size">
-        <h5 class="text-muted">Back to manage designation</h5>
-        <h2 class="category-header-large">Request designation</h2>
-      </div>
-    </v-row>
-  </v-container>
-  <full-page-container>
+  <full-page-container :fluid-width="false">
+    <template #header>
+      <header-navigator
+        title="Manage designations"
+        :routeLocation="{ name: InstitutionRoutesConst.MANAGE_DESIGNATION }"
+        subTitle="Request designation"
+      />
+    </template>
     <designation-agreement-form
       :model="designationModel"
       @submitDesignation="submitDesignation"
@@ -34,6 +33,7 @@ import {
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { SubmitDesignationAgreementDto } from "@/types/contracts/DesignationAgreementContract";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { FormIOForm } from "@/types";
 
 export default {
   components: { DesignationAgreementForm },
@@ -77,11 +77,11 @@ export default {
       );
     });
 
-    const submitDesignation = async (model: DesignationModel) => {
+    const submitDesignation = async (form: FormIOForm<DesignationModel>) => {
       try {
         await DesignationAgreementService.shared.submitDesignationAgreement({
-          dynamicData: model.dynamicData,
-          locations: model.locations.map(
+          dynamicData: form.data.dynamicData,
+          locations: form.data.locations.map(
             (location: DesignationLocationsListItem) => ({
               locationId: location.locationId,
               requestForDesignation: location.requestForDesignation,
@@ -91,8 +91,9 @@ export default {
         snackBar.success("Designation agreement submitted.");
         router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
       } catch (error) {
+        console.log(error, "+error");
         snackBar.error(
-          "And unexpected error happened during the designation agreement submission.",
+          "An unexpected error happened during the designation agreement submission.",
         );
       }
     };
@@ -100,6 +101,7 @@ export default {
     return {
       designationModel,
       submitDesignation,
+      InstitutionRoutesConst,
     };
   },
 };

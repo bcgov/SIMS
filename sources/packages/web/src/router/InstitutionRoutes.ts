@@ -240,7 +240,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.DESIGNATION_REQUEST,
         components: {
           default: DesignationRequest,
-          sidebar: ManageInstitutionSideBar,
         },
         meta: {
           clientType: ClientIdType.Institution,

@@ -2,14 +2,13 @@
   <full-page-container>
     <template #header>
       <header-navigator
-        title="Manage institutions"
+        title="Manage institution"
         subTitle="Manage designations"
       />
     </template>
     <body-header
       title="Designation agreements"
-      subTitle="Ensure you have an active designation to administer student financial
-        assistance."
+      subTitle="Ensure you have an active designation to administer student financial aid."
       :recordsCount="designations.length"
     >
       <template #actions>
