@@ -808,7 +808,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       mailingAddress: transformAddressDetails(updateInstitution.mailingAddress),
     };
     institution.modifier = { id: auditUserId } as User;
-    institution.updatedAt = new Date();
     return this.repo.save(institution);
   }
 
@@ -862,7 +861,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
     if (mustUpdate) {
       institutionUser.modifier = { id: userId } as User;
-      institutionUser.updatedAt = new Date();
       await this.institutionUserRepo.save(institutionUser);
     }
   }

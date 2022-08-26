@@ -171,7 +171,6 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     const updateResult = await this.repo.update(id, {
       deletedAt: new Date(),
       modifier: { id: auditUserId },
-      updatedAt: new Date(),
     });
     if (!updateResult.affected) {
       throw new CustomNamedError(

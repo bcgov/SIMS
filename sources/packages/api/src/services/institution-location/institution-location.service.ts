@@ -98,7 +98,6 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       },
       id: locationId,
       modifier: { id: auditUserId } as User,
-      updatedAt: new Date(),
     } as InstitutionLocation;
 
     return this.repo.save(saveLocation);
@@ -130,7 +129,6 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       institutionCode: institutionLocationData.institutionCode,
       id: locationId,
       modifier: { id: auditUserId } as User,
-      updatedAt: new Date(),
     } as InstitutionLocation;
 
     return this.repo.save(saveLocation);

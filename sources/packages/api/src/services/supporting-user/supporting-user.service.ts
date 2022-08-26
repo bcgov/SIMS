@@ -114,7 +114,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       userToUpdate.supportingData = updateInfo.supportingData;
       userToUpdate.user = { id: updateInfo.userId } as User;
       userToUpdate.modifier = { id: auditUserId } as User;
-      userToUpdate.updatedAt = new Date();
       const updatedUser = await transactionRepo.save(userToUpdate);
       await queryRunner.commitTransaction();
       return updatedUser;

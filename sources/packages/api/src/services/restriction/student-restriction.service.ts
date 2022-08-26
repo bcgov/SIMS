@@ -245,7 +245,6 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       const studentRestriction = new StudentRestriction();
       studentRestriction.id = studentRestrictionId;
       studentRestriction.modifier = { id: userId } as User;
-      studentRestriction.updatedAt = new Date();
       studentRestriction.isActive = false;
       studentRestriction.resolutionNote = note;
       await transactionalEntityManager

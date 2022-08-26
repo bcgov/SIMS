@@ -1023,7 +1023,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     application.pirDeniedOtherDesc = otherReasonDesc;
     application.pirStatus = ProgramInfoStatus.declined;
     application.modifier = { id: auditUserId } as User;
-    application.updatedAt = new Date();
     return this.repo.save(application);
   }
 

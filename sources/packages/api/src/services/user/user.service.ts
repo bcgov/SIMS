@@ -66,7 +66,6 @@ export class UserService extends DataModelService<User> {
       .set({
         isActive: isActive,
         modifier: { id: auditUserId } as User,
-        updatedAt: new Date(),
       })
       .where("id = :id", { id: userId })
       .execute();
@@ -75,7 +74,7 @@ export class UserService extends DataModelService<User> {
   async updateUserEmail(userId: number, email: string) {
     return this.repo.update(
       { id: userId },
-      { email, modifier: { id: userId } as User, updatedAt: new Date() },
+      { email, modifier: { id: userId } as User },
     );
   }
 
@@ -101,6 +100,9 @@ export class UserService extends DataModelService<User> {
     if (!user) {
       user = new User();
       user.userName = userName;
+      user.creator = user;
+    } else {
+      user.modifier = user;
     }
     user.email = email;
     user.firstName = givenNames;

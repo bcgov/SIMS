@@ -238,7 +238,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       hasExistingApplication,
     );
     programOffering.modifier = { id: userId } as User;
-    programOffering.updatedAt = new Date();
     return this.repo.update(offeringId, programOffering);
   }
 
