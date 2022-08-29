@@ -614,7 +614,7 @@ export class StudentService extends RecordDataModelService<Student> {
     auditUserId: number,
   ): Promise<Note> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      return await this.createStudentNote(
+      return this.createStudentNote(
         studentId,
         noteType,
         noteDescription,
