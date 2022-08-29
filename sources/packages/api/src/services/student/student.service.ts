@@ -461,6 +461,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * Update the PD Sent Date
    * @param studentId student who's PD status is to be updated.
    * @param auditUserId user who is making the changes.
+   * @returns Student who's PD sent date is updated.
    */
   async updatePDSentDate(
     studentId: number,
@@ -613,14 +614,13 @@ export class StudentService extends RecordDataModelService<Student> {
     auditUserId: number,
   ): Promise<Note> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      const note = await this.createStudentNote(
+      return await this.createStudentNote(
         studentId,
         noteType,
         noteDescription,
         auditUserId,
         transactionalEntityManager,
       );
-      return note;
     });
   }
 

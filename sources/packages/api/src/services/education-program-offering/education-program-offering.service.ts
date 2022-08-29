@@ -457,7 +457,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringStatus: OfferingStatus,
   ): Promise<void> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      // create the note for assessment.
+      // Create the note for assessment.
       const auditUser = {
         id: userId,
       } as User;
@@ -864,7 +864,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         .getRepository(EducationProgramOffering)
         .save([requestedOffering, precedingOffering]);
 
-      // Save applications with new current assessment or status cancelled on approval.
+      // Save applications with new current assessment or set status as cancelled on approval.
       if (applications?.length > 0) {
         await transactionalEntityManager
           .getRepository(Application)

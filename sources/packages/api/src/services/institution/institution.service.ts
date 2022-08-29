@@ -774,9 +774,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   /**
    * Update institution.
-   * @param institutionId
+   * @param institutionId Institution to be updated.
    * @param auditUserId user who is making the changes.
-   * @param updateInstitution
+   * @param updateInstitution payload to update institution.
    * @returns updated Institution
    */
   async updateInstitution(
