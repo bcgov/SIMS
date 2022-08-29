@@ -1,9 +1,9 @@
 <template>
-  <full-page-container>
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator
         title="Manage institution"
-        subTitle="Manage designations"
+        subTitle="Manage Designations"
       />
     </template>
     <body-header

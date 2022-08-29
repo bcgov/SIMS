@@ -238,9 +238,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.DesignationRequest,
         name: InstitutionRoutesConst.DESIGNATION_REQUEST,
-        components: {
-          default: DesignationRequest,
-        },
+        component: DesignationRequest,
         meta: {
           clientType: ClientIdType.Institution,
           userTypes: [InstitutionUserTypes.admin],
@@ -249,10 +247,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.DesignationView,
         name: InstitutionRoutesConst.DESIGNATION_VIEW,
-        components: {
-          default: DesignationView,
-          sidebar: ManageInstitutionSideBar,
-        },
+        component: DesignationView,
         meta: {
           clientType: ClientIdType.Institution,
           userTypes: [InstitutionUserTypes.admin],

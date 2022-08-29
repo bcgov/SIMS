@@ -32,7 +32,6 @@
         <Column header="Action">
           <template #body="slotProps">
             <v-btn
-              variant="outlined"
               color="primary"
               @click="goToViewDesignation(slotProps.data.designationId)"
             >

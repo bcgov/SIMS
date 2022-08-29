@@ -5,6 +5,7 @@
     @submitted="saveOffering"
   >
     <template #actions="{ submit }" v-if="!readOnly">
+      <!-- todo: add processing logic -->
       <footer-buttons
         :processing="processing"
         primaryLabel="Submit"

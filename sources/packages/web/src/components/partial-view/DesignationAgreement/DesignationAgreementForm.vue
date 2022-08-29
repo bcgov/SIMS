@@ -1,13 +1,14 @@
 <template>
+  <!-- todo: ann add the form definition -->
+  <!-- todo: ann institution dashboard form definition -->
   <formio-container
-    formName="designationagreementdetails"
+    formName="designationAgreementDetails"
     :formData="model"
     :readOnly="readOnly"
     @submitted="submitDesignation"
     @render="formRender"
   >
-    <template #actions="{ submit }">
-      <!-- todo: ann don't show the button for view only mode -->
+    <template #actions="{ submit }" v-if="!viewOnly">
       <footer-buttons
         :processing="processing"
         primaryLabel="Submit"
@@ -32,6 +33,10 @@ export default {
     model: {
       type: Object,
       required: true,
+    },
+    viewOnly: {
+      type: Boolean,
+      required: false,
     },
   },
   setup(props: any, context: SetupContext) {

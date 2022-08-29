@@ -1,10 +1,10 @@
 <template>
-  <full-page-container :fluid-width="false">
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator
         title="Manage designations"
         :routeLocation="{ name: InstitutionRoutesConst.MANAGE_DESIGNATION }"
-        subTitle="Request designation"
+        subTitle="Request Designation"
       />
     </template>
     <designation-agreement-form
@@ -91,7 +91,6 @@ export default {
         snackBar.success("Designation agreement submitted.");
         router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
       } catch (error) {
-        console.log(error, "+error");
         snackBar.error(
           "An unexpected error happened during the designation agreement submission.",
         );
