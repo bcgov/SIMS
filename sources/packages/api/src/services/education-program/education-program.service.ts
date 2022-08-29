@@ -182,7 +182,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.createdAt = now;
     } else {
       program.modifier = auditUser;
-      program.updatedAt = now;
     }
     return this.repo.save(program);
   }
