@@ -60,6 +60,10 @@ export class InstitutionLocationAESTController extends BaseController {
     @Body() payload: AESTInstitutionLocationAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    this.locationService.updateLocation(payload, locationId, userToken.userId);
+    await this.locationService.updateLocation(
+      payload,
+      locationId,
+      userToken.userId,
+    );
   }
 }
