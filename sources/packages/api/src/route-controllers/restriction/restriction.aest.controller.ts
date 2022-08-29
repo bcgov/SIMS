@@ -187,14 +187,14 @@ export class RestrictionAESTController extends BaseController {
         "The given restriction type is not Provincial. Only provincial restrictions can be added.",
       );
     }
-    const addedRestriction =
+    const newStudentRestriction =
       await this.studentRestrictionService.addProvincialRestriction(
         studentId,
         userToken.userId,
         payload.restrictionId,
         payload.noteDescription,
       );
-    return { id: addedRestriction.id };
+    return { id: newStudentRestriction.id };
   }
 
   /**

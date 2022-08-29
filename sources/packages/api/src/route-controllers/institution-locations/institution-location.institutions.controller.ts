@@ -114,7 +114,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     @Body() payload: InstitutionLocationPrimaryContactAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
-    this.locationService.updateLocationPrimaryContact(
+    await this.locationService.updateLocationPrimaryContact(
       payload,
       locationId,
       userToken.userId,
