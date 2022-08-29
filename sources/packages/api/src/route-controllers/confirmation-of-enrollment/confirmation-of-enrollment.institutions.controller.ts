@@ -22,7 +22,6 @@ import {
   WorkflowActionsService,
   COEDeniedReasonService,
   DisbursementScheduleService,
-  StudentAssessmentService,
 } from "../../services";
 import {
   ApplicationStatus,
@@ -83,7 +82,6 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     private readonly applicationService: ApplicationService,
     private readonly workflow: WorkflowActionsService,
     private readonly deniedCOEReasonService: COEDeniedReasonService,
-    private readonly assessmentService: StudentAssessmentService,
   ) {
     super();
   }

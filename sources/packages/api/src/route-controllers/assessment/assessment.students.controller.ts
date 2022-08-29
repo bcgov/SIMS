@@ -81,6 +81,7 @@ export class AssessmentStudentsController extends BaseController {
       await this.studentAssessmentService.studentConfirmAssessment(
         assessmentId,
         userToken.studentId,
+        userToken.userId,
       );
     } catch (error) {
       switch (error.name) {

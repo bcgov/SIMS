@@ -95,6 +95,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     const createdInstitutionLocation = await this.locationService.saveLocation(
       userToken.authorizations.institutionId,
       dryRunSubmissionResult.data.data,
+      userToken.userId,
     );
 
     return { id: createdInstitutionLocation.id };
@@ -111,8 +112,13 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   async update(
     @Param("locationId") locationId: number,
     @Body() payload: InstitutionLocationPrimaryContactAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
-    this.locationService.updateLocationPrimaryContact(payload, locationId);
+    await this.locationService.updateLocationPrimaryContact(
+      payload,
+      locationId,
+      userToken.userId,
+    );
   }
 
   /**

@@ -26,7 +26,6 @@ import {
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-  StudentRestrictionService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -76,7 +75,6 @@ export class ApplicationStudentsController extends BaseController {
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly assessmentService: StudentAssessmentService,
     private readonly applicationControllerService: ApplicationControllerService,
-    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super();
   }
@@ -270,6 +268,7 @@ export class ApplicationStudentsController extends BaseController {
       const draftApplication =
         await this.applicationService.saveDraftApplication(
           studentToken.studentId,
+          studentToken.userId,
           payload.programYearId,
           payload.data,
           payload.associatedFiles,
@@ -305,6 +304,7 @@ export class ApplicationStudentsController extends BaseController {
     try {
       await this.applicationService.saveDraftApplication(
         studentToken.studentId,
+        studentToken.userId,
         payload.programYearId,
         payload.data,
         payload.associatedFiles,
@@ -362,6 +362,7 @@ export class ApplicationStudentsController extends BaseController {
     const updateResult = await this.applicationService.updateApplicationStatus(
       studentApplication.id,
       payload.applicationStatus,
+      userToken.userId,
     );
 
     if (updateResult.affected === 0) {

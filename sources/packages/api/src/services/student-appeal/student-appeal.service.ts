@@ -64,6 +64,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     const creator = { id: userId } as User;
     studentAppeal.application = { id: applicationId } as Application;
     studentAppeal.creator = creator;
+    studentAppeal.createdAt = currentDateTime;
     studentAppeal.submittedDate = currentDateTime;
     studentAppeal.appealRequests = studentAppealRequests.map(
       (appealRequest) =>
@@ -310,6 +311,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           appealStatus: approval.appealStatus,
           note,
           modifier: auditUser,
+          updatedAt: auditDate,
           assessedBy: auditUser,
           assessedDate: auditDate,
         } as StudentAppealRequest);
@@ -329,6 +331,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           },
           triggerType: AssessmentTriggerType.StudentAppeal,
           creator: auditUser,
+          createdAt: auditDate,
           submittedBy: auditUser,
           submittedDate: auditDate,
         } as StudentAssessment;

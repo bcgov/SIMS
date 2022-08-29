@@ -457,14 +457,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringStatus: OfferingStatus,
   ): Promise<void> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      // create the note for assessment.
-      const user = {
+      // Create the note for assessment.
+      const auditUser = {
         id: userId,
       } as User;
+      const now = new Date();
       const note = new Note();
       note.description = assessmentNotes;
       note.noteType = NoteType.Program;
-      note.creator = user;
+      note.creator = auditUser;
+      note.createdAt = now;
       const noteEntity = await transactionalEntityManager
         .getRepository(Note)
         .save(note);
@@ -473,8 +475,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       const offering = new EducationProgramOffering();
       offering.id = offeringId;
       offering.offeringStatus = offeringStatus;
-      offering.assessedDate = new Date();
-      offering.assessedBy = user;
+      offering.assessedDate = now;
+      offering.assessedBy = auditUser;
+      offering.modifier = auditUser;
+      offering.updatedAt = now;
       offering.offeringNote = noteEntity;
 
       await transactionalEntityManager
@@ -561,6 +565,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       educationProgramOffering,
     );
     const auditUser = { id: userId } as User;
+    const now = new Date();
     const precedingOffering = {
       id: currentOffering.id,
     } as EducationProgramOffering;
@@ -573,12 +578,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       currentOffering.parentOffering ?? precedingOffering;
     requestedOffering.precedingOffering = precedingOffering;
     requestedOffering.creator = auditUser;
+    requestedOffering.createdAt = now;
 
     //Update the status and audit details of current offering.
     const underReviewOffering = new EducationProgramOffering();
     underReviewOffering.id = offeringId;
     underReviewOffering.offeringStatus = OfferingStatus.ChangeUnderReview;
     underReviewOffering.modifier = auditUser;
+    underReviewOffering.updatedAt = now;
 
     await this.repo.save([underReviewOffering, requestedOffering]);
     return requestedOffering;
@@ -834,6 +841,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       note.description = assessmentNotes;
       note.noteType = NoteType.Program;
       note.creator = auditUser;
+      note.createdAt = currentDate;
       const noteEntity = await transactionalEntityManager
         .getRepository(Note)
         .save(note);
@@ -856,7 +864,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         .getRepository(EducationProgramOffering)
         .save([requestedOffering, precedingOffering]);
 
-      // Save applications with new current assessment on approval.
+      // Save applications with new current assessment or set application status as cancelled on approval.
       if (applications?.length > 0) {
         await transactionalEntityManager
           .getRepository(Application)

@@ -52,22 +52,30 @@ export class UserService extends DataModelService<User> {
    * Define the user as active or inactive to allow or prevent access to the system.
    * @param userId user to be updated.
    * @param isActive active or inactive value.
+   * @param auditUserId user who is making the changes.
    * @returns update result.
    */
   async updateUserStatus(
     userId: number,
     isActive: boolean,
+    auditUserId: number,
   ): Promise<UpdateResult> {
     return this.repo
       .createQueryBuilder()
       .update(User)
-      .set({ isActive: isActive })
+      .set({
+        isActive: isActive,
+        modifier: { id: auditUserId } as User,
+      })
       .where("id = :id", { id: userId })
       .execute();
   }
 
   async updateUserEmail(userId: number, email: string) {
-    return this.repo.update({ id: userId }, { email });
+    return this.repo.update(
+      { id: userId },
+      { email, modifier: { id: userId } as User },
+    );
   }
 
   async getActiveUser(userName: string): Promise<User> {
@@ -92,6 +100,9 @@ export class UserService extends DataModelService<User> {
     if (!user) {
       user = new User();
       user.userName = userName;
+      user.creator = user;
+    } else {
+      user.modifier = user;
     }
     user.email = email;
     user.firstName = givenNames;

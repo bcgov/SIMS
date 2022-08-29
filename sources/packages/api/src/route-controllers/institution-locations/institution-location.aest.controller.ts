@@ -2,8 +2,14 @@ import { Body, Controller, Get, Param, Patch } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { InstitutionLocationService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, Roles } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
+import { IUserToken } from "../../auth/userToken.interface";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { InstitutionLocationControllerService } from "./institution-location.controller.service";
@@ -52,7 +58,12 @@ export class InstitutionLocationAESTController extends BaseController {
   async update(
     @Param("locationId") locationId: number,
     @Body() payload: AESTInstitutionLocationAPIInDTO,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    this.locationService.updateLocation(payload, locationId);
+    await this.locationService.updateLocation(
+      payload,
+      locationId,
+      userToken.userId,
+    );
   }
 }

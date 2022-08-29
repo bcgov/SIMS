@@ -350,11 +350,13 @@ export class StudentService extends RecordDataModelService<Student> {
    * Updates the student contact information.
    * @param studentId student to be updated.
    * @param contact contact information to be updated.
+   * @param auditUserId user who is making the changes.
    * @returns updated student.
    */
   async updateStudentContactByStudentId(
     studentId: number,
     contact: StudentInfo,
+    auditUserId: number,
   ): Promise<Student> {
     const student = new Student();
     student.id = studentId;
@@ -362,6 +364,7 @@ export class StudentService extends RecordDataModelService<Student> {
       address: transformAddressDetails(contact),
       phone: contact.phone,
     };
+    student.modifier = { id: auditUserId } as User;
 
     return this.save(student);
   }
@@ -456,16 +459,23 @@ export class StudentService extends RecordDataModelService<Student> {
 
   /**
    * Update the PD Sent Date
-   * @param studentId
+   * @param studentId student who's PD status is to be updated.
+   * @param auditUserId user who is making the changes.
+   * @returns Student who's PD sent date is updated.
    */
-  async updatePDSentDate(studentId: number): Promise<Student> {
+  async updatePDSentDate(
+    studentId: number,
+    auditUserId: number,
+  ): Promise<Student> {
     // get the Student Object
     const studentToUpdate = await this.repo.findOneOrFail({
       where: { id: studentId },
     });
     if (studentToUpdate) {
-      // Date in UTC
-      studentToUpdate.studentPDSentAt = getUTCNow();
+      const now = new Date();
+      studentToUpdate.studentPDSentAt = now;
+      studentToUpdate.modifier = { id: auditUserId } as User;
+      studentToUpdate.updatedAt = now;
       return this.repo.save(studentToUpdate);
     }
   }
@@ -590,20 +600,28 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Service to add note for an Institution.
-   * ! Deprecated, please use the alternative method createStudentNote.
-   * @param studentId
-   * @param note
-   *  @returns saved Note.
+   * Add student note independently.
+   * @param studentId student to have the note associated.
+   * @param noteType note type.
+   * @param noteDescription note description.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns saved Note.
    */
-  async saveStudentNote(studentId: number, note: Note): Promise<Note> {
-    const student = await this.repo.findOne({
-      where: { id: studentId },
-      relations: { notes: true },
+  async addStudentNote(
+    studentId: number,
+    noteType: NoteType,
+    noteDescription: string,
+    auditUserId: number,
+  ): Promise<Note> {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      return this.createStudentNote(
+        studentId,
+        noteType,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
     });
-    student.notes.push(note);
-    await this.repo.save(student);
-    return note;
   }
 
   /**

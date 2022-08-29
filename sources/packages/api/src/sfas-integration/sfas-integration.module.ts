@@ -7,6 +7,7 @@ import {
   SFASApplicationService,
   SFASRestrictionService,
   SFASPartTimeApplicationsService,
+  StudentService,
 } from "../services";
 import { SFASIntegrationProcessingService } from "./sfas-integration-processing.service";
 import { SFASIntegrationService } from "./sfas-integration.service";
@@ -22,6 +23,7 @@ import { SFASIntegrationService } from "./sfas-integration.service";
     SFASApplicationService,
     SFASRestrictionService,
     SFASPartTimeApplicationsService,
+    StudentService,
   ],
   exports: [
     SFASIntegrationService,

@@ -25,6 +25,8 @@ import {
   DesignationAgreementLocationService,
   GCNotifyService,
   GCNotifyActionsService,
+  StudentService,
+  SFASIndividualService,
 } from "./services";
 import {
   UserController,
@@ -116,6 +118,8 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     DesignationAgreementLocationService,
     GCNotifyService,
     GCNotifyActionsService,
+    StudentService,
+    SFASIndividualService,
   ],
 })
 export class AppModule {}

@@ -8,6 +8,8 @@ import {
   StudentRestrictionService,
   DisbursementScheduleErrorsService,
   RestrictionService,
+  StudentService,
+  SFASIndividualService,
 } from "../../services";
 import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
@@ -34,6 +36,8 @@ import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/
     ECertFullTimeFileFooter,
     DisbursementScheduleErrorsService,
     RestrictionService,
+    StudentService,
+    SFASIndividualService,
   ],
   exports: [
     ECertFullTimeIntegrationService,

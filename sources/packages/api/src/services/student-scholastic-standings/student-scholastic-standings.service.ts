@@ -156,6 +156,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       scholasticStanding.submittedDate = now;
       scholasticStanding.submittedBy = auditUser;
       scholasticStanding.creator = auditUser;
+      scholasticStanding.createdAt = now;
 
       // Reference offering id.
       scholasticStanding.referenceOffering = existingOffering;
@@ -171,10 +172,10 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
 
         // Assigning id and audit fields as undefined, so that when its saved its considered as a new EducationProgramOffering object.
         offering.id = undefined;
-        offering.createdAt = undefined;
+        offering.modifier = undefined;
         offering.updatedAt = undefined;
         offering.creator = auditUser;
-        offering.modifier = auditUser;
+        offering.createdAt = now;
 
         const newStudyEndDate =
           scholasticStandingData.dateOfChange ??
@@ -207,6 +208,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           application: { id: application.id } as Application,
           triggerType: AssessmentTriggerType.ScholasticStandingChange,
           creator: auditUser,
+          createdAt: now,
           submittedBy: auditUser,
           submittedDate: now,
           offering: { id: savedOffering.id } as EducationProgramOffering,

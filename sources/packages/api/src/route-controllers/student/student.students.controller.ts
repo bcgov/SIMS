@@ -332,6 +332,7 @@ export class StudentStudentsController extends BaseController {
     await this.studentService.updateStudentContactByStudentId(
       studentUserToken.studentId,
       submissionResult.data.data,
+      studentUserToken.userId,
     );
   }
 

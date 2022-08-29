@@ -342,11 +342,13 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * the student is confirming the NOA (Notice of Assessment).
    * @param assessmentId assessment id to be updated.
    * @param studentId student confirming the NOA.
+   * @param auditUserId user who is making the changes.
    * @returns updated record.
    */
   async studentConfirmAssessment(
     assessmentId: number,
     studentId: number,
+    auditUserId: number,
   ): Promise<StudentAssessment> {
     const assessment = await this.repo
       .createQueryBuilder("assessment")
@@ -376,9 +378,15 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
-
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     assessment.noaApprovalStatus = AssessmentStatus.completed;
     assessment.application.applicationStatus = ApplicationStatus.enrollment;
+    // Populate the audit fields.
+    assessment.application.modifier = auditUser;
+    assessment.application.updatedAt = now;
+    assessment.modifier = auditUser;
+    assessment.updatedAt = now;
     return this.repo.save(assessment);
   }
 

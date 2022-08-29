@@ -37,7 +37,6 @@ import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { MSFAANumberService } from "../msfaa-number/msfaa-number.service";
 import {
   CustomNamedError,
-  getUTCNow,
   dateDifference,
   COE_WINDOW,
   PIR_DENIED_REASON_OTHER_ID,
@@ -194,6 +193,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         associatedFiles,
       );
       application.modifier = auditUser;
+      application.updatedAt = now;
       application.studentAssessments = [originalAssessment];
       application.currentAssessment = originalAssessment;
 
@@ -309,6 +309,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * otherwise the draft will be created. The validations are also
    * applied accordingly to update/create scenarios.
    * @param studentId student id.
+   * @param auditUserId user who is making the changes.
    * @param programYearId program year associated with the application draft.
    * @param applicationData dynamic data received from Form.IO form.
    * @param associatedFiles associated uploaded files.
@@ -317,6 +318,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   async saveDraftApplication(
     studentId: number,
+    auditUserId: number,
     programYearId: number,
     applicationData: ApplicationData,
     associatedFiles: string[],
@@ -352,6 +354,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "The application is already saved under a different program year.",
       );
     }
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     // If there is no draft application, create one
     // and initialize the necessary data.
     if (!draftApplication) {
@@ -359,7 +363,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
       draftApplication.student = { id: studentId } as Student;
       draftApplication.programYear = { id: programYearId } as ProgramYear;
       draftApplication.applicationStatus = ApplicationStatus.draft;
-      draftApplication.applicationStatusUpdatedOn = getUTCNow();
+      draftApplication.applicationStatusUpdatedOn = now;
+      draftApplication.creator = auditUser;
+      draftApplication.createdAt = now;
+    } else {
+      draftApplication.modifier = auditUser;
     }
 
     // Below data must be always updated.
@@ -719,12 +727,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
         );
       }
       const auditUser = { id: auditUserId } as User;
+      const now = new Date();
       application.currentAssessment.offering = {
         id: offeringId,
       } as EducationProgramOffering;
       application.currentAssessment.modifier = auditUser;
+      application.currentAssessment.updatedAt = now;
       application.pirStatus = ProgramInfoStatus.completed;
       application.modifier = auditUser;
+      application.updatedAt = now;
       await this.studentRestrictionService.assessSINRestrictionForOfferingId(
         application.student.id,
         offeringId,
@@ -908,12 +919,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * The final statuses of an application are Completed, Overwritten and Cancelled.
    * @param applicationId application id.
    * @param applicationStatus application status that need to be updated.
+   * @param auditUserId user who is making the changes.
    * @returns student Application UpdateResult.
    */
   async updateApplicationStatus(
     applicationId: number,
     applicationStatus: ApplicationStatus,
+    auditUserId: number,
   ): Promise<UpdateResult> {
+    const now = new Date();
     return this.repo.update(
       {
         id: applicationId,
@@ -927,7 +941,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       {
         applicationStatus: applicationStatus,
-        applicationStatusUpdatedOn: getUTCNow(),
+        applicationStatusUpdatedOn: now,
+        modifier: { id: auditUserId } as User,
+        updatedAt: now,
       },
     );
   }
@@ -962,6 +978,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationId application id to be updated.
    * @param locationId location that is setting the offering.
    * @param pirDeniedReasonId Denied reason id for a student application.
+   * @param auditUserId user who is making the changes.
    * @param otherReasonDesc when other is selected as a PIR denied reason, text for the reason
    * is populated.
    * @returns updated application.
@@ -970,6 +987,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     locationId: number,
     pirDeniedReasonId: number,
+    auditUserId: number,
     otherReasonDesc?: string,
   ): Promise<Application> {
     const application = await this.repo
@@ -1004,6 +1022,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
     application.pirDeniedOtherDesc = otherReasonDesc;
     application.pirStatus = ProgramInfoStatus.declined;
+    application.modifier = { id: auditUserId } as User;
     return this.repo.save(application);
   }
 

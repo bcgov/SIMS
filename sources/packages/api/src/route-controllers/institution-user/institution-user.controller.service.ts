@@ -370,6 +370,7 @@ export class InstitutionUserControllerService {
     await this.userService.updateUserStatus(
       institutionUser.user.id,
       payload.isActive,
+      auditUserId,
     );
   }
 }

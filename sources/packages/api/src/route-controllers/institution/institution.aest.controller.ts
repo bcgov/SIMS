@@ -126,13 +126,18 @@ export class InstitutionAESTController extends BaseController {
   async updateInstitution(
     @Param("institutionId") institutionId: number,
     @Body() payload: InstitutionProfileAPIInDTO,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
     const institution =
       this.institutionService.getBasicInstitutionDetailById(institutionId);
     if (!institution) {
       throw new NotFoundException("Institution not found.");
     }
-    await this.institutionService.updateInstitution(institutionId, payload);
+    await this.institutionService.updateInstitution(
+      institutionId,
+      userToken.userId,
+      payload,
+    );
   }
 
   /**
