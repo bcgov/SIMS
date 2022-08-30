@@ -6,13 +6,15 @@ import { profileData } from "../../../data/dev/institution-data/institutionProfi
 describe("Institution Profile", () => {
   const dashboardInstitutionObject = new DashboardInstitutionObject();
   const institutionObject = new InstitutionProfileObject();
-  const institutionCustomCommand = new InstitutionCustomCommand();
+  const iCC = new InstitutionCustomCommand();
 
-  const url = Cypress.env("institutionURL");
+  const LOGIN_URL = Cypress.env("TEST").BASE_URL + "/institution/login";
+  const UNAME = Cypress.env("TEST").UNAME_1;
+  const PASS = Cypress.env("TEST").PASS_1;
 
   beforeEach(() => {
-    cy.visit(url);
-    institutionCustomCommand.loginInstitution();
+    cy.visit(LOGIN_URL);
+    iCC.loginWithCredentials(UNAME,PASS);
   });
 
   it("Verify that user redirect to institution profile page", () => {

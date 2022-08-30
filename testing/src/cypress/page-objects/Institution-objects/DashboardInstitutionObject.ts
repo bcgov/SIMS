@@ -1,4 +1,20 @@
 export default class DashboardInstitutionObject {
+  dashboardWelcomeMessage() {
+    return cy.contains("Welcome to your institution account!");
+  }
+
+  dashboardStartMessage() {
+    return cy.contains("Let's get started");
+  }
+
+  dashboardHelpMessage() {
+    return cy.contains("Need help?");
+  }
+
+  helpCenter() {
+    return cy.contains("Help Centre");
+  }
+
   loginWithBCEID() {
     return cy.contains("Login with BCeID");
   }
@@ -55,31 +71,19 @@ export default class DashboardInstitutionObject {
     return cy.contains("PROFILE");
   }
 
-  profileIconButton() {
-    return cy.get(".mdi-account");
+  iconButton() {
+    return cy.get(".fa-user");
   }
 
-  logOffButton() {
-    return cy.contains("Log off");
-  }
-
-  confirmationEnrollmentText() {
-    return cy.contains("Confirm enrollment ");
-  }
-
-  confirmationEnrollmentVerifyText() {
-    return cy.contains("Available to confirm enrollment");
-  }
-
-  upcomingEnrollmentText() {
-    return cy.contains("Upcoming enrollment");
-  }
-
-  upcomingEnrollmentVerifyText() {
-    return cy.contains("Upcoming enrollment");
+  logOutButton() {
+    return cy.contains("Log Out");
   }
 
   locationVerifyText() {
     return cy.contains("Location Summary");
+  }
+
+  locationButton() {
+    return cy.get(".v-list-group div:first");
   }
 }

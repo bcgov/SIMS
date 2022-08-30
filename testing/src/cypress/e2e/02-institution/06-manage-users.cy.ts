@@ -7,11 +7,13 @@ describe("Manage Users", () => {
   const manageUsersObject = new ManageUsersObject();
   const institutionCustomCommand = new InstitutionCustomCommand();
 
-  const url = Cypress.env("institutionURL");
+  const LOGIN_URL = Cypress.env("TEST").BASE_URL + "/institution/login";
+  const UNAME = Cypress.env("TEST").UNAME_1;
+  const PASS = Cypress.env("TEST").PASS_1;
 
   beforeEach(() => {
-    cy.visit(url);
-    institutionCustomCommand.loginInstitution();
+    cy.visit(LOGIN_URL);
+    institutionCustomCommand.loginWithCredentials(UNAME, PASS);
   });
 
   it("Verify that user redirect to institution manage user summary page", () => {
