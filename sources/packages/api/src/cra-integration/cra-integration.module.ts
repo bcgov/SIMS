@@ -21,6 +21,7 @@ import {
   GCNotifyActionsService,
   StudentRestrictionService,
   RestrictionService,
+  EducationProgramOfferingService,
 } from "../services";
 
 @Module({
@@ -46,6 +47,7 @@ import {
     GCNotifyActionsService,
     RestrictionService,
     StudentRestrictionService,
+    EducationProgramOfferingService,
   ],
   exports: [
     CRAPersonalVerificationService,

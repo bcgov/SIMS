@@ -16,7 +16,7 @@ export function useFormioComponentLoader() {
     fieldId: string,
   ) => {
     const valueToBeLoaded =
-      await EducationProgramOfferingService.shared.getProgramOfferingDetails(
+      await EducationProgramOfferingService.shared.getProgramOfferingStartDate(
         offeringId,
       );
     formioUtils.setComponentValue(

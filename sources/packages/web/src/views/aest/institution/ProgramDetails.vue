@@ -10,14 +10,24 @@
     >
       <template #buttons>
         <v-row class="p-0 m-0" v-if="isPendingProgram">
-          <v-btn
-            variant="outlined"
-            color="primary"
-            class="mr-2"
-            @click="declineProgram"
-            >Decline</v-btn
-          >
-          <v-btn color="primary" @click="approveProgram">Approve program</v-btn>
+          <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
+            <template #="{ notAllowed }">
+              <v-btn
+                variant="outlined"
+                color="primary"
+                class="mr-2"
+                @click="declineProgram"
+                :disabled="notAllowed"
+                >Decline</v-btn
+              >
+              <v-btn
+                color="primary"
+                @click="approveProgram"
+                :disabled="notAllowed"
+                >Approve program</v-btn
+              >
+            </template>
+          </check-permission-role>
         </v-row>
       </template>
     </header-navigator>
@@ -38,7 +48,7 @@
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
 import { ref, onMounted, computed } from "vue";
-import { ProgramStatus } from "@/types";
+import { ProgramStatus, Role } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
@@ -48,12 +58,14 @@ import {
   DeclineProgramAPIInDTO,
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     ManageProgramAndOfferingSummary,
     ApproveProgramModal,
     DeclineProgramModal,
+    CheckPermissionRole,
   },
   props: {
     programId: {
@@ -142,6 +154,7 @@ export default {
       approveProgram,
       declineProgramModal,
       declineProgram,
+      Role,
     };
   },
 };

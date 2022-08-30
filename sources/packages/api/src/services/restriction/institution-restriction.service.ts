@@ -11,10 +11,6 @@ import {
   NoteType,
   Institution,
 } from "../../database/entities";
-import {
-  AssignRestrictionDTO,
-  ResolveRestrictionDTO,
-} from "../../route-controllers/restriction/models/restriction.dto";
 import { CustomNamedError } from "../../utilities";
 
 /**
@@ -98,23 +94,25 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
    * Add provincial restriction to institution.
    * @param institutionId
    * @param userId
-   * @param assignRestrictionDTO
+   * @param restrictionId
+   * @param noteDescription
    * @returns persisted institution restriction.
    */
   async addProvincialRestriction(
     institutionId: number,
     userId: number,
-    assignRestrictionDTO: AssignRestrictionDTO,
+    restrictionId: number,
+    noteDescription: string,
   ): Promise<InstitutionRestriction> {
     const institutionRestriction = new InstitutionRestriction();
     institutionRestriction.institution = { id: institutionId } as Institution;
     institutionRestriction.restriction = {
-      id: assignRestrictionDTO.restrictionId,
+      id: restrictionId,
     } as Restriction;
     institutionRestriction.creator = { id: userId } as User;
-    if (assignRestrictionDTO.noteDescription) {
+    if (noteDescription) {
       institutionRestriction.restrictionNote = {
-        description: assignRestrictionDTO.noteDescription,
+        description: noteDescription,
         noteType: NoteType.Restriction,
         creator: {
           id: institutionRestriction.creator.id,
@@ -129,14 +127,14 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
    * @param institutionId
    * @param institutionRestrictionId
    * @param userId
-   * @param resolveRestrictionDTO
+   * @param noteDescription
    * @returns resolved institution restriction.
    */
   async resolveProvincialRestriction(
     institutionId: number,
     institutionRestrictionId: number,
     userId: number,
-    resolveRestrictionDTO: ResolveRestrictionDTO,
+    noteDescription: string,
   ): Promise<InstitutionRestriction> {
     const institutionRestrictionEntity = await this.repo.findOne({
       where: {
@@ -154,14 +152,17 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       );
     }
 
+    const now = new Date();
     institutionRestrictionEntity.isActive = false;
     institutionRestrictionEntity.modifier = { id: userId } as User;
+    institutionRestrictionEntity.updatedAt = now;
     institutionRestrictionEntity.resolutionNote = {
-      description: resolveRestrictionDTO.noteDescription,
+      description: noteDescription,
       noteType: NoteType.Restriction,
       creator: {
         id: institutionRestrictionEntity.modifier.id,
       } as User,
+      createdAt: now,
     } as Note;
     return this.repo.save(institutionRestrictionEntity);
   }

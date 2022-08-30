@@ -3,11 +3,10 @@ html * {
   font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif, "primeicons";
   font-style: $font-style-normal;
   line-height: 20px;
-  letter-spacing: 0px;
 }
-
+// todo: when all v-navigation-drawer is updated, remove this class.
 .body-background {
-  background: #f2f2f2;
+  background: $color-background;
 }
 
 .bold-text {
@@ -128,9 +127,9 @@ html * {
 }
 
 .label-bold {
-  font-size: $font-size-content;
-  line-height: $line-height-header-sm;
-  font-weight: $font-weight-bold;
+  font-size: $font-size-content !important;
+  line-height: $line-height-header-sm !important;
+  font-weight: $font-weight-bold !important;
 }
 
 // normal label bold
@@ -155,6 +154,11 @@ html * {
   font-size: $font-size-content;
   line-height: $line-height-header-sm;
   font-weight: $font-style-normal;
+}
+
+// Navigation bar labels.
+.nav-item-label:not(.label-bold) {
+  @extend .label-value;
 }
 
 // normal value bold
@@ -196,4 +200,41 @@ html * {
 
 .warning-chip-background {
   background-color: $banner-background-warning !important;
+}
+
+// Active class for nav bar.
+.navigation-btn .active-btn {
+  color: $brand-blue !important;
+  background-color: $color-white !important;
+}
+
+// Btn toggle groups for nav bar adjustment.
+.navigation-btn.v-btn-group {
+  min-width: inherit;
+  overflow: inherit;
+}
+
+// Active sidebar class to match with Figma.
+.active-sidebar-item.v-list-item--active > .v-list-item__overlay {
+  opacity: 0 !important;
+}
+
+// Active sidebar class to match with Figma.
+.active-sidebar-item .v-list-item-title {
+  @extend .label-bold;
+}
+
+// Sidebar class to match with Figma.
+.sidebar-item .v-list-item-title {
+  @extend .nav-item-label;
+}
+
+.nav-subtitle {
+  text-transform: uppercase;
+  letter-spacing: 3px !important;
+}
+
+// This class will restrict the container with max-width.
+.container-max-width {
+  max-width: 730px !important;
 }

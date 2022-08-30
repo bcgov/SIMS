@@ -121,6 +121,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
     // Assign attributes for update from payload only if existing program has no offering(s).
     if (!hasExistingOffering) {
+      program.fieldOfStudyCode = educationProgram.fieldOfStudyCode;
       program.credentialType = educationProgram.credentialType;
       program.cipCode = educationProgram.cipCode;
       program.nocCode = educationProgram.nocCode;
@@ -171,11 +172,14 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.name = educationProgram.name;
     program.description = educationProgram.description;
     const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     if (!programId) {
       // Institution should never be updated after creation.
       program.institution = { id: institutionId } as Institution;
       program.submittedBy = auditUser;
+      program.submittedDate = now;
       program.creator = auditUser;
+      program.createdAt = now;
     } else {
       program.modifier = auditUser;
     }
@@ -485,7 +489,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param approvalNote approval note.
    * @param institutionId institution id.
    * @param programId program id.
-   * @param userId user id.
+   * @param userId user who is making the changes.
    */
   async approveEducationProgram(
     effectiveEndDate: Date,
@@ -494,14 +498,15 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     programId: number,
     userId: number,
   ): Promise<void> {
+    const auditUser = { id: userId } as User;
+    const now = new Date();
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       // create Note
       const notes = new Note();
       notes.description = approvalNote;
       notes.noteType = NoteType.Program;
-      notes.creator = {
-        id: userId,
-      } as User;
+      notes.creator = auditUser;
+      notes.createdAt = now;
       const noteObj = await transactionalEntityManager
         .getRepository(Note)
         .save(notes);
@@ -510,9 +515,11 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       const program = new EducationProgram();
       program.id = programId;
       program.programStatus = ProgramStatus.Approved;
-      program.assessedDate = new Date();
+      program.assessedDate = now;
       program.effectiveEndDate = effectiveEndDate;
-      program.assessedBy = { id: userId } as User;
+      program.assessedBy = auditUser;
+      program.modifier = auditUser;
+      program.updatedAt = now;
       program.programNote = noteObj;
 
       await transactionalEntityManager
@@ -547,12 +554,14 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     auditUserId: number,
   ): Promise<void> {
     const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       // create Note
       const notes = new Note();
       notes.description = declinedNote;
       notes.noteType = NoteType.Program;
       notes.creator = auditUser;
+      notes.createdAt = now;
       const noteObj = await transactionalEntityManager
         .getRepository(Note)
         .save(notes);
@@ -561,8 +570,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       const program = new EducationProgram();
       program.id = programId;
       program.programStatus = ProgramStatus.Declined;
-      program.assessedDate = new Date();
+      program.assessedDate = now;
       program.assessedBy = auditUser;
+      program.modifier = auditUser;
+      program.updatedAt = now;
       program.programNote = noteObj;
       await transactionalEntityManager
         .getRepository(EducationProgram)

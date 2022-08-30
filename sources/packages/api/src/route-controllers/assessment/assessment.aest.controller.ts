@@ -6,6 +6,8 @@ import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   ApplicationExceptionService,
+  ApplicationService,
+  EducationProgramOfferingService,
   StudentAppealService,
   StudentAssessmentService,
   StudentScholasticStandingsService,
@@ -39,6 +41,8 @@ export class AssessmentAESTController extends BaseController {
     private readonly assessmentControllerService: AssessmentControllerService,
     private readonly applicationExceptionService: ApplicationExceptionService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
+    private readonly applicationService: ApplicationService,
+    private readonly educationProgramOfferingService: EducationProgramOfferingService,
   ) {
     super();
   }
@@ -55,8 +59,23 @@ export class AssessmentAESTController extends BaseController {
    */
   @Get("application/:applicationId/requests")
   async getRequestedAssessmentSummary(
-    @Param("applicationId") applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
+    const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
+    const offeringChange =
+      await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
+        applicationId,
+      );
+    if (offeringChange) {
+      requestAssessmentSummary.push({
+        id: offeringChange.id,
+        submittedDate: offeringChange.submittedDate,
+        status: offeringChange.offeringStatus,
+        requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
+        programId: offeringChange.educationProgram.id,
+      });
+    }
+
     const applicationExceptions =
       await this.applicationExceptionService.getExceptionsByApplicationId(
         applicationId,
@@ -65,22 +84,26 @@ export class AssessmentAESTController extends BaseController {
       );
 
     if (applicationExceptions.length > 0) {
-      return applicationExceptions.map((applicationException) => ({
-        id: applicationException.id,
-        submittedDate: applicationException.createdAt,
-        status: applicationException.exceptionStatus,
-        requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
-      }));
+      const applicationExceptionArray: RequestAssessmentSummaryAPIOutDTO[] =
+        applicationExceptions.map((applicationException) => ({
+          id: applicationException.id,
+          submittedDate: applicationException.createdAt,
+          status: applicationException.exceptionStatus,
+          requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
+        }));
+      return requestAssessmentSummary.concat(applicationExceptionArray);
     }
 
     const studentAppeal =
       await this.studentAppealService.getPendingAndDeniedAppeals(applicationId);
-    return studentAppeal.map((appeals) => ({
-      id: appeals.id,
-      submittedDate: appeals.submittedDate,
-      status: appeals.status,
-      requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
-    }));
+    const studentAppealArray: RequestAssessmentSummaryAPIOutDTO[] =
+      studentAppeal.map((appeals) => ({
+        id: appeals.id,
+        submittedDate: appeals.submittedDate,
+        status: appeals.status,
+        requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
+      }));
+    return requestAssessmentSummary.concat(studentAppealArray);
   }
 
   /**
@@ -109,6 +132,8 @@ export class AssessmentAESTController extends BaseController {
         triggerType: assessment.triggerType,
         assessmentDate: assessment.assessmentDate,
         status: assessment.status,
+        offeringId: assessment.offering.id,
+        programId: assessment.offering.educationProgram.id,
         studentAppealId: assessment.studentAppeal?.id,
         applicationExceptionId: assessment.application.applicationException?.id,
         studentScholasticStandingId: assessment.studentScholasticStanding?.id,

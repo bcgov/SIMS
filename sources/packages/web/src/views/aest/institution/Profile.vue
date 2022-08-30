@@ -3,14 +3,19 @@
     <div class="mx-5 py-4">
       <body-header title="Profile" class="m-1">
         <template #actions>
-          <v-btn
-            class="float-right"
-            @click="editProfile"
-            variant="text"
-            color="primary"
-            prepend-icon="fa:fa fa-gear"
-            >Edit
-          </v-btn>
+          <check-permission-role :role="Role.InstitutionEditProfile">
+            <template #="{ notAllowed }">
+              <v-btn
+                class="float-right"
+                @click="editProfile"
+                variant="text"
+                color="primary"
+                prepend-icon="fa:fa fa-gear"
+                :disabled="notAllowed"
+                >Edit
+              </v-btn>
+            </template>
+          </check-permission-role>
         </template>
       </body-header>
       <content-group>
@@ -114,8 +119,11 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { Role } from "@/types";
+
 export default {
-  components: { TitleValue },
+  components: { TitleValue, CheckPermissionRole },
   props: {
     institutionId: {
       type: Number,
@@ -139,6 +147,7 @@ export default {
     return {
       institutionProfileDetail,
       editProfile,
+      Role,
     };
   },
 };

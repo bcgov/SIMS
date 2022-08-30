@@ -48,6 +48,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
    * for the record to be update.
    * @param supportingUserType type of the user to search
    * to have the supporting information updated.
+   * @param auditUserId user who is making the changes.
    * @param updateInfo information that must be updated
    * altogether when a supporting user is providing
    * the supporting data for a Student Application.
@@ -61,6 +62,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
   async updateSupportingUser(
     applicationId: number,
     supportingUserType: SupportingUserType,
+    auditUserId: number,
     updateInfo: UpdateSupportingUserInfo,
   ): Promise<SupportingUser> {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -111,6 +113,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       userToUpdate.gender = updateInfo.gender;
       userToUpdate.supportingData = updateInfo.supportingData;
       userToUpdate.user = { id: updateInfo.userId } as User;
+      userToUpdate.modifier = { id: auditUserId } as User;
       const updatedUser = await transactionRepo.save(userToUpdate);
       await queryRunner.commitTransaction();
       return updatedUser;

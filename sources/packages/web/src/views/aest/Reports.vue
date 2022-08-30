@@ -9,8 +9,14 @@
       @loaded="formLoaded"
       @submitted="exportReport"
     ></formio>
-    <v-row class="justify-center m-4"
-      ><v-btn color="primary" @click="submitForm">Export CSV file</v-btn></v-row
+    <v-row class="justify-center m-4">
+      <check-permission-role :role="Role.AESTReports">
+        <template #="{ notAllowed }">
+          <v-btn color="primary" @click="submitForm" :disabled="notAllowed"
+            >Export CSV file</v-btn
+          >
+        </template>
+      </check-permission-role></v-row
     >
   </full-page-container>
 </template>
@@ -18,9 +24,13 @@
 <script lang="ts">
 import { ReportsFilterAPIInDTO } from "@/services/http/dto";
 import { useSnackBar, useFileUtils } from "@/composables";
-import { FormIOForm } from "@/types";
+import { FormIOForm, Role } from "@/types";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
+  components: {
+    CheckPermissionRole,
+  },
   setup() {
     const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
@@ -41,7 +51,7 @@ export default {
         snackBar.error("Unexpected error while downloading the report.");
       }
     };
-    return { exportReport, formLoaded, submitForm };
+    return { exportReport, formLoaded, submitForm, Role };
   },
 };
 </script>

@@ -114,6 +114,7 @@ export class InstitutionInstitutionsController extends BaseController {
   ): Promise<void> {
     await this.institutionService.updateInstitution(
       userToken.authorizations.institutionId,
+      userToken.userId,
       payload,
     );
   }

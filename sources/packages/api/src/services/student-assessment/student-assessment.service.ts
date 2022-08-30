@@ -6,7 +6,6 @@ import {
   AssessmentStatus,
   AssessmentTriggerType,
   EducationProgram,
-  EducationProgramOffering,
   InstitutionLocation,
   ProgramInfoStatus,
   StudentAppealStatus,
@@ -15,7 +14,7 @@ import {
 } from "../../database/entities";
 import { Brackets, DataSource, IsNull, UpdateResult } from "typeorm";
 import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
-import { StudentRestrictionService, WorkflowActionsService } from "..";
+import { WorkflowActionsService } from "..";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -32,9 +31,8 @@ import {
 @Injectable()
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
   constructor(
-    private readonly dataSource: DataSource,
+    dataSource: DataSource,
     private readonly workflow: WorkflowActionsService,
-    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super(dataSource.getRepository(StudentAssessment));
   }
@@ -191,10 +189,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param status status of the program information request.
 
    * @param programId program id related to the application.
-   * When the application do not have an offering, this is used
-   * to determine the associated program.
-   * @param offeringId offering id, when available, otherwise
-   * a PIR request need happen to an offering id be provided.
+   * When the application is required for PIR this program is used to assign
+   * offering on PIR confirmation.
    * @returns program info update result.
    */
   async updateProgramInfo(
@@ -203,50 +199,31 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     locationId: number,
     status: ProgramInfoStatus,
     programId?: number,
-    offeringId?: number,
   ): Promise<StudentAssessment> {
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
-      const assessmentRepo =
-        transactionalEntityManager.getRepository(StudentAssessment);
-      const assessment = await assessmentRepo
-        .createQueryBuilder("assessment")
-        .select(["assessment.id", "application.id", "student.id"])
-        .innerJoin("assessment.application", "application")
-        .innerJoin("application.student", "student")
-        .where("assessment.id = :assessmentId", { assessmentId })
-        .getOne();
+    const assessment = await this.repo
+      .createQueryBuilder("assessment")
+      .select(["assessment.id", "application.id", "student.id"])
+      .innerJoin("assessment.application", "application")
+      .innerJoin("application.student", "student")
+      .where("assessment.id = :assessmentId", { assessmentId })
+      .getOne();
 
-      if (!assessment) {
-        throw new CustomNamedError(
-          `Not able to find the assessment id ${assessmentId}`,
-          ASSESSMENT_NOT_FOUND,
-        );
-      }
+    if (!assessment) {
+      throw new CustomNamedError(
+        `Not able to find the assessment id ${assessmentId}`,
+        ASSESSMENT_NOT_FOUND,
+      );
+    }
+    const auditUser = { id: auditUserId } as User;
+    assessment.application.location = {
+      id: locationId,
+    } as InstitutionLocation;
+    assessment.application.pirProgram = { id: programId } as EducationProgram;
+    assessment.application.pirStatus = status;
+    assessment.application.modifier = auditUser;
+    assessment.modifier = auditUser;
 
-      const auditUser = { id: auditUserId } as User;
-      assessment.application.location = {
-        id: locationId,
-      } as InstitutionLocation;
-      assessment.application.pirProgram = { id: programId } as EducationProgram;
-      assessment.application.pirStatus = status;
-      assessment.application.modifier = auditUser;
-      assessment.modifier = auditUser;
-      assessment.offering = {
-        id: offeringId,
-      } as EducationProgramOffering;
-
-      // If the offering will be set in the assessment check for possible SIN restrictions.
-      if (offeringId) {
-        await this.studentRestrictionService.assessSINRestrictionForOfferingId(
-          assessment.application.student.id,
-          offeringId,
-          assessment.application.id,
-          auditUserId,
-          transactionalEntityManager,
-        );
-      }
-      return assessmentRepo.save(assessment);
-    });
+    return this.repo.save(assessment);
   }
 
   /**
@@ -365,11 +342,13 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * the student is confirming the NOA (Notice of Assessment).
    * @param assessmentId assessment id to be updated.
    * @param studentId student confirming the NOA.
+   * @param auditUserId user who is making the changes.
    * @returns updated record.
    */
   async studentConfirmAssessment(
     assessmentId: number,
     studentId: number,
+    auditUserId: number,
   ): Promise<StudentAssessment> {
     const assessment = await this.repo
       .createQueryBuilder("assessment")
@@ -399,9 +378,15 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
-
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     assessment.noaApprovalStatus = AssessmentStatus.completed;
     assessment.application.applicationStatus = ApplicationStatus.enrollment;
+    // Populate the audit fields.
+    assessment.application.modifier = auditUser;
+    assessment.application.updatedAt = now;
+    assessment.modifier = auditUser;
+    assessment.updatedAt = now;
     return this.repo.save(assessment);
   }
 
@@ -431,6 +416,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "assessment.submittedDate",
         "assessment.triggerType",
         "assessment.assessmentDate",
+        "offering.id",
+        "educationProgram.id",
         "studentAppeal.id",
         "studentScholasticStanding.id",
         "application.id",
@@ -457,6 +444,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         END`,
         "status",
       )
+      .innerJoin("assessment.offering", "offering")
+      .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("assessment.application", "application")
       .leftJoin("assessment.studentAppeal", "studentAppeal")
       .leftJoin(

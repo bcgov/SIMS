@@ -23,6 +23,7 @@ import {
   DisbursementValue,
   OfferingIntensity,
   StudentAssessment,
+  User,
 } from "../../database/entities";
 import {
   Disbursement,
@@ -200,7 +201,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "offering.studyStartDate",
         "offering.studyEndDate",
         "offering.yearOfStudy",
-        "educationProgram.cipCode",
+        "educationProgram.fieldOfStudyCode",
         "educationProgram.completionYears",
         "user.firstName",
         "user.lastName",
@@ -326,6 +327,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     tuitionRemittanceRequestedAmount: number,
   ): Promise<void> {
     const documentNumber = await this.getNextDocumentNumber();
+    const auditUser = { id: userId } as User;
+    const now = new Date();
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager
         .getRepository(DisbursementSchedule)
@@ -334,8 +337,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         .set({
           documentNumber: documentNumber,
           coeStatus: COEStatus.completed,
-          coeUpdatedBy: { id: userId },
-          coeUpdatedAt: new Date(),
+          coeUpdatedBy: auditUser,
+          coeUpdatedAt: now,
+          modifier: auditUser,
+          updatedAt: now,
           tuitionRemittanceRequestedAmount: tuitionRemittanceRequestedAmount,
         })
         .where("id = :disbursementScheduleId", { disbursementScheduleId })
@@ -346,7 +351,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           .getRepository(Application)
           .createQueryBuilder()
           .update(Application)
-          .set({ applicationStatus: ApplicationStatus.completed })
+          .set({
+            applicationStatus: ApplicationStatus.completed,
+            modifier: auditUser,
+            updatedAt: now,
+          })
           .where("id = :applicationId", { applicationId })
           .execute();
       }
@@ -563,18 +572,22 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     coeDeniedReasonId: number,
     otherReasonDesc: string,
   ): Promise<UpdateResult> {
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     const updateResult = await this.repo
       .createQueryBuilder()
       .update(DisbursementSchedule)
       .set({
         coeStatus: COEStatus.declined,
-        coeUpdatedBy: { id: auditUserId },
-        coeUpdatedAt: new Date(),
+        coeUpdatedBy: auditUser,
+        coeUpdatedAt: now,
         coeDeniedReason: { id: coeDeniedReasonId },
         coeDeniedOtherDesc:
           coeDeniedReasonId === COE_DENIED_REASON_OTHER_ID
             ? otherReasonDesc
             : null,
+        modifier: auditUser,
+        updatedAt: now,
       })
       .where("id = :disbursementScheduleId", { disbursementScheduleId })
       .andWhere("coeStatus = :required", { required: COEStatus.required })

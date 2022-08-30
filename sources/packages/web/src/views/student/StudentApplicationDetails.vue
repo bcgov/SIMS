@@ -21,9 +21,9 @@
             <v-list>
               <template v-for="(item, index) in items" :key="index">
                 <v-list-item :value="index">
-                  <v-list-item-icon class="mr-6" :class="item.textColor">
-                    {{ item.icon }}
-                  </v-list-item-icon>
+                  <template v-slot:prepend>
+                    <v-icon :icon="item.icon"></v-icon>
+                  </template>
                   <v-list-item-title
                     @click="item.command"
                     :class="item.textColor"
@@ -62,7 +62,9 @@
         </p>
         <span class="mt-4"
           >This application was cancelled on
-          {{ dateString(applicationDetails.applicationStatusUpdatedOn) }}.
+          {{
+            dateOnlyLongString(applicationDetails.applicationStatusUpdatedOn)
+          }}.
           <a class="text-primary" @click="viewApplication">
             View application
           </a>
@@ -103,7 +105,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const items = ref([] as MenuType[]);
-    const { dateString } = useFormatters();
+    const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
@@ -230,7 +232,7 @@ export default {
       showModal,
       applicationDetails,
       getApplicationDetails,
-      dateString,
+      dateOnlyLongString,
       ApplicationStatus,
       showViewAssessment,
       editApplicationModal,

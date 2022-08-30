@@ -4,10 +4,8 @@ import { AppService } from "./app.service";
 import { DatabaseModule } from "./database/database.module";
 import { RouterModule } from "@nestjs/core";
 import {
-  StudentService,
   UserService,
   ConfigService,
-  InstitutionService,
   ApplicationService,
   BCeIDServiceProvider,
   InstitutionUserAuthService,
@@ -17,7 +15,6 @@ import {
   WorkflowService,
   FormService,
   InstitutionLocationService,
-  ATBCService,
   StudentFileService,
   ProgramYearService,
   SequenceControlService,
@@ -25,20 +22,17 @@ import {
   MSFAANumberService,
   StudentRestrictionService,
   RestrictionService,
-  InstitutionRestrictionService,
   DesignationAgreementLocationService,
   GCNotifyService,
   GCNotifyActionsService,
+  StudentService,
+  SFASIndividualService,
 } from "./services";
 import {
   UserController,
   ProgramYearController,
   ConfigController,
   DynamicFormController,
-  EducationProgramOfferingController,
-  ATBCController,
-  NotesController,
-  RestrictionController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -111,8 +105,6 @@ import { EducationProgramOfferingBulkService } from "./services/education-progra
   providers: [
     AppService,
     UserService,
-    StudentService,
-    InstitutionService,
     ConfigService,
     BCeIDServiceProvider,
     WorkflowService,
@@ -123,7 +115,6 @@ import { EducationProgramOfferingBulkService } from "./services/education-progra
     InstitutionUserAuthService,
     EducationProgramService,
     EducationProgramOfferingService,
-    ATBCService,
     StudentFileService,
     ProgramYearService,
     SequenceControlService,
@@ -131,11 +122,9 @@ import { EducationProgramOfferingBulkService } from "./services/education-progra
     MSFAANumberService,
     StudentRestrictionService,
     RestrictionService,
-    InstitutionRestrictionService,
     DesignationAgreementLocationService,
     GCNotifyService,
     GCNotifyActionsService,
-    EducationProgramOfferingBulkService,
   ],
 })
 export class AppModule {}

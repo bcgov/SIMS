@@ -52,6 +52,7 @@ export interface EducationProgramAPIOutDTO {
   assessedDate?: Date;
   assessedBy?: string;
   effectiveEndDate?: string;
+  fieldOfStudyCode: number;
 }
 
 /**

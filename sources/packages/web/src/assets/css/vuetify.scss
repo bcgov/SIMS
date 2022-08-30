@@ -1,4 +1,4 @@
-@import "./global-style-variables.scss";
+@import "./base.scss";
 
 .v-btn {
   text-transform: none !important;
@@ -143,4 +143,9 @@
 // Changed the style to match with Figma.
 .v-btn--variant-outlined {
   background-color: white !important;
+}
+
+// Todo : v-field label adjustment.Remove below style if its fixed in vuetify3.
+.v-field {
+  overflow: inherit !important;
 }

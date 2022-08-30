@@ -1,10 +1,7 @@
 <template>
   <full-page-container>
     <template #header>
-      <header-navigator
-        :title="locationDetails?.locationName"
-        subTitle="Programs"
-      />
+      <header-navigator :title="locationName" subTitle="Programs" />
     </template>
     <body-header title="All programs" :recordsCount="programAndCount.count">
       <template #actions>
@@ -100,8 +97,9 @@ import {
   EducationProgramsSummary,
   PaginatedResults,
 } from "@/types";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
+import { useInstitutionState } from "@/composables";
 
 export default {
   components: { StatusChipProgram },
@@ -112,6 +110,7 @@ export default {
     },
   },
   setup(props: any) {
+    const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const programAndCount = ref(
       {} as PaginatedResults<EducationProgramsSummary>,
@@ -121,6 +120,10 @@ export default {
     const searchBox = ref("");
     const currentPage = ref();
     const currentPageLimit = ref();
+
+    const locationName = computed(() => {
+      return getLocationName(parseInt(props.locationId));
+    });
 
     /**
      * function to load program list and count for institution
@@ -216,6 +219,7 @@ export default {
       loading,
       searchBox,
       ProgramSummaryFields,
+      locationName,
     };
   },
 };

@@ -71,10 +71,12 @@ export class ApplicationSystemAccessController extends BaseController {
   async updateApplicationStatus(
     @Param("id", ParseIntPipe) applicationId: number,
     @Body() payload: UpdateApplicationStatusAPIInDTO,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
     const updateResult = await this.applicationService.updateApplicationStatus(
       applicationId,
       payload.status,
+      userToken.userId,
     );
 
     // Checks if some record was updated.

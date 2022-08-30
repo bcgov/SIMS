@@ -67,7 +67,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * and sims.institution_user_auth.
    * @param institutionId Institution to add the user.
    * @param bceidUserAccount BCeID account to be used to create the user.
-   * @param permissionInfo Permissions informations to be added to the user.
+   * @param permissionInfo Permissions information to be added to the user.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns institution user
    */
@@ -105,12 +105,14 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     userEntity.userName = userName;
     // If an audit user was not provided consider the one that will be created as the audit user.
     const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     // Create new relationship between institution and the new user.
     const newInstitutionUser = new InstitutionUser();
     newInstitutionUser.user = userEntity;
     newInstitutionUser.institution = institution;
     newInstitutionUser.authorizations = [];
     newInstitutionUser.creator = auditUser;
+    newInstitutionUser.createdAt = now;
     // Create the permissions for the user under the institution.
     for (const permission of permissionInfo.permissions) {
       const newAuthorization = new InstitutionUserAuth();
@@ -134,6 +136,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       }
       newAuthorization.authType = authType;
       newAuthorization.creator = auditUser;
+      newAuthorization.createdAt = now;
       newInstitutionUser.authorizations.push(newAuthorization);
     }
 
@@ -175,6 +178,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   ): Promise<Institution> {
     // New user to be associated with the institution. It will also be considered the audit user.
     const user = new User();
+    const now = new Date();
     const institution = this.initializeInstitutionFromFormModel(
       institutionModel,
       user,
@@ -202,10 +206,12 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.businessGuid = account.institution.guid;
     institution.legalOperatingName = account.institution.legalName;
     institution.creator = user;
+    institution.createdAt = now;
     // Institution user that has the association between the institution
     // record and the user record.
     const institutionUser = new InstitutionUser();
     institutionUser.creator = user;
+    institutionUser.createdAt = now;
     institutionUser.user = user;
     institutionUser.institution = institution;
     // Get admin authorization type.
@@ -219,6 +225,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     // Assign the new user with an admin authorization.
     const userAuthorization = new InstitutionUserAuth();
     userAuthorization.creator = user;
+    userAuthorization.createdAt = now;
     userAuthorization.authType = authorizationType;
     userAuthorization.institutionUser = institutionUser;
     // Associates the authorizations.
@@ -709,7 +716,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * Service to get notes for a student.
    * @param institutionId
    * @param noteType
-   * @returns Notes
+   * @returns Notes.
    */
   async getInstitutionNotes(
     institutionId: number,
@@ -742,14 +749,15 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * Service to add note for an Institution.
    * @param institutionId
    * @param note
+   * @returns saved Note.
    */
-  async saveInstitutionNote(institutionId: number, note: Note): Promise<void> {
-    const institution = await this.repo.findOne({
-      where: { id: institutionId },
-      relations: { notes: true },
-    });
-    institution.notes.push(note);
-    await this.repo.save(institution);
+  async saveInstitutionNote(institutionId: number, note: Note): Promise<Note> {
+    await this.repo
+      .createQueryBuilder()
+      .relation(Institution, "notes")
+      .of({ id: institutionId } as Institution)
+      .add(note);
+    return note;
   }
 
   /**
@@ -766,12 +774,14 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   /**
    * Update institution.
-   * @param institutionId
-   * @param updateInstitution
+   * @param institutionId Institution to be updated.
+   * @param auditUserId user who is making the changes.
+   * @param updateInstitution payload to update institution.
    * @returns updated Institution
    */
   async updateInstitution(
     institutionId: number,
+    auditUserId: number,
     updateInstitution: Partial<UpdateInstitution>,
   ): Promise<Institution> {
     const institution = new Institution();
@@ -797,6 +807,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.institutionAddress = {
       mailingAddress: transformAddressDetails(updateInstitution.mailingAddress),
     };
+    institution.modifier = { id: auditUserId } as User;
     return this.repo.save(institution);
   }
 
@@ -849,6 +860,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     }
 
     if (mustUpdate) {
+      institutionUser.modifier = { id: userId } as User;
       await this.institutionUserRepo.save(institutionUser);
     }
   }

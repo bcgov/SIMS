@@ -22,7 +22,6 @@ import {
   WorkflowActionsService,
   COEDeniedReasonService,
   DisbursementScheduleService,
-  StudentAssessmentService,
 } from "../../services";
 import {
   ApplicationStatus,
@@ -31,7 +30,7 @@ import {
 } from "../../database/entities";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
-  dateString,
+  getDateOnlyFormat,
   COE_WINDOW,
   getCOEDeniedReason,
   COE_DENIED_REASON_OTHER_ID,
@@ -83,7 +82,6 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     private readonly applicationService: ApplicationService,
     private readonly workflow: WorkflowActionsService,
     private readonly deniedCOEReasonService: COEDeniedReasonService,
-    private readonly assessmentService: StudentAssessmentService,
   ) {
     super();
   }
@@ -170,8 +168,8 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       applicationProgramDescription: offering.educationProgram.description,
       applicationOfferingName: offering.name,
       applicationOfferingIntensity: offering.offeringIntensity,
-      applicationOfferingStartDate: dateString(offering.studyStartDate),
-      applicationOfferingEndDate: dateString(offering.studyEndDate),
+      applicationOfferingStartDate: getDateOnlyFormat(offering.studyStartDate),
+      applicationOfferingEndDate: getDateOnlyFormat(offering.studyEndDate),
       applicationOfferingHasStudyBreak: offering.lacksStudyBreaks,
       applicationOfferingActualTuition: offering.actualTuitionCosts,
       applicationOfferingProgramRelatedCost: offering.programRelatedCosts,
@@ -194,8 +192,8 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       applicationLocationId: offering.institutionLocation.id,
       applicationDeniedReason: getCOEDeniedReason(disbursementSchedule),
       studyBreaks: offering.studyBreaks?.studyBreaks?.map((studyBreak) => ({
-        breakStartDate: dateString(studyBreak.breakStartDate),
-        breakEndDate: dateString(studyBreak.breakEndDate),
+        breakStartDate: getDateOnlyFormat(studyBreak.breakStartDate),
+        breakEndDate: getDateOnlyFormat(studyBreak.breakEndDate),
       })),
       applicationPIRStatus:
         disbursementSchedule.studentAssessment.application.pirStatus,

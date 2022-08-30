@@ -3,7 +3,6 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import {
   StudentRestriction,
   RestrictionType,
-  Note,
   NoteType,
   User,
   Restriction,
@@ -11,14 +10,11 @@ import {
   Application,
   EducationProgramOffering,
 } from "../../database/entities";
-import {
-  AssignRestrictionDTO,
-  ResolveRestrictionDTO,
-} from "../../route-controllers/restriction/models/restriction.dto";
 import { DataSource, EntityManager, SelectQueryBuilder } from "typeorm";
 import { CustomNamedError } from "../../utilities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 import { RestrictionService } from "./restriction.service";
+import { StudentService } from "../student/student.service";
 import { RestrictionCode } from "./models/restriction.model";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
@@ -29,8 +25,9 @@ export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 @Injectable()
 export class StudentRestrictionService extends RecordDataModelService<StudentRestriction> {
   constructor(
-    dataSource: DataSource,
+    private readonly dataSource: DataSource,
     private readonly restrictionService: RestrictionService,
+    private readonly studentService: StudentService,
   ) {
     super(dataSource.getRepository(StudentRestriction));
   }
@@ -164,55 +161,61 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
 
   /**
    * Add provincial restriction to student.
-   * @param studentId
-   * @param userId
-   * @param addStudentRestrictionDTO
+   * @param studentId student to whom the restriction is added.
+   * @param userId user who is adding restriction.
+   * @param restrictionId restriction.
+   * @param noteDescription notes added on adding restriction.
    * @returns persisted student restriction.
    */
   async addProvincialRestriction(
     studentId: number,
     userId: number,
-    addStudentRestrictionDTO: AssignRestrictionDTO,
+    restrictionId: number,
+    noteDescription: string,
   ): Promise<StudentRestriction> {
-    const studentRestriction = new StudentRestriction();
-    studentRestriction.student = { id: studentId } as Student;
-    studentRestriction.restriction = {
-      id: addStudentRestrictionDTO.restrictionId,
-    } as Restriction;
-    studentRestriction.creator = { id: userId } as User;
-    if (addStudentRestrictionDTO.noteDescription) {
-      studentRestriction.restrictionNote = {
-        description: addStudentRestrictionDTO.noteDescription,
-        noteType: NoteType.Restriction,
-        creator: {
-          id: studentRestriction.creator.id,
-        } as User,
-      } as Note;
-    }
-    return this.repo.save(studentRestriction);
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const note = await this.studentService.createStudentNote(
+        studentId,
+        NoteType.Restriction,
+        noteDescription,
+        userId,
+        transactionalEntityManager,
+      );
+      const studentRestriction = new StudentRestriction();
+      studentRestriction.student = { id: studentId } as Student;
+      studentRestriction.restriction = {
+        id: restrictionId,
+      } as Restriction;
+      studentRestriction.creator = { id: userId } as User;
+      studentRestriction.restrictionNote = note;
+      await transactionalEntityManager
+        .getRepository(StudentRestriction)
+        .save(studentRestriction);
+      return studentRestriction;
+    });
   }
 
   /**
    * Resolve provincial restriction.
-   * @param studentId
-   * @param studentRestrictionId
-   * @param userId
-   * @param updateRestrictionDTO
+   * @param studentId Student who's restriction to be resolved.
+   * @param studentRestrictionId student restriction.
+   * @param userId User who is resolving the restriction.
+   * @param noteDescription notes added during the resolution.
    * @returns resolved student restriction.
    */
   async resolveProvincialRestriction(
     studentId: number,
     studentRestrictionId: number,
     userId: number,
-    updateRestrictionDTO: ResolveRestrictionDTO,
-  ): Promise<StudentRestriction> {
+    noteDescription: string,
+  ): Promise<void> {
     const studentRestrictionEntity = await this.repo.findOne({
       where: {
         id: studentRestrictionId,
         student: { id: studentId } as Student,
         isActive: true,
       },
-      relations: { resolutionNote: true, modifier: true, restriction: true },
+      relations: { restriction: true },
     });
 
     if (!studentRestrictionEntity) {
@@ -231,16 +234,23 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         RESTRICTION_NOT_PROVINCIAL,
       );
     }
-    studentRestrictionEntity.isActive = false;
-    studentRestrictionEntity.modifier = { id: userId } as User;
-    studentRestrictionEntity.resolutionNote = {
-      description: updateRestrictionDTO.noteDescription,
-      noteType: NoteType.Restriction,
-      creator: {
-        id: studentRestrictionEntity.modifier.id,
-      } as User,
-    } as Note;
-    return this.repo.save(studentRestrictionEntity);
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const note = await this.studentService.createStudentNote(
+        studentId,
+        NoteType.Restriction,
+        noteDescription,
+        userId,
+        transactionalEntityManager,
+      );
+      const studentRestriction = new StudentRestriction();
+      studentRestriction.id = studentRestrictionId;
+      studentRestriction.modifier = { id: userId } as User;
+      studentRestriction.isActive = false;
+      studentRestriction.resolutionNote = note;
+      await transactionalEntityManager
+        .getRepository(StudentRestriction)
+        .save(studentRestriction);
+    });
   }
 
   /**

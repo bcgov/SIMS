@@ -7,12 +7,14 @@ import {
   Patch,
   UnprocessableEntityException,
   ParseIntPipe,
+  Query,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
+import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
 import { OfferingStatus } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -30,10 +32,15 @@ import {
   OfferingAssessmentAPIInDTO,
   OfferingChangeRequestAPIOutDTO,
   PrecedingOfferingSummaryAPIOutDTO,
-  transformToProgramOfferingDto,
-  ProgramOfferingDto,
+  transformToProgramOfferingDTO,
+  EducationProgramOfferingAPIOutDTO,
   OfferingChangeAssessmentAPIInDTO,
+  EducationProgramOfferingSummaryAPIOutDTO,
 } from "./models/education-program-offering.dto";
+import {
+  OfferingsPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
 import { CustomNamedError } from "../../utilities";
 import { Role } from "../../auth/roles.enum";
 
@@ -42,13 +49,76 @@ import { Role } from "../../auth/roles.enum";
  */
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
-@Controller("institution/offering")
-@ApiTags(`${ClientTypeBaseRoute.AEST}-institution/offering`)
+@Controller("education-program-offering")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-education-program-offering`)
 export class EducationProgramOfferingAESTController extends BaseController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,
+    private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
   ) {
     super();
+  }
+
+  /**
+   * Get summary of offerings for a program and location.
+   * Pagination, sort and search are available on results.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param paginationOptions pagination options.
+   * @returns offering summary results.
+   */
+  @Get("location/:locationId/education-program/:programId")
+  async getOfferingSummary(
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
+    @Query() paginationOptions: OfferingsPaginationOptionsAPIInDTO,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<EducationProgramOfferingSummaryAPIOutDTO>
+  > {
+    return this.educationProgramOfferingControllerService.getOfferingsSummary(
+      locationId,
+      programId,
+      paginationOptions,
+    );
+  }
+
+  /**
+   * Get all offerings that were requested for change and waiting to be approved/declined.
+   * @returns offerings which were requested for change.
+   */
+  @Get("change-requests")
+  async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
+    const offerings =
+      await this.programOfferingService.getOfferingChangeRequests();
+
+    return offerings.map((offering) => ({
+      offeringId: offering.id,
+      programId: offering.educationProgram.id,
+      offeringName: offering.name,
+      submittedDate: offering.submittedDate,
+      locationName: offering.institutionLocation.name,
+      institutionName:
+        offering.institutionLocation.institution.legalOperatingName,
+    }));
+  }
+
+  /**
+   * Get offering details.
+   * @param offeringId offering id
+   * @returns offering details.
+   */
+  @ApiNotFoundResponse({ description: "Offering not found." })
+  @Get(":offeringId")
+  async getOfferingDetails(
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+  ): Promise<EducationProgramOfferingAPIOutDTO> {
+    const offering = await this.programOfferingService.getOfferingById(
+      offeringId,
+    );
+    if (!offering) {
+      throw new NotFoundException("Offering not found.");
+    }
+    return transformToProgramOfferingDTO(offering);
   }
 
   /**
@@ -64,7 +134,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
   @Roles(Role.InstitutionApproveDeclineOffering)
   @Patch(":offeringId/assess")
   async assessOffering(
-    @Param("offeringId") offeringId: number,
+    @Param("offeringId", ParseIntPipe) offeringId: number,
     @Body() payload: OfferingAssessmentAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
@@ -86,25 +156,6 @@ export class EducationProgramOfferingAESTController extends BaseController {
       payload.assessmentNotes,
       payload.offeringStatus,
     );
-  }
-  /**
-   * Get all offerings that were requested for change and waiting to be approved/declined.
-   * @returns offerings which were requested for change.
-   */
-  @Get("change-requests")
-  async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
-    const offerings =
-      await this.programOfferingService.getOfferingChangeRequests();
-
-    return offerings.map((offering) => ({
-      offeringId: offering.id,
-      programId: offering.educationProgram.id,
-      offeringName: offering.name,
-      submittedDate: offering.submittedDate,
-      locationName: offering.institutionLocation.name,
-      institutionName:
-        offering.institutionLocation.institution.legalOperatingName,
-    }));
   }
 
   /**
@@ -131,7 +182,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
   @Get(":offeringId/preceding-offering")
   async getPrecedingOfferingByActualOfferingId(
     @Param("offeringId", ParseIntPipe) offeringId: number,
-  ): Promise<ProgramOfferingDto> {
+  ): Promise<EducationProgramOfferingAPIOutDTO> {
     const offering = await this.programOfferingService.getOfferingById(
       offeringId,
       true,
@@ -139,7 +190,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
     if (!offering) {
       throw new NotFoundException("Offering not found.");
     }
-    return transformToProgramOfferingDto(offering);
+    return transformToProgramOfferingDTO(offering);
   }
 
   /**

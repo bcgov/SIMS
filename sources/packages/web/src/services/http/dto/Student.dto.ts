@@ -1,8 +1,4 @@
-import {
-  FileOriginType,
-  StudentPDStatus,
-  RestrictionNotificationType,
-} from "@/types";
+import { FileOriginType, StudentPDStatus } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { AddressDetailsFormAPIDTO } from "./Common.dto";
 
@@ -112,21 +108,6 @@ export interface ApplicationSummaryAPIOutDTO {
   applicationName: string;
   submitted?: Date;
   status: string;
-}
-
-/**
- * Student restriction DTO.
- * This object is returned by controller.
- */
-export interface StudentRestrictionAPIOutDTO {
-  /**
-   * code is the restriction code.
-   */
-  code: string;
-  /**
-   * type is the notification type.
-   */
-  type: RestrictionNotificationType;
 }
 
 /**

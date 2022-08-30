@@ -1,61 +1,42 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { NoteDTO, NoteBaseDTO } from "@/types/contracts/NoteContract";
+import { NoteAPIInDTO } from "@/services/http/dto";
+import { NoteItemModel } from "@/types";
 
 /**
  * Http API client for Notes.
  */
 export class NoteApi extends HttpBaseClient {
-  public async addInstitutionNote(
+  async addInstitutionNote(
     institutionId: number,
-    note: NoteBaseDTO,
+    note: NoteAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.apiClient.post(
-        `notes/institution/${institutionId}`,
-        note,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.postCall(
+      this.addClientRoot(`note/institution/${institutionId}`),
+      note,
+    );
   }
 
-  public async addStudentNote(
-    studentId: number,
-    note: NoteBaseDTO,
-  ): Promise<void> {
-    try {
-      await this.apiClient.post(
-        `notes/student/${studentId}`,
-        note,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  async addStudentNote(studentId: number, note: NoteAPIInDTO): Promise<void> {
+    await this.postCall(this.addClientRoot(`note/student/${studentId}`), note);
   }
 
-  public async getInstitutionNotes(
+  async getInstitutionNotes(
     institutionId: number,
     noteType?: string,
-  ): Promise<NoteDTO[]> {
+  ): Promise<NoteItemModel[]> {
     const queryString = noteType ? `?noteType=${noteType}` : ``;
-    const institutionNotes = await this.getCall(
-      `notes/institution/${institutionId}${queryString}`,
+    return this.getCallTyped<NoteItemModel[]>(
+      this.addClientRoot(`note/institution/${institutionId}${queryString}`),
     );
-    return institutionNotes.data as NoteDTO[];
   }
 
-  public async getStudentNotes(
+  async getStudentNotes(
     studentId: number,
     noteType?: string,
-  ): Promise<NoteDTO[]> {
+  ): Promise<NoteItemModel[]> {
     const queryString = noteType ? `?noteType=${noteType}` : ``;
-    const studentNotes = await this.getCall(
-      `notes/student/${studentId}${queryString}`,
+    return this.getCallTyped<NoteItemModel[]>(
+      this.addClientRoot(`note/student/${studentId}${queryString}`),
     );
-    return studentNotes.data as NoteDTO[];
   }
 }

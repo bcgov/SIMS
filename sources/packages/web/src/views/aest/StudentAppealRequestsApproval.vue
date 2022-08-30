@@ -30,14 +30,19 @@
               @click="gotToAssessmentsSummary"
               >Cancel</v-btn
             >
-            <v-btn
-              color="primary"
-              class="ml-2"
-              data-cy="completeStudentRequest"
-              @click="submit"
-              >Complete student request</v-btn
-            ></v-row
-          >
+            <check-permission-role :role="Role.StudentApproveDeclineAppeals">
+              <template #="{ notAllowed }">
+                <v-btn
+                  color="primary"
+                  class="ml-2"
+                  data-cy="completeStudentRequest"
+                  @click="submit"
+                  :disabled="notAllowed"
+                  >Complete student request
+                </v-btn>
+              </template>
+            </check-permission-role>
+          </v-row>
         </template>
       </appeal-requests-approval-form>
     </full-page-container>
@@ -54,15 +59,18 @@ import {
   StudentAppealApproval,
   StudentAppealStatus,
   ApiProcessError,
+  Role,
 } from "@/types";
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: {
     AppealRequestsApprovalForm,
     StatusChipRequestedAssessment,
+    CheckPermissionRole,
   },
   props: {
     studentId: {
@@ -149,6 +157,7 @@ export default {
       submitted,
       appealStatus,
       readOnly,
+      Role,
     };
   },
 };

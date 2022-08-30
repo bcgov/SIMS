@@ -16,7 +16,7 @@ import {
 } from "@nestjs/common";
 import { StudentAssessmentService } from "../../services";
 import { AssessmentNOAAPIOutDTO } from "./models/assessment.dto";
-import { dateString, getUserFullName } from "../../utilities";
+import { getDateOnlyFormat, getUserFullName } from "../../utilities";
 
 @Injectable()
 export class AssessmentControllerService {
@@ -120,7 +120,7 @@ export class AssessmentControllerService {
     const disbursementDetails = {};
     assessment.disbursementSchedules.forEach((schedule, index) => {
       const disbursementIdentifier = `disbursement${index + 1}`;
-      disbursementDetails[`${disbursementIdentifier}Date`] = dateString(
+      disbursementDetails[`${disbursementIdentifier}Date`] = getDateOnlyFormat(
         schedule.disbursementDate,
       );
       schedule.disbursementValues.forEach((disbursement) => {
@@ -136,8 +136,10 @@ export class AssessmentControllerService {
       programName: assessment.offering.educationProgram.name,
       locationName: assessment.offering.institutionLocation.name,
       offeringIntensity: assessment.offering.offeringIntensity,
-      offeringStudyStartDate: dateString(assessment.offering.studyStartDate),
-      offeringStudyEndDate: dateString(assessment.offering.studyEndDate),
+      offeringStudyStartDate: getDateOnlyFormat(
+        assessment.offering.studyStartDate,
+      ),
+      offeringStudyEndDate: getDateOnlyFormat(assessment.offering.studyEndDate),
       msfaaNumber: assessment.application.msfaaNumber.msfaaNumber,
       disbursement: disbursementDetails,
     };

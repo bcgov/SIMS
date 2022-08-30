@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Injectable,
   Param,
@@ -15,6 +16,7 @@ import {
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -32,9 +34,7 @@ import {
   ATBCService,
   FormService,
   GCNotifyActionsService,
-  StudentAccountApplicationsService,
   StudentFileService,
-  StudentRestrictionService,
   StudentService,
 } from "../../services";
 import BaseController from "../BaseController";
@@ -43,19 +43,15 @@ import {
   CreateStudentAPIInDTO,
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
-  StudentRestrictionAPIOutDTO,
   StudentUploadFileAPIOutDTO,
   UpdateStudentAPIInDTO,
 } from "./models/student.dto";
-import {
-  ApiProcessError,
-  ATBCCreateClientPayload,
-  ClientTypeBaseRoute,
-} from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { Response } from "express";
 import { StudentControllerService } from "..";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
+  CustomNamedError,
   defaultFileFilter,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
@@ -68,6 +64,10 @@ import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { FormNames } from "../../services/form/constants";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IdentityProviders } from "../../database/entities/identity-providers.type";
+import {
+  STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
+  STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
+} from "../../constants";
 
 /**
  * Student controller for Student Client.
@@ -86,8 +86,6 @@ export class StudentStudentsController extends BaseController {
     private readonly studentService: StudentService,
     private readonly formService: FormService,
     private readonly atbcService: ATBCService,
-    private readonly studentRestrictionService: StudentRestrictionService,
-    private readonly studentAccountApplicationsService: StudentAccountApplicationsService,
   ) {
     super();
   }
@@ -104,6 +102,9 @@ export class StudentStudentsController extends BaseController {
     description:
       "There is already a student associated with the user or the request is invalid.",
   })
+  @ApiForbiddenResponse({
+    description: "User is not allowed to create a student account.",
+  })
   @RequiresStudentAccount(false)
   async create(
     @UserToken() studentUserToken: StudentUserToken,
@@ -113,6 +114,14 @@ export class StudentStudentsController extends BaseController {
     if (studentUserToken.studentId) {
       throw new UnprocessableEntityException(
         "There is already a student associated with the user.",
+      );
+    }
+
+    // Ensure that only BCSC authenticate users can have access
+    // to the student account creation.
+    if (studentUserToken.IDP !== IdentityProviders.BCSC) {
+      throw new ForbiddenException(
+        "User is not allowed to create a student account.",
       );
     }
 
@@ -126,59 +135,25 @@ export class StudentStudentsController extends BaseController {
       );
     }
 
-    const createdStudent = await this.studentService.createStudent(
-      studentUserToken,
-      submissionResult.data.data,
-    );
-
-    return { id: createdStudent.id };
-  }
-
-  /**
-   * Creates the request for ATBC PD evaluation.
-   * Student should only be allowed to check the PD status once and the
-   * SIN validation must be already done with a successful result.
-   */
-  @Patch("apply-pd-status")
-  @ApiUnprocessableEntityResponse({
-    description:
-      "Either the client does not have a validated SIN or the request was already sent to ATBC.",
-  })
-  async applyForPDStatus(
-    @UserToken() studentUserToken: StudentUserToken,
-  ): Promise<void> {
-    // Get student details
-    const student = await this.studentService.getStudentById(
-      studentUserToken.studentId,
-    );
-    // Check the PD status in DB. Student should only be allowed to check the PD status once.
-    // studentPDSentAt is set when student apply for PD status for the first.
-    // studentPDVerified is null before PD scheduled job update status.
-    // studentPDVerified is true if PD confirmed by ATBC or is true from sfas_individual table.
-    // studentPDVerified is false if PD denied by ATBC.
-    if (
-      !student.sinValidation.isValidSIN ||
-      !!student.studentPDSentAt ||
-      student.studentPDVerified !== null
-    ) {
-      throw new UnprocessableEntityException(
-        "Either the client does not have a validated SIN or the request was already sent to ATBC.",
+    try {
+      const createdStudent = await this.studentService.createStudent(
+        studentUserToken,
+        submissionResult.data.data,
       );
-    }
-
-    // Create client payload.
-    const payload: ATBCCreateClientPayload = {
-      SIN: student.sinValidation.sin,
-      firstName: student.user.firstName,
-      lastName: student.user.lastName,
-      email: student.user.email,
-      birthDate: student.birthDate,
-    };
-    // API to create student profile in ATBC.
-    const response = await this.atbcService.ATBCCreateClient(payload);
-    if (response) {
-      // Update PD Sent Date.
-      await this.studentService.updatePDSentDate(student.id);
+      return { id: createdStudent.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND:
+          case STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA:
+            // The error must be generic to not expose the cause of the failure to the student.
+            // Only Ministry should be aware of the real cause of the account creation failure for security reasons.
+            throw new UnprocessableEntityException(
+              "Error while creating the account.",
+            );
+        }
+      }
+      throw error;
     }
   }
 
@@ -357,6 +332,7 @@ export class StudentStudentsController extends BaseController {
     await this.studentService.updateStudentContactByStudentId(
       studentUserToken.studentId,
       submissionResult.data.data,
+      studentUserToken.userId,
     );
   }
 
@@ -374,27 +350,6 @@ export class StudentStudentsController extends BaseController {
       studentUserToken.studentId,
       pagination,
     );
-  }
-
-  /**
-   * GET API which returns student restriction details.
-   * @param studentToken student token.
-   * @returns Student restriction code and notification type, if any.
-   */
-  @Get("restriction")
-  async getStudentRestrictions(
-    @UserToken() studentToken: StudentUserToken,
-  ): Promise<StudentRestrictionAPIOutDTO[]> {
-    const studentRestrictions =
-      await this.studentRestrictionService.getStudentRestrictionsById(
-        studentToken.studentId,
-        true,
-      );
-
-    return studentRestrictions?.map((studentRestriction) => ({
-      code: studentRestriction.restriction.restrictionCode,
-      type: studentRestriction.restriction.notificationType,
-    }));
   }
 
   /**

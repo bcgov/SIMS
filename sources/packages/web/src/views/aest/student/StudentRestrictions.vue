@@ -1,16 +1,21 @@
 <template>
   <full-page-container :full-width="true">
     <body-header title="All restrictions" class="m-1">
-      <template #actions
-        ><v-btn
-          @click="addStudentRestriction"
-          class="float-right"
-          color="primary"
-          data-cy="addRestrictionButton"
-          prepend-icon="fa:fa fa-plus-circle"
-          >Add restriction</v-btn
-        ></template
-      >
+      <template #actions>
+        <check-permission-role :role="Role.StudentAddRestriction">
+          <template #="{ notAllowed }">
+            <v-btn
+              @click="addStudentRestriction"
+              class="float-right"
+              color="primary"
+              data-cy="addRestrictionButton"
+              prepend-icon="fa:fa fa-plus-circle"
+              :disabled="notAllowed"
+              >Add restriction</v-btn
+            >
+          </template>
+        </check-permission-role>
+      </template>
     </body-header>
     <content-group>
       <DataTable
@@ -72,11 +77,13 @@
     ref="viewRestriction"
     :restrictionData="studentRestriction"
     @submitResolutionData="resolveRestriction"
+    :allowedRole="Role.StudentResolveRestriction"
   />
   <AddStudentRestrictionModal
     ref="addRestriction"
     :entityType="RestrictionEntityType.Student"
     @submitRestrictionData="createNewRestriction"
+    :allowedRole="Role.StudentAddRestriction"
   />
 </template>
 
@@ -90,19 +97,24 @@ import {
   RestrictionStatus,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
-  AssignRestrictionDTO,
-  RestrictionDetailDTO,
-  ResolveRestrictionDTO,
   RestrictionEntityType,
   LayoutTemplates,
+  Role,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import {
+  AssignRestrictionAPIInDTO,
+  ResolveRestrictionAPIInDTO,
+  RestrictionDetailAPIOutDTO,
+} from "@/services/http/dto";
 
 export default {
   components: {
     StatusChipRestriction,
     ViewRestrictionModal,
     AddStudentRestrictionModal,
+    CheckPermissionRole,
   },
   props: {
     studentId: {
@@ -142,11 +154,11 @@ export default {
       await viewRestriction.value.showModal();
     };
 
-    const resolveRestriction = async (data: RestrictionDetailDTO) => {
+    const resolveRestriction = async (data: RestrictionDetailAPIOutDTO) => {
       try {
         const payload = {
           noteDescription: data.resolutionNote,
-        } as ResolveRestrictionDTO;
+        } as ResolveRestrictionAPIInDTO;
         await RestrictionService.shared.resolveStudentRestriction(
           props.studentId,
           data.restrictionId,
@@ -165,7 +177,7 @@ export default {
       await addRestriction.value.showModal();
     };
 
-    const createNewRestriction = async (data: AssignRestrictionDTO) => {
+    const createNewRestriction = async (data: AssignRestrictionAPIInDTO) => {
       try {
         await RestrictionService.shared.addStudentRestriction(
           props.studentId,
@@ -197,6 +209,7 @@ export default {
       createNewRestriction,
       RestrictionEntityType,
       LayoutTemplates,
+      Role,
     };
   },
 };

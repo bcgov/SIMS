@@ -15,15 +15,24 @@ import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
+  CustomNamedError,
   getDateOnly,
   getUTCNow,
   removeWhiteSpaces,
   transformAddressDetails,
 } from "../../utilities";
-import { CreateStudentUserInfo, StudentInfo } from "./student.service.models";
+import {
+  CreateStudentUserInfo,
+  StudentInfo,
+  UserInfoMatchData,
+} from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import * as dayjs from "dayjs";
 import { StudentUser } from "../../database/entities/student-user.model";
+import {
+  STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
+  STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
+} from "../../constants";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -119,22 +128,25 @@ export class StudentService extends RecordDataModelService<Student> {
     externalEntityManager?: EntityManager,
     studentAccountApplicationId?: number,
   ): Promise<Student> {
+    // SIN to be saved and used for comparisons.
+    const studentSIN = removeWhiteSpaces(studentInfo.sinNumber);
+    const existingStudent = await this.getExistingStudentForAccountCreation(
+      studentSIN,
+      userInfo,
+    );
+    const student = existingStudent ?? new Student();
+
+    // Checks if a new user must be created or only updated.
     const user = new User();
     if (userInfo.userId) {
       user.id = userInfo.userId;
     }
-
     // If a user id was provided, use it as the audit user. It means that
     // the user is being created by the Ministry on behalf of the student.
     const auditUser = auditUserId ? ({ id: auditUserId } as User) : user;
-
-    const studentSIN = removeWhiteSpaces(studentInfo.sinNumber);
-    const sinValidation = new SINValidation();
-    sinValidation.sin = studentSIN;
-    sinValidation.user = user;
-    user.email = userInfo.email;
-    user.firstName = userInfo.givenNames;
-    user.lastName = userInfo.lastName;
+    user.email = userInfo.email.trim();
+    user.firstName = userInfo.givenNames?.trim();
+    user.lastName = userInfo.lastName.trim();
     if (userInfo.userId) {
       // User id is present and the user wil be updated.
       user.modifier = auditUser;
@@ -144,7 +156,6 @@ export class StudentService extends RecordDataModelService<Student> {
       user.creator = auditUser;
     }
 
-    const student = new Student();
     student.user = user;
     student.birthDate = getDateOnly(userInfo.birthdate);
     student.gender = userInfo.gender;
@@ -153,6 +164,14 @@ export class StudentService extends RecordDataModelService<Student> {
       phone: studentInfo.phone,
     };
     student.user = user;
+
+    // TODO: When SIN validation table is changed to support the
+    // history of a student with multiple users, the below code
+    // must be updated to avoid generating a SIN validation record
+    // when the user is already present.
+    const sinValidation = new SINValidation();
+    sinValidation.sin = studentSIN;
+    sinValidation.user = user;
     student.sinValidation = sinValidation;
 
     try {
@@ -170,8 +189,8 @@ export class StudentService extends RecordDataModelService<Student> {
 
     return this.dataSource.transaction(async (localEntityManager) => {
       const entityManager = externalEntityManager ?? localEntityManager;
-      // Creates the new user and student.
-      const newStudent = await entityManager
+      // Creates or updates the user and student.
+      const savedStudent = await entityManager
         .getRepository(Student)
         .save(student);
       // Create the new entry in the student/user history/audit.
@@ -184,7 +203,7 @@ export class StudentService extends RecordDataModelService<Student> {
       } as StudentAccountApplication;
       await entityManager.getRepository(StudentUser).save(studentUser);
       // Returns the newly created student.
-      return newStudent;
+      return savedStudent;
     });
   }
 
@@ -204,6 +223,97 @@ export class StudentService extends RecordDataModelService<Student> {
     auditUserId?: number,
   ): Promise<Student> {
     return this.internalCreateStudent(userInfo, studentInfo, auditUserId);
+  }
+
+  /**
+   * Search by an existing student using the SIN number and validates
+   * if the student has valid personal data that ensures the same identity.
+   * Case the SIN is present but it is not considered valid, exceptions will
+   * be thrown with the specific error types.
+   * @param studentSIN SIN to be searched.
+   * @param userInfo personal student data to be validated.
+   * @returns existing and validated student.
+   */
+  private async getExistingStudentForAccountCreation(
+    studentSIN: string,
+    userInfo: UserInfoMatchData,
+  ): Promise<Student> {
+    // Check if there are students with the same SIN.
+    const existingStudents = await this.getStudentsBySIN(studentSIN);
+    if (existingStudents.length > 1) {
+      const logMessage = "More than one student found for the provided SIN.";
+      this.logger.warn(logMessage);
+      throw new CustomNamedError(
+        logMessage,
+        STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
+      );
+    }
+    // Check if a student with the same SIN exists and has the same personal data.
+    if (existingStudents.length === 1) {
+      this.logger.warn("Found one student with the same SIN.");
+      const [studentFound] = existingStudents;
+      if (!this.studentMatchesUserInfo(studentFound, userInfo)) {
+        const logMessage =
+          "Student personal data does not match while trying to link the user to an existing student account.";
+        this.logger.warn(logMessage);
+        throw new CustomNamedError(
+          logMessage,
+          STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
+        );
+      }
+      // Found the student with same SIN and personal data.
+      this.logger.warn(
+        "Student personal data matches. The student will be associated with the user.",
+      );
+      return studentFound;
+    }
+
+    return null;
+  }
+
+  /**
+   * Check if a student has a first name, last name and
+   * date of birth that matches with the provided data.
+   * @param student student to be verified.
+   * @param matchData data to be verified.
+   * @returns true if first name, last name and date of birth are the
+   * same, otherwise, false.
+   */
+  private studentMatchesUserInfo(
+    student: Student,
+    matchData: UserInfoMatchData,
+  ): boolean {
+    return (
+      dayjs(student.birthDate).isSame(matchData.birthdate) &&
+      // Using double equals (==) to consider null and undefined comparison as valid.
+      student.user.firstName?.toLowerCase() ==
+        matchData.givenNames?.toLowerCase() &&
+      student.user.lastName.toLowerCase() === matchData.lastName.toLowerCase()
+    );
+  }
+
+  /**
+   * Get students by SIN.
+   * @param sin SIN to be searched.
+   * @returns students with the same SIN.
+   */
+  private async getStudentsBySIN(sin: string): Promise<Student[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        birthDate: true,
+        user: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      relations: {
+        user: true,
+      },
+      where: {
+        sinValidation: { sin },
+      },
+    });
   }
 
   /**
@@ -240,11 +350,13 @@ export class StudentService extends RecordDataModelService<Student> {
    * Updates the student contact information.
    * @param studentId student to be updated.
    * @param contact contact information to be updated.
+   * @param auditUserId user who is making the changes.
    * @returns updated student.
    */
   async updateStudentContactByStudentId(
     studentId: number,
     contact: StudentInfo,
+    auditUserId: number,
   ): Promise<Student> {
     const student = new Student();
     student.id = studentId;
@@ -252,6 +364,7 @@ export class StudentService extends RecordDataModelService<Student> {
       address: transformAddressDetails(contact),
       phone: contact.phone,
     };
+    student.modifier = { id: auditUserId } as User;
 
     return this.save(student);
   }
@@ -346,16 +459,23 @@ export class StudentService extends RecordDataModelService<Student> {
 
   /**
    * Update the PD Sent Date
-   * @param studentId
+   * @param studentId student who's PD status is to be updated.
+   * @param auditUserId user who is making the changes.
+   * @returns Student who's PD sent date is updated.
    */
-  async updatePDSentDate(studentId: number): Promise<Student> {
+  async updatePDSentDate(
+    studentId: number,
+    auditUserId: number,
+  ): Promise<Student> {
     // get the Student Object
     const studentToUpdate = await this.repo.findOneOrFail({
       where: { id: studentId },
     });
     if (studentToUpdate) {
-      // Date in UTC
-      studentToUpdate.studentPDSentAt = getUTCNow();
+      const now = new Date();
+      studentToUpdate.studentPDSentAt = now;
+      studentToUpdate.modifier = { id: auditUserId } as User;
+      studentToUpdate.updatedAt = now;
       return this.repo.save(studentToUpdate);
     }
   }
@@ -453,7 +573,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * Service to get notes for a student.
    * @param studentId
    * @param noteType
-   * @returns Notes
+   * @returns Notes.
    */
   async getStudentNotes(
     studentId: number,
@@ -480,18 +600,28 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Service to add note for an Institution.
-   * ! Deprecated, please use the alternative method createStudentNote.
-   * @param studentId
-   * @param note
+   * Add student note independently.
+   * @param studentId student to have the note associated.
+   * @param noteType note type.
+   * @param noteDescription note description.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns saved Note.
    */
-  async saveStudentNote(studentId: number, note: Note): Promise<void> {
-    const student = await this.repo.findOne({
-      where: { id: studentId },
-      relations: { notes: true },
+  async addStudentNote(
+    studentId: number,
+    noteType: NoteType,
+    noteDescription: string,
+    auditUserId: number,
+  ): Promise<Note> {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      return this.createStudentNote(
+        studentId,
+        noteType,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
     });
-    student.notes.push(note);
-    await this.repo.save(student);
   }
 
   /**

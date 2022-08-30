@@ -10,30 +10,42 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <footer-buttons
-        primaryLabel="Add note"
-        @primaryClick="addNewNote"
-        @secondaryClick="dialogClosed"
-      />
+      <check-permission-role :role="allowedRole">
+        <template #="{ notAllowed }">
+          <footer-buttons
+            :disablePrimaryButton="notAllowed"
+            primaryLabel="Add note"
+            @primaryClick="addNewNote"
+            @secondaryClick="dialogClosed"
+          />
+        </template>
+      </check-permission-role>
     </template>
   </modal-dialog-base>
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { PropType, ref } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useFormioUtils } from "@/composables";
 import {
-  NoteBaseDTO,
   InstitutionNoteType,
   StudentNoteType,
   NoteEntityType,
+  Role,
 } from "@/types";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { NoteAPIInDTO } from "@/services/http/dto";
+
 export default {
-  components: { ModalDialogBase },
+  components: { ModalDialogBase, CheckPermissionRole },
   props: {
     entityType: {
       type: String,
+      required: true,
+    },
+    allowedRole: {
+      type: String as PropType<Role>,
       required: true,
     },
   },
@@ -65,7 +77,7 @@ export default {
     const submitForm = async () => {
       return formData.value.submit();
     };
-    const submitNote = async (data: NoteBaseDTO) => {
+    const submitNote = async (data: NoteAPIInDTO) => {
       context.emit("submitData", data);
     };
     const addNewNote = async () => {
@@ -81,6 +93,7 @@ export default {
       formLoaded,
       submitNote,
       addNewNote,
+      Role,
     };
   },
 };

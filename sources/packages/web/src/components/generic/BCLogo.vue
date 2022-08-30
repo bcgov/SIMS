@@ -5,8 +5,8 @@
       class="ml-5"
       width="57px"
       height="40px"
-      alt="logo"
       src="../../assets/images/bc_gov_logo_header.svg"
+      alt="StudentAid BC logo"
     />
   </span>
   <v-container class="p-0 ml-2" @click="logoClick">

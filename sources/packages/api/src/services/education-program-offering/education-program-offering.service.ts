@@ -22,7 +22,6 @@ import * as os from "os";
 import { DataSource, UpdateResult } from "typeorm";
 import {
   EducationProgramOfferingModel,
-  SaveOfferingModel,
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
   ApplicationAssessmentSummary,
@@ -33,7 +32,6 @@ import {
   sortOfferingsColumnMap,
   PaginationOptions,
   PaginatedResults,
-  getISODateOnlyString,
   CustomNamedError,
   mapFromRawAndEntities,
 } from "../../utilities";
@@ -59,7 +57,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async createEducationProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: EducationProgramOfferingModel,
     userId: number,
   ): Promise<EducationProgramOffering> {
     const programOffering = this.populateProgramOffering(
@@ -85,7 +83,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     paginationOptions: PaginationOptions,
     offeringTypes?: OfferingTypes[],
-  ): Promise<PaginatedResults<EducationProgramOfferingModel>> {
+  ): Promise<PaginatedResults<EducationProgramOffering>> {
     const DEFAULT_SORT_FIELD = "name";
     const offeringsQuery = this.repo
       .createQueryBuilder("offerings")
@@ -134,23 +132,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     // result
     const [records, count] = await offeringsQuery.getManyAndCount();
-    const offerings = records.map((educationProgramOffering) => {
-      const item = new EducationProgramOfferingModel();
-      item.id = educationProgramOffering.id;
-      item.name = educationProgramOffering.name;
-      item.studyStartDate = getISODateOnlyString(
-        educationProgramOffering.studyStartDate,
-      );
-      item.studyEndDate = getISODateOnlyString(
-        educationProgramOffering.studyEndDate,
-      );
-      item.offeringDelivered = educationProgramOffering.offeringDelivered;
-      item.offeringIntensity = educationProgramOffering.offeringIntensity;
-      item.offeringType = educationProgramOffering.offeringType;
-      item.offeringStatus = educationProgramOffering.offeringStatus;
-      return item;
-    });
-    return { results: offerings, count: count };
+    return { results: records, count: count };
   }
 
   /**
@@ -243,7 +225,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     offeringId: number,
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: EducationProgramOfferingModel,
     userId: number,
   ): Promise<UpdateResult> {
     const hasExistingApplication = await this.hasExistingApplication(
@@ -262,7 +244,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   private populateProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: EducationProgramOfferingModel,
     hasExistingApplication?: boolean,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
@@ -475,14 +457,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringStatus: OfferingStatus,
   ): Promise<void> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      // create the note for assessment.
-      const user = {
+      // Create the note for assessment.
+      const auditUser = {
         id: userId,
       } as User;
+      const now = new Date();
       const note = new Note();
       note.description = assessmentNotes;
       note.noteType = NoteType.Program;
-      note.creator = user;
+      note.creator = auditUser;
+      note.createdAt = now;
       const noteEntity = await transactionalEntityManager
         .getRepository(Note)
         .save(note);
@@ -491,8 +475,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       const offering = new EducationProgramOffering();
       offering.id = offeringId;
       offering.offeringStatus = offeringStatus;
-      offering.assessedDate = new Date();
-      offering.assessedBy = user;
+      offering.assessedDate = now;
+      offering.assessedBy = auditUser;
+      offering.modifier = auditUser;
+      offering.updatedAt = now;
       offering.offeringNote = noteEntity;
 
       await transactionalEntityManager
@@ -557,7 +543,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     offeringId: number,
     userId: number,
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: EducationProgramOfferingModel,
   ): Promise<EducationProgramOffering> {
     const currentOffering = await this.getOfferingToRequestChange(
       offeringId,
@@ -579,6 +565,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       educationProgramOffering,
     );
     const auditUser = { id: userId } as User;
+    const now = new Date();
     const precedingOffering = {
       id: currentOffering.id,
     } as EducationProgramOffering;
@@ -591,12 +578,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       currentOffering.parentOffering ?? precedingOffering;
     requestedOffering.precedingOffering = precedingOffering;
     requestedOffering.creator = auditUser;
+    requestedOffering.createdAt = now;
 
     //Update the status and audit details of current offering.
     const underReviewOffering = new EducationProgramOffering();
     underReviewOffering.id = offeringId;
     underReviewOffering.offeringStatus = OfferingStatus.ChangeUnderReview;
     underReviewOffering.modifier = auditUser;
+    underReviewOffering.updatedAt = now;
 
     await this.repo.save([underReviewOffering, requestedOffering]);
     return requestedOffering;
@@ -735,6 +724,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .getRepository(Application)
       .createQueryBuilder("application")
       .select("application.id")
+      .addSelect("application.applicationStatus")
       .addSelect("assessment.id")
       .addSelect("assessment.assessmentData IS NULL", "hasAssessmentData")
       .addSelect("application.data->>'workflowName'", "workflowName")
@@ -819,15 +809,24 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       applications = await this.getApplicationsToSubmitReassessment(offeringId);
 
       for (const application of applications) {
-        application.currentAssessment = {
-          application: { id: application.id } as Application,
-          triggerType: AssessmentTriggerType.OfferingChange,
-          offering: { id: offeringId } as EducationProgramOffering,
-          creator: auditUser,
-          createdAt: currentDate,
-          submittedBy: auditUser,
-          submittedDate: currentDate,
-        } as StudentAssessment;
+        if (application.applicationStatus === ApplicationStatus.completed) {
+          application.currentAssessment = {
+            application: { id: application.id } as Application,
+            triggerType: AssessmentTriggerType.OfferingChange,
+            offering: { id: offeringId } as EducationProgramOffering,
+            creator: auditUser,
+            createdAt: currentDate,
+            submittedBy: auditUser,
+            submittedDate: currentDate,
+          } as StudentAssessment;
+        }
+
+        // If the application which is affected by offering change is not completed
+        // then set the application as cancelled as it cannot be re-assessed.
+        else {
+          application.applicationStatus = ApplicationStatus.cancelled;
+        }
+
         application.modifier = auditUser;
         application.updatedAt = currentDate;
       }
@@ -842,6 +841,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       note.description = assessmentNotes;
       note.noteType = NoteType.Program;
       note.creator = auditUser;
+      note.createdAt = currentDate;
       const noteEntity = await transactionalEntityManager
         .getRepository(Note)
         .save(note);
@@ -864,7 +864,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         .getRepository(EducationProgramOffering)
         .save([requestedOffering, precedingOffering]);
 
-      // Save applications with new current assessment on approval.
+      // Save applications with new current assessment or set application status as cancelled on approval.
       if (applications?.length > 0) {
         await transactionalEntityManager
           .getRepository(Application)
@@ -903,12 +903,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           );
         promises.push(deleteAssessmentPromise);
       }
-      const startAssessmentPromise =
-        this.workflowActionsService.startApplicationAssessment(
-          application.workflowName,
-          application.currentAssessment.id,
-        );
-      promises.push(startAssessmentPromise);
+      if (application.applicationStatus === ApplicationStatus.completed) {
+        const startAssessmentPromise =
+          this.workflowActionsService.startApplicationAssessment(
+            application.workflowName,
+            application.currentAssessment.id,
+          );
+        promises.push(startAssessmentPromise);
+      }
       if (promises.length >= maxPromisesAllowed) {
         // Waits for promises to be process when it reaches maximum allowable parallel
         // count.
@@ -918,5 +920,36 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     }
     // Processing any pending promise if not completed.
     await Promise.all(promises);
+  }
+
+  /**
+   * Get changed offering for an application Id.
+   * @param applicationId Application id
+   * @returns Offering and program details.
+   */
+  async getOfferingRequestsByApplicationId(
+    applicationId: number,
+  ): Promise<EducationProgramOffering> {
+    return this.repo
+      .createQueryBuilder("offering")
+      .select([
+        "offering.id",
+        "offering.submittedDate",
+        "offering.offeringStatus",
+        "educationProgram.id",
+      ])
+      .innerJoin("offering.precedingOffering", "precedingOffering")
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin(
+        StudentAssessment,
+        "studentAssessment",
+        "studentAssessment.offering.id = precedingOffering.id",
+      )
+      .innerJoin("studentAssessment.application", "application")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("precedingOffering.offeringStatus = :offeringStatus", {
+        offeringStatus: OfferingStatus.ChangeUnderReview,
+      })
+      .getOne();
   }
 }

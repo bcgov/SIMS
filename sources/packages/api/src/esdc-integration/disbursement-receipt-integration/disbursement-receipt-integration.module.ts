@@ -8,6 +8,8 @@ import {
   StudentRestrictionService,
   RestrictionService,
   ReportService,
+  StudentService,
+  SFASIndividualService,
 } from "../../services";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
 import { DisbursementReceiptProcessingService } from "./disbursement-receipt-processing.service";
@@ -26,6 +28,8 @@ import { DisbursementReceiptRequestService } from "./disbursement-receipt-reques
     StudentRestrictionService,
     ReportService,
     RestrictionService,
+    StudentService,
+    SFASIndividualService,
   ],
   exports: [
     DisbursementReceiptIntegrationService,

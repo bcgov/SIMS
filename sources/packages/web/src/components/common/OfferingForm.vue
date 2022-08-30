@@ -20,6 +20,7 @@ import { FormIOForm, OfferingFormModel } from "@/types";
 import { SetupContext, computed } from "vue";
 import { useOffering } from "@/composables";
 import { AuthService } from "@/services/AuthService";
+import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
 
 export default {
   props: {
@@ -38,7 +39,9 @@ export default {
   emits: ["saveOffering"],
   setup(props: any, context: SetupContext) {
     const { mapOfferingChipStatus } = useOffering();
-    const saveOffering = (form: FormIOForm) => {
+    const saveOffering = (
+      form: FormIOForm<EducationProgramOfferingAPIInDTO>,
+    ) => {
       context.emit("saveOffering", form.data);
     };
     /**

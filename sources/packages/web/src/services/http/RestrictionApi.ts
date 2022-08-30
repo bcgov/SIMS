@@ -1,60 +1,58 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
-  RestrictionSummaryDTO,
-  RestrictionDetailDTO,
-  ResolveRestrictionDTO,
-  OptionItemDto,
-  AssignRestrictionDTO,
-} from "@/types";
+  AssignRestrictionAPIInDTO,
+  OptionItemAPIOutDTO,
+  ResolveRestrictionAPIInDTO,
+  RestrictionDetailAPIOutDTO,
+  RestrictionSummaryAPIOutDTO,
+  StudentRestrictionAPIOutDTO,
+} from "@/services/http/dto";
 
 /**
  * Http API client for Restrictions.
  */
 export class RestrictionApi extends HttpBaseClient {
-  public async getStudentRestrictions(
+  async getStudentRestrictions(
     studentId: number,
-  ): Promise<RestrictionSummaryDTO[]> {
-    const studentRestrictions = await this.getCall(
-      `restrictions/student/${studentId}`,
+  ): Promise<RestrictionSummaryAPIOutDTO[]> {
+    return this.getCallTyped<RestrictionSummaryAPIOutDTO[]>(
+      this.addClientRoot(`restriction/student/${studentId}`),
     );
-    return studentRestrictions.data as RestrictionSummaryDTO[];
   }
 
-  public async getRestrictionCategories(): Promise<OptionItemDto[]> {
-    const categories = await this.getCall(
-      "restrictions/categories/options-list",
+  async getRestrictionCategories(): Promise<OptionItemAPIOutDTO[]> {
+    return this.getCallTyped<OptionItemAPIOutDTO[]>(
+      this.addClientRoot("restriction/categories/options-list"),
     );
-    return categories.data as OptionItemDto[];
   }
 
-  public async getRestrictionReasons(
+  async getRestrictionReasons(
     restrictionCategory: string,
-  ): Promise<OptionItemDto[]> {
-    const reasons = await this.getCall(
-      `restrictions/reasons/options-list/category/${restrictionCategory}`,
+  ): Promise<OptionItemAPIOutDTO[]> {
+    return this.getCallTyped<OptionItemAPIOutDTO[]>(
+      this.addClientRoot(`restriction/category/${restrictionCategory}/reasons`),
     );
-    return reasons.data as OptionItemDto[];
   }
 
-  public async getStudentRestrictionDetail(
+  async getStudentRestrictionDetail(
     studentId: number,
     studentRestrictionId: number,
-  ): Promise<RestrictionDetailDTO> {
-    const studentRestriction = await this.getCall(
-      `restrictions/student/${studentId}/studentRestriction/${studentRestrictionId}`,
+  ): Promise<RestrictionDetailAPIOutDTO> {
+    return this.getCallTyped<RestrictionDetailAPIOutDTO>(
+      this.addClientRoot(
+        `restriction/student/${studentId}/studentRestriction/${studentRestrictionId}`,
+      ),
     );
-    return studentRestriction.data as RestrictionDetailDTO;
   }
 
-  public async addStudentRestriction(
+  async addStudentRestriction(
     studentId: number,
-    payload: AssignRestrictionDTO,
+    payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
     try {
-      await this.apiClient.post(
-        `restrictions/student/${studentId}`,
+      await this.postCall(
+        this.addClientRoot(`restriction/student/${studentId}`),
         payload,
-        this.addAuthHeader(),
       );
     } catch (error) {
       this.handleRequestError(error);
@@ -62,16 +60,17 @@ export class RestrictionApi extends HttpBaseClient {
     }
   }
 
-  public async resolveStudentRestriction(
+  async resolveStudentRestriction(
     studentId: number,
     studentRestrictionId: number,
-    payload: ResolveRestrictionDTO,
+    payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
     try {
-      await this.apiClient.patch(
-        `restrictions/student/${studentId}/studentRestriction/${studentRestrictionId}/resolve`,
+      await this.patchCall(
+        this.addClientRoot(
+          `restriction/student/${studentId}/studentRestriction/${studentRestrictionId}/resolve`,
+        ),
         payload,
-        this.addAuthHeader(),
       );
     } catch (error) {
       this.handleRequestError(error);
@@ -79,43 +78,55 @@ export class RestrictionApi extends HttpBaseClient {
     }
   }
 
-  public async getInstitutionRestrictions(
+  async getInstitutionRestrictions(
     institutionId: number,
-  ): Promise<RestrictionSummaryDTO[]> {
-    const institutionRestrictions = await this.getCall(
-      `restrictions/institution/${institutionId}`,
+  ): Promise<RestrictionSummaryAPIOutDTO[]> {
+    return this.getCallTyped<RestrictionSummaryAPIOutDTO[]>(
+      this.addClientRoot(`restriction/institution/${institutionId}`),
     );
-    return institutionRestrictions.data as RestrictionSummaryDTO[];
   }
 
-  public async getInstitutionRestrictionDetail(
+  async getInstitutionRestrictionDetail(
     institutionId: number,
     institutionRestrictionId: number,
-  ): Promise<RestrictionDetailDTO> {
-    const institutionRestriction = await this.getCall(
-      `restrictions/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}`,
+  ): Promise<RestrictionDetailAPIOutDTO> {
+    return this.getCallTyped<RestrictionDetailAPIOutDTO>(
+      this.addClientRoot(
+        `restriction/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}`,
+      ),
     );
-    return institutionRestriction.data as RestrictionDetailDTO;
   }
 
-  public async addInstitutionRestriction(
+  async addInstitutionRestriction(
     institutionId: number,
-    payload: AssignRestrictionDTO,
+    payload: AssignRestrictionAPIInDTO,
   ): Promise<void> {
-    await this.postCall<AssignRestrictionDTO>(
-      `restrictions/institution/${institutionId}`,
+    await this.postCall<AssignRestrictionAPIInDTO>(
+      this.addClientRoot(`restriction/institution/${institutionId}`),
       payload,
     );
   }
 
-  public async resolveInstitutionRestriction(
+  async resolveInstitutionRestriction(
     institutionId: number,
     institutionRestrictionId: number,
-    payload: ResolveRestrictionDTO,
+    payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
-    await this.patchCall<ResolveRestrictionDTO>(
-      `restrictions/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}/resolve`,
+    await this.patchCall<ResolveRestrictionAPIInDTO>(
+      this.addClientRoot(
+        `restriction/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}/resolve`,
+      ),
       payload,
+    );
+  }
+
+  /**
+   * API client to call the student restriction rest API.
+   * @returns student restriction(wrapped by promise).
+   */
+  async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
+    return this.getCallTyped<StudentRestrictionAPIOutDTO[]>(
+      this.addClientRoot("restriction"),
     );
   }
 }

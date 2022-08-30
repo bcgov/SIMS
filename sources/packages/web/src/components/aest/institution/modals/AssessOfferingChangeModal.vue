@@ -4,9 +4,15 @@
     @dialogClosed="dialogClosed"
     :title="title"
     :subTitle="subTitle"
+    maxWidth="730"
   >
     <template v-slot:content>
-      <div class="mt-2">
+      <div v-if="showWarning">
+        <span class="font-weight-bold">Note:</span> All applications that are
+        still in progress will be cancelled and the applicant must start a new
+        application.
+      </div>
+      <div class="mt-4">
         <v-form ref="offeringChangeApprovalForm">
           <v-textarea
             v-model="assessOfferingData.assessmentNotes"
@@ -19,11 +25,18 @@
       </div>
     </template>
     <template v-slot:footer>
-      <footer-buttons
-        :primaryLabel="submitLabel"
-        @primaryClick="submitForm"
-        @secondaryClick="dialogClosed"
-      />
+      <check-permission-role
+        :role="Role.InstitutionApproveDeclineOfferingChanges"
+      >
+        <template #="{ notAllowed }">
+          <footer-buttons
+            :primaryLabel="submitLabel"
+            @primaryClick="submitForm"
+            @secondaryClick="dialogClosed"
+            :disablePrimaryButton="notAllowed"
+          />
+        </template>
+      </check-permission-role>
     </template>
   </modal-dialog-base>
 </template>
@@ -32,11 +45,12 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { ref, reactive } from "vue";
-import { OfferingStatus, VForm } from "@/types";
+import { OfferingStatus, VForm, Role } from "@/types";
 import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
-  components: { ModalDialogBase },
+  components: { ModalDialogBase, CheckPermissionRole },
   setup() {
     const {
       showDialog,
@@ -48,6 +62,7 @@ export default {
     const title = ref("");
     const subTitle = ref("");
     const submitLabel = ref("");
+    const showWarning = ref(false);
 
     const dialogClosed = () => {
       resolvePromise(false);
@@ -64,11 +79,13 @@ export default {
         subTitle.value =
           "Outline the reasoning for approving this request. This will be stored in the institution profile notes.";
         submitLabel.value = "Approve now";
+        showWarning.value = true;
       } else {
         title.value = "Decline for reassessment";
         subTitle.value =
           "Outline the reasoning for declining this request. This will be stored in the institution profile notes.";
         submitLabel.value = "Decline now";
+        showWarning.value = false;
       }
 
       return showModalInternal(modalOfferingStatus);
@@ -92,6 +109,8 @@ export default {
       assessOfferingData,
       subTitle,
       submitLabel,
+      showWarning,
+      Role,
     };
   },
 };

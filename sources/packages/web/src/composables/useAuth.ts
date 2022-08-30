@@ -1,6 +1,6 @@
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
-import { AppIDPType, ClientIdType } from "@/types";
+import { AppIDPType, ClientIdType, Role } from "@/types";
 import { computed } from "vue";
 
 export function useAuth() {
@@ -24,10 +24,20 @@ export function useAuth() {
     await AuthService.shared.logout(clientType);
   };
 
+  const hasRole = (role: Role): boolean => {
+    const userToken = AuthService.shared.userToken;
+    if (userToken?.resource_access && userToken?.azp) {
+      const userRoles = userToken.resource_access[userToken.azp].roles;
+      return userRoles?.includes(role);
+    }
+    return false;
+  };
+
   return {
     isAuthenticated,
     parsedToken,
     executeLogin,
     executeLogout,
+    hasRole,
   };
 }
