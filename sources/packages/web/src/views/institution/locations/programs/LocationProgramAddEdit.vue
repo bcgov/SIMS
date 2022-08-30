@@ -1,7 +1,4 @@
 <template>
-  <!-- todo: ann check edit form with Lynn -->
-  <!-- todo: ann Which regulatory body does this program belong to?
-is not working properly -->
   <full-page-container>
     <template #header>
       <header-navigator
@@ -34,7 +31,7 @@ is not working properly -->
       :formData="programData"
       :readOnly="isReadonly"
       @submitted="submitted"
-      ><template #actions="{ submit }">
+      ><template #actions="{ submit }" v-if="!isReadonly">
         <footer-buttons
           :processing="processing"
           primaryLabel="Submit"
@@ -172,7 +169,7 @@ export default {
       } else if (props.programId && !isReadonly.value) {
         return "Edit Program";
       } else if (!props?.programId) {
-        return "Create New Program";
+        return "Create Program";
       }
       return "";
     });

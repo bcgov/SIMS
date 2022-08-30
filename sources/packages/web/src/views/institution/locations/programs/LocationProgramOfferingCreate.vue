@@ -4,7 +4,7 @@
       <header-navigator
         title="Program detail"
         :routeLocation="routeLocation"
-        subTitle="Add Study Period"
+        subTitle="Add offering"
       >
       </header-navigator>
     </template>

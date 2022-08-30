@@ -1,39 +1,28 @@
 <template>
-  <div>
-    <program-offering-detail-header
-      class="m-4"
-      :headerDetails="{
-        ...educationProgram,
-        institutionId: institutionId,
-        status: educationProgram.programStatus,
-      }"
-    />
-    <v-card>
-      <v-container>
-        <ProgramDetails
-          :programId="programId"
-          :locationId="locationId"
-          :educationProgram="educationProgram"
-        />
-        <hr class="horizontal-divider" />
-        <OfferingSummary
-          :programId="programId"
-          :locationId="locationId"
-          :institutionId="institutionId"
-        />
-      </v-container>
-    </v-card>
-  </div>
+  <v-card>
+    <v-container>
+      <program-details
+        :programId="programId"
+        :locationId="locationId"
+        :educationProgram="educationProgram"
+      />
+      <hr class="horizontal-divider" />
+      <offering-summary
+        :programId="programId"
+        :locationId="locationId"
+        :institutionId="institutionId"
+      />
+    </v-container>
+  </v-card>
 </template>
 
 <script lang="ts">
 import ProgramDetails from "@/components/common/ProgramDetails.vue";
 import OfferingSummary from "@/components/common/OfferingSummary.vue";
-import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 
 export default {
-  components: { ProgramDetails, OfferingSummary, ProgramOfferingDetailHeader },
+  components: { ProgramDetails, OfferingSummary },
   props: {
     programId: {
       type: Number,

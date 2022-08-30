@@ -5,7 +5,7 @@ Used when we need to display title and the value inside a container
   <div class="mb-2">
     <span class="label-bold">{{ propertyTitle }}</span>
   </div>
-  <div class="mb-2 label-value">
+  <div class="mb-2 label-value muted-content">
     {{ propertyValue }}
   </div>
 </template>

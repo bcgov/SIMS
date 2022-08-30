@@ -22,7 +22,7 @@
             @click="goToAddNewProgram()"
             prepend-icon="fa:fa fa-plus-circle"
           >
-            Create new program
+            Create program
           </v-btn>
         </v-row>
       </template>

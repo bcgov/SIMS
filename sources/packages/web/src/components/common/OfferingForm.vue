@@ -1,16 +1,16 @@
 <template>
+  <!-- todo: ann form definition -->
   <formio-container
-    formName="educationprogramoffering"
+    formName="educationProgramOffering"
     :formData="formData"
     @submitted="saveOffering"
   >
     <template #actions="{ submit }" v-if="!readOnly">
-      <!-- todo: add processing logic -->
+      <!-- todo: processing logic not working -->
       <footer-buttons
         :processing="processing"
         primaryLabel="Submit"
         @primaryClick="submit"
-        :showSecondaryButton="false"
       />
     </template>
   </formio-container>
@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { FormIOForm, OfferingFormModel } from "@/types";
-import { SetupContext, computed } from "vue";
+import { SetupContext, computed, ref } from "vue";
 import { useOffering } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
@@ -40,10 +40,13 @@ export default {
   emits: ["saveOffering"],
   setup(props: any, context: SetupContext) {
     const { mapOfferingChipStatus } = useOffering();
+    const processing = ref(false);
     const saveOffering = (
       form: FormIOForm<EducationProgramOfferingAPIInDTO>,
     ) => {
+      processing.value = true;
       context.emit("saveOffering", form.data);
+      processing.value = false;
     };
     /**
      * The property clientType is populated for institution because

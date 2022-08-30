@@ -4,6 +4,9 @@
       <slot name="header"></slot>
       <slot name="sub-header"></slot>
     </header>
+    <div class="ml-5 mb-2">
+      <slot name="details-header"></slot>
+    </div>
     <slot name="alerts"></slot>
     <v-container
       :fluid="fullWidth"

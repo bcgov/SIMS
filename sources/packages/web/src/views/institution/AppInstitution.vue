@@ -56,11 +56,6 @@
                   <span class="label-bold">{{ item.label }}</span>
                 </v-list-item-title>
               </v-list-item>
-              <v-divider
-                v-if="index < menuItems.length - 1"
-                :key="index"
-                inset
-              ></v-divider>
             </template>
           </v-list>
         </v-menu>
@@ -95,9 +90,6 @@ export default {
       await executeLogout(ClientIdType.Institution);
     };
     const menuItems = [
-      {
-        label: "Notifications Settings",
-      },
       {
         label: "Log Out",
         command: logoff,

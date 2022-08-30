@@ -4,11 +4,7 @@
       <header-navigator title="Institution" subTitle="My Profile" />
     </template>
     <template #alerts>
-      <banner
-        class="mt-2"
-        :type="BannerTypes.Info"
-        header="Updating read-only information"
-      >
+      <banner :type="BannerTypes.Info" header="Updating read-only information">
         <template #content>
           Please notice that the read-only information below is retrieved from
           your BCeID account and it is not possible to change it here. If any

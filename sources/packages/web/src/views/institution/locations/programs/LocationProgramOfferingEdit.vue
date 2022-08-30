@@ -4,7 +4,7 @@
       <header-navigator
         title="Program detail"
         :routeLocation="routeLocation"
-        subTitle="Edit Study Period"
+        subTitle="Edit Offering"
       >
         <template #buttons>
           <v-row class="p-0 m-0">
@@ -36,14 +36,6 @@
           </v-row>
         </template>
       </header-navigator>
-      <program-offering-detail-header
-        class="m-4"
-        :headerDetails="{
-          ...initialData,
-          status: initialData.offeringStatus,
-          institutionId: institutionId,
-        }"
-      />
     </template>
     <template #alerts>
       <banner
@@ -52,6 +44,15 @@
         :type="BannerTypes.Success"
         header="Students have applied financial aid for this offering"
         summary="You can still make changes to the name. If you need edit the locked fields, please click on the edit actions menu and request to edit."
+      />
+    </template>
+    <template #details-header>
+      <program-offering-detail-header
+        :headerDetails="{
+          ...initialData,
+          status: initialData.offeringStatus,
+          institutionId: institutionId,
+        }"
       />
     </template>
     <offering-form
