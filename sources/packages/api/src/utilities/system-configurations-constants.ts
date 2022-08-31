@@ -99,7 +99,9 @@ export const MAX_UPLOAD_FILES = 1;
  * For multipart forms, the max number of parts (fields + files).
  * 3 means 'the file' + uniqueFileName + group.
  */
-export const MAX_UPLOAD_PARTS = 3;
+// TODO: The value has been set to 4 from 3 to fix the ongoing file upload issue.
+// TODO: On further investigation re-evaluate accordingly.
+export const MAX_UPLOAD_PARTS = 4;
 
 /**
  * Group name associated with the files uploaded by the Ministry

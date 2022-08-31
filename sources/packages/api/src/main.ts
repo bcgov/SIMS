@@ -48,9 +48,16 @@ async function bootstrap() {
   // Getting application port
   const port = process.env.PORT || 3000;
 
-  // TODO: Configure CORS to be as much restrictive as possible.
+  // Only for the development environment, the CORS setting allows
+  // any domain. Otherwise all the web origins(except the same domain where API is hosted)
+  // are restricted.
+  const allowAnyOrigin = process.env.NODE_ENV !== "production";
+
   //TODO: Check for potential security threats in exposing the content-disposition header.
-  app.enableCors({ exposedHeaders: "Content-Disposition" });
+  app.enableCors({
+    exposedHeaders: "Content-Disposition",
+    origin: allowAnyOrigin,
+  });
 
   // Setting express middleware for req
   app.use(LoggerService.apiLogger);
