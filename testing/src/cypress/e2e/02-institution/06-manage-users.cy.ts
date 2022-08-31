@@ -1,19 +1,20 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
 import ManageUsersObject from "../../page-objects/Institution-objects/ManageUsersObject";
 import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
+import InstitutionHelperActions from "./common-helper-functions.cy";
 
+const dashboardInstitutionObject = new DashboardInstitutionObject();
+const manageUsersObject = new ManageUsersObject();
+const institutionCustomCommand = new InstitutionCustomCommand();
+const institutionHelperActions = new InstitutionHelperActions();
+
+const URL = institutionHelperActions.getLoginUrlForTestEnv();
+const USERNAME = institutionHelperActions.getUserNameSingleLocation();
+const PASSWORD = institutionHelperActions.getUserPasswordSingleLocation();
 describe("Manage Users", () => {
-  const dashboardInstitutionObject = new DashboardInstitutionObject();
-  const manageUsersObject = new ManageUsersObject();
-  const institutionCustomCommand = new InstitutionCustomCommand();
-
-  const LOGIN_URL = Cypress.env("TEST").BASE_URL + "/institution/login";
-  const UNAME = Cypress.env("TEST").UNAME_1;
-  const PASS = Cypress.env("TEST").PASS_1;
-
   beforeEach(() => {
-    cy.visit(LOGIN_URL);
-    institutionCustomCommand.loginWithCredentials(UNAME, PASS);
+    cy.visit(URL);
+    institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
   });
 
   it("Verify that user redirect to institution manage user summary page", () => {
