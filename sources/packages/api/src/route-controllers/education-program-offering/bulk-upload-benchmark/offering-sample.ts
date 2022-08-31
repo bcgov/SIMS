@@ -1,3 +1,5 @@
+import { ProgramIntensity } from "src/database/entities";
+
 export const OFFERING_SAMPLE = {
   offeringName: "Sample test", // ok
   yearOfStudy: 1, // ok
@@ -8,8 +10,8 @@ export const OFFERING_SAMPLE = {
   programOfferingDeliveryMismatch: false,
   hasOfferingWILComponent: "no", // ok
   programOfferingWILMismatch: false,
-  studyStartDate: "2022-08-01T00:00:00-07:00", // ok
-  studyEndDate: "2022-11-19T00:00:00-08:00", // ok
+  studyStartDate: "2022-08-01", // ok
+  studyEndDate: "2022-11-19", // ok
   ineligibleDaysForFundingAfter10PercentageCalculation: 20,
   allowable10Percentage: 11,
   invalidStudyDates: false,
@@ -68,6 +70,9 @@ export const OFFERING_SAMPLE = {
 };
 
 export const OFFERING_SAMPLE_NO_DRY_RUN = {
+  locationId: 3,
+  offeringType: "Public", // ok
+  offeringDeclaration: true, //  ok
   offeringName: "Test", // ok
   yearOfStudy: 1, // ok
   showYearOfStudy: true, // ok
@@ -81,7 +86,7 @@ export const OFFERING_SAMPLE_NO_DRY_RUN = {
   // ok
   studyBreaks: [
     {
-      breakStartDate: "2022-08-11",
+      breakStartDate: "2022-08-01",
       breakEndDate: "2022-08-20",
     },
     {
@@ -90,17 +95,22 @@ export const OFFERING_SAMPLE_NO_DRY_RUN = {
     },
     {
       breakStartDate: "2022-09-25",
-      breakEndDate: "2022-10-04",
+      breakEndDate: "2025-10-04",
     },
   ],
   actualTuitionCosts: 123, // ok
   programRelatedCosts: 456, // ok
   mandatoryFees: 789, // ok
   exceptionalExpenses: 10, // ok
-  programIntensity: "Full Time and Part Time",
   programDeliveryTypes: {
+    deliveredOnSite: false,
+    deliveredOnline: true,
+  },
+  programContext: {
+    id: 1,
+    programIntensity: ProgramIntensity.fullTime,
+    hasWILComponent: "no",
     deliveredOnSite: true,
     deliveredOnline: true,
   },
-  hasWILComponent: "no", // ok - hasOfferingWILComponent
 };

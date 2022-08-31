@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { SIN_MAX_LENGTH } from "../../../database/entities";
+import { SIN_MAX_LENGTH } from "../../database/entities";
 
 /**
  * SIN validation algorithm (Luhn algorithm).

@@ -111,3 +111,19 @@ export const MINISTRY_FILE_UPLOAD_GROUP_NAME = "Ministry communications";
  * Daily disbursement report name.
  */
 export const DAILY_DISBURSEMENT_REPORT_NAME = "Daily_Disbursement_File";
+
+/**
+ * This study break exceeds the 21 consecutive day threshold as outlined in StudentAid BC policy
+ * - 0.1 indicates 10%
+ * - 0.5 indicates 50%
+ * - 1.0 indicates 100%
+ */
+export const OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD = 0.1;
+/**
+ * A study break period should not have less than the number of days defined by this const.
+ */
+export const OFFERING_STUDY_BREAK_MIN_DAYS = 6;
+/**
+ * A study break period should not exceed the amount of days defined by this const.
+ */
+export const OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD = 21;

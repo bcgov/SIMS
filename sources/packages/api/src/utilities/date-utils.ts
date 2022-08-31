@@ -170,11 +170,11 @@ export function getFileNameAsCurrentTimestamp(): string {
   return dayjs(new Date()).tz(PST_TIMEZONE).format(TIMESTAMP_CONTINUOUS_FORMAT);
 }
 
-export function isBeforeByDay(
+export function isAfterByDay(
   firstDate: Date | string,
   secondDate: Date | string,
 ): boolean {
-  return dayjs(firstDate).isBefore(secondDate, "day");
+  return dayjs(firstDate).isAfter(secondDate, "day");
 }
 
 export interface Period {
@@ -186,7 +186,7 @@ export function isBetweenPeriod(date: Date | string, period: Period): boolean {
   return dayjs(date).isBetween(period.startDate, period.endDate, "days", "[]");
 }
 
-export function hasIntersection(periodA: Period, periodB: Period): boolean {
+export function hasPeriodOverlap(periodA: Period, periodB: Period): boolean {
   return (
     // Start date in between the periodB (inclusive check).
     isBetweenPeriod(periodA.startDate, periodB) ||
@@ -203,12 +203,12 @@ export function hasIntersection(periodA: Period, periodB: Period): boolean {
  * @param periods periods to check for intersections.
  * @returns true if any period has a intersection with any other period.
  */
-export function hasSomeIntersection(periods: Period[]): boolean {
+export function hasSomePeriodOverlap(periods: Period[]): boolean {
   for (let i = 0; i < periods.length; i++) {
     const currentPeriod = periods[i];
-    const testPeriods = periods.splice(i);
+    const testPeriods = periods.filter((_, index) => index !== i);
     const hasSomeIntersection = testPeriods.some((testPeriod) =>
-      hasIntersection(currentPeriod, testPeriod),
+      hasPeriodOverlap(currentPeriod, testPeriod),
     );
     if (hasSomeIntersection) {
       return true;

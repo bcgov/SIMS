@@ -49,7 +49,7 @@ import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
 import { EducationProgramOfferingBenchmarkController } from "./route-controllers/education-program-offering/bulk-upload-benchmark/education-program-offering-benchmark.controller";
-import { EducationProgramOfferingBulkService } from "./services/education-program-offering/education-program-offering-bulk.service";
+import { EducationProgramOfferingCreationService } from "./services/education-program-offering/education-program-offering-creation.service";
 
 @Module({
   imports: [
@@ -96,10 +96,6 @@ import { EducationProgramOfferingBulkService } from "./services/education-progra
     ProgramYearController,
     ConfigController,
     DynamicFormController,
-    EducationProgramOfferingController,
-    ATBCController,
-    NotesController,
-    RestrictionController,
     EducationProgramOfferingBenchmarkController,
   ],
   providers: [
@@ -125,6 +121,9 @@ import { EducationProgramOfferingBulkService } from "./services/education-progra
     DesignationAgreementLocationService,
     GCNotifyService,
     GCNotifyActionsService,
+    StudentService,
+    SFASIndividualService,
+    EducationProgramOfferingCreationService,
   ],
 })
 export class AppModule {}

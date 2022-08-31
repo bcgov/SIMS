@@ -10,29 +10,38 @@ import {
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource } from "typeorm";
-import { SaveOfferingModel } from "./education-program-offering-bulk.models";
-import { validate } from "class-validator";
-import { dateDifference } from "../../utilities";
+import {
+  CalculatedStudyBreaksAndWeeks,
+  OfferingStudyBreakCalculationContext,
+  SaveOfferingModel,
+} from "./education-program-offering-creation.models";
+import { validateSync } from "class-validator";
+import {
+  dateDifference,
+  OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD,
+  OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
+} from "../../utilities";
 import { plainToClass } from "class-transformer";
 
 @Injectable()
-export class EducationProgramOfferingBulkService extends RecordDataModelService<EducationProgramOffering> {
+export class EducationProgramOfferingCreationService extends RecordDataModelService<EducationProgramOffering> {
   constructor(dataSource: DataSource) {
     super(dataSource.getRepository(EducationProgramOffering));
   }
 
-  async createOffering(
-    offering: SaveOfferingModel,
-  ): Promise<EducationProgramOffering> {
+  async createOffering(offering: SaveOfferingModel): Promise<any> {
     // Needed to generate the proper metadata when 'new Class' is not used.
-    const saveOfferingModelClass = plainToClass(SaveOfferingModel, offering);
+    const saveOfferingModelClass = plainToClass(SaveOfferingModel, offering, {
+      enableImplicitConversion: false,
+    });
     // TODO: Create custom validators for dates and study breaks static data.
-    const result = await validate(saveOfferingModelClass);
+    const result = validateSync(saveOfferingModelClass);
+    console.log(result);
 
     const newOffering = new EducationProgramOffering();
     newOffering.name = offering.offeringName;
-    newOffering.studyStartDate = offering.studyStartDate;
-    newOffering.studyEndDate = offering.studyEndDate;
+    newOffering.studyStartDate = new Date(offering.studyStartDate);
+    newOffering.studyEndDate = new Date(offering.studyEndDate);
     newOffering.actualTuitionCosts = offering.actualTuitionCosts;
     newOffering.programRelatedCosts = offering.programRelatedCosts;
     newOffering.mandatoryFees = offering.mandatoryFees;
@@ -50,7 +59,7 @@ export class EducationProgramOfferingBulkService extends RecordDataModelService<
     newOffering.yearOfStudy = offering.yearOfStudy;
     newOffering.showYearOfStudy = offering.showYearOfStudy;
     newOffering.hasOfferingWILComponent = offering.hasOfferingWILComponent;
-    newOffering.offeringWILType = offering.hasWILComponent;
+    newOffering.offeringWILType = offering.hasOfferingWILComponent;
     //newOffering.offeringDeclaration = offering.offeringDeclaration;
     newOffering.courseLoad = offering.courseLoad;
     newOffering.offeringStatus = OfferingStatus.Approved;
@@ -58,7 +67,8 @@ export class EducationProgramOfferingBulkService extends RecordDataModelService<
     newOffering.studyBreaks = this.getCalculateStudyBreaksAndWeeks(offering);
     newOffering.offeringDeclaration = true;
 
-    return this.repo.save(newOffering);
+    //return this.repo.insert(newOffering);
+    return null;
   }
 
   private getCalculateStudyBreaksAndWeeks(
@@ -72,8 +82,8 @@ export class EducationProgramOfferingBulkService extends RecordDataModelService<
         eachBreak.breakEndDate,
         eachBreak.breakStartDate,
       );
-      newStudyBreak.breakStartDate = eachBreak.breakStartDate;
-      newStudyBreak.breakEndDate = eachBreak.breakEndDate;
+      //newStudyBreak.breakStartDate = eachBreak.breakStartDate;
+      //newStudyBreak.breakEndDate = eachBreak.breakEndDate;
       newStudyBreak.eligibleBreakDays = Math.min(newStudyBreak.breakDays, 21);
       newStudyBreak.ineligibleBreakDays =
         newStudyBreak.breakDays - newStudyBreak.eligibleBreakDays;
@@ -109,6 +119,66 @@ export class EducationProgramOfferingBulkService extends RecordDataModelService<
     studyBreaksAndWeeks.totalDays = totalDays;
     studyBreaksAndWeeks.fundedStudyPeriodDays = fundedStudyPeriodDays;
     studyBreaksAndWeeks.unfundedStudyPeriodDays = unfundedStudyPeriodDays;
+    return studyBreaksAndWeeks;
+  }
+
+  static getCalculatedStudyBreaksAndWeeks(
+    offering: OfferingStudyBreakCalculationContext,
+  ): CalculatedStudyBreaksAndWeeks {
+    let sumOfTotalEligibleBreakDays = 0;
+    let sumOfTotalIneligibleBreakDays = 0;
+    const studyBreaks = offering.studyBreaks.map((eachBreak) => {
+      const newStudyBreak = {} as StudyBreak;
+      newStudyBreak.breakDays = dateDifference(
+        eachBreak.breakEndDate,
+        eachBreak.breakStartDate,
+      );
+      newStudyBreak.breakStartDate = new Date(eachBreak.breakStartDate);
+      newStudyBreak.breakEndDate = new Date(eachBreak.breakEndDate);
+      newStudyBreak.eligibleBreakDays = Math.min(
+        newStudyBreak.breakDays,
+        OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD,
+      );
+      newStudyBreak.ineligibleBreakDays =
+        newStudyBreak.breakDays - newStudyBreak.eligibleBreakDays;
+      sumOfTotalEligibleBreakDays += newStudyBreak.eligibleBreakDays;
+      sumOfTotalIneligibleBreakDays += newStudyBreak.ineligibleBreakDays;
+      return newStudyBreak;
+    });
+
+    // Offering total days.
+    const totalDays = dateDifference(
+      offering.studyEndDate,
+      offering.studyStartDate,
+    );
+
+    // Allowable 10% total days.
+    const allowable10Percentage =
+      totalDays *
+      OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD;
+
+    // Calculating the ineligible days
+    const ineligibleDaysForFundingAfter10PercentageCalculation =
+      sumOfTotalEligibleBreakDays - allowable10Percentage;
+
+    const unfundedStudyPeriodDays =
+      sumOfTotalIneligibleBreakDays +
+      ineligibleDaysForFundingAfter10PercentageCalculation;
+
+    const fundedStudyPeriodDays = Math.max(
+      totalDays - unfundedStudyPeriodDays,
+      0,
+    );
+
+    const studyBreaksAndWeeks: CalculatedStudyBreaksAndWeeks = {
+      studyBreaks,
+      fundedStudyPeriodDays,
+      totalDays,
+      totalFundedWeeks: Math.ceil(fundedStudyPeriodDays / 7),
+      unfundedStudyPeriodDays,
+      sumOfTotalEligibleBreakDays,
+      sumOfTotalIneligibleBreakDays,
+    };
     return studyBreaksAndWeeks;
   }
 

@@ -9,7 +9,7 @@ import BaseController from "../../../route-controllers/BaseController";
 import { DryRunSubmissionResult } from "../../../types";
 import * as fastq from "fastq";
 import type { queueAsPromised } from "fastq";
-import { EducationProgramOfferingBulkService } from "../../../services/education-program-offering/education-program-offering-bulk.service";
+import { EducationProgramOfferingCreationService } from "../../../services/education-program-offering/education-program-offering-creation.service";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("offering-benchmark")
@@ -17,7 +17,7 @@ import { EducationProgramOfferingBulkService } from "../../../services/education
 export class EducationProgramOfferingBenchmarkController extends BaseController {
   constructor(
     private readonly formService: FormService,
-    private readonly offeringBulkService: EducationProgramOfferingBulkService,
+    private readonly offeringBulkService: EducationProgramOfferingCreationService,
   ) {
     super();
   }
