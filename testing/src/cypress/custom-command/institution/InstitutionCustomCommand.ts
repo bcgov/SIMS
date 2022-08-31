@@ -1,7 +1,7 @@
 import LoginInstitutionObject from "../../page-objects/Institution-objects/LoginInstitutionObject";
 
 export default class InstitutionCustomCommand {
-  loginWithCredentials(uname: string, pass: string) {
+  loginWithCredentials(username: string, password: string) {
     const loginInstitutionObject = new LoginInstitutionObject();
 
     loginInstitutionObject.loginWithBCEID().should("be.visible").click();
@@ -9,12 +9,12 @@ export default class InstitutionCustomCommand {
 
     loginInstitutionObject
       .bceidInputText()
-      .type(uname)
-      .should("have.value", uname);
+      .type(username)
+      .should("have.value", username);
     loginInstitutionObject
       .passwordInputText()
-      .type(pass)
-      .should("have.value", pass);
+      .type(password)
+      .should("have.value", password);
     loginInstitutionObject.continueButton().click();
   }
 }

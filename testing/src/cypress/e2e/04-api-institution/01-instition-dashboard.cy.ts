@@ -1,13 +1,19 @@
-const COLLEGE_F = Cypress.env("COLL_F");
-const USER_F = Cypress.env("USERS").coll_f;
-const BASE_URL = Cypress.env("TEST").BASE_URL + "/api/institutions";
-const TOKEN = Cypress.env("TEST").TOKEN;
+import InstitutionHelperActions from "../02-institution/common-helper-functions.cy";
 
-describe("Institution apis", () => {
-  it("Get user status", () => {
+const institutionHelperActions = new InstitutionHelperActions();
+
+const INSTITUTION_DETAILS_SINGLE_LOCATION =
+  institutionHelperActions.getInstitutionDetailsSingleLocation();
+const USER_DETAILS_SINGLE_LOCATION =
+  institutionHelperActions.getUserDetailsSingleLocation();
+const API_URL = institutionHelperActions.getApiUrlForTest();
+const TOKEN = institutionHelperActions.getToken();
+
+describe("Validate Institution apis - Institution with single location", () => {
+  it("Get User status", () => {
     cy.request({
       method: "GET",
-      url: `${BASE_URL}/institution-user/status`,
+      url: `${API_URL}/institution-user/status`,
       followRedirect: false,
       headers: {
         "Content-Type": "text/html",
@@ -20,10 +26,10 @@ describe("Institution apis", () => {
     });
   });
 
-  it("Get user details", () => {
+  it("Get User details", () => {
     cy.request({
       method: "GET",
-      url: `${BASE_URL}/institution-user/my-details`,
+      url: `${API_URL}/institution-user/my-details`,
       followRedirect: false,
       headers: {
         "Content-Type": "text/html",
@@ -31,120 +37,153 @@ describe("Institution apis", () => {
       },
     }).then((resp) => {
       expect(resp.status).to.be.equal(200);
-      expect(resp.body.user).to.have.property("userName", USER_F.userName);
-      expect(resp.body.user).to.have.property("firstName", USER_F.firstName);
-      expect(resp.body.user).to.have.property("lastName", USER_F.lastName);
+      expect(resp.body.user).to.have.property(
+        "userName",
+        USER_DETAILS_SINGLE_LOCATION.userName
+      );
+      expect(resp.body.user).to.have.property(
+        "firstName",
+        USER_DETAILS_SINGLE_LOCATION.firstName
+      );
+      expect(resp.body.user).to.have.property(
+        "lastName",
+        USER_DETAILS_SINGLE_LOCATION.lastName
+      );
       expect(resp.body.user).to.have.property("isActive", true);
       expect(resp.body.user).to.have.property(
         "userFullName",
-        USER_F.userFullName
+        USER_DETAILS_SINGLE_LOCATION.userFullName
       );
       expect(resp.body.user).to.have.property("isAdmin", true);
-      expect(resp.body.user).to.have.property("email", USER_F.email);
+      expect(resp.body.user).to.have.property(
+        "email",
+        USER_DETAILS_SINGLE_LOCATION.email
+      );
       expect(resp.body.authorizations).to.have.property(
         "institutionId",
-        USER_F.authorizations.institutionId
+        USER_DETAILS_SINGLE_LOCATION.authorizations.institutionId
       );
       expect(resp.body.authorizations.authorizations[0]).to.have.property(
         "locationId",
-        USER_F.authorizations.authorizations[0].locationId
+        USER_DETAILS_SINGLE_LOCATION.authorizations.authorizations[0].locationId
       );
       expect(resp.body.authorizations.authorizations[0]).to.have.property(
         "userType",
-        USER_F.authorizations.authorizations[0].userType
+        USER_DETAILS_SINGLE_LOCATION.authorizations.authorizations[0].userType
       );
       expect(resp.body.authorizations.authorizations[0]).to.have.property(
         "userRole",
-        USER_F.authorizations.authorizations[0].userRole
+        USER_DETAILS_SINGLE_LOCATION.authorizations.authorizations[0].userRole
       );
     });
   });
 
-  it("Get institution details", () => {
+  it("Get Institution details", () => {
     cy.request({
       method: "GET",
-      url: `${BASE_URL}/institution`,
+      url: `${API_URL}/institution`,
       followRedirect: true,
       headers: {
         "Content-Type": "text/html",
         Authorization: TOKEN,
       },
-    }).then((resp) => {
-      const body = resp.body;
-      const addr = body.mailingAddress;
-      expect(resp.status).to.be.equal(200);
+    }).then((response) => {
+      const body = response.body;
+      const mailingAddress = body.mailingAddress;
+      expect(response.status).to.be.equal(200);
       expect(body).to.have.property(
         "establishedDate",
-        COLLEGE_F.establishedDate
+        INSTITUTION_DETAILS_SINGLE_LOCATION.establishedDate
       );
 
       expect(body).to.have.property(
         "formattedEstablishedDate",
-        COLLEGE_F.formattedEstablishedDate
+        INSTITUTION_DETAILS_SINGLE_LOCATION.formattedEstablishedDate
       );
       expect(body).to.have.property(
         "hasBusinessGuid",
-        COLLEGE_F.hasBusinessGuid
+        INSTITUTION_DETAILS_SINGLE_LOCATION.hasBusinessGuid
       );
       expect(body).to.have.property(
         "institutionType",
-        COLLEGE_F.institutionType
+        INSTITUTION_DETAILS_SINGLE_LOCATION.institutionType
       );
       expect(body).to.have.property(
         "institutionTypeName",
-        COLLEGE_F.institutionTypeName
+        INSTITUTION_DETAILS_SINGLE_LOCATION.institutionTypeName
       );
-      expect(body).to.have.property("isBCPrivate", COLLEGE_F.isBCPrivate);
+      expect(body).to.have.property(
+        "isBCPrivate",
+        INSTITUTION_DETAILS_SINGLE_LOCATION.isBCPrivate
+      );
       expect(body).to.have.property(
         "legalOperatingName",
-        COLLEGE_F.legalOperatingName
+        INSTITUTION_DETAILS_SINGLE_LOCATION.legalOperatingName
       );
-      expect(addr).to.have.property(
+      expect(mailingAddress).to.have.property(
         "addressLine1",
-        COLLEGE_F.mailingAddress.addressLine1
+        INSTITUTION_DETAILS_SINGLE_LOCATION.mailingAddress.addressLine1
       );
-      expect(addr).to.have.property(
+      expect(mailingAddress).to.have.property(
         "addressLine2",
-        COLLEGE_F.mailingAddress.addressLine2
+        INSTITUTION_DETAILS_SINGLE_LOCATION.mailingAddress.addressLine2
       );
-      expect(addr).to.have.property(
+      expect(mailingAddress).to.have.property(
         "canadaPostalCode",
-        COLLEGE_F.mailingAddress.canadaPostalCode
+        INSTITUTION_DETAILS_SINGLE_LOCATION.mailingAddress.canadaPostalCode
       );
-      expect(addr).to.have.property("city", COLLEGE_F.mailingAddress.city);
-      expect(addr).to.have.property(
+      expect(mailingAddress).to.have.property(
+        "city",
+        INSTITUTION_DETAILS_SINGLE_LOCATION.mailingAddress.city
+      );
+      expect(mailingAddress).to.have.property(
         "postalCode",
-        COLLEGE_F.mailingAddress.postalCode
+        INSTITUTION_DETAILS_SINGLE_LOCATION.mailingAddress.postalCode
       );
-      expect(addr).to.have.property(
+      expect(mailingAddress).to.have.property(
         "provinceState",
-        COLLEGE_F.mailingAddress.provinceState
+        INSTITUTION_DETAILS_SINGLE_LOCATION.mailingAddress.provinceState
       );
-      expect(addr).to.have.property(
+      expect(mailingAddress).to.have.property(
         "selectedCountry",
-        COLLEGE_F.mailingAddress.selectedCountry
+        INSTITUTION_DETAILS_SINGLE_LOCATION.mailingAddress.selectedCountry
       );
-      expect(body).to.have.property("operatingName", COLLEGE_F.operatingName);
+      expect(body).to.have.property(
+        "operatingName",
+        INSTITUTION_DETAILS_SINGLE_LOCATION.operatingName
+      );
       expect(body).to.have.property(
         "primaryContactEmail",
-        COLLEGE_F.primaryContactEmail
+        INSTITUTION_DETAILS_SINGLE_LOCATION.primaryContactEmail
       );
       expect(body).to.have.property(
         "primaryContactFirstName",
-        COLLEGE_F.primaryContactFirstName
+        INSTITUTION_DETAILS_SINGLE_LOCATION.primaryContactFirstName
       );
       expect(body).to.have.property(
         "primaryContactLastName",
-        COLLEGE_F.primaryContactLastName
+        INSTITUTION_DETAILS_SINGLE_LOCATION.primaryContactLastName
       );
       expect(body).to.have.property(
         "primaryContactPhone",
-        COLLEGE_F.primaryContactPhone
+        INSTITUTION_DETAILS_SINGLE_LOCATION.primaryContactPhone
       );
-      expect(body).to.have.property("primaryEmail", COLLEGE_F.primaryEmail);
-      expect(body).to.have.property("primaryPhone", COLLEGE_F.primaryPhone);
-      expect(body).to.have.property("regulatingBody", COLLEGE_F.regulatingBody);
-      expect(body).to.have.property("website", COLLEGE_F.website);
+      expect(body).to.have.property(
+        "primaryEmail",
+        INSTITUTION_DETAILS_SINGLE_LOCATION.primaryEmail
+      );
+      expect(body).to.have.property(
+        "primaryPhone",
+        INSTITUTION_DETAILS_SINGLE_LOCATION.primaryPhone
+      );
+      expect(body).to.have.property(
+        "regulatingBody",
+        INSTITUTION_DETAILS_SINGLE_LOCATION.regulatingBody
+      );
+      expect(body).to.have.property(
+        "website",
+        INSTITUTION_DETAILS_SINGLE_LOCATION.website
+      );
     });
   });
 });

@@ -1,19 +1,21 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
 import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
 import ManageInstitutionObject from "../../page-objects/Institution-objects/ManageInstitutionObject";
+import InstitutionHelperActions from "./common-helper-functions.cy";
 
 const dashboardObject = new DashboardInstitutionObject();
-const iCC = new InstitutionCustomCommand();
+const institutionCustomCommand = new InstitutionCustomCommand();
 const manageInstituionObject = new ManageInstitutionObject();
+const institutionHelperActions = new InstitutionHelperActions()
 
-const LOGIN_URL = Cypress.env("TEST").BASE_URL + "/institution/login";
-const UNAME = Cypress.env("TEST").UNAME_1;
-const PASS = Cypress.env("TEST").PASS_1;
+const URL = institutionHelperActions.getLoginUrlForTestEnv();
+const USERNAME = institutionHelperActions.getUserNameSingleLocation();
+const PASSWORD = institutionHelperActions.getUserPasswordSingleLocation();
 
 describe("Dashboard Page", () => {
   beforeEach(() => {
-    cy.visit(LOGIN_URL);
-    iCC.loginWithCredentials(UNAME, PASS);
+    cy.visit(URL);
+    institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
   });
 
   it("Verify that user is redirected to dashboard page", () => {
@@ -36,7 +38,7 @@ describe("Dashboard Page", () => {
   it("Verify that all buttons are clickable in dashboard and redirect to appropriate pages.", () => {
     dashboardObject.dashboardButton().click();
     dashboardObject.notificationButton().click();
-    //needs validation with the notifications
+    //Needs validation with the notifications.
     dashboardObject.homeButton().click();
     dashboardObject.locationButton().click();
     dashboardObject.manageInstitutionButton().click();
