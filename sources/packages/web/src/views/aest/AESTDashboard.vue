@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <full-page-container>
     <formio formName="aestdashboard"></formio>
-  </v-container>
+  </full-page-container>
 </template>

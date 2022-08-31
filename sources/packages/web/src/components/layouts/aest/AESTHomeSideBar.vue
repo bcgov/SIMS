@@ -1,43 +1,60 @@
 <template>
-  <v-navigation-drawer app class="body-background" permanent>
-    <v-list density="compact" nav>
+  <v-navigation-drawer app v-model="drawer" color="background" permanent>
+    <v-list
+      active-class="active-sidebar-item"
+      density="compact"
+      bg-color="background"
+      active-color="primary"
+    >
       <v-list-item
         v-for="topItem in topItems"
         :key="topItem.label"
         :prepend-icon="topItem.icon"
         :title="topItem.label"
-        @click="topItem.command"
+        :to="topItem.command()"
       />
     </v-list>
-    <v-list density="compact" nav>
-      <v-list-subheader>Student requests</v-list-subheader>
+    <v-list
+      active-class="active-sidebar-item"
+      density="compact"
+      bg-color="background"
+      active-color="primary"
+    >
+      <v-list-subheader class="nav-subtitle">Student requests</v-list-subheader>
       <v-list-item
         :prepend-icon="studentAccountApplicationItem.icon"
         :title="studentAccountApplicationItem.label"
-        @click="studentAccountApplicationItem.command"
+        :to="studentAccountApplicationItem.command()"
       />
       <v-list-item
         :prepend-icon="exceptionsItem.icon"
         :title="exceptionsItem.label"
-        @click="exceptionsItem.command"
+        :to="exceptionsItem.command()"
       />
       <v-list-item
         :prepend-icon="appealsItem.icon"
         :title="appealsItem.label"
-        @click="appealsItem.command"
+        :to="appealsItem.command()"
       />
     </v-list>
-    <v-list density="compact" nav>
-      <v-list-subheader>Institution requests</v-list-subheader>
+    <v-list
+      active-class="active-sidebar-item"
+      density="compact"
+      bg-color="background"
+      active-color="primary"
+    >
+      <v-list-subheader class="nav-subtitle"
+        >Institution requests</v-list-subheader
+      >
       <v-list-item
         :title="designations.label"
         :prepend-icon="designations.icon"
-        @click="designations.command"
+        :to="designations.command()"
       />
       <v-list-item
         :title="offerings.label"
         :prepend-icon="offerings.icon"
-        @click="offerings.command"
+        :to="offerings.command()"
       />
     </v-list>
     <template #append>
@@ -45,7 +62,7 @@
         <check-permission-role :role="Role.AESTReports">
           <template #="{ notAllowed }">
             <v-list-item
-              @click="reports.command"
+              :to="reports.command()"
               :title="reports.label"
               :disabled="notAllowed"
             />
@@ -56,7 +73,7 @@
   </v-navigation-drawer>
 </template>
 <script lang="ts">
-import { useRouter } from "vue-router";
+import { ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuModel, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -64,95 +81,77 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 export default {
   components: { CheckPermissionRole },
   setup() {
-    const router = useRouter();
+    const drawer = ref("drawer");
     const topItems = [
       {
         label: "Home",
         icon: "mdi-home-outline",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.AEST_DASHBOARD,
-          });
-        },
+        command: () => ({
+          name: AESTRoutesConst.AEST_DASHBOARD,
+        }),
       },
       {
         label: "Search Students",
         icon: "mdi-magnify",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.SEARCH_STUDENTS,
-          });
-        },
+        command: () => ({
+          name: AESTRoutesConst.SEARCH_STUDENTS,
+        }),
       },
       {
         label: "Search Institutions",
         icon: "mdi-magnify",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.SEARCH_INSTITUTIONS,
-          });
-        },
+        command: () => ({
+          name: AESTRoutesConst.SEARCH_INSTITUTIONS,
+        }),
       },
     ];
 
     const studentAccountApplicationItem = {
       label: "Accounts",
       icon: "mdi-account-outline",
-      command: () => {
-        router.push({
-          name: AESTRoutesConst.STUDENT_ACCOUNT_APPLICATIONS,
-        });
-      },
+      command: () => ({
+        name: AESTRoutesConst.STUDENT_ACCOUNT_APPLICATIONS,
+      }),
     } as MenuModel;
 
     const exceptionsItem = {
       label: "Exceptions",
       icon: "mdi-alert-circle-outline",
-      command: () => {
-        router.push({
-          name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
-        });
-      },
+      command: () => ({
+        name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
+      }),
     } as MenuModel;
 
     const appealsItem = {
       label: "Appeals",
       icon: "mdi-folder-open-outline",
-      command: () => {
-        router.push({
-          name: AESTRoutesConst.APPLICATION_APPEALS_PENDING,
-        });
-      },
+      command: () => ({
+        name: AESTRoutesConst.APPLICATION_APPEALS_PENDING,
+      }),
     } as MenuModel;
 
     const designations = {
       label: "Pending designations",
       icon: "mdi-bookmark-outline",
-      command: () => {
-        router.push({
-          name: AESTRoutesConst.PENDING_DESIGNATIONS,
-        });
-      },
+      command: () => ({
+        name: AESTRoutesConst.PENDING_DESIGNATIONS,
+      }),
     } as MenuModel;
 
     const reports = {
       label: "Reports",
       icon: "mdi-home-outline",
-      command: () => {
-        router.push({
-          name: AESTRoutesConst.REPORTS,
-        });
-      },
+      command: () => ({
+        name: AESTRoutesConst.REPORTS,
+      }),
     } as MenuModel;
 
     const offerings = {
       label: "Offerings",
       icon: "mdi-view-list-outline",
-      command: () => {
-        router.push({
-          name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS,
-        });
-      },
+      command: () => ({
+        name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS,
+      }),
     } as MenuModel;
 
     return {
@@ -165,6 +164,7 @@ export default {
       offerings,
       AESTRoutesConst,
       Role,
+      drawer,
     };
   },
 };
