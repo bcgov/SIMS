@@ -14,6 +14,7 @@ import {
   Application,
   ApplicationStatus,
   AssessmentTriggerType,
+  StudyBreak,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
@@ -34,8 +35,15 @@ import {
   PaginatedResults,
   CustomNamedError,
   mapFromRawAndEntities,
+  dateDifference,
+  OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD,
+  OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
 } from "../../utilities";
 import { OFFERING_NOT_VALID } from "../../constants";
+import {
+  CalculatedStudyBreaksAndWeeks,
+  OfferingStudyBreakCalculationContext,
+} from "./education-program-offering-validation.models";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -951,5 +959,67 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         offeringStatus: OfferingStatus.ChangeUnderReview,
       })
       .getOne();
+  }
+
+  static getCalculatedStudyBreaksAndWeeks(
+    offering: OfferingStudyBreakCalculationContext,
+  ): CalculatedStudyBreaksAndWeeks {
+    let sumOfTotalEligibleBreakDays = 0;
+    let sumOfTotalIneligibleBreakDays = 0;
+    const studyBreaks = offering.studyBreaks.map((eachBreak) => {
+      const newStudyBreak = {} as StudyBreak;
+      newStudyBreak.breakDays = dateDifference(
+        eachBreak.breakEndDate,
+        eachBreak.breakStartDate,
+      );
+      newStudyBreak.breakStartDate = new Date(eachBreak.breakStartDate);
+      newStudyBreak.breakEndDate = new Date(eachBreak.breakEndDate);
+      newStudyBreak.eligibleBreakDays = Math.min(
+        newStudyBreak.breakDays,
+        OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD,
+      );
+      newStudyBreak.ineligibleBreakDays =
+        newStudyBreak.breakDays - newStudyBreak.eligibleBreakDays;
+      sumOfTotalEligibleBreakDays += newStudyBreak.eligibleBreakDays;
+      sumOfTotalIneligibleBreakDays += newStudyBreak.ineligibleBreakDays;
+
+      return newStudyBreak;
+    });
+
+    // Offering total days.
+    const totalDays = dateDifference(
+      offering.studyEndDate,
+      offering.studyStartDate,
+    );
+
+    // Allowable 10% total days.
+    const allowable10Percentage =
+      totalDays *
+      OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD;
+
+    // Calculating the ineligible days
+    const ineligibleDaysForFundingAfter10PercentageCalculation =
+      sumOfTotalEligibleBreakDays - allowable10Percentage;
+
+    const unfundedStudyPeriodDays =
+      sumOfTotalIneligibleBreakDays +
+      ineligibleDaysForFundingAfter10PercentageCalculation;
+
+    const fundedStudyPeriodDays = Math.max(
+      totalDays - unfundedStudyPeriodDays,
+      0,
+    );
+
+    const studyBreaksAndWeeks: CalculatedStudyBreaksAndWeeks = {
+      studyBreaks,
+      fundedStudyPeriodDays,
+      totalDays,
+      totalFundedWeeks: Math.ceil(fundedStudyPeriodDays / 7),
+      unfundedStudyPeriodDays,
+      sumOfTotalEligibleBreakDays,
+      sumOfTotalIneligibleBreakDays,
+    };
+
+    return studyBreaksAndWeeks;
   }
 }

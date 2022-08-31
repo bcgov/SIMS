@@ -49,7 +49,7 @@ import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
 import { EducationProgramOfferingBenchmarkController } from "./route-controllers/education-program-offering/bulk-upload-benchmark/education-program-offering-benchmark.controller";
-import { EducationProgramOfferingCreationService } from "./services/education-program-offering/education-program-offering-creation.service";
+import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 
 @Module({
   imports: [
@@ -123,7 +123,7 @@ import { EducationProgramOfferingCreationService } from "./services/education-pr
     GCNotifyActionsService,
     StudentService,
     SFASIndividualService,
-    EducationProgramOfferingCreationService,
+    EducationProgramOfferingValidationService,
   ],
 })
 export class AppModule {}

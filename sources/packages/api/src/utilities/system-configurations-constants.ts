@@ -127,3 +127,27 @@ export const OFFERING_STUDY_BREAK_MIN_DAYS = 6;
  * A study break period should not exceed the amount of days defined by this const.
  */
 export const OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD = 21;
+/**
+ * Minimal value to an offering year of study.
+ */
+export const OFFERING_YEAR_OF_STUDY_MIN_VALUE = 1;
+/**
+ * Maximum value to an offering year of study.
+ */
+export const OFFERING_YEAR_OF_STUDY_MAX_VALUE = 9;
+/**
+ * Minimum value to an offering course load.
+ */
+export const OFFERING_COURSE_LOAD_MIN_VALUE = 20;
+/**
+ * Maximum value to an offering course load.
+ */
+export const OFFERING_COURSE_LOAD_MAX_VALUE = 59;
+/**
+ * Minimum amount of days to an offering study period.
+ */
+export const OFFERING_STUDY_PERIOD_MIN_DAYS = 42;
+/**
+ * Maximum amount of days to an offering study period.
+ */
+export const OFFERING_STUDY_PERIOD_MAX_DAYS = 365;

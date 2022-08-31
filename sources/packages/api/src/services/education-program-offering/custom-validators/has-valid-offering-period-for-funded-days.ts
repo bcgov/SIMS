@@ -5,7 +5,10 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD } from "../../../utilities";
+import {
+  OFFERING_STUDY_PERIOD_MAX_DAYS,
+  OFFERING_STUDY_PERIOD_MIN_DAYS,
+} from "../../../utilities";
 import { StudyBreak } from "../education-program-offering-validation.models";
 import { OfferingCalculationValidationBaseConstraint } from "./offering-calculation-validation-base-constraint";
 
@@ -13,7 +16,7 @@ import { OfferingCalculationValidationBaseConstraint } from "./offering-calculat
  *
  */
 @ValidatorConstraint()
-class StudyBreaksCombinedMustNotExceedsThresholdConstraint
+class HasValidOfferingPeriodForFundedDaysConstraint
   extends OfferingCalculationValidationBaseConstraint
   implements ValidatorConstraintInterface
 {
@@ -22,32 +25,35 @@ class StudyBreaksCombinedMustNotExceedsThresholdConstraint
       studyBreaks,
       args,
     );
-    return calculatedStudyBreaksAndWeeks.sumOfTotalIneligibleBreakDays === 0;
+    return (
+      calculatedStudyBreaksAndWeeks.fundedStudyPeriodDays >=
+        OFFERING_STUDY_PERIOD_MIN_DAYS &&
+      calculatedStudyBreaksAndWeeks.fundedStudyPeriodDays <=
+        OFFERING_STUDY_PERIOD_MAX_DAYS
+    );
   }
 
   defaultMessage() {
-    const displayPercentage =
-      OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD * 100;
-    return `The combined study breaks exceed the ${displayPercentage}% threshold as outlined in StudentAid BC policy.`;
+    return `The study period is ineligible for StudentAid BC funding. Your dates must be between ${OFFERING_STUDY_PERIOD_MIN_DAYS} to ${OFFERING_STUDY_PERIOD_MAX_DAYS} days`;
   }
 }
 
 /**
  *
  */
-export function StudyBreaksCombinedMustNotExceedsThreshold(
+export function HasValidOfferingPeriodForFundedDays(
   startPeriodProperty: (targetObject: unknown) => Date | string,
   endPeriodProperty: (targetObject: unknown) => Date | string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
     registerDecorator({
-      name: "StudyBreaksCombinedMustNotExceedsThreshold",
+      name: "HasValidOfferingPeriodForFundedDays",
       target: object.constructor,
       propertyName,
       options: validationOptions,
       constraints: [startPeriodProperty, endPeriodProperty],
-      validator: StudyBreaksCombinedMustNotExceedsThresholdConstraint,
+      validator: HasValidOfferingPeriodForFundedDaysConstraint,
     });
   };
 }

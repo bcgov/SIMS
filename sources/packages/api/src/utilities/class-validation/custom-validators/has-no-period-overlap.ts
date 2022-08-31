@@ -5,8 +5,8 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { hasSomePeriodOverlap, Period } from "../date-utils";
-import { getPeriodEndDateProperty, getPeriodStartDateProperty } from ".";
+import { hasSomePeriodOverlap, Period } from "../../date-utils";
+import { getPeriodEndDateProperty, getPeriodStartDateProperty } from "..";
 
 /**
  *

@@ -5,8 +5,8 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { isBetweenPeriod, Period } from "..";
-import { getPeriodEndDateProperty, getPeriodStartDateProperty } from ".";
+import { isBetweenPeriod, Period } from "../..";
+import { getPeriodStartDateProperty, getPeriodEndDateProperty } from "..";
 
 /**
  *
@@ -16,11 +16,7 @@ class PeriodsAreBetweenLimitsConstraint
   implements ValidatorConstraintInterface
 {
   validate(values: unknown[], args: ValidationArguments): boolean {
-    const [startPeriodProperty, endPeriodProperty] = args.constraints;
-    const minStartDate = args.object[startPeriodProperty];
-    const maxEndDate = args.object[endPeriodProperty];
-    const period: Period = { startDate: minStartDate, endDate: maxEndDate };
-
+    const period = this.getPeriodFromArguments(args);
     const [refTarget] = values;
     const periodStartDateProperty = getPeriodStartDateProperty(refTarget);
     const periodEndDateProperty = getPeriodEndDateProperty(refTarget);
@@ -41,8 +37,15 @@ class PeriodsAreBetweenLimitsConstraint
   }
 
   defaultMessage(args: ValidationArguments) {
+    const period: Period = this.getPeriodFromArguments(args);
+    return `${args.property} must have all dates between ${period.startDate} and ${period.endDate}.`;
+  }
+
+  private getPeriodFromArguments(args: ValidationArguments): Period {
     const [startPeriodProperty, endPeriodProperty] = args.constraints;
-    return `${args.property} must have all dates between the period defined by ${startPeriodProperty} and ${endPeriodProperty}.`;
+    const startDate = startPeriodProperty(args.object);
+    const endDate = endPeriodProperty(args.object);
+    return { startDate, endDate };
   }
 }
 
@@ -50,8 +53,8 @@ class PeriodsAreBetweenLimitsConstraint
  *
  */
 export function PeriodsAreBetweenLimits(
-  startPeriodProperty: string,
-  endPeriodProperty: string,
+  startPeriodProperty: (targetObject: unknown) => Date | string,
+  endPeriodProperty: (targetObject: unknown) => Date | string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {

@@ -8,7 +8,7 @@ import {
 import {
   EducationProgramValidationContext,
   ProgramDeliveryOptions,
-} from "../education-program-offering-creation.models";
+} from "../education-program-offering-validation.models";
 
 /**
  *

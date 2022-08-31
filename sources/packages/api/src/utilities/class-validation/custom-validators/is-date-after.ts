@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { isAfterByDay } from "../date-utils";
+import { isAfterByDay } from "../../date-utils";
 
 /**
  *
@@ -13,23 +13,25 @@ import { isAfterByDay } from "../date-utils";
 @ValidatorConstraint()
 class IsDateAfterConstraint implements ValidatorConstraintInterface {
   validate(value: Date | string, args: ValidationArguments): boolean {
-    const relatedPropertyName = this.getRelatedPropertyName(args);
-    const relatedValue = args.object[relatedPropertyName];
-    if (!relatedValue) {
+    const startDate = this.getStartDate(args);
+    if (!startDate) {
       // The related property does not exists in the provided object to be compared.
       return false;
     }
-    return isAfterByDay(value, relatedValue);
+    return isAfterByDay(value, startDate);
   }
 
   defaultMessage(args: ValidationArguments) {
-    const relatedPropertyName = this.getRelatedPropertyName(args);
-    return `${args.property} must be a date after ${relatedPropertyName}.`;
+    const startDate = this.getStartDate(args);
+    if (!startDate) {
+      return `${args.property} has an undefined start date related value.`;
+    }
+    return `${args.property} must be a date after ${startDate}.`;
   }
 
-  private getRelatedPropertyName(args: ValidationArguments): string {
-    const [relatedPropertyName] = args.constraints;
-    return relatedPropertyName;
+  private getStartDate(args: ValidationArguments): Date | string | undefined {
+    const [startDateProperty] = args.constraints;
+    return startDateProperty(args.object);
   }
 }
 
@@ -37,7 +39,7 @@ class IsDateAfterConstraint implements ValidatorConstraintInterface {
  *
  */
 export function IsDateAfter(
-  relatedProperty: string,
+  startDateProperty: (targetObject: unknown) => Date | string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
@@ -46,7 +48,7 @@ export function IsDateAfter(
       target: object.constructor,
       propertyName,
       options: validationOptions,
-      constraints: [relatedProperty],
+      constraints: [startDateProperty],
       validator: IsDateAfterConstraint,
     });
   };

@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { dateDifference } from "../date-utils";
+import { dateDifference } from "../../date-utils";
 
 /**
  *
@@ -13,8 +13,8 @@ import { dateDifference } from "../date-utils";
 @ValidatorConstraint()
 class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
   validate(value: Date | string, args: ValidationArguments): boolean {
-    const [periodStartDateProperty, minDaysAllowed] = args.constraints;
-    const periodStartDate = args.object[periodStartDateProperty];
+    const [startDateProperty, minDaysAllowed] = args.constraints;
+    const periodStartDate = startDateProperty(args.object);
     if (!periodStartDate) {
       // The related property does not exists in the provided object to be compared.
       return false;
@@ -23,8 +23,10 @@ class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    const [periodStartDateProperty, minDaysAllowed] = args.constraints;
-    return `The number of day(s) between ${periodStartDateProperty} and ${args.property} must be at least ${minDaysAllowed}.`;
+    const [startDateProperty, minDaysAllowed] = args.constraints;
+    return `The number of day(s) between ${startDateProperty(
+      args.object,
+    )} and ${args.property} must be at least ${minDaysAllowed}.`;
   }
 }
 
@@ -32,7 +34,7 @@ class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
  *
  */
 export function PeriodMinLength(
-  periodStartDateProperty: string,
+  startDateProperty: (targetObject: unknown) => Date | string,
   minDaysAllowed: number,
   validationOptions?: ValidationOptions,
 ) {
@@ -42,7 +44,7 @@ export function PeriodMinLength(
       target: object.constructor,
       propertyName,
       options: validationOptions,
-      constraints: [periodStartDateProperty, minDaysAllowed],
+      constraints: [startDateProperty, minDaysAllowed],
       validator: PeriodMinLengthConstraint,
     });
   };

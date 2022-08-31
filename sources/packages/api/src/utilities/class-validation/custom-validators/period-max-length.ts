@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { dateDifference } from "../date-utils";
+import { dateDifference } from "../../date-utils";
 
 /**
  *
@@ -13,8 +13,8 @@ import { dateDifference } from "../date-utils";
 @ValidatorConstraint()
 class PeriodMaxLengthConstraint implements ValidatorConstraintInterface {
   validate(value: Date | string, args: ValidationArguments): boolean {
-    const [periodStartDateProperty, maxDaysAllowed] = args.constraints;
-    const periodStartDate = args.object[periodStartDateProperty];
+    const [startDateProperty, maxDaysAllowed] = args.constraints;
+    const periodStartDate = startDateProperty(args.object);
     if (!periodStartDate) {
       // The related property does not exists in the provided object to be compared.
       return false;
@@ -23,8 +23,10 @@ class PeriodMaxLengthConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    const [periodStartDateProperty, maxDaysAllowed] = args.constraints;
-    return `The number of day(s) between ${periodStartDateProperty} and ${args.property} must not greater than ${maxDaysAllowed}.`;
+    const [startDateProperty, maxDaysAllowed] = args.constraints;
+    return `The number of day(s) between ${startDateProperty(
+      args.object,
+    )} and ${args.property} must not greater than ${maxDaysAllowed}.`;
   }
 }
 
@@ -32,7 +34,7 @@ class PeriodMaxLengthConstraint implements ValidatorConstraintInterface {
  *
  */
 export function PeriodMaxLength(
-  periodStartDateProperty: string,
+  startDateProperty: (targetObject: unknown) => Date | string,
   maxDaysAllowed: number,
   validationOptions?: ValidationOptions,
 ) {
@@ -42,7 +44,7 @@ export function PeriodMaxLength(
       target: object.constructor,
       propertyName,
       options: validationOptions,
-      constraints: [periodStartDateProperty, maxDaysAllowed],
+      constraints: [startDateProperty, maxDaysAllowed],
       validator: PeriodMaxLengthConstraint,
     });
   };

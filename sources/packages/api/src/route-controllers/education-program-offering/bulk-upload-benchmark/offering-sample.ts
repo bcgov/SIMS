@@ -76,7 +76,7 @@ export const OFFERING_SAMPLE_NO_DRY_RUN = {
   offeringName: "Test", // ok
   yearOfStudy: 1, // ok
   showYearOfStudy: true, // ok
-  offeringIntensity: "Full Time", // ok
+  offeringIntensity: "Part Time", // ok
   offeringDelivered: "blended", // ok
   hasOfferingWILComponent: "no", // ok
   programOfferingWILMismatch: false,
@@ -95,7 +95,7 @@ export const OFFERING_SAMPLE_NO_DRY_RUN = {
     },
     {
       breakStartDate: "2022-09-25",
-      breakEndDate: "2025-10-04",
+      breakEndDate: "2022-10-04",
     },
   ],
   actualTuitionCosts: 123, // ok

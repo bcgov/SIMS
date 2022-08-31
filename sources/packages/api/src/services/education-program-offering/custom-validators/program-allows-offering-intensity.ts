@@ -6,7 +6,7 @@ import {
   ValidationArguments,
 } from "class-validator";
 import { ProgramIntensity } from "../../../database/entities";
-import { EducationProgramValidationContext } from "../education-program-offering-creation.models";
+import { EducationProgramValidationContext } from "../education-program-offering-validation.models";
 
 /**
  *
