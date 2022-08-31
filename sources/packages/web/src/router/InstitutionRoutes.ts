@@ -169,10 +169,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.LocationProgramInfoRequestEdit,
         name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
-        components: {
-          default: LocationEditProgramInfoRequest,
-          sidebar: InstitutionHomeSideBar,
-        },
+        component: LocationEditProgramInfoRequest,
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
@@ -184,10 +181,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.LocationCOEDetails,
         name: InstitutionRoutesConst.COE_EDIT,
-        components: {
-          default: LocationCOERequest,
-          sidebar: InstitutionHomeSideBar,
-        },
+        component: LocationCOERequest,
         props: true,
         meta: {
           clientType: ClientIdType.Institution,

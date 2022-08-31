@@ -6,7 +6,6 @@
     @submitted="saveOffering"
   >
     <template #actions="{ submit }" v-if="!readOnly">
-      <!-- todo: processing logic not working -->
       <footer-buttons
         :processing="processing"
         primaryLabel="Submit"
@@ -18,7 +17,7 @@
 
 <script lang="ts">
 import { FormIOForm, OfferingFormModel } from "@/types";
-import { SetupContext, computed, ref } from "vue";
+import { SetupContext, computed } from "vue";
 import { useOffering } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
@@ -36,17 +35,19 @@ export default {
       required: false,
       default: true,
     },
+    processing: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   emits: ["saveOffering"],
   setup(props: any, context: SetupContext) {
     const { mapOfferingChipStatus } = useOffering();
-    const processing = ref(false);
     const saveOffering = (
       form: FormIOForm<EducationProgramOfferingAPIInDTO>,
     ) => {
-      processing.value = true;
       context.emit("saveOffering", form.data);
-      processing.value = false;
     };
     /**
      * The property clientType is populated for institution because

@@ -1,56 +1,63 @@
 <template>
-  <div class="p-m-4">
-    <header-navigator
-      :title="locationName"
-      subTitle="Program Information Requests"
-    />
-
-    <v-container>
-      <v-sheet elevation="1" class="mx-auto mt-2">
-        <v-container>
-          <DataTable
-            :autoLayout="true"
-            :value="applications"
-            class="p-m-4"
-            :paginator="true"
-            :rows="10"
+  <full-page-container :full-width="true">
+    <template #header>
+      <header-navigator
+        :title="locationName"
+        subTitle="Program Information Requests"
+      />
+    </template>
+    <body-header
+      title="Active applications"
+      :recordsCount="applications.length"
+    >
+      <!-- todo: template action search box -->
+    </body-header>
+    <content-group>
+      <toggle-content
+        :toggled="!applications.length"
+        message="You don't have programs information requests yet"
+      >
+        <DataTable
+          :autoLayout="true"
+          :value="applications"
+          class="p-m-4"
+          :paginator="true"
+          :rows="10"
+        >
+          <Column field="fullName" header="Name">
+            <template #body="slotProps">
+              <span>{{ slotProps.data.fullName }}</span>
+            </template>
+          </Column>
+          <Column field="studyStartPeriod" header="Study Period">
+            <template #body="slotProps">
+              <span>
+                {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
+                {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
+              </span>
+            </template></Column
           >
-            <Column field="fullName" header="Name">
-              <template #body="slotProps">
-                <span>{{ slotProps.data.fullName }}</span>
-              </template>
-            </Column>
-            <Column field="studyStartPeriod" header="Study Period">
-              <template #body="slotProps">
-                <span>
-                  {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
-                  {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
-                </span>
-              </template></Column
-            >
-            <Column field="applicationNumber" header="Application #"></Column>
-            <Column field="pirStatus" header="Status">
-              <template #body="slotProps">
-                <status-chip-program-info-request
-                  :status="slotProps.data.pirStatus"
-                />
-              </template>
-            </Column>
-            <Column field="applicationId" header="">
-              <template #body="slotProps">
-                <v-btn
-                  color="primary"
-                  variant="outlined"
-                  @click="goToViewApplication(slotProps.data.applicationId)"
-                  >view</v-btn
-                >
-              </template>
-            </Column>
-          </DataTable>
-        </v-container>
-      </v-sheet>
-    </v-container>
-  </div>
+          <Column field="applicationNumber" header="Application #"></Column>
+          <Column field="pirStatus" header="Status">
+            <template #body="slotProps">
+              <status-chip-program-info-request
+                :status="slotProps.data.pirStatus"
+              />
+            </template>
+          </Column>
+          <Column field="applicationId" header="">
+            <template #body="slotProps">
+              <v-btn
+                color="primary"
+                @click="goToViewApplication(slotProps.data.applicationId)"
+                >View</v-btn
+              >
+            </template>
+          </Column>
+        </DataTable>
+      </toggle-content>
+    </content-group>
+  </full-page-container>
 </template>
 
 <script lang="ts">

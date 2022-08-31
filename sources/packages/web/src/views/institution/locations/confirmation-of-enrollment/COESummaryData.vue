@@ -7,6 +7,7 @@
     >
       <template #actions>
         <v-text-field
+          v-if="!!disbursements.count"
           density="compact"
           label="Search Name"
           variant="outlined"
@@ -19,59 +20,57 @@
       </template>
     </body-header>
     <content-group>
-      <DataTable
-        :value="disbursements.results"
-        :lazy="true"
-        class="p-m-4"
-        :paginator="true"
-        :rows="pageLimit"
-        :rowsPerPageOptions="rowsPerPageOptions"
-        :totalRecords="disbursements.count"
-        @page="pageEvent"
-        @sort="sortEvent"
-      >
-        <template #empty>
-          <p class="text-center font-weight-bold">No records found.</p>
-        </template>
-        <Column field="fullName" header="Name" sortable="true">
-          <template #body="slotProps">
-            <span>{{ slotProps.data.fullName }}</span>
-          </template>
-        </Column>
-        <Column field="studyStartPeriod" header="Study Period">
-          <template #body="slotProps">
-            <span>
-              {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
-              {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
-            </span>
-          </template></Column
+      <!-- todo:ann review other toggled message and header actions -->
+      <toggle-content :toggled="!disbursements.count">
+        <DataTable
+          :value="disbursements.results"
+          :lazy="true"
+          :paginator="true"
+          :rows="pageLimit"
+          :rowsPerPageOptions="rowsPerPageOptions"
+          :totalRecords="disbursements.count"
+          @page="pageEvent"
+          @sort="sortEvent"
         >
-        <Column field="applicationNumber" header="Application #"></Column>
-        <Column field="disbursementDate" header="Disbursement Date">
-          <template #body="slotProps">
-            <span>
-              {{ dateOnlyLongString(slotProps.data.disbursementDate) }}
-            </span>
-          </template></Column
-        >
-        <Column field="coeStatus" header="Status" sortable="true">
-          <template #body="slotProps">
-            <status-chip-c-o-e :status="slotProps.data.coeStatus" />
-          </template>
-        </Column>
-        <Column field="applicationId" header="">
-          <template #body="slotProps">
-            <v-btn
-              color="primary"
-              variant="outlined"
-              @click="
-                goToViewApplication(slotProps.data.disbursementScheduleId)
-              "
-              >view</v-btn
-            >
-          </template>
-        </Column>
-      </DataTable>
+          <Column field="fullName" header="Name" sortable="true">
+            <template #body="slotProps">
+              <span>{{ slotProps.data.fullName }}</span>
+            </template>
+          </Column>
+          <Column field="studyStartPeriod" header="Study dates">
+            <template #body="slotProps">
+              <span>
+                {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
+                {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
+              </span>
+            </template></Column
+          >
+          <Column field="applicationNumber" header="Application #"></Column>
+          <Column field="disbursementDate" header="Disbursement date">
+            <template #body="slotProps">
+              <span>
+                {{ dateOnlyLongString(slotProps.data.disbursementDate) }}
+              </span>
+            </template></Column
+          >
+          <Column field="coeStatus" header="Status" sortable="true">
+            <template #body="slotProps">
+              <status-chip-c-o-e :status="slotProps.data.coeStatus" />
+            </template>
+          </Column>
+          <Column field="applicationId" header="Action">
+            <template #body="slotProps">
+              <v-btn
+                color="primary"
+                @click="
+                  goToViewApplication(slotProps.data.disbursementScheduleId)
+                "
+                >View</v-btn
+              >
+            </template>
+          </Column>
+        </DataTable>
+      </toggle-content>
     </content-group>
   </full-page-container>
 </template>

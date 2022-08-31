@@ -17,7 +17,7 @@
       </v-btn>
     </template>
   </body-header>
-  <v-row class="secondary-color">
+  <v-row>
     <v-col cols="5">
       <title-value
         propertyTitle="Description"
@@ -35,7 +35,8 @@
           "
           >Full Time</span
         >
-        <br /><span
+        <br />
+        <span
           v-if="
             educationProgram.programIntensity ===
             ProgramIntensity.fullTimePartTime
@@ -51,7 +52,7 @@
       />
     </v-col>
   </v-row>
-  <v-row class="secondary-color">
+  <v-row>
     <v-col cols="5">
       <title-value
         propertyTitle="Classification of Instructional Programs (CIP)"

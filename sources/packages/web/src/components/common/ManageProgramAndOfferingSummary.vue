@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-container>
+    <v-container :fluid="true">
       <program-details
         :programId="programId"
         :locationId="locationId"

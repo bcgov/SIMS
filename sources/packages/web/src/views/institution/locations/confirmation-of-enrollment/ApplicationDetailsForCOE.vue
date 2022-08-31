@@ -1,55 +1,60 @@
 <template>
-  <div class="p-m-4">
-    <header-navigator
-      title="Confirmation of enrolment"
-      :routeLocation="{
-        name: InstitutionRoutesConst.COE_SUMMARY,
-        params: {
-          locationId: locationId,
-        },
-      }"
-      subTitle="View Financial Aid Application"
-      ><template #buttons>
-        <v-menu v-if="initialData.applicationCOEStatus === COEStatus.required">
-          <template v-slot:activator="{ props }">
-            <v-btn
-              color="primary"
-              v-bind="props"
-              prepend-icon="fa:fa fa-chevron-circle-down"
-            >
-              Application Actions
-            </v-btn>
-          </template>
-          <v-list>
-            <template v-for="(item, index) in items" :key="index">
-              <v-list-item :value="index">
-                <v-list-item-title
-                  @click="item.command"
-                  :class="item.textColor"
-                >
-                  <span class="label-bold">{{ item.label }}</span>
-                </v-list-item-title>
-              </v-list-item>
-              <v-divider
-                v-if="index < items.length - 1"
-                :key="index"
-                inset
-              ></v-divider>
+  <full-page-container layout-template="centered">
+    <template #header>
+      <header-navigator
+        title="Confirm enrolment"
+        :routeLocation="{
+          name: InstitutionRoutesConst.COE_SUMMARY,
+          params: {
+            locationId: locationId,
+          },
+        }"
+        subTitle="View Financial Aid Application"
+        ><template #buttons>
+          <v-menu
+            v-if="initialData.applicationCOEStatus === COEStatus.required"
+          >
+            <template v-slot:activator="{ props }">
+              <v-btn
+                color="primary"
+                v-bind="props"
+                prepend-icon="fa:fa fa-chevron-circle-down"
+              >
+                Application Actions
+              </v-btn>
             </template>
-          </v-list>
-        </v-menu>
-      </template>
-    </header-navigator>
-
-    <v-container>
-      <Information :data="initialData" />
-      <formio formName="confirmsstudentenrollment" :data="initialData"></formio>
-    </v-container>
+            <v-list>
+              <template v-for="(item, index) in items" :key="index">
+                <v-list-item :value="index">
+                  <v-list-item-title
+                    @click="item.command"
+                    :class="item.textColor"
+                  >
+                    <span class="label-bold">{{ item.label }}</span>
+                  </v-list-item-title>
+                </v-list-item>
+                <v-divider
+                  v-if="index < items.length - 1"
+                  :key="index"
+                  inset
+                ></v-divider>
+              </template>
+            </v-list>
+          </v-menu>
+        </template>
+      </header-navigator>
+    </template>
+    <!-- TODO: ANN form definition -->
+    <formio-container
+      formName="confirmsStudentEnrollment"
+      :formData="initialData"
+    />
+    <!-- todo: ann refactor whole page 31-aug 2022 (review modals) -->
     <formio-modal-dialog
       max-width="730"
       ref="confirmCOEModal"
       title="Confirm enrolment"
-      formName="confirmcoe"
+      formName="confirmCOE"
     >
       <template #actions="{ cancel, submit }">
         <v-row class="m-0 p-0">
@@ -66,8 +71,8 @@
         </v-row>
       </template>
     </formio-modal-dialog>
-    <ConfirmCOEDenyModal ref="denyCOEModal" @submitData="submitCOEDeny" />
-  </div>
+    <confirm-c-o-e-deny-modal ref="denyCOEModal" @submitData="submitCOEDeny" />
+  </full-page-container>
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
@@ -78,7 +83,6 @@ import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnroll
 import { COEStatus, FormIOForm, ApiProcessError, MenuType } from "@/types";
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
 import { useSnackBar, ModalDialog } from "@/composables";
-import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
 import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
@@ -93,7 +97,6 @@ import {
 export default {
   components: {
     ConfirmCOEDenyModal,
-    Information,
     FormioModalDialog,
   },
   props: {

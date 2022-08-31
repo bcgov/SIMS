@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator
         title="Program detail"
@@ -59,6 +59,7 @@
       :data="initialData"
       :readOnly="readOnly"
       @saveOffering="saveOffering"
+      :processing="processing"
     ></offering-form>
   </full-page-container>
 </template>
@@ -103,6 +104,7 @@ export default {
     },
   },
   setup(props: any) {
+    const processing = ref(false);
     const snackBar = useSnackBar();
     const router = useRouter();
     const items = [
@@ -173,6 +175,7 @@ export default {
 
     const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
+        processing.value = true;
         //Update offering
         await EducationProgramOfferingService.shared.updateProgramOffering(
           props.locationId,
@@ -184,6 +187,8 @@ export default {
         router.push(routeLocation.value);
       } catch {
         snackBar.error("An error happened during the Offering saving process.");
+      } finally {
+        processing.value = false;
       }
     };
 
@@ -198,6 +203,7 @@ export default {
       items,
       routeLocation,
       readOnly,
+      processing,
     };
   },
 };
