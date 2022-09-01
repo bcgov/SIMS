@@ -1,12 +1,10 @@
 <template>
   <full-page-container layout-template="centered-card" :enable-max-width="true">
     <v-row
-      ><v-col cols="18"
+      ><v-col cols="15"
         ><v-card-header>
-          <v-col cols="13">
-            <h1 class="category-header-large primary-color">
-              Welcome to AEST Portal
-            </h1>
+          <v-col cols="12">
+            <h1 class="category-header-large primary-color">Welcome to AEST</h1>
             <p class="mb-5">
               In order to successfully login—you must be previously authorized
               by the system administrator. Please use your IDIR to authenticate.
@@ -34,7 +32,7 @@
             <!-- TODO: v-btn inside v-card-actions is not working properly. try in vuetify 3 stable version -->
           </p>
 
-          <div class="pt-6 pb-2">
+          <div class="pt-3 pb-2 ml-2">
             <v-row>
               <v-btn
                 color="primary"
@@ -47,10 +45,10 @@
             </v-row>
           </div>
         </content-group></v-col
-      ><v-col cols="5"
+      ><v-col cols="3"
         ><v-img
           height="260"
-          class="mt-12"
+          class="mt-8"
           alt="A person entering their login information into a digital screen.."
           src="@/assets/images/person-seeing-screen.svg" /></v-col
     ></v-row>
