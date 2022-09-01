@@ -6,7 +6,7 @@ import { profileData } from "../../../data/dev/institution-data/institutionProfi
 describe("Institution Profile", () => {
   const dashboardInstitutionObject = new DashboardInstitutionObject();
   const institutionObject = new InstitutionProfileObject();
-  const iCC = new InstitutionCustomCommand();
+  const institutionCustomCommand = new InstitutionCustomCommand();
 
   const LOGIN_URL = Cypress.env("TEST").BASE_URL + "/institution/login";
   const UNAME = Cypress.env("TEST").UNAME_1;
@@ -14,7 +14,7 @@ describe("Institution Profile", () => {
 
   beforeEach(() => {
     cy.visit(LOGIN_URL);
-    iCC.loginWithCredentials(UNAME,PASS);
+    institutionCustomCommand.loginWithCredentials(UNAME,PASS);
   });
 
   it("Verify that user redirect to institution profile page", () => {

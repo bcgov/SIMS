@@ -78,6 +78,11 @@ describe("Validate Institution apis - Institution with single location", () => {
     });
   });
 
+//TODO Need to implement test case for user which does not have first name
+//TODO Need to implement test case for user which have access to more than one location
+//TODO Need to implement test case for institution having more than one location
+//TODO Need to implement test case for institution having location outside Canada
+
   it("Get Institution details", () => {
     cy.request({
       method: "GET",

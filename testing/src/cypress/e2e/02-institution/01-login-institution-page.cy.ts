@@ -18,7 +18,7 @@ describe("Login Page", () => {
   });
 
   it("Verify invalid username/password field validation error", () => {
-    // Please note that this is not a functionality that our team owns. If there is any issue with the test case, it should not be a blocker.
+    // Please note that this is not a functionality that our application owns. If there is any issue with the test case, it should not be a blocker.
     institutionCustomCommand.loginWithCredentials("invalid", "invalid");
     loginObject
       .errorMessage()
