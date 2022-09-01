@@ -120,10 +120,10 @@
 }
 
 //CSS class added to match v-tab with figma.
-.v-slide-group.v-tabs.v-tabs--horizontal {
-  display: inline-block;
+.v-slide-group.v-tabs.v-tabs--horizontal
+  .v-slide-group__container
+  .v-slide-group__content {
   border-bottom: 2px solid $common-border-color;
-  width: 100%;
 }
 
 // v-btn toggle background color for notes, to match with Figma.
