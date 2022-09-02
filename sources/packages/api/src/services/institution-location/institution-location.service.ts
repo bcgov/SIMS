@@ -131,24 +131,6 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     return this.repo.save(saveLocation);
   }
 
-  async getAllInstitutionLocations(
-    institutionId: number,
-  ): Promise<InstitutionLocation[]> {
-    return this.repo
-      .createQueryBuilder("institution_location")
-      .select([
-        "institution_location.name",
-        "institution_location.data",
-        "institution.institutionPrimaryContact",
-        "institution_location.id",
-        "institution_location.primaryContact",
-        "institution_location.institutionCode",
-      ])
-      .leftJoin("institution_location.institution", "institution")
-      .where("institution.id = :id", { id: institutionId })
-      .getMany();
-  }
-
   /**
    * Gets all locations available and return just
    * a subset of available data.

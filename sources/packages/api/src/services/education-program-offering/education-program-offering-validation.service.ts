@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { OfferingStatus } from "../../database/entities";
 import {
   OfferingValidationResult,
+  OfferingValidationWarnings,
   SaveOfferingModel,
   ValidationWarning,
 } from "./education-program-offering-validation.models";
@@ -21,36 +22,46 @@ export class EducationProgramOfferingValidationService {
       // Ensures that the object received is a class. This is needed to the
       // proper validation metadata be available to the validation be performed.
       const offeringModel = plainToClass(SaveOfferingModel, offering, {
-        enableImplicitConversion: false,
+        enableImplicitConversion: true,
       });
-      const validationErrors = validateSync(offeringModel);
+      const errors = validateSync(offeringModel);
+      const flattenedErrors = flattenErrorMessages(errors);
+      const warnings = this.getOfferingSavingWarnings(errors);
+      const offeringStatus = this.getOfferingSavingStatus(
+        flattenedErrors.length,
+        warnings.length,
+      );
       return {
         offeringModel,
-        validationErrors,
+        offeringStatus,
+        warnings,
+        errors,
+        flattenedErrors,
       };
     });
   }
 
-  getOfferingSavingWarnings(errors: ValidationError[]): ValidationWarning[] {
-    const warnings: ValidationWarning[] = [];
+  private getOfferingSavingWarnings(
+    errors: ValidationError[],
+  ): OfferingValidationWarnings[] {
+    const warnings: OfferingValidationWarnings[] = [];
     errors.forEach((error) => {
       const flattenedContexts = flattenContexts(error);
       const contextWarnings = flattenedContexts
-        .map((context) => Object.values(context))
-        .flat(1)
+        .flatMap((context) => Object.values(context))
         .filter(
           (contextProperty: ValidationWarning) => contextProperty.isWarning,
-        );
+        )
+        .map((warning: ValidationWarning) => warning.warningType);
       warnings.push(...contextWarnings);
     });
     return warnings;
   }
 
-  getOfferingSavingStatus(
-    errors: ValidationError[],
+  private getOfferingSavingStatus(
+    totalErrors: number,
+    totalWarnings: number,
   ): OfferingStatus.Approved | OfferingStatus.CreationPending | undefined {
-    const totalErrors = flattenErrorMessages(errors).length;
-    const totalWarnings = this.getOfferingSavingWarnings(errors).length;
     if (totalErrors === 0) {
       return OfferingStatus.Approved;
     }

@@ -53,6 +53,8 @@ import {
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
+import { EducationProgramOfferingBulkInsertService } from "./services/education-program-offering/education-program-offering-bulk-insert.service";
+import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -107,6 +109,8 @@ import { LoggerModule } from "./logger/logger.module";
     EducationProgramOfferingControllerService,
     StudentService,
     SFASIndividualService,
+    EducationProgramOfferingBulkInsertService,
+    EducationProgramOfferingValidationService,
   ],
 })
 export class AppInstitutionsModule {}

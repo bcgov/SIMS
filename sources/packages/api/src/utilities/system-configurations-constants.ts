@@ -113,6 +113,11 @@ export const MINISTRY_FILE_UPLOAD_GROUP_NAME = "Ministry communications";
 export const DAILY_DISBURSEMENT_REPORT_NAME = "Daily_Disbursement_File";
 
 /**
+ * High estimated value to defined a max money amount for inputs that does not have a constrain defined.
+ */
+export const MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE = 999999;
+
+/**
  * This study break exceeds the 21 consecutive day threshold as outlined in StudentAid BC policy
  * - 0.1 indicates 10%
  * - 0.5 indicates 50%

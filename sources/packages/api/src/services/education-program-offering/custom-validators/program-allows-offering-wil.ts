@@ -23,9 +23,7 @@ class ProgramAllowsOfferingWILConstraint
   ): boolean {
     const program = args.object as EducationProgramValidationContext;
     if (!program?.programContext?.hasWILComponent) {
-      throw new Error(
-        "Missing the WIL(work-integrated learning) information from the program associated with the offering.",
-      );
+      return false;
     }
     if (
       offeringWIL === WILComponentOptions.Yes &&

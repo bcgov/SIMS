@@ -9,6 +9,7 @@ import {
   IsOptional,
   IsPositive,
   Max,
+  MaxLength,
   Min,
   ValidateIf,
   ValidateNested,
@@ -18,7 +19,10 @@ import { IsDateAfter } from "../../utilities/class-validation/custom-validators/
 import {
   EducationProgram,
   OfferingIntensity,
+  OfferingStatus,
   OfferingTypes,
+  OFFERING_NAME_MAX_LENGTH,
+  OFFERING_WIL_TYPE_MAX_LENGTH,
   StudyBreaksAndWeeks,
 } from "../../database/entities";
 import {
@@ -36,6 +40,7 @@ import { ProgramAllowsOfferingWIL } from "./custom-validators/program-allows-off
 import { StudyBreaksCombinedMustNotExceedsThreshold } from "./custom-validators/study-break-has-valid-consecutive-threshold";
 import { HasValidOfferingPeriodForFundedDays } from "./custom-validators/has-valid-offering-period-for-funded-days";
 import {
+  MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
   OFFERING_COURSE_LOAD_MAX_VALUE,
   OFFERING_COURSE_LOAD_MIN_VALUE,
   OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD,
@@ -131,6 +136,7 @@ const studyEndDateProperty = (offering: SaveOfferingModel) =>
 
 export class SaveOfferingModel implements EducationProgramValidationContext {
   @IsNotEmpty()
+  @MaxLength(OFFERING_NAME_MAX_LENGTH)
   offeringName: string;
   @Min(OFFERING_YEAR_OF_STUDY_MIN_VALUE)
   @Max(OFFERING_YEAR_OF_STUDY_MAX_VALUE)
@@ -158,6 +164,13 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
     ),
   })
   hasOfferingWILComponent: WILComponentOptions;
+  @ValidateIf(
+    (offering: SaveOfferingModel) =>
+      offering.hasOfferingWILComponent === WILComponentOptions.Yes,
+  )
+  @IsNotEmpty()
+  @MaxLength(OFFERING_WIL_TYPE_MAX_LENGTH)
+  offeringWILComponentType: string;
   @IsDateString()
   studyStartDate: string;
   @IsDateString()
@@ -200,21 +213,26 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   )
   studyBreaks: StudyBreak[];
   @Min(0)
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   actualTuitionCosts: number;
   @Min(0)
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   programRelatedCosts: number;
   @Min(0)
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   mandatoryFees: number;
   @Min(0)
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   exceptionalExpenses: number;
   @ValidateNested()
   @Type(() => ProgramDeliveryTypes)
   programDeliveryTypes: ProgramDeliveryTypes;
   @IsIn([OfferingTypes.Private, OfferingTypes.Public])
   offeringType: OfferingTypes;
-  @IsPositive({ message: "Related institution location was not found." })
+  @IsPositive({
+    message: "Related institution location was not found or not provided.",
+  })
   locationId: number;
-  @IsBoolean()
   @IsIn([true])
   offeringDeclaration: boolean;
   @IsOptional()
@@ -222,12 +240,16 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   @Max(OFFERING_COURSE_LOAD_MAX_VALUE)
   courseLoad?: number;
   @IsNotEmptyObject(undefined, {
-    message: "Not able to find a program related to this offering.",
+    message:
+      "Not able to find a program related to this offering or it was not provided.",
   })
   programContext: EducationProgramForOfferingValidationContext;
 }
 
 export interface OfferingValidationResult {
   offeringModel: SaveOfferingModel;
-  validationErrors: ValidationError[];
+  offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
+  warnings: OfferingValidationWarnings[];
+  errors: ValidationError[];
+  flattenedErrors: string[];
 }

@@ -10,7 +10,7 @@ import {
   ProgramStatus,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, In, Repository } from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
@@ -608,5 +608,24 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       ])
       .where("programs.id = :programId", { programId })
       .getOne();
+  }
+
+  async getProgramsBySABCCodes(institutionId: number, sabcCodes: string[]) {
+    return this.repo.find({
+      select: {
+        id: true,
+        sabcCode: true,
+        programIntensity: true,
+        hasWILComponent: true,
+        deliveredOnSite: true,
+        deliveredOnline: true,
+      },
+      where: {
+        sabcCode: In(sabcCodes),
+        institution: {
+          id: institutionId,
+        },
+      },
+    });
   }
 }

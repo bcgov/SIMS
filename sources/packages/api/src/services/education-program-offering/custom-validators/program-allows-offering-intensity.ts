@@ -21,9 +21,7 @@ class ProgramAllowsOfferingIntensityConstraint
   ): boolean {
     const program = args.object as EducationProgramValidationContext;
     if (!program?.programContext?.programIntensity) {
-      throw new Error(
-        "Missing the intensity information from the program associated with the offering.",
-      );
+      return false;
     }
     return program.programContext.programIntensity.includes(offeringIntensity);
   }

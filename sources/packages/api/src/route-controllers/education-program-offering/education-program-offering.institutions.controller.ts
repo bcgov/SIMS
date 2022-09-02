@@ -9,6 +9,8 @@ import {
   Post,
   Query,
   UnprocessableEntityException,
+  UploadedFile,
+  UseInterceptors,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
@@ -19,6 +21,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   HasLocationAccess,
+  IsInstitutionAdmin,
   UserToken,
 } from "../../auth/decorators";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -44,7 +47,14 @@ import {
   EducationProgramOfferingSummaryAPIOutDTO,
   transformToProgramOfferingDTO,
 } from "./models/education-program-offering.dto";
-import { CustomNamedError } from "../../utilities";
+import {
+  CustomNamedError,
+  defaultFileFilter,
+  uploadLimits,
+} from "../../utilities";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { EducationProgramOfferingBulkInsertService } from "../../services/education-program-offering/education-program-offering-bulk-insert.service";
+import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program-offering")
@@ -55,6 +65,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     private readonly formService: FormService,
     private readonly programService: EducationProgramService,
     private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
+    private readonly educationProgramOfferingBulkInsertService: EducationProgramOfferingBulkInsertService,
+    private readonly educationProgramOfferingValidationService: EducationProgramOfferingValidationService,
   ) {
     super();
   }
@@ -331,5 +343,37 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       }
       throw error;
     }
+  }
+
+  /**
+   * Allow files uploads to a particular student.
+   * @param userToken authentication token.
+   * @param file file content.
+   * @param uniqueFileName unique file name (name+guid).
+   * @param groupName friendly name to group files. Currently using
+   * the value from 'Directory' property from form.IO file component.
+   * @returns created file information.
+   */
+  @IsInstitutionAdmin()
+  @Post("bulk-upload")
+  @UseInterceptors(
+    FileInterceptor("file", {
+      limits: uploadLimits(1, 2, 4194304),
+      fileFilter: defaultFileFilter,
+    }),
+  )
+  async bulkUpload(
+    @UserToken() userToken: IInstitutionUserToken,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<any> {
+    const fileContent = file.buffer.toString("utf8");
+    const offerings =
+      await this.educationProgramOfferingBulkInsertService.generateSaveOfferingModelFromCSV(
+        userToken.authorizations.institutionId,
+        fileContent,
+      );
+    return this.educationProgramOfferingValidationService.validateOfferingModels(
+      offerings,
+    );
   }
 }

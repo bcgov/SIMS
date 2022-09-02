@@ -26,9 +26,7 @@ class ProgramAllowsOfferingDeliveryConstraint
       !program?.programContext?.deliveredOnSite ||
       !program?.programContext?.deliveredOnline
     ) {
-      throw new Error(
-        "Missing the delivery information (e.g. on-site, online) from the program associated with the offering.",
-      );
+      return false;
     }
     switch (deliveryOption) {
       case ProgramDeliveryOptions.Onsite:

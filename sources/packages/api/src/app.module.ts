@@ -48,8 +48,6 @@ import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
-import { EducationProgramOfferingBenchmarkController } from "./route-controllers/education-program-offering/bulk-upload-benchmark/education-program-offering-benchmark.controller";
-import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 
 @Module({
   imports: [
@@ -96,7 +94,6 @@ import { EducationProgramOfferingValidationService } from "./services/education-
     ProgramYearController,
     ConfigController,
     DynamicFormController,
-    EducationProgramOfferingBenchmarkController,
   ],
   providers: [
     AppService,
@@ -123,7 +120,6 @@ import { EducationProgramOfferingValidationService } from "./services/education-
     GCNotifyActionsService,
     StudentService,
     SFASIndividualService,
-    EducationProgramOfferingValidationService,
   ],
 })
 export class AppModule {}

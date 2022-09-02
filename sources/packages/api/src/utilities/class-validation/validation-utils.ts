@@ -4,9 +4,9 @@ export function flattenErrorMessages(errors: ValidationError[]): string[] {
   const allErrors: string[] = [];
   errors.forEach((error) => {
     const flattenedConstraints = flattenConstraints(error);
-    const errorMessages = flattenedConstraints
-      .map((constraint) => Object.values(constraint))
-      .flat(1);
+    const errorMessages = flattenedConstraints.flatMap((constraint) =>
+      Object.values(constraint),
+    );
     allErrors.push(...errorMessages);
   });
   return allErrors;
