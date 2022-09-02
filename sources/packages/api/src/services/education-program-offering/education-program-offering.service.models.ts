@@ -17,30 +17,27 @@ export interface EducationProgramOfferingSummaryModel {
   offeringStatus: OfferingStatus;
 }
 
-export interface EducationProgramOfferingModel {
-  offeringName: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  offeringDelivered: string;
-  lacksStudyBreaks: boolean;
-  offeringIntensity: OfferingIntensity;
-  yearOfStudy: number;
-  showYearOfStudy?: boolean;
-  hasOfferingWILComponent: string;
-  offeringWILType?: string;
-  breaksAndWeeks: StudyBreaksAndWeeks;
-  offeringDeclaration: boolean;
-  assessedBy?: string;
-  assessedDate?: Date;
-  submittedDate?: Date;
-  offeringStatus: OfferingStatus;
-  offeringType: OfferingTypes;
-  courseLoad?: number;
-}
+// export interface EducationProgramOfferingModel {
+//   offeringName: string;
+//   studyStartDate: Date;
+//   studyEndDate: Date;
+//   actualTuitionCosts: number;
+//   programRelatedCosts: number;
+//   mandatoryFees: number;
+//   exceptionalExpenses: number;
+//   offeringDelivered: string;
+//   offeringIntensity: OfferingIntensity;
+//   yearOfStudy: number;
+//   showYearOfStudy?: boolean;
+//   hasOfferingWILComponent: string;
+//   offeringWILType?: string;
+//   offeringDeclaration: boolean;
+//   offeringStatus: OfferingStatus; // Remove?
+//   offeringType: OfferingTypes;
+//   courseLoad?: number;
+//   lacksStudyBreaks: boolean;
+//   breaksAndWeeks: StudyBreaksAndWeeks;
+// }
 
 /**
  * Filter object to pass all the offering optional filters.

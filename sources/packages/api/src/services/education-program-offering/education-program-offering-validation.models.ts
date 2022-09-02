@@ -138,39 +138,6 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   @IsNotEmpty()
   @MaxLength(OFFERING_NAME_MAX_LENGTH)
   offeringName: string;
-  @Min(OFFERING_YEAR_OF_STUDY_MIN_VALUE)
-  @Max(OFFERING_YEAR_OF_STUDY_MAX_VALUE)
-  yearOfStudy: number;
-  @IsBoolean()
-  showYearOfStudy: boolean;
-  @IsEnum(OfferingIntensity)
-  @ProgramAllowsOfferingIntensity({
-    context: new ValidationWarning(
-      OfferingValidationWarnings.ProgramOfferingIntensityMismatch,
-    ),
-  })
-  offeringIntensity: OfferingIntensity;
-  @IsEnum(ProgramDeliveryOptions)
-  @ProgramAllowsOfferingDelivery({
-    context: new ValidationWarning(
-      OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
-    ),
-  })
-  offeringDelivered: string;
-  @IsEnum(WILComponentOptions)
-  @ProgramAllowsOfferingWIL({
-    context: new ValidationWarning(
-      OfferingValidationWarnings.ProgramOfferingWILMismatch,
-    ),
-  })
-  hasOfferingWILComponent: WILComponentOptions;
-  @ValidateIf(
-    (offering: SaveOfferingModel) =>
-      offering.hasOfferingWILComponent === WILComponentOptions.Yes,
-  )
-  @IsNotEmpty()
-  @MaxLength(OFFERING_WIL_TYPE_MAX_LENGTH)
-  offeringWILComponentType: string;
   @IsDateString()
   studyStartDate: string;
   @IsDateString()
@@ -185,6 +152,62 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
     ),
   })
   studyEndDate: string;
+  @Min(0)
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
+  actualTuitionCosts: number;
+  @Min(0)
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
+  programRelatedCosts: number;
+  @Min(0)
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
+  mandatoryFees: number;
+  @Min(0)
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
+  exceptionalExpenses: number;
+  @IsEnum(ProgramDeliveryOptions)
+  @ProgramAllowsOfferingDelivery({
+    context: new ValidationWarning(
+      OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
+    ),
+  })
+  offeringDelivered: string;
+  @IsEnum(OfferingIntensity)
+  @ProgramAllowsOfferingIntensity({
+    context: new ValidationWarning(
+      OfferingValidationWarnings.ProgramOfferingIntensityMismatch,
+    ),
+  })
+  offeringIntensity: OfferingIntensity;
+  @Min(OFFERING_YEAR_OF_STUDY_MIN_VALUE)
+  @Max(OFFERING_YEAR_OF_STUDY_MAX_VALUE)
+  yearOfStudy: number;
+  @IsBoolean()
+  showYearOfStudy: boolean;
+  @IsEnum(WILComponentOptions)
+  @ProgramAllowsOfferingWIL({
+    context: new ValidationWarning(
+      OfferingValidationWarnings.ProgramOfferingWILMismatch,
+    ),
+  })
+  hasOfferingWILComponent: WILComponentOptions;
+  @ValidateIf(
+    (offering: SaveOfferingModel) =>
+      offering.hasOfferingWILComponent === WILComponentOptions.Yes,
+  )
+  @IsNotEmpty()
+  @MaxLength(OFFERING_WIL_TYPE_MAX_LENGTH)
+  offeringWILComponentType: string;
+  @IsIn([true])
+  offeringDeclaration: boolean;
+  @ValidateNested()
+  @Type(() => ProgramDeliveryTypes)
+  programDeliveryTypes: ProgramDeliveryTypes;
+  @IsIn([OfferingTypes.Private, OfferingTypes.Public])
+  offeringType: OfferingTypes;
+  @IsOptional()
+  @Min(OFFERING_COURSE_LOAD_MIN_VALUE)
+  @Max(OFFERING_COURSE_LOAD_MAX_VALUE)
+  courseLoad?: number;
   @IsBoolean()
   lacksStudyBreaks: boolean;
   @Type(() => StudyBreak)
@@ -212,33 +235,10 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
     },
   )
   studyBreaks: StudyBreak[];
-  @Min(0)
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
-  actualTuitionCosts: number;
-  @Min(0)
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
-  programRelatedCosts: number;
-  @Min(0)
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
-  mandatoryFees: number;
-  @Min(0)
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
-  exceptionalExpenses: number;
-  @ValidateNested()
-  @Type(() => ProgramDeliveryTypes)
-  programDeliveryTypes: ProgramDeliveryTypes;
-  @IsIn([OfferingTypes.Private, OfferingTypes.Public])
-  offeringType: OfferingTypes;
   @IsPositive({
     message: "Related institution location was not found or not provided.",
   })
   locationId: number;
-  @IsIn([true])
-  offeringDeclaration: boolean;
-  @IsOptional()
-  @Min(OFFERING_COURSE_LOAD_MIN_VALUE)
-  @Max(OFFERING_COURSE_LOAD_MAX_VALUE)
-  courseLoad?: number;
   @IsNotEmptyObject(undefined, {
     message:
       "Not able to find a program related to this offering or it was not provided.",

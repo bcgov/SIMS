@@ -22,7 +22,6 @@ import { WorkflowStartResult } from "../workflow/workflow.models";
 import * as os from "os";
 import { DataSource, UpdateResult } from "typeorm";
 import {
-  EducationProgramOfferingModel,
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
   ApplicationAssessmentSummary,
@@ -43,6 +42,7 @@ import { OFFERING_NOT_VALID } from "../../constants";
 import {
   CalculatedStudyBreaksAndWeeks,
   OfferingStudyBreakCalculationContext,
+  SaveOfferingModel,
 } from "./education-program-offering-validation.models";
 
 @Injectable()
@@ -65,7 +65,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async createEducationProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: EducationProgramOfferingModel,
+    educationProgramOffering: SaveOfferingModel,
     userId: number,
   ): Promise<EducationProgramOffering> {
     const programOffering = this.populateProgramOffering(
@@ -252,14 +252,18 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   private populateProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: EducationProgramOfferingModel,
+    educationProgramOffering: SaveOfferingModel,
     hasExistingApplication?: boolean,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.offeringName;
     if (!hasExistingApplication) {
-      programOffering.studyStartDate = educationProgramOffering.studyStartDate;
-      programOffering.studyEndDate = educationProgramOffering.studyEndDate;
+      programOffering.studyStartDate = new Date(
+        educationProgramOffering.studyStartDate,
+      );
+      programOffering.studyEndDate = new Date(
+        educationProgramOffering.studyEndDate,
+      );
       programOffering.actualTuitionCosts =
         educationProgramOffering.actualTuitionCosts;
       programOffering.programRelatedCosts =
@@ -285,7 +289,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       programOffering.hasOfferingWILComponent =
         educationProgramOffering.hasOfferingWILComponent;
       programOffering.offeringWILType =
-        educationProgramOffering.offeringWILType;
+        educationProgramOffering.offeringWILComponentType;
       programOffering.studyBreaks = educationProgramOffering.breaksAndWeeks;
       programOffering.offeringDeclaration =
         educationProgramOffering.offeringDeclaration;
@@ -551,7 +555,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     offeringId: number,
     userId: number,
-    educationProgramOffering: EducationProgramOfferingModel,
+    educationProgramOffering: SaveOfferingModel,
   ): Promise<EducationProgramOffering> {
     const currentOffering = await this.getOfferingToRequestChange(
       offeringId,
