@@ -81,7 +81,7 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 export default {
   components: { CheckPermissionRole },
   setup() {
-    const drawer = ref("drawer");
+    const drawer = ref();
     const topItems = [
       {
         label: "Home",
