@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app v-model="drawer" color="background" permanent>
+  <v-navigation-drawer app color="background" permanent>
     <v-list
       active-class="active-sidebar-item"
       density="compact"
@@ -55,7 +55,6 @@ import { MenuModel } from "@/types";
 
 export default {
   setup() {
-    const drawer = ref("drawer");
     const store = useStore();
     const { isAdmin, userAuth } = useInstitutionAuth();
     const userLocationList = computed(
@@ -148,7 +147,6 @@ export default {
       items,
       userLocationList,
       locationsMenu,
-      drawer,
     };
   },
 };

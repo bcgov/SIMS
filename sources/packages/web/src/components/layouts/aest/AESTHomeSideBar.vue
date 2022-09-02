@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app v-model="drawer" color="background" permanent>
+  <v-navigation-drawer app color="background" permanent>
     <v-list
       active-class="active-sidebar-item"
       density="compact"
@@ -73,7 +73,6 @@
   </v-navigation-drawer>
 </template>
 <script lang="ts">
-import { ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuModel, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -81,7 +80,6 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 export default {
   components: { CheckPermissionRole },
   setup() {
-    const drawer = ref();
     const topItems = [
       {
         label: "Home",
@@ -164,7 +162,6 @@ export default {
       offerings,
       AESTRoutesConst,
       Role,
-      drawer,
     };
   },
 };
