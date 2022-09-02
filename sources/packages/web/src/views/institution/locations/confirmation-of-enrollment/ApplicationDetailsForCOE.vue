@@ -71,7 +71,7 @@
         </v-row>
       </template>
     </formio-modal-dialog>
-
+    <!-- todo: ann confirm with if this form modals needs to be moved to vue??? -->
     <!-- Deny modal -->
     <formio-modal-dialog
       max-width="730"

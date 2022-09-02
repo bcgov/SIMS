@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app permanent v-model="drawer" color="background">
+  <v-navigation-drawer app permanent order="" color="background">
     <v-list density="compact" bg-color="background" active-color="primary">
       <v-list-item
         class="sidebar-item"
@@ -21,7 +21,6 @@ import { MenuModel } from "@/types";
 export default {
   components: {},
   setup() {
-    const drawer = ref("drawer");
     const items = ref<MenuModel[]>([
       {
         label: "Manage Profile",
@@ -55,7 +54,6 @@ export default {
 
     return {
       items,
-      drawer,
     };
   },
 };

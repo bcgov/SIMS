@@ -124,10 +124,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.ActiveApplicationEdit,
         name: InstitutionRoutesConst.ACTIVE_APPLICATION_EDIT,
-        components: {
-          default: ActiveApplicationEdit,
-          sidebar: InstitutionHomeSideBar,
-        },
+        component: ActiveApplicationEdit,
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
@@ -384,10 +381,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.ActiveApplicationScholasticStandingView,
         name: InstitutionRoutesConst.SCHOLASTIC_STANDING_VIEW,
-        components: {
-          default: ViewSubmittedApplicationScholasticStanding,
-          sidebar: InstitutionHomeSideBar,
-        },
+        component: ViewSubmittedApplicationScholasticStanding,
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
