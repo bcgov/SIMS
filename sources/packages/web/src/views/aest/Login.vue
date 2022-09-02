@@ -19,7 +19,6 @@
             With authorization from the system administrator, login here using
             your IDIR to access the AEST portal.
           </p>
-
           <p class="sign-in-description">
             <banner
               class="mt-2"
@@ -29,9 +28,7 @@
         have access to this application. Please contact the Administrator for
         more information."
             />
-            <!-- TODO: v-btn inside v-card-actions is not working properly. try in vuetify 3 stable version -->
           </p>
-
           <div class="pt-3 pb-2 ml-2">
             <v-row>
               <v-btn
@@ -49,7 +46,7 @@
         ><v-img
           height="260"
           class="mt-8"
-          alt="A person entering their login information into a digital screen.."
+          alt="A person entering their login information into a digital screen."
           src="@/assets/images/person-seeing-screen.svg" /></v-col
     ></v-row>
   </full-page-container>
