@@ -73,6 +73,7 @@
   </v-navigation-drawer>
 </template>
 <script lang="ts">
+import { ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuModel, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -80,6 +81,7 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 export default {
   components: { CheckPermissionRole },
   setup() {
+    const drawer = ref("drawer");
     const topItems = [
       {
         label: "Home",
@@ -162,6 +164,7 @@ export default {
       offerings,
       AESTRoutesConst,
       Role,
+      drawer,
     };
   },
 };
