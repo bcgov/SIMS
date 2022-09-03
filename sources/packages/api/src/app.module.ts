@@ -27,6 +27,7 @@ import {
   GCNotifyActionsService,
   StudentService,
   SFASIndividualService,
+  EducationProgramOfferingValidationService,
 } from "./services";
 import {
   UserController,
@@ -120,6 +121,7 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     GCNotifyActionsService,
     StudentService,
     SFASIndividualService,
+    EducationProgramOfferingValidationService,
   ],
 })
 export class AppModule {}

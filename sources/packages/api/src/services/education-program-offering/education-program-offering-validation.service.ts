@@ -12,11 +12,22 @@ import {
   flattenContexts,
   flattenErrorMessages,
 } from "../../utilities/class-validation";
+import { CustomNamedError } from "../../utilities";
+import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../constants";
 
 @Injectable()
 export class EducationProgramOfferingValidationService {
+  validateOfferingModel(
+    offering: SaveOfferingModel,
+    silently = false,
+  ): OfferingValidationResult {
+    const [validation] = this.validateOfferingModels([offering], silently);
+    return validation;
+  }
+
   validateOfferingModels(
     offerings: SaveOfferingModel[],
+    silently = false,
   ): OfferingValidationResult[] {
     return offerings.map((offering) => {
       // Ensures that the object received is a class. This is needed to the
@@ -31,12 +42,19 @@ export class EducationProgramOfferingValidationService {
         flattenedErrors.length,
         warnings.length,
       );
+
+      if (!silently && !offeringStatus) {
+        throw new CustomNamedError(
+          "The validated offering has critical errors.",
+          OFFERING_VALIDATION_CRITICAL_ERROR,
+        );
+      }
+
       return {
         offeringModel,
         offeringStatus,
         warnings,
-        errors,
-        flattenedErrors,
+        errors: flattenedErrors,
       };
     });
   }
@@ -66,6 +84,8 @@ export class EducationProgramOfferingValidationService {
       return OfferingStatus.Approved;
     }
     if (totalErrors === totalWarnings) {
+      // If all errors are warnings then the offering can be created
+      // but it will need a review and approval by the Ministry.
       return OfferingStatus.CreationPending;
     }
     return undefined;

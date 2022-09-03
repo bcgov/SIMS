@@ -56,3 +56,6 @@ export * from "./application-exception/application-exception.service";
 export * from "./disbursement-receipt/disbursement-receipt.service";
 export * from "./student-account-applications/student-account-applications.service";
 export * from "./student-account-applications/student-account-applications.models";
+export * from "./education-program-offering/education-program-offering-bulk-insert.service";
+export * from "./education-program-offering/education-program-offering-validation.models";
+export * from "./education-program-offering/education-program-offering-validation.service";

@@ -15,12 +15,13 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   StudyBreak,
+  StudyBreaksAndWeeks,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { WorkflowStartResult } from "../workflow/workflow.models";
 import * as os from "os";
-import { DataSource, UpdateResult } from "typeorm";
+import { DataSource, InsertResult, UpdateResult } from "typeorm";
 import {
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
@@ -44,37 +45,39 @@ import {
   OfferingStudyBreakCalculationContext,
   SaveOfferingModel,
 } from "./education-program-offering-validation.models";
+import { classToClass } from "class-transformer";
+import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly workflowActionsService: WorkflowActionsService,
+    private readonly offeringValidationService: EducationProgramOfferingValidationService,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
   }
 
   /**
    * Creates a new education program offering at program level
-   * @param locationId location id to associate the new program offering.
-   * @param programId program id to associate the new program offering.
    * @param educationProgramOffering Information used to create the program offering.
    * @param userId User who creates the offering.
    * @returns Education program offering created.
    */
   async createEducationProgramOffering(
-    locationId: number,
-    programId: number,
     educationProgramOffering: SaveOfferingModel,
     userId: number,
-  ): Promise<EducationProgramOffering> {
+  ): Promise<InsertResult> {
+    const offeringValidation =
+      this.offeringValidationService.validateOfferingModel(
+        educationProgramOffering,
+      );
     const programOffering = this.populateProgramOffering(
-      locationId,
-      programId,
-      educationProgramOffering,
+      offeringValidation.offeringModel,
     );
+    programOffering.offeringStatus = offeringValidation.offeringStatus;
     programOffering.creator = { id: userId } as User;
-    return this.repo.save(programOffering);
+    return this.repo.insert(programOffering);
   }
 
   /**
@@ -223,35 +226,32 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
   /**
    * Creates a new education program offering at program level
-   * @param locationId location id to associate the new program offering.
-   * @param programId program id to associate the new program offering.
    * @param educationProgramOffering Information used to create the program offering.
    * @param userId User who updates the offering.
    * @returns Education program offering created.
    */
   async updateEducationProgramOffering(
-    locationId: number,
-    programId: number,
     offeringId: number,
-    educationProgramOffering: EducationProgramOfferingModel,
+    educationProgramOffering: SaveOfferingModel,
     userId: number,
   ): Promise<UpdateResult> {
+    const offeringValidation =
+      this.offeringValidationService.validateOfferingModel(
+        educationProgramOffering,
+      );
     const hasExistingApplication = await this.hasExistingApplication(
       offeringId,
     );
     const programOffering = this.populateProgramOffering(
-      locationId,
-      programId,
-      educationProgramOffering,
+      offeringValidation.offeringModel,
       hasExistingApplication,
     );
+    programOffering.offeringStatus = offeringValidation.offeringStatus;
     programOffering.modifier = { id: userId } as User;
     return this.repo.update(offeringId, programOffering);
   }
 
   private populateProgramOffering(
-    locationId: number,
-    programId: number,
     educationProgramOffering: SaveOfferingModel,
     hasExistingApplication?: boolean,
   ): EducationProgramOffering {
@@ -277,9 +277,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         educationProgramOffering.lacksStudyBreaks;
       programOffering.offeringType =
         educationProgramOffering.offeringType ?? OfferingTypes.Public;
-      programOffering.educationProgram = { id: programId } as EducationProgram;
+      programOffering.educationProgram = {
+        id: educationProgramOffering.programContext.id,
+      } as EducationProgram;
       programOffering.institutionLocation = {
-        id: locationId,
+        id: educationProgramOffering.locationId,
       } as InstitutionLocation;
       programOffering.offeringIntensity =
         educationProgramOffering.offeringIntensity;
@@ -290,12 +292,21 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         educationProgramOffering.hasOfferingWILComponent;
       programOffering.offeringWILType =
         educationProgramOffering.offeringWILComponentType;
-      programOffering.studyBreaks = educationProgramOffering.breaksAndWeeks;
       programOffering.offeringDeclaration =
         educationProgramOffering.offeringDeclaration;
       programOffering.offeringType = educationProgramOffering.offeringType;
       programOffering.courseLoad = educationProgramOffering.courseLoad;
-      programOffering.offeringStatus = educationProgramOffering.offeringStatus;
+      // Study Breaks calculation.
+      const calculatedStudyBreaks = (programOffering.studyBreaks =
+        EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks(
+          educationProgramOffering,
+        ));
+      // classToClass will ensure that no additional properties will be
+      // assigned to studyBreaks since calculatedStudyBreaks could received
+      // extra properties that are not required to be saved to the database.
+      programOffering.studyBreaks = classToClass<StudyBreaksAndWeeks>(
+        calculatedStudyBreaks,
+      );
     }
     return programOffering;
   }
@@ -572,8 +583,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     }
 
     const requestedOffering = this.populateProgramOffering(
-      locationId,
-      programId,
       educationProgramOffering,
     );
     const auditUser = { id: userId } as User;

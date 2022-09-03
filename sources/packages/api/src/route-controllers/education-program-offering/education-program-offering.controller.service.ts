@@ -4,7 +4,11 @@ import {
   OfferingStatus,
   OfferingTypes,
 } from "../../database/entities";
-import { EducationProgramOfferingService } from "../../services";
+import {
+  EducationProgramOfferingService,
+  EducationProgramService,
+  SaveOfferingModel,
+} from "../../services";
 import {
   getISODateOnlyString,
   getOfferingNameAndPeriod,
@@ -14,12 +18,16 @@ import {
   OfferingsPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import { EducationProgramOfferingSummaryAPIOutDTO } from "./models/education-program-offering.dto";
+import {
+  EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingSummaryAPIOutDTO,
+} from "./models/education-program-offering.dto";
 
 @Injectable()
 export class EducationProgramOfferingControllerService {
   constructor(
     private readonly offeringService: EducationProgramOfferingService,
+    private readonly programService: EducationProgramService,
   ) {}
 
   /**
@@ -107,5 +115,41 @@ export class EducationProgramOfferingControllerService {
       id: offering.id,
       description: getOfferingNameAndPeriod(offering),
     }));
+  }
+
+  async getSaveOfferingModelFromOfferingAPIInDTO(
+    institutionId: number,
+    locationId: number,
+    programId: number,
+    payload: EducationProgramOfferingAPIInDTO,
+  ): Promise<SaveOfferingModel> {
+    const program = await this.programService.getEducationProgramDetails(
+      programId,
+      institutionId,
+    );
+
+    const offeringModel = new SaveOfferingModel();
+    offeringModel.offeringName = payload.offeringName;
+    offeringModel.studyStartDate = payload.studyStartDate;
+    offeringModel.studyEndDate = payload.studyEndDate;
+    offeringModel.actualTuitionCosts = payload.actualTuitionCosts;
+    offeringModel.programRelatedCosts = payload.programRelatedCosts;
+    offeringModel.mandatoryFees = payload.mandatoryFees;
+    offeringModel.exceptionalExpenses = payload.exceptionalExpenses;
+    offeringModel.offeringDelivered = payload.offeringDelivered;
+    offeringModel.offeringIntensity = payload.offeringIntensity;
+    offeringModel.yearOfStudy = payload.yearOfStudy;
+    offeringModel.showYearOfStudy = payload.showYearOfStudy;
+    offeringModel.hasOfferingWILComponent = payload.hasOfferingWILComponent;
+    offeringModel.offeringWILComponentType = payload.offeringWILType;
+    offeringModel.offeringDeclaration = payload.offeringDeclaration;
+    offeringModel.offeringType = payload.offeringType;
+    offeringModel.courseLoad = payload.courseLoad;
+    offeringModel.lacksStudyBreaks = payload.lacksStudyBreaks;
+    offeringModel.studyBreaks = payload.breaksAndWeeks?.studyBreaks;
+    offeringModel.locationId = locationId;
+    offeringModel.programContext = program;
+
+    return offeringModel;
   }
 }

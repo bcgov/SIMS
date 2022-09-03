@@ -52,7 +52,6 @@ export class EducationProgramOfferingBulkInsertService {
       offeringModel.programRelatedCosts = bulkInsertModel.programRelatedCosts;
       offeringModel.mandatoryFees = bulkInsertModel.mandatoryFees;
       offeringModel.exceptionalExpenses = bulkInsertModel.exceptionalExpenses;
-      offeringModel.programDeliveryTypes = bulkInsertModel.programDeliveryTypes;
       offeringModel.offeringType = bulkInsertModel.offeringType;
       offeringModel.offeringDeclaration = bulkInsertModel.offeringDeclaration;
       offeringModel.courseLoad = bulkInsertModel.courseLoad;

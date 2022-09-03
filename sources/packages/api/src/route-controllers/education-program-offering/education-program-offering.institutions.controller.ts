@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -13,6 +14,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import {
+  ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -55,6 +57,7 @@ import {
 import { FileInterceptor } from "@nestjs/platform-express";
 import { EducationProgramOfferingBulkInsertService } from "../../services/education-program-offering/education-program-offering-bulk-insert.service";
 import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";
+import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program-offering")
@@ -98,30 +101,36 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       programId,
       userToken.authorizations.institutionId,
     );
-
     if (!requestProgram) {
       throw new NotFoundException("Program to create the offering not found.");
     }
 
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.EducationProgramOffering,
-      payload,
-    );
+    try {
+      const saveOfferingModel =
+        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+          userToken.authorizations.institutionId,
+          locationId,
+          programId,
+          payload,
+        );
 
-    if (!submissionResult.valid) {
-      throw new UnprocessableEntityException(
-        "Not able to a create an offering due to an invalid request.",
-      );
+      const createdProgramOffering =
+        await this.programOfferingService.createEducationProgramOffering(
+          saveOfferingModel,
+          userToken.userId,
+        );
+      const [offeringId] = createdProgramOffering.identifiers;
+      return { id: +offeringId };
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === OFFERING_VALIDATION_CRITICAL_ERROR
+      ) {
+        throw new UnprocessableEntityException(
+          "Not able to a create an offering due to an invalid request.",
+        );
+      }
     }
-
-    const createdProgramOffering =
-      await this.programOfferingService.createEducationProgramOffering(
-        locationId,
-        programId,
-        submissionResult.data.data,
-        userToken.userId,
-      );
-    return { id: createdProgramOffering.id };
   }
 
   /**
@@ -162,23 +171,31 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         "Either offering for the program and location not found or the offering not in appropriate status to be updated.",
       );
     }
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.EducationProgramOffering,
-      payload,
-    );
 
-    if (!submissionResult.valid) {
-      throw new UnprocessableEntityException(
-        "Not able to a update a program offering due to an invalid request.",
+    try {
+      const saveOfferingModel =
+        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+          userToken.authorizations.institutionId,
+          locationId,
+          programId,
+          payload,
+        );
+
+      await this.programOfferingService.updateEducationProgramOffering(
+        offeringId,
+        saveOfferingModel,
+        userToken.userId,
       );
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === OFFERING_VALIDATION_CRITICAL_ERROR
+      ) {
+        throw new UnprocessableEntityException(
+          "Not able to a update a program offering due to an invalid request.",
+        );
+      }
     }
-    await this.programOfferingService.updateEducationProgramOffering(
-      locationId,
-      programId,
-      offeringId,
-      submissionResult.data.data,
-      userToken.userId,
-    );
   }
 
   /**
@@ -303,6 +320,9 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     description:
       "The request is not valid or offering for given program and location not found or not in valid status.",
   })
+  @ApiBadRequestResponse({
+    description: "Not able to a create an offering due to an invalid request.",
+  })
   async requestChange(
     @Body() payload: EducationProgramOfferingAPIInDTO,
     @Param("offeringId", ParseIntPipe) offeringId: number,
@@ -317,29 +337,34 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     if (!program) {
       throw new NotFoundException("Program not found for the institution.");
     }
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.EducationProgramOffering,
-      payload,
-    );
-
-    if (!submissionResult.valid) {
-      throw new UnprocessableEntityException(
-        "Not able to request a change for program offering due to an invalid request.",
-      );
-    }
 
     try {
+      const saveOfferingModel =
+        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+          userToken.authorizations.institutionId,
+          locationId,
+          programId,
+          payload,
+        );
+
       const requestedOffering = await this.programOfferingService.requestChange(
         locationId,
         programId,
         offeringId,
         userToken.userId,
-        submissionResult.data.data,
+        saveOfferingModel,
       );
       return { id: requestedOffering.id };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        throw new UnprocessableEntityException(error.message);
+        switch (error.name) {
+          case OFFERING_VALIDATION_CRITICAL_ERROR:
+            throw new BadRequestException(
+              "Not able to a create an offering due to an invalid request.",
+            );
+          default:
+            throw new UnprocessableEntityException(error.message);
+        }
       }
       throw error;
     }

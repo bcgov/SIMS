@@ -99,13 +99,6 @@ export enum WILComponentOptions {
   No = "no",
 }
 
-export class ProgramDeliveryTypes {
-  @IsBoolean()
-  deliveredOnSite: boolean;
-  @IsBoolean()
-  deliveredOnline: boolean;
-}
-
 export class StudyBreak {
   @IsDateString()
   @IsPeriodStartDate()
@@ -199,9 +192,6 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   offeringWILComponentType: string;
   @IsIn([true])
   offeringDeclaration: boolean;
-  @ValidateNested()
-  @Type(() => ProgramDeliveryTypes)
-  programDeliveryTypes: ProgramDeliveryTypes;
   @IsIn([OfferingTypes.Private, OfferingTypes.Public])
   offeringType: OfferingTypes;
   @IsOptional()
@@ -250,6 +240,5 @@ export interface OfferingValidationResult {
   offeringModel: SaveOfferingModel;
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   warnings: OfferingValidationWarnings[];
-  errors: ValidationError[];
-  flattenedErrors: string[];
+  errors: string[];
 }

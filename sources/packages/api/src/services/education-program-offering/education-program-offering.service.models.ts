@@ -17,28 +17,6 @@ export interface EducationProgramOfferingSummaryModel {
   offeringStatus: OfferingStatus;
 }
 
-// export interface EducationProgramOfferingModel {
-//   offeringName: string;
-//   studyStartDate: Date;
-//   studyEndDate: Date;
-//   actualTuitionCosts: number;
-//   programRelatedCosts: number;
-//   mandatoryFees: number;
-//   exceptionalExpenses: number;
-//   offeringDelivered: string;
-//   offeringIntensity: OfferingIntensity;
-//   yearOfStudy: number;
-//   showYearOfStudy?: boolean;
-//   hasOfferingWILComponent: string;
-//   offeringWILType?: string;
-//   offeringDeclaration: boolean;
-//   offeringStatus: OfferingStatus; // Remove?
-//   offeringType: OfferingTypes;
-//   courseLoad?: number;
-//   lacksStudyBreaks: boolean;
-//   breaksAndWeeks: StudyBreaksAndWeeks;
-// }
-
 /**
  * Filter object to pass all the offering optional filters.
  ** offeringTypes is mandatory here, but it is assigned by the controller as

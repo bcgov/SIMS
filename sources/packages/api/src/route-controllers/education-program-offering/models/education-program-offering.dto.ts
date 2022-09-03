@@ -15,6 +15,7 @@ import {
   MaxLength,
 } from "class-validator";
 import { Type } from "class-transformer";
+import { WILComponentOptions } from "../../../services";
 
 export class StudyBreakOutDTO {
   breakStartDate: Date;
@@ -23,9 +24,9 @@ export class StudyBreakOutDTO {
 
 export class StudyBreakInDTO {
   @Allow()
-  breakStartDate: Date;
+  breakStartDate: string;
   @Allow()
-  breakEndDate: Date;
+  breakEndDate: string;
 }
 
 export class StudyBreaksAndWeeksOutDTO {
@@ -50,13 +51,21 @@ export class StudyBreaksAndWeeksInDTO {
   unfundedStudyPeriodDays: number;
 }
 
+export class StudyBreaksAndWeeksAPIOutDTO {
+  studyBreaks: StudyBreakOutDTO[];
+  fundedStudyPeriodDays: number;
+  totalDays: number;
+  totalFundedWeeks: number;
+  unfundedStudyPeriodDays: number;
+}
+
 export class EducationProgramOfferingAPIInDTO {
   @Allow()
   offeringName: string;
   @Allow()
-  studyStartDate: Date;
+  studyStartDate: string;
   @Allow()
-  studyEndDate: Date;
+  studyEndDate: string;
   @Allow()
   actualTuitionCosts: number;
   @Allow()
@@ -74,7 +83,7 @@ export class EducationProgramOfferingAPIInDTO {
   @Allow()
   yearOfStudy: number;
   @Allow()
-  hasOfferingWILComponent: string;
+  hasOfferingWILComponent: WILComponentOptions;
   @Allow()
   offeringDeclaration: boolean;
   @Allow()
@@ -87,10 +96,6 @@ export class EducationProgramOfferingAPIInDTO {
   showYearOfStudy?: boolean;
   @IsOptional()
   breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
-  @IsOptional()
-  assessedBy?: string;
-  @IsOptional()
-  assessedDate?: Date;
   @IsOptional()
   courseLoad?: number;
 }
@@ -114,7 +119,7 @@ export class EducationProgramOfferingAPIOutDTO {
   offeringType: OfferingTypes;
   offeringWILType?: string;
   showYearOfStudy?: boolean;
-  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
+  breaksAndWeeks?: StudyBreaksAndWeeksAPIOutDTO;
   assessedBy?: string;
   assessedDate?: Date;
   submittedDate: Date;
