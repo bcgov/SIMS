@@ -8,6 +8,7 @@ import { EducationProgramOffering } from "../../../database/entities/education-p
 import { getUserFullName } from "../../../utilities";
 import {
   Allow,
+  IsBoolean,
   IsEnum,
   IsIn,
   IsNotEmpty,
@@ -91,9 +92,9 @@ export class EducationProgramOfferingAPIInDTO {
   @Allow()
   offeringType: OfferingTypes;
   @IsOptional()
-  offeringWILType?: string;
-  @IsOptional()
-  showYearOfStudy?: boolean;
+  offeringWILComponentType?: string;
+  @IsBoolean()
+  showYearOfStudy: boolean;
   @IsOptional()
   breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
   @IsOptional()

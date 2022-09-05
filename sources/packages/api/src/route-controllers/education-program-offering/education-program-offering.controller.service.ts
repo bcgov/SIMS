@@ -1,4 +1,8 @@
-import { Injectable, UnprocessableEntityException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import {
   OfferingIntensity,
   OfferingStatus,
@@ -127,29 +131,16 @@ export class EducationProgramOfferingControllerService {
       programId,
       institutionId,
     );
-
-    const offeringModel = new SaveOfferingModel();
-    offeringModel.offeringName = payload.offeringName;
-    offeringModel.studyStartDate = payload.studyStartDate;
-    offeringModel.studyEndDate = payload.studyEndDate;
-    offeringModel.actualTuitionCosts = payload.actualTuitionCosts;
-    offeringModel.programRelatedCosts = payload.programRelatedCosts;
-    offeringModel.mandatoryFees = payload.mandatoryFees;
-    offeringModel.exceptionalExpenses = payload.exceptionalExpenses;
-    offeringModel.offeringDelivered = payload.offeringDelivered;
-    offeringModel.offeringIntensity = payload.offeringIntensity;
-    offeringModel.yearOfStudy = payload.yearOfStudy;
-    offeringModel.showYearOfStudy = payload.showYearOfStudy;
-    offeringModel.hasOfferingWILComponent = payload.hasOfferingWILComponent;
-    offeringModel.offeringWILComponentType = payload.offeringWILType;
-    offeringModel.offeringDeclaration = payload.offeringDeclaration;
-    offeringModel.offeringType = payload.offeringType;
-    offeringModel.courseLoad = payload.courseLoad;
-    offeringModel.lacksStudyBreaks = payload.lacksStudyBreaks;
-    offeringModel.studyBreaks = payload.breaksAndWeeks?.studyBreaks;
-    offeringModel.locationId = locationId;
-    offeringModel.programContext = program;
-
-    return offeringModel;
+    if (!program) {
+      throw new NotFoundException(
+        "Program to create the offering not found for the institution.",
+      );
+    }
+    return {
+      ...payload,
+      locationId,
+      studyBreaks: payload.breaksAndWeeks?.studyBreaks,
+      programContext: program,
+    };
   }
 }

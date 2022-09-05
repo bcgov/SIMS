@@ -156,3 +156,15 @@ export const OFFERING_STUDY_PERIOD_MIN_DAYS = 42;
  * Maximum amount of days to an offering study period.
  */
 export const OFFERING_STUDY_PERIOD_MAX_DAYS = 365;
+/**
+ * Max number of parts (fields + files) allowed for a offering bulk upload.
+ */
+export const OFFERING_BULK_UPLOAD_MAX_UPLOAD_PARTS = 2;
+/**
+ * Max upload file size for an offering bulk upload (in bytes).
+ */
+export const OFFERING_BULK_UPLOAD_MAX_FILE_SIZE = 4194304;
+/**
+ * Offering bulk insert file encoding.
+ */
+export const OFFERING_BULK_FILE_ENCODING = "utf8";

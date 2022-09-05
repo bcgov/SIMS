@@ -6,14 +6,15 @@ import {
   IsIn,
   IsNotEmpty,
   IsNotEmptyObject,
+  IsNumber,
   IsOptional,
   IsPositive,
+  Matches,
   Max,
   MaxLength,
   Min,
   ValidateIf,
   ValidateNested,
-  ValidationError,
 } from "class-validator";
 import { IsDateAfter } from "../../utilities/class-validation/custom-validators/is-date-after";
 import {
@@ -88,7 +89,7 @@ export class ValidationWarning {
   readonly isWarning: boolean;
 }
 
-export enum ProgramDeliveryOptions {
+export enum OfferingDeliveryOptions {
   Onsite = "onsite",
   Online = "online",
   Blended = "blended",
@@ -157,7 +158,7 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   @Min(0)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   exceptionalExpenses: number;
-  @IsEnum(ProgramDeliveryOptions)
+  @IsEnum(OfferingDeliveryOptions)
   @ProgramAllowsOfferingDelivery({
     context: new ValidationWarning(
       OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
@@ -189,7 +190,7 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   )
   @IsNotEmpty()
   @MaxLength(OFFERING_WIL_TYPE_MAX_LENGTH)
-  offeringWILComponentType: string;
+  offeringWILComponentType?: string;
   @IsIn([true])
   offeringDeclaration: boolean;
   @IsIn([OfferingTypes.Private, OfferingTypes.Public])
@@ -241,4 +242,59 @@ export interface OfferingValidationResult {
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   warnings: OfferingValidationWarnings[];
   errors: string[];
+}
+
+export class OfferingBulkInsertModel {
+  @Matches(/^[A-Z]{4}$/, {
+    message: "Institution Location Code must be a 4 letters uppercase code.",
+  })
+  institutionLocationCode: string;
+  @Matches(/^[[A-Z]{3}[0-9]{1}$/, {
+    message:
+      "SABC Program Code must be a 3 uppercase letters followed by a number.",
+  })
+  sabcProgramCode: string;
+  @IsNotEmpty({ message: "Offering name must be provided." })
+  offeringName: string;
+  @IsDateString(undefined, { message: "" })
+  studyStartDate: string;
+  @IsDateString()
+  studyEndDate: string;
+  @IsNumber()
+  actualTuitionCosts: number;
+  @IsNumber()
+  programRelatedCosts: number;
+  @IsNumber()
+  mandatoryFees: number;
+  @IsNumber()
+  exceptionalExpenses: number;
+  @IsNotEmpty()
+  offeringDelivered: string;
+  @IsEnum(OfferingIntensity)
+  offeringIntensity: OfferingIntensity;
+  @IsNumber()
+  yearOfStudy: number;
+  @IsNotEmpty()
+  showYearOfStudy: boolean;
+  @IsNotEmpty()
+  hasOfferingWILComponent: WILComponentOptions;
+  @IsOptional()
+  offeringWILComponentType?: string;
+  @IsIn([true])
+  offeringDeclaration: boolean;
+  @IsIn([OfferingTypes.Private, OfferingTypes.Public])
+  offeringType: OfferingTypes;
+  @IsOptional()
+  courseLoad?: number;
+  @IsBoolean()
+  lacksStudyBreaks: boolean;
+  @Type(() => StudyBreak)
+  @ValidateIf(
+    (offering: SaveOfferingModel) =>
+      !offering.lacksStudyBreaks &&
+      !!offering.studyStartDate &&
+      !!offering.studyEndDate,
+  )
+  @ArrayMinSize(1)
+  studyBreaks: StudyBreak[];
 }

@@ -7,7 +7,7 @@ import {
 } from "class-validator";
 import {
   EducationProgramValidationContext,
-  ProgramDeliveryOptions,
+  OfferingDeliveryOptions,
 } from "../education-program-offering-validation.models";
 
 /**
@@ -18,7 +18,7 @@ class ProgramAllowsOfferingDeliveryConstraint
   implements ValidatorConstraintInterface
 {
   validate(
-    deliveryOption: ProgramDeliveryOptions,
+    deliveryOption: OfferingDeliveryOptions,
     args: ValidationArguments,
   ): boolean {
     const program = args.object as EducationProgramValidationContext;
@@ -29,11 +29,11 @@ class ProgramAllowsOfferingDeliveryConstraint
       return false;
     }
     switch (deliveryOption) {
-      case ProgramDeliveryOptions.Onsite:
+      case OfferingDeliveryOptions.Onsite:
         return program.programContext.deliveredOnSite;
-      case ProgramDeliveryOptions.Online:
+      case OfferingDeliveryOptions.Online:
         return program.programContext.deliveredOnline;
-      case ProgramDeliveryOptions.Blended:
+      case OfferingDeliveryOptions.Blended:
         // Blended requires that both options are allowed by the program.
         return (
           program.programContext.deliveredOnSite &&

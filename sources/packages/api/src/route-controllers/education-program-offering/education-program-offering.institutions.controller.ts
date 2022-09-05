@@ -33,7 +33,6 @@ import {
   EducationProgramService,
   FormService,
 } from "../../services";
-import { FormNames } from "../../services/form/constants";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
@@ -50,8 +49,12 @@ import {
   transformToProgramOfferingDTO,
 } from "./models/education-program-offering.dto";
 import {
+  csvFileFilter,
   CustomNamedError,
-  defaultFileFilter,
+  MAX_UPLOAD_FILES,
+  OFFERING_BULK_FILE_ENCODING,
+  OFFERING_BULK_UPLOAD_MAX_FILE_SIZE,
+  OFFERING_BULK_UPLOAD_MAX_UPLOAD_PARTS,
   uploadLimits,
 } from "../../utilities";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -83,7 +86,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    */
   @HasLocationAccess("locationId")
   @ApiNotFoundResponse({
-    description: "Program to create the offering not found.",
+    description:
+      "Program to create the offering not found for the institution.",
   })
   @ApiUnprocessableEntityResponse({
     description: "Not able to a create an offering due to an invalid request.",
@@ -95,16 +99,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    // Location id in the param is validated by the decorator.
-    // Only program id is validated here.
-    const requestProgram = await this.programService.getInstitutionProgram(
-      programId,
-      userToken.authorizations.institutionId,
-    );
-    if (!requestProgram) {
-      throw new NotFoundException("Program to create the offering not found.");
-    }
-
     try {
       const saveOfferingModel =
         await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
@@ -113,23 +107,21 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           programId,
           payload,
         );
-
       const createdProgramOffering =
         await this.programOfferingService.createEducationProgramOffering(
           saveOfferingModel,
           userToken.userId,
         );
-      const [offeringId] = createdProgramOffering.identifiers;
-      return { id: +offeringId };
+      const [identifier] = createdProgramOffering.identifiers;
+      return { id: +identifier.id };
     } catch (error: unknown) {
       if (
         error instanceof CustomNamedError &&
         error.name === OFFERING_VALIDATION_CRITICAL_ERROR
       ) {
-        throw new UnprocessableEntityException(
-          "Not able to a create an offering due to an invalid request.",
-        );
+        throw new BadRequestException(error.objectInfo, error.message);
       }
+      throw error;
     }
   }
 
@@ -146,8 +138,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @HasLocationAccess("locationId")
   @ApiUnprocessableEntityResponse({
     description:
-      "Either offering for the program and location not found" +
-      "or the offering not in appropriate status to be updated." +
+      "Either offering for the program and location is not found " +
+      "or the offering is not in the appropriate status to be updated " +
       "or the request is invalid.",
   })
   @Patch(
@@ -168,7 +160,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     );
     if (!offering) {
       throw new UnprocessableEntityException(
-        "Either offering for the program and location not found or the offering not in appropriate status to be updated.",
+        "Either offering for the program and location is not found or the offering is not in the appropriate status to be updated.",
       );
     }
 
@@ -180,7 +172,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           programId,
           payload,
         );
-
       await this.programOfferingService.updateEducationProgramOffering(
         offeringId,
         saveOfferingModel,
@@ -191,10 +182,9 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         error instanceof CustomNamedError &&
         error.name === OFFERING_VALIDATION_CRITICAL_ERROR
       ) {
-        throw new UnprocessableEntityException(
-          "Not able to a update a program offering due to an invalid request.",
-        );
+        throw new BadRequestException(error.objectInfo, error.message);
       }
+      throw error;
     }
   }
 
@@ -314,7 +304,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     ":offeringId/location/:locationId/education-program/:programId/request-change",
   )
   @ApiNotFoundResponse({
-    description: "Program for the given institution not found.",
+    description:
+      "Program to create the offering not found for the institution.",
   })
   @ApiUnprocessableEntityResponse({
     description:
@@ -330,14 +321,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const program = await this.programService.getInstitutionProgram(
-      programId,
-      userToken.authorizations.institutionId,
-    );
-    if (!program) {
-      throw new NotFoundException("Program not found for the institution.");
-    }
-
     try {
       const saveOfferingModel =
         await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
@@ -346,7 +329,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           programId,
           payload,
         );
-
       const requestedOffering = await this.programOfferingService.requestChange(
         locationId,
         programId,
@@ -359,9 +341,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case OFFERING_VALIDATION_CRITICAL_ERROR:
-            throw new BadRequestException(
-              "Not able to a create an offering due to an invalid request.",
-            );
+            throw new BadRequestException(error.objectInfo, error.message);
           default:
             throw new UnprocessableEntityException(error.message);
         }
@@ -371,27 +351,27 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   }
 
   /**
-   * Allow files uploads to a particular student.
-   * @param userToken authentication token.
-   * @param file file content.
-   * @param uniqueFileName unique file name (name+guid).
-   * @param groupName friendly name to group files. Currently using
-   * the value from 'Directory' property from form.IO file component.
-   * @returns created file information.
+   * CSV with offering to be created under existing programs.
+   * @param file file content with all information needed t create offerings.
+   * @returns TODO: to be defined.
    */
   @IsInstitutionAdmin()
-  @Post("bulk-upload")
+  @Post("bulk-insert")
   @UseInterceptors(
     FileInterceptor("file", {
-      limits: uploadLimits(1, 2, 4194304),
-      fileFilter: defaultFileFilter,
+      limits: uploadLimits(
+        MAX_UPLOAD_FILES,
+        OFFERING_BULK_UPLOAD_MAX_UPLOAD_PARTS,
+        OFFERING_BULK_UPLOAD_MAX_FILE_SIZE,
+      ),
+      fileFilter: csvFileFilter,
     }),
   )
   async bulkUpload(
     @UserToken() userToken: IInstitutionUserToken,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<any> {
-    const fileContent = file.buffer.toString("utf8");
+    const fileContent = file.buffer.toString(OFFERING_BULK_FILE_ENCODING);
     const offerings =
       await this.educationProgramOfferingBulkInsertService.generateSaveOfferingModelFromCSV(
         userToken.authorizations.institutionId,

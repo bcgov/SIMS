@@ -2,18 +2,20 @@ import { Injectable } from "@nestjs/common";
 import { EducationProgram, OfferingTypes } from "../../database/entities";
 import { parseCSVContent } from "../../utilities/csv/csv-utils";
 import { InstitutionLocationService, EducationProgramService } from "..";
-import { SaveOfferingModel } from "./education-program-offering-validation.models";
+import {
+  SaveOfferingModel,
+  WILComponentOptions,
+} from "./education-program-offering-validation.models";
+import {
+  CSVHeaders,
+  OfferingCSVModel,
+  STUDY_BREAK_INDEX_PLACE_HOLDER,
+  YesNoOptions,
+} from "./education-program-offering-csv.models";
 
 const MAX_STUDY_BREAKS_ENTRIES = 5;
 type InstitutionCodeToIdMap = Record<string, number>;
 type ProgramCodeToProgramMap = Record<string, EducationProgram>;
-type OfferingBulkInsertModel = Omit<
-  SaveOfferingModel,
-  "locationId" | "programContext"
-> & {
-  institutionLocationCode: string;
-  sabcProgramCode: string;
-};
 
 @Injectable()
 export class EducationProgramOfferingBulkInsertService {
@@ -26,39 +28,44 @@ export class EducationProgramOfferingBulkInsertService {
     institutionId: number,
     csvContent: string,
   ): Promise<SaveOfferingModel[]> {
-    const bulkInsertModels = await this.readCSV(csvContent);
+    const csvModels = await this.readCSV(csvContent);
+    // TODO: validate all CSV models.
 
     const [locationsMap, programsMap] = await Promise.all([
       this.getLocationsMaps(institutionId),
-      this.getProgramsMaps(institutionId, bulkInsertModels),
+      this.getProgramsMaps(institutionId, csvModels),
     ]);
 
-    return bulkInsertModels.map((bulkInsertModel) => {
+    return csvModels.map((csvModel) => {
       const offeringModel = {} as SaveOfferingModel;
-      offeringModel.offeringName = bulkInsertModel.offeringName;
-      offeringModel.yearOfStudy = bulkInsertModel.yearOfStudy;
-      offeringModel.showYearOfStudy = bulkInsertModel.showYearOfStudy;
-      offeringModel.offeringIntensity = bulkInsertModel.offeringIntensity;
-      offeringModel.offeringDelivered = bulkInsertModel.offeringDelivered;
+      offeringModel.offeringName = csvModel.offeringName;
+      offeringModel.yearOfStudy = csvModel.yearOfStudy;
+      offeringModel.showYearOfStudy =
+        csvModel.showYearOfStudy === YesNoOptions.Yes;
+      offeringModel.offeringIntensity = csvModel.offeringIntensity;
+      offeringModel.offeringDelivered = csvModel.offeringDelivered;
       offeringModel.hasOfferingWILComponent =
-        bulkInsertModel.hasOfferingWILComponent;
-      offeringModel.offeringWILComponentType =
-        bulkInsertModel.offeringWILComponentType;
-      offeringModel.studyStartDate = bulkInsertModel.studyStartDate;
-      offeringModel.studyEndDate = bulkInsertModel.studyEndDate;
-      offeringModel.lacksStudyBreaks = bulkInsertModel.lacksStudyBreaks;
-      offeringModel.studyBreaks = bulkInsertModel.studyBreaks;
-      offeringModel.actualTuitionCosts = bulkInsertModel.actualTuitionCosts;
-      offeringModel.programRelatedCosts = bulkInsertModel.programRelatedCosts;
-      offeringModel.mandatoryFees = bulkInsertModel.mandatoryFees;
-      offeringModel.exceptionalExpenses = bulkInsertModel.exceptionalExpenses;
-      offeringModel.offeringType = bulkInsertModel.offeringType;
-      offeringModel.offeringDeclaration = bulkInsertModel.offeringDeclaration;
-      offeringModel.courseLoad = bulkInsertModel.courseLoad;
-      offeringModel.locationId =
-        locationsMap[bulkInsertModel.institutionLocationCode];
-      offeringModel.programContext =
-        programsMap[bulkInsertModel.sabcProgramCode];
+        csvModel.WILComponent === YesNoOptions.Yes
+          ? WILComponentOptions.Yes
+          : WILComponentOptions.No;
+      offeringModel.offeringWILComponentType = csvModel.WILComponentType;
+      offeringModel.studyStartDate = csvModel.studyStartDate;
+      offeringModel.studyEndDate = csvModel.studyEndDate;
+      offeringModel.lacksStudyBreaks =
+        csvModel.hasStudyBreaks == YesNoOptions.No;
+      offeringModel.studyBreaks = csvModel.studyBreaks;
+      offeringModel.actualTuitionCosts = csvModel.actualTuitionCosts;
+      offeringModel.programRelatedCosts = csvModel.programRelatedCosts;
+      offeringModel.mandatoryFees = csvModel.mandatoryFees;
+      offeringModel.exceptionalExpenses = csvModel.exceptionalExpenses;
+      offeringModel.offeringType =
+        csvModel.publicOffering === YesNoOptions.Yes
+          ? OfferingTypes.Public
+          : OfferingTypes.Private;
+      offeringModel.offeringDeclaration = csvModel.consent === YesNoOptions.Yes;
+      offeringModel.courseLoad = csvModel.courseLoad;
+      offeringModel.locationId = locationsMap[csvModel.institutionLocationCode];
+      offeringModel.programContext = programsMap[csvModel.sabcProgramCode];
       return offeringModel;
     });
   }
@@ -80,7 +87,7 @@ export class EducationProgramOfferingBulkInsertService {
 
   private async getProgramsMaps(
     institutionId: number,
-    bulkInsertModels: OfferingBulkInsertModel[],
+    bulkInsertModels: OfferingCSVModel[],
   ): Promise<ProgramCodeToProgramMap> {
     const distinctProgramCodes = bulkInsertModels
       .filter((model) => !!model.sabcProgramCode) // Remove empty items.
@@ -99,56 +106,49 @@ export class EducationProgramOfferingBulkInsertService {
     return programMap;
   }
 
-  private async readCSV(
-    csvContent: string,
-  ): Promise<OfferingBulkInsertModel[]> {
-    const offeringModels: OfferingBulkInsertModel[] = [];
+  private async readCSV(csvContent: string): Promise<OfferingCSVModel[]> {
+    const offeringModels: OfferingCSVModel[] = [];
     const lines = await parseCSVContent(csvContent, { headers: true });
     lines.forEach((line) => {
-      const offeringModel = {} as OfferingBulkInsertModel;
+      const offeringModel = {} as OfferingCSVModel;
       offeringModels.push(offeringModel);
-      offeringModel.institutionLocationCode = line["Institution Location Code"];
-      offeringModel.sabcProgramCode = line["SABC Program Code"];
-      offeringModel.offeringName = line["Name"];
-      offeringModel.yearOfStudy = line["Year of Study"];
-      offeringModel.showYearOfStudy = this.convertYesNoToBool(
-        line["Show Year of Study"],
-      );
-      offeringModel.offeringIntensity = line["Offering Intensity"];
-      offeringModel.courseLoad = line["Course Load"];
-      offeringModel.offeringDelivered = line["Delivered Type"];
-      offeringModel.hasOfferingWILComponent = line["WIL Component"];
-      offeringModel.offeringWILComponentType = line["WIL Component Type"];
-      offeringModel.studyStartDate = line["Start Date"];
-      offeringModel.studyEndDate = line["End Date"];
-      offeringModel.lacksStudyBreaks = !this.convertYesNoToBool(
-        line["Has Study Breaks"],
-      );
-      offeringModel.actualTuitionCosts = line["Actual Tuition"];
-      offeringModel.programRelatedCosts = line["Program Related Costs"];
-      offeringModel.mandatoryFees = line["Mandatory Fees"];
-      offeringModel.exceptionalExpenses = line["Exceptional Expenses"];
-      offeringModel.offeringType = this.convertYesNoToBool(
-        line["Public Offering"],
-      )
-        ? OfferingTypes.Public
-        : OfferingTypes.Private;
-      offeringModel.offeringDeclaration = this.convertYesNoToBool(
-        line["Consent"],
-      );
+      offeringModel.institutionLocationCode = line[CSVHeaders.LocationCode];
+      offeringModel.sabcProgramCode = line[CSVHeaders.SABCProgramCode];
+      offeringModel.offeringName = line[CSVHeaders.OfferingName];
+      offeringModel.yearOfStudy = line[CSVHeaders.YearOfStudy];
+      offeringModel.showYearOfStudy = line[CSVHeaders.ShowYearOfStudy];
+      offeringModel.offeringIntensity = line[CSVHeaders.OfferingIntensity];
+      offeringModel.courseLoad = line[CSVHeaders.CourseLoad];
+      offeringModel.courseLoad = line[CSVHeaders.CourseLoad];
+      offeringModel.offeringDelivered = line[CSVHeaders.DeliveredType];
+      offeringModel.WILComponent = line[CSVHeaders.WILComponent];
+      offeringModel.WILComponentType = line[CSVHeaders.WILComponentType];
+      offeringModel.studyStartDate = line[CSVHeaders.StudyStartDate];
+      offeringModel.studyEndDate = line[CSVHeaders.StudyEndDate];
+      offeringModel.hasStudyBreaks = line[CSVHeaders.HasStudyBreaks];
+      offeringModel.actualTuitionCosts = line[CSVHeaders.ActualTuitionCosts];
+      offeringModel.programRelatedCosts = line[CSVHeaders.ProgramRelatedCosts];
+      offeringModel.mandatoryFees = line[CSVHeaders.MandatoryFees];
+      offeringModel.exceptionalExpenses = line[CSVHeaders.ExceptionalExpenses];
+      offeringModel.publicOffering = line[CSVHeaders.PublicOffering];
+      offeringModel.consent = line[CSVHeaders.Consent];
       offeringModel.studyBreaks = [];
       for (let i = 1; i <= MAX_STUDY_BREAKS_ENTRIES; i++) {
-        const breakStartDate = line[`Study Break ${i} - Start Date`];
-        const breakEndDate = line[`Study Break ${i} - End Date`];
+        const breakStartDateHeader = CSVHeaders.StudyBreakStartDate.replace(
+          STUDY_BREAK_INDEX_PLACE_HOLDER,
+          i.toString(),
+        );
+        const breakEndDateHeader = CSVHeaders.StudyBreakEndDate.replace(
+          STUDY_BREAK_INDEX_PLACE_HOLDER,
+          i.toString(),
+        );
+        const breakStartDate = line[breakStartDateHeader];
+        const breakEndDate = line[breakEndDateHeader];
         if (!!breakStartDate && !!breakEndDate) {
           offeringModel.studyBreaks.push({ breakStartDate, breakEndDate });
         }
       }
     });
     return offeringModels;
-  }
-
-  private convertYesNoToBool(yesNoString: string): boolean {
-    return yesNoString?.trim().toLowerCase() === "yes";
   }
 }

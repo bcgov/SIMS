@@ -47,6 +47,7 @@ export class EducationProgramOfferingValidationService {
         throw new CustomNamedError(
           "The validated offering has critical errors.",
           OFFERING_VALIDATION_CRITICAL_ERROR,
+          flattenedErrors,
         );
       }
 
