@@ -1,15 +1,23 @@
 export default class InstitutionHelperActions {
   
+  getBaseUrlAndLoginCredentialsInstitution(): string[] {
+    //TODO to have conditional returns basing on the type of the institution like single location or of multiple locations.
+    return [
+      this.getLoginUrlForTestEnv(),
+      this.getUserNameSingleLocation(),
+      this.getUserPasswordSingleLocation()
+    ];
+  }
   getBaseUrlForTestEnv() {
     return Cypress.env("TEST").BASE_URL;
   }
 
-  getLoginUrlForTestEnv(){
-    return this.getBaseUrlForTestEnv() + "/institution/login"
+  getLoginUrlForTestEnv() {
+    return `${this.getBaseUrlForTestEnv()}/institution/login`;
   }
 
-  getApiUrlForTest(){
-    return this.getBaseUrlForTestEnv() + "/api/institutions"
+  getApiUrlForTest() {
+    return `${this.getBaseUrlForTestEnv()}/api/institutions`;
   }
 
   getUserNameSingleLocation() {
@@ -20,15 +28,15 @@ export default class InstitutionHelperActions {
     return Cypress.env("TEST").USER_PASSWORD_SINGLE_LOCATION;
   }
 
-  getUserDetailsSingleLocation(){
+  getUserDetailsSingleLocation() {
     return Cypress.env("USER_DETAILS").USER_SINGLE_LOCATION;
   }
 
-  getInstitutionDetailsSingleLocation(){
+  getInstitutionDetailsSingleLocation() {
     return Cypress.env("INSTITUTION_DETAILS_SINGLE_LOCATION");
   }
 
-  getToken(){
-    return Cypress.env("TEST").TOKEN
+  getToken() {
+    return Cypress.env("TEST").TOKEN;
   }
 }

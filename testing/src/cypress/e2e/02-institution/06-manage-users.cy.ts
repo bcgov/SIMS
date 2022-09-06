@@ -8,9 +8,9 @@ const manageUsersObject = new ManageUsersObject();
 const institutionCustomCommand = new InstitutionCustomCommand();
 const institutionHelperActions = new InstitutionHelperActions();
 
-const URL = institutionHelperActions.getLoginUrlForTestEnv();
-const USERNAME = institutionHelperActions.getUserNameSingleLocation();
-const PASSWORD = institutionHelperActions.getUserPasswordSingleLocation();
+const [URL, USERNAME, PASSWORD] =
+  institutionHelperActions.getBaseUrlAndLoginCredentialsInstitution();
+
 describe("Manage Users", () => {
   beforeEach(() => {
     cy.visit(URL);

@@ -5,12 +5,9 @@ import InstitutionHelperActions from "./common-helper-functions.cy";
 
 const dashboardObject = new DashboardInstitutionObject();
 const institutionCustomCommand = new InstitutionCustomCommand();
-const manageInstituionObject = new ManageInstitutionObject();
+const manageInstitutionObject = new ManageInstitutionObject();
 const institutionHelperActions = new InstitutionHelperActions()
-
-const URL = institutionHelperActions.getLoginUrlForTestEnv();
-const USERNAME = institutionHelperActions.getUserNameSingleLocation();
-const PASSWORD = institutionHelperActions.getUserPasswordSingleLocation();
+const [URL,USERNAME,PASSWORD] = institutionHelperActions.getBaseUrlAndLoginCredentialsInstitution()
 
 describe("Dashboard Page", () => {
   beforeEach(() => {
@@ -42,10 +39,10 @@ describe("Dashboard Page", () => {
     dashboardObject.homeButton().click();
     dashboardObject.locationButton().click();
     dashboardObject.manageInstitutionButton().click();
-    manageInstituionObject.institutionDetails().should("be.visible");
-    manageInstituionObject.manageDesignation().should("be.visible");
-    manageInstituionObject.manageLocations().should("be.visible");
-    manageInstituionObject.manageUsers().should("be.visible");
+    manageInstitutionObject.institutionDetails().should("be.visible");
+    manageInstitutionObject.manageDesignation().should("be.visible");
+    manageInstitutionObject.manageLocations().should("be.visible");
+    manageInstitutionObject.manageUsers().should("be.visible");
     dashboardObject.profileButton().click();
     dashboardObject.iconButton().click();
     dashboardObject.logOutButton().click();

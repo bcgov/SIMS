@@ -6,15 +6,14 @@ import InstitutionHelperActions from "./common-helper-functions.cy";
 const dashboardObject = new DashboardInstitutionObject();
 const institutionCustomCommand = new InstitutionCustomCommand();
 const loginObject = new LoginInstitutionObject();
-const helperActions = new InstitutionHelperActions();
+const institutionHelperActions = new InstitutionHelperActions();
 
-const LOGIN_URL = helperActions.getLoginUrlForTestEnv();
-const USERNAME = helperActions.getUserNameSingleLocation();
-const PASSWORD = helperActions.getUserPasswordSingleLocation();
+const [URL, USERNAME, PASSWORD] =
+  institutionHelperActions.getBaseUrlAndLoginCredentialsInstitution();
 
 describe("Login Page", () => {
   beforeEach(() => {
-    cy.visit(LOGIN_URL);
+    cy.visit(URL);
   });
 
   it("Verify invalid username/password field validation error", () => {
