@@ -6,11 +6,7 @@ import InstitutionHelperActions from "./common-helper-functions.cy";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const institutionManageLocationObject = new ManageLocationObject();
-const institutionCustomCommand = new InstitutionCustomCommand();
 const institutionHelperActions = new InstitutionHelperActions();
-
-const [URL, USERNAME, PASSWORD] =
-  institutionHelperActions.getBaseUrlAndLoginCredentialsInstitution();
 
 function manageInstitution() {
   dashboardInstitutionObject.dashboardButton().click();
@@ -40,8 +36,7 @@ function institutionInputText() {
 
 describe("Manage Locations", () => {
   beforeEach(() => {
-    cy.visit(URL);
-    institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
+    institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
   it("Verify that user redirect to institution manage location page", () => {

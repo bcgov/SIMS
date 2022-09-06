@@ -1,11 +1,14 @@
+import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
+
+const institutionCustomCommand = new InstitutionCustomCommand();
+
 export default class InstitutionHelperActions {
-  
   getBaseUrlAndLoginCredentialsInstitution(): string[] {
     //TODO to have conditional returns basing on the type of the institution like single location or of multiple locations.
     return [
       this.getLoginUrlForTestEnv(),
       this.getUserNameSingleLocation(),
-      this.getUserPasswordSingleLocation()
+      this.getUserPasswordSingleLocation(),
     ];
   }
   getBaseUrlForTestEnv() {
@@ -38,5 +41,12 @@ export default class InstitutionHelperActions {
 
   getToken() {
     return Cypress.env("TEST").TOKEN;
+  }
+
+  loginIntoInstitutionSingleLocation() {
+    const [URL, USERNAME, PASSWORD] =
+      this.getBaseUrlAndLoginCredentialsInstitution();
+    cy.visit(URL);
+    institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
   }
 }

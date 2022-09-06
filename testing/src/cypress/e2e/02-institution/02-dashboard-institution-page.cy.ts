@@ -4,15 +4,12 @@ import ManageInstitutionObject from "../../page-objects/Institution-objects/Mana
 import InstitutionHelperActions from "./common-helper-functions.cy";
 
 const dashboardObject = new DashboardInstitutionObject();
-const institutionCustomCommand = new InstitutionCustomCommand();
 const manageInstitutionObject = new ManageInstitutionObject();
-const institutionHelperActions = new InstitutionHelperActions()
-const [URL,USERNAME,PASSWORD] = institutionHelperActions.getBaseUrlAndLoginCredentialsInstitution()
+const institutionHelperActions = new InstitutionHelperActions();
 
 describe("Dashboard Page", () => {
   beforeEach(() => {
-    cy.visit(URL);
-    institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
+    institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
   it("Verify that user is redirected to dashboard page", () => {

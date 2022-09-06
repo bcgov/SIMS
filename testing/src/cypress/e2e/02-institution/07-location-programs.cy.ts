@@ -8,16 +8,11 @@ import InstitutionHelperActions from "./common-helper-functions.cy";
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const manageUsersObject = new ManageUsersObject();
 const locationProgramObject = new LocationProgramObject();
-const institutionCustomCommand = new InstitutionCustomCommand();
 const institutionHelperActions = new InstitutionHelperActions();
-
-const [URL, USERNAME, PASSWORD] =
-  institutionHelperActions.getBaseUrlAndLoginCredentialsInstitution();
 
 describe("Location Program", () => {
   beforeEach(() => {
-    cy.visit(URL);
-    institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
+    institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
   it("Verify that user redirect to location program page", () => {
