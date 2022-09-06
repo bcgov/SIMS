@@ -1,4 +1,8 @@
 export default class LoginInstitutionObject {
+  loginScreenWelcome() {
+    return cy.get(".category-header-large");
+  }
+
   loginWithBCEID() {
     return cy.contains("Login with BCeID");
   }
@@ -19,7 +23,10 @@ export default class LoginInstitutionObject {
     return cy.get('input[type="submit"]');
   }
 
-  welcomeMessage() {
+  welcomeMessageDashboard() {
     return cy.contains("Welcome to your institution account!");
+  }
+  errorMessage() {
+    return cy.get(".field-help-text");
   }
 }

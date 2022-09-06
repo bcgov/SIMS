@@ -2,11 +2,11 @@ import DashboardInstitutionObject from "../../page-objects/Institution-objects/D
 import ManageLocationObject from "../../page-objects/Institution-objects/ManageLocationObject";
 import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
 import { manageLocation } from "../../../data/dev/institution-data/institutionManageLocation";
+import InstitutionHelperActions from "./common-helper-functions.cy";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const institutionManageLocationObject = new ManageLocationObject();
-const institutionCustomCommand = new InstitutionCustomCommand();
-const url = Cypress.env("institutionURL");
+const institutionHelperActions = new InstitutionHelperActions();
 
 function manageInstitution() {
   dashboardInstitutionObject.dashboardButton().click();
@@ -36,8 +36,7 @@ function institutionInputText() {
 
 describe("Manage Locations", () => {
   beforeEach(() => {
-    cy.visit(url);
-    institutionCustomCommand.loginInstitution();
+    institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
   it("Verify that user redirect to institution manage location page", () => {

@@ -1,17 +1,15 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
 import ManageDesignationsObject from "../../page-objects/Institution-objects/ManageDesignationsObject";
 import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
+import InstitutionHelperActions from "./common-helper-functions.cy";
+
+const dashboardInstitutionObject = new DashboardInstitutionObject();
+const manageDesignationObject = new ManageDesignationsObject();
+const institutionHelperActions = new InstitutionHelperActions();
 
 describe("Manage Designations", () => {
-  const dashboardInstitutionObject = new DashboardInstitutionObject();
-  const manageDesignationObject = new ManageDesignationsObject();
-  const institutionCustomCommand = new InstitutionCustomCommand();
-
-  const url = Cypress.env("institutionURL");
-
   beforeEach(() => {
-    cy.visit(url);
-    institutionCustomCommand.loginInstitution();
+    institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
   it("Verify that user redirect to institution manage designation page", () => {

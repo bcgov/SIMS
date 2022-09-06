@@ -2,17 +2,15 @@ import DashboardInstitutionObject from "../../page-objects/Institution-objects/D
 import InstitutionProfileObject from "../../page-objects/Institution-objects/InstitutionProfileObject";
 import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
 import { profileData } from "../../../data/dev/institution-data/institutionProfileData";
+import InstitutionHelperActions from "./common-helper-functions.cy";
+
+const dashboardInstitutionObject = new DashboardInstitutionObject();
+const institutionObject = new InstitutionProfileObject();
+const institutionHelperActions = new InstitutionHelperActions();
 
 describe("Institution Profile", () => {
-  const dashboardInstitutionObject = new DashboardInstitutionObject();
-  const institutionObject = new InstitutionProfileObject();
-  const institutionCustomCommand = new InstitutionCustomCommand();
-
-  const url = Cypress.env("institutionURL");
-
   beforeEach(() => {
-    cy.visit(url);
-    institutionCustomCommand.loginInstitution();
+    institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
   it("Verify that user redirect to institution profile page", () => {

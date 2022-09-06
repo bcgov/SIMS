@@ -1,17 +1,15 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
 import ManageUsersObject from "../../page-objects/Institution-objects/ManageUsersObject";
 import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
+import InstitutionHelperActions from "./common-helper-functions.cy";
+
+const dashboardInstitutionObject = new DashboardInstitutionObject();
+const manageUsersObject = new ManageUsersObject();
+const institutionHelperActions = new InstitutionHelperActions();
 
 describe("Manage Users", () => {
-  const dashboardInstitutionObject = new DashboardInstitutionObject();
-  const manageUsersObject = new ManageUsersObject();
-  const institutionCustomCommand = new InstitutionCustomCommand();
-
-  const url = Cypress.env("institutionURL");
-
   beforeEach(() => {
-    cy.visit(url);
-    institutionCustomCommand.loginInstitution();
+    institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
   it("Verify that user redirect to institution manage user summary page", () => {

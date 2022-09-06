@@ -15,7 +15,7 @@
       />
       <v-list-subheader class="nav-subtitle">Locations</v-list-subheader>
       <v-list-group
-        v-for="location in locationsMenu"
+        v-for="(location, index) in locationsMenu"
         :key="location.label"
         collapse-icon="mdi-chevron-up"
         expand-icon="mdi-chevron-down"
@@ -26,6 +26,7 @@
             :title="location.label"
             :prepend-icon="location.icon"
             :value="location.value"
+            :data-cy="`Location-${index}`"
           >
             <v-tooltip activator="parent">{{ location.label }}</v-tooltip>
           </v-list-item>
