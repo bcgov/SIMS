@@ -50,11 +50,11 @@ export default {
       context.emit("render");
     };
 
-    const formChanged = async (form: any, event: any) => {
+    const formChanged = (form: FormIOForm, event: any) => {
       context.emit("changed", form, event);
     };
 
-    const formCustomEvent = async (form: any, event: any) => {
+    const formCustomEvent = (form: FormIOForm, event: any) => {
       context.emit("customEvent", form, event);
     };
 

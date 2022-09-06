@@ -513,8 +513,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     locationId: number,
     disbursementScheduleId: number,
   ): Promise<DisbursementSchedule> {
-    console.log(locationId, disbursementScheduleId, "+++++++");
-
     return this.repo
       .createQueryBuilder("disbursementSchedule")
       .select([

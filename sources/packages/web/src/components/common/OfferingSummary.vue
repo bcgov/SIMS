@@ -28,10 +28,7 @@
     </template>
   </body-header>
   <content-group>
-    <toggle-content
-      :toggled="!offeringsAndCount.count"
-      message="You don't have any offerings yet"
-    >
+    <toggle-content :toggled="!offeringsAndCount.count">
       <DataTable
         :value="offeringsAndCount.results"
         :lazy="true"
@@ -59,7 +56,6 @@
           header="Intensity"
         >
         </Column>
-
         <Column field="offeringType" header="Offering type" />
         <Column
           :field="OfferingSummaryFields.OfferingDelivered"

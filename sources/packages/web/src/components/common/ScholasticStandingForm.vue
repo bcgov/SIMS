@@ -31,8 +31,8 @@ interface ScholasticStandingBeforeSubmission
   readonly: boolean;
 }
 export default {
-  // todo: ann check cancel scenrio, check with the team check weather to add cancel (go back to summary page) to all forms
-  // todo: ann check processing is pased correctly in all the consumer function
+  // todo: ann check cancel scenario, check with the team check weather to add cancel (go back to summary page) to all forms
+  // todo: ann check processing is passed correctly in all the consumer function
   emits: ["submit", "cancel"],
   props: {
     initialData: {
@@ -67,11 +67,11 @@ export default {
       { immediate: true },
     );
 
-    const submitted = async (args: ScholasticStanding) => {
+    const submitted = (args: ScholasticStanding) => {
       context.emit("submit", args);
     };
 
-    const cancel = async () => {
+    const cancel = () => {
       context.emit("cancel");
     };
 

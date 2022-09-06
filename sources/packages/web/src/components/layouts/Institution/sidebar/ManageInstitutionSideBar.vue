@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app permanent order="" color="background">
+  <v-navigation-drawer app permanent color="background">
     <v-list density="compact" bg-color="background" active-color="primary">
       <v-list-item
         class="sidebar-item"

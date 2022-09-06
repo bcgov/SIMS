@@ -10,13 +10,10 @@
       title="Active applications"
       :recordsCount="applications.length"
     >
-      <!-- todo: template action search box -->
+      <!-- todo: ann template action search box -->
     </body-header>
     <content-group>
-      <toggle-content
-        :toggled="!applications.length"
-        message="You don't have programs information requests yet"
-      >
+      <toggle-content :toggled="!applications.length">
         <DataTable
           :autoLayout="true"
           :value="applications"

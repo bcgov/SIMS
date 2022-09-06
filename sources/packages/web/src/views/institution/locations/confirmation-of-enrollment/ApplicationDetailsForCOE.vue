@@ -252,7 +252,7 @@ export default {
       await loadInitialData();
     });
 
-    const denyFormLoaded = async (form: any) => {
+    const denyFormLoaded = async (form: FormIOForm) => {
       formioUtils.setRadioOptions(
         form,
         COE_DENIAL_REASON_RADIO,

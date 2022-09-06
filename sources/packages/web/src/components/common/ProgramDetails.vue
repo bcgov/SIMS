@@ -10,7 +10,7 @@
       <v-btn
         class="float-right label-bold"
         variant="outlined"
-        @click="programButtonAction()"
+        @click="programButtonAction"
         color="primary"
       >
         {{ programActionLabel }}
