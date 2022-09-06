@@ -5,6 +5,7 @@
     :no-click-animation="true"
     scrollable
   >
+    <!--todo: ann  Calculate max-height -->
     <v-card elevation="10" :max-width="maxWidth" max-height="65vh">
       <v-card-header>
         <v-card-title>

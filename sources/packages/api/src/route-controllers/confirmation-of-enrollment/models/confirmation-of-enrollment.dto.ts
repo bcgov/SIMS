@@ -27,6 +27,8 @@ export class ApplicationDetailsForCOEAPIOutDTO {
   studyBreaks?: StudyBreak[];
   applicationPIRStatus: ProgramInfoStatus;
   disbursementDate: string;
+  applicationProgramCredential: string;
+  applicationProgramDelivery: string;
 }
 
 export class COEDeniedReasonAPIOutDTO {

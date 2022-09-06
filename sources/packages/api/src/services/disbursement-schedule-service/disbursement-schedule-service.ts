@@ -482,6 +482,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "offering.studyBreaks",
         "program.name",
         "program.description",
+        "program.credentialType",
+        "program.deliveredOnline",
+        "program.deliveredOnSite",
         "coeDeniedReason.id",
         "coeDeniedReason.reason",
       ])

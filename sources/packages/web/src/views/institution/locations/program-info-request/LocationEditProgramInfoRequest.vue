@@ -164,15 +164,13 @@ export default {
       _form: any,
       event: FormIOCustomEvent,
     ) => {
-      switch (event.type) {
-        case FormIOCustomEventTypes.RouteToCreateProgram:
-          router.push({
-            name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-            params: {
-              locationId: props.locationId,
-            },
-          });
-          break;
+      if (event.type === FormIOCustomEventTypes.RouteToCreateProgram) {
+        router.push({
+          name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
+          params: {
+            locationId: props.locationId,
+          },
+        });
       }
     };
     // todo: use proper interface
