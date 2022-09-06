@@ -28,12 +28,8 @@ import {
 } from "../../auth/decorators";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingIntensity, OfferingTypes } from "../../database/entities";
-import {
-  EducationProgramOfferingService,
-  EducationProgramService,
-  FormService,
-} from "../../services";
-import { ClientTypeBaseRoute } from "../../types";
+import { EducationProgramOfferingService } from "../../services";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import {
@@ -46,6 +42,7 @@ import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
+  OfferingBulkInsertValidationResultAPIOutDTO,
   transformToProgramOfferingDTO,
 } from "./models/education-program-offering.dto";
 import {
@@ -58,9 +55,12 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { EducationProgramOfferingBulkInsertService } from "../../services/education-program-offering/education-program-offering-bulk-insert.service";
+import { EducationProgramOfferingCSVService } from "../../services/education-program-offering/education-program-offering-csv.service";
 import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";
-import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../constants";
+import {
+  OFFERING_VALIDATION_CRITICAL_ERROR,
+  OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+} from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program-offering")
@@ -68,10 +68,8 @@ import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../constants";
 export class EducationProgramOfferingInstitutionsController extends BaseController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,
-    private readonly formService: FormService,
-    private readonly programService: EducationProgramService,
     private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
-    private readonly educationProgramOfferingBulkInsertService: EducationProgramOfferingBulkInsertService,
+    private readonly educationProgramOfferingCSVService: EducationProgramOfferingCSVService,
     private readonly educationProgramOfferingValidationService: EducationProgramOfferingValidationService,
   ) {
     super();
@@ -367,18 +365,78 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       fileFilter: csvFileFilter,
     }),
   )
-  async bulkUpload(
+  async bulkInsert(
     @UserToken() userToken: IInstitutionUserToken,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<any> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    // Read the entire file content.
     const fileContent = file.buffer.toString(OFFERING_BULK_FILE_ENCODING);
-    const offerings =
-      await this.educationProgramOfferingBulkInsertService.generateSaveOfferingModelFromCSV(
-        userToken.authorizations.institutionId,
-        fileContent,
-      );
-    return this.educationProgramOfferingValidationService.validateOfferingModels(
-      offerings,
+    // Convert the file raw content into CSV models.
+    const csvModels = await this.educationProgramOfferingCSVService.readCSV(
+      fileContent,
     );
+    // Validate the CSV models.
+    const csvValidations =
+      this.educationProgramOfferingCSVService.validateCSVModels(csvModels);
+    const csvValidationsErrors = csvValidations.filter(
+      (csvValidation) => csvValidation.errors.length,
+    );
+    if (csvValidationsErrors.length) {
+      // At least one error was detected and the CSV must be fixed.
+      const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
+        csvValidationsErrors.map((validation) => ({
+          recordNumber: validation.index + 1,
+          locationCode: validation.csvModel.institutionLocationCode,
+          sabcProgramCode: validation.csvModel.sabcProgramCode,
+          startDate: validation.csvModel.studyStartDate,
+          endDate: validation.csvModel.studyEndDate,
+          errors: validation.errors,
+        }));
+      throw new BadRequestException(
+        new ApiProcessError(
+          "The CSV data received is not in correct format.",
+          OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+          validationResults,
+        ),
+      );
+    }
+    // Convert the CSV models to the SaveOfferingModel to execute the complete offering validation.
+    const offerings =
+      await this.educationProgramOfferingCSVService.generateSaveOfferingModelFromCSVModels(
+        userToken.authorizations.institutionId,
+        csvModels,
+      );
+    // Validate all the offering models.
+    const offeringValidations =
+      this.educationProgramOfferingValidationService.validateOfferingModels(
+        offerings,
+        true,
+      );
+    const offeringValidationsErrors = offeringValidations.filter(
+      (offering) => offering.errors.length,
+    );
+    if (offeringValidationsErrors.length) {
+      // There is some critical validation error that will prevent some offering to be inserted.
+      const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
+        offeringValidationsErrors.map((validation, index) => {
+          const csvModel = csvModels[index];
+          return {
+            recordNumber: validation.index + 1,
+            locationCode: csvModel.institutionLocationCode,
+            sabcProgramCode: csvModel.sabcProgramCode,
+            startDate: validation.offeringModel.studyStartDate,
+            endDate: validation.offeringModel.studyEndDate,
+            errors: validation.errors,
+          };
+        });
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Offering has invalid data.",
+          OFFERING_VALIDATION_CRITICAL_ERROR,
+          validationResults,
+        ),
+      );
+    }
+    return { id: 0 };
   }
 }

@@ -29,7 +29,7 @@ export class EducationProgramOfferingValidationService {
     offerings: SaveOfferingModel[],
     silently = false,
   ): OfferingValidationResult[] {
-    return offerings.map((offering) => {
+    return offerings.map((offering, index) => {
       // Ensures that the object received is a class. This is needed to the
       // proper validation metadata be available to the validation be performed.
       const offeringModel = plainToClass(SaveOfferingModel, offering, {
@@ -52,6 +52,7 @@ export class EducationProgramOfferingValidationService {
       }
 
       return {
+        index,
         offeringModel,
         offeringStatus,
         warnings,

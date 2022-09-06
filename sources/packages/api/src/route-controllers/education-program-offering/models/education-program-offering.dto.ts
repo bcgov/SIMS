@@ -218,3 +218,12 @@ export class OfferingChangeAssessmentAPIInDTO {
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   assessmentNotes: string;
 }
+
+export class OfferingBulkInsertValidationResultAPIOutDTO {
+  recordNumber: number;
+  locationCode: string;
+  sabcProgramCode: string;
+  startDate: string;
+  endDate: string;
+  errors: string[];
+}

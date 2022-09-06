@@ -238,63 +238,9 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
 }
 
 export interface OfferingValidationResult {
+  index: number;
   offeringModel: SaveOfferingModel;
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   warnings: OfferingValidationWarnings[];
   errors: string[];
-}
-
-export class OfferingBulkInsertModel {
-  @Matches(/^[A-Z]{4}$/, {
-    message: "Institution Location Code must be a 4 letters uppercase code.",
-  })
-  institutionLocationCode: string;
-  @Matches(/^[[A-Z]{3}[0-9]{1}$/, {
-    message:
-      "SABC Program Code must be a 3 uppercase letters followed by a number.",
-  })
-  sabcProgramCode: string;
-  @IsNotEmpty({ message: "Offering name must be provided." })
-  offeringName: string;
-  @IsDateString(undefined, { message: "" })
-  studyStartDate: string;
-  @IsDateString()
-  studyEndDate: string;
-  @IsNumber()
-  actualTuitionCosts: number;
-  @IsNumber()
-  programRelatedCosts: number;
-  @IsNumber()
-  mandatoryFees: number;
-  @IsNumber()
-  exceptionalExpenses: number;
-  @IsNotEmpty()
-  offeringDelivered: string;
-  @IsEnum(OfferingIntensity)
-  offeringIntensity: OfferingIntensity;
-  @IsNumber()
-  yearOfStudy: number;
-  @IsNotEmpty()
-  showYearOfStudy: boolean;
-  @IsNotEmpty()
-  hasOfferingWILComponent: WILComponentOptions;
-  @IsOptional()
-  offeringWILComponentType?: string;
-  @IsIn([true])
-  offeringDeclaration: boolean;
-  @IsIn([OfferingTypes.Private, OfferingTypes.Public])
-  offeringType: OfferingTypes;
-  @IsOptional()
-  courseLoad?: number;
-  @IsBoolean()
-  lacksStudyBreaks: boolean;
-  @Type(() => StudyBreak)
-  @ValidateIf(
-    (offering: SaveOfferingModel) =>
-      !offering.lacksStudyBreaks &&
-      !!offering.studyStartDate &&
-      !!offering.studyEndDate,
-  )
-  @ArrayMinSize(1)
-  studyBreaks: StudyBreak[];
 }

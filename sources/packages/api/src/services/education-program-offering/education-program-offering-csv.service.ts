@@ -9,28 +9,29 @@ import {
 import {
   CSVHeaders,
   OfferingCSVModel,
+  OfferingCSVValidationResult,
   STUDY_BREAK_INDEX_PLACE_HOLDER,
   YesNoOptions,
 } from "./education-program-offering-csv.models";
+import { plainToClass } from "class-transformer";
+import { validateSync } from "class-validator";
+import { flattenErrorMessages } from "../../utilities/class-validation";
 
 const MAX_STUDY_BREAKS_ENTRIES = 5;
 type InstitutionCodeToIdMap = Record<string, number>;
 type ProgramCodeToProgramMap = Record<string, EducationProgram>;
 
 @Injectable()
-export class EducationProgramOfferingBulkInsertService {
+export class EducationProgramOfferingCSVService {
   constructor(
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly educationProgramService: EducationProgramService,
   ) {}
 
-  async generateSaveOfferingModelFromCSV(
+  async generateSaveOfferingModelFromCSVModels(
     institutionId: number,
-    csvContent: string,
+    csvModels: OfferingCSVModel[],
   ): Promise<SaveOfferingModel[]> {
-    const csvModels = await this.readCSV(csvContent);
-    // TODO: validate all CSV models.
-
     const [locationsMap, programsMap] = await Promise.all([
       this.getLocationsMaps(institutionId),
       this.getProgramsMaps(institutionId, csvModels),
@@ -106,7 +107,7 @@ export class EducationProgramOfferingBulkInsertService {
     return programMap;
   }
 
-  private async readCSV(csvContent: string): Promise<OfferingCSVModel[]> {
+  async readCSV(csvContent: string): Promise<OfferingCSVModel[]> {
     const offeringModels: OfferingCSVModel[] = [];
     const lines = await parseCSVContent(csvContent, { headers: true });
     lines.forEach((line) => {
@@ -150,5 +151,24 @@ export class EducationProgramOfferingBulkInsertService {
       }
     });
     return offeringModels;
+  }
+
+  validateCSVModels(
+    csvModels: OfferingCSVModel[],
+  ): OfferingCSVValidationResult[] {
+    return csvModels.map((csvModel, index) => {
+      // Ensures that the object received is a class. This is needed to the
+      // proper validation metadata be available to the validation be performed.
+      const offeringCSVModel = plainToClass(OfferingCSVModel, csvModel, {
+        enableImplicitConversion: true,
+      });
+      const errors = validateSync(offeringCSVModel);
+      const flattenedErrors = flattenErrorMessages(errors);
+      return {
+        index,
+        csvModel: offeringCSVModel,
+        errors: flattenedErrors,
+      };
+    });
   }
 }

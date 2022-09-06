@@ -178,3 +178,9 @@ export class OfferingCSVModel {
   @ValidateNested({ each: true })
   studyBreaks: CSVStudyBreak[];
 }
+
+export interface OfferingCSVValidationResult {
+  index: number;
+  csvModel: OfferingCSVModel;
+  errors: string[];
+}

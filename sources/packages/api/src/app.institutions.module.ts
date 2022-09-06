@@ -53,7 +53,7 @@ import {
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
-import { EducationProgramOfferingBulkInsertService } from "./services/education-program-offering/education-program-offering-bulk-insert.service";
+import { EducationProgramOfferingCSVService } from "./services/education-program-offering/education-program-offering-csv.service";
 import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 
 @Module({
@@ -109,7 +109,7 @@ import { EducationProgramOfferingValidationService } from "./services/education-
     EducationProgramOfferingControllerService,
     StudentService,
     SFASIndividualService,
-    EducationProgramOfferingBulkInsertService,
+    EducationProgramOfferingCSVService,
     EducationProgramOfferingValidationService,
   ],
 })
