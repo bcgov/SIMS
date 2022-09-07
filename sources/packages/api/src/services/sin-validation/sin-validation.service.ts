@@ -35,10 +35,12 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
 
   /**
    * Get the history of the SIN validations associated with a user.
-   * @param userId user id to be verified.
+   * @param studentId student id to be verified.
    * @returns SIN validations history.
    */
-  async getSINValidationsByUserId(userId: number): Promise<SINValidation[]> {
+  async getSINValidationsByStudentId(
+    studentId: number,
+  ): Promise<SINValidation[]> {
     return this.repo
       .createQueryBuilder("sinValidation")
       .select([
@@ -55,13 +57,13 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         "sinValidation.temporarySIN",
         "sinValidation.sinExpiryDate",
       ])
-      .where("sinValidation.user.id = :userId", { userId })
+      .where("sinValidation.student.id = :studentId", { studentId })
       .orderBy("sinValidation.createdAt", "DESC")
       .getMany();
   }
 
   /**
-   * Creates a new SIN validation entry associated with the student user.
+   * Creates a new SIN validation entry associated with the student.
    * This entry will be updated in the student record as the one that represents
    * the current state of the SIN validation.
    * @param studentId student id to create the SIN validation record.
@@ -98,7 +100,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       newSINValidation.sinEditedNote = savedNote;
       newSINValidation.creator = auditUser;
       newSINValidation.createdAt = now;
-      newSINValidation.user = student.user;
+      newSINValidation.student = student;
       if (skipValidations) {
         newSINValidation.isValidSIN = true;
         newSINValidation.dateReceived = now;
@@ -142,13 +144,8 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
           "sinValidation.temporarySIN",
           "sinValidation.sinExpiryDate",
         ])
-        .innerJoin(
-          Student,
-          "student",
-          "student.user.id = sinValidation.user.id",
-        )
         .where("sinValidation.id = :sinValidationId", { sinValidationId })
-        .andWhere("student.id = :studentId", { studentId })
+        .andWhere("sinValidation.student.id = :studentId", { studentId })
         .getOne();
 
       if (!sinToBeUpdated) {
@@ -270,9 +267,9 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         "sinValidation.genderSent",
         "sinValidation.temporarySIN",
         "sinValidation.sinExpiryDate",
-        "user.id",
+        "student.id",
       ])
-      .innerJoin("sinValidation.user", "user")
+      .innerJoin("sinValidation.student", "student")
       .where("sinValidation.id = :sinValidationId", {
         sinValidationId: validationResponse.referenceIndex,
       })
@@ -323,9 +320,9 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       const mostUpdatedRecordDate = await this.repo
         .createQueryBuilder("sinValidation")
         .select("MAX(sinValidation.dateReceived)", "maxDate")
-        .innerJoin("sinValidation.user", "user")
-        .where("user.id = :userId", {
-          userId: existingValidation.user.id,
+        .innerJoin("sinValidation.student", "student")
+        .where("student.id = :student", {
+          student: existingValidation.student.id,
         })
         .getRawOne();
       if (processDate > mostUpdatedRecordDate.maxDate) {
@@ -334,8 +331,8 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         delete existingValidation.id;
         // Insert the new SIN validation and associate it with the student
         // as the most updated one to be used as a current.
-        await this.studentService.updateSINValidationByUserId(
-          existingValidation.user.id,
+        await this.studentService.updateSINValidationByStudentId(
+          existingValidation.student.id,
           existingValidation,
           auditUserId,
         );

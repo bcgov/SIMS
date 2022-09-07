@@ -165,15 +165,6 @@ export class StudentService extends RecordDataModelService<Student> {
     };
     student.user = user;
 
-    // TODO: When SIN validation table is changed to support the
-    // history of a student with multiple users, the below code
-    // must be updated to avoid generating a SIN validation record
-    // when the user is already present.
-    const sinValidation = new SINValidation();
-    sinValidation.sin = studentSIN;
-    sinValidation.user = user;
-    student.sinValidation = sinValidation;
-
     try {
       // Get PD status from SFAS integration data.
       student.studentPDVerified = await this.sfasIndividualService.getPDStatus(
@@ -193,6 +184,17 @@ export class StudentService extends RecordDataModelService<Student> {
       const savedStudent = await entityManager
         .getRepository(Student)
         .save(student);
+
+      // SIN validation record is created only when a new student is created.
+      // When a student upgrades to BCSC from BCeID or downgrades from
+      // BCSC to BCeID, the SIN validation is not created as student remains the same.
+      if (!existingStudent) {
+        const sinValidation = new SINValidation();
+        sinValidation.sin = studentSIN;
+        sinValidation.student = student;
+        student.sinValidation = sinValidation;
+        await entityManager.getRepository(Student).save(student);
+      }
       // Create the new entry in the student/user history/audit.
       const studentUser = new StudentUser();
       studentUser.user = user;
@@ -394,7 +396,7 @@ export class StudentService extends RecordDataModelService<Student> {
       studentToSync.birthDate = getDateOnly(studentToken.birthdate);
       studentToSync.user.lastName = studentToken.lastName;
       studentToSync.user.firstName = studentToken.givenNames;
-      sinValidation.user = studentToSync.user;
+      sinValidation.student = studentToSync;
       studentToSync.sinValidation = sinValidation;
       mustSave = true;
     }
@@ -661,21 +663,21 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Uses the user id to identify a student that must have his
    * SIN validation active record updated.
-   * @param userId user id related to the student.
+   * @param studentId Student who's SIN validation is to be updated.
    * @param sinValidation SIN validation record to have the
    * relationship created with the student.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns updated student.
    */
-  async updateSINValidationByUserId(
-    userId: number,
+  async updateSINValidationByStudentId(
+    studentId: number,
     sinValidation: SINValidation,
     auditUserId: number,
   ): Promise<Student> {
     const studentToUpdate = await this.repo
       .createQueryBuilder("student")
       .select("student.id")
-      .where("student.user.id = :userId", { userId })
+      .where("student.id = :studentId", { studentId })
       .getOne();
     studentToUpdate.modifier = { id: auditUserId } as User;
     studentToUpdate.sinValidation = sinValidation;

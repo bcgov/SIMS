@@ -40,7 +40,7 @@ describe("Test student model", () => {
     user.lastName = faker.name.lastName();
     sub.user = user;
     const sinValidation = new SINValidation();
-    sinValidation.user = user;
+    sinValidation.student = sub;
     sinValidation.sin = "964652218";
     sub.sinValidation = sinValidation;
 

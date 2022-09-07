@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { Note, User } from ".";
+import { Note, User, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
@@ -180,19 +180,19 @@ export class SINValidation extends RecordDataModel {
   })
   sinExpiryDate?: Date;
   /**
-   * User id that requires a SIN validation.
+   * Student who requires a SIN validation.
    */
-  @RelationId((sinValidation: SINValidation) => sinValidation.user)
-  userId: number;
+  @RelationId((sinValidation: SINValidation) => sinValidation.student)
+  studentId: number;
   /**
-   * User that requires a SIN validation.
+   * Student who requires a SIN validation.
    */
-  @ManyToOne(() => User, { eager: false, cascade: false, nullable: false })
+  @ManyToOne(() => Student, { eager: false, cascade: false, nullable: false })
   @JoinColumn({
-    name: "user_id",
+    name: "student_id",
     referencedColumnName: ColumnNames.ID,
   })
-  user: User;
+  student: Student;
   /**
    * User that manually edited the SIN.
    */
