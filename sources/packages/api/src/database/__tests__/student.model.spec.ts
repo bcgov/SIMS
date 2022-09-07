@@ -39,12 +39,16 @@ describe("Test student model", () => {
     user.firstName = faker.name.firstName();
     user.lastName = faker.name.lastName();
     sub.user = user;
+
+    // Save student
+    await controller.save(sub);
+
     const sinValidation = new SINValidation();
     sinValidation.student = sub;
     sinValidation.sin = "964652218";
     sub.sinValidation = sinValidation;
 
-    // Save
+    //Update student with new SIN validation
     await controller.save(sub);
 
     // Fetch and test
