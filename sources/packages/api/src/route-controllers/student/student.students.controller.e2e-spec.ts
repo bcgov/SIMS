@@ -68,13 +68,16 @@ describe("Test ATBC Controller", () => {
     simsUser.firstName = faker.name.firstName();
     simsUser.lastName = faker.name.lastName();
     fakeStudent.user = simsUser;
+
+    // Save the student in SIMS
+    await studentService.save(fakeStudent);
+
     const sinValidation = new SINValidation();
     sinValidation.student = fakeStudent;
     sinValidation.isValidSIN = true;
     fakeStudent.sinValidation = sinValidation;
     sinValidation.sin = "706941291";
 
-    // Save the student in SIMS
     await studentService.save(fakeStudent);
 
     // creating mockup for ATBCCreateClient, this function actually calls the ATBC server to create the student profile
