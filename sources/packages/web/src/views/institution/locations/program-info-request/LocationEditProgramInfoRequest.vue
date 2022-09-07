@@ -1,25 +1,32 @@
 <template>
-  <div class="p-m-4">
-    <header-navigator
-      title="Program info requests"
-      :routeLocation="{
-        name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
-      }"
-      subTitle="View Application"
-    />
-  </div>
-  <v-sheet elevation="1" class="mx-auto">
-    <v-container>
-      <formio
-        formName="programinformationrequest"
-        :data="initialData"
-        @loaded="formLoaded"
-        @changed="formChanged"
-        @submitted="submitted"
-        @customEvent="customEventCallback"
-      ></formio>
-    </v-container>
-  </v-sheet>
+  <!-- todo: ann pir form w.i.p -->
+  <full-page-container>
+    <template #header>
+      <header-navigator
+        title="Program info requests"
+        :routeLocation="{
+          name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+        }"
+        subTitle="View Application"
+      />
+    </template>
+    <!-- TODO: ANN form definition -->
+    <formio-container
+      formName="programInformationRequest"
+      :formData="initialData"
+      @loaded="formLoaded"
+      @changed="formChanged"
+      @submitted="submitted"
+      @customEvent="customEventCallback"
+    >
+      <template #actions="{ submit }">
+        <footer-buttons
+          :processing="processing"
+          primaryLabel="Complete program info request"
+          @primaryClick="submit"
+        /> </template
+    ></formio-container>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -38,6 +45,7 @@ import {
   ApiProcessError,
   FormIOCustomEvent,
   FormIOCustomEventTypes,
+  FormIOForm,
 } from "@/types";
 import {
   PIR_OR_DATE_OVERLAP_ERROR,
@@ -57,6 +65,7 @@ export default {
     },
   },
   setup(props: any) {
+    const processing = ref(false);
     const snackBar = useSnackBar();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
@@ -156,37 +165,31 @@ export default {
       _form: any,
       event: FormIOCustomEvent,
     ) => {
-      switch (event.type) {
-        case FormIOCustomEventTypes.RouteToCreateProgram:
-          router.push({
-            name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-            params: {
-              locationId: props.locationId,
-            },
-          });
-          break;
-        case FormIOCustomEventTypes.RouteToProgramInformationRequestSummaryPage:
-          router.push({
-            name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
-          });
-          break;
+      if (event.type === FormIOCustomEventTypes.RouteToCreateProgram) {
+        router.push({
+          name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
+          params: {
+            locationId: props.locationId,
+          },
+        });
       }
     };
-
-    const submitted = async (data: any) => {
+    // todo: use proper interface
+    const submitted = async (form: FormIOForm<any>) => {
       try {
-        if (data.denyProgramInformationRequest) {
+        processing.value = true;
+        if (form.data.denyProgramInformationRequest) {
           await ProgramInfoRequestService.shared.denyProgramInfoRequest(
             props.locationId,
             props.applicationId,
-            data,
+            form.data,
           );
           snackBar.success("Program Information Request denied successfully!");
         } else {
           await ProgramInfoRequestService.shared.completeProgramInfoRequest(
             props.locationId,
             props.applicationId,
-            data,
+            form.data,
           );
           snackBar.success(
             "Program Information Request completed successfully!",
@@ -212,6 +215,8 @@ export default {
           }
         }
         snackBar.error(`${errorLabel}. ${errorMsg}`);
+      } finally {
+        processing.value = false;
       }
     };
     return {
@@ -221,6 +226,7 @@ export default {
       submitted,
       customEventCallback,
       InstitutionRoutesConst,
+      processing,
     };
   },
 };

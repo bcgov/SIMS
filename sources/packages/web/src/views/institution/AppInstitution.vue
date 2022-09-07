@@ -1,6 +1,6 @@
 <template>
   <IdleTimeChecker :clientIdType="ClientIdType.Institution">
-    <v-app-bar color="white">
+    <v-app-bar color="white" floating>
       <b-c-logo subtitle="Institutions" />
       <v-btn-toggle
         selected-class="active-btn label-bold"
