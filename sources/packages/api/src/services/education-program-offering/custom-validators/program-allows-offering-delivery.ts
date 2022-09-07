@@ -43,7 +43,7 @@ class ProgramAllowsOfferingDeliveryConstraint
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `${args.property} has an offering intensity that is not allowed by its program.`;
+    return `${args.property} has an offering delivery that is not allowed by its program.`;
   }
 }
 

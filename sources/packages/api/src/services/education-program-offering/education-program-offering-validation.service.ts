@@ -2,16 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { OfferingStatus } from "../../database/entities";
 import {
   OfferingValidationResult,
-  OfferingValidationWarnings,
   SaveOfferingModel,
   ValidationWarning,
+  ValidationWarningResult,
 } from "./education-program-offering-validation.models";
 import { validateSync, ValidationError } from "class-validator";
 import { plainToClass } from "class-transformer";
-import {
-  flattenContexts,
-  flattenErrorMessages,
-} from "../../utilities/class-validation";
+import { flattenErrors } from "../../utilities/class-validation";
 import { CustomNamedError } from "../../utilities";
 import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../constants";
 
@@ -35,19 +32,25 @@ export class EducationProgramOfferingValidationService {
       const offeringModel = plainToClass(SaveOfferingModel, offering, {
         enableImplicitConversion: true,
       });
-      const errors = validateSync(offeringModel);
-      const flattenedErrors = flattenErrorMessages(errors);
-      const warnings = this.getOfferingSavingWarnings(errors);
+      const validationsErrors = validateSync(offeringModel);
+      const allErrors: string[] = [];
+      const allWarnings: ValidationWarningResult[] = [];
+      validationsErrors.forEach((error) => {
+        const [errors, warnings] = this.extractErrorsAndWarnings(error);
+        allErrors.push(...errors);
+        allWarnings.push(...warnings);
+      });
+
       const offeringStatus = this.getOfferingSavingStatus(
-        flattenedErrors.length,
-        warnings.length,
+        allErrors.length,
+        allWarnings.length,
       );
 
-      if (!silently && !offeringStatus) {
+      if (!silently && !!allErrors.length) {
         throw new CustomNamedError(
-          "The validated offering has critical errors.",
+          "The validated offerings have critical errors.",
           OFFERING_VALIDATION_CRITICAL_ERROR,
-          flattenedErrors,
+          allErrors,
         );
       }
 
@@ -55,27 +58,39 @@ export class EducationProgramOfferingValidationService {
         index,
         offeringModel,
         offeringStatus,
-        warnings,
-        errors: flattenedErrors,
+        warnings: allWarnings,
+        errors: allErrors,
       };
     });
   }
 
-  private getOfferingSavingWarnings(
-    errors: ValidationError[],
-  ): OfferingValidationWarnings[] {
-    const warnings: OfferingValidationWarnings[] = [];
-    errors.forEach((error) => {
-      const flattenedContexts = flattenContexts(error);
-      const contextWarnings = flattenedContexts
-        .flatMap((context) => Object.values(context))
-        .filter(
-          (contextProperty: ValidationWarning) => contextProperty.isWarning,
-        )
-        .map((warning: ValidationWarning) => warning.warningType);
-      warnings.push(...contextWarnings);
+  private extractErrorsAndWarnings(
+    error: ValidationError,
+  ): [errors: string[], warnings: ValidationWarningResult[]] {
+    const errors: string[] = [];
+    const warnings: ValidationWarningResult[] = [];
+    const flattenedErrors = flattenErrors(error);
+    flattenedErrors.forEach((error) => {
+      Object.keys(error.constraints).forEach((errorConstraintKey) => {
+        let associatedContext: ValidationWarning = undefined;
+        if (error.contexts) {
+          associatedContext = error.contexts[
+            errorConstraintKey
+          ] as ValidationWarning;
+        }
+        const errorDescription = error.constraints[errorConstraintKey];
+        if (associatedContext?.isWarning) {
+          warnings.push({
+            warningType: associatedContext.warningType,
+            warningMessage: errorDescription,
+          });
+        } else {
+          errors.push(errorDescription);
+        }
+      });
     });
-    return warnings;
+
+    return [errors, warnings];
   }
 
   private getOfferingSavingStatus(
@@ -85,9 +100,7 @@ export class EducationProgramOfferingValidationService {
     if (totalErrors === 0) {
       return OfferingStatus.Approved;
     }
-    if (totalErrors === totalWarnings) {
-      // If all errors are warnings then the offering can be created
-      // but it will need a review and approval by the Ministry.
+    if (totalWarnings > 0) {
       return OfferingStatus.CreationPending;
     }
     return undefined;

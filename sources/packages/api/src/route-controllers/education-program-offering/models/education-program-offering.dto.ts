@@ -16,7 +16,10 @@ import {
   MaxLength,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { WILComponentOptions } from "../../../services";
+import {
+  OfferingValidationWarnings,
+  WILComponentOptions,
+} from "../../../services";
 
 export class StudyBreakOutDTO {
   breakStartDate: Date;
@@ -226,4 +229,10 @@ export class OfferingBulkInsertValidationResultAPIOutDTO {
   startDate: string;
   endDate: string;
   errors: string[];
+  warnings?: ValidationWarningResultAPIOutDTO[];
+}
+
+export class ValidationWarningResultAPIOutDTO {
+  warningType: OfferingValidationWarnings;
+  warningMessage: string;
 }

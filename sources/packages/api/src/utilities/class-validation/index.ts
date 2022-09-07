@@ -1,5 +1,4 @@
 export * from "./custom-validators/has-no-period-overlap";
-export * from "./custom-validators/is-date-after";
 export * from "./custom-validators/is-period-start-date-decorator";
 export * from "./custom-validators/is-period-end-date-decorator";
 export * from "./custom-validators/sin-validator";

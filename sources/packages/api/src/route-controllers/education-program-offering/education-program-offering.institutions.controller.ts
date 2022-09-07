@@ -68,9 +68,9 @@ import {
 export class EducationProgramOfferingInstitutionsController extends BaseController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,
-    private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
-    private readonly educationProgramOfferingCSVService: EducationProgramOfferingCSVService,
-    private readonly educationProgramOfferingValidationService: EducationProgramOfferingValidationService,
+    private readonly programOfferingControllerService: EducationProgramOfferingControllerService,
+    private readonly programOfferingCSVService: EducationProgramOfferingCSVService,
+    private readonly programOfferingValidationService: EducationProgramOfferingValidationService,
   ) {
     super();
   }
@@ -99,7 +99,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+        await this.programOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -164,7 +164,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
 
     try {
       const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+        await this.programOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -203,7 +203,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   ): Promise<
     PaginatedResultsAPIOutDTO<EducationProgramOfferingSummaryAPIOutDTO>
   > {
-    return this.educationProgramOfferingControllerService.getOfferingsSummary(
+    return this.programOfferingControllerService.getOfferingsSummary(
       locationId,
       programId,
       paginationOptions,
@@ -274,7 +274,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Query("includeInActivePY") includeInActivePY = false,
     @Query("offeringIntensity") offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
-    return this.educationProgramOfferingControllerService.getProgramOfferingsOptionsList(
+    return this.programOfferingControllerService.getProgramOfferingsOptionsList(
       locationId,
       programId,
       programYearId,
@@ -321,7 +321,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+        await this.programOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -368,16 +368,14 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   async bulkInsert(
     @UserToken() userToken: IInstitutionUserToken,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
+  ): Promise<PrimaryIdentifierAPIOutDTO[]> {
     // Read the entire file content.
     const fileContent = file.buffer.toString(OFFERING_BULK_FILE_ENCODING);
     // Convert the file raw content into CSV models.
-    const csvModels = await this.educationProgramOfferingCSVService.readCSV(
-      fileContent,
-    );
+    const csvModels = await this.programOfferingCSVService.readCSV(fileContent);
     // Validate the CSV models.
     const csvValidations =
-      this.educationProgramOfferingCSVService.validateCSVModels(csvModels);
+      this.programOfferingCSVService.validateCSVModels(csvModels);
     const csvValidationsErrors = csvValidations.filter(
       (csvValidation) => csvValidation.errors.length,
     );
@@ -402,13 +400,13 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     }
     // Convert the CSV models to the SaveOfferingModel to execute the complete offering validation.
     const offerings =
-      await this.educationProgramOfferingCSVService.generateSaveOfferingModelFromCSVModels(
+      await this.programOfferingCSVService.generateSaveOfferingModelFromCSVModels(
         userToken.authorizations.institutionId,
         csvModels,
       );
     // Validate all the offering models.
     const offeringValidations =
-      this.educationProgramOfferingValidationService.validateOfferingModels(
+      this.programOfferingValidationService.validateOfferingModels(
         offerings,
         true,
       );
@@ -427,6 +425,10 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
             startDate: validation.offeringModel.studyStartDate,
             endDate: validation.offeringModel.studyEndDate,
             errors: validation.errors,
+            warnings: validation.warnings.map((warning) => ({
+              warningType: warning.warningType,
+              warningMessage: warning.warningMessage,
+            })),
           };
         });
       throw new UnprocessableEntityException(
@@ -437,6 +439,16 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         ),
       );
     }
-    return { id: 0 };
+    // Insert all validated offerings.
+    const insertResults =
+      await this.programOfferingService.createFromValidatedOfferings(
+        offeringValidations,
+        userToken.userId,
+      );
+    // Return all created ids.
+    return insertResults.map((insertResult) => {
+      const [identifier] = insertResult.identifiers;
+      return { id: identifier.id };
+    });
   }
 }

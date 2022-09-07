@@ -6,17 +6,14 @@ import {
   IsIn,
   IsNotEmpty,
   IsNotEmptyObject,
-  IsNumber,
   IsOptional,
   IsPositive,
-  Matches,
   Max,
   MaxLength,
   Min,
   ValidateIf,
   ValidateNested,
 } from "class-validator";
-import { IsDateAfter } from "../../utilities/class-validation/custom-validators/is-date-after";
 import {
   EducationProgram,
   OfferingIntensity,
@@ -106,7 +103,6 @@ export class StudyBreak {
   breakStartDate: string;
   @IsDateString()
   @IsPeriodEndDate()
-  @IsDateAfter((studyBreak: StudyBreak) => studyBreak.breakStartDate)
   @PeriodMinLength(
     (studyBreak: StudyBreak) => studyBreak.breakStartDate,
     OFFERING_STUDY_BREAK_MIN_DAYS,
@@ -159,6 +155,7 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   exceptionalExpenses: number;
   @IsEnum(OfferingDeliveryOptions)
+  @ValidateIf((offering: SaveOfferingModel) => !!offering.programContext)
   @ProgramAllowsOfferingDelivery({
     context: new ValidationWarning(
       OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
@@ -166,6 +163,7 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   })
   offeringDelivered: string;
   @IsEnum(OfferingIntensity)
+  @ValidateIf((offering: SaveOfferingModel) => !!offering.programContext)
   @ProgramAllowsOfferingIntensity({
     context: new ValidationWarning(
       OfferingValidationWarnings.ProgramOfferingIntensityMismatch,
@@ -178,6 +176,7 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   @IsBoolean()
   showYearOfStudy: boolean;
   @IsEnum(WILComponentOptions)
+  @ValidateIf((offering: SaveOfferingModel) => !!offering.programContext)
   @ProgramAllowsOfferingWIL({
     context: new ValidationWarning(
       OfferingValidationWarnings.ProgramOfferingWILMismatch,
@@ -237,10 +236,15 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   programContext: EducationProgramForOfferingValidationContext;
 }
 
+export interface ValidationWarningResult {
+  warningType: OfferingValidationWarnings;
+  warningMessage: string;
+}
+
 export interface OfferingValidationResult {
   index: number;
   offeringModel: SaveOfferingModel;
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
-  warnings: OfferingValidationWarnings[];
+  warnings: ValidationWarningResult[];
   errors: string[];
 }

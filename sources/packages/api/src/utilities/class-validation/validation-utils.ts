@@ -32,22 +32,22 @@ function generateFlattenedConstraints(
   }
 }
 
-export function flattenContexts(error: ValidationError): unknown[] {
-  const flattenedContexts: unknown[] = [];
-  generateFlattenedContexts(error, flattenedContexts);
-  return flattenedContexts;
+export function flattenErrors(error: ValidationError) {
+  const flattenedErrors: ValidationError[] = [];
+  generateFlattenedErrors(error, flattenedErrors);
+  return flattenedErrors;
 }
 
-function generateFlattenedContexts(
+function generateFlattenedErrors(
   error: ValidationError,
-  flattenedContexts: unknown[] = [],
+  flattenedConstraints: ValidationError[] = [],
 ) {
-  if (error.contexts) {
-    flattenedContexts.push(error.contexts);
+  if (error.constraints) {
+    flattenedConstraints.push(error);
   }
   if (error.children) {
     error.children.forEach((childError) =>
-      generateFlattenedContexts(childError, flattenedContexts),
+      generateFlattenedErrors(childError, flattenedConstraints),
     );
   }
 }

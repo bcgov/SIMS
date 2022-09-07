@@ -20,7 +20,6 @@ import {
 import { RecordDataModelService } from "../../database/data.model.service";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { WorkflowStartResult } from "../workflow/workflow.models";
-import * as os from "os";
 import { DataSource, InsertResult, UpdateResult } from "typeorm";
 import {
   OfferingsFilter,
@@ -43,10 +42,12 @@ import { OFFERING_NOT_VALID } from "../../constants";
 import {
   CalculatedStudyBreaksAndWeeks,
   OfferingStudyBreakCalculationContext,
+  OfferingValidationResult,
   SaveOfferingModel,
 } from "./education-program-offering-validation.models";
 import { classToClass } from "class-transformer";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
+import * as os from "os";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -76,6 +77,45 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       offeringValidation.offeringModel,
     );
     programOffering.offeringStatus = offeringValidation.offeringStatus;
+    programOffering.creator = { id: userId } as User;
+    return this.repo.insert(programOffering);
+  }
+
+  async createFromValidatedOfferings(
+    validatedOfferings: OfferingValidationResult[],
+    userId: number,
+  ): Promise<InsertResult[]> {
+    const allResults: InsertResult[] = [];
+    // Used to limit the number of asynchronous operations
+    // that will start at the same time.
+    const maxPromisesAllowed = os.cpus().length;
+    // Hold all the promises that must be processed.
+    const promises: Promise<InsertResult>[] = [];
+    for (const validatedOffering of validatedOfferings) {
+      promises.push(
+        this.createFromValidatedOffering(validatedOffering, userId),
+      );
+      if (promises.length >= maxPromisesAllowed) {
+        // Waits for all be processed or some to fail.
+        const insertResults = await Promise.all(promises);
+        allResults.push(...insertResults);
+        // Clear the array.
+        promises.length = 0;
+      }
+    }
+    const finalResults = await Promise.all(promises);
+    allResults.push(...finalResults);
+    return allResults;
+  }
+
+  private async createFromValidatedOffering(
+    validatedOffering: OfferingValidationResult,
+    userId: number,
+  ): Promise<InsertResult> {
+    const programOffering = this.populateProgramOffering(
+      validatedOffering.offeringModel,
+    );
+    programOffering.offeringStatus = validatedOffering.offeringStatus;
     programOffering.creator = { id: userId } as User;
     return this.repo.insert(programOffering);
   }
