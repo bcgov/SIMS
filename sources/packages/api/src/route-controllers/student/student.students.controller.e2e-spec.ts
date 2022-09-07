@@ -69,7 +69,7 @@ describe("Test ATBC Controller", () => {
     simsUser.lastName = faker.name.lastName();
     fakeStudent.user = simsUser;
 
-    // Save the student in SIMS
+    // Save the student in SIMS.
     await studentService.save(fakeStudent);
 
     const sinValidation = new SINValidation();
@@ -92,8 +92,8 @@ describe("Test ATBC Controller", () => {
         .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK);
     } finally {
-      await studentService.remove(fakeStudent);
       await sinValidationService.remove(sinValidation);
+      await studentService.remove(fakeStudent);
       await userService.remove(simsUser);
     }
   });
