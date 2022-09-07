@@ -1,30 +1,32 @@
 <template>
-  <div class="mb-4">
-    <span class="category-header-large color-blue">
-      {{ educationProgram.name }}
-    </span>
-    <status-chip-program
-      class="ml-2 mb-2"
-      :status="educationProgram.programStatus"
-    ></status-chip-program>
-    <v-btn
-      class="float-right"
-      variant="outlined"
-      @click="programButtonAction()"
-      color="primary"
-    >
-      {{ programActionLabel }}
-    </v-btn>
-  </div>
-  <v-row class="secondary-color">
+  <body-header :title="educationProgram.name">
+    <template #status-chip>
+      <status-chip-program
+        class="ml-2 mb-2"
+        :status="educationProgram.programStatus"
+      ></status-chip-program>
+    </template>
+    <template #actions>
+      <v-btn
+        class="float-right label-bold"
+        variant="outlined"
+        @click="programButtonAction"
+        color="primary"
+      >
+        {{ programActionLabel }}
+      </v-btn>
+    </template>
+  </body-header>
+  <v-row>
     <v-col cols="5">
-      <span class="category-header-medium-small">Description</span>
-      <br />
-      <p>{{ educationProgram.description }}</p>
+      <title-value
+        propertyTitle="Description"
+        :propertyValue="educationProgram.description"
+      />
     </v-col>
-    <v-col cols="4"
-      ><span class="font-weight-bold">Offering</span> <br />
-      <p>
+    <v-col cols="4">
+      <title-value propertyTitle="Description" />
+      <p class="label-value muted-content clearfix">
         <span
           v-if="
             educationProgram.programIntensity ===
@@ -33,7 +35,8 @@
           "
           >Full Time</span
         >
-        <br /><span
+        <br />
+        <span
           v-if="
             educationProgram.programIntensity ===
             ProgramIntensity.fullTimePartTime
@@ -42,31 +45,31 @@
         </span>
       </p>
     </v-col>
-    <v-col cols="2"
-      ><span class="font-weight-bold">Credential Type</span>
-      <br />
-      <p>{{ educationProgram.credentialTypeToDisplay }}</p>
+    <v-col cols="2">
+      <title-value
+        propertyTitle="Credential Type"
+        :propertyValue="educationProgram.credentialTypeToDisplay"
+      />
     </v-col>
   </v-row>
-  <v-row class="secondary-color">
+  <v-row>
     <v-col cols="5">
-      <span class="font-weight-bold"
-        >Classification of Instructional Programs (CIP)</span
-      >
-      <br />
-      <p>{{ educationProgram.cipCode }}</p>
+      <title-value
+        propertyTitle="Classification of Instructional Programs (CIP)"
+        :propertyValue="educationProgram.cipCode"
+      />
     </v-col>
     <v-col cols="4"
-      ><span class="font-weight-bold"
-        >National Occupational Classification (NOC)</span
-      >
-      <br />
-      <p>{{ educationProgram.nocCode }}</p>
+      ><title-value
+        propertyTitle="National Occupational Classification (NOC)"
+        :propertyValue="educationProgram.nocCode"
+      />
     </v-col>
     <v-col cols="3"
-      ><span class="font-weight-bold">Institution Program Code</span>
-      <br />
-      <p>{{ educationProgram.institutionProgramCode }}</p>
+      ><title-value
+        propertyTitle="Institution Program Code"
+        :propertyValue="educationProgram.institutionProgramCode"
+      />
     </v-col>
   </v-row>
 </template>

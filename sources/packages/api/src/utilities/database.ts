@@ -48,7 +48,7 @@ export async function getRawCount(
     `SELECT COUNT(*) FROM (${sqlQuery}) AS count`,
     parameter,
   );
-  return result[0].count;
+  return +result[0].count;
 }
 
 /**

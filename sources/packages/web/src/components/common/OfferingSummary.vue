@@ -22,66 +22,65 @@
           color="primary"
           prepend-icon="fa:fa fa-plus-circle"
         >
-          Add Study Period
+          Add offering
         </v-btn>
       </v-row>
     </template>
   </body-header>
   <content-group>
-    <DataTable
-      :value="offeringsAndCount.results"
-      :lazy="true"
-      :paginator="true"
-      :rows="DEFAULT_PAGE_LIMIT"
-      :rowsPerPageOptions="PAGINATION_LIST"
-      :totalRecords="offeringsAndCount.count"
-      @page="paginationAndSortEvent($event)"
-      @sort="paginationAndSortEvent($event)"
-      :loading="loading"
-    >
-      <template #empty>
-        <p class="text-center font-weight-bold">No records found.</p>
-      </template>
-      <Column
-        :field="OfferingSummaryFields.OfferingName"
-        header="Name"
-        :sortable="true"
-      ></Column>
-      <Column :field="OfferingSummaryFields.StudyDates" header="Study Dates">
-        <template #body="slotProps">
-          {{ dateOnlyLongString(slotProps.data.studyStartDate) }} -
-          {{ dateOnlyLongString(slotProps.data.studyEndDate) }}
-        </template></Column
+    <toggle-content :toggled="!offeringsAndCount.count">
+      <DataTable
+        :value="offeringsAndCount.results"
+        :lazy="true"
+        :paginator="true"
+        :rows="DEFAULT_PAGE_LIMIT"
+        :rowsPerPageOptions="PAGINATION_LIST"
+        :totalRecords="offeringsAndCount.count"
+        @page="paginationAndSortEvent($event)"
+        @sort="paginationAndSortEvent($event)"
+        :loading="loading"
       >
-      <Column
-        :field="OfferingSummaryFields.OfferingIntensity"
-        header="Intensity"
-      >
-      </Column>
-      <Column
-        :field="OfferingSummaryFields.OfferingDelivered"
-        header="Study Delivery"
-      />
-      <Column field="offeringType" header="Offering Type" />
-      <Column header="Status"
-        ><template #body="slotProps">
-          <status-chip-offering
-            :status="slotProps.data.offeringStatus"
-          /> </template
-      ></Column>
-      <Column>
-        <template #body="slotProps">
-          <v-btn
-            color="primary"
-            variant="text"
-            @click="offeringButtonAction(slotProps.data.id)"
-            append-icon="mdi-pencil-outline"
-          >
-            {{ offeringActionLabel }}
-          </v-btn>
-        </template>
-      </Column>
-    </DataTable>
+        <Column
+          :field="OfferingSummaryFields.OfferingName"
+          header="Name"
+          :sortable="true"
+        ></Column>
+        <Column :field="OfferingSummaryFields.StudyDates" header="Study Dates">
+          <template #body="slotProps">
+            {{ dateOnlyLongString(slotProps.data.studyStartDate) }} -
+            {{ dateOnlyLongString(slotProps.data.studyEndDate) }}
+          </template></Column
+        >
+        <Column
+          :field="OfferingSummaryFields.OfferingIntensity"
+          header="Intensity"
+        >
+        </Column>
+        <Column field="offeringType" header="Offering type" />
+        <Column
+          :field="OfferingSummaryFields.OfferingDelivered"
+          header="Study delivery"
+        />
+        <Column header="Status"
+          ><template #body="slotProps">
+            <status-chip-offering
+              :status="slotProps.data.offeringStatus"
+            /> </template
+        ></Column>
+        <Column header="Action">
+          <template #body="slotProps">
+            <v-btn
+              color="primary"
+              variant="text"
+              @click="offeringButtonAction(slotProps.data.id)"
+              append-icon="mdi-pencil-outline"
+            >
+              {{ offeringActionLabel }}
+            </v-btn>
+          </template>
+        </Column>
+      </DataTable>
+    </toggle-content>
   </content-group>
 </template>
 

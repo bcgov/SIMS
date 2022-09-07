@@ -15,7 +15,7 @@ export default {
   },
   setup(props: any) {
     const chipStatus = computed(() =>
-      props.isActive ? StatusChipTypes.Success : StatusChipTypes.Inactive,
+      props.isActive ? StatusChipTypes.Success : StatusChipTypes.Default,
     );
 
     const chipLabel = computed(() => (props.isActive ? "Active" : "Inactive"));

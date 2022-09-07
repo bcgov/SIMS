@@ -1,10 +1,18 @@
 <template>
-  <formio
-    formName="reportscholasticstandingchange"
-    :data="data"
+  <!-- TODO: ANN form definition -->
+  <formio-container
+    formName="reportScholasticStandingChange"
+    :formData="data"
     @submitted="submitted"
-    @customEvent="customEvent"
-  ></formio>
+  >
+    <template #actions="{ submit }" v-if="!readOnly">
+      <footer-buttons
+        :processing="processing"
+        @primaryClick="submit"
+        primaryLabel="Submit update"
+        @secondaryClick="cancel"
+      /> </template
+  ></formio-container>
 </template>
 
 <script lang="ts">
@@ -13,7 +21,6 @@ import {
   ActiveApplicationDataAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "@/services/http/dto";
-import { FormIOCustomEvent } from "@/types";
 
 interface ScholasticStanding
   extends ScholasticStandingSubmittedDetailsAPIOutDTO {
@@ -24,13 +31,20 @@ interface ScholasticStandingBeforeSubmission
   readonly: boolean;
 }
 export default {
-  emits: ["submit", "customEventCallback"],
+  // todo: ann check cancel scenario, check with the team check weather to add cancel (go back to summary page) to all forms
+  // todo: ann check processing is passed correctly in all the consumer function
+  emits: ["submit", "cancel"],
   props: {
     initialData: {
       type: Object,
       required: true,
     },
     readOnly: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    processing: {
       type: Boolean,
       required: true,
       default: false,
@@ -53,15 +67,15 @@ export default {
       { immediate: true },
     );
 
-    const submitted = async (args: ScholasticStanding) => {
+    const submitted = (args: ScholasticStanding) => {
       context.emit("submit", args);
     };
 
-    const customEvent = async (form: any, event: FormIOCustomEvent) => {
-      context.emit("customEventCallback", form, event);
+    const cancel = () => {
+      context.emit("cancel");
     };
 
-    return { data, submitted, customEvent };
+    return { data, submitted, cancel };
   },
 };
 </script>

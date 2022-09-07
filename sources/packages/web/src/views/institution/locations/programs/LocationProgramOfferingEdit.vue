@@ -1,10 +1,10 @@
 <template>
-  <full-page-container>
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator
         title="Program detail"
         :routeLocation="routeLocation"
-        subTitle="Edit Study Period"
+        subTitle="Edit Offering"
       >
         <template #buttons>
           <v-row class="p-0 m-0">
@@ -36,14 +36,6 @@
           </v-row>
         </template>
       </header-navigator>
-      <program-offering-detail-header
-        class="m-4"
-        :headerDetails="{
-          ...initialData,
-          status: initialData.offeringStatus,
-          institutionId: institutionId,
-        }"
-      />
     </template>
     <template #alerts>
       <banner
@@ -54,10 +46,20 @@
         summary="You can still make changes to the name. If you need edit the locked fields, please click on the edit actions menu and request to edit."
       />
     </template>
+    <template #details-header>
+      <program-offering-detail-header
+        :headerDetails="{
+          ...initialData,
+          status: initialData.offeringStatus,
+          institutionId: institutionId,
+        }"
+      />
+    </template>
     <offering-form
       :data="initialData"
       :readOnly="readOnly"
       @saveOffering="saveOffering"
+      :processing="processing"
     ></offering-form>
   </full-page-container>
 </template>
@@ -102,6 +104,7 @@ export default {
     },
   },
   setup(props: any) {
+    const processing = ref(false);
     const snackBar = useSnackBar();
     const router = useRouter();
     const items = [
@@ -172,6 +175,7 @@ export default {
 
     const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
+        processing.value = true;
         //Update offering
         await EducationProgramOfferingService.shared.updateProgramOffering(
           props.locationId,
@@ -183,6 +187,8 @@ export default {
         router.push(routeLocation.value);
       } catch {
         snackBar.error("An error happened during the Offering saving process.");
+      } finally {
+        processing.value = false;
       }
     };
 
@@ -197,6 +203,7 @@ export default {
       items,
       routeLocation,
       readOnly,
+      processing,
     };
   },
 };

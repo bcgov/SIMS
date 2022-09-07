@@ -1,55 +1,60 @@
 <template>
-  <div class="p-m-4">
-    <header-navigator
-      title="Confirmation of enrolment"
-      :routeLocation="{
-        name: InstitutionRoutesConst.COE_SUMMARY,
-        params: {
-          locationId: locationId,
-        },
-      }"
-      subTitle="View Financial Aid Application"
-      ><template #buttons>
-        <v-menu v-if="initialData.applicationCOEStatus === COEStatus.required">
-          <template v-slot:activator="{ props }">
-            <v-btn
-              color="primary"
-              v-bind="props"
-              prepend-icon="fa:fa fa-chevron-circle-down"
-            >
-              Application Actions
-            </v-btn>
-          </template>
-          <v-list>
-            <template v-for="(item, index) in items" :key="index">
-              <v-list-item :value="index">
-                <v-list-item-title
-                  @click="item.command"
-                  :class="item.textColor"
-                >
-                  <span class="label-bold">{{ item.label }}</span>
-                </v-list-item-title>
-              </v-list-item>
-              <v-divider
-                v-if="index < items.length - 1"
-                :key="index"
-                inset
-              ></v-divider>
+  <full-page-container layout-template="centered">
+    <template #header>
+      <header-navigator
+        title="Confirm enrolment"
+        :routeLocation="{
+          name: InstitutionRoutesConst.COE_SUMMARY,
+          params: {
+            locationId: locationId,
+          },
+        }"
+        subTitle="View Financial Aid Application"
+        ><template #buttons>
+          <v-menu
+            v-if="initialData.applicationCOEStatus === COEStatus.required"
+          >
+            <template v-slot:activator="{ props }">
+              <v-btn
+                color="primary"
+                v-bind="props"
+                prepend-icon="fa:fa fa-chevron-circle-down"
+              >
+                Application actions
+              </v-btn>
             </template>
-          </v-list>
-        </v-menu>
-      </template>
-    </header-navigator>
-
-    <v-container>
-      <Information :data="initialData" />
-      <formio formName="confirmsstudentenrollment" :data="initialData"></formio>
-    </v-container>
+            <v-list>
+              <template v-for="(item, index) in items" :key="index">
+                <v-list-item :value="index">
+                  <v-list-item-title
+                    @click="item.command"
+                    :class="item.textColor"
+                  >
+                    <span class="label-bold">{{ item.label }}</span>
+                  </v-list-item-title>
+                </v-list-item>
+                <v-divider
+                  v-if="index < items.length - 1"
+                  :key="index"
+                  inset
+                ></v-divider>
+              </template>
+            </v-list>
+          </v-menu>
+        </template>
+      </header-navigator>
+    </template>
+    <!-- TODO: ANN form definition -->
+    <formio-container
+      formName="confirmsStudentEnrollment"
+      :formData="initialData"
+    />
+    <!-- Approve modal -->
     <formio-modal-dialog
       max-width="730"
       ref="confirmCOEModal"
       title="Confirm enrolment"
-      formName="confirmcoe"
+      formName="confirmCOE"
     >
       <template #actions="{ cancel, submit }">
         <v-row class="m-0 p-0">
@@ -66,8 +71,31 @@
         </v-row>
       </template>
     </formio-modal-dialog>
-    <ConfirmCOEDenyModal ref="denyCOEModal" @submitData="submitCOEDeny" />
-  </div>
+    <!-- todo: ann confirm with if this form modals needs to be moved to vue??? -->
+    <!-- Deny modal -->
+    <formio-modal-dialog
+      max-width="730"
+      ref="denyCOEModal"
+      title="Decline enrolment"
+      formName="declineConfirmationOfEnrollment"
+      @loaded="denyFormLoaded"
+    >
+      <template #actions="{ cancel, submit }">
+        <v-row class="m-0 p-0">
+          <v-btn color="primary" variant="outlined" @click="cancel"
+            >Cancel</v-btn
+          >
+          <v-btn
+            class="float-right"
+            @click="submit"
+            color="primary"
+            variant="elevated"
+            >Decline enrolment now</v-btn
+          >
+        </v-row>
+      </template>
+    </formio-modal-dialog>
+  </full-page-container>
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
@@ -76,9 +104,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import { COEStatus, FormIOForm, ApiProcessError, MenuType } from "@/types";
-import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
-import { useSnackBar, ModalDialog } from "@/composables";
-import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
+import { useSnackBar, ModalDialog, useFormioUtils } from "@/composables";
 import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
@@ -89,11 +115,10 @@ import {
   ConfirmationOfEnrollmentAPIInDTO,
   DenyConfirmationOfEnrollmentAPIInDTO,
 } from "@/services/http/dto";
+const COE_DENIAL_REASON_RADIO = "coeDenyReasonId";
 
 export default {
   components: {
-    ConfirmCOEDenyModal,
-    Information,
     FormioModalDialog,
   },
   props: {
@@ -111,10 +136,10 @@ export default {
     const snackBar = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
     const items = ref([] as MenuType[]);
-    const showModal = ref(false);
-    const editCOEModal = ref({} as ModalDialog<boolean>);
-    const denyCOEModal = ref({} as ModalDialog<void>);
+    const denyCOEModal = ref({} as ModalDialog<FormIOForm & boolean>);
     const confirmCOEModal = ref({} as ModalDialog<FormIOForm & boolean>);
+    const formioUtils = useFormioUtils();
+
     const loadInitialData = async () => {
       initialData.value =
         await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
@@ -122,6 +147,7 @@ export default {
           props.locationId,
         );
     };
+
     const showHideConfirmCOE = async () => {
       const modalResult = await confirmCOEModal.value.showModal();
       if (!modalResult) {
@@ -136,6 +162,12 @@ export default {
           payload,
         );
         snackBar.success("Confirmation of Enrollment Confirmed!");
+        router.push({
+          name: InstitutionRoutesConst.COE_SUMMARY,
+          params: {
+            locationId: props.locationId,
+          },
+        });
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An error happened while confirming the COE.";
@@ -154,10 +186,15 @@ export default {
         snackBar.error(`${errorLabel}. ${errorMsg}`);
       }
     };
-    const submitCOEDeny = async (
-      submissionData: DenyConfirmationOfEnrollmentAPIInDTO,
-    ) => {
+
+    const denyProgramInformation = async () => {
+      const modalResult = await denyCOEModal.value.showModal();
+      if (!modalResult) {
+        return;
+      }
       try {
+        const submissionData =
+          modalResult.data as DenyConfirmationOfEnrollmentAPIInDTO;
         await ConfirmationOfEnrollmentService.shared.denyConfirmationOfEnrollment(
           props.locationId,
           props.disbursementScheduleId,
@@ -176,13 +213,11 @@ export default {
         );
       }
     };
-    const denyProgramInformation = async () => {
-      await denyCOEModal.value.showModal();
-    };
+
     const loadMenu = () => {
       items.value = [
         {
-          label: "Confirm Enrollment",
+          label: "Confirm enrolment",
           textColor:
             COEStatus.required === initialData.value.applicationCOEStatus &&
             !initialData.value.applicationWithinCOEWindow
@@ -198,7 +233,7 @@ export default {
           },
         },
         {
-          label: "Decline Request",
+          label: "Decline enrolment",
           command: denyProgramInformation,
         },
       ];
@@ -217,18 +252,24 @@ export default {
       await loadInitialData();
     });
 
+    const denyFormLoaded = async (form: FormIOForm) => {
+      formioUtils.setRadioOptions(
+        form,
+        COE_DENIAL_REASON_RADIO,
+        await ConfirmationOfEnrollmentService.shared.getCOEDenialReasons(),
+      );
+    };
+
     return {
       initialData,
       items,
       COEStatus,
       showHideConfirmCOE,
-      showModal,
       loadInitialData,
-      editCOEModal,
       denyCOEModal,
-      submitCOEDeny,
       InstitutionRoutesConst,
       confirmCOEModal,
+      denyFormLoaded,
     };
   },
 };

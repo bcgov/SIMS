@@ -22,8 +22,9 @@
             primaryLabel="Create profile"
             @primaryClick="submit"
             :showSecondaryButton="false"
-          /> </template
-      ></formio-container>
+          />
+        </template>
+      </formio-container>
     </full-page-container>
   </full-page-container>
 </template>

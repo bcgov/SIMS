@@ -1,5 +1,5 @@
 <template>
-  <full-page-container :noSidebar="true">
+  <full-page-container>
     <template #header>
       <header-navigator
         title="Manage locations"

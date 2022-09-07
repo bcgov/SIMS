@@ -1,5 +1,5 @@
 <template>
-  <full-page-container :noSidebar="true">
+  <full-page-container>
     <template #header>
       <header-navigator
         title="Manage locations"
@@ -66,9 +66,6 @@ export default {
       () =>
         ({
           name: InstitutionRoutesConst.MANAGE_LOCATIONS,
-          params: {
-            locationId: props.locationId,
-          },
         } as RouteLocationRaw),
     );
     return {

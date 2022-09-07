@@ -4,7 +4,11 @@
       <slot name="header"></slot>
       <slot name="sub-header"></slot>
     </header>
+    <div class="ml-5 mb-2">
+      <slot name="details-header"></slot>
+    </div>
     <slot name="alerts"></slot>
+    <!-- todo: ann remove :class="enableMaxWidth ? 'container-max-width' : ''" after refactoring-->
     <v-container
       :fluid="fullWidth"
       :class="enableMaxWidth ? 'container-max-width' : ''"

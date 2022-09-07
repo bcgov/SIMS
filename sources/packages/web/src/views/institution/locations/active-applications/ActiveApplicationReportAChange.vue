@@ -1,15 +1,18 @@
 <template>
-  <header-navigator
-    title="Report a change"
-    :routeLocation="goBackRouteParams"
-    subTitle="View Application"
-  />
-  <full-page-container class="p-m-4">
+  <full-page-container>
+    <template #header>
+      <header-navigator
+        title="Report a change"
+        :routeLocation="goBackRouteParams"
+        subTitle="View Application"
+      />
+    </template>
     <scholastic-standing-form
       :initialData="initialData"
       :readOnly="false"
       @submitted="submit"
-      @customEvent="customEventCallback"
+      :processing="processing"
+      @cancel="goBack"
     />
   </full-page-container>
 </template>
@@ -17,11 +20,7 @@
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { ref, onMounted, computed } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
-import {
-  ApiProcessError,
-  FormIOCustomEvent,
-  FormIOCustomEventTypes,
-} from "@/types";
+import { ApiProcessError } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
   APPLICATION_NOT_FOUND,
@@ -54,7 +53,7 @@ export default {
     const { dateOnlyLongString } = useFormatters();
     const initialData = ref({} as ActiveApplicationDataAPIOutDTO);
     const snackBar = useSnackBar();
-
+    const processing = ref(false);
     const loadInitialData = async () => {
       const applicationDetails =
         await InstitutionService.shared.getActiveApplication(
@@ -79,20 +78,6 @@ export default {
       };
     };
 
-    const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
-      if (
-        FormIOCustomEventTypes.RouteToInstitutionActiveSummaryPage ===
-        event.type
-      ) {
-        router.push({
-          name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
-          params: {
-            locationId: props.locationId,
-          },
-        });
-      }
-    };
-
     onMounted(async () => {
       await loadInitialData();
     });
@@ -107,8 +92,13 @@ export default {
         } as RouteLocationRaw),
     );
 
+    const goBack = () => {
+      router.push(goBackRouteParams.value);
+    };
+
     const submit = async (data: ScholasticStandingDataAPIInDTO) => {
       try {
+        processing.value = true;
         await ScholasticStandingService.shared.saveScholasticStanding(
           props.applicationId,
           props.locationId,
@@ -132,14 +122,17 @@ export default {
           }
         }
         snackBar.error("An unexpected error happened during the submission.");
+      } finally {
+        processing.value = false;
       }
     };
 
     return {
       initialData,
-      customEventCallback,
       submit,
       goBackRouteParams,
+      processing,
+      goBack,
     };
   },
 };

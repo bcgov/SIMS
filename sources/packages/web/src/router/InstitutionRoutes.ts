@@ -124,10 +124,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.ActiveApplicationEdit,
         name: InstitutionRoutesConst.ACTIVE_APPLICATION_EDIT,
-        components: {
-          default: ActiveApplicationEdit,
-          sidebar: InstitutionHomeSideBar,
-        },
+        component: ActiveApplicationEdit,
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
@@ -169,10 +166,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.LocationProgramInfoRequestEdit,
         name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
-        components: {
-          default: LocationEditProgramInfoRequest,
-          sidebar: InstitutionHomeSideBar,
-        },
+        component: LocationEditProgramInfoRequest,
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
@@ -184,10 +178,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.LocationCOEDetails,
         name: InstitutionRoutesConst.COE_EDIT,
-        components: {
-          default: LocationCOERequest,
-          sidebar: InstitutionHomeSideBar,
-        },
+        component: LocationCOERequest,
         props: true,
         meta: {
           clientType: ClientIdType.Institution,
@@ -238,10 +229,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.DesignationRequest,
         name: InstitutionRoutesConst.DESIGNATION_REQUEST,
-        components: {
-          default: DesignationRequest,
-          sidebar: ManageInstitutionSideBar,
-        },
+        component: DesignationRequest,
         meta: {
           clientType: ClientIdType.Institution,
           userTypes: [InstitutionUserTypes.admin],
@@ -250,10 +238,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.DesignationView,
         name: InstitutionRoutesConst.DESIGNATION_VIEW,
-        components: {
-          default: DesignationView,
-          sidebar: ManageInstitutionSideBar,
-        },
+        component: DesignationView,
         meta: {
           clientType: ClientIdType.Institution,
           userTypes: [InstitutionUserTypes.admin],
@@ -396,10 +381,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.ActiveApplicationScholasticStandingView,
         name: InstitutionRoutesConst.SCHOLASTIC_STANDING_VIEW,
-        components: {
-          default: ViewSubmittedApplicationScholasticStanding,
-          sidebar: InstitutionHomeSideBar,
-        },
+        component: ViewSubmittedApplicationScholasticStanding,
         props: true,
         meta: {
           clientType: ClientIdType.Institution,

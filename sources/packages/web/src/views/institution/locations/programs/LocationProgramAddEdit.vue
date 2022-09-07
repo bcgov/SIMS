@@ -1,31 +1,43 @@
 <template>
-  <header-navigator
-    title="Program detail"
-    :routeLocation="getRouteLocation"
-    :subTitle="subTitle"
-  >
-  </header-navigator>
-  <div class="mt-4 mb-2">
-    <banner
-      v-if="programData.hasOfferings"
-      :type="BannerTypes.Success"
-      header="Students have applied financial aid for this program"
-      summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you'd like to edit the other fields."
-    >
-      <template #actions>
-        <v-btn color="success" @click="createNewProgram">
-          Create program
-        </v-btn>
-      </template>
-    </banner>
-  </div>
-  <full-page-container class="mt-2">
-    <formio
+  <full-page-container>
+    <template #header>
+      <header-navigator
+        title="Programs"
+        :routeLocation="getRouteLocation"
+        :subTitle="subTitle"
+      />
+    </template>
+    <template #alerts>
+      <banner
+        v-if="programData.hasOfferings"
+        :type="BannerTypes.Success"
+        header="Students have applied financial aid for this program"
+        summary="You can still make changes to the program name and description without impacting the students funding. Please create a new program if you'd like to edit the other fields."
+      >
+        <template #actions>
+          <v-btn
+            color="success"
+            @click="createNewProgram"
+            class="btn-font-color-light"
+          >
+            Create program
+          </v-btn>
+        </template>
+      </banner>
+    </template>
+    <!-- todo: ann form definition -->
+    <formio-container
       formName="educationProgram"
-      :data="programData"
+      :formData="programData"
       :readOnly="isReadonly"
       @submitted="submitted"
-    ></formio>
+      ><template #actions="{ submit }" v-if="!isReadonly">
+        <footer-buttons
+          :processing="processing"
+          primaryLabel="Submit"
+          @primaryClick="submit"
+        /> </template
+    ></formio-container>
   </full-page-container>
 </template>
 
@@ -37,11 +49,14 @@ import {
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { onMounted, ref, computed } from "vue";
-import { ClientIdType } from "@/types";
+import { ClientIdType, FormIOForm } from "@/types";
 import { useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/types/contracts/Banner";
-import { EducationProgramAPIOutDTO } from "@/services/http/dto";
+import {
+  EducationProgramAPIInDTO,
+  EducationProgramAPIOutDTO,
+} from "@/services/http/dto";
 
 export default {
   props: {
@@ -55,6 +70,7 @@ export default {
     },
   },
   setup(props: any) {
+    const processing = ref(false);
     const snackBar = useSnackBar();
     const router = useRouter();
     const clientType = computed(() => AuthService.shared.authClientType);
@@ -86,7 +102,7 @@ export default {
 
     const goBack = () => {
       if (isInstitutionUser.value && props.programId) {
-        // in edit program mode
+        // In edit program mode.
         router.push({
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
           params: {
@@ -95,7 +111,7 @@ export default {
           },
         });
       } else if (isInstitutionUser.value && !props.programId) {
-        // in create program mode
+        // In create program mode.
         router.push({
           name: InstitutionRoutesConst.LOCATION_PROGRAMS,
           params: {
@@ -103,7 +119,7 @@ export default {
           },
         });
       } else if (isAESTUser.value) {
-        // in view program mode
+        // In view program mode.
         router.push({
           name: AESTRoutesConst.PROGRAM_DETAILS,
           params: {
@@ -117,7 +133,7 @@ export default {
 
     const getRouteLocation = computed(() => {
       if (isInstitutionUser.value && props.programId) {
-        // in edit program mode
+        // In edit program mode.
         return {
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
           params: {
@@ -126,7 +142,7 @@ export default {
           },
         };
       } else if (isInstitutionUser.value && !props.programId) {
-        // in create program mode
+        // In create program mode.
         return {
           name: InstitutionRoutesConst.LOCATION_PROGRAMS,
           params: {
@@ -134,7 +150,7 @@ export default {
           },
         };
       } else if (isAESTUser.value) {
-        // in view program mode
+        // In view program mode.
         return {
           name: AESTRoutesConst.PROGRAM_DETAILS,
           params: {
@@ -153,27 +169,32 @@ export default {
       } else if (props.programId && !isReadonly.value) {
         return "Edit Program";
       } else if (!props?.programId) {
-        return "Create New Program";
+        return "Create Program";
       }
       return "";
     });
 
-    const submitted = async (data: any) => {
+    const submitted = async (form: FormIOForm<EducationProgramAPIInDTO>) => {
       if (isInstitutionUser.value) {
         try {
+          processing.value = true;
           if (props.programId) {
             await EducationProgramService.shared.updateEducationProgram(
               props.programId,
-              data,
+              form.data,
             );
             snackBar.success("Education Program updated successfully!");
           } else {
-            await EducationProgramService.shared.createEducationProgram(data);
+            await EducationProgramService.shared.createEducationProgram(
+              form.data,
+            );
             snackBar.success("Education Program created successfully!");
           }
           goBack();
         } catch {
           snackBar.error("An error happened during the saving process.");
+        } finally {
+          processing.value = false;
         }
       }
     };
@@ -206,6 +227,7 @@ export default {
       getRouteLocation,
       subTitle,
       BannerTypes,
+      processing,
     };
   },
 };

@@ -1,6 +1,7 @@
 <template>
+  <!-- todo: ann form definition -->
   <formio-container
-    formName="educationprogramoffering"
+    formName="educationProgramOffering"
     :formData="formData"
     @submitted="saveOffering"
   >
@@ -9,7 +10,6 @@
         :processing="processing"
         primaryLabel="Submit"
         @primaryClick="submit"
-        :showSecondaryButton="false"
       />
     </template>
   </formio-container>
@@ -34,6 +34,11 @@ export default {
       type: Boolean,
       required: false,
       default: true,
+    },
+    processing: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
   },
   emits: ["saveOffering"],
