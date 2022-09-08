@@ -76,9 +76,9 @@ export const STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND =
 export const STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA =
   "STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA";
 /**
- * An error was found during the offering validation and process
- * must be stop. Warnings are not considered critical
- * errors since the offering can still be saved in a 'pending' state.
+ * An error was found during the offering validation and the process
+ * must be stopped. Warnings are not considered critical
+ * since the offering can still be saved in a 'pending' state.
  */
 export const OFFERING_VALIDATION_CRITICAL_ERROR =
   "OFFERING_VALIDATION_CRITICAL_ERROR";

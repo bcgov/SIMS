@@ -118,10 +118,12 @@ export const DAILY_DISBURSEMENT_REPORT_NAME = "Daily_Disbursement_File";
 export const MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE = 999999;
 
 /**
- * This study break exceeds the 21 consecutive day threshold as outlined in StudentAid BC policy
+ * Allowed percentage of days of an offering that represents the maximum study breaks days allowed,
  * - 0.1 indicates 10%
  * - 0.5 indicates 50%
  * - 1.0 indicates 100%
+ * For instance, for a offering with 200 days and considering a 10% configuration, the sum of all study
+ * breaks days should not be greater than 20.
  */
 export const OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD = 0.1;
 /**

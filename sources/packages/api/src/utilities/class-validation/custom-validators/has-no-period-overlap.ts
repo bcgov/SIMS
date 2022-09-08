@@ -9,7 +9,8 @@ import { hasSomePeriodOverlap, Period } from "../../date-utils";
 import { getPeriodEndDateProperty, getPeriodStartDateProperty } from "..";
 
 /**
- *
+ * For an array of periods (any object with a start and end dates) checks if
+ * there is any period with an overlap with any other period of the same array.
  */
 @ValidatorConstraint()
 class HasNoPeriodOverlapConstraint implements ValidatorConstraintInterface {
@@ -31,7 +32,8 @@ class HasNoPeriodOverlapConstraint implements ValidatorConstraintInterface {
 }
 
 /**
- *
+ * For an array of periods (any object with a start and end dates) checks if
+ * there is any period with an overlap with any other period of the same array.
  */
 export function HasNoPeriodOverlap(validationOptions?: ValidationOptions) {
   return (object: unknown, propertyName: string) => {

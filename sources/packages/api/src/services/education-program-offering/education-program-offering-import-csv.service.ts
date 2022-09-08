@@ -16,7 +16,7 @@ import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
 import { parse } from "papaparse";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError, removeUTF8BOM } from "../../utilities";
 import { OFFERING_VALIDATION_CSV_FORMAT_ERROR } from "../../constants";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
@@ -40,7 +40,7 @@ export class EducationProgramOfferingImportCSVService {
    * any additional information like the program information and location
    * information needed to execute the complete offering validation.
    * @param institutionId institution id that will receive the offerings.
-   * @param csvModels CSV models to be converted to offering models.
+   * @param csvModels CSV models to be converted to the offering models.
    * @returns offering models to be validated and persisted.
    */
   async generateSaveOfferingModelFromCSVModels(
@@ -139,7 +139,7 @@ export class EducationProgramOfferingImportCSVService {
   readCSV(csvContent: string): OfferingCSVModel[] {
     const offeringModels: OfferingCSVModel[] = [];
     // Remove BOM(Byte order mark), if present.
-    csvContent = csvContent.replace(/^\uFEFF/, "");
+    csvContent = removeUTF8BOM(csvContent);
     const parsedResult = parse(csvContent, {
       header: true,
       skipEmptyLines: true,

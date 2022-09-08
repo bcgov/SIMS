@@ -71,7 +71,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async createEducationProgramOffering(
     educationProgramOffering: SaveOfferingModel,
     userId: number,
-  ): Promise<InsertResult> {
+  ): Promise<EducationProgramOffering> {
     const offeringValidation =
       this.offeringValidationService.validateOfferingModel(
         educationProgramOffering,
@@ -81,7 +81,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     );
     programOffering.offeringStatus = offeringValidation.offeringStatus;
     programOffering.creator = { id: userId } as User;
-    return this.repo.insert(programOffering);
+    return this.repo.save(programOffering);
   }
 
   /**
@@ -1111,6 +1111,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .getOne();
   }
 
+  /**
+   * study break calculations needed for validations and definitions
+   * like the total weeks of study for an offering.
+   * @param offering offering to have the calculation executed.
+   * @returns calculated offering information.
+   */
   static getCalculatedStudyBreaksAndWeeks(
     offering: OfferingStudyBreakCalculationContext,
   ): CalculatedStudyBreaksAndWeeks {

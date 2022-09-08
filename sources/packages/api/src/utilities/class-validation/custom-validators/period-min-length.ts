@@ -8,7 +8,9 @@ import {
 import { dateDifference } from "../../date-utils";
 
 /**
- *
+ * Checks if the number of days between the property date decorated with this
+ * validator (must be the end date) and a start date indicated by the
+ * startDateProperty parameter have the min allowed number of days.
  */
 @ValidatorConstraint()
 class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
@@ -31,7 +33,14 @@ class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
 }
 
 /**
- *
+ * Checks if the number of days between the property date decorated with this
+ * validator (must be the end date) and a start date indicated by the
+ * startDateProperty parameter have the min allowed number of days.
+ * @param startDateProperty indicates the property that define the
+ * start of a period.
+ * @param minDaysAllowed min allowed days to the period be considered valid.
+ * @param validationOptions validations options.
+ * @returns true if the period amount of days is inside the min allowed days.
  */
 export function PeriodMinLength(
   startDateProperty: (targetObject: unknown) => Date | string,

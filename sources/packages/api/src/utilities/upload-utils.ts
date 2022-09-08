@@ -33,7 +33,7 @@ export const uploadLimits = (
  * @param callback callback to return the result of the validation.
  */
 export const defaultFileFilter = (
-  _: any,
+  _: unknown,
   file: MulterFile,
   callback: (error: Error | null, acceptFile: boolean) => void,
 ) => {
@@ -47,7 +47,7 @@ export const defaultFileFilter = (
  * @param callback callback to return the result of the validation.
  */
 export const csvFileFilter = (
-  _: any,
+  _: unknown,
   file: MulterFile,
   callback: (error: Error | null, acceptFile: boolean) => void,
 ) => {

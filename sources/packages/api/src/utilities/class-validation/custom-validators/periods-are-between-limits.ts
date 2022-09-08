@@ -9,7 +9,8 @@ import { isBetweenPeriod, Period } from "../..";
 import { getPeriodStartDateProperty, getPeriodEndDateProperty } from "..";
 
 /**
- *
+ * For an array of periods checks if every period is inside a
+ * start date and end date limits.
  */
 @ValidatorConstraint()
 class PeriodsAreBetweenLimitsConstraint
@@ -50,7 +51,12 @@ class PeriodsAreBetweenLimitsConstraint
 }
 
 /**
- *
+ * For an array of periods checks if every period is inside a
+ * start date and end date limits.
+ * @param startPeriodProperty property of the model that identifies the offering start date.
+ * @param endPeriodProperty property of the model that identifies the offering end date.
+ * @param validationOptions validations options.
+ * @returns true if all periods are inside the limits, otherwise, false.
  */
 export function PeriodsAreBetweenLimits(
   startPeriodProperty: (targetObject: unknown) => Date | string,

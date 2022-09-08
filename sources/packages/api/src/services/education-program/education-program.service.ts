@@ -610,6 +610,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .getOne();
   }
 
+  /**
+   * Get all education programs by the SABC code.
+   * @param institutionId institution to have the programs retrieved.
+   * @param sabcCodes SABC codes.
+   * @returns all education programs by the SABC code for the provided institution.
+   */
   async getProgramsBySABCCodes(institutionId: number, sabcCodes: string[]) {
     return this.repo.find({
       select: {

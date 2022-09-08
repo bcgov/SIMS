@@ -150,8 +150,6 @@ export function getDateOnlyFormat(date?: string | Date): string {
 }
 
 /**
-=======
->>>>>>> main
  *
  * @param date Add days to a given date.
  * @param daysToAdd
@@ -170,27 +168,35 @@ export function getFileNameAsCurrentTimestamp(): string {
   return dayjs(new Date()).tz(PST_TIMEZONE).format(TIMESTAMP_CONTINUOUS_FORMAT);
 }
 
-export function isAfterByDay(
-  firstDate: Date | string,
-  secondDate: Date | string,
-): boolean {
-  return dayjs(firstDate).isAfter(secondDate, "day");
-}
-
+/**
+ * Period defined by a start and end date.
+ */
 export interface Period {
   startDate: Date | string;
   endDate: Date | string;
 }
 
+/**
+ * Checks if date is between a period (inclusive check).
+ * @param date date to be checked.
+ * @param period period to be checked.
+ * @returns true if the date belongs to the period.
+ */
 export function isBetweenPeriod(date: Date | string, period: Period): boolean {
   return dayjs(date).isBetween(period.startDate, period.endDate, "days", "[]");
 }
 
+/**
+ * Checks if the periodA has any overlap with the periodB.
+ * @param periodA first period to be tested.
+ * @param periodB second period to be tested.
+ * @returns true if the periods have some overlap, otherwise, false.
+ */
 export function hasPeriodOverlap(periodA: Period, periodB: Period): boolean {
   return (
-    // Start date in between the periodB (inclusive check).
+    // Start date is in between the periodB (inclusive check).
     isBetweenPeriod(periodA.startDate, periodB) ||
-    // End date in between the periodB (inclusive check).
+    // End date is in between the periodB (inclusive check).
     isBetweenPeriod(periodA.endDate, periodB) ||
     // PeriodA fully contains period B.
     (dayjs(periodA.startDate).isBefore(periodB.startDate) &&
@@ -205,7 +211,9 @@ export function hasPeriodOverlap(periodA: Period, periodB: Period): boolean {
  */
 export function hasSomePeriodOverlap(periods: Period[]): boolean {
   for (let i = 0; i < periods.length; i++) {
+    // Period to be tested against all the others.
     const currentPeriod = periods[i];
+    // All periods but the currentPeriod.
     const testPeriods = periods.filter((_, index) => index !== i);
     const hasSomeIntersection = testPeriods.some((testPeriod) =>
       hasPeriodOverlap(currentPeriod, testPeriod),

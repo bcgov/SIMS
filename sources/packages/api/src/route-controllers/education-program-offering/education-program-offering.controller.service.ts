@@ -146,7 +146,7 @@ export class EducationProgramOfferingControllerService {
    * validation and persistence.
    * @returns offering model to be validated and saved.
    */
-  async getSaveOfferingModelFromOfferingAPIInDTO(
+  async mapOfferingAPIInDTOSaveOfferingModel(
     institutionId: number,
     locationId: number,
     programId: number,

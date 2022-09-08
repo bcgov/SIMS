@@ -48,7 +48,7 @@ class StudyBreaksCombinedMustNotExceedsThresholdConstraint
  * @param startPeriodProperty property of the model that identifies the offering start date.
  * @param endPeriodProperty property of the model that identifies the offering end date.
  * @param validationOptions validations options.
- * @returns true if the study period is valid, otherwise, false.
+ * @returns true if the study breaks are valid, otherwise, false.
  */
 export function StudyBreaksCombinedMustNotExceedsThreshold(
   startPeriodProperty: (targetObject: unknown) => Date | string,

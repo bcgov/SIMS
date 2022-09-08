@@ -98,7 +98,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+        await this.educationProgramOfferingControllerService.mapOfferingAPIInDTOSaveOfferingModel(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -109,8 +109,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           saveOfferingModel,
           userToken.userId,
         );
-      const [identifier] = createdProgramOffering.identifiers;
-      return { id: +identifier.id };
+      return { id: createdProgramOffering.id };
     } catch (error: unknown) {
       if (
         error instanceof CustomNamedError &&
@@ -163,7 +162,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
 
     try {
       const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+        await this.educationProgramOfferingControllerService.mapOfferingAPIInDTOSaveOfferingModel(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -320,7 +319,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+        await this.educationProgramOfferingControllerService.mapOfferingAPIInDTOSaveOfferingModel(
           userToken.authorizations.institutionId,
           locationId,
           programId,

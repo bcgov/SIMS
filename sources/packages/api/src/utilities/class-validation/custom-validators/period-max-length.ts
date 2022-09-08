@@ -8,7 +8,9 @@ import {
 import { dateDifference } from "../../date-utils";
 
 /**
- *
+ * Checks if the number of days between the property date decorated with this
+ * validator (must be the end date) and a start date indicated by the
+ * startDateProperty parameter have the max allowed number of days.
  */
 @ValidatorConstraint()
 class PeriodMaxLengthConstraint implements ValidatorConstraintInterface {
@@ -31,7 +33,14 @@ class PeriodMaxLengthConstraint implements ValidatorConstraintInterface {
 }
 
 /**
- *
+ * Checks if the number of days between the property date decorated with this
+ * validator (must be the end date) and a start date indicated by the
+ * startDateProperty parameter have the max allowed number of days.
+ * @param startDateProperty indicates the property that define the
+ * start of a period.
+ * @param maxDaysAllowed max allowed days to the period be considered valid.
+ * @param validationOptions validations options.
+ * @returns true if the period amount of days is inside the max allowed days.
  */
 export function PeriodMaxLength(
   startDateProperty: (targetObject: unknown) => Date | string,

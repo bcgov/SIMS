@@ -11,6 +11,7 @@ import {
   ValidateIf,
   ValidateNested,
 } from "class-validator";
+import { removeDoubleWhiteSpaces } from "../../utilities";
 import { OfferingIntensity } from "../../database/entities";
 import {
   currencyNumberOptions,
@@ -70,7 +71,7 @@ export class CSVStudyBreak {
 }
 
 /**
- * Used by CSV fields that need provide yes/no or true/false information.
+ * Used by CSV fields that need provide yes/no (true/false like information).
  */
 export enum YesNoOptions {
   Yes = "yes",
@@ -78,21 +79,22 @@ export enum YesNoOptions {
 }
 
 /**
- * Provides a friendly message to the field that needs date validation.
+ * Provides a friendly message to a field that needs date validation.
  * @param header friendly header name.
  * @returns friendly message to the field the that needs date validation.
  */
 function getDateFormatMessage(header: string) {
   if (header.indexOf(STUDY_BREAK_INDEX_PLACE_HOLDER)) {
-    header = header
-      .replace(STUDY_BREAK_INDEX_PLACE_HOLDER, "") // Remove index place holder.
-      .replace(/\s+/g, " "); // Remove duplicated white spaces.
+    // Remove index place holder.
+    header = header.replace(STUDY_BREAK_INDEX_PLACE_HOLDER, "");
+    // Remove white spaces that are leftovers after index place holder removal.
+    header = removeDoubleWhiteSpaces(header);
   }
   return `${header} must be in the format ${DATE_FORMAT}`;
 }
 
 /**
- * Provides a friendly message to the field that needs currency validation.
+ * Provides a friendly message to a field that needs currency validation.
  * @param header friendly header name.
  * @returns friendly message to the field the that needs currency validation.
  */
@@ -101,7 +103,7 @@ function getCurrencyFormatMessage(header: string) {
 }
 
 /**
- * Provides a friendly message to the field that needs a enum like validation.
+ * Provides a friendly message to a field that needs a enum like validation.
  * @param header friendly header name.
  * @returns friendly message to the field the that needs a enum like validation.
  */
@@ -112,7 +114,7 @@ function getEnumFormatMessage(header: string, enumObject: unknown) {
 }
 
 /**
- * Provides a friendly message to the field that needs a yes/no validation.
+ * Provides a friendly message to a field that needs a yes/no validation.
  * @param header friendly header name.
  * @returns friendly message to the field the that needs yes/no like validation.
  */
@@ -122,7 +124,7 @@ function getYesNoFormatMessage(header: string) {
 
 export class OfferingCSVModel {
   /**
-   * Institution location code that uniquely identifies a location in the system.
+   * Institution location code that uniquely identifies a location in the institution.
    */
   @Matches(/^[A-Z]{4}$/, {
     message: `${CSVHeaders.LocationCode} must be a 4 letters uppercase code.`,
@@ -154,26 +156,26 @@ export class OfferingCSVModel {
     message: getDateFormatMessage(CSVHeaders.StudyEndDate),
   })
   studyEndDate: string;
-  @IsNumber(currencyNumberOptions, {
-    message: getCurrencyFormatMessage(CSVHeaders.ActualTuitionCosts),
-  })
   /**
    * Actual tuition costs.
    */
-  actualTuitionCosts: number;
   @IsNumber(currencyNumberOptions, {
-    message: getCurrencyFormatMessage(CSVHeaders.ProgramRelatedCosts),
+    message: getCurrencyFormatMessage(CSVHeaders.ActualTuitionCosts),
   })
+  actualTuitionCosts: number;
   /**
    * Program related costs.
    */
-  programRelatedCosts: number;
   @IsNumber(currencyNumberOptions, {
-    message: getCurrencyFormatMessage(CSVHeaders.MandatoryFees),
+    message: getCurrencyFormatMessage(CSVHeaders.ProgramRelatedCosts),
   })
+  programRelatedCosts: number;
   /**
    * Mandatory fees.
    */
+  @IsNumber(currencyNumberOptions, {
+    message: getCurrencyFormatMessage(CSVHeaders.MandatoryFees),
+  })
   mandatoryFees: number;
   /**
    * Exceptional expenses.

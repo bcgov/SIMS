@@ -12,6 +12,9 @@ import { flattenErrors } from "../../utilities/class-validation";
 import { CustomNamedError } from "../../utilities";
 import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../constants";
 
+/**
+ * Executes the validations on an offering model.
+ */
 @Injectable()
 export class EducationProgramOfferingValidationService {
   validateOfferingModel(
@@ -22,6 +25,14 @@ export class EducationProgramOfferingValidationService {
     return validation;
   }
 
+  /**
+   * Validate offering models and provide the result for every model.
+   * @param offerings offering models to be validated.
+   * @param silently if true, no exception is generated case the validation fails
+   * and the success or failure can be determined from the result object.
+   * @returns validation result or an exception in the case of a failed validation
+   * combined with the silently parameter defined as false.
+   */
   validateOfferingModels(
     offerings: SaveOfferingModel[],
     silently = false,
@@ -64,6 +75,13 @@ export class EducationProgramOfferingValidationService {
     });
   }
 
+  /**
+   * Inspect the validation error and its children checking when an error
+   * happen as has a warning context (must be considered a warning) or it is
+   * a critical error (has no warning context).
+   * @param error error to be inspected.
+   * @returns errors and warnings.
+   */
   private extractErrorsAndWarnings(
     error: ValidationError,
   ): [errors: string[], warnings: ValidationWarningResult[]] {
@@ -89,20 +107,25 @@ export class EducationProgramOfferingValidationService {
         }
       });
     });
-
     return [errors, warnings];
   }
 
+  /**
+   * Defines the offering status based on the number of errors and warnings.
+   * @param totalErrors total critical errors.
+   * @param totalWarnings total warnings (offering can be saved but need Ministry review).
+   * @returns offering approved, pending or undefined case there is some critical error.
+   */
   private getOfferingSavingStatus(
     totalErrors: number,
     totalWarnings: number,
   ): OfferingStatus.Approved | OfferingStatus.CreationPending | undefined {
-    if (totalErrors === 0) {
-      return OfferingStatus.Approved;
+    if (totalErrors > 0) {
+      return undefined;
     }
     if (totalWarnings > 0) {
       return OfferingStatus.CreationPending;
     }
-    return undefined;
+    return OfferingStatus.Approved;
   }
 }
