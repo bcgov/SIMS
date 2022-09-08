@@ -49,7 +49,6 @@ import {
   csvFileFilter,
   CustomNamedError,
   MAX_UPLOAD_FILES,
-  OFFERING_BULK_FILE_ENCODING,
   OFFERING_BULK_UPLOAD_MAX_FILE_SIZE,
   OFFERING_BULK_UPLOAD_MAX_UPLOAD_PARTS,
   uploadLimits,
@@ -372,14 +371,12 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @UploadedFile() file: Express.Multer.File,
   ): Promise<PrimaryIdentifierAPIOutDTO[]> {
     // Read the entire file content.
-    const fileContent = file.buffer.toString(OFFERING_BULK_FILE_ENCODING);
+    const fileContent = file.buffer.toString();
     // Convert the file raw content into CSV models.
     let csvModels: OfferingCSVModel[];
     try {
-      csvModels = await this.programOfferingImportCSVService.readCSV(
-        fileContent,
-      );
-    } catch (error: unknown) {
+      csvModels = this.programOfferingImportCSVService.readCSV(fileContent);
+    } catch {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "Error while parsing CSV file.",

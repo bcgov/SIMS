@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { EducationProgram, OfferingTypes } from "../../database/entities";
-import { parseCSVContent } from "../../utilities/csv/csv-utils";
-import { InstitutionLocationService, EducationProgramService } from "..";
+import { EducationProgramService, InstitutionLocationService } from "..";
 import {
   SaveOfferingModel,
   WILComponentOptions,
@@ -16,6 +15,11 @@ import {
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
+import { parse } from "papaparse";
+import { CustomNamedError } from "../../utilities";
+import { OFFERING_VALIDATION_CSV_FORMAT_ERROR } from "../../constants";
+import { InjectLogger } from "../../common";
+import { LoggerService } from "../../logger/logger.service";
 
 const MAX_STUDY_BREAKS_ENTRIES = 5;
 type InstitutionCodeToIdMap = Record<string, number>;
@@ -107,10 +111,26 @@ export class EducationProgramOfferingImportCSVService {
     return programMap;
   }
 
-  async readCSV(csvContent: string): Promise<OfferingCSVModel[]> {
+  readCSV(csvContent: string): OfferingCSVModel[] {
     const offeringModels: OfferingCSVModel[] = [];
-    const lines = await parseCSVContent(csvContent, { headers: true });
-    lines.forEach((line) => {
+    // Remove BOM(Byte order mark), if present.
+    csvContent = csvContent.replace(/^\uFEFF/, "");
+    const parsedResult = parse(csvContent, {
+      header: true,
+      skipEmptyLines: true,
+    });
+    if (parsedResult.errors.length) {
+      this.logger.error(
+        `The offering CSV parse resulted in some errors. ${JSON.stringify(
+          parsedResult.errors,
+        )}`,
+      );
+      throw new CustomNamedError(
+        "The offering CSV parse resulted in some errors. Please check server errors log for further information.",
+        OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+      );
+    }
+    parsedResult.data.forEach((line) => {
       const offeringModel = {} as OfferingCSVModel;
       offeringModels.push(offeringModel);
       offeringModel.institutionLocationCode = line[CSVHeaders.LocationCode];
@@ -171,4 +191,7 @@ export class EducationProgramOfferingImportCSVService {
       };
     });
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

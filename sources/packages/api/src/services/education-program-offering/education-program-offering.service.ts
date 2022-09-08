@@ -15,7 +15,6 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   StudyBreak,
-  StudyBreaksAndWeeks,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
