@@ -4,11 +4,13 @@ UPDATE
 SET
     student_id = (
         SELECT
-            id
+            student_id
         FROM
-            sims.students
+            sims.student_users
         WHERE
             user_id = sv.user_id
+        LIMIT
+            1
     );
 
 -- Once the student_id column is populated then make the column not null.

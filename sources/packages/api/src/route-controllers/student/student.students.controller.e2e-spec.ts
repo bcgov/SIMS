@@ -92,6 +92,10 @@ describe("Test ATBC Controller", () => {
         .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK);
     } finally {
+      // Set SIN Validation to null to remove the dependency
+      // and delete SIN validation and student.
+      fakeStudent.sinValidation = null;
+      await studentService.save(fakeStudent);
       await sinValidationService.remove(sinValidation);
       await studentService.remove(fakeStudent);
       await userService.remove(simsUser);
