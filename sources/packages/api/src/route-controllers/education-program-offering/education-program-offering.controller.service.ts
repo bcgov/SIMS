@@ -189,6 +189,7 @@ export class EducationProgramOfferingControllerService {
           startDate: validation.csvModel.studyStartDate,
           endDate: validation.csvModel.studyEndDate,
           errors: validation.errors,
+          warnings: [],
         }));
       throw new BadRequestException(
         new ApiProcessError(
@@ -262,13 +263,14 @@ export class EducationProgramOfferingControllerService {
         creationErrors.map((creationError) => {
           const csvModel = csvModels[creationError.validatedOffering.index];
           return {
-            recordNumber: creationError.validatedOffering.index + 1,
+            recordIndex: creationError.validatedOffering.index,
             locationCode: csvModel.institutionLocationCode,
             sabcProgramCode: csvModel.sabcProgramCode,
             startDate:
               creationError.validatedOffering.offeringModel.studyStartDate,
             endDate: creationError.validatedOffering.offeringModel.studyEndDate,
             errors: [creationError.error],
+            warnings: [],
           };
         });
       throw new UnprocessableEntityException(

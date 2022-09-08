@@ -74,6 +74,7 @@ export type OfferingStudyBreakCalculationContext = Pick<
 export type CalculatedStudyBreaksAndWeeks = StudyBreaksAndWeeks & {
   sumOfTotalEligibleBreakDays: number;
   sumOfTotalIneligibleBreakDays: number;
+  allowableStudyBreaksDaysAmount: number;
 };
 
 export interface EducationProgramValidationContext {

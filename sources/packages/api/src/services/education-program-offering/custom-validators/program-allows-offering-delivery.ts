@@ -11,7 +11,8 @@ import {
 } from "../education-program-offering-validation.models";
 
 /**
- *
+ * Executes a validation to ensure that the offering delivery
+ * is allowed by the education program.
  */
 @ValidatorConstraint()
 class ProgramAllowsOfferingDeliveryConstraint
@@ -48,7 +49,11 @@ class ProgramAllowsOfferingDeliveryConstraint
 }
 
 /**
- *
+ * Executes a validation to ensure that the offering delivery
+ * is allowed by the education program.
+ * @param validationOptions validation options.
+ * @returns true if the delivery type is allowed by the program,
+ * otherwise, false.
  */
 export function ProgramAllowsOfferingDelivery(
   validationOptions?: ValidationOptions,

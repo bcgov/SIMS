@@ -275,8 +275,8 @@ export class EducationProgramOffering extends RecordDataModel {
  * Study break.
  */
 export interface StudyBreak {
-  breakStartDate: Date;
-  breakEndDate: Date;
+  breakStartDate: string;
+  breakEndDate: string;
   breakDays: number;
   eligibleBreakDays: number;
   ineligibleBreakDays: number;

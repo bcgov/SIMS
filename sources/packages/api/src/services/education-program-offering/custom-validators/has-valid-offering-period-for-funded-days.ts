@@ -13,7 +13,9 @@ import { StudyBreak } from "../education-program-offering-validation.models";
 import { OfferingCalculationValidationBaseConstraint } from "./offering-calculation-validation-base-constraint";
 
 /**
- *
+ * For an offering that contains study breaks, execute the calculation
+ * of the funded study period to validate if it matches the mix and max
+ * allowed study period amount of days.
  */
 @ValidatorConstraint()
 class HasValidOfferingPeriodForFundedDaysConstraint
@@ -34,12 +36,18 @@ class HasValidOfferingPeriodForFundedDaysConstraint
   }
 
   defaultMessage() {
-    return `The study period is ineligible for StudentAid BC funding. Your dates must be between ${OFFERING_STUDY_PERIOD_MIN_DAYS} to ${OFFERING_STUDY_PERIOD_MAX_DAYS} days`;
+    return `The funded study amount of days is ineligible for StudentAid BC funding. Your dates must be between ${OFFERING_STUDY_PERIOD_MIN_DAYS} to ${OFFERING_STUDY_PERIOD_MAX_DAYS} days.`;
   }
 }
 
 /**
- *
+ * For an offering that contains study breaks, execute the calculation
+ * of the funded study period to validate if it matches the mix and max
+ * allowed study period amount of days.
+ * @param startPeriodProperty property of the model that identifies the offering start date.
+ * @param endPeriodProperty property of the model that identifies the offering end date.
+ * @param validationOptions validations options.
+ * @returns true if the study period is valid, otherwise, false.
  */
 export function HasValidOfferingPeriodForFundedDays(
   startPeriodProperty: (targetObject: unknown) => Date | string,

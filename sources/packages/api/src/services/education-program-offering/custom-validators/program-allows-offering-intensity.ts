@@ -9,7 +9,8 @@ import { ProgramIntensity } from "../../../database/entities";
 import { EducationProgramValidationContext } from "../education-program-offering-validation.models";
 
 /**
- *
+ * Executes a validation to ensure that the offering intensity
+ * is allowed by the education program.
  */
 @ValidatorConstraint()
 class ProgramAllowsOfferingIntensityConstraint
@@ -32,7 +33,11 @@ class ProgramAllowsOfferingIntensityConstraint
 }
 
 /**
- *
+ * Executes a validation to ensure that the offering intensity
+ * is allowed by the education program.
+ * @param validationOptions validation options.
+ * @returns true if the delivery intensity is allowed by the program,
+ * otherwise, false.
  */
 export function ProgramAllowsOfferingIntensity(
   validationOptions?: ValidationOptions,

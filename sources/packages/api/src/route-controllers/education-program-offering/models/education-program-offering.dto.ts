@@ -21,9 +21,9 @@ import {
   WILComponentOptions,
 } from "../../../services";
 
-export class StudyBreakOutDTO {
-  breakStartDate: Date;
-  breakEndDate: Date;
+export class StudyBreakAPIOutDTO {
+  breakStartDate: string;
+  breakEndDate: string;
 }
 
 export class StudyBreakInDTO {
@@ -34,7 +34,7 @@ export class StudyBreakInDTO {
 }
 
 export class StudyBreaksAndWeeksOutDTO {
-  studyBreaks: StudyBreakOutDTO[];
+  studyBreaks: StudyBreakAPIOutDTO[];
   fundedStudyPeriodDays: number;
   totalDays: number;
   totalFundedWeeks: number;
@@ -56,7 +56,7 @@ export class StudyBreaksAndWeeksInDTO {
 }
 
 export class StudyBreaksAndWeeksAPIOutDTO {
-  studyBreaks: StudyBreakOutDTO[];
+  studyBreaks: StudyBreakAPIOutDTO[];
   fundedStudyPeriodDays: number;
   totalDays: number;
   totalFundedWeeks: number;
@@ -229,12 +229,12 @@ export class OfferingChangeAssessmentAPIInDTO {
  */
 export class OfferingBulkInsertValidationResultAPIOutDTO {
   recordIndex: number;
-  locationCode: string;
-  sabcProgramCode: string;
-  startDate: string;
-  endDate: string;
+  locationCode?: string;
+  sabcProgramCode?: string;
+  startDate?: string;
+  endDate?: string;
   errors: string[];
-  warnings?: ValidationWarningResultAPIOutDTO[];
+  warnings: ValidationWarningResultAPIOutDTO[];
 }
 
 /**

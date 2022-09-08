@@ -25,6 +25,9 @@ const MAX_STUDY_BREAKS_ENTRIES = 5;
 type InstitutionCodeToIdMap = Record<string, number>;
 type ProgramCodeToProgramMap = Record<string, EducationProgram>;
 
+/**
+ * Handles the offering bulk insert using a CSV content.
+ */
 @Injectable()
 export class EducationProgramOfferingImportCSVService {
   constructor(
@@ -32,49 +35,58 @@ export class EducationProgramOfferingImportCSVService {
     private readonly educationProgramService: EducationProgramService,
   ) {}
 
+  /**
+   * Generates the offering save model from the CSV content, including
+   * any additional information like the program information and location
+   * information needed to execute the complete offering validation.
+   * @param institutionId institution id that will receive the offerings.
+   * @param csvModels CSV models to be converted to offering models.
+   * @returns offering models to be validated and persisted.
+   */
   async generateSaveOfferingModelFromCSVModels(
     institutionId: number,
     csvModels: OfferingCSVModel[],
   ): Promise<SaveOfferingModel[]> {
+    // Locations and programs information to be associated with the offering models.
     const [locationsMap, programsMap] = await Promise.all([
       this.getLocationsMaps(institutionId),
       this.getProgramsMaps(institutionId, csvModels),
     ]);
-
-    return csvModels.map((csvModel) => {
-      const offeringModel = {} as SaveOfferingModel;
-      offeringModel.offeringName = csvModel.offeringName;
-      offeringModel.yearOfStudy = csvModel.yearOfStudy;
-      offeringModel.showYearOfStudy =
-        csvModel.showYearOfStudy === YesNoOptions.Yes;
-      offeringModel.offeringIntensity = csvModel.offeringIntensity;
-      offeringModel.offeringDelivered = csvModel.offeringDelivered;
-      offeringModel.hasOfferingWILComponent =
+    return csvModels.map((csvModel) => ({
+      offeringName: csvModel.offeringName,
+      yearOfStudy: csvModel.yearOfStudy,
+      showYearOfStudy: csvModel.showYearOfStudy === YesNoOptions.Yes,
+      offeringIntensity: csvModel.offeringIntensity,
+      offeringDelivered: csvModel.offeringDelivered,
+      hasOfferingWILComponent:
         csvModel.WILComponent === YesNoOptions.Yes
           ? WILComponentOptions.Yes
-          : WILComponentOptions.No;
-      offeringModel.offeringWILComponentType = csvModel.WILComponentType;
-      offeringModel.studyStartDate = csvModel.studyStartDate;
-      offeringModel.studyEndDate = csvModel.studyEndDate;
-      offeringModel.lacksStudyBreaks =
-        csvModel.hasStudyBreaks == YesNoOptions.No;
-      offeringModel.studyBreaks = csvModel.studyBreaks;
-      offeringModel.actualTuitionCosts = csvModel.actualTuitionCosts;
-      offeringModel.programRelatedCosts = csvModel.programRelatedCosts;
-      offeringModel.mandatoryFees = csvModel.mandatoryFees;
-      offeringModel.exceptionalExpenses = csvModel.exceptionalExpenses;
-      offeringModel.offeringType =
+          : WILComponentOptions.No,
+      offeringWILComponentType: csvModel.WILComponentType,
+      studyStartDate: csvModel.studyStartDate,
+      studyEndDate: csvModel.studyEndDate,
+      lacksStudyBreaks: csvModel.hasStudyBreaks == YesNoOptions.No,
+      studyBreaks: csvModel.studyBreaks,
+      actualTuitionCosts: csvModel.actualTuitionCosts,
+      programRelatedCosts: csvModel.programRelatedCosts,
+      mandatoryFees: csvModel.mandatoryFees,
+      exceptionalExpenses: csvModel.exceptionalExpenses,
+      offeringType:
         csvModel.publicOffering === YesNoOptions.Yes
           ? OfferingTypes.Public
-          : OfferingTypes.Private;
-      offeringModel.offeringDeclaration = csvModel.consent === YesNoOptions.Yes;
-      offeringModel.courseLoad = csvModel.courseLoad;
-      offeringModel.locationId = locationsMap[csvModel.institutionLocationCode];
-      offeringModel.programContext = programsMap[csvModel.sabcProgramCode];
-      return offeringModel;
-    });
+          : OfferingTypes.Private,
+      offeringDeclaration: csvModel.consent === YesNoOptions.Yes,
+      courseLoad: csvModel.courseLoad,
+      locationId: locationsMap[csvModel.institutionLocationCode],
+      programContext: programsMap[csvModel.sabcProgramCode],
+    }));
   }
 
+  /**
+   * Get a list of all institution locations indexed by the institution code.
+   * @param institutionId institution to have all the locations retrieved.
+   * @returns list of all institution locations indexed by the institution code.
+   */
   private async getLocationsMaps(
     institutionId: number,
   ): Promise<InstitutionCodeToIdMap> {
@@ -90,11 +102,19 @@ export class EducationProgramOfferingImportCSVService {
     return institutionMap;
   }
 
+  /**
+   * Get a list of all the education programs presents in the CSV content
+   * indexed by the SABC code.
+   * @param institutionId institution to have all the programs retrieved.
+   * @param csvModels list to extract the SABC codes.
+   * @returns list of all the education programs presents in the CSV content
+   * indexed by the SABC code.
+   */
   private async getProgramsMaps(
     institutionId: number,
-    bulkInsertModels: OfferingCSVModel[],
+    csvModels: OfferingCSVModel[],
   ): Promise<ProgramCodeToProgramMap> {
-    const distinctProgramCodes = bulkInsertModels
+    const distinctProgramCodes = csvModels
       .filter((model) => !!model.sabcProgramCode) // Remove empty items.
       .map((model) => model.sabcProgramCode) // Select the program codes.
       .filter((value, index, codes) => codes.indexOf(value) === index); // Remove duplicated values.
@@ -111,6 +131,11 @@ export class EducationProgramOfferingImportCSVService {
     return programMap;
   }
 
+  /**
+   * Reads a CSV content and generate a CSV object model for each line.
+   * @param csvContent CSV content to generate the models.
+   * @returns CSV object models.
+   */
   readCSV(csvContent: string): OfferingCSVModel[] {
     const offeringModels: OfferingCSVModel[] = [];
     // Remove BOM(Byte order mark), if present.
@@ -173,6 +198,11 @@ export class EducationProgramOfferingImportCSVService {
     return offeringModels;
   }
 
+  /**
+   * Performs the CSV object model validation and return a result for each model.
+   * @param csvModels CSV model to be validate.
+   * @returns validation result for each model.
+   */
   validateCSVModels(
     csvModels: OfferingCSVModel[],
   ): OfferingCSVValidationResult[] {

@@ -10,7 +10,11 @@ import { StudyBreak } from "../education-program-offering-validation.models";
 import { OfferingCalculationValidationBaseConstraint } from "./offering-calculation-validation-base-constraint";
 
 /**
- *
+ * For an offering that contains study breaks, there is maximum amount
+ * of study break days allowed that is represented by a percentage of the
+ * total days in the offering period. For instance, for an offering that
+ * has 200 days and considering a 10% maximum days allowed, the sun of
+ * all study breaks cannot exceed 20 days.
  */
 @ValidatorConstraint()
 class StudyBreaksCombinedMustNotExceedsThresholdConstraint
@@ -22,7 +26,10 @@ class StudyBreaksCombinedMustNotExceedsThresholdConstraint
       studyBreaks,
       args,
     );
-    return calculatedStudyBreaksAndWeeks.sumOfTotalIneligibleBreakDays === 0;
+    return (
+      calculatedStudyBreaksAndWeeks.sumOfTotalEligibleBreakDays <=
+      calculatedStudyBreaksAndWeeks.allowableStudyBreaksDaysAmount
+    );
   }
 
   defaultMessage() {
@@ -33,7 +40,15 @@ class StudyBreaksCombinedMustNotExceedsThresholdConstraint
 }
 
 /**
- *
+ * For an offering that contains study breaks, there is maximum amount
+ * of study break days allowed that is represented by a percentage of the
+ * total days in the offering period. For instance, for an offering that
+ * has 200 days and considering a 10% maximum days allowed, the sun of
+ * all study breaks cannot exceed 20 days.
+ * @param startPeriodProperty property of the model that identifies the offering start date.
+ * @param endPeriodProperty property of the model that identifies the offering end date.
+ * @param validationOptions validations options.
+ * @returns true if the study period is valid, otherwise, false.
  */
 export function StudyBreaksCombinedMustNotExceedsThreshold(
   startPeriodProperty: (targetObject: unknown) => Date | string,

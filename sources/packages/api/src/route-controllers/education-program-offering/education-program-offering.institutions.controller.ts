@@ -351,7 +351,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * Process a CSV with offerings to be created under existing programs.
    * @param file file content with all information needed to create offerings.
    * @returns when successfully executed, the list of all offerings ids created.
-   * When an error happen it will return the all the records with an error and
+   * When an error happen it will return all the records (with the error) and
    * also a user friendly description of the errors to be fixed.
    */
   @ApiBadRequestResponse({

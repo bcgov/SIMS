@@ -17,10 +17,20 @@ import {
   OfferingDeliveryOptions,
 } from "./education-program-offering-validation.models";
 
+/**
+ * Expected date format to be received from the CSV.
+ */
 const DATE_FORMAT = "YYYY-MM-DD";
 
+/**
+ * For study breaks periods, this is the place holder to receive the array index.
+ */
 export const STUDY_BREAK_INDEX_PLACE_HOLDER = "{index}";
 
+/**
+ * Friendly header names used in the CSV to be populated by the user.
+ * The CSV model parser uses this as a base to parse the CSV string into an object model.
+ */
 export const CSVHeaders = {
   LocationCode: "Institution Location Code",
   SABCProgramCode: "SABC Program Code",
@@ -45,6 +55,9 @@ export const CSVHeaders = {
   StudyBreakEndDate: `Study Break ${STUDY_BREAK_INDEX_PLACE_HOLDER} - End Date`,
 };
 
+/**
+ * Study breaks periods.
+ */
 export class CSVStudyBreak {
   @IsDateString(undefined, {
     message: getDateFormatMessage(CSVHeaders.StudyBreakStartDate),
@@ -56,11 +69,19 @@ export class CSVStudyBreak {
   breakEndDate: string;
 }
 
+/**
+ * Used by CSV fields that need provide yes/no or true/false information.
+ */
 export enum YesNoOptions {
   Yes = "yes",
   No = "no",
 }
 
+/**
+ * Provides a friendly message to the field that needs date validation.
+ * @param header friendly header name.
+ * @returns friendly message to the field the that needs date validation.
+ */
 function getDateFormatMessage(header: string) {
   if (header.indexOf(STUDY_BREAK_INDEX_PLACE_HOLDER)) {
     header = header
@@ -70,35 +91,65 @@ function getDateFormatMessage(header: string) {
   return `${header} must be in the format ${DATE_FORMAT}`;
 }
 
+/**
+ * Provides a friendly message to the field that needs currency validation.
+ * @param header friendly header name.
+ * @returns friendly message to the field the that needs currency validation.
+ */
 function getCurrencyFormatMessage(header: string) {
   return `${header} must be a number without a group separator or decimals.`;
 }
 
+/**
+ * Provides a friendly message to the field that needs a enum like validation.
+ * @param header friendly header name.
+ * @returns friendly message to the field the that needs a enum like validation.
+ */
 function getEnumFormatMessage(header: string, enumObject: unknown) {
   return `${header} must be one of the following options: ${Object.values(
     enumObject,
   ).join()}`;
 }
 
+/**
+ * Provides a friendly message to the field that needs a yes/no validation.
+ * @param header friendly header name.
+ * @returns friendly message to the field the that needs yes/no like validation.
+ */
 function getYesNoFormatMessage(header: string) {
   return getEnumFormatMessage(header, YesNoOptions);
 }
 
 export class OfferingCSVModel {
+  /**
+   * Institution location code that uniquely identifies a location in the system.
+   */
   @Matches(/^[A-Z]{4}$/, {
     message: `${CSVHeaders.LocationCode} must be a 4 letters uppercase code.`,
   })
   institutionLocationCode: string;
+  /**
+   * SABC program code that uniquely identifies a program for an institution.
+   */
   @Matches(/^[[A-Z]{3}[0-9]{1}$/, {
     message: `${CSVHeaders.SABCProgramCode} must be a 3 uppercase letters followed by a number.`,
   })
   sabcProgramCode: string;
+  /**
+   * Offering name.
+   */
   @IsNotEmpty({ message: `${CSVHeaders.OfferingName} must be provided.` })
   offeringName: string;
+  /**
+   * Offering study start date.
+   */
   @IsDateString(undefined, {
     message: getDateFormatMessage(CSVHeaders.StudyStartDate),
   })
   studyStartDate: string;
+  /**
+   * Offering study end date.
+   */
   @IsDateString(undefined, {
     message: getDateFormatMessage(CSVHeaders.StudyEndDate),
   })
@@ -106,19 +157,34 @@ export class OfferingCSVModel {
   @IsNumber(currencyNumberOptions, {
     message: getCurrencyFormatMessage(CSVHeaders.ActualTuitionCosts),
   })
+  /**
+   * Actual tuition costs.
+   */
   actualTuitionCosts: number;
   @IsNumber(currencyNumberOptions, {
     message: getCurrencyFormatMessage(CSVHeaders.ProgramRelatedCosts),
   })
+  /**
+   * Program related costs.
+   */
   programRelatedCosts: number;
   @IsNumber(currencyNumberOptions, {
     message: getCurrencyFormatMessage(CSVHeaders.MandatoryFees),
   })
+  /**
+   * Mandatory fees.
+   */
   mandatoryFees: number;
+  /**
+   * Exceptional expenses.
+   */
   @IsNumber(currencyNumberOptions, {
     message: getCurrencyFormatMessage(CSVHeaders.ExceptionalExpenses),
   })
   exceptionalExpenses: number;
+  /**
+   * Offering delivered type.
+   */
   @IsEnum(OfferingDeliveryOptions, {
     message: getEnumFormatMessage(
       CSVHeaders.DeliveredType,
@@ -126,6 +192,9 @@ export class OfferingCSVModel {
     ),
   })
   offeringDelivered: OfferingDeliveryOptions;
+  /**
+   * Offering intensity.
+   */
   @IsEnum(OfferingIntensity, {
     message: getEnumFormatMessage(
       CSVHeaders.OfferingIntensity,
@@ -133,16 +202,26 @@ export class OfferingCSVModel {
     ),
   })
   offeringIntensity: OfferingIntensity;
+  /**
+   * Number of years of study.
+   */
   @IsNumber()
   yearOfStudy: number;
   @IsEnum(YesNoOptions, {
     message: getYesNoFormatMessage(CSVHeaders.YearOfStudy),
   })
   showYearOfStudy: YesNoOptions;
+  /**
+   * Indicates if the offering has a WIL(work-integrated learning).
+   */
   @IsEnum(YesNoOptions, {
     message: getYesNoFormatMessage(CSVHeaders.WILComponent),
   })
   WILComponent: YesNoOptions;
+  /**
+   * For an offering that has a WIL(work-integrated learning),
+   * indicates which type.
+   */
   @ValidateIf(
     (csvModel: OfferingCSVModel) => csvModel.WILComponent === YesNoOptions.Yes,
     {
@@ -151,21 +230,36 @@ export class OfferingCSVModel {
   )
   @IsNotEmpty()
   WILComponentType?: string;
+  /**
+   * User consent to have the offering submitted.
+   */
   @IsIn([YesNoOptions.Yes], {
     message: `${CSVHeaders.Consent} must be set to '${YesNoOptions.Yes}'.`,
   })
   consent: YesNoOptions;
+  /**
+   * Indicates if the offering should be available for every student to select.
+   */
   @IsEnum(YesNoOptions, {
     message: getYesNoFormatMessage(CSVHeaders.PublicOffering),
   })
   publicOffering: YesNoOptions;
+  /**
+   * Indicates offering course load.
+   */
   @IsOptional()
   @IsNumber()
   courseLoad?: number;
+  /**
+   * Indicates if the offering has some study break.
+   */
   @IsEnum(YesNoOptions, {
     message: getYesNoFormatMessage(CSVHeaders.HasStudyBreaks),
   })
   hasStudyBreaks: YesNoOptions;
+  /**
+   * For offerings with some study break, represents all study break periods.
+   */
   @ValidateIf(
     (csvModel: OfferingCSVModel) =>
       csvModel.hasStudyBreaks === YesNoOptions.Yes,
@@ -176,8 +270,22 @@ export class OfferingCSVModel {
   studyBreaks: CSVStudyBreak[];
 }
 
+/**
+ * Represents the validation performed on a CSV model.
+ */
 export interface OfferingCSVValidationResult {
+  /**
+   * Zero base index of the record in the list of the records.
+   * Does not consider possible header.
+   */
   index: number;
+  /**
+   * Model that was validated.
+   */
   csvModel: OfferingCSVModel;
+  /**
+   * List of possible errors. If no error is present it
+   * means the model was successfully validated.
+   */
   errors: string[];
 }

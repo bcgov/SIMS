@@ -1094,8 +1094,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         eachBreak.breakEndDate,
         eachBreak.breakStartDate,
       );
-      newStudyBreak.breakStartDate = new Date(eachBreak.breakStartDate);
-      newStudyBreak.breakEndDate = new Date(eachBreak.breakEndDate);
+      newStudyBreak.breakStartDate = eachBreak.breakStartDate;
+      newStudyBreak.breakEndDate = eachBreak.breakEndDate;
       newStudyBreak.eligibleBreakDays = Math.min(
         newStudyBreak.breakDays,
         OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD,
@@ -1114,18 +1114,20 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       offering.studyStartDate,
     );
 
-    // Allowable 10% total days.
-    const allowable10Percentage =
+    // Allowable amount of break days allowed.
+    const allowableStudyBreaksDaysAmount =
       totalDays *
       OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD;
 
     // Calculating the ineligible days
-    const ineligibleDaysForFundingAfter10PercentageCalculation =
-      sumOfTotalEligibleBreakDays - allowable10Percentage;
+    const ineligibleDaysForFundingAfterPercentageCalculation = Math.max(
+      sumOfTotalEligibleBreakDays - allowableStudyBreaksDaysAmount,
+      0,
+    );
 
     const unfundedStudyPeriodDays =
       sumOfTotalIneligibleBreakDays +
-      ineligibleDaysForFundingAfter10PercentageCalculation;
+      ineligibleDaysForFundingAfterPercentageCalculation;
 
     const fundedStudyPeriodDays = Math.max(
       totalDays - unfundedStudyPeriodDays,
@@ -1140,6 +1142,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       unfundedStudyPeriodDays,
       sumOfTotalEligibleBreakDays,
       sumOfTotalIneligibleBreakDays,
+      allowableStudyBreaksDaysAmount,
     };
 
     return studyBreaksAndWeeks;
