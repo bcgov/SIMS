@@ -6,7 +6,7 @@ import {
   ValidationArguments,
 } from "class-validator";
 import {
-  EducationProgramValidationContext,
+  SaveOfferingModel,
   WILComponentOptions,
 } from "../education-program-offering-validation.models";
 
@@ -22,13 +22,13 @@ class ProgramAllowsOfferingWILConstraint
     offeringWIL: WILComponentOptions,
     args: ValidationArguments,
   ): boolean {
-    const program = args.object as EducationProgramValidationContext;
-    if (!program?.programContext?.hasWILComponent) {
+    const offeringModel = args.object as SaveOfferingModel;
+    if (!offeringModel?.programContext?.hasWILComponent) {
       return false;
     }
     if (
       offeringWIL === WILComponentOptions.Yes &&
-      program.programContext.hasWILComponent === WILComponentOptions.No
+      offeringModel.programContext.hasWILComponent === WILComponentOptions.No
     ) {
       return false;
     }

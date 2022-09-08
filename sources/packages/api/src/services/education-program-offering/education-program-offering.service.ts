@@ -19,7 +19,7 @@ import {
 import { RecordDataModelService } from "../../database/data.model.service";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { WorkflowStartResult } from "../workflow/workflow.models";
-import { DataSource, InsertResult, UpdateResult } from "typeorm";
+import { DataSource, InsertResult, Repository, UpdateResult } from "typeorm";
 import {
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
@@ -84,14 +84,27 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     return this.repo.insert(programOffering);
   }
 
+  /**
+   * Create offerings from already successfully validated models and
+   * insert all offerings in a DB transaction.
+   * All the inserts will have an attempt to be executed and a status will
+   * be generated for every single one. If any fail, all the data will be
+   * rollback to the previous state at the end of all inserts.
+   * @param validatedOfferings successfully validated offering models.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns result object for all the offering models.
+   */
   async createFromValidatedOfferings(
     validatedOfferings: OfferingValidationResult[],
-    userId: number,
+    auditUserId: number,
   ): Promise<CreateValidatedOfferingResult[]> {
     // Start the transaction that will handle all the inserts.
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.startTransaction();
     try {
+      const offeringRepo = queryRunner.manager.getRepository(
+        EducationProgramOffering,
+      );
       // Used to limit the number of asynchronous operations
       // that will start at the same time.
       const maxPromisesAllowed = os.cpus().length;
@@ -101,7 +114,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         [];
       for (const validatedOffering of validatedOfferings) {
         promises.push(
-          this.createFromValidatedOffering(validatedOffering, userId),
+          this.createFromValidatedOffering(
+            validatedOffering,
+            offeringRepo,
+            auditUserId,
+          ),
         );
         if (promises.length >= maxPromisesAllowed) {
           // Waits for all be processed.
@@ -154,17 +171,27 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     }
   }
 
+  /**
+   * Tries to execute the offering insert and provides a successful object
+   * or an exception with information to be used to create a error result.
+   * @param validatedOffering successfully validated offering to be inserted.
+   * @param offeringRepo repository to be used to execute the insert operations
+   * sharing the same transaction.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns successful object or an exception with information to be used to create an error result.
+   */
   private async createFromValidatedOffering(
     validatedOffering: OfferingValidationResult,
-    userId: number,
+    offeringRepo: Repository<EducationProgramOffering>,
+    auditUserId: number,
   ): Promise<ValidatedOfferingInsertResult> {
     const programOffering = this.populateProgramOffering(
       validatedOffering.offeringModel,
     );
     programOffering.offeringStatus = validatedOffering.offeringStatus;
-    programOffering.creator = { id: userId } as User;
+    programOffering.creator = { id: auditUserId } as User;
     try {
-      const insertResult = await this.repo.insert(programOffering);
+      const insertResult = await offeringRepo.insert(programOffering);
       return { insertResult, validatedOffering };
     } catch (error: unknown) {
       this.logger.error(
@@ -172,6 +199,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
           validatedOffering.offeringModel,
         )}. ${error} `,
       );
+      // This error can be consumed from the output of a Promise.allSettled rejected reason.
       throw new CreateFromValidatedOfferingError(
         validatedOffering,
         "There was error while creating the offering. Please verify if the offering is already present in the system or please get in contact with the support.",

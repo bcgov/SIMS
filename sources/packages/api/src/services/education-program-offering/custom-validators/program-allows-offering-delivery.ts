@@ -6,8 +6,8 @@ import {
   ValidationArguments,
 } from "class-validator";
 import {
-  EducationProgramValidationContext,
   OfferingDeliveryOptions,
+  SaveOfferingModel,
 } from "../education-program-offering-validation.models";
 
 /**
@@ -22,23 +22,23 @@ class ProgramAllowsOfferingDeliveryConstraint
     deliveryOption: OfferingDeliveryOptions,
     args: ValidationArguments,
   ): boolean {
-    const program = args.object as EducationProgramValidationContext;
+    const offeringModel = args.object as SaveOfferingModel;
     if (
-      !program?.programContext?.deliveredOnSite ||
-      !program?.programContext?.deliveredOnline
+      !offeringModel?.programContext?.deliveredOnSite ||
+      !offeringModel?.programContext?.deliveredOnline
     ) {
       return false;
     }
     switch (deliveryOption) {
       case OfferingDeliveryOptions.Onsite:
-        return program.programContext.deliveredOnSite;
+        return offeringModel.programContext.deliveredOnSite;
       case OfferingDeliveryOptions.Online:
-        return program.programContext.deliveredOnline;
+        return offeringModel.programContext.deliveredOnline;
       case OfferingDeliveryOptions.Blended:
         // Blended requires that both options are allowed by the program.
         return (
-          program.programContext.deliveredOnSite &&
-          program.programContext.deliveredOnline
+          offeringModel.programContext.deliveredOnSite &&
+          offeringModel.programContext.deliveredOnline
         );
     }
   }

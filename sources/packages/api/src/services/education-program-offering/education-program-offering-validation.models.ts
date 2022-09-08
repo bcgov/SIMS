@@ -52,12 +52,18 @@ import {
 } from "../../utilities";
 import { InsertResult } from "typeorm";
 
+/**
+ * Number format expected for the offering currency values.
+ */
 export const currencyNumberOptions: IsNumberOptions = {
   allowNaN: false,
   allowInfinity: false,
   maxDecimalPlaces: 0,
 };
 
+/**
+ * Subset of the education program required to perform the offering validations.
+ */
 export type EducationProgramForOfferingValidationContext = Pick<
   EducationProgram,
   | "id"
@@ -67,19 +73,26 @@ export type EducationProgramForOfferingValidationContext = Pick<
   | "deliveredOnline"
 >;
 
+/**
+ * Subset of the offering save model required to execute the study breaks calculations.
+ */
 export type OfferingStudyBreakCalculationContext = Pick<
   SaveOfferingModel,
   "studyEndDate" | "studyStartDate" | "studyBreaks"
 >;
+
+/**
+ * Result of the study break calculation used for offering validations.
+ */
 export type CalculatedStudyBreaksAndWeeks = StudyBreaksAndWeeks & {
   sumOfTotalEligibleBreakDays: number;
   sumOfTotalIneligibleBreakDays: number;
   allowableStudyBreaksDaysAmount: number;
 };
 
-export interface EducationProgramValidationContext {
-  programContext: EducationProgramForOfferingValidationContext;
-}
+// export interface EducationProgramValidationContext {
+//   programContext: EducationProgramForOfferingValidationContext;
+// }
 
 export enum OfferingValidationWarnings {
   InvalidStudyBreakConsecutiveThreshold = "invalidStudyBreakConsecutiveThreshold",
@@ -129,12 +142,24 @@ export class StudyBreak {
   breakEndDate: string;
 }
 
+/**
+ * Study start date property used as parameters in some validators.
+ */
 const studyStartDateProperty = (offering: SaveOfferingModel) =>
   offering.studyStartDate;
+/**
+ * Study end date property used as parameters in some validators.
+ */
 const studyEndDateProperty = (offering: SaveOfferingModel) =>
   offering.studyEndDate;
 
-export class SaveOfferingModel implements EducationProgramValidationContext {
+/**
+ * Complete offering data with all validations needed to ensure data
+ * consistency. Program data and locations data need to be present to
+ * ensure a successfully validation.
+ * Must be used for any offering created or updated.
+ */
+export class SaveOfferingModel {
   @IsNotEmpty()
   @MaxLength(OFFERING_NAME_MAX_LENGTH)
   offeringName: string;
@@ -250,34 +275,75 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   programContext: EducationProgramForOfferingValidationContext;
 }
 
+/**
+ * Validation warning with a unique type and
+ * a user-friendly message to be displayed.
+ */
 export interface ValidationWarningResult {
   warningType: OfferingValidationWarnings;
   warningMessage: string;
 }
 
+/**
+ * Results of the offering model validation with the
+ * offering status when possible. If the offering contains
+ * critical errors the status will not be defined.
+ */
 export interface OfferingValidationResult {
+  /**
+   * Record index in the list of records. Headers are not considered.
+   */
   index: number;
+  /**
+   * validated offering model.
+   */
   offeringModel: SaveOfferingModel;
+  /**
+   * Offering status defined from the validation results.
+   * - Approved: no critical errors and no warnings.
+   * - CreationPending: no critical errors and some warnings.
+   * - Undefined: some critical error.
+   */
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
+  /**
+   * Warnings, if any.
+   */
   warnings: ValidationWarningResult[];
+  /**
+   * Users friendly errors list, if any.
+   */
   errors: string[];
 }
 
+/**
+ * Result of the successful attempt to insert the validated offering into
+ * the database. Used in a parallel bulk insert to provide the
+ * status of every successfully inserted record.
+ */
 export interface ValidatedOfferingInsertResult {
   validatedOffering: OfferingValidationResult;
   insertResult: InsertResult;
 }
 
-export interface CreateValidatedOfferingResult {
-  validatedOffering: OfferingValidationResult;
-  createdOfferingId?: number;
-  success: boolean;
-  error: string;
-}
-
+/**
+ * Result of the fail attempt to insert the validated offering into
+ * the database. Used in a parallel bulk insert to provide the
+ * status of every failed inserted record.
+ */
 export class CreateFromValidatedOfferingError {
   constructor(
     public readonly validatedOffering: OfferingValidationResult,
     public readonly error: string,
   ) {}
+}
+
+/**
+ * Detailed information of success or a failure to insert
+ * the validated offering into the database.
+ */
+export interface CreateValidatedOfferingResult {
+  validatedOffering: OfferingValidationResult;
+  createdOfferingId?: number;
+  success: boolean;
+  error: string;
 }
