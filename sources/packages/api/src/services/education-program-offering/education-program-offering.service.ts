@@ -19,7 +19,7 @@ import {
 import { RecordDataModelService } from "../../database/data.model.service";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { WorkflowStartResult } from "../workflow/workflow.models";
-import { DataSource, InsertResult, Repository, UpdateResult } from "typeorm";
+import { DataSource, Repository, UpdateResult } from "typeorm";
 import {
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
@@ -135,19 +135,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         const creationResult = {} as CreateValidatedOfferingResult;
         if (settledResult.status === "fulfilled") {
           // The insert operation was successful.
-          const successResult =
-            settledResult as PromiseFulfilledResult<ValidatedOfferingInsertResult>;
           creationResult.success = true;
           const [createdIdentifier] =
-            successResult.value.insertResult.identifiers;
+            settledResult.value.insertResult.identifiers;
           creationResult.createdOfferingId = +createdIdentifier.id;
           creationResult.validatedOffering =
-            successResult.value.validatedOffering;
+            settledResult.value.validatedOffering;
         } else {
           // The insert operation failed.
-          const rejectedResult = settledResult as PromiseRejectedResult;
           const createFromValidatedOfferingError =
-            rejectedResult.reason as CreateFromValidatedOfferingError;
+            settledResult.reason as CreateFromValidatedOfferingError;
           creationResult.success = false;
           creationResult.validatedOffering =
             createFromValidatedOfferingError.validatedOffering;

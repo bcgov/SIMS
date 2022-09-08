@@ -335,12 +335,10 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       return { id: requestedOffering.id };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          case OFFERING_VALIDATION_CRITICAL_ERROR:
-            throw new BadRequestException(error.objectInfo, error.message);
-          default:
-            throw new UnprocessableEntityException(error.message);
+        if (error.name === OFFERING_VALIDATION_CRITICAL_ERROR) {
+          throw new BadRequestException(error.objectInfo, error.message);
         }
+        throw new UnprocessableEntityException(error.message);
       }
       throw error;
     }

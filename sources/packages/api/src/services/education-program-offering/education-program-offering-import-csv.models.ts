@@ -133,7 +133,7 @@ export class OfferingCSVModel {
   /**
    * SABC program code that uniquely identifies a program for an institution.
    */
-  @Matches(/^[[A-Z]{3}[0-9]{1}$/, {
+  @Matches(/^[[A-Z]{3}\d{1}$/, {
     message: `${CSVHeaders.SABCProgramCode} must be a 3 uppercase letters followed by a number.`,
   })
   sabcProgramCode: string;
