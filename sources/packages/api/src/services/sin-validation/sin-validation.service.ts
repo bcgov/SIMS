@@ -81,7 +81,6 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
     auditUserId: number,
   ): Promise<SINValidation> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      const student = await this.studentService.getStudentById(studentId);
       const auditUser = { id: auditUserId } as User;
       const savedNote = await this.studentService.createStudentNote(
         studentId,
@@ -99,7 +98,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       newSINValidation.sinEditedNote = savedNote;
       newSINValidation.creator = auditUser;
       newSINValidation.createdAt = now;
-      newSINValidation.student = student;
+      newSINValidation.student = { id: studentId } as Student;
       if (skipValidations) {
         newSINValidation.isValidSIN = true;
         newSINValidation.dateReceived = now;
