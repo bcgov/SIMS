@@ -17,6 +17,7 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 import {
+  OfferingDeliveryOptions,
   OfferingValidationWarnings,
   WILComponentOptions,
 } from "../../../services";
@@ -79,7 +80,7 @@ export class EducationProgramOfferingAPIInDTO {
   @Allow()
   exceptionalExpenses: number;
   @Allow()
-  offeringDelivered: string;
+  offeringDelivered: OfferingDeliveryOptions;
   @Allow()
   lacksStudyBreaks: boolean;
   @Allow()

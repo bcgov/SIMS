@@ -26,7 +26,7 @@ type InstitutionCodeToIdMap = Record<string, number>;
 type ProgramCodeToProgramMap = Record<string, EducationProgram>;
 
 /**
- * Handles the offering bulk insert using a CSV content.
+ * Handles the offering bulk insert preparation using a CSV content.
  */
 @Injectable()
 export class EducationProgramOfferingImportCSVService {

@@ -90,10 +90,9 @@ export type CalculatedStudyBreaksAndWeeks = StudyBreaksAndWeeks & {
   allowableStudyBreaksDaysAmount: number;
 };
 
-// export interface EducationProgramValidationContext {
-//   programContext: EducationProgramForOfferingValidationContext;
-// }
-
+/**
+ * Possible warnings unique identifiers.
+ */
 export enum OfferingValidationWarnings {
   InvalidStudyBreakConsecutiveThreshold = "invalidStudyBreakConsecutiveThreshold",
   ProgramOfferingIntensityMismatch = "programOfferingIntensityMismatch",
@@ -102,6 +101,11 @@ export enum OfferingValidationWarnings {
   InvalidStudyDatesPeriodLength = "invalidStudyDatesPeriodLength",
 }
 
+/**
+ * Represent the context of an error that should be considered a warning.
+ * All validations when failed will generate an error. The ones that have
+ * the warning context will be considered as warnings then.
+ */
 export class ValidationWarning {
   constructor(public readonly warningType: OfferingValidationWarnings) {
     this.isWarning = true;
@@ -109,21 +113,36 @@ export class ValidationWarning {
   readonly isWarning: boolean;
 }
 
+/**
+ * Offering delivery options.
+ */
 export enum OfferingDeliveryOptions {
   Onsite = "onsite",
   Online = "online",
   Blended = "blended",
 }
 
+/**
+ * WIL(work-integrated learning) options.
+ */
 export enum WILComponentOptions {
   Yes = "yes",
   No = "no",
 }
 
+/**
+ * Offering study breaks.
+ */
 export class StudyBreak {
+  /**
+   * Study break start date.
+   */
   @IsDateString()
   @IsPeriodStartDate()
   breakStartDate: string;
+  /**
+   * Study break end date.
+   */
   @IsDateString()
   @IsPeriodEndDate()
   @PeriodMinLength(
@@ -160,11 +179,20 @@ const studyEndDateProperty = (offering: SaveOfferingModel) =>
  * Must be used for any offering created or updated.
  */
 export class SaveOfferingModel {
+  /**
+   * Offering name.
+   */
   @IsNotEmpty()
   @MaxLength(OFFERING_NAME_MAX_LENGTH)
   offeringName: string;
+  /**
+   * Offering study start date.
+   */
   @IsDateString()
   studyStartDate: string;
+  /**
+   * Offering study end date.
+   */
   @IsDateString()
   @PeriodMinLength(studyStartDateProperty, OFFERING_STUDY_PERIOD_MIN_DAYS, {
     context: new ValidationWarning(
@@ -177,22 +205,37 @@ export class SaveOfferingModel {
     ),
   })
   studyEndDate: string;
+  /**
+   * Actual tuition costs.
+   */
   @Min(0)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   @IsNumber(currencyNumberOptions)
   actualTuitionCosts: number;
+  /**
+   * Program related costs.
+   */
   @Min(0)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   @IsNumber(currencyNumberOptions)
   programRelatedCosts: number;
+  /**
+   * Mandatory fees.
+   */
   @Min(0)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   @IsNumber(currencyNumberOptions)
   mandatoryFees: number;
+  /**
+   * Exceptional expenses.
+   */
   @Min(0)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
   @IsNumber(currencyNumberOptions)
   exceptionalExpenses: number;
+  /**
+   * Offering delivered type.
+   */
   @IsEnum(OfferingDeliveryOptions)
   @ValidateIf((offering: SaveOfferingModel) => !!offering.programContext)
   @ProgramAllowsOfferingDelivery({
@@ -200,7 +243,10 @@ export class SaveOfferingModel {
       OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
     ),
   })
-  offeringDelivered: string;
+  offeringDelivered: OfferingDeliveryOptions;
+  /**
+   * Offering intensity.
+   */
   @IsEnum(OfferingIntensity)
   @ValidateIf((offering: SaveOfferingModel) => !!offering.programContext)
   @ProgramAllowsOfferingIntensity({
@@ -209,11 +255,20 @@ export class SaveOfferingModel {
     ),
   })
   offeringIntensity: OfferingIntensity;
+  /**
+   * Number of years of study.
+   */
   @Min(OFFERING_YEAR_OF_STUDY_MIN_VALUE)
   @Max(OFFERING_YEAR_OF_STUDY_MAX_VALUE)
   yearOfStudy: number;
+  /**
+   * Show year of study.
+   */
   @IsBoolean()
   showYearOfStudy: boolean;
+  /**
+   * Indicates if the offering has a WIL(work-integrated learning).
+   */
   @IsEnum(WILComponentOptions)
   @ValidateIf((offering: SaveOfferingModel) => !!offering.programContext)
   @ProgramAllowsOfferingWIL({
@@ -222,6 +277,10 @@ export class SaveOfferingModel {
     ),
   })
   hasOfferingWILComponent: WILComponentOptions;
+  /**
+   * For an offering that has a WIL(work-integrated learning),
+   * indicates which type.
+   */
   @ValidateIf(
     (offering: SaveOfferingModel) =>
       offering.hasOfferingWILComponent === WILComponentOptions.Yes,
@@ -229,16 +288,32 @@ export class SaveOfferingModel {
   @IsNotEmpty()
   @MaxLength(OFFERING_WIL_TYPE_MAX_LENGTH)
   offeringWILComponentType?: string;
+  /**
+   * User consent to have the offering submitted.
+   */
   @IsIn([true])
   offeringDeclaration: boolean;
+  /**
+   * Define if the offering will be available to the
+   * public or must be hidden.
+   */
   @IsIn([OfferingTypes.Private, OfferingTypes.Public])
   offeringType: OfferingTypes;
+  /**
+   * Indicates offering course load.
+   */
   @IsOptional()
   @Min(OFFERING_COURSE_LOAD_MIN_VALUE)
   @Max(OFFERING_COURSE_LOAD_MAX_VALUE)
   courseLoad?: number;
+  /**
+   * Indicates if the offering has some study break.
+   */
   @IsBoolean()
   lacksStudyBreaks: boolean;
+  /**
+   * For offerings with some study break, represents all study break periods.
+   */
   @Type(() => StudyBreak)
   @ValidateIf(
     (offering: SaveOfferingModel) =>
@@ -264,10 +339,16 @@ export class SaveOfferingModel {
     },
   )
   studyBreaks: StudyBreak[];
+  /**
+   * Institution location that will be associated with this offering.
+   */
   @IsPositive({
     message: "Related institution location was not found or not provided.",
   })
   locationId: number;
+  /**
+   * Program information required to execute the offering validation.
+   */
   @IsNotEmptyObject(undefined, {
     message:
       "Not able to find a program related to this offering or it was not provided.",

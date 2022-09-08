@@ -29,7 +29,7 @@ const DATE_FORMAT = "YYYY-MM-DD";
 export const STUDY_BREAK_INDEX_PLACE_HOLDER = "{index}";
 
 /**
- * Friendly header names used in the CSV to be populated by the user.
+ * user-friendly header names used in the CSV to be populated by the user.
  * The CSV model parser uses this as a base to parse the CSV string into an object model.
  */
 export const CSVHeaders = {
@@ -79,7 +79,7 @@ export enum YesNoOptions {
 }
 
 /**
- * Provides a friendly message to a field that needs date validation.
+ * Provides a user-friendly message to a field that needs date validation.
  * @param header friendly header name.
  * @returns friendly message to the field the that needs date validation.
  */
@@ -94,7 +94,7 @@ function getDateFormatMessage(header: string) {
 }
 
 /**
- * Provides a friendly message to a field that needs currency validation.
+ * Provides a user-friendly message to a field that needs currency validation.
  * @param header friendly header name.
  * @returns friendly message to the field the that needs currency validation.
  */
@@ -103,7 +103,7 @@ function getCurrencyFormatMessage(header: string) {
 }
 
 /**
- * Provides a friendly message to a field that needs a enum like validation.
+ * Provides a user-friendly message to a field that needs a enum like validation.
  * @param header friendly header name.
  * @returns friendly message to the field the that needs a enum like validation.
  */
@@ -114,7 +114,7 @@ function getEnumFormatMessage(header: string, enumObject: unknown) {
 }
 
 /**
- * Provides a friendly message to a field that needs a yes/no validation.
+ * Provides a user-friendly message to a field that needs a yes/no validation.
  * @param header friendly header name.
  * @returns friendly message to the field the that needs yes/no like validation.
  */
@@ -209,6 +209,9 @@ export class OfferingCSVModel {
    */
   @IsNumber()
   yearOfStudy: number;
+  /**
+   * Show year of study.
+   */
   @IsEnum(YesNoOptions, {
     message: getYesNoFormatMessage(CSVHeaders.YearOfStudy),
   })
