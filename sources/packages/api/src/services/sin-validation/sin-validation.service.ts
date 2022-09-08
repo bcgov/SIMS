@@ -41,25 +41,24 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   async getSINValidationsByStudentId(
     studentId: number,
   ): Promise<SINValidation[]> {
-    return this.repo
-      .createQueryBuilder("sinValidation")
-      .select([
-        "sinValidation.id",
-        "sinValidation.sin",
-        "sinValidation.createdAt",
-        "sinValidation.isValidSIN",
-        "sinValidation.sinStatus",
-        "sinValidation.validSINCheck",
-        "sinValidation.validBirthdateCheck",
-        "sinValidation.validFirstNameCheck",
-        "sinValidation.validLastNameCheck",
-        "sinValidation.validGenderCheck",
-        "sinValidation.temporarySIN",
-        "sinValidation.sinExpiryDate",
-      ])
-      .where("sinValidation.student.id = :studentId", { studentId })
-      .orderBy("sinValidation.createdAt", "DESC")
-      .getMany();
+    return this.repo.find({
+      select: {
+        id: true,
+        sin: true,
+        createdAt: true,
+        isValidSIN: true,
+        sinStatus: true,
+        validSINCheck: true,
+        validBirthdateCheck: true,
+        validFirstNameCheck: true,
+        validLastNameCheck: true,
+        validGenderCheck: true,
+        temporarySIN: true,
+        sinExpiryDate: true,
+      },
+      where: { student: { id: studentId } },
+      order: { createdAt: "DESC" },
+    });
   }
 
   /**
