@@ -67,9 +67,9 @@ import { OfferingCSVModel } from "../../services/education-program-offering/educ
 export class EducationProgramOfferingInstitutionsController extends BaseController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,
-    private readonly programOfferingControllerService: EducationProgramOfferingControllerService,
-    private readonly programOfferingImportCSVService: EducationProgramOfferingImportCSVService,
-    private readonly programOfferingValidationService: EducationProgramOfferingValidationService,
+    private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
+    private readonly educationProgramOfferingImportCSVService: EducationProgramOfferingImportCSVService,
+    private readonly educationProgramOfferingValidationService: EducationProgramOfferingValidationService,
   ) {
     super();
   }
@@ -98,7 +98,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       const saveOfferingModel =
-        await this.programOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -163,7 +163,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
 
     try {
       const saveOfferingModel =
-        await this.programOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -202,7 +202,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   ): Promise<
     PaginatedResultsAPIOutDTO<EducationProgramOfferingSummaryAPIOutDTO>
   > {
-    return this.programOfferingControllerService.getOfferingsSummary(
+    return this.educationProgramOfferingControllerService.getOfferingsSummary(
       locationId,
       programId,
       paginationOptions,
@@ -273,7 +273,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Query("includeInActivePY") includeInActivePY = false,
     @Query("offeringIntensity") offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
-    return this.programOfferingControllerService.getProgramOfferingsOptionsList(
+    return this.educationProgramOfferingControllerService.getProgramOfferingsOptionsList(
       locationId,
       programId,
       programYearId,
@@ -320,7 +320,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       const saveOfferingModel =
-        await this.programOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
+        await this.educationProgramOfferingControllerService.getSaveOfferingModelFromOfferingAPIInDTO(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -385,7 +385,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     // Convert the file raw content into CSV models.
     let csvModels: OfferingCSVModel[];
     try {
-      csvModels = this.programOfferingImportCSVService.readCSV(fileContent);
+      csvModels =
+        this.educationProgramOfferingImportCSVService.readCSV(fileContent);
     } catch {
       throw new BadRequestException(
         new ApiProcessError(
@@ -396,25 +397,27 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     }
     // Validate the CSV models.
     const csvValidations =
-      this.programOfferingImportCSVService.validateCSVModels(csvModels);
+      this.educationProgramOfferingImportCSVService.validateCSVModels(
+        csvModels,
+      );
     // Assert successful validation.
-    this.programOfferingControllerService.assertCSVValidationsAreValid(
+    this.educationProgramOfferingControllerService.assertCSVValidationsAreValid(
       csvValidations,
     );
     // Convert the CSV models to the SaveOfferingModel to execute the complete offering validation.
     const offerings =
-      await this.programOfferingImportCSVService.generateSaveOfferingModelFromCSVModels(
+      await this.educationProgramOfferingImportCSVService.generateSaveOfferingModelFromCSVModels(
         userToken.authorizations.institutionId,
         csvModels,
       );
     // Validate all the offering models.
     const offeringValidations =
-      this.programOfferingValidationService.validateOfferingModels(
+      this.educationProgramOfferingValidationService.validateOfferingModels(
         offerings,
         true,
       );
     // Assert successful validation.
-    this.programOfferingControllerService.assertOfferingsValidationsAreValid(
+    this.educationProgramOfferingControllerService.assertOfferingsValidationsAreValid(
       offeringValidations,
       csvModels,
     );
@@ -425,7 +428,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         userToken.userId,
       );
     // Assert successful creation.
-    this.programOfferingControllerService.assertOfferingsCreationsAreAllSuccessful(
+    this.educationProgramOfferingControllerService.assertOfferingsCreationsAreAllSuccessful(
       creationResults,
       csvModels,
     );

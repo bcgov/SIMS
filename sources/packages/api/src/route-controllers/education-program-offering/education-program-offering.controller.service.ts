@@ -183,7 +183,7 @@ export class EducationProgramOfferingControllerService {
       // At least one error was detected and the CSV must be fixed.
       const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
         csvValidationsErrors.map((validation) => ({
-          recordNumber: validation.index + 1,
+          recordIndex: validation.index,
           locationCode: validation.csvModel.institutionLocationCode,
           sabcProgramCode: validation.csvModel.sabcProgramCode,
           startDate: validation.csvModel.studyStartDate,
@@ -220,7 +220,7 @@ export class EducationProgramOfferingControllerService {
         offeringValidationsErrors.map((validation) => {
           const csvModel = csvModels[validation.index];
           return {
-            recordNumber: validation.index + 1,
+            recordIndex: validation.index,
             locationCode: csvModel.institutionLocationCode,
             sabcProgramCode: csvModel.sabcProgramCode,
             startDate: validation.offeringModel.studyStartDate,

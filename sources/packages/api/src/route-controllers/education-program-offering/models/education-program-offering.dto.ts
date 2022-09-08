@@ -228,7 +228,7 @@ export class OfferingChangeAssessmentAPIInDTO {
  * for every record that has an error.
  */
 export class OfferingBulkInsertValidationResultAPIOutDTO {
-  recordNumber: number;
+  recordIndex: number;
   locationCode: string;
   sabcProgramCode: string;
   startDate: string;
