@@ -6,21 +6,18 @@ import {
   IsIn,
   IsNotEmpty,
   IsNumber,
-  IsNumberOptions,
   IsOptional,
   Matches,
   ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { OfferingIntensity } from "../../database/entities";
-import { OfferingDeliveryOptions } from "./education-program-offering-validation.models";
+import {
+  currencyNumberOptions,
+  OfferingDeliveryOptions,
+} from "./education-program-offering-validation.models";
 
 const DATE_FORMAT = "YYYY-MM-DD";
-const currencyValidation: IsNumberOptions = {
-  allowNaN: false,
-  allowInfinity: false,
-  maxDecimalPlaces: 2,
-};
 
 export const STUDY_BREAK_INDEX_PLACE_HOLDER = "{index}";
 
@@ -74,7 +71,7 @@ function getDateFormatMessage(header: string) {
 }
 
 function getCurrencyFormatMessage(header: string) {
-  return `${header} must be a number formatted like 9999.99.`;
+  return `${header} must be a number without a group separator or decimals.`;
 }
 
 function getEnumFormatMessage(header: string, enumObject: unknown) {
@@ -106,19 +103,19 @@ export class OfferingCSVModel {
     message: getDateFormatMessage(CSVHeaders.StudyEndDate),
   })
   studyEndDate: string;
-  @IsNumber(currencyValidation, {
+  @IsNumber(currencyNumberOptions, {
     message: getCurrencyFormatMessage(CSVHeaders.ActualTuitionCosts),
   })
   actualTuitionCosts: number;
-  @IsNumber(currencyValidation, {
+  @IsNumber(currencyNumberOptions, {
     message: getCurrencyFormatMessage(CSVHeaders.ProgramRelatedCosts),
   })
   programRelatedCosts: number;
-  @IsNumber(currencyValidation, {
+  @IsNumber(currencyNumberOptions, {
     message: getCurrencyFormatMessage(CSVHeaders.MandatoryFees),
   })
   mandatoryFees: number;
-  @IsNumber(currencyValidation, {
+  @IsNumber(currencyNumberOptions, {
     message: getCurrencyFormatMessage(CSVHeaders.ExceptionalExpenses),
   })
   exceptionalExpenses: number;

@@ -6,6 +6,8 @@ import {
   IsIn,
   IsNotEmpty,
   IsNotEmptyObject,
+  IsNumber,
+  IsNumberOptions,
   IsOptional,
   IsPositive,
   Max,
@@ -48,6 +50,13 @@ import {
   OFFERING_YEAR_OF_STUDY_MAX_VALUE,
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
+import { InsertResult } from "typeorm";
+
+export const currencyNumberOptions: IsNumberOptions = {
+  allowNaN: false,
+  allowInfinity: false,
+  maxDecimalPlaces: 0,
+};
 
 export type EducationProgramForOfferingValidationContext = Pick<
   EducationProgram,
@@ -144,15 +153,19 @@ export class SaveOfferingModel implements EducationProgramValidationContext {
   studyEndDate: string;
   @Min(0)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
+  @IsNumber(currencyNumberOptions)
   actualTuitionCosts: number;
   @Min(0)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
+  @IsNumber(currencyNumberOptions)
   programRelatedCosts: number;
   @Min(0)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
+  @IsNumber(currencyNumberOptions)
   mandatoryFees: number;
   @Min(0)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
+  @IsNumber(currencyNumberOptions)
   exceptionalExpenses: number;
   @IsEnum(OfferingDeliveryOptions)
   @ValidateIf((offering: SaveOfferingModel) => !!offering.programContext)
@@ -247,4 +260,23 @@ export interface OfferingValidationResult {
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   warnings: ValidationWarningResult[];
   errors: string[];
+}
+
+export interface ValidatedOfferingInsertResult {
+  validatedOffering: OfferingValidationResult;
+  insertResult: InsertResult;
+}
+
+export interface CreateValidatedOfferingResult {
+  validatedOffering: OfferingValidationResult;
+  createdOfferingId?: number;
+  success: boolean;
+  error: string;
+}
+
+export class CreateFromValidatedOfferingError {
+  constructor(
+    public readonly validatedOffering: OfferingValidationResult,
+    public readonly error: string,
+  ) {}
 }

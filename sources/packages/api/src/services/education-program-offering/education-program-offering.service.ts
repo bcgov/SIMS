@@ -41,13 +41,17 @@ import {
 import { OFFERING_NOT_VALID } from "../../constants";
 import {
   CalculatedStudyBreaksAndWeeks,
+  CreateFromValidatedOfferingError,
+  CreateValidatedOfferingResult,
   OfferingStudyBreakCalculationContext,
   OfferingValidationResult,
   SaveOfferingModel,
+  ValidatedOfferingInsertResult,
 } from "./education-program-offering-validation.models";
-import { classToClass } from "class-transformer";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import * as os from "os";
+import { InjectLogger } from "../../common";
+import { LoggerService } from "../../logger/logger.service";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -84,40 +88,96 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async createFromValidatedOfferings(
     validatedOfferings: OfferingValidationResult[],
     userId: number,
-  ): Promise<InsertResult[]> {
-    const allResults: InsertResult[] = [];
-    // Used to limit the number of asynchronous operations
-    // that will start at the same time.
-    const maxPromisesAllowed = os.cpus().length;
-    // Hold all the promises that must be processed.
-    const promises: Promise<InsertResult>[] = [];
-    for (const validatedOffering of validatedOfferings) {
-      promises.push(
-        this.createFromValidatedOffering(validatedOffering, userId),
-      );
-      if (promises.length >= maxPromisesAllowed) {
-        // Waits for all be processed or some to fail.
-        const insertResults = await Promise.all(promises);
-        allResults.push(...insertResults);
-        // Clear the array.
-        promises.length = 0;
+  ): Promise<CreateValidatedOfferingResult[]> {
+    // Start the transaction that will handle all the inserts.
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.startTransaction();
+    try {
+      // Used to limit the number of asynchronous operations
+      // that will start at the same time.
+      const maxPromisesAllowed = os.cpus().length;
+      // Hold all the promises that must be processed.
+      const promises: Promise<ValidatedOfferingInsertResult>[] = [];
+      const allSettledResult: PromiseSettledResult<ValidatedOfferingInsertResult>[] =
+        [];
+      for (const validatedOffering of validatedOfferings) {
+        promises.push(
+          this.createFromValidatedOffering(validatedOffering, userId),
+        );
+        if (promises.length >= maxPromisesAllowed) {
+          // Waits for all be processed.
+          const insertResults = await Promise.allSettled(promises);
+          allSettledResult.push(...insertResults);
+          // Clear the array.
+          promises.length = 0;
+        }
       }
+      const finalResults = await Promise.allSettled(promises);
+      allSettledResult.push(...finalResults);
+
+      const creationResults = allSettledResult.map((settledResult) => {
+        const creationResult = {} as CreateValidatedOfferingResult;
+        if (settledResult.status === "fulfilled") {
+          // The insert operation was successful.
+          const successResult =
+            settledResult as PromiseFulfilledResult<ValidatedOfferingInsertResult>;
+          creationResult.success = true;
+          const [createdIdentifier] =
+            successResult.value.insertResult.identifiers;
+          creationResult.createdOfferingId = +createdIdentifier.id;
+          creationResult.validatedOffering =
+            successResult.value.validatedOffering;
+        } else {
+          // The insert operation failed.
+          const rejectedResult = settledResult as PromiseRejectedResult;
+          const createFromValidatedOfferingError =
+            rejectedResult.reason as CreateFromValidatedOfferingError;
+          creationResult.success = false;
+          creationResult.validatedOffering =
+            createFromValidatedOfferingError.validatedOffering;
+          creationResult.error = createFromValidatedOfferingError.error;
+        }
+        return creationResult;
+      });
+
+      if (creationResults.some((result) => !result.success)) {
+        // If any insert failed, abort all the operation.
+        await queryRunner.rollbackTransaction();
+      } else {
+        // All inserts were executed successfully then commit the transaction,
+        await queryRunner.commitTransaction();
+      }
+      return creationResults;
+    } catch {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
     }
-    const finalResults = await Promise.all(promises);
-    allResults.push(...finalResults);
-    return allResults;
   }
 
   private async createFromValidatedOffering(
     validatedOffering: OfferingValidationResult,
     userId: number,
-  ): Promise<InsertResult> {
+  ): Promise<ValidatedOfferingInsertResult> {
     const programOffering = this.populateProgramOffering(
       validatedOffering.offeringModel,
     );
     programOffering.offeringStatus = validatedOffering.offeringStatus;
     programOffering.creator = { id: userId } as User;
-    return this.repo.insert(programOffering);
+    try {
+      const insertResult = await this.repo.insert(programOffering);
+      return { insertResult, validatedOffering };
+    } catch (error: unknown) {
+      this.logger.error(
+        `Error while creating offering from bulk insert. Offering data: ${JSON.stringify(
+          validatedOffering.offeringModel,
+        )}. ${error} `,
+      );
+      throw new CreateFromValidatedOfferingError(
+        validatedOffering,
+        "There was error while creating the offering. Please verify if the offering is already present in the system or please get in contact with the support.",
+      );
+    }
   }
 
   /**
@@ -337,16 +397,26 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       programOffering.offeringType = educationProgramOffering.offeringType;
       programOffering.courseLoad = educationProgramOffering.courseLoad;
       // Study Breaks calculation.
-      const calculatedStudyBreaks = (programOffering.studyBreaks =
+      const calculatedBreaks =
         EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks(
           educationProgramOffering,
-        ));
-      // classToClass will ensure that no additional properties will be
-      // assigned to studyBreaks since calculatedStudyBreaks could received
-      // extra properties that are not required to be saved to the database.
-      programOffering.studyBreaks = classToClass<StudyBreaksAndWeeks>(
-        calculatedStudyBreaks,
-      );
+        );
+      // Ensures that no additional properties will be assigned to studyBreaks
+      // since calculatedStudyBreaks could received extra properties that are
+      // not required to be saved to the database.
+      programOffering.studyBreaks = {
+        fundedStudyPeriodDays: calculatedBreaks.fundedStudyPeriodDays,
+        totalDays: calculatedBreaks.totalDays,
+        totalFundedWeeks: calculatedBreaks.totalFundedWeeks,
+        unfundedStudyPeriodDays: calculatedBreaks.unfundedStudyPeriodDays,
+        studyBreaks: calculatedBreaks.studyBreaks?.map((studyBreak) => ({
+          breakStartDate: studyBreak.breakStartDate,
+          breakEndDate: studyBreak.breakEndDate,
+          breakDays: studyBreak.breakDays,
+          eligibleBreakDays: studyBreak.eligibleBreakDays,
+          ineligibleBreakDays: studyBreak.ineligibleBreakDays,
+        })),
+      };
     }
     return programOffering;
   }
@@ -1019,7 +1089,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   ): CalculatedStudyBreaksAndWeeks {
     let sumOfTotalEligibleBreakDays = 0;
     let sumOfTotalIneligibleBreakDays = 0;
-    const studyBreaks = offering.studyBreaks.map((eachBreak) => {
+    const studyBreaks = offering.studyBreaks?.map((eachBreak) => {
       const newStudyBreak = {} as StudyBreak;
       newStudyBreak.breakDays = dateDifference(
         eachBreak.breakEndDate,
@@ -1075,4 +1145,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     return studyBreaksAndWeeks;
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

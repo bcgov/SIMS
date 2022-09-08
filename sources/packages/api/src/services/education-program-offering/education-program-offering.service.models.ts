@@ -1,6 +1,5 @@
 import {
   OfferingIntensity,
-  StudyBreaksAndWeeks,
   OfferingStatus,
   OfferingTypes,
   Application,

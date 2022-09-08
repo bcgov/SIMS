@@ -12,7 +12,7 @@ import {
   OfferingCSVValidationResult,
   STUDY_BREAK_INDEX_PLACE_HOLDER,
   YesNoOptions,
-} from "./education-program-offering-csv.models";
+} from "./education-program-offering-import-csv.models";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
@@ -22,7 +22,7 @@ type InstitutionCodeToIdMap = Record<string, number>;
 type ProgramCodeToProgramMap = Record<string, EducationProgram>;
 
 @Injectable()
-export class EducationProgramOfferingCSVService {
+export class EducationProgramOfferingImportCSVService {
   constructor(
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly educationProgramService: EducationProgramService,

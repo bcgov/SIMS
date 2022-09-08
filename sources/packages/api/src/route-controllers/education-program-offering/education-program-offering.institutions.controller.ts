@@ -55,12 +55,14 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { EducationProgramOfferingCSVService } from "../../services/education-program-offering/education-program-offering-csv.service";
+import { EducationProgramOfferingImportCSVService } from "../../services/education-program-offering/education-program-offering-import-csv.service";
 import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";
 import {
+  OFFERING_CREATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CSV_FORMAT_ERROR,
 } from "../../constants";
+import { OfferingCSVModel } from "src/services/education-program-offering/education-program-offering-import-csv.models";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program-offering")
@@ -69,7 +71,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly programOfferingControllerService: EducationProgramOfferingControllerService,
-    private readonly programOfferingCSVService: EducationProgramOfferingCSVService,
+    private readonly programOfferingImportCSVService: EducationProgramOfferingImportCSVService,
     private readonly programOfferingValidationService: EducationProgramOfferingValidationService,
   ) {
     super();
@@ -372,10 +374,22 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     // Read the entire file content.
     const fileContent = file.buffer.toString(OFFERING_BULK_FILE_ENCODING);
     // Convert the file raw content into CSV models.
-    const csvModels = await this.programOfferingCSVService.readCSV(fileContent);
+    let csvModels: OfferingCSVModel[];
+    try {
+      csvModels = await this.programOfferingImportCSVService.readCSV(
+        fileContent,
+      );
+    } catch (error: unknown) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Error while parsing CSV file.",
+          OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+        ),
+      );
+    }
     // Validate the CSV models.
     const csvValidations =
-      this.programOfferingCSVService.validateCSVModels(csvModels);
+      this.programOfferingImportCSVService.validateCSVModels(csvModels);
     const csvValidationsErrors = csvValidations.filter(
       (csvValidation) => csvValidation.errors.length,
     );
@@ -400,7 +414,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     }
     // Convert the CSV models to the SaveOfferingModel to execute the complete offering validation.
     const offerings =
-      await this.programOfferingCSVService.generateSaveOfferingModelFromCSVModels(
+      await this.programOfferingImportCSVService.generateSaveOfferingModelFromCSVModels(
         userToken.authorizations.institutionId,
         csvModels,
       );
@@ -416,8 +430,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     if (offeringValidationsErrors.length) {
       // There is some critical validation error that will prevent some offering to be inserted.
       const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
-        offeringValidationsErrors.map((validation, index) => {
-          const csvModel = csvModels[index];
+        offeringValidationsErrors.map((validation) => {
+          const csvModel = csvModels[validation.index];
           return {
             recordNumber: validation.index + 1,
             locationCode: csvModel.institutionLocationCode,
@@ -439,16 +453,41 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         ),
       );
     }
-    // Insert all validated offerings.
-    const insertResults =
+    // Try to insert all validated offerings.
+    const creationResults =
       await this.programOfferingService.createFromValidatedOfferings(
         offeringValidations,
         userToken.userId,
       );
+    const creationErrors = creationResults.filter(
+      (creationResult) => !creationResult.success,
+    );
+    if (creationErrors.length) {
+      // If there is any failed result throw an error.
+      const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
+        creationErrors.map((creationError) => {
+          const csvModel = csvModels[creationError.validatedOffering.index];
+          return {
+            recordNumber: creationError.validatedOffering.index + 1,
+            locationCode: csvModel.institutionLocationCode,
+            sabcProgramCode: csvModel.sabcProgramCode,
+            startDate:
+              creationError.validatedOffering.offeringModel.studyStartDate,
+            endDate: creationError.validatedOffering.offeringModel.studyEndDate,
+            errors: [creationError.error],
+          };
+        });
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Some error happen with one or more offerings being created and the entire process was aborted. No offering was added and the upload can be executed again once the error is fixed.",
+          OFFERING_CREATION_CRITICAL_ERROR,
+          validationResults,
+        ),
+      );
+    }
     // Return all created ids.
-    return insertResults.map((insertResult) => {
-      const [identifier] = insertResult.identifiers;
-      return { id: identifier.id };
+    return creationResults.map((insertResult) => {
+      return { id: insertResult.createdOfferingId };
     });
   }
 }
