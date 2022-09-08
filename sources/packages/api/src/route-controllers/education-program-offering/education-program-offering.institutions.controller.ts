@@ -42,7 +42,6 @@ import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
-  OfferingBulkInsertValidationResultAPIOutDTO,
   transformToProgramOfferingDTO,
 } from "./models/education-program-offering.dto";
 import {
@@ -57,11 +56,10 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { EducationProgramOfferingImportCSVService } from "../../services/education-program-offering/education-program-offering-import-csv.service";
 import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";
 import {
-  OFFERING_CREATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CSV_FORMAT_ERROR,
 } from "../../constants";
-import { OfferingCSVModel } from "src/services/education-program-offering/education-program-offering-import-csv.models";
+import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program-offering")
@@ -350,10 +348,22 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   }
 
   /**
-   * CSV with offering to be created under existing programs.
-   * @param file file content with all information needed t create offerings.
-   * @returns TODO: to be defined.
+   * Process a CSV with offerings to be created under existing programs.
+   * @param file file content with all information needed to create offerings.
+   * @returns when successfully executed, the list of all offerings ids created.
+   * When an error happen it will return the all the records with an error and
+   * also a user friendly description of the errors to be fixed.
    */
+  @ApiBadRequestResponse({
+    description:
+      "Error while parsing CSV file or " +
+      "some CSV data field received is not in correct format.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "An offering has invalid data or " +
+      "some error happen with one or more offerings being created and the entire process was aborted.",
+  })
   @IsInstitutionAdmin()
   @Post("bulk-insert")
   @UseInterceptors(
@@ -377,7 +387,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     try {
       csvModels = this.programOfferingImportCSVService.readCSV(fileContent);
     } catch {
-      throw new UnprocessableEntityException(
+      throw new BadRequestException(
         new ApiProcessError(
           "Error while parsing CSV file.",
           OFFERING_VALIDATION_CSV_FORMAT_ERROR,
@@ -387,28 +397,10 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     // Validate the CSV models.
     const csvValidations =
       this.programOfferingImportCSVService.validateCSVModels(csvModels);
-    const csvValidationsErrors = csvValidations.filter(
-      (csvValidation) => csvValidation.errors.length,
+    // Assert successful validation.
+    this.programOfferingControllerService.assertCSVValidationsAreValid(
+      csvValidations,
     );
-    if (csvValidationsErrors.length) {
-      // At least one error was detected and the CSV must be fixed.
-      const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
-        csvValidationsErrors.map((validation) => ({
-          recordNumber: validation.index + 1,
-          locationCode: validation.csvModel.institutionLocationCode,
-          sabcProgramCode: validation.csvModel.sabcProgramCode,
-          startDate: validation.csvModel.studyStartDate,
-          endDate: validation.csvModel.studyEndDate,
-          errors: validation.errors,
-        }));
-      throw new BadRequestException(
-        new ApiProcessError(
-          "The CSV data received is not in correct format.",
-          OFFERING_VALIDATION_CSV_FORMAT_ERROR,
-          validationResults,
-        ),
-      );
-    }
     // Convert the CSV models to the SaveOfferingModel to execute the complete offering validation.
     const offerings =
       await this.programOfferingImportCSVService.generateSaveOfferingModelFromCSVModels(
@@ -421,67 +413,22 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         offerings,
         true,
       );
-    const offeringValidationsErrors = offeringValidations.filter(
-      (offering) => offering.errors.length,
+    // Assert successful validation.
+    this.programOfferingControllerService.assertOfferingsValidationsAreValid(
+      offeringValidations,
+      csvModels,
     );
-    if (offeringValidationsErrors.length) {
-      // There is some critical validation error that will prevent some offering to be inserted.
-      const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
-        offeringValidationsErrors.map((validation) => {
-          const csvModel = csvModels[validation.index];
-          return {
-            recordNumber: validation.index + 1,
-            locationCode: csvModel.institutionLocationCode,
-            sabcProgramCode: csvModel.sabcProgramCode,
-            startDate: validation.offeringModel.studyStartDate,
-            endDate: validation.offeringModel.studyEndDate,
-            errors: validation.errors,
-            warnings: validation.warnings.map((warning) => ({
-              warningType: warning.warningType,
-              warningMessage: warning.warningMessage,
-            })),
-          };
-        });
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "Offering has invalid data.",
-          OFFERING_VALIDATION_CRITICAL_ERROR,
-          validationResults,
-        ),
-      );
-    }
     // Try to insert all validated offerings.
     const creationResults =
       await this.programOfferingService.createFromValidatedOfferings(
         offeringValidations,
         userToken.userId,
       );
-    const creationErrors = creationResults.filter(
-      (creationResult) => !creationResult.success,
+    // Assert successful creation.
+    this.programOfferingControllerService.assertOfferingsCreationsAreAllSuccessful(
+      creationResults,
+      csvModels,
     );
-    if (creationErrors.length) {
-      // If there is any failed result throw an error.
-      const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
-        creationErrors.map((creationError) => {
-          const csvModel = csvModels[creationError.validatedOffering.index];
-          return {
-            recordNumber: creationError.validatedOffering.index + 1,
-            locationCode: csvModel.institutionLocationCode,
-            sabcProgramCode: csvModel.sabcProgramCode,
-            startDate:
-              creationError.validatedOffering.offeringModel.studyStartDate,
-            endDate: creationError.validatedOffering.offeringModel.studyEndDate,
-            errors: [creationError.error],
-          };
-        });
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "Some error happen with one or more offerings being created and the entire process was aborted. No offering was added and the upload can be executed again once the error is fixed.",
-          OFFERING_CREATION_CRITICAL_ERROR,
-          validationResults,
-        ),
-      );
-    }
     // Return all created ids.
     return creationResults.map((insertResult) => {
       return { id: insertResult.createdOfferingId };

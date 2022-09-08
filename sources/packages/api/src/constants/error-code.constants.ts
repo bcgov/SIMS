@@ -75,12 +75,23 @@ export const STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND =
  */
 export const STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA =
   "STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA";
-
+/**
+ * The validation of an offering found an error that must block
+ * the process from continuing. Warnings are not considered critical
+ * errors since the offering can still be saved in a 'pending' state.
+ */
 export const OFFERING_VALIDATION_CRITICAL_ERROR =
   "OFFERING_VALIDATION_CRITICAL_ERROR";
-
+/**
+ * The CSV content to perform the offering bulk insert is not in the
+ * expected format and cannot be parsed.
+ */
 export const OFFERING_VALIDATION_CSV_FORMAT_ERROR =
   "OFFERING_VALIDATION_CSV_FORMAT_ERROR";
-
+/**
+ * Some error happen with one or more offerings being created and the
+ * entire process was aborted. This error happens during the offerings
+ * database inserts.
+ */
 export const OFFERING_CREATION_CRITICAL_ERROR =
   "OFFERING_CREATION_CRITICAL_ERROR";

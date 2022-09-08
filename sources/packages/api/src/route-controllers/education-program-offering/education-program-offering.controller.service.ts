@@ -1,16 +1,29 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
 } from "@nestjs/common";
+import {
+  OFFERING_CREATION_CRITICAL_ERROR,
+  OFFERING_VALIDATION_CRITICAL_ERROR,
+  OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+} from "src/constants";
+import {
+  OfferingCSVModel,
+  OfferingCSVValidationResult,
+} from "../../services/education-program-offering/education-program-offering-import-csv.models";
+import { ApiProcessError } from "src/types";
 import {
   OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
 } from "../../database/entities";
 import {
+  CreateValidatedOfferingResult,
   EducationProgramOfferingService,
   EducationProgramService,
+  OfferingValidationResult,
   SaveOfferingModel,
 } from "../../services";
 import {
@@ -25,6 +38,7 @@ import {
 import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
+  OfferingBulkInsertValidationResultAPIOutDTO,
 } from "./models/education-program-offering.dto";
 
 @Injectable()
@@ -121,12 +135,24 @@ export class EducationProgramOfferingControllerService {
     }));
   }
 
+  /**
+   * Creates the offering model to be validated and saved using the DTO received.
+   * @param institutionId institution id.
+   * @param locationId location id.
+   **The authorization to validated if the location belongs to the institution
+   **is not expected to be performed by this method.
+   * @param programId program id.
+   * @param payload information to generate the model to perform the offering
+   * validation and persistence.
+   * @returns offering model to be validated and saved.
+   */
   async getSaveOfferingModelFromOfferingAPIInDTO(
     institutionId: number,
     locationId: number,
     programId: number,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<SaveOfferingModel> {
+    // Program information required to perform the offering validations.
     const program = await this.programService.getEducationProgramDetails(
       programId,
       institutionId,
@@ -142,5 +168,116 @@ export class EducationProgramOfferingControllerService {
       studyBreaks: payload.breaksAndWeeks?.studyBreaks,
       programContext: program,
     };
+  }
+
+  /**
+   * Verify if all CSV validations were performed with success and throw
+   * a BadRequestException in case of some failure.
+   * @param csvValidations validations to be verified.
+   */
+  assertCSVValidationsAreValid(csvValidations: OfferingCSVValidationResult[]) {
+    const csvValidationsErrors = csvValidations.filter(
+      (csvValidation) => csvValidation.errors.length,
+    );
+    if (csvValidationsErrors.length) {
+      // At least one error was detected and the CSV must be fixed.
+      const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
+        csvValidationsErrors.map((validation) => ({
+          recordNumber: validation.index + 1,
+          locationCode: validation.csvModel.institutionLocationCode,
+          sabcProgramCode: validation.csvModel.sabcProgramCode,
+          startDate: validation.csvModel.studyStartDate,
+          endDate: validation.csvModel.studyEndDate,
+          errors: validation.errors,
+        }));
+      throw new BadRequestException(
+        new ApiProcessError(
+          "Some CSV data field received is not in correct format.",
+          OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+          validationResults,
+        ),
+      );
+    }
+  }
+
+  /**
+   * Verify if all offerings validations were performed with success and throw
+   * a UnprocessableEntityException in case of some failure.
+   * @param offeringValidations validations to be verified.
+   * @param csvModels reference CSV models to provide extra context in case
+   * an error must be generated.
+   */
+  assertOfferingsValidationsAreValid(
+    offeringValidations: OfferingValidationResult[],
+    csvModels: OfferingCSVModel[],
+  ) {
+    const offeringValidationsErrors = offeringValidations.filter(
+      (offering) => offering.errors.length,
+    );
+    if (offeringValidationsErrors.length) {
+      // There is some critical validation error that will prevent some offering to be inserted.
+      const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
+        offeringValidationsErrors.map((validation) => {
+          const csvModel = csvModels[validation.index];
+          return {
+            recordNumber: validation.index + 1,
+            locationCode: csvModel.institutionLocationCode,
+            sabcProgramCode: csvModel.sabcProgramCode,
+            startDate: validation.offeringModel.studyStartDate,
+            endDate: validation.offeringModel.studyEndDate,
+            errors: validation.errors,
+            warnings: validation.warnings.map((warning) => ({
+              warningType: warning.warningType,
+              warningMessage: warning.warningMessage,
+            })),
+          };
+        });
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "An offering has invalid data.",
+          OFFERING_VALIDATION_CRITICAL_ERROR,
+          validationResults,
+        ),
+      );
+    }
+  }
+
+  /**
+   * Verify if all offerings were successfully inserted and throw
+   * an UnprocessableEntityException in case of some failure.
+   * @param creationResults insert results from all the offerings.
+   * @param csvModels reference CSV models to provide extra context in case
+   * an error must be generated.
+   */
+  assertOfferingsCreationsAreAllSuccessful(
+    creationResults: CreateValidatedOfferingResult[],
+    csvModels: OfferingCSVModel[],
+  ) {
+    const creationErrors = creationResults.filter(
+      (creationResult) => !creationResult.success,
+    );
+    if (creationErrors.length) {
+      // If there is any failed result throw an error.
+      const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
+        creationErrors.map((creationError) => {
+          const csvModel = csvModels[creationError.validatedOffering.index];
+          return {
+            recordNumber: creationError.validatedOffering.index + 1,
+            locationCode: csvModel.institutionLocationCode,
+            sabcProgramCode: csvModel.sabcProgramCode,
+            startDate:
+              creationError.validatedOffering.offeringModel.studyStartDate,
+            endDate: creationError.validatedOffering.offeringModel.studyEndDate,
+            errors: [creationError.error],
+          };
+        });
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Some error happen with one or more offerings being created and the entire process was aborted. No offering was added and the upload can be executed again once the error is fixed.",
+          OFFERING_CREATION_CRITICAL_ERROR,
+          validationResults,
+        ),
+      );
+    }
   }
 }

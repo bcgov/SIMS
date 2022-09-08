@@ -222,6 +222,11 @@ export class OfferingChangeAssessmentAPIInDTO {
   assessmentNotes: string;
 }
 
+/**
+ * Represents the possible errors that can happen during the
+ * offerings bulk insert and provides a detailed description
+ * for every record that has an error.
+ */
 export class OfferingBulkInsertValidationResultAPIOutDTO {
   recordNumber: number;
   locationCode: string;
@@ -232,6 +237,11 @@ export class OfferingBulkInsertValidationResultAPIOutDTO {
   warnings?: ValidationWarningResultAPIOutDTO[];
 }
 
+/**
+ * Represents an error considered not critical for
+ * an offering and provides a user-friendly message
+ * and a type that uniquely identifies this warning.
+ */
 export class ValidationWarningResultAPIOutDTO {
   warningType: OfferingValidationWarnings;
   warningMessage: string;
