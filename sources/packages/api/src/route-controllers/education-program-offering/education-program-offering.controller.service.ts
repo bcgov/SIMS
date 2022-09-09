@@ -8,7 +8,7 @@ import {
   OFFERING_CREATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CSV_FORMAT_ERROR,
-} from "src/constants";
+} from "../../constants";
 import {
   OfferingCSVModel,
   OfferingCSVValidationResult,
