@@ -193,7 +193,7 @@ export class EducationProgramOfferingControllerService {
         }));
       throw new BadRequestException(
         new ApiProcessError(
-          "Some CSV data field received is not in correct format.",
+          "One or more CSV data fields received are not in the correct format.",
           OFFERING_VALIDATION_CSV_FORMAT_ERROR,
           validationResults,
         ),

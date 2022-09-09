@@ -354,7 +354,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @ApiBadRequestResponse({
     description:
       "Error while parsing CSV file or " +
-      "some CSV data field received is not in correct format.",
+      "one or more CSV data fields received are not in the correct format.",
   })
   @ApiUnprocessableEntityResponse({
     description:
