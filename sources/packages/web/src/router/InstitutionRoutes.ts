@@ -36,6 +36,7 @@ import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
 import ViewSubmittedApplicationScholasticStanding from "@/views/institution/locations/active-applications/ViewSubmittedApplicationScholasticStanding.vue";
 import OfferingRequestChange from "@/views/institution/locations/offerings/OfferingRequestChange.vue";
+import OfferingsUpload from "@/views/institution/OfferingsUpload.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -400,6 +401,18 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           checkAllowedLocation: {
             userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
           },
+        },
+      },
+      {
+        path: AppRoutes.OfferingsUpload,
+        name: InstitutionRoutesConst.OFFERINGS_UPLOAD,
+        components: {
+          default: OfferingsUpload,
+          sidebar: ManageInstitutionSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          userTypes: [InstitutionUserTypes.admin],
         },
       },
     ],
