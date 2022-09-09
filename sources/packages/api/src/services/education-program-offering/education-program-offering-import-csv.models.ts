@@ -213,7 +213,7 @@ export class OfferingCSVModel {
    * Show year of study.
    */
   @IsEnum(YesNoOptions, {
-    message: getYesNoFormatMessage(CSVHeaders.YearOfStudy),
+    message: getYesNoFormatMessage(CSVHeaders.ShowYearOfStudy),
   })
   showYearOfStudy: YesNoOptions;
   /**

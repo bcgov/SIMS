@@ -34,8 +34,9 @@ import {
   CustomNamedError,
   mapFromRawAndEntities,
   dateDifference,
-  OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD,
+  OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
+  getISODateOnlyString,
 } from "../../utilities";
 import { OFFERING_NOT_VALID } from "../../constants";
 import {
@@ -434,8 +435,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         totalFundedWeeks: calculatedBreaks.totalFundedWeeks,
         unfundedStudyPeriodDays: calculatedBreaks.unfundedStudyPeriodDays,
         studyBreaks: calculatedBreaks.studyBreaks?.map((studyBreak) => ({
-          breakStartDate: studyBreak.breakStartDate,
-          breakEndDate: studyBreak.breakEndDate,
+          breakStartDate: getISODateOnlyString(studyBreak.breakStartDate),
+          breakEndDate: getISODateOnlyString(studyBreak.breakEndDate),
           breakDays: studyBreak.breakDays,
           eligibleBreakDays: studyBreak.eligibleBreakDays,
           ineligibleBreakDays: studyBreak.ineligibleBreakDays,
@@ -1129,7 +1130,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       newStudyBreak.breakEndDate = eachBreak.breakEndDate;
       newStudyBreak.eligibleBreakDays = Math.min(
         newStudyBreak.breakDays,
-        OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD,
+        OFFERING_STUDY_BREAK_MAX_DAYS,
       );
       newStudyBreak.ineligibleBreakDays =
         newStudyBreak.breakDays - newStudyBreak.eligibleBreakDays;

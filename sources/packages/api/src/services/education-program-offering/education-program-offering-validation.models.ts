@@ -43,7 +43,7 @@ import {
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
   OFFERING_COURSE_LOAD_MAX_VALUE,
   OFFERING_COURSE_LOAD_MIN_VALUE,
-  OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD,
+  OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_STUDY_BREAK_MIN_DAYS,
   OFFERING_STUDY_PERIOD_MAX_DAYS,
   OFFERING_STUDY_PERIOD_MIN_DAYS,
@@ -94,7 +94,8 @@ export type CalculatedStudyBreaksAndWeeks = StudyBreaksAndWeeks & {
  * Possible warnings unique identifiers.
  */
 export enum OfferingValidationWarnings {
-  InvalidStudyBreakConsecutiveThreshold = "invalidStudyBreakConsecutiveThreshold",
+  InvalidStudyBreakAmountOfDays = "InvalidStudyBreakAmountOfDays",
+  InvalidStudyBreaksCombinedThresholdPercentage = "invalidStudyBreaksCombinedThresholdPercentage",
   ProgramOfferingIntensityMismatch = "programOfferingIntensityMismatch",
   ProgramOfferingDeliveryMismatch = "programOfferingDeliveryMismatch",
   ProgramOfferingWILMismatch = "programOfferingWILMismatch",
@@ -151,10 +152,10 @@ export class StudyBreak {
   )
   @PeriodMaxLength(
     (studyBreak: StudyBreak) => studyBreak.breakStartDate,
-    OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD,
+    OFFERING_STUDY_BREAK_MAX_DAYS,
     {
       context: new ValidationWarning(
-        OfferingValidationWarnings.InvalidStudyBreakConsecutiveThreshold,
+        OfferingValidationWarnings.InvalidStudyBreakAmountOfDays,
       ),
     },
   )
@@ -328,6 +329,11 @@ export class SaveOfferingModel {
   @StudyBreaksCombinedMustNotExceedsThreshold(
     studyStartDateProperty,
     studyEndDateProperty,
+    {
+      context: new ValidationWarning(
+        OfferingValidationWarnings.InvalidStudyBreaksCombinedThresholdPercentage,
+      ),
+    },
   )
   @HasValidOfferingPeriodForFundedDays(
     studyStartDateProperty,

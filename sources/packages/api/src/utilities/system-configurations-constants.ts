@@ -132,8 +132,9 @@ export const OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD = 0.
 export const OFFERING_STUDY_BREAK_MIN_DAYS = 6;
 /**
  * A study break period should not exceed the amount of days defined by this const.
+ * If exceeded, the extra days are considered ineligible days.
  */
-export const OFFERING_STUDY_BREAK_CONSECUTIVE_DAYS_THRESHOLD = 21;
+export const OFFERING_STUDY_BREAK_MAX_DAYS = 21;
 /**
  * Minimal value to an offering year of study.
  */

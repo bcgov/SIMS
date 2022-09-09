@@ -5,7 +5,7 @@ import {
 } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 import { EducationProgramOffering } from "../../../database/entities/education-program-offering.model";
-import { getUserFullName } from "../../../utilities";
+import { getISODateOnlyString, getUserFullName } from "../../../utilities";
 import {
   Allow,
   IsBoolean,
@@ -108,8 +108,8 @@ export class EducationProgramOfferingAPIInDTO {
 export class EducationProgramOfferingAPIOutDTO {
   id: number;
   offeringName: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
+  studyStartDate: string;
+  studyEndDate: string;
   actualTuitionCosts: number;
   programRelatedCosts: number;
   mandatoryFees: number;
@@ -122,7 +122,7 @@ export class EducationProgramOfferingAPIOutDTO {
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
   offeringType: OfferingTypes;
-  offeringWILType?: string;
+  offeringWILComponentType?: string;
   showYearOfStudy?: boolean;
   breaksAndWeeks?: StudyBreaksAndWeeksAPIOutDTO;
   assessedBy?: string;
@@ -162,8 +162,8 @@ export const transformToProgramOfferingDTO = (
   return {
     id: offering.id,
     offeringName: offering.name,
-    studyStartDate: offering.studyStartDate,
-    studyEndDate: offering.studyEndDate,
+    studyStartDate: getISODateOnlyString(offering.studyStartDate),
+    studyEndDate: getISODateOnlyString(offering.studyEndDate),
     actualTuitionCosts: offering.actualTuitionCosts,
     programRelatedCosts: offering.programRelatedCosts,
     mandatoryFees: offering.mandatoryFees,
@@ -174,7 +174,7 @@ export const transformToProgramOfferingDTO = (
     yearOfStudy: offering.yearOfStudy,
     showYearOfStudy: offering.showYearOfStudy,
     hasOfferingWILComponent: offering.hasOfferingWILComponent,
-    offeringWILType: offering.offeringWILType,
+    offeringWILComponentType: offering.offeringWILType,
     breaksAndWeeks: offering.studyBreaks,
     offeringDeclaration: offering.offeringDeclaration,
     submittedDate: offering.submittedDate,
