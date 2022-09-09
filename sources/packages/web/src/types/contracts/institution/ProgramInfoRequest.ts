@@ -31,5 +31,5 @@ export enum ProgramInfoStatus {
  */
 export class ApproveProgramInfoRequestModel {
   requestedTuitionRemittance = null;
-  tuitionRemittance = null;
+  tuitionRemittanceAmount = 0;
 }

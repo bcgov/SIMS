@@ -251,3 +251,7 @@ html * {
 .input-unset-display-opacity .v-label {
   opacity: unset !important;
 }
+// Removing nowrap.
+.no-wrap .v-list-item-title {
+  white-space: normal;
+}

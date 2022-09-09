@@ -1,11 +1,17 @@
-// TODO: When all icon are replace to font awesome,
-// replace  icon?: string | string[] with
-// icon?:string[];
+// todo: use MenuInterface and once its removed from all, delete the below
 export interface MenuModel {
   label: string;
   icon?: string | string[];
   command?: () => void;
   items?: MenuModel[];
+}
+// Interface for Menu
+export interface MenuInterface {
+  title: string;
+  value?: string | number;
+  icon?: string;
+  command?: any;
+  items?: MenuInterface[];
 }
 
 export interface Address {

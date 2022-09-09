@@ -49,63 +49,25 @@
       formName="confirmsStudentEnrollment"
       :formData="initialData"
     />
+    <!-- todo: remove old form definition -->
     <!-- Approve modal -->
-    <!-- <formio-modal-dialog
-      max-width="730"
-      ref="confirmCOEModal"
-      title="Confirm enrolment"
-      formName="confirmCOE"
-    >
-      <template #actions="{ cancel, submit }">
-        <v-row class="m-0 p-0">
-          <v-btn color="primary" variant="outlined" @click="cancel"
-            >Cancel</v-btn
-          >
-          <v-btn
-            class="float-right"
-            @click="submit"
-            color="primary"
-            variant="elevated"
-            >Continue to confirmation</v-btn
-          >
-        </v-row>
-      </template>
-    </formio-modal-dialog> -->
-    <!-- todo: ann confirm with if this form modals needs to be moved to vue??? -->
-    <!-- Deny modal -->
-    <formio-modal-dialog
-      max-width="730"
-      ref="denyCOEModal"
-      title="Decline enrolment"
-      formName="declineConfirmationOfEnrollment"
-      @loaded="denyFormLoaded"
-    >
-      <template #actions="{ cancel, submit }">
-        <v-row class="m-0 p-0">
-          <v-btn color="primary" variant="outlined" @click="cancel"
-            >Cancel</v-btn
-          >
-          <v-btn
-            class="float-right"
-            @click="submit"
-            color="primary"
-            variant="elevated"
-            >Decline enrolment now</v-btn
-          >
-        </v-row>
-      </template>
-    </formio-modal-dialog>
     <approve-c-o-e ref="confirmCOEModal" />
+    <!-- Deny modal -->
+    <deny-c-o-e ref="denyCOEModal" />
   </full-page-container>
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { onMounted, ref, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
-import { COEStatus, FormIOForm, ApiProcessError, MenuType } from "@/types";
-import { useSnackBar, ModalDialog, useFormioUtils } from "@/composables";
+import {
+  COEStatus,
+  ApiProcessError,
+  MenuType,
+  ApproveProgramInfoRequestModel,
+} from "@/types";
+import { useSnackBar, ModalDialog, useCOE } from "@/composables";
 import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
@@ -113,17 +75,15 @@ import {
 
 import {
   ApplicationDetailsForCOEAPIOutDTO,
-  ConfirmationOfEnrollmentAPIInDTO,
   DenyConfirmationOfEnrollmentAPIInDTO,
 } from "@/services/http/dto";
 import ApproveCOE from "@/components/institutions/modals/confirmationOfEnrollment/ApproveCOE.vue";
-
-const COE_DENIAL_REASON_RADIO = "coeDenyReasonId";
+import DenyCOE from "@/components/institutions/modals/confirmationOfEnrollment/DenyCOE.vue";
 
 export default {
   components: {
-    FormioModalDialog,
     ApproveCOE,
+    DenyCOE,
   },
   props: {
     disbursementScheduleId: {
@@ -136,13 +96,17 @@ export default {
     },
   },
   setup(props: any) {
+    const { mapCOEChipStatus } = useCOE();
     const router = useRouter();
     const snackBar = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
     const items = ref([] as MenuType[]);
-    const denyCOEModal = ref({} as ModalDialog<FormIOForm & boolean>);
-    const confirmCOEModal = ref({} as ModalDialog<FormIOForm & boolean>);
-    const formioUtils = useFormioUtils();
+    const denyCOEModal = ref(
+      {} as ModalDialog<DenyConfirmationOfEnrollmentAPIInDTO | boolean>,
+    );
+    const confirmCOEModal = ref(
+      {} as ModalDialog<ApproveProgramInfoRequestModel | boolean>,
+    );
 
     const loadInitialData = async () => {
       initialData.value =
@@ -150,6 +114,9 @@ export default {
           props.disbursementScheduleId,
           props.locationId,
         );
+      initialData.value.COEstatusClass = mapCOEChipStatus(
+        initialData.value.applicationCOEStatus,
+      );
     };
 
     const showHideConfirmCOE = async () => {
@@ -158,7 +125,7 @@ export default {
         return;
       }
       try {
-        const payload = modalResult.data as ConfirmationOfEnrollmentAPIInDTO;
+        const payload = modalResult as ApproveProgramInfoRequestModel;
         payload.tuitionRemittanceAmount = payload.tuitionRemittanceAmount ?? 0;
         await ConfirmationOfEnrollmentService.shared.confirmEnrollment(
           props.locationId,
@@ -176,7 +143,6 @@ export default {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An error happened while confirming the COE.";
         if (error instanceof ApiProcessError) {
-          console.log(error.message, "+++++++++++++msg");
           switch (error.errorType) {
             case FIRST_COE_NOT_COMPLETE:
               errorLabel = "First COE is not completed.";
@@ -199,7 +165,7 @@ export default {
       }
       try {
         const submissionData =
-          modalResult.data as DenyConfirmationOfEnrollmentAPIInDTO;
+          modalResult as DenyConfirmationOfEnrollmentAPIInDTO;
         await ConfirmationOfEnrollmentService.shared.denyConfirmationOfEnrollment(
           props.locationId,
           props.disbursementScheduleId,
@@ -257,14 +223,6 @@ export default {
       await loadInitialData();
     });
 
-    const denyFormLoaded = async (form: FormIOForm) => {
-      formioUtils.setRadioOptions(
-        form,
-        COE_DENIAL_REASON_RADIO,
-        await ConfirmationOfEnrollmentService.shared.getCOEDenialReasons(),
-      );
-    };
-
     return {
       initialData,
       items,
@@ -274,7 +232,6 @@ export default {
       denyCOEModal,
       InstitutionRoutesConst,
       confirmCOEModal,
-      denyFormLoaded,
     };
   },
 };
