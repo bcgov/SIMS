@@ -13,7 +13,7 @@ import {
   OfferingCSVModel,
   OfferingCSVValidationResult,
 } from "../../services/education-program-offering/education-program-offering-import-csv.models";
-import { ApiProcessError } from "src/types";
+import { ApiProcessError } from "../../types";
 import {
   OfferingIntensity,
   OfferingStatus,
