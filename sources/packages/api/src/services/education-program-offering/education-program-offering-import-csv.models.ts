@@ -33,27 +33,27 @@ export const STUDY_BREAK_INDEX_PLACE_HOLDER = "{index}";
  * The CSV model parser uses this as a base to parse the CSV string into an object model.
  */
 export const CSVHeaders = {
-  LocationCode: "Institution Location Code",
-  SABCProgramCode: "SABC Program Code",
-  OfferingName: "Name",
-  YearOfStudy: "Year of Study",
-  ShowYearOfStudy: "Show Year of Study",
-  OfferingIntensity: "Offering Intensity",
-  CourseLoad: "Course Load",
-  DeliveredType: "Delivered Type",
-  WILComponent: "WIL Component",
-  WILComponentType: "WIL Component Type",
-  StudyStartDate: "Start Date",
-  StudyEndDate: "End Date",
-  HasStudyBreaks: "Has Study Breaks",
-  ActualTuitionCosts: "Actual Tuition",
-  ProgramRelatedCosts: "Program Related Costs",
-  MandatoryFees: "Mandatory Fees",
-  ExceptionalExpenses: "Exceptional Expenses",
-  PublicOffering: "Public Offering",
-  Consent: "Consent",
-  StudyBreakStartDate: `Study Break ${STUDY_BREAK_INDEX_PLACE_HOLDER} - Start Date`,
-  StudyBreakEndDate: `Study Break ${STUDY_BREAK_INDEX_PLACE_HOLDER} - End Date`,
+  locationCode: "Institution Location Code",
+  sabcProgramCode: "SABC Program Code",
+  offeringName: "Name",
+  yearOfStudy: "Year of Study",
+  showYearOfStudy: "Show Year of Study",
+  offeringIntensity: "Offering Intensity",
+  courseLoad: "Course Load",
+  deliveredType: "Delivered Type",
+  wilComponent: "WIL Component",
+  wilComponentType: "WIL Component Type",
+  studyStartDate: "Start Date",
+  studyEndDate: "End Date",
+  hasStudyBreaks: "Has Study Breaks",
+  actualTuitionCosts: "Actual Tuition",
+  programRelatedCosts: "Program Related Costs",
+  mandatoryFees: "Mandatory Fees",
+  exceptionalExpenses: "Exceptional Expenses",
+  publicOffering: "Public Offering",
+  consent: "Consent",
+  studyBreakStartDate: `Study Break ${STUDY_BREAK_INDEX_PLACE_HOLDER} - Start Date`,
+  studyBreakEndDate: `Study Break ${STUDY_BREAK_INDEX_PLACE_HOLDER} - End Date`,
 };
 
 /**
@@ -61,11 +61,11 @@ export const CSVHeaders = {
  */
 export class CSVStudyBreak {
   @IsDateString(undefined, {
-    message: getDateFormatMessage(CSVHeaders.StudyBreakStartDate),
+    message: getDateFormatMessage(CSVHeaders.studyBreakStartDate),
   })
   breakStartDate: string;
   @IsDateString(undefined, {
-    message: getDateFormatMessage(CSVHeaders.StudyBreakEndDate),
+    message: getDateFormatMessage(CSVHeaders.studyBreakEndDate),
   })
   breakEndDate: string;
 }
@@ -127,61 +127,61 @@ export class OfferingCSVModel {
    * Institution location code that uniquely identifies a location in the institution.
    */
   @Matches(/^[A-Z]{4}$/, {
-    message: `${CSVHeaders.LocationCode} must be a 4 letters uppercase code.`,
+    message: `${CSVHeaders.locationCode} must be a 4 letters uppercase code.`,
   })
   institutionLocationCode: string;
   /**
    * SABC program code that uniquely identifies a program for an institution.
    */
   @Matches(/^[[A-Z]{3}\d{1}$/, {
-    message: `${CSVHeaders.SABCProgramCode} must be a 3 uppercase letters followed by a number.`,
+    message: `${CSVHeaders.sabcProgramCode} must be a 3 uppercase letters followed by a number.`,
   })
   sabcProgramCode: string;
   /**
    * Offering name.
    */
-  @IsNotEmpty({ message: `${CSVHeaders.OfferingName} must be provided.` })
+  @IsNotEmpty({ message: `${CSVHeaders.offeringName} must be provided.` })
   offeringName: string;
   /**
    * Offering study start date.
    */
   @IsDateString(undefined, {
-    message: getDateFormatMessage(CSVHeaders.StudyStartDate),
+    message: getDateFormatMessage(CSVHeaders.studyStartDate),
   })
   studyStartDate: string;
   /**
    * Offering study end date.
    */
   @IsDateString(undefined, {
-    message: getDateFormatMessage(CSVHeaders.StudyEndDate),
+    message: getDateFormatMessage(CSVHeaders.studyEndDate),
   })
   studyEndDate: string;
   /**
    * Actual tuition costs.
    */
   @IsNumber(currencyNumberOptions, {
-    message: getCurrencyFormatMessage(CSVHeaders.ActualTuitionCosts),
+    message: getCurrencyFormatMessage(CSVHeaders.actualTuitionCosts),
   })
   actualTuitionCosts: number;
   /**
    * Program related costs.
    */
   @IsNumber(currencyNumberOptions, {
-    message: getCurrencyFormatMessage(CSVHeaders.ProgramRelatedCosts),
+    message: getCurrencyFormatMessage(CSVHeaders.programRelatedCosts),
   })
   programRelatedCosts: number;
   /**
    * Mandatory fees.
    */
   @IsNumber(currencyNumberOptions, {
-    message: getCurrencyFormatMessage(CSVHeaders.MandatoryFees),
+    message: getCurrencyFormatMessage(CSVHeaders.mandatoryFees),
   })
   mandatoryFees: number;
   /**
    * Exceptional expenses.
    */
   @IsNumber(currencyNumberOptions, {
-    message: getCurrencyFormatMessage(CSVHeaders.ExceptionalExpenses),
+    message: getCurrencyFormatMessage(CSVHeaders.exceptionalExpenses),
   })
   exceptionalExpenses: number;
   /**
@@ -189,7 +189,7 @@ export class OfferingCSVModel {
    */
   @IsEnum(OfferingDeliveryOptions, {
     message: getEnumFormatMessage(
-      CSVHeaders.DeliveredType,
+      CSVHeaders.deliveredType,
       OfferingDeliveryOptions,
     ),
   })
@@ -199,7 +199,7 @@ export class OfferingCSVModel {
    */
   @IsEnum(OfferingIntensity, {
     message: getEnumFormatMessage(
-      CSVHeaders.OfferingIntensity,
+      CSVHeaders.offeringIntensity,
       OfferingIntensity,
     ),
   })
@@ -213,14 +213,14 @@ export class OfferingCSVModel {
    * Show year of study.
    */
   @IsEnum(YesNoOptions, {
-    message: getYesNoFormatMessage(CSVHeaders.ShowYearOfStudy),
+    message: getYesNoFormatMessage(CSVHeaders.showYearOfStudy),
   })
   showYearOfStudy: YesNoOptions;
   /**
    * Indicates if the offering has a WIL(work-integrated learning).
    */
   @IsEnum(YesNoOptions, {
-    message: getYesNoFormatMessage(CSVHeaders.WILComponent),
+    message: getYesNoFormatMessage(CSVHeaders.wilComponent),
   })
   WILComponent: YesNoOptions;
   /**
@@ -230,7 +230,7 @@ export class OfferingCSVModel {
   @ValidateIf(
     (csvModel: OfferingCSVModel) => csvModel.WILComponent === YesNoOptions.Yes,
     {
-      message: `${CSVHeaders.WILComponentType} is required when ${CSVHeaders.WILComponent} is set to '${YesNoOptions.Yes}'.`,
+      message: `${CSVHeaders.wilComponentType} is required when ${CSVHeaders.wilComponent} is set to '${YesNoOptions.Yes}'.`,
     },
   )
   @IsNotEmpty()
@@ -239,14 +239,14 @@ export class OfferingCSVModel {
    * User consent to have the offering submitted.
    */
   @IsIn([YesNoOptions.Yes], {
-    message: `${CSVHeaders.Consent} must be set to '${YesNoOptions.Yes}'.`,
+    message: `${CSVHeaders.consent} must be set to '${YesNoOptions.Yes}'.`,
   })
   consent: YesNoOptions;
   /**
    * Indicates if the offering should be available for every student to select.
    */
   @IsEnum(YesNoOptions, {
-    message: getYesNoFormatMessage(CSVHeaders.PublicOffering),
+    message: getYesNoFormatMessage(CSVHeaders.publicOffering),
   })
   publicOffering: YesNoOptions;
   /**
@@ -259,7 +259,7 @@ export class OfferingCSVModel {
    * Indicates if the offering has some study break.
    */
   @IsEnum(YesNoOptions, {
-    message: getYesNoFormatMessage(CSVHeaders.HasStudyBreaks),
+    message: getYesNoFormatMessage(CSVHeaders.hasStudyBreaks),
   })
   hasStudyBreaks: YesNoOptions;
   /**

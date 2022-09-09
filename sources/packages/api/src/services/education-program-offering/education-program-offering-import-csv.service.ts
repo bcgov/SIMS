@@ -158,33 +158,33 @@ export class EducationProgramOfferingImportCSVService {
     parsedResult.data.forEach((line) => {
       const offeringModel = {} as OfferingCSVModel;
       offeringModels.push(offeringModel);
-      offeringModel.institutionLocationCode = line[CSVHeaders.LocationCode];
-      offeringModel.sabcProgramCode = line[CSVHeaders.SABCProgramCode];
-      offeringModel.offeringName = line[CSVHeaders.OfferingName];
-      offeringModel.yearOfStudy = line[CSVHeaders.YearOfStudy];
-      offeringModel.showYearOfStudy = line[CSVHeaders.ShowYearOfStudy];
-      offeringModel.offeringIntensity = line[CSVHeaders.OfferingIntensity];
-      offeringModel.courseLoad = line[CSVHeaders.CourseLoad];
-      offeringModel.courseLoad = line[CSVHeaders.CourseLoad];
-      offeringModel.offeringDelivered = line[CSVHeaders.DeliveredType];
-      offeringModel.WILComponent = line[CSVHeaders.WILComponent];
-      offeringModel.WILComponentType = line[CSVHeaders.WILComponentType];
-      offeringModel.studyStartDate = line[CSVHeaders.StudyStartDate];
-      offeringModel.studyEndDate = line[CSVHeaders.StudyEndDate];
-      offeringModel.hasStudyBreaks = line[CSVHeaders.HasStudyBreaks];
-      offeringModel.actualTuitionCosts = line[CSVHeaders.ActualTuitionCosts];
-      offeringModel.programRelatedCosts = line[CSVHeaders.ProgramRelatedCosts];
-      offeringModel.mandatoryFees = line[CSVHeaders.MandatoryFees];
-      offeringModel.exceptionalExpenses = line[CSVHeaders.ExceptionalExpenses];
-      offeringModel.publicOffering = line[CSVHeaders.PublicOffering];
-      offeringModel.consent = line[CSVHeaders.Consent];
+      offeringModel.institutionLocationCode = line[CSVHeaders.locationCode];
+      offeringModel.sabcProgramCode = line[CSVHeaders.sabcProgramCode];
+      offeringModel.offeringName = line[CSVHeaders.offeringName];
+      offeringModel.yearOfStudy = line[CSVHeaders.yearOfStudy];
+      offeringModel.showYearOfStudy = line[CSVHeaders.showYearOfStudy];
+      offeringModel.offeringIntensity = line[CSVHeaders.offeringIntensity];
+      offeringModel.courseLoad = line[CSVHeaders.courseLoad];
+      offeringModel.courseLoad = line[CSVHeaders.courseLoad];
+      offeringModel.offeringDelivered = line[CSVHeaders.deliveredType];
+      offeringModel.WILComponent = line[CSVHeaders.wilComponent];
+      offeringModel.WILComponentType = line[CSVHeaders.wilComponentType];
+      offeringModel.studyStartDate = line[CSVHeaders.studyStartDate];
+      offeringModel.studyEndDate = line[CSVHeaders.studyEndDate];
+      offeringModel.hasStudyBreaks = line[CSVHeaders.hasStudyBreaks];
+      offeringModel.actualTuitionCosts = line[CSVHeaders.actualTuitionCosts];
+      offeringModel.programRelatedCosts = line[CSVHeaders.programRelatedCosts];
+      offeringModel.mandatoryFees = line[CSVHeaders.mandatoryFees];
+      offeringModel.exceptionalExpenses = line[CSVHeaders.exceptionalExpenses];
+      offeringModel.publicOffering = line[CSVHeaders.publicOffering];
+      offeringModel.consent = line[CSVHeaders.consent];
       offeringModel.studyBreaks = [];
       for (let i = 1; i <= MAX_STUDY_BREAKS_ENTRIES; i++) {
-        const breakStartDateHeader = CSVHeaders.StudyBreakStartDate.replace(
+        const breakStartDateHeader = CSVHeaders.studyBreakStartDate.replace(
           STUDY_BREAK_INDEX_PLACE_HOLDER,
           i.toString(),
         );
-        const breakEndDateHeader = CSVHeaders.StudyBreakEndDate.replace(
+        const breakEndDateHeader = CSVHeaders.studyBreakEndDate.replace(
           STUDY_BREAK_INDEX_PLACE_HOLDER,
           i.toString(),
         );
