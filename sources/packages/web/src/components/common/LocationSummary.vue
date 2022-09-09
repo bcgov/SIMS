@@ -94,7 +94,6 @@ import { ref, onMounted, computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
-import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionLocationsDetails, Role } from "@/types";
 import { AuthService } from "@/services/AuthService";
 import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
@@ -105,7 +104,6 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 export default {
   emits: ["editLocation"],
   components: {
-    TitleValue,
     StatusChipDesignationAgreement,
     CheckPermissionRole,
   },

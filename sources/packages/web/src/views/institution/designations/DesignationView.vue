@@ -1,25 +1,23 @@
 <template>
-  <div class="p-m-4">
-    <header-navigator
-      title="Manage designations"
-      subTitle="View designations"
-      :routeLocation="{
-        name: InstitutionRoutesConst.MANAGE_DESIGNATION,
-      }"
-    />
-    <full-page-container class="mt-4">
-      <!-- Form.io is not reactively binding the property readOnly. Hence loading the form only after API call is completed. -->
-      <!-- If the readOnly value change after DOM(form) is mounted, form does not respond to it.  -->
-      <designation-agreement-form
-        v-if="modelLoaded"
-        :model="designationModel"
-      ></designation-agreement-form>
-    </full-page-container>
-  </div>
+  <full-page-container :full-width="true">
+    <template #header>
+      <header-navigator
+        title="Manage designations"
+        subTitle="View Designation"
+        :routeLocation="{
+          name: InstitutionRoutesConst.MANAGE_DESIGNATION,
+        }"
+      />
+    </template>
+    <designation-agreement-form
+      :model="designationModel"
+      :view-only="true"
+    ></designation-agreement-form>
+  </full-page-container>
 </template>
 
 <script lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive } from "vue";
 import { useFormatters, useDesignationAgreement } from "@/composables";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import {
@@ -40,8 +38,9 @@ export default {
   setup(props: any) {
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
-    const designationModel = reactive({} as DesignationModel);
-    const modelLoaded = ref(false);
+    const designationModel = reactive({
+      viewMode: DesignationFormViewModes.viewOnly,
+    } as DesignationModel);
 
     onMounted(async () => {
       const designation =
@@ -52,7 +51,6 @@ export default {
       designationModel.institutionName = designation.institutionName;
       designationModel.institutionType = designation.institutionType;
       designationModel.isBCPrivate = designation.isBCPrivate;
-      designationModel.viewMode = DesignationFormViewModes.viewOnly;
       designationModel.designationStatus = designation.designationStatus;
       designationModel.designationStatusClass = mapDesignationChipStatus(
         designation.designationStatus,
@@ -69,10 +67,9 @@ export default {
           ),
         }),
       );
-      modelLoaded.value = true;
     });
 
-    return { designationModel, InstitutionRoutesConst, modelLoaded };
+    return { designationModel, InstitutionRoutesConst };
   },
 };
 </script>

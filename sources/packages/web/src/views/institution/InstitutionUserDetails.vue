@@ -1,7 +1,7 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Manage Users" subTitle="User Summary" />
+      <header-navigator title="Manage institution" subTitle="Manage Users" />
     </template>
     <institution-user-summary
       :hasBusinessGuid="hasBusinessGuid"

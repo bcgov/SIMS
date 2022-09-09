@@ -1,10 +1,6 @@
 <!-- This component is shared between ministry and student users -->
 <template>
-  <body-header
-    title="All users"
-    class="m-1"
-    :recordsCount="usersListAndCount.count"
-  >
+  <body-header title="All users" :recordsCount="usersListAndCount.count">
     <template #actions>
       <v-row class="m-0 p-0">
         <v-text-field
@@ -59,7 +55,7 @@
       <Column :field="UserFields.Email" header="Email" sortable="true"></Column>
       <Column :field="UserFields.UserType" header="User Type">
         <template #body="slotProps">
-          {{ slotProps.data.userType }}
+          <span class="text-capitalize">{{ slotProps.data.userType }}</span>
         </template></Column
       >
       <Column :field="UserFields.Roles" header="Role">
@@ -102,10 +98,10 @@
                 @click="updateUserStatus(slotProps.data)"
                 variant="text"
                 color="primary"
-                append-icon="mdi-account-remove-outline"
+                append-icon="fa:far fa-user"
               >
                 <span class="text-decoration-underline">{{
-                  slotProps.data.isActive ? "Disable User" : "Enable User"
+                  slotProps.data.isActive ? "Disable" : "Enable"
                 }}</span>
               </v-btn>
             </template>

@@ -1,19 +1,30 @@
 <template>
-  <div class="p-m-4">
-    <header-navigator
-      title="Back all programs"
-      :routeLocation="{
-        name: InstitutionRoutesConst.LOCATION_PROGRAMS,
-        params: { locationId: locationId },
-      }"
-      subTitle="View program"
-    />
-    <ManageProgramAndOfferingSummary
+  <full-page-container :full-width="true" layout-template="centered">
+    <template #header>
+      <header-navigator
+        title="Programs"
+        :routeLocation="{
+          name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+          params: { locationId: locationId },
+        }"
+        subTitle="Program Detail"
+      />
+    </template>
+    <template #details-header>
+      <program-offering-detail-header
+        :headerDetails="{
+          ...educationProgram,
+          institutionId: institutionId,
+          status: educationProgram.programStatus,
+        }"
+      />
+    </template>
+    <manage-program-and-offering-summary
       :programId="programId"
       :locationId="locationId"
       :educationProgram="educationProgram"
     />
-  </div>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -22,9 +33,10 @@ import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAn
 import { ref, onMounted } from "vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
+import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 
 export default {
-  components: { ManageProgramAndOfferingSummary },
+  components: { ManageProgramAndOfferingSummary, ProgramOfferingDetailHeader },
   props: {
     programId: {
       type: Number,

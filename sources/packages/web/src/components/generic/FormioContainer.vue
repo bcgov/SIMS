@@ -4,7 +4,9 @@
     :data="formData"
     :readOnly="readOnly"
     @loaded="formLoaded"
-    @customEvent="$emit('customEvent', $event)"
+    @customEvent="formCustomEvent"
+    @render="formRender"
+    @changed="formChanged"
   ></formio>
   <slot name="actions" :submit="submit"></slot>
 </template>
@@ -13,7 +15,7 @@ import { SetupContext } from "vue";
 import { FormIOForm } from "@/types";
 import { useFormioUtils } from "@/composables";
 export default {
-  emits: ["submitted", "loaded", "customEvent"],
+  emits: ["submitted", "loaded", "customEvent", "render", "changed"],
   props: {
     formName: {
       type: String,
@@ -44,7 +46,19 @@ export default {
       }
     };
 
-    return { formLoaded, submit };
+    const formRender = () => {
+      context.emit("render");
+    };
+
+    const formChanged = (form: FormIOForm, event: any) => {
+      context.emit("changed", form, event);
+    };
+
+    const formCustomEvent = (form: FormIOForm, event: any) => {
+      context.emit("customEvent", form, event);
+    };
+
+    return { formLoaded, submit, formRender, formChanged, formCustomEvent };
   },
 };
 </script>

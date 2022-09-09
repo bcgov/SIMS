@@ -11,14 +11,14 @@
         <v-tab :value="COETab.ConfirmEnrollmentTab" :ripple="false">
           <div>
             <v-icon start icon="fa:far fa-check-square"></v-icon>
-            <span class="mx-1 label-bold"> Confirm enrolment </span>
+            <span class="label-bold"> Confirm enrolment </span>
           </div>
         </v-tab>
 
         <v-tab :value="COETab.UpcomingEnrollmentTab" :ripple="false">
           <div>
             <v-icon start icon="fa:far fa-folder-open" class="px-1"></v-icon>
-            <span class="mx-1 label-bold"> Upcoming enrolment </span>
+            <span class="label-bold"> Upcoming enrolment </span>
           </div>
         </v-tab>
       </v-tabs></template

@@ -9,13 +9,13 @@
           :value="ActiveApplicationTab.AvailableToReportTab"
           :ripple="false"
         >
-          <span class="mx-1 label-bold"> Available to report </span>
+          <span class="label-bold"> Available to report </span>
         </v-tab>
         <v-tab
           :value="ActiveApplicationTab.UnavailableToReportTab"
           :ripple="false"
         >
-          <span class="mx-1 label-bold"> Unavailable to report </span>
+          <span class="label-bold"> Unavailable to report </span>
         </v-tab>
       </v-tabs>
     </template>

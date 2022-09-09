@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator :title="locationName" subTitle="Programs" />
     </template>
@@ -22,63 +22,68 @@
             @click="goToAddNewProgram()"
             prepend-icon="fa:fa fa-plus-circle"
           >
-            Create New Program
+            Create program
           </v-btn>
         </v-row>
       </template>
     </body-header>
     <content-group>
-      <DataTable
-        :value="programAndCount.results"
-        :lazy="true"
-        :paginator="true"
-        :rows="DEFAULT_PAGE_LIMIT"
-        :rowsPerPageOptions="PAGINATION_LIST"
-        :totalRecords="programAndCount.count"
-        @page="paginationAndSortEvent($event)"
-        @sort="paginationAndSortEvent($event)"
-        :loading="loading"
+      <toggle-content
+        :toggled="!programAndCount.count"
+        message="You don't have programs yet"
       >
-        <Column :field="ProgramSummaryFields.CipCode" header="CIP"></Column>
-        <Column
-          :field="ProgramSummaryFields.ProgramName"
-          header="Program Name"
-          :sortable="true"
-        ></Column>
-        <Column
-          :field="ProgramSummaryFields.CredentialType"
-          header="Credential"
-          :sortable="true"
+        <DataTable
+          :value="programAndCount.results"
+          :lazy="true"
+          :paginator="true"
+          :rows="DEFAULT_PAGE_LIMIT"
+          :rowsPerPageOptions="PAGINATION_LIST"
+          :totalRecords="programAndCount.count"
+          @page="paginationAndSortEvent($event)"
+          @sort="paginationAndSortEvent($event)"
+          :loading="loading"
         >
-          <template #body="slotProps">
-            <div>
-              {{ slotProps.data.credentialTypeToDisplay }}
-            </div>
-          </template></Column
-        >
-        <Column
-          :field="ProgramSummaryFields.TotalOfferings"
-          header="Offerings"
-        ></Column>
-        <Column
-          :field="ProgramSummaryFields.ProgramStatus"
-          header="Status"
-          :sortable="true"
-          ><template #body="slotProps">
-            <status-chip-program
-              :status="slotProps.data.programStatus"
-            ></status-chip-program></template
-        ></Column>
-        <Column>
-          <template #body="slotProps">
-            <v-btn
-              variant="outlined"
-              @click="goToViewProgram(slotProps.data.programId)"
-              >View</v-btn
-            >
-          </template>
-        </Column>
-      </DataTable>
+          <Column :field="ProgramSummaryFields.CipCode" header="CIP"></Column>
+          <Column
+            :field="ProgramSummaryFields.ProgramName"
+            header="Program Name"
+            :sortable="true"
+          ></Column>
+          <Column
+            :field="ProgramSummaryFields.CredentialType"
+            header="Credential"
+            :sortable="true"
+          >
+            <template #body="slotProps">
+              <div>
+                {{ slotProps.data.credentialTypeToDisplay }}
+              </div>
+            </template></Column
+          >
+          <Column
+            :field="ProgramSummaryFields.TotalOfferings"
+            header="Study periods"
+          ></Column>
+          <Column
+            :field="ProgramSummaryFields.ProgramStatus"
+            header="Status"
+            :sortable="true"
+            ><template #body="slotProps">
+              <status-chip-program
+                :status="slotProps.data.programStatus"
+              ></status-chip-program></template
+          ></Column>
+          <Column header="Action">
+            <template #body="slotProps">
+              <v-btn
+                color="primary"
+                @click="goToViewProgram(slotProps.data.programId)"
+                >View</v-btn
+              >
+            </template>
+          </Column>
+        </DataTable>
+      </toggle-content>
     </content-group>
   </full-page-container>
 </template>
@@ -97,7 +102,7 @@ import {
   EducationProgramsSummary,
   PaginatedResults,
 } from "@/types";
-import { ref, watch, onMounted, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { useInstitutionState } from "@/composables";
 
@@ -153,7 +158,7 @@ export default {
       loading.value = false;
     };
 
-    // pagination sort event callback
+    // Pagination sort event callback.
     const paginationAndSortEvent = async (event: any) => {
       currentPage.value = event?.page;
       currentPageLimit.value = event?.rows;
@@ -170,23 +175,21 @@ export default {
           props.locationId,
         );
     };
-    // search program table
+    // Search program table.
     const searchProgramTable = async () => {
       await loadSummary(
         currentPage.value ?? DEFAULT_PAGE_NUMBER,
         currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
       );
     };
-    onMounted(async () => {
-      await Promise.all([loadSummary(), loadProgramDetails()]);
-    });
 
     watch(
       () => props.locationId,
       async () => {
-        // load program summary and institution details
+        // Load program summary and institution details.
         await Promise.all([loadSummary(), loadProgramDetails()]);
       },
+      { immediate: true },
     );
     const goToAddNewProgram = () => {
       router.push({

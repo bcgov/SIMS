@@ -5,7 +5,8 @@
     :no-click-animation="true"
     scrollable
   >
-    <v-card elevation="10" :max-width="maxWidth">
+    <!--todo: ann  Calculate max-height -->
+    <v-card elevation="10" :max-width="maxWidth" max-height="65vh">
       <v-card-header>
         <v-card-title>
           <slot name="header">
@@ -16,7 +17,7 @@
         </v-card-title>
       </v-card-header>
       <v-divider class="mx-6 mt-1 mb-4"></v-divider>
-      <v-card-text class="pt-0 max-dialog-height">
+      <v-card-text class="pt-0">
         <div class="pb-2" v-if="subTitle">{{ subTitle }}</div>
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
@@ -104,9 +105,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.max-dialog-height {
-  /* Set the max-height to 65% of the viewport to allow scrollable content. */
-  max-height: 65vh;
-}
-</style>

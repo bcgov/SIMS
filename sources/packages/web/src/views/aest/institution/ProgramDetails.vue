@@ -31,6 +31,14 @@
         </v-row>
       </template>
     </header-navigator>
+    <program-offering-detail-header
+      class="m-4"
+      :headerDetails="{
+        ...educationProgram,
+        institutionId: institutionId,
+        status: educationProgram.programStatus,
+      }"
+    />
     <ManageProgramAndOfferingSummary
       :programId="programId"
       :locationId="locationId"
@@ -59,6 +67,7 @@ import {
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 
 export default {
   components: {
@@ -66,6 +75,7 @@ export default {
     ApproveProgramModal,
     DeclineProgramModal,
     CheckPermissionRole,
+    ProgramOfferingDetailHeader,
   },
   props: {
     programId: {

@@ -1,17 +1,17 @@
 <template>
-  <full-page-container>
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator
         title="Program detail"
         :routeLocation="routeLocation"
-        subTitle="Add Study Period"
-      >
-      </header-navigator>
+        subTitle="Add offering"
+      />
     </template>
     <offering-form
       :data="initialData"
       :readOnly="false"
       @saveOffering="saveOffering"
+      :processing="processing"
     ></offering-form>
   </full-page-container>
 </template>
@@ -52,7 +52,7 @@ export default {
   setup(props: any) {
     const snackBar = useSnackBar();
     const router = useRouter();
-
+    const processing = ref(false);
     const initialData = ref({} as OfferingFormCreateModel);
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
@@ -83,6 +83,7 @@ export default {
 
     const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
+        processing.value = true;
         await EducationProgramOfferingService.shared.createProgramOffering(
           props.locationId,
           props.programId,
@@ -93,6 +94,8 @@ export default {
         router.push(routeLocation.value);
       } catch {
         snackBar.error("An error happened during the Offering create process.");
+      } finally {
+        processing.value = false;
       }
     };
 
@@ -104,6 +107,7 @@ export default {
       assessOfferingModalRef,
       BannerTypes,
       routeLocation,
+      processing,
     };
   },
 };

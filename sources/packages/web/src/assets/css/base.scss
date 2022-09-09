@@ -238,3 +238,16 @@ html * {
 .container-max-width {
   max-width: 730px !important;
 }
+
+// Btn font color white.
+.btn-font-color-light .v-btn__content {
+  color: $button-font-color;
+}
+
+// Radio btn style to match with figma
+.input-unset-display-opacity .v-input__control {
+  display: block;
+}
+.input-unset-display-opacity .v-label {
+  opacity: unset !important;
+}

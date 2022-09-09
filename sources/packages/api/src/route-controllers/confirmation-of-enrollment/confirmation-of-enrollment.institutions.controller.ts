@@ -37,6 +37,8 @@ import {
   getExtendedDateFormat,
   getISODateOnlyString,
   getTotalDisbursementAmount,
+  credentialTypeToDisplay,
+  deliveryMethod,
 } from "../../utilities";
 import {
   ApplicationDetailsForCOEAPIOutDTO,
@@ -199,6 +201,13 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         disbursementSchedule.studentAssessment.application.pirStatus,
       disbursementDate: getExtendedDateFormat(
         disbursementSchedule.disbursementDate,
+      ),
+      applicationProgramCredential: credentialTypeToDisplay(
+        offering.educationProgram.credentialType,
+      ),
+      applicationProgramDelivery: deliveryMethod(
+        offering.educationProgram.deliveredOnline,
+        offering.educationProgram.deliveredOnSite,
       ),
     };
   }

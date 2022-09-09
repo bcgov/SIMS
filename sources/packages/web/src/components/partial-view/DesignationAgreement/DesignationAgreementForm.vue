@@ -1,11 +1,20 @@
 <template>
-  <formio
-    formName="designationagreementdetails"
-    :data="model"
+  <!-- todo: ann add the form definition -->
+  <!-- todo: ann institution dashboard form definition -->
+  <formio-container
+    formName="designationAgreementDetails"
+    :formData="model"
     :readOnly="readOnly"
     @submitted="submitDesignation"
     @render="formRender"
-  ></formio>
+  >
+    <template #actions="{ submit }" v-if="!viewOnly">
+      <footer-buttons
+        :processing="processing"
+        primaryLabel="Submit"
+        @primaryClick="submit()"
+      /> </template
+  ></formio-container>
 </template>
 
 <script lang="ts">
@@ -24,6 +33,10 @@ export default {
     model: {
       type: Object,
       required: true,
+    },
+    viewOnly: {
+      type: Boolean,
+      required: false,
     },
   },
   setup(props: any, context: SetupContext) {

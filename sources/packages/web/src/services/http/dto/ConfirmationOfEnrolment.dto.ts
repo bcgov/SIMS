@@ -40,6 +40,8 @@ export interface ApplicationDetailsForCOEAPIOutDTO {
   studyBreaks?: StudyBreakCOE[];
   applicationPIRStatus: ProgramInfoStatus;
   disbursementDate: string;
+  applicationProgramCredential: string;
+  applicationProgramDelivery: string;
 }
 
 export interface COEDeniedReasonAPIOutDTO {

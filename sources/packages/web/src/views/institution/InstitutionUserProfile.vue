@@ -1,23 +1,34 @@
 <template>
-  <banner
-    class="mt-2"
-    :type="BannerTypes.Info"
-    header="Updating read-only information"
-  >
-    <template #content>
-      Please notice that the read-only information below is retrieved from your
-      BCeID account and it is not possible to change it here. If any read-only
-      information needs to be changed please visit
-      <a rel="noopener" href="https://www.bceid.ca/" target="_blank">bceid.ca</a
-      >.
-    </template>
-  </banner>
   <full-page-container>
-    <formio
+    <template #header>
+      <header-navigator title="Institution" subTitle="My Profile" />
+    </template>
+    <template #alerts>
+      <banner :type="BannerTypes.Info" header="Updating read-only information">
+        <template #content>
+          Please notice that the read-only information below is retrieved from
+          your BCeID account and it is not possible to change it here. If any
+          read-only information needs to be changed please visit
+          <a rel="noopener" href="https://www.bceid.ca/" target="_blank"
+            >bceid.ca</a
+          >.
+        </template>
+      </banner>
+    </template>
+    <!-- todo: ann formio definition -->
+    <formio-container
       formName="institutionUserProfile"
-      :data="initialData"
+      :formData="initialData"
       @submitted="submitted"
-    ></formio>
+    >
+      <template #actions="{ submit }">
+        <footer-buttons
+          :processing="processing"
+          primaryLabel="Submit"
+          @primaryClick="submit"
+          :showSecondaryButton="false"
+        /> </template
+    ></formio-container>
   </full-page-container>
 </template>
 
@@ -27,6 +38,7 @@ import { useRouter } from "vue-router";
 import { UserService } from "../../services/UserService";
 import { useSnackBar } from "@/composables";
 import {
+  FormIOForm,
   InstitutionUserDetailsDto,
   InstitutionUserPersistDto,
 } from "../../types";
@@ -40,12 +52,14 @@ export default {
     const router = useRouter();
     // Data-bind
     const initialData = ref({});
+    const processing = ref(false);
 
-    const submitted = async (data: InstitutionUserDetailsDto) => {
+    const submitted = async (form: FormIOForm<InstitutionUserDetailsDto>) => {
       const institutionUserPersistDto: InstitutionUserPersistDto = {
-        userEmail: data.userEmail,
+        userEmail: form.data.userEmail,
       };
       try {
+        processing.value = true;
         await UserService.shared.updateInstitutionUser(
           institutionUserPersistDto,
         );
@@ -55,6 +69,8 @@ export default {
         });
       } catch (excp) {
         snackBar.error("An error happened during the update process.");
+      } finally {
+        processing.value = false;
       }
     };
 

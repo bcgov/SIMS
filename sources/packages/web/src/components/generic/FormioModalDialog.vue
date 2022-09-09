@@ -24,6 +24,7 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useFormioUtils, useModalDialog } from "@/composables";
 import { FormIOForm } from "@/types";
 import formio from "@/components/generic/formio.vue";
+import { SetupContext } from "vue";
 
 export default {
   components: {
@@ -36,7 +37,8 @@ export default {
     formData: { type: Object, required: false },
     maxWidth: { type: Number, required: false },
   },
-  setup() {
+  emits: ["loaded"],
+  setup(_props: any, context: SetupContext) {
     const { checkFormioValidity } = useFormioUtils();
     const { showDialog, resolvePromise, showModal } = useModalDialog<
       FormIOForm | boolean
@@ -45,6 +47,7 @@ export default {
 
     const formLoaded = (loadedForm: FormIOForm) => {
       form = loadedForm;
+      context.emit("loaded", loadedForm);
     };
 
     const submit = async () => {

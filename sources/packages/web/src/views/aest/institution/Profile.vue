@@ -117,13 +117,12 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
-import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
 
 export default {
-  components: { TitleValue, CheckPermissionRole },
+  components: { CheckPermissionRole },
   props: {
     institutionId: {
       type: Number,
