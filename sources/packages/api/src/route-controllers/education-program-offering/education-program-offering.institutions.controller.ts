@@ -98,7 +98,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.mapOfferingAPIInDTOTOSaveOfferingModel(
+        await this.educationProgramOfferingControllerService.buildSaveOfferingModel(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -162,7 +162,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
 
     try {
       const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.mapOfferingAPIInDTOTOSaveOfferingModel(
+        await this.educationProgramOfferingControllerService.buildSaveOfferingModel(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -319,7 +319,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.mapOfferingAPIInDTOTOSaveOfferingModel(
+        await this.educationProgramOfferingControllerService.buildSaveOfferingModel(
           userToken.authorizations.institutionId,
           locationId,
           programId,

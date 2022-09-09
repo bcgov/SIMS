@@ -1151,7 +1151,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       totalDays *
       OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD;
 
-    // Calculating the ineligible days
+    // Calculating the ineligible days.
     const ineligibleDaysForFundingAfterPercentageCalculation = Math.max(
       sumOfTotalEligibleBreakDays - allowableStudyBreaksDaysAmount,
       0,
