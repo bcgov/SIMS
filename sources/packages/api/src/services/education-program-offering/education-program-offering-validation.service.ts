@@ -17,6 +17,14 @@ import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../constants";
  */
 @Injectable()
 export class EducationProgramOfferingValidationService {
+  /**
+   * Validate a offering model and provide the result.
+   * @param offering offering model to be validated.
+   * @param silently if true, no exception is generated case the validation fails
+   * and the success or failure can be determined from the result object.
+   * @returns validation result or an exception in the case of a failed validation
+   * combined with the silently parameter defined as false.
+   */
   validateOfferingModel(
     offering: SaveOfferingModel,
     silently = false,
