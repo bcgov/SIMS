@@ -1,6 +1,5 @@
 import {
   OfferingIntensity,
-  StudyBreaksAndWeeks,
   OfferingStatus,
   OfferingTypes,
   Application,
@@ -15,31 +14,6 @@ export interface EducationProgramOfferingSummaryModel {
   offeringIntensity: OfferingIntensity;
   offeringType: OfferingTypes;
   offeringStatus: OfferingStatus;
-}
-
-export interface EducationProgramOfferingModel {
-  offeringName: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  offeringDelivered: string;
-  lacksStudyBreaks: boolean;
-  offeringIntensity: OfferingIntensity;
-  yearOfStudy: number;
-  showYearOfStudy?: boolean;
-  hasOfferingWILComponent: string;
-  offeringWILType?: string;
-  breaksAndWeeks: StudyBreaksAndWeeks;
-  offeringDeclaration: boolean;
-  assessedBy?: string;
-  assessedDate?: Date;
-  submittedDate?: Date;
-  offeringStatus: OfferingStatus;
-  offeringType: OfferingTypes;
-  courseLoad?: number;
 }
 
 /**
