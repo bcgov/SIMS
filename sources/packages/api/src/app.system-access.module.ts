@@ -32,6 +32,7 @@ import {
   InstitutionLocationService,
   DesignationAgreementLocationService,
   EducationProgramService,
+  EducationProgramOfferingValidationService,
 } from "./services";
 import {
   ApplicationExceptionSystemAccessController,
@@ -131,6 +132,7 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
     InstitutionLocationService,
     DesignationAgreementLocationService,
     EducationProgramService,
+    EducationProgramOfferingValidationService,
   ],
 })
 export class AppSystemAccessModule {}

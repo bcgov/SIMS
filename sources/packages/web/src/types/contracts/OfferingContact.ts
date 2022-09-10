@@ -29,8 +29,8 @@ export interface OfferingFormModel {
   programDeliveryTypes: ProgramDeliveryTypes;
   hasWILComponent: string;
   offeringName: string;
-  studyStartDate?: Date;
-  studyEndDate?: Date;
+  studyStartDate?: string;
+  studyEndDate?: string;
   actualTuitionCosts?: number;
   programRelatedCosts?: number;
   mandatoryFees?: number;
