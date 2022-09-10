@@ -240,4 +240,22 @@ export class EducationProgramOfferingService {
       payload,
     );
   }
+
+  /**
+   * Process a CSV with offerings to be created under existing programs.
+   * @param file file content with all information needed to create offerings.
+   * @onUploadProgress event to report the upload progress.
+   * @returns when successfully executed, the list of all offerings ids created.
+   * When an error happen it will return all the records (with the error) and
+   * also a user friendly description of the errors to be fixed.
+   */
+  async offeringBulkInsert(
+    file: Blob,
+    onUploadProgress: (progressEvent: any) => void,
+  ) {
+    return ApiClient.EducationProgramOffering.offeringBulkInsert(
+      file,
+      onUploadProgress,
+    );
+  }
 }
