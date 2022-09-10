@@ -97,8 +97,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
-      const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.buildSaveOfferingModel(
+      const offeringValidationModel =
+        await this.educationProgramOfferingControllerService.buildOfferingValidationModel(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -106,7 +106,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         );
       const createdProgramOffering =
         await this.programOfferingService.createEducationProgramOffering(
-          saveOfferingModel,
+          offeringValidationModel,
           userToken.userId,
         );
       return { id: createdProgramOffering.id };
@@ -161,8 +161,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     }
 
     try {
-      const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.buildSaveOfferingModel(
+      const offeringValidationModel =
+        await this.educationProgramOfferingControllerService.buildOfferingValidationModel(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -170,7 +170,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         );
       await this.programOfferingService.updateEducationProgramOffering(
         offeringId,
-        saveOfferingModel,
+        offeringValidationModel,
         userToken.userId,
       );
     } catch (error: unknown) {
@@ -318,8 +318,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
-      const saveOfferingModel =
-        await this.educationProgramOfferingControllerService.buildSaveOfferingModel(
+      const offeringValidationModel =
+        await this.educationProgramOfferingControllerService.buildOfferingValidationModel(
           userToken.authorizations.institutionId,
           locationId,
           programId,
@@ -330,7 +330,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         programId,
         offeringId,
         userToken.userId,
-        saveOfferingModel,
+        offeringValidationModel,
       );
       return { id: requestedOffering.id };
     } catch (error: unknown) {
@@ -401,9 +401,9 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     this.educationProgramOfferingControllerService.assertCSVValidationsAreValid(
       csvValidations,
     );
-    // Convert the CSV models to the SaveOfferingModel to execute the complete offering validation.
+    // Convert the CSV models to the OfferingValidationModel to execute the complete offering validation.
     const offerings =
-      await this.educationProgramOfferingImportCSVService.generateSaveOfferingModelFromCSVModels(
+      await this.educationProgramOfferingImportCSVService.generateOfferingValidationModelFromCSVModels(
         userToken.authorizations.institutionId,
         csvModels,
       );

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { EducationProgram, OfferingTypes } from "../../database/entities";
 import { EducationProgramService, InstitutionLocationService } from "..";
 import {
-  SaveOfferingModel,
+  OfferingValidationModel,
   WILComponentOptions,
 } from "./education-program-offering-validation.models";
 import {
@@ -43,10 +43,10 @@ export class EducationProgramOfferingImportCSVService {
    * @param csvModels CSV models to be converted to the offering models.
    * @returns offering models to be validated and persisted.
    */
-  async generateSaveOfferingModelFromCSVModels(
+  async generateOfferingValidationModelFromCSVModels(
     institutionId: number,
     csvModels: OfferingCSVModel[],
-  ): Promise<SaveOfferingModel[]> {
+  ): Promise<OfferingValidationModel[]> {
     // Locations and programs information to be associated with the offering models.
     const [locationsMap, programsMap] = await Promise.all([
       this.getLocationsMaps(institutionId),

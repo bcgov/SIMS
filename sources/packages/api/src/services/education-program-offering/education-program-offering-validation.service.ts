@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { OfferingStatus } from "../../database/entities";
 import {
   OfferingValidationResult,
-  SaveOfferingModel,
+  OfferingValidationModel,
   ValidationWarning,
   ValidationWarningResult,
 } from "./education-program-offering-validation.models";
@@ -26,7 +26,7 @@ export class EducationProgramOfferingValidationService {
    * combined with the silently parameter defined as false.
    */
   validateOfferingModel(
-    offering: SaveOfferingModel,
+    offering: OfferingValidationModel,
     silently = false,
   ): OfferingValidationResult {
     const [validation] = this.validateOfferingModels([offering], silently);
@@ -42,13 +42,13 @@ export class EducationProgramOfferingValidationService {
    * combined with the silently parameter defined as false.
    */
   validateOfferingModels(
-    offerings: SaveOfferingModel[],
+    offerings: OfferingValidationModel[],
     silently = false,
   ): OfferingValidationResult[] {
     return offerings.map((offering, index) => {
       // Ensures that the object received is a class. This is needed to the
       // proper validation metadata be available to the validation be performed.
-      const offeringModel = plainToClass(SaveOfferingModel, offering, {
+      const offeringModel = plainToClass(OfferingValidationModel, offering, {
         enableImplicitConversion: true,
       });
       const validationsErrors = validateSync(offeringModel);

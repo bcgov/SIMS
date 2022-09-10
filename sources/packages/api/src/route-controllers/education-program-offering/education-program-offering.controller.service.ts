@@ -24,7 +24,7 @@ import {
   EducationProgramOfferingService,
   EducationProgramService,
   OfferingValidationResult,
-  SaveOfferingModel,
+  OfferingValidationModel,
 } from "../../services";
 import {
   getISODateOnlyString,
@@ -146,12 +146,12 @@ export class EducationProgramOfferingControllerService {
    * validation and persistence.
    * @returns offering model to be validated and saved.
    */
-  async buildSaveOfferingModel(
+  async buildOfferingValidationModel(
     institutionId: number,
     locationId: number,
     programId: number,
     payload: EducationProgramOfferingAPIInDTO,
-  ): Promise<SaveOfferingModel> {
+  ): Promise<OfferingValidationModel> {
     // Program information required to perform the offering validations.
     const program = await this.programService.getEducationProgramDetails(
       programId,

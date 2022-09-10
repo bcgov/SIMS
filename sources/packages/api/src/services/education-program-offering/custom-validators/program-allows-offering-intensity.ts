@@ -6,7 +6,7 @@ import {
   ValidationArguments,
 } from "class-validator";
 import { ProgramIntensity } from "../../../database/entities";
-import { SaveOfferingModel } from "../education-program-offering-validation.models";
+import { OfferingValidationModel } from "../education-program-offering-validation.models";
 
 /**
  * Executes a validation to ensure that the offering intensity
@@ -20,7 +20,7 @@ class ProgramAllowsOfferingIntensityConstraint
     offeringIntensity: ProgramIntensity,
     args: ValidationArguments,
   ): boolean {
-    const offeringModel = args.object as SaveOfferingModel;
+    const offeringModel = args.object as OfferingValidationModel;
     if (!offeringModel?.programContext?.programIntensity) {
       return false;
     }

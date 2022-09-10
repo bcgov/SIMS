@@ -45,7 +45,7 @@ import {
   CreateValidatedOfferingResult,
   OfferingStudyBreakCalculationContext,
   OfferingValidationResult,
-  SaveOfferingModel,
+  OfferingValidationModel,
   ValidatedOfferingInsertResult,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
@@ -70,7 +70,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @returns Education program offering created.
    */
   async createEducationProgramOffering(
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: OfferingValidationModel,
     userId: number,
   ): Promise<EducationProgramOffering> {
     const offeringValidation =
@@ -357,7 +357,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    */
   async updateEducationProgramOffering(
     offeringId: number,
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: OfferingValidationModel,
     userId: number,
   ): Promise<UpdateResult> {
     const offeringValidation =
@@ -377,7 +377,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   private populateProgramOffering(
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: OfferingValidationModel,
     hasExistingApplication?: boolean,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
@@ -701,7 +701,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     offeringId: number,
     userId: number,
-    educationProgramOffering: SaveOfferingModel,
+    educationProgramOffering: OfferingValidationModel,
   ): Promise<EducationProgramOffering> {
     const currentOffering = await this.getOfferingToRequestChange(
       offeringId,

@@ -7,7 +7,7 @@ import {
 } from "class-validator";
 import {
   OfferingDeliveryOptions,
-  SaveOfferingModel,
+  OfferingValidationModel,
 } from "../education-program-offering-validation.models";
 
 /**
@@ -22,7 +22,7 @@ class ProgramAllowsOfferingDeliveryConstraint
     deliveryOption: OfferingDeliveryOptions,
     args: ValidationArguments,
   ): boolean {
-    const offeringModel = args.object as SaveOfferingModel;
+    const offeringModel = args.object as OfferingValidationModel;
     if (
       !offeringModel?.programContext?.deliveredOnSite ||
       !offeringModel?.programContext?.deliveredOnline

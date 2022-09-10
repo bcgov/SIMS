@@ -77,7 +77,7 @@ export type EducationProgramForOfferingValidationContext = Pick<
  * Subset of the offering save model required to execute the study breaks calculations.
  */
 export type OfferingStudyBreakCalculationContext = Pick<
-  SaveOfferingModel,
+  OfferingValidationModel,
   "studyEndDate" | "studyStartDate" | "studyBreaks"
 >;
 
@@ -165,12 +165,12 @@ export class StudyBreak {
 /**
  * Study start date property used as parameters in some validators.
  */
-const studyStartDateProperty = (offering: SaveOfferingModel) =>
+const studyStartDateProperty = (offering: OfferingValidationModel) =>
   offering.studyStartDate;
 /**
  * Study end date property used as parameters in some validators.
  */
-const studyEndDateProperty = (offering: SaveOfferingModel) =>
+const studyEndDateProperty = (offering: OfferingValidationModel) =>
   offering.studyEndDate;
 
 /**
@@ -179,7 +179,7 @@ const studyEndDateProperty = (offering: SaveOfferingModel) =>
  * ensure a successfully validation.
  * Must be used for any offering created or updated.
  */
-export class SaveOfferingModel {
+export class OfferingValidationModel {
   /**
    * Offering name.
    */
@@ -238,7 +238,7 @@ export class SaveOfferingModel {
    * Offering delivered type.
    */
   @IsEnum(OfferingDeliveryOptions)
-  @ValidateIf((offering: SaveOfferingModel) => !!offering.programContext)
+  @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
   @ProgramAllowsOfferingDelivery({
     context: new ValidationWarning(
       OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
@@ -249,7 +249,7 @@ export class SaveOfferingModel {
    * Offering intensity.
    */
   @IsEnum(OfferingIntensity)
-  @ValidateIf((offering: SaveOfferingModel) => !!offering.programContext)
+  @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
   @ProgramAllowsOfferingIntensity({
     context: new ValidationWarning(
       OfferingValidationWarnings.ProgramOfferingIntensityMismatch,
@@ -271,7 +271,7 @@ export class SaveOfferingModel {
    * Indicates if the offering has a WIL(work-integrated learning).
    */
   @IsEnum(WILComponentOptions)
-  @ValidateIf((offering: SaveOfferingModel) => !!offering.programContext)
+  @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
   @ProgramAllowsOfferingWIL({
     context: new ValidationWarning(
       OfferingValidationWarnings.ProgramOfferingWILMismatch,
@@ -283,7 +283,7 @@ export class SaveOfferingModel {
    * indicates which type.
    */
   @ValidateIf(
-    (offering: SaveOfferingModel) =>
+    (offering: OfferingValidationModel) =>
       offering.hasOfferingWILComponent === WILComponentOptions.Yes,
   )
   @IsNotEmpty()
@@ -317,7 +317,7 @@ export class SaveOfferingModel {
    */
   @Type(() => StudyBreak)
   @ValidateIf(
-    (offering: SaveOfferingModel) =>
+    (offering: OfferingValidationModel) =>
       !offering.lacksStudyBreaks &&
       !!offering.studyStartDate &&
       !!offering.studyEndDate,
@@ -384,7 +384,7 @@ export interface OfferingValidationResult {
   /**
    * validated offering model.
    */
-  offeringModel: SaveOfferingModel;
+  offeringModel: OfferingValidationModel;
   /**
    * Offering status defined from the validation results.
    * - Approved: no critical errors and no warnings.
