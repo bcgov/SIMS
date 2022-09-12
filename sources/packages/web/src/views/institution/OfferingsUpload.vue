@@ -56,7 +56,6 @@
             density="compact"
             accept="ACCEPTED_FILE_TYPE"
             v-model="offeringFiles"
-            show-size
             label="Offering CSV file"
             variant="outlined"
             data-cy="fileUpload"
@@ -82,7 +81,7 @@
           </v-btn>
         </v-row>
       </v-form>
-      <content-group v-if="hasSelectedFile && showValidationSummary">
+      <content-group v-if="showValidationSummary">
         <p class="category-header-small primary-color">Validation summary</p>
         <banner
           class="mb-2"
@@ -173,17 +172,20 @@ import {
 } from "@/types";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
+import { useSnackBar } from "@/composables";
 
 const ACCEPTED_FILE_TYPE = "text/csv";
+const MAX_OFFERING_UPLOAD_SIZE = 4194304;
 
 export default {
   components: {
     StatusChipOffering,
   },
   setup() {
+    const snackBar = useSnackBar();
     const loading = ref(false);
     const offeringFiles = ref({} as FileInputFile[]);
-    const csvFileUpload = ref({} as { reset: () => void });
+    const csvFileUpload = ref({} as any);
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
     const uploadForm = ref({} as VForm);
     const showValidationSummary = ref(false);
@@ -199,19 +201,22 @@ export default {
           await EducationProgramOfferingService.shared.offeringBulkInsert(
             offeringFiles.value[0],
             (progressEvent: any) => {
-              console.log(progressEvent);
+              console.log("progressEvent", progressEvent);
             },
             validationOnly,
           );
         if (uploadResults.length) {
           validationResults.value = uploadResults;
         } else {
-          console.log("Successfully uploaded");
+          resetUploadSummary();
+          snackBar.success("File successfully upload.");
         }
-
-        console.log(uploadResults);
       } catch (error: unknown) {
-        console.log(error);
+        if (error instanceof Error && error.message === "Network Error") {
+          resetUploadSummary();
+          csvFileUpload.value.modelValue.length = 0;
+        }
+        snackBar.error("Unexpected error while uploading the file.");
       }
     };
 
@@ -226,16 +231,13 @@ export default {
       ),
     );
 
-    const hasSelectedFile = computed(() => !!offeringFiles.value?.length);
-
     const fileValidationRules = [
       (files: FileInputFile[]) => {
-        console.log(files);
         if (files?.length !== 1) {
           return "CSV file is required.";
         }
         const [file] = files;
-        if (file.size > 4194304) {
+        if (file.size > MAX_OFFERING_UPLOAD_SIZE) {
           return "CSV file size should not be greater than 4MB";
         }
         if (file.type !== ACCEPTED_FILE_TYPE) {
@@ -246,9 +248,13 @@ export default {
     ];
 
     watch(offeringFiles, () => {
+      resetUploadSummary();
+    });
+
+    const resetUploadSummary = () => {
       validationResults.value = [];
       showValidationSummary.value = false;
-    });
+    };
 
     return {
       loading,
@@ -266,11 +272,7 @@ export default {
       uploadForm,
       ACCEPTED_FILE_TYPE,
       showValidationSummary,
-      hasSelectedFile,
     };
   },
 };
 </script>
-
-function watch(arg0: (offeringFiles: any) => void) { throw new Error('Function
-not implemented.'); }
