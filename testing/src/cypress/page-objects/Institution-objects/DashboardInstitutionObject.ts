@@ -86,4 +86,7 @@ export default class DashboardInstitutionObject {
   locationButton() {
     return cy.get(".v-list-group div:first");
   }
+  locationsList() {
+    return cy.contains("All Locations");
+  }  
 }

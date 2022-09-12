@@ -1,0 +1,57 @@
+{
+  "expectedData": {},
+  "updateData": {
+    "institutionCode": "NEXA",
+    "locationName": "Brockton Avenue",
+    "address": "337 Russell St, Hadley MA 1035",
+    "city": "Hadley",
+    "postalCode": "1035",
+    "state": "Massachusetts",
+    "country": "USA",
+    "firstName": "Joe",
+    "lastName": "llyod",
+    "email": "admin@yopmail.com",
+    "phoneNumber": "4563640590"
+  },
+  "invalidData": {
+    "emailAddress": [
+      "abc@b.c",
+      "abc.abc@b.c",
+      "abc.con@bic.132",
+      "abc.abc@abc@.com",
+      "abc",
+      "abc@",
+      "abc@com"
+    ],
+    "phoneNumberBelow10": ["123", "123456789"],
+    "phoneNumberAbove20": ["123456789654987456123"],
+    "stringWithMoreThan100Chars": [
+      "wertyuiopawertyuiopawertyuiopawertyuiopawertyuiopawertyuiopawertyuiopawertyuiopawertyuiopawertyuiopadf"
+    ],
+    "institutionCodeNonAplhabets":[
+      "123","abd8","&jkh"
+    ],
+    "institutionCodeBelow4":[
+      "AC","AIK"
+    ],
+    "institutionCodeAbove4":[
+      "ASSCD","YOIUpl"
+    ]
+  },
+  "validData": {
+    "emailAddress": ["abc@email.com", "abc.abc@email.com", "abc.123+1@b.ca"],
+    "phoneNumber": [
+      "1234567897",
+      "1234567897894561239",
+      "12325478412345678913"
+    ],
+    "stringsWithAlphaNumericSpecialChars": [
+      "alpha",
+      "aplha special chars -&(*&",
+      "alphanumberic 09865"
+    ],
+    "institutionCode":[
+      "abji","ABCO"
+    ]
+  }
+}
