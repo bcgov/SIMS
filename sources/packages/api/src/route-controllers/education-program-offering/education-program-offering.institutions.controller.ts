@@ -2,9 +2,11 @@ import {
   BadRequestException,
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   NotFoundException,
   Param,
+  ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Post,
@@ -347,6 +349,10 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   /**
    * Process a CSV with offerings to be created under existing programs.
    * @param file file content with all information needed to create offerings.
+   * @param validationOnly if true, will execute all validations and return the
+   * errors and warnings in the same way if the file would be submitted to have
+   * the records inserted. If not present or false, the file will be processed
+   * and the records will be inserted.
    * @returns when successfully executed, the list of all offerings ids created.
    * When an error happen it will return all the records (with the error) and
    * also a user friendly description of the errors to be fixed.
@@ -376,6 +382,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   async bulkInsert(
     @UserToken() userToken: IInstitutionUserToken,
     @UploadedFile() file: Express.Multer.File,
+    @Query("validation-only", new DefaultValuePipe(false), ParseBoolPipe)
+    validationOnly: boolean,
   ): Promise<PrimaryIdentifierAPIOutDTO[]> {
     // Read the entire file content.
     const fileContent = file.buffer.toString();
@@ -417,7 +425,15 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     this.educationProgramOfferingControllerService.assertOfferingsValidationsAreValid(
       offeringValidations,
       csvModels,
+      validationOnly,
     );
+
+    if (validationOnly) {
+      // If the endpoint is called only to perform the validation and no error was found
+      // return an empty array because no record must be created.
+      return [];
+    }
+
     // Try to insert all validated offerings.
     const creationResults =
       await this.programOfferingService.createFromValidatedOfferings(

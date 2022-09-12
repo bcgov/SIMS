@@ -1,3 +1,5 @@
+import { OfferingBulkInsertValidationResultAPIOutDTO } from "@/services/http/dto";
+
 /**
  * Represents the status of an offering.
  ** Offering statuses are grouped into the ones which are exclusively for offering creation
@@ -45,4 +47,11 @@ export interface CourseDetails {
   courseCode: string;
   courseStartDate: string;
   courseEndDate: string;
+}
+
+export interface OfferingsUploadBulkInsert
+  extends OfferingBulkInsertValidationResultAPIOutDTO {
+  recordLineNumber: number;
+  startDateFormatted?: string;
+  endDateFormatted?: string;
 }

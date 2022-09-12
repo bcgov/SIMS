@@ -207,13 +207,18 @@ export class EducationProgramOfferingControllerService {
    * @param offeringValidations validations to be verified.
    * @param csvModels reference CSV models to provide extra context in case
    * an error must be generated.
+   * @param considerWarningsAsErrors if true, a warning will be considered as an error also,
+   * otherwise only errors in the error array will be considered errors.
    */
   assertOfferingsValidationsAreValid(
     offeringValidations: OfferingValidationResult[],
     csvModels: OfferingCSVModel[],
+    considerWarningsAsErrors = false,
   ) {
     const offeringValidationsErrors = offeringValidations.filter(
-      (offering) => offering.errors.length,
+      (offering) =>
+        offering.errors.length ||
+        (considerWarningsAsErrors && offering.warnings.length),
     );
     if (offeringValidationsErrors.length) {
       // There is some critical validation error that will prevent some offering to be inserted.

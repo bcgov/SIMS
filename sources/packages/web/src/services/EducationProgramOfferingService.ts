@@ -1,6 +1,8 @@
 import ApiClient from "./http/ApiClient";
 import {
+  ApiProcessError,
   OfferingIntensity,
+  OfferingsUploadBulkInsert,
   PaginatedResults,
   PaginationOptions,
 } from "@/types";
@@ -14,7 +16,14 @@ import {
   EducationProgramOfferingAPIInDTO,
   OfferingStartDateAPIOutDTO,
   OptionItemAPIOutDTO,
+  OfferingBulkInsertValidationResultAPIOutDTO,
 } from "@/services/http/dto";
+import {
+  OFFERING_CREATION_CRITICAL_ERROR,
+  OFFERING_VALIDATION_CRITICAL_ERROR,
+  OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+} from "@/constants";
+import { useFormatters } from "@/composables";
 
 export class EducationProgramOfferingService {
   // Share Instance
@@ -245,6 +254,10 @@ export class EducationProgramOfferingService {
    * Process a CSV with offerings to be created under existing programs.
    * @param file file content with all information needed to create offerings.
    * @onUploadProgress event to report the upload progress.
+   * @param validationOnly if true, will execute all validations and return the
+   * errors and warnings in the same way if the file would be submitted to have
+   * the records inserted. If not present or false, the file will be processed
+   * and the records will be inserted.
    * @returns when successfully executed, the list of all offerings ids created.
    * When an error happen it will return all the records (with the error) and
    * also a user friendly description of the errors to be fixed.
@@ -252,10 +265,54 @@ export class EducationProgramOfferingService {
   async offeringBulkInsert(
     file: Blob,
     onUploadProgress: (progressEvent: any) => void,
-  ) {
-    return ApiClient.EducationProgramOffering.offeringBulkInsert(
-      file,
-      onUploadProgress,
-    );
+    validationOnly: boolean,
+  ): Promise<OfferingsUploadBulkInsert[]> {
+    try {
+      await ApiClient.EducationProgramOffering.offeringBulkInsert(
+        file,
+        onUploadProgress,
+        validationOnly,
+      );
+      return [];
+    } catch (error: unknown) {
+      // Errors that will contain records validation information that
+      // must be displayed to the user.
+      const bulkInsertValidationErrorTypes = [
+        OFFERING_VALIDATION_CRITICAL_ERROR,
+        OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+        OFFERING_CREATION_CRITICAL_ERROR,
+      ];
+      if (
+        error instanceof ApiProcessError &&
+        bulkInsertValidationErrorTypes.includes(error.errorType)
+      ) {
+        const apiValidationResult = error as ApiProcessError<
+          OfferingBulkInsertValidationResultAPIOutDTO[]
+        >;
+        if (apiValidationResult.objectInfo) {
+          return apiValidationResult.objectInfo.map(
+            this.mapToOfferingsUploadBulkInsert,
+          );
+        }
+      }
+      throw error;
+    }
+  }
+
+  private mapToOfferingsUploadBulkInsert(
+    apiValidationResult: OfferingBulkInsertValidationResultAPIOutDTO,
+  ): OfferingsUploadBulkInsert {
+    const { dateOnlyLongString } = useFormatters();
+    console.log(apiValidationResult);
+    return {
+      recordIndex: apiValidationResult.recordIndex,
+      recordLineNumber: apiValidationResult.recordIndex + 2, // Header + zero base index.
+      locationCode: apiValidationResult.locationCode,
+      sabcProgramCode: apiValidationResult.sabcProgramCode,
+      startDateFormatted: dateOnlyLongString(apiValidationResult.startDate),
+      endDateFormatted: dateOnlyLongString(apiValidationResult.endDate),
+      errors: apiValidationResult.errors,
+      warnings: apiValidationResult.warnings,
+    };
   }
 }
