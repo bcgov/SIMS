@@ -231,6 +231,7 @@ export class EducationProgramOfferingControllerService {
             sabcProgramCode: csvModel.sabcProgramCode,
             startDate: validation.offeringModel.studyStartDate,
             endDate: validation.offeringModel.studyEndDate,
+            offeringStatus: validation.offeringStatus,
             errors: validation.errors,
             warnings: validation.warnings.map((warning) => ({
               warningType: warning.warningType,

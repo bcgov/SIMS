@@ -36,3 +36,11 @@ export type VForm = Vue & {
    */
   errors: ErrorMessage[];
 };
+
+export interface FileInputFile extends Blob {
+  lastModified: number;
+  lastModifiedDate: Date;
+  name: string;
+  size: number;
+  type: string;
+}

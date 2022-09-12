@@ -137,6 +137,7 @@ export interface OfferingBulkInsertValidationResultAPIOutDTO {
   sabcProgramCode?: string;
   startDate?: string;
   endDate?: string;
+  offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
   warnings: ValidationWarningResultAPIOutDTO[];
 }

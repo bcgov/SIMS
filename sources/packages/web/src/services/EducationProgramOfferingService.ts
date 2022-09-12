@@ -305,14 +305,10 @@ export class EducationProgramOfferingService {
     const { dateOnlyLongString } = useFormatters();
     console.log(apiValidationResult);
     return {
-      recordIndex: apiValidationResult.recordIndex,
+      ...apiValidationResult,
       recordLineNumber: apiValidationResult.recordIndex + 2, // Header + zero base index.
-      locationCode: apiValidationResult.locationCode,
-      sabcProgramCode: apiValidationResult.sabcProgramCode,
       startDateFormatted: dateOnlyLongString(apiValidationResult.startDate),
       endDateFormatted: dateOnlyLongString(apiValidationResult.endDate),
-      errors: apiValidationResult.errors,
-      warnings: apiValidationResult.warnings,
     };
   }
 }

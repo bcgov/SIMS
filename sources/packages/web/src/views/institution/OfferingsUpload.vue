@@ -49,56 +49,54 @@
         </li>
       </ul>
       <horizontal-separator />
-      <v-row class="m-0 p-0">
-        <v-file-input
-          ref="csvFileUpload"
-          density="compact"
-          accept="text/csv"
-          v-model="offeringFile"
-          show-size
-          label="Offering CSV file"
-          variant="outlined"
-          data-cy="fileUpload"
-          prepend-icon="fa:fa-solid fa-file-csv"
-          :rules="fileValidationRules"
-        >
-        </v-file-input>
-        <v-btn
-          class="ml-2"
-          color="primary"
-          prepend-icon="fa:fa-solid fa-file-circle-question"
-          @click="validateFile"
-        >
-          Validate
-        </v-btn>
-        <v-btn
-          class="ml-2"
-          color="primary"
-          prepend-icon="fa:fa-solid fa-upload"
-          @click="uploadFile"
-        >
-          Upload now
-        </v-btn>
-      </v-row>
-      <content-group>
+      <v-form ref="uploadForm">
+        <v-row class="m-0 p-0">
+          <v-file-input
+            ref="csvFileUpload"
+            density="compact"
+            accept="ACCEPTED_FILE_TYPE"
+            v-model="offeringFiles"
+            show-size
+            label="Offering CSV file"
+            variant="outlined"
+            data-cy="fileUpload"
+            prepend-icon="fa:fa-solid fa-file-csv"
+            :rules="fileValidationRules"
+          >
+          </v-file-input>
+          <v-btn
+            class="ml-2"
+            color="primary"
+            prepend-icon="fa:fa-solid fa-file-circle-question"
+            @click="uploadFile()"
+          >
+            Validate
+          </v-btn>
+          <v-btn
+            class="ml-2"
+            color="primary"
+            prepend-icon="fa:fa-solid fa-upload"
+            @click="uploadFile(false)"
+          >
+            Upload now
+          </v-btn>
+        </v-row>
+      </v-form>
+      <content-group v-if="hasSelectedFile && showValidationSummary">
         <p class="category-header-small primary-color">Validation summary</p>
-        <p>
-          You file is ready to be imported. Please check below summary of the
-          statuses that the records will be set after the process is completed.
-          If the numbers are not as expected it is possible that the file need
-          some data adjustment.
-        </p>
-        <ul class="m-4">
-          <li>
-            123 record(s) will be created with the status defined as
-            <status-chip-offering :status="OfferingStatus.Approved" />
-          </li>
-          <li>
-            123 record(s) will be created with the status defined as
-            <status-chip-offering :status="OfferingStatus.CreationPending" />
-          </li>
-        </ul>
-        <content-group>
+        <banner
+          class="mb-2"
+          v-if="hasCriticalErrorRecords"
+          :type="BannerTypes.Error"
+          summary="The CSV contain some critical error that will prevent the file from being imported. Please review the errors below."
+        />
+        <banner
+          class="mb-2"
+          v-if="hasWarningRecords"
+          :type="BannerTypes.Warning"
+          summary="The CSV file contains some non-critical errors that will required a review from the Ministry before then can be considered approved. Please review the warnings below."
+        />
+        <content-group v-if="validationResults.length">
           <DataTable
             :value="validationResults"
             :lazy="true"
@@ -120,6 +118,13 @@
               header="End date"
               field="endDateFormatted"
               bodyClass="text-no-wrap"
+            ></Column>
+            <Column header="Status"
+              ><template #body="slotProps">
+                <status-chip-offering
+                  v-if="slotProps.data.offeringStatus"
+                  :status="slotProps.data.offeringStatus"
+                /> </template
             ></Column>
             <Column header="Validations"
               ><template #body="slotProps">
@@ -156,15 +161,20 @@
 </template>
 
 <script lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import {
   OfferingsUploadBulkInsert,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
   OfferingStatus,
+  BannerTypes,
+  VForm,
+  FileInputFile,
 } from "@/types";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
+
+const ACCEPTED_FILE_TYPE = "text/csv";
 
 export default {
   components: {
@@ -172,57 +182,95 @@ export default {
   },
   setup() {
     const loading = ref(false);
-    const offeringFile = ref();
+    const offeringFiles = ref({} as FileInputFile[]);
     const csvFileUpload = ref({} as { reset: () => void });
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
+    const uploadForm = ref({} as VForm);
+    const showValidationSummary = ref(false);
 
-    const validateFile = async () => {
+    const uploadFile = async (validationOnly = true) => {
+      const validationResult = await uploadForm.value.validate();
+      if (!validationResult.valid) {
+        return;
+      }
+      showValidationSummary.value = true;
       try {
-        console.log(offeringFile.value);
         const uploadResults =
           await EducationProgramOfferingService.shared.offeringBulkInsert(
-            offeringFile.value[0],
+            offeringFiles.value[0],
             (progressEvent: any) => {
               console.log(progressEvent);
             },
-            true,
+            validationOnly,
           );
         if (uploadResults.length) {
           validationResults.value = uploadResults;
-          console.log(uploadResults);
         } else {
           console.log("Successfully uploaded");
         }
+
         console.log(uploadResults);
       } catch (error: unknown) {
         console.log(error);
       }
     };
 
+    const hasCriticalErrorRecords = computed(() =>
+      validationResults.value.some((validation) => validation.errors.length),
+    );
+
+    const hasWarningRecords = computed(() =>
+      validationResults.value.some(
+        (validation) =>
+          validation.offeringStatus === OfferingStatus.CreationPending,
+      ),
+    );
+
+    const hasSelectedFile = computed(() => !!offeringFiles.value?.length);
+
     const fileValidationRules = [
-      (value: any) => {
-        console.log(value);
-        if (value?.length !== 1) {
+      (files: FileInputFile[]) => {
+        console.log(files);
+        if (files?.length !== 1) {
           return "CSV file is required.";
         }
-        return (
-          value[0].size < 4194304 ||
-          "CSV file size should not be greater than 4MB"
-        );
+        const [file] = files;
+        if (file.size > 4194304) {
+          return "CSV file size should not be greater than 4MB";
+        }
+        if (file.type !== ACCEPTED_FILE_TYPE) {
+          return `The expected file type is ${ACCEPTED_FILE_TYPE}.`;
+        }
+        return true;
       },
     ];
+
+    watch(offeringFiles, () => {
+      validationResults.value = [];
+      showValidationSummary.value = false;
+    });
 
     return {
       loading,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
-      offeringFile,
-      validateFile,
+      offeringFiles,
+      uploadFile,
       validationResults,
       fileValidationRules,
       csvFileUpload,
       OfferingStatus,
+      hasCriticalErrorRecords,
+      hasWarningRecords,
+      BannerTypes,
+      uploadForm,
+      ACCEPTED_FILE_TYPE,
+      showValidationSummary,
+      hasSelectedFile,
     };
   },
 };
 </script>
+
+function watch(arg0: (offeringFiles: any) => void) { throw new Error('Function
+not implemented.'); }
