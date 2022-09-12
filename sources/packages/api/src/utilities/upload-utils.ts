@@ -9,9 +9,9 @@ const ALLOWED_FILE_EXTENSIONS =
 
 /**
  * Set an upload limits configuration for multer (node.js middleware).
- * @param fileSize For multipart forms, the max file size (in bytes).
  * @param files For multipart forms, the max number of file fields.
  * @param parts For multipart forms, the max number of parts (fields + files).
+ * @param fileSize For multipart forms, the max file size (in bytes).
  * @returns limits object.
  */
 export const uploadLimits = (
@@ -29,17 +29,44 @@ export const uploadLimits = (
 /**
  * Default filter, used by multer (node.js middleware),
  * to allow only the specific MIME types files.
- * @param req request information.
  * @param file received file.
  * @param callback callback to return the result of the validation.
  */
 export const defaultFileFilter = (
-  req: any,
+  _: unknown,
   file: MulterFile,
   callback: (error: Error | null, acceptFile: boolean) => void,
 ) => {
+  return fileFilter(file, ALLOWED_FILE_EXTENSIONS, callback);
+};
+
+/**
+ * CSV (comma separated values) filter, used by multer (node.js middleware),
+ * to allow only the specific MIME types files.
+ * @param file received file.
+ * @param callback callback to return the result of the validation.
+ */
+export const csvFileFilter = (
+  _: unknown,
+  file: MulterFile,
+  callback: (error: Error | null, acceptFile: boolean) => void,
+) => {
+  return fileFilter(file, [".csv"], callback);
+};
+
+/**
+ * Default filter, used by multer (node.js middleware),
+ * to allow only the specific MIME types files.
+ * @param file received file.
+ * @param callback callback to return the result of the validation.
+ */
+const fileFilter = (
+  file: MulterFile,
+  allowedFileExtensions: string[],
+  callback: (error: Error | null, acceptFile: boolean) => void,
+) => {
   const extension = path.extname(file.originalname).toLowerCase();
-  if (ALLOWED_FILE_EXTENSIONS.includes(extension)) {
+  if (allowedFileExtensions.includes(extension)) {
     callback(null, true);
   } else {
     callback(

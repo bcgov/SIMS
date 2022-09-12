@@ -32,6 +32,7 @@ import {
   PIRDeniedReasonService,
   StudentService,
   SFASIndividualService,
+  EducationProgramOfferingImportCSVService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -53,6 +54,7 @@ import {
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
+import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -107,6 +109,8 @@ import { LoggerModule } from "./logger/logger.module";
     EducationProgramOfferingControllerService,
     StudentService,
     SFASIndividualService,
+    EducationProgramOfferingImportCSVService,
+    EducationProgramOfferingValidationService,
   ],
 })
 export class AppInstitutionsModule {}

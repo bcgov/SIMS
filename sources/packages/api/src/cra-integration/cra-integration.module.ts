@@ -22,6 +22,7 @@ import {
   StudentRestrictionService,
   RestrictionService,
   EducationProgramOfferingService,
+  EducationProgramOfferingValidationService,
 } from "../services";
 
 @Module({
@@ -48,6 +49,7 @@ import {
     RestrictionService,
     StudentRestrictionService,
     EducationProgramOfferingService,
+    EducationProgramOfferingValidationService,
   ],
   exports: [
     CRAPersonalVerificationService,

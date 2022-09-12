@@ -27,6 +27,7 @@ import {
   GCNotifyActionsService,
   ATBCService,
   RestrictionService,
+  EducationProgramOfferingValidationService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -94,6 +95,7 @@ import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.co
     RestrictionService,
     StudentAccountApplicationsService,
     EducationProgramOfferingControllerService,
+    EducationProgramOfferingValidationService,
   ],
 })
 export class AppStudentsModule {}

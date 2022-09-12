@@ -5,9 +5,10 @@ import {
 } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 import { EducationProgramOffering } from "../../../database/entities/education-program-offering.model";
-import { getUserFullName } from "../../../utilities";
+import { getISODateOnlyString, getUserFullName } from "../../../utilities";
 import {
   Allow,
+  IsBoolean,
   IsEnum,
   IsIn,
   IsNotEmpty,
@@ -15,21 +16,26 @@ import {
   MaxLength,
 } from "class-validator";
 import { Type } from "class-transformer";
+import {
+  OfferingDeliveryOptions,
+  OfferingValidationWarnings,
+  WILComponentOptions,
+} from "../../../services";
 
-export class StudyBreakOutDTO {
-  breakStartDate: Date;
-  breakEndDate: Date;
+export class StudyBreakAPIOutDTO {
+  breakStartDate: string;
+  breakEndDate: string;
 }
 
 export class StudyBreakInDTO {
   @Allow()
-  breakStartDate: Date;
+  breakStartDate: string;
   @Allow()
-  breakEndDate: Date;
+  breakEndDate: string;
 }
 
 export class StudyBreaksAndWeeksOutDTO {
-  studyBreaks: StudyBreakOutDTO[];
+  studyBreaks: StudyBreakAPIOutDTO[];
   fundedStudyPeriodDays: number;
   totalDays: number;
   totalFundedWeeks: number;
@@ -50,13 +56,21 @@ export class StudyBreaksAndWeeksInDTO {
   unfundedStudyPeriodDays: number;
 }
 
+export class StudyBreaksAndWeeksAPIOutDTO {
+  studyBreaks: StudyBreakAPIOutDTO[];
+  fundedStudyPeriodDays: number;
+  totalDays: number;
+  totalFundedWeeks: number;
+  unfundedStudyPeriodDays: number;
+}
+
 export class EducationProgramOfferingAPIInDTO {
   @Allow()
   offeringName: string;
   @Allow()
-  studyStartDate: Date;
+  studyStartDate: string;
   @Allow()
-  studyEndDate: Date;
+  studyEndDate: string;
   @Allow()
   actualTuitionCosts: number;
   @Allow()
@@ -66,7 +80,7 @@ export class EducationProgramOfferingAPIInDTO {
   @Allow()
   exceptionalExpenses: number;
   @Allow()
-  offeringDelivered: string;
+  offeringDelivered: OfferingDeliveryOptions;
   @Allow()
   lacksStudyBreaks: boolean;
   @Allow()
@@ -74,7 +88,7 @@ export class EducationProgramOfferingAPIInDTO {
   @Allow()
   yearOfStudy: number;
   @Allow()
-  hasOfferingWILComponent: string;
+  hasOfferingWILComponent: WILComponentOptions;
   @Allow()
   offeringDeclaration: boolean;
   @Allow()
@@ -82,15 +96,11 @@ export class EducationProgramOfferingAPIInDTO {
   @Allow()
   offeringType: OfferingTypes;
   @IsOptional()
-  offeringWILType?: string;
-  @IsOptional()
-  showYearOfStudy?: boolean;
+  offeringWILComponentType?: string;
+  @IsBoolean()
+  showYearOfStudy: boolean;
   @IsOptional()
   breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
-  @IsOptional()
-  assessedBy?: string;
-  @IsOptional()
-  assessedDate?: Date;
   @IsOptional()
   courseLoad?: number;
 }
@@ -98,8 +108,8 @@ export class EducationProgramOfferingAPIInDTO {
 export class EducationProgramOfferingAPIOutDTO {
   id: number;
   offeringName: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
+  studyStartDate: string;
+  studyEndDate: string;
   actualTuitionCosts: number;
   programRelatedCosts: number;
   mandatoryFees: number;
@@ -112,9 +122,9 @@ export class EducationProgramOfferingAPIOutDTO {
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
   offeringType: OfferingTypes;
-  offeringWILType?: string;
+  offeringWILComponentType?: string;
   showYearOfStudy?: boolean;
-  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
+  breaksAndWeeks?: StudyBreaksAndWeeksAPIOutDTO;
   assessedBy?: string;
   assessedDate?: Date;
   submittedDate: Date;
@@ -152,8 +162,8 @@ export const transformToProgramOfferingDTO = (
   return {
     id: offering.id,
     offeringName: offering.name,
-    studyStartDate: offering.studyStartDate,
-    studyEndDate: offering.studyEndDate,
+    studyStartDate: getISODateOnlyString(offering.studyStartDate),
+    studyEndDate: getISODateOnlyString(offering.studyEndDate),
     actualTuitionCosts: offering.actualTuitionCosts,
     programRelatedCosts: offering.programRelatedCosts,
     mandatoryFees: offering.mandatoryFees,
@@ -164,7 +174,7 @@ export const transformToProgramOfferingDTO = (
     yearOfStudy: offering.yearOfStudy,
     showYearOfStudy: offering.showYearOfStudy,
     hasOfferingWILComponent: offering.hasOfferingWILComponent,
-    offeringWILType: offering.offeringWILType,
+    offeringWILComponentType: offering.offeringWILType,
     breaksAndWeeks: offering.studyBreaks,
     offeringDeclaration: offering.offeringDeclaration,
     submittedDate: offering.submittedDate,
@@ -211,4 +221,29 @@ export class OfferingChangeAssessmentAPIInDTO {
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   assessmentNotes: string;
+}
+
+/**
+ * Represents the possible errors that can happen during the
+ * offerings bulk insert and provides a detailed description
+ * for every record that has an error.
+ */
+export class OfferingBulkInsertValidationResultAPIOutDTO {
+  recordIndex: number;
+  locationCode?: string;
+  sabcProgramCode?: string;
+  startDate?: string;
+  endDate?: string;
+  errors: string[];
+  warnings: ValidationWarningResultAPIOutDTO[];
+}
+
+/**
+ * Represents an error considered not critical for
+ * an offering and provides a user-friendly message
+ * and a type that uniquely identifies this warning.
+ */
+export class ValidationWarningResultAPIOutDTO {
+  warningType: OfferingValidationWarnings;
+  warningMessage: string;
 }

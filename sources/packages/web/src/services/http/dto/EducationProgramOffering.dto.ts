@@ -85,8 +85,8 @@ export interface EducationProgramOfferingAPIInDTO {
 export interface EducationProgramOfferingAPIOutDTO {
   id: number;
   offeringName: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
+  studyStartDate: string;
+  studyEndDate: string;
   actualTuitionCosts: number;
   programRelatedCosts: number;
   mandatoryFees: number;

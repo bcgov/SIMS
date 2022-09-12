@@ -14,6 +14,9 @@ import { OfferingTypes, User, OfferingStatus, Note } from ".";
 import { OfferingIntensity } from "./offering-intensity.type";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
+export const OFFERING_NAME_MAX_LENGTH = 300;
+export const OFFERING_WIL_TYPE_MAX_LENGTH = 50;
+
 /**
  * The main resource table to store education programs offerings related information.
  * Education programs offering is for a particular program and location.
@@ -272,8 +275,11 @@ export class EducationProgramOffering extends RecordDataModel {
  * Study break.
  */
 export interface StudyBreak {
-  breakStartDate: Date;
-  breakEndDate: Date;
+  breakStartDate: string;
+  breakEndDate: string;
+  breakDays: number;
+  eligibleBreakDays: number;
+  ineligibleBreakDays: number;
 }
 
 /**

@@ -297,9 +297,7 @@ export class StudentAESTController extends BaseController {
       throw new NotFoundException("Student does not exists.");
     }
     const sinValidations =
-      await this.sinValidationService.getSINValidationsByUserId(
-        student.user.id,
-      );
+      await this.sinValidationService.getSINValidationsByStudentId(student.id);
 
     return sinValidations?.map((sinValidation) => ({
       id: sinValidation.id,
