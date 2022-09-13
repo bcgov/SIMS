@@ -14,9 +14,9 @@
     <template #append>
       <v-list density="compact" nav>
         <v-list-item
-          :to="offeringUploadMenuItem.command"
-          :title="offeringUploadMenuItem.label"
-          :prepend-icon="offeringUploadMenuItem.icon"
+          :to="{ name: InstitutionRoutesConst.OFFERINGS_UPLOAD }"
+          title="Offerings upload"
+          prepend-icon="fa:far fa-address-card-o"
         />
       </v-list>
     </template>
@@ -61,17 +61,9 @@ export default {
       },
     ]);
 
-    const offeringUploadMenuItem = {
-      label: "Offering upload",
-      icon: "fa:far fa-address-card-o",
-      command: {
-        name: InstitutionRoutesConst.OFFERINGS_UPLOAD,
-      },
-    };
-
     return {
       items,
-      offeringUploadMenuItem,
+      InstitutionRoutesConst,
     };
   },
 };

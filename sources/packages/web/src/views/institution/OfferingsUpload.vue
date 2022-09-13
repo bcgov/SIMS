@@ -12,40 +12,45 @@
       </p>
       <ul class="m-4">
         <li>
-          Select the file in a CSV (comma separated values) to be uploaded. The
-          files must be in the correct formatted as per SABC instructions.
+          Use the template provided on
+          <a
+            href="https://studentaidbc.ca/institution-officials"
+            rel="noopener"
+            target="_blank"
+            >https://studentaidbc.ca/institution-officials</a
+          >.
         </li>
+        <li>Please save the file as "CSV UTF-8 (Comma delimited) (*.csv)".</li>
+        <li>Select the file to be uploaded.</li>
         <li>
-          Click on 'Validate' to ensure that the file is in the proper format.
-          The validation can happen multiple times and no data will be changed.
+          Click on "Validate" to ensure your file does not have errors or
+          warnings.
         </li>
+        <li>Errors and warnings will show up below.</li>
         <li>
-          Once there are no errors that will prevent the file to be uploaded the
-          'Upload now' button will be enabled to perform the insert of all
-          offerings presents on the file.
+          If your file has errors, please fix it in the excel file first and
+          re-upload.
         </li>
+        <li>Once there are no errors, click the "Create now" button.</li>
       </ul>
-      <p class="category-header-small primary-color">Upload notes</p>
+      <p class="category-header-small primary-color">Additional notes</p>
       <ul class="m-4">
+        <li>This will create all offerings present in the CSV file.</li>
         <li>
-          The upload will be execute for all records present in the CSV file.
-          Any unexpected error during the file processing will abort the entire
-          operation and a list of errors will be displayed. This procedure will
-          allow the file to be fixed and uploaded again.
+          Any errors will produce a list below. These errors must be fixed in
+          order to create your offerings.
         </li>
         <li>
-          The errors listed as a result of the file validation can be classified
-          as 'critical' or 'warning'. All critical errors must be fixed to allow
-          the offerings to be inserted.
+          When clicking "Validate" any warnings will produce a list below. You
+          may want to review these before creating your offerings.
         </li>
         <li>
-          A file can be uploaded with warning errors, but all record that
-          contain at least one warning will required a Ministry approval and
-          will have its status defined as 'Creation Pending'.
+          Offerings created as "Creation Pending" will require StudentAid BC
+          approval.
         </li>
         <li>
-          All records with no errors and no warnings will have its status
-          automatically set to 'Approved'.
+          All offerings with no errors and no warnings will be automatically set
+          to "Approved".
         </li>
       </ul>
       <horizontal-separator />
@@ -91,7 +96,7 @@
           v-if="showPossibleFileChangeError"
           class="mb-2"
           :type="BannerTypes.Error"
-          summary="An error happen during the file upload. Reasons can include a file modification after the file was already selected or a unexpected network failure. Please select the file and try again."
+          summary="An error ocurred during the file upload. Reasons can include a file modification after the file was already selected or a unexpected network failure. Please select the file and try again."
         />
       </v-form>
       <content-group v-if="showValidationSummary">
@@ -100,13 +105,13 @@
           class="mb-2"
           v-if="hasCriticalErrorRecords"
           :type="BannerTypes.Error"
-          summary="The CSV contain some critical error that will prevent the file from being imported. Please review the errors below."
+          summary="Error! We found problems that will prevent the offerings from being created. Please review the errors below."
         />
         <banner
           class="mb-2"
           v-if="hasWarningRecords"
           :type="BannerTypes.Warning"
-          summary="The CSV file contains some non-critical errors that will required a review from the Ministry before then can be considered approved. Please review the warnings below."
+          summary="Warning! Offerings created as 'Creation Pending' will require StudentAid BC approval. Please review the warnings below."
         />
         <content-group v-if="validationResults.length">
           <DataTable
