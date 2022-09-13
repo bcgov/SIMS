@@ -229,7 +229,8 @@ html * {
   @extend .nav-item-label;
 }
 
-.nav-subtitle {
+// v-list subtitle.
+.no-wrap .v-list-subheader {
   text-transform: uppercase;
   letter-spacing: 3px !important;
 }
