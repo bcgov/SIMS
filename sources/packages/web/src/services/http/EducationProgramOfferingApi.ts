@@ -12,10 +12,10 @@ import {
   OfferingStartDateAPIOutDTO,
   OptionItemAPIOutDTO,
   EducationProgramOfferingAPIOutDTO,
-  PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
+import { FileUploadProgressEventArgs } from "./common/FileUploadProgressEvent";
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
    * Creates offering.
@@ -246,26 +246,24 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
    * Process a CSV with offerings to be created under existing programs.
    * @param file file content with all information needed to create offerings.
-   * @onUploadProgress event to report the upload progress.
    * @param validationOnly if true, will execute all validations and return the
    * errors and warnings in the same way if the file would be submitted to have
-   * the records inserted. If not present or false, the file will be processed
-   * and the records will be inserted.
-   * @returns when successfully executed, the list of all offerings ids created.
-   * When an error happen it will return all the records (with the error) and
-   * also a user friendly description of the errors to be fixed.
+   * the records inserted. If false the file will be processed and the records
+   * will be inserted.
+   **Validations errors are returned using different HTTP status codes.
+   * @onUploadProgress event to report the upload progress.
    */
   async offeringBulkInsert(
     file: Blob,
-    onUploadProgress: (progressEvent: any) => void,
     validationOnly: boolean,
-  ) {
+    onUploadProgress: (progressEvent: FileUploadProgressEventArgs) => void,
+  ): Promise<void> {
     const formData = new FormData();
     formData.append("file", file);
     // Configure the request to provide upload progress status.
     const requestConfig: AxiosRequestConfig = { onUploadProgress };
     try {
-      await ApiClient.FileUpload.upload<PrimaryIdentifierAPIOutDTO[]>(
+      await ApiClient.FileUpload.upload(
         `education-program-offering/bulk-insert?validation-only=${validationOnly}`,
         formData,
         requestConfig,

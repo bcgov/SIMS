@@ -18,39 +18,39 @@
             rel="noopener"
             target="_blank"
             >https://studentaidbc.ca/institution-officials</a
-          >.
+          >
         </li>
-        <li>Please save the file as "CSV UTF-8 (Comma delimited) (*.csv)".</li>
-        <li>Select the file to be uploaded.</li>
+        <li>Please save the file as "CSV UTF-8 (Comma delimited) (*.csv)"</li>
+        <li>Select the file to be uploaded</li>
         <li>
           Click on "Validate" to ensure your file does not have errors or
-          warnings.
+          warnings
         </li>
-        <li>Errors and warnings will show up below.</li>
+        <li>Errors and warnings will show up below</li>
         <li>
           If your file has errors, please fix it in the excel file first and
-          re-upload.
+          re-upload
         </li>
-        <li>Once there are no errors, click the "Create now" button.</li>
+        <li>Once there are no errors, click the "Create now" button</li>
       </ul>
-      <p class="category-header-small primary-color">Additional notes</p>
+      <p class="category-header-medium primary-color">Additional notes</p>
       <ul class="m-4">
-        <li>This will create all offerings present in the CSV file.</li>
+        <li>This will create all offerings present in the CSV file</li>
         <li>
           Any errors will produce a list below. These errors must be fixed in
-          order to create your offerings.
+          order to create your offerings
         </li>
         <li>
           When clicking "Validate" any warnings will produce a list below. You
-          may want to review these before creating your offerings.
+          may want to review these before creating your offerings
         </li>
         <li>
-          Offerings created as "Creation Pending" will require StudentAid BC
-          approval.
+          Offerings created as "{{ OfferingStatus.CreationPending }}" will
+          require StudentAid BC approval
         </li>
         <li>
           All offerings with no errors and no warnings will be automatically set
-          to "Approved".
+          to "{{ OfferingStatus.Approved }}"
         </li>
       </ul>
       <horizontal-separator />
@@ -69,13 +69,13 @@
             :rules="[fileValidationRules]"
             @change="uploadChanged"
             :key="csvFileUploadKey"
-          >
-          </v-file-input>
+          />
+
           <v-btn
             class="ml-2"
             color="primary"
             prepend-icon="fa:fa-solid fa-file-circle-question"
-            @click="uploadFile()"
+            @click="uploadFile"
             :loading="loading"
             :disabled="loading"
           >
@@ -92,6 +92,14 @@
             Create now
           </v-btn>
         </v-row>
+        <v-progress-linear
+          v-if="loading"
+          class="mb-4"
+          rounded
+          :max="uploadProgress.total"
+          :model-value="uploadProgress.loaded"
+          color="primary"
+        />
         <banner
           v-if="showPossibleFileChangeError"
           class="mb-2"
@@ -100,7 +108,7 @@
         />
       </v-form>
       <content-group v-if="showValidationSummary">
-        <p class="category-header-small primary-color">Validation summary</p>
+        <p class="category-header-medium primary-color">Validation summary</p>
         <banner
           class="mb-2"
           v-if="hasCriticalErrorRecords"
@@ -191,6 +199,7 @@ import {
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 import { useSnackBar } from "@/composables";
+import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
 
 const ACCEPTED_FILE_TYPE = "text/csv";
 const MAX_OFFERING_UPLOAD_SIZE = 4194304;
@@ -202,30 +211,35 @@ export default {
   setup() {
     const snackBar = useSnackBar();
     const loading = ref(false);
-    const showPossibleFileChangeError = ref(false);
     const offeringFiles = ref([] as FileInputFile[]);
-    const csvFileUpload = ref({} as any);
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
     const uploadForm = ref({} as VForm);
+    const uploadProgress = ref({} as FileUploadProgressEventArgs);
     const showValidationSummary = ref(false);
+    // Workaround to reset the file upload component to its original state.
+    // It is apparently a vuetify beta issue. It can be removed once there is a
+    // better way to force the component to reset its state.
     const csvFileUploadKey = ref(0);
+    // Specific error message to detect the error that occurs when the file upload
+    // has a file selected and the user changes its contents (net::ERR_UPLOAD_FILE_CHANGED).
+    const showPossibleFileChangeError = ref(false);
 
     const uploadFile = async (validationOnly = true) => {
       const validationResult = await uploadForm.value.validate();
       if (!validationResult.valid) {
         return;
       }
-
       showPossibleFileChangeError.value = false;
       try {
         loading.value = true;
+        const [uploadFile] = offeringFiles.value;
         const uploadResults =
           await EducationProgramOfferingService.shared.offeringBulkInsert(
-            offeringFiles.value[0],
-            (progressEvent: any) => {
-              console.log("progressEvent", progressEvent);
-            },
+            uploadFile,
             validationOnly,
+            (progressEvent: FileUploadProgressEventArgs) => {
+              uploadProgress.value = progressEvent;
+            },
           );
         if (uploadResults.length) {
           validationResults.value = uploadResults;
@@ -284,7 +298,6 @@ export default {
       uploadFile,
       validationResults,
       fileValidationRules,
-      csvFileUpload,
       OfferingStatus,
       hasCriticalErrorRecords,
       hasWarningRecords,
@@ -294,6 +307,7 @@ export default {
       showValidationSummary,
       csvFileUploadKey,
       showPossibleFileChangeError,
+      uploadProgress,
     };
   },
 };

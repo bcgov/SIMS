@@ -24,6 +24,7 @@ import {
   OFFERING_VALIDATION_CSV_FORMAT_ERROR,
 } from "@/constants";
 import { useFormatters } from "@/composables";
+import { FileUploadProgressEventArgs } from "./http/common/FileUploadProgressEvent";
 
 export class EducationProgramOfferingService {
   // Share Instance
@@ -253,27 +254,26 @@ export class EducationProgramOfferingService {
   /**
    * Process a CSV with offerings to be created under existing programs.
    * @param file file content with all information needed to create offerings.
-   * @onUploadProgress event to report the upload progress.
    * @param validationOnly if true, will execute all validations and return the
    * errors and warnings in the same way if the file would be submitted to have
-   * the records inserted. If not present or false, the file will be processed
-   * and the records will be inserted.
-   * @returns when successfully executed, the list of all offerings ids created.
-   * When an error happen it will return all the records (with the error) and
-   * also a user friendly description of the errors to be fixed.
+   * the records inserted. If false the file will be processed and the records
+   * will be inserted.
+   * @onUploadProgress event to report the upload progress.
+   * @returns a list with all validations errors and warning. Case mo errors and
+   * warning were found, an empty array will be returned.
    */
   async offeringBulkInsert(
     file: Blob,
-    onUploadProgress: (progressEvent: any) => void,
     validationOnly: boolean,
+    onUploadProgress: (progressEvent: FileUploadProgressEventArgs) => void,
   ): Promise<OfferingsUploadBulkInsert[]> {
     try {
       await ApiClient.EducationProgramOffering.offeringBulkInsert(
         file,
-        onUploadProgress,
         validationOnly,
+        onUploadProgress,
       );
-      return [];
+      return new Array<OfferingsUploadBulkInsert>();
     } catch (error: unknown) {
       // Errors that will contain records validation information that
       // must be displayed to the user.

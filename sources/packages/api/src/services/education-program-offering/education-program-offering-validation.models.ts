@@ -393,7 +393,7 @@ export class OfferingValidationModel {
     ),
   })
   @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
-  @ProgramAllowsOfferingDelivery({
+  @ProgramAllowsOfferingDelivery(userFriendlyNames.offeringDelivered, {
     context: new ValidationWarning(
       OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
     ),

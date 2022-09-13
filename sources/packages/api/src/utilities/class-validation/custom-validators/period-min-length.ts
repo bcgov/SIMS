@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { dateDifference } from "../../date-utils";
+import { dateDifference, getISODateOnlyString } from "../../date-utils";
 
 /**
  * Checks if the number of days between the property date decorated with this
@@ -27,11 +27,11 @@ class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
   defaultMessage(args: ValidationArguments) {
     const [startDateProperty, minDaysAllowed, propertyDisplayName] =
       args.constraints;
-    return `The number of day(s) between ${startDateProperty(
-      args.object,
-    )} and ${
+    const startDate = getISODateOnlyString(startDateProperty(args.object));
+    const endDate = getISODateOnlyString(args.value);
+    return `${
       propertyDisplayName ?? args.property
-    } must be at least ${minDaysAllowed}.`;
+    }, the number of day(s) between ${startDate} and ${endDate} must be at least ${minDaysAllowed}.`;
   }
 }
 

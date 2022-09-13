@@ -430,7 +430,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
 
     if (validationOnly) {
       // If the endpoint is called only to perform the validation and no error was found
-      // return an empty array because no record must be created.
+      // return an empty array because no record will be created.
       return [];
     }
 

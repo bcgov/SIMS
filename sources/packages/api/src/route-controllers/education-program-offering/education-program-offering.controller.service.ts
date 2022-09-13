@@ -208,7 +208,7 @@ export class EducationProgramOfferingControllerService {
    * @param csvModels reference CSV models to provide extra context in case
    * an error must be generated.
    * @param considerWarningsAsErrors if true, a warning will be considered as an error also,
-   * otherwise only errors in the error array will be considered errors.
+   * otherwise only errors in the errors array will be considered errors.
    */
   assertOfferingsValidationsAreValid(
     offeringValidations: OfferingValidationResult[],
