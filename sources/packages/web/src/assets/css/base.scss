@@ -230,7 +230,9 @@ html * {
 }
 
 // v-list subtitle.
-.no-wrap .v-list-subheader {
+// todo: when nav-subtitle is not used in AEST sidebar. remove from here too.
+.no-wrap .v-list-subheader,
+.nav-subtitle {
   text-transform: uppercase;
   letter-spacing: 3px !important;
 }
