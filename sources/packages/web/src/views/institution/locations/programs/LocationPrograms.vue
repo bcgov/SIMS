@@ -7,6 +7,7 @@
       <template #actions>
         <v-row class="m-0 p-0">
           <v-text-field
+            v-if="!!programAndCount.count"
             density="compact"
             label="Search Program"
             variant="outlined"

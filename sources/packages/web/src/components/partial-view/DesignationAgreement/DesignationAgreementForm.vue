@@ -1,6 +1,4 @@
 <template>
-  <!-- todo: ann add the form definition -->
-  <!-- todo: ann institution dashboard form definition -->
   <formio-container
     formName="designationAgreementDetails"
     :formData="model"

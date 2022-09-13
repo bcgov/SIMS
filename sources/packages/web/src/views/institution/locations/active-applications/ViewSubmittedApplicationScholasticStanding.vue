@@ -1,7 +1,6 @@
 <template>
   <full-page-container>
     <template #header>
-      <!-- todo: ann update coe and all forms -->
       <header-navigator
         title="Report a change"
         subTitle="View Application"

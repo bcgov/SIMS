@@ -91,6 +91,7 @@ export default {
 
     // Closed the modal dialog.
     const cancel = () => {
+      confirmCOE.value.reset();
       resolvePromise(false);
     };
 

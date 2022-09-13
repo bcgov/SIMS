@@ -31,8 +31,6 @@ interface ScholasticStandingBeforeSubmission
   readonly: boolean;
 }
 export default {
-  // todo: ann check cancel scenario, check with the team check weather to add cancel (go back to summary page) to all forms
-  // todo: ann check processing is passed correctly in all the consumer function
   emits: ["submit", "cancel"],
   props: {
     initialData: {

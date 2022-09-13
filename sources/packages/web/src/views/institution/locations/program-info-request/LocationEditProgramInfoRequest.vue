@@ -1,12 +1,9 @@
 <template>
-  <!-- todo: ann pir form w.i.p -->
   <full-page-container>
     <template #header>
       <header-navigator
         title="Program info requests"
-        :routeLocation="{
-          name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
-        }"
+        :routeLocation="goBackRouteParams"
         subTitle="View Application"
       />
     </template>
@@ -24,15 +21,16 @@
           :processing="processing"
           primaryLabel="Complete program info request"
           @primaryClick="submit"
+          @secondaryClick="goBack"
         /> </template
     ></formio-container>
   </full-page-container>
 </template>
 
 <script lang="ts">
-import { useRouter } from "vue-router";
+import { RouteLocationRaw, useRouter } from "vue-router";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import {
   useFormioUtils,
   useFormioDropdownLoader,
@@ -219,6 +217,18 @@ export default {
         processing.value = false;
       }
     };
+
+    const goBackRouteParams = computed(
+      () =>
+        ({
+          name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+        } as RouteLocationRaw),
+    );
+
+    const goBack = () => {
+      router.push(goBackRouteParams.value);
+    };
+
     return {
       initialData,
       formLoaded,
@@ -227,6 +237,8 @@ export default {
       customEventCallback,
       InstitutionRoutesConst,
       processing,
+      goBackRouteParams,
+      goBack,
     };
   },
 };

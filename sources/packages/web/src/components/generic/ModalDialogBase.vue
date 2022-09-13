@@ -5,8 +5,7 @@
     :no-click-animation="true"
     scrollable
   >
-    <!--todo: ann  Calculate max-height -->
-    <v-card elevation="10" :max-width="maxWidth" max-height="65vh">
+    <v-card elevation="10" :max-width="maxWidth" max-height="85vh">
       <v-card-header>
         <v-card-title>
           <slot name="header">
@@ -34,7 +33,6 @@
 
 <script lang="ts">
 import { ref, watch, computed, SetupContext } from "vue";
-
 const dialogClosedEvent = "dialogClosed";
 
 enum DialogTypes {

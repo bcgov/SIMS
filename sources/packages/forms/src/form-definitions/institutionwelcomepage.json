@@ -64,7 +64,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "<h1 class=\"category-header-large primary-color\">Welcome to your account!</h1>\n<p class=\"formio-text mt-4\">\n  <strong>New users</strong> can follow the steps listed below to get started.\n</p>\n<p class=\"formio-text\">\n  <strong>Returning users</strong> can use the left-hand navigation \nto do things like confirm enrolment or report a change.\n</p>",
+                  "content": "<h1 class=\"category-header-x-large primary-color\">Welcome to your account!</h1>\n<p class=\"formio-text mt-4\">\n  <strong>New users</strong> can follow the steps listed below to get started.\n</p>\n<p class=\"formio-text\">\n  <strong>Returning users</strong> can use the left-hand navigation \nto do things like confirm enrolment or report a change.\n</p>",
                   "refreshOnChange": false,
                   "customClass": "",
                   "hidden": false,
@@ -132,7 +132,7 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "epe3u14"
+                  "id": "epsfk75"
                 }
               ],
               "width": 8,
@@ -389,8 +389,8 @@
           "label": "HTML",
           "labelWidth": "",
           "labelMargin": "",
-          "tag": "p",
-          "className": "",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
           "attrs": [
             {
               "attr": "",
@@ -399,7 +399,7 @@
           ],
           "content": "Let's get started",
           "refreshOnChange": false,
-          "customClass": "category-header-large primary-color",
+          "customClass": "",
           "hidden": false,
           "modalEdit": false,
           "key": "html3",
@@ -465,7 +465,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "e15fwz9"
+          "id": "exrj12t"
         },
         {
           "label": "Columns",
@@ -481,17 +481,41 @@
                       "components": [
                         {
                           "label": "HTML",
+                          "labelWidth": "",
+                          "labelMargin": "",
                           "tag": "div",
+                          "className": "",
                           "attrs": [
                             {
                               "attr": "",
                               "value": ""
                             }
                           ],
-                          "content": "Step 1",
+                          "content": "<p class=\"category-header-medium primary-color mt-5 mb-5\">Step 1</p>\n<p class=\"category-header-small secondary-color-light mt-5 mb-5\">For admin users</p>\n",
                           "refreshOnChange": false,
-                          "customClass": "category-header-medium primary-color mt-5 mb-5",
+                          "customClass": "",
+                          "hidden": false,
+                          "modalEdit": false,
                           "key": "html4",
+                          "tags": [],
+                          "properties": {},
+                          "conditional": {
+                            "show": null,
+                            "when": null,
+                            "eq": "",
+                            "json": ""
+                          },
+                          "customConditional": "",
+                          "logic": [],
+                          "attributes": {},
+                          "overlay": {
+                            "style": "",
+                            "page": "",
+                            "left": "",
+                            "top": "",
+                            "width": "",
+                            "height": ""
+                          },
                           "type": "htmlelement",
                           "input": false,
                           "tableView": false,
@@ -503,11 +527,9 @@
                           "protected": false,
                           "unique": false,
                           "persistent": false,
-                          "hidden": false,
                           "clearOnHide": true,
                           "refreshOn": "",
                           "redrawOn": "",
-                          "modalEdit": false,
                           "dataGridLabel": false,
                           "labelPosition": "top",
                           "description": "",
@@ -522,7 +544,6 @@
                           "calculateValue": "",
                           "calculateServer": false,
                           "widget": null,
-                          "attributes": {},
                           "validateOn": "change",
                           "validate": {
                             "required": false,
@@ -532,100 +553,13 @@
                             "multiple": false,
                             "unique": false
                           },
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": ""
-                          },
-                          "overlay": {
-                            "style": "",
-                            "left": "",
-                            "top": "",
-                            "width": "",
-                            "height": ""
-                          },
                           "allowCalculateOverride": false,
                           "encrypted": false,
                           "showCharCount": false,
                           "showWordCount": false,
-                          "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "eo2wp2"
-                        },
-                        {
-                          "label": "HTML",
-                          "tag": "div",
-                          "attrs": [
-                            {
-                              "attr": "",
-                              "value": ""
-                            }
-                          ],
-                          "content": "For admin users",
-                          "refreshOnChange": false,
-                          "customClass": "category-header-small secondary-color-light mt-5 mb-5",
-                          "key": "html5",
-                          "type": "htmlelement",
-                          "input": false,
-                          "tableView": false,
-                          "placeholder": "",
-                          "prefix": "",
-                          "suffix": "",
-                          "multiple": false,
-                          "defaultValue": null,
-                          "protected": false,
-                          "unique": false,
-                          "persistent": false,
-                          "hidden": false,
-                          "clearOnHide": true,
-                          "refreshOn": "",
-                          "redrawOn": "",
-                          "modalEdit": false,
-                          "dataGridLabel": false,
-                          "labelPosition": "top",
-                          "description": "",
-                          "errorLabel": "",
-                          "tooltip": "",
-                          "hideLabel": false,
-                          "tabindex": "",
-                          "disabled": false,
-                          "autofocus": false,
-                          "dbIndex": false,
-                          "customDefaultValue": "",
-                          "calculateValue": "",
-                          "calculateServer": false,
-                          "widget": null,
-                          "attributes": {},
-                          "validateOn": "change",
-                          "validate": {
-                            "required": false,
-                            "custom": "",
-                            "customPrivate": false,
-                            "strictDateValidation": false,
-                            "multiple": false,
-                            "unique": false
-                          },
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": ""
-                          },
-                          "overlay": {
-                            "style": "",
-                            "left": "",
-                            "top": "",
-                            "width": "",
-                            "height": ""
-                          },
-                          "allowCalculateOverride": false,
-                          "encrypted": false,
-                          "showCharCount": false,
-                          "showWordCount": false,
-                          "properties": {},
-                          "allowMultipleMasks": false,
-                          "addons": [],
-                          "id": "e1fuuhr"
+                          "id": "eze7czvw"
                         }
                       ],
                       "width": 4,
@@ -639,17 +573,41 @@
                       "components": [
                         {
                           "label": "HTML",
+                          "labelWidth": "",
+                          "labelMargin": "",
                           "tag": "div",
+                          "className": "",
                           "attrs": [
                             {
                               "attr": "",
                               "value": ""
                             }
                           ],
-                          "content": "Step 2",
+                          "content": "<p class=\"category-header-medium primary-color mt-5 mb-5\"> Step 2 </p>\n<p class=\"category-header-small secondary-color-light mt-5 mb-5\">For admin users</p>",
                           "refreshOnChange": false,
-                          "customClass": "category-header-medium primary-color mt-5 mb-5",
+                          "customClass": "",
+                          "hidden": false,
+                          "modalEdit": false,
                           "key": "html6",
+                          "tags": [],
+                          "properties": {},
+                          "conditional": {
+                            "show": null,
+                            "when": null,
+                            "eq": "",
+                            "json": ""
+                          },
+                          "customConditional": "",
+                          "logic": [],
+                          "attributes": {},
+                          "overlay": {
+                            "style": "",
+                            "page": "",
+                            "left": "",
+                            "top": "",
+                            "width": "",
+                            "height": ""
+                          },
                           "type": "htmlelement",
                           "input": false,
                           "tableView": false,
@@ -661,11 +619,9 @@
                           "protected": false,
                           "unique": false,
                           "persistent": false,
-                          "hidden": false,
                           "clearOnHide": true,
                           "refreshOn": "",
                           "redrawOn": "",
-                          "modalEdit": false,
                           "dataGridLabel": false,
                           "labelPosition": "top",
                           "description": "",
@@ -680,7 +636,6 @@
                           "calculateValue": "",
                           "calculateServer": false,
                           "widget": null,
-                          "attributes": {},
                           "validateOn": "change",
                           "validate": {
                             "required": false,
@@ -690,100 +645,13 @@
                             "multiple": false,
                             "unique": false
                           },
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": ""
-                          },
-                          "overlay": {
-                            "style": "",
-                            "left": "",
-                            "top": "",
-                            "width": "",
-                            "height": ""
-                          },
                           "allowCalculateOverride": false,
                           "encrypted": false,
                           "showCharCount": false,
                           "showWordCount": false,
-                          "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "elembmp"
-                        },
-                        {
-                          "label": "HTML",
-                          "tag": "div",
-                          "attrs": [
-                            {
-                              "attr": "",
-                              "value": ""
-                            }
-                          ],
-                          "content": "For admin users",
-                          "refreshOnChange": false,
-                          "customClass": "category-header-small secondary-color-light mt-5 mb-5",
-                          "key": "html9",
-                          "type": "htmlelement",
-                          "input": false,
-                          "tableView": false,
-                          "placeholder": "",
-                          "prefix": "",
-                          "suffix": "",
-                          "multiple": false,
-                          "defaultValue": null,
-                          "protected": false,
-                          "unique": false,
-                          "persistent": false,
-                          "hidden": false,
-                          "clearOnHide": true,
-                          "refreshOn": "",
-                          "redrawOn": "",
-                          "modalEdit": false,
-                          "dataGridLabel": false,
-                          "labelPosition": "top",
-                          "description": "",
-                          "errorLabel": "",
-                          "tooltip": "",
-                          "hideLabel": false,
-                          "tabindex": "",
-                          "disabled": false,
-                          "autofocus": false,
-                          "dbIndex": false,
-                          "customDefaultValue": "",
-                          "calculateValue": "",
-                          "calculateServer": false,
-                          "widget": null,
-                          "attributes": {},
-                          "validateOn": "change",
-                          "validate": {
-                            "required": false,
-                            "custom": "",
-                            "customPrivate": false,
-                            "strictDateValidation": false,
-                            "multiple": false,
-                            "unique": false
-                          },
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": ""
-                          },
-                          "overlay": {
-                            "style": "",
-                            "left": "",
-                            "top": "",
-                            "width": "",
-                            "height": ""
-                          },
-                          "allowCalculateOverride": false,
-                          "encrypted": false,
-                          "showCharCount": false,
-                          "showWordCount": false,
-                          "properties": {},
-                          "allowMultipleMasks": false,
-                          "addons": [],
-                          "id": "ez68dcr"
+                          "id": "ec09vk6"
                         }
                       ],
                       "width": 4,
@@ -956,17 +824,41 @@
               "components": [
                 {
                   "label": "HTML",
+                  "labelWidth": "",
+                  "labelMargin": "",
                   "tag": "div",
+                  "className": "",
                   "attrs": [
                     {
                       "attr": "",
                       "value": ""
                     }
                   ],
-                  "content": "Step 4",
+                  "content": "<p class=\"category-header-medium primary-color mt-5 mb-5\">Step 4</p>\n<p class=\"category-header-small secondary-color-light mt-5 mb-5\">For legal signing authority</p>",
                   "refreshOnChange": false,
-                  "customClass": "category-header-medium primary-color mt-5 mb-5",
+                  "customClass": "",
+                  "hidden": false,
+                  "modalEdit": false,
                   "key": "html8",
+                  "tags": [],
+                  "properties": {},
+                  "conditional": {
+                    "show": null,
+                    "when": null,
+                    "eq": "",
+                    "json": ""
+                  },
+                  "customConditional": "",
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
                   "type": "htmlelement",
                   "input": false,
                   "tableView": false,
@@ -978,11 +870,9 @@
                   "protected": false,
                   "unique": false,
                   "persistent": false,
-                  "hidden": false,
                   "clearOnHide": true,
                   "refreshOn": "",
                   "redrawOn": "",
-                  "modalEdit": false,
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
@@ -997,7 +887,6 @@
                   "calculateValue": "",
                   "calculateServer": false,
                   "widget": null,
-                  "attributes": {},
                   "validateOn": "change",
                   "validate": {
                     "required": false,
@@ -1007,100 +896,13 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
                   "allowCalculateOverride": false,
                   "encrypted": false,
                   "showCharCount": false,
                   "showWordCount": false,
-                  "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ecywnor"
-                },
-                {
-                  "label": "HTML",
-                  "tag": "div",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "For legal signing authority",
-                  "refreshOnChange": false,
-                  "customClass": "category-header-small secondary-color-light mt-5 mb-5",
-                  "key": "html10",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false,
-                  "placeholder": "",
-                  "prefix": "",
-                  "suffix": "",
-                  "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
-                  "unique": false,
-                  "persistent": false,
-                  "hidden": false,
-                  "clearOnHide": true,
-                  "refreshOn": "",
-                  "redrawOn": "",
-                  "modalEdit": false,
-                  "dataGridLabel": false,
-                  "labelPosition": "top",
-                  "description": "",
-                  "errorLabel": "",
-                  "tooltip": "",
-                  "hideLabel": false,
-                  "tabindex": "",
-                  "disabled": false,
-                  "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "widget": null,
-                  "attributes": {},
-                  "validateOn": "change",
-                  "validate": {
-                    "required": false,
-                    "custom": "",
-                    "customPrivate": false,
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false
-                  },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "allowCalculateOverride": false,
-                  "encrypted": false,
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "properties": {},
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "id": "el3g8i8"
+                  "id": "eqzjyz"
                 }
               ],
               "width": 3,
@@ -1230,8 +1032,6 @@
                   "components": [
                     {
                       "label": "Columns",
-                      "labelWidth": "",
-                      "labelMargin": "",
                       "columns": [
                         {
                           "components": [
@@ -1307,7 +1107,7 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "eajpz4h"
+                              "id": "eoryuv"
                             }
                           ],
                           "width": 4,
@@ -1391,7 +1191,7 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "ed9dszt"
+                              "id": "eu43cg"
                             }
                           ],
                           "width": 4,
@@ -1475,7 +1275,7 @@
                               "properties": {},
                               "allowMultipleMasks": false,
                               "addons": [],
-                              "id": "eqiw2ir"
+                              "id": "emgrz2r"
                             }
                           ],
                           "size": "md",
@@ -1486,50 +1286,30 @@
                           "currentWidth": 4
                         }
                       ],
-                      "autoAdjust": false,
-                      "customClass": "",
-                      "hidden": false,
-                      "hideLabel": false,
-                      "modalEdit": false,
                       "key": "columns4",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "columns",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": false,
+                      "hidden": false,
                       "clearOnHide": false,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
                       "errorLabel": "",
                       "tooltip": "",
+                      "hideLabel": false,
                       "tabindex": "",
                       "disabled": false,
                       "autofocus": false,
@@ -1538,6 +1318,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -1547,15 +1328,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tree": false,
                       "lazyLoad": false,
-                      "id": "exl8l5t"
+                      "autoAdjust": false,
+                      "id": "ewfmwg"
                     }
                   ],
                   "placeholder": "",
@@ -1596,7 +1391,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "exulf7m6"
+                  "id": "eslwmg"
                 }
               ],
               "width": 9,
@@ -1649,55 +1444,33 @@
                   "components": [
                     {
                       "label": "HTML",
-                      "labelWidth": "",
-                      "labelMargin": "",
                       "tag": "div",
-                      "className": "",
                       "attrs": [
                         {
                           "attr": "",
                           "value": ""
                         }
                       ],
-                      "content": "<p class=\"category-header-small-no-transform\">Request designation</p>\n<p>\n  Request designation for your institution.\n</p>\n<p>\n  You can skip this step if your institution has already been designated. \n</p>",
+                      "content": "<p class=\"category-header-small-no-transform\">Request designation</p>\n<p class=\"py-3\">\n  Request designation for your institution.\n</p>\n<p>\n  You can skip this step if your institution has already been designated. \n</p>",
                       "refreshOnChange": false,
-                      "customClass": "",
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "html18",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": false,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -1712,6 +1485,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -1721,13 +1495,26 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e1go4j"
+                      "id": "eu14q35"
                     }
                   ],
                   "placeholder": "",
@@ -1768,7 +1555,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "err3vo"
+                  "id": "e3eruyh"
                 }
               ],
               "width": 3,

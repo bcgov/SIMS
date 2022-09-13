@@ -96,6 +96,7 @@ export default {
 
     // Closed the modal dialog.
     const cancel = () => {
+      denyCOE.value.reset();
       resolvePromise(false);
     };
 

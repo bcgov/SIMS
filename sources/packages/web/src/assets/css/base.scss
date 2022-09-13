@@ -251,7 +251,18 @@ html * {
 .input-unset-display-opacity .v-label {
   opacity: unset !important;
 }
+
 // Removing nowrap.
 .no-wrap .v-list-item-title {
   white-space: normal;
+}
+
+// Adjust v-list sub groups (children).
+.no-wrap .v-list-group .v-list-group__items {
+  margin-inline-start: 12px;
+}
+
+// Reduce v-list icon and title space.
+.no-wrap .v-list-item__content {
+  margin-inline-start: -20px;
 }

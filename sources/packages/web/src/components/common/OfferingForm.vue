@@ -1,5 +1,4 @@
 <template>
-  <!-- todo: ann form definition -->
   <formio-container
     formName="educationProgramOffering"
     :formData="formData"
@@ -10,6 +9,7 @@
         :processing="processing"
         primaryLabel="Submit"
         @primaryClick="submit"
+        @secondaryClick="cancel"
       />
     </template>
   </formio-container>
@@ -41,7 +41,7 @@ export default {
       default: false,
     },
   },
-  emits: ["saveOffering"],
+  emits: ["saveOffering", "cancel"],
   setup(props: any, context: SetupContext) {
     const { mapOfferingChipStatus } = useOffering();
     const saveOffering = (
@@ -70,9 +70,14 @@ export default {
       }),
     );
 
+    const cancel = () => {
+      context.emit("cancel");
+    };
+
     return {
       saveOffering,
       formData,
+      cancel,
     };
   },
 };

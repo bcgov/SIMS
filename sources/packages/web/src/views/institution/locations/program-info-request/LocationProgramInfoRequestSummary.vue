@@ -9,9 +9,7 @@
     <body-header
       title="Active applications"
       :recordsCount="applications.length"
-    >
-      <!-- todo: ann template action search box -->
-    </body-header>
+    />
     <content-group>
       <toggle-content :toggled="!applications.length">
         <DataTable

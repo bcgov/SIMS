@@ -44,12 +44,10 @@
         </template>
       </header-navigator>
     </template>
-    <!-- TODO: ANN form definition -->
     <formio-container
       formName="confirmsStudentEnrollment"
       :formData="initialData"
     />
-    <!-- todo: remove old form definition -->
     <!-- Approve modal -->
     <approve-c-o-e ref="confirmCOEModal" />
     <!-- Deny modal -->

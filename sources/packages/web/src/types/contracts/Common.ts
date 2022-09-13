@@ -1,3 +1,5 @@
+import { RouteLocationRaw } from "vue-router";
+
 // todo: use MenuInterface and once its removed from all, delete the below
 export interface MenuModel {
   label: string;
@@ -8,10 +10,14 @@ export interface MenuModel {
 // Interface for Menu
 export interface MenuInterface {
   title: string;
-  value?: string | number;
-  icon?: string;
-  command?: any;
-  items?: MenuInterface[];
+  props?: {
+    prependIcon?: string;
+    to?: RouteLocationRaw;
+  };
+  items?: any;
+  type?: string;
+  subgroup?: boolean;
+  children?: MenuInterface[];
 }
 
 export interface Address {
