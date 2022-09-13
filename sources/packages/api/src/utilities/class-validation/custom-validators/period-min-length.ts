@@ -25,10 +25,13 @@ class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    const [startDateProperty, minDaysAllowed] = args.constraints;
+    const [startDateProperty, minDaysAllowed, propertyDisplayName] =
+      args.constraints;
     return `The number of day(s) between ${startDateProperty(
       args.object,
-    )} and ${args.property} must be at least ${minDaysAllowed}.`;
+    )} and ${
+      propertyDisplayName ?? args.property
+    } must be at least ${minDaysAllowed}.`;
   }
 }
 
@@ -39,12 +42,15 @@ class PeriodMinLengthConstraint implements ValidatorConstraintInterface {
  * @param startDateProperty indicates the property that define the
  * start of a period.
  * @param minDaysAllowed min allowed days to the period be considered valid.
+ * @param propertyDisplayName user-friendly property name to be added to the
+ * validation message.
  * @param validationOptions validations options.
  * @returns true if the period amount of days is inside the min allowed days.
  */
 export function PeriodMinLength(
   startDateProperty: (targetObject: unknown) => Date | string,
   minDaysAllowed: number,
+  propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
@@ -53,7 +59,7 @@ export function PeriodMinLength(
       target: object.constructor,
       propertyName,
       options: validationOptions,
-      constraints: [startDateProperty, minDaysAllowed],
+      constraints: [startDateProperty, minDaysAllowed, propertyDisplayName],
       validator: PeriodMinLengthConstraint,
     });
   };
