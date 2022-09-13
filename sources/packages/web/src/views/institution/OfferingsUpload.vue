@@ -52,15 +52,18 @@
       <v-form ref="uploadForm">
         <v-row class="m-0 p-0">
           <v-file-input
-            ref="csvFileUpload"
+            :loading="loading"
+            :clearable="true"
+            :accept="ACCEPTED_FILE_TYPE"
             density="compact"
-            accept="ACCEPTED_FILE_TYPE"
             v-model="offeringFiles"
             label="Offering CSV file"
             variant="outlined"
             data-cy="fileUpload"
             prepend-icon="fa:fa-solid fa-file-csv"
-            :rules="fileValidationRules"
+            :rules="[fileValidationRules]"
+            @change="uploadChanged"
+            :key="csvFileUploadKey"
           >
           </v-file-input>
           <v-btn
@@ -68,6 +71,8 @@
             color="primary"
             prepend-icon="fa:fa-solid fa-file-circle-question"
             @click="uploadFile()"
+            :loading="loading"
+            :disabled="loading"
           >
             Validate
           </v-btn>
@@ -75,11 +80,19 @@
             class="ml-2"
             color="primary"
             prepend-icon="fa:fa-solid fa-upload"
+            :loading="loading"
+            :disabled="loading"
             @click="uploadFile(false)"
           >
-            Upload now
+            Create now
           </v-btn>
         </v-row>
+        <banner
+          v-if="showPossibleFileChangeError"
+          class="mb-2"
+          :type="BannerTypes.Error"
+          summary="An error happen during the file upload. Reasons can include a file modification after the file was already selected or a unexpected network failure. Please select the file and try again."
+        />
       </v-form>
       <content-group v-if="showValidationSummary">
         <p class="category-header-small primary-color">Validation summary</p>
@@ -160,7 +173,7 @@
 </template>
 
 <script lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import {
   OfferingsUploadBulkInsert,
   DEFAULT_PAGE_LIMIT,
@@ -184,19 +197,23 @@ export default {
   setup() {
     const snackBar = useSnackBar();
     const loading = ref(false);
-    const offeringFiles = ref({} as FileInputFile[]);
+    const showPossibleFileChangeError = ref(false);
+    const offeringFiles = ref([] as FileInputFile[]);
     const csvFileUpload = ref({} as any);
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
     const uploadForm = ref({} as VForm);
     const showValidationSummary = ref(false);
+    const csvFileUploadKey = ref(0);
 
     const uploadFile = async (validationOnly = true) => {
       const validationResult = await uploadForm.value.validate();
       if (!validationResult.valid) {
         return;
       }
-      showValidationSummary.value = true;
+
+      showPossibleFileChangeError.value = false;
       try {
+        loading.value = true;
         const uploadResults =
           await EducationProgramOfferingService.shared.offeringBulkInsert(
             offeringFiles.value[0],
@@ -207,16 +224,19 @@ export default {
           );
         if (uploadResults.length) {
           validationResults.value = uploadResults;
+          showValidationSummary.value = true;
         } else {
-          resetUploadSummary();
+          resetForm();
           snackBar.success("File successfully upload.");
         }
       } catch (error: unknown) {
         if (error instanceof Error && error.message === "Network Error") {
-          resetUploadSummary();
-          csvFileUpload.value.modelValue.length = 0;
+          resetForm();
+          showPossibleFileChangeError.value = true;
         }
         snackBar.error("Unexpected error while uploading the file.");
+      } finally {
+        loading.value = false;
       }
     };
 
@@ -231,29 +251,24 @@ export default {
       ),
     );
 
-    const fileValidationRules = [
-      (files: FileInputFile[]) => {
-        if (files?.length !== 1) {
-          return "CSV file is required.";
-        }
-        const [file] = files;
-        if (file.size > MAX_OFFERING_UPLOAD_SIZE) {
-          return "CSV file size should not be greater than 4MB";
-        }
-        if (file.type !== ACCEPTED_FILE_TYPE) {
-          return `The expected file type is ${ACCEPTED_FILE_TYPE}.`;
-        }
-        return true;
-      },
-    ];
+    const fileValidationRules = (files: FileInputFile[]) => {
+      if (files?.length !== 1) {
+        return "CSV file is required.";
+      }
+      const [file] = files;
+      if (file.size > MAX_OFFERING_UPLOAD_SIZE) {
+        return "CSV file size should not be greater than 4MB";
+      }
+      if (file.type !== ACCEPTED_FILE_TYPE) {
+        return `The expected file type is ${ACCEPTED_FILE_TYPE}.`;
+      }
+      return true;
+    };
 
-    watch(offeringFiles, () => {
-      resetUploadSummary();
-    });
-
-    const resetUploadSummary = () => {
-      validationResults.value = [];
+    const resetForm = () => {
       showValidationSummary.value = false;
+      offeringFiles.value = [];
+      csvFileUploadKey.value++;
     };
 
     return {
@@ -272,6 +287,8 @@ export default {
       uploadForm,
       ACCEPTED_FILE_TYPE,
       showValidationSummary,
+      csvFileUploadKey,
+      showPossibleFileChangeError,
     };
   },
 };
