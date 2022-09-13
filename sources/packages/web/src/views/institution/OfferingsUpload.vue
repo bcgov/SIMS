@@ -111,7 +111,7 @@
         <p class="category-header-medium primary-color">Validation summary</p>
         <banner
           class="mb-2"
-          v-if="hasCriticalErrorRecords"
+          v-if="hasCriticalErrorsRecords"
           :type="BannerTypes.Error"
           summary="Error! We found problems that will prevent the offerings from being created. Please review the errors below."
         />
@@ -211,7 +211,9 @@ export default {
   setup() {
     const snackBar = useSnackBar();
     const loading = ref(false);
+    // Only one will be used but the component allows multiple.
     const offeringFiles = ref([] as FileInputFile[]);
+    // Possible errors and warnings received upon file upload.
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
     const uploadForm = ref({} as VForm);
     const uploadProgress = ref({} as FileUploadProgressEventArgs);
@@ -220,7 +222,7 @@ export default {
     // It is apparently a vuetify beta issue. It can be removed once there is a
     // better way to force the component to reset its state.
     const csvFileUploadKey = ref(0);
-    // Specific error message to detect the error that occurs when the file upload
+    // Specific error message to be display the error that occurs when the file upload
     // has a file selected and the user changes its contents (net::ERR_UPLOAD_FILE_CHANGED).
     const showPossibleFileChangeError = ref(false);
 
@@ -259,7 +261,7 @@ export default {
       }
     };
 
-    const hasCriticalErrorRecords = computed(() =>
+    const hasCriticalErrorsRecords = computed(() =>
       validationResults.value.some((validation) => validation.errors.length),
     );
 
@@ -299,7 +301,7 @@ export default {
       validationResults,
       fileValidationRules,
       OfferingStatus,
-      hasCriticalErrorRecords,
+      hasCriticalErrorsRecords,
       hasWarningRecords,
       BannerTypes,
       uploadForm,
