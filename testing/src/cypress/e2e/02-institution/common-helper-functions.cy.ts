@@ -1,4 +1,5 @@
 import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
+import { v4 } from "uuid";
 
 const institutionCustomCommand = new InstitutionCustomCommand();
 
@@ -48,5 +49,9 @@ export default class InstitutionHelperActions {
       this.getBaseUrlAndLoginCredentialsInstitution();
     cy.visit(URL);
     institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
+  }
+
+  getUniqueId() {
+    return v4().substring(0, 4);
   }
 }

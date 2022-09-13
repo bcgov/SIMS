@@ -2,35 +2,86 @@ import DashboardInstitutionObject from "../../page-objects/Institution-objects/D
 import ManageLocationObject from "../../page-objects/Institution-objects/ManageLocationObject";
 import InstitutionHelperActions from "./common-helper-functions.cy";
 import data from "./data/manage-location.json";
+
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const institutionManageLocationObject = new ManageLocationObject();
 const institutionHelperActions = new InstitutionHelperActions();
 
-function intercept() {
-  cy.intercept("GET", "**/location/**").as("location");
-}
-
-function loginAndClickOnManageInstitution(){
+function loginAndClickOnManageInstitution() {
   institutionHelperActions.loginIntoInstitutionSingleLocation();
-    dashboardInstitutionObject.dashboardButton().click();
-    dashboardInstitutionObject.manageInstitutionButton().click();
+  dashboardInstitutionObject.dashboardButton().click();
+  dashboardInstitutionObject.manageInstitutionButton().click();
 }
 
-function loginAndClickOnEditLocation(){
+function loginAndClickOnEditLocation() {
   loginAndClickOnManageInstitution();
-  intercept();
-    institutionManageLocationObject.manageLocationButton().click();
-    institutionManageLocationObject.editLocationButton().click();
-    cy.wait("@location");
+  cy.intercept("GET", "**/location/**").as("location");
+  institutionManageLocationObject.manageLocationButton().click();
+  institutionManageLocationObject.editLocationButton().click();
+  cy.wait("@location");
 }
 
-function loginAndClickOnAddNewLocation(){
-  loginAndClickOnManageInstitution()
+function loginAndClickOnAddNewLocation() {
+  loginAndClickOnManageInstitution();
   institutionManageLocationObject.addNewLocationButton().click();
 }
 
+function verifyLocationAndContactDetails() {
+  institutionManageLocationObject.institutionCode().should("be.visible");
+  institutionManageLocationObject.address1Text().should("be.visible");
+  institutionManageLocationObject.address2Text().should("be.visible");
+  institutionManageLocationObject.countryText().should("be.visible");
+  institutionManageLocationObject.cityText().should("be.visible");
+  institutionManageLocationObject.primaryContactText().should("be.visible");
+  institutionManageLocationObject.firstNameText().should("be.visible");
+  institutionManageLocationObject.lastNameText().should("be.visible");
+  institutionManageLocationObject.phoneNumberText().should("be.visible");
+  institutionManageLocationObject.emailText().should("be.visible");
+}
+
+function verifyInvalidEamilFormatsAreNotAllowed() {
+  data.invalidData.emailAddress.forEach((element: string) => {
+    institutionManageLocationObject.emailInputText().clear().type(element);
+    cy.contains("Email must be a valid email.").should("exist");
+  });
+}
+
+function verifyValidEmailFormatsAreAllowed() {
+  data.validData.emailAddress.forEach((element: string) => {
+    institutionManageLocationObject.emailInputText().clear().type(element);
+    cy.contains("Email must be a valid email.").should("not.exist");
+  });
+}
+
+function verifyPhoneNumberFieldNotAcceptsBelow10Above20() {
+  data.invalidData.phoneNumberBelow10.forEach((element: string) => {
+    institutionManageLocationObject.phoneInputText().clear().type(element);
+    cy.contains("Phone number must have at least 10 characters.").should(
+      "exist"
+    );
+  });
+  data.invalidData.phoneNumberAbove20.forEach((element: string) => {
+    institutionManageLocationObject.phoneInputText().clear().type(element);
+    cy.contains("Phone number must have no more than 20 characters.").should(
+      "exist"
+    );
+  });
+}
+
+function verifyPhoneNumberFieldAcceptsBetween10And20() {
+  data.validData.phoneNumber.forEach((element: string) => {
+    institutionManageLocationObject.phoneInputText().clear().type(element);
+    cy.contains("Phone number must have no more than 20 characters.").should(
+      "not.exist"
+    );
+    cy.contains("Phone number must have at least 10 characters.").should(
+      "not.exist"
+    );
+  });
+}
+
 describe("'Manage Location' - Fields and Titles", () => {
-  beforeEach(() => {    
+  beforeEach(() => {
     loginAndClickOnManageInstitution();
   });
 
@@ -51,41 +102,19 @@ describe("'Manage Location' - Fields and Titles", () => {
     institutionManageLocationObject.manageLocationButton().click();
     institutionManageLocationObject.editLocationButton().click();
     institutionManageLocationObject.editLocationMessage().should("be.visible");
-    institutionManageLocationObject.locationNameText().should("be.visible");
-    institutionManageLocationObject.institutionCode().should("be.visible");
-    institutionManageLocationObject.address1Text().should("be.visible");
-    institutionManageLocationObject.address2Text().should("be.visible");
-    institutionManageLocationObject.countryText().should("be.visible");
-    institutionManageLocationObject.provinceText().should("be.visible");
-    institutionManageLocationObject.cityText().should("be.visible");
-    institutionManageLocationObject.postalCodeText().should("be.visible");
-    institutionManageLocationObject.primaryContactText().should("be.visible");
-    institutionManageLocationObject.firstNameText().should("be.visible");
-    institutionManageLocationObject.lastNameText().should("be.visible");
-    institutionManageLocationObject.phoneNumberText().should("be.visible");
-    institutionManageLocationObject.emailText().should("be.visible");
+    verifyLocationAndContactDetails();
   });
 
   it("Verify that is redirected to 'Add New Location' page", () => {
     institutionManageLocationObject.manageLocationButton().click();
     institutionManageLocationObject.addNewLocationButton().click();
     institutionManageLocationObject.addLocationMessage().should("be.visible");
-    institutionManageLocationObject.locationNameText().should("be.visible");
-    institutionManageLocationObject.institutionCode().should("be.visible");
-    institutionManageLocationObject.address1Text().should("be.visible");
-    institutionManageLocationObject.address2Text().should("be.visible");
-    institutionManageLocationObject.countryText().should("be.visible");
-    institutionManageLocationObject.cityText().should("be.visible");
-    institutionManageLocationObject.primaryContactText().should("be.visible");
-    institutionManageLocationObject.firstNameText().should("be.visible");
-    institutionManageLocationObject.lastNameText().should("be.visible");
-    institutionManageLocationObject.phoneNumberText().should("be.visible");
-    institutionManageLocationObject.emailText().should("be.visible");
+    verifyLocationAndContactDetails();
   });
 });
 
 describe("'Edit Location' page inline error and validations", () => {
-  before(() => {   
+  before(() => {
     loginAndClickOnEditLocation();
   });
 
@@ -101,49 +130,24 @@ describe("'Edit Location' page inline error and validations", () => {
   });
 
   it("Verify that email field does not accept invalid email formats", () => {
-    data.invalidData.emailAddress.forEach((element: string) => {
-      institutionManageLocationObject.emailInputText().clear().type(element);
-      cy.contains("Email must be a valid email.");
-    });
+    verifyInvalidEamilFormatsAreNotAllowed();
   });
 
   it("Verify that email field accepts valid email formats", () => {
-    data.validData.emailAddress.forEach((element: string) => {
-      institutionManageLocationObject.emailInputText().clear().type(element);
-      cy.contains("Email must be a valid email.").should("not.exist");
-    });
+    verifyValidEmailFormatsAreAllowed();
   });
 
   it("Verify that phone number field does not accept numbers below 10 and above 20", () => {
-    data.invalidData.phoneNumberBelow10.forEach((element: string) => {
-      institutionManageLocationObject.phoneInputText().clear().type(element);
-      cy.contains("Phone number must have at least 10 characters.").should(
-        "exist"
-      );
-    });    
-    data.invalidData.phoneNumberAbove20.forEach((element: string) => {
-      institutionManageLocationObject.phoneInputText().clear().type(element);
-      cy.contains("Phone number must have no more than 20 characters.").should(
-        "exist"
-      );
-    });
+    verifyPhoneNumberFieldNotAcceptsBelow10Above20();
   });
 
   it("Verify that phone number field accepts valid number formats", () => {
-    data.validData.phoneNumber.forEach((element: string) => {
-      institutionManageLocationObject.phoneInputText().clear().type(element);
-      cy.contains("Phone number must have no more than 20 characters.").should(
-        "not.exist"
-      );
-      cy.contains("Phone number must have at least 10 characters.").should(
-        "not.exist"
-      );
-    });
+    verifyPhoneNumberFieldAcceptsBetween10And20();
   });
 });
 
 describe("'Add New Location' inline errors validation", () => {
-  before(() => {    
+  before(() => {
     loginAndClickOnAddNewLocation();
   });
 
@@ -257,8 +261,8 @@ describe("'Add New Location' inline errors validation", () => {
 });
 
 describe("Country drop-down items and provinces", () => {
-  beforeEach(() => {    
-    loginAndClickOnAddNewLocation()
+  beforeEach(() => {
+    loginAndClickOnAddNewLocation();
     institutionManageLocationObject.countryDropDownMenu().click();
   });
 
@@ -327,8 +331,8 @@ describe("Country drop-down items and provinces", () => {
 });
 
 describe("Primary Contact Information Validation", () => {
-  beforeEach(() => {   
-    loginAndClickOnAddNewLocation();    
+  beforeEach(() => {
+    loginAndClickOnAddNewLocation();
   });
   it("Verify that FirstName should accept alpha numeric and special chars", () => {
     data.validData.stringsWithAlphaNumericSpecialChars.forEach(
@@ -372,43 +376,126 @@ describe("Primary Contact Information Validation", () => {
   });
 
   it("Verify that email field does not accept invalid emails", () => {
-    data.invalidData.emailAddress.forEach((element: string) => {
-      institutionManageLocationObject.emailInputText().clear().type(element);
-      cy.contains("Email must be a valid email.");
-    });
+    verifyInvalidEamilFormatsAreNotAllowed();
   });
 
   it("Verify that email field accepts valid emails", () => {
-    data.validData.emailAddress.forEach((element: string) => {
-      institutionManageLocationObject.emailInputText().clear().type(element);
-      cy.contains("Email must be a valid email.").should("not.exist");
-    });
+    verifyValidEmailFormatsAreAllowed();
   });
 
   it("Verify that phone number field does not accept numbers below 10 and above 20", () => {
-    data.invalidData.phoneNumberBelow10.forEach((element: string) => {
-      institutionManageLocationObject.phoneInputText().clear().type(element);
-      cy.contains("Phone number must have at least 10 characters.").should(
-        "exist"
-      );
-    });
-    data.invalidData.phoneNumberAbove20.forEach((element: string) => {
-      institutionManageLocationObject.phoneInputText().clear().type(element);
-      cy.contains("Phone number must have no more than 20 characters.").should(
-        "exist"
-      );
-    });
+    verifyPhoneNumberFieldNotAcceptsBelow10Above20();
   });
 
   it("Verify that phone number field accepts valid numbers", () => {
-    data.validData.phoneNumber.forEach((element: string) => {
-      institutionManageLocationObject.phoneInputText().clear().type(element);
-      cy.contains("Phone number must have no more than 20 characters.").should(
-        "not.exist"
-      );
-      cy.contains("Phone number must have at least 10 characters.").should(
-        "not.exist"
-      );
-    });
+    verifyPhoneNumberFieldAcceptsBetween10And20();
+  });
+});
+
+describe("Add New Location and update for the institution", () => {
+  const uniqeId1 = institutionHelperActions.getUniqueId();
+  const name1 = `test-${uniqeId1}`;
+  const institutionCode = "ASKN";
+  const canadaPostalCode = "A1A2A3";
+  const phoneNumber = "1236549871";
+
+  before(() => {
+    loginAndClickOnAddNewLocation();
+  });
+
+  it("Create new institution location", () => {
+    institutionManageLocationObject
+      .locationName()
+      .clear()
+      .type(`location-${name1}`)
+      .should("have.value", `location-${name1}`);
+    institutionManageLocationObject
+      .institutionCode()
+      .clear()
+      .type(institutionCode)
+      .should("have.value", institutionCode);
+    institutionManageLocationObject
+      .addressLine1()
+      .clear()
+      .type(`Addrline1-${name1}`)
+      .should("have.value", `Addrline1-${name1}`);
+    institutionManageLocationObject
+      .addressLine2()
+      .clear()
+      .type(`Addrline2-${name1}`)
+      .should("have.value", `Addrline2-${name1}`);
+    institutionManageLocationObject.countryDropDownMenu().click();
+    institutionManageLocationObject.countryCanadaFromDropDownMenu().click();
+    institutionManageLocationObject.provinceDropDownMenu().click();
+    institutionManageLocationObject.provinceABFromDropDown().click();
+    institutionManageLocationObject
+      .cityInputText()
+      .type(`city-${name1}`)
+      .should("have.value", `city-${name1}`);
+    institutionManageLocationObject
+      .canadaPostalCode()
+      .type(canadaPostalCode)
+      .should("have.value", "A1A 2A3");
+    institutionManageLocationObject
+      .firstNameInputText()
+      .type(`fname-${name1}`)
+      .should("have.value", `fname-${name1}`);
+    institutionManageLocationObject
+      .lastNameInputText()
+      .type(`lname-${name1}`)
+      .should("have.value", `lname-${name1}`);
+    institutionManageLocationObject
+      .emailInputText()
+      .type(`${name1}@gov.test`)
+      .should("have.value", `${name1}@gov.test`);
+    institutionManageLocationObject
+      .phoneInputText()
+      .type(phoneNumber)
+      .should("have.value", phoneNumber);
+    institutionManageLocationObject.submitButton().click();
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
+    cy.contains(`fname-${name1}`).should("be.visible");
+    cy.contains(`lname-${name1}`).should("be.visible");
+    cy.contains(`${name1}@gov.test`).should("be.visible");
+  });
+
+  it("Update institution primary contact details", () => {
+    cy.wait(2);
+    cy.intercept("GET", "**/location/**").as("location");
+    cy.contains(`location-${name1}`)
+      .parents(".v-row")
+      .children()
+      .contains("Edit")
+      .click();
+    cy.wait("@location");
+    const uniqeId = institutionHelperActions.getUniqueId();
+    const name = `test-${uniqeId}`;
+    const phoneNumber = "1236549000";
+    institutionManageLocationObject
+      .firstNameInputText()
+      .clear()
+      .type(`fname-${name}`)
+      .should("have.value", `fname-${name}`);
+    institutionManageLocationObject
+      .lastNameInputText()
+      .clear()
+      .type(`lname-${name}`)
+      .should("have.value", `lname-${name}`);
+    institutionManageLocationObject
+      .emailInputText()
+      .clear()
+      .type(`${name}@gov.test`)
+      .should("have.value", `${name}@gov.test`);
+    institutionManageLocationObject
+      .phoneInputText()
+      .clear()
+      .type(phoneNumber)
+      .should("have.value", phoneNumber);
+    institutionManageLocationObject.submitButton().click();
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
+    cy.contains(`fname-${name}`).should("be.visible");
+    cy.contains(`lname-${name}`).should("be.visible");
+    cy.contains(`${name}@gov.test`).should("be.visible");
+    cy.contains("1236549000").should("be.visible");
   });
 });

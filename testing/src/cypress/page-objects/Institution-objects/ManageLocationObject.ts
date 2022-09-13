@@ -103,8 +103,8 @@ export default class ManageLocationObject {
     return cy.get('div[data-value="other"]');
   }
 
-  otherCountryInputText(){
-    return cy.get("[data-cy='otherCountry']")
+  otherCountryInputText() {
+    return cy.get("[data-cy='otherCountry']");
   }
 
   provinceDropDownMenu() {
