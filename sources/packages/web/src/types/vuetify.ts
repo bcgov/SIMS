@@ -40,7 +40,7 @@ export type VForm = Vue & {
 /**
  * Vuetify file for a v-file-input component.
  */
-export interface FileInputFile extends Blob {
+export interface InputFile extends Blob {
   lastModified: number;
   lastModifiedDate: Date;
   name: string;

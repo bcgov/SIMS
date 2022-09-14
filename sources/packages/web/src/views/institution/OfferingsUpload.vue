@@ -124,7 +124,6 @@
         <content-group v-if="validationResults.length">
           <DataTable
             :value="validationResults"
-            :lazy="true"
             :paginator="true"
             :rows="DEFAULT_PAGE_LIMIT"
             :rowsPerPageOptions="PAGINATION_LIST"
@@ -194,7 +193,7 @@ import {
   OfferingStatus,
   BannerTypes,
   VForm,
-  FileInputFile,
+  InputFile,
 } from "@/types";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
@@ -212,7 +211,7 @@ export default {
     const snackBar = useSnackBar();
     const loading = ref(false);
     // Only one will be used but the component allows multiple.
-    const offeringFiles = ref([] as FileInputFile[]);
+    const offeringFiles = ref<InputFile[]>([]);
     // Possible errors and warnings received upon file upload.
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
     const uploadForm = ref({} as VForm);
@@ -247,8 +246,13 @@ export default {
           validationResults.value = uploadResults;
           showValidationSummary.value = true;
         } else {
-          resetForm();
-          snackBar.success("File successfully upload.");
+          if (validationOnly) {
+            snackBar.success("Success! File validated.");
+          } else {
+            // Reset for to execute a possible new file upload if needed.
+            resetForm();
+            snackBar.success("Success! Offerings created.");
+          }
         }
       } catch (error: unknown) {
         if (error instanceof Error && error.message === "Network Error") {
@@ -272,7 +276,7 @@ export default {
       ),
     );
 
-    const fileValidationRules = (files: FileInputFile[]) => {
+    const fileValidationRules = (files: InputFile[]) => {
       if (files?.length !== 1) {
         return "CSV file is required.";
       }

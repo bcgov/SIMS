@@ -15,7 +15,8 @@ import {
 } from "@/services/http/dto";
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
-import { FileUploadProgressEventArgs } from "./common/FileUploadProgressEvent";
+import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
+
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
    * Creates offering.
