@@ -38,6 +38,7 @@ import {
   InstitutionTypeService,
   StudentAccountApplicationsService,
   InstitutionRestrictionService,
+  EducationProgramOfferingValidationService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -140,6 +141,7 @@ import { InstitutionUserControllerService } from "./route-controllers/institutio
     EducationProgramControllerService,
     StudentAccountApplicationsService,
     EducationProgramOfferingControllerService,
+    EducationProgramOfferingValidationService,
   ],
 })
 export class AppAESTModule {}

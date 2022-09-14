@@ -4,8 +4,10 @@
  * the error handling.
  */
 export class CustomNamedError extends Error {
-  constructor(message: string, name: string) {
+  constructor(message: string, name: string, objectInfo?: unknown) {
     super(message);
     this.name = name;
+    this.objectInfo = objectInfo;
   }
+  readonly objectInfo: unknown;
 }

@@ -68,13 +68,16 @@ describe("Test ATBC Controller", () => {
     simsUser.firstName = faker.name.firstName();
     simsUser.lastName = faker.name.lastName();
     fakeStudent.user = simsUser;
+
+    // Save the student in SIMS.
+    await studentService.save(fakeStudent);
+
     const sinValidation = new SINValidation();
-    sinValidation.user = simsUser;
+    sinValidation.student = fakeStudent;
     sinValidation.isValidSIN = true;
     fakeStudent.sinValidation = sinValidation;
     sinValidation.sin = "706941291";
 
-    // Save the student in SIMS
     await studentService.save(fakeStudent);
 
     // creating mockup for ATBCCreateClient, this function actually calls the ATBC server to create the student profile
@@ -89,8 +92,12 @@ describe("Test ATBC Controller", () => {
         .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK);
     } finally {
-      await studentService.remove(fakeStudent);
+      // Set SIN Validation to null to remove the dependency
+      // and delete SIN validation and student.
+      fakeStudent.sinValidation = null;
+      await studentService.save(fakeStudent);
       await sinValidationService.remove(sinValidation);
+      await studentService.remove(fakeStudent);
       await userService.remove(simsUser);
     }
   });
