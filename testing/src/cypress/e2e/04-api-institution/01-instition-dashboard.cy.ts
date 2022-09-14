@@ -1,5 +1,5 @@
-import InstitutionHelperActions from "../02-institution/common-helper-functions.cy";
-
+import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
+import Authorization from "../../custom-command/common/authorization";
 const institutionHelperActions = new InstitutionHelperActions();
 
 const INSTITUTION_DETAILS_SINGLE_LOCATION =
@@ -7,17 +7,21 @@ const INSTITUTION_DETAILS_SINGLE_LOCATION =
 const USER_DETAILS_SINGLE_LOCATION =
   institutionHelperActions.getUserDetailsSingleLocation();
 const API_URL = institutionHelperActions.getApiUrlForTest();
-const TOKEN = institutionHelperActions.getToken();
 
-describe("Validate Institution apis - Institution with single location", () => {
-  it("Get User status", () => {
+describe("[Institution Dashboard APIs] - Institution with single location", () => {
+  let token: any;
+  before(async () => {
+    const authorizer = new Authorization();
+    token = await authorizer.getAuthToken();
+  });
+  it("[Institution Dashboard APIs] - Verify GET `user-status` call", () => {
     cy.request({
       method: "GET",
       url: `${API_URL}/institution-user/status`,
       followRedirect: false,
       headers: {
         "Content-Type": "text/html",
-        Authorization: TOKEN,
+        Authorization: `Bearer ${token}`,
       },
     }).then((response) => {
       expect(response.status).to.be.equal(200);
@@ -26,38 +30,38 @@ describe("Validate Institution apis - Institution with single location", () => {
     });
   });
 
-  it("Get User details", () => {
+  it("[Institution Dashboard APIs] - Verify GET `user-details` call", () => {
     cy.request({
       method: "GET",
       url: `${API_URL}/institution-user/my-details`,
       followRedirect: false,
       headers: {
         "Content-Type": "text/html",
-        Authorization: TOKEN,
+        Authorization: `Bearer ${token}`,
       },
     }).then((resp) => {
       expect(resp.status).to.be.equal(200);
       expect(resp.body.user).to.have.property(
         "userName",
-        USER_DETAILS_SINGLE_LOCATION.userName
+        USER_DETAILS_SINGLE_LOCATION.user.userName
       );
       expect(resp.body.user).to.have.property(
         "firstName",
-        USER_DETAILS_SINGLE_LOCATION.firstName
+        USER_DETAILS_SINGLE_LOCATION.user.firstName
       );
       expect(resp.body.user).to.have.property(
         "lastName",
-        USER_DETAILS_SINGLE_LOCATION.lastName
+        USER_DETAILS_SINGLE_LOCATION.user.lastName
       );
       expect(resp.body.user).to.have.property("isActive", true);
       expect(resp.body.user).to.have.property(
         "userFullName",
-        USER_DETAILS_SINGLE_LOCATION.userFullName
+        USER_DETAILS_SINGLE_LOCATION.user.userFullName
       );
       expect(resp.body.user).to.have.property("isAdmin", true);
       expect(resp.body.user).to.have.property(
         "email",
-        USER_DETAILS_SINGLE_LOCATION.email
+        USER_DETAILS_SINGLE_LOCATION.user.email
       );
       expect(resp.body.authorizations).to.have.property(
         "institutionId",
@@ -78,19 +82,19 @@ describe("Validate Institution apis - Institution with single location", () => {
     });
   });
 
-//TODO Need to implement test case for user which does not have first name
-//TODO Need to implement test case for user which have access to more than one location
-//TODO Need to implement test case for institution having more than one location
-//TODO Need to implement test case for institution having location outside Canada
+  //TODO Need to implement test case for user which does not have first name
+  //TODO Need to implement test case for user which have access to more than one location
+  //TODO Need to implement test case for institution having more than one location
+  //TODO Need to implement test case for institution having location outside Canada
 
-  it("Get Institution details", () => {
+  it("[Institution Dashboard APIs] - Verify GET `Institution-details call", () => {
     cy.request({
       method: "GET",
       url: `${API_URL}/institution`,
       followRedirect: true,
       headers: {
         "Content-Type": "text/html",
-        Authorization: TOKEN,
+        Authorization: `Bearer ${token}`,
       },
     }).then((response) => {
       const body = response.body;
@@ -157,26 +161,14 @@ describe("Validate Institution apis - Institution with single location", () => {
         "operatingName",
         INSTITUTION_DETAILS_SINGLE_LOCATION.operatingName
       );
-      expect(body).to.have.property(
-        "primaryContactEmail",
-        INSTITUTION_DETAILS_SINGLE_LOCATION.primaryContactEmail
-      );
-      expect(body).to.have.property(
-        "primaryContactFirstName",
-        INSTITUTION_DETAILS_SINGLE_LOCATION.primaryContactFirstName
-      );
-      expect(body).to.have.property(
-        "primaryContactLastName",
-        INSTITUTION_DETAILS_SINGLE_LOCATION.primaryContactLastName
-      );
+      expect(body).to.have.property("primaryContactEmail");
+      expect(body).to.have.property("primaryContactFirstName");
+      expect(body).to.have.property("primaryContactLastName");
       expect(body).to.have.property(
         "primaryContactPhone",
         INSTITUTION_DETAILS_SINGLE_LOCATION.primaryContactPhone
       );
-      expect(body).to.have.property(
-        "primaryEmail",
-        INSTITUTION_DETAILS_SINGLE_LOCATION.primaryEmail
-      );
+      expect(body).to.have.property("primaryEmail");
       expect(body).to.have.property(
         "primaryPhone",
         INSTITUTION_DETAILS_SINGLE_LOCATION.primaryPhone

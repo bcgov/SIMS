@@ -1,5 +1,8 @@
-import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
+import InstitutionCustomCommand from "./InstitutionCustomCommand";
 import { v4 } from "uuid";
+import ApiData from "../../e2e/data/endpoints/api-endpoints.json";
+import UserData from "../../e2e/data/institution/user-details.json";
+import InstitutionData from "../../e2e/data/institution/institution-details.json";
 
 const institutionCustomCommand = new InstitutionCustomCommand();
 
@@ -13,15 +16,17 @@ export default class InstitutionHelperActions {
     ];
   }
   getBaseUrlForTestEnv() {
-    return Cypress.env("TEST").BASE_URL;
+    return ApiData.testEnv.baseUrl;
   }
 
   getLoginUrlForTestEnv() {
-    return `${this.getBaseUrlForTestEnv()}/institution/login`;
+    return `${this.getBaseUrlForTestEnv()}${
+      ApiData.endPoints.institutionLogin
+    }`;
   }
 
   getApiUrlForTest() {
-    return `${this.getBaseUrlForTestEnv()}/api/institutions`;
+    return `${this.getBaseUrlForTestEnv()}${ApiData.endPoints.institutionsApi}`;
   }
 
   getUserNameSingleLocation() {
@@ -33,15 +38,11 @@ export default class InstitutionHelperActions {
   }
 
   getUserDetailsSingleLocation() {
-    return Cypress.env("USER_DETAILS").USER_SINGLE_LOCATION;
+    return UserData.userDetailsSingleLocation;
   }
 
   getInstitutionDetailsSingleLocation() {
-    return Cypress.env("INSTITUTION_DETAILS_SINGLE_LOCATION");
-  }
-
-  getToken() {
-    return Cypress.env("TEST").TOKEN;
+    return InstitutionData.institutionWithSingleLocation;
   }
 
   loginIntoInstitutionSingleLocation() {

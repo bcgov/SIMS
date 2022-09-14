@@ -1,8 +1,7 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
 import InstitutionProfileObject from "../../page-objects/Institution-objects/InstitutionProfileObject";
-import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
 import { profileData } from "../../../data/dev/institution-data/institutionProfileData";
-import InstitutionHelperActions from "./common-helper-functions.cy";
+import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const institutionObject = new InstitutionProfileObject();
@@ -53,9 +52,7 @@ describe("Institution Profile", () => {
     institutionObject.institutionDetailsButton().click();
     cy.wait("@institution");
     institutionObject.primaryPhoneNumberInputText().should("be.disabled");
-
     institutionObject.primaryEmailInputText().should("be.disabled");
-
     institutionObject.establishedDate().should("be.disabled");
     institutionObject.firstNameInstitutionInputText().should("be.disabled");
     institutionObject.lastNameInstitutionInputText().should("be.disabled");

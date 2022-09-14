@@ -1,0 +1,26 @@
+{
+  "institutionWithSingleLocation": {
+    "legalOperatingName": "College F",
+    "operatingName": "College F Operating Name",
+    "primaryPhone": "1234567890",
+    "website": "1.com",
+    "regulatingBody": "icbc",
+    "institutionType": 2,
+    "institutionTypeName": "BC Private",
+    "establishedDate": "2019-07-05T00:00:00.000Z",
+    "formattedEstablishedDate": "July, 5 2019",
+    "primaryContactPhone": "1234567890",
+    "mailingAddress": {
+      "addressLine1": "123 Fake St",
+      "addressLine2": "",
+      "provinceState": "BC",
+      "country": "Canada",
+      "city": "Victoria",
+      "postalCode": "V1V1V1",
+      "canadaPostalCode": "V1V1V1",
+      "selectedCountry": "Canada"
+    },
+    "isBCPrivate": true,
+    "hasBusinessGuid": true
+  }
+}
