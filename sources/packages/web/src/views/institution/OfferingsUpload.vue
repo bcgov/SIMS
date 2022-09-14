@@ -104,7 +104,7 @@
           v-if="showPossibleFileChangeError"
           class="mb-2"
           :type="BannerTypes.Error"
-          summary="An error ocurred during the file upload. Reasons can include a file modification after the file was already selected or a unexpected network failure. Please select the file and try again."
+          summary="An error occurred during the file upload. Reasons can include a file modification after the file was already selected or an unexpected network failure. Please select the file and try again."
         />
       </v-form>
       <content-group v-if="showValidationSummary">
