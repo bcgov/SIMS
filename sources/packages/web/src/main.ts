@@ -27,7 +27,6 @@ import ToggleContent from "@/components/generic/ToggleContent.vue";
 import FormioContainer from "@/components/generic/FormioContainer.vue";
 import FooterButtons from "@/components/generic/FooterButtons.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
-import HorizontalSeparator from "@/components/generic/HorizontalSeparator.vue";
 
 AppConfigService.shared.init().then(() => {
   createApp(App)
@@ -48,6 +47,5 @@ AppConfigService.shared.init().then(() => {
     .component("FormioContainer", FormioContainer)
     .component("FooterButtons", FooterButtons)
     .component("TitleValue", TitleValue)
-    .component("HorizontalSeparator", HorizontalSeparator)
     .mount("#app");
 });

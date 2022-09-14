@@ -53,7 +53,7 @@
           to "{{ OfferingStatus.Approved }}"
         </li>
       </ul>
-      <horizontal-separator />
+      <v-divider />
       <v-form ref="uploadForm">
         <v-row class="m-0 p-0">
           <v-file-input

@@ -50,7 +50,7 @@ export interface CourseDetails {
 }
 
 /**
- * Offering bul insert validation result with formatted values
+ * Offering bulk insert validation result with formatted values
  * to be displayed to the user.
  */
 export interface OfferingsUploadBulkInsert

@@ -517,7 +517,7 @@ export class OfferingValidationModel {
       !!offering.studyEndDate,
   )
   @ArrayMinSize(1, {
-    message: `${userFriendlyNames.studyBreaks} must contains at least one period.`,
+    message: `${userFriendlyNames.studyBreaks} must contain at least one period break.`,
   })
   @ValidateNested({ each: true })
   @HasNoPeriodOverlap(userFriendlyNames.studyBreaks)

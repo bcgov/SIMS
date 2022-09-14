@@ -24,7 +24,7 @@ import {
   OFFERING_VALIDATION_CSV_FORMAT_ERROR,
 } from "@/constants";
 import { useFormatters } from "@/composables";
-import { FileUploadProgressEventArgs } from "./http/common/FileUploadProgressEvent";
+import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
 
 export class EducationProgramOfferingService {
   // Share Instance
