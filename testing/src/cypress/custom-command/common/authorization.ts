@@ -3,7 +3,7 @@ import { stringify } from "querystring";
 import authData from "../../e2e/data/authentication-details.json";
 
 export default class Authorization {
-  async getAuthToken(): Promise<AxiosResponse<String>> {
+  async getAuthToken(): Promise<AxiosResponse<string>> {
     const auth_url = authData.testEnv.keyCloakTokenUrl;
     const body = stringify({
       username: authData.testEnv.username,
