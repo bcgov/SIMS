@@ -49,9 +49,23 @@ export interface CourseDetails {
   courseEndDate: string;
 }
 
+/**
+ * Offering bul insert validation result with formatted values
+ * to be displayed to the user.
+ */
 export interface OfferingsUploadBulkInsert
   extends OfferingBulkInsertValidationResultAPIOutDTO {
+  /**
+   * CSV line number that contains the error.
+   * Should match with CSV/spreadsheet line number for easy troubleshoot.
+   */
   recordLineNumber: number;
+  /**
+   * Offering start date formatted.
+   */
   startDateFormatted?: string;
+  /**
+   * Offering end date formatted.
+   */
   endDateFormatted?: string;
 }

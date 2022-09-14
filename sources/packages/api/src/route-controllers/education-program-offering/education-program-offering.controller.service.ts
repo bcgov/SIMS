@@ -266,19 +266,22 @@ export class EducationProgramOfferingControllerService {
     if (creationErrors.length) {
       // If there is any failed result throw an error.
       const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
-        creationErrors.map((creationError) => {
-          const csvModel = csvModels[creationError.validatedOffering.index];
-          return {
-            recordIndex: creationError.validatedOffering.index,
-            locationCode: csvModel.institutionLocationCode,
-            sabcProgramCode: csvModel.sabcProgramCode,
-            startDate:
-              creationError.validatedOffering.offeringModel.studyStartDate,
-            endDate: creationError.validatedOffering.offeringModel.studyEndDate,
-            errors: [creationError.error],
-            warnings: [],
-          };
-        });
+        creationErrors
+          .map((creationError) => {
+            const csvModel = csvModels[creationError.validatedOffering.index];
+            return {
+              recordIndex: creationError.validatedOffering.index,
+              locationCode: csvModel.institutionLocationCode,
+              sabcProgramCode: csvModel.sabcProgramCode,
+              startDate:
+                creationError.validatedOffering.offeringModel.studyStartDate,
+              endDate:
+                creationError.validatedOffering.offeringModel.studyEndDate,
+              errors: [creationError.error],
+              warnings: [],
+            };
+          })
+          .sort((a, b) => a.recordIndex - b.recordIndex);
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "Some error happen with one or more offerings being created and the entire process was aborted. No offering was added and the upload can be executed again once the error is fixed.",

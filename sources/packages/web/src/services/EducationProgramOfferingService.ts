@@ -255,11 +255,11 @@ export class EducationProgramOfferingService {
    * Process a CSV with offerings to be created under existing programs.
    * @param file file content with all information needed to create offerings.
    * @param validationOnly if true, will execute all validations and return the
-   * errors and warnings in the same way if the file would be submitted to have
-   * the records inserted. If false the file will be processed and the records
+   * errors and warnings. These validations are the same executed during the
+   * final creation process. If false, the file will be processed and the records
    * will be inserted.
    * @onUploadProgress event to report the upload progress.
-   * @returns a list with all validations errors and warning. Case mo errors and
+   * @returns a list with all validations errors and warning. Case no errors and
    * warning were found, an empty array will be returned.
    */
   async offeringBulkInsert(
@@ -299,11 +299,16 @@ export class EducationProgramOfferingService {
     }
   }
 
+  /**
+   * Maps the API bulk insert validation result adding formatted values to be displayed in the UI.
+   * @param apiValidationResult validation result to be mapped and formatted.
+   * @returns offering bulk insert validation with additional properties formatted
+   * to be displayed to the UI..
+   */
   private mapToOfferingsUploadBulkInsert(
     apiValidationResult: OfferingBulkInsertValidationResultAPIOutDTO,
   ): OfferingsUploadBulkInsert {
     const { dateOnlyLongString } = useFormatters();
-    console.log(apiValidationResult);
     return {
       ...apiValidationResult,
       recordLineNumber: apiValidationResult.recordIndex + 2, // Header + zero base index.

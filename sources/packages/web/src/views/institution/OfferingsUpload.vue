@@ -75,7 +75,7 @@
             class="ml-2"
             color="primary"
             prepend-icon="fa:fa-solid fa-file-circle-question"
-            @click="uploadFile"
+            @click="uploadFile(true)"
             :loading="loading"
             :disabled="loading"
           >
@@ -226,7 +226,7 @@ export default {
     // has a file selected and the user changes its contents (net::ERR_UPLOAD_FILE_CHANGED).
     const showPossibleFileChangeError = ref(false);
 
-    const uploadFile = async (validationOnly = true) => {
+    const uploadFile = async (validationOnly: boolean) => {
       const validationResult = await uploadForm.value.validate();
       if (!validationResult.valid) {
         return;
@@ -234,10 +234,10 @@ export default {
       showPossibleFileChangeError.value = false;
       try {
         loading.value = true;
-        const [uploadFile] = offeringFiles.value;
+        const [fileToUpload] = offeringFiles.value;
         const uploadResults =
           await EducationProgramOfferingService.shared.offeringBulkInsert(
-            uploadFile,
+            fileToUpload,
             validationOnly,
             (progressEvent: FileUploadProgressEventArgs) => {
               uploadProgress.value = progressEvent;

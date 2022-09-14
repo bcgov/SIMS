@@ -247,8 +247,8 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * Process a CSV with offerings to be created under existing programs.
    * @param file file content with all information needed to create offerings.
    * @param validationOnly if true, will execute all validations and return the
-   * errors and warnings in the same way if the file would be submitted to have
-   * the records inserted. If false the file will be processed and the records
+   * errors and warnings. These validations are the same executed during the
+   * final creation process. If false, the file will be processed and the records
    * will be inserted.
    **Validations errors are returned using different HTTP status codes.
    * @onUploadProgress event to report the upload progress.
