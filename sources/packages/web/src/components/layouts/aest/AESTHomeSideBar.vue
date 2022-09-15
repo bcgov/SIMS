@@ -129,7 +129,7 @@ export default {
     } as MenuModel;
 
     const designations = {
-      label: "Pending designations",
+      label: "Designations",
       icon: "mdi-bookmark-outline",
       command: () => ({
         name: AESTRoutesConst.PENDING_DESIGNATIONS,
