@@ -21,7 +21,7 @@
         <v-list-item
           :to="{ name: InstitutionRoutesConst.OFFERINGS_UPLOAD }"
           prepend-icon="fa:far fa-address-card-o"
-          title="Offerings upload"
+          title="Offerings Upload"
         /> </v-list
     ></template>
   </v-navigation-drawer>
