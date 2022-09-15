@@ -12,7 +12,7 @@ const USERNAME = institutionHelperActions.getUserNameForApiTest();
 const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
 
 describe("[Institution Dashboard APIs] - Institution with single location", () => {
-  let token: any;
+  let token: string;
   before(async () => {
     const authorizer = new Authorization();
     token = await authorizer.getAuthToken(
