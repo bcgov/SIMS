@@ -1,7 +1,7 @@
 import { RouteLocationRaw } from "vue-router";
 
 /**
- * ! @deprecated Use MenuItemModel and once MenuModel removed from all delete the MenuModel.
+ * @deprecated Use MenuItemModel and once MenuModel removed from all delete the MenuModel.
  */
 export interface MenuModel {
   label: string;
