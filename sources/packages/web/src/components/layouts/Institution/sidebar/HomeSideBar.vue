@@ -5,45 +5,9 @@
       density="compact"
       bg-color="background"
       active-color="primary"
-    >
-      <v-list-item
-        v-for="item in items"
-        :key="item.label"
-        :to="item.command()"
-        :prepend-icon="item.icon"
-        :title="item.label"
-      />
-      <v-list-subheader class="nav-subtitle">Locations</v-list-subheader>
-      <v-list-group
-        v-for="(location, index) in locationsMenu"
-        :key="location.label"
-        collapse-icon="mdi-chevron-up"
-        expand-icon="mdi-chevron-down"
-      >
-        <template #activator="{ props }">
-          <v-list-item
-            v-bind="props"
-            :title="location.label"
-            :prepend-icon="location.icon"
-            :value="location.value"
-            :data-cy="`Location-${index}`"
-          >
-            <v-tooltip activator="parent">{{ location.label }}</v-tooltip>
-          </v-list-item>
-        </template>
-        <v-list-item
-          class="mx-4"
-          v-for="locationItem in location?.items"
-          :key="locationItem"
-          :title="locationItem.label"
-          :to="locationItem.command()"
-          ><template v-slot:prepend>
-            <v-icon :icon="locationItem.icon" size="20"
-          /></template>
-          <v-tooltip activator="parent">{{ locationItem.label }}</v-tooltip>
-        </v-list-item>
-      </v-list-group>
-    </v-list>
+      class="no-wrap"
+      :items="items"
+    />
   </v-navigation-drawer>
 </template>
 <script lang="ts">
@@ -52,7 +16,7 @@ import { ref, computed, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
 import { useInstitutionAuth } from "@/composables/institution/useInstitutionAuth";
-import { MenuModel } from "@/types";
+import { MenuItemModel } from "@/types";
 
 export default {
   setup() {
@@ -62,76 +26,87 @@ export default {
       () => store.state.institution.locationState,
     );
 
-    const items = ref<MenuModel[]>([]);
-    const locationsMenu = ref<MenuModel[]>([]);
+    const items = ref<MenuItemModel[]>([
+      {
+        title: "Home",
+        props: {
+          prependIcon: "mdi-home-outline",
+          to: {
+            name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+          },
+        },
+      },
+    ]);
+    const locationsMenu = ref<any[]>([]);
 
     const getUserLocationList = () => {
-      items.value = [
-        {
-          label: "Home",
-          icon: "mdi-home-outline",
-          command: () => ({
-            name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-          }),
-        },
-      ];
+      if (userLocationList.value) {
+        items.value.push({ type: "subheader", title: "Locations" });
+      }
       for (const data of userLocationList.value) {
-        const locationMenu =
+        if (
           isAdmin.value ||
           userAuth.value?.some(
             (el: InstitutionUserAuthRolesAndLocation) =>
               el?.locationId === data?.id,
           )
-            ? {
-                label: data.name,
-                icon: "mdi-map-marker-outline",
-                items: [
-                  {
-                    label: "Programs",
-                    icon: "fa:far fa-folder-open",
-                    command: () => ({
-                      name: InstitutionRoutesConst.LOCATION_PROGRAMS,
-                      params: {
-                        locationId: data.id,
-                      },
-                    }),
+        ) {
+          items.value.push({
+            title: data.name as string,
+            props: {
+              prependIcon: "mdi-map-marker-outline",
+            },
+            children: [
+              {
+                title: "Programs",
+                props: {
+                  prependIcon: "fa:far fa-folder-open",
+                  to: {
+                    name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+                    params: {
+                      locationId: data.id,
+                    },
                   },
-                  {
-                    label: "Program Info Requests",
-                    icon: "fa:far fa-paper-plane",
-                    command: () => ({
-                      name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
-                      params: {
-                        locationId: data.id,
-                      },
-                    }),
+                },
+              },
+              {
+                title: "Program Info Requests",
+                props: {
+                  prependIcon: "fa:far fa-paper-plane",
+                  to: {
+                    name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+                    params: {
+                      locationId: data.id,
+                    },
                   },
-                  {
-                    label: "Confirm Enrolment",
-                    icon: "fa:far fa-check-square",
-                    command: () => ({
-                      name: InstitutionRoutesConst.COE_SUMMARY,
-                      params: {
-                        locationId: data.id,
-                      },
-                    }),
+                },
+              },
+              {
+                title: "Confirm Enrolment",
+                props: {
+                  prependIcon: "fa:far fa-check-square",
+                  to: {
+                    name: InstitutionRoutesConst.COE_SUMMARY,
+                    params: {
+                      locationId: data.id,
+                    },
                   },
-                  {
-                    label: "Report a Change",
-                    icon: "fa:far fa-hand-paper",
-                    command: () => ({
-                      name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
-                      params: {
-                        locationId: data.id,
-                      },
-                    }),
+                },
+              },
+              {
+                title: "Report a Change",
+                props: {
+                  prependIcon: "fa:far fa-hand-paper",
+                  to: {
+                    name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
+                    params: {
+                      locationId: data.id,
+                    },
                   },
-                ],
-              }
-            : undefined;
-
-        if (locationMenu) {
-          locationsMenu.value.push(locationMenu);
+                },
+              },
+            ],
+          });
         }
       }
     };

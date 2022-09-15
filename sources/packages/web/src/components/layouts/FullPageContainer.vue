@@ -8,11 +8,7 @@
       <slot name="details-header"></slot>
     </div>
     <slot name="alerts"></slot>
-    <!-- todo: ann remove :class="enableMaxWidth ? 'container-max-width' : ''" after refactoring-->
-    <v-container
-      :fluid="fullWidth"
-      :class="enableMaxWidth ? 'container-max-width' : ''"
-    >
+    <v-container :fluid="fullWidth">
       <template v-if="layoutTemplate === LayoutTemplates.CenteredCard">
         <v-row justify="center">
           <v-card class="mt-4 p-4 w-100" :class="widthClass">
@@ -58,12 +54,6 @@ export default {
       validator: (val: string) => val in LayoutTemplates,
     },
     fullWidth: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    // Set enableMaxWidth to true, when container max-width need to be set.
-    enableMaxWidth: {
       type: Boolean,
       required: false,
       default: false,
