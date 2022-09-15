@@ -1,4 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { InstitutionLocation } from "./institution-location.model";
 import { InstitutionUserTypeAndRole } from "./institution-user-type-role.model";
 import { InstitutionUser } from "./institution-user.model";
@@ -35,4 +41,13 @@ export class InstitutionUserAuth extends RecordDataModel {
     referencedColumnName: "id",
   })
   institutionUser: InstitutionUser;
+  /**
+   * When set indicates that the record is considered deleted.
+   */
+  @DeleteDateColumn({
+    name: "deleted_at",
+    type: "timestamptz",
+    nullable: true,
+  })
+  deletedAt?: Date;
 }
