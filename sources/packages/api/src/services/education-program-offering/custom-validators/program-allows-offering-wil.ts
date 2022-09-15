@@ -36,18 +36,24 @@ class ProgramAllowsOfferingWILConstraint
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `${args.property} is defined as ${WILComponentOptions.Yes} but the program does not allow WIL(work-integrated learning).`;
+    const [propertyDisplayName] = args.constraints;
+    return `${propertyDisplayName ?? args.property} is defined as ${
+      WILComponentOptions.Yes
+    } but the program does not allow WIL(work-integrated learning).`;
   }
 }
 
 /**
  * Executes a validation to ensure WIL(work-integrated learning)
  * option is allowed by the education program.
+ * @param propertyDisplayName user-friendly property name to be added to the
+ * validation message.
  * @param validationOptions validation options.
  * @returns true if the WIL(work-integrated learning) is allowed
  * by the program, otherwise, false.
  */
 export function ProgramAllowsOfferingWIL(
+  propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
@@ -56,6 +62,7 @@ export function ProgramAllowsOfferingWIL(
       target: object.constructor,
       propertyName,
       options: validationOptions,
+      constraints: [propertyDisplayName],
       validator: ProgramAllowsOfferingWILConstraint,
     });
   };

@@ -537,15 +537,16 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       await queryRunner.connect();
       // Open new transaction.
       await queryRunner.startTransaction();
-      // Delete existing associations.
-      await queryRunner.manager
-        .createQueryBuilder()
-        .delete()
-        .from(InstitutionUserAuth)
-        .where("institutionUser.id = :institutionUserId", {
-          institutionUserId,
-        })
-        .execute();
+      // Soft-delete existing associations.
+      const transactionRepo =
+        queryRunner.manager.getRepository(InstitutionUserAuth);
+      await transactionRepo.update(
+        { institutionUser: { id: institutionUserId } },
+        {
+          deletedAt: new Date(),
+          modifier: { id: auditUserId },
+        },
+      );
       // Add new associations.
       await queryRunner.manager.save(newAuthorizationEntries);
       await queryRunner.commitTransaction();

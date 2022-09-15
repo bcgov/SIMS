@@ -11,17 +11,14 @@ import {
   ValidateIf,
   ValidateNested,
 } from "class-validator";
-import { removeDoubleWhiteSpaces } from "../../utilities";
+import { DATE_ONLY_ISO_FORMAT, removeDoubleWhiteSpaces } from "../../utilities";
 import { OfferingIntensity } from "../../database/entities";
 import {
   currencyNumberOptions,
+  getCurrencyFormatMessage,
+  getEnumFormatMessage,
   OfferingDeliveryOptions,
 } from "./education-program-offering-validation.models";
-
-/**
- * Expected date format to be received from the CSV.
- */
-const DATE_FORMAT = "YYYY-MM-DD";
 
 /**
  * For study breaks periods, this is the place holder to receive the array index.
@@ -90,27 +87,7 @@ function getDateFormatMessage(header: string) {
     // Remove white spaces that are leftovers after index place holder removal.
     header = removeDoubleWhiteSpaces(header);
   }
-  return `${header} must be in the format ${DATE_FORMAT}`;
-}
-
-/**
- * Provides a user-friendly message to a field that needs currency validation.
- * @param header friendly header name.
- * @returns friendly message to the field the that needs currency validation.
- */
-function getCurrencyFormatMessage(header: string) {
-  return `${header} must be a number without a group separator or decimals.`;
-}
-
-/**
- * Provides a user-friendly message to a field that needs a enum like validation.
- * @param header friendly header name.
- * @returns friendly message to the field the that needs a enum like validation.
- */
-function getEnumFormatMessage(header: string, enumObject: unknown) {
-  return `${header} must be one of the following options: ${Object.values(
-    enumObject,
-  ).join()}`;
+  return `${header} must be in the format ${DATE_ONLY_ISO_FORMAT}`;
 }
 
 /**

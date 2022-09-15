@@ -3,11 +3,12 @@ import { AxiosRequestConfig, AxiosResponse } from "axios";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class FileUploadApi extends HttpBaseClient {
-  public async upload(
+  async upload<T = FileCreateAPIOutDTO>(
     relativeUrl: string,
     data: FormData,
     config: AxiosRequestConfig,
-  ): Promise<FileCreateAPIOutDTO> {
+    skipGlobalErrorHandler = false,
+  ): Promise<T> {
     try {
       const mergedConfig = { ...this.addAuthHeader(), ...config };
       const response = await this.apiClient.post(
@@ -17,12 +18,14 @@ export class FileUploadApi extends HttpBaseClient {
       );
       return response.data;
     } catch (error) {
-      this.handleRequestError(error);
+      if (!skipGlobalErrorHandler) {
+        this.handleRequestError(error);
+      }
       throw error;
     }
   }
 
-  public async download(relativeUrl: string): Promise<AxiosResponse<any>> {
+  async download(relativeUrl: string): Promise<AxiosResponse<any>> {
     return this.downloadFile(relativeUrl);
   }
 }

@@ -7,7 +7,23 @@
       class="sidebar-item no-wrap"
       active-class="active-sidebar-item"
       :items="items"
-    />
+    >
+    </v-list
+    ><template #append>
+      <v-list
+        density="compact"
+        nav
+        class="sidebar-item no-wrap"
+        active-class="active-sidebar-item"
+        bg-color="background"
+        active-color="primary"
+      >
+        <v-list-item
+          :to="{ name: InstitutionRoutesConst.OFFERINGS_UPLOAD }"
+          prepend-icon="fa:far fa-address-card-o"
+          title="Offerings upload"
+        /> </v-list
+    ></template>
   </v-navigation-drawer>
 </template>
 <script lang="ts">
@@ -59,6 +75,7 @@ export default {
 
     return {
       items,
+      InstitutionRoutesConst,
     };
   },
 };

@@ -14,7 +14,11 @@ import { OfferingTypes, User, OfferingStatus, Note } from ".";
 import { OfferingIntensity } from "./offering-intensity.type";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
-export const OFFERING_NAME_MAX_LENGTH = 300;
+/**
+ * Max value the offering name can have. By DB definition it is defined as
+ * 300 but from business perspective it should not be longer than 50.
+ */
+export const OFFERING_NAME_MAX_LENGTH = 50;
 export const OFFERING_WIL_TYPE_MAX_LENGTH = 50;
 
 /**

@@ -64,6 +64,7 @@ export const InstitutionRoutesConst = {
   UNKNOWN_LOGIN: Symbol(),
   SCHOLASTIC_STANDING_VIEW: Symbol(),
   OFFERING_REQUEST_CHANGE: Symbol(),
+  OFFERINGS_UPLOAD: Symbol(),
 };
 
 /**
