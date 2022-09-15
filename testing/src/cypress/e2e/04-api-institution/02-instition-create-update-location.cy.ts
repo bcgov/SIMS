@@ -4,6 +4,10 @@ import ApiData from "../data/endpoints/api-endpoints.json";
 
 const institutionHelperActions = new InstitutionHelperActions();
 
+const USERNAME = institutionHelperActions.getUserNameForApiTest();
+const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
+const TOKEN_URL = institutionHelperActions.getApiUrlForKeyCloakToken();
+
 function createOrUpdateInstitutionLocation(
   token: string,
   id: string,
@@ -38,7 +42,6 @@ function createOrUpdateInstitutionLocation(
       primaryContactLastName: `Auto-${uniqueId}-LastName`,
       primaryContactEmail: `Auto@${uniqueId}.com`,
       primaryContactPhone: "32165496872",
-      submit: true,
       provinceState: "NS",
       postalCode: "A1A2A3",
     };
@@ -56,7 +59,6 @@ function createOrUpdateInstitutionLocation(
       primaryContactLastName: `Auto-${uniqueId}-LastName`,
       primaryContactEmail: `Auto@${uniqueId}.com`,
       primaryContactPhone: "32165496872",
-      submit: true,
       otherCountry: `testAuto-${uniqueId}-Country`,
       otherPostalCode: "98654",
     };
@@ -74,7 +76,7 @@ function createOrUpdateInstitutionLocation(
   });
 }
 describe("[Institution Create/Update] Verify location create/update", () => {
-  let token: any;
+  let token: string;
   const uniqueId1 = institutionHelperActions.getUniqueId();
   const uniqueId2 = institutionHelperActions.getUniqueId();
   const uniqueId3 = institutionHelperActions.getUniqueId();
@@ -82,18 +84,23 @@ describe("[Institution Create/Update] Verify location create/update", () => {
 
   before(async () => {
     const authorizer = new Authorization();
-    token = await authorizer.getAuthToken();
+    token = await authorizer.getAuthToken(
+      USERNAME,
+      PASSWORD,
+      authorizer.CLIENT_ID.INSTITUTION,
+      TOKEN_URL
+    );
   });
 
-  it("[Institution Create/Update] - Verify to create new Non-Canadian location", () => {
+  it("Verify to create new Non-Canadian location", () => {
     createOrUpdateInstitutionLocation(token, uniqueId1, false, true);
   });
 
-  it("[Institution Create/Update] - Verify to create new Canadian location", () => {
+  it("Verify to create new Canadian location", () => {
     createOrUpdateInstitutionLocation(token, uniqueId2, true, true);
   });
 
-  it("[Institution Create/Update] - Verify to update the existing location to Canadian Location", () => {
+  it("Verify to update the existing location to Canadian Location", () => {
     createOrUpdateInstitutionLocation(token, uniqueId3, true, true);
   });
 

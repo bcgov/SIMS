@@ -7,14 +7,22 @@ const INSTITUTION_DETAILS_SINGLE_LOCATION =
 const USER_DETAILS_SINGLE_LOCATION =
   institutionHelperActions.getUserDetailsSingleLocation();
 const API_URL = institutionHelperActions.getApiUrlForTest();
+const TOKEN_URL = institutionHelperActions.getApiUrlForKeyCloakToken();
+const USERNAME = institutionHelperActions.getUserNameForApiTest();
+const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
 
 describe("[Institution Dashboard APIs] - Institution with single location", () => {
   let token: any;
   before(async () => {
     const authorizer = new Authorization();
-    token = await authorizer.getAuthToken();
+    token = await authorizer.getAuthToken(
+      USERNAME,
+      PASSWORD,
+      authorizer.CLIENT_ID.INSTITUTION,
+      TOKEN_URL
+    );
   });
-  it("[Institution Dashboard APIs] - Verify GET `user-status` call", () => {
+  it("Verify GET `user-status` call", () => {
     cy.request({
       method: "GET",
       url: `${API_URL}/institution-user/status`,
@@ -30,7 +38,7 @@ describe("[Institution Dashboard APIs] - Institution with single location", () =
     });
   });
 
-  it("[Institution Dashboard APIs] - Verify GET `user-details` call", () => {
+  it("Verify GET `user-details` call", () => {
     cy.request({
       method: "GET",
       url: `${API_URL}/institution-user/my-details`,
@@ -87,7 +95,7 @@ describe("[Institution Dashboard APIs] - Institution with single location", () =
   //TODO Need to implement test case for institution having more than one location
   //TODO Need to implement test case for institution having location outside Canada
 
-  it("[Institution Dashboard APIs] - Verify GET `Institution-details call", () => {
+  it("Verify GET `Institution-details call", () => {
     cy.request({
       method: "GET",
       url: `${API_URL}/institution`,

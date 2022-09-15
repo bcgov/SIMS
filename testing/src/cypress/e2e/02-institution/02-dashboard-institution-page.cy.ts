@@ -11,7 +11,7 @@ describe("[Institution Dashboard] - fields and titles ", () => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
-  it("[Institution Dashboard] - Verify that user is redirected to dashboard page", () => {
+  it("Verify that user is redirected to dashboard page", () => {
     cy.url().should("include", "/dashboard");
     dashboardObject.dashboardWelcomeMessage().should("be.visible");
     dashboardObject
@@ -28,7 +28,7 @@ describe("[Institution Dashboard] - fields and titles ", () => {
       .should("have.attr", "href", "https://studentaidbc.ca/help-centre");
   });
 
-  it("[Institution Dashboard] - Verify that all buttons are clickable in dashboard and redirect to appropriate pages.", () => {
+  it("Verify that all buttons are clickable in dashboard and redirect to appropriate pages.", () => {
     dashboardObject.dashboardButton().click();
     dashboardObject.notificationButton().click();
     //Needs validation with the notifications.
@@ -44,7 +44,7 @@ describe("[Institution Dashboard] - fields and titles ", () => {
     dashboardObject.logOutButton().click();
   });
 
-  it("[Institution Dashboard] - Verify that clicking on manage institution leads Location Summary page", () => {
+  it("Verify that clicking on manage institution leads Location Summary page", () => {
     dashboardObject.dashboardButton().click();
     dashboardObject.manageInstitutionButton().click();
     dashboardObject.locationVerifyText().should("be.visible");

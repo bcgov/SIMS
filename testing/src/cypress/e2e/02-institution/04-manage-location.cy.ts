@@ -80,6 +80,62 @@ function verifyPhoneNumberFieldAcceptNumBetween10And20() {
   });
 }
 
+function createInstitutionLocation(
+  uniqeId: string,
+  institutionCode: string,
+  phoneNumber: string
+) {
+  institutionManageLocationObject
+    .locationName()
+    .clear()
+    .type(uniqeId)
+    .should("have.value", uniqeId);
+  institutionManageLocationObject
+    .institutionCode()
+    .clear()
+    .type(institutionCode)
+    .should("have.value", institutionCode);
+  institutionManageLocationObject
+    .addressLine1()
+    .clear()
+    .type(`Addrline1-${uniqeId}`)
+    .should("have.value", `Addrline1-${uniqeId}`);
+  institutionManageLocationObject
+    .addressLine2()
+    .clear()
+    .type(`Addrline2-${uniqeId}`)
+    .should("have.value", `Addrline2-${uniqeId}`);
+  institutionManageLocationObject.countryDropDownMenu().click();
+  institutionManageLocationObject.countryCanadaFromDropDownMenu().click();
+  institutionManageLocationObject.provinceDropDownMenu().click();
+  institutionManageLocationObject.provinceABFromDropDown().click();
+  institutionManageLocationObject
+    .cityInputText()
+    .type(`city-${uniqeId}`)
+    .should("have.value", `city-${uniqeId}`);
+  institutionManageLocationObject
+    .canadaPostalCode()
+    .type("A1A2A3")
+    .should("have.value", "A1A 2A3");
+  institutionManageLocationObject
+    .firstNameInputText()
+    .type(`fname-${uniqeId}`)
+    .should("have.value", `fname-${uniqeId}`);
+  institutionManageLocationObject
+    .lastNameInputText()
+    .type(`lname-${uniqeId}`)
+    .should("have.value", `lname-${uniqeId}`);
+  institutionManageLocationObject
+    .emailInputText()
+    .type(`${uniqeId}@gov.test`)
+    .should("have.value", `${uniqeId}@gov.test`);
+  institutionManageLocationObject
+    .phoneInputText()
+    .type(phoneNumber)
+    .should("have.value", phoneNumber);
+  institutionManageLocationObject.submitButton().click();
+}
+
 describe("[Institution Manage Location] - Fields and Titles", () => {
   beforeEach(() => {
     loginAndClickOnManageInstitution();
@@ -280,42 +336,55 @@ describe("[Institution Manage Location] - Country drop-down items and provinces"
     institutionManageLocationObject.provinceDropDownMenu().click();
     institutionManageLocationObject
       .provinceABFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .provinceBCFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .provinceMBFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .provinceNBFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .provinceNLFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .provinceNSFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .provinceONFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .provinceQCFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .provinceNTFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .provinceYUFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .provinceNUFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .provinceSKFromDropDown()
+      .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
       .canadaPostalCode()
+      .scrollIntoView()
       .should("be.visible")
       .should("have.attr", "placeholder", "___ ___");
   });
@@ -409,85 +478,33 @@ describe("[Institution Manage Location] - Primary Contact Information Validation
   });
 });
 
-describe("[Institution Manage Location] - Add New Location and update for the institution", () => {
+describe("Add New Location and update for the institution", () => {
   const uniqeId1 = institutionHelperActions.getUniqueId();
-  const name1 = `test-${uniqeId1}`;
+  const uniqeId2 = institutionHelperActions.getUniqueId();
   const institutionCode = "ASKN";
-  const canadaPostalCode = "A1A2A3";
   const phoneNumber = "1236549871";
 
-  before(() => {
+  beforeEach(() => {
     loginAndClickOnAddNewLocation();
   });
 
   it("Create new institution location", () => {
-    institutionManageLocationObject
-      .locationName()
-      .clear()
-      .type(`location-${name1}`)
-      .should("have.value", `location-${name1}`);
-    institutionManageLocationObject
-      .institutionCode()
-      .clear()
-      .type(institutionCode)
-      .should("have.value", institutionCode);
-    institutionManageLocationObject
-      .addressLine1()
-      .clear()
-      .type(`Addrline1-${name1}`)
-      .should("have.value", `Addrline1-${name1}`);
-    institutionManageLocationObject
-      .addressLine2()
-      .clear()
-      .type(`Addrline2-${name1}`)
-      .should("have.value", `Addrline2-${name1}`);
-    institutionManageLocationObject.countryDropDownMenu().click();
-    institutionManageLocationObject.countryCanadaFromDropDownMenu().click();
-    institutionManageLocationObject.provinceDropDownMenu().click();
-    institutionManageLocationObject.provinceABFromDropDown().click();
-    institutionManageLocationObject
-      .cityInputText()
-      .type(`city-${name1}`)
-      .should("have.value", `city-${name1}`);
-    institutionManageLocationObject
-      .canadaPostalCode()
-      .type(canadaPostalCode)
-      .should("have.value", "A1A 2A3");
-    institutionManageLocationObject
-      .firstNameInputText()
-      .type(`fname-${name1}`)
-      .should("have.value", `fname-${name1}`);
-    institutionManageLocationObject
-      .lastNameInputText()
-      .type(`lname-${name1}`)
-      .should("have.value", `lname-${name1}`);
-    institutionManageLocationObject
-      .emailInputText()
-      .type(`${name1}@gov.test`)
-      .should("have.value", `${name1}@gov.test`);
-    institutionManageLocationObject
-      .phoneInputText()
-      .type(phoneNumber)
-      .should("have.value", phoneNumber);
-    institutionManageLocationObject.submitButton().click();
+    createInstitutionLocation(uniqeId1, institutionCode, phoneNumber);
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    cy.contains(`fname-${name1}`).should("be.visible");
-    cy.contains(`lname-${name1}`).should("be.visible");
-    cy.contains(`${name1}@gov.test`).should("be.visible");
+    cy.contains(`fname-${uniqeId1}`).scrollIntoView().should("be.visible");
+    cy.contains(`lname-${uniqeId1}`).scrollIntoView().should("be.visible");
+    cy.contains(`${uniqeId1}@gov.test`).scrollIntoView().should("be.visible");
   });
 
   it("Update institution primary contact details", () => {
-    cy.wait(2);
+    createInstitutionLocation(uniqeId2, institutionCode, phoneNumber);
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
     cy.intercept("GET", "**/location/**").as("location");
-    cy.contains(`location-`)
-      .parents(".v-row")
-      .children()
-      .contains("Edit")
-      .click();
+    cy.contains(uniqeId2).parents(".v-row").children().contains("Edit").click();
     cy.wait("@location");
-    const uniqeId = institutionHelperActions.getUniqueId();
-    const name = `test-${uniqeId}`;
-    const phoneNumber = "1236549000";
+    const updateuniqeId = institutionHelperActions.getUniqueId();
+    const name = `test-${updateuniqeId}`;
+    const updatePhoneNumber = "1236549000";
     institutionManageLocationObject
       .firstNameInputText()
       .clear()
@@ -506,13 +523,13 @@ describe("[Institution Manage Location] - Add New Location and update for the in
     institutionManageLocationObject
       .phoneInputText()
       .clear()
-      .type(phoneNumber)
-      .should("have.value", phoneNumber);
+      .type(updatePhoneNumber)
+      .should("have.value", updatePhoneNumber);
     institutionManageLocationObject.submitButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    cy.contains(`fname-${name}`).should("be.visible");
-    cy.contains(`lname-${name}`).should("be.visible");
-    cy.contains(`${name}@gov.test`).should("be.visible");
-    cy.contains("1236549000").should("be.visible");
+    cy.contains(`fname-${name}`).scrollIntoView().should("be.visible");
+    cy.contains(`lname-${name}`).scrollIntoView().should("be.visible");
+    cy.contains(`${name}@gov.test`).scrollIntoView().should("be.visible");
+    cy.contains("1236549000").scrollIntoView().should("be.visible");
   });
 });

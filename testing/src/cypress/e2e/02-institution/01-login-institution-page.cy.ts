@@ -16,7 +16,7 @@ describe("[Institution Login] - Login Page", () => {
     cy.visit(URL);
   });
 
-  it("[Institution Login] - Verify invalid username/password field validation error", () => {
+  it("Verify invalid username/password field validation error", () => {
     // Please note that this is not a functionality that our application owns. If there is any issue with the test case, it should not be a blocker.
     institutionCustomCommand.loginWithCredentials("invalid", "invalid");
     loginObject
@@ -24,12 +24,12 @@ describe("[Institution Login] - Login Page", () => {
       .should("have.text", "The user ID or password you entered is incorrect");
   });
 
-  it("[Institution Login] - Verify login successfully", () => {
+  it("Verify login successfully", () => {
     institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
     loginObject.welcomeMessageDashboard().should("be.visible");
   });
 
-  it("[Institution Login] - Verify logout successfully", () => {
+  it("Verify logout successfully", () => {
     institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
     dashboardObject.iconButton().click();
     dashboardObject.logOutButton().click();

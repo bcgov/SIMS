@@ -1,15 +1,23 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { stringify } from "querystring";
-import authData from "../../e2e/data/authentication-details.json";
 
 export default class Authorization {
-  async getAuthToken(): Promise<AxiosResponse<string>> {
-    const auth_url = authData.testEnv.keyCloakTokenUrl;
+  CLIENT_ID = {
+    INSTITUTION: "institution",
+    STUDENT: "student",
+  };
+  async getAuthToken(
+    username: string,
+    password: string,
+    clientId: string,
+    authUrl: string
+  ): Promise<string> {
+    const auth_url = authUrl;
     const body = stringify({
-      username: authData.testEnv.username,
-      password: authData.testEnv.password,
       grant_type: "password",
-      client_id: "institution",
+      username: username,
+      password: password,
+      client_id: clientId,
     });
     const settings = {
       headers: {
@@ -18,9 +26,8 @@ export default class Authorization {
     };
     try {
       const response = await axios.post(auth_url, body, settings);
-      return response.data["access_token"];
+      return response.data.access_token;
     } catch (error) {
-      console.error(error);
       throw error;
     }
   }
