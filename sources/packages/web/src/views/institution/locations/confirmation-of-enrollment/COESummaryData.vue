@@ -21,7 +21,6 @@
         </template>
       </body-header>
       <content-group>
-        <!-- todo:ann review other toggled message and header actions line 11 -->
         <toggle-content :toggled="!disbursements.count">
           <DataTable
             :value="disbursements.results"

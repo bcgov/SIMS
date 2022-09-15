@@ -25,7 +25,6 @@
         </template>
       </banner>
     </template>
-    <!-- todo: ann form definition -->
     <formio-container
       formName="educationProgram"
       :formData="programData"
@@ -36,6 +35,7 @@
           :processing="processing"
           primaryLabel="Submit"
           @primaryClick="submit"
+          @secondaryClick="goBack"
         /> </template
     ></formio-container>
   </full-page-container>

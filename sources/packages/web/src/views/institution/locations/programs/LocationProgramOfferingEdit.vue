@@ -60,6 +60,7 @@
       :readOnly="readOnly"
       @saveOffering="saveOffering"
       :processing="processing"
+      @cancel="goBack"
     ></offering-form>
   </full-page-container>
 </template>
@@ -169,9 +170,14 @@ export default {
         ...programOffering,
       };
     };
+
     onMounted(async () => {
       await loadFormData();
     });
+
+    const goBack = () => {
+      router.push(routeLocation.value);
+    };
 
     const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
@@ -184,7 +190,7 @@ export default {
           data,
         );
         snackBar.success("Education Offering updated successfully!");
-        router.push(routeLocation.value);
+        goBack();
       } catch {
         snackBar.error("An error happened during the Offering saving process.");
       } finally {
@@ -204,6 +210,7 @@ export default {
       routeLocation,
       readOnly,
       processing,
+      goBack,
     };
   },
 };

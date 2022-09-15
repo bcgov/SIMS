@@ -1,11 +1,26 @@
-// TODO: When all icon are replace to font awesome,
-// replace  icon?: string | string[] with
-// icon?:string[];
+import { RouteLocationRaw } from "vue-router";
+
+/**
+ * @deprecated Use MenuItemModel and once MenuModel removed from all delete the MenuModel.
+ */
 export interface MenuModel {
   label: string;
   icon?: string | string[];
   command?: () => void;
   items?: MenuModel[];
+}
+
+/**
+ *  Interface for Menu.
+ */
+export interface MenuItemModel {
+  title: string;
+  props?: {
+    prependIcon?: string;
+    to?: RouteLocationRaw;
+  };
+  type?: string;
+  children?: MenuItemModel[];
 }
 
 export interface Address {

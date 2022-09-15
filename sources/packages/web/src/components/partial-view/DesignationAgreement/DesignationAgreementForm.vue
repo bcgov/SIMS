@@ -1,6 +1,4 @@
 <template>
-  <!-- todo: ann add the form definition -->
-  <!-- todo: ann institution dashboard form definition -->
   <formio-container
     formName="designationAgreementDetails"
     :formData="model"
@@ -8,7 +6,7 @@
     @submitted="submitDesignation"
     @render="formRender"
   >
-    <template #actions="{ submit }" v-if="!viewOnly">
+    <template #actions="{ submit }" v-if="!(viewOnly || hideFooter)">
       <footer-buttons
         :processing="processing"
         primaryLabel="Submit"
@@ -35,6 +33,10 @@ export default {
       required: true,
     },
     viewOnly: {
+      type: Boolean,
+      required: false,
+    },
+    hideFooter: {
       type: Boolean,
       required: false,
     },

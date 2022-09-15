@@ -125,3 +125,29 @@ export interface EducationProgramOfferingSummaryAPIOutDTO {
 export interface OfferingStartDateAPIOutDTO {
   studyStartDate: Date;
 }
+
+/**
+ * Represents the possible errors that can happen during the
+ * offerings bulk insert and provides a detailed description
+ * for every record that has an error.
+ */
+export interface OfferingBulkInsertValidationResultAPIOutDTO {
+  recordIndex: number;
+  locationCode?: string;
+  sabcProgramCode?: string;
+  startDate?: string;
+  endDate?: string;
+  offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
+  errors: string[];
+  warnings: ValidationWarningResultAPIOutDTO[];
+}
+
+/**
+ * Represents an error considered not critical for
+ * an offering and provides a user-friendly message
+ * and a type that uniquely identifies this warning.
+ */
+export interface ValidationWarningResultAPIOutDTO {
+  warningType: string;
+  warningMessage: string;
+}

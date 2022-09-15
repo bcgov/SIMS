@@ -15,7 +15,6 @@
         </template>
       </banner>
     </template>
-    <!-- todo: ann formio definition -->
     <formio-container
       formName="institutionUserProfile"
       :formData="initialData"

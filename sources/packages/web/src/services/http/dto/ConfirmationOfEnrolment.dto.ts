@@ -1,3 +1,4 @@
+import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import { COEStatus, ProgramInfoStatus, StudyBreakCOE } from "@/types";
 
 export interface ConfirmationOfEnrollmentAPIInDTO {
@@ -42,6 +43,7 @@ export interface ApplicationDetailsForCOEAPIOutDTO {
   disbursementDate: string;
   applicationProgramCredential: string;
   applicationProgramDelivery: string;
+  coeStatusClass: StatusChipTypes;
 }
 
 export interface COEDeniedReasonAPIOutDTO {
