@@ -247,14 +247,19 @@ html * {
   color: $button-font-color;
 }
 
-// Radio btn style to match with figma
+// Radio btn style to match with figma.
+// Todo: horizontal direction is not working in vue 3.
+// Todo : Test in stable version and remove.
 .input-unset-display-opacity .v-input__control {
   display: block;
 }
 .input-unset-display-opacity .v-label {
   opacity: unset !important;
 }
-
+// Removing nowrap.
+.input-unset-display-opacity .v-input__control label.v-label {
+  white-space: normal;
+}
 // Removing nowrap.
 .no-wrap .v-list-item-title {
   white-space: normal;
@@ -268,4 +273,13 @@ html * {
 // Reduce v-list icon and title space.
 .no-wrap .v-list-item__content {
   margin-inline-start: -20px;
+}
+
+// Modal height. 102px is the min height of header and footer of the modal.
+.modal-height {
+  max-height: calc(100vh - 102px) !important;
+}
+// Min height for modal header.
+.modal-height .v-card-title {
+  min-height: 50px;
 }

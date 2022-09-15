@@ -24,14 +24,14 @@
     class="ma-2"
   >
     <v-row>
-      <v-col md="10" lg="10" xl="10">
+      <v-col md="10">
         <div>
           <v-icon icon="mdi-map-marker-outline"></v-icon>
           <span class="category-header-medium mx-1">{{ item.name }}</span>
           <status-chip-designation-agreement :status="item.designationStatus" />
         </div>
       </v-col>
-      <v-col >
+      <v-col>
         <check-permission-role :role="Role.InstitutionEditLocationDetails">
           <template #="{ notAllowed }">
             <v-btn

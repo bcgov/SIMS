@@ -26,10 +26,3 @@ export enum ProgramInfoStatus {
    */
   declined = "Declined",
 }
-/**
- * Model for approve program info request.
- */
-export class ApproveProgramInfoRequestModel {
-  requestedTuitionRemittance = null;
-  tuitionRemittanceAmount = 0;
-}

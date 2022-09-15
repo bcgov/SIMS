@@ -14,7 +14,7 @@
         <span class="label-value"
           >Confirming enrolment verifies this applicant is attending your
           institution and will allow funding to be disbursed.</span
-        >
+        >{{ formModel }}
         <content-group class="my-3">
           <v-radio-group
             v-model="formModel.requestedTuitionRemittance"
@@ -22,8 +22,7 @@
             color="primary"
             :rules="[
               (v) =>
-                !(v == null) ||
-                'Do you want to request tuition remittance is required',
+                !!v || 'Do you want to request tuition remittance is required',
             ]"
             ><template #label>
               <div class="label-bold-normal">
@@ -44,7 +43,8 @@
               type="number"
               prefix="$"
               :rules="[
-                (v) => !!v || 'Tuition remittance amount is required',
+                (v) =>
+                  v > 0 || v === 0 || 'Tuition remittance amount is required',
               ]" /></content-group
         ></content-group>
       </template>
@@ -64,7 +64,7 @@
 <script lang="ts">
 import { ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { VForm, ApproveProgramInfoRequestModel } from "@/types";
+import { ApproveConfirmEnrollmentModel, VForm } from "@/types";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog } from "@/composables";
 
@@ -75,10 +75,12 @@ export default {
   },
   setup() {
     const { showDialog, resolvePromise, showModal } = useModalDialog<
-      ApproveProgramInfoRequestModel | boolean
+      ApproveConfirmEnrollmentModel | boolean
     >();
     const confirmCOE = ref({} as VForm);
-    const formModel = reactive(new ApproveProgramInfoRequestModel());
+    const formModel = reactive({
+      tuitionRemittanceAmount: 0,
+    } as ApproveConfirmEnrollmentModel);
 
     // Approve COE and closes the modal.
     const submit = async () => {
@@ -93,6 +95,8 @@ export default {
     const cancel = () => {
       confirmCOE.value.reset();
       resolvePromise(false);
+      formModel.tuitionRemittanceAmount = 0;
+      confirmCOE.value.errors = [];
     };
 
     return {

@@ -63,7 +63,7 @@ import {
   COEStatus,
   ApiProcessError,
   MenuType,
-  ApproveProgramInfoRequestModel,
+  ApproveConfirmEnrollmentModel,
 } from "@/types";
 import { useSnackBar, ModalDialog, useCOE } from "@/composables";
 import {
@@ -103,7 +103,7 @@ export default {
       {} as ModalDialog<DenyConfirmationOfEnrollmentAPIInDTO | boolean>,
     );
     const confirmCOEModal = ref(
-      {} as ModalDialog<ApproveProgramInfoRequestModel | boolean>,
+      {} as ModalDialog<ApproveConfirmEnrollmentModel | boolean>,
     );
 
     const loadInitialData = async () => {
@@ -112,7 +112,7 @@ export default {
           props.disbursementScheduleId,
           props.locationId,
         );
-      initialData.value.COEstatusClass = mapCOEChipStatus(
+      initialData.value.coeStatusClass = mapCOEChipStatus(
         initialData.value.applicationCOEStatus,
       );
     };
@@ -123,7 +123,7 @@ export default {
         return;
       }
       try {
-        const payload = modalResult as ApproveProgramInfoRequestModel;
+        const payload = modalResult as ApproveConfirmEnrollmentModel;
         payload.tuitionRemittanceAmount = payload.tuitionRemittanceAmount ?? 0;
         await ConfirmationOfEnrollmentService.shared.confirmEnrollment(
           props.locationId,

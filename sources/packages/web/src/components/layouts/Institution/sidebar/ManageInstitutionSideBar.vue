@@ -13,12 +13,12 @@
 <script lang="ts">
 import { ref } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { MenuInterface } from "@/types";
+import { MenuItemModel } from "@/types";
 
 export default {
   components: {},
   setup() {
-    const items = ref<MenuInterface[]>([
+    const items = ref<MenuItemModel[]>([
       {
         title: "Manage Profile",
         props: {

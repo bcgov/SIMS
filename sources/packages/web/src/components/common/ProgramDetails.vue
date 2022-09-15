@@ -18,13 +18,13 @@
     </template>
   </body-header>
   <v-row>
-    <v-col md="5" lg="5" xl="5">
+    <v-col md="5">
       <title-value
         propertyTitle="Description"
         :propertyValue="educationProgram.description"
       />
     </v-col>
-    <v-col md="4" lg="4" xl="4">
+    <v-col md="4">
       <title-value propertyTitle="Description" />
       <p class="label-value muted-content clearfix">
         <span
@@ -53,13 +53,13 @@
     </v-col>
   </v-row>
   <v-row>
-    <v-col md="5" lg="5" xl="5">
+    <v-col md="5">
       <title-value
         propertyTitle="Classification of Instructional Programs (CIP)"
         :propertyValue="educationProgram.cipCode"
       />
     </v-col>
-    <v-col md="4" lg="4" xl="4"
+    <v-col md="4"
       ><title-value
         propertyTitle="National Occupational Classification (NOC)"
         :propertyValue="educationProgram.nocCode"

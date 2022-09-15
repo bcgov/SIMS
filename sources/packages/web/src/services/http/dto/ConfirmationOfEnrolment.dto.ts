@@ -43,7 +43,7 @@ export interface ApplicationDetailsForCOEAPIOutDTO {
   disbursementDate: string;
   applicationProgramCredential: string;
   applicationProgramDelivery: string;
-  COEstatusClass: StatusChipTypes;
+  coeStatusClass: StatusChipTypes;
 }
 
 export interface COEDeniedReasonAPIOutDTO {

@@ -4,12 +4,12 @@
       <div class="label-bold-normal">{{ header }}</div>
     </template>
     <v-row>
-      <v-col md="10" lg="10" xl="10">
+      <v-col md="10">
         <div class="label-value-normal">
           <slot name="content">{{ summary }}</slot>
         </div>
       </v-col>
-      <v-col md="2" lg="2" xl="2">
+      <v-col md="2">
         <div class="float-right"><slot name="actions"></slot></div
       ></v-col>
     </v-row>

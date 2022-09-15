@@ -57,7 +57,7 @@
               "value": ""
             }
           ],
-          "content": "<h2 class=\"category-header-large primary-color\">{{ data.applicationStudentName }}\n  <span class=\"fa fa-circle formio-status-chip {{data.COEstatusClass }} mt-1 ml-3\">\n  {{data.applicationCOEStatus }}\n</span>\n</h2> \n",
+          "content": "<h2 class=\"category-header-large primary-color\">{{ data.applicationStudentName }}\n  <span class=\"fa fa-circle formio-status-chip {{data.coeStatusClass }} mt-1 ml-3\">\n  {{data.applicationCOEStatus }}\n</span>\n</h2> \n",
           "refreshOnChange": true,
           "customClass": "",
           "hidden": false,
@@ -125,7 +125,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "eyafzr"
+          "id": "ek8erwo"
         },
         {
           "label": "Application Number | Location Name | Study Dates",
@@ -2308,7 +2308,7 @@
                               "type": "htmlelement",
                               "input": false,
                               "tableView": false,
-                              "id": "etfvvo6000000000000000000000000000000000000000000000000",
+                              "id": "etfvvo600000000000000000000000000000000000000000000000000000",
                               "placeholder": "",
                               "prefix": "",
                               "suffix": "",
@@ -2963,7 +2963,7 @@
                     {
                       "components": [
                         {
-                          "label": "Mandatory fees ",
+                          "label": "Mandatory fees",
                           "labelWidth": "",
                           "labelMargin": "",
                           "tag": "p",
@@ -3043,7 +3043,7 @@
                           "showWordCount": false,
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "enfqh88"
+                          "id": "exzfnf"
                         },
                         {
                           "label": "Offering Mandatory Cost",

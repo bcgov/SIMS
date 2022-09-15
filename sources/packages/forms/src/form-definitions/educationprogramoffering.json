@@ -1985,7 +1985,7 @@
                               "redrawOn": "",
                               "clearOnHide": true,
                               "customDefaultValue": "",
-                              "calculateValue": "console.log(data.studyStartDate);\nconsole.log(data.studyEndDate);\nconsole.log(value);\nvalue = value;",
+                              "calculateValue": "",
                               "calculateServer": false,
                               "allowCalculateOverride": false,
                               "validate": {
@@ -2058,7 +2058,7 @@
                               "allowMultipleMasks": false,
                               "addons": [],
                               "datepickerMode": "day",
-                              "id": "edh4t2q"
+                              "id": "exylzox"
                             }
                           ],
                           "width": 6,
@@ -3099,7 +3099,7 @@
                           "allowMultipleMasks": false,
                           "addons": [],
                           "datepickerMode": "day",
-                          "id": "e06r1tn0"
+                          "id": "e06r1tn000"
                         },
                         {
                           "label": "Break end date",
@@ -3235,7 +3235,7 @@
                           "allowMultipleMasks": false,
                           "addons": [],
                           "datepickerMode": "day",
-                          "id": "egv82qp0000000"
+                          "id": "egv82qp000000000"
                         },
                         {
                           "label": "Total break days",
@@ -3265,7 +3265,7 @@
                           "key": "breakDays",
                           "type": "number",
                           "input": true,
-                          "id": "e9861k000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                          "id": "e9861k00000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -3340,7 +3340,7 @@
                           "key": "eligibleBreakDays",
                           "type": "number",
                           "input": true,
-                          "id": "el1tn7000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                          "id": "el1tn700000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",
@@ -3416,7 +3416,7 @@
                           "key": "ineligibleBreakDays",
                           "type": "number",
                           "input": true,
-                          "id": "e9yr3s000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                          "id": "e9yr3s00000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                           "placeholder": "",
                           "prefix": "",
                           "customClass": "",

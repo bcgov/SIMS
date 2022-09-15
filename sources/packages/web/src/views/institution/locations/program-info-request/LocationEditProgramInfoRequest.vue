@@ -30,7 +30,7 @@
 <script lang="ts">
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import {
   useFormioUtils,
   useFormioDropdownLoader,
@@ -72,6 +72,9 @@ export default {
     const formioDataLoader = useFormioDropdownLoader();
     const programRequestData = ref();
     const { mapProgramInfoChipStatus } = useProgramInfoRequest();
+    const goBackRouteParams = {
+      name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+    } as RouteLocationRaw;
 
     // Components names on Form.IO definition that will be manipulated.
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
@@ -218,15 +221,8 @@ export default {
       }
     };
 
-    const goBackRouteParams = computed(
-      () =>
-        ({
-          name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
-        } as RouteLocationRaw),
-    );
-
     const goBack = () => {
-      router.push(goBackRouteParams.value);
+      router.push(goBackRouteParams);
     };
 
     return {

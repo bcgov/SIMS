@@ -23,7 +23,7 @@
           color="primary"
           :rules="[
             (v) =>
-              !(v == null) ||
+              !!v ||
               'Select the reason for declining the enrolment is required',
           ]"
           ><template #label>
@@ -36,6 +36,7 @@
             :key="reason.value"
             :label="reason.label"
             :value="reason.value"
+            class="my-2"
           ></v-radio>
         </v-radio-group>
         <!-- The value of other is 1, so we are showing the Other Reason, when the Institution user selects Other.-->
@@ -98,6 +99,7 @@ export default {
     const cancel = () => {
       denyCOE.value.reset();
       resolvePromise(false);
+      denyCOE.value.errors = [];
     };
 
     onMounted(async () => {

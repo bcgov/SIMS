@@ -2,7 +2,7 @@
   <v-card max-width="730" elevation="2" class="mx-auto mt-15">
     <v-card-text>
       <v-row>
-        <v-col lg="9" md="9" xl="9">
+        <v-col md="9">
           <h1 class="category-header-large primary-color">
             Welcome to StudentAid BC
           </h1>

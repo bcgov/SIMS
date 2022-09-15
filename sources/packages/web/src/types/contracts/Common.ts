@@ -1,22 +1,27 @@
 import { RouteLocationRaw } from "vue-router";
 
-// todo: use MenuInterface and once MenuModel removed from all, delete the MenuModel
+/**
+ * ! Use MenuItemModel and once MenuModel removed from all,
+ * ! delete the MenuModel
+ */
 export interface MenuModel {
   label: string;
   icon?: string | string[];
   command?: () => void;
   items?: MenuModel[];
 }
-// Interface for Menu.
-export interface MenuInterface {
+
+/**
+ *  Interface for Menu.
+ */
+export interface MenuItemModel {
   title: string;
   props?: {
     prependIcon?: string;
     to?: RouteLocationRaw;
   };
-  items?: any;
   type?: string;
-  children?: MenuInterface[];
+  children?: MenuItemModel[];
 }
 
 export interface Address {

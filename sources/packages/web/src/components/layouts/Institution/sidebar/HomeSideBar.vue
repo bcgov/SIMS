@@ -16,7 +16,7 @@ import { ref, computed, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
 import { useInstitutionAuth } from "@/composables/institution/useInstitutionAuth";
-import { MenuInterface } from "@/types";
+import { MenuItemModel } from "@/types";
 
 export default {
   setup() {
@@ -26,7 +26,7 @@ export default {
       () => store.state.institution.locationState,
     );
 
-    const items = ref<MenuInterface[]>([
+    const items = ref<MenuItemModel[]>([
       {
         title: "Home",
         props: {
