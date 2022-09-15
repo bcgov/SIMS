@@ -6,13 +6,19 @@ export class ProgramSABCCodeAddUniqueConstraint1663266371968
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Alter-sin-validation-id.sql", "Student"),
+      getSQLFileData(
+        "Add-sabc-code-unique-constraint.sql",
+        "EducationPrograms",
+      ),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Alter-sin-validation-id.sql", "Student"),
+      getSQLFileData(
+        "Drop-sabc-code-unique-constraint.sql",
+        "EducationPrograms",
+      ),
     );
   }
 }

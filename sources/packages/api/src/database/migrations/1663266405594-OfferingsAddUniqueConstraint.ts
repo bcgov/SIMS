@@ -6,13 +6,19 @@ export class OfferingsAddUniqueConstraint1663266405594
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Alter-sin-validation-id.sql", "Student"),
+      getSQLFileData(
+        "Add-offering-duplication-unique-index.sql",
+        "EducationProgramsOfferings",
+      ),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Alter-sin-validation-id.sql", "Student"),
+      getSQLFileData(
+        "Drop-offering-duplication-unique-index.sql",
+        "EducationProgramsOfferings",
+      ),
     );
   }
 }

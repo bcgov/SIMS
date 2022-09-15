@@ -6,13 +6,19 @@ export class InstitutionLocationCodeAddUniqueConstraint1663266324821
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Alter-sin-validation-id.sql", "Student"),
+      getSQLFileData(
+        "Add-location-code-unique-constraint.sql",
+        "InstitutionLocations",
+      ),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Alter-sin-validation-id.sql", "Student"),
+      getSQLFileData(
+        "Drop-location-code-unique-constraint.sql",
+        "InstitutionLocations",
+      ),
     );
   }
 }
