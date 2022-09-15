@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { isBetweenPeriod, Period } from "../..";
+import { getISODateOnlyString, isBetweenPeriod, Period } from "../..";
 import { getPeriodStartDateProperty, getPeriodEndDateProperty } from "..";
 
 /**
@@ -38,8 +38,13 @@ class PeriodsAreBetweenLimitsConstraint
   }
 
   defaultMessage(args: ValidationArguments) {
+    const [, , propertyDisplayName] = args.constraints;
     const period: Period = this.getPeriodFromArguments(args);
-    return `${args.property} must have all dates between ${period.startDate} and ${period.endDate}.`;
+    return `${
+      propertyDisplayName ?? args.property
+    } must have all dates between ${getISODateOnlyString(
+      period.startDate,
+    )} and ${getISODateOnlyString(period.endDate)}.`;
   }
 
   private getPeriodFromArguments(args: ValidationArguments): Period {
@@ -55,12 +60,15 @@ class PeriodsAreBetweenLimitsConstraint
  * start date and end date limits.
  * @param startPeriodProperty property of the model that identifies the offering start date.
  * @param endPeriodProperty property of the model that identifies the offering end date.
+ * @param propertyDisplayName user-friendly property name to be added to the
+ * validation message.
  * @param validationOptions validations options.
  * @returns true if all periods are inside the limits, otherwise, false.
  */
 export function PeriodsAreBetweenLimits(
   startPeriodProperty: (targetObject: unknown) => Date | string,
   endPeriodProperty: (targetObject: unknown) => Date | string,
+  propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
@@ -69,7 +77,11 @@ export function PeriodsAreBetweenLimits(
       target: object.constructor,
       propertyName,
       options: validationOptions,
-      constraints: [startPeriodProperty, endPeriodProperty],
+      constraints: [
+        startPeriodProperty,
+        endPeriodProperty,
+        propertyDisplayName,
+      ],
       validator: PeriodsAreBetweenLimitsConstraint,
     });
   };

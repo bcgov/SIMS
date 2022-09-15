@@ -40,6 +40,7 @@ import { ProgramAllowsOfferingWIL } from "./custom-validators/program-allows-off
 import { StudyBreaksCombinedMustNotExceedsThreshold } from "./custom-validators/study-break-has-valid-consecutive-threshold";
 import { HasValidOfferingPeriodForFundedDays } from "./custom-validators/has-valid-offering-period-for-funded-days";
 import {
+  DATE_ONLY_ISO_FORMAT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
   OFFERING_COURSE_LOAD_MAX_VALUE,
   OFFERING_COURSE_LOAD_MIN_VALUE,
@@ -51,6 +52,93 @@ import {
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
 import { InsertResult } from "typeorm";
+
+const userFriendlyNames = {
+  offeringName: "Name",
+  studyStartDate: "Start date",
+  studyEndDate: "End date",
+  actualTuitionCosts: "Tuition",
+  programRelatedCosts: "Program related costs",
+  mandatoryFees: "Mandatory fees",
+  exceptionalExpenses: "Exceptional expenses",
+  offeringDelivered: "Delivery type",
+  offeringIntensity: "Offering intensity",
+  yearOfStudy: "Year of study",
+  showYearOfStudy: "Show year of study",
+  hasOfferingWILComponent: "WIL Component",
+  offeringWILComponentType: "WIL Component Type",
+  offeringDeclaration: "Consent",
+  offeringType: "Offering type",
+  courseLoad: "Course load",
+  lacksStudyBreaks: "Lacks study breaks",
+  studyBreaks: "Study breaks",
+  locationId: "Location",
+  programContext: "Program",
+  breakStartDate: "Study break start date",
+  breakEndDate: "Study break end date",
+};
+
+/**
+ * Provides a user-friendly message to a field that needs date validation.
+ * @param propertyDisplayName property display name.
+ * @returns friendly message to the field the that needs date validation.
+ */
+function getDateFormatMessage(propertyDisplayName: string) {
+  return `${propertyDisplayName} must be in the format ${DATE_ONLY_ISO_FORMAT}`;
+}
+
+/**
+ * Provides a user-friendly message to a field that needs min number validation.
+ * @param propertyDisplayName property display name.
+ * @returns friendly message to the field the that needs min number validation.
+ */
+function getMinFormatMessage(propertyDisplayName: string, min = 0) {
+  return `${propertyDisplayName} must be at least ${min}.`;
+}
+
+/**
+ * Provides a user-friendly message to a field that needs max number validation.
+ * @param propertyDisplayName property display name.
+ * @returns friendly message to the field the that needs max number validation.
+ */
+function getMaxFormatMessage(propertyDisplayName: string, max: number) {
+  return `${propertyDisplayName} must be not greater than ${max}.`;
+}
+
+/**
+ * Provides a user-friendly message to a field that needs currency validation.
+ * @param propertyDisplayName property display name.
+ * @returns friendly message to the field the that needs currency validation.
+ */
+export function getCurrencyFormatMessage(propertyDisplayName: string) {
+  return `${propertyDisplayName} must be a number without a group separator or decimals.`;
+}
+
+/**
+ * Provides a user-friendly message to a field that needs a enum like validation.
+ * @param propertyDisplayName property display name.
+ * @returns friendly message to the field the that needs a enum like validation.
+ */
+export function getEnumFormatMessage(
+  propertyDisplayName: string,
+  enumObject: unknown,
+) {
+  return `${propertyDisplayName} must be one of the following options: ${Object.values(
+    enumObject,
+  ).join()}`;
+}
+
+/**
+ * Provides a user-friendly message to a field that has a max length constraint.
+ * @param propertyDisplayName property display name.
+ * @returns user-friendly message to the field that has a max length constraint.
+ */
+export function getMaxLengthFormatMessage(
+  propertyDisplayName: string,
+  maxLength: number,
+) {
+  return `${propertyDisplayName} should not be longer than ${maxLength} characters.`;
+}
 
 /**
  * Number format expected for the offering currency values.
@@ -138,21 +226,27 @@ export class StudyBreak {
   /**
    * Study break start date.
    */
-  @IsDateString()
+  @IsDateString(undefined, {
+    message: getDateFormatMessage(userFriendlyNames.breakStartDate),
+  })
   @IsPeriodStartDate()
   breakStartDate: string;
   /**
    * Study break end date.
    */
-  @IsDateString()
+  @IsDateString(undefined, {
+    message: getDateFormatMessage(userFriendlyNames.breakEndDate),
+  })
   @IsPeriodEndDate()
   @PeriodMinLength(
     (studyBreak: StudyBreak) => studyBreak.breakStartDate,
     OFFERING_STUDY_BREAK_MIN_DAYS,
+    userFriendlyNames.breakEndDate,
   )
   @PeriodMaxLength(
     (studyBreak: StudyBreak) => studyBreak.breakStartDate,
     OFFERING_STUDY_BREAK_MAX_DAYS,
+    userFriendlyNames.breakEndDate,
     {
       context: new ValidationWarning(
         OfferingValidationWarnings.InvalidStudyBreakAmountOfDays,
@@ -183,63 +277,123 @@ export class OfferingValidationModel {
   /**
    * Offering name.
    */
-  @IsNotEmpty()
-  @MaxLength(OFFERING_NAME_MAX_LENGTH)
+  @IsNotEmpty({ message: `${userFriendlyNames.offeringName} is required.` })
+  @MaxLength(OFFERING_NAME_MAX_LENGTH, {
+    message: getMaxLengthFormatMessage(
+      userFriendlyNames.offeringName,
+      OFFERING_NAME_MAX_LENGTH,
+    ),
+  })
   offeringName: string;
   /**
    * Offering study start date.
    */
-  @IsDateString()
+  @IsDateString(undefined, {
+    message: getDateFormatMessage(userFriendlyNames.studyStartDate),
+  })
   studyStartDate: string;
   /**
    * Offering study end date.
    */
-  @IsDateString()
-  @PeriodMinLength(studyStartDateProperty, OFFERING_STUDY_PERIOD_MIN_DAYS, {
-    context: new ValidationWarning(
-      OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
-    ),
+  @IsDateString(undefined, {
+    message: getDateFormatMessage(userFriendlyNames.studyEndDate),
   })
-  @PeriodMaxLength(studyStartDateProperty, OFFERING_STUDY_PERIOD_MAX_DAYS, {
-    context: new ValidationWarning(
-      OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
-    ),
-  })
+  @PeriodMinLength(
+    studyStartDateProperty,
+    OFFERING_STUDY_PERIOD_MIN_DAYS,
+    userFriendlyNames.studyEndDate,
+    {
+      context: new ValidationWarning(
+        OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
+      ),
+    },
+  )
+  @PeriodMaxLength(
+    studyStartDateProperty,
+    OFFERING_STUDY_PERIOD_MAX_DAYS,
+    userFriendlyNames.studyEndDate,
+    {
+      context: new ValidationWarning(
+        OfferingValidationWarnings.InvalidStudyDatesPeriodLength,
+      ),
+    },
+  )
   studyEndDate: string;
   /**
    * Actual tuition costs.
    */
-  @Min(0)
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
-  @IsNumber(currencyNumberOptions)
+  @Min(0, {
+    message: getMinFormatMessage(userFriendlyNames.actualTuitionCosts),
+  })
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE, {
+    message: getMaxFormatMessage(
+      userFriendlyNames.actualTuitionCosts,
+      MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+    ),
+  })
+  @IsNumber(currencyNumberOptions, {
+    message: getCurrencyFormatMessage(userFriendlyNames.actualTuitionCosts),
+  })
   actualTuitionCosts: number;
   /**
    * Program related costs.
    */
-  @Min(0)
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
-  @IsNumber(currencyNumberOptions)
+  @Min(0, {
+    message: getMinFormatMessage(userFriendlyNames.programRelatedCosts),
+  })
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE, {
+    message: getMaxFormatMessage(
+      userFriendlyNames.programRelatedCosts,
+      MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+    ),
+  })
+  @IsNumber(currencyNumberOptions, {
+    message: getCurrencyFormatMessage(userFriendlyNames.programRelatedCosts),
+  })
   programRelatedCosts: number;
   /**
    * Mandatory fees.
    */
-  @Min(0)
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
-  @IsNumber(currencyNumberOptions)
+  @Min(0, {
+    message: getMinFormatMessage(userFriendlyNames.mandatoryFees),
+  })
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE, {
+    message: getMaxFormatMessage(
+      userFriendlyNames.mandatoryFees,
+      MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+    ),
+  })
+  @IsNumber(currencyNumberOptions, {
+    message: getCurrencyFormatMessage(userFriendlyNames.mandatoryFees),
+  })
   mandatoryFees: number;
   /**
    * Exceptional expenses.
    */
-  @Min(0)
-  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
-  @IsNumber(currencyNumberOptions)
+  @Min(0, {
+    message: getMinFormatMessage(userFriendlyNames.exceptionalExpenses),
+  })
+  @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE, {
+    message: getMaxFormatMessage(
+      userFriendlyNames.exceptionalExpenses,
+      MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+    ),
+  })
+  @IsNumber(currencyNumberOptions, {
+    message: getCurrencyFormatMessage(userFriendlyNames.exceptionalExpenses),
+  })
   exceptionalExpenses: number;
   /**
    * Offering delivered type.
    */
-  @IsEnum(OfferingDeliveryOptions)
+  @IsEnum(OfferingDeliveryOptions, {
+    message: getEnumFormatMessage(
+      userFriendlyNames.offeringDelivered,
+      OfferingDeliveryOptions,
+    ),
+  })
   @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
-  @ProgramAllowsOfferingDelivery({
+  @ProgramAllowsOfferingDelivery(userFriendlyNames.offeringDelivered, {
     context: new ValidationWarning(
       OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
     ),
@@ -250,7 +404,7 @@ export class OfferingValidationModel {
    */
   @IsEnum(OfferingIntensity)
   @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
-  @ProgramAllowsOfferingIntensity({
+  @ProgramAllowsOfferingIntensity(userFriendlyNames.offeringIntensity, {
     context: new ValidationWarning(
       OfferingValidationWarnings.ProgramOfferingIntensityMismatch,
     ),
@@ -259,20 +413,37 @@ export class OfferingValidationModel {
   /**
    * Number of years of study.
    */
-  @Min(OFFERING_YEAR_OF_STUDY_MIN_VALUE)
-  @Max(OFFERING_YEAR_OF_STUDY_MAX_VALUE)
+  @Min(OFFERING_YEAR_OF_STUDY_MIN_VALUE, {
+    message: getMinFormatMessage(
+      userFriendlyNames.yearOfStudy,
+      OFFERING_YEAR_OF_STUDY_MIN_VALUE,
+    ),
+  })
+  @Max(OFFERING_YEAR_OF_STUDY_MAX_VALUE, {
+    message: getMaxFormatMessage(
+      userFriendlyNames.yearOfStudy,
+      OFFERING_YEAR_OF_STUDY_MAX_VALUE,
+    ),
+  })
   yearOfStudy: number;
   /**
    * Show year of study.
    */
-  @IsBoolean()
+  @IsBoolean({
+    message: `${userFriendlyNames.showYearOfStudy} must be a valid boolean value.`,
+  })
   showYearOfStudy: boolean;
   /**
    * Indicates if the offering has a WIL(work-integrated learning).
    */
-  @IsEnum(WILComponentOptions)
+  @IsEnum(WILComponentOptions, {
+    message: getEnumFormatMessage(
+      userFriendlyNames.hasOfferingWILComponent,
+      WILComponentOptions,
+    ),
+  })
   @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
-  @ProgramAllowsOfferingWIL({
+  @ProgramAllowsOfferingWIL(userFriendlyNames.hasOfferingWILComponent, {
     context: new ValidationWarning(
       OfferingValidationWarnings.ProgramOfferingWILMismatch,
     ),
@@ -286,31 +457,54 @@ export class OfferingValidationModel {
     (offering: OfferingValidationModel) =>
       offering.hasOfferingWILComponent === WILComponentOptions.Yes,
   )
-  @IsNotEmpty()
-  @MaxLength(OFFERING_WIL_TYPE_MAX_LENGTH)
+  @IsNotEmpty({
+    message: `${userFriendlyNames.offeringWILComponentType} is required when ${userFriendlyNames.hasOfferingWILComponent} is set to '${WILComponentOptions.Yes}'.`,
+  })
+  @MaxLength(OFFERING_WIL_TYPE_MAX_LENGTH, {
+    message: getMaxLengthFormatMessage(
+      userFriendlyNames.offeringWILComponentType,
+      OFFERING_WIL_TYPE_MAX_LENGTH,
+    ),
+  })
   offeringWILComponentType?: string;
   /**
    * User consent to have the offering submitted.
    */
-  @IsIn([true])
+  @IsIn([true], {
+    message: `${userFriendlyNames.offeringDeclaration} must be accepted.`,
+  })
   offeringDeclaration: boolean;
   /**
    * Define if the offering will be available to the
    * public or must be hidden.
    */
-  @IsIn([OfferingTypes.Private, OfferingTypes.Public])
+  @IsIn([OfferingTypes.Private, OfferingTypes.Public], {
+    message: `${userFriendlyNames.offeringType} must be either ${OfferingTypes.Private} or ${OfferingTypes.Public}.`,
+  })
   offeringType: OfferingTypes;
   /**
    * Indicates offering course load.
    */
   @IsOptional()
-  @Min(OFFERING_COURSE_LOAD_MIN_VALUE)
-  @Max(OFFERING_COURSE_LOAD_MAX_VALUE)
+  @Min(OFFERING_COURSE_LOAD_MIN_VALUE, {
+    message: getMinFormatMessage(
+      userFriendlyNames.courseLoad,
+      OFFERING_COURSE_LOAD_MIN_VALUE,
+    ),
+  })
+  @Max(OFFERING_COURSE_LOAD_MAX_VALUE, {
+    message: getMaxFormatMessage(
+      userFriendlyNames.courseLoad,
+      OFFERING_COURSE_LOAD_MAX_VALUE,
+    ),
+  })
   courseLoad?: number;
   /**
    * Indicates if the offering has some study break.
    */
-  @IsBoolean()
+  @IsBoolean({
+    message: `${userFriendlyNames.lacksStudyBreaks} must be a boolean value.`,
+  })
   lacksStudyBreaks: boolean;
   /**
    * For offerings with some study break, represents all study break periods.
@@ -322,10 +516,17 @@ export class OfferingValidationModel {
       !!offering.studyStartDate &&
       !!offering.studyEndDate,
   )
-  @ArrayMinSize(1)
+  @ArrayMinSize(1, {
+    message:
+      "An offering with study breaks must contain at least one complete study break.",
+  })
   @ValidateNested({ each: true })
-  @HasNoPeriodOverlap()
-  @PeriodsAreBetweenLimits(studyStartDateProperty, studyEndDateProperty)
+  @HasNoPeriodOverlap(userFriendlyNames.studyBreaks)
+  @PeriodsAreBetweenLimits(
+    studyStartDateProperty,
+    studyEndDateProperty,
+    userFriendlyNames.studyBreaks,
+  )
   @StudyBreaksCombinedMustNotExceedsThreshold(
     studyStartDateProperty,
     studyEndDateProperty,
@@ -349,7 +550,7 @@ export class OfferingValidationModel {
    * Institution location that will be associated with this offering.
    */
   @IsPositive({
-    message: "Related institution location was not found or not provided.",
+    message: "Related institution location was not found or was not provided.",
   })
   locationId: number;
   /**

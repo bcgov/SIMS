@@ -25,10 +25,13 @@ class PeriodMaxLengthConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    const [startDateProperty, maxDaysAllowed] = args.constraints;
+    const [startDateProperty, maxDaysAllowed, propertyDisplayName] =
+      args.constraints;
     const startDate = getISODateOnlyString(startDateProperty(args.object));
     const endDate = getISODateOnlyString(args.value);
-    return `The number of day(s) between ${startDate} and ${endDate} must not be greater than ${maxDaysAllowed}.`;
+    return `${
+      propertyDisplayName ?? args.property
+    }, the number of day(s) between ${startDate} and ${endDate} must not be greater than ${maxDaysAllowed}.`;
   }
 }
 
@@ -39,12 +42,15 @@ class PeriodMaxLengthConstraint implements ValidatorConstraintInterface {
  * @param startDateProperty indicates the property that define the
  * start of a period.
  * @param maxDaysAllowed max allowed days to the period be considered valid.
+ * @param propertyDisplayName user-friendly property name to be added to the
+ * validation message.
  * @param validationOptions validations options.
  * @returns true if the period amount of days is inside the max allowed days.
  */
 export function PeriodMaxLength(
   startDateProperty: (targetObject: unknown) => Date | string,
   maxDaysAllowed: number,
+  propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
@@ -53,7 +59,7 @@ export function PeriodMaxLength(
       target: object.constructor,
       propertyName,
       options: validationOptions,
-      constraints: [startDateProperty, maxDaysAllowed],
+      constraints: [startDateProperty, maxDaysAllowed, propertyDisplayName],
       validator: PeriodMaxLengthConstraint,
     });
   };

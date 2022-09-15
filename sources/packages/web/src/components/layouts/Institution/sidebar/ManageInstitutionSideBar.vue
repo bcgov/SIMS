@@ -11,6 +11,15 @@
         :title="item.label"
       />
     </v-list>
+    <template #append>
+      <v-list density="compact" nav>
+        <v-list-item
+          :to="{ name: InstitutionRoutesConst.OFFERINGS_UPLOAD }"
+          title="Offerings upload"
+          prepend-icon="fa:far fa-address-card-o"
+        />
+      </v-list>
+    </template>
   </v-navigation-drawer>
 </template>
 <script lang="ts">
@@ -54,6 +63,7 @@ export default {
 
     return {
       items,
+      InstitutionRoutesConst,
     };
   },
 };

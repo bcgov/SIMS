@@ -144,6 +144,7 @@ export default abstract class HttpBaseClient {
       throw new ApiProcessError(
         axiosError.response.data.message,
         axiosError.response.data.errorType,
+        axiosError.response.data.objectInfo,
       );
     }
     throw error;
