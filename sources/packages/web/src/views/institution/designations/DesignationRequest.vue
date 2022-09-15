@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Manage designations"
-        :routeLocation="{ name: InstitutionRoutesConst.MANAGE_DESIGNATION }"
+        :routeLocation="goBackRouteParams"
         subTitle="Request Designation"
       />
     </template>
