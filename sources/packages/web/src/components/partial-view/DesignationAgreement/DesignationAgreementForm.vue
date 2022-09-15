@@ -11,6 +11,7 @@
         :processing="processing"
         primaryLabel="Submit"
         @primaryClick="submit()"
+        @secondaryClick="cancel"
       /> </template
   ></formio-container>
 </template>
@@ -26,7 +27,7 @@ import {
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 
 export default {
-  emits: ["submitDesignation"],
+  emits: ["submitDesignation", "cancel"],
   props: {
     model: {
       type: Object,
@@ -65,7 +66,11 @@ export default {
       return props.model.viewMode === DesignationFormViewModes.viewOnly;
     });
 
-    return { formRender, submitDesignation, readOnly };
+    const cancel = () => {
+      context.emit("cancel");
+    };
+
+    return { formRender, submitDesignation, readOnly, cancel };
   },
 };
 </script>
