@@ -5,7 +5,7 @@
       subTitle="Lookup students by entering their information below."
     >
     </body-header>
-    <content-group>
+    <content-group class="mb-8">
       <v-row
         ><v-col>
           <v-text-field
@@ -64,8 +64,8 @@
         >
       </v-row>
     </content-group>
-
-    <content-group v-if="studentsFound" class="mt-8">
+    <body-header title="Results" v-if="studentsFound"></body-header>
+    <content-group v-if="studentsFound">
       <toggle-content :toggled="!students?.length">
         <DataTable :value="students">
           <Column field="firstName" header="First Name" :sortable="true">
