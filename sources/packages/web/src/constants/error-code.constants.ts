@@ -37,3 +37,25 @@ export const BCEID_ACCOUNT_NOT_FOUND = "BCEID_ACCOUNT_NOT_FOUND";
  */
 export const STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS =
   "STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS";
+/**
+ * An error was found during the offering validation and the process
+ * must be stopped. Every offering validation will generate an error but
+ * some errors are classified as warnings and therefore are not considered
+ * critical, which means that critical errors are the only ones that will
+ * cause the process to be interrupted.
+ */
+export const OFFERING_VALIDATION_CRITICAL_ERROR =
+  "OFFERING_VALIDATION_CRITICAL_ERROR";
+/**
+ * The CSV content to perform the offering bulk insert is not in the
+ * expected format and cannot be parsed.
+ */
+export const OFFERING_VALIDATION_CSV_FORMAT_ERROR =
+  "OFFERING_VALIDATION_CSV_FORMAT_ERROR";
+/**
+ * Some error happen with one or more offerings being created and
+ * the entire process was aborted. This error happens during the offerings
+ * database inserts.
+ */
+export const OFFERING_CREATION_CRITICAL_ERROR =
+  "OFFERING_CREATION_CRITICAL_ERROR";

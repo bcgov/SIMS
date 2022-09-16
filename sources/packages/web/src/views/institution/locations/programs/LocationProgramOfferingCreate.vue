@@ -12,6 +12,7 @@
       :readOnly="false"
       @saveOffering="saveOffering"
       :processing="processing"
+      @cancel="goBack"
     ></offering-form>
   </full-page-container>
 </template>
@@ -77,9 +78,14 @@ export default {
         hasWILComponent: programDetails.hasWILComponent,
       };
     };
+
     onMounted(async () => {
       await loadFormData();
     });
+
+    const goBack = () => {
+      router.push(routeLocation.value);
+    };
 
     const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
@@ -90,8 +96,7 @@ export default {
           data,
         );
         snackBar.success("Education Offering created successfully!");
-
-        router.push(routeLocation.value);
+        goBack();
       } catch {
         snackBar.error("An error happened during the Offering create process.");
       } finally {
@@ -108,6 +113,7 @@ export default {
       BannerTypes,
       routeLocation,
       processing,
+      goBack,
     };
   },
 };

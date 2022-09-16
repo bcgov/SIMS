@@ -1,3 +1,5 @@
+import { OfferingBulkInsertValidationResultAPIOutDTO } from "@/services/http/dto";
+
 /**
  * Represents the status of an offering.
  ** Offering statuses are grouped into the ones which are exclusively for offering creation
@@ -45,4 +47,25 @@ export interface CourseDetails {
   courseCode: string;
   courseStartDate: string;
   courseEndDate: string;
+}
+
+/**
+ * Offering bulk insert validation result with formatted values
+ * to be displayed to the user.
+ */
+export interface OfferingsUploadBulkInsert
+  extends OfferingBulkInsertValidationResultAPIOutDTO {
+  /**
+   * CSV line number that contains the error.
+   * Should match with CSV/spreadsheet line number for easy troubleshoot.
+   */
+  recordLineNumber: number;
+  /**
+   * Offering start date formatted.
+   */
+  startDateFormatted?: string;
+  /**
+   * Offering end date formatted.
+   */
+  endDateFormatted?: string;
 }

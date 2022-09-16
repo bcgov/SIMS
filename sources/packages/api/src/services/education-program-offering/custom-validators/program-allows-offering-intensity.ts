@@ -30,18 +30,24 @@ class ProgramAllowsOfferingIntensityConstraint
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `${args.property} has an offering intensity that is not allowed by its program.`;
+    const [propertyDisplayName] = args.constraints;
+    return `${
+      propertyDisplayName ?? args.property
+    } has an offering intensity that is not allowed by its program.`;
   }
 }
 
 /**
  * Executes a validation to ensure that the offering intensity
  * is allowed by the education program.
+ * @param propertyDisplayName user-friendly property name to be added to the
+ * validation message.
  * @param validationOptions validation options.
  * @returns true if the delivery intensity is allowed by the program,
  * otherwise, false.
  */
 export function ProgramAllowsOfferingIntensity(
+  propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
@@ -50,6 +56,7 @@ export function ProgramAllowsOfferingIntensity(
       target: object.constructor,
       propertyName,
       options: validationOptions,
+      constraints: [propertyDisplayName],
       validator: ProgramAllowsOfferingIntensityConstraint,
     });
   };

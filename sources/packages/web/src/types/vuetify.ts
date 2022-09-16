@@ -36,3 +36,14 @@ export type VForm = Vue & {
    */
   errors: ErrorMessage[];
 };
+
+/**
+ * Vuetify file for a v-file-input component.
+ */
+export interface InputFile extends Blob {
+  lastModified: number;
+  lastModifiedDate: Date;
+  name: string;
+  size: number;
+  type: string;
+}

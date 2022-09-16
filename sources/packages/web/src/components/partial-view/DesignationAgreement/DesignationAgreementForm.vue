@@ -1,6 +1,4 @@
 <template>
-  <!-- todo: ann add the form definition -->
-  <!-- todo: ann institution dashboard form definition -->
   <formio-container
     formName="designationAgreementDetails"
     :formData="model"
@@ -8,11 +6,12 @@
     @submitted="submitDesignation"
     @render="formRender"
   >
-    <template #actions="{ submit }" v-if="!viewOnly">
+    <template #actions="{ submit }" v-if="!(viewOnly || hideFooter)">
       <footer-buttons
         :processing="processing"
         primaryLabel="Submit"
         @primaryClick="submit()"
+        @secondaryClick="cancel"
       /> </template
   ></formio-container>
 </template>
@@ -28,13 +27,17 @@ import {
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 
 export default {
-  emits: ["submitDesignation"],
+  emits: ["submitDesignation", "cancel"],
   props: {
     model: {
       type: Object,
       required: true,
     },
     viewOnly: {
+      type: Boolean,
+      required: false,
+    },
+    hideFooter: {
       type: Boolean,
       required: false,
     },
@@ -63,7 +66,11 @@ export default {
       return props.model.viewMode === DesignationFormViewModes.viewOnly;
     });
 
-    return { formRender, submitDesignation, readOnly };
+    const cancel = () => {
+      context.emit("cancel");
+    };
+
+    return { formRender, submitDesignation, readOnly, cancel };
   },
 };
 </script>

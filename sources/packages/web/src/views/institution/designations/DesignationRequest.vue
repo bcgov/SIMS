@@ -3,13 +3,14 @@
     <template #header>
       <header-navigator
         title="Manage designations"
-        :routeLocation="{ name: InstitutionRoutesConst.MANAGE_DESIGNATION }"
+        :routeLocation="goBackRouteParams"
         subTitle="Request Designation"
       />
     </template>
     <designation-agreement-form
       :model="designationModel"
       @submitDesignation="submitDesignation"
+      @cancel="goBack"
     ></designation-agreement-form>
   </full-page-container>
 </template>
@@ -23,7 +24,7 @@ import {
   useInstitutionState,
   useSnackBar,
 } from "@/composables";
-import { useRouter } from "vue-router";
+import { RouteLocationRaw, useRouter } from "vue-router";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import {
   DesignationModel,
@@ -39,6 +40,9 @@ export default {
   components: { DesignationAgreementForm },
   setup() {
     const router = useRouter();
+    const goBackRouteParams = {
+      name: InstitutionRoutesConst.MANAGE_DESIGNATION,
+    } as RouteLocationRaw;
 
     const snackBar = useSnackBar();
     const formatter = useFormatters();
@@ -77,6 +81,10 @@ export default {
       );
     });
 
+    const goBack = () => {
+      router.push(goBackRouteParams);
+    };
+
     const submitDesignation = async (form: FormIOForm<DesignationModel>) => {
       try {
         await DesignationAgreementService.shared.submitDesignationAgreement({
@@ -89,7 +97,7 @@ export default {
           ),
         } as SubmitDesignationAgreementDto);
         snackBar.success("Designation agreement submitted.");
-        router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
+        goBack();
       } catch (error) {
         snackBar.error(
           "An unexpected error happened during the designation agreement submission.",
@@ -101,6 +109,8 @@ export default {
       designationModel,
       submitDesignation,
       InstitutionRoutesConst,
+      goBackRouteParams,
+      goBack,
     };
   },
 };
