@@ -17,6 +17,7 @@ import {
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
   RequestAssessmentTypeAPIOutDTO,
+  AwardDetailsAPIOutDTO,
 } from "./models/assessment.dto";
 import {
   ApiNotFoundResponse,
@@ -171,5 +172,20 @@ export class AssessmentAESTController extends BaseController {
     @Param("assessmentId") assessmentId: number,
   ): Promise<AssessmentNOAAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentNOA(assessmentId);
+  }
+
+  /**
+   * Get estimated and actual(if present) award details of an assessment.
+   * @param assessmentId assessment to which awards details belong to.
+   * @returns estimated and actual award details.
+   */
+  @Get(":assessmentId/award")
+  @ApiNotFoundResponse({
+    description: "Assessment id not found.",
+  })
+  async getAwardDetails(
+    @Param("assessmentId", ParseIntPipe) assessmentId: number,
+  ): Promise<AwardDetailsAPIOutDTO> {
+    return this.assessmentControllerService.getAwardDetails(assessmentId);
   }
 }

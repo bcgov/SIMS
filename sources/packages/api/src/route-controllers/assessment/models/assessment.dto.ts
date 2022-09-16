@@ -59,5 +59,29 @@ export class AssessmentNOAAPIOutDTO {
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   msfaaNumber: string;
-  disbursement: any;
+  disbursement: DynamicAwardDTO;
+}
+
+export class AwardDetailsAPIOutDTO {
+  applicationNumber: string;
+  institutionName: string;
+  offeringIntensity: OfferingIntensity;
+  offeringStudyStartDate: string;
+  offeringStudyEndDate: string;
+  @ApiProperty({
+    description:
+      "Dynamic output of the workflow calculation. " +
+      "Contains data that could represent a part-time or a full-time award details. ",
+  })
+  estimatedAward: DynamicAwardDTO;
+  @ApiProperty({
+    description:
+      "Dynamic output from disbursement receipt for the given disbursement. " +
+      "Contains data that could represent a part-time or a full-time award details. ",
+  })
+  finalAward: DynamicAwardDTO;
+}
+
+export interface DynamicAwardDTO {
+  [k: string]: string | number;
 }

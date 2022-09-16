@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, FindManyOptions } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   DisbursementReceipt,
@@ -122,5 +122,50 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
       .select("MAX(disbursementReceipt.batchRunDate)")
       .getRawOne();
     return batchRunDate?.max ?? new Date();
+  }
+
+  /**
+   * Get the disbursement receipt details for
+   * given assessment.
+   * @param assessmentId assessment to which disbursement
+   * receipt belongs to.
+   * @param studentId student to whom the disbursement
+   * receipt belongs to.
+   * @returns disbursement receipt details.
+   */
+  async getDisbursementReceiptByAssessment(
+    assessmentId: number,
+    studentId?: number,
+  ): Promise<DisbursementReceipt[]> {
+    const findCriteria: FindManyOptions<DisbursementReceipt> = {
+      select: {
+        id: true,
+        disbursementSchedule: { id: true },
+        disbursementReceiptValues: { grantType: true, grantAmount: true },
+      },
+      relations: {
+        disbursementReceiptValues: true,
+        disbursementSchedule: true,
+      },
+    };
+    if (studentId) {
+      findCriteria.where = {
+        disbursementSchedule: {
+          studentAssessment: {
+            id: assessmentId,
+            application: { student: { id: studentId } },
+          },
+        },
+      };
+    } else {
+      findCriteria.where = {
+        disbursementSchedule: {
+          studentAssessment: {
+            id: assessmentId,
+          },
+        },
+      };
+    }
+    return this.repo.find(findCriteria);
   }
 }

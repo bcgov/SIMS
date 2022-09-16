@@ -28,6 +28,7 @@ import {
   ATBCService,
   RestrictionService,
   EducationProgramOfferingValidationService,
+  DisbursementReceiptService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -96,6 +97,7 @@ import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.co
     StudentAccountApplicationsService,
     EducationProgramOfferingControllerService,
     EducationProgramOfferingValidationService,
+    DisbursementReceiptService,
   ],
 })
 export class AppStudentsModule {}
