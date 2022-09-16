@@ -64,7 +64,7 @@
         >
       </v-row>
     </content-group>
-    <body-header title="Results" v-if="studentsFound"></body-header>
+    <body-header title="Results" v-if="studentsFound" />
     <content-group v-if="studentsFound">
       <toggle-content :toggled="!students?.length">
         <DataTable :value="students">

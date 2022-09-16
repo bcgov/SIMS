@@ -5,7 +5,7 @@
       subTitle="Look up an institution by entering their information below."
     >
     </body-header>
-    <content-group>
+    <content-group class="mb-8">
       <v-row>
         <v-col>
           <v-text-field
@@ -40,8 +40,8 @@
         >
       </v-row>
     </content-group>
-
-    <content-group v-if="institutionsFound" class="mt-8">
+    <body-header title="Results" v-if="institutionsFound" />
+    <content-group v-if="institutionsFound">
       <DataTable
         v-if="institutionsFound"
         class="mt-4"
