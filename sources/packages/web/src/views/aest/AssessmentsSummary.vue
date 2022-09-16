@@ -75,7 +75,7 @@ export default {
 
     const gotToViewAssessment = (assessmentId: number) => {
       router.push({
-        name: AESTRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
+        name: AESTRoutesConst.ASSESSMENT_AWARD_VIEW,
         params: {
           studentId: props.studentId,
           applicationId: props.applicationId,

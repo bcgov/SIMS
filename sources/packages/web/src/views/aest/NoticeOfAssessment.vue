@@ -5,8 +5,8 @@
         title="Assessment"
         subTitle="Notice of Assessment"
         :routeLocation="{
-          name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-          params: { applicationId, studentId },
+          name: AESTRoutesConst.ASSESSMENT_AWARD_VIEW,
+          params: { applicationId, studentId, assessmentId },
         }"
       />
     </div>

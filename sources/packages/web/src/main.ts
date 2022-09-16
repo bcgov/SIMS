@@ -18,6 +18,8 @@ import Column from "primevue/column";
 import { AppConfigService } from "./services/AppConfigService";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
+import ContentGroupInfo from "@/components/generic/ContentGroupInfo.vue";
+import TooltipIcon from "@/components/generic/TooltipIcon.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import StudentPageContainer from "@/components/layouts/student/StudentPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
@@ -38,6 +40,8 @@ AppConfigService.shared.init().then(() => {
     .component("Column", Column)
     .component("BodyHeader", BodyHeader)
     .component("ContentGroup", ContentGroup)
+    .component("ContentGroupInfo", ContentGroupInfo)
+    .component("TooltipIcon", TooltipIcon)
     .component("FullPageContainer", FullPageContainer)
     .component("StudentPageContainer", StudentPageContainer)
     .component("HeaderNavigator", HeaderNavigator)
