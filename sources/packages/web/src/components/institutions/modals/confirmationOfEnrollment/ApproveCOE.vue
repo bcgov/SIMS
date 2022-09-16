@@ -22,7 +22,7 @@
             color="primary"
             :rules="[
               (v) =>
-                !(v == null) ||
+                !(v === null) ||
                 'Do you want to request tuition remittance is required',
             ]"
             ><template #label>
