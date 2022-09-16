@@ -15,14 +15,15 @@
           >Confirming enrolment verifies this applicant is attending your
           institution and will allow funding to be disbursed.</span
         >
-        <content-group class="my-3">
+        <content-group class="my-3"
+          >{{ formModel }}
           <v-radio-group
             v-model="formModel.requestedTuitionRemittance"
             class="mt-2 input-unset-display-opacity"
             color="primary"
             :rules="[
               (v) =>
-                !(v === null) ||
+                !!(v === true || v === false) ||
                 'Do you want to request tuition remittance is required',
             ]"
             ><template #label>
