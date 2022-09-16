@@ -1,6 +1,10 @@
 <template>
   <full-page-container>
-    <body-header title="Search Institution"> </body-header>
+    <body-header
+      title="Search Institution"
+      subTitle="Look up an institution by entering their information below."
+    >
+    </body-header>
     <content-group>
       <v-row>
         <v-col>

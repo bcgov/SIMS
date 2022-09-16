@@ -1,6 +1,10 @@
 <template>
   <full-page-container>
-    <body-header title="Search Students"> </body-header>
+    <body-header
+      title="Search Students"
+      subTitle="Lookup students by entering their information below."
+    >
+    </body-header>
     <content-group>
       <v-row
         ><v-col>
