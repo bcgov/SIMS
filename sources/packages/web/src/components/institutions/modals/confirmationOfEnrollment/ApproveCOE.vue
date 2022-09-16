@@ -22,7 +22,8 @@
             color="primary"
             :rules="[
               (v) =>
-                !!v || 'Do you want to request tuition remittance is required',
+                !!(v === true || v === false) ||
+                'Do you want to request tuition remittance is required',
             ]"
             ><template #label>
               <div class="label-bold-normal">
