@@ -14,19 +14,20 @@ export default class InstitutionHelperActions {
       this.getUserPasswordSingleLocation(),
     ];
   }
+
   getBaseUrlForTestEnv() {
     return Cypress.env("TEST").BASE_URL;
   }
 
   getLoginUrlForTestEnv() {
     return `${this.getBaseUrlForTestEnv()}${
-      Cypress.env("END_POINTS").INSTITUTION_LOGIN
+      Cypress.env("ENDPOINTS").INSTITUTION_LOGIN
     }`;
   }
 
   getApiUrlForTest() {
     return `${this.getBaseUrlForTestEnv()}${
-      Cypress.env("END_POINTS").INSTITUTIONS_API
+      Cypress.env("ENDPOINTS").INSTITUTIONS_API
     }`;
   }
 
@@ -60,7 +61,7 @@ export default class InstitutionHelperActions {
 
   getApiForLocationCreationOrUpdate() {
     return `${this.getBaseUrlForTestEnv()}${
-      Cypress.env("END_POINTS").CREATE_INSTITUTION_LOCATION
+      Cypress.env("ENDPOINTS").CREATE_INSTITUTION_LOCATION
     }`;
   }
 

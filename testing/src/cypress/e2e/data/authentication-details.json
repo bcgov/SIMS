@@ -1,7 +1,0 @@
-{
-  "testEnv": {
-    "keyCloakTokenUrl": "https://test.oidc.gov.bc.ca/auth/realms/jxoe2o46/protocol/openid-connect/token",
-    "username": "4116796724b34ebd98dd035a9e4570c0@bceid",
-    "password": ""
-  }
-}

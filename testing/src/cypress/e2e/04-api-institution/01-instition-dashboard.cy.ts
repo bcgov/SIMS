@@ -1,5 +1,6 @@
 import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
 import Authorization from "../../custom-command/common/authorization";
+import { ClientId } from "../../custom-command/common/authorization";
 const institutionHelperActions = new InstitutionHelperActions();
 
 const INSTITUTION_DETAILS_SINGLE_LOCATION =
@@ -18,7 +19,7 @@ describe("[Institution Dashboard APIs] - Institution with single location", () =
     token = await authorizer.getAuthToken(
       USERNAME,
       PASSWORD,
-      authorizer.CLIENT_ID.INSTITUTION,
+      ClientId.INSTITUTION,
       TOKEN_URL
     );
   });

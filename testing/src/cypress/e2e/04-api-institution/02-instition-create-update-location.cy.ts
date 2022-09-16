@@ -1,6 +1,6 @@
 import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
 import Authorization from "../../custom-command/common/authorization";
-import ApiData from "../data/endpoints/api-endpoints.json";
+import { ClientId } from "../../custom-command/common/authorization";
 
 const institutionHelperActions = new InstitutionHelperActions();
 
@@ -21,11 +21,11 @@ function createOrUpdateInstitutionLocation(
   let status: number;
   if (create) {
     method = "POST";
-    url = `${ApiData.testEnv.baseUrl}${ApiData.endPoints.createInstitutionLocation}`;
+    url = institutionHelperActions.getApiForLocationCreationOrUpdate();
     status = 201;
   } else {
     method = "PATCH";
-    url = `${ApiData.testEnv.baseUrl}${ApiData.endPoints.createInstitutionLocation}/1`;
+    url = `${institutionHelperActions.getApiForLocationCreationOrUpdate()}/1`;
     status = 200;
   }
   if (canadian) {
@@ -87,7 +87,7 @@ describe("[Institution Create/Update] Verify location create/update", () => {
     token = await authorizer.getAuthToken(
       USERNAME,
       PASSWORD,
-      authorizer.CLIENT_ID.INSTITUTION,
+      ClientId.INSTITUTION,
       TOKEN_URL
     );
   });

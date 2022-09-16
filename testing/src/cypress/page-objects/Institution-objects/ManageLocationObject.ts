@@ -1,3 +1,19 @@
+export enum Provinces {
+  ALBERTA = "AB",
+  BRITISH_COLUMBIA = "BC",
+  MANITOBA = "MB",
+  NEW_BRUNSWICK = "NB",
+  NEW_FOUNDLAND_AND_LABRADOR = "NL",
+  NOVA_SCOTIA = "NS",
+  ONTARIO = "ON",
+  PRINCE_EDWARD_ISLAND = "PE",
+  QUEBEC = "QC",
+  SASKATCHEWAN = "SK",
+  YUKON = "YT",
+  NORTHERN_TERRITORIES = "NT",
+  NUNAVUT = "NU",
+}
+
 export default class ManageLocationObject {
   manageLocationButton() {
     return cy.get(".v-list > :nth-child(2)");
@@ -111,56 +127,8 @@ export default class ManageLocationObject {
     return cy.get("[data-cy='provinceState']").parent();
   }
 
-  provinceABFromDropDown() {
-    return cy.get('div[data-value="AB"]');
-  }
-
-  provinceBCFromDropDown() {
-    return cy.get('div[data-value="BC"]');
-  }
-
-  provinceMBFromDropDown() {
-    return cy.get('div[data-value="MB"]');
-  }
-
-  provinceNBFromDropDown() {
-    return cy.get('div[data-value="NB"]');
-  }
-
-  provinceNLFromDropDown() {
-    return cy.get('div[data-value="NL"]');
-  }
-
-  provinceNSFromDropDown() {
-    return cy.get('div[data-value="NS"]');
-  }
-
-  provinceONFromDropDown() {
-    return cy.get('div[data-value="ON"]');
-  }
-
-  provincePEFromDropDown() {
-    return cy.get('div[data-value="PE"]');
-  }
-
-  provinceQCFromDropDown() {
-    return cy.get('div[data-value="QC"]');
-  }
-
-  provinceSKFromDropDown() {
-    return cy.get('div[data-value="SK"]');
-  }
-
-  provinceYUFromDropDown() {
-    return cy.get('div[data-value="YT"]');
-  }
-
-  provinceNTFromDropDown() {
-    return cy.get('div[data-value="NT"]');
-  }
-
-  provinceNUFromDropDown() {
-    return cy.get('div[data-value="NU"]');
+  getProvinceFromDropdown(province: Provinces) {
+    return cy.get(`div[data-value="${province}"]`);
   }
 
   firstNameInputText() {
@@ -202,21 +170,27 @@ export default class ManageLocationObject {
   locationNameText() {
     return cy.contains("Location name");
   }
+
   institutionCodeText() {
     return cy.contains("Institution code");
   }
+
   address1Text() {
     return cy.contains("Address 1");
   }
+
   address2Text() {
     return cy.contains("Address 2");
   }
+
   countryText() {
     return cy.contains("Country");
   }
+
   provinceText() {
     return cy.contains("Province");
   }
+
   cityText() {
     return cy.contains("City");
   }
@@ -227,9 +201,11 @@ export default class ManageLocationObject {
   primaryContactText() {
     return cy.contains("Primary contact");
   }
+
   firstNameText() {
     return cy.contains("First name");
   }
+
   lastNameText() {
     return cy.contains("Last name");
   }
@@ -237,6 +213,7 @@ export default class ManageLocationObject {
   emailText() {
     return cy.contains("Email");
   }
+
   phoneNumberText() {
     return cy.contains("Phone number");
   }

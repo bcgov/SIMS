@@ -1,11 +1,14 @@
 import axios from "axios";
 import { stringify } from "querystring";
 
+export const enum ClientId {
+  INSTITUTION = "institution",
+  STUDENT = "student",
+  AEST = "aest",
+  SUPPORTING_USERS = "supportingUsers",
+}
+
 export default class Authorization {
-  CLIENT_ID = {
-    INSTITUTION: "institution",
-    STUDENT: "student",
-  };
   async getAuthToken(
     username: string,
     password: string,
@@ -24,11 +27,7 @@ export default class Authorization {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     };
-    try {
-      const response = await axios.post(auth_url, body, settings);
-      return response.data.access_token;
-    } catch (error) {
-      throw error;
-    }
+    const response = await axios.post(auth_url, body, settings);
+    return response.data.access_token;
   }
 }
