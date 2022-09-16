@@ -77,4 +77,9 @@ export class Student extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   sinValidation: SINValidation;
+
+  @Column({
+    name: "sin_consent",
+  })
+  sinConsent: boolean;
 }
