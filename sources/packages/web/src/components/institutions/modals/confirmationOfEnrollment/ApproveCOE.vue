@@ -2,7 +2,6 @@
   <v-form ref="confirmCOE">
     <modal-dialog-base
       :showDialog="showDialog"
-      @dialogClosed="dialogClosed"
       title="Confirm enrolment"
       max-width="730"
     >
