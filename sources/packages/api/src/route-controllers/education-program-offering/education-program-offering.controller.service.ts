@@ -207,13 +207,18 @@ export class EducationProgramOfferingControllerService {
    * @param offeringValidations validations to be verified.
    * @param csvModels reference CSV models to provide extra context in case
    * an error must be generated.
+   * @param considerWarningsAsErrors if true, a warning will be considered as an error also,
+   * otherwise only errors in the errors array will be considered errors.
    */
   assertOfferingsValidationsAreValid(
     offeringValidations: OfferingValidationResult[],
     csvModels: OfferingCSVModel[],
+    considerWarningsAsErrors = false,
   ) {
     const offeringValidationsErrors = offeringValidations.filter(
-      (offering) => offering.errors.length,
+      (offering) =>
+        offering.errors.length ||
+        (considerWarningsAsErrors && offering.warnings.length),
     );
     if (offeringValidationsErrors.length) {
       // There is some critical validation error that will prevent some offering to be inserted.
@@ -226,6 +231,7 @@ export class EducationProgramOfferingControllerService {
             sabcProgramCode: csvModel.sabcProgramCode,
             startDate: validation.offeringModel.studyStartDate,
             endDate: validation.offeringModel.studyEndDate,
+            offeringStatus: validation.offeringStatus,
             errors: validation.errors,
             warnings: validation.warnings.map((warning) => ({
               warningType: warning.warningType,
@@ -260,19 +266,22 @@ export class EducationProgramOfferingControllerService {
     if (creationErrors.length) {
       // If there is any failed result throw an error.
       const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
-        creationErrors.map((creationError) => {
-          const csvModel = csvModels[creationError.validatedOffering.index];
-          return {
-            recordIndex: creationError.validatedOffering.index,
-            locationCode: csvModel.institutionLocationCode,
-            sabcProgramCode: csvModel.sabcProgramCode,
-            startDate:
-              creationError.validatedOffering.offeringModel.studyStartDate,
-            endDate: creationError.validatedOffering.offeringModel.studyEndDate,
-            errors: [creationError.error],
-            warnings: [],
-          };
-        });
+        creationErrors
+          .map((creationError) => {
+            const csvModel = csvModels[creationError.validatedOffering.index];
+            return {
+              recordIndex: creationError.validatedOffering.index,
+              locationCode: csvModel.institutionLocationCode,
+              sabcProgramCode: csvModel.sabcProgramCode,
+              startDate:
+                creationError.validatedOffering.offeringModel.studyStartDate,
+              endDate:
+                creationError.validatedOffering.offeringModel.studyEndDate,
+              errors: [creationError.error],
+              warnings: [],
+            };
+          })
+          .sort((a, b) => a.recordIndex - b.recordIndex);
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "Some error happen with one or more offerings being created and the entire process was aborted. No offering was added and the upload can be executed again once the error is fixed.",

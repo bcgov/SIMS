@@ -6,7 +6,6 @@ import InstitutionUserProfile from "@/views/institution/InstitutionUserProfile.v
 import AppInstitution from "@/views/institution/AppInstitution.vue";
 import ManageLocation from "@/views/institution/ManageLocations.vue";
 import LocationPrograms from "@/views/institution/locations/programs/LocationPrograms.vue";
-import LocationUsers from "@/views/institution/LocationUsers.vue";
 import LocationProgramInfoRequestSummary from "@/views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
 import ActiveApplicationsSummary from "@/views/institution/locations/active-applications/LocationActiveApplicationSummary.vue";
 import ActiveApplicationEdit from "@/views/institution/locations/active-applications/ActiveApplicationReportAChange.vue";
@@ -36,6 +35,7 @@ import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
 import ViewSubmittedApplicationScholasticStanding from "@/views/institution/locations/active-applications/ViewSubmittedApplicationScholasticStanding.vue";
 import OfferingRequestChange from "@/views/institution/locations/offerings/OfferingRequestChange.vue";
+import OfferingsUpload from "@/views/institution/OfferingsUpload.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -184,21 +184,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           clientType: ClientIdType.Institution,
           checkAllowedLocation: {
             userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
-          },
-        },
-      },
-      {
-        path: `${AppRoutes.LocationUsers}/:locationId`,
-        name: InstitutionRoutesConst.LOCATION_USERS,
-        components: {
-          default: LocationUsers,
-          sidebar: InstitutionHomeSideBar,
-        },
-        props: true,
-        meta: {
-          clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.admin],
           },
         },
       },
@@ -400,6 +385,18 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           checkAllowedLocation: {
             userTypes: [InstitutionUserTypes.admin, InstitutionUserTypes.user],
           },
+        },
+      },
+      {
+        path: AppRoutes.OfferingsUpload,
+        name: InstitutionRoutesConst.OFFERINGS_UPLOAD,
+        components: {
+          default: OfferingsUpload,
+          sidebar: ManageInstitutionSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          userTypes: [InstitutionUserTypes.admin],
         },
       },
     ],

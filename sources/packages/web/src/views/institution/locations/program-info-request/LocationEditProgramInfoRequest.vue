@@ -3,9 +3,7 @@
     <template #header>
       <header-navigator
         title="Program info requests"
-        :routeLocation="{
-          name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
-        }"
+        :routeLocation="goBackRouteParams"
         subTitle="View Application"
       />
     </template>
@@ -23,13 +21,14 @@
           :processing="processing"
           primaryLabel="Complete program info request"
           @primaryClick="submit"
+          @secondaryClick="goBack"
         /> </template
     ></formio-container>
   </full-page-container>
 </template>
 
 <script lang="ts">
-import { useRouter } from "vue-router";
+import { RouteLocationRaw, useRouter } from "vue-router";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
 import { ref } from "vue";
 import {
@@ -73,6 +72,9 @@ export default {
     const formioDataLoader = useFormioDropdownLoader();
     const programRequestData = ref();
     const { mapProgramInfoChipStatus } = useProgramInfoRequest();
+    const goBackRouteParams = {
+      name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+    } as RouteLocationRaw;
 
     // Components names on Form.IO definition that will be manipulated.
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
@@ -218,6 +220,11 @@ export default {
         processing.value = false;
       }
     };
+
+    const goBack = () => {
+      router.push(goBackRouteParams);
+    };
+
     return {
       initialData,
       formLoaded,
@@ -226,6 +233,8 @@ export default {
       customEventCallback,
       InstitutionRoutesConst,
       processing,
+      goBackRouteParams,
+      goBack,
     };
   },
 };

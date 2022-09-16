@@ -44,18 +44,24 @@ class ProgramAllowsOfferingDeliveryConstraint
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `${args.property} has an offering delivery that is not allowed by its program.`;
+    const [propertyDisplayName] = args.constraints;
+    return `${
+      propertyDisplayName ?? args.property
+    } has an offering delivery that is not allowed by its program.`;
   }
 }
 
 /**
  * Executes a validation to ensure that the offering delivery
  * is allowed by the education program.
+ * @param propertyDisplayName user-friendly property name to be added to the
+ * validation message.
  * @param validationOptions validation options.
  * @returns true if the delivery type is allowed by the program,
  * otherwise, false.
  */
 export function ProgramAllowsOfferingDelivery(
+  propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
@@ -64,6 +70,7 @@ export function ProgramAllowsOfferingDelivery(
       target: object.constructor,
       propertyName,
       options: validationOptions,
+      constraints: [propertyDisplayName],
       validator: ProgramAllowsOfferingDeliveryConstraint,
     });
   };

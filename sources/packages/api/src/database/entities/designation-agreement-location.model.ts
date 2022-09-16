@@ -36,7 +36,7 @@ export class DesignationAgreementLocation extends RecordDataModel {
   @ManyToOne(
     () => DesignationAgreement,
     (designation) => designation.designationAgreementLocations,
-    { eager: false, orphanedRowAction: "delete" },
+    { eager: false },
   )
   @JoinColumn({
     name: "designation_agreement_id",

@@ -42,3 +42,10 @@ export enum EnrollmentPeriod {
    */
   Upcoming = "upcoming",
 }
+/**
+ * Approve confirmation of enrollment.
+ */
+export interface ApproveConfirmEnrollmentModel {
+  requestedTuitionRemittance: string;
+  tuitionRemittanceAmount: number;
+}

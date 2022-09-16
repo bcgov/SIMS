@@ -5,17 +5,14 @@
     :no-click-animation="true"
     scrollable
   >
-    <!--todo: ann  Calculate max-height -->
-    <v-card elevation="10" :max-width="maxWidth" max-height="65vh">
-      <v-card-header>
-        <v-card-title>
-          <slot name="header">
-            <h2 v-if="title" class="category-header-large primary-color">
-              {{ title }}
-            </h2>
-          </slot>
-        </v-card-title>
-      </v-card-header>
+    <v-card elevation="10" :max-width="maxWidth" class="modal-height">
+      <v-card-title>
+        <slot name="header">
+          <h2 v-if="title" class="category-header-large primary-color">
+            {{ title }}
+          </h2>
+        </slot>
+      </v-card-title>
       <v-divider class="mx-6 mt-1 mb-4"></v-divider>
       <v-card-text class="pt-0">
         <div class="pb-2" v-if="subTitle">{{ subTitle }}</div>
@@ -34,7 +31,6 @@
 
 <script lang="ts">
 import { ref, watch, computed, SetupContext } from "vue";
-
 const dialogClosedEvent = "dialogClosed";
 
 enum DialogTypes {

@@ -40,6 +40,7 @@
       <designation-agreement-form
         v-if="modelLoaded"
         :model="designationFormModel"
+        :hide-footer="true"
       ></designation-agreement-form>
     </full-page-container>
     <approve-deny-designation

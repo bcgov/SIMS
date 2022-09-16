@@ -13,6 +13,10 @@ import {
   OptionItemAPIOutDTO,
   EducationProgramOfferingAPIOutDTO,
 } from "@/services/http/dto";
+import { AxiosRequestConfig } from "axios";
+import ApiClient from "./ApiClient";
+import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
+
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
    * Creates offering.
@@ -238,5 +242,36 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       ),
       payload,
     );
+  }
+
+  /**
+   * Process a CSV with offerings to be created under existing programs.
+   * @param file file content with all information needed to create offerings.
+   * @param validationOnly if true, will execute all validations and return the
+   * errors and warnings. These validations are the same executed during the
+   * final creation process. If false, the file will be processed and the records
+   * will be inserted.
+   **Validations errors are returned using different HTTP status codes.
+   * @onUploadProgress event to report the upload progress.
+   */
+  async offeringBulkInsert(
+    file: Blob,
+    validationOnly: boolean,
+    onUploadProgress: (progressEvent: FileUploadProgressEventArgs) => void,
+  ): Promise<void> {
+    const formData = new FormData();
+    formData.append("file", file);
+    // Configure the request to provide upload progress status.
+    const requestConfig: AxiosRequestConfig = { onUploadProgress };
+    try {
+      await ApiClient.FileUpload.upload(
+        `education-program-offering/bulk-insert?validation-only=${validationOnly}`,
+        formData,
+        requestConfig,
+        true,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 }
