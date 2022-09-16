@@ -610,7 +610,8 @@ export interface OfferingValidationResult {
  */
 export interface ValidatedOfferingInsertResult {
   validatedOffering: OfferingValidationResult;
-  insertResult: InsertResult;
+  insertResult?: InsertResult;
+  error?: string;
 }
 
 /**
@@ -633,5 +634,5 @@ export interface CreateValidatedOfferingResult {
   validatedOffering: OfferingValidationResult;
   createdOfferingId?: number;
   success: boolean;
-  error: string;
+  error?: string;
 }

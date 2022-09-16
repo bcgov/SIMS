@@ -247,6 +247,7 @@ export default {
           showValidationSummary.value = true;
         } else {
           if (validationOnly) {
+            resetValidationSummary();
             snackBar.success("Success! File validated.");
           } else {
             // Reset for to execute a possible new file upload if needed.
@@ -290,8 +291,12 @@ export default {
       return true;
     };
 
-    const resetForm = () => {
+    const resetValidationSummary = () => {
       showValidationSummary.value = false;
+    };
+
+    const resetForm = () => {
+      resetValidationSummary();
       offeringFiles.value = [];
       csvFileUploadKey.value++;
     };

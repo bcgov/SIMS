@@ -19,7 +19,13 @@ import {
 import { RecordDataModelService } from "../../database/data.model.service";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { WorkflowStartResult } from "../workflow/workflow.models";
-import { DataSource, Repository, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  In,
+  QueryFailedError,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import {
   OfferingsFilter,
   PrecedingOfferingSummaryModel,
@@ -46,12 +52,15 @@ import {
   OfferingStudyBreakCalculationContext,
   OfferingValidationResult,
   OfferingValidationModel,
-  ValidatedOfferingInsertResult,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import * as os from "os";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
+import {
+  DatabaseConstraintNames,
+  PostgresDriverError,
+} from "../../database/error-handler";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -91,6 +100,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * All the inserts will have an attempt to be executed and a status will
    * be generated for every single one. If any fail, all the data will be
    * rollback to the previous state at the end of all inserts.
+   * If a database level error happen it will abort the entire transaction and
+   * specific error will be returned to inform the user.
    * @param validatedOfferings successfully validated offering models.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns result object for all the offering models.
@@ -99,6 +110,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     validatedOfferings: OfferingValidationResult[],
     auditUserId: number,
   ): Promise<CreateValidatedOfferingResult[]> {
+    console.time("createFromValidatedOfferings");
     // Start the transaction that will handle all the inserts.
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.startTransaction();
@@ -108,11 +120,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       );
       // Used to limit the number of asynchronous operations
       // that will start at the same time.
-      const maxPromisesAllowed = os.cpus().length;
+      const maxPromisesAllowed = os.cpus().length * 2000;
       // Hold all the promises that must be processed.
-      const promises: Promise<ValidatedOfferingInsertResult>[] = [];
-      const allSettledResult: PromiseSettledResult<ValidatedOfferingInsertResult>[] =
-        [];
+      const promises: Promise<CreateValidatedOfferingResult>[] = [];
+      const allResults: CreateValidatedOfferingResult[] = [];
       for (const validatedOffering of validatedOfferings) {
         promises.push(
           this.createFromValidatedOffering(
@@ -123,55 +134,44 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         );
         if (promises.length >= maxPromisesAllowed) {
           // Waits for all be processed.
-          const insertResults = await Promise.allSettled(promises);
-          allSettledResult.push(...insertResults);
+          const insertResults = await Promise.all(promises);
+          allResults.push(...insertResults);
           // Clear the array.
           promises.length = 0;
         }
       }
-      const finalResults = await Promise.allSettled(promises);
-      allSettledResult.push(...finalResults);
+      const finalResults = await Promise.all(promises);
+      allResults.push(...finalResults);
 
-      const creationResults = allSettledResult.map((settledResult) => {
-        const creationResult = {} as CreateValidatedOfferingResult;
-        if (settledResult.status === "fulfilled") {
-          // The insert operation was successful.
-          creationResult.success = true;
-          const [createdIdentifier] =
-            settledResult.value.insertResult.identifiers;
-          creationResult.createdOfferingId = +createdIdentifier.id;
-          creationResult.validatedOffering =
-            settledResult.value.validatedOffering;
-        } else {
-          // The insert operation failed.
-          const createFromValidatedOfferingError =
-            settledResult.reason as CreateFromValidatedOfferingError;
-          creationResult.success = false;
-          creationResult.validatedOffering =
-            createFromValidatedOfferingError.validatedOffering;
-          creationResult.error = createFromValidatedOfferingError.error;
-        }
-        return creationResult;
-      });
-
-      if (creationResults.some((result) => !result.success)) {
-        // If any insert failed, abort all the operation.
+      if (allResults.some((result) => !result.success)) {
+        // If any result was reported with some error, abort all the operation.
         await queryRunner.rollbackTransaction();
       } else {
         // All inserts were executed successfully then commit the transaction,
         await queryRunner.commitTransaction();
       }
-      return creationResults;
-    } catch {
+      return allResults;
+    } catch (error: unknown) {
       await queryRunner.rollbackTransaction();
+      if (error instanceof CreateFromValidatedOfferingError) {
+        return [
+          {
+            success: false,
+            validatedOffering: error.validatedOffering,
+            error: error.error,
+          },
+        ];
+      }
+      throw error;
     } finally {
       await queryRunner.release();
+      console.timeEnd("createFromValidatedOfferings");
     }
   }
 
   /**
    * Tries to execute the offering insert and provides a successful object
-   * or an exception with information to be used to create a error result.
+   * or an exception with information to be used to create an error result.
    * @param validatedOffering successfully validated offering to be inserted.
    * @param offeringRepo repository to be used to execute the insert operations
    * sharing the same transaction.
@@ -182,27 +182,105 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     validatedOffering: OfferingValidationResult,
     offeringRepo: Repository<EducationProgramOffering>,
     auditUserId: number,
-  ): Promise<ValidatedOfferingInsertResult> {
+  ): Promise<CreateValidatedOfferingResult> {
     const programOffering = this.populateProgramOffering(
       validatedOffering.offeringModel,
     );
     programOffering.offeringStatus = validatedOffering.offeringStatus;
     programOffering.creator = { id: auditUserId } as User;
+
+    // const hasDuplicatedOffering = await this.hasDuplicatedOffering(
+    //   programOffering,
+    //   offeringRepo,
+    // );
+    // if (hasDuplicatedOffering) {
+    //   return {
+    //     success: false,
+    //     validatedOffering,
+    //     error:
+    //       "An offering with same name, start date, and end date is already present in the system.",
+    //   };
+    // }
+
     try {
       const insertResult = await offeringRepo.insert(programOffering);
-      return { insertResult, validatedOffering };
+      const [createdIdentifier] = insertResult.identifiers;
+      const createdOfferingId = +createdIdentifier.id;
+      return {
+        success: true,
+        validatedOffering,
+        createdOfferingId,
+      };
     } catch (error: unknown) {
+      if (error instanceof QueryFailedError) {
+        const postgresError = error as PostgresDriverError;
+        if (
+          postgresError.constraint ===
+          DatabaseConstraintNames.OfferingNameStudyStartDateStudyEndDateIndex
+        ) {
+          throw new CreateFromValidatedOfferingError(
+            validatedOffering,
+            "An offering with the same name, start date, and end date was already inserted as part of this bulk insert and the process was aborted. Please remove the duplicated offering and try again.",
+          );
+        }
+      }
       this.logger.error(
-        `Error while creating offering from bulk insert. Offering data: ${JSON.stringify(
+        `Unexpected error while creating offering from bulk insert. Offering data: ${JSON.stringify(
           validatedOffering.offeringModel,
         )}. ${error} `,
       );
-      // This error can be consumed from the output of a Promise.allSettled rejected reason.
       throw new CreateFromValidatedOfferingError(
         validatedOffering,
-        "There was error while creating the offering. Please verify if the offering is already present in the system or please get in contact with the support.",
+        "There was an unexpected error during the offering bulk insert and it was not possible to create the record, please contact support.",
       );
     }
+  }
+
+  /**
+   * Checks if an offering with the same name, start and end dates is already
+   * present on DB for records in 'Approved' or 'Creation pending' statuses
+   * considering same location and program.
+   * @param offering offering data to be checked.
+   * @param offeringRepo offering repository that can optionally be used, for
+   * instance, when this check must be executed as part of some transaction.
+   * @returns true if the offering is considered duplicated, otherwise, false.
+   */
+  async hasDuplicatedOffering(
+    offering: Pick<
+      EducationProgramOffering,
+      | "institutionLocation"
+      | "educationProgram"
+      | "name"
+      | "studyStartDate"
+      | "studyEndDate"
+    >,
+    offeringRepo?: Repository<EducationProgramOffering>,
+  ): Promise<boolean> {
+    return false;
+    //console.time("hasDuplicatedOffering" + offering.name);
+    const repo = offeringRepo ?? this.repo;
+    const offeringFound = await repo.findOne({
+      select: {
+        id: true,
+      },
+      where: {
+        name: offering.name,
+        studyStartDate: offering.studyStartDate,
+        studyEndDate: offering.studyEndDate,
+        offeringStatus: In([
+          OfferingStatus.Approved,
+          OfferingStatus.CreationPending,
+        ]),
+        // educationProgram: {
+        //   id: offering.educationProgram.id,
+        // },
+        // institutionLocation: {
+        //   id: offering.institutionLocation.id,
+        // },
+      },
+    });
+    //console.timeEnd("hasDuplicatedOffering" + offering.name);
+    return !!offeringFound;
   }
 
   /**
