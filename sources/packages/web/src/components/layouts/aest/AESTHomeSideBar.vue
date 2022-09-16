@@ -5,65 +5,40 @@
       density="compact"
       bg-color="background"
       active-color="primary"
-    >
-      <v-list-item
-        v-for="topItem in topItems"
-        :key="topItem.label"
-        :prepend-icon="topItem.icon"
-        :title="topItem.label"
-        :to="topItem.command()"
-      />
-    </v-list>
+      class="no-wrap"
+      :items="topItems"
+    />
     <v-list
       active-class="active-sidebar-item"
       density="compact"
       bg-color="background"
       active-color="primary"
-    >
-      <v-list-subheader class="nav-subtitle">Student requests</v-list-subheader>
-      <v-list-item
-        :prepend-icon="studentAccountApplicationItem.icon"
-        :title="studentAccountApplicationItem.label"
-        :to="studentAccountApplicationItem.command()"
-      />
-      <v-list-item
-        :prepend-icon="exceptionsItem.icon"
-        :title="exceptionsItem.label"
-        :to="exceptionsItem.command()"
-      />
-      <v-list-item
-        :prepend-icon="appealsItem.icon"
-        :title="appealsItem.label"
-        :to="appealsItem.command()"
-      />
-    </v-list>
+      class="no-wrap"
+      :items="studentRequestsItems"
+    />
     <v-list
       active-class="active-sidebar-item"
       density="compact"
       bg-color="background"
       active-color="primary"
-    >
-      <v-list-subheader class="nav-subtitle"
-        >Institution requests</v-list-subheader
-      >
-      <v-list-item
-        :title="designations.label"
-        :prepend-icon="designations.icon"
-        :to="designations.command()"
-      />
-      <v-list-item
-        :title="offerings.label"
-        :prepend-icon="offerings.icon"
-        :to="offerings.command()"
-      />
-    </v-list>
+      class="no-wrap"
+      :items="institutionRequestsItems"
+    />
     <template #append>
-      <v-list density="compact" nav>
+      <v-list
+        density="compact"
+        active-class="active-sidebar-item"
+        bg-color="background"
+        class="no-wrap"
+        active-color="primary"
+        nav
+      >
         <check-permission-role :role="Role.AESTReports">
           <template #="{ notAllowed }">
             <v-list-item
-              :to="reports.command()"
-              :title="reports.label"
+              :to="{ name: AESTRoutesConst.REPORTS }"
+              prepend-icon="mdi-home-outline"
+              title="Reports"
               :disabled="notAllowed"
             />
           </template>
@@ -74,92 +49,107 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { MenuModel, Role } from "@/types";
+import { MenuItemModel, Role } from "@/types";
+import { ref } from "vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default {
   components: { CheckPermissionRole },
   setup() {
-    const topItems = [
+    const topItems = ref<MenuItemModel[]>([
       {
-        label: "Home",
-        icon: "mdi-home-outline",
-        command: () => ({
-          name: AESTRoutesConst.AEST_DASHBOARD,
-        }),
+        title: "Home",
+        props: {
+          prependIcon: "mdi-home-outline",
+          to: {
+            name: AESTRoutesConst.AEST_DASHBOARD,
+          },
+        },
       },
       {
-        label: "Search Students",
-        icon: "mdi-magnify",
-        command: () => ({
-          name: AESTRoutesConst.SEARCH_STUDENTS,
-        }),
+        title: "Search Students",
+        props: {
+          prependIcon: "mdi-magnify",
+          to: {
+            name: AESTRoutesConst.SEARCH_STUDENTS,
+          },
+        },
       },
       {
-        label: "Search Institutions",
-        icon: "mdi-magnify",
-        command: () => ({
-          name: AESTRoutesConst.SEARCH_INSTITUTIONS,
-        }),
+        title: "Search Institutions",
+        props: {
+          prependIcon: "mdi-magnify",
+          to: {
+            name: AESTRoutesConst.SEARCH_INSTITUTIONS,
+          },
+        },
       },
-    ];
-
-    const studentAccountApplicationItem = {
-      label: "Accounts",
-      icon: "mdi-account-outline",
-      command: () => ({
-        name: AESTRoutesConst.STUDENT_ACCOUNT_APPLICATIONS,
-      }),
-    } as MenuModel;
-
-    const exceptionsItem = {
-      label: "Exceptions",
-      icon: "mdi-alert-circle-outline",
-      command: () => ({
-        name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
-      }),
-    } as MenuModel;
-
-    const appealsItem = {
-      label: "Appeals",
-      icon: "mdi-folder-open-outline",
-      command: () => ({
-        name: AESTRoutesConst.APPLICATION_APPEALS_PENDING,
-      }),
-    } as MenuModel;
-
-    const designations = {
-      label: "Designations",
-      icon: "mdi-bookmark-outline",
-      command: () => ({
-        name: AESTRoutesConst.PENDING_DESIGNATIONS,
-      }),
-    } as MenuModel;
-
-    const reports = {
-      label: "Reports",
-      icon: "mdi-home-outline",
-      command: () => ({
-        name: AESTRoutesConst.REPORTS,
-      }),
-    } as MenuModel;
-
-    const offerings = {
-      label: "Offerings",
-      icon: "mdi-view-list-outline",
-      command: () => ({
-        name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS,
-      }),
-    } as MenuModel;
-
+    ]);
+    const studentRequestsItems = ref<MenuItemModel[]>([
+      {
+        type: "subheader",
+        title: "Student requests",
+      },
+    ]);
+    studentRequestsItems.value.push(
+      {
+        title: "Accounts",
+        props: {
+          prependIcon: "mdi-account-outline",
+          to: {
+            name: AESTRoutesConst.STUDENT_ACCOUNT_APPLICATIONS,
+          },
+        },
+      },
+      {
+        title: "Exceptions",
+        props: {
+          prependIcon: "mdi-alert-circle-outline",
+          to: {
+            name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
+          },
+        },
+      },
+      {
+        title: "Appeals",
+        props: {
+          prependIcon: "mdi-folder-open-outline",
+          to: {
+            name: AESTRoutesConst.APPLICATION_APPEALS_PENDING,
+          },
+        },
+      },
+    );
+    const institutionRequestsItems = ref<MenuItemModel[]>([
+      {
+        type: "subheader",
+        title: "Institution requests",
+      },
+    ]);
+    institutionRequestsItems.value.push(
+      {
+        title: "Designations",
+        props: {
+          prependIcon: "mdi-bookmark-outline",
+          to: {
+            name: AESTRoutesConst.PENDING_DESIGNATIONS,
+          },
+        },
+      },
+      {
+        title: "Offerings",
+        props: {
+          prependIcon: "mdi-view-list-outline",
+          to: {
+            name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS,
+          },
+        },
+      },
+    );
     return {
-      appealsItem,
       topItems,
-      designations,
-      studentAccountApplicationItem,
-      exceptionsItem,
-      reports,
-      offerings,
+      studentRequestsItems,
+      institutionRequestsItems,
       AESTRoutesConst,
       Role,
     };
