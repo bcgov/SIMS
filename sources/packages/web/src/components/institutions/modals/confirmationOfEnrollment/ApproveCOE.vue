@@ -15,8 +15,7 @@
           >Confirming enrolment verifies this applicant is attending your
           institution and will allow funding to be disbursed.</span
         >
-        <content-group class="my-3"
-          >{{ formModel }}
+        <content-group class="my-3">
           <v-radio-group
             v-model="formModel.requestedTuitionRemittance"
             class="mt-2 input-unset-display-opacity"
