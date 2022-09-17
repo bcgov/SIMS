@@ -20,7 +20,7 @@
       >
         <v-list-item
           :to="{ name: InstitutionRoutesConst.OFFERINGS_UPLOAD }"
-          prepend-icon="fa:far fa-address-card-o"
+          prepend-icon="fa:fa-solid fa-upload"
           title="Offerings Upload"
         /> </v-list
     ></template>
