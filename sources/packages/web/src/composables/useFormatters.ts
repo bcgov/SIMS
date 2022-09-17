@@ -15,6 +15,16 @@ export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 
 export function useFormatters() {
   /**
+   * Converts a date only ISO format date (e.g. 2020-12-31) to a date and
+   * time value at midnight in the current local time. For instance,
+   * for PDT timezone it would be 2020-12-31T00:00:00-07:00.
+   * @param date date only string in the format YYYY-MM-YY.
+   * @returns date with local time set to midnight.
+   */
+  const dateOnlyToLocalDateTimeString = (date: Date | string): string => {
+    return dayjs(date).format();
+  };
+  /**
    * Get the date only part of a date/time or string.
    * @param date date/time or string to have the date extracted.
    * @returns date only string in ISO format YYYY-MM-DD.
@@ -182,6 +192,7 @@ export function useFormatters() {
 
   return {
     dateOnlyLongString,
+    dateOnlyToLocalDateTimeString,
     getDatesDiff,
     getFormattedAddress,
     timeOnlyInHoursAndMinutes,
