@@ -215,11 +215,6 @@ export default {
     const snackBar = useSnackBar();
     const validationProcessing = ref(false);
     const creationProcessing = ref(false);
-
-    const loading = computed(
-      () => validationProcessing.value || creationProcessing.value,
-    );
-
     // Only one will be used but the component allows multiple.
     const offeringFiles = ref<InputFile[]>([]);
     // Possible errors and warnings received upon file upload.
@@ -305,10 +300,14 @@ export default {
     };
 
     const resetForm = () => {
-      validationResults.value = new Array<OfferingsUploadBulkInsert>();
+      validationResults.value = [];
       offeringFiles.value = [];
       csvFileUploadKey.value++;
     };
+
+    const loading = computed(
+      () => validationProcessing.value || creationProcessing.value,
+    );
 
     return {
       loading,

@@ -17,7 +17,7 @@ export function useFormatters() {
   /**
    * Converts a date only ISO format date (e.g. 2020-12-31) to a date and
    * time value at midnight in the current local time. For instance,
-   * for PDT timezone it would be 2020-12-31T00:00:00-07:00.
+   * for a -7:00 timezone it would be 2020-12-31T00:00:00-07:00.
    * @param date date only string in the format YYYY-MM-YY.
    * @returns date with local time set to midnight.
    */

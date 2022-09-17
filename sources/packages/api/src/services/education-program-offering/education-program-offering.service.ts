@@ -106,7 +106,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     validatedOfferings: OfferingValidationResult[],
     auditUserId: number,
   ): Promise<CreateValidatedOfferingResult[]> {
-    console.time("createFromValidatedOfferings");
     // Start the transaction that will handle all the inserts.
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.startTransaction();
@@ -161,7 +160,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       throw error;
     } finally {
       await queryRunner.release();
-      console.timeEnd("createFromValidatedOfferings");
     }
   }
 

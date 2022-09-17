@@ -1,7 +1,7 @@
 import { QueryFailedError } from "typeorm";
 
 /**
- * Database constraints and indexes that must be used to further verifications.
+ * Database constraints and indexes that must be used for further verifications.
  */
 export enum DatabaseConstraintNames {
   /**
