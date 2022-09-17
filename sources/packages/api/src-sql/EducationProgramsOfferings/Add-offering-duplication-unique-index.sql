@@ -1,6 +1,9 @@
--- Remove duplicated offerings that would prevent the unique index from being created.
-DELETE FROM
+-- Ensures currently duplicated offerings will be renamed to avoid issues
+-- while creating the unique contraint.
+UPDATE
   sims.education_programs_offerings
+SET
+  offering_name = offering_name || ' - updated to be unique - ' || id :: text
 WHERE
   id IN (
     SELECT
