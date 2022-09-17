@@ -97,11 +97,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   /**
    * Create offerings from already successfully validated models and
    * insert all offerings in a DB transaction.
-   * All the inserts will have an attempt to be executed and a status will
-   * be generated for every single one. If any fail, all the data will be
-   * rollback to the previous state at the end of all inserts.
    * If a database level error happen it will abort the entire transaction and
-   * specific error will be returned to inform the user.
+   * the specific error will be returned to inform the user.
    * @param validatedOfferings successfully validated offering models.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns result object for all the offering models.
@@ -120,7 +117,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       );
       // Used to limit the number of asynchronous operations
       // that will start at the same time.
-      const maxPromisesAllowed = os.cpus().length * 2000;
+      const maxPromisesAllowed = os.cpus().length;
       // Hold all the promises that must be processed.
       const promises: Promise<CreateValidatedOfferingResult>[] = [];
       const allResults: CreateValidatedOfferingResult[] = [];
@@ -189,19 +186,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.offeringStatus = validatedOffering.offeringStatus;
     programOffering.creator = { id: auditUserId } as User;
 
-    // const hasDuplicatedOffering = await this.hasDuplicatedOffering(
-    //   programOffering,
-    //   offeringRepo,
-    // );
-    // if (hasDuplicatedOffering) {
-    //   return {
-    //     success: false,
-    //     validatedOffering,
-    //     error:
-    //       "An offering with same name, start date, and end date is already present in the system.",
-    //   };
-    // }
-
     try {
       const insertResult = await offeringRepo.insert(programOffering);
       const [createdIdentifier] = insertResult.identifiers;
@@ -220,7 +204,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         ) {
           throw new CreateFromValidatedOfferingError(
             validatedOffering,
-            "An offering with the same name, start date, and end date was already inserted as part of this bulk insert and the process was aborted. Please remove the duplicated offering and try again.",
+            "Duplication error. An offering with the same name, start date, and end date was found. Please remove the duplicated offering and try again.",
           );
         }
       }
@@ -234,53 +218,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "There was an unexpected error during the offering bulk insert and it was not possible to create the record, please contact support.",
       );
     }
-  }
-
-  /**
-   * Checks if an offering with the same name, start and end dates is already
-   * present on DB for records in 'Approved' or 'Creation pending' statuses
-   * considering same location and program.
-   * @param offering offering data to be checked.
-   * @param offeringRepo offering repository that can optionally be used, for
-   * instance, when this check must be executed as part of some transaction.
-   * @returns true if the offering is considered duplicated, otherwise, false.
-   */
-  async hasDuplicatedOffering(
-    offering: Pick<
-      EducationProgramOffering,
-      | "institutionLocation"
-      | "educationProgram"
-      | "name"
-      | "studyStartDate"
-      | "studyEndDate"
-    >,
-    offeringRepo?: Repository<EducationProgramOffering>,
-  ): Promise<boolean> {
-    return false;
-    //console.time("hasDuplicatedOffering" + offering.name);
-    const repo = offeringRepo ?? this.repo;
-    const offeringFound = await repo.findOne({
-      select: {
-        id: true,
-      },
-      where: {
-        name: offering.name,
-        studyStartDate: offering.studyStartDate,
-        studyEndDate: offering.studyEndDate,
-        offeringStatus: In([
-          OfferingStatus.Approved,
-          OfferingStatus.CreationPending,
-        ]),
-        // educationProgram: {
-        //   id: offering.educationProgram.id,
-        // },
-        // institutionLocation: {
-        //   id: offering.institutionLocation.id,
-        // },
-      },
-    });
-    //console.timeEnd("hasDuplicatedOffering" + offering.name);
-    return !!offeringFound;
   }
 
   /**
