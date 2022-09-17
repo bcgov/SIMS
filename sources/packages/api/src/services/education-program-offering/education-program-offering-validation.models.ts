@@ -556,6 +556,7 @@ export class OfferingValidationModel {
   /**
    * Program information required to execute the offering validation.
    */
+  @ValidateIf((offering: OfferingValidationModel) => !!offering.locationId)
   @IsNotEmptyObject(undefined, {
     message:
       "Not able to find a program related to this offering or it was not provided.",

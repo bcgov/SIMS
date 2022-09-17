@@ -200,7 +200,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         const postgresError = error as PostgresDriverError;
         if (
           postgresError.constraint ===
-          DatabaseConstraintNames.OfferingNameStudyStartDateStudyEndDateIndex
+          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesIndex
         ) {
           throw new CreateFromValidatedOfferingError(
             validatedOffering,

@@ -76,7 +76,7 @@
             color="primary"
             prepend-icon="fa:fa-solid fa-file-circle-question"
             @click="uploadFile(true)"
-            :loading="loading"
+            :loading="validationProcessing"
             :disabled="loading"
           >
             Validate
@@ -85,7 +85,7 @@
             class="ml-2"
             color="primary"
             prepend-icon="fa:fa-solid fa-upload"
-            :loading="loading"
+            :loading="creationProcessing"
             :disabled="loading"
             @click="uploadFile(false)"
           >
@@ -107,8 +107,12 @@
           summary="An error occurred during the file upload. Reasons can include a file modification after the file was already selected or an unexpected network failure. Please select the file and try again."
         />
       </v-form>
-      <content-group v-if="showValidationSummary">
-        <p class="category-header-medium primary-color">Validation summary</p>
+      <content-group v-if="validationResults.length">
+        <body-header
+          title="Validation summary"
+          :recordsCount="validationResults.length"
+        ></body-header>
+        <p class="category-header-medium primary-color"></p>
         <banner
           class="mb-2"
           v-if="hasCriticalErrorsRecords"
@@ -121,7 +125,7 @@
           :type="BannerTypes.Warning"
           summary="Warning! Offerings created as 'Creation Pending' will require StudentAid BC approval. Please review the warnings below."
         />
-        <content-group v-if="validationResults.length">
+        <content-group>
           <DataTable
             :value="validationResults"
             :paginator="true"
@@ -209,14 +213,19 @@ export default {
   },
   setup() {
     const snackBar = useSnackBar();
-    const loading = ref(false);
+    const validationProcessing = ref(false);
+    const creationProcessing = ref(false);
+
+    const loading = computed(
+      () => validationProcessing.value || creationProcessing.value,
+    );
+
     // Only one will be used but the component allows multiple.
     const offeringFiles = ref<InputFile[]>([]);
     // Possible errors and warnings received upon file upload.
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
     const uploadForm = ref({} as VForm);
     const uploadProgress = ref({} as FileUploadProgressEventArgs);
-    const showValidationSummary = ref(false);
     // Workaround to reset the file upload component to its original state.
     // It is apparently a vuetify beta issue. It can be removed once there is a
     // better way to force the component to reset its state.
@@ -232,7 +241,11 @@ export default {
       }
       showPossibleFileChangeError.value = false;
       try {
-        loading.value = true;
+        if (validationOnly) {
+          validationProcessing.value = true;
+        } else {
+          creationProcessing.value = true;
+        }
         const [fileToUpload] = offeringFiles.value;
         const uploadResults =
           await EducationProgramOfferingService.shared.offeringBulkInsert(
@@ -242,12 +255,11 @@ export default {
               uploadProgress.value = progressEvent;
             },
           );
+        validationResults.value = uploadResults;
         if (uploadResults.length) {
           validationResults.value = uploadResults;
-          showValidationSummary.value = true;
         } else {
           if (validationOnly) {
-            resetValidationSummary();
             snackBar.success("Success! File validated.");
           } else {
             // Reset for to execute a possible new file upload if needed.
@@ -262,7 +274,8 @@ export default {
         }
         snackBar.error("Unexpected error while uploading the file.");
       } finally {
-        loading.value = false;
+        validationProcessing.value = false;
+        creationProcessing.value = false;
       }
     };
 
@@ -291,18 +304,16 @@ export default {
       return true;
     };
 
-    const resetValidationSummary = () => {
-      showValidationSummary.value = false;
-    };
-
     const resetForm = () => {
-      resetValidationSummary();
+      validationResults.value = new Array<OfferingsUploadBulkInsert>();
       offeringFiles.value = [];
       csvFileUploadKey.value++;
     };
 
     return {
       loading,
+      validationProcessing,
+      creationProcessing,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       offeringFiles,
@@ -315,7 +326,6 @@ export default {
       BannerTypes,
       uploadForm,
       ACCEPTED_FILE_TYPE,
-      showValidationSummary,
       csvFileUploadKey,
       showPossibleFileChangeError,
       uploadProgress,
