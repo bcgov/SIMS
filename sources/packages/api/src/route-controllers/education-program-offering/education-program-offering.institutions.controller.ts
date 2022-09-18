@@ -62,7 +62,6 @@ import { EducationProgramOfferingImportCSVService } from "../../services/educati
 import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";
 import {
   OFFERING_VALIDATION_CRITICAL_ERROR,
-  OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR,
   OFFERING_VALIDATION_CSV_PARSE_ERROR,
 } from "../../constants";
 import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
