@@ -364,7 +364,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @ApiBadRequestResponse({
     description:
       "Error while parsing CSV file or " +
-      "one or more CSV data fields received are not in the correct format.",
+      "one or more CSV data fields received are not in the correct format or " +
+      "there are no records to be imported.",
   })
   @ApiUnprocessableEntityResponse({
     description:
@@ -397,22 +398,15 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       csvModels =
         this.educationProgramOfferingImportCSVService.readCSV(fileContent);
     } catch (error: unknown) {
+      let errorMessage = "Error while parsing CSV file.";
       if (
         error instanceof CustomNamedError &&
         error.name === OFFERING_VALIDATION_CSV_PARSE_ERROR
       ) {
-        throw new BadRequestException(
-          new ApiProcessError(
-            error.message,
-            OFFERING_VALIDATION_CSV_PARSE_ERROR,
-          ),
-        );
+        errorMessage = error.message;
       }
       throw new BadRequestException(
-        new ApiProcessError(
-          "Error while parsing CSV file.",
-          OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR,
-        ),
+        new ApiProcessError(errorMessage, OFFERING_VALIDATION_CSV_PARSE_ERROR),
       );
     }
     // Validate the CSV models.
