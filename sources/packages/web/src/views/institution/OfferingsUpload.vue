@@ -198,11 +198,13 @@ import {
   BannerTypes,
   VForm,
   InputFile,
+  ApiProcessError,
 } from "@/types";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 import { useSnackBar } from "@/composables";
 import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
+import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "@/constants";
 
 const ACCEPTED_FILE_TYPE = "text/csv";
 const MAX_OFFERING_UPLOAD_SIZE = 4194304;
@@ -234,6 +236,7 @@ export default {
       if (!validationResult.valid) {
         return;
       }
+      validationResults.value = [];
       showPossibleFileChangeError.value = false;
       try {
         if (validationOnly) {
@@ -266,8 +269,14 @@ export default {
         if (error instanceof Error && error.message === "Network Error") {
           resetForm();
           showPossibleFileChangeError.value = true;
+        } else if (
+          error instanceof ApiProcessError &&
+          error.errorType === OFFERING_VALIDATION_CSV_PARSE_ERROR
+        ) {
+          snackBar.error(error.message);
+        } else {
+          snackBar.error("Unexpected error while uploading the file.");
         }
-        snackBar.error("Unexpected error while uploading the file.");
       } finally {
         validationProcessing.value = false;
         creationProcessing.value = false;

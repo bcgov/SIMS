@@ -616,9 +616,7 @@ export interface ValidatedOfferingInsertResult {
 }
 
 /**
- * Result of the fail attempt to insert the validated offering into
- * the database. Used in a parallel bulk insert to provide the
- * status of every failed inserted record.
+ * Result of the fail attempt to insert the validated offering into the database.
  */
 export class CreateFromValidatedOfferingError {
   constructor(
@@ -634,6 +632,4 @@ export class CreateFromValidatedOfferingError {
 export interface CreateValidatedOfferingResult {
   validatedOffering: OfferingValidationResult;
   createdOfferingId?: number;
-  success: boolean;
-  error?: string;
 }

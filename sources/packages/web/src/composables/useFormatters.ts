@@ -5,6 +5,8 @@ import {
 import { SINValidStatus } from "@/store/modules/student/student";
 import { Address, InstitutionUserRoles, SINStatusEnum } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
@@ -35,11 +37,19 @@ export function useFormatters() {
   /**
    * Convert a string or date to a string format like "Aug 05 2021".
    * @param date string or date to be converted.
+   * @param format specific date string format expected. If the format
+   * is not the expected it will convert the date as as 'Invalid Date'.
+   * @param strict requires that the format and input match exactly,
+   * including delimiters.
    * @returns string representation (e.g. Aug 05 2021).
    */
-  const dateOnlyLongString = (date?: string | Date): string => {
+  const dateOnlyLongString = (
+    date?: string | Date,
+    format?: string,
+    strict?: boolean,
+  ): string => {
     if (date) {
-      return dayjs(date).format("MMM DD YYYY");
+      return dayjs(date, format, strict).format("MMM DD YYYY");
     }
     return "";
   };

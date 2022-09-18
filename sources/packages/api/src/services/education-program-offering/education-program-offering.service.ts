@@ -106,11 +106,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     validatedOfferings: OfferingValidationResult[],
     auditUserId: number,
   ): Promise<CreateValidatedOfferingResult[]> {
-    // Start the transaction that will handle all the inserts.
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.startTransaction();
-    try {
-      const offeringRepo = queryRunner.manager.getRepository(
+    return this.dataSource.transaction(async (entityManager) => {
+      const offeringRepo = entityManager.getRepository(
         EducationProgramOffering,
       );
       // Used to limit the number of asynchronous operations
@@ -137,30 +134,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       }
       const finalResults = await Promise.all(promises);
       allResults.push(...finalResults);
-
-      if (allResults.some((result) => !result.success)) {
-        // If any result was reported with some error, abort all the operation.
-        await queryRunner.rollbackTransaction();
-      } else {
-        // All inserts were executed successfully then commit the transaction,
-        await queryRunner.commitTransaction();
-      }
       return allResults;
-    } catch (error: unknown) {
-      await queryRunner.rollbackTransaction();
-      if (error instanceof CreateFromValidatedOfferingError) {
-        return [
-          {
-            success: false,
-            validatedOffering: error.validatedOffering,
-            error: error.error,
-          },
-        ];
-      }
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
+    });
   }
 
   /**
@@ -182,16 +157,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     );
     programOffering.offeringStatus = validatedOffering.offeringStatus;
     programOffering.creator = { id: auditUserId } as User;
-
     try {
       const insertResult = await offeringRepo.insert(programOffering);
       const [createdIdentifier] = insertResult.identifiers;
       const createdOfferingId = +createdIdentifier.id;
-      return {
-        success: true,
-        validatedOffering,
-        createdOfferingId,
-      };
+      return { validatedOffering, createdOfferingId };
     } catch (error: unknown) {
       if (error instanceof QueryFailedError) {
         const postgresError = error as PostgresDriverError;

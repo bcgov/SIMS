@@ -85,11 +85,16 @@ export const STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA =
 export const OFFERING_VALIDATION_CRITICAL_ERROR =
   "OFFERING_VALIDATION_CRITICAL_ERROR";
 /**
+ * Error happen during CSV content parse.
+ */
+export const OFFERING_VALIDATION_CSV_PARSE_ERROR =
+  "OFFERING_VALIDATION_CSV_PARSE_ERROR";
+/**
  * The CSV content to perform the offering bulk insert is not in the
  * expected format and cannot be parsed.
  */
-export const OFFERING_VALIDATION_CSV_FORMAT_ERROR =
-  "OFFERING_VALIDATION_CSV_FORMAT_ERROR";
+export const OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR =
+  "OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR";
 /**
  * Some error happen with one or more offerings being created and
  * the entire process was aborted. This error happens during the offerings
