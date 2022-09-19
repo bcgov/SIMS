@@ -605,17 +605,6 @@ export interface OfferingValidationResult {
 }
 
 /**
- * Result of the successful attempt to insert the validated offering into
- * the database. Used in a parallel bulk insert to provide the
- * status of every successfully inserted record.
- */
-export interface ValidatedOfferingInsertResult {
-  validatedOffering: OfferingValidationResult;
-  insertResult?: InsertResult;
-  error?: string;
-}
-
-/**
  * Result of the fail attempt to insert the validated offering into the database.
  */
 export class CreateFromValidatedOfferingError {
