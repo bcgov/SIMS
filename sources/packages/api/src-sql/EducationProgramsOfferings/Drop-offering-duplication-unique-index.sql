@@ -1,0 +1,1 @@
+DROP INDEX sims.location_id_program_id_offering_name_study_dates_index;

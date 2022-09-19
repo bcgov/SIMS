@@ -72,7 +72,7 @@ import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
 import { OfferingFormBaseModel, OfferingStatus } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar, ModalDialog } from "@/composables";
+import { useSnackBar, ModalDialog, useFormatters } from "@/composables";
 import {
   EducationProgramOfferingAPIInDTO,
   OfferingAssessmentAPIInDTO,
@@ -108,6 +108,7 @@ export default {
     const processing = ref(false);
     const snackBar = useSnackBar();
     const router = useRouter();
+    const { dateOnlyToLocalDateTimeString } = useFormatters();
     const items = [
       {
         label: "Request Change",
@@ -163,12 +164,29 @@ export default {
           props.programId,
           props.offeringId,
         );
-      initialData.value = {
+      const offeringModel: OfferingFormBaseModel = {
         programIntensity: programDetails.programIntensity,
         programDeliveryTypes: programDetails.programDeliveryTypes,
         hasWILComponent: programDetails.hasWILComponent,
         ...programOffering,
+        ...programOffering.breaksAndWeeks,
       };
+      // Convert date only values to local date and time values.
+      offeringModel.studyStartDate = dateOnlyToLocalDateTimeString(
+        programOffering.studyStartDate,
+      );
+      offeringModel.studyEndDate = dateOnlyToLocalDateTimeString(
+        programOffering.studyEndDate,
+      );
+      programOffering.breaksAndWeeks?.studyBreaks?.forEach((studyBreak) => {
+        studyBreak.breakStartDate = dateOnlyToLocalDateTimeString(
+          studyBreak.breakStartDate,
+        );
+        studyBreak.breakEndDate = dateOnlyToLocalDateTimeString(
+          studyBreak.breakEndDate,
+        );
+      });
+      initialData.value = offeringModel;
     };
 
     onMounted(async () => {

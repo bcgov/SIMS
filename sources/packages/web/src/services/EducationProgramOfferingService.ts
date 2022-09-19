@@ -21,9 +21,9 @@ import {
 import {
   OFFERING_CREATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CRITICAL_ERROR,
-  OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+  OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR,
 } from "@/constants";
-import { useFormatters } from "@/composables";
+import { DATE_ONLY_ISO_FORMAT, useFormatters } from "@/composables";
 import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
 
 export class EducationProgramOfferingService {
@@ -279,7 +279,7 @@ export class EducationProgramOfferingService {
       // must be displayed to the user.
       const bulkInsertValidationErrorTypes = [
         OFFERING_VALIDATION_CRITICAL_ERROR,
-        OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+        OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR,
         OFFERING_CREATION_CRITICAL_ERROR,
       ];
       if (
@@ -312,8 +312,16 @@ export class EducationProgramOfferingService {
     return {
       ...apiValidationResult,
       recordLineNumber: apiValidationResult.recordIndex + 2, // Header + zero base index.
-      startDateFormatted: dateOnlyLongString(apiValidationResult.startDate),
-      endDateFormatted: dateOnlyLongString(apiValidationResult.endDate),
+      startDateFormatted: dateOnlyLongString(
+        apiValidationResult.startDate,
+        DATE_ONLY_ISO_FORMAT,
+        true,
+      ),
+      endDateFormatted: dateOnlyLongString(
+        apiValidationResult.endDate,
+        DATE_ONLY_ISO_FORMAT,
+        true,
+      ),
     };
   }
 }

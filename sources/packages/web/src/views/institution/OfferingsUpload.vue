@@ -76,7 +76,7 @@
             color="primary"
             prepend-icon="fa:fa-solid fa-file-circle-question"
             @click="uploadFile(true)"
-            :loading="loading"
+            :loading="validationProcessing"
             :disabled="loading"
           >
             Validate
@@ -85,7 +85,7 @@
             class="ml-2"
             color="primary"
             prepend-icon="fa:fa-solid fa-upload"
-            :loading="loading"
+            :loading="creationProcessing"
             :disabled="loading"
             @click="uploadFile(false)"
           >
@@ -107,8 +107,11 @@
           summary="An error occurred during the file upload. Reasons can include a file modification after the file was already selected or an unexpected network failure. Please select the file and try again."
         />
       </v-form>
-      <content-group v-if="showValidationSummary">
-        <p class="category-header-medium primary-color">Validation summary</p>
+      <content-group v-if="validationResults.length">
+        <body-header
+          title="Validation summary"
+          :recordsCount="validationResults.length"
+        ></body-header>
         <banner
           class="mb-2"
           v-if="hasCriticalErrorsRecords"
@@ -121,7 +124,7 @@
           :type="BannerTypes.Warning"
           summary="Warning! Offerings created as 'Creation Pending' will require StudentAid BC approval. Please review the warnings below."
         />
-        <content-group v-if="validationResults.length">
+        <content-group>
           <DataTable
             :value="validationResults"
             :paginator="true"
@@ -194,11 +197,13 @@ import {
   BannerTypes,
   VForm,
   InputFile,
+  ApiProcessError,
 } from "@/types";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 import { useSnackBar } from "@/composables";
 import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadProgressEvent";
+import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "@/constants";
 
 const ACCEPTED_FILE_TYPE = "text/csv";
 const MAX_OFFERING_UPLOAD_SIZE = 4194304;
@@ -209,14 +214,14 @@ export default {
   },
   setup() {
     const snackBar = useSnackBar();
-    const loading = ref(false);
+    const validationProcessing = ref(false);
+    const creationProcessing = ref(false);
     // Only one will be used but the component allows multiple.
     const offeringFiles = ref<InputFile[]>([]);
     // Possible errors and warnings received upon file upload.
     const validationResults = ref([] as OfferingsUploadBulkInsert[]);
     const uploadForm = ref({} as VForm);
     const uploadProgress = ref({} as FileUploadProgressEventArgs);
-    const showValidationSummary = ref(false);
     // Workaround to reset the file upload component to its original state.
     // It is apparently a vuetify beta issue. It can be removed once there is a
     // better way to force the component to reset its state.
@@ -230,9 +235,14 @@ export default {
       if (!validationResult.valid) {
         return;
       }
+      validationResults.value = [];
       showPossibleFileChangeError.value = false;
       try {
-        loading.value = true;
+        if (validationOnly) {
+          validationProcessing.value = true;
+        } else {
+          creationProcessing.value = true;
+        }
         const [fileToUpload] = offeringFiles.value;
         const uploadResults =
           await EducationProgramOfferingService.shared.offeringBulkInsert(
@@ -242,9 +252,9 @@ export default {
               uploadProgress.value = progressEvent;
             },
           );
+        validationResults.value = uploadResults;
         if (uploadResults.length) {
           validationResults.value = uploadResults;
-          showValidationSummary.value = true;
         } else {
           if (validationOnly) {
             snackBar.success("Success! File validated.");
@@ -258,10 +268,17 @@ export default {
         if (error instanceof Error && error.message === "Network Error") {
           resetForm();
           showPossibleFileChangeError.value = true;
+        } else if (
+          error instanceof ApiProcessError &&
+          error.errorType === OFFERING_VALIDATION_CSV_PARSE_ERROR
+        ) {
+          snackBar.error(error.message);
+        } else {
+          snackBar.error("Unexpected error while uploading the file.");
         }
-        snackBar.error("Unexpected error while uploading the file.");
       } finally {
-        loading.value = false;
+        validationProcessing.value = false;
+        creationProcessing.value = false;
       }
     };
 
@@ -291,13 +308,19 @@ export default {
     };
 
     const resetForm = () => {
-      showValidationSummary.value = false;
+      validationResults.value = [];
       offeringFiles.value = [];
       csvFileUploadKey.value++;
     };
 
+    const loading = computed(
+      () => validationProcessing.value || creationProcessing.value,
+    );
+
     return {
       loading,
+      validationProcessing,
+      creationProcessing,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       offeringFiles,
@@ -310,7 +333,6 @@ export default {
       BannerTypes,
       uploadForm,
       ACCEPTED_FILE_TYPE,
-      showValidationSummary,
       csvFileUploadKey,
       showPossibleFileChangeError,
       uploadProgress,

@@ -30,7 +30,10 @@ import {
 } from "../../auth/decorators";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingIntensity, OfferingTypes } from "../../database/entities";
-import { EducationProgramOfferingService } from "../../services";
+import {
+  CreateFromValidatedOfferingError,
+  EducationProgramOfferingService,
+} from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
@@ -59,7 +62,7 @@ import { EducationProgramOfferingImportCSVService } from "../../services/educati
 import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";
 import {
   OFFERING_VALIDATION_CRITICAL_ERROR,
-  OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+  OFFERING_VALIDATION_CSV_PARSE_ERROR,
 } from "../../constants";
 import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
 
@@ -360,7 +363,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @ApiBadRequestResponse({
     description:
       "Error while parsing CSV file or " +
-      "one or more CSV data fields received are not in the correct format.",
+      "one or more CSV data fields received are not in the correct format or " +
+      "there are no records to be imported.",
   })
   @ApiUnprocessableEntityResponse({
     description:
@@ -392,12 +396,16 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     try {
       csvModels =
         this.educationProgramOfferingImportCSVService.readCSV(fileContent);
-    } catch {
+    } catch (error: unknown) {
+      let errorMessage = "Error while parsing CSV file.";
+      if (
+        error instanceof CustomNamedError &&
+        error.name === OFFERING_VALIDATION_CSV_PARSE_ERROR
+      ) {
+        errorMessage = error.message;
+      }
       throw new BadRequestException(
-        new ApiProcessError(
-          "Error while parsing CSV file.",
-          OFFERING_VALIDATION_CSV_FORMAT_ERROR,
-        ),
+        new ApiProcessError(errorMessage, OFFERING_VALIDATION_CSV_PARSE_ERROR),
       );
     }
     // Validate the CSV models.
@@ -434,20 +442,25 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       return [];
     }
 
-    // Try to insert all validated offerings.
-    const creationResults =
-      await this.programOfferingService.createFromValidatedOfferings(
-        offeringValidations,
-        userToken.userId,
-      );
-    // Assert successful creation.
-    this.educationProgramOfferingControllerService.assertOfferingsCreationsAreAllSuccessful(
-      creationResults,
-      csvModels,
-    );
-    // Return all created ids.
-    return creationResults.map((insertResult) => {
-      return { id: insertResult.createdOfferingId };
-    });
+    try {
+      // Try to insert all validated offerings.
+      const creationResults =
+        await this.programOfferingService.createFromValidatedOfferings(
+          offeringValidations,
+          userToken.userId,
+        );
+      // Return all created ids.
+      return creationResults.map((insertResult) => {
+        return { id: insertResult.createdOfferingId };
+      });
+    } catch (error: unknown) {
+      if (error instanceof CreateFromValidatedOfferingError) {
+        this.educationProgramOfferingControllerService.throwFromCreationError(
+          error,
+          csvModels,
+        );
+      }
+      throw error;
+    }
   }
 }

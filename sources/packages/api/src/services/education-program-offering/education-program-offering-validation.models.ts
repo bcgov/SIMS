@@ -51,7 +51,6 @@ import {
   OFFERING_YEAR_OF_STUDY_MAX_VALUE,
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
-import { InsertResult } from "typeorm";
 
 const userFriendlyNames = {
   offeringName: "Name",
@@ -556,6 +555,7 @@ export class OfferingValidationModel {
   /**
    * Program information required to execute the offering validation.
    */
+  @ValidateIf((offering: OfferingValidationModel) => !!offering.locationId)
   @IsNotEmptyObject(undefined, {
     message:
       "Not able to find a program related to this offering or it was not provided.",
@@ -604,19 +604,7 @@ export interface OfferingValidationResult {
 }
 
 /**
- * Result of the successful attempt to insert the validated offering into
- * the database. Used in a parallel bulk insert to provide the
- * status of every successfully inserted record.
- */
-export interface ValidatedOfferingInsertResult {
-  validatedOffering: OfferingValidationResult;
-  insertResult: InsertResult;
-}
-
-/**
- * Result of the fail attempt to insert the validated offering into
- * the database. Used in a parallel bulk insert to provide the
- * status of every failed inserted record.
+ * Result of the fail attempt to insert the validated offering into the database.
  */
 export class CreateFromValidatedOfferingError {
   constructor(
@@ -632,6 +620,4 @@ export class CreateFromValidatedOfferingError {
 export interface CreateValidatedOfferingResult {
   validatedOffering: OfferingValidationResult;
   createdOfferingId?: number;
-  success: boolean;
-  error: string;
 }

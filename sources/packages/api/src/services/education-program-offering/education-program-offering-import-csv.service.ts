@@ -17,7 +17,7 @@ import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
 import { parse } from "papaparse";
 import { CustomNamedError, removeUTF8BOM } from "../../utilities";
-import { OFFERING_VALIDATION_CSV_FORMAT_ERROR } from "../../constants";
+import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "../../constants";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 
@@ -142,7 +142,7 @@ export class EducationProgramOfferingImportCSVService {
     csvContent = removeUTF8BOM(csvContent);
     const parsedResult = parse(csvContent, {
       header: true,
-      skipEmptyLines: true,
+      skipEmptyLines: "greedy",
     });
     if (parsedResult.errors.length) {
       this.logger.error(
@@ -151,8 +151,14 @@ export class EducationProgramOfferingImportCSVService {
         )}`,
       );
       throw new CustomNamedError(
-        "The offering CSV parse resulted in some errors. Please check server errors log for further information.",
-        OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+        "The offering CSV parse resulted in some errors. Please check the CSV content.",
+        OFFERING_VALIDATION_CSV_PARSE_ERROR,
+      );
+    }
+    if (!parsedResult.data.length) {
+      throw new CustomNamedError(
+        "No records were found to be parsed. Please check the CSV content.",
+        OFFERING_VALIDATION_CSV_PARSE_ERROR,
       );
     }
     parsedResult.data.forEach((line) => {
