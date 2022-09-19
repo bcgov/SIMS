@@ -1,8 +1,8 @@
 <template>
-  <v-form ref="accessOfferingForm">
+  <v-form ref="assessOfferingForm">
     <modal-dialog-base :showDialog="showDialog" :title="title" max-width="730">
       <template #content>
-        <error-summary :errors="accessOfferingForm.errors" />
+        <error-summary :errors="assessOfferingForm.errors" />
         <div class="pb-2">
           <span class="label-value">{{ label }}</span>
         </div>
@@ -54,7 +54,7 @@ export default {
       OfferingAssessmentAPIInDTO | boolean
     >();
 
-    const accessOfferingForm = ref({} as VForm);
+    const assessOfferingForm = ref({} as VForm);
     const formModel = reactive({
       assessmentNotes: "",
     } as OfferingAssessmentAPIInDTO);
@@ -82,7 +82,7 @@ export default {
     };
 
     const submit = async () => {
-      const validationResult = await accessOfferingForm.value.validate();
+      const validationResult = await assessOfferingForm.value.validate();
       if (!validationResult.valid) {
         return;
       }
@@ -99,7 +99,7 @@ export default {
       title,
       primaryLabel,
       Role,
-      accessOfferingForm,
+      assessOfferingForm,
       formModel,
     };
   },
