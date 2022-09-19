@@ -51,7 +51,6 @@ import {
   OFFERING_YEAR_OF_STUDY_MAX_VALUE,
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
-import { InsertResult } from "typeorm";
 
 const userFriendlyNames = {
   offeringName: "Name",
