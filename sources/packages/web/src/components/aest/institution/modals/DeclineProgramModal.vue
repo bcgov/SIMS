@@ -1,37 +1,49 @@
 <template>
-  <modal-dialog-base
-    title="Decline program"
-    :showDialog="showDialog"
-    @dialogClosed="dialogClosed"
-  >
-    <template v-slot:content>
-      <formio
-        formName="declineEducationProgram"
-        @submitted="submitForm"
-        @loaded="formLoaded"
-      ></formio>
-    </template>
-    <template v-slot:footer>
-      <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
-        <template #="{ notAllowed }">
-          <footer-buttons
-            primaryLabel="Decline now"
-            @primaryClick="declineProgram"
-            @secondaryClick="dialogClosed"
-            :disablePrimaryButton="notAllowed"
-          />
-        </template>
-      </check-permission-role>
-    </template>
-  </modal-dialog-base>
+  <v-form ref="declineProgramForm">
+    <modal-dialog-base
+      title="Decline program"
+      :showDialog="showDialog"
+      max-width="730"
+    >
+      <template #content>
+        <error-summary :errors="approveProgramForm.errors" />
+        <div class="pb-2">
+          <span class="label-value"
+            >Outline the reasoning for declining this program. This will be
+            stored in the institution profile notes.</span
+          >
+        </div>
+        <span class="label-bold">Notes</span>
+        <v-textarea
+          label="Long text..."
+          v-model="formModel.declinedNote"
+          variant="outlined"
+          :rules="[(v) => !!v || 'Notes is required']"
+      /></template>
+      <template #footer>
+        <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
+          <template #="{ notAllowed }">
+            <footer-buttons
+              :processing="processing"
+              primaryLabel="Decline now"
+              @primaryClick="submit"
+              @secondaryClick="cancel"
+              :disablePrimaryButton="notAllowed"
+            />
+          </template>
+        </check-permission-role>
+      </template>
+    </modal-dialog-base>
+  </v-form>
 </template>
 
 <script lang="ts">
+import { ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { DeclineProgramAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { Role } from "@/types";
+import { Role, VForm } from "@/types";
 
 export default {
   components: {
@@ -40,32 +52,33 @@ export default {
   },
   setup() {
     const { showDialog, resolvePromise, showModal } = useModalDialog<
-      DeclineProgramAPIInDTO | undefined
+      DeclineProgramAPIInDTO | false
     >();
-    let declineProgramForm: any = undefined;
+    let declineProgramForm = ref({} as VForm);
 
-    const declineProgram = () => {
-      return declineProgramForm.submit();
-    };
-    const submitForm = (formData: DeclineProgramAPIInDTO) => {
-      resolvePromise(formData);
+    const formModel = reactive({
+      declinedNote: "",
+    } as DeclineProgramAPIInDTO);
+
+    const submit = async () => {
+      const validationResult = await declineProgramForm.value.validate();
+      if (!validationResult.valid) {
+        return;
+      }
+      resolvePromise(formModel);
     };
 
-    const formLoaded = (form: any) => {
-      declineProgramForm = form;
-    };
-
-    const dialogClosed = () => {
-      resolvePromise(undefined);
+    const cancel = () => {
+      declineProgramForm.value.reset();
+      resolvePromise(false);
+      declineProgramForm.value.errors = [];
     };
 
     return {
       showDialog,
-      declineProgram,
+      submit,
       showModal,
-      dialogClosed,
-      formLoaded,
-      submitForm,
+      cancel,
       Role,
     };
   },
