@@ -1,12 +1,12 @@
 <template>
-  <student-page-container :full-width="true" layout-template="centered">
+  <student-page-container layout-template="centered-card">
     <template #header>
       <header-navigator
-        title="Back to Applications"
+        title="Applications"
         :routeLocation="{
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         }"
-        subTitle="Financial aid application"
+        subTitle="Financial Aid Application"
         ><template #buttons>
           <v-menu>
             <template v-slot:activator="{ props }"
@@ -15,19 +15,16 @@
                 @click="toggle"
                 v-bind="props"
                 prepend-icon="fa:fa fa-chevron-circle-down"
-                >Application Options
+                >Application actions
               </v-btn>
             </template>
-            <v-list>
+            <v-list class="action-list">
               <template v-for="(item, index) in items" :key="index">
-                <v-list-item :value="index">
+                <v-list-item :value="index" @click="item.command">
                   <template v-slot:prepend>
-                    <v-icon :icon="item.icon"></v-icon>
+                    <v-icon :icon="item.icon" :color="item.iconColor"></v-icon>
                   </template>
-                  <v-list-item-title
-                    @click="item.command"
-                    :class="item.textColor"
-                  >
+                  <v-list-item-title :class="item.textColor">
                     <span class="label-bold"> {{ item.label }}</span>
                   </v-list-item-title>
                 </v-list-item>
@@ -42,41 +39,20 @@
         </template>
       </header-navigator>
     </template>
-
+    <!-- todo: ann change the modal -->
     <CancelApplication
       :showModal="showModal"
       :applicationId="id"
       @showHideCancelApplication="showHideCancelApplication"
       @reloadData="getApplicationDetails"
     />
-    <v-container class="pt-12">
-      <div
-        class="bg-white application-info-border"
-        v-if="
-          applicationDetails.applicationStatus === ApplicationStatus.cancelled
-        "
-      >
-        <p>
-          <v-icon color="primary">mdi-information </v-icon
-          ><span class="pl-2 font-weight-bold">For your information</span>
-        </p>
-        <span class="mt-4"
-          >This application was cancelled on
-          {{
-            dateOnlyLongString(applicationDetails.applicationStatusUpdatedOn)
-          }}.
-          <a class="text-primary" @click="viewApplication">
-            View application
-          </a>
-        </span>
-      </div>
-      <ApplicationDetails
-        v-if="applicationDetails?.applicationStatus"
-        :applicationDetails="applicationDetails"
-      />
-    </v-container>
+    <!-- todo: ann review if -->
+    <application-progress-bar
+      v-if="applicationDetails?.applicationStatus"
+      :applicationId="id"
+    />
   </student-page-container>
-  <ConfirmEditApplication ref="editApplicationModal" />
+  <confirm-edit-application ref="editApplicationModal" />
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
@@ -87,13 +63,13 @@ import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import { GetApplicationDataDto, ApplicationStatus, MenuType } from "@/types";
-import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
+import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 
 export default {
   components: {
     CancelApplication,
-    ApplicationDetails,
+    ApplicationProgressBar,
     ConfirmEditApplication,
   },
   props: {
@@ -107,6 +83,7 @@ export default {
     const items = ref([] as MenuType[]);
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
+    // todo: ann check ifts really needed
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const snackBar = useSnackBar();
@@ -176,8 +153,8 @@ export default {
           ApplicationStatus.completed
       ) {
         items.value.push({
-          label: "Edit",
-          icon: "fa:fa fa-pencil",
+          label: "Edit application",
+          icon: "fa:fa fa-pencil-alt",
           command:
             applicationDetails.value.applicationStatus ===
             ApplicationStatus.draft
@@ -186,7 +163,7 @@ export default {
         });
       }
       items.value.push({
-        label: "View",
+        label: "View application",
         icon: "fa:fa fa-folder-open",
         command: viewApplication,
       });
@@ -197,8 +174,9 @@ export default {
           ApplicationStatus.completed
       ) {
         items.value.push({
-          label: "Cancel",
+          label: "Cancel application",
           icon: "fa:fa fa-trash",
+          iconColor: "error",
           textColor: "error-color",
           command: () => {
             showHideCancelApplication();

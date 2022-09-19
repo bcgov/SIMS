@@ -54,7 +54,6 @@
           primaryLabel="Decline enrolment now"
           @primaryClick="submit"
           @secondaryClick="cancel"
-          :disablePrimaryButton="notAllowed"
         />
       </template>
     </modal-dialog-base>
@@ -98,8 +97,8 @@ export default {
     // Closed the modal dialog.
     const cancel = () => {
       denyCOE.value.reset();
+      denyCOE.value.resetValidation();
       resolvePromise(false);
-      denyCOE.value.errors = [];
     };
 
     onMounted(async () => {

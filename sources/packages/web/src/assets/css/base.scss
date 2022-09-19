@@ -271,8 +271,12 @@ html * {
 }
 
 // Reduce v-list icon and title space.
-.no-wrap .v-list-item__content {
+.no-wrap .v-list-item__content,
+.action-list .v-list-item__content {
   margin-inline-start: -20px;
+}
+.action-list .v-list-item__prepend > .v-icon {
+  opacity: unset;
 }
 
 // Modal height. 102px is the min height of header and footer of the modal.
@@ -282,4 +286,8 @@ html * {
 // Min height for modal header.
 .modal-height .v-card-title {
   min-height: 50px;
+}
+// Tracker slider thumb(draft only).
+.message-color.v-slider--disabled .v-slider-thumb__surface {
+  border-radius: 24%;
 }
