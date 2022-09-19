@@ -15,7 +15,6 @@ export default class Authorization {
     clientId: string,
     authUrl: string
   ): Promise<string> {
-    const auth_url = authUrl;
     const body = stringify({
       grant_type: "password",
       username: username,
@@ -27,7 +26,7 @@ export default class Authorization {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     };
-    const response = await axios.post(auth_url, body, settings);
+    const response = await axios.post(authUrl, body, settings);
     return response.data.access_token;
   }
 }
