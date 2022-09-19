@@ -112,7 +112,6 @@
           title="Validation summary"
           :recordsCount="validationResults.length"
         ></body-header>
-        <p class="category-header-medium primary-color"></p>
         <banner
           class="mb-2"
           v-if="hasCriticalErrorsRecords"
