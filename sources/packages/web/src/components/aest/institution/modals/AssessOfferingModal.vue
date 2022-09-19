@@ -33,10 +33,9 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
-import { computed } from "vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { OfferingStatus, Role, VForm } from "@/types";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
