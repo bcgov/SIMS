@@ -13,7 +13,9 @@
             stored in the institution profile notes.</span
           >
         </div>
-        <span class="label-bold">Notes</span>
+        <div class="pb-2">
+          <span class="label-bold">Notes</span>
+        </div>
         <v-textarea
           label="Long text..."
           v-model="formModel.declinedNote"
