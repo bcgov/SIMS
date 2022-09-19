@@ -1,4 +1,4 @@
--- Remove existing codes to avoid conflics while creating the constraint.
+-- Remove existing codes to avoid conflicts while creating the constraint.
 UPDATE
   sims.education_programs
 SET
