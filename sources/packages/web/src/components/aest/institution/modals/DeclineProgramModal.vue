@@ -6,7 +6,7 @@
       max-width="730"
     >
       <template #content>
-        <error-summary :errors="approveProgramForm.errors" />
+        <error-summary :errors="declineProgramForm.errors" />
         <div class="pb-2">
           <span class="label-value"
             >Outline the reasoning for declining this program. This will be
@@ -40,6 +40,7 @@
 <script lang="ts">
 import { ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
+import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog } from "@/composables";
 import { DeclineProgramAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -49,13 +50,13 @@ export default {
   components: {
     ModalDialogBase,
     CheckPermissionRole,
+    ErrorSummary,
   },
   setup() {
-    const { showDialog, resolvePromise, showModal } = useModalDialog<
+    const { showDialog, showModal, resolvePromise } = useModalDialog<
       DeclineProgramAPIInDTO | false
     >();
-    let declineProgramForm = ref({} as VForm);
-
+    const declineProgramForm = ref({} as VForm);
     const formModel = reactive({
       declinedNote: "",
     } as DeclineProgramAPIInDTO);
@@ -77,8 +78,10 @@ export default {
     return {
       showDialog,
       submit,
-      showModal,
       cancel,
+      showModal,
+      formModel,
+      declineProgramForm,
       Role,
     };
   },
