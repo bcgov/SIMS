@@ -13,11 +13,9 @@
             stored in the institution profile notes.</span
           >
         </div>
-        <div class="pb-2">
-          <span class="label-bold">Notes</span>
-        </div>
         <v-textarea
-          label="Long text..."
+          label="Notes"
+          placeholder="Long text..."
           v-model="formModel.declinedNote"
           variant="outlined"
           :rules="[(v) => !!v || 'Notes is required']"
@@ -54,6 +52,13 @@ export default {
     CheckPermissionRole,
     ErrorSummary,
   },
+  props: {
+    processing: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
   setup() {
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       DeclineProgramAPIInDTO | false
@@ -73,8 +78,8 @@ export default {
 
     const cancel = () => {
       declineProgramForm.value.reset();
+      declineProgramForm.value.resetValidation();
       resolvePromise(false);
-      declineProgramForm.value.errors = [];
     };
 
     return {

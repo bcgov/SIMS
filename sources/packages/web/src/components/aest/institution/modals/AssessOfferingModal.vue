@@ -6,11 +6,9 @@
         <div class="pb-2">
           <span class="label-value">{{ label }}</span>
         </div>
-        <div class="pb-2">
-          <span class="label-bold">Notes</span>
-        </div>
         <v-textarea
-          label="Long text..."
+          label="Notes"
+          placeholder="Long text..."
           v-model="formModel.assessmentNotes"
           variant="outlined"
           :rules="[(v) => !!v || 'Notes is required']"
@@ -48,6 +46,11 @@ export default {
       type: String,
       required: true,
     },
+    processing: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   setup(props: any) {
     const { showDialog, showModal, resolvePromise } = useModalDialog<
@@ -78,6 +81,8 @@ export default {
     );
 
     const cancel = () => {
+      assessOfferingForm.value.reset();
+      assessOfferingForm.value.resetValidation();
       resolvePromise(false);
     };
 

@@ -14,10 +14,11 @@
           >
         </div>
         <!-- TODO Date picker is not available in the vuetify 3 version, so temporary usage of textfield and regex-->
-        <span class="label-bold mt-2">Effective end date</span>
+
         <v-text-field
+          label="Effective end date"
           class="mt-2"
-          label="yyyy-MM-dd"
+          placeholder="yyyy-MM-dd"
           v-model="formModel.effectiveEndDate"
           variant="outlined"
           :rules="[
@@ -26,11 +27,9 @@
               'Effective end date is not in right format',
           ]"
         />
-        <div class="pb-2">
-          <span class="label-bold">Notes</span>
-        </div>
         <v-textarea
-          label="Long text..."
+          label="Notes"
+          placeholder="Long text..."
           v-model="formModel.approvedNote"
           variant="outlined"
           :rules="[(v) => !!v || 'Notes is required']"
@@ -68,6 +67,13 @@ export default {
     CheckPermissionRole,
     ErrorSummary,
   },
+  props: {
+    processing: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
   setup() {
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       ApproveProgramAPIInDTO | boolean
@@ -89,8 +95,8 @@ export default {
     // Closed the modal dialog.
     const cancel = () => {
       approveProgramForm.value.reset();
+      approveProgramForm.value.resetValidation();
       resolvePromise(false);
-      approveProgramForm.value.errors = [];
     };
 
     return {
