@@ -32,6 +32,7 @@ import {
   PeriodsAreBetweenLimits,
   PeriodMinLength,
   PeriodMaxLength,
+  IsDateAfter,
 } from "../../utilities/class-validation";
 import { Type } from "class-transformer";
 import { ProgramAllowsOfferingIntensity } from "./custom-validators/program-allows-offering-intensity";
@@ -297,6 +298,7 @@ export class OfferingValidationModel {
   @IsDateString(undefined, {
     message: getDateFormatMessage(userFriendlyNames.studyEndDate),
   })
+  @IsDateAfter(studyStartDateProperty, userFriendlyNames.studyEndDate)
   @PeriodMinLength(
     studyStartDateProperty,
     OFFERING_STUDY_PERIOD_MIN_DAYS,
