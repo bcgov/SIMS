@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { dateDifference, getISODateOnlyString } from "../../date-utils";
+import { dateDifference, getDateOnlyFormat } from "../../date-utils";
 
 /**
  * Checks if the number of days between the property date decorated with this
@@ -27,8 +27,8 @@ class PeriodMaxLengthConstraint implements ValidatorConstraintInterface {
   defaultMessage(args: ValidationArguments) {
     const [startDateProperty, maxDaysAllowed, propertyDisplayName] =
       args.constraints;
-    const startDate = getISODateOnlyString(startDateProperty(args.object));
-    const endDate = getISODateOnlyString(args.value);
+    const startDate = getDateOnlyFormat(startDateProperty(args.object));
+    const endDate = getDateOnlyFormat(args.value);
     return `${
       propertyDisplayName ?? args.property
     }, the number of day(s) between ${startDate} and ${endDate} must not be greater than ${maxDaysAllowed}.`;
