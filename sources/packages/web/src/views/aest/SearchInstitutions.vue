@@ -15,7 +15,7 @@
             v-model="legalName"
             data-cy="legalName"
             @keyup.enter="searchInstitutions"
-            :rules="[(v) => !!v || 'Legal name required']"
+            hide-details
           />
         </v-col>
         <v-col>
@@ -26,7 +26,7 @@
             v-model="operatingName"
             data-cy="operatingName"
             @keyup.enter="searchInstitutions"
-            :rules="[(v) => !!v || 'Operating name required']"
+            hide-details
           />
         </v-col>
         <v-col

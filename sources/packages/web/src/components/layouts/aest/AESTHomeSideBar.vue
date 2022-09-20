@@ -8,22 +8,6 @@
       class="no-wrap"
       :items="topItems"
     />
-    <v-list
-      active-class="active-sidebar-item"
-      density="compact"
-      bg-color="background"
-      active-color="primary"
-      class="no-wrap"
-      :items="studentRequestsItems"
-    />
-    <v-list
-      active-class="active-sidebar-item"
-      density="compact"
-      bg-color="background"
-      active-color="primary"
-      class="no-wrap"
-      :items="institutionRequestsItems"
-    />
     <template #append>
       <v-list
         density="compact"
@@ -84,14 +68,10 @@ export default {
           },
         },
       },
-    ]);
-    const studentRequestsItems = ref<MenuItemModel[]>([
       {
         type: "subheader",
         title: "Student requests",
       },
-    ]);
-    studentRequestsItems.value.push(
       {
         title: "Accounts",
         props: {
@@ -119,14 +99,10 @@ export default {
           },
         },
       },
-    );
-    const institutionRequestsItems = ref<MenuItemModel[]>([
       {
         type: "subheader",
         title: "Institution requests",
       },
-    ]);
-    institutionRequestsItems.value.push(
       {
         title: "Designations",
         props: {
@@ -145,11 +121,9 @@ export default {
           },
         },
       },
-    );
+    ]);
     return {
       topItems,
-      studentRequestsItems,
-      institutionRequestsItems,
       AESTRoutesConst,
       Role,
     };
