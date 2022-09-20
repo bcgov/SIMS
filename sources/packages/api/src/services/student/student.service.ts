@@ -164,7 +164,7 @@ export class StudentService extends RecordDataModelService<Student> {
       phone: studentInfo.phone,
     };
     student.user = user;
-    student.sinConsent = true;
+    student.sinConsent = studentInfo.sinConsent;
     try {
       // Get PD status from SFAS integration data.
       student.studentPDVerified = await this.sfasIndividualService.getPDStatus(
