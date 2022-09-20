@@ -65,9 +65,9 @@ export class EducationProgramOfferingImportCSVService {
       offeringWILComponentType: csvModel.WILComponentType,
       studyStartDate: csvModel.studyStartDate,
       studyEndDate: csvModel.studyEndDate,
-      lacksStudyBreaks: csvModel.hasStudyBreaks == YesNoOptions.No,
+      lacksStudyBreaks: csvModel.hasStudyBreaks === YesNoOptions.No,
       studyBreaks:
-        csvModel.hasStudyBreaks == YesNoOptions.Yes
+        csvModel.hasStudyBreaks === YesNoOptions.Yes
           ? csvModel.studyBreaks
           : null,
       actualTuitionCosts: csvModel.actualTuitionCosts,
