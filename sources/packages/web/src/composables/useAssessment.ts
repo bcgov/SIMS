@@ -42,16 +42,13 @@ export function useAssessment() {
 
   const mapAssessmentDetailHeader = (
     assessment: AssessmentDetailHeader,
-  ): Map<string, string> => {
-    const map = new Map<string, string>();
-    map.set("Application #", assessment.applicationNumber);
-    map.set("Institution", assessment.institutionName);
-    map.set(
-      "Study dates",
-      `${assessment.offeringStudyStartDate} - ${assessment.offeringStudyEndDate}`,
-    );
-    map.set("Type", assessment.offeringIntensity);
-    return map;
+  ): Record<string, string> => {
+    return {
+      "Application #": assessment.applicationNumber,
+      Institution: assessment.institutionName,
+      "Study dates": `${assessment.offeringStudyStartDate} - ${assessment.offeringStudyEndDate}`,
+      Type: assessment.offeringIntensity,
+    };
   };
 
   return {

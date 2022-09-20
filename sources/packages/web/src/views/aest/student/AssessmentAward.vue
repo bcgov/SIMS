@@ -2,7 +2,7 @@
   <full-page-container>
     <template #header>
       <header-navigator
-        title="Financial Aid Application"
+        title="Assessments"
         subTitle="View Assessment"
         :routeLocation="{
           name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
@@ -58,7 +58,7 @@ export default {
     const router = useRouter();
     const assessmentAwardData = ref<AwardDetailsAPIOutDTO>();
     const { mapAssessmentDetailHeader } = useAssessment();
-    const headerMap = ref<Map<string, string>>(new Map<string, string>());
+    const headerMap = ref<Record<string, string>>({});
 
     onMounted(async () => {
       assessmentAwardData.value =

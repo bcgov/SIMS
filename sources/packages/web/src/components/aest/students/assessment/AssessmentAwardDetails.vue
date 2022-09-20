@@ -1,6 +1,9 @@
 <template>
   <div v-if="assessmentAwardData.estimatedAward">
-    <div class="font-weight-bold my-3">First Payment</div>
+    <!-- Show the first payment/second payment header only if there is second disbursement. -->
+    <div v-if="isSecondDisbursementAvailable" class="font-weight-bold my-3">
+      First Payment
+    </div>
     <v-row>
       <v-col>
         <content-group>
@@ -8,129 +11,12 @@
             Estimated award
           </div>
           <!-- Estimated award table. -->
-          <v-table class="bordered">
-            <thead>
-              <tr>
-                <th scope="col" class="text-left">Loan/grant type</th>
-                <th scope="col" class="text-left">Estimated award</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Canada Student Loan</td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement1cslf ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>B.C. Student Loan</td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement1bcsl ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-P
-                  <tooltip-icon
-                    content="Canada Student Grant with Permanent Disability."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement1csgp ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-D
-                  <tooltip-icon
-                    content="Canada Student Grant with dependant(s)."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement1csgd ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-F
-                  <tooltip-icon
-                    content="Canada Student Grant for Full time studies."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement1csgf ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-TU
-                  <tooltip-icon content="Canada Student Grant for Top-up." />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement1csgt ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  BCAG <tooltip-icon content="British Colombia Access Grant." />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement1bcag ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  BCAG-D
-                  <tooltip-icon
-                    content="British Colombia Access Grant with disabilities."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement1bcag ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  SBSD
-                  <tooltip-icon
-                    content="British Colombia Supplemental Bursary with Disabilities."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement1sbsd ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
+          <award-table
+            :awardDetails="assessmentAwardData.estimatedAward"
+            identifier="disbursement1"
+          />
           <div class="my-3">
-            <progress-info
+            <status-info-label
               :data="
                 mapCOEAssessmentProgressStatus(
                   assessmentAwardData.estimatedAward.disbursement1Status,
@@ -138,19 +24,21 @@
               "
             />
           </div>
-          <div class="my-3" v-if="isFirstDisbursementCompleted">
-            <v-icon
-              icon="fa:fas fa-check-circle"
-              color="success"
-              class="progress-info-icon"
-            />
-            Tuition remittance applied
-            <span class="label-bold"
-              >-${{
-                assessmentAwardData.estimatedAward
-                  .disbursement1TuitionRemittance
-              }}</span
-            >
+          <div
+            class="my-3"
+            v-if="
+              assessmentAwardData.estimatedAward.disbursement1TuitionRemittance
+            "
+          >
+            <status-info-label :data="{ status: StatusInfo.Completed }"
+              >Tuition remittance applied
+              <span class="label-bold"
+                >-${{
+                  assessmentAwardData.estimatedAward
+                    .disbursement1TuitionRemittance
+                }}</span
+              >
+            </status-info-label>
           </div>
           <content-group-info>
             <div>
@@ -174,127 +62,11 @@
             Final award
           </div>
           <!-- Final award table. -->
-          <v-table class="bordered" v-if="showFirstFinalAward">
-            <thead>
-              <tr>
-                <th scope="col" class="text-left">Loan/grant type</th>
-                <th scope="col" class="text-left">Final award</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Canada Student Loan</td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt1cslf ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>B.C. Student Loan</td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt1bcsl ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-P
-                  <tooltip-icon
-                    content="Canada Student Grant with Permanent Disability."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt1csgp ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-D
-                  <tooltip-icon
-                    content="Canada Student Grant with dependant(s)."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt1csgd ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-F
-                  <tooltip-icon
-                    content="Canada Student Grant for Full time studies."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt1csgf ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-TU
-                  <tooltip-icon content="Canada Student Grant for Top-up." />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt1csgt ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  BCAG <tooltip-icon content="British Colombia Access Grant." />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt1bcag ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  BCAG-D
-                  <tooltip-icon
-                    content="British Colombia Access Grant with disabilities."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt1bcag ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  SBSD
-                  <tooltip-icon
-                    content="British Colombia Supplemental Bursary with Disabilities."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt1sbsd ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
+          <award-table
+            :awardDetails="assessmentAwardData.finalAward"
+            identifier="disbursementReceipt1"
+            v-if="showFirstFinalAward"
+          />
           <div v-else>
             {{
               getFinalAwardNotAvailableMessage(
@@ -316,129 +88,12 @@
             Estimated award
           </div>
           <!-- Estimated award table. -->
-          <v-table class="bordered">
-            <thead>
-              <tr>
-                <th scope="col" class="text-left">Loan/grant type</th>
-                <th scope="col" class="text-left">Estimated award</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Canada Student Loan</td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement2cslf ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>B.C. Student Loan</td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement2bcsl ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-P
-                  <tooltip-icon
-                    content="Canada Student Grant with Permanent Disability."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement2csgp ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-D
-                  <tooltip-icon
-                    content="Canada Student Grant with dependant(s)."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement2csgd ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-F
-                  <tooltip-icon
-                    content="Canada Student Grant for Full time studies."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement2csgf ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-TU
-                  <tooltip-icon content="Canada Student Grant for Top-up." />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement2csgt ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  BCAG <tooltip-icon content="British Colombia Access Grant." />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement2bcag ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  BCAG-D
-                  <tooltip-icon
-                    content="British Colombia Access Grant with disabilities."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement2bcag ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  SBSD
-                  <tooltip-icon
-                    content="British Colombia Supplemental Bursary with Disabilities."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.estimatedAward.disbursement2sbsd ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
+          <award-table
+            :awardDetails="assessmentAwardData.estimatedAward"
+            identifier="disbursement2"
+          />
           <div class="my-3">
-            <progress-info
+            <status-info-label
               :data="
                 mapCOEAssessmentProgressStatus(
                   assessmentAwardData.estimatedAward.disbursement2Status,
@@ -446,19 +101,21 @@
               "
             />
           </div>
-          <div class="my-3" v-if="isSecondDisbursementCompleted">
-            <v-icon
-              icon="fa:fas fa-check-circle"
-              color="success"
-              class="progress-info-icon"
-            />
-            Tuition remittance applied
-            <span class="label-bold"
-              >-${{
-                assessmentAwardData.estimatedAward
-                  .disbursement2TuitionRemittance
-              }}</span
-            >
+          <div
+            class="my-3"
+            v-if="
+              assessmentAwardData.estimatedAward.disbursement2TuitionRemittance
+            "
+          >
+            <status-info-label :data="{ status: StatusInfo.Completed }">
+              Tuition remittance applied
+              <span class="label-bold"
+                >-${{
+                  assessmentAwardData.estimatedAward
+                    .disbursement2TuitionRemittance
+                }}</span
+              >
+            </status-info-label>
           </div>
           <content-group-info>
             <div>
@@ -482,127 +139,11 @@
             Final award
           </div>
           <!-- Final award table. -->
-          <v-table class="bordered" v-if="showSecondFinalAward">
-            <thead>
-              <tr>
-                <th scope="col" class="text-left">Loan/grant type</th>
-                <th scope="col" class="text-left">Final award</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Canada Student Loan</td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt2cslf ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>B.C. Student Loan</td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt2bcsl ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-P
-                  <tooltip-icon
-                    content="Canada Student Grant with Permanent Disability."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt2csgp ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-D
-                  <tooltip-icon
-                    content="Canada Student Grant with dependant(s)."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt2csgd ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-F
-                  <tooltip-icon
-                    content="Canada Student Grant for Full time studies."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt2csgf ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  CSG-TU
-                  <tooltip-icon content="Canada Student Grant for Top-up." />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt2csgt ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  BCAG <tooltip-icon content="British Colombia Access Grant." />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt2bcag ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  BCAG-D
-                  <tooltip-icon
-                    content="British Colombia Access Grant with disabilities."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt2bcag ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  SBSD
-                  <tooltip-icon
-                    content="British Colombia Supplemental Bursary with Disabilities."
-                  />
-                </td>
-                <td>
-                  {{
-                    assessmentAwardData.finalAward.disbursementReceipt2sbsd ??
-                    "(Not eligible)"
-                  }}
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
+          <award-table
+            :awardDetails="assessmentAwardData.finalAward"
+            identifier="disbursementReceipt2"
+            v-if="showSecondFinalAward"
+          />
           <div v-else>
             {{
               getFinalAwardNotAvailableMessage(
@@ -618,13 +159,14 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
-import { COEStatus, ProgressInfoDetails, ProgressInfoStatus } from "@/types";
+import { COEStatus, StatusInfoDetails, StatusInfo } from "@/types";
 import { useRouter } from "vue-router";
 import { PropType, computed } from "vue";
-import ProgressInfo from "@/components/generic/ProgressInfo.vue";
+import StatusInfoLabel from "@/components/generic/StatusInfoLabel.vue";
+import AwardTable from "@/components/aest/students/assessment/AwardTable.vue";
 
 export default {
-  components: { ProgressInfo },
+  components: { StatusInfoLabel, AwardTable },
   props: {
     assessmentAwardData: {
       type: Object as PropType<AwardDetailsAPIOutDTO>,
@@ -682,25 +224,25 @@ export default {
 
     const mapCOEAssessmentProgressStatus = (
       status: COEStatus,
-    ): ProgressInfoDetails => {
+    ): StatusInfoDetails => {
       switch (status) {
         case COEStatus.completed:
           return {
-            status: ProgressInfoStatus.Completed,
+            status: StatusInfo.Completed,
             header: "Enrolment confirmed",
           };
         case COEStatus.required:
           return {
-            status: ProgressInfoStatus.Pending,
+            status: StatusInfo.Pending,
             header: "Enrolment not confirmed",
           };
         case COEStatus.declined:
           return {
-            status: ProgressInfoStatus.Rejected,
+            status: StatusInfo.Rejected,
             header: "Enrolment declined",
           };
         default:
-          return { status: ProgressInfoStatus.Pending, header: "" };
+          return { status: StatusInfo.Pending, header: "" };
       }
     };
 
@@ -714,6 +256,7 @@ export default {
       showSecondFinalAward,
       getFinalAwardNotAvailableMessage,
       mapCOEAssessmentProgressStatus,
+      StatusInfo,
     };
   },
 };

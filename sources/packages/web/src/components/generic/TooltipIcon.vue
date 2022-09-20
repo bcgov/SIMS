@@ -7,17 +7,13 @@
         v-bind="props"
       />
     </template>
-    <span>{{ content }}</span>
+    <slot></slot>
   </v-tooltip>
 </template>
 
 <script lang="ts">
 export default {
   props: {
-    content: {
-      type: String,
-      required: true,
-    },
     activator: {
       type: String,
       required: false,
