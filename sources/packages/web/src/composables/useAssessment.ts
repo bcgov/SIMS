@@ -3,6 +3,7 @@ import {
   ApplicationExceptionStatus,
   StudentAppealStatus,
   StudentAssessmentStatus,
+  AssessmentDetailHeader,
 } from "@/types";
 
 export function useAssessment() {
@@ -39,5 +40,23 @@ export function useAssessment() {
     }
   };
 
-  return { mapRequestAssessmentChipStatus, mapAssessmentHistoryChipStatus };
+  const mapAssessmentDetailHeader = (
+    assessment: AssessmentDetailHeader,
+  ): Map<string, string> => {
+    const map = new Map<string, string>();
+    map.set("Application #", assessment.applicationNumber);
+    map.set("Institution", assessment.institutionName);
+    map.set(
+      "Study dates",
+      `${assessment.offeringStudyStartDate} - ${assessment.offeringStudyEndDate}`,
+    );
+    map.set("Type", assessment.offeringIntensity);
+    return map;
+  };
+
+  return {
+    mapRequestAssessmentChipStatus,
+    mapAssessmentHistoryChipStatus,
+    mapAssessmentDetailHeader,
+  };
 }
