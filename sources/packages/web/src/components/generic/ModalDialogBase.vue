@@ -5,7 +5,8 @@
     :no-click-animation="true"
     scrollable
   >
-    <v-card elevation="10" :max-width="maxWidth" class="modal-height">
+    <!-- TODO remove mx-auto in stable version of vuetify to center modelDialog -->
+    <v-card elevation="10" :max-width="maxWidth" class="modal-height mx-auto">
       <v-card-title>
         <slot name="header">
           <h2 v-if="title" class="category-header-large primary-color">

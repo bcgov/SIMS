@@ -230,11 +230,8 @@ html * {
 }
 
 // v-list subtitle.
-// todo: when nav-subtitle is not used in AEST sidebar. remove from here too.
-.no-wrap .v-list-subheader,
-.nav-subtitle {
-  text-transform: uppercase;
-  letter-spacing: 3px !important;
+.no-wrap .v-list-subheader {
+  font-size: $font-size-small;
 }
 
 // This class will restrict the container with max-width.
