@@ -1,11 +1,11 @@
 import axios from "axios";
 import { stringify } from "querystring";
 
-export const enum ClientId {
-  INSTITUTION = "institution",
-  STUDENT = "student",
-  AEST = "aest",
-  SUPPORTING_USERS = "supportingUsers",
+export enum ClientId {
+  Institution = "institution",
+  Student = "student",
+  Aest = "aest",
+  SupportingUsers = "supportingUsers",
 }
 
 export default class Authorization {

@@ -88,7 +88,7 @@ describe("[Institution Create/Update] Verify location create/update", () => {
     token = await authorizer.getAuthToken(
       USERNAME,
       PASSWORD,
-      ClientId.INSTITUTION,
+      ClientId.Institution,
       TOKEN_URL
     );
   });

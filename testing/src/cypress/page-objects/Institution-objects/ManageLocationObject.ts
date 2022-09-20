@@ -1,17 +1,17 @@
 export enum Provinces {
-  ALBERTA = "AB",
-  BRITISH_COLUMBIA = "BC",
-  MANITOBA = "MB",
-  NEW_BRUNSWICK = "NB",
-  NEW_FOUNDLAND_AND_LABRADOR = "NL",
-  NOVA_SCOTIA = "NS",
-  ONTARIO = "ON",
-  PRINCE_EDWARD_ISLAND = "PE",
-  QUEBEC = "QC",
-  SASKATCHEWAN = "SK",
-  YUKON = "YT",
-  NORTHERN_TERRITORIES = "NT",
-  NUNAVUT = "NU",
+  Alberta = "AB",
+  BritishColumbia = "BC",
+  Manitoba = "MB",
+  NewBrunswick = "NB",
+  NewFoundlandAndLabrador = "NL",
+  NovaScotia = "NS",
+  Ontario = "ON",
+  PrinceEdwardIsland = "PE",
+  Quebec = "QC",
+  Saskatchewan = "SK",
+  Yukon = "YT",
+  NorthernTerritories = "NT",
+  Nunavut = "NU",
 }
 
 export default class ManageLocationObject {
@@ -198,6 +198,7 @@ export default class ManageLocationObject {
   postalCodeText() {
     return cy.contains("Postal/ZIP code");
   }
+
   primaryContactText() {
     return cy.contains("Primary contact");
   }

@@ -111,7 +111,7 @@ function createInstitutionLocation(
   institutionManageLocationObject.countryCanadaFromDropDownMenu().click();
   institutionManageLocationObject.provinceDropDownMenu().click();
   institutionManageLocationObject
-    .getProvinceFromDropdown(Provinces.ALBERTA)
+    .getProvinceFromDropdown(Provinces.Alberta)
     .click();
   institutionManageLocationObject
     .cityInputText()
@@ -339,51 +339,51 @@ describe("[Institution Manage Location] - Country drop-down items and provinces"
     institutionManageLocationObject.countryCanadaFromDropDownMenu().click();
     institutionManageLocationObject.provinceDropDownMenu().click();
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.ALBERTA)
+      .getProvinceFromDropdown(Provinces.Alberta)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.BRITISH_COLUMBIA)
+      .getProvinceFromDropdown(Provinces.BritishColumbia)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.MANITOBA)
+      .getProvinceFromDropdown(Provinces.Manitoba)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.NEW_BRUNSWICK)
+      .getProvinceFromDropdown(Provinces.NewBrunswick)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.NEW_FOUNDLAND_AND_LABRADOR)
+      .getProvinceFromDropdown(Provinces.NewFoundlandAndLabrador)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.NORTHERN_TERRITORIES)
+      .getProvinceFromDropdown(Provinces.NorthernTerritories)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.NOVA_SCOTIA)
+      .getProvinceFromDropdown(Provinces.NovaScotia)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.QUEBEC)
+      .getProvinceFromDropdown(Provinces.Quebec)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.NORTHERN_TERRITORIES)
+      .getProvinceFromDropdown(Provinces.NorthernTerritories)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.YUKON)
+      .getProvinceFromDropdown(Provinces.Yukon)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.NUNAVUT)
+      .getProvinceFromDropdown(Provinces.Nunavut)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject
-      .getProvinceFromDropdown(Provinces.SASKATCHEWAN)
+      .getProvinceFromDropdown(Provinces.Saskatchewan)
       .scrollIntoView()
       .should("be.visible");
     institutionManageLocationObject

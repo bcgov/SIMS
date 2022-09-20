@@ -20,7 +20,7 @@ describe("[Institution Dashboard APIs] - Institution with single location", () =
     token = await authorizer.getAuthToken(
       USERNAME,
       PASSWORD,
-      ClientId.INSTITUTION,
+      ClientId.Institution,
       TOKEN_URL
     );
   });
