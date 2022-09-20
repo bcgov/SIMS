@@ -150,6 +150,8 @@ export class AssessmentControllerService {
   /**
    * Disbursement data is populated with dynamic key in a defined pattern to be compatible with form table.
    * @param disbursementSchedules disbursement schedule details.
+   * @param includeDocumentNumber when true document number is mapped
+   * to disbursement dynamic data.
    * @returns disbursement dynamic award data.
    */
   private populateDisbursementAwardValues(
@@ -182,12 +184,14 @@ export class AssessmentControllerService {
   /**
    * Get estimated and actual(if present) award details of an assessment.
    * @param assessmentId assessment to which awards details belong to.
-   * @param studentId student to whom the award details belong to.
+   * @param includeDocumentNumber when true document number is mapped
+   * to disbursement dynamic data.
+   * @param studentId studentId student to whom the award details belong to.
    * @returns estimated and actual award details.
    */
   async getAssessmentAwardDetails(
     assessmentId: number,
-    includeDocumentNumber: boolean,
+    includeDocumentNumber = false,
     studentId?: number,
   ): Promise<AwardDetailsAPIOutDTO> {
     const assessment = await this.assessmentService.getAssessmentForNOA(
@@ -196,7 +200,7 @@ export class AssessmentControllerService {
     );
 
     if (!assessment) {
-      throw new NotFoundException("Assessment was not found.");
+      throw new NotFoundException("Assessment not found.");
     }
     const estimatedAward = this.populateDisbursementAwardValues(
       assessment.disbursementSchedules,
@@ -243,6 +247,14 @@ export class AssessmentControllerService {
     };
   }
 
+  /**
+   * Populate the final awards in a dynamic way like disbursement schedule(estimated) awards.
+   * @param disbursementReceipts disbursement receipt details.
+   * @param disbursementScheduleId disbursement schedule id of the disbursement receipt(s).
+   * @param identifier identifier which is used to create dynamic data by appending grant code
+   * to it.
+   * @returns dynamic award data of disbursement receipts of a given disbursement.
+   */
   private populateDisbursementReceiptAwardValues(
     disbursementReceipts: DisbursementReceipt[],
     disbursementScheduleId: number,

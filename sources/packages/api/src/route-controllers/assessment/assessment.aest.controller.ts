@@ -181,7 +181,7 @@ export class AssessmentAESTController extends BaseController {
    */
   @Get(":assessmentId/award")
   @ApiNotFoundResponse({
-    description: "Assessment id not found.",
+    description: "Assessment not found.",
   })
   async getAssessmentAwardDetails(
     @Param("assessmentId", ParseIntPipe) assessmentId: number,

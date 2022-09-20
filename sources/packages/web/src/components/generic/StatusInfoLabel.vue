@@ -1,5 +1,5 @@
 <template>
-  <v-icon :icon="icon" :color="data.status" class="progress-info-icon" />
+  <v-icon :icon="icon" :color="data.status" class="status-info-icon" />
   <span class="mx-2">
     <slot>{{ data.header }}</slot>
   </span>
