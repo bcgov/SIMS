@@ -11,8 +11,8 @@
           <v-table class="bordered">
             <thead>
               <tr>
-                <th class="text-left">Loan/grant type</th>
-                <th class="text-left">Estimated award</th>
+                <th scope="col" class="text-left">Loan/grant type</th>
+                <th scope="col" class="text-left">Estimated award</th>
               </tr>
             </thead>
             <tbody>
@@ -177,8 +177,8 @@
           <v-table class="bordered" v-if="showFirstFinalAward">
             <thead>
               <tr>
-                <th class="text-left">Loan/grant type</th>
-                <th class="text-left">Final award</th>
+                <th scope="col" class="text-left">Loan/grant type</th>
+                <th scope="col" class="text-left">Final award</th>
               </tr>
             </thead>
             <tbody>
@@ -319,8 +319,8 @@
           <v-table class="bordered">
             <thead>
               <tr>
-                <th class="text-left">Loan/grant type</th>
-                <th class="text-left">Estimated award</th>
+                <th scope="col" class="text-left">Loan/grant type</th>
+                <th scope="col" class="text-left">Estimated award</th>
               </tr>
             </thead>
             <tbody>
@@ -485,8 +485,8 @@
           <v-table class="bordered" v-if="showSecondFinalAward">
             <thead>
               <tr>
-                <th class="text-left">Loan/grant type</th>
-                <th class="text-left">Final award</th>
+                <th scope="col" class="text-left">Loan/grant type</th>
+                <th scope="col" class="text-left">Final award</th>
               </tr>
             </thead>
             <tbody>
