@@ -40,3 +40,4 @@ export * from "@/types/contracts/SnackBar";
 export * from "@/types/contracts/Menu";
 export * from "@/types/contracts/Banner";
 export * from "@/types/contracts/aest/roles";
+export * from "@/types/contracts/ProgressInfo";

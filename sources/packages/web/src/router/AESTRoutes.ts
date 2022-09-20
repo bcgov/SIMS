@@ -53,7 +53,7 @@ import ViewOfferingChangeRequestComplete from "@/views/aest/institution/ViewOffe
 import StudentApplicationAppeals from "@/views/aest/student/StudentApplicationAppeals.vue";
 import StudentAccountApplications from "@/views/aest/student/StudentAccountApplications.vue";
 import StudentAccountApplicationsApproval from "@/views/aest/student/StudentAccountApplicationsApproval.vue";
-import AssessmentAwardDetails from "@/views/aest/student/AssessmentAwardDetails.vue";
+import AssessmentAward from "@/views/aest/student/AssessmentAward.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -239,7 +239,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.AssessmentAwardView,
             name: AESTRoutesConst.ASSESSMENT_AWARD_VIEW,
             props: true,
-            component: AssessmentAwardDetails,
+            component: AssessmentAward,
             meta: {
               clientType: ClientIdType.AEST,
             },

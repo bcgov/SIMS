@@ -3,6 +3,7 @@ import {
   AssessmentHistorySummaryAPIOutDTO,
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
+  AwardDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 /**
@@ -61,6 +62,19 @@ export class StudentAssessmentApi extends HttpBaseClient {
     await this.patchCall(
       this.addClientRoot(`assessment/${assessmentId}/confirm-assessment`),
       null,
+    );
+  }
+
+  /**
+   * Get estimated and actual(if present) award details of an assessment.
+   * @param assessmentId assessment to which awards details belong to.
+   * @returns estimated and actual award details.
+   */
+  async getAssessmentAwardDetails(
+    assessmentId: number,
+  ): Promise<AwardDetailsAPIOutDTO> {
+    return this.getCallTyped<AwardDetailsAPIOutDTO>(
+      this.addClientRoot(`assessment/${assessmentId}/award`),
     );
   }
 }

@@ -154,6 +154,7 @@ export class AssessmentControllerService {
    */
   private populateDisbursementAwardValues(
     disbursementSchedules: DisbursementSchedule[],
+    includeDocumentNumber?: boolean,
   ): DynamicAwardDTO {
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
@@ -165,7 +166,11 @@ export class AssessmentControllerService {
         schedule.coeStatus;
       disbursementDetails[`${disbursementIdentifier}TuitionRemittance`] =
         schedule.tuitionRemittanceRequestedAmount;
-      schedule.coeStatus;
+
+      if (includeDocumentNumber) {
+        disbursementDetails[`${disbursementIdentifier}DocumentNumber`] =
+          schedule.documentNumber;
+      }
       schedule.disbursementValues.forEach((disbursement) => {
         const disbursementValueKey = `${disbursementIdentifier}${disbursement.valueCode.toLowerCase()}`;
         disbursementDetails[disbursementValueKey] = disbursement.valueAmount;
@@ -180,8 +185,9 @@ export class AssessmentControllerService {
    * @param studentId student to whom the award details belong to.
    * @returns estimated and actual award details.
    */
-  async getAwardDetails(
+  async getAssessmentAwardDetails(
     assessmentId: number,
+    includeDocumentNumber: boolean,
     studentId?: number,
   ): Promise<AwardDetailsAPIOutDTO> {
     const assessment = await this.assessmentService.getAssessmentForNOA(
@@ -194,6 +200,7 @@ export class AssessmentControllerService {
     }
     const estimatedAward = this.populateDisbursementAwardValues(
       assessment.disbursementSchedules,
+      includeDocumentNumber,
     );
     const [firstDisbursement, secondDisbursement] =
       assessment.disbursementSchedules;

@@ -3,6 +3,7 @@ import {
   AssessmentHistorySummaryAPIOutDTO,
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
+  AwardDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 /**
@@ -60,5 +61,18 @@ export class StudentAssessmentsService {
    */
   async confirmAssessmentNOA(assessmentId: number): Promise<void> {
     await ApiClient.StudentAssessmentApi.confirmAssessmentNOA(assessmentId);
+  }
+
+  /**
+   * Get estimated and actual(if present) award details of an assessment.
+   * @param assessmentId assessment to which awards details belong to.
+   * @returns estimated and actual award details.
+   */
+  async getAssessmentAwardDetails(
+    assessmentId: number,
+  ): Promise<AwardDetailsAPIOutDTO> {
+    return ApiClient.StudentAssessmentApi.getAssessmentAwardDetails(
+      assessmentId,
+    );
   }
 }

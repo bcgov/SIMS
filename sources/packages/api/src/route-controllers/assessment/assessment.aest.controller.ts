@@ -183,9 +183,12 @@ export class AssessmentAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "Assessment id not found.",
   })
-  async getAwardDetails(
+  async getAssessmentAwardDetails(
     @Param("assessmentId", ParseIntPipe) assessmentId: number,
   ): Promise<AwardDetailsAPIOutDTO> {
-    return this.assessmentControllerService.getAwardDetails(assessmentId);
+    return this.assessmentControllerService.getAssessmentAwardDetails(
+      assessmentId,
+      true,
+    );
   }
 }

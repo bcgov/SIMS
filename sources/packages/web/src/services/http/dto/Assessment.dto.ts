@@ -50,3 +50,26 @@ export interface AssessmentNOAAPIOutDTO {
   msfaaNumber: string;
   disbursement: any;
 }
+
+export interface DynamicAwardDTO {
+  [k: string]: string | number;
+}
+
+export interface AwardDetailsAPIOutDTO {
+  applicationNumber: string;
+  institutionName: string;
+  offeringIntensity: OfferingIntensity;
+  offeringStudyStartDate: string;
+  offeringStudyEndDate: string;
+
+  /**
+   * Dynamic output of the workflow calculation.
+   * Contains data that could represent a part-time or a full-time award details.
+   */
+  estimatedAward: DynamicAwardDTO;
+  /**
+   * Dynamic output from disbursement receipt for the given disbursement.
+   * Contains data that could represent a part-time or a full-time award details.
+   */
+  finalAward: DynamicAwardDTO;
+}
