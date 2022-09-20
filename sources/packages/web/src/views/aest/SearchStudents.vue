@@ -141,22 +141,15 @@ export default {
       });
     };
     const isValidSearch = () => {
-      const hasInput =
-        !!appNumber.value ||
-        !!firstName.value ||
-        !!sin.value ||
-        !!lastName.value;
-      if (hasInput) {
-        if (sin.value) {
-          if (isSINValid(sin.value)) {
-            return true;
-          } else {
-            return "Please provide a proper SIN number.";
-          }
-        }
-        return true;
+      const hasNoInput =
+        !appNumber.value && !firstName.value && !sin.value && !lastName.value;
+      if (hasNoInput) {
+        return "Please provide at least one search parameter.";
       }
-      return "Please provide at least one search parameter.";
+      if (sin.value) {
+        return isSINValid(sin.value) || "Please provide a proper SIN number.";
+      }
+      return true;
     };
     const searchStudents = async () => {
       const validationResult = await searchStudentsForm.value.validate();
