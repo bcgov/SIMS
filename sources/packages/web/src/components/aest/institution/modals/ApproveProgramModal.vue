@@ -14,7 +14,6 @@
           >
         </div>
         <!-- TODO Date picker is not available in the vuetify 3 version, so temporary usage of textfield and regex-->
-
         <v-text-field
           label="Effective end date"
           class="mt-2"

@@ -6,7 +6,7 @@
       bg-color="background"
       active-color="primary"
       class="no-wrap"
-      :items="topItems"
+      :items="menuItems"
     />
     <template #append>
       <v-list
@@ -40,7 +40,7 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 export default {
   components: { CheckPermissionRole },
   setup() {
-    const topItems = ref<MenuItemModel[]>([
+    const menuItems = ref<MenuItemModel[]>([
       {
         title: "Home",
         props: {
@@ -123,7 +123,7 @@ export default {
       },
     ]);
     return {
-      topItems,
+      menuItems,
       AESTRoutesConst,
       Role,
     };
