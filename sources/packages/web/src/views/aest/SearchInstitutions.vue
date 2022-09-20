@@ -117,10 +117,7 @@ export default {
     const { getFormattedAddress } = useFormatters();
     const isValidSearch = () => {
       const hasInput = !!operatingName.value || !!legalName.value;
-      if (hasInput) {
-        return true;
-      }
-      return "Please provide at least one search parameter.";
+      return hasInput || "Please provide at least one search parameter.";
     };
     const searchInstitutions = async () => {
       const validationResult = await searchInstitutionsForm.value.validate();
