@@ -1,6 +1,7 @@
 import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
-import Authorization from "../../custom-command/common/authorization";
-import { ClientId } from "../../custom-command/common/authorization";
+import Authorization, {
+  ClientId,
+} from "../../custom-command/common/authorization";
 
 const institutionHelperActions = new InstitutionHelperActions();
 

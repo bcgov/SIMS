@@ -1,7 +1,9 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
-import ManageLocationObject from "../../page-objects/Institution-objects/ManageLocationObject";
 import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
-import { Provinces } from "../../page-objects/Institution-objects/ManageLocationObject";
+import ManageLocationObject, {
+  Provinces,
+} from "../../page-objects/Institution-objects/ManageLocationObject";
+
 import data from "../data/institution/manage-location.json";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
