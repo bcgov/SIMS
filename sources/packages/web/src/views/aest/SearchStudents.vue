@@ -147,7 +147,7 @@ export default {
         return "Please provide at least one search parameter.";
       }
       if (sin.value) {
-        return isSINValid(sin.value) || "Please provide a proper SIN number.";
+        return isSINValid(sin.value) || "Please provide a proper SIN.";
       }
       return true;
     };
