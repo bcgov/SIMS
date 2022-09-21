@@ -1,13 +1,12 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
-import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
 import ManageInstitutionObject from "../../page-objects/Institution-objects/ManageInstitutionObject";
-import InstitutionHelperActions from "./common-helper-functions.cy";
+import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
 
 const dashboardObject = new DashboardInstitutionObject();
 const manageInstitutionObject = new ManageInstitutionObject();
 const institutionHelperActions = new InstitutionHelperActions();
 
-describe("Dashboard Page", () => {
+describe("[Institution Dashboard] - fields and titles ", () => {
   beforeEach(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
   });

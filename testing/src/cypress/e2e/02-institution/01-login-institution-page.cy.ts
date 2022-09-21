@@ -1,7 +1,7 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
 import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
 import LoginInstitutionObject from "../../page-objects/Institution-objects/LoginInstitutionObject";
-import InstitutionHelperActions from "./common-helper-functions.cy";
+import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
 
 const dashboardObject = new DashboardInstitutionObject();
 const institutionCustomCommand = new InstitutionCustomCommand();
@@ -11,7 +11,7 @@ const institutionHelperActions = new InstitutionHelperActions();
 const [URL, USERNAME, PASSWORD] =
   institutionHelperActions.getBaseUrlAndLoginCredentialsInstitution();
 
-describe("Login Page", () => {
+describe("[Institution Login] - Login Page", () => {
   beforeEach(() => {
     cy.visit(URL);
   });

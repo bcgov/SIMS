@@ -1,4 +1,7 @@
-import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
+import InstitutionCustomCommand from "./InstitutionCustomCommand";
+import { v4 } from "uuid";
+import UserData from "../../e2e/data/institution/user-details.json";
+import InstitutionData from "../../e2e/data/institution/institution-details.json";
 
 const institutionCustomCommand = new InstitutionCustomCommand();
 
@@ -11,16 +14,25 @@ export default class InstitutionHelperActions {
       this.getUserPasswordSingleLocation(),
     ];
   }
+
   getBaseUrlForTestEnv() {
     return Cypress.env("TEST").BASE_URL;
   }
 
   getLoginUrlForTestEnv() {
-    return `${this.getBaseUrlForTestEnv()}/institution/login`;
+    return `${this.getBaseUrlForTestEnv()}${
+      Cypress.env("ENDPOINTS").INSTITUTION_LOGIN
+    }`;
   }
 
   getApiUrlForTest() {
-    return `${this.getBaseUrlForTestEnv()}/api/institutions`;
+    return `${this.getBaseUrlForTestEnv()}${
+      Cypress.env("ENDPOINTS").INSTITUTIONS_API
+    }`;
+  }
+
+  getApiUrlForKeyCloakToken() {
+    return Cypress.env("TEST").KEY_CLOAK_URL;
   }
 
   getUserNameSingleLocation() {
@@ -31,16 +43,26 @@ export default class InstitutionHelperActions {
     return Cypress.env("TEST").USER_PASSWORD_SINGLE_LOCATION;
   }
 
+  getUserNameForApiTest() {
+    return Cypress.env("TEST").USERNAME_API_TEST;
+  }
+
+  getUserPasswordForApiTest() {
+    return Cypress.env("TEST").USER_PASSWORD_API_TEST;
+  }
+
   getUserDetailsSingleLocation() {
-    return Cypress.env("USER_DETAILS").USER_SINGLE_LOCATION;
+    return UserData.userDetailsSingleLocation;
   }
 
   getInstitutionDetailsSingleLocation() {
-    return Cypress.env("INSTITUTION_DETAILS_SINGLE_LOCATION");
+    return InstitutionData.institutionWithSingleLocation;
   }
 
-  getToken() {
-    return Cypress.env("TEST").TOKEN;
+  getApiForLocationCreationOrUpdate() {
+    return `${this.getBaseUrlForTestEnv()}${
+      Cypress.env("ENDPOINTS").CREATE_INSTITUTION_LOCATION
+    }`;
   }
 
   loginIntoInstitutionSingleLocation() {
@@ -48,5 +70,9 @@ export default class InstitutionHelperActions {
       this.getBaseUrlAndLoginCredentialsInstitution();
     cy.visit(URL);
     institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
+  }
+
+  getUniqueId() {
+    return v4();
   }
 }
