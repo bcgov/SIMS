@@ -21,9 +21,10 @@
       </tr>
       <tr>
         <td>
-          CSG-P
+          CSGP
           <tooltip-icon
-            >Canada Student Grant with Permanent Disability.</tooltip-icon
+            >Canada Student Grant for Student with Permanent
+            Disability.</tooltip-icon
           >
         </td>
         <td>
@@ -32,8 +33,10 @@
       </tr>
       <tr>
         <td>
-          CSG-D
-          <tooltip-icon>Canada Student Grant with dependant(s).</tooltip-icon>
+          CSGD
+          <tooltip-icon
+            >Canada Student Grant for Students with Dependents.</tooltip-icon
+          >
         </td>
         <td>
           {{ getAwardValue("csgd") }}
@@ -41,9 +44,9 @@
       </tr>
       <tr>
         <td>
-          CSG-F
+          CSGF
           <tooltip-icon
-            >Canada Student Grant for Full time studies.</tooltip-icon
+            >Canada Student Grant for Full-time Studies.</tooltip-icon
           >
         </td>
         <td>
@@ -52,8 +55,10 @@
       </tr>
       <tr>
         <td>
-          CSG-TU
-          <tooltip-icon>Canada Student Grant for Top-up.</tooltip-icon>
+          CSGT
+          <tooltip-icon
+            >Canada Student Grant for Full-time Top-up.</tooltip-icon
+          >
         </td>
         <td>
           {{ getAwardValue("csgt") }}
@@ -62,7 +67,7 @@
       <tr>
         <td>
           BCAG
-          <tooltip-icon>British Colombia Access Grant.</tooltip-icon>
+          <tooltip-icon>B.C. Access Grant.</tooltip-icon>
         </td>
         <td>
           {{ getAwardValue("bcag") }}
@@ -70,10 +75,8 @@
       </tr>
       <tr>
         <td>
-          BCAG-D
-          <tooltip-icon
-            >British Colombia Access Grant with disabilities.</tooltip-icon
-          >
+          BGPD
+          <tooltip-icon>B.C. Permanent Disability Grant.</tooltip-icon>
         </td>
         <td>
           {{ getAwardValue("bcagd") }}
@@ -83,8 +86,7 @@
         <td>
           SBSD
           <tooltip-icon
-            >British Colombia Supplemental Bursary with
-            Disabilities.</tooltip-icon
+            >B.C. Supplemental Bursary with Disabilities.</tooltip-icon
           >
         </td>
         <td>
