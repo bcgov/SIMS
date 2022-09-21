@@ -50,6 +50,7 @@
     <application-progress-bar
       v-if="applicationDetails?.applicationStatus"
       :applicationId="id"
+      @editApplication="editApplication"
     />
   </student-page-container>
   <confirm-edit-application ref="editApplicationModal" />

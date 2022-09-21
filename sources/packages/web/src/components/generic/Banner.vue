@@ -1,5 +1,10 @@
 <template>
-  <v-alert :type="type" variant="outlined" :icon="bannerIcon">
+  <v-alert
+    :type="type"
+    variant="outlined"
+    :icon="bannerIcon"
+    class="sims-banner"
+  >
     <template #title>
       <div class="label-bold-normal">{{ header }}</div>
     </template>

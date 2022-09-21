@@ -22,7 +22,7 @@
       </template>
       <Column
         :field="StudentApplicationFields.ApplicationNumber"
-        sortable="true"
+        :sortable="true"
         header="Application #"
       >
       </Column>
