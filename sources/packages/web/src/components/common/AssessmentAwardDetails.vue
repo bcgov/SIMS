@@ -19,11 +19,9 @@
             identifier="disbursement1"
           />
           <div class="my-3">
-            <status-info-label
-              :data="
-                mapCOEAssessmentProgressStatus(
-                  assessmentAwardData.estimatedAward.disbursement1Status,
-                )
+            <status-info-enrollment
+              :coeStatus="
+                assessmentAwardData.estimatedAward.disbursement1Status
               "
             />
           </div>
@@ -33,7 +31,7 @@
               assessmentAwardData.estimatedAward.disbursement1TuitionRemittance
             "
           >
-            <status-info-label :data="{ status: StatusInfo.Completed }"
+            <status-info-label :status="StatusInfo.Completed"
               >Tuition remittance applied
               <span class="label-bold"
                 >-${{
@@ -98,11 +96,9 @@
             identifier="disbursement2"
           />
           <div class="my-3">
-            <status-info-label
-              :data="
-                mapCOEAssessmentProgressStatus(
-                  assessmentAwardData.estimatedAward.disbursement2Status,
-                )
+            <status-info-enrollment
+              :coeStatus="
+                assessmentAwardData.estimatedAward.disbursement2Status
               "
             />
           </div>
@@ -168,13 +164,14 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
-import { COEStatus, StatusInfoDetails, StatusInfo } from "@/types";
+import { COEStatus, StatusInfo } from "@/types";
 import { useRouter } from "vue-router";
 import { PropType, computed } from "vue";
 import AwardTable from "@/components/aest/students/assessment/AwardTable.vue";
+import StatusInfoEnrollment from "@/components/common/StatusInfoEnrollment.vue";
 
 export default {
-  components: { AwardTable },
+  components: { AwardTable, StatusInfoEnrollment },
   props: {
     assessmentAwardData: {
       type: Object as PropType<AwardDetailsAPIOutDTO>,
@@ -230,30 +227,6 @@ export default {
       });
     };
 
-    const mapCOEAssessmentProgressStatus = (
-      status: COEStatus,
-    ): StatusInfoDetails => {
-      switch (status) {
-        case COEStatus.completed:
-          return {
-            status: StatusInfo.Completed,
-            header: "Enrolment confirmed",
-          };
-        case COEStatus.required:
-          return {
-            status: StatusInfo.Pending,
-            header: "Enrolment not confirmed",
-          };
-        case COEStatus.declined:
-          return {
-            status: StatusInfo.Rejected,
-            header: "Enrolment declined",
-          };
-        default:
-          return { status: StatusInfo.Pending, header: "" };
-      }
-    };
-
     return {
       AESTRoutesConst,
       goToNoticeOfAssessment,
@@ -263,7 +236,6 @@ export default {
       showFirstFinalAward,
       showSecondFinalAward,
       getFinalAwardNotAvailableMessage,
-      mapCOEAssessmentProgressStatus,
       StatusInfo,
     };
   },

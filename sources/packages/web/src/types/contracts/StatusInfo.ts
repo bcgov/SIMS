@@ -3,8 +3,3 @@ export enum StatusInfo {
   Pending = "secondary",
   Rejected = "error",
 }
-
-export interface StatusInfoDetails {
-  status: StatusInfo;
-  header: string;
-}

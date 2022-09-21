@@ -1,27 +1,27 @@
 <template>
-  <v-icon :icon="icon" :color="data.status" class="status-info-icon" />
+  <v-icon :icon="icon" :color="status" class="status-info-icon" />
   <span class="mx-2">
-    <slot>{{ data.header }}</slot>
+    <slot></slot>
   </span>
 </template>
 
 <script lang="ts">
-import { PropType, computed } from "vue";
-import { StatusInfo, StatusInfoDetails } from "@/types";
+import { PropType, computed, defineComponent } from "vue";
+import { StatusInfo } from "@/types";
 
-export default {
+export default defineComponent({
   props: {
-    data: {
-      type: Object as PropType<StatusInfoDetails>,
+    status: {
+      type: Object as PropType<StatusInfo>,
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const icon = computed(() => {
-      if (props.data.status === StatusInfo.Completed) {
+      if (props.status === StatusInfo.Completed) {
         return "fa:fas fa-check-circle";
       }
-      if (props.data.status === StatusInfo.Rejected) {
+      if (props.status === StatusInfo.Rejected) {
         return "fa:fas fa-circle-xmark";
       }
       return "fa:fas fa-clock";
@@ -30,5 +30,5 @@ export default {
       icon,
     };
   },
-};
+});
 </script>
