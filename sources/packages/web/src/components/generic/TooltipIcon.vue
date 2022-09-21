@@ -3,7 +3,9 @@
     <template #activator="{ props }">
       <v-icon
         icon="fa:fas fa-circle-question"
-        class="tooltip-icon mx-2"
+        class="mx-2"
+        color="secondary"
+        size="16"
         v-bind="props"
       />
     </template>

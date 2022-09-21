@@ -26,17 +26,17 @@ export default defineComponent({
         case COEStatus.completed:
           return {
             status: StatusInfo.Completed,
-            header: "Enrollment confirmed",
+            header: "Enrolment confirmed",
           };
         case COEStatus.required:
           return {
             status: StatusInfo.Pending,
-            header: "Enrollment not confirmed",
+            header: "Enrolment not confirmed",
           };
         case COEStatus.declined:
           return {
             status: StatusInfo.Rejected,
-            header: "Enrollment declined",
+            header: "Enrolment declined",
           };
         default:
           return { status: StatusInfo.Pending, header: "" };

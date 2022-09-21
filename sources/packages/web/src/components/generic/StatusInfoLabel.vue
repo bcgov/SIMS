@@ -1,5 +1,5 @@
 <template>
-  <v-icon :icon="icon" :color="status" class="status-info-icon" />
+  <v-icon :icon="icon" :color="status" size="20" />
   <span class="mx-2">
     <slot></slot>
   </span>

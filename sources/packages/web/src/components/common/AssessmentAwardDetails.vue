@@ -19,7 +19,7 @@
             identifier="disbursement1"
           />
           <div class="my-3">
-            <status-info-enrollment
+            <status-info-enrolment
               :coeStatus="
                 assessmentAwardData.estimatedAward.disbursement1Status
               "
@@ -96,7 +96,7 @@
             identifier="disbursement2"
           />
           <div class="my-3">
-            <status-info-enrollment
+            <status-info-enrolment
               :coeStatus="
                 assessmentAwardData.estimatedAward.disbursement2Status
               "
@@ -168,10 +168,10 @@ import { COEStatus, StatusInfo } from "@/types";
 import { useRouter } from "vue-router";
 import { PropType, computed } from "vue";
 import AwardTable from "@/components/aest/students/assessment/AwardTable.vue";
-import StatusInfoEnrollment from "@/components/common/StatusInfoEnrollment.vue";
+import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
 
 export default {
-  components: { AwardTable, StatusInfoEnrollment },
+  components: { AwardTable, StatusInfoEnrolment },
   props: {
     assessmentAwardData: {
       type: Object as PropType<AwardDetailsAPIOutDTO>,
