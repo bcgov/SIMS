@@ -39,7 +39,7 @@ html * {
 
 .content-group {
   color: $app-content-color;
-  border: 1px solid #e8e8e8;
+  border: 1px solid $common-border-color;
   box-sizing: border-box;
   border-radius: 8px;
 }
@@ -292,7 +292,7 @@ html * {
 .tooltip-icon {
   color: $color-muted;
   font-size: 16px !important;
-  font-weight: 900 !important;
+  font-weight: $font-weight-bolder !important;
 }
 
 .content-group-info {
@@ -301,7 +301,7 @@ html * {
 }
 
 .status-info-icon {
-  font-weight: 900 !important;
+  font-weight: $font-weight-bolder !important;
   font-size: 20px !important;
   line-height: 18px !important;
   font-style: normal;

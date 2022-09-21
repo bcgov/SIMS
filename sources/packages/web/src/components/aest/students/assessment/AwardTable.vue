@@ -10,13 +10,13 @@
       <tr>
         <td>Canada Student Loan</td>
         <td>
-          {{ awardDetails[`${identifier}cslf`] ?? NOT_ELIGIBLE }}
+          {{ getAwardValue("cslf") }}
         </td>
       </tr>
       <tr>
         <td>B.C. Student Loan</td>
         <td>
-          {{ awardDetails[`${identifier}bcsl`] ?? NOT_ELIGIBLE }}
+          {{ getAwardValue("bcsl") }}
         </td>
       </tr>
       <tr>
@@ -27,7 +27,7 @@
           >
         </td>
         <td>
-          {{ awardDetails[`${identifier}csgp`] ?? NOT_ELIGIBLE }}
+          {{ getAwardValue("csgp") }}
         </td>
       </tr>
       <tr>
@@ -36,7 +36,7 @@
           <tooltip-icon>Canada Student Grant with dependant(s).</tooltip-icon>
         </td>
         <td>
-          {{ awardDetails[`${identifier}csgd`] ?? NOT_ELIGIBLE }}
+          {{ getAwardValue("csgd") }}
         </td>
       </tr>
       <tr>
@@ -47,7 +47,7 @@
           >
         </td>
         <td>
-          {{ awardDetails[`${identifier}csgf`] ?? NOT_ELIGIBLE }}
+          {{ getAwardValue("csgf") }}
         </td>
       </tr>
       <tr>
@@ -56,7 +56,7 @@
           <tooltip-icon>Canada Student Grant for Top-up.</tooltip-icon>
         </td>
         <td>
-          {{ awardDetails[`${identifier}csgt`] ?? NOT_ELIGIBLE }}
+          {{ getAwardValue("csgt") }}
         </td>
       </tr>
       <tr>
@@ -65,7 +65,7 @@
           <tooltip-icon>British Colombia Access Grant.</tooltip-icon>
         </td>
         <td>
-          {{ awardDetails[`${identifier}bcag`] ?? NOT_ELIGIBLE }}
+          {{ getAwardValue("bcag") }}
         </td>
       </tr>
       <tr>
@@ -76,7 +76,7 @@
           >
         </td>
         <td>
-          {{ awardDetails[`${identifier}bcagd`] ?? NOT_ELIGIBLE }}
+          {{ getAwardValue("bcagd") }}
         </td>
       </tr>
       <tr>
@@ -88,34 +88,38 @@
           >
         </td>
         <td>
-          {{ awardDetails[`${identifier}sbsd`] ?? NOT_ELIGIBLE }}
+          {{ getAwardValue("sbsd") }}
         </td>
       </tr>
     </tbody>
   </v-table>
 </template>
 <script lang="ts">
-import { DynamicAwardDTO } from "@/services/http/dto";
-import { PropType } from "vue";
+import { PropType, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   props: {
     awardDetails: {
-      type: Object as PropType<DynamicAwardDTO>,
+      type: Object as PropType<Record<string, string | number>>,
       required: true,
-      default: {} as DynamicAwardDTO,
+      default: {} as Record<string, string | number>,
     },
     identifier: {
       type: String,
       required: true,
     },
   },
-  setup() {
-    const NOT_ELIGIBLE = "(Not eligible)";
+  setup(props) {
+    const getAwardValue = (awardType: string): string | number => {
+      return (
+        props.awardDetails[`${props.identifier}${awardType}`] ??
+        "(Not eligible)"
+      );
+    };
 
     return {
-      NOT_ELIGIBLE,
+      getAwardValue,
     };
   },
-};
+});
 </script>

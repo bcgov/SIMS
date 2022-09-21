@@ -1,15 +1,18 @@
 <template>
   <div v-if="assessmentAwardData.estimatedAward">
     <!-- Show the first payment/second payment header only if there is second disbursement. -->
-    <div v-if="isSecondDisbursementAvailable" class="font-weight-bold my-3">
+    <h3
+      v-if="isSecondDisbursementAvailable"
+      class="category-header-medium secondary-color my-3"
+    >
       First Payment
-    </div>
+    </h3>
     <v-row>
       <v-col>
         <content-group>
-          <div class="category-header-medium primary-color my-3">
+          <h3 class="category-header-medium primary-color my-3">
             Estimated award
-          </div>
+          </h3>
           <!-- Estimated award table. -->
           <award-table
             :awardDetails="assessmentAwardData.estimatedAward"
@@ -62,9 +65,7 @@
       </v-col>
       <v-col>
         <content-group>
-          <div class="category-header-medium primary-color my-3">
-            Final award
-          </div>
+          <h3 class="category-header-medium primary-color my-3">Final award</h3>
           <!-- Final award table. -->
           <award-table
             :awardDetails="assessmentAwardData.finalAward"
@@ -84,7 +85,7 @@
   </div>
   <!-- Estimated and actual award details of second disbursement. -->
   <div v-if="isSecondDisbursementAvailable">
-    <div class="font-weight-bold my-3">Second Payment</div>
+    <h3 class="category-header-medium secondary-color my-3">Second Payment</h3>
     <v-row>
       <v-col>
         <content-group>
@@ -170,11 +171,10 @@ import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import { COEStatus, StatusInfoDetails, StatusInfo } from "@/types";
 import { useRouter } from "vue-router";
 import { PropType, computed } from "vue";
-import StatusInfoLabel from "@/components/generic/StatusInfoLabel.vue";
 import AwardTable from "@/components/aest/students/assessment/AwardTable.vue";
 
 export default {
-  components: { StatusInfoLabel, AwardTable },
+  components: { AwardTable },
   props: {
     assessmentAwardData: {
       type: Object as PropType<AwardDetailsAPIOutDTO>,

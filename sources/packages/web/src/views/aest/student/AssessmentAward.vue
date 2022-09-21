@@ -35,7 +35,7 @@ import { ref, onMounted } from "vue";
 import { useAssessment } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
-import AssessmentAwardDetails from "@/components/aest/students/assessment/AssessmentAwardDetails.vue";
+import AssessmentAwardDetails from "@/components/common/AssessmentAwardDetails.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
 
 export default {

@@ -59,7 +59,7 @@ export class AssessmentNOAAPIOutDTO {
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   msfaaNumber: string;
-  disbursement: DynamicAwardDTO;
+  disbursement: Record<string, string | number>;
 }
 
 export class AwardDetailsAPIOutDTO {
@@ -73,15 +73,11 @@ export class AwardDetailsAPIOutDTO {
       "Dynamic output of the workflow calculation. " +
       "Contains data that could represent a part-time or a full-time award details. ",
   })
-  estimatedAward: DynamicAwardDTO;
+  estimatedAward: Record<string, string | number>;
   @ApiProperty({
     description:
       "Dynamic output from disbursement receipt for the given disbursement. " +
       "Contains data that could represent a part-time or a full-time award details. ",
   })
-  finalAward: DynamicAwardDTO;
-}
-
-export interface DynamicAwardDTO {
-  [k: string]: string | number;
+  finalAward: Record<string, string | number>;
 }

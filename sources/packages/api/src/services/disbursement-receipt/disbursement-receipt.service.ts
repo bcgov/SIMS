@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, FindManyOptions } from "typeorm";
+import { DataSource } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   DisbursementReceipt,
@@ -137,7 +137,7 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     assessmentId: number,
     studentId?: number,
   ): Promise<DisbursementReceipt[]> {
-    const findCriteria: FindManyOptions<DisbursementReceipt> = {
+    return this.repo.find({
       select: {
         id: true,
         disbursementSchedule: { id: true },
@@ -147,25 +147,14 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
         disbursementReceiptValues: true,
         disbursementSchedule: true,
       },
-    };
-    if (studentId) {
-      findCriteria.where = {
+      where: {
         disbursementSchedule: {
           studentAssessment: {
             id: assessmentId,
-            application: { student: { id: studentId } },
+            application: studentId ? { student: { id: studentId } } : undefined,
           },
         },
-      };
-    } else {
-      findCriteria.where = {
-        disbursementSchedule: {
-          studentAssessment: {
-            id: assessmentId,
-          },
-        },
-      };
-    }
-    return this.repo.find(findCriteria);
+      },
+    });
   }
 }

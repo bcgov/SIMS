@@ -51,10 +51,6 @@ export interface AssessmentNOAAPIOutDTO {
   disbursement: any;
 }
 
-export interface DynamicAwardDTO {
-  [k: string]: string | number;
-}
-
 export interface AwardDetailsAPIOutDTO {
   applicationNumber: string;
   institutionName: string;
@@ -66,10 +62,10 @@ export interface AwardDetailsAPIOutDTO {
    * Dynamic output of the workflow calculation.
    * Contains data that could represent a part-time or a full-time award details.
    */
-  estimatedAward: DynamicAwardDTO;
+  estimatedAward: Record<string, string | number>;
   /**
    * Dynamic output from disbursement receipt for the given disbursement.
    * Contains data that could represent a part-time or a full-time award details.
    */
-  finalAward: DynamicAwardDTO;
+  finalAward: Record<string, string | number>;
 }

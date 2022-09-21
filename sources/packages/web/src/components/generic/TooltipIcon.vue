@@ -14,11 +14,6 @@
 <script lang="ts">
 export default {
   props: {
-    activator: {
-      type: String,
-      required: false,
-      default: "parent",
-    },
     location: {
       type: String,
       required: false,

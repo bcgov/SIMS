@@ -24,7 +24,6 @@ import {
 import {
   AssessmentNOAAPIOutDTO,
   AwardDetailsAPIOutDTO,
-  DynamicAwardDTO,
 } from "./models/assessment.dto";
 import { getDateOnlyFormat, getUserFullName } from "../../utilities";
 
@@ -156,8 +155,8 @@ export class AssessmentControllerService {
    */
   private populateDisbursementAwardValues(
     disbursementSchedules: DisbursementSchedule[],
-    includeDocumentNumber?: boolean,
-  ): DynamicAwardDTO {
+    includeDocumentNumber = false,
+  ): Record<string, string | number> {
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
       const disbursementIdentifier = `disbursement${index + 1}`;
@@ -259,7 +258,7 @@ export class AssessmentControllerService {
     disbursementReceipts: DisbursementReceipt[],
     disbursementScheduleId: number,
     identifier: string,
-  ): DynamicAwardDTO {
+  ): Record<string, string | number> {
     const finalAward = {};
     disbursementReceipts
       .filter(
