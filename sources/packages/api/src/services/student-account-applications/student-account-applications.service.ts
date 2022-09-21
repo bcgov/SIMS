@@ -134,7 +134,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       city: studentProfile.city,
       postalCode: studentProfile.postalCode,
       selectedCountry: studentProfile.selectedCountry,
-      sinConsent: studentProfile.sinConsent,
+      sinConsent: true,
     };
 
     return this.dataSource.transaction(async (entityManager) => {
