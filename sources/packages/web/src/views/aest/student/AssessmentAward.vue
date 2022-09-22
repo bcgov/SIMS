@@ -31,14 +31,14 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { useAssessment } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import AssessmentAwardDetails from "@/components/common/AssessmentAwardDetails.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
 
-export default {
+export default defineComponent({
   components: { AssessmentAwardDetails, DetailHeader },
   props: {
     studentId: {
@@ -54,7 +54,7 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const assessmentAwardData = ref<AwardDetailsAPIOutDTO>();
     const { mapAssessmentDetailHeader } = useAssessment();
@@ -86,5 +86,5 @@ export default {
       headerMap,
     };
   },
-};
+});
 </script>
