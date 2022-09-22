@@ -54,7 +54,6 @@ export default {
         dateOfBirth: studentInfo.birthDateFormatted,
         mode: StudentProfileFormModes.StudentEdit,
         identityProvider: AuthService.shared.userToken?.IDP,
-        sinConsent: studentInfo.sinConsent,
       };
       initialData.value = data;
     };
