@@ -8,7 +8,6 @@ import { AddressInfo } from "../../database/entities";
 export interface StudentInfo extends AddressInfo {
   phone: string;
   sinNumber: string;
-  sinConsent: boolean;
 }
 
 /**

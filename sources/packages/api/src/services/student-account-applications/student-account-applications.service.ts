@@ -134,6 +134,10 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       city: studentProfile.city,
       postalCode: studentProfile.postalCode,
       selectedCountry: studentProfile.selectedCountry,
+      // The Ministry approval will happen based on a student profile submitted form
+      // that contains the SIN consent. If the consent is not provided by the student
+      // the Ministry approval would never happen, hence we are considering at this
+      // moment that the student provided already the SIN consent.
       sinConsent: true,
     };
 

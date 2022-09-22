@@ -113,7 +113,6 @@ export default {
       studentProfileFormModel.identityProvider = AppIDPType.BCeID;
       studentProfileFormModel.mode =
         StudentProfileFormModes.AESTAccountApproval;
-      studentProfileFormModel.sinConsent = true;
       initialData.value = studentProfileFormModel;
     };
 

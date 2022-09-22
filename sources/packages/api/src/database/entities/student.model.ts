@@ -78,7 +78,7 @@ export class Student extends RecordDataModel {
   })
   sinValidation: SINValidation;
   /**
-   * Mandatory sin consent required by user when creating a new profile.
+   * Indicates consent of the student to terms and conditions of the studentAid BC declaration of SIN.
    */
   @Column({
     name: "sin_consent",

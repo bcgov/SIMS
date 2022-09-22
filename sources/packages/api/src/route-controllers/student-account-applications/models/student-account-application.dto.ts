@@ -39,6 +39,4 @@ export class StudentAccountApplicationApprovalAPIInDTO extends CreateStudentAPII
   dateOfBirth: string;
   @Allow()
   gender: string;
-  @Allow()
-  sinConsent: boolean;
 }
