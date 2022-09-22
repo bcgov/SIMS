@@ -21,6 +21,7 @@ describe("Test student model", () => {
     const sfasIndividualService = new SFASIndividualService(dataSource);
     const controller = new StudentService(dataSource, sfasIndividualService);
     const sub = new Student();
+    sub.sinConsent = true;
     sub.birthDate = faker.date.past(18);
     sub.gender = "X";
     sub.contactInfo = {
