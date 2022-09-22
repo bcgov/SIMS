@@ -77,7 +77,9 @@ export class Student extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   sinValidation: SINValidation;
-
+  /**
+   * Mandatory sin consent required by user when creating a new profile.
+   */
   @Column({
     name: "sin_consent",
   })
