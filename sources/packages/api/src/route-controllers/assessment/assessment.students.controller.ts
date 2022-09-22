@@ -3,6 +3,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   UnprocessableEntityException,
 } from "@nestjs/common";
@@ -14,7 +15,10 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
-import { AssessmentNOAAPIOutDTO } from "./models/assessment.dto";
+import {
+  AssessmentNOAAPIOutDTO,
+  AwardDetailsAPIOutDTO,
+} from "./models/assessment.dto";
 import {
   ApiNotFoundResponse,
   ApiTags,
@@ -93,5 +97,22 @@ export class AssessmentStudentsController extends BaseController {
           throw error;
       }
     }
+  }
+
+  /**
+   * Get estimated and actual(if present) award details of an assessment.
+   * @param assessmentId assessment to which awards details belong to.
+   * @returns estimated and actual award details.
+   */
+  @Get(":assessmentId/award")
+  @ApiNotFoundResponse({
+    description: "Assessment not found.",
+  })
+  async getAssessmentAwardDetails(
+    @Param("assessmentId", ParseIntPipe) assessmentId: number,
+  ): Promise<AwardDetailsAPIOutDTO> {
+    return this.assessmentControllerService.getAssessmentAwardDetails(
+      assessmentId,
+    );
   }
 }

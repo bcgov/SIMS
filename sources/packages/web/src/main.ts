@@ -18,6 +18,8 @@ import Column from "primevue/column";
 import { AppConfigService } from "./services/AppConfigService";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
+import ContentGroupInfo from "@/components/generic/ContentGroupInfo.vue";
+import TooltipIcon from "@/components/generic/TooltipIcon.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import StudentPageContainer from "@/components/layouts/student/StudentPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
@@ -27,6 +29,7 @@ import ToggleContent from "@/components/generic/ToggleContent.vue";
 import FormioContainer from "@/components/generic/FormioContainer.vue";
 import FooterButtons from "@/components/generic/FooterButtons.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
+import StatusInfoLabel from "@/components/generic/StatusInfoLabel.vue";
 
 AppConfigService.shared.init().then(() => {
   createApp(App)
@@ -38,6 +41,9 @@ AppConfigService.shared.init().then(() => {
     .component("Column", Column)
     .component("BodyHeader", BodyHeader)
     .component("ContentGroup", ContentGroup)
+    .component("ContentGroupInfo", ContentGroupInfo)
+    .component("TooltipIcon", TooltipIcon)
+    .component("StatusInfoLabel", StatusInfoLabel)
     .component("FullPageContainer", FullPageContainer)
     .component("StudentPageContainer", StudentPageContainer)
     .component("HeaderNavigator", HeaderNavigator)

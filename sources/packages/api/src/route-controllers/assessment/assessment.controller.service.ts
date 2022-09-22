@@ -3,6 +3,9 @@ import {
   StudentAppealRequest,
   SupportingUser,
   SupportingUserType,
+  DisbursementSchedule,
+  COEStatus,
+  DisbursementReceipt,
 } from "../../database/entities";
 import {
   StudentAppealRequestAPIOutDTO,
@@ -14,13 +17,22 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { StudentAssessmentService } from "../../services";
-import { AssessmentNOAAPIOutDTO } from "./models/assessment.dto";
+import {
+  StudentAssessmentService,
+  DisbursementReceiptService,
+} from "../../services";
+import {
+  AssessmentNOAAPIOutDTO,
+  AwardDetailsAPIOutDTO,
+} from "./models/assessment.dto";
 import { getDateOnlyFormat, getUserFullName } from "../../utilities";
 
 @Injectable()
 export class AssessmentControllerService {
-  constructor(private readonly assessmentService: StudentAssessmentService) {}
+  constructor(
+    private readonly assessmentService: StudentAssessmentService,
+    private readonly disbursementReceiptService: DisbursementReceiptService,
+  ) {}
 
   /**
    * Converts an array with supporting users to an object where every user
@@ -116,19 +128,6 @@ export class AssessmentControllerService {
       );
     }
 
-    //Disbursement data is populated with dynamic key in a defined pattern to be compatible with form table.
-    const disbursementDetails = {};
-    assessment.disbursementSchedules.forEach((schedule, index) => {
-      const disbursementIdentifier = `disbursement${index + 1}`;
-      disbursementDetails[`${disbursementIdentifier}Date`] = getDateOnlyFormat(
-        schedule.disbursementDate,
-      );
-      schedule.disbursementValues.forEach((disbursement) => {
-        const disbursementValueKey = `${disbursementIdentifier}${disbursement.valueCode.toLowerCase()}`;
-        disbursementDetails[disbursementValueKey] = disbursement.valueAmount;
-      });
-    });
-
     return {
       assessment: assessment.assessmentData,
       applicationNumber: assessment.application.applicationNumber,
@@ -141,7 +140,137 @@ export class AssessmentControllerService {
       ),
       offeringStudyEndDate: getDateOnlyFormat(assessment.offering.studyEndDate),
       msfaaNumber: assessment.application.msfaaNumber.msfaaNumber,
-      disbursement: disbursementDetails,
+      disbursement: this.populateDisbursementAwardValues(
+        assessment.disbursementSchedules,
+      ),
     };
+  }
+
+  /**
+   * Disbursement data is populated with dynamic key in a defined pattern to be compatible with form table.
+   * @param disbursementSchedules disbursement schedule details.
+   * @param includeDocumentNumber when true document number is mapped
+   * to disbursement dynamic data.
+   * @returns disbursement dynamic award data.
+   */
+  private populateDisbursementAwardValues(
+    disbursementSchedules: DisbursementSchedule[],
+    includeDocumentNumber = false,
+  ): Record<string, string | number> {
+    const disbursementDetails = {};
+    disbursementSchedules.forEach((schedule, index) => {
+      const disbursementIdentifier = `disbursement${index + 1}`;
+      disbursementDetails[`${disbursementIdentifier}Date`] = getDateOnlyFormat(
+        schedule.disbursementDate,
+      );
+      disbursementDetails[`${disbursementIdentifier}Status`] =
+        schedule.coeStatus;
+      disbursementDetails[`${disbursementIdentifier}TuitionRemittance`] =
+        schedule.tuitionRemittanceRequestedAmount;
+
+      if (includeDocumentNumber) {
+        disbursementDetails[`${disbursementIdentifier}DocumentNumber`] =
+          schedule.documentNumber;
+      }
+      schedule.disbursementValues.forEach((disbursement) => {
+        const disbursementValueKey = `${disbursementIdentifier}${disbursement.valueCode.toLowerCase()}`;
+        disbursementDetails[disbursementValueKey] = disbursement.valueAmount;
+      });
+    });
+    return disbursementDetails;
+  }
+
+  /**
+   * Get estimated and actual(if present) award details of an assessment.
+   * @param assessmentId assessment to which awards details belong to.
+   * @param includeDocumentNumber when true document number is mapped
+   * to disbursement dynamic data.
+   * @param studentId studentId student to whom the award details belong to.
+   * @returns estimated and actual award details.
+   */
+  async getAssessmentAwardDetails(
+    assessmentId: number,
+    includeDocumentNumber = false,
+    studentId?: number,
+  ): Promise<AwardDetailsAPIOutDTO> {
+    const assessment = await this.assessmentService.getAssessmentForNOA(
+      assessmentId,
+      studentId,
+    );
+
+    if (!assessment) {
+      throw new NotFoundException("Assessment not found.");
+    }
+    const estimatedAward = this.populateDisbursementAwardValues(
+      assessment.disbursementSchedules,
+      includeDocumentNumber,
+    );
+    const [firstDisbursement, secondDisbursement] =
+      assessment.disbursementSchedules;
+    let finalAward = {};
+    // Populate the final awards in a dynamic way like disbursement schedule(estimated) awards.
+    if (firstDisbursement.coeStatus === COEStatus.completed) {
+      const disbursementReceipts =
+        await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
+          assessmentId,
+          studentId,
+        );
+      if (disbursementReceipts.length) {
+        finalAward = this.populateDisbursementReceiptAwardValues(
+          disbursementReceipts,
+          firstDisbursement.id,
+          "disbursementReceipt1",
+        );
+        if (secondDisbursement) {
+          const secondDisbursementReceiptAwards =
+            this.populateDisbursementReceiptAwardValues(
+              disbursementReceipts,
+              secondDisbursement.id,
+              "disbursementReceipt2",
+            );
+          finalAward = { ...finalAward, ...secondDisbursementReceiptAwards };
+        }
+      }
+    }
+    return {
+      applicationNumber: assessment.application.applicationNumber,
+      institutionName:
+        assessment.offering.educationProgram.institution.operatingName,
+      offeringIntensity: assessment.offering.offeringIntensity,
+      offeringStudyStartDate: getDateOnlyFormat(
+        assessment.offering.studyStartDate,
+      ),
+      offeringStudyEndDate: getDateOnlyFormat(assessment.offering.studyEndDate),
+      estimatedAward,
+      finalAward,
+    };
+  }
+
+  /**
+   * Populate the final awards in a dynamic way like disbursement schedule(estimated) awards.
+   * @param disbursementReceipts disbursement receipt details.
+   * @param disbursementScheduleId disbursement schedule id of the disbursement receipt(s).
+   * @param identifier identifier which is used to create dynamic data by appending grant code
+   * to it.
+   * @returns dynamic award data of disbursement receipts of a given disbursement.
+   */
+  private populateDisbursementReceiptAwardValues(
+    disbursementReceipts: DisbursementReceipt[],
+    disbursementScheduleId: number,
+    identifier: string,
+  ): Record<string, string | number> {
+    const finalAward = {};
+    disbursementReceipts
+      .filter(
+        (receipt) => receipt.disbursementSchedule.id === disbursementScheduleId,
+      )
+      .forEach((receipt) => {
+        finalAward[`${identifier}Id`] = receipt.id;
+        receipt.disbursementReceiptValues.forEach((receiptValue) => {
+          const disbursementValueKey = `${identifier}${receiptValue.grantType.toLowerCase()}`;
+          finalAward[disbursementValueKey] = receiptValue.grantAmount;
+        });
+      });
+    return finalAward;
   }
 }

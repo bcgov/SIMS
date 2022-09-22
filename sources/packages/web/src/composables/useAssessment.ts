@@ -3,6 +3,7 @@ import {
   ApplicationExceptionStatus,
   StudentAppealStatus,
   StudentAssessmentStatus,
+  AssessmentDetailHeader,
 } from "@/types";
 
 export function useAssessment() {
@@ -39,5 +40,20 @@ export function useAssessment() {
     }
   };
 
-  return { mapRequestAssessmentChipStatus, mapAssessmentHistoryChipStatus };
+  const mapAssessmentDetailHeader = (
+    assessment: AssessmentDetailHeader,
+  ): Record<string, string> => {
+    return {
+      "Application #": assessment.applicationNumber,
+      Institution: assessment.institutionName,
+      "Study dates": `${assessment.offeringStudyStartDate} - ${assessment.offeringStudyEndDate}`,
+      Type: assessment.offeringIntensity,
+    };
+  };
+
+  return {
+    mapRequestAssessmentChipStatus,
+    mapAssessmentHistoryChipStatus,
+    mapAssessmentDetailHeader,
+  };
 }

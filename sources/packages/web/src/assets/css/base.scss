@@ -38,7 +38,8 @@ html * {
 }
 
 .content-group {
-  border: 1px solid #e8e8e8;
+  color: $app-content-color;
+  border: 1px solid $common-border-color;
   box-sizing: border-box;
   border-radius: 8px;
 }
@@ -279,4 +280,13 @@ html * {
 // Min height for modal header.
 .modal-height .v-card-title {
   min-height: 50px;
+}
+
+.v-table.bordered {
+  border: 1px solid $common-border-color;
+}
+
+.content-group-info {
+  background-color: $color-background;
+  border: 2px solid $common-border-color !important;
 }
