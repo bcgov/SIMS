@@ -17,7 +17,9 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import { ApplicationSummaryAPIOutDTO, PaginatedResultsAPIOutDTO } from "./dto";
 
 export class ApplicationApi extends HttpBaseClient {
-  async getApplicationData(applicationId: number): Promise<any> {
+  async getApplicationData(
+    applicationId: number,
+  ): Promise<GetApplicationDataDto> {
     try {
       const response = await this.apiClient.get(
         this.addClientRoot(`application/${applicationId}`),
@@ -120,6 +122,7 @@ export class ApplicationApi extends HttpBaseClient {
    * @param applicationId
    * @returns
    */
+  // todo: Already have endpoint getApplicationData , in this same file.
   async getApplicationDetails(
     applicationId: number,
   ): Promise<GetApplicationBaseDTO> {

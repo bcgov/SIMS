@@ -37,11 +37,11 @@ export default defineComponent({
   props: {
     label: {
       type: String,
-      required: true,
+      required: false,
     },
     content: {
       type: String,
-      required: true,
+      required: false,
     },
     icon: {
       type: String,
@@ -49,12 +49,12 @@ export default defineComponent({
     },
     backgroundColor: {
       type: String,
-      required: true,
+      required: false,
       default: "white",
     },
     iconColor: {
       type: String,
-      required: true,
+      required: false,
       default: "default",
     },
   },

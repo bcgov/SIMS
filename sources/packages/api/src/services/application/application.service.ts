@@ -1461,4 +1461,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .setParameter("isApplicationArchived", true)
       .execute();
   }
+
+  /**
+   * Get full details of an application by application id.
+   * @param applicationId application id.
+   * @returns application full details.
+   */
+  // todo: ann query
+  async fullApplicationDetails(applicationId: number): Promise<Application> {
+    const application = this.repo.findOneOrFail({
+      select: {
+        id: true,
+      },
+      where: {
+        id: applicationId,
+      },
+    });
+    return application;
+  }
 }

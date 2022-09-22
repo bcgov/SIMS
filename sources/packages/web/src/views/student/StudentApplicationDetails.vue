@@ -38,6 +38,10 @@
           </v-menu>
         </template>
       </header-navigator>
+      <detail-header
+        :headerMap="headerMap"
+        v-if="applicationDetails.applicationStatus !== ApplicationStatus.draft"
+      />
     </template>
     <!-- todo: ann change the modal -->
     <CancelApplication
@@ -48,7 +52,6 @@
     />
     <!-- todo: ann review if -->
     <application-progress-bar
-      v-if="applicationDetails?.applicationStatus"
       :applicationId="id"
       @editApplication="editApplication"
     />
@@ -57,21 +60,28 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref, watch, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
-import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
+import {
+  useFormatters,
+  ModalDialog,
+  useSnackBar,
+  useApplication,
+} from "@/composables";
 import { GetApplicationDataDto, ApplicationStatus, MenuType } from "@/types";
 import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
+import DetailHeader from "@/components/generic/DetailHeader.vue";
 
 export default {
   components: {
     CancelApplication,
     ApplicationProgressBar,
     ConfirmEditApplication,
+    DetailHeader,
   },
   props: {
     id: {
@@ -81,13 +91,15 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const items = ref([] as MenuType[]);
+    const items = ref<MenuType[]>([]);
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
-    // todo: ann check ifts really needed
+    // todo: ann check if ts really needed
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const snackBar = useSnackBar();
+    const { mapApplicationDetailHeader } = useApplication();
+    const headerMap = ref<Record<string, string>>({});
 
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
@@ -195,14 +207,14 @@ export default {
     watch(
       () => props.id,
       async (currValue: number) => {
-        //update the list
+        // Update the list.
         await getApplicationDetails(currValue);
+        headerMap.value = mapApplicationDetailHeader(applicationDetails.value);
+      },
+      {
+        immediate: true,
       },
     );
-
-    onMounted(async () => {
-      await getApplicationDetails(props.id);
-    });
 
     return {
       items,
@@ -217,6 +229,7 @@ export default {
       editApplicationModal,
       editApplication,
       viewApplication,
+      headerMap,
     };
   },
 };

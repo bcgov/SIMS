@@ -1,5 +1,9 @@
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { ApplicationStatus } from "@/types";
+import {
+  ApplicationDetailHeader,
+  ApplicationStatus,
+  OfferingIntensity,
+} from "@/types";
 
 export function useApplication() {
   const mapApplicationChipStatus = (
@@ -22,5 +26,19 @@ export function useApplication() {
     }
   };
 
-  return { mapApplicationChipStatus };
+  const mapApplicationDetailHeader = (
+    application: Required<ApplicationDetailHeader>,
+  ): Record<string, OfferingIntensity | string> => {
+    return {
+      "Application #": application.applicationNumber,
+      Institution: application.applicationInstitutionName,
+      "Study dates":
+        application.applicationStartDate && application.applicationEndDate
+          ? `${application.applicationStartDate} - ${application.applicationEndDate}`
+          : "-",
+      Type: application.applicationOfferingIntensity,
+    };
+  };
+
+  return { mapApplicationChipStatus, mapApplicationDetailHeader };
 }

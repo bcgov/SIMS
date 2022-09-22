@@ -10,6 +10,7 @@ import {
   Patch,
   UnprocessableEntityException,
   Query,
+  ParseIntPipe,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -447,5 +448,29 @@ export class ApplicationStudentsController extends BaseController {
       id: application.id,
       applicationNumber: application.applicationNumber,
     };
+  }
+  
+  /**
+   * Get full details of an application by application id.
+   * @param applicationId application id.
+   * @returns application full details.
+   */
+  @Get(":id/full-details")
+  @ApiNotFoundResponse({
+    description: "Application id not found.",
+  })
+  async getApplicationFullDetails(
+    @Param("id", ParseIntPipe) applicationId: number,
+  ): Promise<any> {
+    const application =
+      await this.applicationService.getApplicationToRequestAppeal(
+        applicationId,
+      );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+    return application;
   }
 }
