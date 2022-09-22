@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip :location="location">
+  <v-tooltip>
     <template #activator="{ props }">
       <v-icon
         icon="fa:fas fa-circle-question"
@@ -12,15 +12,3 @@
     <slot></slot>
   </v-tooltip>
 </template>
-
-<script lang="ts">
-export default {
-  props: {
-    location: {
-      type: String,
-      required: false,
-      default: "right",
-    },
-  },
-};
-</script>
