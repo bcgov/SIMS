@@ -165,12 +165,11 @@
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import { COEStatus, StatusInfo } from "@/types";
-import { useRouter } from "vue-router";
-import { PropType, computed } from "vue";
+import { PropType, computed, defineComponent } from "vue";
 import AwardTable from "@/components/aest/students/assessment/AwardTable.vue";
 import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
 
-export default {
+export default defineComponent({
   components: { AwardTable, StatusInfoEnrolment },
   props: {
     assessmentAwardData: {
@@ -179,8 +178,7 @@ export default {
       default: {} as AwardDetailsAPIOutDTO,
     },
   },
-  setup(props: any) {
-    const router = useRouter();
+  setup(props) {
     const isFirstDisbursementCompleted = computed<boolean>(
       () =>
         props.assessmentAwardData.estimatedAward?.disbursement1Status ===
@@ -196,14 +194,18 @@ export default {
     );
     const showFirstFinalAward = computed<boolean>(
       () =>
-        isFirstDisbursementCompleted.value &&
-        props.assessmentAwardData.finalAward.disbursementReceipt1Id,
+        !!(
+          isFirstDisbursementCompleted.value &&
+          props.assessmentAwardData.finalAward.disbursementReceipt1Id
+        ),
     );
 
     const showSecondFinalAward = computed<boolean>(
       () =>
-        isSecondDisbursementCompleted.value &&
-        props.assessmentAwardData.finalAward.disbursementReceipt2Id,
+        !!(
+          isSecondDisbursementCompleted.value &&
+          props.assessmentAwardData.finalAward.disbursementReceipt2Id
+        ),
     );
 
     const getFinalAwardNotAvailableMessage = (coeStatus: COEStatus) => {
@@ -216,20 +218,8 @@ export default {
       return "The final award is no longer applicable due to a change. Any scheduled disbursements will be cancelled.";
     };
 
-    const goToNoticeOfAssessment = () => {
-      return router.push({
-        name: AESTRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
-        params: {
-          studentId: props.studentId,
-          applicationId: props.applicationId,
-          assessmentId: props.assessmentId,
-        },
-      });
-    };
-
     return {
       AESTRoutesConst,
-      goToNoticeOfAssessment,
       isSecondDisbursementAvailable,
       isSecondDisbursementCompleted,
       isFirstDisbursementCompleted,
@@ -239,5 +229,5 @@ export default {
       StatusInfo,
     };
   },
-};
+});
 </script>
