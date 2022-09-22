@@ -41,7 +41,7 @@
               >
               <tooltip-icon
                 >Tuition remittance is when your institution requests money from
-                your award to pay for upcoming school fees.</tooltip-icon
+                your award to pay for upcoming school fees</tooltip-icon
               >
             </status-info-label>
           </div>
@@ -118,7 +118,7 @@
               >
               <tooltip-icon
                 >Tuition remittance is when your institution requests money from
-                your award to pay for upcoming school fees.</tooltip-icon
+                your award to pay for upcoming school fees</tooltip-icon
               >
             </status-info-label>
           </div>

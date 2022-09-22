@@ -10,9 +10,7 @@
       <tr>
         <td>
           CSLF
-          <tooltip-icon
-            >Canada Student Loan for Full-time Studies.</tooltip-icon
-          >
+          <tooltip-icon>Canada Student Loan for Full-time Studies</tooltip-icon>
         </td>
         <td>
           {{ getAwardValue("cslf") }}
@@ -21,7 +19,7 @@
       <tr>
         <td>
           BCSL
-          <tooltip-icon>B.C. Student Loan.</tooltip-icon>
+          <tooltip-icon>B.C. Student Loan</tooltip-icon>
         </td>
         <td>
           {{ getAwardValue("bcsl") }}
@@ -30,9 +28,7 @@
       <tr>
         <td>
           CSLP
-          <tooltip-icon
-            >Canada Student Loan for Part-time Studies.</tooltip-icon
-          >
+          <tooltip-icon>Canada Student Loan for Part-time Studies</tooltip-icon>
         </td>
         <td>
           {{ getAwardValue("cslp") }}
@@ -43,7 +39,7 @@
           CSGP
           <tooltip-icon
             >Canada Student Grant for Student with Permanent
-            Disability.</tooltip-icon
+            Disability</tooltip-icon
           >
         </td>
         <td>
@@ -54,7 +50,7 @@
         <td>
           CSGD
           <tooltip-icon
-            >Canada Student Grant for Students with Dependents.</tooltip-icon
+            >Canada Student Grant for Students with Dependents</tooltip-icon
           >
         </td>
         <td>
@@ -65,7 +61,7 @@
         <td>
           CSGF
           <tooltip-icon
-            >Canada Student Grant for Full-time Studies.</tooltip-icon
+            >Canada Student Grant for Full-time Studies</tooltip-icon
           >
         </td>
         <td>
@@ -75,9 +71,7 @@
       <tr>
         <td>
           CSGT
-          <tooltip-icon
-            >Canada Student Grant for Full-time Top-up.</tooltip-icon
-          >
+          <tooltip-icon>Canada Student Grant for Full-time Top-up</tooltip-icon>
         </td>
         <td>
           {{ getAwardValue("csgt") }}
@@ -87,7 +81,7 @@
         <td>
           CSPT
           <tooltip-icon
-            >Canada Student Grant for Part-time Studies.</tooltip-icon
+            >Canada Student Grant for Part-time Studies</tooltip-icon
           >
         </td>
         <td>
@@ -97,7 +91,7 @@
       <tr>
         <td>
           BCAG
-          <tooltip-icon>B.C. Access Grant.</tooltip-icon>
+          <tooltip-icon>B.C. Access Grant</tooltip-icon>
         </td>
         <td>
           {{ getAwardValue("bcag") }}
@@ -106,7 +100,7 @@
       <tr>
         <td>
           BGPD
-          <tooltip-icon>B.C. Permanent Disability Grant.</tooltip-icon>
+          <tooltip-icon>B.C. Permanent Disability Grant</tooltip-icon>
         </td>
         <td>
           {{ getAwardValue("bcagd") }}
@@ -116,7 +110,7 @@
         <td>
           SBSD
           <tooltip-icon
-            >B.C. Supplemental Bursary with Disabilities.</tooltip-icon
+            >B.C. Supplemental Bursary with Disabilities</tooltip-icon
           >
         </td>
         <td>
