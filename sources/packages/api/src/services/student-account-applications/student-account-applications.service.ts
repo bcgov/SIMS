@@ -138,7 +138,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       // that contains the SIN consent. If the consent is not provided by the student
       // the Ministry approval would never happen, hence we are considering at this
       // moment that the student provided already the SIN consent.
-      sinConsent: true,
+      sinConsent: studentProfile.sinConsent,
     };
 
     return this.dataSource.transaction(async (entityManager) => {

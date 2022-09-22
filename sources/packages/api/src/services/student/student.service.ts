@@ -32,6 +32,7 @@ import { StudentUser } from "../../database/entities/student-user.model";
 import {
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
+  STUDENT_SIN_CONSENT_NOT_CHECKED,
 } from "../../constants";
 
 @Injectable()
@@ -134,6 +135,12 @@ export class StudentService extends RecordDataModelService<Student> {
       studentSIN,
       userInfo,
     );
+    if (!studentInfo.sinConsent) {
+      throw new CustomNamedError(
+        "Student SIN consent not checked.",
+        STUDENT_SIN_CONSENT_NOT_CHECKED,
+      );
+    }
     const student = existingStudent ?? new Student();
 
     // Checks if a new user must be created or only updated.
@@ -164,7 +171,7 @@ export class StudentService extends RecordDataModelService<Student> {
       phone: studentInfo.phone,
     };
     student.user = user;
-    student.sinConsent = true;
+    student.sinConsent = studentInfo.sinConsent;
     try {
       // Get PD status from SFAS integration data.
       student.studentPDVerified = await this.sfasIndividualService.getPDStatus(
