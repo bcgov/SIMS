@@ -1,3 +1,19 @@
+export enum Provinces {
+  Alberta = "AB",
+  BritishColumbia = "BC",
+  Manitoba = "MB",
+  NewBrunswick = "NB",
+  NewFoundlandAndLabrador = "NL",
+  NovaScotia = "NS",
+  Ontario = "ON",
+  PrinceEdwardIsland = "PE",
+  Quebec = "QC",
+  Saskatchewan = "SK",
+  Yukon = "YT",
+  NorthernTerritories = "NT",
+  Nunavut = "NU",
+}
+
 export default class ManageLocationObject {
   manageLocationButton() {
     return cy.get(".v-list > :nth-child(2)");
@@ -43,7 +59,7 @@ export default class ManageLocationObject {
     return cy.contains("Location name is required");
   }
 
-  addressFirst() {
+  addressLine1() {
     return cy.get("[data-cy='addressLine1']");
   }
 
@@ -51,7 +67,7 @@ export default class ManageLocationObject {
     return cy.contains("Address 1 is required");
   }
 
-  addressSecond() {
+  addressLine2() {
     return cy.get("[data-cy='addressLine2']");
   }
 
@@ -63,8 +79,12 @@ export default class ManageLocationObject {
     return cy.contains("City is required");
   }
 
-  postalCode() {
+  canadaPostalCode() {
     return cy.get("[data-cy='canadaPostalCode']");
+  }
+
+  otherPostalCode() {
+    return cy.get("[data-cy='otherPostalCode']");
   }
 
   postalErrorMessage() {
@@ -87,6 +107,30 @@ export default class ManageLocationObject {
     return cy.contains("Country is required");
   }
 
+  countryDropDownMenu() {
+    return cy.get("[data-cy='selectedCountry']").parent();
+  }
+
+  countryCanadaFromDropDownMenu() {
+    return cy.get('div[data-value="Canada"]');
+  }
+
+  countryOtherFromDropDownMenu() {
+    return cy.get('div[data-value="other"]');
+  }
+
+  otherCountryInputText() {
+    return cy.get("[data-cy='otherCountry']");
+  }
+
+  provinceDropDownMenu() {
+    return cy.get("[data-cy='provinceState']").parent();
+  }
+
+  getProvinceFromDropdown(province: Provinces) {
+    return cy.get(`div[data-value="${province}"]`);
+  }
+
   firstNameInputText() {
     return cy.get("[data-cy='primaryContactFirstName']");
   }
@@ -99,7 +143,7 @@ export default class ManageLocationObject {
     return cy.get("First name is required");
   }
 
-  lastNameINputText() {
+  lastNameInputText() {
     return cy.get("[data-cy='primaryContactLastName']");
   }
 
@@ -121,5 +165,57 @@ export default class ManageLocationObject {
 
   phoneNumberErrorMessage() {
     return cy.contains("Phone Number is required");
+  }
+
+  locationNameText() {
+    return cy.contains("Location name");
+  }
+
+  institutionCodeText() {
+    return cy.contains("Institution code");
+  }
+
+  address1Text() {
+    return cy.contains("Address 1");
+  }
+
+  address2Text() {
+    return cy.contains("Address 2");
+  }
+
+  countryText() {
+    return cy.contains("Country");
+  }
+
+  provinceText() {
+    return cy.contains("Province");
+  }
+
+  cityText() {
+    return cy.contains("City");
+  }
+
+  postalCodeText() {
+    return cy.contains("Postal/ZIP code");
+  }
+
+  primaryContactText() {
+    return cy.contains("Primary contact");
+  }
+
+  firstNameText() {
+    return cy.contains("First name");
+  }
+
+  lastNameText() {
+    return cy.contains("Last name");
+  }
+
+  emailText() {
+    return cy.contains("Email");
+  }
+
+  phoneNumberText() {
+    return cy.contains("Phone number");
   }
 }

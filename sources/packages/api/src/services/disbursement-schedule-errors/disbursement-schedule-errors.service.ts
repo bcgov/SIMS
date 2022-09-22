@@ -5,6 +5,7 @@ import {
   DisbursementFeedbackErrors,
   DisbursementSchedule,
 } from "../../database/entities";
+import { DatabaseConstraintNames } from "../../database/error-handler";
 
 /**
  * Service layer for Disbursement Schedule Errors
@@ -19,7 +20,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
   /**
    * Save Error codes from the E-Cert feedback file.
    * @param disbursementSchedule disbursementSchedule.
-   * @param errorCode Error Code to be saved.
+   * @param errorCodes Error Code to be saved.
    * @param dateReceived Date Received.
    * @returns Created E-Cert Error record.
    */
@@ -42,7 +43,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
       .into(DisbursementFeedbackErrors)
       .values(errorCodesObject)
       .onConflict(
-        "ON CONSTRAINT disbursement_schedule_id_error_code_unique DO NOTHING",
+        `ON CONSTRAINT ${DatabaseConstraintNames.DisbursementScheduleIDErrorCodeUnique} DO NOTHING`,
       )
       .execute();
   }

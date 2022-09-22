@@ -11,13 +11,13 @@
     >
       <template #actions>
         <v-text-field
-          class="v-text-field-search-width"
           density="compact"
           label="Search name or application #"
           variant="outlined"
           v-model="searchCriteria"
           @keyup.enter="searchAppeals"
           prepend-inner-icon="mdi-magnify"
+          hide-details
         >
         </v-text-field>
       </template>

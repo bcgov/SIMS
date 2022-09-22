@@ -7,7 +7,7 @@ import {
 import {
   OFFERING_CREATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CRITICAL_ERROR,
-  OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+  OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR,
 } from "../../constants";
 import {
   OfferingCSVModel,
@@ -20,11 +20,11 @@ import {
   OfferingTypes,
 } from "../../database/entities";
 import {
-  CreateValidatedOfferingResult,
   EducationProgramOfferingService,
   EducationProgramService,
   OfferingValidationResult,
   OfferingValidationModel,
+  CreateFromValidatedOfferingError,
 } from "../../services";
 import {
   getISODateOnlyString,
@@ -194,7 +194,7 @@ export class EducationProgramOfferingControllerService {
       throw new BadRequestException(
         new ApiProcessError(
           "One or more CSV data fields received are not in the correct format.",
-          OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+          OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR,
           validationResults,
         ),
       );
@@ -250,45 +250,33 @@ export class EducationProgramOfferingControllerService {
   }
 
   /**
-   * Verify if all offerings were successfully inserted and throw
-   * an UnprocessableEntityException in case of some failure.
-   * @param creationResults insert results from all the offerings.
+   * Converts the service error into the HTTP bulk upload error.
+   * @param error error to generate the HTTP error.
    * @param csvModels reference CSV models to provide extra context in case
    * an error must be generated.
    */
-  assertOfferingsCreationsAreAllSuccessful(
-    creationResults: CreateValidatedOfferingResult[],
+  throwFromCreationError(
+    error: CreateFromValidatedOfferingError,
     csvModels: OfferingCSVModel[],
   ) {
-    const creationErrors = creationResults.filter(
-      (creationResult) => !creationResult.success,
+    const csvModel = csvModels[error.validatedOffering.index];
+    const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] = [
+      {
+        recordIndex: error.validatedOffering.index,
+        locationCode: csvModel.institutionLocationCode,
+        sabcProgramCode: csvModel.sabcProgramCode,
+        startDate: error.validatedOffering.offeringModel.studyStartDate,
+        endDate: error.validatedOffering.offeringModel.studyEndDate,
+        errors: [error.error],
+        warnings: [],
+      },
+    ];
+    throw new UnprocessableEntityException(
+      new ApiProcessError(
+        "Some error happen with one or more offerings being created and the entire process was aborted. No offering was added and the upload can be executed again once the error is fixed.",
+        OFFERING_CREATION_CRITICAL_ERROR,
+        validationResults,
+      ),
     );
-    if (creationErrors.length) {
-      // If there is any failed result throw an error.
-      const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] =
-        creationErrors
-          .map((creationError) => {
-            const csvModel = csvModels[creationError.validatedOffering.index];
-            return {
-              recordIndex: creationError.validatedOffering.index,
-              locationCode: csvModel.institutionLocationCode,
-              sabcProgramCode: csvModel.sabcProgramCode,
-              startDate:
-                creationError.validatedOffering.offeringModel.studyStartDate,
-              endDate:
-                creationError.validatedOffering.offeringModel.studyEndDate,
-              errors: [creationError.error],
-              warnings: [],
-            };
-          })
-          .sort((a, b) => a.recordIndex - b.recordIndex);
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "Some error happen with one or more offerings being created and the entire process was aborted. No offering was added and the upload can be executed again once the error is fixed.",
-          OFFERING_CREATION_CRITICAL_ERROR,
-          validationResults,
-        ),
-      );
-    }
   }
 }

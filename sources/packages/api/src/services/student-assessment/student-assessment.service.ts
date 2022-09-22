@@ -130,12 +130,17 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "user.firstName",
         "user.lastName",
         "educationProgram.name",
+        "institution.operatingName",
         "location.name",
         "offering.studyStartDate",
         "offering.studyEndDate",
         "offering.offeringIntensity",
         "msfaaNumber.msfaaNumber",
+        "disbursementSchedule.id",
+        "disbursementSchedule.documentNumber",
         "disbursementSchedule.disbursementDate",
+        "disbursementSchedule.coeStatus",
+        "disbursementSchedule.tuitionRemittanceRequestedAmount",
         "disbursementValue.valueType",
         "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
@@ -146,6 +151,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .innerJoin("student.user", "user")
       .innerJoin("assessment.offering", "offering")
       .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin("educationProgram.institution", "institution")
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("assessment.disbursementSchedules", "disbursementSchedule")
       .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")

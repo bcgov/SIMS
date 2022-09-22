@@ -17,7 +17,7 @@ import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
 import { parse } from "papaparse";
 import { CustomNamedError, removeUTF8BOM } from "../../utilities";
-import { OFFERING_VALIDATION_CSV_FORMAT_ERROR } from "../../constants";
+import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "../../constants";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 
@@ -65,8 +65,11 @@ export class EducationProgramOfferingImportCSVService {
       offeringWILComponentType: csvModel.WILComponentType,
       studyStartDate: csvModel.studyStartDate,
       studyEndDate: csvModel.studyEndDate,
-      lacksStudyBreaks: csvModel.hasStudyBreaks == YesNoOptions.No,
-      studyBreaks: csvModel.studyBreaks,
+      lacksStudyBreaks: csvModel.hasStudyBreaks === YesNoOptions.No,
+      studyBreaks:
+        csvModel.hasStudyBreaks === YesNoOptions.Yes
+          ? csvModel.studyBreaks
+          : null,
       actualTuitionCosts: csvModel.actualTuitionCosts,
       programRelatedCosts: csvModel.programRelatedCosts,
       mandatoryFees: csvModel.mandatoryFees,
@@ -142,7 +145,7 @@ export class EducationProgramOfferingImportCSVService {
     csvContent = removeUTF8BOM(csvContent);
     const parsedResult = parse(csvContent, {
       header: true,
-      skipEmptyLines: true,
+      skipEmptyLines: "greedy",
     });
     if (parsedResult.errors.length) {
       this.logger.error(
@@ -151,8 +154,14 @@ export class EducationProgramOfferingImportCSVService {
         )}`,
       );
       throw new CustomNamedError(
-        "The offering CSV parse resulted in some errors. Please check server errors log for further information.",
-        OFFERING_VALIDATION_CSV_FORMAT_ERROR,
+        "The offering CSV parse resulted in some errors. Please check the CSV content.",
+        OFFERING_VALIDATION_CSV_PARSE_ERROR,
+      );
+    }
+    if (!parsedResult.data.length) {
+      throw new CustomNamedError(
+        "No records were found to be parsed. Please check the CSV content.",
+        OFFERING_VALIDATION_CSV_PARSE_ERROR,
       );
     }
     parsedResult.data.forEach((line) => {
@@ -160,7 +169,7 @@ export class EducationProgramOfferingImportCSVService {
       offeringModels.push(offeringModel);
       offeringModel.institutionLocationCode = line[CSVHeaders.locationCode];
       offeringModel.sabcProgramCode = line[CSVHeaders.sabcProgramCode];
-      offeringModel.offeringName = line[CSVHeaders.offeringName];
+      offeringModel.offeringName = line[CSVHeaders.offeringName]?.trim();
       offeringModel.yearOfStudy = line[CSVHeaders.yearOfStudy];
       offeringModel.showYearOfStudy = line[CSVHeaders.showYearOfStudy];
       offeringModel.offeringIntensity = line[CSVHeaders.offeringIntensity];
@@ -168,7 +177,8 @@ export class EducationProgramOfferingImportCSVService {
       offeringModel.courseLoad = line[CSVHeaders.courseLoad];
       offeringModel.offeringDelivered = line[CSVHeaders.deliveredType];
       offeringModel.WILComponent = line[CSVHeaders.wilComponent];
-      offeringModel.WILComponentType = line[CSVHeaders.wilComponentType];
+      offeringModel.WILComponentType =
+        line[CSVHeaders.wilComponentType]?.trim();
       offeringModel.studyStartDate = line[CSVHeaders.studyStartDate];
       offeringModel.studyEndDate = line[CSVHeaders.studyEndDate];
       offeringModel.hasStudyBreaks = line[CSVHeaders.hasStudyBreaks];

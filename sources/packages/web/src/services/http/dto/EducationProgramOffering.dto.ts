@@ -99,9 +99,9 @@ export interface EducationProgramOfferingAPIOutDTO {
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;
   offeringType: OfferingTypes;
-  offeringWILType?: string;
+  offeringWILComponentType?: string;
   showYearOfStudy?: boolean;
-  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
+  breaksAndWeeks?: StudyBreaksAndWeeksAPIOutDTO;
   assessedBy?: string;
   assessedDate?: Date;
   submittedDate: Date;
@@ -109,6 +109,19 @@ export interface EducationProgramOfferingAPIOutDTO {
   hasExistingApplication?: boolean;
   locationName?: string;
   institutionName?: string;
+}
+
+export interface StudyBreaksAndWeeksAPIOutDTO {
+  studyBreaks: StudyBreakAPIOutDTO[];
+  fundedStudyPeriodDays: number;
+  totalDays: number;
+  totalFundedWeeks: number;
+  unfundedStudyPeriodDays: number;
+}
+
+export interface StudyBreakAPIOutDTO {
+  breakStartDate: string;
+  breakEndDate: string;
 }
 
 export interface EducationProgramOfferingSummaryAPIOutDTO {

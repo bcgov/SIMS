@@ -123,4 +123,38 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
       .getRawOne();
     return batchRunDate?.max ?? new Date();
   }
+
+  /**
+   * Get the disbursement receipt details for
+   * given assessment.
+   * @param assessmentId assessment to which disbursement
+   * receipt belongs to.
+   * @param studentId student to whom the disbursement
+   * receipt belongs to.
+   * @returns disbursement receipt details.
+   */
+  async getDisbursementReceiptByAssessment(
+    assessmentId: number,
+    studentId?: number,
+  ): Promise<DisbursementReceipt[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        disbursementSchedule: { id: true },
+        disbursementReceiptValues: { grantType: true, grantAmount: true },
+      },
+      relations: {
+        disbursementReceiptValues: true,
+        disbursementSchedule: true,
+      },
+      where: {
+        disbursementSchedule: {
+          studentAssessment: {
+            id: assessmentId,
+            application: studentId ? { student: { id: studentId } } : undefined,
+          },
+        },
+      },
+    });
+  }
 }

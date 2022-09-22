@@ -1,0 +1,19 @@
+{
+  "userDetailsSingleLocation": {
+    "user": {
+      "userName": "4116796724b34ebd98dd035a9e4570c0@bceid",
+      "firstName": "SIMSGivenname",
+      "lastName": "Surname",
+      "isActive": true,
+      "userFullName": "SIMSGivenname Surname",
+      "isAdmin": true,
+      "email": "do_not_reply@aest.gov.bc.ca"
+    },
+    "authorizations": {
+      "institutionId": 1,
+      "authorizations": [
+        { "locationId": null, "userType": "admin", "userRole": null }
+      ]
+    }
+  }
+}

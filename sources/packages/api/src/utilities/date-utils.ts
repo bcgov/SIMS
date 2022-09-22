@@ -37,6 +37,19 @@ export const getUTC = (localDate: Date): Date => {
 };
 
 /**
+ * Checks if the end date is after the start date.
+ * @param startDate start date.
+ * @param endDate end date.
+ * @returns true if end date is after start date, otherwise, false.
+ */
+export const isAfter = (
+  startDate: string | Date,
+  endDate: string | Date,
+): boolean => {
+  return dayjs(endDate).isAfter(startDate);
+};
+
+/**
  * Difference in days between endDate and startDate (endDate-startDate).
  * @param endDate end date.
  * @param startDate start date.

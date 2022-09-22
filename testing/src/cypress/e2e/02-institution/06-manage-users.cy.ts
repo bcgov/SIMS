@@ -1,7 +1,7 @@
 import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
 import ManageUsersObject from "../../page-objects/Institution-objects/ManageUsersObject";
 import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
-import InstitutionHelperActions from "./common-helper-functions.cy";
+import InstitutionHelperActions from "../../custom-command/institution/common-helper-functions.cy";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const manageUsersObject = new ManageUsersObject();

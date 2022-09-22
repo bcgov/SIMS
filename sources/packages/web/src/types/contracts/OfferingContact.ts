@@ -1,3 +1,4 @@
+import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
 import {
   ClientIdType,
   OfferingStatus,
@@ -20,36 +21,26 @@ export enum OfferingIntensity {
 }
 
 /**
- * This is a modal for Eduction Program Offering form.io
- ** It has client specific properties in addition to DTO returned from API.
- ** Whenever the DTO is enhanced please make sure this model is sync with DTO.
+ * Education program offering form.io model.
  */
-export interface OfferingFormModel {
+export type OfferingFormModel = EducationProgramOfferingAPIOutDTO & {
+  /**
+   * Education program intensity. Used to perform offering validations.
+   */
   programIntensity: ProgramIntensity;
+  /**
+   * Education program delivery type. Used to perform offering validations.
+   */
   programDeliveryTypes: ProgramDeliveryTypes;
+  /**
+   * Indicates if the education program has WIL(work-integrated learning).
+   * Used to perform offering validations.
+   */
   hasWILComponent: string;
-  offeringName: string;
-  studyStartDate?: string;
-  studyEndDate?: string;
-  actualTuitionCosts?: number;
-  programRelatedCosts?: number;
-  mandatoryFees?: number;
-  exceptionalExpenses?: number;
-  offeringDelivered?: string;
-  lacksStudyBreaks: boolean;
-  offeringIntensity: OfferingIntensity;
-  yearOfStudy: number;
-  showYearOfStudy?: boolean;
-  hasOfferingWILComponent: string;
-  offeringWILType?: string;
-  breaksAndWeeks?: StudyBreaksAndWeeks;
-  offeringDeclaration: boolean;
-  offeringStatus: OfferingStatus;
-  offeringChipStatus: string;
   clientType?: ClientIdType;
   offeringStatusToDisplay: OfferingStatus;
   hasExistingApplication?: boolean;
-}
+};
 
 /**
  * Offering form base model which consists of properties excluding the values derived at client.

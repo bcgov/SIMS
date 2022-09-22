@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { getISODateOnlyString, isBetweenPeriod, Period } from "../..";
+import { getDateOnlyFormat, isBetweenPeriod, Period } from "../..";
 import { getPeriodStartDateProperty, getPeriodEndDateProperty } from "..";
 
 /**
@@ -42,9 +42,9 @@ class PeriodsAreBetweenLimitsConstraint
     const period: Period = this.getPeriodFromArguments(args);
     return `${
       propertyDisplayName ?? args.property
-    } must have all dates between ${getISODateOnlyString(
+    } must have all dates between ${getDateOnlyFormat(
       period.startDate,
-    )} and ${getISODateOnlyString(period.endDate)}.`;
+    )} and ${getDateOnlyFormat(period.endDate)}.`;
   }
 
   private getPeriodFromArguments(args: ValidationArguments): Period {

@@ -38,7 +38,8 @@ html * {
 }
 
 .content-group {
-  border: 1px solid #e8e8e8;
+  color: $app-content-color;
+  border: 1px solid $common-border-color;
   box-sizing: border-box;
   border-radius: 8px;
 }
@@ -230,11 +231,8 @@ html * {
 }
 
 // v-list subtitle.
-// todo: when nav-subtitle is not used in AEST sidebar. remove from here too.
-.no-wrap .v-list-subheader,
-.nav-subtitle {
-  text-transform: uppercase;
-  letter-spacing: 3px !important;
+.no-wrap .v-list-subheader {
+  font-size: $font-size-small;
 }
 
 // This class will restrict the container with max-width.
@@ -316,4 +314,13 @@ html * {
   /* UI/Borders */
   border: 1px solid #e8e8e8;
   border-radius: 8px;
+}
+
+.v-table.bordered {
+  border: 1px solid $common-border-color;
+}
+
+.content-group-info {
+  background-color: $color-background;
+  border: 2px solid $common-border-color !important;
 }
