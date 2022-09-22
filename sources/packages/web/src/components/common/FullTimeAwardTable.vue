@@ -18,24 +18,6 @@
       </tr>
       <tr>
         <td>
-          BCSL
-          <tooltip-icon>B.C. Student Loan</tooltip-icon>
-        </td>
-        <td>
-          {{ getAwardValue("bcsl") }}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          CSLP
-          <tooltip-icon>Canada Student Loan for Part-time Studies</tooltip-icon>
-        </td>
-        <td>
-          {{ getAwardValue("cslp") }}
-        </td>
-      </tr>
-      <tr>
-        <td>
           CSGP
           <tooltip-icon
             >Canada Student Grant for Student with Permanent
@@ -79,13 +61,11 @@
       </tr>
       <tr>
         <td>
-          CSPT
-          <tooltip-icon
-            >Canada Student Grant for Part-time Studies</tooltip-icon
-          >
+          BCSL
+          <tooltip-icon>B.C. Student Loan</tooltip-icon>
         </td>
         <td>
-          {{ getAwardValue("cspt") }}
+          {{ getAwardValue("bcsl") }}
         </td>
       </tr>
       <tr>
