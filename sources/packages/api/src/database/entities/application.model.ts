@@ -320,6 +320,16 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   applicationException?: ApplicationException;
+
+  /**
+   * Application submitted date.
+   */
+  @Column({
+    name: "submitted_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  submittedDate: Date;
 }
 
 /**

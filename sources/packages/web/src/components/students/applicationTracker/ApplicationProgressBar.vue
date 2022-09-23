@@ -1,7 +1,5 @@
 <template>
-  <template
-    v-if="applicationDetails.applicationStatus !== ApplicationStatus.cancelled"
-  >
+  <template v-if="applicationStatus !== ApplicationStatus.cancelled">
     <body-header title="Track your application" />
     <v-slider
       v-model="trackerApplicationStatus"
@@ -17,40 +15,52 @@
       track-size="20"
       readonly
       :disabled="disabled"
-      class="message-color"
-    />
+      class="application-slider"
+      :thumb-label="thumbLabel"
+    >
+      <template #thumb-label>
+        <v-icon
+          icon="fa:fas fa-exclamation-circle"
+          class="mb-6"
+          :size="20"
+          color="danger"
+        /> </template
+    ></v-slider>
 
     <draft
       @editApplication="$emit('editApplication')"
-      v-if="applicationDetails.applicationStatus === ApplicationStatus.draft"
+      v-if="applicationStatus === ApplicationStatus.draft"
     />
     <!-- The below components are checked with applicationStatusTracker[trackerApplicationStatus], so that in future if we need to see the previous, it can be easily attained just by removing readonly param from the v-slider or by adding a simple logic. -->
     <submitted
       v-if="
+        trackerApplicationStatus !== undefined &&
         applicationStatusTracker[trackerApplicationStatus] ===
-        ApplicationStatus.submitted
+          ApplicationStatus.submitted
       "
     />
+
     <in-progress
       v-if="
+        trackerApplicationStatus !== undefined &&
         applicationStatusTracker[trackerApplicationStatus] ===
-        ApplicationStatus.inProgress
+          ApplicationStatus.inProgress
       "
-      :applicationDetails="applicationDetails"
+      :applicationId="applicationId"
+      @declinedEvent="declinedEvent"
     />
   </template>
   <cancelled v-else />
 </template>
 <script lang="ts">
-import { ApplicationStatus, GetApplicationDataDto } from "@/types";
-import { ref, watch } from "vue";
-import { ApplicationService } from "@/services/ApplicationService";
+import { ApplicationStatus } from "@/types";
+import { PropType, ref, defineComponent, computed } from "vue";
 import Draft from "@/components/students/applicationTracker/Draft.vue";
 import Submitted from "@/components/students/applicationTracker/Submitted.vue";
 import InProgress from "@/components/students/applicationTracker/InProgress.vue";
 import Cancelled from "@/components/students/applicationTracker/Cancelled.vue";
 
-export default {
+export default defineComponent({
   emits: ["editApplication"],
   components: {
     Draft,
@@ -63,8 +73,13 @@ export default {
       type: Number,
       required: true,
     },
+    applicationStatus: {
+      type: Object as PropType<ApplicationStatus>,
+      required: true,
+    },
   },
-  setup(props: any) {
+  setup(props) {
+    const thumbLabel = ref();
     const applicationStatusTracker = ref<Record<number, ApplicationStatus>>({
       0: ApplicationStatus.submitted,
       1: ApplicationStatus.inProgress,
@@ -72,14 +87,9 @@ export default {
       3: ApplicationStatus.enrollment,
       4: ApplicationStatus.completed,
     });
-    const trackerApplicationStatus = ref<number>();
-    // todo: ann review GetApplicationDataDto
-    const applicationDetails = ref({} as GetApplicationDataDto);
-    const disabled = ref(false);
-    // Todo: trackFillColor will vary when more status are added.
+    // trackFillColor will vary when more status are added.
     const trackFillColor = ref("warning");
-    const thumbColor = ref("warning");
-    const thumbSize = ref(0);
+
     const applicationStatusOrder = (status: ApplicationStatus) => {
       const [key] =
         Object.entries(applicationStatusTracker.value).find(
@@ -91,44 +101,42 @@ export default {
       }
     };
 
-    const loadApplicationDetails = async () => {
-      // todo: ann check this function
-      applicationDetails.value =
-        await ApplicationService.shared.getApplicationData(props.applicationId);
-      if (
-        applicationDetails.value.applicationStatus === ApplicationStatus.draft
-      ) {
-        disabled.value = true;
-        thumbColor.value = "default";
-        // todo: ann add comment
-        thumbSize.value = 20;
-        return;
-      }
-      trackerApplicationStatus.value = applicationStatusOrder(
-        applicationDetails.value.applicationStatus,
-      );
-    };
-
-    watch(
-      () => props.applicationId,
-      async () => {
-        await loadApplicationDetails();
-      },
-      {
-        immediate: true,
-      },
+    const trackerApplicationStatus = computed(() =>
+      applicationStatusOrder(props.applicationStatus),
     );
+
+    const disabled = computed(() =>
+      props.applicationStatus === ApplicationStatus.draft ? true : false,
+    );
+
+    const thumbColor = computed(() =>
+      props.applicationStatus === ApplicationStatus.draft
+        ? "default"
+        : "warning",
+    );
+
+    const thumbSize = computed(() =>
+      // thumbSize is 0 for all the status except draft.
+      props.applicationStatus === ApplicationStatus.draft ? 20 : 0,
+    );
+
+    // Emit this function whenever there is a declined card. eg, Inprogress cards.
+    const declinedEvent = () => {
+      thumbLabel.value = "always";
+      trackFillColor.value = "error";
+    };
 
     return {
       applicationStatusTracker,
       trackerApplicationStatus,
-      applicationDetails,
       disabled,
       trackFillColor,
       thumbColor,
       thumbSize,
       ApplicationStatus,
+      thumbLabel,
+      declinedEvent,
     };
   },
-};
+});
 </script>

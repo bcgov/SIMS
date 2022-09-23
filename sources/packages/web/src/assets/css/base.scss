@@ -285,10 +285,20 @@ html * {
 .modal-height .v-card-title {
   min-height: 50px;
 }
+
 // Tracker slider thumb(draft only).
-// todo: ann rename class message-color
-.message-color.v-slider--disabled .v-slider-thumb__surface {
+.application-slider.v-slider--disabled .v-slider-thumb__surface {
   border-radius: 24%;
+}
+
+.application-slider .v-slider-thumb__label {
+  background-color: unset;
+}
+.application-slider.v-slider.v-input--horizontal
+  .v-slider-thumb__label::before {
+  border-left: unset;
+  border-right: unset;
+  border-top: unset;
 }
 
 .application-tracker-alert .label {

@@ -3,6 +3,8 @@ import {
   COEStatus,
   AssessmentStatus,
   OfferingIntensity,
+  OfferingStatus,
+  ApplicationExceptionStatus,
 } from "@/types";
 
 export interface SaveStudentApplicationDto {
@@ -221,4 +223,27 @@ export interface ApplicationDetailHeader {
   applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: string;
   applicationEndDate: string;
+}
+
+export interface InProgressApplicationDetails {
+  id: number;
+  applicationStatus: ApplicationStatus;
+  pirStatus: ProgramInfoStatus;
+  PIRDeniedReason: string;
+  offeringStatus: OfferingStatus;
+  exceptionStatus: ApplicationExceptionStatus;
+  parent1IncomeVerificationStatusWaiting: boolean;
+  parent1IncomeVerificationStatusSuccess: boolean;
+  parent2IncomeVerificationStatusWaiting: boolean;
+  parent2IncomeVerificationStatusSuccess: boolean;
+  partnerIncomeVerificationStatusWaiting: boolean;
+  partnerIncomeVerificationStatusSuccess: boolean;
+  studentIncomeVerificationStatusWaiting: boolean;
+  studentIncomeVerificationStatusSuccess: boolean;
+  parent1InfoSuccess: boolean;
+  parent2InfoSuccess: boolean;
+  parent1InfoWaiting: boolean;
+  parent2InfoWaiting: boolean;
+  partnerInfoSuccess: boolean;
+  partnerInfoWaiting: boolean;
 }

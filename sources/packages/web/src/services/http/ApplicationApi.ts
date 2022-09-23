@@ -11,6 +11,7 @@ import {
   DataTableSortOrder,
   ApplicationIdentifiersDTO,
   ClientIdType,
+  InProgressApplicationDetails,
 } from "@/types";
 import { AuthService } from "../AuthService";
 import HttpBaseClient from "./common/HttpBaseClient";
@@ -122,7 +123,7 @@ export class ApplicationApi extends HttpBaseClient {
    * @param applicationId
    * @returns
    */
-  // todo: Already have endpoint getApplicationData , in this same file.
+  // todo:ann Already have endpoint getApplicationData , in this same file.
   async getApplicationDetails(
     applicationId: number,
   ): Promise<GetApplicationBaseDTO> {
@@ -167,5 +168,19 @@ export class ApplicationApi extends HttpBaseClient {
     return this.getCallTyped<ApplicationIdentifiersDTO>(
       this.addClientRoot(`application/${applicationNumber}/appeal`),
     );
+  }
+
+  /**
+   * Get in progress details of an application by application id.
+   * @param applicationId application id.
+   * @returns application full details.
+   */
+  async getApplicationFullDetails(
+    applicationId: number,
+  ): Promise<InProgressApplicationDetails> {
+    const response = await this.getCall(
+      this.addClientRoot(`application/${applicationId}/in-progress`),
+    );
+    return response.data;
   }
 }

@@ -27,6 +27,8 @@ import {
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  CRAIncomeVerificationService,
+  SupportingUserService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -36,6 +38,7 @@ import {
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   ApplicationIdentifiersDTO,
+  InProgressApplicationDetails,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -45,8 +48,8 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { ApplicationStatus } from "../../database/entities";
-import { PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
+import { ApplicationStatus, SupportingUserType } from "../../database/entities";
+import { getPIRDeniedReason, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
   INVALID_APPLICATION_NUMBER,
   OFFERING_NOT_VALID,
@@ -76,6 +79,8 @@ export class ApplicationStudentsController extends BaseController {
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly assessmentService: StudentAssessmentService,
     private readonly applicationControllerService: ApplicationControllerService,
+    private readonly craIncomeVerificationService: CRAIncomeVerificationService,
+    private readonly supportingUserService: SupportingUserService,
   ) {
     super();
   }
@@ -449,28 +454,140 @@ export class ApplicationStudentsController extends BaseController {
       applicationNumber: application.applicationNumber,
     };
   }
-  
+
   /**
-   * Get full details of an application by application id.
+   * Get in progress details of an application by application id.
    * @param applicationId application id.
    * @returns application full details.
    */
-  @Get(":id/full-details")
+  @Get(":id/in-progress")
   @ApiNotFoundResponse({
     description: "Application id not found.",
   })
   async getApplicationFullDetails(
     @Param("id", ParseIntPipe) applicationId: number,
-  ): Promise<any> {
-    const application =
-      await this.applicationService.getApplicationToRequestAppeal(
-        applicationId,
-      );
+  ): Promise<InProgressApplicationDetails> {
+    const inProgressApplicationDetails = {} as InProgressApplicationDetails;
+    const application = await this.applicationService.getApplicationByIdAndUser(
+      applicationId,
+    );
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} was not found.`,
       );
     }
-    return application;
+    inProgressApplicationDetails.id = application.id;
+    inProgressApplicationDetails.applicationStatus =
+      application.applicationStatus;
+    inProgressApplicationDetails.pirStatus = application.pirStatus;
+    inProgressApplicationDetails.PIRDeniedReason =
+      getPIRDeniedReason(application);
+    inProgressApplicationDetails.offeringStatus =
+      application.currentAssessment?.offering.offeringStatus;
+    inProgressApplicationDetails.exceptionStatus =
+      application.applicationException?.exceptionStatus;
+
+    const incomeVerificationDetails =
+      await this.craIncomeVerificationService.allIncomeVerificationsForAnApplication(
+        applicationId,
+      );
+    if (incomeVerificationDetails.length > 0) {
+      incomeVerificationDetails.forEach((incomeVerification) => {
+        if (incomeVerification.supportingUser) {
+          // Supporting user income verification details.
+          // If supporting user type is parent, then there will be only 2 parents.
+          if (
+            incomeVerification.supportingUser.supportingUserType ===
+            SupportingUserType.Parent
+          ) {
+            if (
+              !(
+                inProgressApplicationDetails.hasOwnProperty(
+                  "parent1IncomeVerificationStatusWaiting",
+                ) ||
+                inProgressApplicationDetails.hasOwnProperty(
+                  "parent1IncomeVerificationStatusSuccess",
+                )
+              )
+            ) {
+              // Parent 1.
+              if (!incomeVerification.dateReceived) {
+                inProgressApplicationDetails.parent1IncomeVerificationStatusWaiting =
+                  true;
+              } else {
+                inProgressApplicationDetails.parent1IncomeVerificationStatusSuccess =
+                  true;
+              }
+            } else {
+              // Parent 2.
+              if (!incomeVerification.dateReceived) {
+                inProgressApplicationDetails.parent2IncomeVerificationStatusWaiting =
+                  true;
+              } else {
+                inProgressApplicationDetails.parent2IncomeVerificationStatusSuccess =
+                  true;
+              }
+            }
+          } else {
+            // partner income verification details.
+            if (!incomeVerification.dateReceived) {
+              inProgressApplicationDetails.partnerIncomeVerificationStatusWaiting =
+                true;
+            } else {
+              inProgressApplicationDetails.partnerIncomeVerificationStatusSuccess =
+                true;
+            }
+          }
+        } else {
+          // student income verification details.
+          if (!incomeVerification.dateReceived) {
+            inProgressApplicationDetails.studentIncomeVerificationStatusWaiting =
+              true;
+          } else {
+            inProgressApplicationDetails.studentIncomeVerificationStatusSuccess =
+              true;
+          }
+        }
+      });
+    }
+    const supportingUserDetails =
+      await this.supportingUserService.getSupportingUsersByApplicationId(
+        applicationId,
+      );
+    supportingUserDetails.forEach((supportingUser) => {
+      if (supportingUser.supportingUserType === SupportingUserType.Parent) {
+        if (supportingUser.supportingData) {
+          // Success.
+          if (
+            !inProgressApplicationDetails.hasOwnProperty("parent1InfoSuccess")
+          ) {
+            // Parent 1.
+            inProgressApplicationDetails.parent1InfoSuccess = true;
+          } else {
+            // Parent 2.
+            inProgressApplicationDetails.parent2InfoSuccess = true;
+          }
+        } else {
+          // waiting
+          if (
+            !inProgressApplicationDetails.hasOwnProperty("parent1InfoWaiting")
+          ) {
+            // Parent 1.
+            inProgressApplicationDetails.parent1InfoWaiting = true;
+          } else {
+            // Parent 2.
+            inProgressApplicationDetails.parent2InfoWaiting = true;
+          }
+        }
+      } else {
+        // Partner
+        if (supportingUser.supportingData) {
+          inProgressApplicationDetails.partnerInfoSuccess = true;
+        } else {
+          inProgressApplicationDetails.partnerInfoWaiting = true;
+        }
+      }
+    });
+    return inProgressApplicationDetails;
   }
 }

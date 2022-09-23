@@ -18,6 +18,7 @@
                 >Application actions
               </v-btn>
             </template>
+            <!-- todo: ann refactor list -->
             <v-list class="action-list">
               <template v-for="(item, index) in items" :key="index">
                 <v-list-item :value="index" @click="item.command">
@@ -43,18 +44,19 @@
         v-if="applicationDetails.applicationStatus !== ApplicationStatus.draft"
       />
     </template>
-    <!-- todo: ann change the modal -->
+    <!-- todo: ann ask andrew modal change part of the PR -->
     <CancelApplication
       :showModal="showModal"
       :applicationId="id"
       @showHideCancelApplication="showHideCancelApplication"
       @reloadData="getApplicationDetails"
     />
-    <!-- todo: ann review if -->
     <application-progress-bar
       :applicationId="id"
       @editApplication="editApplication"
+      :applicationStatus="applicationDetails.applicationStatus"
     />
+    <!-- todo: ann submitted date -->
   </student-page-container>
   <confirm-edit-application ref="editApplicationModal" />
 </template>

@@ -249,4 +249,32 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
       }
     }
   }
+
+  /**
+   * Get the student and supporting users (if any) income verification details for an applications.
+   * @param applicationId application id.
+   * @returns income verification details for an applications.
+   */
+  async allIncomeVerificationsForAnApplication(
+    applicationId: number,
+  ): Promise<CRAIncomeVerification[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        supportingUser: {
+          id: true,
+          supportingUserType: true,
+        },
+        dateReceived: true,
+      },
+      relations: {
+        supportingUser: true,
+      },
+      where: {
+        application: {
+          id: applicationId,
+        },
+      },
+    });
+  }
 }

@@ -196,6 +196,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.updatedAt = now;
       application.studentAssessments = [originalAssessment];
       application.currentAssessment = originalAssessment;
+      application.submittedDate = now;
 
       // When application and assessment are saved, assess for SIN restriction.
       await this.dataSource.transaction(async (transactionalEntityManager) => {
@@ -233,7 +234,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Creating New Application with same Application Number and Program Year as
     // that of the Overwritten Application and with newly submitted payload with
     // application status submitted.
-
+    // todo: ann check with the team about overwritten application submitted date
     const newApplication = new Application();
     newApplication.applicationNumber = application.applicationNumber;
     newApplication.relationshipStatus = applicationData.relationshipStatus;
@@ -533,6 +534,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "offering.offeringIntensity",
         "offering.studyStartDate",
         "offering.studyEndDate",
+        "offering.offeringStatus",
         "location.id",
         "location.name",
         "pirDeniedReasonId.id",
@@ -541,6 +543,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.formName",
         "programYear.startDate",
         "programYear.endDate",
+        "applicationException.exceptionStatus",
       ])
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
@@ -551,6 +554,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("student.user", "user")
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirDeniedReasonId", "pirDeniedReasonId")
+      .leftJoin("application.applicationException", "applicationException")
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })
@@ -1460,23 +1464,5 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .setParameter("isApplicationArchived", true)
       .execute();
-  }
-
-  /**
-   * Get full details of an application by application id.
-   * @param applicationId application id.
-   * @returns application full details.
-   */
-  // todo: ann query
-  async fullApplicationDetails(applicationId: number): Promise<Application> {
-    const application = this.repo.findOneOrFail({
-      select: {
-        id: true,
-      },
-      where: {
-        id: applicationId,
-      },
-    });
-    return application;
   }
 }

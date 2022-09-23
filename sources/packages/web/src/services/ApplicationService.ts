@@ -10,6 +10,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   ApplicationIdentifiersDTO,
+  InProgressApplicationDetails,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
@@ -126,5 +127,16 @@ export class ApplicationService {
     return ApiClient.Application.getApplicationForRequestChange(
       applicationNumber,
     );
+  }
+
+  /**
+   * Get in progress details of an application by application id.
+   * @param applicationId application id.
+   * @returns application full details.
+   */
+  public async getApplicationFullDetails(
+    applicationId: number,
+  ): Promise<InProgressApplicationDetails> {
+    return ApiClient.Application.getApplicationFullDetails(applicationId);
   }
 }

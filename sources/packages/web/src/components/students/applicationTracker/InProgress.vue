@@ -6,15 +6,14 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your income."
+    v-if="applicationDetails?.studentIncomeVerificationStatusWaiting"
   />
 
   <application-status-tracker-banner
     label="Waiting for additional information from your institution"
     icon="fa:fas fa-clock"
     icon-color="secondary"
-    v-if="
-      applicationDetails.applicationPIRStatus === ProgramInfoStatus.required
-    "
+    v-if="applicationDetails?.pirStatus === ProgramInfoStatus.required"
     ><template #content
       ><span
         >We sent a <strong>program information request</strong> to your
@@ -29,6 +28,7 @@
     label="Waiting for additional information from a parent"
     icon="fa:fas fa-clock"
     icon-color="secondary"
+    v-if="applicationDetails?.parent1InfoWaiting"
     ><template #content
       ><span
         >We are waiting for
@@ -44,6 +44,7 @@
     label="Waiting for additional information from another parent"
     icon="fa:fas fa-clock"
     icon-color="secondary"
+    v-if="applicationDetails?.parent2InfoWaiting"
     ><template #content
       ><span
         >We are waiting for
@@ -60,6 +61,7 @@
     label="Waiting for additional information from your partner"
     icon="fa:fas fa-clock"
     icon-color="secondary"
+    v-if="applicationDetails?.partnerInfoWaiting"
     ><template #content
       ><span
         >We are waiting for
@@ -76,6 +78,7 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your parent's income."
+    v-if="applicationDetails?.parent1IncomeVerificationStatusWaiting"
   />
 
   <application-status-tracker-banner
@@ -83,6 +86,7 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your other parent's income."
+    v-if="applicationDetails?.parent2IncomeVerificationStatusWaiting"
   />
 
   <application-status-tracker-banner
@@ -90,6 +94,18 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your income."
+    v-if="applicationDetails?.partnerIncomeVerificationStatusWaiting"
+  />
+
+  <application-status-tracker-banner
+    label="Waiting for StudentAid BC to review your application"
+    icon="fa:fas fa-clock"
+    icon-color="secondary"
+    content="StudentAid BC is currently reviewing your application and the 
+    additional information you provided for 1 or more of the questions."
+    v-if="
+      applicationDetails?.exceptionStatus === ApplicationExceptionStatus.Pending
+    "
   />
 
   <!-- Success cards -->
@@ -98,6 +114,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your income."
+    v-if="applicationDetails?.studentIncomeVerificationStatusSuccess"
   />
 
   <application-status-tracker-banner
@@ -105,6 +122,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="We have successfully received supporting information from a parent."
+    v-if="applicationDetails?.parent1InfoSuccess"
   />
 
   <application-status-tracker-banner
@@ -112,19 +130,19 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="We have successfully received supporting information from your other parent."
+    v-if="applicationDetails?.parent2InfoSuccess"
   />
 
   <application-status-tracker-banner
-    label="Parent information request completed"
+    label="Partner information request completed"
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="We have successfully received supporting information from your partner."
+    v-if="applicationDetails?.partnerInfoSuccess"
   />
 
   <application-status-tracker-banner
-    v-if="
-      applicationDetails.applicationPIRStatus === ProgramInfoStatus.completed
-    "
+    v-if="applicationDetails?.pirStatus === ProgramInfoStatus.completed"
     label="Institution program information request completed"
     icon="fa:fas fa-check-circle"
     icon-color="success"
@@ -136,6 +154,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your parent's income."
+    v-if="applicationDetails?.parent1IncomeVerificationStatusSuccess"
   />
 
   <application-status-tracker-banner
@@ -143,6 +162,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your other parent's income."
+    v-if="applicationDetails?.parent2IncomeVerificationStatusSuccess"
   />
 
   <application-status-tracker-banner
@@ -150,6 +170,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your partner's income."
+    v-if="applicationDetails?.partnerIncomeVerificationStatusSuccess"
   />
 
   <application-status-tracker-banner
@@ -157,13 +178,15 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="StudentAid BC has successfully reviewed and accepted the additional information you provided."
+    v-if="
+      applicationDetails?.exceptionStatus ===
+      ApplicationExceptionStatus.Approved
+    "
   />
 
   <!-- Denial cards -->
   <application-status-tracker-banner
-    v-if="
-      applicationDetails.applicationPIRStatus === ProgramInfoStatus.declined
-    "
+    v-if="applicationDetails?.pirStatus === ProgramInfoStatus.declined"
     label="Your institution denied your program information request"
     icon="fa:fas fa-exclamation-circle"
     icon-color="danger"
@@ -171,13 +194,16 @@
     ><template #content
       ><span
         ><strong>Reason from your institution:</strong>
-        {{ applicationDetails.applicationPIRDeniedReason }}. Please contact the
-        Financial Aid Officer from your institution for more information. You
-        will need to edit your application for it to be processed again.</span
+        {{ applicationDetails.PIRDeniedReason }}. Please contact the Financial
+        Aid Officer from your institution for more information. You will need to
+        edit your application for it to be processed again.</span
       ></template
     ></application-status-tracker-banner
   >
   <application-status-tracker-banner
+    v-if="
+      applicationDetails?.offeringStatus === OfferingStatus.ChangeOverwritten
+    "
     label="Your institution updated the study period. Please re-submit your application with the updated study period."
     icon="fa:fas fa-exclamation-circle"
     icon-color="danger"
@@ -195,6 +221,10 @@
     ></application-status-tracker-banner
   >
   <application-status-tracker-banner
+    v-if="
+      applicationDetails?.exceptionStatus ===
+      ApplicationExceptionStatus.Declined
+    "
     label="StudentAid BC has not accepted your application"
     icon="fa:fas fa-exclamation-circle"
     icon-color="danger"
@@ -208,21 +238,29 @@
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { GetApplicationDataDto, ProgramInfoStatus } from "@/types";
-import { PropType } from "vue";
+import {
+  ApplicationExceptionStatus,
+  InProgressApplicationDetails,
+  OfferingStatus,
+  ProgramInfoStatus,
+} from "@/types";
+import { onMounted, ref } from "vue";
+import { ApplicationService } from "@/services/ApplicationService";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
+  emits: ["declinedEvent"],
   components: {
     ApplicationStatusTrackerBanner,
   },
   props: {
-    applicationDetails: {
-      type: Object as PropType<GetApplicationDataDto>,
+    applicationId: {
+      type: Number,
       required: true,
-      default: {} as PropType<GetApplicationDataDto>,
     },
   },
-  setup() {
+  setup(props, { emit }) {
+    const applicationDetails = ref<InProgressApplicationDetails>();
     const router = useRouter();
     const goToStudentApplication = async () => {
       router.push({
@@ -230,7 +268,31 @@ export default {
       });
     };
 
-    return { goToStudentApplication, ProgramInfoStatus };
+    onMounted(async () => {
+      applicationDetails.value =
+        await ApplicationService.shared.getApplicationFullDetails(
+          props.applicationId,
+        );
+
+      // Any declined cards will call declined event.
+      if (
+        applicationDetails.value.pirStatus === ProgramInfoStatus.declined ||
+        applicationDetails.value.offeringStatus ===
+          OfferingStatus.ChangeOverwritten ||
+        applicationDetails.value.exceptionStatus ===
+          ApplicationExceptionStatus.Declined
+      ) {
+        emit("declinedEvent");
+      }
+    });
+
+    return {
+      goToStudentApplication,
+      ProgramInfoStatus,
+      applicationDetails,
+      ApplicationExceptionStatus,
+      OfferingStatus,
+    };
   },
-};
+});
 </script>
