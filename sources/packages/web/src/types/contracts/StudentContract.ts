@@ -80,4 +80,5 @@ export type StudentProfileFormModel = Pick<
     dateOfBirth: string;
     mode: StudentProfileFormModes;
     identityProvider?: AppIDPType;
+    sinConsent: boolean;
   };
