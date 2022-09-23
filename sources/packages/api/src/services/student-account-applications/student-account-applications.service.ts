@@ -157,9 +157,9 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       accountApplication.modifier = auditUser;
       accountApplication.updatedAt = now;
       accountApplication.assessedDate = now;
-      // await entityManager
-      //   .getRepository(StudentAccountApplication)
-      //   .save(accountApplication);
+      await entityManager
+        .getRepository(StudentAccountApplication)
+        .save(accountApplication);
       // Create the new student and updates the user.
       return this.studentService.createStudentFromAccountApplication(
         userInfo,
