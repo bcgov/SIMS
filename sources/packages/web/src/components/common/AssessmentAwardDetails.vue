@@ -111,7 +111,7 @@
               assessmentAwardData.estimatedAward.disbursement2TuitionRemittance
             "
           >
-            <status-info-label :data="{ status: StatusInfo.Completed }">
+            <status-info-label :status="StatusInfo.Completed">
               Tuition remittance applied
               <span class="label-bold"
                 >-${{
