@@ -23,3 +23,10 @@ export type StudentAccountApplicationApprovalModel = StudentInfo &
     dateOfBirth: string;
     gender: string;
   };
+
+/**
+ * Data needed to get SIN consent of student
+ */
+export interface AccountApplicationSubmittedData {
+  sinConsent: boolean;
+}
