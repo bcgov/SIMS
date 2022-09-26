@@ -45,6 +45,16 @@ export interface AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
   restrictionId: number;
 }
 
+export interface AssignRestrictionCategoryOutDTO {
+  title: string;
+  value: string;
+}
+
+export interface AssignRestrictionReasonsOutDTO {
+  title: string;
+  value: number;
+}
+
 /**
  * Student restriction DTO.
  * This object is returned by api.

@@ -6,7 +6,12 @@
     scrollable
   >
     <!-- TODO remove mx-auto in stable version of vuetify to center modelDialog -->
-    <v-card elevation="10" :max-width="maxWidth" class="modal-height mx-auto">
+    <v-card
+      elevation="10"
+      :max-width="maxWidth"
+      :min-width="minWidth"
+      class="modal-height mx-auto"
+    >
       <v-card-title>
         <slot name="header">
           <h2 v-if="title" class="category-header-large primary-color">
@@ -56,6 +61,10 @@ export default {
       required: true,
     },
     maxWidth: {
+      type: Number,
+      required: false,
+    },
+    minWidth: {
       type: Number,
       required: false,
     },

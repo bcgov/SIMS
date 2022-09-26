@@ -30,7 +30,7 @@
         <Column
           field="restrictionCategory"
           header="Category"
-          sortable="true"
+          :sortable="true"
         ></Column>
         <Column field="description" header="Reason">
           <template #body="slotProps">{{
@@ -76,13 +76,11 @@
   <ViewRestrictionModal
     ref="viewRestriction"
     :restrictionData="studentRestriction"
-    @submitResolutionData="resolveRestriction"
     :allowedRole="Role.StudentResolveRestriction"
   />
   <AddStudentRestrictionModal
     ref="addRestriction"
     :entityType="RestrictionEntityType.Student"
-    @submitRestrictionData="createNewRestriction"
     :allowedRole="Role.StudentAddRestriction"
   />
 </template>
@@ -126,8 +124,12 @@ export default {
     const studentRestrictions = ref();
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
-    const viewRestriction = ref({} as ModalDialog<void>);
-    const addRestriction = ref({} as ModalDialog<void>);
+    const viewRestriction = ref(
+      {} as ModalDialog<AssignRestrictionAPIInDTO | boolean>,
+    );
+    const addRestriction = ref(
+      {} as ModalDialog<AssignRestrictionAPIInDTO | boolean>,
+    );
     const studentRestriction = ref();
     const snackBar = useSnackBar();
 
@@ -174,7 +176,11 @@ export default {
     };
 
     const addStudentRestriction = async () => {
-      await addRestriction.value.showModal();
+      const addStudentRestrictionData = await addRestriction.value.showModal();
+      if (addStudentRestrictionData)
+        createNewRestriction(
+          addStudentRestrictionData as AssignRestrictionAPIInDTO,
+        );
     };
 
     const createNewRestriction = async (data: AssignRestrictionAPIInDTO) => {
