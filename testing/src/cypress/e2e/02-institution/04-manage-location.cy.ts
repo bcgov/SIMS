@@ -11,7 +11,7 @@ const institutionManageLocationObject = new ManageLocationObject();
 const institutionHelperActions = new InstitutionHelperActions();
 function loginAndClickOnManageInstitution() {
   institutionHelperActions.loginIntoInstitutionSingleLocation();
-  dashboardInstitutionObject.dashboardButton().click();
+  // dashboardInstitutionObject.dashboardButton().click();
   dashboardInstitutionObject.manageInstitutionButton().click();
 }
 

@@ -65,6 +65,12 @@ export default class InstitutionHelperActions {
     }`;
   }
 
+  getApiForDesignationAgreement() {
+    return `${this.getBaseUrlForTestEnv()}${
+      Cypress.env("ENDPOINTS").DESIGNATION_AGREEMENT
+    }`;
+  }
+
   loginIntoInstitutionSingleLocation() {
     const [URL, USERNAME, PASSWORD] =
       this.getBaseUrlAndLoginCredentialsInstitution();
