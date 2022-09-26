@@ -234,8 +234,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Creating New Application with same Application Number and Program Year as
     // that of the Overwritten Application and with newly submitted payload with
     // application status submitted.
-    // todo: ann check with the team about overwritten application submitted date
     const newApplication = new Application();
+    // todo: ann check with the Andrew about overwritten application submitted date.
+    newApplication.submittedDate = now;
+
     newApplication.applicationNumber = application.applicationNumber;
     newApplication.relationshipStatus = applicationData.relationshipStatus;
     newApplication.studentNumber = applicationData.studentNumber;
@@ -544,6 +546,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.startDate",
         "programYear.endDate",
         "applicationException.exceptionStatus",
+        "application.submittedDate",
       ])
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")

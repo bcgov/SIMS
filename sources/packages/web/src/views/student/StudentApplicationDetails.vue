@@ -12,13 +12,11 @@
             <template v-slot:activator="{ props }"
               ><v-btn
                 color="primary"
-                @click="toggle"
                 v-bind="props"
                 prepend-icon="fa:fa fa-chevron-circle-down"
                 >Application actions
               </v-btn>
             </template>
-            <!-- todo: ann refactor list -->
             <v-list class="action-list">
               <template v-for="(item, index) in items" :key="index">
                 <v-list-item :value="index" @click="item.command">
@@ -44,7 +42,7 @@
         v-if="applicationDetails.applicationStatus !== ApplicationStatus.draft"
       />
     </template>
-    <!-- todo: ann ask andrew modal change part of the PR -->
+
     <CancelApplication
       :showModal="showModal"
       :applicationId="id"
@@ -56,9 +54,19 @@
       @editApplication="editApplication"
       :applicationStatus="applicationDetails.applicationStatus"
     />
-    <!-- todo: ann submitted date -->
   </student-page-container>
   <confirm-edit-application ref="editApplicationModal" />
+
+  <!-- Submitted date footer. -->
+  <div
+    class="text-center my-3 muted-content"
+    v-if="applicationDetails.applicationStatus !== ApplicationStatus.draft"
+  >
+    <span class="header-extra-small">Date submitted: </span
+    ><span class="value-extra-small">{{
+      dateOnlyLongString(applicationDetails.applicationSubmittedDate)
+    }}</span>
+  </div>
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
@@ -73,12 +81,17 @@ import {
   useSnackBar,
   useApplication,
 } from "@/composables";
-import { GetApplicationDataDto, ApplicationStatus, MenuType } from "@/types";
+import {
+  ApplicationStatus,
+  MenuType,
+  ApplicationDetailsAPIOutDTO,
+} from "@/types";
 import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   components: {
     CancelApplication,
     ApplicationProgressBar,
@@ -91,13 +104,12 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const items = ref<MenuType[]>([]);
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
-    // todo: ann check if ts really needed
-    const applicationDetails = ref({} as GetApplicationDataDto);
+    const applicationDetails = ref({} as ApplicationDetailsAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const snackBar = useSnackBar();
     const { mapApplicationDetailHeader } = useApplication();
@@ -202,14 +214,15 @@ export default {
 
     const getApplicationDetails = async (applicationId: number) => {
       applicationDetails.value =
-        await ApplicationService.shared.getApplicationData(applicationId);
+        await ApplicationService.shared.getApplicationStatusDetails(
+          applicationId,
+        );
       loadMenu();
     };
 
     watch(
       () => props.id,
       async (currValue: number) => {
-        // Update the list.
         await getApplicationDetails(currValue);
         headerMap.value = mapApplicationDetailHeader(applicationDetails.value);
       },
@@ -234,5 +247,5 @@ export default {
       headerMap,
     };
   },
-};
+});
 </script>

@@ -38,7 +38,9 @@ import {
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   ApplicationIdentifiersDTO,
-  InProgressApplicationDetails,
+  InProgressApplicationDetailsAPIOutDTO,
+  CancelledApplicationDetailsAPIOutDTO,
+  ApplicationDetailsAPIOutDTO,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -464,10 +466,11 @@ export class ApplicationStudentsController extends BaseController {
   @ApiNotFoundResponse({
     description: "Application id not found.",
   })
-  async getApplicationFullDetails(
+  async getInProgressApplicationDetails(
     @Param("id", ParseIntPipe) applicationId: number,
-  ): Promise<InProgressApplicationDetails> {
-    const inProgressApplicationDetails = {} as InProgressApplicationDetails;
+  ): Promise<InProgressApplicationDetailsAPIOutDTO> {
+    const inProgressApplicationDetails =
+      {} as InProgressApplicationDetailsAPIOutDTO;
     const application = await this.applicationService.getApplicationByIdAndUser(
       applicationId,
     );
@@ -589,5 +592,67 @@ export class ApplicationStudentsController extends BaseController {
       }
     });
     return inProgressApplicationDetails;
+  }
+
+  /**
+   * Get cancelled details of an application by application id.
+   * @param applicationId application id.
+   * @returns application full details.
+   */
+  @Get(":id/cancelled")
+  @ApiNotFoundResponse({
+    description: "Application id not found.",
+  })
+  async getCancelledApplicationDetails(
+    @Param("id", ParseIntPipe) applicationId: number,
+  ): Promise<CancelledApplicationDetailsAPIOutDTO> {
+    const application = await this.applicationService.getApplicationByIdAndUser(
+      applicationId,
+    );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+    return {
+      statusUpdatedOn: application.applicationStatusUpdatedOn,
+    };
+  }
+
+  /**
+   * Get details of an application by application id.
+   * @param applicationId application id.
+   * @returns application full details.
+   */
+  @Get(":id/details")
+  @ApiNotFoundResponse({
+    description: "Application id not found.",
+  })
+  async getApplicationStatusDetails(
+    @Param("id", ParseIntPipe) applicationId: number,
+  ): Promise<ApplicationDetailsAPIOutDTO> {
+    const application = await this.applicationService.getApplicationByIdAndUser(
+      applicationId,
+    );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+    const offering = application.currentAssessment?.offering;
+    // When a student selects "offering not found" (pir required)
+    // get study dates field from data and display the date when an offering is found.
+    // and display the date when an offering is found
+    return {
+      applicationNumber: application.applicationNumber,
+      applicationInstitutionName: application.location?.name,
+      applicationStartDate:
+        offering?.studyStartDate ?? application.data.studystartDate,
+      applicationEndDate:
+        offering?.studyEndDate ?? application.data.studyendDate,
+      applicationOfferingIntensity: offering?.offeringIntensity,
+      applicationSubmittedDate: application.submittedDate,
+      applicationStatus: application.applicationStatus,
+    };
   }
 }

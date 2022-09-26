@@ -94,6 +94,7 @@ export class GetApplicationDataDto extends GetApplicationBaseDTO {
   applicationCOEDeniedReason?: string;
   programYearStartDate: Date;
   programYearEndDate: Date;
+  applicationSubmittedDate: Date;
 }
 
 export interface ApplicationStatusToBeUpdatedDto {
@@ -107,7 +108,7 @@ export interface ApplicationWithProgramYearDto {
   active: boolean;
 }
 
-export interface InProgressApplicationDetails {
+export interface InProgressApplicationDetailsAPIOutDTO {
   id: number;
   applicationStatus: ApplicationStatus;
   pirStatus: ProgramInfoStatus;
@@ -128,4 +129,18 @@ export interface InProgressApplicationDetails {
   parent2InfoWaiting: boolean;
   partnerInfoSuccess: boolean;
   partnerInfoWaiting: boolean;
+}
+
+export interface CancelledApplicationDetailsAPIOutDTO {
+  statusUpdatedOn: Date;
+}
+
+export interface ApplicationDetailsAPIOutDTO {
+  applicationNumber: string;
+  applicationInstitutionName: string;
+  applicationStartDate: Date | string;
+  applicationEndDate: Date | string;
+  applicationOfferingIntensity: OfferingIntensity;
+  applicationSubmittedDate: Date;
+  applicationStatus: ApplicationStatus;
 }

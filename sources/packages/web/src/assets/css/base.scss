@@ -232,7 +232,7 @@ html * {
 
 // v-list subtitle.
 .no-wrap .v-list-subheader {
-  font-size: $font-size-small;
+  font-size: $font-size-xsmall;
 }
 
 // This class will restrict the container with max-width.
@@ -281,28 +281,30 @@ html * {
 .modal-height {
   max-height: calc(100vh - 102px) !important;
 }
+
 // Min height for modal header.
 .modal-height .v-card-title {
   min-height: 50px;
 }
 
-// Tracker slider thumb(draft only).
-.application-slider.v-slider--disabled .v-slider-thumb__surface {
-  border-radius: 24%;
+// Tracker slider thumb (draft and submitted).
+.application-slider .v-slider-thumb__surface {
+  border-radius: 6px;
 }
 
-.application-slider .v-slider-thumb__label {
+// Remove the ripple and hover effect.
+.application-slider .v-slider-thumb__surface::before {
   background-color: unset;
 }
-.application-slider.v-slider.v-input--horizontal
-  .v-slider-thumb__label::before {
-  border-left: unset;
-  border-right: unset;
-  border-top: unset;
+
+// Remove the ripple and hover effect
+.application-slider .v-ripple__container {
+  display: none;
 }
 
+// Alert label color.
 .application-tracker-alert .label {
-  color: $brand-black !important;
+  color: $brand-black;
 }
 
 .application-tracker-alert.v-alert.white .v-alert__underlay {

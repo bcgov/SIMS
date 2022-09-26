@@ -167,6 +167,7 @@ export class ApplicationControllerService {
       applicationCOEDeniedReason: disbursement
         ? getCOEDeniedReason(disbursement)
         : undefined,
+      applicationSubmittedDate: applicationDetail.submittedDate,
     };
   }
 

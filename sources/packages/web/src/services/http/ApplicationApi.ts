@@ -11,7 +11,9 @@ import {
   DataTableSortOrder,
   ApplicationIdentifiersDTO,
   ClientIdType,
-  InProgressApplicationDetails,
+  InProgressApplicationDetailsAPIOutDTO,
+  CancelledApplicationDetailsAPIOutDTO,
+  ApplicationDetailsAPIOutDTO,
 } from "@/types";
 import { AuthService } from "../AuthService";
 import HttpBaseClient from "./common/HttpBaseClient";
@@ -123,7 +125,7 @@ export class ApplicationApi extends HttpBaseClient {
    * @param applicationId
    * @returns
    */
-  // todo:ann Already have endpoint getApplicationData , in this same file.
+  // todo: Looks like its not used. Have same endpoint getApplicationData, in this same file. remove bth function and interface, if its not used.
   async getApplicationDetails(
     applicationId: number,
   ): Promise<GetApplicationBaseDTO> {
@@ -175,11 +177,39 @@ export class ApplicationApi extends HttpBaseClient {
    * @param applicationId application id.
    * @returns application full details.
    */
-  async getApplicationFullDetails(
+  async getInProgressApplicationDetails(
     applicationId: number,
-  ): Promise<InProgressApplicationDetails> {
+  ): Promise<InProgressApplicationDetailsAPIOutDTO> {
     const response = await this.getCall(
       this.addClientRoot(`application/${applicationId}/in-progress`),
+    );
+    return response.data;
+  }
+
+  /**
+   * Get cancelled details of an application by application id.
+   * @param applicationId application id.
+   * @returns application full details.
+   */
+  async getCancelledApplicationDetails(
+    applicationId: number,
+  ): Promise<CancelledApplicationDetailsAPIOutDTO> {
+    const response = await this.getCall(
+      this.addClientRoot(`application/${applicationId}/cancelled`),
+    );
+    return response.data;
+  }
+
+  /**
+   * Get details of an application by application id.
+   * @param applicationId application id.
+   * @returns application full details.
+   */
+  async getApplicationStatusDetails(
+    applicationId: number,
+  ): Promise<ApplicationDetailsAPIOutDTO> {
+    const response = await this.getCall(
+      this.addClientRoot(`application/${applicationId}/details`),
     );
     return response.data;
   }

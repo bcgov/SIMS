@@ -1,5 +1,4 @@
 <template>
-  <!-- todo: ann  REMOVE IF CONDITION FROM SEARCH BOX -->
   <!-- Waiting cards -->
   <application-status-tracker-banner
     label="Waiting for your income verification"
@@ -240,7 +239,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import {
   ApplicationExceptionStatus,
-  InProgressApplicationDetails,
+  InProgressApplicationDetailsAPIOutDTO,
   OfferingStatus,
   ProgramInfoStatus,
 } from "@/types";
@@ -260,7 +259,7 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const applicationDetails = ref<InProgressApplicationDetails>();
+    const applicationDetails = ref<InProgressApplicationDetailsAPIOutDTO>();
     const router = useRouter();
     const goToStudentApplication = async () => {
       router.push({
@@ -270,7 +269,7 @@ export default defineComponent({
 
     onMounted(async () => {
       applicationDetails.value =
-        await ApplicationService.shared.getApplicationFullDetails(
+        await ApplicationService.shared.getInProgressApplicationDetails(
           props.applicationId,
         );
 

@@ -4,6 +4,7 @@ import {
   ApplicationStatus,
   OfferingIntensity,
 } from "@/types";
+import { useFormatters } from "./useFormatters";
 
 export function useApplication() {
   const mapApplicationChipStatus = (
@@ -29,12 +30,16 @@ export function useApplication() {
   const mapApplicationDetailHeader = (
     application: Required<ApplicationDetailHeader>,
   ): Record<string, OfferingIntensity | string> => {
+    const { dateOnlyLongString } = useFormatters();
+
     return {
       "Application #": application.applicationNumber,
       Institution: application.applicationInstitutionName,
       "Study dates":
         application.applicationStartDate && application.applicationEndDate
-          ? `${application.applicationStartDate} - ${application.applicationEndDate}`
+          ? `${dateOnlyLongString(
+              application.applicationStartDate,
+            )} - ${dateOnlyLongString(application.applicationEndDate)}`
           : "-",
       Type: application.applicationOfferingIntensity,
     };

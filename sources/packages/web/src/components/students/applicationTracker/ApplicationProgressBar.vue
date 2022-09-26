@@ -16,16 +16,22 @@
       readonly
       :disabled="disabled"
       class="application-slider"
-      :thumb-label="thumbLabel"
     >
-      <template #thumb-label>
-        <v-icon
-          icon="fa:fas fa-exclamation-circle"
-          class="mb-6"
-          :size="20"
-          color="danger"
-        /> </template
-    ></v-slider>
+      <template v-slot:tick-label="{ tick, index }">
+        <span
+          v-if="index === trackerApplicationStatus"
+          class="label-bold default-color"
+          >{{ tick.label }}
+          <v-icon
+            v-if="hasDeclinedCard"
+            icon="fa:fas fa-exclamation-circle"
+            :size="20"
+            color="danger"
+            class="pl-4"
+        /></span>
+        <span class="label-value default-color" v-else>{{ tick.label }} </span>
+      </template>
+    </v-slider>
 
     <draft
       @editApplication="$emit('editApplication')"
@@ -39,7 +45,6 @@
           ApplicationStatus.submitted
       "
     />
-
     <in-progress
       v-if="
         trackerApplicationStatus !== undefined &&
@@ -50,7 +55,7 @@
       @declinedEvent="declinedEvent"
     />
   </template>
-  <cancelled v-else />
+  <cancelled v-else :applicationId="applicationId" />
 </template>
 <script lang="ts">
 import { ApplicationStatus } from "@/types";
@@ -79,7 +84,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const thumbLabel = ref();
+    const hasDeclinedCard = ref(false);
     const applicationStatusTracker = ref<Record<number, ApplicationStatus>>({
       0: ApplicationStatus.submitted,
       1: ApplicationStatus.inProgress,
@@ -117,12 +122,16 @@ export default defineComponent({
 
     const thumbSize = computed(() =>
       // thumbSize is 0 for all the status except draft.
-      props.applicationStatus === ApplicationStatus.draft ? 20 : 0,
+      [ApplicationStatus.draft, ApplicationStatus.submitted].includes(
+        props.applicationStatus,
+      )
+        ? 20
+        : 0,
     );
 
     // Emit this function whenever there is a declined card. eg, Inprogress cards.
     const declinedEvent = () => {
-      thumbLabel.value = "always";
+      hasDeclinedCard.value = true;
       trackFillColor.value = "error";
     };
 
@@ -134,7 +143,7 @@ export default defineComponent({
       thumbColor,
       thumbSize,
       ApplicationStatus,
-      thumbLabel,
+      hasDeclinedCard,
       declinedEvent,
     };
   },
