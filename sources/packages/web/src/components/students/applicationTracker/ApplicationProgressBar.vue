@@ -17,7 +17,7 @@
       :disabled="disabled"
       class="application-slider"
     >
-      <template v-slot:tick-label="{ tick, index }">
+      <template #tick-label="{ tick, index }">
         <span
           v-if="index === trackerApplicationStatus"
           class="label-bold default-color"
@@ -121,7 +121,7 @@ export default defineComponent({
     );
 
     const thumbSize = computed(() =>
-      // thumbSize is 0 for all the status except draft.
+      // thumbSize is 0 for all the status except draft and submitted.
       [ApplicationStatus.draft, ApplicationStatus.submitted].includes(
         props.applicationStatus,
       )
@@ -129,7 +129,8 @@ export default defineComponent({
         : 0,
     );
 
-    // Emit this function whenever there is a declined card. eg, Inprogress cards.
+    // Emit this function whenever there is a declined card (i.e whenever
+    // exclamation icon needs to be shown). eg, Inprogress denial cards.
     const declinedEvent = () => {
       hasDeclinedCard.value = true;
       trackFillColor.value = "error";

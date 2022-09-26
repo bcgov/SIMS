@@ -125,7 +125,7 @@ export class ApplicationApi extends HttpBaseClient {
    * @param applicationId
    * @returns
    */
-  // todo: Looks like its not used. Have same endpoint getApplicationData, in this same file. remove bth function and interface, if its not used.
+  // todo: Looks like its not used. Have same endpoint getApplicationData in this same file. remove both function and interface, if its not used.
   async getApplicationDetails(
     applicationId: number,
   ): Promise<GetApplicationBaseDTO> {
@@ -175,7 +175,7 @@ export class ApplicationApi extends HttpBaseClient {
   /**
    * Get in progress details of an application by application id.
    * @param applicationId application id.
-   * @returns application full details.
+   * @returns application details.
    */
   async getInProgressApplicationDetails(
     applicationId: number,
@@ -189,7 +189,7 @@ export class ApplicationApi extends HttpBaseClient {
   /**
    * Get cancelled details of an application by application id.
    * @param applicationId application id.
-   * @returns application full details.
+   * @returns application details.
    */
   async getCancelledApplicationDetails(
     applicationId: number,
@@ -203,7 +203,7 @@ export class ApplicationApi extends HttpBaseClient {
   /**
    * Get details of an application by application id.
    * @param applicationId application id.
-   * @returns application full details.
+   * @returns application details.
    */
   async getApplicationStatusDetails(
     applicationId: number,

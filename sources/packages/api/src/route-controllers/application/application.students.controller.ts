@@ -571,7 +571,7 @@ export class ApplicationStudentsController extends BaseController {
             inProgressApplicationDetails.parent2InfoSuccess = true;
           }
         } else {
-          // waiting
+          // waiting.
           if (
             !inProgressApplicationDetails.hasOwnProperty("parent1InfoWaiting")
           ) {
@@ -583,7 +583,7 @@ export class ApplicationStudentsController extends BaseController {
           }
         }
       } else {
-        // Partner
+        // Partner.
         if (supportingUser.supportingData) {
           inProgressApplicationDetails.partnerInfoSuccess = true;
         } else {
@@ -641,8 +641,8 @@ export class ApplicationStudentsController extends BaseController {
     }
     const offering = application.currentAssessment?.offering;
     // When a student selects "offering not found" (pir required)
-    // get study dates field from data and display the date when an offering is found.
-    // and display the date when an offering is found
+    // get study dates field and offering intensity from data and
+    // display the date and offering intensity when an offering is found.
     return {
       applicationNumber: application.applicationNumber,
       applicationInstitutionName: application.location?.name,
@@ -650,7 +650,9 @@ export class ApplicationStudentsController extends BaseController {
         offering?.studyStartDate ?? application.data.studystartDate,
       applicationEndDate:
         offering?.studyEndDate ?? application.data.studyendDate,
-      applicationOfferingIntensity: offering?.offeringIntensity,
+      applicationOfferingIntensity:
+        offering?.offeringIntensity ??
+        application.data.howWillYouBeAttendingTheProgram,
       applicationSubmittedDate: application.submittedDate,
       applicationStatus: application.applicationStatus,
     };

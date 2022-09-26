@@ -297,7 +297,7 @@ html * {
   background-color: unset;
 }
 
-// Remove the ripple and hover effect
+// Remove the ripple and hover effect.
 .application-slider .v-ripple__container {
   display: none;
 }
@@ -324,7 +324,7 @@ html * {
 
 .application-tracker-alert.v-alert {
   /* UI/Borders */
-  border: 1px solid #e8e8e8;
+  border: 1px solid $common-border-color;
   border-radius: 8px;
 }
 

@@ -141,7 +141,7 @@ export class ApplicationControllerService {
    */
   async transformToApplicationDetailForStudentDTO(
     applicationDetail: Application,
-    disbursement?: DisbursementSchedule,
+    disbursement: DisbursementSchedule,
   ): Promise<GetApplicationDataDto> {
     const offering = applicationDetail.currentAssessment?.offering;
     return {
@@ -167,7 +167,6 @@ export class ApplicationControllerService {
       applicationCOEDeniedReason: disbursement
         ? getCOEDeniedReason(disbursement)
         : undefined,
-      applicationSubmittedDate: applicationDetail.submittedDate,
     };
   }
 

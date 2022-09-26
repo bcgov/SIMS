@@ -1,5 +1,5 @@
 <template>
-  <!-- Waiting cards -->
+  <!-- Waiting cards. -->
   <application-status-tracker-banner
     label="Waiting for your income verification"
     icon="fa:fas fa-clock"
@@ -107,7 +107,7 @@
     "
   />
 
-  <!-- Success cards -->
+  <!-- Success cards. -->
   <application-status-tracker-banner
     label="Income verification completed"
     icon="fa:fas fa-check-circle"
@@ -183,7 +183,7 @@
     "
   />
 
-  <!-- Denial cards -->
+  <!-- Denial cards. -->
   <application-status-tracker-banner
     v-if="applicationDetails?.pirStatus === ProgramInfoStatus.declined"
     label="Your institution denied your program information request"

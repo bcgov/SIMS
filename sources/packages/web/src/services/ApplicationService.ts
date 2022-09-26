@@ -154,7 +154,7 @@ export class ApplicationService {
   }
 
   /**
-   * Get cancelled details of an application by application id.
+   * Get details of an application by application id.
    * @param applicationId application id.
    * @returns application full details.
    */
