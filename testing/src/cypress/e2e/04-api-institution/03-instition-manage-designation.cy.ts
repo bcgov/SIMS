@@ -93,20 +93,18 @@ describe("[Designation details] ", () => {
       });
       expect(body.submittedData.agreementAccepted).to.be.a("boolean");
       body.submittedData.eligibilityOfficers.forEach((officerData: JSON) => {
-        expect(officerData.email).to.match(commonRegexObject.emailRegex);
+        expect(officerData.email).to.be.a("string");
         expect(officerData.phone).to.match(commonRegexObject.phoneNumberRegex);
         expect(officerData.name).to.be.a("string");
         expect(officerData.positionTitle).to.be.oneOf(["Admin"]);
       });
       body.submittedData.enrolmentOfficers.forEach((officerData: JSON) => {
-        expect(officerData.email).to.match(commonRegexObject.emailRegex);
+        expect(officerData.email).to.be.a("string");
         expect(officerData.phone).to.match(commonRegexObject.phoneNumberRegex);
         expect(officerData.name).to.be.a("string");
         expect(officerData.positionTitle).to.be.oneOf(["AEO"]);
       });
-      expect(body.submittedData.legalAuthorityEmailAddress).to.match(
-        commonRegexObject.emailRegex
-      );
+      expect(body.submittedData.legalAuthorityEmailAddress).to.be.a("string");
       expect(body.submittedData.legalAuthorityName).to.be.a("string");
       expect(body.submittedData.scheduleA).to.be.a("boolean");
       expect(body.submittedData.scheduleB).to.be.a("boolean");
