@@ -18,6 +18,8 @@ import { ClientTypeBaseRoute } from "../../types";
 import {
   AssessmentNOAAPIOutDTO,
   AwardDetailsAPIOutDTO,
+  RequestAssessmentSummaryAPIOutDTO,
+  AssessmentHistorySummaryAPIOutDTO,
 } from "./models/assessment.dto";
 import {
   ApiNotFoundResponse,
@@ -113,6 +115,40 @@ export class AssessmentStudentsController extends BaseController {
   ): Promise<AwardDetailsAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentAwardDetails(
       assessmentId,
+    );
+  }
+
+  /**
+   * Get all requests related to an assessments for a student
+   * application, i.e, this will fetch all pending and denied
+   * student appeals.
+   * @param applicationId application number.
+   * @returns assessment requests or exceptions for a student application.
+   */
+  @Get("application/:applicationId/requests")
+  async getRequestedAssessmentSummary(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
+    return this.assessmentControllerService.getRequestedAssessmentSummary(
+      applicationId,
+      userToken.studentId,
+    );
+  }
+
+  /**
+   * Get history of approved assessments for an application.
+   * @param applicationId, application number.
+   * @returns summary of the assessment history for a student application.
+   */
+  @Get("application/:applicationId/history")
+  async getAssessmentHistorySummary(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
+    return this.assessmentControllerService.getAssessmentHistorySummary(
+      applicationId,
+      userToken.studentId,
     );
   }
 }

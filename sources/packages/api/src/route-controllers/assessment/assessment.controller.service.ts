@@ -6,6 +6,8 @@ import {
   DisbursementSchedule,
   COEStatus,
   DisbursementReceipt,
+  ApplicationExceptionStatus,
+  AssessmentTriggerType,
 } from "../../database/entities";
 import {
   StudentAppealRequestAPIOutDTO,
@@ -20,18 +22,30 @@ import {
 import {
   StudentAssessmentService,
   DisbursementReceiptService,
+  EducationProgramOfferingService,
+  ApplicationExceptionService,
+  StudentAppealService,
+  StudentScholasticStandingsService,
 } from "../../services";
 import {
   AssessmentNOAAPIOutDTO,
   AwardDetailsAPIOutDTO,
+  RequestAssessmentSummaryAPIOutDTO,
+  RequestAssessmentTypeAPIOutDTO,
+  AssessmentHistorySummaryAPIOutDTO,
 } from "./models/assessment.dto";
 import { getDateOnlyFormat, getUserFullName } from "../../utilities";
+import { StudentAssessmentStatus } from "../../services/student-assessment/student-assessment.models";
 
 @Injectable()
 export class AssessmentControllerService {
   constructor(
     private readonly assessmentService: StudentAssessmentService,
     private readonly disbursementReceiptService: DisbursementReceiptService,
+    private readonly educationProgramOfferingService: EducationProgramOfferingService,
+    private readonly applicationExceptionService: ApplicationExceptionService,
+    private readonly studentAppealService: StudentAppealService,
+    private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
   ) {}
 
   /**
@@ -272,5 +286,129 @@ export class AssessmentControllerService {
         });
       });
     return finalAward;
+  }
+
+  /**
+   * Get all requests related to an assessments for a student
+   * application, i.e, this will fetch all pending and denied
+   * student appeals for an application or possible application
+   * exceptions that will prevent the assessment to proceed till
+   * they are approved, for instance, when a document is uploaded
+   * and need to be reviewed.
+   * @param applicationId application number.
+   * @param studentId applicant student.
+   * When student id is provided, then only student appeals are returned as
+   * other assessment types must not be available for students.
+   * @returns assessment requests or exceptions for a student application.
+   */
+
+  async getRequestedAssessmentSummary(
+    applicationId: number,
+    studentId?: number,
+  ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
+    const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
+    // Requested offering changes and application exceptions must not ne accessible for student.
+    if (!studentId) {
+      const offeringChange =
+        await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
+          applicationId,
+        );
+      if (offeringChange) {
+        requestAssessmentSummary.push({
+          id: offeringChange.id,
+          submittedDate: offeringChange.submittedDate,
+          status: offeringChange.offeringStatus,
+          requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
+          programId: offeringChange.educationProgram.id,
+        });
+      }
+
+      const applicationExceptions =
+        await this.applicationExceptionService.getExceptionsByApplicationId(
+          applicationId,
+          ApplicationExceptionStatus.Pending,
+          ApplicationExceptionStatus.Declined,
+        );
+
+      if (applicationExceptions.length > 0) {
+        const applicationExceptionArray: RequestAssessmentSummaryAPIOutDTO[] =
+          applicationExceptions.map((applicationException) => ({
+            id: applicationException.id,
+            submittedDate: applicationException.createdAt,
+            status: applicationException.exceptionStatus,
+            requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
+          }));
+        return requestAssessmentSummary.concat(applicationExceptionArray);
+      }
+    }
+
+    const studentAppeal =
+      await this.studentAppealService.getPendingAndDeniedAppeals(
+        applicationId,
+        studentId,
+      );
+    const studentAppealArray: RequestAssessmentSummaryAPIOutDTO[] =
+      studentAppeal.map((appeals) => ({
+        id: appeals.id,
+        submittedDate: appeals.submittedDate,
+        status: appeals.status,
+        requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
+      }));
+    return requestAssessmentSummary.concat(studentAppealArray);
+  }
+
+  /**
+   * Method to get history of assessments for an application,
+   * i.e, this will have original assessment for the
+   * student application, and all approved student
+   * appeal and scholastic standings for the application
+   * which will have different assessment status.
+   * @param applicationId, application number.
+   * @param studentId applicant student.
+   * When student id is provided, then only student assessment history is returned and
+   * unsuccessful scholastic standing details must not be available for students.
+   * @returns summary of the assessment history for a student application.
+   */
+  async getAssessmentHistorySummary(
+    applicationId: number,
+    studentId?: number,
+  ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
+    // Unsuccessful scholastic standing is not returned for student access.
+    const [assessments, unsuccessfulScholasticStanding] = await Promise.all([
+      this.assessmentService.assessmentHistorySummary(applicationId),
+      studentId
+        ? undefined
+        : this.studentScholasticStandingsService.getUnsuccessfulScholasticStandings(
+            applicationId,
+          ),
+    ]);
+    const history: AssessmentHistorySummaryAPIOutDTO[] = assessments.map(
+      (assessment) => ({
+        assessmentId: assessment.id,
+        submittedDate: assessment.submittedDate,
+        triggerType: assessment.triggerType,
+        assessmentDate: assessment.assessmentDate,
+        status: assessment.status,
+        offeringId: assessment.offering.id,
+        programId: assessment.offering.educationProgram.id,
+        studentAppealId: assessment.studentAppeal?.id,
+        applicationExceptionId: assessment.application.applicationException?.id,
+        studentScholasticStandingId: assessment.studentScholasticStanding?.id,
+      }),
+    );
+    // Add unsuccessful scholastic standing to the top of the list, if present.
+    // For unsuccessful scholastic standing, status is always "completed" and
+    // "createdAt" is "submittedDate".
+    if (!studentId && unsuccessfulScholasticStanding) {
+      history.unshift({
+        submittedDate: unsuccessfulScholasticStanding.createdAt,
+        triggerType: AssessmentTriggerType.ScholasticStandingChange,
+        status: StudentAssessmentStatus.Completed,
+        studentScholasticStandingId: unsuccessfulScholasticStanding.id,
+        hasUnsuccessfulWeeks: true,
+      });
+    }
+
+    return history;
   }
 }

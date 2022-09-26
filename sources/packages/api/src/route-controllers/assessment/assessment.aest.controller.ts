@@ -5,18 +5,9 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  ApplicationExceptionService,
-  ApplicationService,
-  EducationProgramOfferingService,
-  StudentAppealService,
-  StudentAssessmentService,
-  StudentScholasticStandingsService,
-} from "../../services";
-import {
   AssessmentHistorySummaryAPIOutDTO,
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
-  RequestAssessmentTypeAPIOutDTO,
   AwardDetailsAPIOutDTO,
 } from "./models/assessment.dto";
 import {
@@ -25,11 +16,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AssessmentControllerService } from "./assessment.controller.service";
-import {
-  ApplicationExceptionStatus,
-  AssessmentTriggerType,
-} from "../../database/entities";
-import { StudentAssessmentStatus } from "../../services/student-assessment/student-assessment.models";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -37,13 +23,7 @@ import { StudentAssessmentStatus } from "../../services/student-assessment/stude
 @ApiTags(`${ClientTypeBaseRoute.AEST}-assessment`)
 export class AssessmentAESTController extends BaseController {
   constructor(
-    private readonly studentAppealService: StudentAppealService,
-    private readonly studentAssessmentService: StudentAssessmentService,
     private readonly assessmentControllerService: AssessmentControllerService,
-    private readonly applicationExceptionService: ApplicationExceptionService,
-    private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
-    private readonly applicationService: ApplicationService,
-    private readonly educationProgramOfferingService: EducationProgramOfferingService,
   ) {
     super();
   }
@@ -62,49 +42,9 @@ export class AssessmentAESTController extends BaseController {
   async getRequestedAssessmentSummary(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
-    const offeringChange =
-      await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
-        applicationId,
-      );
-    if (offeringChange) {
-      requestAssessmentSummary.push({
-        id: offeringChange.id,
-        submittedDate: offeringChange.submittedDate,
-        status: offeringChange.offeringStatus,
-        requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
-        programId: offeringChange.educationProgram.id,
-      });
-    }
-
-    const applicationExceptions =
-      await this.applicationExceptionService.getExceptionsByApplicationId(
-        applicationId,
-        ApplicationExceptionStatus.Pending,
-        ApplicationExceptionStatus.Declined,
-      );
-
-    if (applicationExceptions.length > 0) {
-      const applicationExceptionArray: RequestAssessmentSummaryAPIOutDTO[] =
-        applicationExceptions.map((applicationException) => ({
-          id: applicationException.id,
-          submittedDate: applicationException.createdAt,
-          status: applicationException.exceptionStatus,
-          requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
-        }));
-      return requestAssessmentSummary.concat(applicationExceptionArray);
-    }
-
-    const studentAppeal =
-      await this.studentAppealService.getPendingAndDeniedAppeals(applicationId);
-    const studentAppealArray: RequestAssessmentSummaryAPIOutDTO[] =
-      studentAppeal.map((appeals) => ({
-        id: appeals.id,
-        submittedDate: appeals.submittedDate,
-        status: appeals.status,
-        requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
-      }));
-    return requestAssessmentSummary.concat(studentAppealArray);
+    return this.assessmentControllerService.getRequestedAssessmentSummary(
+      applicationId,
+    );
   }
 
   /**
@@ -120,40 +60,9 @@ export class AssessmentAESTController extends BaseController {
   async getAssessmentHistorySummary(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
-    const [assessments, unsuccessfulScholasticStanding] = await Promise.all([
-      this.studentAssessmentService.assessmentHistorySummary(applicationId),
-      this.studentScholasticStandingsService.getUnsuccessfulScholasticStandings(
-        applicationId,
-      ),
-    ]);
-    const history: AssessmentHistorySummaryAPIOutDTO[] = assessments.map(
-      (assessment) => ({
-        assessmentId: assessment.id,
-        submittedDate: assessment.submittedDate,
-        triggerType: assessment.triggerType,
-        assessmentDate: assessment.assessmentDate,
-        status: assessment.status,
-        offeringId: assessment.offering.id,
-        programId: assessment.offering.educationProgram.id,
-        studentAppealId: assessment.studentAppeal?.id,
-        applicationExceptionId: assessment.application.applicationException?.id,
-        studentScholasticStandingId: assessment.studentScholasticStanding?.id,
-      }),
+    return this.assessmentControllerService.getAssessmentHistorySummary(
+      applicationId,
     );
-    // Add unsuccessful scholastic standing to the top of the list, if present.
-    // For unsuccessful scholastic standing, status is always "completed" and
-    // "createdAt" is "submittedDate".
-    if (unsuccessfulScholasticStanding) {
-      history.unshift({
-        submittedDate: unsuccessfulScholasticStanding.createdAt,
-        triggerType: AssessmentTriggerType.ScholasticStandingChange,
-        status: StudentAssessmentStatus.Completed,
-        studentScholasticStandingId: unsuccessfulScholasticStanding.id,
-        hasUnsuccessfulWeeks: true,
-      });
-    }
-
-    return history;
   }
 
   /**
