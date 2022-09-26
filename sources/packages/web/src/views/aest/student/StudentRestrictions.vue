@@ -125,7 +125,7 @@ export default {
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
     const viewRestriction = ref(
-      {} as ModalDialog<AssignRestrictionAPIInDTO | boolean>,
+      {} as ModalDialog<RestrictionDetailAPIOutDTO | boolean>,
     );
     const addRestriction = ref(
       {} as ModalDialog<AssignRestrictionAPIInDTO | boolean>,
@@ -152,8 +152,12 @@ export default {
           studentRestriction.value.updatedAt,
         );
       }
-
-      await viewRestriction.value.showModal();
+      const viewStudentRestrictionData =
+        await viewRestriction.value.showModal();
+      if (viewStudentRestrictionData)
+        resolveRestriction(
+          viewStudentRestrictionData as RestrictionDetailAPIOutDTO,
+        );
     };
 
     const resolveRestriction = async (data: RestrictionDetailAPIOutDTO) => {
