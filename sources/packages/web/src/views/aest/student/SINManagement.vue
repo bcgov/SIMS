@@ -64,26 +64,11 @@
       </toggle-content>
     </content-group>
   </full-page-container>
-  <formio-modal-dialog
-    max-width="730"
+  <AddNewSIN
     ref="addNewSINModal"
-    title="Add a new SIN"
-    formName="aestAddNewSIN"
-  >
-    <template #actions="{ cancel, submit }">
-      <check-permission-role :role="Role.StudentAddNewSIN">
-        <template #="{ notAllowed }">
-          <footer-buttons
-            justify="end"
-            primaryLabel="Add SIN now"
-            @secondaryClick="cancel"
-            @primaryClick="submit"
-            :disablePrimaryButton="notAllowed"
-          />
-        </template>
-      </check-permission-role>
-    </template>
-  </formio-modal-dialog>
+    :restrictionData="addNewSIN"
+    :allowedRole="Role.StudentAddNewSIN"
+  ></AddNewSIN>
   <formio-modal-dialog
     max-width="730"
     ref="addExpiryDateModal"
@@ -129,11 +114,13 @@ import {
   UpdateSINValidationAPIInDTO,
 } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import AddNewSIN from "@/components/common/sin/AddNewSIN.vue";
 
 export default {
   components: {
     FormioModalDialog,
     CheckPermissionRole,
+    AddNewSIN,
   },
   props: {
     studentId: {
