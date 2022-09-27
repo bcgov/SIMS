@@ -111,6 +111,7 @@ export interface SuccessWaitingStatus {
   success: boolean;
   waiting: boolean;
 }
+
 export interface ApplicationIncomeVerification {
   parent1IncomeVerificationStatus: SuccessWaitingStatus;
   parent2IncomeVerificationStatus: SuccessWaitingStatus;
