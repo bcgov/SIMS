@@ -460,7 +460,7 @@ export class ApplicationStudentsController extends BaseController {
   /**
    * Get in progress details of an application by application id.
    * @param applicationId application id.
-   * @returns application full details.
+   * @returns application details.
    */
   @Get(":id/in-progress")
   @ApiNotFoundResponse({
@@ -469,8 +469,6 @@ export class ApplicationStudentsController extends BaseController {
   async getInProgressApplicationDetails(
     @Param("id", ParseIntPipe) applicationId: number,
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
-    const inProgressApplicationDetails =
-      {} as InProgressApplicationDetailsAPIOutDTO;
     const application = await this.applicationService.getApplicationByIdAndUser(
       applicationId,
     );
@@ -479,125 +477,42 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-    inProgressApplicationDetails.id = application.id;
-    inProgressApplicationDetails.applicationStatus =
-      application.applicationStatus;
-    inProgressApplicationDetails.pirStatus = application.pirStatus;
-    inProgressApplicationDetails.PIRDeniedReason =
-      getPIRDeniedReason(application);
-    inProgressApplicationDetails.offeringStatus =
-      application.currentAssessment?.offering.offeringStatus;
-    inProgressApplicationDetails.exceptionStatus =
-      application.applicationException?.exceptionStatus;
 
     const incomeVerificationDetails =
       await this.craIncomeVerificationService.allIncomeVerificationsForAnApplication(
         applicationId,
       );
-    if (incomeVerificationDetails.length > 0) {
-      incomeVerificationDetails.forEach((incomeVerification) => {
-        if (incomeVerification.supportingUser) {
-          // Supporting user income verification details.
-          // If supporting user type is parent, then there will be only 2 parents.
-          if (
-            incomeVerification.supportingUser.supportingUserType ===
-            SupportingUserType.Parent
-          ) {
-            if (
-              !(
-                inProgressApplicationDetails.hasOwnProperty(
-                  "parent1IncomeVerificationStatusWaiting",
-                ) ||
-                inProgressApplicationDetails.hasOwnProperty(
-                  "parent1IncomeVerificationStatusSuccess",
-                )
-              )
-            ) {
-              // Parent 1.
-              if (!incomeVerification.dateReceived) {
-                inProgressApplicationDetails.parent1IncomeVerificationStatusWaiting =
-                  true;
-              } else {
-                inProgressApplicationDetails.parent1IncomeVerificationStatusSuccess =
-                  true;
-              }
-            } else {
-              // Parent 2.
-              if (!incomeVerification.dateReceived) {
-                inProgressApplicationDetails.parent2IncomeVerificationStatusWaiting =
-                  true;
-              } else {
-                inProgressApplicationDetails.parent2IncomeVerificationStatusSuccess =
-                  true;
-              }
-            }
-          } else {
-            // partner income verification details.
-            if (!incomeVerification.dateReceived) {
-              inProgressApplicationDetails.partnerIncomeVerificationStatusWaiting =
-                true;
-            } else {
-              inProgressApplicationDetails.partnerIncomeVerificationStatusSuccess =
-                true;
-            }
-          }
-        } else {
-          // student income verification details.
-          if (!incomeVerification.dateReceived) {
-            inProgressApplicationDetails.studentIncomeVerificationStatusWaiting =
-              true;
-          } else {
-            inProgressApplicationDetails.studentIncomeVerificationStatusSuccess =
-              true;
-          }
-        }
-      });
-    }
+    const incomeVerification =
+      this.applicationControllerService.processApplicationIncomeVerificationDetails(
+        incomeVerificationDetails,
+      );
+
     const supportingUserDetails =
       await this.supportingUserService.getSupportingUsersByApplicationId(
         applicationId,
       );
-    supportingUserDetails.forEach((supportingUser) => {
-      if (supportingUser.supportingUserType === SupportingUserType.Parent) {
-        if (supportingUser.supportingData) {
-          // Success.
-          if (
-            !inProgressApplicationDetails.hasOwnProperty("parent1InfoSuccess")
-          ) {
-            // Parent 1.
-            inProgressApplicationDetails.parent1InfoSuccess = true;
-          } else {
-            // Parent 2.
-            inProgressApplicationDetails.parent2InfoSuccess = true;
-          }
-        } else {
-          // waiting.
-          if (
-            !inProgressApplicationDetails.hasOwnProperty("parent1InfoWaiting")
-          ) {
-            // Parent 1.
-            inProgressApplicationDetails.parent1InfoWaiting = true;
-          } else {
-            // Parent 2.
-            inProgressApplicationDetails.parent2InfoWaiting = true;
-          }
-        }
-      } else {
-        // Partner.
-        if (supportingUser.supportingData) {
-          inProgressApplicationDetails.partnerInfoSuccess = true;
-        } else {
-          inProgressApplicationDetails.partnerInfoWaiting = true;
-        }
-      }
-    });
-    return inProgressApplicationDetails;
+
+    const supportingUser =
+      this.applicationControllerService.processApplicationSupportingUserDetails(
+        supportingUserDetails,
+      );
+
+    return {
+      id: application.id,
+      applicationStatus: application.applicationStatus,
+      pirStatus: application.pirStatus,
+      PIRDeniedReason: getPIRDeniedReason(application),
+      offeringStatus: application.currentAssessment?.offering.offeringStatus,
+      exceptionStatus: application.applicationException?.exceptionStatus,
+      ...incomeVerification,
+      ...supportingUser,
+    };
   }
 
   /**
    * Get cancelled details of an application by application id.
    * @param applicationId application id.
-   * @returns application full details.
+   * @returns application details.
    */
   @Get(":id/cancelled")
   @ApiNotFoundResponse({
@@ -622,7 +537,7 @@ export class ApplicationStudentsController extends BaseController {
   /**
    * Get details of an application by application id.
    * @param applicationId application id.
-   * @returns application full details.
+   * @returns application details.
    */
   @Get(":id/details")
   @ApiNotFoundResponse({

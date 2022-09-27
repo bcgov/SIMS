@@ -243,9 +243,8 @@ import {
   OfferingStatus,
   ProgramInfoStatus,
 } from "@/types";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
-import { defineComponent } from "vue";
 
 export default defineComponent({
   emits: ["declinedEvent"],

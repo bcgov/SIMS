@@ -7,6 +7,8 @@ import {
 } from "../../services";
 import {
   ApplicationFormData,
+  ApplicationIncomeVerification,
+  ApplicationSupportingUserDetails,
   GetApplicationBaseDTO,
   GetApplicationDataDto,
 } from "./models/application.model";
@@ -21,9 +23,12 @@ import {
 import {
   Application,
   ApplicationData,
+  CRAIncomeVerification,
   DisbursementSchedule,
   OfferingIntensity,
   ProgramStatus,
+  SupportingUser,
+  SupportingUserType,
 } from "../../database/entities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 import { ApiProcessError } from "../../types";
@@ -202,5 +207,116 @@ export class ApplicationControllerService {
         ),
       );
     }
+  }
+
+  /**
+   * Process application income verification details.
+   * @param CRAIncomeVerification CRA income verification data.
+   * @return processed object.
+   */
+  processApplicationIncomeVerificationDetails(
+    CRAIncomeVerification: CRAIncomeVerification[],
+  ): ApplicationIncomeVerification {
+    const incomeVerificationDetails = {} as ApplicationIncomeVerification;
+    CRAIncomeVerification.forEach((incomeVerification) => {
+      if (incomeVerification.supportingUser) {
+        // Supporting user income verification details.
+        // If supporting user type is parent, then there will be only 2 parents.
+        if (
+          incomeVerification.supportingUser.supportingUserType ===
+          SupportingUserType.Parent
+        ) {
+          if (
+            !(
+              incomeVerificationDetails.hasOwnProperty(
+                "parent1IncomeVerificationStatusWaiting",
+              ) ||
+              incomeVerificationDetails.hasOwnProperty(
+                "parent1IncomeVerificationStatusSuccess",
+              )
+            )
+          ) {
+            // Parent 1.
+            if (!incomeVerification.dateReceived) {
+              incomeVerificationDetails.parent1IncomeVerificationStatusWaiting =
+                true;
+            } else {
+              incomeVerificationDetails.parent1IncomeVerificationStatusSuccess =
+                true;
+            }
+          } else {
+            // Parent 2.
+            if (!incomeVerification.dateReceived) {
+              incomeVerificationDetails.parent2IncomeVerificationStatusWaiting =
+                true;
+            } else {
+              incomeVerificationDetails.parent2IncomeVerificationStatusSuccess =
+                true;
+            }
+          }
+        } else {
+          // partner income verification details.
+          if (!incomeVerification.dateReceived) {
+            incomeVerificationDetails.partnerIncomeVerificationStatusWaiting =
+              true;
+          } else {
+            incomeVerificationDetails.partnerIncomeVerificationStatusSuccess =
+              true;
+          }
+        }
+      } else {
+        // student income verification details.
+        if (!incomeVerification.dateReceived) {
+          incomeVerificationDetails.studentIncomeVerificationStatusWaiting =
+            true;
+        } else {
+          incomeVerificationDetails.studentIncomeVerificationStatusSuccess =
+            true;
+        }
+      }
+    });
+    return incomeVerificationDetails;
+  }
+
+  /**
+   * Process application supporting user details.
+   * @param supportingUser supporting users data.
+   * @return processed object.
+   */
+  processApplicationSupportingUserDetails(
+    supportingUser: SupportingUser[],
+  ): ApplicationSupportingUserDetails {
+    const supportingUserDetails = {} as ApplicationSupportingUserDetails;
+    supportingUser.forEach((supportingUser) => {
+      if (supportingUser.supportingUserType === SupportingUserType.Parent) {
+        if (supportingUser.supportingData) {
+          // Success.
+          if (!supportingUserDetails.hasOwnProperty("parent1InfoSuccess")) {
+            // Parent 1.
+            supportingUserDetails.parent1InfoSuccess = true;
+          } else {
+            // Parent 2.
+            supportingUserDetails.parent2InfoSuccess = true;
+          }
+        } else {
+          // waiting.
+          if (!supportingUserDetails.hasOwnProperty("parent1InfoWaiting")) {
+            // Parent 1.
+            supportingUserDetails.parent1InfoWaiting = true;
+          } else {
+            // Parent 2.
+            supportingUserDetails.parent2InfoWaiting = true;
+          }
+        }
+      } else {
+        // Partner.
+        if (supportingUser.supportingData) {
+          supportingUserDetails.partnerInfoSuccess = true;
+        } else {
+          supportingUserDetails.partnerInfoWaiting = true;
+        }
+      }
+    });
+    return supportingUserDetails;
   }
 }

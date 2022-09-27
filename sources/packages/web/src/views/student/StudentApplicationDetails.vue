@@ -70,7 +70,7 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, defineComponent } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -89,7 +89,6 @@ import {
 import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
-import { defineComponent } from "vue";
 
 export default defineComponent({
   components: {

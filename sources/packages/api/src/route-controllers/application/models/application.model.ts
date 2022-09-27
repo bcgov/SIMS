@@ -107,13 +107,7 @@ export interface ApplicationWithProgramYearDto {
   active: boolean;
 }
 
-export interface InProgressApplicationDetailsAPIOutDTO {
-  id: number;
-  applicationStatus: ApplicationStatus;
-  pirStatus: ProgramInfoStatus;
-  PIRDeniedReason: string;
-  offeringStatus: OfferingStatus;
-  exceptionStatus: ApplicationExceptionStatus;
+export interface ApplicationIncomeVerification {
   parent1IncomeVerificationStatusWaiting: boolean;
   parent1IncomeVerificationStatusSuccess: boolean;
   parent2IncomeVerificationStatusWaiting: boolean;
@@ -122,12 +116,26 @@ export interface InProgressApplicationDetailsAPIOutDTO {
   partnerIncomeVerificationStatusSuccess: boolean;
   studentIncomeVerificationStatusWaiting: boolean;
   studentIncomeVerificationStatusSuccess: boolean;
+}
+
+export interface ApplicationSupportingUserDetails {
   parent1InfoSuccess: boolean;
   parent2InfoSuccess: boolean;
   parent1InfoWaiting: boolean;
   parent2InfoWaiting: boolean;
   partnerInfoSuccess: boolean;
   partnerInfoWaiting: boolean;
+}
+
+export interface InProgressApplicationDetailsAPIOutDTO
+  extends ApplicationIncomeVerification,
+    ApplicationSupportingUserDetails {
+  id: number;
+  applicationStatus: ApplicationStatus;
+  pirStatus: ProgramInfoStatus;
+  PIRDeniedReason: string;
+  offeringStatus: OfferingStatus;
+  exceptionStatus: ApplicationExceptionStatus;
 }
 
 export interface CancelledApplicationDetailsAPIOutDTO {
