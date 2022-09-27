@@ -215,32 +215,30 @@ export class ApplicationControllerService {
    * @param CRAIncomeVerification CRA income verification data.
    * @return processed object.
    */
-
   processApplicationIncomeVerificationDetails(
     CRAIncomeVerification: CRAIncomeVerification[],
   ): ApplicationIncomeVerification {
     const incomeVerificationDetails = {} as ApplicationIncomeVerification;
-    const studentIncomeVerification = CRAIncomeVerification.filter(
+    const studentIncomeVerifications = CRAIncomeVerification.filter(
       (incomeVerification) => !incomeVerification.supportingUser,
     );
     const supportingUserIncomeVerification = CRAIncomeVerification.filter(
       (incomeVerification) => incomeVerification.supportingUser,
     );
-    studentIncomeVerification.forEach((incomeVerification) => {
-      // Student income verification details.
-      incomeVerificationDetails.studentIncomeVerificationStatus = {
-        waiting: !incomeVerification.dateReceived,
-        success: !!incomeVerification.dateReceived,
-      };
-    });
+    const [studentIncomeVerification] = studentIncomeVerifications;
+    // Student income verification details.
+    incomeVerificationDetails.studentIncomeVerificationStatus = {
+      waiting: !studentIncomeVerification.dateReceived,
+      success: !!studentIncomeVerification.dateReceived,
+    };
 
     supportingUserIncomeVerification.forEach((incomeVerification, index) => {
       // Supporting user income verification details.
-      // If supporting user type is parent, then there cam be 1 or 2 parent..
       if (
         incomeVerification.supportingUser.supportingUserType ===
         SupportingUserType.Parent
       ) {
+        // If supporting user type is parent, then there can be 1 or 2 parent.
         incomeVerificationDetails[
           `parent${index + 1}IncomeVerificationStatus`
         ] = {
