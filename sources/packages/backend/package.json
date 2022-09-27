@@ -8,7 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "npm run setup:db && nest start --watch --preserveWatchOutput",
     "start:debug": "nest start --debug --watch --preserveWatchOutput",
@@ -18,7 +18,7 @@
     "test:watch": "jest --watch ",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "ENVIRONMENT=test jest --config ./test/jest-e2e.json",
+    "test:e2e": "ENVIRONMENT=apps/api/test jest --config ./test/jest-e2e.json",
     "test:e2e:local": "NODE_ENV=local ENVIRONMENT=test jest --config ./test/jest-e2e.json",
     "test:e2e:local:win": "SET NODE_ENV=local&&SET ENVIRONMENT=test&&jest --config ./test/jest-e2e.json",
     "setup:db": "ts-node scripts/setupDB",
@@ -92,7 +92,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -100,7 +100,14 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/libs/",
+      "<rootDir>/apps/"
+    ],
+    "moduleNameMapper": {
+      "^@sims/sims-db(|/.*)$": "<rootDir>/libs/sims-db/src/$1"
+    }
   }
 }

@@ -16,7 +16,7 @@ import {
   getISODateOnlyString,
   getUserFullName,
 } from "../../utilities";
-import { AddressInfo, Application } from "src/database/entities";
+import { AddressInfo, Application } from "../../database/entities";
 import {
   ApplicationSummaryAPIOutDTO,
   StudentProfileAPIOutDTO,

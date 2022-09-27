@@ -1,4 +1,4 @@
-import { InstitutionUserRole, InstitutionUserType } from "src/types";
+import { InstitutionUserRole, InstitutionUserType } from "../../types";
 import { Repository } from "typeorm";
 import { InstitutionUserTypeAndRole } from "../entities";
 

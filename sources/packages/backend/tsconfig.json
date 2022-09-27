@@ -11,6 +11,14 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
-    "allowJs": true
+    "allowJs": true,
+    "paths": {
+      "@sims/sims-db": [
+        "libs/sims-db/src"
+      ],
+      "@sims/sims-db/*": [
+        "libs/sims-db/src/*"
+      ]
+    }
   }
 }
