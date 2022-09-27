@@ -16,6 +16,7 @@
           <!-- Estimated award table. -->
           <award-table
             :awardDetails="assessmentAwardData.estimatedAward"
+            :offeringIntensity="assessmentAwardData.offeringIntensity"
             identifier="disbursement1"
           />
           <div class="my-3">
@@ -67,6 +68,7 @@
           <!-- Final award table. -->
           <award-table
             :awardDetails="assessmentAwardData.finalAward"
+            :offeringIntensity="assessmentAwardData.offeringIntensity"
             identifier="disbursementReceipt1"
             v-if="showFirstFinalAward"
           />
@@ -93,6 +95,7 @@
           <!-- Estimated award table. -->
           <award-table
             :awardDetails="assessmentAwardData.estimatedAward"
+            :offeringIntensity="assessmentAwardData.offeringIntensity"
             identifier="disbursement2"
           />
           <div class="my-3">
@@ -108,7 +111,7 @@
               assessmentAwardData.estimatedAward.disbursement2TuitionRemittance
             "
           >
-            <status-info-label :data="{ status: StatusInfo.Completed }">
+            <status-info-label :status="StatusInfo.Completed">
               Tuition remittance applied
               <span class="label-bold"
                 >-${{
@@ -146,6 +149,7 @@
           <!-- Final award table. -->
           <award-table
             :awardDetails="assessmentAwardData.finalAward"
+            :offeringIntensity="assessmentAwardData.offeringIntensity"
             identifier="disbursementReceipt2"
             v-if="showSecondFinalAward"
           />
@@ -166,7 +170,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import { COEStatus, StatusInfo } from "@/types";
 import { PropType, computed, defineComponent } from "vue";
-import AwardTable from "@/components/aest/students/assessment/AwardTable.vue";
+import AwardTable from "@/components/common/AwardTable.vue";
 import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
 
 export default defineComponent({

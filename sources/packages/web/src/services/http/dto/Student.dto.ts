@@ -31,6 +31,7 @@ export interface StudentProfileAPIOutDTO {
   validSin: boolean;
   pdStatus: StudentPDStatus;
   sin: string;
+  sinConsent: boolean;
 }
 
 export interface AESTStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {

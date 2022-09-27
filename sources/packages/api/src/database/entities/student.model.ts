@@ -77,4 +77,11 @@ export class Student extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   sinValidation: SINValidation;
+  /**
+   * Indicates consent of the student to terms and conditions of the studentAid BC declaration of SIN.
+   */
+  @Column({
+    name: "sin_consent",
+  })
+  sinConsent: boolean;
 }

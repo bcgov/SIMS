@@ -65,6 +65,8 @@ export class CreateStudentAPIInDTO
   mode: string;
   @Allow()
   identityProvider: string;
+  @Allow()
+  sinConsent: boolean;
 }
 
 /**

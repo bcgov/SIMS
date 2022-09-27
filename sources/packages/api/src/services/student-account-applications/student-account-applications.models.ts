@@ -23,3 +23,13 @@ export type StudentAccountApplicationApprovalModel = StudentInfo &
     dateOfBirth: string;
     gender: string;
   };
+
+/**
+ * Dynamic data submitted by the student for the Ministry review while
+ * requesting his identity verification.
+ * The properties mapped here represent only the data that must be
+ * consumed by the API, for instance, the sinConsent.
+ */
+export interface AccountApplicationSubmittedData {
+  sinConsent: boolean;
+}

@@ -3,6 +3,7 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { StudentAccountApplication, User } from "../../database/entities";
 import { DataSource, IsNull } from "typeorm";
 import {
+  AccountApplicationSubmittedData,
   StudentAccountApplicationApprovalModel,
   StudentAccountApplicationCreateModel,
 } from "./student-account-applications.models";
@@ -103,7 +104,11 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     auditUserId: number,
   ) {
     const accountApplication = await this.repo.findOne({
-      select: { id: true, user: { id: true } },
+      select: {
+        id: true,
+        user: { id: true },
+        submittedData: true,
+      },
       relations: { user: true },
       where: { id },
     });
@@ -114,6 +119,9 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
         STUDENT_ACCOUNT_APPLICATION_NOT_FOUND,
       );
     }
+
+    const accountApplicationSubmittedData =
+      accountApplication.submittedData as AccountApplicationSubmittedData;
 
     const userInfo = {
       userId: accountApplication.user.id,
@@ -134,6 +142,11 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       city: studentProfile.city,
       postalCode: studentProfile.postalCode,
       selectedCountry: studentProfile.selectedCountry,
+      // The Ministry approval will happen based on a student profile submitted form
+      // that contains the SIN consent. If the consent is not provided by the student
+      // the Ministry approval would never happen, hence we are considering at this
+      // moment that the student provided already the SIN consent.
+      sinConsent: accountApplicationSubmittedData.sinConsent,
     };
 
     return this.dataSource.transaction(async (entityManager) => {
