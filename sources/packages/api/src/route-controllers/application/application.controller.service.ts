@@ -11,6 +11,7 @@ import {
   ApplicationSupportingUserDetails,
   GetApplicationBaseDTO,
   GetApplicationDataDto,
+  SuccessWaitingStatus,
 } from "./models/application.model";
 import {
   credentialTypeToDisplay,
@@ -214,65 +215,44 @@ export class ApplicationControllerService {
    * @param CRAIncomeVerification CRA income verification data.
    * @return processed object.
    */
+
   processApplicationIncomeVerificationDetails(
     CRAIncomeVerification: CRAIncomeVerification[],
   ): ApplicationIncomeVerification {
     const incomeVerificationDetails = {} as ApplicationIncomeVerification;
-    CRAIncomeVerification.forEach((incomeVerification) => {
-      if (incomeVerification.supportingUser) {
-        // Supporting user income verification details.
-        // If supporting user type is parent, then there will be only 2 parents.
-        if (
-          incomeVerification.supportingUser.supportingUserType ===
-          SupportingUserType.Parent
-        ) {
-          if (
-            !(
-              incomeVerificationDetails.hasOwnProperty(
-                "parent1IncomeVerificationStatusWaiting",
-              ) ||
-              incomeVerificationDetails.hasOwnProperty(
-                "parent1IncomeVerificationStatusSuccess",
-              )
-            )
-          ) {
-            // Parent 1.
-            if (!incomeVerification.dateReceived) {
-              incomeVerificationDetails.parent1IncomeVerificationStatusWaiting =
-                true;
-            } else {
-              incomeVerificationDetails.parent1IncomeVerificationStatusSuccess =
-                true;
-            }
-          } else {
-            // Parent 2.
-            if (!incomeVerification.dateReceived) {
-              incomeVerificationDetails.parent2IncomeVerificationStatusWaiting =
-                true;
-            } else {
-              incomeVerificationDetails.parent2IncomeVerificationStatusSuccess =
-                true;
-            }
-          }
-        } else {
-          // partner income verification details.
-          if (!incomeVerification.dateReceived) {
-            incomeVerificationDetails.partnerIncomeVerificationStatusWaiting =
-              true;
-          } else {
-            incomeVerificationDetails.partnerIncomeVerificationStatusSuccess =
-              true;
-          }
-        }
+    const studentIncomeVerification = CRAIncomeVerification.filter(
+      (incomeVerification) => !incomeVerification.supportingUser,
+    );
+    const supportingUserIncomeVerification = CRAIncomeVerification.filter(
+      (incomeVerification) => incomeVerification.supportingUser,
+    );
+    studentIncomeVerification.forEach((incomeVerification) => {
+      // Student income verification details.
+      incomeVerificationDetails.studentIncomeVerificationStatus = {
+        waiting: !incomeVerification.dateReceived,
+        success: !!incomeVerification.dateReceived,
+      };
+    });
+
+    supportingUserIncomeVerification.forEach((incomeVerification, index) => {
+      // Supporting user income verification details.
+      // If supporting user type is parent, then there cam be 1 or 2 parent..
+      if (
+        incomeVerification.supportingUser.supportingUserType ===
+        SupportingUserType.Parent
+      ) {
+        incomeVerificationDetails[
+          `parent${index + 1}IncomeVerificationStatus`
+        ] = {
+          waiting: !incomeVerification.dateReceived,
+          success: !!incomeVerification.dateReceived,
+        } as SuccessWaitingStatus;
       } else {
-        // student income verification details.
-        if (!incomeVerification.dateReceived) {
-          incomeVerificationDetails.studentIncomeVerificationStatusWaiting =
-            true;
-        } else {
-          incomeVerificationDetails.studentIncomeVerificationStatusSuccess =
-            true;
-        }
+        // partner income verification details.
+        incomeVerificationDetails.partnerIncomeVerificationStatus = {
+          waiting: !incomeVerification.dateReceived,
+          success: !!incomeVerification.dateReceived,
+        };
       }
     });
     return incomeVerificationDetails;
@@ -287,34 +267,18 @@ export class ApplicationControllerService {
     supportingUser: SupportingUser[],
   ): ApplicationSupportingUserDetails {
     const supportingUserDetails = {} as ApplicationSupportingUserDetails;
-    supportingUser.forEach((supportingUser) => {
+    supportingUser.forEach((supportingUser, index) => {
       if (supportingUser.supportingUserType === SupportingUserType.Parent) {
-        if (supportingUser.supportingData) {
-          // Success.
-          if (!supportingUserDetails.hasOwnProperty("parent1InfoSuccess")) {
-            // Parent 1.
-            supportingUserDetails.parent1InfoSuccess = true;
-          } else {
-            // Parent 2.
-            supportingUserDetails.parent2InfoSuccess = true;
-          }
-        } else {
-          // waiting.
-          if (!supportingUserDetails.hasOwnProperty("parent1InfoWaiting")) {
-            // Parent 1.
-            supportingUserDetails.parent1InfoWaiting = true;
-          } else {
-            // Parent 2.
-            supportingUserDetails.parent2InfoWaiting = true;
-          }
-        }
+        supportingUserDetails[`parent${index + 1}Info`] = {
+          waiting: !supportingUser.supportingData,
+          success: !!supportingUser.supportingData,
+        } as SuccessWaitingStatus;
       } else {
         // Partner.
-        if (supportingUser.supportingData) {
-          supportingUserDetails.partnerInfoSuccess = true;
-        } else {
-          supportingUserDetails.partnerInfoWaiting = true;
-        }
+        supportingUserDetails.partnerInfo = {
+          waiting: !supportingUser.supportingData,
+          success: !!supportingUser.supportingData,
+        };
       }
     });
     return supportingUserDetails;

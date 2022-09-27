@@ -50,7 +50,7 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { ApplicationStatus, SupportingUserType } from "../../database/entities";
+import { ApplicationStatus } from "../../database/entities";
 import { getPIRDeniedReason, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
   INVALID_APPLICATION_NUMBER,

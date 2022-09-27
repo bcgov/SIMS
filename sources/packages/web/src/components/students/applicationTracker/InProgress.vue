@@ -5,7 +5,7 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your income."
-    v-if="applicationDetails?.studentIncomeVerificationStatusWaiting"
+    v-if="applicationDetails?.studentIncomeVerificationStatus?.waiting"
   />
 
   <application-status-tracker-banner
@@ -27,7 +27,7 @@
     label="Waiting for additional information from a parent"
     icon="fa:fas fa-clock"
     icon-color="secondary"
-    v-if="applicationDetails?.parent1InfoWaiting"
+    v-if="applicationDetails?.parent1Info?.waiting"
     ><template #content
       ><span
         >We are waiting for
@@ -43,7 +43,7 @@
     label="Waiting for additional information from another parent"
     icon="fa:fas fa-clock"
     icon-color="secondary"
-    v-if="applicationDetails?.parent2InfoWaiting"
+    v-if="applicationDetails?.parent2Info?.waiting"
     ><template #content
       ><span
         >We are waiting for
@@ -60,7 +60,7 @@
     label="Waiting for additional information from your partner"
     icon="fa:fas fa-clock"
     icon-color="secondary"
-    v-if="applicationDetails?.partnerInfoWaiting"
+    v-if="applicationDetails?.partnerInfo?.waiting"
     ><template #content
       ><span
         >We are waiting for
@@ -77,7 +77,7 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your parent's income."
-    v-if="applicationDetails?.parent1IncomeVerificationStatusWaiting"
+    v-if="!!applicationDetails?.parent1IncomeVerificationStatus?.waiting"
   />
 
   <application-status-tracker-banner
@@ -85,7 +85,7 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your other parent's income."
-    v-if="applicationDetails?.parent2IncomeVerificationStatusWaiting"
+    v-if="applicationDetails?.parent2IncomeVerificationStatus?.waiting"
   />
 
   <application-status-tracker-banner
@@ -93,7 +93,7 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your income."
-    v-if="applicationDetails?.partnerIncomeVerificationStatusWaiting"
+    v-if="applicationDetails?.partnerIncomeVerificationStatus?.waiting"
   />
 
   <application-status-tracker-banner
@@ -113,7 +113,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your income."
-    v-if="applicationDetails?.studentIncomeVerificationStatusSuccess"
+    v-if="applicationDetails?.studentIncomeVerificationStatus?.success"
   />
 
   <application-status-tracker-banner
@@ -121,7 +121,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="We have successfully received supporting information from a parent."
-    v-if="applicationDetails?.parent1InfoSuccess"
+    v-if="applicationDetails?.parent1Info?.success"
   />
 
   <application-status-tracker-banner
@@ -129,7 +129,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="We have successfully received supporting information from your other parent."
-    v-if="applicationDetails?.parent2InfoSuccess"
+    v-if="applicationDetails?.parent2Info?.success"
   />
 
   <application-status-tracker-banner
@@ -137,7 +137,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="We have successfully received supporting information from your partner."
-    v-if="applicationDetails?.partnerInfoSuccess"
+    v-if="applicationDetails?.partnerInfo?.success"
   />
 
   <application-status-tracker-banner
@@ -153,7 +153,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your parent's income."
-    v-if="applicationDetails?.parent1IncomeVerificationStatusSuccess"
+    v-if="applicationDetails?.parent1IncomeVerificationStatus?.success"
   />
 
   <application-status-tracker-banner
@@ -161,7 +161,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your other parent's income."
-    v-if="applicationDetails?.parent2IncomeVerificationStatusSuccess"
+    v-if="applicationDetails?.parent2IncomeVerificationStatus?.success"
   />
 
   <application-status-tracker-banner
@@ -169,7 +169,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your partner's income."
-    v-if="applicationDetails?.partnerIncomeVerificationStatusSuccess"
+    v-if="applicationDetails?.partnerIncomeVerificationStatus?.success"
   />
 
   <application-status-tracker-banner
@@ -260,6 +260,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const applicationDetails = ref<InProgressApplicationDetailsAPIOutDTO>();
     const router = useRouter();
+
     const goToStudentApplication = async () => {
       router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
@@ -271,7 +272,6 @@ export default defineComponent({
         await ApplicationService.shared.getInProgressApplicationDetails(
           props.applicationId,
         );
-
       // Any declined cards will call declined event.
       if (
         applicationDetails.value.pirStatus === ProgramInfoStatus.declined ||

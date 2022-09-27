@@ -134,7 +134,7 @@ export class ApplicationService {
   /**
    * Get in progress details of an application by application id.
    * @param applicationId application id.
-   * @returns application full details.
+   * @returns application details.
    */
   public async getInProgressApplicationDetails(
     applicationId: number,
@@ -145,7 +145,7 @@ export class ApplicationService {
   /**
    * Get cancelled details of an application by application id.
    * @param applicationId application id.
-   * @returns application full details.
+   * @returns application details.
    */
   public async getCancelledApplicationDetails(
     applicationId: number,
@@ -156,7 +156,7 @@ export class ApplicationService {
   /**
    * Get details of an application by application id.
    * @param applicationId application id.
-   * @returns application full details.
+   * @returns application details.
    */
   public async getApplicationStatusDetails(
     applicationId: number,

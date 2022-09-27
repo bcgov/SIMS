@@ -225,6 +225,11 @@ export interface ApplicationDetailHeader {
   applicationEndDate: Date | string;
 }
 
+export interface SuccessWaitingStatus {
+  success: boolean;
+  waiting: boolean;
+}
+
 export interface InProgressApplicationDetailsAPIOutDTO {
   id: number;
   applicationStatus: ApplicationStatus;
@@ -232,20 +237,13 @@ export interface InProgressApplicationDetailsAPIOutDTO {
   PIRDeniedReason: string;
   offeringStatus: OfferingStatus;
   exceptionStatus: ApplicationExceptionStatus;
-  parent1IncomeVerificationStatusWaiting: boolean;
-  parent1IncomeVerificationStatusSuccess: boolean;
-  parent2IncomeVerificationStatusWaiting: boolean;
-  parent2IncomeVerificationStatusSuccess: boolean;
-  partnerIncomeVerificationStatusWaiting: boolean;
-  partnerIncomeVerificationStatusSuccess: boolean;
-  studentIncomeVerificationStatusWaiting: boolean;
-  studentIncomeVerificationStatusSuccess: boolean;
-  parent1InfoSuccess: boolean;
-  parent2InfoSuccess: boolean;
-  parent1InfoWaiting: boolean;
-  parent2InfoWaiting: boolean;
-  partnerInfoSuccess: boolean;
-  partnerInfoWaiting: boolean;
+  parent1IncomeVerificationStatus: SuccessWaitingStatus;
+  parent2IncomeVerificationStatus: SuccessWaitingStatus;
+  partnerIncomeVerificationStatus: SuccessWaitingStatus;
+  studentIncomeVerificationStatus: SuccessWaitingStatus;
+  parent1Info: SuccessWaitingStatus;
+  parent2Info: SuccessWaitingStatus;
+  partnerInfo: SuccessWaitingStatus;
 }
 
 export interface CancelledApplicationDetailsAPIOutDTO {

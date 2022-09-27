@@ -235,7 +235,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // that of the Overwritten Application and with newly submitted payload with
     // application status submitted.
     const newApplication = new Application();
-    // todo: ann check with the Andrew about overwritten application submitted date.
+    // Current is set as submitted date.
     newApplication.submittedDate = now;
 
     newApplication.applicationNumber = application.applicationNumber;

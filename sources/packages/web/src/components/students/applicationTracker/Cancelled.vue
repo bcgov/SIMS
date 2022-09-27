@@ -1,5 +1,4 @@
 <template>
-  <!-- todo: ann check with andrew if to display the program header when a draft application was canceled (as most of the info wont be available). -->
   <application-status-tracker-banner
     label="You've cancelled your application"
     icon="fa:fas fa-exclamation-circle"

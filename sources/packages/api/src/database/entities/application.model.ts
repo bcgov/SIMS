@@ -320,7 +320,6 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   applicationException?: ApplicationException;
-
   /**
    * Application submitted date.
    */
@@ -329,7 +328,7 @@ export class Application extends RecordDataModel {
     type: "timestamptz",
     nullable: true,
   })
-  submittedDate: Date;
+  submittedDate?: Date;
 }
 
 /**

@@ -107,24 +107,21 @@ export interface ApplicationWithProgramYearDto {
   active: boolean;
 }
 
+export interface SuccessWaitingStatus {
+  success: boolean;
+  waiting: boolean;
+}
 export interface ApplicationIncomeVerification {
-  parent1IncomeVerificationStatusWaiting: boolean;
-  parent1IncomeVerificationStatusSuccess: boolean;
-  parent2IncomeVerificationStatusWaiting: boolean;
-  parent2IncomeVerificationStatusSuccess: boolean;
-  partnerIncomeVerificationStatusWaiting: boolean;
-  partnerIncomeVerificationStatusSuccess: boolean;
-  studentIncomeVerificationStatusWaiting: boolean;
-  studentIncomeVerificationStatusSuccess: boolean;
+  parent1IncomeVerificationStatus: SuccessWaitingStatus;
+  parent2IncomeVerificationStatus: SuccessWaitingStatus;
+  partnerIncomeVerificationStatus: SuccessWaitingStatus;
+  studentIncomeVerificationStatus: SuccessWaitingStatus;
 }
 
 export interface ApplicationSupportingUserDetails {
-  parent1InfoSuccess: boolean;
-  parent2InfoSuccess: boolean;
-  parent1InfoWaiting: boolean;
-  parent2InfoWaiting: boolean;
-  partnerInfoSuccess: boolean;
-  partnerInfoWaiting: boolean;
+  parent1Info: SuccessWaitingStatus;
+  parent2Info: SuccessWaitingStatus;
+  partnerInfo: SuccessWaitingStatus;
 }
 
 export interface InProgressApplicationDetailsAPIOutDTO

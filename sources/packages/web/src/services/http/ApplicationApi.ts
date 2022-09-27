@@ -125,7 +125,6 @@ export class ApplicationApi extends HttpBaseClient {
    * @param applicationId
    * @returns
    */
-  // todo: Looks like its not used. Have same endpoint getApplicationData in this same file. remove both function and interface, if its not used.
   async getApplicationDetails(
     applicationId: number,
   ): Promise<GetApplicationBaseDTO> {
