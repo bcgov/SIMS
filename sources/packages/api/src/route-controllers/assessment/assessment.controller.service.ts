@@ -169,7 +169,7 @@ export class AssessmentControllerService {
    */
   private populateDisbursementAwardValues(
     disbursementSchedules: DisbursementSchedule[],
-    includeDocumentNumber = false,
+    includeDocumentNumber = true,
   ): Record<string, string | number> {
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
@@ -204,8 +204,8 @@ export class AssessmentControllerService {
    */
   async getAssessmentAwardDetails(
     assessmentId: number,
-    includeDocumentNumber = false,
     studentId?: number,
+    includeDocumentNumber = true,
   ): Promise<AwardDetailsAPIOutDTO> {
     const assessment = await this.assessmentService.getAssessmentForNOA(
       assessmentId,
@@ -297,18 +297,19 @@ export class AssessmentControllerService {
    * and need to be reviewed.
    * @param applicationId application number.
    * @param studentId applicant student.
-   * When student id is provided, then only student appeals are returned as
-   * other assessment types must not be available for students.
+   * @param  includeOnlyAppeals then only student appeals are returned and
+   * other assessment types must not be available when this property is true.
    * @returns assessment requests or exceptions for a student application.
    */
 
   async getRequestedAssessmentSummary(
     applicationId: number,
     studentId?: number,
+    includeOnlyAppeals = false,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
-    // Requested offering changes and application exceptions must not ne accessible for student.
-    if (!studentId) {
+    // Requested offering changes and application exceptions must not be included when includeOnlyAppeals is true.
+    if (!includeOnlyAppeals) {
       const offeringChange =
         await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
           applicationId,
@@ -375,7 +376,7 @@ export class AssessmentControllerService {
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
     // Unsuccessful scholastic standing is not returned for student access.
     const [assessments, unsuccessfulScholasticStanding] = await Promise.all([
-      this.assessmentService.assessmentHistorySummary(applicationId),
+      this.assessmentService.assessmentHistorySummary(applicationId, studentId),
       studentId
         ? undefined
         : this.studentScholasticStandingsService.getUnsuccessfulScholasticStandings(

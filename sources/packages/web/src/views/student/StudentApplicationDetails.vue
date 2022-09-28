@@ -75,6 +75,19 @@
         :applicationDetails="applicationDetails"
       />
     </v-container>
+    <request-assessment
+      :applicationId="id"
+      :hideWhenEmpty="true"
+      @viewStudentAppeal="goToStudentAppeal"
+      @viewApplicationException="goToApplicationException"
+      @viewOfferingRequest="goToOfferingRequest"
+    />
+    <history-assessment
+      :applicationId="id"
+      :viewRequestTypes="studentAssessmentRequestTypes"
+      @viewStudentAppeal="goToStudentAppeal"
+      @viewAssessment="gotToViewAssessment"
+    />
   </student-page-container>
   <ConfirmEditApplication ref="editApplicationModal" />
 </template>
@@ -86,15 +99,24 @@ import CancelApplication from "@/components/students/modals/CancelApplicationMod
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
-import { GetApplicationDataDto, ApplicationStatus, MenuType } from "@/types";
+import {
+  GetApplicationDataDto,
+  ApplicationStatus,
+  MenuType,
+  AssessmentTriggerType,
+} from "@/types";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
+import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
+import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
 
 export default {
   components: {
     CancelApplication,
     ApplicationDetails,
     ConfirmEditApplication,
+    HistoryAssessment,
+    RequestAssessment,
   },
   props: {
     id: {
@@ -110,6 +132,10 @@ export default {
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const snackBar = useSnackBar();
+    // The assessment trigger types for which the request form is visible to student.
+    const studentAssessmentRequestTypes = ref<AssessmentTriggerType[]>([
+      AssessmentTriggerType.StudentAppeal,
+    ]);
 
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
@@ -212,6 +238,15 @@ export default {
         await ApplicationService.shared.getApplicationData(applicationId);
       loadMenu();
     };
+    const gotToViewAssessment = (assessmentId: number) => {
+      router.push({
+        name: StudentRoutesConst.ASSESSMENT_AWARD_VIEW,
+        params: {
+          applicationId: props.id,
+          assessmentId,
+        },
+      });
+    };
 
     watch(
       () => props.id,
@@ -238,6 +273,8 @@ export default {
       editApplicationModal,
       editApplication,
       viewApplication,
+      studentAssessmentRequestTypes,
+      gotToViewAssessment,
     };
   },
 };

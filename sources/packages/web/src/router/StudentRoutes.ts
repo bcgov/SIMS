@@ -15,7 +15,7 @@ import StudentApplicationDetails from "@/views/student/StudentApplicationDetails
 import StudentAppealRequest from "@/views/student/StudentAppealRequest.vue";
 import StudentAccountActivity from "@/views/student/StudentAccountActivity.vue";
 import StudentAccountApplicationInProgress from "@/views/student/StudentAccountApplicationInProgress.vue";
-
+import StudentAssessmentAward from "@/views/student/StudentAssessmentAward.vue";
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -95,6 +95,15 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.ASSESSMENT,
         component: Assessment,
         props: true,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentAssessmentAwardView,
+        name: StudentRoutesConst.ASSESSMENT_AWARD_VIEW,
+        props: true,
+        component: StudentAssessmentAward,
         meta: {
           clientType: ClientIdType.Student,
         },

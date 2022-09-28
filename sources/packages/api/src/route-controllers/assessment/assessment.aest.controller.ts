@@ -97,7 +97,6 @@ export class AssessmentAESTController extends BaseController {
   ): Promise<AwardDetailsAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentAwardDetails(
       assessmentId,
-      true,
     );
   }
 }

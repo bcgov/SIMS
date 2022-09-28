@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container v-if="requestedAssessment.length || !hideWhenEmpty">
     <v-card>
       <v-container>
         <body-header
@@ -58,7 +58,7 @@
 </template>
 <script lang="ts">
 import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
-import { ref, onMounted, SetupContext } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
@@ -67,7 +67,7 @@ import {
   RequestAssessmentTypeAPIOutDTO,
 } from "@/services/http/dto/Assessment.dto";
 
-export default {
+export default defineComponent({
   emits: [
     "viewStudentAppeal",
     "viewApplicationException",
@@ -81,8 +81,13 @@ export default {
       type: Number,
       required: true,
     },
+    hideWhenEmpty: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
-  setup(props: any, context: SetupContext) {
+  setup(props, context) {
     const { dateOnlyLongString } = useFormatters();
 
     const requestedAssessment = ref([] as RequestAssessmentSummaryAPIOutDTO[]);
@@ -115,5 +120,5 @@ export default {
       viewRequestForm,
     };
   },
-};
+});
 </script>

@@ -112,9 +112,12 @@ export class AssessmentStudentsController extends BaseController {
   })
   async getAssessmentAwardDetails(
     @Param("assessmentId", ParseIntPipe) assessmentId: number,
+    @UserToken() userToken: StudentUserToken,
   ): Promise<AwardDetailsAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentAwardDetails(
       assessmentId,
+      userToken.studentId,
+      false,
     );
   }
 
@@ -133,6 +136,7 @@ export class AssessmentStudentsController extends BaseController {
     return this.assessmentControllerService.getRequestedAssessmentSummary(
       applicationId,
       userToken.studentId,
+      true,
     );
   }
 
