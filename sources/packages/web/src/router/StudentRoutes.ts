@@ -16,6 +16,7 @@ import StudentAppealRequest from "@/views/student/StudentAppealRequest.vue";
 import StudentAccountActivity from "@/views/student/StudentAccountActivity.vue";
 import StudentAccountApplicationInProgress from "@/views/student/StudentAccountApplicationInProgress.vue";
 import StudentAssessmentAward from "@/views/student/StudentAssessmentAward.vue";
+import StudentAppealRequests from "@/views/student/StudentAppealRequests.vue";
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -153,6 +154,15 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.RequestChange,
         name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
         component: StudentAppealRequest,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentAppealRequests,
+        name: StudentRoutesConst.STUDENT_APPEAL_REQUESTS,
+        component: StudentAppealRequests,
+        props: true,
         meta: {
           clientType: ClientIdType.Student,
         },

@@ -77,7 +77,7 @@
     </v-container>
     <request-assessment
       :applicationId="id"
-      :hideWhenEmpty="true"
+      :showWhenEmpty="false"
       @viewStudentAppeal="goToStudentAppeal"
       @viewApplicationException="goToApplicationException"
       @viewOfferingRequest="goToOfferingRequest"
@@ -248,6 +248,16 @@ export default {
       });
     };
 
+    const goToStudentAppeal = (appealId: number) => {
+      router.push({
+        name: StudentRoutesConst.STUDENT_APPEAL_REQUESTS,
+        params: {
+          applicationId: props.id,
+          appealId,
+        },
+      });
+    };
+
     watch(
       () => props.id,
       async (currValue: number) => {
@@ -275,6 +285,7 @@ export default {
       viewApplication,
       studentAssessmentRequestTypes,
       gotToViewAssessment,
+      goToStudentAppeal,
     };
   },
 };

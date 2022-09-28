@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="requestedAssessment.length || !hideWhenEmpty">
+  <v-container v-if="requestedAssessment.length || showWhenEmpty">
     <v-card>
       <v-container>
         <body-header
@@ -81,10 +81,10 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    hideWhenEmpty: {
+    showWhenEmpty: {
       type: Boolean,
       required: false,
-      default: false,
+      default: true,
     },
   },
   setup(props, context) {
