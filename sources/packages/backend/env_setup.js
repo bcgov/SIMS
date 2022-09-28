@@ -4,7 +4,7 @@ if (
   process.env.NODE_ENV !== "docker"
 ) {
   require("dotenv").config({
-    path: path.resolve(__dirname, "../../../../../../.env"),
+    path: path.resolve(__dirname, "../../../.env"),
   });
 }
 

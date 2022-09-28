@@ -43,6 +43,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/workers/tsconfig.app.json"
       }
+    },
+    "db-migrations": {
+      "type": "application",
+      "root": "apps/db-migrations",
+      "entryFile": "main",
+      "sourceRoot": "apps/db-migrations/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/db-migrations/tsconfig.app.json"
+      }
     }
   },
   "monorepo": true,

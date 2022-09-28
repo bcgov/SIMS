@@ -26,6 +26,9 @@
     "test:local": "NODE_ENV=local ENVIRONMENT=test jest",
     "test:local:win": "SET NODE_ENV=local&&SET ENVIRONMENT=test&&jest",
     "docker:start": "npm run setup:db && node dist/main",
+    "migration:run": "tsc --project apps/db-migrations/tsconfig.app.json && node dist/apps/db-migrations/main.js",
+    "migration:run:local": "tsc --project apps/db-migrations/tsconfig.app.json && node -r ./env_setup dist/apps/db-migrations/main.js",
+    "migration:run:local2": "node --abort-on-uncaught-exception --require ./env_setup --require ts-node/register apps/db-migrations/src/main.ts",
     "migration:create": "cd src/database/migrations && npx typeorm-ts-node-commonjs migration:create",
     "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d src/database/data-source.ts"
   },
@@ -73,6 +76,7 @@
     "@types/supertest": "^2.0.10",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
+    "copyfiles": "^2.4.1",
     "eslint": "^7.12.1",
     "eslint-config-prettier": "7.0.0",
     "eslint-plugin-prettier": "^3.1.4",
