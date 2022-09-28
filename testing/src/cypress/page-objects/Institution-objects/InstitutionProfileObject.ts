@@ -1,10 +1,10 @@
 export default class InstitutionProfileObject {
-  institutionDetailsButton() {
-    return cy.contains("Institution Details");
+  manageProfileButton() {
+    return cy.contains("Manage Profile");
   }
 
-  institutionInformationText() {
-    return cy.contains("Institution Information");
+  institutionProfileInformationText() {
+    return cy.contains("Your institution profile");
   }
 
   legalOperatingNameInputText() {

@@ -13,8 +13,12 @@ function createOrUpdateInstitutionLocation(
   token: string,
   id: string,
   canadian: boolean,
-  create: boolean
+  create: boolean,
+  institutionCode?: string
 ) {
+  if (institutionCode == undefined) {
+    institutionCode = institutionHelperActions.getRandomInstitutionCode();
+  }
   const uniqueId = id;
   let body: object;
   let method: string;
@@ -32,7 +36,7 @@ function createOrUpdateInstitutionLocation(
   if (canadian) {
     body = {
       locationName: `Auto-${uniqueId}-location`,
-      institutionCode: "AUTO",
+      institutionCode: institutionCode,
       addressLine1: `Auto-${uniqueId}-Street`,
       addressLine2: "14235",
       selectedCountry: "Canada",
@@ -43,13 +47,15 @@ function createOrUpdateInstitutionLocation(
       primaryContactLastName: `Auto-${uniqueId}-LastName`,
       primaryContactEmail: `Auto@${uniqueId}.com`,
       primaryContactPhone: "32165496872",
+      applicationId: "",
+      applicationStatus: "",
       provinceState: "NS",
       postalCode: "A1A2A3",
     };
   } else {
     body = {
       locationName: `Auto-${uniqueId}-location`,
-      institutionCode: "AUTO",
+      institutionCode: institutionCode,
       addressLine1: `Auto-${uniqueId}-Street`,
       addressLine2: "14235",
       selectedCountry: "other",
@@ -60,6 +66,8 @@ function createOrUpdateInstitutionLocation(
       primaryContactLastName: `Auto-${uniqueId}-LastName`,
       primaryContactEmail: `Auto@${uniqueId}.com`,
       primaryContactPhone: "32165496872",
+      applicationId: "",
+      applicationStatus: "",
       otherCountry: `testAuto-${uniqueId}-Country`,
       otherPostalCode: "98654",
     };

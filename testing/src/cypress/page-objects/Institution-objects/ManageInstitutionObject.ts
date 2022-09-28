@@ -1,6 +1,6 @@
 export default class ManageInstitutionObject {
-  institutionDetails() {
-    return cy.contains("Institution Details");
+  manageProfile() {
+    return cy.contains("Manage Profile");
   }
 
   manageLocations() {

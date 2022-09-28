@@ -11,7 +11,7 @@ describe("[Institution Dashboard] - fields and titles ", () => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
-  it("Verify that user is redirected to dashboard page", () => {
+  it.skip("Verify that user is redirected to dashboard page", () => {
     cy.url().should("include", "/dashboard");
     dashboardObject.dashboardWelcomeMessage().should("be.visible");
     dashboardObject
@@ -28,25 +28,21 @@ describe("[Institution Dashboard] - fields and titles ", () => {
       .should("have.attr", "href", "https://studentaidbc.ca/help-centre");
   });
 
-  it("Verify that all buttons are clickable in dashboard and redirect to appropriate pages.", () => {
-    dashboardObject.dashboardButton().click();
-    dashboardObject.notificationButton().click();
-    //Needs validation with the notifications.
+  it.skip("Verify that all buttons are clickable in dashboard and redirect to appropriate pages.", () => {
     dashboardObject.homeButton().click();
     dashboardObject.locationButton().click();
     dashboardObject.manageInstitutionButton().click();
-    manageInstitutionObject.institutionDetails().should("be.visible");
+    manageInstitutionObject.manageProfile().should("be.visible");
     manageInstitutionObject.manageDesignation().should("be.visible");
     manageInstitutionObject.manageLocations().should("be.visible");
     manageInstitutionObject.manageUsers().should("be.visible");
-    dashboardObject.profileButton().click();
+    dashboardObject.myProfileButton().click();
     dashboardObject.iconButton().click();
     dashboardObject.logOutButton().click();
   });
 
   it("Verify that clicking on manage institution leads Location Summary page", () => {
-    dashboardObject.dashboardButton().click();
     dashboardObject.manageInstitutionButton().click();
-    dashboardObject.locationVerifyText().should("be.visible");
+    dashboardObject.allLocationsText().should("be.visible");
   });
 });

@@ -75,4 +75,13 @@ export default class InstitutionHelperActions {
   getUniqueId() {
     return v4();
   }
+
+  getRandomInstitutionCode() {
+    let institutionCode = "";
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (var i = 0; i < 4; i++) {
+      institutionCode += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return institutionCode;
+  }
 }
