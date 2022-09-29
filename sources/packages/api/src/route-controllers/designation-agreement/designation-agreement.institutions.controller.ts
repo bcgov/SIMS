@@ -26,13 +26,14 @@ import { FormNames } from "../../services/form/constants";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { ClientTypeBaseRoute } from "../../types";
 /***
  * Designation agreement dedicated controller for Institution.
  * */
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsInstitutionAdmin()
 @Controller("designation-agreement")
-@ApiTags("institution")
+@ApiTags(`${ClientTypeBaseRoute.Institution}-designation-agreement`)
 export class DesignationAgreementInstitutionsController extends BaseController {
   constructor(
     private readonly designationAgreementService: DesignationAgreementService,
