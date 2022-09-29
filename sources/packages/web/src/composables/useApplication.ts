@@ -46,12 +46,13 @@ export function useApplication() {
     }
 
     return {
-      "Application #": application.applicationNumber,
-      Institution: application.applicationInstitutionName,
-      "Study dates": studyDates,
+      "Application #": application.applicationNumber ?? "-",
+      Institution: application.applicationInstitutionName ?? "-",
+      "Study dates": studyDates ?? "-",
       Type:
         application.applicationOfferingIntensity ??
-        application.data.howWillYouBeAttendingTheProgram,
+        application.data.howWillYouBeAttendingTheProgram ??
+        "-",
     };
   };
   return { mapApplicationChipStatus, mapApplicationDetailHeader };
