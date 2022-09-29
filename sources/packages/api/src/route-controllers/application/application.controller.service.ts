@@ -9,6 +9,7 @@ import {
   ApplicationFormData,
   GetApplicationBaseDTO,
   GetApplicationDataDto,
+  SuccessWaitingStatus,
 } from "./models/application.model";
 import {
   credentialTypeToDisplay,
@@ -21,13 +22,20 @@ import {
 import {
   Application,
   ApplicationData,
+  CRAIncomeVerification,
   DisbursementSchedule,
   OfferingIntensity,
   ProgramStatus,
+  SupportingUser,
+  SupportingUserType,
 } from "../../database/entities";
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
+import {
+  ApplicationIncomeVerification,
+  ApplicationSupportingUserDetails,
+} from "./models/application.system.dto";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
@@ -202,5 +210,99 @@ export class ApplicationControllerService {
         ),
       );
     }
+  }
+
+  /**
+   * Process application income verification details.
+   * @param craIncomeVerification CRA income verification data.
+   * @return processed object.
+   */
+  processApplicationIncomeVerificationDetails(
+    craIncomeVerification: CRAIncomeVerification[],
+  ): ApplicationIncomeVerification {
+    const incomeVerificationDetails = {} as ApplicationIncomeVerification;
+    // Student.
+    const [student] = craIncomeVerification.filter(
+      (incomeVerification) => !incomeVerification.supportingUser,
+    );
+    if (student) {
+      // Student income verification details.
+      incomeVerificationDetails.studentIncomeVerificationStatus =
+        !student.dateReceived
+          ? SuccessWaitingStatus.Waiting
+          : SuccessWaitingStatus.Success;
+    }
+    // Parent.
+    const [parent1, parent2] = craIncomeVerification.filter(
+      (incomeVerification) =>
+        incomeVerification.supportingUser?.supportingUserType ===
+        SupportingUserType.Parent,
+    );
+    if (parent1) {
+      incomeVerificationDetails.parent1IncomeVerificationStatus =
+        !parent1.dateReceived
+          ? SuccessWaitingStatus.Waiting
+          : SuccessWaitingStatus.Success;
+    }
+    if (parent2) {
+      incomeVerificationDetails.parent2IncomeVerificationStatus =
+        !parent2.dateReceived
+          ? SuccessWaitingStatus.Waiting
+          : SuccessWaitingStatus.Success;
+    }
+
+    // Partner.
+    const [partner] = craIncomeVerification.filter(
+      (incomeVerification) =>
+        incomeVerification.supportingUser?.supportingUserType ===
+        SupportingUserType.Partner,
+    );
+    // partner income verification details.
+    if (partner) {
+      incomeVerificationDetails.partnerIncomeVerificationStatus =
+        !partner.dateReceived
+          ? SuccessWaitingStatus.Waiting
+          : SuccessWaitingStatus.Success;
+    }
+    return incomeVerificationDetails;
+  }
+
+  /**
+   * Process application supporting user details.
+   * @param supportingUser supporting users data.
+   * @return processed object.
+   */
+  processApplicationSupportingUserDetails(
+    supportingUser: SupportingUser[],
+  ): ApplicationSupportingUserDetails {
+    const supportingUserDetails = {} as ApplicationSupportingUserDetails;
+    // Parent.
+    const [parent1, parent2] = supportingUser.filter(
+      (incomeVerification) =>
+        incomeVerification.supportingUserType === SupportingUserType.Parent,
+    );
+    if (parent1) {
+      supportingUserDetails.parent1Info = !parent1.supportingData
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
+    }
+    if (parent2) {
+      supportingUserDetails.parent2Info = !parent2.supportingData
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
+    }
+
+    // Partner.
+    const [partner] = supportingUser.filter(
+      (incomeVerification) =>
+        incomeVerification.supportingUserType === SupportingUserType.Partner,
+    );
+    if (partner) {
+      supportingUserDetails.partnerInfo = !partner.supportingData
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
+    }
+
+    return supportingUserDetails;
   }
 }

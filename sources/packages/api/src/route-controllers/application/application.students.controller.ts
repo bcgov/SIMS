@@ -10,6 +10,7 @@ import {
   Patch,
   UnprocessableEntityException,
   Query,
+  ParseIntPipe,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -26,6 +27,8 @@ import {
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  CRAIncomeVerificationService,
+  SupportingUserService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -45,7 +48,7 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { ApplicationStatus } from "../../database/entities";
-import { PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
+import { getPIRDeniedReason, PIR_OR_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
   INVALID_APPLICATION_NUMBER,
   OFFERING_NOT_VALID,
@@ -59,6 +62,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { ApplicationControllerService } from "./application.controller.service";
+import { InProgressApplicationDetailsAPIOutDTO } from "./models/application.system.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -75,6 +79,8 @@ export class ApplicationStudentsController extends BaseController {
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly assessmentService: StudentAssessmentService,
     private readonly applicationControllerService: ApplicationControllerService,
+    private readonly craIncomeVerificationService: CRAIncomeVerificationService,
+    private readonly supportingUserService: SupportingUserService,
   ) {
     super();
   }
@@ -446,6 +452,59 @@ export class ApplicationStudentsController extends BaseController {
     return {
       id: application.id,
       applicationNumber: application.applicationNumber,
+    };
+  }
+
+  /**
+   * Get in progress details of an application by application id.
+   * @param applicationId application id.
+   * @returns application details.
+   */
+  @Get(":applicationId/in-progress")
+  @ApiNotFoundResponse({
+    description: "Application id not found.",
+  })
+  async getInProgressApplicationDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<InProgressApplicationDetailsAPIOutDTO> {
+    const application = await this.applicationService.getApplicationDetails(
+      applicationId,
+      studentToken.studentId,
+    );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+    const incomeVerificationDetails =
+      await this.craIncomeVerificationService.getAllIncomeVerificationsForAnApplication(
+        applicationId,
+      );
+    const incomeVerification =
+      this.applicationControllerService.processApplicationIncomeVerificationDetails(
+        incomeVerificationDetails,
+      );
+
+    const supportingUserDetails =
+      await this.supportingUserService.getSupportingUsersByApplicationId(
+        applicationId,
+      );
+
+    const supportingUser =
+      this.applicationControllerService.processApplicationSupportingUserDetails(
+        supportingUserDetails,
+      );
+
+    return {
+      id: application.id,
+      applicationStatus: application.applicationStatus,
+      pirStatus: application.pirStatus,
+      pirDeniedReason: getPIRDeniedReason(application),
+      offeringStatus: application.currentAssessment?.offering.offeringStatus,
+      exceptionStatus: application.applicationException?.exceptionStatus,
+      ...incomeVerification,
+      ...supportingUser,
     };
   }
 }

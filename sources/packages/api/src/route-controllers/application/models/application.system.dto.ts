@@ -1,8 +1,13 @@
+import { IntersectionType } from "@nestjs/swagger";
 import { IsEnum, IsInt, IsOptional, Min } from "class-validator";
 import {
+  ApplicationExceptionStatus,
   ApplicationStatus,
+  OfferingStatus,
+  ProgramInfoStatus,
   SupportingUserType,
 } from "../../../database/entities";
+import { SuccessWaitingStatus } from "./application.model";
 
 export class UpdateApplicationStatusAPIInDTO {
   @IsEnum(ApplicationStatus)
@@ -48,4 +53,29 @@ export class CreateSupportingUsersAPIInDTO {
 
 export class SupportingUserDetailsAPIOutDTO {
   supportingData: any;
+}
+
+export class ApplicationIncomeVerification {
+  parent1IncomeVerificationStatus?: SuccessWaitingStatus;
+  parent2IncomeVerificationStatus?: SuccessWaitingStatus;
+  partnerIncomeVerificationStatus?: SuccessWaitingStatus;
+  studentIncomeVerificationStatus?: SuccessWaitingStatus;
+}
+
+export class ApplicationSupportingUserDetails {
+  parent1Info?: SuccessWaitingStatus;
+  parent2Info?: SuccessWaitingStatus;
+  partnerInfo?: SuccessWaitingStatus;
+}
+
+export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(
+  ApplicationSupportingUserDetails,
+  ApplicationIncomeVerification,
+) {
+  id: number;
+  applicationStatus: ApplicationStatus;
+  pirStatus: ProgramInfoStatus;
+  pirDeniedReason?: string;
+  offeringStatus?: OfferingStatus;
+  exceptionStatus?: ApplicationExceptionStatus;
 }

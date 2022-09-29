@@ -7,7 +7,6 @@
       >
         <template #actions>
           <v-text-field
-            v-if="!!applications.results?.length"
             density="compact"
             label="Search name or application #"
             variant="outlined"
