@@ -74,8 +74,8 @@ import {
  */
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
-@Controller("students")
-@ApiTags(`${ClientTypeBaseRoute.Student}-students`)
+@Controller("student")
+@ApiTags(`${ClientTypeBaseRoute.Student}-student`)
 @Injectable()
 export class StudentStudentsController extends BaseController {
   constructor(

@@ -79,8 +79,8 @@ import { Role } from "../../auth/roles.enum";
  */
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
-@Controller("students")
-@ApiTags(`${ClientTypeBaseRoute.AEST}-students`)
+@Controller("student")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-student`)
 @Injectable()
 export class StudentAESTController extends BaseController {
   constructor(
