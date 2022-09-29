@@ -53,7 +53,7 @@
       :application-id="id"
       @editApplication="editApplication"
       :application-status="applicationDetails.applicationStatus"
-      :status-updated-on="applicationDetails.statusUpdatedOn"
+      :status-updated-on="applicationDetails.applicationStatusUpdatedOn"
     />
   </student-page-container>
   <confirm-edit-application ref="editApplicationModal" />

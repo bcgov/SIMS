@@ -77,7 +77,7 @@ export default defineComponent({
       required: true,
     },
     statusUpdatedOn: {
-      type: Date,
+      type: String,
       required: true,
     },
   },
