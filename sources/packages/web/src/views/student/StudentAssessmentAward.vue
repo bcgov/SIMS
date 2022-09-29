@@ -38,9 +38,7 @@
           </h2>
           <p class="default-color my-3">
             Please visit the
-            <span class="font-weight-bold"
-              >National Student Loan Service Centre (NSLSC)</span
-            >
+            <strong>National Student Loan Service Centre (NSLSC)</strong>
             to collect your awarded funds. It may take time to process if you do
             not see it immediately. Please contact NSLSC if you have additional
             questions about receiving your funds.
