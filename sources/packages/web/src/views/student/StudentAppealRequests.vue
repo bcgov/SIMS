@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <student-page-container>
     <template #header>
       <header-navigator
         title="Application details"
@@ -25,7 +25,7 @@
       :readOnly="true"
       :showApprovalDetails="false"
     />
-  </full-page-container>
+  </student-page-container>
 </template>
 <script lang="ts">
 import { ref, onMounted, defineComponent } from "vue";
