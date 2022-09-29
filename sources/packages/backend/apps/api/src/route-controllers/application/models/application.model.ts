@@ -5,6 +5,7 @@ import {
   AssessmentStatus,
   COEStatus,
   ApplicationData,
+  OfferingIntensity,
 } from "../../../database/entities";
 
 export class SaveApplicationDto {
@@ -80,7 +81,7 @@ export class GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
 }
 export class GetApplicationDataDto extends GetApplicationBaseDTO {
   applicationStatusUpdatedOn: Date;
-  applicationOfferingIntensity: string;
+  applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: string;
   applicationEndDate: string;
   applicationInstitutionName: string;
@@ -102,4 +103,9 @@ export interface ApplicationWithProgramYearDto {
   formName: string;
   programYearId: number;
   active: boolean;
+}
+
+export enum SuccessWaitingStatus {
+  Success = "Success",
+  Waiting = "Waiting",
 }

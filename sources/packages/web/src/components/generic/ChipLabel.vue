@@ -38,9 +38,9 @@ export default {
     const iconColor = computed(() => {
       switch (props.status) {
         case StatusChipTypes.Success:
-          return "success_shade";
+          return "success-shade";
         case StatusChipTypes.Warning:
-          return "warning_shade";
+          return "warning-shade";
         default:
           return "";
       }

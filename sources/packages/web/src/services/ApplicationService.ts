@@ -17,6 +17,7 @@ import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
+import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
 export class ApplicationService {
   // Share Instance
@@ -126,5 +127,16 @@ export class ApplicationService {
     return ApiClient.Application.getApplicationForRequestChange(
       applicationNumber,
     );
+  }
+
+  /**
+   * Get in progress details of an application by application id.
+   * @param applicationId application id.
+   * @returns application details.
+   */
+  async getInProgressApplicationDetails(
+    applicationId: number,
+  ): Promise<InProgressApplicationDetailsAPIOutDTO> {
+    return ApiClient.Application.getInProgressApplicationDetails(applicationId);
   }
 }

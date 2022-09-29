@@ -170,7 +170,11 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
   ): Promise<SupportingUser[]> {
     return this.repo
       .createQueryBuilder("supportingUser")
-      .select(["supportingUser.id", "supportingUser.supportingUserType"])
+      .select([
+        "supportingUser.id",
+        "supportingUser.supportingUserType",
+        "supportingUser.supportingData",
+      ])
       .innerJoin("supportingUser.application", "application")
       .where("application.id = :applicationId", {
         applicationId,

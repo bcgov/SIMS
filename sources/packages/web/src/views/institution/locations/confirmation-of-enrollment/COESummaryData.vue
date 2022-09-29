@@ -8,7 +8,6 @@
       >
         <template #actions>
           <v-text-field
-            v-if="!!disbursements.count"
             density="compact"
             label="Search Name"
             variant="outlined"
