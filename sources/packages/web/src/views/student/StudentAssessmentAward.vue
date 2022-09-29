@@ -11,7 +11,7 @@
           },
         }"
       />
-      <detail-header :headerMap="headerMap" />
+      <detail-header :headerMap="headerData" />
     </template>
     <v-card class="p-4">
       <body-header
@@ -28,7 +28,7 @@
           >
         </template>
       </body-header>
-      <assessment-award-details :assessmentAwardData="assessmentAwardData" />
+      <assessment-award-details :assessmentAwardData="assessmentAward" />
     </v-card>
     <v-card class="p-4 my-3">
       <v-row>
@@ -88,16 +88,16 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
-    const assessmentAwardData = ref<AwardDetailsAPIOutDTO>();
+    const assessmentAward = ref<AwardDetailsAPIOutDTO>();
     const { mapAssessmentDetailHeader } = useAssessment();
-    const headerMap = ref<Record<string, string>>({});
+    const headerData = ref<Record<string, string>>({});
 
     onMounted(async () => {
-      assessmentAwardData.value =
+      assessmentAward.value =
         await StudentAssessmentsService.shared.getAssessmentAwardDetails(
           props.assessmentId,
         );
-      headerMap.value = mapAssessmentDetailHeader(assessmentAwardData.value);
+      headerData.value = mapAssessmentDetailHeader(assessmentAward.value);
     });
 
     const goToNoticeOfAssessment = () => {
@@ -113,8 +113,8 @@ export default defineComponent({
     return {
       StudentRoutesConst,
       goToNoticeOfAssessment,
-      assessmentAwardData,
-      headerMap,
+      assessmentAward,
+      headerData,
       LayoutTemplates,
     };
   },
