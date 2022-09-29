@@ -3,13 +3,11 @@ import { IsEnum, IsInt, IsOptional, Min } from "class-validator";
 import {
   ApplicationExceptionStatus,
   ApplicationStatus,
-  OfferingIntensity,
   OfferingStatus,
   ProgramInfoStatus,
   SupportingUserType,
 } from "../../../database/entities";
 import { SuccessWaitingStatus } from "./application.model";
-("./application.model");
 
 export class UpdateApplicationStatusAPIInDTO {
   @IsEnum(ApplicationStatus)
