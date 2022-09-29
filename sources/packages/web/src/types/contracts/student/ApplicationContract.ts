@@ -1,4 +1,9 @@
-import { ProgramInfoStatus, COEStatus, AssessmentStatus } from "@/types";
+import {
+  ProgramInfoStatus,
+  COEStatus,
+  AssessmentStatus,
+  OfferingIntensity,
+} from "@/types";
 
 export interface SaveStudentApplicationDto {
   programYearId: number;
@@ -114,7 +119,7 @@ export interface GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
  */
 export interface GetApplicationDataDto extends GetApplicationBaseDTO {
   applicationStatusUpdatedOn: string;
-  applicationOfferingIntensity: string;
+  applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: string;
   applicationEndDate: string;
   applicationInstitutionName: string;
@@ -209,3 +214,36 @@ export interface PartTimeAssessment extends BaseAssessment {
  * assessment payload created by camunda workflow.
  */
 export type Assessment = FullTimeAssessment | PartTimeAssessment;
+
+/**
+ * Represents the application dynamic data.
+ * ! This is a subset of application data properties.
+ */
+export interface ApplicationData {
+  /**
+   * Study start date provided by the student when the desired option was not found.
+   */
+  studystartDate?: string;
+  /**
+   * Study end date provided by the student when the desired option was not found.
+   */
+  studyendDate?: string;
+  /**
+   * Defines if the Student will take a full-time or part-time course.
+   */
+  howWillYouBeAttendingTheProgram?: OfferingIntensity;
+}
+
+export interface ApplicationDetailHeader {
+  applicationNumber: string;
+  applicationInstitutionName: string;
+  applicationOfferingIntensity: OfferingIntensity;
+  applicationStartDate: Date | string;
+  applicationEndDate: Date | string;
+  data: ApplicationData;
+}
+
+export enum SuccessWaitingStatus {
+  Success = "Success",
+  Waiting = "Waiting",
+}

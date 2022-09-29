@@ -158,8 +158,11 @@ export function getExtendedDateFormat(date: Date): string {
  * @param date date to be retrieved as Extended date format
  * @returns extended date format like Mar 22 2021
  */
-export function getDateOnlyFormat(date?: string | Date): string {
-  return dayjs(date).format(DATE_ONLY_FORMAT);
+export function getDateOnlyFormat(date?: string | Date): string | undefined {
+  if (date) {
+    return dayjs(date).format(DATE_ONLY_FORMAT);
+  }
+  return undefined;
 }
 
 /**

@@ -37,8 +37,8 @@ import { Role } from "../../auth/roles.enum";
  */
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
-@Controller("reports")
-@ApiTags(`${ClientTypeBaseRoute.AEST}-reports`)
+@Controller("report")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-report`)
 export class ReportAESTController extends BaseController {
   constructor(
     private readonly reportService: ReportService,

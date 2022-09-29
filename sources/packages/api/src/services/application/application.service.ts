@@ -196,6 +196,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.updatedAt = now;
       application.studentAssessments = [originalAssessment];
       application.currentAssessment = originalAssessment;
+      application.submittedDate = now;
 
       // When application and assessment are saved, assess for SIN restriction.
       await this.dataSource.transaction(async (transactionalEntityManager) => {
@@ -233,8 +234,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Creating New Application with same Application Number and Program Year as
     // that of the Overwritten Application and with newly submitted payload with
     // application status submitted.
-
     const newApplication = new Application();
+    // Current date is set as submitted date.
+    newApplication.submittedDate = now;
     newApplication.applicationNumber = application.applicationNumber;
     newApplication.relationshipStatus = applicationData.relationshipStatus;
     newApplication.studentNumber = applicationData.studentNumber;
@@ -533,6 +535,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "offering.offeringIntensity",
         "offering.studyStartDate",
         "offering.studyEndDate",
+        "offering.offeringStatus",
         "location.id",
         "location.name",
         "pirDeniedReasonId.id",
@@ -541,6 +544,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.formName",
         "programYear.startDate",
         "programYear.endDate",
+        "applicationException.exceptionStatus",
+        "application.submittedDate",
       ])
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
@@ -551,6 +556,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("student.user", "user")
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirDeniedReasonId", "pirDeniedReasonId")
+      .leftJoin("application.applicationException", "applicationException")
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })
@@ -1460,5 +1466,67 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .setParameter("isApplicationArchived", true)
       .execute();
+  }
+
+  /**
+   * Fetches application by applicationId and studentId.
+   * @param applicationId application id.
+   * @param studentId student id (optional parameter.).
+   * @returns application details
+   */
+  async getApplicationDetails(
+    applicationId: number,
+    studentId?: number,
+  ): Promise<Application> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        applicationStatus: true,
+        applicationNumber: true,
+        location: {
+          id: true,
+          name: true,
+        },
+        applicationStatusUpdatedOn: true,
+        pirStatus: true,
+        pirDeniedReasonId: {
+          id: true,
+          reason: true,
+        },
+        pirDeniedOtherDesc: true,
+        currentAssessment: {
+          offering: {
+            id: true,
+            offeringStatus: true,
+            studyStartDate: true,
+            studyEndDate: true,
+            offeringIntensity: true,
+          },
+        },
+        applicationException: {
+          exceptionStatus: true,
+        },
+        submittedDate: true,
+        // data is of type 'FindOptionsSelect<ApplicationData>'.
+        // Here even if the data is spread the db will fetch all the data property as of now.
+        data: {
+          studyendDate: true,
+          studystartDate: true,
+          howWillYouBeAttendingTheProgram: true,
+        },
+      },
+      relations: {
+        pirDeniedReasonId: true,
+        currentAssessment: true,
+        applicationException: true,
+        location: true,
+      },
+      where: {
+        id: applicationId,
+        student: {
+          id: studentId,
+        },
+      },
+    });
   }
 }

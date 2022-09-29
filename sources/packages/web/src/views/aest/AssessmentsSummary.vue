@@ -11,12 +11,14 @@
       />
     </template>
     <RequestAssessment
+      class="mb-5"
       :applicationId="applicationId"
       @viewStudentAppeal="goToStudentAppeal"
       @viewApplicationException="goToApplicationException"
       @viewOfferingRequest="goToOfferingRequest"
     />
     <HistoryAssessment
+      class="mb-5"
       :applicationId="applicationId"
       :viewRequestTypes="assessmentRequestTypes"
       @viewStudentAppeal="goToStudentAppeal"

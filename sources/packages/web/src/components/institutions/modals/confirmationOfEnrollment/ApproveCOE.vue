@@ -54,7 +54,6 @@
           primaryLabel="Continue to confirmation"
           @primaryClick="submit"
           @secondaryClick="cancel"
-          :disablePrimaryButton="notAllowed"
         />
       </template>
     </modal-dialog-base>
@@ -94,9 +93,9 @@ export default {
     // Closed the modal dialog.
     const cancel = () => {
       confirmCOE.value.reset();
+      confirmCOE.value.resetValidation();
       resolvePromise(false);
       formModel.tuitionRemittanceAmount = 0;
-      confirmCOE.value.errors = [];
     };
 
     return {

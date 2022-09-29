@@ -1,10 +1,12 @@
 <template>
   <request-assessment
+    class="mb-5"
     :applicationId="applicationId"
     :showWhenEmpty="false"
     @viewStudentAppeal="goToStudentAppeal"
   />
   <history-assessment
+    class="mb-5"
     :applicationId="applicationId"
     :viewRequestTypes="studentAssessmentRequestTypes"
     @viewStudentAppeal="goToStudentAppeal"

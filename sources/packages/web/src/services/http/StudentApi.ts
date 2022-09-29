@@ -24,7 +24,7 @@ export class StudentApi extends HttpBaseClient {
    * @param studentProfile information needed to create the user.
    */
   async createStudent(studentProfile: CreateStudentAPIInDTO): Promise<void> {
-    await this.postCall(this.addClientRoot("students"), studentProfile);
+    await this.postCall(this.addClientRoot("student"), studentProfile);
   }
 
   /**
@@ -35,7 +35,7 @@ export class StudentApi extends HttpBaseClient {
   async updateStudentContact(
     studentContact: UpdateStudentAPIInDTO,
   ): Promise<void> {
-    await this.patchCall(this.addClientRoot("students"), studentContact);
+    await this.patchCall(this.addClientRoot("student"), studentContact);
   }
 
   /**
@@ -49,7 +49,7 @@ export class StudentApi extends HttpBaseClient {
   ): Promise<StudentProfileAPIOutDTO> {
     return this.getCallTyped<
       StudentProfileAPIOutDTO | AESTStudentProfileAPIOutDTO
-    >(this.addClientRoot(`students/${studentId ?? ""}`));
+    >(this.addClientRoot(`student/${studentId ?? ""}`));
   }
 
   /**
@@ -60,7 +60,7 @@ export class StudentApi extends HttpBaseClient {
    */
   public async synchronizeFromUserToken(): Promise<void> {
     try {
-      await this.patchCall(this.addClientRoot("students/sync"), null, true);
+      await this.patchCall(this.addClientRoot("student/sync"), null, true);
     } catch (error: unknown) {
       this.handleAPICustomError(error);
     }
@@ -83,7 +83,7 @@ export class StudentApi extends HttpBaseClient {
   async searchStudents(
     payload: SearchStudentAPIInDTO,
   ): Promise<SearchStudentAPIOutDTO[]> {
-    return this.postCall(this.addClientRoot("students/search"), payload);
+    return this.postCall(this.addClientRoot("student/search"), payload);
   }
 
   /**
@@ -94,7 +94,7 @@ export class StudentApi extends HttpBaseClient {
     studentFilesPayload: StudentFileUploaderAPIInDTO,
   ): Promise<void> {
     await this.patchCall<StudentFileUploaderAPIInDTO>(
-      this.addClientRoot("students/save-uploaded-files"),
+      this.addClientRoot("student/save-uploaded-files"),
       studentFilesPayload,
     );
   }
@@ -113,7 +113,7 @@ export class StudentApi extends HttpBaseClient {
     payload: AESTFileUploadToStudentAPIInDTO,
   ): Promise<void> {
     await this.patchCall<AESTFileUploadToStudentAPIInDTO>(
-      this.addClientRoot(`students/${studentId}/save-uploaded-files`),
+      this.addClientRoot(`student/${studentId}/save-uploaded-files`),
       payload,
     );
   }
@@ -124,7 +124,7 @@ export class StudentApi extends HttpBaseClient {
    */
   async getStudentFiles(): Promise<StudentUploadFileAPIOutDTO[]> {
     return this.getCallTyped<StudentUploadFileAPIOutDTO[]>(
-      this.addClientRoot("students/documents"),
+      this.addClientRoot("student/documents"),
     );
   }
 
@@ -136,7 +136,7 @@ export class StudentApi extends HttpBaseClient {
     studentId: number,
   ): Promise<AESTStudentFileAPIOutDTO[]> {
     return this.getCallTyped<AESTStudentFileAPIOutDTO[]>(
-      this.addClientRoot(`students/${studentId}/documents`),
+      this.addClientRoot(`student/${studentId}/documents`),
     );
   }
 
@@ -149,7 +149,7 @@ export class StudentApi extends HttpBaseClient {
     studentId: number,
   ): Promise<SINValidationsAPIOutDTO[]> {
     return this.getCallTyped<SINValidationsAPIOutDTO[]>(
-      this.addClientRoot(`students/${studentId}/sin-validations`),
+      this.addClientRoot(`student/${studentId}/sin-validations`),
     );
   }
 
@@ -165,7 +165,7 @@ export class StudentApi extends HttpBaseClient {
     payload: CreateSINValidationAPIInDTO,
   ): Promise<void> {
     await this.postCall(
-      this.addClientRoot(`students/${studentId}/sin-validations`),
+      this.addClientRoot(`student/${studentId}/sin-validations`),
       payload,
     );
   }
@@ -183,7 +183,7 @@ export class StudentApi extends HttpBaseClient {
   ): Promise<void> {
     await this.patchCall(
       this.addClientRoot(
-        `students/${studentId}/sin-validations/${sinValidationId}`,
+        `student/${studentId}/sin-validations/${sinValidationId}`,
       ),
       payload,
     );

@@ -1,83 +1,77 @@
 <template>
-  <v-container>
-    <v-card>
-      <v-container>
-        <body-header
-          title="History"
-          class="m-1"
-          subTitle="A history of applications"
-          :recordsCount="assessmentHistory.length"
-        >
-        </body-header>
-        <content-group class="mt-4">
-          <toggle-content :toggled="!assessmentHistory.length">
-            <DataTable
-              :value="assessmentHistory"
-              :paginator="true"
-              :rows="DEFAULT_PAGE_LIMIT"
-              :rowsPerPageOptions="PAGINATION_LIST"
-              :totalRecords="assessmentHistory.length"
-            >
-              <template #empty>
-                <p class="text-center font-weight-bold">No records found.</p>
-              </template>
-              <Column
-                field="submittedDate"
-                header="Submitted date"
-                sortable="true"
-                ><template #body="slotProps">{{
-                  dateOnlyLongString(slotProps.data.submittedDate)
-                }}</template></Column
-              ><Column
-                field="triggerType"
-                header="Type"
-                sortable="true"
-              ></Column
-              ><Column header="Request form">
-                <template #body="{ data }">
-                  <template v-if="canShowViewRequest(data)">
-                    <v-btn
-                      @click="viewRequest(data)"
-                      color="primary"
-                      variant="text"
-                      class="text-decoration-underline"
-                      prepend-icon="fa:far fa-file-alt"
-                    >
-                      {{ getViewRequestLabel(data) }}</v-btn
-                    >
-                  </template>
-                </template></Column
-              ><Column field="status" header="Status" sortable="true"
-                ><template #body="slotProps"
-                  ><status-chip-assessment-history
-                    :status="slotProps.data.status" /></template></Column
-              ><Column
-                field="assessmentDate"
-                header="Assessment date"
-                sortable="true"
-                ><template #body="slotProps">
-                  <span v-if="slotProps.data.assessmentDate">{{
-                    dateOnlyLongString(slotProps.data.assessmentDate)
-                  }}</span
-                  ><span v-else>-</span></template
-                ></Column
-              ><Column header="Assessment">
-                <template #body="{ data }">
+  <v-card>
+    <v-container>
+      <body-header
+        title="History"
+        class="m-1"
+        subTitle="A history of applications"
+        :recordsCount="assessmentHistory.length"
+      >
+      </body-header>
+      <content-group class="mt-4">
+        <toggle-content :toggled="!assessmentHistory.length">
+          <DataTable
+            :value="assessmentHistory"
+            :paginator="true"
+            :rows="DEFAULT_PAGE_LIMIT"
+            :rowsPerPageOptions="PAGINATION_LIST"
+            :totalRecords="assessmentHistory.length"
+          >
+            <template #empty>
+              <p class="text-center font-weight-bold">No records found.</p>
+            </template>
+            <Column
+              field="submittedDate"
+              header="Submitted date"
+              sortable="true"
+              ><template #body="slotProps">{{
+                dateOnlyLongString(slotProps.data.submittedDate)
+              }}</template></Column
+            ><Column field="triggerType" header="Type" sortable="true"></Column
+            ><Column header="Request form">
+              <template #body="{ data }">
+                <template v-if="canShowViewRequest(data)">
                   <v-btn
-                    v-if="!data.hasUnsuccessfulWeeks"
-                    @click="$emit('viewAssessment', data.assessmentId)"
+                    @click="viewRequest(data)"
                     color="primary"
+                    variant="text"
+                    class="text-decoration-underline"
+                    prepend-icon="fa:far fa-file-alt"
                   >
-                    View assessment</v-btn
+                    {{ getViewRequestLabel(data) }}</v-btn
                   >
                 </template>
-              </Column>
-            </DataTable>
-          </toggle-content>
-        </content-group>
-      </v-container>
-    </v-card>
-  </v-container>
+              </template></Column
+            ><Column field="status" header="Status" sortable="true"
+              ><template #body="slotProps"
+                ><status-chip-assessment-history
+                  :status="slotProps.data.status" /></template></Column
+            ><Column
+              field="assessmentDate"
+              header="Assessment date"
+              sortable="true"
+              ><template #body="slotProps">
+                <span v-if="slotProps.data.assessmentDate">{{
+                  dateOnlyLongString(slotProps.data.assessmentDate)
+                }}</span
+                ><span v-else>-</span></template
+              ></Column
+            ><Column header="Assessment">
+              <template #body="{ data }">
+                <v-btn
+                  v-if="!data.hasUnsuccessfulWeeks"
+                  @click="$emit('viewAssessment', data.assessmentId)"
+                  color="primary"
+                >
+                  View assessment</v-btn
+                >
+              </template>
+            </Column>
+          </DataTable>
+        </toggle-content>
+      </content-group>
+    </v-container>
+  </v-card>
 </template>
 <script lang="ts">
 import {

@@ -1,33 +1,29 @@
 <template>
-  <student-page-container :full-width="true" layout-template="centered">
+  <student-page-container layout-template="centered">
     <template #header>
       <header-navigator
-        title="Back to Applications"
+        title="Applications"
         :routeLocation="{
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         }"
-        subTitle="Financial aid application"
+        subTitle="Financial Aid Application"
         ><template #buttons>
           <v-menu>
             <template v-slot:activator="{ props }"
               ><v-btn
                 color="primary"
-                @click="toggle"
                 v-bind="props"
                 prepend-icon="fa:fa fa-chevron-circle-down"
-                >Application Options
+                >Application actions
               </v-btn>
             </template>
-            <v-list>
+            <v-list class="action-list">
               <template v-for="(item, index) in items" :key="index">
-                <v-list-item :value="index">
+                <v-list-item :value="index" @click="item.command">
                   <template v-slot:prepend>
-                    <v-icon :icon="item.icon"></v-icon>
+                    <v-icon :icon="item.icon" :color="item.iconColor"></v-icon>
                   </template>
-                  <v-list-item-title
-                    @click="item.command"
-                    :class="item.textColor"
-                  >
+                  <v-list-item-title :class="item.textColor">
                     <span class="label-bold"> {{ item.label }}</span>
                   </v-list-item-title>
                 </v-list-item>
@@ -41,62 +37,65 @@
           </v-menu>
         </template>
       </header-navigator>
+      <detail-header
+        :headerMap="headerMap"
+        v-if="applicationDetails.applicationStatus !== ApplicationStatus.draft"
+      />
     </template>
 
     <CancelApplication
-      :showModal="showModal"
+      :showodal="showModal"
       :applicationId="id"
       @showHideCancelApplication="showHideCancelApplication"
       @reloadData="getApplicationDetails"
     />
-    <v-container class="pt-12">
-      <div
-        class="bg-white application-info-border"
-        v-if="
-          applicationDetails.applicationStatus === ApplicationStatus.cancelled
-        "
-      >
-        <p>
-          <v-icon color="primary">mdi-information </v-icon
-          ><span class="pl-2 font-weight-bold">For your information</span>
-        </p>
-        <span class="mt-4"
-          >This application was cancelled on
-          {{
-            dateOnlyLongString(applicationDetails.applicationStatusUpdatedOn)
-          }}.
-          <a class="text-primary" @click="viewApplication">
-            View application
-          </a>
-        </span>
-      </div>
-      <ApplicationDetails
-        v-if="applicationDetails?.applicationStatus"
-        :applicationDetails="applicationDetails"
-      />
-    </v-container>
+    <application-progress-bar
+      class="mb-5"
+      :application-id="id"
+      @editApplication="editApplication"
+      :application-status="applicationDetails.applicationStatus"
+      :status-updated-on="applicationDetails.statusUpdatedOn"
+    />
     <student-assessment-details :applicationId="id" v-if="showViewAssessment" />
   </student-page-container>
-  <ConfirmEditApplication ref="editApplicationModal" />
+  <confirm-edit-application ref="editApplicationModal" />
+
+  <!-- Submitted date footer. -->
+  <div
+    class="text-center my-3 muted-content"
+    v-if="applicationDetails.applicationStatus !== ApplicationStatus.draft"
+  >
+    <span class="header-extra-small">Date submitted: </span
+    ><span class="value-extra-small">{{
+      dateOnlyLongString(applicationDetails.submittedDate)
+    }}</span>
+  </div>
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref, watch, computed } from "vue";
+import { ref, watch, computed, defineComponent } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
-import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
-import { GetApplicationDataDto, ApplicationStatus, MenuType } from "@/types";
-import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
+import {
+  useFormatters,
+  ModalDialog,
+  useSnackBar,
+  useApplication,
+} from "@/composables";
+import { ApplicationStatus, GetApplicationDataDto, MenuType } from "@/types";
+import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
+import DetailHeader from "@/components/generic/DetailHeader.vue";
 import StudentAssessmentDetails from "@/components/students/StudentAssessmentDetails.vue";
 
-export default {
+export default defineComponent({
   components: {
     CancelApplication,
-    ApplicationDetails,
+    ApplicationProgressBar,
     ConfirmEditApplication,
+    DetailHeader,
     StudentAssessmentDetails,
   },
   props: {
@@ -105,14 +104,16 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
-    const items = ref([] as MenuType[]);
+    const items = ref<MenuType[]>([]);
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const snackBar = useSnackBar();
+    const { mapApplicationDetailHeader } = useApplication();
+    const headerMap = ref<Record<string, string>>({});
 
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
@@ -179,8 +180,8 @@ export default {
           ApplicationStatus.completed
       ) {
         items.value.push({
-          label: "Edit",
-          icon: "fa:fa fa-pencil",
+          label: "Edit application",
+          icon: "fa:fa fa-pencil-alt",
           command:
             applicationDetails.value.applicationStatus ===
             ApplicationStatus.draft
@@ -189,7 +190,7 @@ export default {
         });
       }
       items.value.push({
-        label: "View",
+        label: "View application",
         icon: "fa:fa fa-folder-open",
         command: viewApplication,
       });
@@ -200,8 +201,9 @@ export default {
           ApplicationStatus.completed
       ) {
         items.value.push({
-          label: "Cancel",
+          label: "Cancel application",
           icon: "fa:fa fa-trash",
+          iconColor: "error",
           textColor: "error-color",
           command: () => {
             showHideCancelApplication();
@@ -219,14 +221,13 @@ export default {
     watch(
       () => props.id,
       async (currValue: number) => {
-        //update the list
         await getApplicationDetails(currValue);
+        headerMap.value = mapApplicationDetailHeader(applicationDetails.value);
+      },
+      {
+        immediate: true,
       },
     );
-
-    onMounted(async () => {
-      await getApplicationDetails(props.id);
-    });
 
     return {
       items,
@@ -241,7 +242,8 @@ export default {
       editApplicationModal,
       editApplication,
       viewApplication,
+      headerMap,
     };
   },
-};
+});
 </script>

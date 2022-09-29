@@ -232,7 +232,7 @@ html * {
 
 // v-list subtitle.
 .no-wrap .v-list-subheader {
-  font-size: $font-size-small;
+  font-size: $font-size-xsmall;
 }
 
 // This class will restrict the container with max-width.
@@ -269,17 +269,57 @@ html * {
 }
 
 // Reduce v-list icon and title space.
-.no-wrap .v-list-item__content {
+.no-wrap .v-list-item__content,
+.action-list .v-list-item__content {
   margin-inline-start: -20px;
+}
+.action-list .v-list-item__prepend > .v-icon {
+  opacity: unset;
 }
 
 // Modal height. 102px is the min height of header and footer of the modal.
 .modal-height {
   max-height: calc(100vh - 102px) !important;
 }
+
 // Min height for modal header.
 .modal-height .v-card-title {
   min-height: 50px;
+}
+
+// Tracker slider thumb (draft and submitted).
+.application-slider .v-slider-thumb__surface {
+  border-radius: 6px;
+}
+
+// Remove the ripple and hover effect.
+.application-slider .v-slider-thumb__surface::before {
+  background-color: unset;
+}
+
+// Remove the ripple and hover effect.
+.application-slider .v-ripple__container {
+  display: none;
+}
+
+// Alert label color.
+.application-tracker-alert .label {
+  color: $brand-black;
+}
+
+.application-tracker-alert.v-alert.white .v-alert__underlay {
+  background-color: $color-white;
+}
+
+.application-tracker-alert.v-alert:not(.white) .v-alert__underlay {
+  opacity: unset;
+  z-index: -1;
+}
+
+// UI/Borders.
+.application-tracker-alert.v-alert {
+  border: 1px solid $common-border-color;
+  border-radius: 8px;
 }
 
 .v-table.bordered {
