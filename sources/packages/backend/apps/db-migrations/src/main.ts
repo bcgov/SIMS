@@ -20,8 +20,6 @@ async function bootstrap() {
   });
   const dataSource = await migrationDataSource.initialize();
   try {
-    console.info(ormConfig);
-    // Create DataSource
     console.info("**** Running setupDB ****");
     await dataSource.query(`CREATE SCHEMA IF NOT EXISTS ${ormConfig.schema};`);
     await dataSource.query(`SET search_path TO ${ormConfig.schema}, public;`);
