@@ -44,7 +44,7 @@ export default defineComponent({
       default: true,
     },
   },
-  setup(_props: any, context) {
+  setup(_props, context) {
     const { checkFormioValidity } = useFormioUtils();
     const approvalForms: any[] = [];
     const approvalFormLoaded = (form: any) => {

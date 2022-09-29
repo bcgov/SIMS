@@ -111,7 +111,7 @@ export default defineComponent({
     // When the value is default then request form is viewable for all
     // possible trigger types.
     viewRequestTypes: {
-      type: Object as PropType<AssessmentTriggerType[]>,
+      type: Array as PropType<AssessmentTriggerType[]>,
       required: false,
       default: [] as AssessmentTriggerType[],
     },
@@ -152,7 +152,7 @@ export default defineComponent({
     };
 
     // Decide to show the request form for all possible assessment trigger types.
-    const showViewRequestDefault = (
+    const showDefaultViewRequest = (
       data: AssessmentHistorySummaryAPIOutDTO,
     ): boolean => {
       switch (data.triggerType) {
@@ -173,14 +173,14 @@ export default defineComponent({
     const canShowViewRequest = (
       data: AssessmentHistorySummaryAPIOutDTO,
     ): boolean => {
-      const defaultShowViewRequest = showViewRequestDefault(data);
+      const defaultViewRequest = showDefaultViewRequest(data);
       if (props.viewRequestTypes.length) {
         return (
-          defaultShowViewRequest &&
+          defaultViewRequest &&
           props.viewRequestTypes.includes(data.triggerType)
         );
       }
-      return showViewRequestDefault(data);
+      return defaultViewRequest;
     };
 
     const getViewRequestLabel = (

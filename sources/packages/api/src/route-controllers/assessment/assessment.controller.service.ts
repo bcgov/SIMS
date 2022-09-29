@@ -289,12 +289,8 @@ export class AssessmentControllerService {
   }
 
   /**
-   * Get all requests related to an assessments for a student
-   * application, i.e, this will fetch all pending and denied
-   * student appeals for an application or possible application
-   * exceptions that will prevent the assessment to proceed till
-   * they are approved, for instance, when a document is uploaded
-   * and need to be reviewed.
+   * Get all pending and declined requests related to an application which would result
+   * a new assessment when the request is approved.
    * @param applicationId application number.
    * @param studentId applicant student.
    * @param  includeOnlyAppeals then only student appeals are returned and

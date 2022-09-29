@@ -122,8 +122,8 @@ export class AssessmentStudentsController extends BaseController {
   }
 
   /**
-   * Get all requests related to an assessments for a student
-   * application, i.e, this will fetch all pending and denied
+   * Get all requests related to an application for a student
+   *  i.e, this will fetch all pending and denied
    * student appeals.
    * @param applicationId application number.
    * @returns assessment requests or exceptions for a student application.
