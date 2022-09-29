@@ -10,6 +10,7 @@ export const StudentRoutesConst = {
   FINANCIAL_AID_APPLICATION: Symbol(),
   APPLICATIONS: Symbol(),
   ASSESSMENT: Symbol(),
+  ASSESSMENT_AWARD_VIEW: Symbol(),
   PERSONAL_INFO: Symbol(),
   SELECT_PROGRAM: Symbol(),
   FINANCIAL_INFO: Symbol(),
@@ -25,6 +26,7 @@ export const StudentRoutesConst = {
   STUDENT_REQUEST_CHANGE: Symbol(),
   STUDENT_ACCOUNT_ACTIVITY: Symbol(),
   STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS: Symbol(),
+  STUDENT_APPEAL_REQUESTS: Symbol(),
 };
 
 /**

@@ -410,12 +410,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * * and assessmentData is not null, then status
    * * is Completed.
    * @param applicationId applicationId.
+   * @param studentId applicant student.
    * @returns AssessmentHistory list
    */
   async assessmentHistorySummary(
     applicationId: number,
+    studentId?: number,
   ): Promise<AssessmentHistory[]> {
-    const queryResult = await this.repo
+    const assessmentHistoryQuery = this.repo
       .createQueryBuilder("assessment")
       .select([
         "assessment.id",
@@ -471,7 +473,13 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
               },
             ),
         ),
-      )
+      );
+    if (studentId) {
+      assessmentHistoryQuery.andWhere("application.student.id = :studentId", {
+        studentId,
+      });
+    }
+    const queryResult = await assessmentHistoryQuery
       .orderBy("status", "DESC")
       .addOrderBy("assessment.submittedDate", "DESC")
       .getRawAndEntities();

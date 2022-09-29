@@ -1,5 +1,5 @@
 <template>
-  <student-page-container layout-template="centered-card">
+  <student-page-container layout-template="centered">
     <template #header>
       <header-navigator
         title="Applications"
@@ -50,11 +50,13 @@
       @reloadData="getApplicationDetails"
     />
     <application-progress-bar
+      class="mb-5"
       :application-id="id"
       @editApplication="editApplication"
       :application-status="applicationDetails.applicationStatus"
       :status-updated-on="applicationDetails.statusUpdatedOn"
     />
+    <student-assessment-details :applicationId="id" v-if="showViewAssessment" />
   </student-page-container>
   <confirm-edit-application ref="editApplicationModal" />
 
@@ -86,6 +88,7 @@ import { ApplicationStatus, GetApplicationDataDto, MenuType } from "@/types";
 import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
+import StudentAssessmentDetails from "@/components/students/StudentAssessmentDetails.vue";
 
 export default defineComponent({
   components: {
@@ -93,6 +96,7 @@ export default defineComponent({
     ApplicationProgressBar,
     ConfirmEditApplication,
     DetailHeader,
+    StudentAssessmentDetails,
   },
   props: {
     id: {
