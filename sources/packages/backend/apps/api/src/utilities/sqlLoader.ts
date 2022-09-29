@@ -9,10 +9,6 @@ const sqlDirPath = "src-sql";
  */
 export const getSQLDirPath = () => path.resolve(__dirname, sqlDirPath);
 
-console.log("+++++++++++++++++++++DIR NAME?+++++++++++++++++++++");
-console.log(__dirname);
-console.log(path.resolve());
-
 /**
  * @description Get SQL file content
  * @param fileName
