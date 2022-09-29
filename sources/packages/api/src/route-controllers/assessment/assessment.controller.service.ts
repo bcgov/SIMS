@@ -366,22 +366,17 @@ export class AssessmentControllerService {
    * which will have different assessment status.
    * @param applicationId, application number.
    * @param studentId applicant student.
-   * When student id is provided, then only student assessment history is returned and
-   * unsuccessful scholastic standing details must not be available for students.
    * @returns summary of the assessment history for a student application.
    */
   async getAssessmentHistorySummary(
     applicationId: number,
     studentId?: number,
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
-    // Unsuccessful scholastic standing is not returned for student access.
     const [assessments, unsuccessfulScholasticStanding] = await Promise.all([
       this.assessmentService.assessmentHistorySummary(applicationId, studentId),
-      studentId
-        ? undefined
-        : this.studentScholasticStandingsService.getUnsuccessfulScholasticStandings(
-            applicationId,
-          ),
+      this.studentScholasticStandingsService.getUnsuccessfulScholasticStandings(
+        applicationId,
+      ),
     ]);
     const history: AssessmentHistorySummaryAPIOutDTO[] = assessments.map(
       (assessment) => ({
@@ -400,7 +395,7 @@ export class AssessmentControllerService {
     // Add unsuccessful scholastic standing to the top of the list, if present.
     // For unsuccessful scholastic standing, status is always "completed" and
     // "createdAt" is "submittedDate".
-    if (!studentId && unsuccessfulScholasticStanding) {
+    if (unsuccessfulScholasticStanding) {
       history.unshift({
         submittedDate: unsuccessfulScholasticStanding.createdAt,
         triggerType: AssessmentTriggerType.ScholasticStandingChange,
