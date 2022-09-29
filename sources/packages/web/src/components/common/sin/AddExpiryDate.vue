@@ -93,30 +93,6 @@ export default {
       resolvePromise(false);
     };
 
-    const sinValidation = (sin: string) => {
-      // Common SIN validation algorithm (Luhn algorithm).
-      if (sin) {
-        sin = sin.replace(/\s/g, "");
-        if (sin.length === 9) {
-          let checksum = 0;
-          for (let i = 0; i < sin.length; i++) {
-            const currentDigit = parseInt(sin.charAt(i));
-            if ((i + 1) % 2 === 0) {
-              const digitTimes2 = currentDigit * 2;
-              checksum += digitTimes2 < 10 ? digitTimes2 : digitTimes2 - 9;
-            } else {
-              checksum += parseInt(sin.charAt(i));
-            }
-          }
-          if (checksum % 10 === 0) {
-            return true;
-          }
-        }
-        return "Invalid Social Insurance Number";
-      }
-      return "SIN is required";
-    };
-
     return {
       showDialog,
       showModal,
@@ -125,7 +101,6 @@ export default {
       Role,
       addExpiryDateForm,
       formModel,
-      sinValidation,
     };
   },
 };
