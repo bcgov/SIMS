@@ -6,7 +6,6 @@ import {
   DisbursementSchedule,
   COEStatus,
   DisbursementReceipt,
-  ApplicationExceptionStatus,
   AssessmentTriggerType,
 } from "../../database/entities";
 import {
@@ -169,7 +168,7 @@ export class AssessmentControllerService {
    */
   private populateDisbursementAwardValues(
     disbursementSchedules: DisbursementSchedule[],
-    includeDocumentNumber = true,
+    includeDocumentNumber = false,
   ): Record<string, string | number> {
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
@@ -204,8 +203,8 @@ export class AssessmentControllerService {
    */
   async getAssessmentAwardDetails(
     assessmentId: number,
+    includeDocumentNumber = false,
     studentId?: number,
-    includeDocumentNumber = true,
   ): Promise<AwardDetailsAPIOutDTO> {
     const assessment = await this.assessmentService.getAssessmentForNOA(
       assessmentId,
@@ -289,56 +288,15 @@ export class AssessmentControllerService {
   }
 
   /**
-   * Get all pending and declined requests related to an application which would result
-   * a new assessment when the request is approved.
-   * @param applicationId application number.
+   * Get all pending and denied appeals for an application.
+   * @param applicationId application to which the requests are retrieved.
    * @param studentId applicant student.
-   * @param  includeOnlyAppeals then only student appeals are returned and
-   * other assessment types must not be available when this property is true.
-   * @returns assessment requests or exceptions for a student application.
+   * @returns pending and denied appeals.
    */
-
-  async getRequestedAssessmentSummary(
+  async getPendingAndDeniedAppeals(
     applicationId: number,
     studentId?: number,
-    includeOnlyAppeals = false,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
-    // Requested offering changes and application exceptions must not be included when includeOnlyAppeals is true.
-    if (!includeOnlyAppeals) {
-      const offeringChange =
-        await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
-          applicationId,
-        );
-      if (offeringChange) {
-        requestAssessmentSummary.push({
-          id: offeringChange.id,
-          submittedDate: offeringChange.submittedDate,
-          status: offeringChange.offeringStatus,
-          requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
-          programId: offeringChange.educationProgram.id,
-        });
-      }
-
-      const applicationExceptions =
-        await this.applicationExceptionService.getExceptionsByApplicationId(
-          applicationId,
-          ApplicationExceptionStatus.Pending,
-          ApplicationExceptionStatus.Declined,
-        );
-
-      if (applicationExceptions.length > 0) {
-        const applicationExceptionArray: RequestAssessmentSummaryAPIOutDTO[] =
-          applicationExceptions.map((applicationException) => ({
-            id: applicationException.id,
-            submittedDate: applicationException.createdAt,
-            status: applicationException.exceptionStatus,
-            requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
-          }));
-        return requestAssessmentSummary.concat(applicationExceptionArray);
-      }
-    }
-
     const studentAppeal =
       await this.studentAppealService.getPendingAndDeniedAppeals(
         applicationId,
@@ -351,15 +309,13 @@ export class AssessmentControllerService {
         status: appeals.status,
         requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
       }));
-    return requestAssessmentSummary.concat(studentAppealArray);
+    return studentAppealArray;
   }
 
   /**
-   * Method to get history of assessments for an application,
-   * i.e, this will have original assessment for the
-   * student application, and all approved student
-   * appeal and scholastic standings for the application
-   * which will have different assessment status.
+   * Get history of approved assessment requests and
+   * unsuccessful scholastic standing change requests(which will not create new assessment)
+   * for an application.
    * @param applicationId, application number.
    * @param studentId applicant student.
    * @returns summary of the assessment history for a student application.

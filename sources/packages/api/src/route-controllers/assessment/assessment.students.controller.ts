@@ -116,8 +116,8 @@ export class AssessmentStudentsController extends BaseController {
   ): Promise<AwardDetailsAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentAwardDetails(
       assessmentId,
-      userToken.studentId,
       false,
+      userToken.studentId,
     );
   }
 
@@ -133,10 +133,9 @@ export class AssessmentStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    return this.assessmentControllerService.getRequestedAssessmentSummary(
+    return this.assessmentControllerService.getPendingAndDeniedAppeals(
       applicationId,
       userToken.studentId,
-      true,
     );
   }
 

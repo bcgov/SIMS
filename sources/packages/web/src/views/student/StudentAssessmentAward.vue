@@ -50,6 +50,7 @@
             prepend-icon="fa:fas fa-up-right-from-square"
             href="https://protege-secure.csnpe-nslsc.canada.ca/en/public/register-account"
             target="_blank"
+            rel="noopener"
             >Go to NSLSC</v-btn
           >
         </v-col>

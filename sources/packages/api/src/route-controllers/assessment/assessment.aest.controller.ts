@@ -9,6 +9,7 @@ import {
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
   AwardDetailsAPIOutDTO,
+  RequestAssessmentTypeAPIOutDTO,
 } from "./models/assessment.dto";
 import {
   ApiNotFoundResponse,
@@ -16,6 +17,11 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AssessmentControllerService } from "./assessment.controller.service";
+import {
+  EducationProgramOfferingService,
+  ApplicationExceptionService,
+} from "../../services";
+import { ApplicationExceptionStatus } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -24,6 +30,8 @@ import { AssessmentControllerService } from "./assessment.controller.service";
 export class AssessmentAESTController extends BaseController {
   constructor(
     private readonly assessmentControllerService: AssessmentControllerService,
+    private readonly educationProgramOfferingService: EducationProgramOfferingService,
+    private readonly applicationExceptionService: ApplicationExceptionService,
   ) {
     super();
   }
@@ -38,9 +46,43 @@ export class AssessmentAESTController extends BaseController {
   async getRequestedAssessmentSummary(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    return this.assessmentControllerService.getRequestedAssessmentSummary(
-      applicationId,
-    );
+    const requestAssessmentSummary: RequestAssessmentSummaryAPIOutDTO[] = [];
+    const offeringChange =
+      await this.educationProgramOfferingService.getOfferingRequestsByApplicationId(
+        applicationId,
+      );
+    if (offeringChange) {
+      requestAssessmentSummary.push({
+        id: offeringChange.id,
+        submittedDate: offeringChange.submittedDate,
+        status: offeringChange.offeringStatus,
+        requestType: RequestAssessmentTypeAPIOutDTO.OfferingRequest,
+        programId: offeringChange.educationProgram.id,
+      });
+    }
+    const applicationExceptions =
+      await this.applicationExceptionService.getExceptionsByApplicationId(
+        applicationId,
+        ApplicationExceptionStatus.Pending,
+        ApplicationExceptionStatus.Declined,
+      );
+    // When a pending or denied application exception exist then no other request can exist
+    // for the given application.
+    if (applicationExceptions.length > 0) {
+      const applicationExceptionArray: RequestAssessmentSummaryAPIOutDTO[] =
+        applicationExceptions.map((applicationException) => ({
+          id: applicationException.id,
+          submittedDate: applicationException.createdAt,
+          status: applicationException.exceptionStatus,
+          requestType: RequestAssessmentTypeAPIOutDTO.StudentException,
+        }));
+      return requestAssessmentSummary.concat(applicationExceptionArray);
+    }
+    const appeals =
+      await this.assessmentControllerService.getPendingAndDeniedAppeals(
+        applicationId,
+      );
+    return requestAssessmentSummary.concat(appeals);
   }
 
   /**
@@ -93,6 +135,7 @@ export class AssessmentAESTController extends BaseController {
   ): Promise<AwardDetailsAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentAwardDetails(
       assessmentId,
+      true,
     );
   }
 }

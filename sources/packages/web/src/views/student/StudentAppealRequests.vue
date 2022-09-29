@@ -52,7 +52,7 @@ export default defineComponent({
   },
   setup(props) {
     const studentAppealRequests = ref<StudentAppealRequest[]>([]);
-    const appealStatus = ref<StudentAppealStatus>(StudentAppealStatus.Pending);
+    const appealStatus = ref(StudentAppealStatus.Pending);
 
     onMounted(async () => {
       const appeal =
