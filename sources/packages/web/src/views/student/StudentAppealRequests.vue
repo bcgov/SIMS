@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <div class="mb-4">
+  <full-page-container>
+    <template #header>
       <header-navigator
         title="Application details"
         subTitle="View Request"
@@ -11,23 +11,21 @@
           },
         }"
       />
-    </div>
-    <full-page-container>
-      <body-header title="Student change">
-        <template #status-chip>
-          <status-chip-requested-assessment
-            :status="appealStatus"
-          ></status-chip-requested-assessment>
-        </template>
-      </body-header>
-      <!-- Show approval details must always be false for student view. -->
-      <appeal-requests-approval-form
-        :studentAppealRequests="studentAppealRequests"
-        :readOnly="true"
-        :showApprovalDetails="false"
-      />
-    </full-page-container>
-  </v-container>
+    </template>
+    <body-header title="Student change">
+      <template #status-chip>
+        <status-chip-requested-assessment
+          :status="appealStatus"
+        ></status-chip-requested-assessment>
+      </template>
+    </body-header>
+    <!-- Show approval details must always be false for student view. -->
+    <appeal-requests-approval-form
+      :studentAppealRequests="studentAppealRequests"
+      :readOnly="true"
+      :showApprovalDetails="false"
+    />
+  </full-page-container>
 </template>
 <script lang="ts">
 import { ref, onMounted, defineComponent } from "vue";

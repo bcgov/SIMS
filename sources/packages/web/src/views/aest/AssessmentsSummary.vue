@@ -18,6 +18,7 @@
     />
     <HistoryAssessment
       :applicationId="applicationId"
+      :viewRequestTypes="assessmentRequestTypes"
       @viewStudentAppeal="goToStudentAppeal"
       @viewAssessment="gotToViewAssessment"
       @viewOfferingRequest="goToOfferingRequest"
@@ -30,10 +31,12 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
+import { ref, defineComponent } from "vue";
+import { AssessmentTriggerType } from "@/types";
 import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
 
-export default {
+export default defineComponent({
   components: {
     RequestAssessment,
     HistoryAssessment,
@@ -50,6 +53,13 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+    // The assessment trigger types for which the request form must be visible by default.
+    const assessmentRequestTypes = ref<AssessmentTriggerType[]>([
+      AssessmentTriggerType.StudentAppeal,
+      AssessmentTriggerType.OfferingChange,
+      AssessmentTriggerType.ScholasticStandingChange,
+      AssessmentTriggerType.OriginalAssessment,
+    ]);
 
     const goToStudentAppeal = (appealId: number) => {
       router.push({
@@ -111,7 +121,8 @@ export default {
       goToApplicationException,
       goToScholasticStanding,
       goToOfferingRequest,
+      assessmentRequestTypes,
     };
   },
-};
+});
 </script>

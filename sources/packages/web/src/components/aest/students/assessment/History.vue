@@ -108,12 +108,9 @@ export default defineComponent({
       required: true,
     },
     // Assessment trigger types for which request for is available to view.
-    // When the value is default then request form is viewable for all
-    // possible trigger types.
     viewRequestTypes: {
       type: Array as PropType<AssessmentTriggerType[]>,
-      required: false,
-      default: [] as AssessmentTriggerType[],
+      required: true,
     },
   },
   setup(props, context) {
@@ -151,36 +148,18 @@ export default defineComponent({
       }
     };
 
-    // Decide to show the request form for all possible assessment trigger types.
-    const showDefaultViewRequest = (
-      data: AssessmentHistorySummaryAPIOutDTO,
-    ): boolean => {
-      switch (data.triggerType) {
-        case AssessmentTriggerType.StudentAppeal:
-        case AssessmentTriggerType.ScholasticStandingChange:
-          return true;
-        case AssessmentTriggerType.OriginalAssessment:
-          return !!data.applicationExceptionId;
-        case AssessmentTriggerType.OfferingChange:
-          return true;
-        default:
-          return false;
-      }
-    };
-
-    // Decide to show the request form for the provided assessment trigger types.
-    // Extending the existing logic to show request form for provided trigger types.
+    // Decides to show the request form for all possible assessment trigger types.
     const canShowViewRequest = (
       data: AssessmentHistorySummaryAPIOutDTO,
     ): boolean => {
-      const defaultViewRequest = showDefaultViewRequest(data);
-      if (props.viewRequestTypes.length) {
-        return (
-          defaultViewRequest &&
-          props.viewRequestTypes.includes(data.triggerType)
-        );
+      let showRequestForm = false;
+      if (props.viewRequestTypes.includes(data.triggerType)) {
+        showRequestForm = true;
       }
-      return defaultViewRequest;
+      if (data.triggerType === AssessmentTriggerType.OriginalAssessment) {
+        return showRequestForm && !!data.applicationExceptionId;
+      }
+      return showRequestForm;
     };
 
     const getViewRequestLabel = (
