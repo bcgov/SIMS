@@ -1,38 +1,30 @@
 <template>
-  <v-form ref="addNewSINForm">
+  <v-form ref="addExpiryDateForm">
     <modal-dialog-base
-      title="Add a new SIN"
+      title="Add expiry date"
       :showDialog="showDialog"
       max-width="730"
     >
       <template #content>
-        <error-summary :errors="addNewSINForm.errors" />
+        <error-summary :errors="addExpiryDateForm.errors" />
         <div class="pb-2">
           <span class="label-value"
-            >Enter a new SIN for the student. The SIN will be validated with
-            Employment and Social Development Canada (ESDC) unless you skip the
-            validations.</span
+            >Enter a date that the SIN will expiry on. Please note you will not
+            be able to change this.</span
           >
         </div>
+        <!-- TODO Date picker is not available in the vuetify 3 version, so temporary usage of textfield and regex-->
         <v-text-field
-          hide-details
-          label="Social Insurance Number (SIN)"
-          v-model="formModel.sin"
+          label="Expiry date"
+          class="mt-2"
+          placeholder="yyyy-MM-dd"
+          v-model="formModel.expiryDate"
           variant="outlined"
-          :rules="[(v) => sinValidation(v)]" />
-        <v-checkbox
-          label="Skip the validations"
-          v-model="formModel.skipValidations"
-          hide-details />
-        <banner
-          class="mb-4"
-          v-if="formModel.skipValidations"
-          :type="BannerTypes.Error"
-          header="Danger! Are you sure you want to skip the validations?"
-          summary=" By selecting this, you are forcing the SIN to be valid for the
-            student. Please proceed with caution."
-        >
-        </banner>
+          :rules="[
+            (v) =>
+              v.match(/^\d{4}-\d{2}-\d{2}$/) ||
+              'Expiry end date is not in right format',
+          ]" />
         <v-textarea
           hide-details
           label="Notes"
@@ -42,11 +34,11 @@
           :rules="[(v) => !!v || 'Notes is required']"
       /></template>
       <template #footer>
-        <check-permission-role :role="Role.StudentAddNewSIN">
+        <check-permission-role :role="Role.StudentAddSINExpiry">
           <template #="{ notAllowed }">
             <footer-buttons
               justify="end"
-              primaryLabel="Add SIN now"
+              primaryLabel="Add expiry date now"
               @secondaryClick="cancel"
               @primaryClick="submit"
               :disablePrimaryButton="notAllowed"
@@ -64,8 +56,7 @@ import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog } from "@/composables";
 import { Role, VForm } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { CreateSINValidationAPIInDTO } from "@/services/http/dto";
-import { BannerTypes } from "@/types/contracts/Banner";
+import { UpdateSINValidationAPIInDTO } from "@/services/http/dto";
 
 export default {
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
@@ -81,25 +72,24 @@ export default {
   },
   setup() {
     const { showDialog, showModal, resolvePromise } = useModalDialog<
-      CreateSINValidationAPIInDTO | boolean
+      UpdateSINValidationAPIInDTO | boolean
     >();
-    const addNewSINForm = ref({} as VForm);
-    const formModel = reactive({} as CreateSINValidationAPIInDTO);
+    const addExpiryDateForm = ref({} as VForm);
+    const formModel = reactive({} as UpdateSINValidationAPIInDTO);
 
     const submit = async () => {
-      const validationResult = await addNewSINForm.value.validate();
+      const validationResult = await addExpiryDateForm.value.validate();
       if (!validationResult.valid) {
         return;
       }
       const payload = { ...formModel };
       resolvePromise(payload);
-      addNewSINForm.value.reset();
+      addExpiryDateForm.value.reset();
     };
 
     const cancel = () => {
-      addNewSINForm.value.reset();
-      formModel.skipValidations = false;
-      addNewSINForm.value.resetValidation();
+      addExpiryDateForm.value.reset();
+      addExpiryDateForm.value.resetValidation();
       resolvePromise(false);
     };
 
@@ -133,9 +123,8 @@ export default {
       cancel,
       submit,
       Role,
-      addNewSINForm,
+      addExpiryDateForm,
       formModel,
-      BannerTypes,
       sinValidation,
     };
   },

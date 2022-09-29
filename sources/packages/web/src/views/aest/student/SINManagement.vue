@@ -64,63 +64,37 @@
       </toggle-content>
     </content-group>
   </full-page-container>
-  <AddNewSIN
-    ref="addNewSINModal"
-    :restrictionData="addNewSIN"
-    :allowedRole="Role.StudentAddNewSIN"
-  ></AddNewSIN>
-  <formio-modal-dialog
-    max-width="730"
+  <AddNewSIN ref="addNewSINModal" :allowedRole="Role.StudentAddNewSIN" />
+  <AddExpiryDate
     ref="addExpiryDateModal"
-    title="Add expiry date"
-    formName="aestAddSINExpiryDate"
-  >
-    <template #actions="{ cancel, submit }">
-      <check-permission-role :role="Role.StudentAddSINExpiry">
-        <template #="{ notAllowed }">
-          <footer-buttons
-            justify="end"
-            primaryLabel="Add expiry date now"
-            @secondaryClick="cancel"
-            @primaryClick="submit"
-            :disablePrimaryButton="notAllowed"
-          />
-        </template>
-      </check-permission-role>
-    </template>
-  </formio-modal-dialog>
+    :allowedRole="Role.StudentAddSINExpiry"
+  />
 </template>
 
 <script lang="ts">
 import { ref, watch } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
-  FormIOForm,
   PAGINATION_LIST,
   SINValidations,
   LayoutTemplates,
   Role,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
-import {
-  useFileUtils,
-  ModalDialog,
-  useSnackBar,
-  useFormatters,
-} from "@/composables";
-import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
+import { useFileUtils, ModalDialog, useSnackBar } from "@/composables";
 import {
   CreateSINValidationAPIInDTO,
   UpdateSINValidationAPIInDTO,
 } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import AddNewSIN from "@/components/common/sin/AddNewSIN.vue";
+import AddExpiryDate from "@/components/common/sin/AddExpiryDate.vue";
 
 export default {
   components: {
-    FormioModalDialog,
     CheckPermissionRole,
     AddNewSIN,
+    AddExpiryDate,
   },
   props: {
     studentId: {
@@ -129,14 +103,14 @@ export default {
     },
   },
   setup(props: any) {
+    const showModal = ref(false);
     const studentSINValidations = ref([] as SINValidations[]);
     const addNewSINModal = ref(
-      {} as ModalDialog<FormIOForm<CreateSINValidationAPIInDTO> | boolean>,
+      {} as ModalDialog<CreateSINValidationAPIInDTO | boolean>,
     );
     const addExpiryDateModal = ref(
-      {} as ModalDialog<FormIOForm<UpdateSINValidationAPIInDTO> | boolean>,
+      {} as ModalDialog<UpdateSINValidationAPIInDTO | boolean>,
     );
-    const { getISODateOnlyString } = useFormatters();
     const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
@@ -151,18 +125,17 @@ export default {
     watch(props.studentId, loadSINValidations, { immediate: true });
 
     const addNewSIN = async () => {
-      const modalResult = await addNewSINModal.value.showModal();
-      if (!modalResult) {
-        return;
-      }
+      const addNewSINData = await addNewSINModal.value.showModal();
+      if (addNewSINData)
+        createNewSIN(addNewSINData as CreateSINValidationAPIInDTO);
+    };
 
+    const createNewSIN = async (data: CreateSINValidationAPIInDTO) => {
       try {
         processingNewSIN.value = true;
-        const formioForm =
-          modalResult as FormIOForm<CreateSINValidationAPIInDTO>;
         await StudentService.shared.createStudentSINValidation(
           props.studentId,
-          formioForm.data,
+          data,
         );
         snackBar.success(
           "New SIN record created and associated to the student.",
@@ -176,29 +149,22 @@ export default {
     };
 
     const addExpiryDate = async (sinValidationId: number) => {
-      const modalResult = await addExpiryDateModal.value.showModal();
-      if (!modalResult) {
-        return;
-      }
-
-      try {
-        processingEditExpiryDate.value = true;
-        const formioForm =
-          modalResult as FormIOForm<UpdateSINValidationAPIInDTO>;
-        formioForm.data.expiryDate = getISODateOnlyString(
-          formioForm.data.expiryDate,
-        );
-        await StudentService.shared.updateStudentSINValidation(
-          props.studentId,
-          sinValidationId,
-          formioForm.data,
-        );
-        snackBar.success("Temporary SIN expiry date updated.");
-        await loadSINValidations();
-      } catch {
-        snackBar.error("Unexpected error while updating the expiry date.");
-      } finally {
-        processingEditExpiryDate.value = false;
+      const addExpiryDateData = await addExpiryDateModal.value.showModal();
+      if (addExpiryDateData) {
+        try {
+          processingEditExpiryDate.value = true;
+          await StudentService.shared.updateStudentSINValidation(
+            props.studentId,
+            sinValidationId,
+            addExpiryDateData as UpdateSINValidationAPIInDTO,
+          );
+          snackBar.success("Temporary SIN expiry date updated.");
+          await loadSINValidations();
+        } catch {
+          snackBar.error("Unexpected error while updating the expiry date.");
+        } finally {
+          processingEditExpiryDate.value = false;
+        }
       }
     };
 
@@ -216,6 +182,7 @@ export default {
       processingEditExpiryDate,
       LayoutTemplates,
       Role,
+      showModal,
     };
   },
 };
