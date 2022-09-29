@@ -10,6 +10,7 @@
       <template #content>
         <error-summary :errors="addRestrictionForm.errors" />
         <v-autocomplete
+          class="mt-4"
           label="Category"
           density="compact"
           :items="items"
