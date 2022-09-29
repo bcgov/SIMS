@@ -10,7 +10,6 @@ import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   ApplicationIdentifiersDTO,
-  InProgressApplicationDetailsAPIOutDTO,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
@@ -18,6 +17,7 @@ import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
+import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
 export class ApplicationService {
   // Share Instance

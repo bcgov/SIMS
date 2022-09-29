@@ -250,13 +250,13 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import {
   ApplicationExceptionStatus,
-  InProgressApplicationDetailsAPIOutDTO,
   OfferingStatus,
   ProgramInfoStatus,
   SuccessWaitingStatus,
 } from "@/types";
 import { onMounted, ref, defineComponent } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
+import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
 export default defineComponent({
   emits: ["declinedEvent"],

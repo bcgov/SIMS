@@ -11,11 +11,11 @@ import {
   DataTableSortOrder,
   ApplicationIdentifiersDTO,
   ClientIdType,
-  InProgressApplicationDetailsAPIOutDTO,
 } from "@/types";
 import { AuthService } from "../AuthService";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { ApplicationSummaryAPIOutDTO, PaginatedResultsAPIOutDTO } from "./dto";
+import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
 export class ApplicationApi extends HttpBaseClient {
   async getApplicationData(

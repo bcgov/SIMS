@@ -287,7 +287,7 @@ export class ApplicationControllerService {
         : SuccessWaitingStatus.Success;
     }
     if (parent2) {
-      supportingUserDetails.parent1Info = !parent2.supportingData
+      supportingUserDetails.parent2Info = !parent2.supportingData
         ? SuccessWaitingStatus.Waiting
         : SuccessWaitingStatus.Success;
     }
