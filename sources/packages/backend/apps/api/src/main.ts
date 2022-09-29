@@ -1,5 +1,5 @@
 import "reflect-metadata";
-require("../../../env_setup");
+require("../../../env_setup_apps");
 import { NestFactory, HttpAdapterHost } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";

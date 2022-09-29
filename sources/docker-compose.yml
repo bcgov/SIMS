@@ -7,8 +7,8 @@ services:
     image: api-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: api-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
-      context: ./packages/api
-      dockerfile: Dockerfile.dev
+      context: ./packages/backend
+      dockerfile: ./apps/api/Dockerfile.dev
     environment:
       - NODE_ENV=docker
       - PORT=${API_PORT}
@@ -76,7 +76,7 @@ services:
     ports:
       - ${API_PORT}:${API_PORT}
     volumes:
-      - ./packages/api/src:/app/src
+      - ./packages/backend/app/api/src:/app/src
     networks:
       - local-network
     restart: always

@@ -1,4 +1,4 @@
-require("../../../env_setup");
+require("../../../../../env_setup");
 import * as faker from "faker";
 import { SINValidation, Student, User } from "../../database/entities";
 import {

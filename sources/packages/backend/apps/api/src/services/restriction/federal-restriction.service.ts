@@ -4,7 +4,7 @@ import { FederalRestriction } from "../../database/entities";
 import { DataSource, EntityManager } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 
-const FEDERAL_RESTRICTIONS_RAW_SQL_FOLDER = "RawSQL/FederalRestrictions";
+const FEDERAL_RESTRICTIONS_RAW_SQL_FOLDER = "federal-restrictions";
 
 /**
  * Service layer for Federal Restrictions.

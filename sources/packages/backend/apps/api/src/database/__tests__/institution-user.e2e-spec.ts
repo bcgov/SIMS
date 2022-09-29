@@ -1,4 +1,4 @@
-require("../../../env_setup");
+require("../../../../../env_setup");
 import { closeDB, setupDB } from "../../testHelpers";
 import { DataSource, Repository } from "typeorm";
 import * as faker from "faker";

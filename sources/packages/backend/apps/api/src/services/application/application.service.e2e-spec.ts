@@ -1,6 +1,5 @@
-require("../../../env_setup");
+require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
-import { DatabaseModule } from "../../database/database.module";
 import {
   ApplicationService,
   ConfigService,
@@ -32,6 +31,7 @@ import {
 } from "../../testHelpers/fake-entities";
 import { MAX_MSFAA_VALID_DAYS } from "../../utilities/system-configurations-constants";
 import * as dayjs from "dayjs";
+import { DatabaseModule } from "../../database/database.module";
 
 const createFakeApplicationInAssessment = (student: Student): Application => {
   const fakeApplication = createFakeApplication();

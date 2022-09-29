@@ -7,7 +7,11 @@ const sqlDirPath = "src-sql";
  * @description Get SQL dir path
  * @returns The SQL files container dir from resources folder
  */
-export const getSQLDirPath = () => path.resolve(sqlDirPath);
+export const getSQLDirPath = () => path.resolve(__dirname, sqlDirPath);
+
+console.log("+++++++++++++++++++++DIR NAME?+++++++++++++++++++++");
+console.log(__dirname);
+console.log(path.resolve());
 
 /**
  * @description Get SQL file content

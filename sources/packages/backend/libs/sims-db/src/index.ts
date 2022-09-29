@@ -1,2 +1,2 @@
-export * from './sims-db.module';
-export * from './sims-db.service';
+export * from "./database.module";
+export * from "./database.service";
