@@ -53,7 +53,12 @@
                 assessmentAwardData.estimatedAward.disbursement1Date
               }}</span>
             </div>
-            <div v-if="isFirstDisbursementCompleted">
+            <div
+              v-if="
+                isFirstDisbursementCompleted &&
+                assessmentAwardData.estimatedAward.disbursement1DocumentNumber
+              "
+            >
               <span class="label-bold">Certificate number: </span>
               <span>{{
                 assessmentAwardData.estimatedAward.disbursement1DocumentNumber
@@ -132,7 +137,12 @@
                 assessmentAwardData.estimatedAward.disbursement2Date
               }}</span>
             </div>
-            <div v-if="isSecondDisbursementCompleted">
+            <div
+              v-if="
+                isSecondDisbursementCompleted &&
+                assessmentAwardData.estimatedAward.disbursement2DocumentNumber
+              "
+            >
               <span class="label-bold">Certificate number: </span>
               <span>{{
                 assessmentAwardData.estimatedAward.disbursement2DocumentNumber

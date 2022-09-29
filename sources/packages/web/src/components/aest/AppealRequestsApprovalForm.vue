@@ -3,7 +3,7 @@
     :studentAppealRequests="studentAppealRequests"
     :readOnly="true"
   >
-    <template #approval-form="{ approval }">
+    <template #approval-form="{ approval }" v-if="showApprovalDetails">
       <formio
         formName="staffapprovalappeal"
         :data="approval"
@@ -18,12 +18,12 @@
 
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { SetupContext } from "vue";
+import { defineComponent } from "vue";
 import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
 import { useFormioUtils } from "@/composables";
 import { StudentAppealApproval } from "@/types";
 
-export default {
+export default defineComponent({
   emits: ["submitted"],
   components: {
     AppealRequestsForm,
@@ -38,8 +38,13 @@ export default {
       required: true,
       default: false,
     },
+    showApprovalDetails: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
-  setup(_props: any, context: SetupContext) {
+  setup(_props, context) {
     const { checkFormioValidity } = useFormioUtils();
     const approvalForms: any[] = [];
     const approvalFormLoaded = (form: any) => {
@@ -66,5 +71,5 @@ export default {
       submit,
     };
   },
-};
+});
 </script>

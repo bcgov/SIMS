@@ -5,19 +5,11 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  ApplicationExceptionService,
-  ApplicationService,
-  EducationProgramOfferingService,
-  StudentAppealService,
-  StudentAssessmentService,
-  StudentScholasticStandingsService,
-} from "../../services";
-import {
   AssessmentHistorySummaryAPIOutDTO,
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
-  RequestAssessmentTypeAPIOutDTO,
   AwardDetailsAPIOutDTO,
+  RequestAssessmentTypeAPIOutDTO,
 } from "./models/assessment.dto";
 import {
   ApiNotFoundResponse,
@@ -26,10 +18,10 @@ import {
 } from "@nestjs/swagger";
 import { AssessmentControllerService } from "./assessment.controller.service";
 import {
-  ApplicationExceptionStatus,
-  AssessmentTriggerType,
-} from "../../database/entities";
-import { StudentAssessmentStatus } from "../../services/student-assessment/student-assessment.models";
+  EducationProgramOfferingService,
+  ApplicationExceptionService,
+} from "../../services";
+import { ApplicationExceptionStatus } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -37,24 +29,16 @@ import { StudentAssessmentStatus } from "../../services/student-assessment/stude
 @ApiTags(`${ClientTypeBaseRoute.AEST}-assessment`)
 export class AssessmentAESTController extends BaseController {
   constructor(
-    private readonly studentAppealService: StudentAppealService,
-    private readonly studentAssessmentService: StudentAssessmentService,
     private readonly assessmentControllerService: AssessmentControllerService,
-    private readonly applicationExceptionService: ApplicationExceptionService,
-    private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
-    private readonly applicationService: ApplicationService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
+    private readonly applicationExceptionService: ApplicationExceptionService,
   ) {
     super();
   }
 
   /**
-   * Get all requests related to an assessments for a student
-   * application, i.e, this will fetch all pending and denied
-   * student appeals for an application or possible application
-   * exceptions that will prevent the assessment to proceed till
-   * they are approved, for instance, when a document is uploaded
-   * and need to be reviewed.
+   * Get all pending and declined requests related to an application which would result
+   * a new assessment when that request is approved.
    * @param applicationId application number.
    * @returns assessment requests or exceptions for a student application.
    */
@@ -76,14 +60,14 @@ export class AssessmentAESTController extends BaseController {
         programId: offeringChange.educationProgram.id,
       });
     }
-
     const applicationExceptions =
       await this.applicationExceptionService.getExceptionsByApplicationId(
         applicationId,
         ApplicationExceptionStatus.Pending,
         ApplicationExceptionStatus.Declined,
       );
-
+    // When a pending or denied application exception exist then no other request can exist
+    // for the given application.
     if (applicationExceptions.length > 0) {
       const applicationExceptionArray: RequestAssessmentSummaryAPIOutDTO[] =
         applicationExceptions.map((applicationException) => ({
@@ -94,17 +78,11 @@ export class AssessmentAESTController extends BaseController {
         }));
       return requestAssessmentSummary.concat(applicationExceptionArray);
     }
-
-    const studentAppeal =
-      await this.studentAppealService.getPendingAndDeniedAppeals(applicationId);
-    const studentAppealArray: RequestAssessmentSummaryAPIOutDTO[] =
-      studentAppeal.map((appeals) => ({
-        id: appeals.id,
-        submittedDate: appeals.submittedDate,
-        status: appeals.status,
-        requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
-      }));
-    return requestAssessmentSummary.concat(studentAppealArray);
+    const appeals =
+      await this.assessmentControllerService.getPendingAndDeniedAppeals(
+        applicationId,
+      );
+    return requestAssessmentSummary.concat(appeals);
   }
 
   /**
@@ -120,40 +98,9 @@ export class AssessmentAESTController extends BaseController {
   async getAssessmentHistorySummary(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
-    const [assessments, unsuccessfulScholasticStanding] = await Promise.all([
-      this.studentAssessmentService.assessmentHistorySummary(applicationId),
-      this.studentScholasticStandingsService.getUnsuccessfulScholasticStandings(
-        applicationId,
-      ),
-    ]);
-    const history: AssessmentHistorySummaryAPIOutDTO[] = assessments.map(
-      (assessment) => ({
-        assessmentId: assessment.id,
-        submittedDate: assessment.submittedDate,
-        triggerType: assessment.triggerType,
-        assessmentDate: assessment.assessmentDate,
-        status: assessment.status,
-        offeringId: assessment.offering.id,
-        programId: assessment.offering.educationProgram.id,
-        studentAppealId: assessment.studentAppeal?.id,
-        applicationExceptionId: assessment.application.applicationException?.id,
-        studentScholasticStandingId: assessment.studentScholasticStanding?.id,
-      }),
+    return this.assessmentControllerService.getAssessmentHistorySummary(
+      applicationId,
     );
-    // Add unsuccessful scholastic standing to the top of the list, if present.
-    // For unsuccessful scholastic standing, status is always "completed" and
-    // "createdAt" is "submittedDate".
-    if (unsuccessfulScholasticStanding) {
-      history.unshift({
-        submittedDate: unsuccessfulScholasticStanding.createdAt,
-        triggerType: AssessmentTriggerType.ScholasticStandingChange,
-        status: StudentAssessmentStatus.Completed,
-        studentScholasticStandingId: unsuccessfulScholasticStanding.id,
-        hasUnsuccessfulWeeks: true,
-      });
-    }
-
-    return history;
   }
 
   /**
