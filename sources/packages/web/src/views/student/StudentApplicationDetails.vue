@@ -44,15 +44,16 @@
     </template>
 
     <CancelApplication
-      :showModal="showModal"
+      :showodal="showModal"
       :applicationId="id"
       @showHideCancelApplication="showHideCancelApplication"
       @reloadData="getApplicationDetails"
     />
     <application-progress-bar
-      :applicationId="id"
+      :application-id="id"
       @editApplication="editApplication"
-      :applicationStatus="applicationDetails.applicationStatus"
+      :application-status="applicationDetails.applicationStatus"
+      :status-updated-on="applicationDetails.statusUpdatedOn"
     />
   </student-page-container>
   <confirm-edit-application ref="editApplicationModal" />
@@ -64,7 +65,7 @@
   >
     <span class="header-extra-small">Date submitted: </span
     ><span class="value-extra-small">{{
-      dateOnlyLongString(applicationDetails.applicationSubmittedDate)
+      dateOnlyLongString(applicationDetails.submittedDate)
     }}</span>
   </div>
 </template>
@@ -81,11 +82,7 @@ import {
   useSnackBar,
   useApplication,
 } from "@/composables";
-import {
-  ApplicationStatus,
-  MenuType,
-  ApplicationDetailsAPIOutDTO,
-} from "@/types";
+import { ApplicationStatus, GetApplicationDataDto, MenuType } from "@/types";
 import ApplicationProgressBar from "@/components/students/applicationTracker/ApplicationProgressBar.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
@@ -108,7 +105,7 @@ export default defineComponent({
     const items = ref<MenuType[]>([]);
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
-    const applicationDetails = ref({} as ApplicationDetailsAPIOutDTO);
+    const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const snackBar = useSnackBar();
     const { mapApplicationDetailHeader } = useApplication();
@@ -213,9 +210,7 @@ export default defineComponent({
 
     const getApplicationDetails = async (applicationId: number) => {
       applicationDetails.value =
-        await ApplicationService.shared.getApplicationStatusDetails(
-          applicationId,
-        );
+        await ApplicationService.shared.getApplicationData(applicationId);
       loadMenu();
     };
 

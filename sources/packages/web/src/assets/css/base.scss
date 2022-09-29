@@ -316,14 +316,8 @@ html * {
   z-index: -1;
 }
 
-// col img css.
-.col-img {
-  margin-top: -3%;
-  margin-right: -21%;
-}
-
+// UI/Borders.
 .application-tracker-alert.v-alert {
-  /* UI/Borders */
   border: 1px solid $common-border-color;
   border-radius: 8px;
 }

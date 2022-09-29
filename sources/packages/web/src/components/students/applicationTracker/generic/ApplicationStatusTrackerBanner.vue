@@ -9,17 +9,17 @@
       <v-icon class="mt-1" :icon="icon" :size="20" :color="iconColor" />
     </template>
     <template #title>
-      <div class="category-header-medium mb-3 label">
+      <h3 class="category-header-medium mb-3 label">
         {{ label }}
-      </div>
+      </h3>
     </template>
     <span class="label-value-normal">
       <slot name="content">
         <v-row>
-          <v-col :md="hasImage ? 10 : 12">
-            {{ content }}
+          <v-col md="auto">
+            <span>{{ content }}</span>
           </v-col>
-          <v-col md="2" class="col-img" v-if="hasImage">
+          <v-col offset-md="5" class="mt-n8">
             <slot name="image"></slot>
           </v-col>
         </v-row>
@@ -31,7 +31,7 @@
   </v-alert>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   props: {
@@ -57,18 +57,6 @@ export default defineComponent({
       required: false,
       default: "default",
     },
-  },
-  setup(_props, { slots }) {
-    const hasImage = ref(false);
-    // Check if the slot exists by name and has content.
-    // It returns an empty array if it's empty.
-    if (slots.image && slots.image().length) {
-      hasImage.value = true;
-    }
-
-    return {
-      hasImage,
-    };
   },
 });
 </script>

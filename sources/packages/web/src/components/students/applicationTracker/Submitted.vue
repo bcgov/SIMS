@@ -8,7 +8,7 @@
     <template #image>
       <v-img
         height="60"
-        alt="You don't have any agreements yet."
+        alt="A paper plane in the air. Illustration by Storyset."
         src="@/assets/images/paper_plane.svg"
     /></template>
   </application-status-tracker-banner>

@@ -11,8 +11,6 @@ import {
   DEFAULT_PAGE_NUMBER,
   ApplicationIdentifiersDTO,
   InProgressApplicationDetailsAPIOutDTO,
-  CancelledApplicationDetailsAPIOutDTO,
-  ApplicationDetailsAPIOutDTO,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
@@ -136,31 +134,9 @@ export class ApplicationService {
    * @param applicationId application id.
    * @returns application details.
    */
-  public async getInProgressApplicationDetails(
+  async getInProgressApplicationDetails(
     applicationId: number,
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
     return ApiClient.Application.getInProgressApplicationDetails(applicationId);
-  }
-
-  /**
-   * Get cancelled details of an application by application id.
-   * @param applicationId application id.
-   * @returns application details.
-   */
-  public async getCancelledApplicationDetails(
-    applicationId: number,
-  ): Promise<CancelledApplicationDetailsAPIOutDTO> {
-    return ApiClient.Application.getCancelledApplicationDetails(applicationId);
-  }
-
-  /**
-   * Get details of an application by application id.
-   * @param applicationId application id.
-   * @returns application details.
-   */
-  public async getApplicationStatusDetails(
-    applicationId: number,
-  ): Promise<ApplicationDetailsAPIOutDTO> {
-    return ApiClient.Application.getApplicationStatusDetails(applicationId);
   }
 }

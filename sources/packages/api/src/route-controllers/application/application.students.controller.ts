@@ -38,9 +38,6 @@ import {
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   ApplicationIdentifiersDTO,
-  InProgressApplicationDetailsAPIOutDTO,
-  CancelledApplicationDetailsAPIOutDTO,
-  ApplicationDetailsAPIOutDTO,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -65,6 +62,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { ApplicationControllerService } from "./application.controller.service";
+import { InProgressApplicationDetailsAPIOutDTO } from "./models/application.system.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -462,24 +460,25 @@ export class ApplicationStudentsController extends BaseController {
    * @param applicationId application id.
    * @returns application details.
    */
-  @Get(":id/in-progress")
+  @Get(":applicationId/in-progress")
   @ApiNotFoundResponse({
     description: "Application id not found.",
   })
   async getInProgressApplicationDetails(
-    @Param("id", ParseIntPipe) applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() studentToken: StudentUserToken,
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
-    const application = await this.applicationService.getApplicationByIdAndUser(
+    const application = await this.applicationService.getApplicationDetails(
       applicationId,
+      studentToken.studentId,
     );
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} was not found.`,
       );
     }
-
     const incomeVerificationDetails =
-      await this.craIncomeVerificationService.allIncomeVerificationsForAnApplication(
+      await this.craIncomeVerificationService.getAllIncomeVerificationsForAnApplication(
         applicationId,
       );
     const incomeVerification =
@@ -501,75 +500,11 @@ export class ApplicationStudentsController extends BaseController {
       id: application.id,
       applicationStatus: application.applicationStatus,
       pirStatus: application.pirStatus,
-      PIRDeniedReason: getPIRDeniedReason(application),
+      pirDeniedReason: getPIRDeniedReason(application),
       offeringStatus: application.currentAssessment?.offering.offeringStatus,
       exceptionStatus: application.applicationException?.exceptionStatus,
       ...incomeVerification,
       ...supportingUser,
-    };
-  }
-
-  /**
-   * Get cancelled details of an application by application id.
-   * @param applicationId application id.
-   * @returns application details.
-   */
-  @Get(":id/cancelled")
-  @ApiNotFoundResponse({
-    description: "Application id not found.",
-  })
-  async getCancelledApplicationDetails(
-    @Param("id", ParseIntPipe) applicationId: number,
-  ): Promise<CancelledApplicationDetailsAPIOutDTO> {
-    const application = await this.applicationService.getApplicationByIdAndUser(
-      applicationId,
-    );
-    if (!application) {
-      throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
-      );
-    }
-    return {
-      statusUpdatedOn: application.applicationStatusUpdatedOn,
-    };
-  }
-
-  /**
-   * Get details of an application by application id.
-   * @param applicationId application id.
-   * @returns application details.
-   */
-  @Get(":id/details")
-  @ApiNotFoundResponse({
-    description: "Application id not found.",
-  })
-  async getApplicationStatusDetails(
-    @Param("id", ParseIntPipe) applicationId: number,
-  ): Promise<ApplicationDetailsAPIOutDTO> {
-    const application = await this.applicationService.getApplicationByIdAndUser(
-      applicationId,
-    );
-    if (!application) {
-      throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
-      );
-    }
-    const offering = application.currentAssessment?.offering;
-    // When a student selects "offering not found" (pir required)
-    // get study dates field and offering intensity from data and
-    // display the date and offering intensity when an offering is found.
-    return {
-      applicationNumber: application.applicationNumber,
-      applicationInstitutionName: application.location?.name,
-      applicationStartDate:
-        offering?.studyStartDate ?? application.data.studystartDate,
-      applicationEndDate:
-        offering?.studyEndDate ?? application.data.studyendDate,
-      applicationOfferingIntensity:
-        offering?.offeringIntensity ??
-        application.data.howWillYouBeAttendingTheProgram,
-      applicationSubmittedDate: application.submittedDate,
-      applicationStatus: application.applicationStatus,
     };
   }
 }

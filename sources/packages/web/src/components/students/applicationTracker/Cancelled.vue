@@ -3,23 +3,18 @@
     label="You've cancelled your application"
     icon="fa:fas fa-exclamation-circle"
     icon-color="danger"
-    background-color="error_bg"
+    background-color="error-bg"
     ><template #content
-      ><span
-        >You cancelled your application on
-        {{ dateOnlyLongString(applicationDetails?.statusUpdatedOn) }}. However
-        you can still view your application by clicking on the “Application
-        actions” button.</span
-      >
-    </template></application-status-tracker-banner
-  >
+      >You cancelled your application on
+      {{ dateOnlyLongString(cancelledDate) }}. However you can still view your
+      application by clicking on the “Application actions” button.
+    </template>
+  </application-status-tracker-banner>
 </template>
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import { useFormatters } from "@/composables";
-import { ApplicationService } from "@/services/ApplicationService";
-import { CancelledApplicationDetailsAPIOutDTO } from "@/types";
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   components: {
@@ -30,21 +25,15 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    cancelledDate: {
+      type: Date,
+      required: true,
+    },
   },
-  setup(props) {
-    const applicationDetails = ref<CancelledApplicationDetailsAPIOutDTO>();
+  setup() {
     const { dateOnlyLongString } = useFormatters();
 
-    const getApplicationCancelledDetails = async () => {
-      applicationDetails.value =
-        await ApplicationService.shared.getCancelledApplicationDetails(
-          props.applicationId,
-        );
-    };
-
-    onMounted(getApplicationCancelledDetails);
-
-    return { applicationDetails, dateOnlyLongString };
+    return { dateOnlyLongString };
   },
 });
 </script>

@@ -1,11 +1,60 @@
 <template>
+  <!-- Denial cards. -->
+  <application-status-tracker-banner
+    v-if="applicationDetails?.pirStatus === ProgramInfoStatus.declined"
+    label="Your institution denied your program information request"
+    icon="fa:fas fa-exclamation-circle"
+    icon-color="danger"
+    background-color="error-bg"
+    ><template #content
+      ><strong>Reason from your institution:</strong>
+      {{ applicationDetails.PIRDeniedReason }}. Please contact the Financial Aid
+      Officer from your institution for more information. You will need to edit
+      your application for it to be processed again.</template
+    ></application-status-tracker-banner
+  >
+  <application-status-tracker-banner
+    v-if="
+      applicationDetails?.offeringStatus === OfferingStatus.ChangeOverwritten
+    "
+    label="Your institution updated the study period. Please re-submit your application with the updated study period."
+    icon="fa:fas fa-exclamation-circle"
+    icon-color="danger"
+    background-color="error-bg"
+    ><template #content
+      >Your institution updated the study period information. Please
+      <a href="" @click="goToStudentApplication" class="primary-color"
+        >start a new application</a
+      >, select the updated study period, and submit your application to have it
+      processed again. Please contact the Financial Aid Officer from your
+      institution if you require more information about the change in study
+      period.</template
+    ></application-status-tracker-banner
+  >
+  <application-status-tracker-banner
+    v-if="
+      applicationDetails?.exceptionStatus ===
+      ApplicationExceptionStatus.Declined
+    "
+    label="StudentAid BC has not accepted your application"
+    icon="fa:fas fa-exclamation-circle"
+    icon-color="danger"
+    content="StudentAid BC has not accepted 1 or more of the additional information that you provided in your 
+    application, making it ineligible for funding. Please contact StudentAid BC if your require more details. 
+    You may edit your application with new additional information to process it again or cancel your application."
+    background-color="error-bg"
+  />
+
   <!-- Waiting cards. -->
   <application-status-tracker-banner
     label="Waiting for your income verification"
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your income."
-    v-if="applicationDetails?.studentIncomeVerificationStatus?.waiting"
+    v-if="
+      applicationDetails?.studentIncomeVerificationStatus ===
+      SuccessWaitingStatus.Waiting
+    "
   />
 
   <application-status-tracker-banner
@@ -14,12 +63,10 @@
     icon-color="secondary"
     v-if="applicationDetails?.pirStatus === ProgramInfoStatus.required"
     ><template #content
-      ><span
-        >We sent a <strong>program information request</strong> to your
-        institution to complete the study information in your application.
-        Please contact your Financial Aid Officer from your institution, if you
-        require more information.</span
-      ></template
+      >We sent a <strong>program information request</strong> to your
+      institution to complete the study information in your application. Please
+      contact your Financial Aid Officer from your institution, if you require
+      more information.</template
     ></application-status-tracker-banner
   >
 
@@ -27,15 +74,13 @@
     label="Waiting for additional information from a parent"
     icon="fa:fas fa-clock"
     icon-color="secondary"
-    v-if="applicationDetails?.parent1Info?.waiting"
+    v-if="applicationDetails?.parent1Info === SuccessWaitingStatus.Waiting"
     ><template #content
-      ><span
-        >We are waiting for
-        <strong>supporting information from a parent.</strong> Please check your
-        email to confirm that you have received a message from us. This email
-        will include important details and links that your parent will need in
-        order to provide their information for your application.</span
-      ></template
+      >We are waiting for
+      <strong>supporting information from a parent.</strong> Please check your
+      email to confirm that you have received a message from us. This email will
+      include important details and links that your parent will need in order to
+      provide their information for your application.</template
     ></application-status-tracker-banner
   >
 
@@ -43,16 +88,13 @@
     label="Waiting for additional information from another parent"
     icon="fa:fas fa-clock"
     icon-color="secondary"
-    v-if="applicationDetails?.parent2Info?.waiting"
+    v-if="applicationDetails?.parent2Info === SuccessWaitingStatus.Waiting"
     ><template #content
-      ><span
-        >We are waiting for
-        <strong>supporting information from another parent.</strong> Please
-        check your email to confirm that you have received a message from us.
-        This email will include important details and links that your parent
-        will need in order to provide their information for your
-        application.</span
-      ></template
+      >We are waiting for
+      <strong>supporting information from another parent.</strong> Please check
+      your email to confirm that you have received a message from us. This email
+      will include important details and links that your parent will need in
+      order to provide their information for your application.</template
     ></application-status-tracker-banner
   >
 
@@ -60,15 +102,13 @@
     label="Waiting for additional information from your partner"
     icon="fa:fas fa-clock"
     icon-color="secondary"
-    v-if="applicationDetails?.partnerInfo?.waiting"
+    v-if="applicationDetails?.partnerInfo === SuccessWaitingStatus.Waiting"
     ><template #content
-      ><span
-        >We are waiting for
-        <strong>supporting information from your partner.</strong> Please check
-        your email to confirm that you have received a message from us. This
-        email will include important details and links that your partner will
-        need in order to provide their information for your application.</span
-      ></template
+      >We are waiting for
+      <strong>supporting information from your partner.</strong> Please check
+      your email to confirm that you have received a message from us. This email
+      will include important details and links that your partner will need in
+      order to provide their information for your application.</template
     ></application-status-tracker-banner
   >
 
@@ -77,7 +117,10 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your parent's income."
-    v-if="!!applicationDetails?.parent1IncomeVerificationStatus?.waiting"
+    v-if="
+      applicationDetails?.parent1IncomeVerificationStatus ===
+      SuccessWaitingStatus.Waiting
+    "
   />
 
   <application-status-tracker-banner
@@ -85,7 +128,10 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your other parent's income."
-    v-if="applicationDetails?.parent2IncomeVerificationStatus?.waiting"
+    v-if="
+      applicationDetails?.parent2IncomeVerificationStatus ===
+      SuccessWaitingStatus.Waiting
+    "
   />
 
   <application-status-tracker-banner
@@ -93,7 +139,10 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your income."
-    v-if="applicationDetails?.partnerIncomeVerificationStatus?.waiting"
+    v-if="
+      applicationDetails?.partnerIncomeVerificationStatus ===
+      SuccessWaitingStatus.Waiting
+    "
   />
 
   <application-status-tracker-banner
@@ -113,7 +162,10 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your income."
-    v-if="applicationDetails?.studentIncomeVerificationStatus?.success"
+    v-if="
+      applicationDetails?.studentIncomeVerificationStatus ===
+      SuccessWaitingStatus.Success
+    "
   />
 
   <application-status-tracker-banner
@@ -121,7 +173,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="We have successfully received supporting information from a parent."
-    v-if="applicationDetails?.parent1Info?.success"
+    v-if="applicationDetails?.parent1Info === SuccessWaitingStatus.Success"
   />
 
   <application-status-tracker-banner
@@ -129,7 +181,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="We have successfully received supporting information from your other parent."
-    v-if="applicationDetails?.parent2Info?.success"
+    v-if="applicationDetails?.parent2Info === SuccessWaitingStatus.Success"
   />
 
   <application-status-tracker-banner
@@ -137,7 +189,7 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="We have successfully received supporting information from your partner."
-    v-if="applicationDetails?.partnerInfo?.success"
+    v-if="applicationDetails?.partnerInfo === SuccessWaitingStatus.Success"
   />
 
   <application-status-tracker-banner
@@ -153,7 +205,10 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your parent's income."
-    v-if="applicationDetails?.parent1IncomeVerificationStatus?.success"
+    v-if="
+      applicationDetails?.parent1IncomeVerificationStatus ===
+      SuccessWaitingStatus.Success
+    "
   />
 
   <application-status-tracker-banner
@@ -161,7 +216,10 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your other parent's income."
-    v-if="applicationDetails?.parent2IncomeVerificationStatus?.success"
+    v-if="
+      applicationDetails?.parent2IncomeVerificationStatus ===
+      SuccessWaitingStatus.Success
+    "
   />
 
   <application-status-tracker-banner
@@ -169,7 +227,10 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your partner's income."
-    v-if="applicationDetails?.partnerIncomeVerificationStatus?.success"
+    v-if="
+      applicationDetails?.partnerIncomeVerificationStatus ===
+      SuccessWaitingStatus.Success
+    "
   />
 
   <application-status-tracker-banner
@@ -182,56 +243,6 @@
       ApplicationExceptionStatus.Approved
     "
   />
-
-  <!-- Denial cards. -->
-  <application-status-tracker-banner
-    v-if="applicationDetails?.pirStatus === ProgramInfoStatus.declined"
-    label="Your institution denied your program information request"
-    icon="fa:fas fa-exclamation-circle"
-    icon-color="danger"
-    background-color="error_bg"
-    ><template #content
-      ><span
-        ><strong>Reason from your institution:</strong>
-        {{ applicationDetails.PIRDeniedReason }}. Please contact the Financial
-        Aid Officer from your institution for more information. You will need to
-        edit your application for it to be processed again.</span
-      ></template
-    ></application-status-tracker-banner
-  >
-  <application-status-tracker-banner
-    v-if="
-      applicationDetails?.offeringStatus === OfferingStatus.ChangeOverwritten
-    "
-    label="Your institution updated the study period. Please re-submit your application with the updated study period."
-    icon="fa:fas fa-exclamation-circle"
-    icon-color="danger"
-    background-color="error_bg"
-    ><template #content
-      ><span
-        >Your institution updated the study period information. Please
-        <a href="" @click="goToStudentApplication" class="primary-color"
-          >start a new application</a
-        >, select the updated study period, and submit your application to have
-        it processed again. Please contact the Financial Aid Officer from your
-        institution if you require more information about the change in study
-        period.</span
-      ></template
-    ></application-status-tracker-banner
-  >
-  <application-status-tracker-banner
-    v-if="
-      applicationDetails?.exceptionStatus ===
-      ApplicationExceptionStatus.Declined
-    "
-    label="StudentAid BC has not accepted your application"
-    icon="fa:fas fa-exclamation-circle"
-    icon-color="danger"
-    content="StudentAid BC has not accepted 1 or more of the additional information that you provided in your 
-    application, making it ineligible for funding. Please contact StudentAid BC if your require more details. 
-    You may edit your application with new additional information to process it again or cancel your application."
-    background-color="error_bg"
-  />
 </template>
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/students/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
@@ -242,6 +253,7 @@ import {
   InProgressApplicationDetailsAPIOutDTO,
   OfferingStatus,
   ProgramInfoStatus,
+  SuccessWaitingStatus,
 } from "@/types";
 import { onMounted, ref, defineComponent } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -261,7 +273,7 @@ export default defineComponent({
     const applicationDetails = ref<InProgressApplicationDetailsAPIOutDTO>();
     const router = useRouter();
 
-    const goToStudentApplication = async () => {
+    const goToStudentApplication = () => {
       router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
       });
@@ -290,6 +302,7 @@ export default defineComponent({
       applicationDetails,
       ApplicationExceptionStatus,
       OfferingStatus,
+      SuccessWaitingStatus,
     };
   },
 });

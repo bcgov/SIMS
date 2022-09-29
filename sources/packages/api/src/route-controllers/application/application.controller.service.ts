@@ -7,8 +7,6 @@ import {
 } from "../../services";
 import {
   ApplicationFormData,
-  ApplicationIncomeVerification,
-  ApplicationSupportingUserDetails,
   GetApplicationBaseDTO,
   GetApplicationDataDto,
   SuccessWaitingStatus,
@@ -34,6 +32,10 @@ import {
 import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
+import {
+  ApplicationIncomeVerification,
+  ApplicationSupportingUserDetails,
+} from "./models/application.system.dto";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
@@ -212,47 +214,56 @@ export class ApplicationControllerService {
 
   /**
    * Process application income verification details.
-   * @param CRAIncomeVerification CRA income verification data.
+   * @param craIncomeVerification CRA income verification data.
    * @return processed object.
    */
   processApplicationIncomeVerificationDetails(
-    CRAIncomeVerification: CRAIncomeVerification[],
+    craIncomeVerification: CRAIncomeVerification[],
   ): ApplicationIncomeVerification {
     const incomeVerificationDetails = {} as ApplicationIncomeVerification;
-    const studentIncomeVerifications = CRAIncomeVerification.filter(
+    // Student.
+    const [student] = craIncomeVerification.filter(
       (incomeVerification) => !incomeVerification.supportingUser,
     );
-    const supportingUserIncomeVerification = CRAIncomeVerification.filter(
-      (incomeVerification) => incomeVerification.supportingUser,
+    if (student) {
+      // Student income verification details.
+      incomeVerificationDetails.studentIncomeVerificationStatus =
+        !student.dateReceived
+          ? SuccessWaitingStatus.Waiting
+          : SuccessWaitingStatus.Success;
+    }
+    // Parent.
+    const [parent1, parent2] = craIncomeVerification.filter(
+      (incomeVerification) =>
+        incomeVerification.supportingUser?.supportingUserType ===
+        SupportingUserType.Parent,
     );
-    const [studentIncomeVerification] = studentIncomeVerifications;
-    // Student income verification details.
-    incomeVerificationDetails.studentIncomeVerificationStatus = {
-      waiting: !studentIncomeVerification.dateReceived,
-      success: !!studentIncomeVerification.dateReceived,
-    };
+    if (parent1) {
+      incomeVerificationDetails.parent1IncomeVerificationStatus =
+        !parent1.dateReceived
+          ? SuccessWaitingStatus.Waiting
+          : SuccessWaitingStatus.Success;
+    }
+    if (parent2) {
+      incomeVerificationDetails.parent2IncomeVerificationStatus =
+        !parent2.dateReceived
+          ? SuccessWaitingStatus.Waiting
+          : SuccessWaitingStatus.Success;
+    }
 
-    supportingUserIncomeVerification.forEach((incomeVerification, index) => {
-      // Supporting user income verification details.
-      if (
-        incomeVerification.supportingUser.supportingUserType ===
-        SupportingUserType.Parent
-      ) {
-        // If supporting user type is parent, then there can be 1 or 2 parent.
-        incomeVerificationDetails[
-          `parent${index + 1}IncomeVerificationStatus`
-        ] = {
-          waiting: !incomeVerification.dateReceived,
-          success: !!incomeVerification.dateReceived,
-        } as SuccessWaitingStatus;
-      } else {
-        // partner income verification details.
-        incomeVerificationDetails.partnerIncomeVerificationStatus = {
-          waiting: !incomeVerification.dateReceived,
-          success: !!incomeVerification.dateReceived,
-        };
-      }
-    });
+    // Partner.
+    const [partner] = craIncomeVerification.filter(
+      (incomeVerification) =>
+        incomeVerification.supportingUser?.supportingUserType ===
+        SupportingUserType.Partner,
+    );
+    // partner income verification details.
+    if (partner) {
+      incomeVerificationDetails.partnerIncomeVerificationStatus =
+        !partner.dateReceived
+          ? SuccessWaitingStatus.Waiting
+          : SuccessWaitingStatus.Success;
+    }
     return incomeVerificationDetails;
   }
 
@@ -265,20 +276,33 @@ export class ApplicationControllerService {
     supportingUser: SupportingUser[],
   ): ApplicationSupportingUserDetails {
     const supportingUserDetails = {} as ApplicationSupportingUserDetails;
-    supportingUser.forEach((supportingUser, index) => {
-      if (supportingUser.supportingUserType === SupportingUserType.Parent) {
-        supportingUserDetails[`parent${index + 1}Info`] = {
-          waiting: !supportingUser.supportingData,
-          success: !!supportingUser.supportingData,
-        } as SuccessWaitingStatus;
-      } else {
-        // Partner.
-        supportingUserDetails.partnerInfo = {
-          waiting: !supportingUser.supportingData,
-          success: !!supportingUser.supportingData,
-        };
-      }
-    });
+    // Parent.
+    const [parent1, parent2] = supportingUser.filter(
+      (incomeVerification) =>
+        incomeVerification.supportingUserType === SupportingUserType.Parent,
+    );
+    if (parent1) {
+      supportingUserDetails.parent1Info = !parent1.supportingData
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
+    }
+    if (parent2) {
+      supportingUserDetails.parent1Info = !parent2.supportingData
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
+    }
+
+    // Partner.
+    const [partner] = supportingUser.filter(
+      (incomeVerification) =>
+        incomeVerification.supportingUserType === SupportingUserType.Partner,
+    );
+    if (partner) {
+      supportingUserDetails.partnerInfo = !partner.supportingData
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
+    }
+
     return supportingUserDetails;
   }
 }

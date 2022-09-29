@@ -6,8 +6,6 @@ import {
   COEStatus,
   ApplicationData,
   OfferingIntensity,
-  OfferingStatus,
-  ApplicationExceptionStatus,
 } from "../../../database/entities";
 
 export class SaveApplicationDto {
@@ -107,45 +105,7 @@ export interface ApplicationWithProgramYearDto {
   active: boolean;
 }
 
-export interface SuccessWaitingStatus {
-  success: boolean;
-  waiting: boolean;
-}
-
-export interface ApplicationIncomeVerification {
-  parent1IncomeVerificationStatus: SuccessWaitingStatus;
-  parent2IncomeVerificationStatus: SuccessWaitingStatus;
-  partnerIncomeVerificationStatus: SuccessWaitingStatus;
-  studentIncomeVerificationStatus: SuccessWaitingStatus;
-}
-
-export interface ApplicationSupportingUserDetails {
-  parent1Info: SuccessWaitingStatus;
-  parent2Info: SuccessWaitingStatus;
-  partnerInfo: SuccessWaitingStatus;
-}
-
-export interface InProgressApplicationDetailsAPIOutDTO
-  extends ApplicationIncomeVerification,
-    ApplicationSupportingUserDetails {
-  id: number;
-  applicationStatus: ApplicationStatus;
-  pirStatus: ProgramInfoStatus;
-  PIRDeniedReason: string;
-  offeringStatus: OfferingStatus;
-  exceptionStatus: ApplicationExceptionStatus;
-}
-
-export interface CancelledApplicationDetailsAPIOutDTO {
-  statusUpdatedOn: Date;
-}
-
-export interface ApplicationDetailsAPIOutDTO {
-  applicationNumber: string;
-  applicationInstitutionName: string;
-  applicationStartDate: Date | string;
-  applicationEndDate: Date | string;
-  applicationOfferingIntensity: OfferingIntensity;
-  applicationSubmittedDate: Date;
-  applicationStatus: ApplicationStatus;
+export enum SuccessWaitingStatus {
+  Success = "Success",
+  Waiting = "Waiting",
 }

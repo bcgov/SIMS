@@ -38,24 +38,18 @@
       v-if="applicationStatus === ApplicationStatus.draft"
     />
     <!-- The below components are checked with applicationStatusTracker[trackerApplicationStatus], so that in future if we need to see the previous, it can be easily attained just by removing readonly param from the v-slider or by adding a simple logic. -->
-    <submitted
-      v-if="
-        trackerApplicationStatus !== undefined &&
-        applicationStatusTracker[trackerApplicationStatus] ===
-          ApplicationStatus.submitted
-      "
-    />
+    <submitted v-else-if="applicationStatus === ApplicationStatus.submitted" />
     <in-progress
-      v-if="
-        trackerApplicationStatus !== undefined &&
-        applicationStatusTracker[trackerApplicationStatus] ===
-          ApplicationStatus.inProgress
-      "
-      :applicationId="applicationId"
+      v-else-if="applicationStatus === ApplicationStatus.inProgress"
+      :application-id="applicationId"
       @declinedEvent="declinedEvent"
     />
   </template>
-  <cancelled v-else :applicationId="applicationId" />
+  <cancelled
+    v-else
+    :application-id="applicationId"
+    :cancelled-date="statusUpdatedOn"
+  />
 </template>
 <script lang="ts">
 import { ApplicationStatus } from "@/types";
@@ -79,7 +73,11 @@ export default defineComponent({
       required: true,
     },
     applicationStatus: {
-      type: Object as PropType<ApplicationStatus>,
+      type: String as PropType<ApplicationStatus>,
+      required: true,
+    },
+    statusUpdatedOn: {
+      type: Date,
       required: true,
     },
   },

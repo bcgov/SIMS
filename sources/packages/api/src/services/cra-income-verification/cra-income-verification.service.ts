@@ -255,7 +255,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
    * @param applicationId application id.
    * @returns income verification details for an applications.
    */
-  async allIncomeVerificationsForAnApplication(
+  async getAllIncomeVerificationsForAnApplication(
     applicationId: number,
   ): Promise<CRAIncomeVerification[]> {
     return this.repo.find({

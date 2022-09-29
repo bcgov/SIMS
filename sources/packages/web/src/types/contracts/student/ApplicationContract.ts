@@ -217,45 +217,51 @@ export interface PartTimeAssessment extends BaseAssessment {
  */
 export type Assessment = FullTimeAssessment | PartTimeAssessment;
 
+/**
+ * Represents the application dynamic data.
+ * ! This is a subset of application data properties.
+ */
+export interface ApplicationData {
+  /**
+   * Study start date provided by the student when the desired option was not found.
+   */
+  studystartDate?: string;
+  /**
+   * Study end date provided by the student when the desired option was not found.
+   */
+  studyendDate?: string;
+  /**
+   * Defines if the Student will take a full-time or part-time course.
+   */
+  howWillYouBeAttendingTheProgram?: OfferingIntensity;
+}
+
 export interface ApplicationDetailHeader {
   applicationNumber: string;
   applicationInstitutionName: string;
   applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: Date | string;
   applicationEndDate: Date | string;
+  data: ApplicationData;
 }
 
-export interface SuccessWaitingStatus {
-  success: boolean;
-  waiting: boolean;
+export enum SuccessWaitingStatus {
+  Success = "Success",
+  Waiting = "Waiting",
 }
 
 export interface InProgressApplicationDetailsAPIOutDTO {
   id: number;
   applicationStatus: ApplicationStatus;
   pirStatus: ProgramInfoStatus;
-  PIRDeniedReason: string;
-  offeringStatus: OfferingStatus;
-  exceptionStatus: ApplicationExceptionStatus;
-  parent1IncomeVerificationStatus: SuccessWaitingStatus;
-  parent2IncomeVerificationStatus: SuccessWaitingStatus;
-  partnerIncomeVerificationStatus: SuccessWaitingStatus;
-  studentIncomeVerificationStatus: SuccessWaitingStatus;
-  parent1Info: SuccessWaitingStatus;
-  parent2Info: SuccessWaitingStatus;
-  partnerInfo: SuccessWaitingStatus;
-}
-
-export interface CancelledApplicationDetailsAPIOutDTO {
-  statusUpdatedOn: Date;
-}
-
-export interface ApplicationDetailsAPIOutDTO {
-  applicationNumber: string;
-  applicationInstitutionName: string;
-  applicationStartDate: Date | string;
-  applicationEndDate: Date | string;
-  applicationOfferingIntensity: OfferingIntensity;
-  applicationSubmittedDate: Date;
-  applicationStatus: ApplicationStatus;
+  PIRDeniedReason?: string;
+  offeringStatus?: OfferingStatus;
+  exceptionStatus?: ApplicationExceptionStatus;
+  parent1IncomeVerificationStatus?: SuccessWaitingStatus;
+  parent2IncomeVerificationStatus?: SuccessWaitingStatus;
+  partnerIncomeVerificationStatus?: SuccessWaitingStatus;
+  studentIncomeVerificationStatus?: SuccessWaitingStatus;
+  parent1Info?: SuccessWaitingStatus;
+  parent2Info?: SuccessWaitingStatus;
+  partnerInfo?: SuccessWaitingStatus;
 }

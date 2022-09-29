@@ -12,8 +12,6 @@ import {
   ApplicationIdentifiersDTO,
   ClientIdType,
   InProgressApplicationDetailsAPIOutDTO,
-  CancelledApplicationDetailsAPIOutDTO,
-  ApplicationDetailsAPIOutDTO,
 } from "@/types";
 import { AuthService } from "../AuthService";
 import HttpBaseClient from "./common/HttpBaseClient";
@@ -179,37 +177,8 @@ export class ApplicationApi extends HttpBaseClient {
   async getInProgressApplicationDetails(
     applicationId: number,
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
-    const response = await this.getCall(
+    return this.getCallTyped<InProgressApplicationDetailsAPIOutDTO>(
       this.addClientRoot(`application/${applicationId}/in-progress`),
     );
-    return response.data;
-  }
-
-  /**
-   * Get cancelled details of an application by application id.
-   * @param applicationId application id.
-   * @returns application details.
-   */
-  async getCancelledApplicationDetails(
-    applicationId: number,
-  ): Promise<CancelledApplicationDetailsAPIOutDTO> {
-    const response = await this.getCall(
-      this.addClientRoot(`application/${applicationId}/cancelled`),
-    );
-    return response.data;
-  }
-
-  /**
-   * Get details of an application by application id.
-   * @param applicationId application id.
-   * @returns application details.
-   */
-  async getApplicationStatusDetails(
-    applicationId: number,
-  ): Promise<ApplicationDetailsAPIOutDTO> {
-    const response = await this.getCall(
-      this.addClientRoot(`application/${applicationId}/details`),
-    );
-    return response.data;
   }
 }
