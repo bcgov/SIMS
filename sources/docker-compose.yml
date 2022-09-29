@@ -76,7 +76,7 @@ services:
     ports:
       - ${API_PORT}:${API_PORT}
     volumes:
-      - ./packages/backend/app/api/src:/app/src
+      - ./packages/backend/apps/api/src:/app/src
     networks:
       - local-network
     restart: always

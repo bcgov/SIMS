@@ -18,10 +18,10 @@ RUN npm ci
 COPY . .
 
 # Building app
-RUN npm run build
+RUN npm run build api
 
 # Exposing application port
 EXPOSE ${PORT}
 
 # Entry point
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "npm", "run", "start:prod:api" ]
