@@ -1,4 +1,4 @@
-require("../../../env_setup");
+require("../../../../../env_setup");
 import { JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
 import {

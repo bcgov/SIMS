@@ -1,4 +1,4 @@
-require("../../../env_setup");
+require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { DatabaseModule } from "@sims/sims-db";
 import { BCeIDService } from "../bceid/bceid.service";

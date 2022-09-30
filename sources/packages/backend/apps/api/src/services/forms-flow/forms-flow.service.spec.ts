@@ -1,4 +1,4 @@
-require("../../../env_setup");
+require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService, KeycloakService, TokensService } from "..";
 import { FormsFlowService } from "./forms-flow.service";

@@ -1,4 +1,4 @@
-require("../../../env_setup");
+require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { ProgramYearService } from "../../services";
 import { ProgramYearController } from "./program-year.controller";
