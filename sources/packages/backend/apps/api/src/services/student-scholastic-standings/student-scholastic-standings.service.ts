@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource, Repository } from "typeorm";
-import { StudentScholasticStanding } from "../../database/entities/student-scholastic-standing.model";
 import {
+  RecordDataModelService,
+  StudentScholasticStanding,
   Application,
   ApplicationStatus,
   AssessmentTriggerType,
@@ -12,7 +12,7 @@ import {
   StudentAssessment,
   StudentRestriction,
   User,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { CustomNamedError } from "../../utilities";
 import {
   APPLICATION_NOT_FOUND,

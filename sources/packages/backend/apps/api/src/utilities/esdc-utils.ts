@@ -1,4 +1,4 @@
-import { OfferingIntensity, RelationshipStatus } from "../database/entities";
+import { OfferingIntensity, RelationshipStatus } from "@sims/sims-db";
 
 /**
  * Gets the marital status code conversion for the MSFAA request file

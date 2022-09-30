@@ -1,4 +1,4 @@
-import { ProgramYear, SupportingUserType } from "../database/entities";
+import { ProgramYear, SupportingUserType } from "@sims/sims-db";
 
 /**
  * Define the form name to be used from a program year based

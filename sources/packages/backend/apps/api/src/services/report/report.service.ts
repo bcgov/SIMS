@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Connection } from "typeorm";
-import { RecordDataModelService } from "../../database/data.model.service";
-import { ReportConfig } from "../../database/entities";
+import { RecordDataModelService, ReportConfig } from "@sims/sims-db";
 import { CustomNamedError } from "../../utilities";
 import { ReportsFilterModel } from "./report.models";
 import { StringBuilder } from "../../utilities/string-builder";

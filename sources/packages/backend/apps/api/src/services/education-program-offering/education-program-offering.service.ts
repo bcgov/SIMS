@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
+  RecordDataModelService,
   EducationProgramOffering,
   EducationProgram,
   InstitutionLocation,
@@ -15,8 +16,10 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   StudyBreak,
-} from "../../database/entities";
-import { RecordDataModelService } from "../../database/data.model.service";
+  ProgramYear,
+  DatabaseConstraintNames,
+  PostgresDriverError,
+} from "@sims/sims-db";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { WorkflowStartResult } from "../workflow/workflow.models";
 import {
@@ -30,7 +33,6 @@ import {
   PrecedingOfferingSummaryModel,
   ApplicationAssessmentSummary,
 } from "./education-program-offering.service.models";
-import { ProgramYear } from "../../database/entities/program-year.model";
 import {
   FieldSortOrder,
   sortOfferingsColumnMap,
@@ -56,10 +58,6 @@ import { EducationProgramOfferingValidationService } from "./education-program-o
 import * as os from "os";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
-import {
-  DatabaseConstraintNames,
-  PostgresDriverError,
-} from "../../database/error-handler";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {

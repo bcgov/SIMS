@@ -20,10 +20,7 @@ import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base
 import { ECertPartTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertPartTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertPartTimeFileRecord } from "./e-cert-files/e-cert-file-record";
-import {
-  DisbursementValueType,
-  OfferingIntensity,
-} from "../../../database/entities";
+import { DisbursementValueType, OfferingIntensity } from "@sims/sims-db";
 import { ECertIntegrationService } from "../e-cert-integration.service";
 import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
 

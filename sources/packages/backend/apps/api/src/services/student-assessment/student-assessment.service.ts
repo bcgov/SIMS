@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import {
+  RecordDataModelService,
   ApplicationExceptionStatus,
   ApplicationStatus,
   AssessmentStatus,
@@ -11,7 +11,7 @@ import {
   StudentAppealStatus,
   StudentAssessment,
   User,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { Brackets, DataSource, IsNull, UpdateResult } from "typeorm";
 import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
 import { WorkflowActionsService } from "..";

@@ -4,7 +4,7 @@ import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { OfferingIntensity } from "../../database/entities";
+import { OfferingIntensity } from "@sims/sims-db";
 import { MSFAARequestService } from "../../esdc-integration/msfaa-integration/msfaa-request.service";
 import { MSFAAResponseService } from "../../esdc-integration/msfaa-integration/msfaa-response.service";
 import { ApiTags } from "@nestjs/swagger";

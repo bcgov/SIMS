@@ -6,7 +6,7 @@ import {
   OfferingIntensity,
   OfferingStatus,
   StudentAppealStatus,
-} from "../../../database/entities";
+} from "@sims/sims-db";
 import { ApiProperty } from "@nestjs/swagger";
 
 export enum RequestAssessmentTypeAPIOutDTO {

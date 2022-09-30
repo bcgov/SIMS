@@ -9,7 +9,7 @@ import {
 } from "../../services";
 import { ESDCIntegrationConfig } from "../../types";
 import { SINValidationIntegrationService } from "./sin-validation-integration.service";
-import { SINValidation, Student } from "../../database/entities";
+import { SINValidation, Student } from "@sims/sims-db";
 import { ESDC_SIN_VALIDATION_SEQUENCE_GROUP_NAME } from "../../utilities";
 import {
   SINCheckStatus,

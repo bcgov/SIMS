@@ -1,5 +1,5 @@
 import * as faker from "faker";
-import { User } from "../../database/entities";
+import { User } from "@sims/sims-db";
 
 export function createFakeUser(): User {
   const user = new User();

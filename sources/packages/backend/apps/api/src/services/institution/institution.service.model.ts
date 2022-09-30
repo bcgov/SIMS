@@ -1,4 +1,4 @@
-import { AddressInfo } from "../../database/entities";
+import { AddressInfo } from "@sims/sims-db";
 
 export interface UpdateInstitution {
   operatingName: string;

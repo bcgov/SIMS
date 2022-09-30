@@ -3,7 +3,7 @@ import { WorkflowService } from "..";
 import { WorkflowStartResult } from "./workflow.models";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
-import { ApplicationExceptionStatus } from "../../database/entities";
+import { ApplicationExceptionStatus } from "@sims/sims-db";
 
 @Injectable()
 export class WorkflowActionsService {

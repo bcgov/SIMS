@@ -58,12 +58,11 @@ import {
   PaginatedResults,
   uploadLimits,
 } from "../../utilities";
-import { FileOriginType } from "../../database/entities/student-file.type";
+import { FileOriginType, IdentityProviders } from "@sims/sims-db";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { FormNames } from "../../services/form/constants";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { IdentityProviders } from "../../database/entities/identity-providers.type";
 import {
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,

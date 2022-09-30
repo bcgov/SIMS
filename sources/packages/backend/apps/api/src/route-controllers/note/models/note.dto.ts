@@ -4,7 +4,7 @@ import {
   NoteType,
   NOTE_DESCRIPTION_MAX_LENGTH,
   User,
-} from "../../../database/entities";
+} from "@sims/sims-db";
 
 /**
  * Base DTO for note.

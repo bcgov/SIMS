@@ -1,5 +1,5 @@
 import { UserInfo } from "../../types";
-import { AddressInfo } from "../../database/entities";
+import { AddressInfo } from "@sims/sims-db";
 
 /**
  * Information that must be provided

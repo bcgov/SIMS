@@ -1,5 +1,5 @@
 import { Allow, IsEmail, IsNotEmpty, Length } from "class-validator";
-import { InstitutionLocationData } from "../../../database/entities/institution-location.model";
+import { InstitutionLocationData } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
   AddressDetailsAPIInDTO,

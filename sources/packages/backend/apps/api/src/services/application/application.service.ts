@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import {
   DataSource,
   In,
@@ -11,6 +10,7 @@ import {
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
+  RecordDataModelService,
   Application,
   ApplicationStudentFile,
   EducationProgramOffering,
@@ -26,7 +26,7 @@ import {
   AssessmentTriggerType,
   User,
   ApplicationData,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
 import {

@@ -8,7 +8,7 @@ import {
   EducationProgramService,
   FormService,
 } from "../../services";
-import { EducationProgram, OfferingTypes } from "../../database/entities";
+import { EducationProgram, OfferingTypes } from "@sims/sims-db";
 import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,

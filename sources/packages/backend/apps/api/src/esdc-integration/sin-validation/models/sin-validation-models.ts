@@ -1,4 +1,4 @@
-import { SINValidation } from "../../../database/entities";
+import { SINValidation } from "@sims/sims-db";
 import { SINValidationFileHeader } from "../sin-validation-files/sin-validation-file-header";
 import { SINValidationFileResponse } from "../sin-validation-files/sin-validation-file-response";
 

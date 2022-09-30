@@ -1,4 +1,4 @@
-import { Application, DisbursementSchedule } from "../database/entities";
+import { Application, DisbursementSchedule } from "@sims/sims-db";
 import { COE_DENIED_REASON_OTHER_ID, PIR_DENIED_REASON_OTHER_ID } from ".";
 export const PIR_OR_DATE_OVERLAP_ERROR = "PIR_OR_DATE_OVERLAP_ERROR";
 export const PIR_OR_DATE_OVERLAP_ERROR_MESSAGE =

@@ -1,4 +1,4 @@
-import { RelationshipStatus } from "../../../database/entities";
+import { RelationshipStatus } from "@sims/sims-db";
 import { MSFAAResponseCancelledRecord } from "../msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "../msfaa-files/msfaa-response-received-record";
 

@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
-import { StudentAccountApplication, User } from "../../database/entities";
+import {
+  RecordDataModelService,
+  StudentAccountApplication,
+  User,
+} from "@sims/sims-db";
 import { DataSource, IsNull } from "typeorm";
 import {
   AccountApplicationSubmittedData,

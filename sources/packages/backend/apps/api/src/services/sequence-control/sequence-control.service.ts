@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, EntityManager } from "typeorm";
-import { RecordDataModelService } from "../../database/data.model.service";
-import { SequenceControl } from "../../database/entities";
+import { RecordDataModelService, SequenceControl } from "@sims/sims-db";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { configureIdleTransactionSessionTimeout } from "../../utilities/database";

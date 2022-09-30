@@ -1,12 +1,5 @@
-require("../../../../env_setup");
 import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
-const directLoad =
-  process.env.ENVIRONMENT === "test" || process.env.NODE_ENV === "cmd";
-
-const migrations = directLoad
-  ? ["src/database/migrations/*{.ts,.js}"]
-  : ["dist/database/migrations/*{.ts,.js}"];
 
 export const ormConfig: PostgresConnectionOptions = {
   type: "postgres",
@@ -17,7 +10,6 @@ export const ormConfig: PostgresConnectionOptions = {
   password: process.env.POSTGRES_PASSWORD,
   schema: process.env.DB_SCHEMA || "sims",
   synchronize: false,
-  migrations,
 };
 
 export const simsDataSource = new DataSource({

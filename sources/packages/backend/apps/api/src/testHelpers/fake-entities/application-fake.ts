@@ -6,7 +6,7 @@ import {
   RelationshipStatus,
   Student,
   StudentAssessment,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { createFakeProgramYear } from "./program-year-fake";
 import { createFakeStudent } from "./student-fake";
 import { getUTCNow } from "../../utilities/date-utils";

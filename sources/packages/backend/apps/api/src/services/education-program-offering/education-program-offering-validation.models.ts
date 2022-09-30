@@ -24,7 +24,7 @@ import {
   OFFERING_NAME_MAX_LENGTH,
   OFFERING_WIL_TYPE_MAX_LENGTH,
   StudyBreaksAndWeeks,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import {
   IsPeriodStartDate,
   IsPeriodEndDate,

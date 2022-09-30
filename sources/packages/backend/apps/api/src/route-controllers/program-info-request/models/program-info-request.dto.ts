@@ -1,6 +1,9 @@
 import { IsOptional, IsPositive } from "class-validator";
-import { OfferingTypes, ProgramInfoStatus } from "../../../database/entities";
-import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
+import {
+  OfferingTypes,
+  ProgramInfoStatus,
+  OfferingIntensity,
+} from "@sims/sims-db";
 
 export class CompleteProgramInfoRequestAPIInDTO {
   @IsPositive()

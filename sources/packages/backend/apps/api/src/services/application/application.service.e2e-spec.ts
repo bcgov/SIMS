@@ -15,12 +15,13 @@ import {
 } from "..";
 import { DataSource, Repository } from "typeorm";
 import {
+  DatabaseModule,
   Application,
   ApplicationStatus,
   MSFAANumber,
   RelationshipStatus,
   Student,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
 import { createFakeApplication } from "../../testHelpers/fake-entities/application-fake";
 import {
@@ -31,7 +32,6 @@ import {
 } from "../../testHelpers/fake-entities";
 import { MAX_MSFAA_VALID_DAYS } from "../../utilities/system-configurations-constants";
 import * as dayjs from "dayjs";
-import { DatabaseModule } from "../../database/database.module";
 
 const createFakeApplicationInAssessment = (student: Student): Application => {
   const fakeApplication = createFakeApplication();

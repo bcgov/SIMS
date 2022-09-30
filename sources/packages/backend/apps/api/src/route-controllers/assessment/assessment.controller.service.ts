@@ -7,7 +7,7 @@ import {
   COEStatus,
   DisbursementReceipt,
   AssessmentTriggerType,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import {
   StudentAppealRequestAPIOutDTO,
   SupportingUserAPIOutDTO,

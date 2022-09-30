@@ -2,7 +2,7 @@ require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { MSFAANumberService } from "../../services/msfaa-number/msfaa-number.service";
-import { DatabaseModule } from "../../database/database.module";
+import { DatabaseModule } from "@sims/sims-db";
 import * as dayjs from "dayjs";
 import { MAX_MSFAA_VALID_DAYS } from "../../utilities";
 

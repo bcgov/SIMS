@@ -1,5 +1,5 @@
 import { StudentPDStatus } from "../types/pdStatus";
-import { Student } from "../database/entities";
+import { Student } from "@sims/sims-db";
 
 /**
  * Determines the permanent disability status from Student Entity.

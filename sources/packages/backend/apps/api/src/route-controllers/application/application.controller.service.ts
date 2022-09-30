@@ -28,8 +28,8 @@ import {
   ProgramStatus,
   SupportingUser,
   SupportingUserType,
-} from "../../database/entities";
-import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
+  RestrictionActionType,
+} from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
 import {

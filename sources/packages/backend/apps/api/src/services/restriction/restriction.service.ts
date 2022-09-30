@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
-import { Restriction, RestrictionType } from "../../database/entities";
+import {
+  RecordDataModelService,
+  Restriction,
+  RestrictionType,
+} from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 import { FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION } from "../../utilities";
 import { EnsureFederalRestrictionResult } from "./models/federal-restriction.model";

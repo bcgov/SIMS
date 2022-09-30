@@ -2,9 +2,9 @@ import {
   OfferingTypes,
   OfferingStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
-} from "../../../database/entities";
-import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
-import { EducationProgramOffering } from "../../../database/entities/education-program-offering.model";
+  OfferingIntensity,
+  EducationProgramOffering,
+} from "@sims/sims-db";
 import { getISODateOnlyString, getUserFullName } from "../../../utilities";
 import {
   Allow,

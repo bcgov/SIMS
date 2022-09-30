@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsPositive, MaxLength } from "class-validator";
-import { RestrictionNotificationType } from "../../../database/entities/restriction-notification-type.type";
 import {
+  RestrictionNotificationType,
   NOTE_DESCRIPTION_MAX_LENGTH,
   RestrictionType,
-} from "../../../database/entities";
+} from "@sims/sims-db";
 
 /**
  * Base DTO for restriction.

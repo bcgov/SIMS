@@ -22,7 +22,7 @@ import {
   AssessmentStatus,
   SupportingUserType,
   StudyBreaksAndWeeks,
-} from "../../../database/entities";
+} from "@sims/sims-db";
 
 export class ProgramYearAPIOutDTO {
   programYear: string;

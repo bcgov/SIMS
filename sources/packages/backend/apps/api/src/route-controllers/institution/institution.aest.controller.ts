@@ -10,7 +10,7 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { InstitutionService } from "../../services";
-import { AddressInfo, Institution } from "../../database/entities";
+import { AddressInfo, Institution } from "@sims/sims-db";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,

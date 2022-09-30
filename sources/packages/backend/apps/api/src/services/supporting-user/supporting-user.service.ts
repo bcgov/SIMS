@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { RecordDataModelService } from "../../database/data.model.service";
 import {
+  RecordDataModelService,
   Application,
   SupportingUser,
   SupportingUserType,
   User,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { removeWhiteSpaces } from "../../utilities/string-utils";
 import { configureIdleTransactionSessionTimeout } from "../../utilities/database";
 import {

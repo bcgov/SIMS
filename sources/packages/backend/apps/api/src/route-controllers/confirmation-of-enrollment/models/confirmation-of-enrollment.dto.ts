@@ -1,6 +1,5 @@
 import { Min, IsOptional } from "class-validator";
-import { COEStatus } from "../../../database/entities/coe-status.type";
-import { ProgramInfoStatus } from "../../../database/entities/program-info-status.type";
+import { COEStatus, ProgramInfoStatus } from "@sims/sims-db";
 
 export class ApplicationDetailsForCOEAPIOutDTO {
   applicationProgramName: string;

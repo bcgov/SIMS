@@ -1,14 +1,16 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource, In, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { StudentFile, Student, User } from "../../database/entities";
-import { CreateFile } from "./student-file.model";
 import {
+  RecordDataModelService,
+  StudentFile,
+  Student,
+  User,
   FileOriginType,
   StudentFileMetadata,
-} from "../../database/entities/student-file.type";
+} from "@sims/sims-db";
+import { CreateFile } from "./student-file.model";
 import { GCNotifyResult } from "../notification/gc-notify.model";
 
 @Injectable()

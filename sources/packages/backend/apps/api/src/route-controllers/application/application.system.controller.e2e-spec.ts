@@ -3,7 +3,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
-import { DatabaseModule } from "../../database/database.module";
+import { DatabaseModule } from "@sims/sims-db";
 import { AuthModule } from "../../auth/auth.module";
 import {
   ApplicationService,
@@ -31,7 +31,7 @@ import {
   Institution,
   InstitutionLocation,
   User,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import {
   createFakeLocation,
   createFakeInstitution,

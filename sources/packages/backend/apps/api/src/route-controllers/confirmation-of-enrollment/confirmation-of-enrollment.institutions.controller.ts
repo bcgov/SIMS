@@ -27,7 +27,7 @@ import {
   ApplicationStatus,
   DisbursementSchedule,
   DisbursementValueType,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   getDateOnlyFormat,

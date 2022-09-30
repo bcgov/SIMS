@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNotEmptyObject, IsOptional } from "class-validator";
-import { ContactInfo, SupportingUserType } from "../../../database/entities";
+import { ContactInfo, SupportingUserType } from "@sims/sims-db";
 
 /**
  * Information used to uniquely identify a Student Application.

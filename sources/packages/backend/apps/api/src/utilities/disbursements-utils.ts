@@ -1,7 +1,5 @@
 import { Award } from "../esdc-integration/e-cert-integration/models/e-cert-integration-model";
-import { DisbursementValueType } from "../database/entities";
-
-const FIELD_OF_STUDY_LENGTH = 2;
+import { DisbursementValueType } from "@sims/sims-db";
 
 /**
  * Extract from the list of awards (disbursement values)

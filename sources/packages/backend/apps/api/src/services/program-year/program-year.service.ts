@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource } from "typeorm";
-import { ProgramYear } from "../../database/entities/program-year.model";
+import { RecordDataModelService, ProgramYear } from "@sims/sims-db";
 
 @Injectable()
 export class ProgramYearService extends RecordDataModelService<ProgramYear> {

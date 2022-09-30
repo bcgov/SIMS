@@ -1,4 +1,4 @@
-import { Restriction } from "../../../database/entities";
+import { Restriction } from "@sims/sims-db";
 
 export class EnsureFederalRestrictionResult {
   restrictions: Restriction[] = [];

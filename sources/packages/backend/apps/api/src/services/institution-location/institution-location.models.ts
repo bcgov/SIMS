@@ -1,5 +1,8 @@
-import { PrimaryContact } from "../../database/entities/primary-contact.type";
-import { AddressInfo, InstitutionLocationData } from "../../database/entities";
+import {
+  PrimaryContact,
+  AddressInfo,
+  InstitutionLocationData,
+} from "@sims/sims-db";
 
 export interface LocationWithDesignationStatus {
   id: number;

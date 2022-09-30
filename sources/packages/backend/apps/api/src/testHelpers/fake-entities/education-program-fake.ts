@@ -4,9 +4,9 @@ import {
   Institution,
   User,
   ProgramStatus,
-} from "../../database/entities";
+  ProgramIntensity,
+} from "@sims/sims-db";
 import { createFakeInstitution } from "./institution-fake";
-import { ProgramIntensity } from "../../database/entities/program-intensity.type";
 
 export function createFakeEducationProgram(
   institution?: Institution,

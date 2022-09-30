@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource } from "typeorm";
-import { PIRDeniedReason } from "../../database/entities/pir-denied-reason.model";
+import { RecordDataModelService, PIRDeniedReason } from "@sims/sims-db";
 
 @Injectable()
 export class PIRDeniedReasonService extends RecordDataModelService<PIRDeniedReason> {

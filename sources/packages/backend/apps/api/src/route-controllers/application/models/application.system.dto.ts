@@ -6,7 +6,7 @@ import {
   OfferingStatus,
   ProgramInfoStatus,
   SupportingUserType,
-} from "../../../database/entities";
+} from "@sims/sims-db";
 import { SuccessWaitingStatus } from "./application.model";
 
 export class UpdateApplicationStatusAPIInDTO {

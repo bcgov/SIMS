@@ -1,4 +1,4 @@
-import { Application, StudentAssessment } from "../../database/entities";
+import { Application, StudentAssessment } from "@sims/sims-db";
 
 export interface ApplicationOverriddenResult {
   overriddenApplication: Application;

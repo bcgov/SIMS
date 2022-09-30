@@ -15,7 +15,7 @@ import {
   InstitutionLocationService,
 } from "../../services";
 import { FormNames } from "../../services/form/constants";
-import { DesignationAgreementStatus } from "../../database/entities";
+import { DesignationAgreementStatus } from "@sims/sims-db";
 import { getISODateOnlyString, PaginationParams } from "../../utilities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {

@@ -7,13 +7,13 @@ import {
   Repository,
   UpdateResult,
 } from "typeorm";
-import { RecordDataModelService } from "../../database/data.model.service";
 import {
+  RecordDataModelService,
   MSFAANumber,
   Student,
   Application,
   OfferingIntensity,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import * as dayjs from "dayjs";
 import { MAX_MSFAA_VALID_DAYS } from "../../utilities";
 import { SequenceControlService } from "../sequence-control/sequence-control.service";

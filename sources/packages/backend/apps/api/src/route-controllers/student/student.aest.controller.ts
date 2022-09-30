@@ -60,13 +60,12 @@ import {
 } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
-import { FileOriginType } from "../../database/entities/student-file.type";
+import { FileOriginType, Student } from "@sims/sims-db";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import {
   ApplicationPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import { Student } from "../../database/entities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
   SIN_VALIDATION_RECORD_INVALID_OPERATION,

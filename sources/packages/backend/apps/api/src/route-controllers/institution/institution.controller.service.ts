@@ -4,7 +4,7 @@ import {
   INSTITUTION_TYPE_BC_PRIVATE,
   getExtendedDateFormat,
 } from "../../utilities";
-import { AddressInfo } from "../../database/entities";
+import { AddressInfo } from "@sims/sims-db";
 import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 

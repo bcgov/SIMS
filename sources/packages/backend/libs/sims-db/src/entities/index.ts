@@ -68,3 +68,7 @@ export * from "./disbursement-receipt-values.model";
 export * from "./student-account-application.model";
 export * from "./student-scholastic-standing.model";
 export * from "./student-user.model";
+export * from "./identity-providers.type";
+export * from "./restriction-action-type.type";
+export * from "./restriction-notification-type.type";
+export * from "./primary-contact.type";

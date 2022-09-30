@@ -25,11 +25,7 @@ import {
   ApplicationApiOutDTO,
   UpdateSupportingUserApiInDTO,
 } from "./models/supporting-user.dto";
-import {
-  AddressInfo,
-  ContactInfo,
-  SupportingUserType,
-} from "../../database/entities";
+import { AddressInfo, ContactInfo, SupportingUserType } from "@sims/sims-db";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   STUDENT_APPLICATION_NOT_FOUND,

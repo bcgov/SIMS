@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import {
+  RecordDataModelService,
   StudentRestriction,
   RestrictionType,
   NoteType,
@@ -9,10 +9,10 @@ import {
   Student,
   Application,
   EducationProgramOffering,
-} from "../../database/entities";
+  RestrictionActionType,
+} from "@sims/sims-db";
 import { DataSource, EntityManager, SelectQueryBuilder } from "typeorm";
 import { CustomNamedError } from "../../utilities";
-import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 import { RestrictionService } from "./restriction.service";
 import { StudentService } from "../student/student.service";
 import { RestrictionCode } from "./models/restriction.model";

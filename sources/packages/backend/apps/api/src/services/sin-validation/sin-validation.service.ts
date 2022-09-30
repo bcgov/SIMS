@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource, Repository } from "typeorm";
 import {
+  RecordDataModelService,
   NoteType,
   SINValidation,
   Student,
   User,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import {

@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource, SelectQueryBuilder } from "typeorm";
 import {
+  RecordDataModelService,
   DesignationAgreementLocation,
   DesignationAgreementStatus,
-} from "../../database/entities";
+} from "@sims/sims-db";
 
 /**
  * Manages the operations needed for designation agreements location.

@@ -16,7 +16,7 @@ import {
   getISODateOnlyString,
   getUserFullName,
 } from "../../utilities";
-import { AddressInfo, Application } from "../../database/entities";
+import { AddressInfo, Application } from "@sims/sims-db";
 import {
   ApplicationSummaryAPIOutDTO,
   StudentProfileAPIOutDTO,

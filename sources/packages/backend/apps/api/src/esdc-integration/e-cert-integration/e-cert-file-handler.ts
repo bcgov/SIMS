@@ -1,8 +1,5 @@
 import { InjectLogger } from "../../common";
-import {
-  DisbursementSchedule,
-  OfferingIntensity,
-} from "../../database/entities";
+import { DisbursementSchedule, OfferingIntensity } from "@sims/sims-db";
 import { LoggerService } from "../../logger/logger.service";
 import {
   ConfigService,

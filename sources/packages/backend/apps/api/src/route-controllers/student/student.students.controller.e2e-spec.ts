@@ -1,6 +1,6 @@
 require("../../../../../env_setup");
 import * as faker from "faker";
-import { SINValidation, Student, User } from "../../database/entities";
+import { DatabaseModule, SINValidation, Student, User } from "@sims/sims-db";
 import {
   StudentService,
   ATBCService,
@@ -13,7 +13,6 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
 import { ATBCCreateClientResponse } from "../../types";
-import { DatabaseModule } from "../../database/database.module";
 import { AuthModule } from "../../auth/auth.module";
 import { AppStudentsModule } from "../../app.students.module";
 

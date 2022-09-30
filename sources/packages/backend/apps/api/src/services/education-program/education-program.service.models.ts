@@ -1,4 +1,4 @@
-import { ProgramIntensity, ProgramStatus } from "../../database/entities";
+import { ProgramIntensity, ProgramStatus } from "@sims/sims-db";
 
 export interface ProgramDeliveryTypes {
   deliveredOnSite: boolean;

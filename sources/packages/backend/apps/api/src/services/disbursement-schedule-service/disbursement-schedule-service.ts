@@ -13,8 +13,8 @@ import {
 } from "../../utilities";
 import { DataSource, In, Repository, UpdateResult, Brackets } from "typeorm";
 import { SequenceControlService, StudentRestrictionService } from "..";
-import { RecordDataModelService } from "../../database/data.model.service";
 import {
+  RecordDataModelService,
   Application,
   ApplicationStatus,
   AssessmentTriggerType,
@@ -24,7 +24,8 @@ import {
   OfferingIntensity,
   StudentAssessment,
   User,
-} from "../../database/entities";
+  RestrictionActionType,
+} from "@sims/sims-db";
 import {
   Disbursement,
   ECertDisbursementSchedule,
@@ -35,7 +36,6 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "../student-assessment/student-assessment.constants";
-import { RestrictionActionType } from "../../database/entities/restriction-action-type.type";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";

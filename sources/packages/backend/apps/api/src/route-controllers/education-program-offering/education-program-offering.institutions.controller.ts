@@ -29,7 +29,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
-import { OfferingIntensity, OfferingTypes } from "../../database/entities";
+import { OfferingIntensity, OfferingTypes } from "@sims/sims-db";
 import {
   CreateFromValidatedOfferingError,
   EducationProgramOfferingService,

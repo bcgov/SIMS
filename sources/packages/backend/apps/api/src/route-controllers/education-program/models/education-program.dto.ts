@@ -6,8 +6,8 @@ import {
 import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   ProgramStatus,
-} from "../../../database/entities";
-import { ProgramIntensity } from "../../../database/entities/program-intensity.type";
+  ProgramIntensity,
+} from "@sims/sims-db";
 
 /**
  * Education program complete information.

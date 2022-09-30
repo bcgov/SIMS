@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, InsertResult } from "typeorm";
-import { RecordDataModelService } from "../../database/data.model.service";
 import {
+  RecordDataModelService,
   DisbursementFeedbackErrors,
   DisbursementSchedule,
-} from "../../database/entities";
-import { DatabaseConstraintNames } from "../../database/error-handler";
+  DatabaseConstraintNames,
+} from "@sims/sims-db";
 
 /**
  * Service layer for Disbursement Schedule Errors

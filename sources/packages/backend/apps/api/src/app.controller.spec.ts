@@ -2,7 +2,7 @@ require("../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { DatabaseModule } from "./database/database.module";
+import { DatabaseModule } from "@sims/sims-db";
 
 describe("AppController", () => {
   let appController: AppController;

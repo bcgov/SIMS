@@ -1,7 +1,7 @@
 import {
   DesignationAgreementStatus,
   InstitutionLocationData,
-} from "../../../database/entities";
+} from "@sims/sims-db";
 
 /**
  * This DTO contains dynamic data that must

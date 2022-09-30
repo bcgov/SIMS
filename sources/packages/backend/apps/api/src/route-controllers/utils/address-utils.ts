@@ -1,4 +1,4 @@
-import { AddressInfo } from "../../database/entities";
+import { AddressInfo } from "@sims/sims-db";
 import { AddressDetailsAPIOutDTO } from "../models/common.dto";
 // 'selectedCountry' in the form will have the value 'other',
 // when 'Other'(i.e country other than canada) is selected.

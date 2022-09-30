@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { DataModelService } from "../../database/data.model.service";
-import { SFASRestriction } from "../../database/entities";
+import { DataModelService, SFASRestriction } from "@sims/sims-db";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { getUTC } from "../../utilities";

@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { DataModelService } from "../../database/data.model.service";
-import { SFASIndividual } from "../../database/entities";
+import { DataModelService, SFASIndividual } from "@sims/sims-db";
 import { SFASIndividualRecord } from "../../sfas-integration/sfas-files/sfas-individual-record";
 import { getUTC } from "../../utilities";
 import { SFASDataImporter } from "./sfas-data-importer";

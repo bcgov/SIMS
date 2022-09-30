@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import {
+  RecordDataModelService,
   Application,
   ApplicationStatus,
   Student,
@@ -9,7 +9,8 @@ import {
   NoteType,
   SINValidation,
   StudentAccountApplication,
-} from "../../database/entities";
+  StudentUser,
+} from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
@@ -28,7 +29,6 @@ import {
 } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import * as dayjs from "dayjs";
-import { StudentUser } from "../../database/entities/student-user.model";
 import {
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,

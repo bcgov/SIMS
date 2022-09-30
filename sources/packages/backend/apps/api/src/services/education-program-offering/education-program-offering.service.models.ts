@@ -3,7 +3,7 @@ import {
   OfferingStatus,
   OfferingTypes,
   Application,
-} from "../../database/entities";
+} from "@sims/sims-db";
 
 export interface EducationProgramOfferingSummaryModel {
   id: number;

@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
-import { InstitutionType } from "../../database/entities/institution-type.model";
+import { RecordDataModelService, InstitutionType } from "@sims/sims-db";
 import { DataSource } from "typeorm";
 
 /**

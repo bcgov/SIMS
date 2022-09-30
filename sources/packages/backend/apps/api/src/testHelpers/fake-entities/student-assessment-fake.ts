@@ -4,7 +4,7 @@ import {
   EducationProgramOffering,
   StudentAssessment,
   User,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { createFakeUser } from "./user-fake";
 
 export function createFakeStudentAssessment(

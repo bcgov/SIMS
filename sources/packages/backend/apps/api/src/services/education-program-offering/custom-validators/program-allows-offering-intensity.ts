@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from "class-validator";
-import { ProgramIntensity } from "../../../database/entities";
+import { ProgramIntensity } from "@sims/sims-db";
 import { OfferingValidationModel } from "../education-program-offering-validation.models";
 
 /**

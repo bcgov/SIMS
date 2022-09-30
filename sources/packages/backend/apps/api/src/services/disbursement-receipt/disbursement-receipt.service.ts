@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { RecordDataModelService } from "../../database/data.model.service";
 import {
+  RecordDataModelService,
   DisbursementReceipt,
   DisbursementReceiptValue,
   DisbursementSchedule,
   User,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { DisbursementReceiptModel } from "./disbursement-receipt.model";
 
 /**

@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataModelService } from "../../database/data.model.service";
-import { FederalRestriction } from "../../database/entities";
+import { DataModelService, FederalRestriction } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 

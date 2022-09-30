@@ -1,4 +1,4 @@
-import { ProgramYear } from "../../database/entities";
+import { ProgramYear } from "@sims/sims-db";
 
 export function createFakeProgramYear(): ProgramYear {
   const programYear = new ProgramYear();

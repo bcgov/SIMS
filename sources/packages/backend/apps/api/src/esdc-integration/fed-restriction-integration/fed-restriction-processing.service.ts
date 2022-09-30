@@ -10,7 +10,7 @@ import { FedRestrictionIntegrationService } from "./fed-restriction-integration.
 import { ESDCIntegrationConfig } from "../../types";
 import * as os from "os";
 import { DataSource, InsertResult } from "typeorm";
-import { FederalRestriction, Restriction } from "../../database/entities";
+import { FederalRestriction, Restriction } from "@sims/sims-db";
 import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "../../utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";

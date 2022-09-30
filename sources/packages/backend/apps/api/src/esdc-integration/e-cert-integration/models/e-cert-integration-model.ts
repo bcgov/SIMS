@@ -1,7 +1,4 @@
-import {
-  DisbursementValue,
-  RelationshipStatus,
-} from "../../../database/entities";
+import { DisbursementValue, RelationshipStatus } from "@sims/sims-db";
 
 export const ECERT_SENT_TITLE = "NEW ENTITLEMENT";
 /**

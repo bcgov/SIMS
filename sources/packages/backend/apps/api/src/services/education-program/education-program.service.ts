@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
+  RecordDataModelService,
   EducationProgram,
   EducationProgramOffering,
   Institution,
@@ -8,15 +9,14 @@ import {
   OfferingTypes,
   User,
   ProgramStatus,
-} from "../../database/entities";
-import { RecordDataModelService } from "../../database/data.model.service";
+  ProgramYear,
+  InstitutionLocation,
+} from "@sims/sims-db";
 import { DataSource, In, Repository } from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
 } from "./education-program.service.models";
-import { ProgramYear } from "../../database/entities/program-year.model";
-import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import {
   getRawCount,
   sortProgramsColumnMap,

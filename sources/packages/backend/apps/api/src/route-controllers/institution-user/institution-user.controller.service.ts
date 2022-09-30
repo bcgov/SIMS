@@ -16,7 +16,7 @@ import {
   CustomNamedError,
   getUserFullName,
 } from "../../utilities";
-import { InstitutionUser } from "../../database/entities";
+import { InstitutionUser } from "@sims/sims-db";
 import {
   CreateInstitutionUserAPIInDTO,
   InstitutionUserAPIOutDTO,

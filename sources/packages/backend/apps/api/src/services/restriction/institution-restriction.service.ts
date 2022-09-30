@@ -1,16 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource } from "typeorm";
 import { RESTRICTION_NOT_ACTIVE } from "./student-restriction.service";
-
 import {
+  RecordDataModelService,
   InstitutionRestriction,
   Restriction,
   User,
   Note,
   NoteType,
   Institution,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { CustomNamedError } from "../../utilities";
 
 /**

@@ -15,7 +15,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
-import { OfferingStatus } from "../../database/entities";
+import { OfferingStatus } from "@sims/sims-db";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,

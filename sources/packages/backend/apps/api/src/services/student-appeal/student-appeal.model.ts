@@ -1,4 +1,4 @@
-import { StudentAppeal, StudentAppealStatus } from "../../database/entities";
+import { StudentAppeal, StudentAppealStatus } from "@sims/sims-db";
 
 /**
  * Service model for student appeal.

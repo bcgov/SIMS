@@ -14,7 +14,7 @@ import {
   ATBCPDCheckerResponse,
   ATBCPDCheckerPayload,
 } from "../../types";
-import { Student } from "../../database/entities";
+import { Student } from "@sims/sims-db";
 import { StudentService } from "../../services";
 import { ATBCPDStatus } from "./atbc.models";
 

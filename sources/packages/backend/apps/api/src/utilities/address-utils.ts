@@ -1,4 +1,4 @@
-import { AddressInfo } from "../database/entities";
+import { AddressInfo } from "@sims/sims-db";
 
 /**
  * Util to transform address details as `AddressInfo` interface.

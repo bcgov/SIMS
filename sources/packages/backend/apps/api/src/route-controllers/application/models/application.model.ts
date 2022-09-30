@@ -6,7 +6,7 @@ import {
   COEStatus,
   ApplicationData,
   OfferingIntensity,
-} from "../../../database/entities";
+} from "@sims/sims-db";
 
 export class SaveApplicationDto {
   /**

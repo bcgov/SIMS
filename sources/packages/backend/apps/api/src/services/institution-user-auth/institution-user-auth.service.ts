@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource } from "typeorm";
-import { InstitutionUserAuth } from "../../database/entities";
+import { RecordDataModelService, InstitutionUserAuth } from "@sims/sims-db";
 import { InstitutionUserAuthorizations } from "./institution-user-auth.models";
 import {
   InstitutionUserRoles,

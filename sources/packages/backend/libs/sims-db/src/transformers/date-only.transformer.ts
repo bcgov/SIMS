@@ -1,7 +1,17 @@
 import * as dayjs from "dayjs";
-import { getDateOnly } from "../../utilities";
 import { FindOperator, ValueTransformer } from "typeorm";
 export const TYPEORM_DATE_ONLY_FORMAT = "YYYY-MM-DD";
+
+/***
+ * Parse a new string in the expected format YYYY-MM-DD and returns
+ * a new Date object with the local time defined as 00:00:00.
+ */
+function getDateOnly(stringDate: string): Date | null {
+  if (stringDate) {
+    return new Date(`${stringDate}T00:00:00`);
+  }
+  return null;
+}
 
 /***
  * Format a date in the same expected format that a date only

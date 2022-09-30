@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { OfferingStatus } from "../../database/entities";
+import { OfferingStatus } from "@sims/sims-db";
 import {
   OfferingValidationResult,
   OfferingValidationModel,

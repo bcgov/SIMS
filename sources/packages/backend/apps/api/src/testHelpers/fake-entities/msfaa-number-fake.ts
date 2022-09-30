@@ -1,8 +1,4 @@
-import {
-  MSFAANumber,
-  OfferingIntensity,
-  Student,
-} from "../../database/entities";
+import { MSFAANumber, OfferingIntensity, Student } from "@sims/sims-db";
 import { createFakeStudent } from "./student-fake";
 import * as faker from "faker";
 

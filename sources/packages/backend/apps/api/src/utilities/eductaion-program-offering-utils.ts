@@ -1,4 +1,4 @@
-import { EducationProgramOffering } from "../database/entities";
+import { EducationProgramOffering } from "@sims/sims-db";
 import { getDateOnlyFormat } from ".";
 
 /**

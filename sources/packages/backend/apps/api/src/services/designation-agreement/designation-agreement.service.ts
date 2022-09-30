@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource } from "typeorm";
 import {
+  RecordDataModelService,
   DesignationAgreement,
   DesignationAgreementLocation,
   DesignationAgreementStatus,
@@ -10,7 +10,7 @@ import {
   Note,
   NoteType,
   User,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import {
   UpdateDesignation,
   UpdateDesignationLocation,

@@ -1,4 +1,4 @@
-import { ContactInfo } from "../../database/entities";
+import { ContactInfo } from "@sims/sims-db";
 
 /**
  * Represents the information that must be updated

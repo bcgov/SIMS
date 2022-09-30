@@ -16,7 +16,7 @@ import {
   ApplicationStatus,
   FileOriginType,
   NOTE_DESCRIPTION_MAX_LENGTH,
-} from "../../../database/entities";
+} from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
   AddressDetailsAPIInDTO,

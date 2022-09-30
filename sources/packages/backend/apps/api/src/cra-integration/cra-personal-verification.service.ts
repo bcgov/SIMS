@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { CRAIncomeVerification, Student } from "../database/entities";
+import { CRAIncomeVerification, Student } from "@sims/sims-db";
 import { EntityManager } from "typeorm";
 import { InjectLogger } from "../common";
 import { LoggerService } from "../logger/logger.service";

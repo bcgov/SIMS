@@ -1,6 +1,6 @@
 require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
-import { DatabaseModule } from "../../database/database.module";
+import { DatabaseModule } from "@sims/sims-db";
 import { BCeIDService } from "../bceid/bceid.service";
 import { ConfigService } from "../config/config.service";
 import { UserService } from "./user.service";

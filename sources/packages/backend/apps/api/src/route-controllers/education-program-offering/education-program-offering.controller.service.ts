@@ -18,7 +18,7 @@ import {
   OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import {
   EducationProgramOfferingService,
   EducationProgramService,

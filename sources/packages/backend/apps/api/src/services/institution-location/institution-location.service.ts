@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
-import { InstitutionLocation, User } from "../../database/entities";
+import {
+  RecordDataModelService,
+  InstitutionLocation,
+  User,
+} from "@sims/sims-db";
 import { DataSource, In, SelectQueryBuilder } from "typeorm";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
 import {

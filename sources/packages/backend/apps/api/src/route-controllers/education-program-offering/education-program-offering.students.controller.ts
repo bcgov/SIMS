@@ -13,7 +13,7 @@ import {
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty } from "../../auth/decorators";
-import { OfferingIntensity, OfferingTypes } from "../../database/entities";
+import { OfferingIntensity, OfferingTypes } from "@sims/sims-db";
 import { EducationProgramOfferingService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";

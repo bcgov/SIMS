@@ -1,4 +1,4 @@
-import { StudentAssessment } from "../../database/entities";
+import { StudentAssessment } from "@sims/sims-db";
 
 export enum StudentAssessmentStatus {
   Submitted = "Submitted",

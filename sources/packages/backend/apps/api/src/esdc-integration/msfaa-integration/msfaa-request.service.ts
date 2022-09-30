@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectLogger } from "../../common";
-import { MSFAANumber } from "../../database/entities";
+import { MSFAANumber, OfferingIntensity } from "@sims/sims-db";
 import { LoggerService } from "../../logger/logger.service";
 import { getUTCNow, getISODateOnlyString } from "../../utilities";
 import { EntityManager } from "typeorm";
@@ -14,7 +14,6 @@ import {
   MSFAAUploadResult,
 } from "./models/msfaa-integration.model";
 import { MSFAAIntegrationService } from "./msfaa-integration.service";
-import { OfferingIntensity } from "../../database/entities/offering-intensity.type";
 import { ESDCFileHandler } from "../esdc-file-handler";
 
 @Injectable()

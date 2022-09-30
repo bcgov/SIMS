@@ -21,7 +21,7 @@ import {
   EducationProgramOfferingService,
   ApplicationExceptionService,
 } from "../../services";
-import { ApplicationExceptionStatus } from "../../database/entities";
+import { ApplicationExceptionStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)

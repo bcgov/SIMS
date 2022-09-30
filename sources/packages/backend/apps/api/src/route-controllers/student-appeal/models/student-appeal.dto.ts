@@ -7,7 +7,7 @@ import {
   IsPositive,
   ValidateNested,
 } from "class-validator";
-import { StudentAppealStatus } from "../../../database/entities";
+import { StudentAppealStatus } from "@sims/sims-db";
 /**
  * DTO for student appeal request.
  */

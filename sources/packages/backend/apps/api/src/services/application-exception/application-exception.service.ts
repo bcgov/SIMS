@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import { Brackets, DataSource } from "typeorm";
 import {
+  RecordDataModelService,
   Application,
   ApplicationException,
   ApplicationExceptionRequest,
@@ -10,7 +10,7 @@ import {
   NoteType,
   Student,
   User,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import {
   CustomNamedError,
   FieldSortOrder,

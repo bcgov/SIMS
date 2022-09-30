@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, In, IsNull, Repository, UpdateResult } from "typeorm";
-import { RecordDataModelService } from "../../database/data.model.service";
 import {
+  RecordDataModelService,
   Application,
   CRAIncomeVerification,
   SupportingUser,
-} from "../../database/entities";
+} from "@sims/sims-db";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { getUTCNow } from "../../utilities";
 import {

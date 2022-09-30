@@ -39,7 +39,7 @@ import {
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
 } from "../../constants";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ApplicationExceptionStatus } from "../../database/entities";
+import { ApplicationExceptionStatus } from "@sims/sims-db";
 import {
   ApplicationExceptionPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,

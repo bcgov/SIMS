@@ -40,7 +40,7 @@ import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,
 } from "../../services/student-appeal/constants";
-import { StudentAppealStatus } from "../../database/entities";
+import { StudentAppealStatus } from "@sims/sims-db";
 import {
   PaginatedResultsAPIOutDTO,
   StudentAppealPendingPaginationOptionsAPIInDTO,

@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, Brackets } from "typeorm";
-import { DataModelService } from "../../database/data.model.service";
-import { SFASPartTimeApplications } from "../../database/entities";
+import { DataModelService, SFASPartTimeApplications } from "@sims/sims-db";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { getUTC } from "../../utilities";

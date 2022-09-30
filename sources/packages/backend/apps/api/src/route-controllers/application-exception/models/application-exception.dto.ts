@@ -12,7 +12,7 @@ import {
   ApplicationExceptionStatus,
   EXCEPTION_NAME_MAX_LENGTH,
   NOTE_DESCRIPTION_MAX_LENGTH,
-} from "../../../database/entities";
+} from "@sims/sims-db";
 
 export class ApplicationExceptionRequestAPIInDTO {
   @IsNotEmpty()

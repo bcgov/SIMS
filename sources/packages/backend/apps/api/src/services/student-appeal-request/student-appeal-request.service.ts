@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
 import { DataSource, SelectQueryBuilder } from "typeorm";
 import {
+  RecordDataModelService,
   StudentAppealRequest,
   StudentAppealStatus,
-} from "../../database/entities";
+} from "@sims/sims-db";
 
 @Injectable()
 export class StudentAppealRequestsService extends RecordDataModelService<StudentAppealRequest> {

@@ -12,7 +12,7 @@ import {
   ValidateNested,
 } from "class-validator";
 import { DATE_ONLY_ISO_FORMAT, removeDoubleWhiteSpaces } from "../../utilities";
-import { OfferingIntensity } from "../../database/entities";
+import { OfferingIntensity } from "@sims/sims-db";
 import {
   currencyNumberOptions,
   getCurrencyFormatMessage,

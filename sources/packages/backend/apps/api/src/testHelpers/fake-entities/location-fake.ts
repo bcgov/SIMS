@@ -1,5 +1,5 @@
 import * as faker from "faker";
-import { Institution, InstitutionLocation } from "../../database/entities";
+import { Institution, InstitutionLocation } from "@sims/sims-db";
 import { createFakeInstitution } from "./institution-fake";
 
 export function createFakeLocation(

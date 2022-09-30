@@ -1,4 +1,4 @@
-import { ormConfig, simsDataSource } from "../database/data-source";
+import { ormConfig, simsDataSource } from "@sims/sims-db";
 
 export async function setupDB() {
   try {

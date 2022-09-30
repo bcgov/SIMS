@@ -1,5 +1,5 @@
 import * as faker from "faker";
-import { Student, User } from "../../database/entities";
+import { Student, User } from "@sims/sims-db";
 import { createFakeUser } from "./user-fake";
 
 export function createFakeStudent(user?: User): Student {

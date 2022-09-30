@@ -1,7 +1,4 @@
-import {
-  DisbursementSchedule,
-  DisbursementValueType,
-} from "../../database/entities";
+import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
 
 export interface DisbursementValue {
   valueCode: string;

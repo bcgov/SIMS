@@ -36,7 +36,7 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   CustomNamedError,
 } from "../../utilities";
-import { Application, AssessmentTriggerType } from "../../database/entities";
+import { Application, AssessmentTriggerType } from "@sims/sims-db";
 import {
   OFFERING_INTENSITY_MISMATCH,
   PIR_DENIED_REASON_NOT_FOUND_ERROR,

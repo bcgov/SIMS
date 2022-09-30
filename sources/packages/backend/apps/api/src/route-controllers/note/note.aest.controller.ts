@@ -12,7 +12,7 @@ import {
 import { StudentService, InstitutionService } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { NoteType } from "../../database/entities";
+import { NoteType } from "@sims/sims-db";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   NoteAPIOutDTO,

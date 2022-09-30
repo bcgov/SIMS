@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { RecordDataModelService } from "../../database/data.model.service";
+import { RecordDataModelService, COEDeniedReason } from "@sims/sims-db";
 import { DataSource } from "typeorm";
-import { COEDeniedReason } from "../../database/entities/coe-denied-reason.model";
 
 @Injectable()
 export class COEDeniedReasonService extends RecordDataModelService<COEDeniedReason> {

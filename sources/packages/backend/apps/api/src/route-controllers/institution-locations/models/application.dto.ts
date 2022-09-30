@@ -8,7 +8,7 @@ import {
   Application,
   ApplicationStatus,
   EducationProgramOffering,
-} from "../../../database/entities";
+} from "@sims/sims-db";
 import { StudyBreak } from "../../confirmation-of-enrollment/models/confirmation-of-enrollment.dto";
 import { ApplicationScholasticStandingStatus } from "../../../services/application/application.models";
 

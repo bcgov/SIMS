@@ -35,7 +35,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { IUserToken } from "../../auth/userToken.interface";
-import { ApplicationStatus } from "../../database/entities";
+import { ApplicationStatus } from "@sims/sims-db";
 
 /**
  * Allow system access to the application data.
