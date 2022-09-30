@@ -7,6 +7,7 @@ import {
   Body,
   UnprocessableEntityException,
   Query,
+  ParseIntPipe,
 } from "@nestjs/common";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
@@ -68,7 +69,7 @@ export class StudentAppealAESTController extends BaseController {
     description: "Not able to find the student appeal.",
   })
   async getStudentAppealWithRequests(
-    @Param("appealId") appealId: number,
+    @Param("appealId", ParseIntPipe) appealId: number,
   ): Promise<StudentAppealAPIOutDTO> {
     const studentAppeal =
       await this.studentAppealService.getAppealAndRequestsById(appealId);

@@ -1,55 +1,61 @@
 <template>
-  <template v-if="applicationStatus !== ApplicationStatus.cancelled">
-    <body-header title="Track your application" />
-    <v-slider
-      v-model="trackerApplicationStatus"
-      :ticks="applicationStatusTracker"
-      :max="4"
-      step="1"
-      show-ticks="always"
-      tick-size="0"
-      track-color="readonly"
-      :track-fill-color="trackFillColor"
-      :thumb-size="thumbSize"
-      :thumb-color="thumbColor"
-      track-size="20"
-      readonly
-      :disabled="disabled"
-      class="application-slider"
-    >
-      <template #tick-label="{ tick, index }">
-        <span
-          v-if="index === trackerApplicationStatus"
-          class="label-bold default-color"
-          >{{ tick.label }}
-          <v-icon
-            v-if="hasDeclinedCard"
-            icon="fa:fas fa-exclamation-circle"
-            :size="20"
-            color="danger"
-            class="pl-4"
-        /></span>
-        <span class="label-value default-color" v-else>{{ tick.label }} </span>
-      </template>
-    </v-slider>
+  <v-card class="p-4">
+    <template v-if="applicationStatus !== ApplicationStatus.cancelled">
+      <body-header title="Track your application" />
+      <v-slider
+        v-model="trackerApplicationStatus"
+        :ticks="applicationStatusTracker"
+        :max="4"
+        step="1"
+        show-ticks="always"
+        tick-size="0"
+        track-color="readonly"
+        :track-fill-color="trackFillColor"
+        :thumb-size="thumbSize"
+        :thumb-color="thumbColor"
+        track-size="20"
+        readonly
+        :disabled="disabled"
+        class="application-slider"
+      >
+        <template #tick-label="{ tick, index }">
+          <span
+            v-if="index === trackerApplicationStatus"
+            class="label-bold default-color"
+            >{{ tick.label }}
+            <v-icon
+              v-if="hasDeclinedCard"
+              icon="fa:fas fa-exclamation-circle"
+              :size="20"
+              color="danger"
+              class="pl-4"
+          /></span>
+          <span class="label-value default-color" v-else
+            >{{ tick.label }}
+          </span>
+        </template>
+      </v-slider>
 
-    <draft
-      @editApplication="$emit('editApplication')"
-      v-if="applicationStatus === ApplicationStatus.draft"
-    />
-    <!-- The below components are checked with applicationStatusTracker[trackerApplicationStatus], so that in future if we need to see the previous, it can be easily attained just by removing readonly param from the v-slider or by adding a simple logic. -->
-    <submitted v-else-if="applicationStatus === ApplicationStatus.submitted" />
-    <in-progress
-      v-else-if="applicationStatus === ApplicationStatus.inProgress"
+      <draft
+        @editApplication="$emit('editApplication')"
+        v-if="applicationStatus === ApplicationStatus.draft"
+      />
+      <!-- The below components are checked with applicationStatusTracker[trackerApplicationStatus], so that in future if we need to see the previous, it can be easily attained just by removing readonly param from the v-slider or by adding a simple logic. -->
+      <submitted
+        v-else-if="applicationStatus === ApplicationStatus.submitted"
+      />
+      <in-progress
+        v-else-if="applicationStatus === ApplicationStatus.inProgress"
+        :application-id="applicationId"
+        @declinedEvent="declinedEvent"
+      />
+    </template>
+    <cancelled
+      v-else
       :application-id="applicationId"
-      @declinedEvent="declinedEvent"
+      :cancelled-date="statusUpdatedOn"
     />
-  </template>
-  <cancelled
-    v-else
-    :application-id="applicationId"
-    :cancelled-date="statusUpdatedOn"
-  />
+  </v-card>
 </template>
 <script lang="ts">
 import { ApplicationStatus } from "@/types";
@@ -77,7 +83,7 @@ export default defineComponent({
       required: true,
     },
     statusUpdatedOn: {
-      type: Date,
+      type: String,
       required: true,
     },
   },

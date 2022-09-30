@@ -92,6 +92,7 @@ export class GetApplicationDataDto extends GetApplicationBaseDTO {
   applicationCOEDeniedReason?: string;
   programYearStartDate: Date;
   programYearEndDate: Date;
+  submittedDate?: Date;
 }
 
 export interface ApplicationStatusToBeUpdatedDto {

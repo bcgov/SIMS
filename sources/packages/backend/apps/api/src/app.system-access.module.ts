@@ -33,6 +33,9 @@ import {
   DesignationAgreementLocationService,
   EducationProgramService,
   EducationProgramOfferingValidationService,
+  StudentAppealService,
+  StudentAppealRequestsService,
+  StudentScholasticStandingsService,
 } from "./services";
 import {
   ApplicationExceptionSystemAccessController,
@@ -133,6 +136,9 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
     DesignationAgreementLocationService,
     EducationProgramService,
     EducationProgramOfferingValidationService,
+    StudentAppealService,
+    StudentAppealRequestsService,
+    StudentScholasticStandingsService,
   ],
 })
 export class AppSystemAccessModule {}

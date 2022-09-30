@@ -116,12 +116,14 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * * andWhere: will only take Pending and
    * * Declined status.
    * @param applicationId application id .
+   * @param studentId applicant student.
    * @returns StudentAppeal list.
    */
   async getPendingAndDeniedAppeals(
     applicationId: number,
+    studentId?: number,
   ): Promise<PendingAndDeniedAppeals[]> {
-    const query = await this.repo
+    const query = this.repo
       .createQueryBuilder("studentAppeal")
       .select(["studentAppeal.id", "studentAppeal.submittedDate"])
       .addSelect(
@@ -147,7 +149,13 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
               .getSql()})`,
           );
         }),
-      )
+      );
+    if (studentId) {
+      query.andWhere("application.student.id = :studentId", {
+        studentId,
+      });
+    }
+    const queryResult = await query
       .orderBy(
         `CASE 
           WHEN EXISTS(${this.studentAppealRequestsService
@@ -158,18 +166,23 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       )
       .addOrderBy("studentAppeal.submittedDate", "DESC")
       .getRawAndEntities();
-    return mapFromRawAndEntities<PendingAndDeniedAppeals>(query, "status");
+    return mapFromRawAndEntities<PendingAndDeniedAppeals>(
+      queryResult,
+      "status",
+    );
   }
 
   /**
    * Get the student appeal and its requests.
    * @param appealId appeal if to be retrieved.
+   * @param studentId applicant student.
    * @returns student appeal and its requests.
    */
   async getAppealAndRequestsById(
     appealId: number,
+    studentId?: number,
   ): Promise<StudentAppealWithStatus> {
-    const queryResult = await this.repo
+    const query = this.repo
       .createQueryBuilder("studentAppeal")
       .select([
         "studentAppeal.id",
@@ -185,10 +198,17 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       ])
       .addSelect(this.buildStatusSelect(), "status")
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
+      .innerJoin("studentAppeal.application", "application")
       .leftJoin("appealRequest.assessedBy", "user")
       .leftJoin("appealRequest.note", "note")
-      .where("studentAppeal.id = :appealId", { appealId })
-      .getRawAndEntities();
+      .where("studentAppeal.id = :appealId", { appealId });
+
+    if (studentId) {
+      query.andWhere("application.student.id = :studentId", {
+        studentId,
+      });
+    }
+    const queryResult = await query.getRawAndEntities();
 
     const [appealWithStatus] = mapFromRawAndEntities<StudentAppealWithStatus>(
       queryResult,

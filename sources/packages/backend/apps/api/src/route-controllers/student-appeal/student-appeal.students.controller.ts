@@ -7,13 +7,18 @@ import {
   UnprocessableEntityException,
   BadRequestException,
   InternalServerErrorException,
+  Get,
+  ParseIntPipe,
 } from "@nestjs/common";
 import {
   ApplicationService,
   FormService,
   StudentAppealService,
 } from "../../services";
-import { StudentAppealAPIInDTO } from "./models/student-appeal.dto";
+import {
+  StudentAppealAPIInDTO,
+  StudentAppealAPIOutDTO,
+} from "./models/student-appeal.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -21,7 +26,7 @@ import {
   RequiresStudentAccount,
   UserToken,
 } from "../../auth/decorators";
-import { IUserToken } from "../../auth/userToken.interface";
+import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import {
   ApiTags,
   ApiNotFoundResponse,
@@ -143,6 +148,41 @@ export class StudentAppealStudentsController extends BaseController {
     );
     return {
       id: studentAppeal.id,
+    };
+  }
+
+  /**
+   * Get the student appeal and its requests.
+   * @param appealId appeal id to be retrieved.
+   * @returns the student appeal and its requests.
+   */
+  @Get(":appealId/requests")
+  @ApiNotFoundResponse({
+    description: "Not able to find the student appeal.",
+  })
+  async getStudentAppealWithRequests(
+    @Param("appealId", ParseIntPipe) appealId: number,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<StudentAppealAPIOutDTO> {
+    const studentAppeal =
+      await this.studentAppealService.getAppealAndRequestsById(
+        appealId,
+        userToken.studentId,
+      );
+    if (!studentAppeal) {
+      throw new NotFoundException("Not able to find the student appeal.");
+    }
+
+    return {
+      id: studentAppeal.id,
+      submittedDate: studentAppeal.submittedDate,
+      status: studentAppeal.status,
+      appealRequests: studentAppeal.appealRequests.map((appealRequest) => ({
+        id: appealRequest.id,
+        appealStatus: appealRequest.appealStatus,
+        submittedData: appealRequest.submittedData,
+        submittedFormName: appealRequest.submittedFormName,
+      })),
     };
   }
 }
