@@ -28,6 +28,6 @@ export const getSQLFileData = (fileName: string, subDirPath?: string) => {
   if (fs.existsSync(path)) {
     return fs.readFileSync(path, { encoding: "utf8" });
   } else {
-    //throw new Error(`getSQLFileData: No file exists in path: ${path}`);
+    throw new Error(`getSQLFileData: No file exists in path: ${path}`);
   }
 };

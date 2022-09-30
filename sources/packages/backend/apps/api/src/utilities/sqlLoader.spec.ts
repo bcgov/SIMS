@@ -11,7 +11,7 @@ describe("Test SQL Loader", () => {
   it("should get sql file data", () => {
     // Read test.sql file
     const expected = "-- ## This is an empty test sql file.";
-    const result = getSQLFileData("test.sql", "../../../src-sql");
+    const result = getSQLFileData("test.sql");
     expect(result).toEqual(expected);
   });
 });
