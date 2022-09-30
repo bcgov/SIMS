@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
-import { getSQLFileData } from "../../utilities";
+import { getSQLFileData } from "../utilities/sqlLoader";
 
 export class AddApplicationSubmittedDate1663973026834
   implements MigrationInterface
