@@ -54,7 +54,7 @@
       :application-id="id"
       @editApplication="editApplication"
       :application-status="applicationDetails.applicationStatus"
-      :status-updated-on="applicationDetails.statusUpdatedOn"
+      :status-updated-on="applicationDetails.applicationStatusUpdatedOn"
     />
     <student-assessment-details :applicationId="id" v-if="showViewAssessment" />
   </student-page-container>
