@@ -18,11 +18,9 @@ async function getUniqueInstitutionCode(token: string) {
     headers: { Authorization: `Bearer ${token}` },
   };
   const response = await (await axios.get(url, settings)).data;
-  for (let index = 0; index < response.length; index++) {
-    const element = response[index];
-    locationIds.push(element.institutionCode);
+  for (let location in response) {
+    locationIds.push(location.institutionCode);
   }
-
   while (locationIds.includes(newLocationId)) {
     newLocationId = institutionHelperActions.getRandomInstitutionCode();
   }
