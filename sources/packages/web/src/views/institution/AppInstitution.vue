@@ -45,14 +45,13 @@
               elevation="1"
               color="secondary"
               v-bind="props"
-              value="settingsBtn"
               aria-label="settings"
             ></v-btn>
           </template>
           <v-list>
             <template v-for="(item, index) in menuItems" :key="index">
-              <v-list-item :value="index">
-                <v-list-item-title @click="item.command">
+              <v-list-item :value="index" @click="item.command">
+                <v-list-item-title>
                   <span class="label-bold">{{ item.label }}</span>
                 </v-list-item-title>
               </v-list-item>
@@ -83,7 +82,7 @@ import { ref } from "vue";
 export default {
   components: { BCLogo, IdleTimeChecker },
   setup() {
-    const toggleNav = ref("toggle-nav");
+    const toggleNav = ref();
     const { executeLogout } = useAuth();
     const { isAdmin, isAuthenticated } = useInstitutionAuth();
     const logoff = async () => {

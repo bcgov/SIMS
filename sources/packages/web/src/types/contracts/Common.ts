@@ -21,6 +21,7 @@ export interface MenuItemModel {
   };
   type?: string;
   children?: MenuItemModel[];
+  command?: () => void;
 }
 
 export interface Address {
