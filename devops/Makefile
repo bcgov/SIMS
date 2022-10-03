@@ -36,7 +36,7 @@ define QA_DB_NAME
 endef
 
 define BUILD_TAG
-"$(BUILD_REF)-$(BUILD_ID)"
+"$(subst /,-,$(BUILD_REF))-$(BUILD_ID)"
 endef
 
 define BUILD_TEMPLATE_PATH
@@ -304,7 +304,7 @@ build-api:
 	test -n "$(BUILD_REF)"
 	test -n "$(BUILD_NAMESPACE)"
 	@echo "+\n++ BUILDING API with tag: $(BUILD_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/api -p NAME=$(API) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/api/Dockerfile -p NAME=$(API) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(API) --wait
 
 build-web:

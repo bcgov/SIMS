@@ -6,7 +6,6 @@
     <template #actions>
       <v-row class="m-0 p-0">
         <v-text-field
-          v-if="!!offeringsAndCount.count"
           density="compact"
           label="Search Offering Name"
           variant="outlined"
