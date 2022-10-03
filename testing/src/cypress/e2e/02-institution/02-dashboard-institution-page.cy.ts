@@ -11,7 +11,7 @@ describe("[Institution Dashboard] - fields and titles ", () => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
   });
 
-  it.skip("Verify that user is redirected to dashboard page", () => {
+  it("Verify that user is redirected to dashboard page", () => {
     cy.url().should("include", "/dashboard");
     dashboardObject.dashboardWelcomeMessage().should("be.visible");
     dashboardObject
@@ -28,7 +28,7 @@ describe("[Institution Dashboard] - fields and titles ", () => {
       .should("have.attr", "href", "https://studentaidbc.ca/help-centre");
   });
 
-  it.skip("Verify that all buttons are clickable in dashboard and redirect to appropriate pages.", () => {
+  it("Verify that all buttons are clickable in dashboard and redirect to appropriate pages.", () => {
     dashboardObject.homeButton().click();
     dashboardObject.locationButton().click();
     dashboardObject.manageInstitutionButton().click();

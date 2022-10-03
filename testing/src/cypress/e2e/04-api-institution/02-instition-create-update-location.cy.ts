@@ -2,6 +2,7 @@ import InstitutionHelperActions from "../../custom-command/institution/common-he
 import Authorization, {
   ClientId,
 } from "../../custom-command/common/authorization";
+import axios from "axios";
 
 const institutionHelperActions = new InstitutionHelperActions();
 
@@ -9,7 +10,26 @@ const USERNAME = institutionHelperActions.getUserNameForApiTest();
 const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
 const TOKEN_URL = institutionHelperActions.getApiUrlForKeyCloakToken();
 
-function createOrUpdateInstitutionLocation(
+async function getUniqueInstitutionCode(token: string) {
+  let locationIds: string[] | PromiseLike<string[]> = [];
+  let newLocationId = institutionHelperActions.getRandomInstitutionCode();
+  const url = institutionHelperActions.getApiForGetAllInstitutionLocation();
+  const settings = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+  const response = await (await axios.get(url, settings)).data;
+  for (let index = 0; index < response.length; index++) {
+    const element = response[index];
+    locationIds.push(element.institutionCode);
+  }
+
+  while (locationIds.includes(newLocationId)) {
+    newLocationId = institutionHelperActions.getRandomInstitutionCode();
+  }
+  return newLocationId;
+}
+
+async function createOrUpdateInstitutionLocation(
   token: string,
   id: string,
   canadian: boolean,
@@ -17,7 +37,7 @@ function createOrUpdateInstitutionLocation(
   institutionCode?: string
 ) {
   if (institutionCode == undefined) {
-    institutionCode = institutionHelperActions.getRandomInstitutionCode();
+    institutionCode = await getUniqueInstitutionCode(token);
   }
   const uniqueId = id;
   let body: object;
@@ -47,8 +67,6 @@ function createOrUpdateInstitutionLocation(
       primaryContactLastName: `Auto-${uniqueId}-LastName`,
       primaryContactEmail: `Auto@${uniqueId}.com`,
       primaryContactPhone: "32165496872",
-      applicationId: "",
-      applicationStatus: "",
       provinceState: "NS",
       postalCode: "A1A2A3",
     };
@@ -66,8 +84,6 @@ function createOrUpdateInstitutionLocation(
       primaryContactLastName: `Auto-${uniqueId}-LastName`,
       primaryContactEmail: `Auto@${uniqueId}.com`,
       primaryContactPhone: "32165496872",
-      applicationId: "",
-      applicationStatus: "",
       otherCountry: `testAuto-${uniqueId}-Country`,
       otherPostalCode: "98654",
     };
@@ -84,6 +100,7 @@ function createOrUpdateInstitutionLocation(
     expect(response.status).to.be.equal(status);
   });
 }
+
 describe("[Institution Create/Update] Verify location create/update", () => {
   let token: string;
   const uniqueId1 = institutionHelperActions.getUniqueId();

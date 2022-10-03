@@ -2,7 +2,6 @@ import InstitutionCustomCommand from "./InstitutionCustomCommand";
 import { v4 } from "uuid";
 import UserData from "../../e2e/data/institution/user-details.json";
 import InstitutionData from "../../e2e/data/institution/institution-details.json";
-
 const institutionCustomCommand = new InstitutionCustomCommand();
 
 export default class InstitutionHelperActions {
@@ -65,6 +64,12 @@ export default class InstitutionHelperActions {
     }`;
   }
 
+  getApiForGetAllInstitutionLocation() {
+    return `${this.getBaseUrlForTestEnv()}${
+      Cypress.env("ENDPOINTS").GET_INSTITUTION_LOCATIONS
+    }`;
+  }
+
   loginIntoInstitutionSingleLocation() {
     const [URL, USERNAME, PASSWORD] =
       this.getBaseUrlAndLoginCredentialsInstitution();
@@ -78,10 +83,12 @@ export default class InstitutionHelperActions {
 
   getRandomInstitutionCode() {
     let institutionCode = "";
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for (var i = 0; i < 4; i++) {
-      institutionCode += chars.charAt(Math.floor(Math.random() * chars.length));
+    let code = v4()
+      .replace(/[0-9,-]/g, "")
+      .split("");
+    for (let i = 0; i < 4; i++) {
+      institutionCode += code[i];
     }
-    return institutionCode;
+    return institutionCode.toUpperCase();
   }
 }
