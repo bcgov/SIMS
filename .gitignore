@@ -11,6 +11,7 @@ dist/
 
 #cypress
 screenshots/
+testing/**/report/
 videos/
-report/
 cypress.env.json
+

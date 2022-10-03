@@ -1,0 +1,59 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/api/src",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@nestjs/swagger",
+        "options": {
+          "classValidatorShim": true,
+          "introspectComments": true,
+          "dtoKeyOfComment": "description",
+          "controllerKeyOfComment": "description"
+        }
+      }
+    ],
+    "webpack": true,
+    "tsConfigPath": "apps/api/tsconfig.app.json"
+  },
+  "projects": {
+    "sims-db": {
+      "type": "library",
+      "root": "libs/sims-db",
+      "entryFile": "index",
+      "sourceRoot": "libs/sims-db/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/sims-db/tsconfig.lib.json"
+      }
+    },
+    "api": {
+      "type": "application",
+      "root": "apps/api",
+      "entryFile": "main",
+      "sourceRoot": "apps/api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api/tsconfig.app.json"
+      }
+    },
+    "workers": {
+      "type": "application",
+      "root": "apps/workers",
+      "entryFile": "main",
+      "sourceRoot": "apps/workers/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/workers/tsconfig.app.json"
+      }
+    },
+    "db-migrations": {
+      "type": "application",
+      "root": "apps/db-migrations",
+      "entryFile": "main",
+      "sourceRoot": "apps/db-migrations/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/db-migrations/tsconfig.app.json"
+      }
+    }
+  },
+  "monorepo": true,
+  "root": "apps/api"
+}
