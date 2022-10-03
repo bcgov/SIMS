@@ -5212,7 +5212,7 @@
                       "id": "ekq9e7a"
                     }
                   ],
-                  "id": "eh9wpfl000",
+                  "id": "eh9wpfl0000",
                   "placeholder": "",
                   "prefix": "",
                   "customClass": "",
@@ -7867,6 +7867,8 @@
             {
               "label": "Upload proof of citizenship",
               "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
               "description": "",
               "tooltip": "",
               "customClass": "font-weight-bold",
@@ -7914,6 +7916,7 @@
                 "unique": false
               },
               "errorLabel": "",
+              "errors": "",
               "key": "citizenshipVerification",
               "tags": [],
               "properties": {},
@@ -7935,7 +7938,7 @@
                 "height": ""
               },
               "type": "file",
-              "url": "students/files",
+              "url": "student/files",
               "imageSize": "200",
               "input": true,
               "placeholder": "",
@@ -7950,11 +7953,11 @@
               "showCharCount": false,
               "showWordCount": false,
               "allowMultipleMasks": false,
+              "addons": [],
               "privateDownload": false,
-              "id": "etkoqe",
+              "id": "eezgosk",
               "options": "",
-              "fileKey": "",
-              "addons": []
+              "fileKey": ""
             },
             {
               "label": "Columns",
@@ -9179,6 +9182,8 @@
                 {
                   "label": "Upload supporting documents (optional):",
                   "labelPosition": "top",
+                  "labelWidth": "",
+                  "labelMargin": "",
                   "description": "",
                   "tooltip": "",
                   "customClass": "font-weight-bold",
@@ -9226,6 +9231,7 @@
                     "unique": false
                   },
                   "errorLabel": "",
+                  "errors": "",
                   "key": "otherLivingSituationDocs",
                   "tags": [],
                   "properties": {},
@@ -9247,7 +9253,7 @@
                     "height": ""
                   },
                   "type": "file",
-                  "url": "students/files",
+                  "url": "student/files",
                   "imageSize": "200",
                   "input": true,
                   "placeholder": "",
@@ -9262,11 +9268,11 @@
                   "showCharCount": false,
                   "showWordCount": false,
                   "allowMultipleMasks": false,
+                  "addons": [],
                   "privateDownload": false,
-                  "id": "etziji",
+                  "id": "eimqg6s",
                   "options": "",
-                  "fileKey": "",
-                  "addons": []
+                  "fileKey": ""
                 },
                 {
                   "label": "Columns",
@@ -11187,7 +11193,7 @@
                   "key": "firstName",
                   "type": "textfield",
                   "input": true,
-                  "id": "el2qrn9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                  "id": "el2qrn90000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -11264,7 +11270,7 @@
                   "key": "lastName",
                   "type": "textfield",
                   "input": true,
-                  "id": "e618eci000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                  "id": "e618eci0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -11425,7 +11431,7 @@
                   "addons": [],
                   "inputType": "radio",
                   "fieldSet": false,
-                  "id": "elh1men00000000000000000000",
+                  "id": "elh1men000000000000000000000",
                   "defaultValue": null
                 }
               ],
@@ -13467,7 +13473,7 @@
                             "height": ""
                           },
                           "type": "file",
-                          "url": "students/files",
+                          "url": "student/files",
                           "imageSize": "200",
                           "input": true,
                           "placeholder": "",
@@ -13893,7 +13899,7 @@
                       "addons": []
                     }
                   ],
-                  "id": "ecpkm9j00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                  "id": "ecpkm9j000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                   "placeholder": "",
                   "prefix": "",
                   "customClass": "",
@@ -14574,6 +14580,8 @@
             {
               "label": "Dependant custody file upload",
               "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
               "description": "",
               "tooltip": "",
               "customClass": "font-weight-bold",
@@ -14621,6 +14629,7 @@
                 "unique": false
               },
               "errorLabel": "",
+              "errors": "",
               "key": "dependantCustodyFileUpload",
               "tags": [],
               "properties": {},
@@ -14642,7 +14651,7 @@
                 "height": ""
               },
               "type": "file",
-              "url": "students/files",
+              "url": "student/files",
               "imageSize": "200",
               "input": true,
               "placeholder": "",
@@ -14657,11 +14666,11 @@
               "showCharCount": false,
               "showWordCount": false,
               "allowMultipleMasks": false,
+              "addons": [],
               "privateDownload": false,
-              "id": "ebvl7sr",
+              "id": "e5q1bx",
               "options": "",
-              "fileKey": "",
-              "addons": []
+              "fileKey": ""
             },
             {
               "label": "Columns",
@@ -19105,7 +19114,7 @@
                       "key": "ageAtStartOfYourStudyPeriod",
                       "type": "number",
                       "input": true,
-                      "id": "edl38cm00000000000000000000000000",
+                      "id": "edl38cm000000000000000000000000000",
                       "placeholder": "",
                       "prefix": "",
                       "customClass": "",
@@ -19250,7 +19259,7 @@
                       "addons": [],
                       "inputType": "radio",
                       "fieldSet": false,
-                      "id": "ein4w0k000000",
+                      "id": "ein4w0k0000000",
                       "defaultValue": ""
                     },
                     {
@@ -19345,7 +19354,7 @@
                       "addons": [],
                       "inputType": "radio",
                       "fieldSet": false,
-                      "id": "ee41yls00000",
+                      "id": "ee41yls000000",
                       "defaultValue": ""
                     }
                   ],
@@ -20105,11 +20114,24 @@
             },
             {
               "label": "Upload supporting documents (optional):",
+              "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
+              "description": "",
+              "tooltip": "",
               "customClass": "font-weight-bold",
+              "tabindex": "",
+              "hidden": false,
               "hideLabel": true,
+              "autofocus": false,
+              "disabled": false,
               "tableView": false,
+              "modalEdit": false,
               "storage": "url",
               "dir": "Estranged Details",
+              "fileNameTemplate": "",
+              "image": false,
+              "uploadOnly": false,
               "webcam": false,
               "fileTypes": [
                 {
@@ -20118,72 +20140,72 @@
                 }
               ],
               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+              "fileMinSize": "0KB",
               "fileMaxSize": "4MB",
               "multiple": true,
-              "key": "estrangedFileUpload",
-              "conditional": {
-                "show": true,
-                "when": "parentbcResident",
-                "eq": "estranged"
-              },
-              "type": "file",
-              "url": "students/files",
-              "input": true,
-              "placeholder": "",
-              "prefix": "",
-              "suffix": "",
-              "defaultValue": null,
-              "protected": false,
-              "unique": false,
               "persistent": true,
-              "hidden": false,
-              "clearOnHide": true,
-              "refreshOn": "",
-              "redrawOn": "",
-              "modalEdit": false,
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
+              "protected": false,
               "dbIndex": false,
+              "encrypted": false,
+              "redrawOn": "",
+              "clearOnHide": true,
               "customDefaultValue": "",
               "calculateValue": "",
               "calculateServer": false,
-              "widget": null,
-              "attributes": {},
-              "validateOn": "change",
+              "allowCalculateOverride": false,
               "validate": {
                 "required": false,
+                "customMessage": "",
                 "custom": "",
                 "customPrivate": false,
+                "json": "",
                 "strictDateValidation": false,
                 "multiple": false,
                 "unique": false
               },
+              "errorLabel": "",
+              "errors": "",
+              "key": "estrangedFileUpload",
+              "tags": [],
+              "properties": {},
+              "conditional": {
+                "show": true,
+                "when": "parentbcResident",
+                "eq": "estranged",
+                "json": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "attributes": {},
               "overlay": {
                 "style": "",
+                "page": "",
                 "left": "",
                 "top": "",
                 "width": "",
                 "height": ""
               },
-              "allowCalculateOverride": false,
-              "encrypted": false,
+              "type": "file",
+              "url": "student/files",
+              "imageSize": "200",
+              "input": true,
+              "placeholder": "",
+              "prefix": "",
+              "suffix": "",
+              "defaultValue": null,
+              "unique": false,
+              "refreshOn": "",
+              "dataGridLabel": false,
+              "widget": null,
+              "validateOn": "change",
               "showCharCount": false,
               "showWordCount": false,
-              "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "image": false,
               "privateDownload": false,
-              "imageSize": "200",
-              "fileMinSize": "0KB",
-              "uploadOnly": false,
-              "id": "esa19l"
+              "id": "el6c3zi",
+              "options": "",
+              "fileKey": ""
             },
             {
               "label": "Columns",
@@ -24124,6 +24146,8 @@
             {
               "label": "ExceptionalExpenseFile",
               "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
               "description": "",
               "tooltip": "",
               "customClass": "",
@@ -24171,6 +24195,7 @@
                 "unique": false
               },
               "errorLabel": "",
+              "errors": "",
               "key": "exceptionalExpenseFile",
               "tags": [],
               "properties": {},
@@ -24192,7 +24217,7 @@
                 "height": ""
               },
               "type": "file",
-              "url": "students/files",
+              "url": "student/files",
               "imageSize": "200",
               "input": true,
               "placeholder": "",
@@ -24207,11 +24232,11 @@
               "showCharCount": false,
               "showWordCount": false,
               "allowMultipleMasks": false,
+              "addons": [],
               "privateDownload": false,
-              "id": "ee51l9",
+              "id": "exd3mbh",
               "options": "",
-              "fileKey": "",
-              "addons": []
+              "fileKey": ""
             },
             {
               "label": "Columns",
@@ -27432,6 +27457,8 @@
             {
               "label": "<strong>Upload supporting documents (optional):</strong>",
               "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
               "description": "",
               "tooltip": "",
               "customClass": "",
@@ -27479,6 +27506,7 @@
                 "unique": false
               },
               "errorLabel": "",
+              "errors": "",
               "key": "parentLivingSituationFile",
               "tags": [],
               "properties": {},
@@ -27500,7 +27528,7 @@
                 "height": ""
               },
               "type": "file",
-              "url": "students/files",
+              "url": "student/files",
               "imageSize": "200",
               "input": true,
               "placeholder": "",
@@ -27515,11 +27543,11 @@
               "showCharCount": false,
               "showWordCount": false,
               "allowMultipleMasks": false,
+              "addons": [],
               "privateDownload": false,
-              "id": "egitir9",
+              "id": "edx790g",
               "options": "",
-              "fileKey": "",
-              "addons": []
+              "fileKey": ""
             },
             {
               "label": "Columns",
@@ -29005,6 +29033,8 @@
             {
               "label": "Upload supporting documents (optional):",
               "labelPosition": "top",
+              "labelWidth": "",
+              "labelMargin": "",
               "description": "",
               "tooltip": "",
               "customClass": "font-weight-bold",
@@ -29052,6 +29082,7 @@
                 "unique": false
               },
               "errorLabel": "",
+              "errors": "",
               "key": "transportationCostsFile",
               "tags": [],
               "properties": {},
@@ -29073,7 +29104,7 @@
                 "height": ""
               },
               "type": "file",
-              "url": "students/files",
+              "url": "student/files",
               "imageSize": "200",
               "input": true,
               "placeholder": "",
@@ -29088,11 +29119,11 @@
               "showCharCount": false,
               "showWordCount": false,
               "allowMultipleMasks": false,
+              "addons": [],
               "privateDownload": false,
-              "id": "esa8w1oe",
+              "id": "e911hnc",
               "options": "",
-              "fileKey": "",
-              "addons": []
+              "fileKey": ""
             },
             {
               "label": "Columns",
