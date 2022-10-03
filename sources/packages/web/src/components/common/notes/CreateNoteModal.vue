@@ -1,44 +1,68 @@
 <template>
-  <modal-dialog-base :showDialog="showDialog" @dialogClosed="dialogClosed">
-    <template v-slot:content>
-      <v-container class="min-width-modal">
-        <formio
-          formName="createnote"
-          @loaded="formLoaded"
-          @submitted="submitNote"
-        ></formio>
-      </v-container>
-    </template>
-    <template v-slot:footer>
-      <check-permission-role :role="allowedRole">
-        <template #="{ notAllowed }">
-          <footer-buttons
-            :disablePrimaryButton="notAllowed"
-            primaryLabel="Add note"
-            @primaryClick="addNewNote"
-            @secondaryClick="dialogClosed"
-          />
-        </template>
-      </check-permission-role>
-    </template>
-  </modal-dialog-base>
+  <v-form ref="addNewNoteForm">
+    <modal-dialog-base
+      title="Create new note"
+      :showDialog="showDialog"
+      max-width="730"
+    >
+      <template #content>
+        <error-summary :errors="addNewNoteForm.errors" />
+        <div class="pb-2">
+          <span class="label-value"
+            >Add a note with relavent decisions or actions taken on this
+            account.</span
+          >
+        </div>
+        <v-autocomplete
+          label="Note type"
+          density="compact"
+          :items="noteTypeItems"
+          v-model="formModel.noteType"
+          variant="outlined"
+          placeholder="Select a Note type"
+          :rules="[(v) => !!v || 'Note type is required.']" />
+        <v-textarea
+          hide-details
+          label="Note body"
+          placeholder="Long text..."
+          v-model="formModel.description"
+          variant="outlined"
+          :rules="[(v) => !!v || 'Note body is required']"
+      /></template>
+      <template #footer>
+        <check-permission-role :role="allowedRole">
+          <template #="{ notAllowed }">
+            <footer-buttons
+              justify="end"
+              primaryLabel="Add note"
+              @secondaryClick="cancel"
+              @primaryClick="submit"
+              :disablePrimaryButton="notAllowed"
+            />
+          </template>
+        </check-permission-role>
+      </template>
+    </modal-dialog-base>
+  </v-form>
 </template>
 
 <script lang="ts">
-import { PropType, ref } from "vue";
+import { PropType, ref, reactive, onMounted } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog, useFormioUtils } from "@/composables";
+import ErrorSummary from "@/components/generic/ErrorSummary.vue";
+import { useModalDialog } from "@/composables";
 import {
+  Role,
+  VForm,
   InstitutionNoteType,
   StudentNoteType,
   NoteEntityType,
-  Role,
 } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { NoteAPIInDTO } from "@/services/http/dto";
+import { NoteAPIInDTO, NoteTypeItemsDTO } from "@/services/http/dto";
 
 export default {
-  components: { ModalDialogBase, CheckPermissionRole },
+  components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
   props: {
     entityType: {
       type: String,
@@ -49,51 +73,52 @@ export default {
       required: true,
     },
   },
-  emits: ["submitData"],
-  setup(props: any, context: any) {
-    const { showDialog, showModal } = useModalDialog<void>();
-    const formData = ref();
-    const formioUtils = useFormioUtils();
-    const dialogClosed = () => {
-      showDialog.value = false;
-    };
-    const formLoaded = async (form: any) => {
-      formData.value = form;
-      const dropdown = formioUtils.getComponent(form, "noteType");
-      const options = [{}];
+
+  setup(props: any) {
+    const { showDialog, showModal, resolvePromise } = useModalDialog<
+      NoteAPIInDTO | boolean
+    >();
+    const addNewNoteForm = ref({} as VForm);
+    const formModel = reactive({} as NoteAPIInDTO);
+    const noteTypeItems = ref([] as NoteTypeItemsDTO[]);
+
+    onMounted(async () => {
       if (props.entityType === NoteEntityType.Institution) {
         for (const noteType in InstitutionNoteType) {
-          options.push({ label: noteType, value: noteType });
+          noteTypeItems.value.push({ title: noteType, value: noteType });
         }
       }
       if (props.entityType === NoteEntityType.Student) {
         for (const noteType in StudentNoteType) {
-          options.push({ label: noteType, value: noteType });
+          noteTypeItems.value.push({ title: noteType, value: noteType });
         }
       }
-      dropdown.component.data.values = options;
-      dropdown.redraw();
-    };
-    const submitForm = async () => {
-      return formData.value.submit();
-    };
-    const submitNote = async (data: NoteAPIInDTO) => {
-      context.emit("submitData", data);
-    };
-    const addNewNote = async () => {
-      const formSubmitted = await submitForm();
-      if (formSubmitted) {
-        showDialog.value = false;
+    });
+
+    const submit = async () => {
+      const validationResult = await addNewNoteForm.value.validate();
+      if (!validationResult.valid) {
+        return;
       }
+      const payload = { ...formModel };
+      resolvePromise(payload);
+      addNewNoteForm.value.reset();
+    };
+
+    const cancel = () => {
+      addNewNoteForm.value.reset();
+      addNewNoteForm.value.resetValidation();
+      resolvePromise(false);
     };
     return {
       showDialog,
       showModal,
-      dialogClosed,
-      formLoaded,
-      submitNote,
-      addNewNote,
+      formModel,
       Role,
+      submit,
+      cancel,
+      addNewNoteForm,
+      noteTypeItems,
     };
   },
 };

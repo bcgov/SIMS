@@ -6,7 +6,7 @@
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
             <v-btn
-              @click="addNewNote()"
+              @click="addNewNote"
               class="float-right"
               color="primary"
               prepend-icon="fa:far fa-edit"
@@ -69,7 +69,6 @@
     <CreateNoteModal
       ref="createNotesModal"
       :entityType="entityType"
-      @submitData="emitToParent"
       :allowedRole="allowedRole"
     />
   </full-page-container>
@@ -108,9 +107,10 @@ export default {
   setup(props: any, context: any) {
     const { dateOnlyLongString, timeOnlyInHoursAndMinutes } = useFormatters();
     const showModal = ref(false);
-    const createNotesModal = ref({} as ModalDialog<void>);
+    const createNotesModal = ref({} as ModalDialog<NoteAPIInDTO | boolean>);
     const addNewNote = async () => {
-      await createNotesModal.value.showModal();
+      const addNewNoteData = await createNotesModal.value.showModal();
+      if (addNewNoteData) emitToParent(addNewNoteData as NoteAPIInDTO);
     };
     const emitToParent = async (data: NoteAPIInDTO) => {
       context.emit("submitData", data);
