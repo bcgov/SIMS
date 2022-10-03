@@ -2,6 +2,7 @@ import InstitutionCustomCommand from "./InstitutionCustomCommand";
 import { v4 } from "uuid";
 import UserData from "../../e2e/data/institution/user-details.json";
 import InstitutionData from "../../e2e/data/institution/institution-details.json";
+import axios from "axios";
 const institutionCustomCommand = new InstitutionCustomCommand();
 
 export default class InstitutionHelperActions {
@@ -82,6 +83,7 @@ export default class InstitutionHelperActions {
   }
 
   getRandomInstitutionCode() {
+    //TODO - this is only a temporary implementation until we control the data that is being injected as a test data setup/clean up
     let institutionCode = "";
     let code = v4()
       .replace(/[0-9,-]/g, "")
@@ -90,5 +92,21 @@ export default class InstitutionHelperActions {
       institutionCode += code[i];
     }
     return institutionCode.toUpperCase();
+  }
+
+  async getUniqueInstitutionCode(token: string) {
+    let newInstitutionLocationCode = this.getRandomInstitutionCode();
+    const url = this.getApiForGetAllInstitutionLocation();
+    const settings = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    const response = await axios.get(url, settings);
+    const institutionLocationCodes = response.data.map(
+      (location: { institutionCode: string }) => location.institutionCode
+    );
+    while (institutionLocationCodes.includes(newInstitutionLocationCode)) {
+      newInstitutionLocationCode = this.getRandomInstitutionCode();
+    }
+    return newInstitutionLocationCode;
   }
 }

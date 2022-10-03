@@ -5,6 +5,9 @@ import ManageLocationObject, {
 } from "../../page-objects/Institution-objects/ManageLocationObject";
 
 import data from "../data/institution/manage-location.json";
+import Authorization, {
+  ClientId,
+} from "../../custom-command/common/authorization";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const institutionManageLocationObject = new ManageLocationObject();
@@ -479,16 +482,31 @@ describe("[Institution Manage Location] - Primary Contact Information Validation
 });
 
 describe("Add New Location and update for the institution", () => {
+  let token: string;
   const uniqeId1 = institutionHelperActions.getUniqueId();
   const uniqeId2 = institutionHelperActions.getUniqueId();
   const phoneNumber = "1236549871";
+  const USERNAME = institutionHelperActions.getUserNameForApiTest();
+  const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
+  const TOKEN_URL = institutionHelperActions.getApiUrlForKeyCloakToken();
+
+  before(async () => {
+    const authorizer = new Authorization();
+    token = await authorizer.getAuthToken(
+      USERNAME,
+      PASSWORD,
+      ClientId.Institution,
+      TOKEN_URL
+    );
+  });
 
   beforeEach(() => {
     loginAndClickOnAddNewLocation();
   });
 
-  it("Create new institution location", () => {
-    const institutionCode = institutionHelperActions.getRandomInstitutionCode();
+  it("Create new institution location", async () => {
+    const institutionCode =
+      await institutionHelperActions.getUniqueInstitutionCode(token);
     createInstitutionLocation(uniqeId1, institutionCode, phoneNumber);
     dashboardInstitutionObject.allLocationsText().should("be.visible");
     cy.contains(`fname-${uniqeId1}`).scrollIntoView().should("be.visible");

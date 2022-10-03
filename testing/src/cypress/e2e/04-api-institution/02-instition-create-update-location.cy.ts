@@ -10,23 +10,6 @@ const USERNAME = institutionHelperActions.getUserNameForApiTest();
 const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
 const TOKEN_URL = institutionHelperActions.getApiUrlForKeyCloakToken();
 
-async function getUniqueInstitutionCode(token: string) {
-  let locationIds: string[] | PromiseLike<string[]> = [];
-  let newLocationId = institutionHelperActions.getRandomInstitutionCode();
-  const url = institutionHelperActions.getApiForGetAllInstitutionLocation();
-  const settings = {
-    headers: { Authorization: `Bearer ${token}` },
-  };
-  const response = await (await axios.get(url, settings)).data;
-  for (let location in response) {
-    locationIds.push(location.institutionCode);
-  }
-  while (locationIds.includes(newLocationId)) {
-    newLocationId = institutionHelperActions.getRandomInstitutionCode();
-  }
-  return newLocationId;
-}
-
 async function createOrUpdateInstitutionLocation(
   token: string,
   id: string,
@@ -34,8 +17,10 @@ async function createOrUpdateInstitutionLocation(
   create: boolean,
   institutionCode?: string
 ) {
-  if (institutionCode == undefined) {
-    institutionCode = await getUniqueInstitutionCode(token);
+  if (!institutionCode) {
+    institutionCode = await institutionHelperActions.getUniqueInstitutionCode(
+      token
+    );
   }
   const uniqueId = id;
   let body: object;
