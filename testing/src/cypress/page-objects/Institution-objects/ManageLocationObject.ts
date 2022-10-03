@@ -27,16 +27,16 @@ export default class ManageLocationObject {
     return cy.contains("Let’s add an additional institution location");
   }
 
-  editLocationMessage() {
-    return cy.contains("Edit Locations");
+  locationDetailsText() {
+    return cy.contains("Location details");
   }
 
   addLocationMessage() {
     return cy.contains("Add Location");
   }
 
-  addNewLocationButton() {
-    return cy.contains("Add New Location");
+  addLocationButton() {
+    return cy.contains("Add location");
   }
 
   submitButton() {

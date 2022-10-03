@@ -13,43 +13,38 @@ describe("Institution Profile", () => {
   });
 
   it("Verify that user redirect to institution profile page", () => {
-    dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    institutionObject.institutionDetailsButton().click();
+    dashboardInstitutionObject.allLocationsText().should("be.visible");
+    institutionObject.manageProfileButton().click();
   });
 
   it("Check that legal operating name text field should be disable or not", () => {
-    dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    institutionObject.institutionDetailsButton().click();
+    dashboardInstitutionObject.allLocationsText().should("be.visible");
+    institutionObject.manageProfileButton().click();
     institutionObject.legalOperatingNameInputText().should("be.disabled");
   });
 
   it("Clicking on the save button without filling out the required fields", () => {
     cy.intercept("GET", "**/institution").as("institution");
-    dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    institutionObject.institutionDetailsButton().click();
+    dashboardInstitutionObject.allLocationsText().should("be.visible");
+    institutionObject.manageProfileButton().click();
     institutionObject.primaryEmailInputText().should("be.visible");
   });
 
   it("Check that when user enter data only in non mandatory field and click on next section.", () => {
     cy.intercept("GET", "**/institution").as("institution");
-    dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    institutionObject.institutionDetailsButton().click();
+    dashboardInstitutionObject.allLocationsText().should("be.visible");
+    institutionObject.manageProfileButton().click();
   });
 
   it("Make sure enable fields are editable and disable fields are not.", () => {
     cy.intercept("GET", "**/institution").as("institution");
-    dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    institutionObject.institutionDetailsButton().click();
+    dashboardInstitutionObject.allLocationsText().should("be.visible");
+    institutionObject.manageProfileButton().click();
     cy.wait("@institution");
     institutionObject.primaryPhoneNumberInputText().should("be.disabled");
     institutionObject.primaryEmailInputText().should("be.disabled");

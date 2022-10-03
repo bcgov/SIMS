@@ -59,6 +59,7 @@ objects:
         type: Git
       strategy:
         dockerStrategy:
+          dockerfilePath: "${DOCKER_FILE_PATH}"
           pullSecret:
             name: artifactory-secret-credential
           from:
@@ -85,6 +86,9 @@ parameters:
     value: https://github.com/bcgov/SIMS.git
   - name: SOURCE_REPOSITORY_REF
     required: true
+  - name: DOCKER_FILE_PATH
+    required: true
+    value: Dockerfile
   - name: TAG
     value: "latest"
   - name: BASE_IMAGE_REPO

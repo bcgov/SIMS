@@ -69,6 +69,23 @@
   line-height: $line-height-header-lg;
 }
 
+/**Typography styles for extra small header**/
+.extra-small {
+  font-style: $font-style-normal;
+  font-size: $font-header-small;
+  line-height: $line-height-header-sm;
+}
+
+.header-extra-small {
+  @extend .extra-small;
+  font-weight: $font-weight-bold;
+}
+
+.value-extra-small {
+  @extend .extra-small;
+  font-weight: $font-weight-normal;
+}
+
 .category-header-x-large {
   font-style: $font-style-normal;
   font-weight: $font-weight-bold;
@@ -79,7 +96,7 @@
 .label-medium {
   font-style: $font-style-normal;
   font-weight: 700;
-  font-size: $font-size-small;
+  font-size: $font-size-xsmall;
   line-height: 18px;
 }
 

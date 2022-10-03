@@ -22,7 +22,7 @@
       </template>
       <Column
         :field="StudentApplicationFields.ApplicationNumber"
-        sortable="true"
+        :sortable="true"
         header="Application #"
       >
       </Column>
@@ -62,7 +62,7 @@
       <Column
         :field="StudentApplicationFields.Status"
         header="Status"
-        sortable="true"
+        :sortable="true"
       >
         <template #body="slotProps">
           <status-chip-application :status="slotProps.data.status" />

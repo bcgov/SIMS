@@ -23,9 +23,6 @@ export default class LoginInstitutionObject {
     return cy.get('input[type="submit"]');
   }
 
-  welcomeMessageDashboard() {
-    return cy.contains("Welcome to your institution account!");
-  }
   errorMessage() {
     return cy.get(".field-help-text");
   }

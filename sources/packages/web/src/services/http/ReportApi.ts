@@ -8,6 +8,6 @@ export class ReportApi extends HttpBaseClient {
   async exportReport(
     payload: ReportsFilterAPIInDTO,
   ): Promise<AxiosResponse<any>> {
-    return this.downloadFile<ReportsFilterAPIInDTO>("reports", payload);
+    return this.downloadFile<ReportsFilterAPIInDTO>("report", payload);
   }
 }

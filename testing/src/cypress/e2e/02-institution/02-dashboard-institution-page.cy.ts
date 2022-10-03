@@ -29,24 +29,20 @@ describe("[Institution Dashboard] - fields and titles ", () => {
   });
 
   it("Verify that all buttons are clickable in dashboard and redirect to appropriate pages.", () => {
-    dashboardObject.dashboardButton().click();
-    dashboardObject.notificationButton().click();
-    //Needs validation with the notifications.
     dashboardObject.homeButton().click();
     dashboardObject.locationButton().click();
     dashboardObject.manageInstitutionButton().click();
-    manageInstitutionObject.institutionDetails().should("be.visible");
+    manageInstitutionObject.manageProfile().should("be.visible");
     manageInstitutionObject.manageDesignation().should("be.visible");
     manageInstitutionObject.manageLocations().should("be.visible");
     manageInstitutionObject.manageUsers().should("be.visible");
-    dashboardObject.profileButton().click();
+    dashboardObject.myProfileButton().click();
     dashboardObject.iconButton().click();
     dashboardObject.logOutButton().click();
   });
 
   it("Verify that clicking on manage institution leads Location Summary page", () => {
-    dashboardObject.dashboardButton().click();
     dashboardObject.manageInstitutionButton().click();
-    dashboardObject.locationVerifyText().should("be.visible");
+    dashboardObject.allLocationsText().should("be.visible");
   });
 });

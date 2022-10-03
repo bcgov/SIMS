@@ -15,9 +15,12 @@ import {
 import { AuthService } from "../AuthService";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { ApplicationSummaryAPIOutDTO, PaginatedResultsAPIOutDTO } from "./dto";
+import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
 export class ApplicationApi extends HttpBaseClient {
-  async getApplicationData(applicationId: number): Promise<any> {
+  async getApplicationData(
+    applicationId: number,
+  ): Promise<GetApplicationDataDto> {
     try {
       const response = await this.apiClient.get(
         this.addClientRoot(`application/${applicationId}`),
@@ -147,8 +150,8 @@ export class ApplicationApi extends HttpBaseClient {
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
     let url =
       AuthService.shared.authClientType === ClientIdType.AEST
-        ? `students/${studentId}/application-summary`
-        : `students/application-summary`;
+        ? `student/${studentId}/application-summary`
+        : `student/application-summary`;
     // Adding pagination params. There is always a default page and pageCount for paginated APIs.
     url = addPaginationOptions(url, page, pageCount, "?");
     //Adding Sort params. There is always a default sortField and sortOrder for COE.
@@ -163,6 +166,19 @@ export class ApplicationApi extends HttpBaseClient {
   ): Promise<ApplicationIdentifiersDTO> {
     return this.getCallTyped<ApplicationIdentifiersDTO>(
       this.addClientRoot(`application/${applicationNumber}/appeal`),
+    );
+  }
+
+  /**
+   * Get in progress details of an application by application id.
+   * @param applicationId application id.
+   * @returns application details.
+   */
+  async getInProgressApplicationDetails(
+    applicationId: number,
+  ): Promise<InProgressApplicationDetailsAPIOutDTO> {
+    return this.getCallTyped<InProgressApplicationDetailsAPIOutDTO>(
+      this.addClientRoot(`application/${applicationId}/in-progress`),
     );
   }
 }

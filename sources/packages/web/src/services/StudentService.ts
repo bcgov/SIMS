@@ -146,7 +146,7 @@ export class StudentService {
   async downloadStudentFile(
     uniqueFileName: string,
   ): Promise<AxiosResponse<any>> {
-    return ApiClient.FileUpload.download(`students/files/${uniqueFileName}`);
+    return ApiClient.FileUpload.download(`student/files/${uniqueFileName}`);
   }
 
   /**
