@@ -49,6 +49,9 @@
         :application-id="applicationId"
         @declinedEvent="declinedEvent"
       />
+      <assessment
+        v-else-if="applicationStatus === ApplicationStatus.assessment"
+      />
     </template>
     <cancelled
       v-else
@@ -64,6 +67,7 @@ import Draft from "@/components/students/applicationTracker/Draft.vue";
 import Submitted from "@/components/students/applicationTracker/Submitted.vue";
 import InProgress from "@/components/students/applicationTracker/InProgress.vue";
 import Cancelled from "@/components/students/applicationTracker/Cancelled.vue";
+import Assessment from "@/components/students/applicationTracker/Assessment.vue";
 
 export default defineComponent({
   emits: ["editApplication"],
@@ -72,6 +76,7 @@ export default defineComponent({
     Submitted,
     InProgress,
     Cancelled,
+    Assessment,
   },
   props: {
     applicationId: {
