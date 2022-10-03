@@ -5,13 +5,15 @@ import ManageLocationObject, {
 } from "../../page-objects/Institution-objects/ManageLocationObject";
 
 import data from "../data/institution/manage-location.json";
+import Authorization, {
+  ClientId,
+} from "../../custom-command/common/authorization";
 
 const dashboardInstitutionObject = new DashboardInstitutionObject();
 const institutionManageLocationObject = new ManageLocationObject();
 const institutionHelperActions = new InstitutionHelperActions();
 function loginAndClickOnManageInstitution() {
   institutionHelperActions.loginIntoInstitutionSingleLocation();
-  dashboardInstitutionObject.dashboardButton().click();
   dashboardInstitutionObject.manageInstitutionButton().click();
 }
 
@@ -25,7 +27,7 @@ function loginAndClickOnEditLocation() {
 
 function loginAndClickOnAddNewLocation() {
   loginAndClickOnManageInstitution();
-  institutionManageLocationObject.addNewLocationButton().click();
+  institutionManageLocationObject.addLocationButton().click();
 }
 
 function verifyLocationAndContactDetails() {
@@ -146,10 +148,10 @@ describe("[Institution Manage Location] - Fields and Titles", () => {
   });
 
   it("Verify that user is redirected to institution manage location page", () => {
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
+    dashboardInstitutionObject.allLocationsText().should("be.visible");
     institutionManageLocationObject.manageLocationButton().click();
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    dashboardInstitutionObject.locationsList().should("be.visible");
+    dashboardInstitutionObject.manageLocationsText().should("be.visible");
+    dashboardInstitutionObject.allLocationsText().should("be.visible");
   });
 
   it("Verify that user is redirected to edit page of institution manage location", () => {
@@ -161,14 +163,14 @@ describe("[Institution Manage Location] - Fields and Titles", () => {
   it("Verify that user is redirected to edit some of the fields", () => {
     institutionManageLocationObject.manageLocationButton().click();
     institutionManageLocationObject.editLocationButton().click();
-    institutionManageLocationObject.editLocationMessage().should("be.visible");
+    institutionManageLocationObject.locationDetailsText().should("be.visible");
     verifyLocationAndContactDetails();
   });
 
   it("Verify that is redirected to 'Add New Location' page", () => {
     institutionManageLocationObject.manageLocationButton().click();
-    institutionManageLocationObject.addNewLocationButton().click();
-    institutionManageLocationObject.addLocationMessage().should("be.visible");
+    institutionManageLocationObject.addLocationButton().click();
+    institutionManageLocationObject.locationDetailsText().should("be.visible");
     verifyLocationAndContactDetails();
   });
 });
@@ -224,9 +226,6 @@ describe("[Institution Manage Location] - 'Add New Location' inline errors valid
     cy.contains("Last name is required").should("be.visible");
     cy.contains("Email is required").should("be.visible");
     cy.contains("Phone number is required").should("be.visible");
-    cy.contains(
-      "Please check the form and correct all errors before submitting."
-    ).should("be.visible");
   });
 
   it("Verify that location name should accept aplha-numeric and special chars", () => {
@@ -483,26 +482,42 @@ describe("[Institution Manage Location] - Primary Contact Information Validation
 });
 
 describe("Add New Location and update for the institution", () => {
+  let token: string;
   const uniqeId1 = institutionHelperActions.getUniqueId();
   const uniqeId2 = institutionHelperActions.getUniqueId();
-  const institutionCode = "ASKN";
   const phoneNumber = "1236549871";
+  const USERNAME = institutionHelperActions.getUserNameForApiTest();
+  const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
+  const TOKEN_URL = institutionHelperActions.getApiUrlForKeyCloakToken();
+
+  before(async () => {
+    const authorizer = new Authorization();
+    token = await authorizer.getAuthToken(
+      USERNAME,
+      PASSWORD,
+      ClientId.Institution,
+      TOKEN_URL
+    );
+  });
 
   beforeEach(() => {
     loginAndClickOnAddNewLocation();
   });
 
-  it("Create new institution location", () => {
+  it("Create new institution location", async () => {
+    const institutionCode =
+      await institutionHelperActions.getUniqueInstitutionCode(token);
     createInstitutionLocation(uniqeId1, institutionCode, phoneNumber);
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
+    dashboardInstitutionObject.allLocationsText().should("be.visible");
     cy.contains(`fname-${uniqeId1}`).scrollIntoView().should("be.visible");
     cy.contains(`lname-${uniqeId1}`).scrollIntoView().should("be.visible");
     cy.contains(`${uniqeId1}@gov.test`).scrollIntoView().should("be.visible");
   });
 
   it("Update institution primary contact details", () => {
+    const institutionCode = institutionHelperActions.getRandomInstitutionCode();
     createInstitutionLocation(uniqeId2, institutionCode, phoneNumber);
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
+    dashboardInstitutionObject.allLocationsText().should("be.visible");
     cy.intercept("GET", "**/location/**").as("location");
     cy.contains(uniqeId2).parents(".v-row").children().contains("Edit").click();
     cy.wait("@location");
@@ -530,7 +545,7 @@ describe("Add New Location and update for the institution", () => {
       .type(updatePhoneNumber)
       .should("have.value", updatePhoneNumber);
     institutionManageLocationObject.submitButton().click();
-    dashboardInstitutionObject.locationVerifyText().should("be.visible");
+    dashboardInstitutionObject.allLocationsText().should("be.visible");
     cy.contains(`fname-${name}`).scrollIntoView().should("be.visible");
     cy.contains(`lname-${name}`).scrollIntoView().should("be.visible");
     cy.contains(`${name}@gov.test`).scrollIntoView().should("be.visible");

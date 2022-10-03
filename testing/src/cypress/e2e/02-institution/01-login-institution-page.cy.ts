@@ -26,7 +26,7 @@ describe("[Institution Login] - Login Page", () => {
 
   it("Verify login successfully", () => {
     institutionCustomCommand.loginWithCredentials(USERNAME, PASSWORD);
-    loginObject.welcomeMessageDashboard().should("be.visible");
+    dashboardObject.dashboardWelcomeMessage().should("be.visible");
   });
 
   it("Verify logout successfully", () => {
