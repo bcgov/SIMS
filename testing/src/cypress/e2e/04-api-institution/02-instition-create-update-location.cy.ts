@@ -2,7 +2,6 @@ import InstitutionHelperActions from "../../custom-command/institution/common-he
 import Authorization, {
   ClientId,
 } from "../../custom-command/common/authorization";
-import axios from "axios";
 
 const institutionHelperActions = new InstitutionHelperActions();
 
