@@ -36,10 +36,8 @@ export class ZeebeTransportStrategy
    * Handles the application close.
    */
   async close() {
-    console.info("Closing zeebe client.");
     if (this.zeebeClient) {
       await this.zeebeClient.close();
     }
-    console.info("Zeebe client closed.");
   }
 }

@@ -52,15 +52,17 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-        # Deploy SIMS-Api, Web and Workers
+      # Deploy SIMS-Api
       - name: Deploy SIMS-API
         working-directory: "./devops/"
         run: |
           make oc-deploy-api
+      # Deploy Workers
       - name: Deploy Workers
         working-directory: "./devops/"
         run: |
           make oc-deploy-workers
+      # Deploy Deploy Web/Frontend
       - name: Deploy Web/Frontend
         working-directory: "./devops/"
         run: |

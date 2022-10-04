@@ -11,13 +11,13 @@ jobs:
   checkEnv:
     name: Check Env variables
     runs-on: ubuntu-latest
-    steps:
-      - name: Print Env Vars
-        run: |
-          echo Git Base Ref: ${{ github.base_ref }}
-          echo Git Build ID: ${{ github.event.number }}
-          echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
-          echo OC CLI Version: $(oc version)
+  steps:
+    - name: Print Env Vars
+      run: |
+        echo Git Base Ref: ${{ github.base_ref }}
+        echo Git Build ID: ${{ github.event.number }}
+        echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
+        echo OC CLI Version: $(oc version)
 
   # Build Web, SIMS-Api and Workers
   build:
@@ -101,15 +101,17 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-      # Deploy SIMS-Api, Web and Workers
+      # Deploy SIMS-Api
       - name: Deploy SIMS-API
         working-directory: "./devops/"
         run: |
           make oc-deploy-api
+      # Deploy Workers
       - name: Deploy Workers
         working-directory: "./devops/"
         run: |
           make oc-deploy-workers
+      # Deploy Deploy Web/Frontend
       - name: Deploy Web/Frontend
         working-directory: "./devops/"
         run: |

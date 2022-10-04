@@ -320,8 +320,10 @@ build-api:
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(API) --wait
 
 build-workers:
-	test -n "$(BUILD_REF)"
 	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(BUILD_TAG)"
+	test -n "$(WORKERS)"
 	@echo "+\n++ BUILDING WORKERS with tag: $(BUILD_TAG)\n+"
 	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WORKERS) --wait
