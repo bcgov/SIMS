@@ -29,7 +29,7 @@
           v-if="formModel.skipValidations"
           :type="BannerTypes.Error"
           header="Danger! Are you sure you want to skip the validations?"
-          summary=" By selecting this, you are forcing the SIN to be valid for the
+          summary="By selecting this, you are forcing the SIN to be valid for the
             student. Please proceed with caution."
         >
         </banner>
@@ -42,10 +42,9 @@
           :rules="[(v) => !!v || 'Notes is required']"
       /></template>
       <template #footer>
-        <check-permission-role :role="Role.StudentAddNewSIN">
+        <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
             <footer-buttons
-              justify="end"
               primaryLabel="Add SIN now"
               @secondaryClick="cancel"
               @primaryClick="submit"
@@ -61,7 +60,7 @@
 import { PropType, ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog } from "@/composables";
+import { useModalDialog, useValidators } from "@/composables";
 import { Role, VForm } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { CreateSINValidationAPIInDTO } from "@/services/http/dto";
@@ -70,16 +69,13 @@ import { BannerTypes } from "@/types/contracts/Banner";
 export default {
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
   props: {
-    entityType: {
-      type: String,
-      required: true,
-    },
     allowedRole: {
       type: String as PropType<Role>,
       required: true,
     },
   },
   setup() {
+    const { isSINValid } = useValidators();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       CreateSINValidationAPIInDTO | boolean
     >();
@@ -104,25 +100,8 @@ export default {
     };
 
     const sinValidation = (sin: string) => {
-      // Common SIN validation algorithm (Luhn algorithm).
       if (sin) {
-        sin = sin.replace(/\s/g, "");
-        if (sin.length === 9) {
-          let checksum = 0;
-          for (let i = 0; i < sin.length; i++) {
-            const currentDigit = parseInt(sin.charAt(i));
-            if ((i + 1) % 2 === 0) {
-              const digitTimes2 = currentDigit * 2;
-              checksum += digitTimes2 < 10 ? digitTimes2 : digitTimes2 - 9;
-            } else {
-              checksum += parseInt(sin.charAt(i));
-            }
-          }
-          if (checksum % 10 === 0) {
-            return true;
-          }
-        }
-        return "Invalid Social Insurance Number";
+        return isSINValid(sin) || "Please provide a proper SIN.";
       }
       return "SIN is required";
     };
@@ -132,7 +111,6 @@ export default {
       showModal,
       cancel,
       submit,
-      Role,
       addNewSINForm,
       formModel,
       BannerTypes,

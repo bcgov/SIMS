@@ -22,7 +22,6 @@
           placeholder="Select a Note type"
           :rules="[(v) => !!v || 'Note type is required.']" />
         <v-textarea
-          hide-details
           label="Note body"
           placeholder="Long text..."
           v-model="formModel.description"
