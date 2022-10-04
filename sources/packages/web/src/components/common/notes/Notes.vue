@@ -26,7 +26,7 @@
     <v-timeline
       truncate-line="both"
       side="end"
-      align="left"
+      :align="left"
       class="justify-content-start"
     >
       <v-timeline-item
@@ -66,7 +66,7 @@
         </div>
       </v-timeline-item>
     </v-timeline>
-    <CreateNoteModal
+    <create-note-modal
       ref="createNotesModal"
       :entityType="entityType"
       :allowedRole="allowedRole"
@@ -110,7 +110,9 @@ export default {
     const createNotesModal = ref({} as ModalDialog<NoteAPIInDTO | boolean>);
     const addNewNote = async () => {
       const addNewNoteData = await createNotesModal.value.showModal();
-      if (addNewNoteData) emitToParent(addNewNoteData as NoteAPIInDTO);
+      if (addNewNoteData) {
+        emitToParent(addNewNoteData as NoteAPIInDTO);
+      }
     };
     const emitToParent = async (data: NoteAPIInDTO) => {
       context.emit("submitData", data);

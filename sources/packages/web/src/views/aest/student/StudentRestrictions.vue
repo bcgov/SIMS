@@ -73,12 +73,12 @@
       </DataTable>
     </content-group>
   </full-page-container>
-  <ViewRestrictionModal
+  <view-restriction-modal
     ref="viewRestriction"
     :restrictionData="studentRestriction"
     :allowedRole="Role.StudentResolveRestriction"
   />
-  <AddStudentRestrictionModal
+  <add-student-restriction-modal
     ref="addRestriction"
     :entityType="RestrictionEntityType.Student"
     :allowedRole="Role.StudentAddRestriction"
@@ -154,10 +154,11 @@ export default {
       }
       const viewStudentRestrictionData =
         await viewRestriction.value.showModal();
-      if (viewStudentRestrictionData)
+      if (viewStudentRestrictionData) {
         resolveRestriction(
           viewStudentRestrictionData as RestrictionDetailAPIOutDTO,
         );
+      }
     };
 
     const resolveRestriction = async (data: RestrictionDetailAPIOutDTO) => {
@@ -181,10 +182,11 @@ export default {
 
     const addStudentRestriction = async () => {
       const addStudentRestrictionData = await addRestriction.value.showModal();
-      if (addStudentRestrictionData)
+      if (addStudentRestrictionData) {
         createNewRestriction(
           addStudentRestrictionData as AssignRestrictionAPIInDTO,
         );
+      }
     };
 
     const createNewRestriction = async (data: AssignRestrictionAPIInDTO) => {

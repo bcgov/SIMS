@@ -10,7 +10,7 @@
         </v-col>
         <v-col cols="auto">
           <v-switch
-            hide-details
+            hide-details="auto"
             label="Admin"
             color="primary"
             inset
@@ -20,7 +20,7 @@
         </v-col>
         <v-col cols="auto">
           <v-switch
-            hide-details
+            hide-details="auto"
             :disabled="!formModel.isAdmin"
             label="Legal signing authority"
             inset
@@ -62,7 +62,7 @@
         </v-col>
         <v-col>
           <v-radio-group
-            hide-details
+            hide-details="auto"
             inline
             v-model="location.userAccess"
             color="primary"

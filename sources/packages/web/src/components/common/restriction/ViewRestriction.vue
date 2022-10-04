@@ -4,7 +4,6 @@
     <modal-dialog-base
       title="View restriction"
       :showDialog="showDialog"
-      max-width="730"
       min-width="730"
     >
       <template #content>
@@ -13,12 +12,18 @@
           Restriction information
         </h4>
         <content-group>
-          <p class="font-weight-bold">Category</p>
-          <p>{{ restrictionData.restrictionCategory }}</p>
-          <p class="font-weight-bold">Reason</p>
-          <p>{{ restrictionData.description }}</p>
-          <p class="font-weight-bold">Notes</p>
-          <p>{{ restrictionData.restrictionNote }}</p>
+          <title-value
+            propertyTitle="Category"
+            :propertyValue="restrictionData.restrictionCategory"
+          />
+          <title-value
+            propertyTitle="Reason"
+            :propertyValue="restrictionData.description"
+          />
+          <title-value
+            propertyTitle="Notes"
+            :propertyValue="restrictionData.restrictionNote"
+          />
           <v-row
             ><v-col class="font-weight-bold">Date created</v-col
             ><v-col class="font-weight-bold">Created by</v-col
@@ -43,7 +48,7 @@
           placeholder="Long text..."
           v-model="formModel.resolutionNote"
           variant="outlined"
-          :rules="[(v) => !!v || 'Resolution reason is required']"
+          :rules="[(v) => checkResolutionNotesLength(v)]"
         />
         <h4 class="font-weight-bold" v-if="!restrictionData.isActive">
           Resolution
@@ -84,11 +89,12 @@
 import { PropType, ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog } from "@/composables";
+import { useModalDialog, useValidators } from "@/composables";
 import { Role, RestrictionType, VForm, RestrictionStatus } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { RestrictionDetailAPIOutDTO } from "@/services/http/dto";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
+import TitleValue from "@/components/generic/TitleValue.vue";
 
 export default {
   components: {
@@ -96,6 +102,7 @@ export default {
     CheckPermissionRole,
     ErrorSummary,
     StatusChipRestriction,
+    TitleValue,
   },
   props: {
     restrictionData: {
@@ -108,6 +115,8 @@ export default {
     },
   },
   setup(props: any) {
+    const NOTES_MAX_CHARACTERS = 500;
+    const { checkMaxCharacters } = useValidators();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       RestrictionDetailAPIOutDTO | false
     >();
@@ -129,6 +138,16 @@ export default {
       resolvePromise(false);
     };
 
+    const checkResolutionNotesLength = (notes: string) => {
+      if (notes) {
+        return (
+          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
+          "Max 500 characters."
+        );
+      }
+      return "Resolution reason is required.";
+    };
+
     return {
       showDialog,
       showModal,
@@ -139,6 +158,7 @@ export default {
       Role,
       formModel,
       RestrictionStatus,
+      checkResolutionNotesLength,
     };
   },
 };

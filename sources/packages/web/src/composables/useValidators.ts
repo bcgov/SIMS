@@ -32,7 +32,15 @@ export function useValidators() {
     return valid;
   };
 
+  const checkMaxCharacters = (
+    value: string,
+    maxCharacters: number,
+  ): boolean => {
+    return value.length <= maxCharacters;
+  };
+
   return {
     isSINValid,
+    checkMaxCharacters,
   };
 }

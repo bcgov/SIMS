@@ -26,12 +26,12 @@
               'Expiry end date is not in right format',
           ]" />
         <v-textarea
-          hide-details
+          hide-details="auto"
           label="Notes"
           placeholder="Long text..."
           v-model="formModel.noteDescription"
           variant="outlined"
-          :rules="[(v) => !!v || 'Notes is required']"
+          :rules="[(v) => checkNotesLength(v)]"
       /></template>
       <template #footer>
         <check-permission-role :role="Role.StudentAddSINExpiry">
@@ -50,15 +50,15 @@
   </v-form>
 </template>
 <script lang="ts">
-import { PropType, ref, reactive } from "vue";
+import { PropType, ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog } from "@/composables";
+import { useModalDialog, useValidators } from "@/composables";
 import { Role, VForm } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { UpdateSINValidationAPIInDTO } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
   props: {
     entityType: {
@@ -71,6 +71,8 @@ export default {
     },
   },
   setup() {
+    const NOTES_MAX_CHARACTERS = 500;
+    const { checkMaxCharacters } = useValidators();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       UpdateSINValidationAPIInDTO | boolean
     >();
@@ -93,6 +95,16 @@ export default {
       resolvePromise(false);
     };
 
+    const checkNotesLength = (notes: string) => {
+      if (notes) {
+        return (
+          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
+          "Max 500 characters."
+        );
+      }
+      return "Note body is required.";
+    };
+
     return {
       showDialog,
       showModal,
@@ -101,7 +113,8 @@ export default {
       Role,
       addExpiryDateForm,
       formModel,
+      checkNotesLength,
     };
   },
-};
+});
 </script>

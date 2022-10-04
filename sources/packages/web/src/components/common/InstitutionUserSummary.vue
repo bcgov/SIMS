@@ -11,7 +11,7 @@
           data-cy="searchBox"
           @keyup.enter="searchUserTable"
           prepend-inner-icon="mdi-magnify"
-          hide-details
+          hide-details="auto"
         >
         </v-text-field>
         <check-permission-role :role="Role.InstitutionAddNewUser">
@@ -50,9 +50,13 @@
       <Column
         :field="UserFields.DisplayName"
         header="Name"
-        sortable="true"
+        :sortable="true"
       ></Column>
-      <Column :field="UserFields.Email" header="Email" sortable="true"></Column>
+      <Column
+        :field="UserFields.Email"
+        header="Email"
+        :sortable="true"
+      ></Column>
       <Column :field="UserFields.UserType" header="User Type">
         <template #body="slotProps">
           <span class="text-capitalize">{{ slotProps.data.userType }}</span>

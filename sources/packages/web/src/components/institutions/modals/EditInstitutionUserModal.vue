@@ -13,7 +13,7 @@
         >
           <template #user-name>
             <v-text-field
-              hide-details
+              hide-details="auto"
               v-model="userInfo.displayName"
               disabled
               class="mr-3 bceid-input"

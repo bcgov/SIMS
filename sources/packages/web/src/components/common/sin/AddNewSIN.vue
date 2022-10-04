@@ -7,7 +7,7 @@
     >
       <template #content>
         <error-summary :errors="addNewSINForm.errors" />
-        <div class="pb-2">
+        <div class="pb-5">
           <span class="label-value"
             >Enter a new SIN for the student. The SIN will be validated with
             Employment and Social Development Canada (ESDC) unless you skip the
@@ -15,7 +15,7 @@
           >
         </div>
         <v-text-field
-          hide-details
+          hide-details="auto"
           label="Social Insurance Number (SIN)"
           v-model="formModel.sin"
           variant="outlined"
@@ -23,7 +23,7 @@
         <v-checkbox
           label="Skip the validations"
           v-model="formModel.skipValidations"
-          hide-details />
+          hide-details="auto" />
         <banner
           class="mb-4"
           v-if="formModel.skipValidations"
@@ -34,12 +34,12 @@
         >
         </banner>
         <v-textarea
-          hide-details
+          hide-details="auto"
           label="Notes"
           placeholder="Long text..."
           v-model="formModel.noteDescription"
           variant="outlined"
-          :rules="[(v) => !!v || 'Notes is required']"
+          :rules="[(v) => checkNotesLength(v)]"
       /></template>
       <template #footer>
         <check-permission-role :role="allowedRole">
@@ -75,6 +75,8 @@ export default {
     },
   },
   setup() {
+    const NOTES_MAX_CHARACTERS = 500;
+    const { checkMaxCharacters } = useValidators();
     const { isSINValid } = useValidators();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       CreateSINValidationAPIInDTO | boolean
@@ -106,6 +108,16 @@ export default {
       return "SIN is required";
     };
 
+    const checkNotesLength = (notes: string) => {
+      if (notes) {
+        return (
+          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
+          "Max 500 characters."
+        );
+      }
+      return "Note body is required.";
+    };
+
     return {
       showDialog,
       showModal,
@@ -115,6 +127,7 @@ export default {
       formModel,
       BannerTypes,
       sinValidation,
+      checkNotesLength,
     };
   },
 };

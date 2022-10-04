@@ -17,7 +17,7 @@
           v-model="searchCriteria"
           @keyup.enter="searchAppeals"
           prepend-inner-icon="mdi-magnify"
-          hide-details
+          hide-details="auto"
         >
         </v-text-field>
       </template>

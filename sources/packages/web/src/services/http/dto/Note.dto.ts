@@ -7,10 +7,12 @@ export interface NoteAPIInDTO {
   noteType: StudentNoteType;
   description: string;
 }
+
 export interface NoteTypeItemsDTO {
   title: string;
   value: string;
 }
+
 /**
  * Notes detail DTO. This is used for view only purpose.
  */

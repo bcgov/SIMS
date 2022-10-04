@@ -26,13 +26,12 @@
           placeholder="Long text..."
           v-model="formModel.description"
           variant="outlined"
-          :rules="[(v) => !!v || 'Note body is required']"
+          :rules="[(v) => checkNotesLength(v)]"
       /></template>
       <template #footer>
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
             <footer-buttons
-              justify="end"
               primaryLabel="Add note"
               @secondaryClick="cancel"
               @primaryClick="submit"
@@ -46,10 +45,10 @@
 </template>
 
 <script lang="ts">
-import { PropType, ref, reactive, onMounted } from "vue";
+import { PropType, ref, reactive, onMounted, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog } from "@/composables";
+import { useModalDialog, useValidators } from "@/composables";
 import {
   Role,
   VForm,
@@ -60,7 +59,7 @@ import {
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { NoteAPIInDTO, NoteTypeItemsDTO } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
   props: {
     entityType: {
@@ -72,8 +71,9 @@ export default {
       required: true,
     },
   },
-
-  setup(props: any) {
+  setup(props) {
+    const NOTES_MAX_CHARACTERS = 500;
+    const { checkMaxCharacters } = useValidators();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       NoteAPIInDTO | boolean
     >();
@@ -109,6 +109,17 @@ export default {
       addNewNoteForm.value.resetValidation();
       resolvePromise(false);
     };
+
+    const checkNotesLength = (notes: string) => {
+      if (notes) {
+        return (
+          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
+          "Max 500 characters."
+        );
+      }
+      return "Note body is required.";
+    };
+
     return {
       showDialog,
       showModal,
@@ -118,7 +129,8 @@ export default {
       cancel,
       addNewNoteForm,
       noteTypeItems,
+      checkNotesLength,
     };
   },
-};
+});
 </script>

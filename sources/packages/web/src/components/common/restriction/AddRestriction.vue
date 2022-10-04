@@ -4,7 +4,6 @@
     <modal-dialog-base
       title="Add new restriction"
       :showDialog="showDialog"
-      max-width="730"
       min-width="730"
     >
       <template #content>
@@ -13,7 +12,7 @@
           class="mt-4"
           label="Category"
           density="compact"
-          :items="items"
+          :items="restrictionCategories"
           v-model="selectedCategory"
           variant="outlined"
           placeholder="Select a category"
@@ -22,7 +21,7 @@
         <v-autocomplete
           label="Reason"
           density="compact"
-          :items="reasonItems"
+          :items="restrictionReasons"
           v-model="formModel.restrictionId"
           variant="outlined"
           placeholder="Select a reason"
@@ -32,7 +31,7 @@
           placeholder="Long text..."
           v-model="formModel.noteDescription"
           variant="outlined"
-          :rules="[(v) => !!v || 'Notes is required']"
+          :rules="[(v) => checkNotesLength(v)]"
       /></template>
       <template #footer>
         <check-permission-role :role="allowedRole">
@@ -54,7 +53,7 @@
 import { PropType, ref, onMounted, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog } from "@/composables";
+import { useModalDialog, useValidators } from "@/composables";
 import { Role, VForm, RestrictionEntityType } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import {
@@ -78,8 +77,10 @@ export default {
     },
   },
   setup(props: any) {
-    const items = ref([] as AssignRestrictionCategoryOutDTO[]);
-    const reasonItems = ref([] as AssignRestrictionReasonsOutDTO[]);
+    const NOTES_MAX_CHARACTERS = 500;
+    const { checkMaxCharacters } = useValidators();
+    const restrictionCategories = ref([] as AssignRestrictionCategoryOutDTO[]);
+    const restrictionReasons = ref([] as AssignRestrictionReasonsOutDTO[]);
     const selectedCategory = ref("");
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       AssignRestrictionAPIInDTO | false
@@ -92,40 +93,40 @@ export default {
         await RestrictionService.shared.getRestrictionCategories();
       // Restriction category Designation is exclusively for Institution. Rest of them are for Student.
       if (props.entityType === RestrictionEntityType.Student) {
-        for (const category of categories) {
-          items.value.push({
+        categories.map((category) => {
+          restrictionCategories.value.push({
             title: category.description,
             value: category.description,
           });
-        }
+        });
       } else {
-        items.value.push({
+        restrictionCategories.value.push({
           title: "Designation",
           value: "Designation",
         });
       }
     };
 
-    onMounted(async () => {
-      categoryItems();
-    });
+    onMounted(categoryItems);
 
     const categoryChanged = (category: string) => {
       categoryReasonItems(category);
     };
 
     const categoryReasonItems = async (category: string) => {
-      reasonItems.value = [];
+      restrictionReasons.value = [];
       const reasons = await RestrictionService.shared.getRestrictionReasons(
         category,
       );
       // Restriction category Designation is exclusively for Institution. Rest of them are for Student.
-      for (const reason of reasons) {
-        reasonItems.value.push({
-          title: reason.description,
-          value: reason.id,
-        });
-      }
+      reasons.map((reason) => {
+        {
+          restrictionReasons.value.push({
+            title: reason.description,
+            value: reason.id,
+          });
+        }
+      });
     };
 
     const submit = async () => {
@@ -144,6 +145,16 @@ export default {
       resolvePromise(false);
     };
 
+    const checkNotesLength = (notes: string) => {
+      if (notes) {
+        return (
+          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
+          "Max 500 characters."
+        );
+      }
+      return "Note body is required.";
+    };
+
     return {
       showDialog,
       showModal,
@@ -152,10 +163,11 @@ export default {
       Role,
       addRestrictionForm,
       formModel,
-      items,
-      reasonItems,
+      restrictionCategories,
+      restrictionReasons,
       selectedCategory,
       categoryChanged,
+      checkNotesLength,
     };
   },
 };
