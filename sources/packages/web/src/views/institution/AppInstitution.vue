@@ -48,7 +48,12 @@
               aria-label="settings"
             ></v-btn>
           </template>
-          <v-list>
+          <v-list
+            active-class="active-list-item"
+            density="compact"
+            bg-color="background"
+            active-color="primary"
+          >
             <template v-for="(item, index) in menuItems" :key="index">
               <v-list-item :value="index" @click="item.command">
                 <v-list-item-title>

@@ -6,7 +6,7 @@ import * as components from "vuetify/lib/components";
 import * as directives from "vuetify/lib/directives";
 import { aliases, fa } from "vuetify/iconsets/fa";
 import { mdi } from "vuetify/iconsets/mdi";
-
+// todo: ann discuss default with dev -(conflict with collapsable component in formio)
 export default createVuetify({
   components,
   directives,

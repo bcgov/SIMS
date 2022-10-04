@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <student-page-container>
     <v-row no-gutters>
       <v-col cols="8">
         <h1 class="category-header-large primary-color">Almost there!</h1>
@@ -26,5 +26,5 @@
           src="@/assets/images/person-chair-mobile.svg"
       /></v-col>
     </v-row>
-  </full-page-container>
+  </student-page-container>
 </template>

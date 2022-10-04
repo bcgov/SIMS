@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer app color="background" permanent>
     <v-list
-      active-class="active-sidebar-item"
+      active-class="active-list-item"
       density="compact"
       bg-color="background"
       active-color="primary"

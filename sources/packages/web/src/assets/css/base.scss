@@ -216,12 +216,12 @@ html * {
 }
 
 // Active sidebar class to match with Figma.
-.active-sidebar-item.v-list-item--active > .v-list-item__overlay {
+.active-list-item.v-list-item--active > .v-list-item__overlay {
   opacity: 0 !important;
 }
 
 // Active sidebar class to match with Figma.
-.active-sidebar-item .v-list-item-title {
+.active-list-item .v-list-item-title {
   @extend .label-bold;
 }
 

@@ -10,7 +10,7 @@ export interface InProgressApplicationDetailsAPIOutDTO {
   id: number;
   applicationStatus: ApplicationStatus;
   pirStatus: ProgramInfoStatus;
-  PIRDeniedReason?: string;
+  pirDeniedReason?: string;
   offeringStatus?: OfferingStatus;
   exceptionStatus?: ApplicationExceptionStatus;
   parent1IncomeVerificationStatus?: SuccessWaitingStatus;

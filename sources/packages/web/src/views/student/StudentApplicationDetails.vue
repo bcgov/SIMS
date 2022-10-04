@@ -17,7 +17,13 @@
                 >Application actions
               </v-btn>
             </template>
-            <v-list class="action-list">
+            <v-list
+              class="action-list"
+              active-class="active-list-item"
+              density="compact"
+              bg-color="background"
+              active-color="primary"
+            >
               <template v-for="(item, index) in items" :key="index">
                 <v-list-item :value="index" @click="item.command">
                   <template v-slot:prepend>

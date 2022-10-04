@@ -59,9 +59,18 @@
               v-bind="props"
             ></v-btn>
           </template>
-          <v-list>
+          <v-list
+            active-class="active-list-item"
+            density="compact"
+            bg-color="background"
+            active-color="primary"
+          >
             <template v-for="(item, index) in menuItems" :key="index">
-              <v-list-item :value="index" @click="item.command">
+              <v-list-item
+                :value="index"
+                @click="item.command"
+                :to="item.props?.to"
+              >
                 <v-list-item-title>
                   <span class="label-bold">{{ item.title }}</span>
                 </v-list-item-title>
@@ -113,27 +122,32 @@ export default defineComponent({
         });
       }
     };
+
     const hasAuthenticatedStudentAccount = computed(
       () => isAuthenticated.value && hasStudentAccount.value,
     );
+
     const menuItems = computed(() => {
       const items: MenuItemModel[] = [];
       if (hasStudentAccount.value) {
-        items.push({
-          title: "Profile",
-          props: {
-            to: { name: StudentRoutesConst.STUDENT_PROFILE_EDIT },
-          },
-        });
-
-        items.push({
-          title: "Account Activity",
-          props: {
-            to: {
-              name: StudentRoutesConst.STUDENT_ACCOUNT_ACTIVITY,
+        items.push(
+          {
+            title: "Profile",
+            props: {
+              to: {
+                name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
+              },
             },
           },
-        });
+          {
+            title: "Account Activity",
+            props: {
+              to: {
+                name: StudentRoutesConst.STUDENT_ACCOUNT_ACTIVITY,
+              },
+            },
+          },
+        );
       }
 
       items.push({
@@ -142,7 +156,6 @@ export default defineComponent({
           await executeLogout(ClientIdType.Student);
         },
       });
-
       return items;
     });
 

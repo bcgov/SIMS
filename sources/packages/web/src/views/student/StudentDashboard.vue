@@ -1,7 +1,6 @@
 <template>
-  <student-page-container layout-template="centered"
-    >{{ formData }}
-    <!-- todo: student namr ann first name is full name verify and check api -->
+  <student-page-container layout-template="centered">
+    <!-- TODO: ANN FORM DEFINITION -->
     <formio-container
       formName="studentWelcomePage"
       :formData="formData"
