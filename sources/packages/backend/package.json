@@ -28,6 +28,7 @@
     "@nestjs/core": "^9.0.3",
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/mapped-types": "^1.1.0",
+    "@nestjs/microservices": "^9.1.2",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.3",
     "@nestjs/swagger": "^6.0.4",
@@ -50,7 +51,8 @@
     "soap": "^0.36.0",
     "ssh2-sftp-client": "^7.1.0",
     "swagger-ui-express": "^4.3.0",
-    "typeorm": "^0.3.7"
+    "typeorm": "^0.3.7",
+    "zeebe-node": "^8.1.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.1.4",
@@ -65,11 +67,11 @@
     "@types/papaparse": "^5.3.5",
     "@types/passport-jwt": "^3.0.4",
     "@types/supertest": "^2.0.10",
-    "@typescript-eslint/eslint-plugin": "^4.6.1",
-    "@typescript-eslint/parser": "^4.6.1",
+    "@typescript-eslint/eslint-plugin": "^5.39.0",
+    "@typescript-eslint/parser": "^5.39.0",
     "copy-webpack-plugin": "^11.0.0",
     "cross-env": "^7.0.3",
-    "eslint": "^7.12.1",
+    "eslint": "^8.24.0",
     "eslint-config-prettier": "7.0.0",
     "eslint-plugin-prettier": "^3.1.4",
     "faker": "^5.2.0",
