@@ -93,7 +93,7 @@ export default {
         await RestrictionService.shared.getRestrictionCategories();
       // Restriction category Designation is exclusively for Institution. Rest of them are for Student.
       if (props.entityType === RestrictionEntityType.Student) {
-        categories.map((category) => {
+        categories.forEach((category) => {
           restrictionCategories.value.push({
             title: category.description,
             value: category.description,
@@ -115,7 +115,7 @@ export default {
         selectedCategory.value,
       );
       // Restriction category Designation is exclusively for Institution. Rest of them are for Student.
-      reasons.map((reason) => {
+      reasons.forEach((reason) => {
         {
           restrictionReasons.value.push({
             title: reason.description,

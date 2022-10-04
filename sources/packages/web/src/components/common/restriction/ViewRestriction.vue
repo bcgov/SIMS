@@ -25,9 +25,9 @@
             :propertyValue="restrictionData.restrictionNote"
           />
           <v-row
-            ><v-col class="font-weight-bold">Date created</v-col
-            ><v-col class="font-weight-bold">Created by</v-col
-            ><v-col class="font-weight-bold">Status</v-col></v-row
+            ><v-col class="label-bold">Date created</v-col
+            ><v-col class="label-bold">Created by</v-col
+            ><v-col class="label-bold">Status</v-col></v-row
           >
           <v-row
             ><v-col>{{ restrictionData.createdAt }}</v-col
@@ -50,15 +50,15 @@
           variant="outlined"
           :rules="[(v) => checkResolutionNotesLength(v)]"
         />
-        <h4 class="font-weight-bold" v-if="!restrictionData.isActive">
+        <h4 class="category-header-medium" v-if="!restrictionData.isActive">
           Resolution
         </h4>
         <content-group v-if="!restrictionData.isActive">
-          <p class="category-header-medium">Resolution reason</p>
+          <p class="label-bold">Resolution reason</p>
           <p>{{ restrictionData.resolutionNote }}</p>
           <v-row
-            ><v-col class="font-weight-bold">Date resolved</v-col
-            ><v-col class="font-weight-bold">Resolved by</v-col></v-row
+            ><v-col class="label-bold">Date resolved</v-col
+            ><v-col class="label-bold">Resolved by</v-col></v-row
           >
           <v-row
             ><v-col>{{ restrictionData.updatedAt }}</v-col
