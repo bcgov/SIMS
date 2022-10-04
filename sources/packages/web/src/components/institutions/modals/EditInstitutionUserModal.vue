@@ -20,7 +20,7 @@
               density="compact"
               variant="outlined"
               :label="userNameLabel"
-              :rules="[(v) => !!v || 'Basic BCeID user Id is required']"
+              :rules="[(v) => !!v || 'Basic BCeID user Id is required.']"
             />
           </template>
         </institution-user-management>

@@ -105,7 +105,7 @@ export default {
       if (sin) {
         return isSINValid(sin) || "Please provide a proper SIN.";
       }
-      return "SIN is required";
+      return "SIN is required.";
     };
 
     const checkNotesLength = (notes: string) => {
