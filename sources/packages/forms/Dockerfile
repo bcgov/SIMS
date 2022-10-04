@@ -3,7 +3,7 @@ ARG FORMS_SA_USER_NAME
 ARG FORMS_SA_PASSWORD
 
 # Base Image
-FROM node:12.18.3-slim
+FROM node:16.17.0-alpine3.16
 
 WORKDIR /forms-deploy
 

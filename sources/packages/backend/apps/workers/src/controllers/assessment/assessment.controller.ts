@@ -17,6 +17,11 @@ export class AssessmentController {
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {}
 
+  /**
+   * This is a sample code to demonstrated the workers feature.
+   * @param job information to execute the work.
+   * @returns job completion or job failure information.
+   */
   @ZeebeWorker("load-assessment-data")
   async loadAssessmentData(
     job: Readonly<
