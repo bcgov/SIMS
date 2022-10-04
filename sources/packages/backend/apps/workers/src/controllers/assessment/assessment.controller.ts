@@ -30,6 +30,9 @@ export class AssessmentController {
     const assessment = await this.studentAssessmentService.getById(
       job.variables.assessmentId,
     );
+    if (!assessment) {
+      return job.fail("Assessment not found.");
+    }
     return job.complete({ data: assessment.application.data });
   }
 }

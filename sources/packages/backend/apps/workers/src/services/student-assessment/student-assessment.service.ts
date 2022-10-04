@@ -15,13 +15,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     super(dataSource.getRepository(StudentAssessment));
   }
 
-  /**
-   * Get the assessment and the related application information.
-   * * This method is used by the the assessment workflow as a main source
-   * * of information for the assessment/reassessment and the application.
-   * @param assessmentId assessment id .
-   * @returns assessment and the related application information.
-   */
   async getById(assessmentId: number): Promise<StudentAssessment> {
     return this.repo
       .createQueryBuilder("assessment")

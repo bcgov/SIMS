@@ -5,13 +5,17 @@ import {
 } from "@nestjs/microservices";
 import { ZBClient, ZBWorkerOptions } from "zeebe-node";
 
+/**
+ * Zeebe strategy to stablish the connectivity and create all workers.
+ */
 export class ZeebeTransportStrategy
   extends Server
   implements CustomTransportStrategy
 {
   private zeebeClient: ZBClient;
   /**
-   * This method is triggered when you run "app.listen()".
+   * Identify all Zeebe workers in the controllers and create the
+   * respective Zeebe workers to handle all the jobs.
    */
   listen(callback: () => void) {
     this.zeebeClient = new ZBClient();
@@ -29,7 +33,7 @@ export class ZeebeTransportStrategy
   }
 
   /**
-   * This method is triggered on application shutdown.
+   * Handles the application close.
    */
   async close() {
     console.info("Closing zeebe client.");
