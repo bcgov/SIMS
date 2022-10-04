@@ -13,9 +13,8 @@ on:
         default: "NULL"
 
 jobs:
-  # Deploy API/App images in Test
   deployTest:
-    name: Deploy App, API, and DB to TEST environment
+    name: Deploy Web, SIMS-Api, Workers, and DB to TEST environment
     runs-on: ubuntu-latest
     env:
       BUILD_ID: ${{ github.event.inputs.BUILD_ID }}
@@ -53,12 +52,16 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-      # Deploy the api
-      - name: Deploy API
+        # Deploy SIMS-Api, Web and Workers
+      - name: Deploy SIMS-API
         working-directory: "./devops/"
         run: |
           make oc-deploy-api
-      - name: Deploy APP
+      - name: Deploy Workers
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-workers
+      - name: Deploy Web/Frontend
         working-directory: "./devops/"
         run: |
           make oc-deploy-web
