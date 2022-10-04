@@ -16,7 +16,7 @@
           v-model="selectedCategory"
           variant="outlined"
           placeholder="Select a category"
-          @update:modelValue="categoryChanged(selectedCategory)"
+          @update:modelValue="categoryReasonItems()"
           :rules="[(v) => !!v || 'Category is required.']" />
         <v-autocomplete
           label="Reason"
@@ -58,8 +58,8 @@ import { Role, VForm, RestrictionEntityType } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import {
   AssignRestrictionAPIInDTO,
-  AssignRestrictionCategoryOutDTO,
-  AssignRestrictionReasonsOutDTO,
+  AssignRestrictionCategories,
+  AssignRestrictionReasons,
 } from "@/services/http/dto";
 import { RestrictionService } from "@/services/RestrictionService";
 
@@ -79,8 +79,8 @@ export default {
   setup(props: any) {
     const NOTES_MAX_CHARACTERS = 500;
     const { checkMaxCharacters } = useValidators();
-    const restrictionCategories = ref([] as AssignRestrictionCategoryOutDTO[]);
-    const restrictionReasons = ref([] as AssignRestrictionReasonsOutDTO[]);
+    const restrictionCategories = ref([] as AssignRestrictionCategories[]);
+    const restrictionReasons = ref([] as AssignRestrictionReasons[]);
     const selectedCategory = ref("");
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       AssignRestrictionAPIInDTO | false
@@ -109,14 +109,10 @@ export default {
 
     onMounted(categoryItems);
 
-    const categoryChanged = (category: string) => {
-      categoryReasonItems(category);
-    };
-
-    const categoryReasonItems = async (category: string) => {
+    const categoryReasonItems = async () => {
       restrictionReasons.value = [];
       const reasons = await RestrictionService.shared.getRestrictionReasons(
-        category,
+        selectedCategory.value,
       );
       // Restriction category Designation is exclusively for Institution. Rest of them are for Student.
       reasons.map((reason) => {
@@ -166,7 +162,7 @@ export default {
       restrictionCategories,
       restrictionReasons,
       selectedCategory,
-      categoryChanged,
+      categoryReasonItems,
       checkNotesLength,
     };
   },

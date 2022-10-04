@@ -1,77 +1,72 @@
 <template>
-  <full-page-container :full-width="true">
-    <v-row class="m-2">
-      <v-col class="category-header-large color-blue">{{ title }}</v-col>
-      <v-col>
-        <check-permission-role :role="allowedRole">
-          <template #="{ notAllowed }">
-            <v-btn
-              @click="addNewNote"
-              class="float-right"
-              color="primary"
-              prepend-icon="fa:far fa-edit"
-              :disabled="notAllowed"
-            >
-              Create new note
-            </v-btn>
-          </template>
-        </check-permission-role>
-      </v-col>
-    </v-row>
-    <v-row class="m-2" v-if="!notes || notes.length === 0"
-      ><v-col
-        >No notes found. Please click on create new note to add one.</v-col
-      ></v-row
-    >
-    <v-timeline
-      truncate-line="both"
-      side="end"
-      :align="left"
-      class="justify-content-start"
-    >
-      <v-timeline-item
-        v-for="note in notes"
-        :key="note"
-        dot-color="primary"
-        size="x-small"
-        fill-dot
+  <v-card>
+    <v-container :fluid="true">
+      <v-row class="m-2">
+        <v-col class="category-header-large color-blue">{{ title }}</v-col>
+        <v-col>
+          <check-permission-role :role="allowedRole">
+            <template #="{ notAllowed }">
+              <v-btn
+                @click="addNewNote"
+                class="float-right"
+                color="primary"
+                prepend-icon="fa:far fa-edit"
+                :disabled="notAllowed"
+              >
+                Create new note
+              </v-btn>
+            </template>
+          </check-permission-role>
+        </v-col>
+      </v-row>
+      <v-row class="m-2" v-if="!notes || notes.length === 0"
+        ><v-col
+          >No notes found. Please click on create new note to add one.</v-col
+        ></v-row
       >
-        <div class="d-flex">
-          <span class="primary-color marker-text">{{
-            dateOnlyLongString(note.createdAt)
-          }}</span>
-          <div class="mx-8">
-            <div class="content-header">{{ note.noteType }}</div>
-            <div v-if="showMoreNotes(notes)" class="header mt-2">
-              {{ note.description.substring(0, 150) }}
-              <a @click="toggleNotes(notes)" class="primary-color"
-                >Show more...</a
-              >
-            </div>
-            <div v-else class="header mt-2">
-              {{ note.description }}
-              <a
-                v-if="note.showMore"
-                @click="toggleNotes(notes)"
-                class="primary-color"
-                >Show less...</a
-              >
-            </div>
-            <div class="content-footer mt-2 mb-8 secondary-color-light">
-              <span>{{ timeOnlyInHoursAndMinutes(note.createdAt) }}</span
-              ><span class="mx-2">|</span>
-              <span>{{ `${note.lastName}, ${note.firstName}` }}</span>
+      <v-timeline side="end" class="justify-content-start" truncate-line="both">
+        <v-timeline-item
+          v-for="note in notes"
+          :key="note"
+          dot-color="primary"
+          size="x-small"
+          fill-dot
+        >
+          <div class="d-flex">
+            <span class="primary-color label-bold">{{
+              dateOnlyLongString(note.createdAt)
+            }}</span>
+            <div class="mx-8">
+              <div class="content-header">{{ note.noteType }}</div>
+              <div v-if="showMoreNotes(notes)" class="header mt-2">
+                {{ note.description.substring(0, 150) }}
+                <a @click="toggleNotes(notes)" class="primary-color"
+                  >Show more...</a
+                >
+              </div>
+              <div v-else class="header mt-2">
+                {{ note.description }}
+                <a
+                  v-if="note.showMore"
+                  @click="toggleNotes(notes)"
+                  class="primary-color"
+                  >Show less...</a
+                >
+              </div>
+              <div class="content-footer mt-2 mb-8 secondary-color-light">
+                <span>{{ timeOnlyInHoursAndMinutes(note.createdAt) }}</span
+                ><span class="mx-2">|</span>
+                <span>{{ `${note.lastName}, ${note.firstName}` }}</span>
+              </div>
             </div>
           </div>
-        </div>
-      </v-timeline-item>
-    </v-timeline>
-    <create-note-modal
-      ref="createNotesModal"
-      :entityType="entityType"
-      :allowedRole="allowedRole"
-    />
-  </full-page-container>
+        </v-timeline-item>
+      </v-timeline>
+      <create-note-modal
+        ref="createNotesModal"
+        :entityType="entityType"
+        :allowedRole="allowedRole" /></v-container
+  ></v-card>
 </template>
 
 <script lang="ts">
@@ -111,11 +106,8 @@ export default {
     const addNewNote = async () => {
       const addNewNoteData = await createNotesModal.value.showModal();
       if (addNewNoteData) {
-        emitToParent(addNewNoteData as NoteAPIInDTO);
+        context.emit("submitData", addNewNoteData);
       }
-    };
-    const emitToParent = async (data: NoteAPIInDTO) => {
-      context.emit("submitData", data);
     };
 
     const toggleNotes = (item: NoteItemModel) => {
@@ -134,7 +126,6 @@ export default {
       addNewNote,
       createNotesModal,
       showModal,
-      emitToParent,
       toggleNotes,
       showMoreNotes,
       LayoutTemplates,

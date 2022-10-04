@@ -8,7 +8,7 @@ export interface NoteAPIInDTO {
   description: string;
 }
 
-export interface NoteTypeItemsDTO {
+export interface NoteTypeItems {
   title: string;
   value: string;
 }

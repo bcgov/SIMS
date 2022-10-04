@@ -8,7 +8,7 @@
     >
       <template #content>
         <error-summary :errors="viewRestrictionForm.errors" />
-        <h4 class="font-weight-bold" v-if="!restrictionData.isActive">
+        <h4 class="category-header-medium" v-if="!restrictionData.isActive">
           Restriction information
         </h4>
         <content-group>
@@ -54,7 +54,7 @@
           Resolution
         </h4>
         <content-group v-if="!restrictionData.isActive">
-          <p class="font-weight-bold">Resolution reason</p>
+          <p class="category-header-medium">Resolution reason</p>
           <p>{{ restrictionData.resolutionNote }}</p>
           <v-row
             ><v-col class="font-weight-bold">Date resolved</v-col

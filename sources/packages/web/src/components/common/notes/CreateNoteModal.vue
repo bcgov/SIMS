@@ -57,7 +57,7 @@ import {
   NoteEntityType,
 } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { NoteAPIInDTO, NoteTypeItemsDTO } from "@/services/http/dto";
+import { NoteAPIInDTO, NoteTypeItems } from "@/services/http/dto";
 
 export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
@@ -79,7 +79,7 @@ export default defineComponent({
     >();
     const addNewNoteForm = ref({} as VForm);
     const formModel = reactive({} as NoteAPIInDTO);
-    const noteTypeItems = ref([] as NoteTypeItemsDTO[]);
+    const noteTypeItems = ref([] as NoteTypeItems[]);
 
     onMounted(async () => {
       if (props.entityType === NoteEntityType.Institution) {
