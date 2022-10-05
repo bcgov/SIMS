@@ -120,6 +120,8 @@ parameters:
     value: "production"
   - name: BUILD_TAG
     value: "0"
+  - name: API_SECRET_NAME
+    value: sims-api-creds
   - name: ATBC_LOGIN_ENDPOINT
     require: true
   - name: ZEEBE_ADDRESS_KEY
