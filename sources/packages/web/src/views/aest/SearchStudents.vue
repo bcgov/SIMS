@@ -38,7 +38,7 @@
               variant="outlined"
               v-model="firstName"
               @keyup.enter="searchStudents"
-              hide-detail
+              hide-details
             /> </v-col
           ><v-col>
             <v-text-field
