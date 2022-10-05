@@ -6,7 +6,7 @@ html * {
 }
 // todo: when all v-navigation-drawer is updated, remove this class.
 .body-background {
-  background: $color-background;
+  background: $default-background;
 }
 
 .bold-text {
@@ -327,6 +327,12 @@ html * {
 }
 
 .content-group-info {
-  background-color: $color-background;
+  background-color: $default-background;
   border: 2px solid $common-border-color !important;
+}
+
+.collapsible .card-header.bg-default {
+  border-left: 8px solid $brand-blue;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }

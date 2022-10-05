@@ -1,8 +1,8 @@
 <template>
-  <v-navigation-drawer app permanent color="background">
+  <v-navigation-drawer app permanent color="default">
     <v-list
       density="compact"
-      bg-color="background"
+      bg-color="default"
       active-color="primary"
       class="sidebar-item no-wrap"
       active-class="active-list-item"
@@ -15,7 +15,7 @@
         nav
         class="sidebar-item no-wrap"
         active-class="active-list-item"
-        bg-color="background"
+        bg-color="default"
         active-color="primary"
       >
         <v-list-item

@@ -51,7 +51,7 @@
           <v-list
             active-class="active-list-item"
             density="compact"
-            bg-color="background"
+            bg-color="default"
             active-color="primary"
           >
             <template v-for="(item, index) in menuItems" :key="index">

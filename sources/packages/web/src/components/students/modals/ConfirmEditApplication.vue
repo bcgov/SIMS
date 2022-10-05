@@ -1,19 +1,16 @@
 <template>
   <modal-dialog-base
     title="Confirm Edit Application"
-    dialogType="question"
     :showDialog="showDialog"
-    @dialogClosed="dialogClosed"
+    max-width="730"
   >
-    <template v-slot:content>
-      <v-container class="p-component text-dark">
-        <p>
-          This will result in a new assessment which could cause a delay in your
-          application, are you sure you want to proceed?
-        </p>
-      </v-container>
+    <template #content>
+      <p>
+        This will result in a new assessment which could cause a delay in your
+        application, are you sure you want to proceed?
+      </p>
     </template>
-    <template v-slot:footer>
+    <template #:footer>
       <footer-buttons
         primaryLabel="Yes"
         secondaryLabel="No"

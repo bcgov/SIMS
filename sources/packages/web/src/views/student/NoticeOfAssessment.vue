@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Application details"
-        subTitle="Notice of Assessment"
+        subTitle="Assessment"
         :routeLocation="{
           name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
           params: {
@@ -12,7 +12,9 @@
         }"
       />
     </template>
+    <!-- todo: ann form definition -->
     <notice-of-assessment-form-view :assessmentId="assessmentId" />
+    <!-- todo: ann btn -->
     <v-row class="justify-center mt-4">
       <v-btn color="primary" @click="confirmAssessment()">
         Confirmation of assessment

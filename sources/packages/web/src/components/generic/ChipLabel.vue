@@ -29,7 +29,7 @@ export default {
         case StatusChipTypes.Error:
           return "error";
         case StatusChipTypes.Default:
-          return "default";
+          return "black";
         default:
           return "";
       }
