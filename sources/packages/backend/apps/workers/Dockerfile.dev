@@ -6,9 +6,6 @@ LABEL maintainer="BC GOV"
 # Updating container path variable with node bin
 ENV PATH $PATH:/app/node_modules/.bin
 
-# Application Port
-ENV PORT 3000
-
 WORKDIR /app
 
 # Copying package.json and package-lock.json
@@ -21,10 +18,7 @@ RUN npm ci
 COPY . .
 
 # Building app
-RUN npm run build api
-
-# Exposing application port
-EXPOSE ${PORT}
+RUN npm run build workers
 
 # Entry point
-CMD [ "npm", "run", "docker:start:api" ]
+CMD [ "npm", "run", "docker:start:workers" ]

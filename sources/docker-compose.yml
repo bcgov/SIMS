@@ -83,7 +83,33 @@ services:
     depends_on:
       - postgres
   # - API
-  # App
+  # Workers
+  workers:
+    image: workers-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    container_name: workers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    build:
+      context: ./packages/backend
+      dockerfile: ./apps/workers/Dockerfile.dev
+    environment:
+      - NODE_ENV=docker
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}    
+      - ZEEBE_ADDRESS=${ZEEBE_ADDRESS}
+      - ZEEBE_CLIENT_ID=${ZEEBE_CLIENT_ID}
+      - ZEEBE_CLIENT_SECRET=${ZEEBE_CLIENT_SECRET}
+      - ZEEBE_AUTHORIZATION_SERVER_URL=${ZEEBE_AUTHORIZATION_SERVER_URL}
+    volumes:
+      - ./packages/backend/apps/workers/src:/app/src
+    networks:
+      - local-network
+    restart: always
+    depends_on:
+      - postgres
+  # - Workers
+  # Web
   web:
     image: web-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: web-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
@@ -101,7 +127,7 @@ services:
     restart: always
     depends_on:
       - api
-  # - App
+  # - Web
   # Postgres
   postgres:
     image: postgres-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}

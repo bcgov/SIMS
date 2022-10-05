@@ -35,6 +35,10 @@ objects:
       gc-notify-url: ${GC_NOTIFY_URL}
       gc-notify-api-key: ${GC_NOTIFY_API_KEY}
       gc-notify-to-address: ${GC_NOTIFY_TO_ADDRESS}
+      zeebe-address: ${ZEEBE_ADDRESS}
+      zeebe-client-id: ${ZEEBE_CLIENT_ID}
+      zeebe-client-secret: ${ZEEBE_CLIENT_SECRET}
+      zeebe-authorization-server-url: ${ZEEBE_AUTHORIZATION_SERVER_URL}
 parameters:
   - name: NAME
     description: |
@@ -171,3 +175,23 @@ parameters:
     required: true
     description: |
       GC notify to address to send email notification.
+  - name: ZEEBE_ADDRESS
+    displayName: Zeebe address
+    required: true
+    description: |
+      Zeebe address to connect to.
+  - name: ZEEBE_CLIENT_ID
+    displayName: Zeebe client id.
+    required: true
+    description: |
+      Zeebe client id used for authentication.
+  - name: ZEEBE_CLIENT_SECRET
+    displayName: Zeebe client id.
+    required: true
+    description: |
+      Zeebe client secret used for authentication.
+  - name: ZEEBE_AUTHORIZATION_SERVER_URL
+    displayName: Zeebe authorization server url
+    required: true
+    description: |
+      Zeebe authorization server url.
