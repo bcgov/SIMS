@@ -14,7 +14,7 @@
           variant="outlined"
           @keyup.enter="goToSearchProgramName()"
           prepend-inner-icon="mdi-magnify"
-          hide-details
+          hide-details="auto"
         />
       </template>
     </body-header>

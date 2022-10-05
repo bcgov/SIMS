@@ -47,3 +47,8 @@ export interface InputFile extends Blob {
   size: number;
   type: string;
 }
+
+export interface SelectItemType {
+  title: string;
+  value: string | number;
+}

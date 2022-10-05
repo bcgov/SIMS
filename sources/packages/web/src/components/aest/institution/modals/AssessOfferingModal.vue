@@ -11,7 +11,7 @@
           placeholder="Long text..."
           v-model="formModel.assessmentNotes"
           variant="outlined"
-          :rules="[(v) => !!v || 'Notes is required']"
+          :rules="[checkNotesLengthRule]"
         />
       </template>
       <template #footer>
@@ -33,7 +33,7 @@
 <script lang="ts">
 import { ref, reactive, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog } from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { OfferingStatus, Role, VForm } from "@/types";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
@@ -53,6 +53,7 @@ export default {
     },
   },
   setup(props: any) {
+    const { checkNotesLengthRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       OfferingAssessmentAPIInDTO | boolean
     >();
@@ -106,6 +107,7 @@ export default {
       Role,
       assessOfferingForm,
       formModel,
+      checkNotesLengthRule,
     };
   },
 };

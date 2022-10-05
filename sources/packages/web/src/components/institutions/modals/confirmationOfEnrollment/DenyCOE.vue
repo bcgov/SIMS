@@ -24,7 +24,7 @@
           :rules="[
             (v) =>
               !!v ||
-              'Select the reason for declining the enrolment is required',
+              'Select the reason for declining the enrolment is required.',
           ]"
           ><template #label>
             <div class="label-bold-normal">
@@ -45,7 +45,7 @@
           label="Other reason"
           v-model="formModel.otherReasonDesc"
           variant="outlined"
-          :rules="[(v) => !!v || 'Other reason is required']"
+          :rules="[(v) => !!v || 'Other reason is required.']"
         />
       </template>
       <template #footer>

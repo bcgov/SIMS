@@ -22,7 +22,7 @@
             :rules="[
               (v) =>
                 !!(v === true || v === false) ||
-                'Do you want to request tuition remittance is required',
+                'Do you want to request tuition remittance is required.',
             ]"
             ><template #label>
               <div class="label-bold-normal">
@@ -44,7 +44,7 @@
               prefix="$"
               :rules="[
                 (v) =>
-                  v > 0 || v === 0 || 'Tuition remittance amount is required',
+                  v > 0 || v === 0 || 'Tuition remittance amount is required.',
               ]" /></content-group
         ></content-group>
       </template>

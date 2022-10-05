@@ -1,46 +1,65 @@
 <template>
-  <modal-dialog-base :showDialog="showDialog" @dialogClosed="dialogClosed">
-    <template v-slot:content>
-      <v-container class="temporary-modal">
-        <formio
-          formName="addrestriction"
-          @loaded="formLoaded"
-          @changed="formChanged"
-          @submitted="submitRestriction"
-        ></formio>
-      </v-container>
-    </template>
-    <template v-slot:footer>
-      <check-permission-role :role="allowedRole">
-        <template #="{ notAllowed }">
-          <footer-buttons
-            primaryLabel="Add Restriction"
-            @primaryClick="addRestriction"
-            @secondaryClick="dialogClosed"
-            :disablePrimaryButton="notAllowed"
-        /></template>
-      </check-permission-role>
-    </template>
-  </modal-dialog-base>
+  <v-form ref="addRestrictionForm">
+    <modal-dialog-base
+      title="Add new restriction"
+      :showDialog="showDialog"
+      min-width="730"
+    >
+      <template #content>
+        <error-summary :errors="addRestrictionForm.errors" />
+        <!-- TODO add placeholder for v-select when we have stable vuetify 3.-->
+        <v-select
+          class="mt-4"
+          label="Category"
+          density="compact"
+          :items="restrictionCategories"
+          v-model="selectedCategory"
+          variant="outlined"
+          @update:modelValue="categoryReasonItems()"
+          :rules="[(v) => !!v || 'Category is required.']" />
+        <v-select
+          label="Reason"
+          density="compact"
+          :items="restrictionReasons"
+          v-model="formModel.restrictionId"
+          variant="outlined"
+          :rules="[(v) => !!v || 'Reason is required.']" />
+        <v-textarea
+          label="Notes"
+          placeholder="Long text..."
+          v-model="formModel.noteDescription"
+          variant="outlined"
+          :rules="[checkNotesLengthRule]"
+      /></template>
+      <template #footer>
+        <check-permission-role :role="allowedRole">
+          <template #="{ notAllowed }">
+            <footer-buttons
+              :processing="processing"
+              primaryLabel="Add Restriction"
+              @primaryClick="submit"
+              @secondaryClick="cancel"
+              :disablePrimaryButton="notAllowed"
+            />
+          </template>
+        </check-permission-role>
+      </template>
+    </modal-dialog-base>
+  </v-form>
 </template>
-
 <script lang="ts">
-import { PropType, ref } from "vue";
+import { PropType, ref, onMounted, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { RestrictionService } from "@/services/RestrictionService";
-import {
-  useModalDialog,
-  useFormioUtils,
-  useFormioDropdownLoader,
-} from "@/composables";
-import { RestrictionEntityType, Role } from "@/types";
+import ErrorSummary from "@/components/generic/ErrorSummary.vue";
+import { useModalDialog, useRules } from "@/composables";
+import { Role, VForm, RestrictionEntityType, SelectItemType } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { AssignRestrictionAPIInDTO } from "@/services/http/dto";
+import { RestrictionService } from "@/services/RestrictionService";
 
 export const CATEGORY_KEY = "category";
 export default {
-  components: { ModalDialogBase, CheckPermissionRole },
-  emits: ["submitRestrictionData"],
+  components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
   props: {
     entityType: {
       type: String,
@@ -51,74 +70,86 @@ export default {
       required: true,
     },
   },
-  setup(props: any, context: any) {
-    const { showDialog, showModal } = useModalDialog<void>();
-    const formData = ref();
-    const formioUtils = useFormioUtils();
-    const formioDataLoader = useFormioDropdownLoader();
+  setup(props: any) {
+    const { checkNotesLengthRule } = useRules();
+    const restrictionCategories = ref([] as SelectItemType[]);
+    const restrictionReasons = ref([] as SelectItemType[]);
+    const selectedCategory = ref("");
+    const { showDialog, showModal, resolvePromise } = useModalDialog<
+      AssignRestrictionAPIInDTO | false
+    >();
+    const addRestrictionForm = ref({} as VForm);
+    const formModel = reactive({} as AssignRestrictionAPIInDTO);
 
-    const dialogClosed = () => {
-      showDialog.value = false;
-    };
-    const formLoaded = async (form: any) => {
-      formData.value = form;
-      const dropdown = formioUtils.getComponent(form, CATEGORY_KEY);
+    const categoryItems = async () => {
       const categories =
         await RestrictionService.shared.getRestrictionCategories();
-      const options = [{}];
       // Restriction category Designation is exclusively for Institution. Rest of them are for Student.
       if (props.entityType === RestrictionEntityType.Student) {
-        for (const category of categories) {
-          options.push({
-            label: category.description,
+        categories.forEach((category) => {
+          restrictionCategories.value.push({
+            title: category.description,
             value: category.description,
           });
-        }
+        });
       } else {
-        options.push({
-          label: "Designation",
+        restrictionCategories.value.push({
+          title: "Designation",
           value: "Designation",
         });
       }
-
-      dropdown.component.data.values = options;
-      dropdown.redraw();
     };
 
-    const formChanged = async (form: any, event: any) => {
-      if (event.changed?.component.key === CATEGORY_KEY) {
-        const selectedRestrictionCategory: string =
-          formioUtils.getComponentValueByKey(form, CATEGORY_KEY);
-        formioDataLoader.loadRestrictionReasons(
-          form,
-          "restrictionId",
-          selectedRestrictionCategory,
-        );
+    onMounted(categoryItems);
+
+    const categoryReasonItems = async () => {
+      restrictionReasons.value = [];
+      const reasons = await RestrictionService.shared.getRestrictionReasons(
+        selectedCategory.value,
+      );
+      const restrictionReasonsArray: SelectItemType[] = [];
+      // Restriction category Designation is exclusively for Institution. Rest of them are for Student.
+      reasons.forEach((reason) => {
+        {
+          restrictionReasonsArray.push({
+            title: reason.description,
+            value: reason.id,
+          });
+        }
+      });
+      restrictionReasons.value = restrictionReasonsArray;
+    };
+
+    const submit = async () => {
+      const validationResult = await addRestrictionForm.value.validate();
+      if (!validationResult.valid) {
+        return;
       }
+      // Copying the payload, as reset is making the formModel properties null.
+      const payload = { ...formModel };
+      resolvePromise(payload);
+      addRestrictionForm.value.reset();
     };
-    const submitForm = async () => {
-      return formData.value.submit();
-    };
-    const submitRestriction = async (data: AssignRestrictionAPIInDTO) => {
-      context.emit("submitRestrictionData", data);
-    };
-    const addRestriction = async () => {
-      const formSubmitted = await submitForm();
-      if (formSubmitted) {
-        showDialog.value = false;
-      }
+
+    const cancel = () => {
+      addRestrictionForm.value.reset();
+      addRestrictionForm.value.resetValidation();
+      resolvePromise(false);
     };
 
     return {
       showDialog,
       showModal,
-      dialogClosed,
-      formLoaded,
-      submitRestriction,
-      submitForm,
-      addRestriction,
-      formChanged,
+      cancel,
+      submit,
       Role,
+      addRestrictionForm,
+      formModel,
+      restrictionCategories,
+      restrictionReasons,
+      selectedCategory,
+      categoryReasonItems,
+      checkNotesLengthRule,
     };
   },
 };

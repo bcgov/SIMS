@@ -1,43 +1,41 @@
 <template>
-  <v-form ref="approveProgramForm">
+  <v-form ref="addExpiryDateForm">
     <modal-dialog-base
-      title="Approve program"
+      title="Add expiry date"
       :showDialog="showDialog"
       max-width="730"
     >
       <template #content>
-        <error-summary :errors="approveProgramForm.errors" />
+        <error-summary :errors="addExpiryDateForm.errors" />
         <div class="pb-2">
           <span class="label-value"
-            >Outline the reasoning for approving this program. This will be
-            stored in the institution profile notes.</span
+            >Enter a date that the SIN will expiry on. Please note you will not
+            be able to change this.</span
           >
         </div>
         <!-- TODO Date picker is not available in the vuetify 3 version, so temporary usage of textfield and regex-->
         <v-text-field
-          label="Effective end date"
+          label="Expiry date"
           class="mt-2"
           placeholder="yyyy-MM-dd"
-          v-model="formModel.effectiveEndDate"
+          v-model="formModel.expiryDate"
           variant="outlined"
-          :rules="[checkStringDateFormatRule]"
-        />
+          :rules="[checkStringDateFormatRule]" />
         <v-textarea
+          hide-details="auto"
           label="Notes"
           placeholder="Long text..."
-          v-model="formModel.approvedNote"
+          v-model="formModel.noteDescription"
           variant="outlined"
           :rules="[checkNotesLengthRule]"
-        />
-      </template>
+      /></template>
       <template #footer>
-        <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
+        <check-permission-role :role="Role.StudentAddSINExpiry">
           <template #="{ notAllowed }">
             <footer-buttons
-              :processing="processing"
-              primaryLabel="Approve now"
-              @primaryClick="submit"
+              primaryLabel="Add expiry date now"
               @secondaryClick="cancel"
+              @primaryClick="submit"
               :disablePrimaryButton="notAllowed"
             />
           </template>
@@ -46,66 +44,59 @@
     </modal-dialog-base>
   </v-form>
 </template>
-
 <script lang="ts">
-import { ref, reactive } from "vue";
+import { PropType, ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog, useRules } from "@/composables";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { ApproveProgramAPIInDTO } from "@/services/http/dto";
-import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { useModalDialog, useRules } from "@/composables";
 import { Role, VForm } from "@/types";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { UpdateSINValidationAPIInDTO } from "@/services/http/dto";
 
-export default {
-  components: {
-    ModalDialogBase,
-    CheckPermissionRole,
-    ErrorSummary,
-  },
+export default defineComponent({
+  components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
   props: {
-    processing: {
-      type: Boolean,
+    allowedRole: {
+      type: String as PropType<Role>,
       required: true,
-      default: false,
     },
   },
   setup() {
     const { checkNotesLengthRule, checkStringDateFormatRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
-      ApproveProgramAPIInDTO | boolean
+      UpdateSINValidationAPIInDTO | boolean
     >();
-    const approveProgramForm = ref({} as VForm);
-    const formModel = reactive({
-      effectiveEndDate: "",
-      approvedNote: "",
-    } as ApproveProgramAPIInDTO);
+    const addExpiryDateForm = ref({} as VForm);
+    const formModel = reactive({} as UpdateSINValidationAPIInDTO);
 
     const submit = async () => {
-      const validationResult = await approveProgramForm.value.validate();
+      const validationResult = await addExpiryDateForm.value.validate();
       if (!validationResult.valid) {
         return;
       }
-      resolvePromise(formModel);
+      // Copying the payload, as reset is making the formModel properties null.
+      const payload = { ...formModel };
+      resolvePromise(payload);
+      addExpiryDateForm.value.reset();
     };
 
-    // Closed the modal dialog.
     const cancel = () => {
-      approveProgramForm.value.reset();
-      approveProgramForm.value.resetValidation();
+      addExpiryDateForm.value.reset();
+      addExpiryDateForm.value.resetValidation();
       resolvePromise(false);
     };
 
     return {
       showDialog,
-      submit,
       showModal,
       cancel,
-      formModel,
-      approveProgramForm,
+      submit,
       Role,
+      addExpiryDateForm,
+      formModel,
       checkNotesLengthRule,
       checkStringDateFormatRule,
     };
   },
-};
+});
 </script>

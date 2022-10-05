@@ -1,42 +1,120 @@
 <template>
-  <modal-dialog-base :showDialog="showDialog" @dialogClosed="dialogClosed">
-    <template v-slot:content>
-      <v-container class="temporary-modal">
-        <formio
-          formName="viewRestriction"
-          :data="restrictionData"
-          @loaded="formLoaded"
-          @submitted="submitResolution"
-        ></formio>
-      </v-container>
-    </template>
-    <template v-slot:footer>
-      <check-permission-role :role="allowedRole">
-        <template #="{ notAllowed }">
-          <footer-buttons
-            primaryLabel="Resolve Restriction"
-            :disablePrimaryButton="notAllowed"
-            @primaryClick="resolveRestriction"
-            @secondaryClick="dialogClosed"
+  <v-form ref="viewRestrictionForm">
+    <modal-dialog-base
+      title="View restriction"
+      :showDialog="showDialog"
+      min-width="730"
+    >
+      <template #content>
+        <error-summary :errors="viewRestrictionForm.errors" />
+        <h4
+          class="category-header-medium mb-5"
+          v-if="!restrictionData.isActive"
+        >
+          Restriction information
+        </h4>
+        <content-group>
+          <title-value
+            propertyTitle="Category"
+            :propertyValue="restrictionData.restrictionCategory"
           />
-        </template>
-      </check-permission-role>
-    </template>
-  </modal-dialog-base>
+          <title-value
+            propertyTitle="Reason"
+            :propertyValue="restrictionData.description"
+          />
+          <title-value
+            propertyTitle="Notes"
+            :propertyValue="restrictionData.restrictionNote"
+          />
+          <v-row
+            ><v-col
+              ><title-value
+                propertyTitle="Date created"
+                :propertyValue="restrictionData.createdAt" /></v-col
+            ><v-col
+              ><title-value
+                propertyTitle="Created by"
+                :propertyValue="restrictionData.createdBy" /></v-col
+            ><v-col
+              ><title-value propertyTitle="Status" /><status-chip-restriction
+                :status="
+                  restrictionData.isActive
+                    ? RestrictionStatus.Active
+                    : RestrictionStatus.Resolved
+                " /></v-col
+          ></v-row>
+        </content-group>
+        <v-divider></v-divider>
+        <v-textarea
+          v-if="restrictionData.isActive"
+          label="Resolution reason"
+          placeholder="Long text..."
+          v-model="formModel.resolutionNote"
+          variant="outlined"
+          :rules="[(v) => checkResolutionNotesLength(v)]" />
+        <h4
+          class="category-header-medium mb-5"
+          v-if="!restrictionData.isActive"
+        >
+          Resolution
+        </h4>
+        <content-group v-if="!restrictionData.isActive">
+          <title-value
+            propertyTitle="Resolution reason"
+            :propertyValue="restrictionData.resolutionNote"
+          />
+          <v-row
+            ><v-col
+              ><title-value
+                propertyTitle="Date resolved"
+                :propertyValue="restrictionData.updatedAt" /></v-col
+            ><v-col
+              ><title-value
+                propertyTitle="Resolved by"
+                :propertyValue="restrictionData.updatedBy" /></v-col
+          ></v-row> </content-group
+      ></template>
+      <template #footer>
+        <check-permission-role :role="allowedRole">
+          <template #="{ notAllowed }">
+            <footer-buttons
+              :processing="processing"
+              primaryLabel="Resolve restriction"
+              :secondaryLabel="restrictionData.isActive ? 'Cancel' : 'Close'"
+              @primaryClick="submit"
+              @secondaryClick="cancel"
+              :disablePrimaryButton="notAllowed"
+              :showPrimaryButton="restrictionData.isActive"
+            />
+          </template>
+        </check-permission-role>
+      </template>
+    </modal-dialog-base>
+  </v-form>
 </template>
 
 <script lang="ts">
-import { PropType, ref } from "vue";
+import { PropType, ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog } from "@/composables";
-import { RestrictionType, Role } from "@/types";
+import ErrorSummary from "@/components/generic/ErrorSummary.vue";
+import { useModalDialog, useValidators } from "@/composables";
+import { Role, RestrictionType, VForm, RestrictionStatus } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { RestrictionDetailAPIOutDTO } from "@/services/http/dto";
+import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
+import TitleValue from "@/components/generic/TitleValue.vue";
 
 export default {
-  components: { ModalDialogBase, CheckPermissionRole },
+  components: {
+    ModalDialogBase,
+    CheckPermissionRole,
+    ErrorSummary,
+    StatusChipRestriction,
+    TitleValue,
+  },
   props: {
     restrictionData: {
-      type: Object,
+      type: Object as PropType<RestrictionDetailAPIOutDTO>,
       required: true,
     },
     allowedRole: {
@@ -44,40 +122,51 @@ export default {
       required: true,
     },
   },
-  emits: ["submitResolutionData"],
-  setup(props: any, context: any) {
-    const { showDialog, showModal } = useModalDialog<void>();
-    const formData = ref();
+  setup(props: any) {
+    const NOTES_MAX_CHARACTERS = 500;
+    const { checkMaxCharacters } = useValidators();
+    const { showDialog, showModal, resolvePromise } = useModalDialog<
+      RestrictionDetailAPIOutDTO | false
+    >();
+    const viewRestrictionForm = ref({} as VForm);
+    const formModel = reactive({} as RestrictionDetailAPIOutDTO);
 
-    const dialogClosed = () => {
-      showDialog.value = false;
-    };
-    const formLoaded = async (form: any) => {
-      formData.value = form;
-    };
-    const submitForm = async () => {
-      return formData.value.submit();
-    };
-    const submitResolution = async (data: any) => {
-      context.emit("submitResolutionData", data);
-    };
-    const resolveRestriction = async () => {
-      const formSubmitted = await submitForm();
-      if (formSubmitted) {
-        showDialog.value = false;
+    const submit = async () => {
+      const validationResult = await viewRestrictionForm.value.validate();
+      if (!validationResult.valid) {
+        return;
       }
+      formModel.restrictionId = props.restrictionData.restrictionId;
+      resolvePromise(formModel);
+    };
+
+    const cancel = () => {
+      viewRestrictionForm.value.reset();
+      viewRestrictionForm.value.resetValidation();
+      resolvePromise(false);
+    };
+
+    const checkResolutionNotesLength = (notes: string) => {
+      if (notes) {
+        return (
+          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
+          `Max ${NOTES_MAX_CHARACTERS} characters.`
+        );
+      }
+      return "Resolution reason is required.";
     };
 
     return {
       showDialog,
       showModal,
-      dialogClosed,
-      formLoaded,
-      submitResolution,
-      submitForm,
       RestrictionType,
-      resolveRestriction,
+      submit,
+      cancel,
+      viewRestrictionForm,
       Role,
+      formModel,
+      RestrictionStatus,
+      checkResolutionNotesLength,
     };
   },
 };
