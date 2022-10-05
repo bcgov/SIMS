@@ -68,6 +68,8 @@ objects:
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
+              ports:
+                - containerPort: "${{PORT}}"
               resources:
                 limits:
                   cpu: ${CPU_LIMIT}
@@ -100,6 +102,8 @@ parameters:
     value: "1000M"
   - name: REPLICAS
     value: "1"
+  - name: PORT
+    required: true
   - name: DB_SERVICE
     value: patroni-master
   - name: DB_SECRET_NAME
