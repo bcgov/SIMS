@@ -55,7 +55,7 @@ import {
   InstitutionNoteType,
   StudentNoteType,
   NoteEntityType,
-  VSelectType,
+  SelectItemType,
 } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { NoteAPIInDTO } from "@/services/http/dto";
@@ -79,7 +79,7 @@ export default defineComponent({
     >();
     const addNewNoteForm = ref({} as VForm);
     const formModel = reactive({} as NoteAPIInDTO);
-    const noteTypeItems = ref([] as VSelectType[]);
+    const noteTypeItems = ref([] as SelectItemType[]);
 
     onMounted(async () => {
       if (props.entityType === NoteEntityType.Institution) {
@@ -92,8 +92,8 @@ export default defineComponent({
 
     const convertEnumToVSelect = (
       type: Record<string, string | number>,
-    ): VSelectType[] => {
-      const selectItemsArray: VSelectType[] = [];
+    ): SelectItemType[] => {
+      const selectItemsArray: SelectItemType[] = [];
       for (const selectItem in type) {
         selectItemsArray.push({ title: selectItem, value: selectItem });
       }

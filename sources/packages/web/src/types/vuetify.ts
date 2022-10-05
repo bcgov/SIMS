@@ -48,7 +48,7 @@ export interface InputFile extends Blob {
   type: string;
 }
 
-export interface VSelectType {
+export interface SelectItemType {
   title: string;
   value: string | number;
 }

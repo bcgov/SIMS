@@ -52,7 +52,7 @@ import { PropType, ref, onMounted, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules } from "@/composables";
-import { Role, VForm, RestrictionEntityType, VSelectType } from "@/types";
+import { Role, VForm, RestrictionEntityType, SelectItemType } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { AssignRestrictionAPIInDTO } from "@/services/http/dto";
 import { RestrictionService } from "@/services/RestrictionService";
@@ -72,8 +72,8 @@ export default {
   },
   setup(props: any) {
     const { checkNotesLengthRule } = useRules();
-    const restrictionCategories = ref([] as VSelectType[]);
-    const restrictionReasons = ref([] as VSelectType[]);
+    const restrictionCategories = ref([] as SelectItemType[]);
+    const restrictionReasons = ref([] as SelectItemType[]);
     const selectedCategory = ref("");
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       AssignRestrictionAPIInDTO | false
@@ -107,7 +107,7 @@ export default {
       const reasons = await RestrictionService.shared.getRestrictionReasons(
         selectedCategory.value,
       );
-      const restrictionReasonsArray: VSelectType[] = [];
+      const restrictionReasonsArray: SelectItemType[] = [];
       // Restriction category Designation is exclusively for Institution. Rest of them are for Student.
       reasons.forEach((reason) => {
         {
