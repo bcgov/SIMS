@@ -16,7 +16,7 @@
               v-model="legalName"
               data-cy="legalName"
               @keyup.enter="searchInstitutions"
-              hide-details="auto"
+              hide-details
             />
           </v-col>
           <v-col>
@@ -27,7 +27,7 @@
               v-model="operatingName"
               data-cy="operatingName"
               @keyup.enter="searchInstitutions"
-              hide-details="auto"
+              hide-details
             />
           </v-col>
           <v-col

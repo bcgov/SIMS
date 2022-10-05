@@ -45,11 +45,6 @@ export interface AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
   restrictionId: number;
 }
 
-export interface AssignRestrictionCategories {
-  title: string;
-  value: string;
-}
-
 export interface AssignRestrictionReasons {
   title: string;
   value: number;

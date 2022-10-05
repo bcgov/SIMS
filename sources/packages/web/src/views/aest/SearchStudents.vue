@@ -16,7 +16,7 @@
               variant="outlined"
               v-model="appNumber"
               @keyup.enter="searchStudents"
-              hide-details="auto"
+              hide-details
             />
           </v-col>
           <v-col>
@@ -27,7 +27,7 @@
               variant="outlined"
               v-model="sin"
               @keyup.enter="searchStudents"
-              hide-details="auto"
+              hide-details
             />
           </v-col>
           <v-col>
@@ -38,7 +38,7 @@
               variant="outlined"
               v-model="firstName"
               @keyup.enter="searchStudents"
-              hide-details="auto"
+              hide-detail
             /> </v-col
           ><v-col>
             <v-text-field
@@ -48,7 +48,7 @@
               variant="outlined"
               v-model="lastName"
               @keyup.enter="searchStudents"
-              hide-details="auto"
+              hide-details
             /> </v-col
           ><v-col
             ><v-btn

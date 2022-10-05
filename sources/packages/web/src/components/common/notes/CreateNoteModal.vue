@@ -55,9 +55,10 @@ import {
   InstitutionNoteType,
   StudentNoteType,
   NoteEntityType,
+  VSelectType,
 } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { NoteAPIInDTO, NoteTypeItems } from "@/services/http/dto";
+import { NoteAPIInDTO } from "@/services/http/dto";
 
 export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
@@ -78,20 +79,24 @@ export default defineComponent({
     >();
     const addNewNoteForm = ref({} as VForm);
     const formModel = reactive({} as NoteAPIInDTO);
-    const noteTypeItems = ref([] as NoteTypeItems[]);
+    const noteTypeItems = ref([] as VSelectType[]);
 
     onMounted(async () => {
       if (props.entityType === NoteEntityType.Institution) {
-        for (const noteType in InstitutionNoteType) {
-          noteTypeItems.value.push({ title: noteType, value: noteType });
-        }
+        noteTypeItems.value = convertEnumToVSelect(InstitutionNoteType);
       }
       if (props.entityType === NoteEntityType.Student) {
-        for (const noteType in StudentNoteType) {
-          noteTypeItems.value.push({ title: noteType, value: noteType });
-        }
+        noteTypeItems.value = convertEnumToVSelect(StudentNoteType);
       }
     });
+
+    const convertEnumToVSelect = (type: any): VSelectType[] => {
+      const noteTypeArray: VSelectType[] = [];
+      for (const noteType in type) {
+        noteTypeArray.push({ title: noteType, value: noteType });
+      }
+      return noteTypeArray;
+    };
 
     const submit = async () => {
       const validationResult = await addNewNoteForm.value.validate();

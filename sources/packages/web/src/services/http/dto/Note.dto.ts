@@ -8,11 +8,6 @@ export interface NoteAPIInDTO {
   description: string;
 }
 
-export interface NoteTypeItems {
-  title: string;
-  value: string;
-}
-
 /**
  * Notes detail DTO. This is used for view only purpose.
  */
