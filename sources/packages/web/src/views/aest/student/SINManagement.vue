@@ -127,25 +127,21 @@ export default {
     const addNewSIN = async () => {
       const addNewSINData = await addNewSINModal.value.showModal();
       if (addNewSINData)
-        createNewSIN(addNewSINData as CreateSINValidationAPIInDTO);
-    };
-
-    const createNewSIN = async (data: CreateSINValidationAPIInDTO) => {
-      try {
-        processingNewSIN.value = true;
-        await StudentService.shared.createStudentSINValidation(
-          props.studentId,
-          data,
-        );
-        snackBar.success(
-          "New SIN record created and associated to the student.",
-        );
-        await loadSINValidations();
-      } catch {
-        snackBar.error("Unexpected error while creating a new SIN record.");
-      } finally {
-        processingNewSIN.value = false;
-      }
+        try {
+          processingNewSIN.value = true;
+          await StudentService.shared.createStudentSINValidation(
+            props.studentId,
+            addNewSINData as CreateSINValidationAPIInDTO,
+          );
+          snackBar.success(
+            "New SIN record created and associated to the student.",
+          );
+          await loadSINValidations();
+        } catch {
+          snackBar.error("Unexpected error while creating a new SIN record.");
+        } finally {
+          processingNewSIN.value = false;
+        }
     };
 
     const addExpiryDate = async (sinValidationId: number) => {
