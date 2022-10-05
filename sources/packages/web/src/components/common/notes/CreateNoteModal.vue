@@ -83,14 +83,14 @@ export default defineComponent({
 
     onMounted(async () => {
       if (props.entityType === NoteEntityType.Institution) {
-        noteTypeItems.value = convertEnumToVSelect(InstitutionNoteType);
+        noteTypeItems.value = convertToSelectItemType(InstitutionNoteType);
       }
       if (props.entityType === NoteEntityType.Student) {
-        noteTypeItems.value = convertEnumToVSelect(StudentNoteType);
+        noteTypeItems.value = convertToSelectItemType(StudentNoteType);
       }
     });
 
-    const convertEnumToVSelect = (
+    const convertToSelectItemType = (
       type: Record<string, string | number>,
     ): SelectItemType[] => {
       const selectItemsArray: SelectItemType[] = [];
