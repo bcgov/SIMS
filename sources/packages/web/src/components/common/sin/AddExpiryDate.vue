@@ -33,7 +33,6 @@
         <check-permission-role :role="Role.StudentAddSINExpiry">
           <template #="{ notAllowed }">
             <footer-buttons
-              justify="end"
               primaryLabel="Add expiry date now"
               @secondaryClick="cancel"
               @primaryClick="submit"

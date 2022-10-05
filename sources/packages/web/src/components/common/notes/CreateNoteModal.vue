@@ -20,7 +20,6 @@
           :items="noteTypeItems"
           v-model="formModel.noteType"
           variant="outlined"
-          placeholder="Select a Note type"
           :rules="[(v) => !!v || 'Note type is required.']" />
         <v-textarea
           label="Note body"
