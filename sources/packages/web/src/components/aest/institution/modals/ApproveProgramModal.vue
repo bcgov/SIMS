@@ -20,11 +20,7 @@
           placeholder="yyyy-MM-dd"
           v-model="formModel.effectiveEndDate"
           variant="outlined"
-          :rules="[
-            (v) =>
-              v.match(/^\d{4}-\d{2}-\d{2}$/) ||
-              'Effective end date is not in right format',
-          ]"
+          :rules="[(v) => checkStringDateFormatRule(v)]"
         />
         <v-textarea
           label="Notes"
@@ -74,7 +70,7 @@ export default {
     },
   },
   setup() {
-    const { checkNotesLengthRule } = useRules();
+    const { checkNotesLengthRule, checkStringDateFormatRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       ApproveProgramAPIInDTO | boolean
     >();
@@ -108,6 +104,7 @@ export default {
       approveProgramForm,
       Role,
       checkNotesLengthRule,
+      checkStringDateFormatRule,
     };
   },
 };

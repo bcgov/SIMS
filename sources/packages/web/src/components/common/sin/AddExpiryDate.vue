@@ -20,11 +20,7 @@
           placeholder="yyyy-MM-dd"
           v-model="formModel.expiryDate"
           variant="outlined"
-          :rules="[
-            (v) =>
-              v.match(/^\d{4}-\d{2}-\d{2}$/) ||
-              'Expiry end date is not in right format',
-          ]" />
+          :rules="[(v) => checkStringDateFormatRule(v)]" />
         <v-textarea
           hide-details="auto"
           label="Notes"
@@ -71,7 +67,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const { checkNotesLengthRule } = useRules();
+    const { checkNotesLengthRule, checkStringDateFormatRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       UpdateSINValidationAPIInDTO | boolean
     >();
@@ -104,6 +100,7 @@ export default defineComponent({
       addExpiryDateForm,
       formModel,
       checkNotesLengthRule,
+      checkStringDateFormatRule,
     };
   },
 });
