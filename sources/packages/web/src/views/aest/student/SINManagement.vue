@@ -64,8 +64,8 @@
       </toggle-content>
     </content-group>
   </full-page-container>
-  <AddNewSIN ref="addNewSINModal" :allowedRole="Role.StudentAddNewSIN" />
-  <AddExpiryDate
+  <add-new-sin ref="addNewSINModal" :allowedRole="Role.StudentAddNewSIN" />
+  <add-expiry-date
     ref="addExpiryDateModal"
     :allowedRole="Role.StudentAddSINExpiry"
   />
