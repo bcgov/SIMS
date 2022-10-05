@@ -27,15 +27,16 @@
             :propertyValue="restrictionData.restrictionNote"
           />
           <v-row
-            ><v-col class="label-bold">Date created</v-col
-            ><v-col class="label-bold">Created by</v-col
-            ><v-col class="label-bold">Status</v-col></v-row
-          >
-          <v-row
-            ><v-col>{{ restrictionData.createdAt }}</v-col
-            ><v-col>{{ restrictionData.createdBy }}</v-col
             ><v-col
-              ><status-chip-restriction
+              ><title-value
+                propertyTitle="Date created"
+                :propertyValue="restrictionData.createdAt" /></v-col
+            ><v-col
+              ><title-value
+                propertyTitle="Created by"
+                :propertyValue="restrictionData.createdBy" /></v-col
+            ><v-col
+              ><title-value propertyTitle="Status" /><status-chip-restriction
                 :status="
                   restrictionData.isActive
                     ? RestrictionStatus.Active
@@ -50,8 +51,7 @@
           placeholder="Long text..."
           v-model="formModel.resolutionNote"
           variant="outlined"
-          :rules="[(v) => checkResolutionNotesLength(v)]"
-        />
+          :rules="[(v) => checkResolutionNotesLength(v)]" />
         <h4
           class="category-header-medium mb-5"
           v-if="!restrictionData.isActive"
@@ -59,18 +59,21 @@
           Resolution
         </h4>
         <content-group v-if="!restrictionData.isActive">
-          <p class="label-bold">Resolution reason</p>
-          <p>{{ restrictionData.resolutionNote }}</p>
+          <title-value
+            propertyTitle="Resolution reason"
+            :propertyValue="restrictionData.resolutionNote"
+          />
           <v-row
-            ><v-col class="label-bold">Date resolved</v-col
-            ><v-col class="label-bold">Resolved by</v-col></v-row
-          >
-          <v-row
-            ><v-col>{{ restrictionData.updatedAt }}</v-col
-            ><v-col>{{ restrictionData.updatedBy }}</v-col></v-row
-          ></content-group
-        ></template
-      >
+            ><v-col
+              ><title-value
+                propertyTitle="Date resolved"
+                :propertyValue="restrictionData.updatedAt" /></v-col
+            ><v-col
+              ><title-value
+                propertyTitle="Resolved by"
+                :propertyValue="restrictionData.updatedBy" /></v-col
+          ></v-row> </content-group
+      ></template>
       <template #footer>
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
