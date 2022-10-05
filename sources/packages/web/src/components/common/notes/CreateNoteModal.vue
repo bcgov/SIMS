@@ -90,12 +90,14 @@ export default defineComponent({
       }
     });
 
-    const convertEnumToVSelect = (type: any): VSelectType[] => {
-      const noteTypeArray: VSelectType[] = [];
-      for (const noteType in type) {
-        noteTypeArray.push({ title: noteType, value: noteType });
+    const convertEnumToVSelect = (
+      type: Record<string, string | number>,
+    ): VSelectType[] => {
+      const selectItemsArray: VSelectType[] = [];
+      for (const selectItem in type) {
+        selectItemsArray.push({ title: selectItem, value: selectItem });
       }
-      return noteTypeArray;
+      return selectItemsArray;
     };
 
     const submit = async () => {
