@@ -11,7 +11,7 @@
           placeholder="Long text..."
           v-model="formModel.assessmentNotes"
           variant="outlined"
-          :rules="[(v) => checkNotesLengthRule(v)]"
+          :rules="[checkNotesLengthRule]"
         />
       </template>
       <template #footer>

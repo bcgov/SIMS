@@ -18,7 +18,7 @@
           placeholder="Long text..."
           v-model="formModel.declinedNote"
           variant="outlined"
-          :rules="[(v) => checkNotesLengthRule(v)]"
+          :rules="[checkNotesLengthRule]"
       /></template>
       <template #footer>
         <check-permission-role :role="Role.InstitutionApproveDeclineProgram">

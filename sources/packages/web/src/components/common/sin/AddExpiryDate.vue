@@ -20,14 +20,14 @@
           placeholder="yyyy-MM-dd"
           v-model="formModel.expiryDate"
           variant="outlined"
-          :rules="[(v) => checkStringDateFormatRule(v)]" />
+          :rules="[checkStringDateFormatRule]" />
         <v-textarea
           hide-details="auto"
           label="Notes"
           placeholder="Long text..."
           v-model="formModel.noteDescription"
           variant="outlined"
-          :rules="[(v) => checkNotesLengthRule(v)]"
+          :rules="[checkNotesLengthRule]"
       /></template>
       <template #footer>
         <check-permission-role :role="Role.StudentAddSINExpiry">

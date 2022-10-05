@@ -18,7 +18,7 @@
             v-model="assessOfferingData.assessmentNotes"
             variant="outlined"
             label="Notes"
-            :rules="[(v) => checkNotesLengthRule(v)]"
+            :rules="[checkNotesLengthRule]"
             required
           ></v-textarea>
         </v-form>

@@ -20,14 +20,14 @@
           placeholder="yyyy-MM-dd"
           v-model="formModel.effectiveEndDate"
           variant="outlined"
-          :rules="[(v) => checkStringDateFormatRule(v)]"
+          :rules="[checkStringDateFormatRule]"
         />
         <v-textarea
           label="Notes"
           placeholder="Long text..."
           v-model="formModel.approvedNote"
           variant="outlined"
-          :rules="[(v) => checkNotesLengthRule(v)]"
+          :rules="[checkNotesLengthRule]"
         />
       </template>
       <template #footer>

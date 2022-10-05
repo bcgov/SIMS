@@ -19,7 +19,7 @@
           label="Social Insurance Number (SIN)"
           v-model="formModel.sin"
           variant="outlined"
-          :rules="[(v) => sinValidationRule(v)]" />
+          :rules="[sinValidationRule]" />
         <v-checkbox
           label="Skip the validations"
           v-model="formModel.skipValidations"
@@ -39,7 +39,7 @@
           placeholder="Long text..."
           v-model="formModel.noteDescription"
           variant="outlined"
-          :rules="[(v) => checkNotesLengthRule(v)]"
+          :rules="[checkNotesLengthRule]"
       /></template>
       <template #footer>
         <check-permission-role :role="allowedRole">
