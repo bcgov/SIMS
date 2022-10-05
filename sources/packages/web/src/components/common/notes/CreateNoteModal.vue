@@ -9,7 +9,7 @@
         <error-summary :errors="addNewNoteForm.errors" />
         <div class="pb-2">
           <span class="label-value"
-            >Add a note with relavent decisions or actions taken on this
+            >Add a note with relevant decisions or actions taken on this
             account.</span
           >
         </div>
@@ -114,7 +114,7 @@ export default defineComponent({
       if (notes) {
         return (
           checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
-          "Max 500 characters."
+          `Max ${NOTES_MAX_CHARACTERS} characters.`
         );
       }
       return "Note body is required.";

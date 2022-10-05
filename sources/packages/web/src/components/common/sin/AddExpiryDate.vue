@@ -99,7 +99,7 @@ export default defineComponent({
       if (notes) {
         return (
           checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
-          "Max 500 characters."
+          `Max ${NOTES_MAX_CHARACTERS} characters.`
         );
       }
       return "Note body is required.";
