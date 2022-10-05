@@ -1,6 +1,5 @@
 <template>
   <v-form ref="addRestrictionForm">
-    <!-- TODO min-width has to be confirmed  -->
     <modal-dialog-base
       title="Add new restriction"
       :showDialog="showDialog"
@@ -8,23 +7,22 @@
     >
       <template #content>
         <error-summary :errors="addRestrictionForm.errors" />
-        <v-autocomplete
+        <!-- TODO add placeholder for v-select when we have stable vuetify 3.-->
+        <v-select
           class="mt-4"
           label="Category"
           density="compact"
           :items="restrictionCategories"
           v-model="selectedCategory"
           variant="outlined"
-          placeholder="Select a category"
           @update:modelValue="categoryReasonItems()"
           :rules="[(v) => !!v || 'Category is required.']" />
-        <v-autocomplete
+        <v-select
           label="Reason"
           density="compact"
           :items="restrictionReasons"
           v-model="formModel.restrictionId"
           variant="outlined"
-          placeholder="Select a reason"
           :rules="[(v) => !!v || 'Reason is required.']" />
         <v-textarea
           label="Notes"
@@ -130,6 +128,7 @@ export default {
       if (!validationResult.valid) {
         return;
       }
+      // Copying the payload, as reset is making the formModel properties null.
       const payload = { ...formModel };
       resolvePromise(payload);
       addRestrictionForm.value.reset();

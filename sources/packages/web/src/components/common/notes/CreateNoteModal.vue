@@ -13,7 +13,8 @@
             account.</span
           >
         </div>
-        <v-autocomplete
+        <!-- TODO add placeholder for v-select when we have stable vuetify 3.-->
+        <v-select
           label="Note type"
           density="compact"
           :items="noteTypeItems"
@@ -99,6 +100,7 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
+      // Copying the payload, as reset is making the formModel properties null.
       const payload = { ...formModel };
       resolvePromise(payload);
       addNewNoteForm.value.reset();

@@ -1,6 +1,5 @@
 <template>
   <v-form ref="viewRestrictionForm">
-    <!-- TODO min-width has to be confirmed  -->
     <modal-dialog-base
       title="View restriction"
       :showDialog="showDialog"
@@ -8,7 +7,10 @@
     >
       <template #content>
         <error-summary :errors="viewRestrictionForm.errors" />
-        <h4 class="category-header-medium" v-if="!restrictionData.isActive">
+        <h4
+          class="category-header-medium mb-5"
+          v-if="!restrictionData.isActive"
+        >
           Restriction information
         </h4>
         <content-group>
@@ -50,7 +52,10 @@
           variant="outlined"
           :rules="[(v) => checkResolutionNotesLength(v)]"
         />
-        <h4 class="category-header-medium" v-if="!restrictionData.isActive">
+        <h4
+          class="category-header-medium mb-5"
+          v-if="!restrictionData.isActive"
+        >
           Resolution
         </h4>
         <content-group v-if="!restrictionData.isActive">

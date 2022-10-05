@@ -89,6 +89,7 @@ export default {
       if (!validationResult.valid) {
         return;
       }
+      // Copying the payload, as reset is making the formModel properties null.
       const payload = { ...formModel };
       resolvePromise(payload);
       addNewSINForm.value.reset();
