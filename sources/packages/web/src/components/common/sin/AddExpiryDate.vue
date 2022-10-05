@@ -56,10 +56,6 @@ import { UpdateSINValidationAPIInDTO } from "@/services/http/dto";
 export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
   props: {
-    entityType: {
-      type: String,
-      required: true,
-    },
     allowedRole: {
       type: String as PropType<Role>,
       required: true,
