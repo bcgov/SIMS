@@ -18,7 +18,7 @@
             v-model="assessOfferingData.assessmentNotes"
             variant="outlined"
             label="Notes"
-            :rules="[(v) => checkNotesLength(v)]"
+            :rules="[(v) => checkNotesLengthRule(v)]"
             required
           ></v-textarea>
         </v-form>
@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog, useValidators } from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import { ref, reactive } from "vue";
 import { OfferingStatus, VForm, Role } from "@/types";
 import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
@@ -52,8 +52,7 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 export default {
   components: { ModalDialogBase, CheckPermissionRole },
   setup() {
-    const NOTES_MAX_CHARACTERS = 500;
-    const { checkMaxCharacters } = useValidators();
+    const { checkNotesLengthRule } = useRules();
     const {
       showDialog,
       showModal: showModalInternal,
@@ -101,16 +100,6 @@ export default {
       }
     };
 
-    const checkNotesLength = (notes: string) => {
-      if (notes) {
-        return (
-          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
-          `Max ${NOTES_MAX_CHARACTERS} characters.`
-        );
-      }
-      return "Note body is required.";
-    };
-
     return {
       showDialog,
       showModal,
@@ -123,7 +112,7 @@ export default {
       submitLabel,
       showWarning,
       Role,
-      checkNotesLength,
+      checkNotesLengthRule,
     };
   },
 };

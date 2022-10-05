@@ -11,7 +11,7 @@
           placeholder="Long text..."
           v-model="formModel.assessmentNotes"
           variant="outlined"
-          :rules="[(v) => checkNotesLength(v)]"
+          :rules="[(v) => checkNotesLengthRule(v)]"
         />
       </template>
       <template #footer>
@@ -33,7 +33,7 @@
 <script lang="ts">
 import { ref, reactive, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog, useValidators } from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { OfferingStatus, Role, VForm } from "@/types";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
@@ -53,8 +53,7 @@ export default {
     },
   },
   setup(props: any) {
-    const NOTES_MAX_CHARACTERS = 500;
-    const { checkMaxCharacters } = useValidators();
+    const { checkNotesLengthRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       OfferingAssessmentAPIInDTO | boolean
     >();
@@ -97,16 +96,6 @@ export default {
       resolvePromise(formModel);
     };
 
-    const checkNotesLength = (notes: string) => {
-      if (notes) {
-        return (
-          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
-          `Max ${NOTES_MAX_CHARACTERS} characters.`
-        );
-      }
-      return "Note body is required.";
-    };
-
     return {
       showDialog,
       showModal,
@@ -118,7 +107,7 @@ export default {
       Role,
       assessOfferingForm,
       formModel,
-      checkNotesLength,
+      checkNotesLengthRule,
     };
   },
 };

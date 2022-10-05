@@ -19,7 +19,7 @@
           label="Social Insurance Number (SIN)"
           v-model="formModel.sin"
           variant="outlined"
-          :rules="[(v) => sinValidation(v)]" />
+          :rules="[(v) => sinValidationRule(v)]" />
         <v-checkbox
           label="Skip the validations"
           v-model="formModel.skipValidations"
@@ -39,7 +39,7 @@
           placeholder="Long text..."
           v-model="formModel.noteDescription"
           variant="outlined"
-          :rules="[(v) => checkNotesLength(v)]"
+          :rules="[(v) => checkNotesLengthRule(v)]"
       /></template>
       <template #footer>
         <check-permission-role :role="allowedRole">
@@ -60,7 +60,7 @@
 import { PropType, ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog, useValidators } from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import { Role, VForm } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { CreateSINValidationAPIInDTO } from "@/services/http/dto";
@@ -75,9 +75,7 @@ export default {
     },
   },
   setup() {
-    const NOTES_MAX_CHARACTERS = 500;
-    const { checkMaxCharacters } = useValidators();
-    const { isSINValid } = useValidators();
+    const { sinValidationRule, checkNotesLengthRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       CreateSINValidationAPIInDTO | boolean
     >();
@@ -102,23 +100,6 @@ export default {
       resolvePromise(false);
     };
 
-    const sinValidation = (sin: string) => {
-      if (sin) {
-        return isSINValid(sin) || "Please provide a proper SIN.";
-      }
-      return "SIN is required.";
-    };
-
-    const checkNotesLength = (notes: string) => {
-      if (notes) {
-        return (
-          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
-          `Max ${NOTES_MAX_CHARACTERS} characters.`
-        );
-      }
-      return "Note body is required.";
-    };
-
     return {
       showDialog,
       showModal,
@@ -127,8 +108,8 @@ export default {
       addNewSINForm,
       formModel,
       BannerTypes,
-      sinValidation,
-      checkNotesLength,
+      sinValidationRule,
+      checkNotesLengthRule,
     };
   },
 };

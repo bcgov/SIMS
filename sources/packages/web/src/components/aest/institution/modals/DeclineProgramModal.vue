@@ -18,7 +18,7 @@
           placeholder="Long text..."
           v-model="formModel.declinedNote"
           variant="outlined"
-          :rules="[(v) => checkNotesLength(v)]"
+          :rules="[(v) => checkNotesLengthRule(v)]"
       /></template>
       <template #footer>
         <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
@@ -41,7 +41,7 @@
 import { ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog, useValidators } from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import { DeclineProgramAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role, VForm } from "@/types";
@@ -60,8 +60,7 @@ export default {
     },
   },
   setup() {
-    const NOTES_MAX_CHARACTERS = 500;
-    const { checkMaxCharacters } = useValidators();
+    const { checkNotesLengthRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       DeclineProgramAPIInDTO | false
     >();
@@ -84,16 +83,6 @@ export default {
       resolvePromise(false);
     };
 
-    const checkNotesLength = (notes: string) => {
-      if (notes) {
-        return (
-          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
-          `Max ${NOTES_MAX_CHARACTERS} characters.`
-        );
-      }
-      return "Note body is required.";
-    };
-
     return {
       showDialog,
       submit,
@@ -102,7 +91,7 @@ export default {
       formModel,
       declineProgramForm,
       Role,
-      checkNotesLength,
+      checkNotesLengthRule,
     };
   },
 };

@@ -31,7 +31,7 @@
           placeholder="Long text..."
           v-model="formModel.noteDescription"
           variant="outlined"
-          :rules="[(v) => checkNotesLength(v)]"
+          :rules="[(v) => checkNotesLengthRule(v)]"
       /></template>
       <template #footer>
         <check-permission-role :role="Role.StudentAddSINExpiry">
@@ -53,7 +53,7 @@
 import { PropType, ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog, useValidators } from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import { Role, VForm } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { UpdateSINValidationAPIInDTO } from "@/services/http/dto";
@@ -71,8 +71,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const NOTES_MAX_CHARACTERS = 500;
-    const { checkMaxCharacters } = useValidators();
+    const { checkNotesLengthRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       UpdateSINValidationAPIInDTO | boolean
     >();
@@ -96,16 +95,6 @@ export default defineComponent({
       resolvePromise(false);
     };
 
-    const checkNotesLength = (notes: string) => {
-      if (notes) {
-        return (
-          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
-          `Max ${NOTES_MAX_CHARACTERS} characters.`
-        );
-      }
-      return "Note body is required.";
-    };
-
     return {
       showDialog,
       showModal,
@@ -114,7 +103,7 @@ export default defineComponent({
       Role,
       addExpiryDateForm,
       formModel,
-      checkNotesLength,
+      checkNotesLengthRule,
     };
   },
 });

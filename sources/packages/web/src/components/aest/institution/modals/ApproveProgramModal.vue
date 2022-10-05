@@ -31,7 +31,7 @@
           placeholder="Long text..."
           v-model="formModel.approvedNote"
           variant="outlined"
-          :rules="[(v) => checkNotesLength(v)]"
+          :rules="[(v) => checkNotesLengthRule(v)]"
         />
       </template>
       <template #footer>
@@ -54,7 +54,7 @@
 <script lang="ts">
 import { ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog, useValidators } from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { ApproveProgramAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -74,8 +74,7 @@ export default {
     },
   },
   setup() {
-    const NOTES_MAX_CHARACTERS = 500;
-    const { checkMaxCharacters } = useValidators();
+    const { checkNotesLengthRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       ApproveProgramAPIInDTO | boolean
     >();
@@ -100,16 +99,6 @@ export default {
       resolvePromise(false);
     };
 
-    const checkNotesLength = (notes: string) => {
-      if (notes) {
-        return (
-          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
-          `Max ${NOTES_MAX_CHARACTERS} characters.`
-        );
-      }
-      return "Note body is required.";
-    };
-
     return {
       showDialog,
       submit,
@@ -118,7 +107,7 @@ export default {
       formModel,
       approveProgramForm,
       Role,
-      checkNotesLength,
+      checkNotesLengthRule,
     };
   },
 };

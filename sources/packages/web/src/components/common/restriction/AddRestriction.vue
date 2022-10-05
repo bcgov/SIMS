@@ -29,7 +29,7 @@
           placeholder="Long text..."
           v-model="formModel.noteDescription"
           variant="outlined"
-          :rules="[(v) => checkNotesLength(v)]"
+          :rules="[(v) => checkNotesLengthRule(v)]"
       /></template>
       <template #footer>
         <check-permission-role :role="allowedRole">
@@ -51,7 +51,7 @@
 import { PropType, ref, onMounted, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog, useValidators } from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import { Role, VForm, RestrictionEntityType } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import {
@@ -75,8 +75,7 @@ export default {
     },
   },
   setup(props: any) {
-    const NOTES_MAX_CHARACTERS = 500;
-    const { checkMaxCharacters } = useValidators();
+    const { checkNotesLengthRule } = useRules();
     const restrictionCategories = ref([] as AssignRestrictionCategories[]);
     const restrictionReasons = ref([] as AssignRestrictionReasons[]);
     const selectedCategory = ref("");
@@ -140,16 +139,6 @@ export default {
       resolvePromise(false);
     };
 
-    const checkNotesLength = (notes: string) => {
-      if (notes) {
-        return (
-          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
-          `Max ${NOTES_MAX_CHARACTERS} characters.`
-        );
-      }
-      return "Note body is required.";
-    };
-
     return {
       showDialog,
       showModal,
@@ -162,7 +151,7 @@ export default {
       restrictionReasons,
       selectedCategory,
       categoryReasonItems,
-      checkNotesLength,
+      checkNotesLengthRule,
     };
   },
 };
