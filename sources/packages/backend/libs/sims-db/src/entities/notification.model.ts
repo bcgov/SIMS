@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames } from "../constant";
+import { Message } from "./message.model";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
 
@@ -43,4 +44,13 @@ export class Notification extends RecordDataModel {
     nullable: false,
   })
   gcNotifyPayload: string;
+  /**
+   * Message associated with this notification.
+   */
+  @OneToOne(() => Message, { eager: false, cascade: false })
+  @JoinColumn({
+    name: "message_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  message: Message;
 }
