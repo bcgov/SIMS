@@ -133,8 +133,14 @@
   padding-left: 20px;
 }
 
-.align-bullets ul {
+.align-bullets ul,
+.align-bullets ol {
   padding-left: 20px;
+}
+
+.align-bullets ul li,
+.align-bullets ol li {
+  line-height: $line-height-header-md !important;
 }
 
 /**Todo: formio-component-content styles must be removed once content component is
@@ -487,4 +493,12 @@
 .formio-bordered-column .col-md-6 {
   border: 1px solid #e8e8e8;
   border-radius: 0px;
+}
+
+.formio-bordered table {
+  border: 1px solid $common-border-color;
+}
+
+.formio-bordered table tbody tr:last-child {
+  background-color: $default-background;
 }
