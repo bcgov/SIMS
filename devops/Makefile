@@ -25,7 +25,6 @@ export API := $(or ${API}, api-$(APP_NAME))
 export WORKERS := $(or ${WORKERS}, workers-$(APP_NAME))
 export WEB := $(or ${WEB}, web-$(APP_NAME))
 export API_PORT := $(or ${API_PORT}, 7070)
-export WORKERS_PORT := $(or ${WORKERS_PORT}, 4040)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
 export DATABASE_NAME_KEY := $(or ${DATABASE_NAME_KEY}, database-name)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
@@ -407,11 +406,9 @@ deploy-workers:
 	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(DATABASE_NAME_KEY)"
 	test -n "$(WORKERS)"
-	test -n "$(WORKERS_PORT)"
 	@echo "+\n++ Deploying Workers with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \
 		-p NAME=$(WORKERS) \
-		-p PORT=$(WORKERS_PORT) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_TAG)" \
