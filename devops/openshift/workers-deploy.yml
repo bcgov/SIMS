@@ -68,8 +68,6 @@ objects:
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
-              ports:
-                - containerPort: "${{PORT}}"
               resources:
                 limits:
                   cpu: ${CPU_LIMIT}
@@ -77,14 +75,6 @@ objects:
                 requests:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      name: ${NAME}
-    spec:
-      selector:
-        deploymentconfig: ${NAME}
-      type: ClusterIP
 parameters:
   - name: NAME
     required: true
@@ -102,8 +92,6 @@ parameters:
     value: "1000M"
   - name: REPLICAS
     value: "1"
-  - name: PORT
-    required: true
   - name: DB_SERVICE
     value: patroni-master
   - name: DB_SECRET_NAME
