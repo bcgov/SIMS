@@ -71,8 +71,8 @@
     class="text-center my-3 muted-content"
     v-if="applicationDetails.applicationStatus !== ApplicationStatus.draft"
   >
-    <span class="header-extra-small">Date submitted: </span
-    ><span class="value-extra-small">{{
+    <span class="header-text-small">Date submitted: </span
+    ><span class="value-text-small">{{
       dateOnlyLongString(applicationDetails.submittedDate)
     }}</span>
   </div>

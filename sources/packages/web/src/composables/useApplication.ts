@@ -55,5 +55,6 @@ export function useApplication() {
         "-",
     };
   };
+
   return { mapApplicationChipStatus, mapApplicationDetailHeader };
 }

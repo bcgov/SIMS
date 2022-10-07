@@ -69,20 +69,20 @@
   line-height: $line-height-header-lg;
 }
 
-/**Typography styles for extra small header**/
-.extra-small {
+/**Typography styles for small header**/
+.text-small {
   font-style: $font-style-normal;
   font-size: $font-header-small;
   line-height: $line-height-header-sm;
 }
 
-.header-extra-small {
-  @extend .extra-small;
+.header-text-small {
+  @extend .text-small;
   font-weight: $font-weight-bold;
 }
 
-.value-extra-small {
-  @extend .extra-small;
+.value-text-small {
+  @extend .text-small;
   font-weight: $font-weight-normal;
 }
 
@@ -100,11 +100,28 @@
   line-height: 18px;
 }
 
-.label-small {
+.label-small-bold {
   font-style: $font-style-normal;
   font-weight: 700;
   font-size: 12px;
   line-height: 18px;
+}
+
+/**Typography styles for extra small header**/
+.extra-small {
+  font-style: $font-style-normal;
+  font-size: $font-size-xsmall;
+  line-height: $line-height-header-xsm;
+}
+
+.header-extra-small {
+  @extend .extra-small;
+  font-weight: $font-weight-bold;
+}
+
+.value-extra-small {
+  @extend .extra-small;
+  font-weight: $font-weight-normal;
 }
 
 .ff-form-container .alert-success {
@@ -491,7 +508,7 @@
 
 // Squared bordered style for formio md-6 col.
 .formio-bordered-column .col-md-6 {
-  border: 1px solid #e8e8e8;
+  border: 1px solid $common-border-color;
   border-radius: 0px;
 }
 
@@ -499,6 +516,10 @@
   border: 1px solid $common-border-color;
 }
 
-.formio-bordered table tbody tr:last-child {
+.formio-table-last-col-background table tbody tr:last-child {
   background-color: $default-background;
+}
+
+.formio-bordered table tbody tr td {
+  max-width: 70px;
 }

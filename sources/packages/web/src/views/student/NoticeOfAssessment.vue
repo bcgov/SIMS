@@ -2,12 +2,13 @@
   <student-page-container>
     <template #header>
       <header-navigator
-        title="Application details"
+        title="View assessment"
         subTitle="Assessment"
         :routeLocation="{
-          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          name: StudentRoutesConst.ASSESSMENT_AWARD_VIEW,
           params: {
-            id: applicationId,
+            applicationId: applicationId,
+            assessmentId: assessmentId,
           },
         }"
       />
