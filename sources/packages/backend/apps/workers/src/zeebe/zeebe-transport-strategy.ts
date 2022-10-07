@@ -23,7 +23,7 @@ export class ZeebeTransportStrategy
     const handlers = this.getHandlers();
     handlers.forEach((handler: MessageHandler, taskType: string) => {
       const { extras } = handler;
-      const workerOptions = extras as ZBWorkerOptions;
+      const workerOptions = extras.options as ZBWorkerOptions;
       this.zeebeClient.createWorker({
         ...workerOptions,
         taskType,
