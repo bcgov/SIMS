@@ -1,18 +1,36 @@
-import * as jsonpath from "jsonpath";
+import * as JSONPath from "jsonpath";
 
+/**
+ * A jsonpath node with an indexer that represents an
+ * item that belongs to an enum will looks like below.
+ * The one to last position will be the index (0 in this case)
+ * and the last position will be the property name.
+ * @example { value: 'John Doe', path: [ '$', 'dependants', 0, 'fullName' ] }
+ */
 const INDEXED_PATH_MIN_LENGTH = 2;
 
+/**
+ * Object returned by the method jsonpath.nodes.
+ * @example
+ * { value: 'Not Requested', path: [ '$', 'pdStatus' ] }
+ * { value: 'John Doe', path: [ '$', 'dependants', 0, 'fullName' ] }
+ */
 interface JSONPathNode {
   value: unknown;
-  path: unknown[];
+  path: JSONPath.PathComponent[];
 }
 
-interface IndexedJSONPathNode {
-  value: unknown;
-  propertyName: string;
-  index: number;
-}
-
+/**
+ * Check if the jsonpath node has an indexer inspecting the
+ * content of the one to last item in the path.
+ * @example
+ * Not indexed
+ * { value: 'Not Requested', path: [ '$', 'pdStatus' ] }
+ * Indexed because has an indexer in one to last position.
+ * { value: 'John Doe', path: [ '$', 'dependants', 0, 'fullName' ] }
+ * @param node jsonpath node to be inspected.
+ * @returns true if it is has an index, otherwise, false.
+ */
 function hasIndexer(node: JSONPathNode) {
   return (
     node.path.length >= INDEXED_PATH_MIN_LENGTH &&
@@ -20,14 +38,11 @@ function hasIndexer(node: JSONPathNode) {
   );
 }
 
-function getIndexedJSONPathNode(node: JSONPathNode): IndexedJSONPathNode {
-  return {
-    value: node.value,
-    propertyName: node.path[node.path.length - 1] as string,
-    index: +node.path[node.path.length - INDEXED_PATH_MIN_LENGTH],
-  };
-}
-
+/**
+ * Get the value or array of values represented by the jsonpath nodes.
+ * @param nodes nodes to have the values converted.
+ * @returns value or array of values represented by the jsonpath nodes.
+ */
 function getValueFromJSONPathNode(nodes: JSONPathNode[]): unknown | unknown[] {
   const [firstNode] = nodes;
   // Checks if an indexer is present which indicates that the node represents an array.
@@ -37,27 +52,68 @@ function getValueFromJSONPathNode(nodes: JSONPathNode[]): unknown | unknown[] {
   // Process an node that represents an array result.
   const resultObject = new Array<unknown>();
   for (const node of nodes) {
-    const indexedItem = getIndexedJSONPathNode(node);
-    if (!resultObject[indexedItem.index]) {
-      resultObject[indexedItem.index] = {};
+    const propertyName = node.path[node.path.length - 1] as string;
+    const index = +node.path[node.path.length - INDEXED_PATH_MIN_LENGTH];
+    if (!resultObject[index]) {
+      resultObject[index] = {};
     }
-    resultObject[indexedItem.index][indexedItem.propertyName] =
-      indexedItem.value;
+    resultObject[index][propertyName] = node.value;
   }
   return resultObject;
 }
 
+/**
+ * Execute the jsonpath filter in the provided object.
+ * @param object object to be filtered by the jsonpath expression.
+ * @param jsonPathExpression jsonpath expression.
+ * @see https://goessner.net/articles/JsonPath.
+ * @returns the object or array of objects resulted from the
+ * jsonpath expression execution.
+ */
 function getJsonPathNodeValue(
-  value: unknown,
+  object: unknown,
   jsonPathExpression: string,
-): unknown {
-  const jsonPathNode = jsonpath.nodes(value, jsonPathExpression);
+): unknown | unknown[] {
+  const jsonPathNode = JSONPath.nodes(object, jsonPathExpression);
   if (!jsonPathNode.length) {
     return null;
   }
   return getValueFromJSONPathNode(jsonPathNode);
 }
 
+/**
+ * Creates a new object based in the filter object provided.
+ * @param object object to have the jsonpath expressions executed.
+ * @param filter key/value object where the keys will be used
+ * to generate the properties that will then contain the values
+ * resulting from the jsonpath expressions execution.
+ * @returns new object with one property for each filter key provided
+ * where the values for each property are the values
+ * resulting from the jsonpath expressions execution.
+ * @example
+ * // Assuming the below object.
+ * {
+ *   identity: {
+ *     firstName: "John",
+ *     lastName: "Doe"
+ *   }
+ *   age: 13,
+ *   address: {
+ *     street: "Some street",
+ *     number: 123
+ *   }
+ * }
+ * // Assuming the below filter object:
+ * {
+ *   familyName: "$.identity.lastName",
+ *   streetNumber: "$.address.number"
+ * }
+ * // The result object will be:
+ * {
+ *    familyName: "John Doe",
+ *    streetNumber: "123"
+ * }
+ */
 export function filterObjectProperties(
   object: unknown,
   filter: Record<string, string>,
