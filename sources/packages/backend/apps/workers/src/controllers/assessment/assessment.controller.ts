@@ -1,5 +1,5 @@
 import { Controller } from "@nestjs/common";
-import { ZeebeWorker } from "../../zeebe/zeebe-worker.decorator";
+import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
   ICustomHeaders,
@@ -20,7 +20,7 @@ import {
   SupportingUser,
   SupportingUserType,
 } from "@sims/sims-db";
-import { filterObjectProperties } from "../../utilities/jsonpath/jsonpath-utils";
+import { filterObjectProperties } from "../../utilities";
 import { ASSESSMENT_ID } from "../workflow-constants";
 
 @Controller()

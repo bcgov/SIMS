@@ -1,5 +1,5 @@
 import { Controller } from "@nestjs/common";
-import { ZeebeWorker } from "../../zeebe/zeebe-worker.decorator";
+import { ZeebeWorker } from "../../zeebe";
 import {
   ZeebeJob,
   MustReturnJobActionAcknowledgement,
@@ -26,9 +26,7 @@ export class ApplicationController {
     private readonly applicationExceptionService: ApplicationExceptionService,
   ) {}
 
-  @ZeebeWorker("update-application-status", {
-    fetchVariable: [APPLICATION_ID],
-  })
+  @ZeebeWorker("update-application-status", { fetchVariable: [APPLICATION_ID] })
   async updateApplicationStatus(
     job: Readonly<
       ZeebeJob<
