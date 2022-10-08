@@ -70,25 +70,26 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         // looking for some application exception.
         this.searchExceptionsRecursively(arrayItem, applicationExceptions);
       }
-    } else {
-      // If the payload is an object, iterate through its properties
-      // looking for some application exception.
-      for (const objectKey of Object.keys(payload)) {
-        const propertyValue = payload[objectKey];
-        if (!propertyValue) {
-          continue;
-        }
-        if (Array.isArray(propertyValue) || typeof propertyValue === "object") {
-          this.searchExceptionsRecursively(
-            propertyValue,
-            applicationExceptions,
-          );
-        } else if (propertyValue === "studentApplicationException") {
-          // Check if the same exception was already added, for instance for the
-          // cases that the exceptions are added to an array of items like dependents.
-          if (applicationExceptions.indexOf(objectKey) === -1) {
-            applicationExceptions.push(objectKey);
-          }
+      return;
+    }
+    // If the payload is an object, iterate through its properties
+    // looking for some application exception.
+    for (const objectKey of Object.keys(payload)) {
+      const propertyValue = payload[objectKey];
+      if (!propertyValue) {
+        continue;
+      }
+      // If it is an array or an object it must check the array children or object properties.
+      if (Array.isArray(propertyValue) || typeof propertyValue === "object") {
+        this.searchExceptionsRecursively(propertyValue, applicationExceptions);
+        continue;
+      }
+      // Check if the property has the value that determine that its keys represents an exception.
+      if (propertyValue === "studentApplicationException") {
+        // Check if the same exception was already added, for instance for the
+        // cases that the exceptions are added to an array of items like dependents.
+        if (applicationExceptions.indexOf(objectKey) === -1) {
+          applicationExceptions.push(objectKey);
         }
       }
     }
