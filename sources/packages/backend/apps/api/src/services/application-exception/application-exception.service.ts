@@ -42,6 +42,8 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @returns created exception.
+   * @deprecated moved to the workers.
+   * TODO: to be removed, only workers will create exceptions.
    */
   async createException(
     applicationId: number,

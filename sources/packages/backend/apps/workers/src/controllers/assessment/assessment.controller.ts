@@ -11,8 +11,8 @@ import {
   AssessmentDataWorkerInDTO,
   StudentAppealRequestWorkersOutDTO,
   SupportingUserWorkerOutDTO,
-} from "./assessment.dto";
-import { StudentAssessmentService } from "../../services/student-assessment/student-assessment.service";
+} from "..";
+import { StudentAssessmentService } from "../../services";
 import {
   CRAIncomeVerification,
   StudentAppealRequest,
@@ -21,6 +21,7 @@ import {
   SupportingUserType,
 } from "@sims/sims-db";
 import { filterObjectProperties } from "../../utilities/jsonpath/jsonpath-utils";
+import { ASSESSMENT_ID } from "../workflow-constants";
 
 @Controller()
 export class AssessmentController {
@@ -28,7 +29,7 @@ export class AssessmentController {
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {}
 
-  @ZeebeWorker("load-assessment-data")
+  @ZeebeWorker("load-assessment-data", { fetchVariable: [ASSESSMENT_ID] })
   async loadAssessmentData(
     job: Readonly<
       ZeebeJob<AssessmentDataWorkerInDTO, ICustomHeaders, IOutputVariables>
@@ -46,7 +47,6 @@ export class AssessmentController {
       assessmentDTO,
       job.customHeaders,
     );
-    console.log(outputVariables);
     return job.complete(outputVariables);
   }
 

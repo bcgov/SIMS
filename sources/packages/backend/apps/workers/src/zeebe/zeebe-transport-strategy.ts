@@ -26,6 +26,9 @@ export class ZeebeTransportStrategy
       const workerOptions = extras.options as ZBWorkerOptions;
       this.zeebeClient.createWorker({
         ...workerOptions,
+        // Ensures that the variables must be explicit provided in order to
+        // be retrieved from the workflow as per Camunda best practices.
+        fetchVariable: workerOptions?.fetchVariable ?? [],
         taskType,
         taskHandler: async (job) => handler(job),
       });
