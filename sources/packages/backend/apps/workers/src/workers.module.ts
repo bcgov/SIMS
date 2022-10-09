@@ -4,11 +4,13 @@ import {
   AssessmentController,
   ApplicationController,
   ProgramInfoRequestController,
+  SupportingUserController,
 } from "./controllers";
 import {
   StudentAssessmentService,
   ApplicationService,
   ApplicationExceptionService,
+  SupportingUserService,
 } from "./services";
 
 @Module({
@@ -17,11 +19,13 @@ import {
     AssessmentController,
     ApplicationController,
     ProgramInfoRequestController,
+    SupportingUserController,
   ],
   providers: [
     StudentAssessmentService,
     ApplicationService,
     ApplicationExceptionService,
+    SupportingUserService,
   ],
 })
 export class WorkersModule {}

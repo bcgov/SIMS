@@ -4,3 +4,5 @@ export * from "./assessment/assessment.controller";
 export * from "./assessment/assessment.dto";
 export * from "./program-info-request/program-info-request.controller";
 export * from "./program-info-request/program-info-request.dto";
+export * from "./supporting-user/supporting-user.controller";
+export * from "./supporting-user/supporting-user.dto";

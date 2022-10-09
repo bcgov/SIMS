@@ -22,6 +22,7 @@ import {
 } from "@sims/sims-db";
 import { filterObjectProperties } from "../../utilities";
 import { ASSESSMENT_ID } from "../workflow-constants";
+import { ASSESSMENT_NOT_FOUND } from "apps/api/src/services";
 
 @Controller()
 export class AssessmentController {
@@ -39,7 +40,7 @@ export class AssessmentController {
       job.variables.assessmentId,
     );
     if (!assessment) {
-      return job.fail("Assessment not found.");
+      return job.error(ASSESSMENT_NOT_FOUND, "Assessment not found.");
     }
 
     const assessmentDTO = this.createAssessmentDTO(assessment);

@@ -59,7 +59,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: {
         id: true,
         pirStatus: true,
-        data: options?.loadDynamicData
+        data: !options?.loadDynamicData
           ? {
               // TODO: change data to be unknown in the entity model.
               selectedLocation: true,
