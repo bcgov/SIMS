@@ -18,6 +18,10 @@ import {
 } from "..";
 import { APPLICATION_ID } from "../workflow-constants";
 import { ApplicationExceptionStatus } from "@sims/sims-db";
+import {
+  APPLICATION_NOT_FOUND,
+  APPLICATION_STATUS_NOT_UPDATED,
+} from "../error-code-constants";
 
 @Controller()
 export class ApplicationController {
@@ -43,7 +47,7 @@ export class ApplicationController {
     );
     if (!updateResult.affected) {
       return job.error(
-        "APPLICATION_STATUS_NOT_UPDATED",
+        APPLICATION_STATUS_NOT_UPDATED,
         "The application status was not updated either because the application id was not found or the application is not in the expected status.",
       );
     }
@@ -66,7 +70,7 @@ export class ApplicationController {
       job.variables.applicationId,
     );
     if (!application) {
-      return job.error("APPLICATION_NOT_FOUND", "Application id not found.");
+      return job.error(APPLICATION_NOT_FOUND, "Application id not found.");
     }
     if (application.applicationException) {
       // The exceptions were already processed for this application.

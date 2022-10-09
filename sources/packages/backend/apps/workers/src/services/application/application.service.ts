@@ -2,9 +2,10 @@ import { Injectable } from "@nestjs/common";
 import {
   Application,
   ApplicationStatus,
+  ProgramInfoStatus,
   RecordDataModelService,
 } from "@sims/sims-db";
-import { DataSource, In, UpdateResult } from "typeorm";
+import { DataSource, In, IsNull, UpdateResult } from "typeorm";
 
 /**
  * Manages the student assessment related operations.
@@ -37,14 +38,33 @@ export class ApplicationService extends RecordDataModelService<Application> {
     );
   }
 
-  async getApplicationById(applicationId: number): Promise<Application> {
+  async updateProgramInfoStatus(
+    applicationId: number,
+    pirStatus: ProgramInfoStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: applicationId,
+        pirStatus: IsNull(),
+      },
+      { pirStatus },
+    );
+  }
+
+  async getApplicationById(
+    applicationId: number,
+    options?: { loadDynamicData: boolean },
+  ): Promise<Application> {
     return this.repo.findOne({
       select: {
-        // TODO: change data to be unknown in the entity model.
         id: true,
-        data: {
-          selectedLocation: true,
-        },
+        pirStatus: true,
+        data: options?.loadDynamicData
+          ? {
+              // TODO: change data to be unknown in the entity model.
+              selectedLocation: true,
+            }
+          : undefined,
         applicationException: {
           id: true,
           exceptionStatus: true,

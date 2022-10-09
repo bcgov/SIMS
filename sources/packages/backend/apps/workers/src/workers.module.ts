@@ -1,6 +1,10 @@
 import { Module } from "@nestjs/common";
 import { DatabaseModule } from "@sims/sims-db";
-import { AssessmentController, ApplicationController } from "./controllers";
+import {
+  AssessmentController,
+  ApplicationController,
+  ProgramInfoRequestController,
+} from "./controllers";
 import {
   StudentAssessmentService,
   ApplicationService,
@@ -9,7 +13,11 @@ import {
 
 @Module({
   imports: [DatabaseModule],
-  controllers: [AssessmentController, ApplicationController],
+  controllers: [
+    AssessmentController,
+    ApplicationController,
+    ProgramInfoRequestController,
+  ],
   providers: [
     StudentAssessmentService,
     ApplicationService,

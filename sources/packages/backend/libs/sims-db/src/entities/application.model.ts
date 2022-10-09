@@ -137,8 +137,9 @@ export class Application extends RecordDataModel {
     type: "enum",
     enum: ProgramInfoStatus,
     enumName: "ProgramInfoStatus",
+    nullable: true,
   })
-  pirStatus: ProgramInfoStatus;
+  pirStatus?: ProgramInfoStatus;
   /**
    * List of all files ids currently associated with the application.
    */
