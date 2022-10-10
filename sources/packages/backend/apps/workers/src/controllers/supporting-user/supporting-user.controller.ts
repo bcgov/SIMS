@@ -51,7 +51,7 @@ export class SupportingUserController {
   }
 
   @ZeebeWorker("check-supporting-user-response", {
-    fetchVariable: [APPLICATION_ID],
+    fetchVariable: [APPLICATION_ID, "supportingUserId"],
   })
   async checkSupportingUserResponse(
     job: Readonly<

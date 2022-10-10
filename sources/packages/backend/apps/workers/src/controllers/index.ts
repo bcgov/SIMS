@@ -6,3 +6,5 @@ export * from "./program-info-request/program-info-request.controller";
 export * from "./program-info-request/program-info-request.dto";
 export * from "./supporting-user/supporting-user.controller";
 export * from "./supporting-user/supporting-user.dto";
+export * from "./cra-integration/cra-integration.controller";
+export * from "./cra-integration/cra-integration.dto";

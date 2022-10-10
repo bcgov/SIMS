@@ -5,12 +5,14 @@ import {
   ApplicationController,
   ProgramInfoRequestController,
   SupportingUserController,
+  CRAIntegrationController,
 } from "./controllers";
 import {
   StudentAssessmentService,
   ApplicationService,
   ApplicationExceptionService,
   SupportingUserService,
+  CRAIncomeVerificationService,
 } from "./services";
 
 @Module({
@@ -20,12 +22,14 @@ import {
     ApplicationController,
     ProgramInfoRequestController,
     SupportingUserController,
+    CRAIntegrationController,
   ],
   providers: [
     StudentAssessmentService,
     ApplicationService,
     ApplicationExceptionService,
     SupportingUserService,
+    CRAIncomeVerificationService,
   ],
 })
 export class WorkersModule {}
