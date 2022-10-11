@@ -10,6 +10,7 @@
           v-model="toggleNotes"
           mandatory
           class="float-right btn-toggle"
+          selected-class="selected-btn-toggle"
         >
           <v-btn
             rounded="xl"
