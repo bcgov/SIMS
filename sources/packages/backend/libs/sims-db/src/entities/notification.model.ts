@@ -41,9 +41,10 @@ export class Notification extends RecordDataModel {
    */
   @Column({
     name: "gc_notify_payload",
+    type: "jsonb",
     nullable: false,
   })
-  gcNotifyPayload: string;
+  gcNotifyPayload: unknown;
   /**
    * Message associated with this notification.
    */
@@ -53,4 +54,36 @@ export class Notification extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   message: Message;
+  /**
+   * Date Sent Column
+   */
+  @Column({
+    name: "date_sent",
+    type: "timestamptz",
+    nullable: false,
+  })
+  dateSent: Date;
+  /**
+   * Date Read Column
+   */
+  @Column({
+    name: "date_read",
+    type: "timestamptz",
+    nullable: true,
+  })
+  dateRead: Date;
+}
+
+/**
+ * Enumeration types for Messages.
+ */
+export enum MessageType {
+  /**
+   * Message type student file upload.
+   */
+  StudentFileUpload = 1,
+  /**
+   * Message type ministry file upload.
+   */
+  MinistryFileUpload = 2,
 }

@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { MessageType } from "@sims/sims-db";
 import { getExtendedDateFormat, getPSTPDTDateTime } from "../../utilities";
 import {
   MINISTRY_FILE_UPLOAD_TEMPLATE_ID,
@@ -12,19 +13,27 @@ import {
   StudentFileUploadPersonalisation,
 } from "./gc-notify.model";
 import { GCNotifyService } from "./gc-notify.service";
+import { NotificationService } from "./notification.service";
 
 @Injectable()
 export class GCNotifyActionsService {
-  constructor(private readonly gcNotifyService: GCNotifyService) {}
+  constructor(
+    private readonly gcNotifyService: GCNotifyService,
+    private readonly notificationService: NotificationService,
+  ) {}
 
   /**
    * This method is used to send email notification to SABC
    * when a student uploads documents and submits it in the file uploader screen.
    * @param notification input parameters to generate the notification.
+   * @param userId id of the user who will receive the message.
+   * @param auditUserId id of the user creating the notification.
    * @returns GC Notify API call response.
    */
   async sendFileUploadNotification(
     notification: StudentFileUploadNotification,
+    userId: number,
+    auditUserId: number,
   ): Promise<GCNotifyResult> {
     const payload = {
       email_address: this.gcNotifyService.ministryToAddress(),
@@ -38,6 +47,14 @@ export class GCNotifyActionsService {
         date: this.getDateTimeOnPSTTimeZone(),
       },
     };
+    // save notification into notification table.
+    await this.notificationService.saveNotification(
+      userId,
+      MessageType.StudentFileUpload,
+      STUDENT_FILE_UPLOAD_TEMPLATE_ID,
+      payload,
+      auditUserId,
+    );
     return this.gcNotifyService.sendEmailNotification<StudentFileUploadPersonalisation>(
       payload,
     );
@@ -50,6 +67,8 @@ export class GCNotifyActionsService {
    */
   async sendMinistryFileUploadNotification(
     notification: MinistryStudentFileUploadNotification,
+    userId: number,
+    auditUserId: number,
   ): Promise<GCNotifyResult> {
     const payload = {
       email_address: notification.toAddress,
@@ -60,6 +79,16 @@ export class GCNotifyActionsService {
         date: this.getDateTimeOnPSTTimeZone(),
       },
     };
+
+    // save notification into notification table.
+    await this.notificationService.saveNotification(
+      userId,
+      MessageType.MinistryFileUpload,
+      MINISTRY_FILE_UPLOAD_TEMPLATE_ID,
+      payload,
+      auditUserId,
+    );
+
     return this.gcNotifyService.sendEmailNotification<MinistryStudentFileUploadPersonalisation>(
       payload,
     );

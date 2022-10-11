@@ -21,6 +21,7 @@ import {
   StudentService,
   SFASIndividualService,
   EducationProgramOfferingValidationService,
+  NotificationService,
 } from "./services";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -51,6 +52,7 @@ import { LoggerModule } from "./logger/logger.module";
     StudentService,
     SFASIndividualService,
     EducationProgramOfferingValidationService,
+    NotificationService,
   ],
 })
 export class AppSupportingUsersModule {}

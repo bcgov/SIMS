@@ -280,13 +280,17 @@ export class StudentStudentsController extends BaseController {
     // This method will be executed alongside with the transaction during the
     // execution of the method updateStudentFiles.
     const sendFileUploadNotification = () =>
-      this.gcNotifyActionsService.sendFileUploadNotification({
-        firstName: student.user.firstName,
-        lastName: student.user.lastName,
-        birthDate: student.birthDate,
-        documentPurpose: payload.submittedForm.documentPurpose,
-        applicationNumber: payload.submittedForm.applicationNumber,
-      });
+      this.gcNotifyActionsService.sendFileUploadNotification(
+        {
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          documentPurpose: payload.submittedForm.documentPurpose,
+          applicationNumber: payload.submittedForm.applicationNumber,
+        },
+        student.user.id,
+        studentUserToken.userId,
+      );
 
     const fileMetadata = payload.submittedForm.applicationNumber
       ? { applicationNumber: payload.submittedForm.applicationNumber }

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS sims.messages (
-    id SERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     description VARCHAR(1000) NOT NULL,
     -- Audit columns
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),

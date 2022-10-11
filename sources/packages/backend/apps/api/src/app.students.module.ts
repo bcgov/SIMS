@@ -33,6 +33,7 @@ import {
   StudentScholasticStandingsService,
   CRAIncomeVerificationService,
   SupportingUserService,
+  NotificationService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -106,6 +107,7 @@ import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.co
     StudentScholasticStandingsService,
     CRAIncomeVerificationService,
     SupportingUserService,
+    NotificationService,
   ],
 })
 export class AppStudentsModule {}

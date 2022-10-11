@@ -3,6 +3,9 @@ CREATE TABLE IF NOT EXISTS notifications (
     -- Reference Columns
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     message_id INT REFERENCES messages(id) ON DELETE CASCADE,
+    gc_notify_payload jsonb NOT NULL,
+    date_sent timestamp without time zone NOT NULL DEFAULT now(),
+    date_read timestamp without time zone,
     -- Audit columns
     created_at timestamp without time zone NOT NULL DEFAULT now(),
     updated_at timestamp without time zone NOT NULL DEFAULT now(),

@@ -40,6 +40,7 @@ import {
   InstitutionRestrictionService,
   EducationProgramOfferingValidationService,
   DisbursementReceiptService,
+  NotificationService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -144,6 +145,7 @@ import { InstitutionUserControllerService } from "./route-controllers/institutio
     EducationProgramOfferingControllerService,
     EducationProgramOfferingValidationService,
     DisbursementReceiptService,
+    NotificationService,
   ],
 })
 export class AppAESTModule {}

@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class CreateMessage1665067344564 implements MigrationInterface {
+export class CreateMessage1665093378388 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(getSQLFileData("Create-messages.sql", "Messages"));
   }
