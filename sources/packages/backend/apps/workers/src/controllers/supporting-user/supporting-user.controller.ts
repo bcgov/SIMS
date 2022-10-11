@@ -9,18 +9,19 @@ import {
 import { SupportingUserService } from "../../services";
 import {
   CheckSupportingUserResponseJobInDTO,
-  CheckSupportingUserResponseJobOutDTO,
   CreateSupportingUsersJobInDTO,
   CreateSupportingUsersJobOutDTO,
 } from "..";
 import { APPLICATION_ID } from "../workflow-constants";
 import { SUPPORTING_USER_NOT_FOUND } from "../error-code-constants";
+import { filterObjectProperties } from "../../utilities";
 
 @Controller()
 export class SupportingUserController {
   constructor(private readonly supportingUserService: SupportingUserService) {}
 
   @ZeebeWorker("create-supporting-users", {
+    // supportingUsersTypes is a local variable declared at the task level only.
     fetchVariable: [APPLICATION_ID, "supportingUsersTypes"],
   })
   async createSupportingUsers(
@@ -50,7 +51,7 @@ export class SupportingUserController {
     return job.complete({ createdSupportingUsersIds });
   }
 
-  @ZeebeWorker("check-supporting-user-response", {
+  @ZeebeWorker("load-supporting-user-data", {
     fetchVariable: [APPLICATION_ID, "supportingUserId"],
   })
   async checkSupportingUserResponse(
@@ -58,7 +59,7 @@ export class SupportingUserController {
       ZeebeJob<
         CheckSupportingUserResponseJobInDTO,
         ICustomHeaders,
-        CheckSupportingUserResponseJobOutDTO
+        IOutputVariables
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
@@ -72,8 +73,10 @@ export class SupportingUserController {
         "Supporting user not found while checking for supporting user response.",
       );
     }
-    return job.complete({
-      hasSupportingUserData: !!supportingUser.supportingData,
-    });
+    const outputVariables = filterObjectProperties(
+      supportingUser.supportingData,
+      job.customHeaders,
+    );
+    return job.complete(outputVariables);
   }
 }

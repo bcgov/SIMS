@@ -120,7 +120,11 @@ export function filterObjectProperties(
 ): unknown {
   const resultObject = {} as Record<string, unknown>;
   Object.keys(filter).forEach((filterKey: string) => {
-    resultObject[filterKey] = getJsonPathNodeValue(object, filter[filterKey]);
+    if (object) {
+      resultObject[filterKey] = getJsonPathNodeValue(object, filter[filterKey]);
+    } else {
+      resultObject[filterKey] = null;
+    }
   });
   return resultObject;
 }

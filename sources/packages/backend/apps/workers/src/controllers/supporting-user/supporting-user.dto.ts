@@ -12,7 +12,3 @@ export class CreateSupportingUsersJobOutDTO {
 export class CheckSupportingUserResponseJobInDTO {
   supportingUserId: number;
 }
-
-export class CheckSupportingUserResponseJobOutDTO {
-  hasSupportingUserData: boolean;
-}

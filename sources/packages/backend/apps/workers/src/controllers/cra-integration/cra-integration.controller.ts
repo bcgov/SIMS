@@ -27,7 +27,6 @@ export class CRAIntegrationController {
       SUPPORTING_USER_ID,
       "taxYear",
       "reportedIncome",
-      "supportingUserId",
     ],
   })
   async createSupportingUsers(
