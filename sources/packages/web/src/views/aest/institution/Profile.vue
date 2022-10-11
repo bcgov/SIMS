@@ -1,7 +1,7 @@
 <template>
   <v-card class="mt-4">
     <div class="mx-5 py-4">
-      <body-header title="Profile" class="m-1">
+      <body-header title="Profile">
         <template #actions>
           <check-permission-role :role="Role.InstitutionEditProfile">
             <template #="{ notAllowed }">
@@ -18,27 +18,9 @@
           </check-permission-role>
         </template>
       </body-header>
+      <p class="category-header-medium">Institution profile</p>
       <content-group>
         <v-row>
-          <v-col>
-            <title-value
-              propertyTitle="Legal operating name"
-              :propertyValue="institutionProfileDetail.legalOperatingName"
-            />
-            <title-value
-              propertyTitle="Institution name"
-              :propertyValue="institutionProfileDetail.operatingName"
-            />
-            <title-value
-              propertyTitle="Type"
-              :propertyValue="institutionProfileDetail.institutionTypeName"
-            />
-            <title-value
-              propertyTitle="Regulating body"
-              :propertyValue="institutionProfileDetail.regulatingBody"
-            />
-          </v-col>
-          <v-divider class="mx-4" vertical></v-divider>
           <v-col>
             <title-value
               propertyTitle="Primary phone number"
@@ -57,15 +39,32 @@
               :propertyValue="institutionProfileDetail.formattedEstablishedDate"
             />
           </v-col>
+          <v-divider class="mx-4" vertical></v-divider>
+          <v-col>
+            <title-value
+              propertyTitle="Legal operating name"
+              :propertyValue="institutionProfileDetail.legalOperatingName"
+            />
+            <title-value
+              propertyTitle="Institution name"
+              :propertyValue="institutionProfileDetail.operatingName"
+            />
+            <title-value
+              propertyTitle="Type"
+              :propertyValue="institutionProfileDetail.institutionTypeName"
+            />
+            <title-value
+              propertyTitle="Regulating body"
+              :propertyValue="institutionProfileDetail.regulatingBody"
+            />
+          </v-col>
         </v-row>
       </content-group>
-      <p class="category-header-large color-blue mt-2 mb-2">Contact info</p>
+      <p class="category-header-medium mt-5">Contact information</p>
       <v-row>
         <v-col
           ><content-group
-            ><h6 class="color-blue font-weight-bold">
-              INSTITUTION PRIMARY CONTACT
-            </h6>
+            ><span class="label-bold">Institution primary contact</span>
             <v-row class="mt-1 mb-2 ml-0 text-muted">
               {{ institutionProfileDetail.primaryContactFirstName }}
               {{ institutionProfileDetail.primaryContactLastName }}
@@ -79,7 +78,7 @@
           </content-group></v-col
         >
       </v-row>
-      <p class="category-header-large color-blue mt-2 mb-2">Mailing address</p>
+      <p class="category-header-medium mt-5">Mailing address</p>
       <content-group>
         <title-value
           propertyTitle="Address 1"

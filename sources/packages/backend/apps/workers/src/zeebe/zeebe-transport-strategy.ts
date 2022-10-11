@@ -7,6 +7,7 @@ import { ZBClient, ZBWorkerOptions } from "zeebe-node";
 
 /**
  * Zeebe strategy to stablish the connectivity and create all workers.
+ * @see https://docs.camunda.io/docs/0.25/components/zeebe/basics/job-workers.
  */
 export class ZeebeTransportStrategy
   extends Server
