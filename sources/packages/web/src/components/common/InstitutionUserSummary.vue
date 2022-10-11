@@ -80,7 +80,7 @@
             :is-active="slotProps.data.isActive"
           /> </template
       ></Column>
-      <Column header="Actions"
+      <Column header="Action"
         ><template #body="slotProps">
           <check-permission-role :role="Role.InstitutionEditUser">
             <template #="{ notAllowed }">
