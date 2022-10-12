@@ -13,7 +13,12 @@ import {
   CreateIncomeRequestJobInDTO,
   CreateIncomeRequestJobOutDTO,
 } from "..";
-import { APPLICATION_ID, SUPPORTING_USER_ID } from "../workflow-constants";
+import {
+  APPLICATION_ID,
+  REPORTED_INCOME,
+  SUPPORTING_USER_ID,
+  TAX_YEAR,
+} from "../workflow-variables";
 
 @Controller()
 export class CRAIntegrationController {
@@ -25,8 +30,8 @@ export class CRAIntegrationController {
     fetchVariable: [
       APPLICATION_ID,
       SUPPORTING_USER_ID,
-      "taxYear",
-      "reportedIncome",
+      TAX_YEAR,
+      REPORTED_INCOME,
     ],
   })
   async createSupportingUsers(
