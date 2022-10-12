@@ -48,16 +48,20 @@ export class GCNotifyActionsService {
       },
     };
     // save notification into notification table.
-    await this.notificationService.saveNotification(
+    const notificationSaved = await this.notificationService.saveNotification(
       userId,
       MessageType.StudentFileUpload,
       STUDENT_FILE_UPLOAD_TEMPLATE_ID,
       payload,
       auditUserId,
     );
-    return this.gcNotifyService.sendEmailNotification<StudentFileUploadPersonalisation>(
-      payload,
-    );
+    const gcNotifyResult =
+      await this.gcNotifyService.sendEmailNotification<StudentFileUploadPersonalisation>(
+        payload,
+      );
+    // update date sent column in notification table after sending email notification successfully.
+    await this.notificationService.updateNotification(notificationSaved.id);
+    return gcNotifyResult;
   }
 
   /**
@@ -81,7 +85,7 @@ export class GCNotifyActionsService {
     };
 
     // save notification into notification table.
-    await this.notificationService.saveNotification(
+    const notificationSaved = await this.notificationService.saveNotification(
       userId,
       MessageType.MinistryFileUpload,
       MINISTRY_FILE_UPLOAD_TEMPLATE_ID,
@@ -89,9 +93,13 @@ export class GCNotifyActionsService {
       auditUserId,
     );
 
-    return this.gcNotifyService.sendEmailNotification<MinistryStudentFileUploadPersonalisation>(
-      payload,
-    );
+    const gcNotifyResult =
+      await this.gcNotifyService.sendEmailNotification<MinistryStudentFileUploadPersonalisation>(
+        payload,
+      );
+    // update date sent column in notification table after sending email notification successfully.
+    await this.notificationService.updateNotification(notificationSaved.id);
+    return gcNotifyResult;
   }
 
   /**

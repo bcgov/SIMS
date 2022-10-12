@@ -6,7 +6,7 @@ import {
   Message,
   MessageType,
 } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { DataSource, UpdateResult } from "typeorm";
 
 @Injectable()
 export class NotificationService extends RecordDataModelService<Notification> {
@@ -39,5 +39,20 @@ export class NotificationService extends RecordDataModelService<Notification> {
     notification.createdAt = now;
     notification.message = { id: messageType } as Message;
     return this.repo.save(notification);
+  }
+
+  /**
+   * Updates the date sent column of the inbox notification record.
+   * @param notificationId notification id.
+   * @returns result of the record updated.
+   */
+  async updateNotification(notificationId: number): Promise<UpdateResult> {
+    const now = new Date();
+    return this.repo.update(
+      {
+        id: notificationId,
+      },
+      { dateSent: now },
+    );
   }
 }

@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     template_id VARCHAR(1000) NOT NULL,
     message_id INT REFERENCES messages(id) ON DELETE CASCADE,
     gc_notify_payload jsonb NOT NULL,
-    date_sent timestamp without time zone NOT NULL DEFAULT now(),
+    date_sent timestamp without time zone,
     date_read timestamp without time zone,
     -- Audit columns
     created_at timestamp without time zone NOT NULL DEFAULT now(),
