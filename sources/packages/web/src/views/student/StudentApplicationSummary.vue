@@ -3,29 +3,24 @@
     <template #header>
       <header-navigator title="Applications" subTitle="My Applications">
         <template #buttons>
-          <StartApplication />
+          <start-application />
         </template>
       </header-navigator>
     </template>
 
     <v-row>
       <v-col cols="12">
-        <StudentApplications
+        <student-applications
           :reloadData="reloadData"
           @editApplicationAction="editApplicationAction"
-          @openConfirmCancel="openConfirmCancel"
+          @openConfirmCancel="confirmCancelApplication"
           @goToApplication="goToApplication"
         />
       </v-col>
     </v-row>
   </student-page-container>
-  <ConfirmEditApplication ref="editApplicationModal" />
-  <CancelApplication
-    :showModal="showModal"
-    :applicationId="selectedApplicationId"
-    @showHideCancelApplication="showHideCancelApplication"
-    @reloadData="setReloadData"
-  />
+  <confirm-edit-application ref="editApplicationModal" />
+  <cancel-application ref="cancelApplicationModal" />
 </template>
 <script lang="ts">
 import { ref } from "vue";
@@ -37,7 +32,7 @@ import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
-import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
+import CancelApplication from "@/components/students/modals/CancelApplication.vue";
 
 export default {
   components: {
@@ -51,13 +46,8 @@ export default {
     const snackBar = useSnackBar();
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const showModal = ref(false);
-    const selectedApplicationId = ref(0);
     const reloadData = ref(false);
-
-    const openConfirmCancel = (id: number) => {
-      showModal.value = true;
-      selectedApplicationId.value = id;
-    };
+    const cancelApplicationModal = ref({} as ModalDialog<boolean>);
 
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
@@ -105,6 +95,14 @@ export default {
       reloadData.value = true;
     };
 
+    const confirmCancelApplication = async (applicationId: number) => {
+      console.log(applicationId, "++++++applicationId");
+      if (await cancelApplicationModal.value.showModal(applicationId)) {
+        // Reload details.
+        setReloadData();
+      }
+    };
+
     const goToApplication = (id: number) => {
       return router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
@@ -118,13 +116,13 @@ export default {
       ApplicationStatus,
       editApplicationAction,
       editApplicationModal,
-      openConfirmCancel,
+      confirmCancelApplication,
       showModal,
-      selectedApplicationId,
       showHideCancelApplication,
       reloadData,
       setReloadData,
       goToApplication,
+      cancelApplicationModal,
     };
   },
 };

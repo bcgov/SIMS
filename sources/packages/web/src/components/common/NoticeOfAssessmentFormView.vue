@@ -1,29 +1,37 @@
 <template>
-  <formio formName="noticeofassessment" :data="initialData"></formio>
+  <formio-container formName="noticeOfAssessment" :formData="initialData" />
 </template>
 
 <script lang="ts">
-import { ref, watch } from "vue";
+import { watch, defineComponent, ref } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
 
-export default {
+interface noa extends AssessmentNOAAPIOutDTO {
+  viewOnly?: boolean;
+}
+
+export default defineComponent({
   props: {
     assessmentId: {
       type: Number,
       required: true,
     },
+    viewOnly: {
+      type: Boolean,
+      required: false,
+    },
   },
-  setup(props: any) {
-    const initialData = ref({} as AssessmentNOAAPIOutDTO);
-
+  setup(props) {
+    const initialData = ref<noa>();
     watch(
-      () => props.assessmentId,
+      () => [props.assessmentId, props.viewOnly],
       async () => {
-        initialData.value =
+        const assessment =
           await StudentAssessmentsService.shared.getAssessmentNOA(
             props.assessmentId,
           );
+        initialData.value = { ...assessment, viewOnly: props.viewOnly };
       },
       { immediate: true },
     );
@@ -32,5 +40,5 @@ export default {
       initialData,
     };
   },
-};
+});
 </script>

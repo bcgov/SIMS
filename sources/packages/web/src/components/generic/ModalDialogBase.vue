@@ -31,25 +31,26 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, computed, SetupContext } from "vue";
+import { DialogTypes } from "@/types";
+import {
+  ref,
+  watch,
+  computed,
+  SetupContext,
+  defineComponent,
+  PropType,
+} from "vue";
 const dialogClosedEvent = "dialogClosed";
 
-enum DialogTypes {
-  info = "info",
-  question = "question",
-  warning = "warning",
-}
-
-export default {
+export default defineComponent({
   props: {
     showDialog: {
       type: Boolean,
       required: true,
     },
     dialogType: {
-      type: String,
+      type: String as PropType<DialogTypes>,
       required: true,
-      validator: (val: string) => val in DialogTypes,
     },
     title: {
       type: String,
@@ -100,5 +101,5 @@ export default {
 
     return { showHideDialog, icon };
   },
-};
+});
 </script>

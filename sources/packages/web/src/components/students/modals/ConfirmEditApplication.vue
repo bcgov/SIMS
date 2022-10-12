@@ -1,18 +1,17 @@
 <template>
   <modal-dialog-base
-    title="Confirm Edit Application"
+    title="Edit application"
+    :dialog-type="DialogTypes.question"
     :showDialog="showDialog"
-    max-width="730"
+    :max-width="730"
   >
     <template #content>
-      <p>
-        This will result in a new assessment which could cause a delay in your
-        application, are you sure you want to proceed?
-      </p>
+      Editing your application will result in a new assessment, which could
+      delay your application. <strong>Are you sure you want to proceed?</strong>
     </template>
-    <template #:footer>
+    <template #footer>
       <footer-buttons
-        primaryLabel="Yes"
+        primaryLabel="Edit application now"
         secondaryLabel="No"
         @primaryClick="editApplication"
         @secondaryClick="dialogClosed"
@@ -24,14 +23,15 @@
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
+import { DialogTypes } from "@/types";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   components: {
     ModalDialogBase,
   },
   setup() {
     const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
-
     const dialogClosed = () => {
       resolvePromise(false);
     };
@@ -43,7 +43,8 @@ export default {
       showModal,
       dialogClosed,
       editApplication,
+      DialogTypes,
     };
   },
-};
+});
 </script>

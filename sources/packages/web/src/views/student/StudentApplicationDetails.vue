@@ -49,12 +49,12 @@
       />
     </template>
 
-    <CancelApplication
+    <!-- <CancelApplication
       :showodal="showModal"
       :applicationId="id"
       @showHideCancelApplication="showHideCancelApplication"
       @reloadData="getApplicationDetails"
-    />
+    /> -->
     <application-progress-bar
       class="mb-5"
       :application-id="id"
@@ -65,6 +65,7 @@
     <student-assessment-details :applicationId="id" v-if="showViewAssessment" />
   </student-page-container>
   <confirm-edit-application ref="editApplicationModal" />
+  <cancel-application ref="cancelApplicationModal" />
 
   <!-- Submitted date footer. -->
   <div
@@ -81,7 +82,7 @@
 import { useRouter } from "vue-router";
 import { ref, watch, computed, defineComponent } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
+import CancelApplication from "@/components/students/modals/CancelApplication.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import {
@@ -114,16 +115,13 @@ export default defineComponent({
     const router = useRouter();
     const items = ref<MenuType[]>([]);
     const { dateOnlyLongString } = useFormatters();
-    const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
+    const cancelApplicationModal = ref({} as ModalDialog<boolean>);
     const snackBar = useSnackBar();
     const { mapApplicationDetailHeader } = useApplication();
     const headerMap = ref<Record<string, string>>({});
 
-    const showHideCancelApplication = () => {
-      showModal.value = !showModal.value;
-    };
     const showViewAssessment = computed(() =>
       [
         ApplicationStatus.assessment,
@@ -173,12 +171,20 @@ export default defineComponent({
       });
     };
 
+    const getApplicationDetails = async (applicationId: number) => {
+      applicationDetails.value =
+        await ApplicationService.shared.getApplicationData(applicationId);
+      loadMenu();
+    };
+
     const confirmEditApplication = async () => {
       if (await editApplicationModal.value.showModal()) {
         editApplication();
       }
     };
+
     const loadMenu = () => {
+      items.value = [];
       if (
         applicationDetails.value.applicationStatus !==
           ApplicationStatus.cancelled &&
@@ -211,17 +217,16 @@ export default defineComponent({
           icon: "fa:fa fa-trash",
           iconColor: "error",
           textColor: "error-color",
-          command: () => {
-            showHideCancelApplication();
-          },
+          command: confirmCancelApplication,
         });
       }
     };
 
-    const getApplicationDetails = async (applicationId: number) => {
-      applicationDetails.value =
-        await ApplicationService.shared.getApplicationData(applicationId);
-      loadMenu();
+    const confirmCancelApplication = async () => {
+      if (await cancelApplicationModal.value.showModal(props.id)) {
+        // Reload details.
+        await getApplicationDetails(props.id);
+      }
     };
 
     watch(
@@ -238,8 +243,6 @@ export default defineComponent({
     return {
       items,
       StudentRoutesConst,
-      showHideCancelApplication,
-      showModal,
       applicationDetails,
       getApplicationDetails,
       dateOnlyLongString,
@@ -249,6 +252,7 @@ export default defineComponent({
       editApplication,
       viewApplication,
       headerMap,
+      cancelApplicationModal,
     };
   },
 });

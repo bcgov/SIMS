@@ -14,7 +14,7 @@
     </p>
 
     <p>
-      You’ll still be able to view cancelled applications but can’t make futher
+      You'll still be able to view cancelled applications but can’t make futher
       edits.
     </p>
     <template #footer>
@@ -56,29 +56,11 @@ export default {
   },
   emits: ["showHideCancelApplication", "reloadData"],
   setup(props: any, context: any) {
-    const snackBar = useSnackBar();
     const updateShowCancelApplicationModal = () => {
       context.emit("showHideCancelApplication");
     };
-    const confirmCancelApplicationModal = async () => {
-      try {
-        const payload: ApplicationStatusToBeUpdatedDto = {
-          applicationStatus: ApplicationStatus.cancelled,
-        };
-        await ApplicationService.shared.updateStudentApplicationStatus(
-          props.applicationId,
-          payload,
-        );
-        updateShowCancelApplicationModal();
-        context.emit("reloadData", props.applicationId);
-        snackBar.success("Your application is now cancelled!");
-      } catch (error) {
-        snackBar.error("An error happened while cancelling the Application.");
-      }
-    };
     return {
       updateShowCancelApplicationModal,
-      confirmCancelApplicationModal,
     };
   },
 };

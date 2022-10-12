@@ -46,12 +46,12 @@ export default {
     },
     processing: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
     },
     showSecondaryButton: {
       type: Boolean,
-      required: true,
+      required: false,
       default: true,
     },
     showPrimaryButton: {
