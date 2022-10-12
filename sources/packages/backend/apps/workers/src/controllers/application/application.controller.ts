@@ -11,10 +11,10 @@ import {
   ApplicationService,
 } from "../../services";
 import {
-  ApplicationExceptionsWorkersInDTO,
-  ApplicationExceptionsWorkersOutDTO,
-  ApplicationUpdateStatusHeadersDTO,
-  ApplicationUpdateStatusWorkersInDTO,
+  ApplicationExceptionsJobInDTO,
+  ApplicationExceptionsJobOutDTO,
+  ApplicationUpdateStatusJobHeaderDTO,
+  ApplicationUpdateStatusJobInDTO,
 } from "..";
 import { APPLICATION_ID } from "../workflow-constants";
 import { ApplicationExceptionStatus } from "@sims/sims-db";
@@ -30,12 +30,19 @@ export class ApplicationController {
     private readonly applicationExceptionService: ApplicationExceptionService,
   ) {}
 
+  /**
+   * Updates the student application status ensuring that the application
+   * was in the expected state and also allowing the method to be called
+   * multiple times without causing any harm to enure the impotency.
+   * @returns reports only that the job was completed without returning any
+   * output variables.
+   */
   @ZeebeWorker("update-application-status", { fetchVariable: [APPLICATION_ID] })
   async updateApplicationStatus(
     job: Readonly<
       ZeebeJob<
-        ApplicationUpdateStatusWorkersInDTO,
-        ApplicationUpdateStatusHeadersDTO,
+        ApplicationUpdateStatusJobInDTO,
+        ApplicationUpdateStatusJobHeaderDTO,
         IOutputVariables
       >
     >,
@@ -54,20 +61,27 @@ export class ApplicationController {
     return job.complete();
   }
 
+  /**
+   * Searches the student application dynamic data recursively trying to
+   * find properties with the value defined as "studentApplicationException"
+   * which identifies an application exception to be reviewed by the Ministry.
+   * @returns application exceptions status.
+   */
   @ZeebeWorker("verify-application-exceptions", {
     fetchVariable: [APPLICATION_ID],
   })
   async verifyApplicationExceptions(
     job: Readonly<
       ZeebeJob<
-        ApplicationExceptionsWorkersInDTO,
+        ApplicationExceptionsJobInDTO,
         ICustomHeaders,
-        ApplicationExceptionsWorkersOutDTO
+        ApplicationExceptionsJobOutDTO
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     const application = await this.applicationService.getApplicationById(
       job.variables.applicationId,
+      { loadDynamicData: false },
     );
     if (!application) {
       return job.error(APPLICATION_NOT_FOUND, "Application id not found.");
@@ -84,12 +98,13 @@ export class ApplicationController {
       application.data,
     );
     if (exceptions.length) {
-      await this.applicationExceptionService.createException(
-        job.variables.applicationId,
-        exceptions,
-      );
+      const createdException =
+        await this.applicationExceptionService.createException(
+          job.variables.applicationId,
+          exceptions,
+        );
       return job.complete({
-        applicationExceptionStatus: ApplicationExceptionStatus.Pending,
+        applicationExceptionStatus: createdException.exceptionStatus,
       });
     }
     return job.complete({

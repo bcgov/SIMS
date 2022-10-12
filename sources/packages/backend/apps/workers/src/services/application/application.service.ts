@@ -7,9 +7,6 @@ import {
 } from "@sims/sims-db";
 import { DataSource, In, IsNull, UpdateResult } from "typeorm";
 
-/**
- * Manages the student assessment related operations.
- */
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   constructor(dataSource: DataSource) {
@@ -38,6 +35,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
     );
   }
 
+  /**
+   * Updates the Program Information Request (PIR) for the first time.
+   * If the PIR is already set the update will be ignore and no rows
+   * will be affected.
+   * @param applicationId application to have the PIR updated.
+   * @param pirStatus status to be updated.
+   * @returns update result.
+   */
   async updateProgramInfoStatus(
     applicationId: number,
     pirStatus: ProgramInfoStatus,
@@ -51,6 +56,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
     );
   }
 
+  /**
+   * Gets the application information with additional options to load the data.
+   * @param applicationId application t have the data loaded.
+   * @param options data load options.
+   * @returns application information.
+   */
   async getApplicationById(
     applicationId: number,
     options?: { loadDynamicData: boolean },
@@ -60,11 +71,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         id: true,
         pirStatus: true,
         data: !options?.loadDynamicData
-          ? {
+          ? undefined
+          : {
               // TODO: change data to be unknown in the entity model.
               selectedLocation: true,
-            }
-          : undefined,
+            },
         applicationException: {
           id: true,
           exceptionStatus: true,

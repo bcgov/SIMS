@@ -12,7 +12,7 @@ import {
   CreateSupportingUsersJobInDTO,
   CreateSupportingUsersJobOutDTO,
 } from "..";
-import { APPLICATION_ID } from "../workflow-constants";
+import { APPLICATION_ID, SUPPORTING_USERS_TYPES } from "../workflow-constants";
 import { SUPPORTING_USER_NOT_FOUND } from "../error-code-constants";
 import { filterObjectProperties } from "../../utilities";
 
@@ -21,8 +21,7 @@ export class SupportingUserController {
   constructor(private readonly supportingUserService: SupportingUserService) {}
 
   @ZeebeWorker("create-supporting-users", {
-    // supportingUsersTypes is a local variable declared at the task level only.
-    fetchVariable: [APPLICATION_ID, "supportingUsersTypes"],
+    fetchVariable: [APPLICATION_ID, SUPPORTING_USERS_TYPES],
   })
   async createSupportingUsers(
     job: Readonly<

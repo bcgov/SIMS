@@ -30,6 +30,16 @@ export class AssessmentController {
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {}
 
+  /**
+   * Loads consolidated assessment including the assessment itself, application
+   * dynamic data, supporting users, income and more. Includes the ability to filter
+   * only the necessary data using jsonpath expressions (@see https://goessner.net/articles/JsonPath).
+   * The filtered data must ensures that no PII (Personal Identifiable Information)
+   * data will be sent to the workflow.
+   * The filter is executed based on a key/value pair containing the jsonpath expression
+   * received through the job custom headers.
+   * @returns filtered consolidated information.
+   */
   @ZeebeWorker("load-assessment-data", { fetchVariable: [ASSESSMENT_ID] })
   async loadAssessmentData(
     job: Readonly<
@@ -42,7 +52,6 @@ export class AssessmentController {
     if (!assessment) {
       return job.error(ASSESSMENT_NOT_FOUND, "Assessment not found.");
     }
-
     const assessmentDTO = this.createAssessmentDTO(assessment);
     const outputVariables = filterObjectProperties(
       assessmentDTO,
@@ -51,6 +60,13 @@ export class AssessmentController {
     return job.complete(outputVariables);
   }
 
+  /**
+   * Creates a well-known object that represents the universe of possible
+   * information that can be later filtered.
+   * @param assessment assessment to be converted.
+   * @returns well-known object that represents the universe of possible
+   * information that can be later filtered.
+   */
   private createAssessmentDTO(
     assessment: StudentAssessment,
   ): ApplicationAssessmentWorkerOutDTO {

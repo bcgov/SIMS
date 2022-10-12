@@ -33,7 +33,6 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
   ): Promise<ApplicationException> {
     const newException = new ApplicationException();
     newException.application = { id: applicationId } as Application;
-
     newException.exceptionStatus = ApplicationExceptionStatus.Pending;
     newException.exceptionRequests = exceptionNames.map(
       (exceptionName) => ({ exceptionName } as ApplicationExceptionRequest),
@@ -79,7 +78,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       if (!propertyValue) {
         continue;
       }
-      // If it is an array or an object it must check the array children or object properties.
+      // If it is an array or an object it must check the children's array or object properties.
       if (Array.isArray(propertyValue) || typeof propertyValue === "object") {
         this.searchExceptionsRecursively(propertyValue, applicationExceptions);
         continue;

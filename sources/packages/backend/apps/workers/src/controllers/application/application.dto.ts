@@ -1,18 +1,18 @@
 import { ApplicationExceptionStatus, ApplicationStatus } from "@sims/sims-db";
 
-export class ApplicationUpdateStatusWorkersInDTO {
+export interface ApplicationUpdateStatusJobInDTO {
   applicationId: number;
 }
 
-export class ApplicationUpdateStatusHeadersDTO {
+export interface ApplicationUpdateStatusJobHeaderDTO {
   fromStatus: ApplicationStatus;
   toStatus: ApplicationStatus;
 }
 
-export class ApplicationExceptionsWorkersInDTO {
+export interface ApplicationExceptionsJobInDTO {
   applicationId: number;
 }
 
-export class ApplicationExceptionsWorkersOutDTO {
+export interface ApplicationExceptionsJobOutDTO {
   applicationExceptionStatus: ApplicationExceptionStatus;
 }

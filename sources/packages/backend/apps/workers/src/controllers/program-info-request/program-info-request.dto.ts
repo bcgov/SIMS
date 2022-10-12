@@ -1,13 +1,13 @@
 import { ProgramInfoStatus } from "@sims/sims-db";
 
-export class ProgramInfoRequestWorkersInDTO {
+export interface ProgramInfoRequestJobInDTO {
   applicationId: number;
 }
 
-export class ProgramInfoRequestHeadersDTO {
+export interface ProgramInfoRequestJobHeaderDTO {
   programInfoStatus: ProgramInfoStatus;
 }
 
-export class ProgramInfoRequestWorkersOutDTO {
+export interface ProgramInfoRequestJobOutDTO {
   programInfoStatus: ProgramInfoStatus;
 }

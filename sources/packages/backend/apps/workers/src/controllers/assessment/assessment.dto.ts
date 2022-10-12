@@ -59,7 +59,7 @@ export interface StudentAppealRequestWorkerOutDTO {
   submittedData: unknown;
 }
 
-export class StudentAppealRequestWorkersOutDTO {
+export interface StudentAppealRequestWorkersOutDTO {
   submittedData: unknown;
 }
 
