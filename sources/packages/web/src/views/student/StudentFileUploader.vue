@@ -1,22 +1,24 @@
 <template>
-  <student-page-container>
+  <student-page-container layout-template="centered">
     <template #header>
       <header-navigator title="Student" subTitle="File uploader" />
     </template>
-
-    <div class="row">
-      <div class="col-xs-6 col-md-7">
-        <full-page-container>
-          <formio
-            formName="uploadStudentDocuments"
-            @submitted="submitForm"
-          ></formio>
-        </full-page-container>
-      </div>
-      <div class="col-xs-5 col-md-5">
-        <StudentDocumentList :reload="reloadDocuments" />
-      </div>
-    </div>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-container>
+            <!-- todo: ann form definition and btn -->
+            <formio-container
+              formName="uploadStudentDocuments"
+              @submitted="submitForm"
+            />
+          </v-container>
+        </v-card>
+      </v-col>
+      <v-col md="5">
+        <student-document-list :reload="reloadDocuments" />
+      </v-col>
+    </v-row>
   </student-page-container>
 </template>
 

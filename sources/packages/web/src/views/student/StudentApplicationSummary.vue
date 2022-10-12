@@ -7,7 +7,6 @@
         </template>
       </header-navigator>
     </template>
-
     <v-row>
       <v-col cols="12">
         <student-applications
@@ -96,7 +95,6 @@ export default {
     };
 
     const confirmCancelApplication = async (applicationId: number) => {
-      console.log(applicationId, "++++++applicationId");
       if (await cancelApplicationModal.value.showModal(applicationId)) {
         // Reload details.
         setReloadData();

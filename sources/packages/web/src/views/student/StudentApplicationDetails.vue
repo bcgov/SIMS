@@ -49,12 +49,6 @@
       />
     </template>
 
-    <!-- <CancelApplication
-      :showodal="showModal"
-      :applicationId="id"
-      @showHideCancelApplication="showHideCancelApplication"
-      @reloadData="getApplicationDetails"
-    /> -->
     <application-progress-bar
       class="mb-5"
       :application-id="id"
@@ -64,6 +58,7 @@
     />
     <student-assessment-details :applicationId="id" v-if="showViewAssessment" />
   </student-page-container>
+
   <confirm-edit-application ref="editApplicationModal" />
   <cancel-application ref="cancelApplicationModal" />
 

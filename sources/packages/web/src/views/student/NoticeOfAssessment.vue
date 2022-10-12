@@ -50,6 +50,7 @@ import { computed, defineComponent, ref, watch } from "vue";
 import { ApplicationStatus, AssessmentStatus } from "@/types";
 import { ClientIdType } from "@/types";
 import CancelApplication from "@/components/students/modals/CancelApplication.vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: {
@@ -67,6 +68,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router = useRouter();
     const cancelApplicationModal = ref({} as ModalDialog<boolean>);
     const assessment = ref<AssessmentNOAAPIOutDTO>();
     const snackBar = useSnackBar();
@@ -107,7 +109,12 @@ export default defineComponent({
 
     const confirmCancelApplication = async () => {
       if (await cancelApplicationModal.value.showModal(props.applicationId)) {
-        // ann todo, redirect or stay.
+        return router.push({
+          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          params: {
+            id: props.applicationId,
+          },
+        });
       }
     };
     return {
