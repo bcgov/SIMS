@@ -1,18 +1,18 @@
-export class CreateIncomeRequestJobInDTO {
+export interface CreateIncomeRequestJobInDTO {
   applicationId: number;
   taxYear: number;
   reportedIncome: number;
   supportingUserId?: number;
 }
 
-export class CreateIncomeRequestJobOutDTO {
+export interface CreateIncomeRequestJobOutDTO {
   incomeVerificationId: number;
 }
 
-export class CheckIncomeRequestJobInDTO {
+export interface CheckIncomeRequestJobInDTO {
   incomeVerificationId: number;
 }
 
-export class CheckIncomeRequestJobOutDTO {
+export interface CheckIncomeRequestJobOutDTO {
   incomeVerificationCompleted: boolean;
 }

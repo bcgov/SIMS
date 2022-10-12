@@ -16,7 +16,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Updates the student application status ensuring that the application
    * was in the expected state and also allowing the method to be called
-   * multiple times without causing any harm to enure the impotency.
+   * multiple times without causing any harm to enure the idempotency.
    * @param applicationId application to change the status.
    * @param fromStatus expected status of the application.
    * @param toStatus status to be updated, if not already.

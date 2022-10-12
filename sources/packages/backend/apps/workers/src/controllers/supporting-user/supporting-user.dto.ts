@@ -1,14 +1,14 @@
 import { SupportingUserType } from "@sims/sims-db";
 
-export class CreateSupportingUsersJobInDTO {
+export interface CreateSupportingUsersJobInDTO {
   applicationId: number;
   supportingUsersTypes: SupportingUserType[];
 }
 
-export class CreateSupportingUsersJobOutDTO {
+export interface CreateSupportingUsersJobOutDTO {
   createdSupportingUsersIds: number[];
 }
 
-export class CheckSupportingUserResponseJobInDTO {
+export interface CheckSupportingUserResponseJobInDTO {
   supportingUserId: number;
 }

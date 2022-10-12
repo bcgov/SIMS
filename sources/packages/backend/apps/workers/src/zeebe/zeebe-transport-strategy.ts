@@ -18,7 +18,7 @@ export class ZeebeTransportStrategy
    * Identify all Zeebe workers in the controllers and create the
    * respective Zeebe workers to handle all the jobs.
    */
-  listen(callback: () => void) {
+  async listen(callback: () => void) {
     this.zeebeClient = new ZBClient();
     const handlers = this.getHandlers();
     handlers.forEach((handler: MessageHandler, taskType: string) => {
