@@ -367,7 +367,7 @@
             "height": ""
           },
           "type": "file",
-          "url": "students/{{data.studentId}}/files",
+          "url": "student/{{data.studentId}}/files",
           "imageSize": "200",
           "input": true,
           "placeholder": "",
@@ -384,7 +384,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "privateDownload": false,
-          "id": "e6o8xl",
+          "id": "edb3fkn",
           "options": "",
           "fileKey": ""
         }
