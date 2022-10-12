@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,
     -- Reference Columns
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    template_id VARCHAR(1000) NOT NULL,
     message_id INT REFERENCES messages(id) ON DELETE CASCADE,
     gc_notify_payload jsonb NOT NULL,
     date_sent timestamp without time zone NOT NULL DEFAULT now(),
