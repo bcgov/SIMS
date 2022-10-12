@@ -10,7 +10,7 @@ import { DataSource, UpdateResult } from "typeorm";
 
 @Injectable()
 export class NotificationService extends RecordDataModelService<Notification> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(Notification));
   }
 
