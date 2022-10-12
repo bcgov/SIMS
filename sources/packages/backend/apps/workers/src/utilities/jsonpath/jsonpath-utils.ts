@@ -2,7 +2,7 @@ import * as JSONPath from "jsonpath";
 
 /**
  * A jsonpath node with an indexer that represents an
- * item that belongs to an enum will looks like below.
+ * item that belongs to an array will looks like below.
  * The one to last position will be the index (0 in this case)
  * and the last position will be the property name.
  * @example { value: 'John Doe', path: [ '$', 'dependants', 0, 'fullName' ] }
