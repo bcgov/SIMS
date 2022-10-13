@@ -33,7 +33,6 @@
     <v-input
       :rules="[isAdminOrHasLocationAccessValidationRule()]"
       hide-details="auto"
-      error
     >
     </v-input>
   </content-group>
@@ -76,7 +75,6 @@
       <v-input
         :rules="[hasLocationAuthorizationValidationRule()]"
         hide-details="auto"
-        error
       >
       </v-input>
     </toggle-content>
