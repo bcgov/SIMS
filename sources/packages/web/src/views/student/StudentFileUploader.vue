@@ -7,7 +7,6 @@
       <v-col>
         <v-card>
           <v-container>
-            <!-- todo: ann form definition and btn -->
             <formio-container
               formName="uploadStudentDocuments"
               @submitted="submitForm"

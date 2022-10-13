@@ -1,11 +1,10 @@
 <template>
   <student-page-container layout-template="centered">
-    <!-- TODO: ANN FORM DEFINITION -->
     <formio-container
       formName="studentWelcomePage"
       :formData="formData"
       @customEvent="goToStudentApplication"
-    ></formio-container>
+    />
   </student-page-container>
 </template>
 <script lang="ts">

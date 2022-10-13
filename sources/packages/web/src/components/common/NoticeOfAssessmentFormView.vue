@@ -7,7 +7,7 @@ import { watch, defineComponent, ref } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
 
-interface noa extends AssessmentNOAAPIOutDTO {
+interface NoticeOfAssessment extends AssessmentNOAAPIOutDTO {
   viewOnly?: boolean;
 }
 
@@ -23,7 +23,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const initialData = ref<noa>();
+    const initialData = ref<NoticeOfAssessment>();
     watch(
       () => [props.assessmentId, props.viewOnly],
       async () => {

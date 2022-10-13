@@ -45,8 +45,7 @@ import { StudentAssessmentsService } from "@/services/StudentAssessmentsService"
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
 import { computed, defineComponent, ref, watch } from "vue";
-import { ApplicationStatus, AssessmentStatus } from "@/types";
-import { ClientIdType } from "@/types";
+import { ApplicationStatus, AssessmentStatus, ClientIdType } from "@/types";
 import CancelApplication from "@/components/students/modals/CancelApplication.vue";
 import { useRouter } from "vue-router";
 
