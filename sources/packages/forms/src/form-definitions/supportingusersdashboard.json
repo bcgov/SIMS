@@ -10,6 +10,8 @@
   "components": [
     {
       "label": "HTML",
+      "labelWidth": "",
+      "labelMargin": "",
       "tag": "p",
       "className": "",
       "attrs": [
@@ -45,6 +47,7 @@
       },
       "type": "htmlelement",
       "input": false,
+      "tableView": false,
       "placeholder": "",
       "prefix": "",
       "suffix": "",
@@ -56,7 +59,6 @@
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
-      "tableView": false,
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
@@ -85,8 +87,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "euh3hhc",
-      "addons": []
+      "addons": [],
+      "id": "e3d7r2f"
     },
     {
       "label": "Columns",
@@ -112,7 +114,7 @@
               "customClass": "",
               "hidden": false,
               "modalEdit": false,
-              "key": "html2",
+              "key": "mainMessage",
               "tags": [],
               "properties": {},
               "conditional": {
@@ -176,7 +178,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "ejdnon8"
+              "id": "enqgscq"
             },
             {
               "label": "Columns",
@@ -189,7 +191,7 @@
                       "title": "Start Parent Information Request",
                       "collapsible": false,
                       "hideLabel": true,
-                      "key": "startParentInformationRequest",
+                      "key": "startParentInformationRequestPanel",
                       "type": "panel",
                       "label": "Panel",
                       "input": false,
@@ -197,10 +199,6 @@
                       "components": [
                         {
                           "label": "HTML",
-                          "labelWidth": "",
-                          "labelMargin": "",
-                          "tag": "p",
-                          "className": "",
                           "attrs": [
                             {
                               "attr": "",
@@ -209,43 +207,24 @@
                           ],
                           "content": "I am a parent and need to complete supporting information for my dependent.",
                           "refreshOnChange": false,
-                          "customClass": "",
-                          "hidden": false,
-                          "modalEdit": false,
-                          "key": "html3",
-                          "tags": [],
-                          "properties": {},
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": "",
-                            "json": ""
-                          },
-                          "customConditional": "",
-                          "logic": [],
-                          "attributes": {},
-                          "overlay": {
-                            "style": "",
-                            "page": "",
-                            "left": "",
-                            "top": "",
-                            "width": "",
-                            "height": ""
-                          },
+                          "key": "parentInformationRequestMessage",
                           "type": "htmlelement",
                           "input": false,
                           "tableView": false,
                           "placeholder": "",
                           "prefix": "",
+                          "customClass": "",
                           "suffix": "",
                           "multiple": false,
                           "defaultValue": null,
                           "protected": false,
                           "unique": false,
                           "persistent": false,
+                          "hidden": false,
                           "clearOnHide": true,
                           "refreshOn": "",
                           "redrawOn": "",
+                          "modalEdit": false,
                           "dataGridLabel": false,
                           "labelPosition": "top",
                           "description": "",
@@ -260,6 +239,7 @@
                           "calculateValue": "",
                           "calculateServer": false,
                           "widget": null,
+                          "attributes": {},
                           "validateOn": "change",
                           "validate": {
                             "required": false,
@@ -269,74 +249,60 @@
                             "multiple": false,
                             "unique": false
                           },
-                          "allowCalculateOverride": false,
-                          "encrypted": false,
-                          "showCharCount": false,
-                          "showWordCount": false,
-                          "allowMultipleMasks": false,
-                          "addons": [],
-                          "id": "enzfeyr"
-                        },
-                        {
-                          "label": "Start submission",
-                          "labelWidth": "",
-                          "labelMargin": "",
-                          "action": "custom",
-                          "showValidations": false,
-                          "theme": "primary",
-                          "size": "md",
-                          "block": false,
-                          "leftIcon": "",
-                          "rightIcon": "",
-                          "shortcut": "",
-                          "description": "",
-                          "tooltip": "",
-                          "customClass": "",
-                          "tabindex": "",
-                          "disableOnInvalid": false,
-                          "hidden": false,
-                          "autofocus": false,
-                          "disabled": false,
-                          "tableView": false,
-                          "modalEdit": false,
-                          "key": "startParentInformationRequest1",
-                          "tags": [],
-                          "properties": {},
                           "conditional": {
                             "show": null,
                             "when": null,
-                            "eq": "",
-                            "json": ""
+                            "eq": ""
                           },
-                          "customConditional": "",
-                          "logic": [],
-                          "attributes": {},
                           "overlay": {
                             "style": "",
-                            "page": "",
                             "left": "",
                             "top": "",
                             "width": "",
                             "height": ""
                           },
+                          "allowCalculateOverride": false,
+                          "encrypted": false,
+                          "showCharCount": false,
+                          "showWordCount": false,
+                          "properties": {},
+                          "allowMultipleMasks": false,
+                          "addons": [],
+                          "tag": "p",
+                          "id": "eqadt88"
+                        },
+                        {
+                          "label": "Start submission",
+                          "action": "custom",
+                          "showValidations": false,
+                          "tableView": false,
+                          "key": "startParentInformationRequestButton",
                           "type": "button",
                           "custom": "form.emit('customEvent', {\n  type: \"routeToParentInformation\"\n});",
                           "input": true,
                           "placeholder": "",
                           "prefix": "",
+                          "customClass": "",
                           "suffix": "",
                           "multiple": false,
                           "defaultValue": null,
                           "protected": false,
                           "unique": false,
                           "persistent": false,
+                          "hidden": false,
                           "clearOnHide": true,
                           "refreshOn": "",
                           "redrawOn": "",
+                          "modalEdit": false,
                           "dataGridLabel": true,
                           "labelPosition": "top",
+                          "description": "",
                           "errorLabel": "",
+                          "tooltip": "",
                           "hideLabel": false,
+                          "tabindex": "",
+                          "disabled": false,
+                          "autofocus": false,
                           "dbIndex": false,
                           "customDefaultValue": "",
                           "calculateValue": "",
@@ -344,6 +310,7 @@
                           "widget": {
                             "type": "input"
                           },
+                          "attributes": {},
                           "validateOn": "change",
                           "validate": {
                             "required": false,
@@ -353,13 +320,32 @@
                             "multiple": false,
                             "unique": false
                           },
+                          "conditional": {
+                            "show": null,
+                            "when": null,
+                            "eq": ""
+                          },
+                          "overlay": {
+                            "style": "",
+                            "left": "",
+                            "top": "",
+                            "width": "",
+                            "height": ""
+                          },
                           "allowCalculateOverride": false,
                           "encrypted": false,
                           "showCharCount": false,
                           "showWordCount": false,
+                          "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "eul1wud"
+                          "size": "md",
+                          "leftIcon": "",
+                          "rightIcon": "",
+                          "block": false,
+                          "disableOnInvalid": false,
+                          "theme": "primary",
+                          "id": "effbxal"
                         }
                       ],
                       "hideOnChildrenHidden": false,
@@ -423,7 +409,7 @@
                       "lazyLoad": false,
                       "theme": "default",
                       "breadcrumb": "default",
-                      "id": "e9438pl"
+                      "id": "e4961f"
                     }
                   ],
                   "width": 6,
@@ -439,7 +425,7 @@
                       "title": "Start Partner Information Request",
                       "collapsible": false,
                       "hideLabel": true,
-                      "key": "startParentInformationRequest2",
+                      "key": "startPartnerInformationRequestPanel",
                       "type": "panel",
                       "label": "Start Parent Information Request",
                       "input": false,
@@ -447,10 +433,6 @@
                       "components": [
                         {
                           "label": "HTML",
-                          "labelWidth": "",
-                          "labelMargin": "",
-                          "tag": "p",
-                          "className": "",
                           "attrs": [
                             {
                               "attr": "",
@@ -459,43 +441,24 @@
                           ],
                           "content": "I am a partner and need to complete supporting information for my partner.",
                           "refreshOnChange": false,
-                          "customClass": "",
-                          "hidden": false,
-                          "modalEdit": false,
-                          "key": "html4",
-                          "tags": [],
-                          "properties": {},
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": "",
-                            "json": ""
-                          },
-                          "customConditional": "",
-                          "logic": [],
-                          "attributes": {},
-                          "overlay": {
-                            "style": "",
-                            "page": "",
-                            "left": "",
-                            "top": "",
-                            "width": "",
-                            "height": ""
-                          },
+                          "key": "partnerInformationRequestMessage",
                           "type": "htmlelement",
                           "input": false,
                           "tableView": false,
                           "placeholder": "",
                           "prefix": "",
+                          "customClass": "",
                           "suffix": "",
                           "multiple": false,
                           "defaultValue": null,
                           "protected": false,
                           "unique": false,
                           "persistent": false,
+                          "hidden": false,
                           "clearOnHide": true,
                           "refreshOn": "",
                           "redrawOn": "",
+                          "modalEdit": false,
                           "dataGridLabel": false,
                           "labelPosition": "top",
                           "description": "",
@@ -510,6 +473,7 @@
                           "calculateValue": "",
                           "calculateServer": false,
                           "widget": null,
+                          "attributes": {},
                           "validateOn": "change",
                           "validate": {
                             "required": false,
@@ -519,74 +483,60 @@
                             "multiple": false,
                             "unique": false
                           },
-                          "allowCalculateOverride": false,
-                          "encrypted": false,
-                          "showCharCount": false,
-                          "showWordCount": false,
-                          "allowMultipleMasks": false,
-                          "addons": [],
-                          "id": "efxj9v"
-                        },
-                        {
-                          "label": "Start submission",
-                          "labelWidth": "",
-                          "labelMargin": "",
-                          "action": "custom",
-                          "showValidations": false,
-                          "theme": "primary",
-                          "size": "md",
-                          "block": false,
-                          "leftIcon": "",
-                          "rightIcon": "",
-                          "shortcut": "",
-                          "description": "",
-                          "tooltip": "",
-                          "customClass": "",
-                          "tabindex": "",
-                          "disableOnInvalid": false,
-                          "hidden": false,
-                          "autofocus": false,
-                          "disabled": false,
-                          "tableView": false,
-                          "modalEdit": false,
-                          "key": "startParentInformationRequest3",
-                          "tags": [],
-                          "properties": {},
                           "conditional": {
                             "show": null,
                             "when": null,
-                            "eq": "",
-                            "json": ""
+                            "eq": ""
                           },
-                          "customConditional": "",
-                          "logic": [],
-                          "attributes": {},
                           "overlay": {
                             "style": "",
-                            "page": "",
                             "left": "",
                             "top": "",
                             "width": "",
                             "height": ""
                           },
+                          "allowCalculateOverride": false,
+                          "encrypted": false,
+                          "showCharCount": false,
+                          "showWordCount": false,
+                          "properties": {},
+                          "allowMultipleMasks": false,
+                          "addons": [],
+                          "tag": "p",
+                          "id": "er6b3e8"
+                        },
+                        {
+                          "label": "Start submission",
+                          "action": "custom",
+                          "showValidations": false,
+                          "tableView": false,
+                          "key": "startPartnerInformationRequestButton",
                           "type": "button",
                           "custom": "form.emit('customEvent', {\n  type: \"routeToPartnerInformation\"\n});",
                           "input": true,
                           "placeholder": "",
                           "prefix": "",
+                          "customClass": "",
                           "suffix": "",
                           "multiple": false,
                           "defaultValue": null,
                           "protected": false,
                           "unique": false,
                           "persistent": false,
+                          "hidden": false,
                           "clearOnHide": true,
                           "refreshOn": "",
                           "redrawOn": "",
+                          "modalEdit": false,
                           "dataGridLabel": true,
                           "labelPosition": "top",
+                          "description": "",
                           "errorLabel": "",
+                          "tooltip": "",
                           "hideLabel": false,
+                          "tabindex": "",
+                          "disabled": false,
+                          "autofocus": false,
                           "dbIndex": false,
                           "customDefaultValue": "",
                           "calculateValue": "",
@@ -594,6 +544,7 @@
                           "widget": {
                             "type": "input"
                           },
+                          "attributes": {},
                           "validateOn": "change",
                           "validate": {
                             "required": false,
@@ -603,13 +554,32 @@
                             "multiple": false,
                             "unique": false
                           },
+                          "conditional": {
+                            "show": null,
+                            "when": null,
+                            "eq": ""
+                          },
+                          "overlay": {
+                            "style": "",
+                            "left": "",
+                            "top": "",
+                            "width": "",
+                            "height": ""
+                          },
                           "allowCalculateOverride": false,
                           "encrypted": false,
                           "showCharCount": false,
                           "showWordCount": false,
+                          "properties": {},
                           "allowMultipleMasks": false,
                           "addons": [],
-                          "id": "esf8ugl"
+                          "size": "md",
+                          "leftIcon": "",
+                          "rightIcon": "",
+                          "block": false,
+                          "disableOnInvalid": false,
+                          "theme": "primary",
+                          "id": "e9grsr5"
                         }
                       ],
                       "hideOnChildrenHidden": false,
@@ -673,7 +643,7 @@
                       "lazyLoad": false,
                       "theme": "default",
                       "breadcrumb": "default",
-                      "id": "ektnc9g"
+                      "id": "exzzdr"
                     }
                   ],
                   "width": 6,
@@ -689,7 +659,7 @@
               "hidden": false,
               "hideLabel": false,
               "modalEdit": false,
-              "key": "columns1",
+              "key": "columns",
               "tags": [],
               "properties": {},
               "conditional": {
@@ -711,6 +681,7 @@
               },
               "type": "columns",
               "input": false,
+              "tableView": false,
               "placeholder": "",
               "prefix": "",
               "suffix": "",
@@ -722,7 +693,6 @@
               "clearOnHide": false,
               "refreshOn": "",
               "redrawOn": "",
-              "tableView": false,
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
@@ -753,7 +723,7 @@
               "addons": [],
               "tree": false,
               "lazyLoad": false,
-              "id": "ej1mg6p"
+              "id": "elpfe5"
             }
           ],
           "width": 9,
@@ -786,7 +756,7 @@
               "customClass": "img-background",
               "hidden": false,
               "modalEdit": false,
-              "key": "html1",
+              "key": "illustration",
               "tags": [],
               "properties": {},
               "conditional": {
@@ -850,7 +820,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "e99trfs"
+              "id": "ecx9zjp"
             }
           ],
           "width": 3,
