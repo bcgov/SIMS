@@ -4,10 +4,10 @@ CREATE TABLE IF NOT EXISTS sims.notification_messages (
     -- Audit columns
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    creator INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
+    creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
     SET
         NULL,
-        modifier INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
+        modifier INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
     SET
         NULL
 );

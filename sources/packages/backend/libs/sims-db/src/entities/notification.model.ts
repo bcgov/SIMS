@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
@@ -22,7 +23,7 @@ export class Notification extends RecordDataModel {
   /**
    * User associated with this notification.
    */
-  @OneToOne(() => User, { eager: false, cascade: false })
+  @ManyToOne(() => User, { eager: false, cascade: false })
   @JoinColumn({
     name: "user_id",
     referencedColumnName: ColumnNames.ID,

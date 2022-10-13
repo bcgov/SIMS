@@ -8,7 +8,7 @@ import {
 import {
   GCNotifyResult,
   MinistryStudentFileUploadNotification,
-  MinistryStudentFileUploadPersonalisation,
+  MinistryStudentFileUploadPersonalization,
   StudentFileUploadNotification,
   StudentFileUploadPersonalisation,
 } from "./gc-notify.model";
@@ -96,7 +96,7 @@ export class GCNotifyActionsService {
     );
 
     const gcNotifyResult =
-      await this.gcNotifyService.sendEmailNotification<MinistryStudentFileUploadPersonalisation>(
+      await this.gcNotifyService.sendEmailNotification<MinistryStudentFileUploadPersonalization>(
         payload,
       );
     // Update date sent column in notification table after sending email notification successfully.

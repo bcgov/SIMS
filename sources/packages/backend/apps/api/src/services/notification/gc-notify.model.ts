@@ -48,7 +48,7 @@ export interface MinistryStudentFileUploadNotification {
   toAddress: string;
 }
 
-export interface MinistryStudentFileUploadPersonalisation {
+export interface MinistryStudentFileUploadPersonalization {
   givenNames: string;
   lastName: string;
 }
