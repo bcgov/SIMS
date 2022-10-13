@@ -289,7 +289,7 @@ export class StudentStudentsController extends BaseController {
           applicationNumber: payload.submittedForm.applicationNumber,
         },
         student.user.id,
-        studentUserToken.userId,
+        studentUserToken.userId, // This is the user who uploaded the file
       );
 
     const fileMetadata = payload.submittedForm.applicationNumber
