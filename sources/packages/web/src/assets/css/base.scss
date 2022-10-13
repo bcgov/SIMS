@@ -334,4 +334,6 @@ html * {
 
 .collapsible .card-header.bg-default {
   border-left: 8px solid $brand-blue;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }

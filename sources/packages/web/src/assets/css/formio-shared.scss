@@ -532,7 +532,7 @@
 
 .formio-custom-tooltip:before {
   content: "\f059";
-  font-family: "BCSans", "FontAwesome";
+  font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif, "FontAwesome";
   color: $brand-grey;
   font-size: 16px;
   padding: 0 10px;
@@ -540,7 +540,7 @@
 
 .formio-custom-tooltip .tooltip-text {
   visibility: hidden;
-  background-color: rgba(#424242, 0.7);
+  background-color: rgba(#424242, 0.85);
   color: #eeeeee;
   padding: 0.5em;
   border-radius: 4px;
