@@ -2,14 +2,17 @@ import InstitutionHelperActions from "../../custom-command/institution/common-he
 import Authorization, {
   ClientId,
 } from "../../custom-command/common/authorization";
-import CommonRegex from "../../custom-command/common/commonRegex";
+import { CommonRegex } from "../../custom-command/common/commonRegex";
 
 const institutionHelperActions = new InstitutionHelperActions();
-const commonRegexObject = new CommonRegex();
 
 const USERNAME = institutionHelperActions.getUserNameForApiTest();
 const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
 const TOKEN_URL = institutionHelperActions.getApiUrlForKeyCloakToken();
+enum DesignationAgreementIndex {
+  FirstAgreement = 1,
+  SecondAgreement = 2,
+}
 
 describe("[Designation details] ", () => {
   let token: string;
@@ -42,11 +45,9 @@ describe("[Designation details] ", () => {
           "Declined",
           "Pending",
         ]);
-        expect(designation.endDate).to.match(commonRegexObject.dateTimeRegex);
-        expect(designation.startDate).to.match(commonRegexObject.dateTimeRegex);
-        expect(designation.submittedDate).to.match(
-          commonRegexObject.timeStampRegex
-        );
+        expect(designation.endDate).to.match(CommonRegex.dateTimeRegex);
+        expect(designation.startDate).to.match(CommonRegex.dateTimeRegex);
+        expect(designation.submittedDate).to.match(CommonRegex.timeStampRegex);
       });
     });
   });
@@ -54,7 +55,9 @@ describe("[Designation details] ", () => {
   it("Verify GET call for designation-agreement view endpoint", () => {
     cy.request({
       method: "GET",
-      url: `${institutionHelperActions.getApiForDesignationAgreement()}/1`,
+      url: `${institutionHelperActions.getApiForDesignationAgreement()}/${
+        DesignationAgreementIndex.FirstAgreement
+      }`,
       followRedirect: false,
       headers: {
         Authorization: `Bearer ${token}`,
@@ -68,8 +71,8 @@ describe("[Designation details] ", () => {
         "Declined",
         "Pending",
       ]);
-      expect(body.endDate).to.match(commonRegexObject.timeStampRegex);
-      expect(body.startDate).to.match(commonRegexObject.timeStampRegex);
+      expect(body.endDate).to.match(CommonRegex.timeStampRegex);
+      expect(body.startDate).to.match(CommonRegex.timeStampRegex);
       expect(body.institutionId).to.be.a("number");
       expect(body.institutionName).to.be.eq("College F");
       expect(body.institutionType).to.be.eq("BC Private");
@@ -94,13 +97,13 @@ describe("[Designation details] ", () => {
       expect(body.submittedData.agreementAccepted).to.be.a("boolean");
       body.submittedData.eligibilityOfficers.forEach((officerData: JSON) => {
         expect(officerData.email).to.be.a("string");
-        expect(officerData.phone).to.match(commonRegexObject.phoneNumberRegex);
+        expect(officerData.phone).to.match(CommonRegex.phoneNumberRegex);
         expect(officerData.name).to.be.a("string");
         expect(officerData.positionTitle).to.be.oneOf(["Admin"]);
       });
       body.submittedData.enrolmentOfficers.forEach((officerData: JSON) => {
         expect(officerData.email).to.be.a("string");
-        expect(officerData.phone).to.match(commonRegexObject.phoneNumberRegex);
+        expect(officerData.phone).to.match(CommonRegex.phoneNumberRegex);
         expect(officerData.name).to.be.a("string");
         expect(officerData.positionTitle).to.be.oneOf(["AEO"]);
       });
