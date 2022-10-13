@@ -29,6 +29,10 @@ COMMENT ON COLUMN notifications.message_id IS 'Foreign key reference to the mess
 
 COMMENT ON COLUMN notifications.message_payload IS 'JSON data containing message payload.';
 
+COMMENT ON COLUMN notifications.date_sent IS 'Record date notification was sent.';
+
+COMMENT ON COLUMN notifications.date_read IS 'Record date was read.';
+
 COMMENT ON COLUMN applications.created_at IS 'Record creation timestamp.';
 
 COMMENT ON COLUMN applications.updated_at IS 'Record update timestamp';

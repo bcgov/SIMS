@@ -20,14 +20,14 @@ export class NotificationService extends RecordDataModelService<Notification> {
    * @param messageType message type of the notification.
    * @param templateId template id of the notification.
    * @param auditUserId id of the user creating the notification.
-   * @param gcNotifyPayload notification payload.
+   * @param messagePayload notification payload.
    * @returns payload of the record created.
    */
   async saveNotification(
     userId: number,
     messageType: MessageType,
     templateId: string,
-    gcNotifyPayload: unknown,
+    messagePayload: unknown,
     auditUserId: number,
   ): Promise<Notification> {
     const now = new Date();
@@ -35,7 +35,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
     notification.templateId = templateId;
     notification.user = { id: userId } as User;
     notification.creator = { id: auditUserId } as User;
-    notification.gcNotifyPayload = gcNotifyPayload;
+    notification.messagePayload = messagePayload;
     notification.createdAt = now;
     notification.message = { id: messageType } as Message;
     return this.repo.save(notification);

@@ -48,7 +48,7 @@ export class Notification extends RecordDataModel {
     type: "jsonb",
     nullable: false,
   })
-  gcNotifyPayload: unknown;
+  messagePayload: unknown;
   /**
    * Message associated with this notification.
    */
