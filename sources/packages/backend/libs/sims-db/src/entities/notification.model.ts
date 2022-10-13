@@ -50,10 +50,10 @@ export class Notification extends RecordDataModel {
    */
   @OneToOne(() => NotificationMessage, { eager: false, cascade: false })
   @JoinColumn({
-    name: "message_id",
+    name: "notification_message_id",
     referencedColumnName: ColumnNames.ID,
   })
-  message: NotificationMessage;
+  notificationMessage: NotificationMessage;
   /**
    * Date Sent Column
    */
