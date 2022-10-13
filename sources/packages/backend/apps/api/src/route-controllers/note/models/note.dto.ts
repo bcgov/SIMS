@@ -1,10 +1,5 @@
 import { IsEnum, IsNotEmpty, MaxLength } from "class-validator";
-import {
-  Note,
-  NoteType,
-  NOTE_DESCRIPTION_MAX_LENGTH,
-  User,
-} from "@sims/sims-db";
+import { Note, NoteType, NOTE_DESCRIPTION_MAX_LENGTH } from "@sims/sims-db";
 
 /**
  * Base DTO for note.

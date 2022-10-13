@@ -7,7 +7,6 @@ import {
   Query,
   ParseIntPipe,
   NotFoundException,
-  ParseEnumPipe,
 } from "@nestjs/common";
 import { StudentService, InstitutionService } from "../../services";
 import BaseController from "../BaseController";
