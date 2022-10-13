@@ -8,7 +8,7 @@
         :rowsPerPageOptions="PAGINATION_LIST"
         :totalRecords="designations.length"
       >
-        <Column header="Submitted on"
+        <Column header="Date submitted"
           ><template #body="slotProps">
             <span>{{ dateOnlyLongString(slotProps.data.submittedDate) }}</span>
           </template>
