@@ -3,6 +3,7 @@ import Authorization, {
   ClientId,
 } from "../../custom-command/common/authorization";
 import { CommonRegex } from "../../custom-command/common/commonRegex";
+import { DesignationAgreementStatus } from "../../custom-command/common/designationAgreementStatus";
 
 const institutionHelperActions = new InstitutionHelperActions();
 
@@ -40,11 +41,9 @@ describe("[Designation details] ", () => {
       expect(response.status).to.be.eq(200);
       body.forEach((designation: JSON) => {
         expect(designation.designationId).to.be.a("number");
-        expect(designation.designationStatus).to.be.oneOf([
-          "Approved",
-          "Declined",
-          "Pending",
-        ]);
+        expect(designation.designationStatus).to.be.oneOf(
+          Object.values(DesignationAgreementStatus)
+        );
         expect(designation.endDate).to.match(CommonRegex.dateTimeRegex);
         expect(designation.startDate).to.match(CommonRegex.dateTimeRegex);
         expect(designation.submittedDate).to.match(CommonRegex.timeStampRegex);
@@ -66,11 +65,9 @@ describe("[Designation details] ", () => {
       const body = response.body;
       expect(response.status).to.be.eq(200);
       expect(body.designationId).to.be.a("number");
-      expect(body.designationStatus).to.be.oneOf([
-        "Approved",
-        "Declined",
-        "Pending",
-      ]);
+      expect(body.designationStatus).to.be.oneOf(
+        Object.values(DesignationAgreementStatus)
+      );
       expect(body.endDate).to.match(CommonRegex.timeStampRegex);
       expect(body.startDate).to.match(CommonRegex.timeStampRegex);
       expect(body.institutionId).to.be.a("number");
