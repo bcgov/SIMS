@@ -3,11 +3,10 @@ import {
   Entity,
   JoinColumn,
   OneToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
-import { Message } from "./message.model";
+import { NotificationMessage } from "./notification-message.model";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
 
@@ -16,12 +15,9 @@ import { User } from "./user.model";
 })
 export class Notification extends RecordDataModel {
   /**
-   *  Primary key column.
+   * Auto-generated sequential primary key column.
    */
-  @PrimaryColumn({
-    name: "id",
-    nullable: false,
-  })
+  @PrimaryGeneratedColumn()
   id: number;
   /**
    * User associated with this notification.
@@ -52,12 +48,12 @@ export class Notification extends RecordDataModel {
   /**
    * Message associated with this notification.
    */
-  @OneToOne(() => Message, { eager: false, cascade: false })
+  @OneToOne(() => NotificationMessage, { eager: false, cascade: false })
   @JoinColumn({
     name: "message_id",
     referencedColumnName: ColumnNames.ID,
   })
-  message: Message;
+  message: NotificationMessage;
   /**
    * Date Sent Column
    */
@@ -79,15 +75,15 @@ export class Notification extends RecordDataModel {
 }
 
 /**
- * Enumeration types for Messages.
+ * Enumeration types for Notification Messages.
  */
-export enum MessageType {
+export enum NotificationMessageType {
   /**
-   * Message type student file upload.
+   * Notification Message type student file upload.
    */
   StudentFileUpload = 1,
   /**
-   * Message type ministry file upload.
+   * Notification  Message type ministry file upload.
    */
   MinistryFileUpload = 2,
 }

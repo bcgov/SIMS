@@ -49,7 +49,7 @@ import {
   SupportingUser,
   User,
   Notification,
-  Message,
+  NotificationMessage,
 } from "./entities";
 
 @Module({
@@ -105,7 +105,7 @@ import {
         SupportingUser,
         User,
         Notification,
-        Message,
+        NotificationMessage,
       ],
     }),
   ],

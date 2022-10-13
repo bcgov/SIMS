@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS sims.notifications (
     -- Reference Columns
     user_id INT REFERENCES users(id),
     template_id UUID NOT NULL,
-    message_id INT REFERENCES messages(id) ON DELETE CASCADE,
+    notification_message_id INT REFERENCES notification_messages(id) ON DELETE CASCADE,
     message_payload jsonb NOT NULL,
     date_sent timestamp with time zone,
     date_read timestamp with time zone,
@@ -25,7 +25,7 @@ COMMENT ON COLUMN notifications.id IS 'Auto-generated sequential primary key col
 
 COMMENT ON COLUMN notifications.user_id IS 'Foreign key reference to the users table.';
 
-COMMENT ON COLUMN notifications.message_id IS 'Foreign key reference to the messages table.';
+COMMENT ON COLUMN notifications.notification_message_id IS 'Foreign key reference to the notification_messages table.';
 
 COMMENT ON COLUMN notifications.message_payload IS 'JSON data containing message payload.';
 

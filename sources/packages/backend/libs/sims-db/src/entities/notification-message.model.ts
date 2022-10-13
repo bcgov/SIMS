@@ -1,18 +1,21 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 
 @Entity({
   name: TableNames.Messages,
 })
-export class Message extends RecordDataModel {
+export class NotificationMessage extends RecordDataModel {
   /**
-   * Auto-generated sequential primary key column.
+   *  Primary key column.
    */
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({
+    name: "id",
+    nullable: false,
+  })
   id: number;
   /**
-   * Description of message.
+   * Description of notification message.
    */
   @Column({
     name: "description",

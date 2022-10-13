@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { MessageType } from "@sims/sims-db";
+import { NotificationMessageType } from "@sims/sims-db";
 import { getExtendedDateFormat, getPSTPDTDateTime } from "../../utilities";
 import {
   MINISTRY_FILE_UPLOAD_TEMPLATE_ID,
@@ -47,10 +47,10 @@ export class GCNotifyActionsService {
         date: this.getDateTimeOnPSTTimeZone(),
       },
     };
-    // save notification into notification table.
+    // Save notification into notification table.
     const notificationSaved = await this.notificationService.saveNotification(
       userId,
-      MessageType.StudentFileUpload,
+      NotificationMessageType.StudentFileUpload,
       STUDENT_FILE_UPLOAD_TEMPLATE_ID,
       payload,
       auditUserId,
@@ -59,7 +59,7 @@ export class GCNotifyActionsService {
       await this.gcNotifyService.sendEmailNotification<StudentFileUploadPersonalisation>(
         payload,
       );
-    // update date sent column in notification table after sending email notification successfully.
+    // Update date sent column in notification table after sending email notification successfully.
     await this.notificationService.updateNotification(notificationSaved.id);
     return gcNotifyResult;
   }
@@ -86,10 +86,10 @@ export class GCNotifyActionsService {
       },
     };
 
-    // save notification into notification table.
+    // Save notification into notification table.
     const notificationSaved = await this.notificationService.saveNotification(
       userId,
-      MessageType.MinistryFileUpload,
+      NotificationMessageType.MinistryFileUpload,
       MINISTRY_FILE_UPLOAD_TEMPLATE_ID,
       payload,
       auditUserId,
@@ -99,7 +99,7 @@ export class GCNotifyActionsService {
       await this.gcNotifyService.sendEmailNotification<MinistryStudentFileUploadPersonalisation>(
         payload,
       );
-    // update date sent column in notification table after sending email notification successfully.
+    // Update date sent column in notification table after sending email notification successfully.
     await this.notificationService.updateNotification(notificationSaved.id);
     return gcNotifyResult;
   }

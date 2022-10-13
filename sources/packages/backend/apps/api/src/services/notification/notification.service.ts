@@ -3,8 +3,8 @@ import {
   RecordDataModelService,
   Notification,
   User,
-  Message,
-  MessageType,
+  NotificationMessage,
+  NotificationMessageType,
 } from "@sims/sims-db";
 import { DataSource, UpdateResult } from "typeorm";
 
@@ -25,7 +25,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
    */
   async saveNotification(
     userId: number,
-    messageType: MessageType,
+    messageType: NotificationMessageType,
     templateId: string,
     messagePayload: unknown,
     auditUserId: number,
@@ -36,7 +36,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
     notification.creator = { id: auditUserId } as User;
     notification.messagePayload = messagePayload;
     notification.createdAt = new Date();
-    notification.message = { id: messageType } as Message;
+    notification.message = { id: messageType } as NotificationMessage;
     return this.repo.save(notification);
   }
 
