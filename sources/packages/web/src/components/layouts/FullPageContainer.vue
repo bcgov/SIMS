@@ -58,7 +58,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const widthClass = computed(() => {
       return props.fullWidth ? "" : "full-page-container-size";
     });

@@ -512,14 +512,17 @@
   border-radius: 0px;
 }
 
+// Formio table style as per figma.
 .formio-bordered table {
   border: 1px solid $common-border-color;
 }
 
+// Formio figma style for the nth child (like total).
 .formio-table-last-col-background table tbody tr:last-child {
   background-color: $default-background;
 }
 
+// Formio table style for alignment.
 .formio-bordered table tbody tr td {
   max-width: 70px;
 }
@@ -551,4 +554,11 @@
 
 .formio-custom-tooltip:hover .tooltip-text {
   visibility: visible;
+}
+
+// Collapsible panel style as per figma.
+.collapsible .card-header.bg-default {
+  border-left: 8px solid $brand-blue;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }

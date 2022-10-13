@@ -37,14 +37,7 @@
 
 <script lang="ts">
 import { DialogTypes } from "@/types";
-import {
-  ref,
-  watch,
-  computed,
-  SetupContext,
-  defineComponent,
-  PropType,
-} from "vue";
+import { ref, watch, computed, defineComponent, PropType } from "vue";
 const dialogClosedEvent = "dialogClosed";
 
 export default defineComponent({
@@ -75,7 +68,7 @@ export default defineComponent({
     },
   },
   emits: [dialogClosedEvent],
-  setup(props: any, context: SetupContext) {
+  setup(props, context) {
     const showHideDialog = ref(false);
     watch(
       () => props.showDialog,

@@ -51,19 +51,19 @@
 </template>
 
 <script lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, defineComponent } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { FileOriginType } from "@/types";
 import { useFileUtils } from "@/composables";
 import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
-export default {
+export default defineComponent({
   props: {
     reload: {
       type: Boolean,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const fileUtils = useFileUtils();
     const studentDocuments = ref([] as StudentUploadFileAPIOutDTO[]);
     const ministryDocuments = ref([] as StudentUploadFileAPIOutDTO[]);
@@ -89,5 +89,5 @@ export default {
     );
     return { fileUtils, studentDocuments, ministryDocuments };
   },
-};
+});
 </script>

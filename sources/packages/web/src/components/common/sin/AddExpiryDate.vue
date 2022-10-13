@@ -2,8 +2,9 @@
   <v-form ref="addExpiryDateForm">
     <modal-dialog-base
       title="Add expiry date"
-      :showDialog="showDialog"
-      max-width="730"
+      :dialog-type="DialogTypes.question"
+      :maxWidth="730"
+      :show-dialog="showDialog"
     >
       <template #content>
         <error-summary :errors="addExpiryDateForm.errors" />
@@ -49,7 +50,7 @@ import { PropType, ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules } from "@/composables";
-import { Role, VForm } from "@/types";
+import { DialogTypes, Role, VForm } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { UpdateSINValidationAPIInDTO } from "@/services/http/dto";
 
@@ -96,6 +97,7 @@ export default defineComponent({
       formModel,
       checkNotesLengthRule,
       checkStringDateFormatRule,
+      DialogTypes,
     };
   },
 });
