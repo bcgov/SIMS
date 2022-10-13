@@ -42,20 +42,3 @@ export const transformToNoteDTO = (note: Note): NoteAPIOutDTO => {
     createdAt: note.createdAt,
   };
 };
-
-/**
- * Util to transform DTO to note entity model.
- * @param note
- * @param userId
- * @returns notes
- */
-export const transformToNoteEntity = (
-  note: NoteAPIInDTO,
-  userId: number,
-): Note => {
-  return {
-    noteType: note.noteType,
-    description: note.description,
-    creator: { id: userId } as User,
-  } as Note;
-};
