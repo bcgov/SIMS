@@ -6,7 +6,7 @@
         <div
           class="document-box mb-4"
           v-for="ministryDocument in ministryDocuments"
-          :key="ministryDocument"
+          :key="ministryDocument.uniqueFileName"
         >
           <div
             class="file-label"
@@ -30,7 +30,7 @@
         <div
           class="document-box mb-4"
           v-for="studentDocument in studentDocuments"
-          :key="studentDocument"
+          :key="studentDocument.uniqueFileName"
         >
           <div
             class="file-label"
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { FileOriginType } from "@/types";
 import { useFileUtils } from "@/composables";
@@ -67,6 +67,7 @@ export default {
     const fileUtils = useFileUtils();
     const studentDocuments = ref([] as StudentUploadFileAPIOutDTO[]);
     const ministryDocuments = ref([] as StudentUploadFileAPIOutDTO[]);
+
     const getStudentDocuments = async () => {
       const documents = await StudentService.shared.getStudentFiles();
       ministryDocuments.value = documents.filter(
@@ -77,12 +78,13 @@ export default {
       );
     };
 
-    onMounted(getStudentDocuments);
-
     watch(
       () => props.reload,
       () => {
         getStudentDocuments();
+      },
+      {
+        immediate: true,
       },
     );
     return { fileUtils, studentDocuments, ministryDocuments };

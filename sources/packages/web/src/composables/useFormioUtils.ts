@@ -79,7 +79,7 @@ export function useFormioUtils() {
     return matchedComponents;
   };
 
-  // Search for components of a specifi type.
+  // Search for components of a specific type.
   const getComponentsOfType = (form: any, type: string): any[] => {
     return recursiveSearch(form, (component) => component.type === type);
   };

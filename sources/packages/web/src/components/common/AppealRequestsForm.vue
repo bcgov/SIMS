@@ -31,7 +31,7 @@ export default {
     },
     readOnly: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
     },
   },

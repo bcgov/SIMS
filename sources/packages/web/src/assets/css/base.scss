@@ -336,30 +336,3 @@ html * {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }
-// todo: ann move to formio.scss
-// cutom tooltip fot htm compinent in formio
-.formio-custom-tooltip {
-  position: absolute;
-  display: inline-flex;
-}
-.formio-custom-tooltip:before {
-  content: "\f059";
-  font-family: FontAwesome;
-  color: $brand-grey;
-  font-size: 16px;
-  padding: 0 10px;
-}
-.formio-custom-tooltip .tooltip-text {
-  visibility: hidden;
-  background-color: rgba(#424242, 0.7);
-  color: #eeeeee;
-  padding: 0.5em;
-  border-radius: 4px;
-  opacity: 1;
-  font-size: 0.875rem;
-  line-height: 1.6;
-}
-
-.formio-custom-tooltip:hover .tooltip-text {
-  visibility: visible;
-}

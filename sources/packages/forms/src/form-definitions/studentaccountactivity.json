@@ -299,7 +299,7 @@
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
-                      "id": "e7d7d4b000000000",
+                      "id": "e7d7d4b000000000000000000000000000000000000000000000",
                       "placeholder": "",
                       "prefix": "",
                       "customClass": "",
@@ -779,7 +779,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "For StudentAid BC restrictions, please refer to the <a href=\"https://studentaidbc.ca/help-centre\" target=\"_blank\" rel=\"noopener noreferrer\">StudentAid BC Help Centre.</a>",
+                  "content": "For StudentAid BC restrictions, please refer to the <a href=\"https://studentaidbc.ca/help-centre\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"primary-color\">StudentAid BC Help Centre.</a>",
                   "refreshOnChange": false,
                   "customClass": "",
                   "hidden": false,
@@ -847,7 +847,7 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "eifp1kn"
+                  "id": "e7qzgaf"
                 },
                 {
                   "label": "HTML",
@@ -861,7 +861,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "For National Student Loans Centre restrictions, please refer to the <a href=\"https://www.csnpe-nslsc.canada.ca\" target=\"_blank\" rel=\"noopener noreferrer\">National Student Loan Service Centre.</a>",
+                  "content": "For National Student Loans Centre restrictions, please refer to the <a  class=\"primary-color\" href=\"https://www.csnpe-nslsc.canada.ca\" target=\"_blank\" rel=\"noopener noreferrer\">National Student Loan Service Centre.</a>",
                   "refreshOnChange": false,
                   "customClass": "",
                   "hidden": false,
@@ -929,7 +929,7 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "esinped"
+                  "id": "eerf5vf"
                 },
                 {
                   "label": "Content",
@@ -1451,7 +1451,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -1549,7 +1549,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e5zvyo"
+                      "id": "eo43uij"
                     }
                   ],
                   "collapsed": true,
@@ -1591,7 +1591,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ezlmfhe"
+                  "id": "e4ppj5l"
                 },
                 {
                   "title": "Code B3D - B.C. loan in default",
@@ -1599,7 +1599,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -1635,46 +1635,25 @@
                     {
                       "html": "<p>Please note your loan is in default and you are not eligible for additional funding. If you need more information or have concerns, please contact StudentAid BC.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content46",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -1689,6 +1668,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -1698,15 +1678,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e5g0l0o"
+                      "id": "efsfnwr"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -1745,8 +1739,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "evmojwj",
-                  "collapsed": true
+                  "id": "earwu9c"
                 },
                 {
                   "title": "Code B6A - Bankruptcy",
@@ -1754,7 +1747,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -1790,46 +1783,25 @@
                     {
                       "html": "<p>Please note that your account is still under a hold due to bankruptcy. We have been notified that the hold with <strong>Canada Student Financial Assistance Program (CSFA)</strong> has been removed. Please complete a \"B.C. Student Loan Rehabilitation Due to Bankruptcy\" appeal. If you need more information or have concerns, please contact StudentAid BC.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content47",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -1844,6 +1816,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -1853,15 +1826,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e6mouls"
+                      "id": "edno0aj"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -1900,8 +1887,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eu32j7m",
-                  "collapsed": true
+                  "id": "esg4vu"
                 },
                 {
                   "title": "Code ECRS - Early completion",
@@ -1909,7 +1895,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -2007,9 +1993,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eydc28k"
+                      "id": "ewvdwn8"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -2048,8 +2035,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "evgnty",
-                  "collapsed": true
+                  "id": "eratsbh"
                 },
                 {
                   "title": "Code SSR - Poor scholastic standing",
@@ -2057,7 +2043,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -2155,9 +2141,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eonlfc"
+                      "id": "e0qd9ur"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -2196,8 +2183,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "erqcy88",
-                  "collapsed": true
+                  "id": "e3be0q"
                 },
                 {
                   "title": "Code STRS - Transfer pending",
@@ -2205,7 +2191,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -2303,9 +2289,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "emz6mki"
+                      "id": "ew5rk1e"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -2344,8 +2331,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ezv0bp7",
-                  "collapsed": true
+                  "id": "e94oyn9"
                 },
                 {
                   "title": "Code UNCF - Maximum of unclassified funding",
@@ -2353,7 +2339,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -2451,7 +2437,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ecned9b"
+                      "id": "e1w2cze"
                     }
                   ],
                   "collapsed": true,
@@ -2493,7 +2479,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ex8279f"
+                  "id": "ecu8es"
                 },
                 {
                   "title": "Code UNCL -  Maximum of unclassified funding",
@@ -2501,7 +2487,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -2599,9 +2585,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "edgy0u"
+                      "id": "e80rsrb"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -2640,8 +2627,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e3utsxr",
-                  "collapsed": true
+                  "id": "e2x834b"
                 },
                 {
                   "title": "Code APLE - Pending appeal",
@@ -2649,7 +2635,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -2747,9 +2733,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ekmpmjh"
+                      "id": "eyvwgxk"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -2788,8 +2775,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "euwhwjo",
-                  "collapsed": true
+                  "id": "e4c9mc8"
                 },
                 {
                   "title": "Code B2D - B.C. loan delinquency",
@@ -2797,7 +2783,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -2833,46 +2819,25 @@
                     {
                       "html": "<p>Please note that your loan is delinquent and you are not eligible for additional funding. If you need more information or have concerns, please contact StudentAid BC.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content54",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -2887,6 +2852,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -2896,15 +2862,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "etgxwzk"
+                      "id": "e9chugb"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -2943,8 +2923,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e7d45w",
-                  "collapsed": true
+                  "id": "e5weupjp4"
                 },
                 {
                   "title": "Code B2 - B.C. loan delinquency",
@@ -2952,7 +2931,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -3050,7 +3029,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eb8491f"
+                      "id": "e6b6m5h"
                     }
                   ],
                   "collapsed": true,
@@ -3092,7 +3071,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e6kt1jn"
+                  "id": "eaaszn"
                 },
                 {
                   "title": "Code SINF - Temporary Social Insurance Number (SIN) expiration",
@@ -3100,7 +3079,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -3136,46 +3115,25 @@
                     {
                       "html": "<p>Your SIN number is currently expired for your application or we are missing the expiry date of your SIN number. Your application will not be disbursed until this is resolved. You may upload the appropriate documentation using the \"file uploader\" located in the top right of your account and we will work to resolve your issue. For more information please contact StudentAid BC.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content56",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -3190,6 +3148,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -3199,13 +3158,26 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e9meixh"
+                      "id": "exuqcvt"
                     }
                   ],
                   "collapsed": true,
@@ -3247,7 +3219,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eqtpt6"
+                  "id": "ekuh9n"
                 },
                 {
                   "label": "HTML",
@@ -3333,56 +3305,65 @@
                 },
                 {
                   "title": "Code 4 - Nearing the lifetime maximum",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "theme": "default",
+                  "tooltip": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
+                  "hidden": false,
+                  "hideLabel": false,
+                  "disabled": false,
+                  "modalEdit": false,
                   "key": "code4NearingTheLifetimeMaximum",
+                  "tags": [],
+                  "properties": {},
+                  "customConditional": "",
+                  "conditional": {
+                    "json": "",
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
                   "type": "panel",
                   "label": "Panel",
+                  "breadcrumb": "default",
+                  "tabindex": "",
                   "input": false,
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content1",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -3397,6 +3378,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -3406,45 +3388,50 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "edmnn6f"
+                      "id": "e9qhe0vh"
                     }
                   ],
                   "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
-                  "customClass": "",
                   "suffix": "",
                   "multiple": false,
                   "defaultValue": null,
                   "protected": false,
                   "unique": false,
                   "persistent": false,
-                  "hidden": false,
                   "clearOnHide": false,
                   "refreshOn": "",
                   "redrawOn": "",
-                  "modalEdit": false,
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
                   "errorLabel": "",
-                  "tooltip": "",
-                  "hideLabel": false,
-                  "tabindex": "",
-                  "disabled": false,
                   "autofocus": false,
                   "dbIndex": false,
                   "customDefaultValue": "",
                   "calculateValue": "",
                   "calculateServer": false,
                   "widget": null,
-                  "attributes": {},
                   "validateOn": "change",
                   "validate": {
                     "required": false,
@@ -3454,30 +3441,15 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
                   "allowCalculateOverride": false,
                   "encrypted": false,
                   "showCharCount": false,
                   "showWordCount": false,
-                  "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "theme": "default",
-                  "breadcrumb": "default",
-                  "id": "ed0742l"
+                  "id": "eqzzgm"
                 },
                 {
                   "title": "Code 5 - Reached the lifetime maximum",
@@ -3485,7 +3457,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -3521,46 +3493,25 @@
                     {
                       "html": "<p>You have reached your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content2",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -3575,6 +3526,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -3584,13 +3536,26 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e28y4hg"
+                      "id": "ebyc02xh"
                     }
                   ],
                   "collapsed": true,
@@ -3632,7 +3597,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eg0wj1a"
+                  "id": "evxk18i"
                 },
                 {
                   "title": "Code 6 - Nearing the lifetime maximum",
@@ -3640,7 +3605,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -3676,201 +3641,25 @@
                     {
                       "html": "<p>You are approaching your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content4",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": null,
-                      "protected": false,
-                      "unique": false,
-                      "persistent": true,
-                      "clearOnHide": true,
-                      "refreshOn": "",
-                      "redrawOn": "",
-                      "dataGridLabel": false,
-                      "labelPosition": "top",
-                      "description": "",
-                      "errorLabel": "",
-                      "tooltip": "",
-                      "hideLabel": false,
-                      "tabindex": "",
-                      "disabled": false,
-                      "autofocus": false,
-                      "dbIndex": false,
-                      "customDefaultValue": "",
-                      "calculateValue": "",
-                      "calculateServer": false,
-                      "widget": null,
-                      "validateOn": "change",
-                      "validate": {
-                        "required": false,
-                        "custom": "",
-                        "customPrivate": false,
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false
-                      },
-                      "allowCalculateOverride": false,
-                      "encrypted": false,
-                      "showCharCount": false,
-                      "showWordCount": false,
-                      "allowMultipleMasks": false,
-                      "addons": [],
-                      "id": "eukagqx"
-                    }
-                  ],
-                  "placeholder": "",
-                  "prefix": "",
-                  "suffix": "",
-                  "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
-                  "unique": false,
-                  "persistent": false,
-                  "clearOnHide": false,
-                  "refreshOn": "",
-                  "redrawOn": "",
-                  "dataGridLabel": false,
-                  "labelPosition": "top",
-                  "description": "",
-                  "errorLabel": "",
-                  "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "widget": null,
-                  "validateOn": "change",
-                  "validate": {
-                    "required": false,
-                    "custom": "",
-                    "customPrivate": false,
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false
-                  },
-                  "allowCalculateOverride": false,
-                  "encrypted": false,
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "tree": false,
-                  "lazyLoad": false,
-                  "id": "eg4hrf7",
-                  "collapsed": true
-                },
-                {
-                  "title": "Code 7 - Reached the lifetime maximum",
-                  "labelWidth": "",
-                  "labelMargin": "",
-                  "theme": "default",
-                  "tooltip": "",
-                  "customClass": "",
-                  "collapsible": true,
-                  "hidden": false,
-                  "hideLabel": false,
-                  "disabled": false,
-                  "modalEdit": false,
-                  "key": "code7",
-                  "tags": [],
-                  "properties": {},
-                  "customConditional": "",
-                  "conditional": {
-                    "json": "",
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
-                  "logic": [],
-                  "attributes": {},
-                  "overlay": {
-                    "style": "",
-                    "page": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "type": "panel",
-                  "label": "Panel",
-                  "breadcrumb": "default",
-                  "tabindex": "",
-                  "input": false,
-                  "tableView": false,
-                  "components": [
-                    {
-                      "html": "<p>You have reached your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. If you need more information, please contact the National Student Loan Service Centre.</p>",
-                      "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
                       "customClass": "",
-                      "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
-                      "key": "content5",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
-                      "type": "content",
-                      "input": false,
-                      "tableView": false,
-                      "placeholder": "",
-                      "prefix": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -3885,6 +3674,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -3894,13 +3684,26 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eczlt257"
+                      "id": "evwvd0n"
                     }
                   ],
                   "collapsed": true,
@@ -3942,21 +3745,21 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ef4c6j9"
+                  "id": "evt8ggd"
                 },
                 {
-                  "title": "Code 8 - Nearing the lifetime maximum",
+                  "title": "Code 7 - Reached the lifetime maximum",
                   "labelWidth": "",
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
                   "disabled": false,
                   "modalEdit": false,
-                  "key": "code8NearingTheLifetimeMaximum",
+                  "key": "code7",
                   "tags": [],
                   "properties": {},
                   "customConditional": "",
@@ -3984,48 +3787,27 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>You have reached your Canada-B.C intergrated student loan maximim lifetime number of weeks allowable for your current level of study. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
-                      "key": "content6",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
+                      "key": "content5",
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -4040,6 +3822,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -4049,15 +3832,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e8sn8s"
+                      "id": "erbjxwo"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -4096,8 +3893,155 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ey4z4qj",
-                  "collapsed": true
+                  "id": "eu8zayn"
+                },
+                {
+                  "title": "Code 8 - Nearing the lifetime maximum",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "theme": "default",
+                  "tooltip": "",
+                  "customClass": "collapsible",
+                  "collapsible": true,
+                  "hidden": false,
+                  "hideLabel": false,
+                  "disabled": false,
+                  "modalEdit": false,
+                  "key": "code8NearingTheLifetimeMaximum",
+                  "tags": [],
+                  "properties": {},
+                  "customConditional": "",
+                  "conditional": {
+                    "json": "",
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "type": "panel",
+                  "label": "Panel",
+                  "breadcrumb": "default",
+                  "tabindex": "",
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "html": "<p>You are approaching your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "label": "Content",
+                      "refreshOnChange": false,
+                      "key": "content6",
+                      "type": "content",
+                      "input": false,
+                      "tableView": false,
+                      "placeholder": "",
+                      "prefix": "",
+                      "customClass": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "modalEdit": false,
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "hideLabel": false,
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "attributes": {},
+                      "validateOn": "change",
+                      "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "properties": {},
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "id": "eetgp4q"
+                    }
+                  ],
+                  "collapsed": true,
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "multiple": false,
+                  "defaultValue": null,
+                  "protected": false,
+                  "unique": false,
+                  "persistent": false,
+                  "clearOnHide": false,
+                  "refreshOn": "",
+                  "redrawOn": "",
+                  "dataGridLabel": false,
+                  "labelPosition": "top",
+                  "description": "",
+                  "errorLabel": "",
+                  "autofocus": false,
+                  "dbIndex": false,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
+                  "widget": null,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false,
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "allowCalculateOverride": false,
+                  "encrypted": false,
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "tree": false,
+                  "lazyLoad": false,
+                  "id": "eiqzjy"
                 },
                 {
                   "title": "Code 9 - Reached the lifetime maximum",
@@ -4105,7 +4049,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -4139,7 +4083,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>You have reached your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. For more information, contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>You have reached your Canada-B.C integrated student loan maximum lifetime number of weeks allowable for your current level of study. For more information, contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content7",
@@ -4203,7 +4147,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e0n4lm"
+                      "id": "e6lrydq"
                     }
                   ],
                   "collapsed": true,
@@ -4245,7 +4189,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "en582ne"
+                  "id": "eidhqm7"
                 },
                 {
                   "title": "Code AV - Maximum for an aviation program",
@@ -4253,7 +4197,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -4289,46 +4233,25 @@
                     {
                       "html": "<p>Please note you have reached the 17 week maximum for an aviation program. If you need more information or have concerns, please contact StudentAid BC.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content8",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -4343,6 +4266,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -4352,15 +4276,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ee7rsmf"
+                      "id": "ee65fr"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -4399,8 +4337,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ehn8iwq",
-                  "collapsed": true
+                  "id": "eaxmcrh"
                 },
                 {
                   "title": "Code B6 - Bankruptcy",
@@ -4408,7 +4345,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -4444,46 +4381,25 @@
                     {
                       "html": "<p>Please note that your account is under a hold due to bankruptcy where student financial assistance was included. Your first step will be to remove the hold with <strong>Canada Student Financial Assistance Program </strong>(CSFA Program) and then complete an appeal with StudentAid BC. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content9",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -4498,6 +4414,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -4507,15 +4424,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eh43087"
+                      "id": "e54t04"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -4554,8 +4485,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eb7sxfa",
-                  "collapsed": true
+                  "id": "e6hyznp"
                 },
                 {
                   "title": "Code BF - Risk guaranteed portfolios frozen",
@@ -4563,7 +4493,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -4597,7 +4527,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that your account is under a hold due to risk guaranteed portfolio being frozen. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note that your account is under a hold due to risk guaranteed portfolio being frozen. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content10",
@@ -4661,7 +4591,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eqnpyzc"
+                      "id": "elytm8f"
                     }
                   ],
                   "collapsed": true,
@@ -4703,7 +4633,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e5wmd1"
+                  "id": "e3l2cmb"
                 },
                 {
                   "title": "Code C - Restriction on file",
@@ -4711,7 +4641,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -4745,48 +4675,27 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note the Canada Student Financial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note the Canada Student Financial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content11",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -4801,6 +4710,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -4810,15 +4720,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "erxuxr"
+                      "id": "erf5kz"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -4857,8 +4781,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ed4h4xa",
-                  "collapsed": true
+                  "id": "emxlf49"
                 },
                 {
                   "title": "Code TD - Account closed",
@@ -4866,7 +4789,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -4900,48 +4823,27 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note the Canada Student Financial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note the Canada Student Finanacial Assistance Program (CSFA Program) has placed a restriction on your file. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content12",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -4956,6 +4858,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -4965,15 +4868,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e8079z"
+                      "id": "ega288d"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -5012,8 +4929,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ebhlnib",
-                  "collapsed": true
+                  "id": "emb2yf5"
                 },
                 {
                   "title": "Code E2 - Bankruptcy",
@@ -5021,7 +4937,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -5057,46 +4973,25 @@
                     {
                       "html": "<p>Please note that your application indicated that you have reported bankruptcy in the past. If you need more information or have concerns, please contact StudentAid BC.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content13",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -5111,6 +5006,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -5120,15 +5016,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e0bvaz"
+                      "id": "e7oiea"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -5167,8 +5077,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ea68x6",
-                  "collapsed": true
+                  "id": "e6luxnn"
                 },
                 {
                   "title": "Code FC - Failed credit check ",
@@ -5176,7 +5085,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -5207,6 +5116,77 @@
                   "breadcrumb": "default",
                   "tabindex": "",
                   "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "html": "<p>Please note that there has been a failed credit check that has impacted your account. If you need more information or have concerns, please contact StudentAid BC.</p>",
+                      "label": "Content",
+                      "refreshOnChange": false,
+                      "key": "content14",
+                      "type": "content",
+                      "input": false,
+                      "tableView": false,
+                      "placeholder": "",
+                      "prefix": "",
+                      "customClass": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "modalEdit": false,
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "hideLabel": false,
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "attributes": {},
+                      "validateOn": "change",
+                      "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "properties": {},
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "id": "eaxtd4d"
+                    }
+                  ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -5218,7 +5198,6 @@
                   "clearOnHide": false,
                   "refreshOn": "",
                   "redrawOn": "",
-                  "tableView": false,
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
@@ -5246,84 +5225,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "components": [
-                    {
-                      "html": "<p>Please note that there has been a failed credit check that has impacted your account. If you need more information or have concerns, please contact StudentAid BC.</p>",
-                      "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
-                      "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
-                      "key": "content14",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
-                      "type": "content",
-                      "input": false,
-                      "tableView": false,
-                      "placeholder": "",
-                      "prefix": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": null,
-                      "protected": false,
-                      "unique": false,
-                      "persistent": true,
-                      "clearOnHide": true,
-                      "refreshOn": "",
-                      "redrawOn": "",
-                      "dataGridLabel": false,
-                      "labelPosition": "top",
-                      "description": "",
-                      "errorLabel": "",
-                      "tooltip": "",
-                      "hideLabel": false,
-                      "tabindex": "",
-                      "disabled": false,
-                      "autofocus": false,
-                      "dbIndex": false,
-                      "customDefaultValue": "",
-                      "calculateValue": "",
-                      "calculateServer": false,
-                      "widget": null,
-                      "validateOn": "change",
-                      "validate": {
-                        "required": false,
-                        "custom": "",
-                        "customPrivate": false,
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false
-                      },
-                      "allowCalculateOverride": false,
-                      "encrypted": false,
-                      "showCharCount": false,
-                      "showWordCount": false,
-                      "allowMultipleMasks": false,
-                      "addons": [],
-                      "id": "exl78ug"
-                    }
-                  ],
-                  "id": "exbxn9d",
-                  "collapsed": true
+                  "id": "ewlpgyc"
                 },
                 {
                   "title": "Code O - Overaward",
@@ -5331,7 +5233,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -5367,46 +5269,25 @@
                     {
                       "html": "<p>Please note that there are overawards attached to your account. If you need more information or have concerns, please contact StudentAid BC.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content15",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -5421,6 +5302,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -5430,15 +5312,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ee3141k"
+                      "id": "ew493co"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -5477,8 +5373,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "el4cbzh",
-                  "collapsed": true
+                  "id": "ejan6vt"
                 },
                 {
                   "title": "Code P - Offense related to Canada student loans",
@@ -5486,7 +5381,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -5520,48 +5415,27 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content16",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -5576,6 +5450,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -5585,15 +5460,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eavnb4j"
+                      "id": "ec80rza"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -5632,8 +5521,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "elalvbd",
-                  "collapsed": true
+                  "id": "eay5kc"
                 },
                 {
                   "title": "Code R - Risk-shared loan  collection",
@@ -5641,7 +5529,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -5677,46 +5565,25 @@
                     {
                       "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content17",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -5731,6 +5598,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -5740,15 +5608,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eeiukg"
+                      "id": "ev0eb0h"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -5787,8 +5669,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eadmd3m",
-                  "collapsed": true
+                  "id": "eiuilxh"
                 },
                 {
                   "title": "Code RB - Bankruptcy",
@@ -5796,7 +5677,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -5894,9 +5775,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "em339gj"
+                      "id": "e3e4i7q"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -5935,8 +5817,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e3bq2kh",
-                  "collapsed": true
+                  "id": "esw1fqe"
                 },
                 {
                   "title": "Code RJ - Ineligible for funding",
@@ -5944,7 +5825,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -5975,6 +5856,77 @@
                   "breadcrumb": "default",
                   "tabindex": "",
                   "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
+                      "label": "Content",
+                      "refreshOnChange": false,
+                      "key": "content19",
+                      "type": "content",
+                      "input": false,
+                      "tableView": false,
+                      "placeholder": "",
+                      "prefix": "",
+                      "customClass": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "modalEdit": false,
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "hideLabel": false,
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "attributes": {},
+                      "validateOn": "change",
+                      "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "properties": {},
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "id": "ekcg7bn"
+                    }
+                  ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -5986,7 +5938,6 @@
                   "clearOnHide": false,
                   "refreshOn": "",
                   "redrawOn": "",
-                  "tableView": false,
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
@@ -6014,84 +5965,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "components": [
-                    {
-                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
-                      "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
-                      "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
-                      "key": "content19",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
-                      "type": "content",
-                      "input": false,
-                      "tableView": false,
-                      "placeholder": "",
-                      "prefix": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": null,
-                      "protected": false,
-                      "unique": false,
-                      "persistent": true,
-                      "clearOnHide": true,
-                      "refreshOn": "",
-                      "redrawOn": "",
-                      "dataGridLabel": false,
-                      "labelPosition": "top",
-                      "description": "",
-                      "errorLabel": "",
-                      "tooltip": "",
-                      "hideLabel": false,
-                      "tabindex": "",
-                      "disabled": false,
-                      "autofocus": false,
-                      "dbIndex": false,
-                      "customDefaultValue": "",
-                      "calculateValue": "",
-                      "calculateServer": false,
-                      "widget": null,
-                      "validateOn": "change",
-                      "validate": {
-                        "required": false,
-                        "custom": "",
-                        "customPrivate": false,
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false
-                      },
-                      "allowCalculateOverride": false,
-                      "encrypted": false,
-                      "showCharCount": false,
-                      "showWordCount": false,
-                      "allowMultipleMasks": false,
-                      "addons": [],
-                      "id": "empolg7"
-                    }
-                  ],
-                  "id": "e7bb01",
-                  "collapsed": true
+                  "id": "e2fydis"
                 },
                 {
                   "title": "Code RP - Offense related to Canada student loans",
@@ -6099,7 +5973,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -6135,46 +6009,25 @@
                     {
                       "html": "<p>Please note that a hold has been placed on your account based on an reported issue from the Canada Student Financial Assistance Program (CSFA Program). If you need more information or have concerns, please contact StudentAid BC.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content21",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -6189,6 +6042,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -6198,15 +6052,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "elc5gu"
+                      "id": "eodspvp"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -6245,8 +6113,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "el39pm",
-                  "collapsed": true
+                  "id": "eh5n31g"
                 },
                 {
                   "title": "Code RP - Ineligible for funding",
@@ -6254,7 +6121,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -6352,9 +6219,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eu7ymzn"
+                      "id": "et7zkfn"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -6393,8 +6261,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eqmzfqd",
-                  "collapsed": true
+                  "id": "ery45u"
                 },
                 {
                   "title": "Code T - Claim for loss",
@@ -6402,7 +6269,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -6436,48 +6303,27 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported that they have received a claim for loss request but it has not yet been or is in the process of being audited/assessed. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The&nbsp;Canada Student Financial Assistance Program (CSFA Program) has reported that they have received a claim for loss request but it has not yet been or is in the process of being audited/assessed. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content22",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -6492,6 +6338,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -6501,15 +6348,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "em2efm8"
+                      "id": "edvltg9"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -6548,8 +6409,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ekrp55p",
-                  "collapsed": true
+                  "id": "e8z089m"
                 },
                 {
                   "title": "Code W - Repayment assistance program",
@@ -6557,7 +6417,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -6591,7 +6451,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The&nbsp;Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content24",
@@ -6655,9 +6515,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ep5zkhi"
+                      "id": "e3cecl"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -6696,8 +6557,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eaoyt",
-                  "collapsed": true
+                  "id": "e7aqtjs"
                 },
                 {
                   "title": "Code X Risk-shared or direct loan in arrears",
@@ -6705,7 +6565,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -6803,9 +6663,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "el0otc"
+                      "id": "ej0bjq"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -6844,8 +6705,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ed3cg44",
-                  "collapsed": true
+                  "id": "er32b2"
                 },
                 {
                   "title": "Code Z3 - Repayment assistance program",
@@ -6853,7 +6713,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -6887,48 +6747,27 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The&nbsp;Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content25",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -6943,6 +6782,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -6952,15 +6792,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "etjo1go"
+                      "id": "elhadbf"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -6999,8 +6853,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ewlbx6d",
-                  "collapsed": true
+                  "id": "eto3a3a"
                 },
                 {
                   "title": "Code ZR - Repayment assistance program",
@@ -7008,7 +6861,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -7042,48 +6895,27 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>The Canada Student Financial Assistance Program (CSFA Program) has reported an issue with your repayment assistance program. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content26",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -7098,6 +6930,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -7107,15 +6940,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eo4jyw"
+                      "id": "ers0iv"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -7154,8 +7001,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eqb9tn",
-                  "collapsed": true
+                  "id": "enzzzg"
                 },
                 {
                   "title": "Code B7 - Reached lifetime maximum",
@@ -7163,7 +7009,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -7199,46 +7045,25 @@
                     {
                       "html": "<p>StudentAid BC funding limit is 520 weeks. You have received 520 weeks of funding and are at the limit. If you need more information or have concerns, please contact StudentAid BC.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content27",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -7253,6 +7078,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -7262,15 +7088,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eo2m1z"
+                      "id": "eu45r9t"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -7309,8 +7149,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e0ucu5k",
-                  "collapsed": true
+                  "id": "e2wp6qi"
                 },
                 {
                   "title": "Code BO - Nearing lifetime maximum",
@@ -7318,7 +7157,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -7354,46 +7193,25 @@
                     {
                       "html": "<p>You are approaching your Canada-B.C. integrated student loan maximum lifetime number of weeks allowable for your current level of study. This is information only and no action is required. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content28",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -7408,6 +7226,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -7417,15 +7236,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "el75nwd"
+                      "id": "e6qhqxr"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -7464,8 +7297,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "evnwn4g",
-                  "collapsed": true
+                  "id": "eyutth96"
                 },
                 {
                   "title": "Code RD - Ineligible for funding",
@@ -7473,7 +7305,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -7507,7 +7339,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A judgement has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content29",
@@ -7571,9 +7403,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e6j28f"
+                      "id": "e61abs"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -7612,8 +7445,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "egp3h1h",
-                  "collapsed": true
+                  "id": "e9j8j2e"
                 },
                 {
                   "title": "Code XB - Altered date",
@@ -7621,7 +7453,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -7655,48 +7487,27 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content30",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -7711,6 +7522,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -7720,15 +7532,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ef8i4v"
+                      "id": "eedvrr2"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -7767,8 +7593,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e6az5jj",
-                  "collapsed": true
+                  "id": "eumqnp"
                 },
                 {
                   "title": "Code XD - Altered date for direct lend",
@@ -7776,7 +7601,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -7810,7 +7635,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content31",
@@ -7874,9 +7699,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e6sevm"
+                      "id": "em903o"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -7915,8 +7741,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ep4tgsm",
-                  "collapsed": true
+                  "id": "e2rene"
                 },
                 {
                   "title": "Code XJ - Canada Student Financial Assistance Program restriction",
@@ -7924,7 +7749,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -7958,7 +7783,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content32",
@@ -8022,9 +7847,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e69dfc"
+                      "id": "ezc95j"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -8063,8 +7889,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ecl8xol",
-                  "collapsed": true
+                  "id": "ef6246m"
                 },
                 {
                   "title": "Code XP - Canada Student Financial Assistance Program restriction",
@@ -8072,7 +7897,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -8106,7 +7931,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre. </p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre. &nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content33",
@@ -8170,7 +7995,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e7bw32"
+                      "id": "e2478rh"
                     }
                   ],
                   "collapsed": true,
@@ -8212,7 +8037,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e9buecu"
+                  "id": "e23amz2"
                 },
                 {
                   "title": "Code SA - Canada Student Financial Assistance Program restriction",
@@ -8220,7 +8045,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -8254,7 +8079,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content34",
@@ -8318,9 +8143,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "en2u4"
+                      "id": "ei37mwy"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -8359,8 +8185,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eo197nm",
-                  "collapsed": true
+                  "id": "er0l6jp8"
                 },
                 {
                   "title": "Code SO - Canada Student Financial Assistance Program restriction",
@@ -8368,7 +8193,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -8402,7 +8227,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content35",
@@ -8466,7 +8291,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ehdd88k"
+                      "id": "eggds5s"
                     }
                   ],
                   "collapsed": true,
@@ -8508,7 +8333,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ebo0dzg"
+                  "id": "ekh5ck8"
                 },
                 {
                   "title": "Code IC - Canada Student Financial Assistance Program restriction",
@@ -8516,7 +8341,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -8550,7 +8375,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content36",
@@ -8614,7 +8439,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e6hda8c"
+                      "id": "eqlez1e"
                     }
                   ],
                   "collapsed": true,
@@ -8656,7 +8481,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ez98807"
+                  "id": "eo9ugh4"
                 },
                 {
                   "title": "Code IS -  Canada Student Financial Assistance Program restriction",
@@ -8664,7 +8489,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -8698,7 +8523,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content37",
@@ -8762,7 +8587,7 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ee9fjh"
+                      "id": "e8f70gw"
                     }
                   ],
                   "collapsed": true,
@@ -8804,7 +8629,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ep6uic"
+                  "id": "e41qv2"
                 },
                 {
                   "title": "Code F3 - Fraud",
@@ -8812,7 +8637,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -8910,9 +8735,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e7x6h1x"
+                      "id": "efz4f37"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -8951,8 +8777,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e47gtim",
-                  "collapsed": true
+                  "id": "ec3qs6n"
                 },
                 {
                   "title": "Code F4 - Fraud",
@@ -8960,7 +8785,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -8994,48 +8819,27 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content39",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -9050,6 +8854,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -9059,15 +8864,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "et9mitk"
+                      "id": "e2vmim"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -9106,8 +8925,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "eoa8ksk",
-                  "collapsed": true
+                  "id": "ez7vk7i"
                 },
                 {
                   "title": "Code F5 - Fraud",
@@ -9115,7 +8933,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -9149,7 +8967,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content40",
@@ -9213,9 +9031,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "ewv20kr"
+                      "id": "e96g46"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -9254,8 +9073,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e31he0n",
-                  "collapsed": true
+                  "id": "ew95yrg"
                 },
                 {
                   "title": "Code DR - Canada Student Financial Assistance Program restriction",
@@ -9263,7 +9081,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -9297,7 +9115,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content41",
@@ -9361,9 +9179,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "e39cabp"
+                      "id": "ec0tth"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -9402,8 +9221,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ejb8ltq",
-                  "collapsed": true
+                  "id": "erznaau"
                 },
                 {
                   "title": "Code B5 - Lifetime maximum for permeant disability",
@@ -9411,7 +9229,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -9445,7 +9263,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content42",
@@ -9509,9 +9327,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eutahke"
+                      "id": "eacrhr"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -9550,8 +9369,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e1fwk1",
-                  "collapsed": true
+                  "id": "enk0ii"
                 },
                 {
                   "title": "Code A - Canada Student Financial Assistance Program restriction",
@@ -9559,7 +9377,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -9593,7 +9411,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content43",
@@ -9657,9 +9475,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "exnysfl"
+                      "id": "el2u2gj"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -9698,8 +9517,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "ew74wbc",
-                  "collapsed": true
+                  "id": "eazeybl"
                 },
                 {
                   "title": "Code Z1 - Overaward",
@@ -9707,7 +9525,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -9743,46 +9561,25 @@
                     {
                       "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
                       "label": "Content",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "customClass": "",
                       "refreshOnChange": false,
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "content44",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "content",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": true,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -9797,6 +9594,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -9806,15 +9604,29 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "esqn2t3"
+                      "id": "e9cz7n"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -9853,8 +9665,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e4pvs6",
-                  "collapsed": true
+                  "id": "eeun81i"
                 },
                 {
                   "title": "Code Z2 - Canada student financial aid restriction",
@@ -9862,7 +9673,7 @@
                   "labelMargin": "",
                   "theme": "default",
                   "tooltip": "",
-                  "customClass": "",
+                  "customClass": "collapsible",
                   "collapsible": true,
                   "hidden": false,
                   "hideLabel": false,
@@ -9896,7 +9707,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.</p>",
+                      "html": "<p>A restriction has been registered on your account by the Canada Student Financial Assistance Program (CSFA Program) and there is a hold on any further funding. If you need more information, please contact the National Student Loan Service Centre.&nbsp;</p>",
                       "label": "Content",
                       "refreshOnChange": false,
                       "key": "content45",
@@ -9960,9 +9771,10 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eit0ua7"
+                      "id": "ejjpfls"
                     }
                   ],
+                  "collapsed": true,
                   "placeholder": "",
                   "prefix": "",
                   "suffix": "",
@@ -10001,8 +9813,7 @@
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "id": "e56kq9",
-                  "collapsed": true
+                  "id": "e49h62j"
                 }
               ],
               "id": "et7zun"

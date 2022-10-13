@@ -13,7 +13,6 @@
         }"
         ><template #buttons v-if="!viewOnly">
           <v-row class="p-0 m-0">
-            <!-- todo: ann call cancel application -->
             <v-btn
               color="primary"
               variant="outlined"
@@ -31,7 +30,6 @@
         </template>
       </header-navigator>
     </template>
-    <!-- todo: ann form definition test parttime noa -->
     <notice-of-assessment-form-view
       :assessmentId="assessmentId"
       :view-only="viewOnly"

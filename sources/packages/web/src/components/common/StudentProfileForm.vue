@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO: ANN FORM DEFINITION -->
   <formio-container
     formName="studentProfile"
     :formData="formModel"
@@ -24,7 +23,7 @@ import { ref, computed, PropType } from "vue";
 import { StudentProfileFormModel, StudentProfileFormModes } from "@/types";
 
 export default {
-  emits: ["submitted", "customEvent"],
+  emits: ["submitted", "customEvent", "loaded"],
   props: {
     formModel: {
       type: Object as PropType<StudentProfileFormModel>,
