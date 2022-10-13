@@ -1,6 +1,6 @@
 export default class DashboardInstitutionObject {
   dashboardWelcomeMessage() {
-    return cy.contains("Welcome to your institution account!");
+    return cy.contains("Welcome to your account!");
   }
 
   dashboardStartMessage() {
@@ -35,14 +35,6 @@ export default class DashboardInstitutionObject {
     return cy.get('input[type="submit"]');
   }
 
-  dashboardButton() {
-    return cy.contains("Dashboard");
-  }
-
-  notificationButton() {
-    return cy.contains("Notifications");
-  }
-
   programsButton() {
     return cy.contains("Programs");
   }
@@ -67,8 +59,8 @@ export default class DashboardInstitutionObject {
     return cy.contains("Manage Institution");
   }
 
-  profileButton() {
-    return cy.contains("PROFILE");
+  myProfileButton() {
+    return cy.contains("My Profile");
   }
 
   iconButton() {
@@ -79,14 +71,15 @@ export default class DashboardInstitutionObject {
     return cy.contains("Log Out");
   }
 
-  locationVerifyText() {
-    return cy.contains("Location Summary");
+  allLocationsText() {
+    return cy.contains("All locations");
   }
 
   locationButton() {
     return cy.get(".v-list-group div:first");
   }
-  locationsList() {
-    return cy.contains("All Locations");
-  }  
+
+  manageLocationsText() {
+    return cy.contains("Manage Locations");
+  }
 }

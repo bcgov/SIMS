@@ -9,12 +9,18 @@ const USERNAME = institutionHelperActions.getUserNameForApiTest();
 const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
 const TOKEN_URL = institutionHelperActions.getApiUrlForKeyCloakToken();
 
-function createOrUpdateInstitutionLocation(
+async function createOrUpdateInstitutionLocation(
   token: string,
   id: string,
   canadian: boolean,
-  create: boolean
+  create: boolean,
+  institutionCode?: string
 ) {
+  if (!institutionCode) {
+    institutionCode = await institutionHelperActions.getUniqueInstitutionCode(
+      token
+    );
+  }
   const uniqueId = id;
   let body: object;
   let method: string;
@@ -32,7 +38,7 @@ function createOrUpdateInstitutionLocation(
   if (canadian) {
     body = {
       locationName: `Auto-${uniqueId}-location`,
-      institutionCode: "AUTO",
+      institutionCode: institutionCode,
       addressLine1: `Auto-${uniqueId}-Street`,
       addressLine2: "14235",
       selectedCountry: "Canada",
@@ -49,7 +55,7 @@ function createOrUpdateInstitutionLocation(
   } else {
     body = {
       locationName: `Auto-${uniqueId}-location`,
-      institutionCode: "AUTO",
+      institutionCode: institutionCode,
       addressLine1: `Auto-${uniqueId}-Street`,
       addressLine2: "14235",
       selectedCountry: "other",
@@ -76,6 +82,7 @@ function createOrUpdateInstitutionLocation(
     expect(response.status).to.be.equal(status);
   });
 }
+
 describe("[Institution Create/Update] Verify location create/update", () => {
   let token: string;
   const uniqueId1 = institutionHelperActions.getUniqueId();

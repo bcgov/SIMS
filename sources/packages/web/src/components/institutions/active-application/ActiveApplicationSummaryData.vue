@@ -14,7 +14,7 @@
             data-cy="searchCriteria"
             @keyup.enter="searchActiveApplications"
             prepend-inner-icon="mdi-magnify"
-            hide-details
+            hide-details="auto"
           >
           </v-text-field>
         </template>

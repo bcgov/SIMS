@@ -886,7 +886,7 @@
             "height": ""
           },
           "type": "file",
-          "url": "students/files",
+          "url": "student/files",
           "imageSize": "200",
           "input": true,
           "placeholder": "",
@@ -903,7 +903,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "privateDownload": false,
-          "id": "ehonsnu",
+          "id": "ev6zpfu",
           "options": "",
           "fileKey": ""
         }

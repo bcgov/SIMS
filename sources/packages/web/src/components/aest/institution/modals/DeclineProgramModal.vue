@@ -18,7 +18,7 @@
           placeholder="Long text..."
           v-model="formModel.declinedNote"
           variant="outlined"
-          :rules="[(v) => !!v || 'Notes is required']"
+          :rules="[checkNotesLengthRule]"
       /></template>
       <template #footer>
         <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
@@ -41,7 +41,7 @@
 import { ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog } from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import { DeclineProgramAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role, VForm } from "@/types";
@@ -60,6 +60,7 @@ export default {
     },
   },
   setup() {
+    const { checkNotesLengthRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       DeclineProgramAPIInDTO | false
     >();
@@ -90,6 +91,7 @@ export default {
       formModel,
       declineProgramForm,
       Role,
+      checkNotesLengthRule,
     };
   },
 };

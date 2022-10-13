@@ -14,7 +14,7 @@
             data-cy="searchBox"
             @keyup.enter="searchProgramTable"
             prepend-inner-icon="mdi-magnify"
-            hide-details
+            hide-details="auto"
           />
           <v-btn
             class="ml-2"

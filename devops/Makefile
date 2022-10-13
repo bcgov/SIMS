@@ -22,6 +22,7 @@ export BYPASS_APPLICATION_SUBMIT_VALIDATIONS := $(or $(BYPASS_APPLICATION_SUBMIT
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 43)
 export API := $(or ${API}, api-$(APP_NAME))
+export WORKERS := $(or ${WORKERS}, workers-$(APP_NAME))
 export WEB := $(or ${WEB}, web-$(APP_NAME))
 export API_PORT := $(or ${API_PORT}, 7070)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
@@ -29,6 +30,7 @@ export DATABASE_NAME_KEY := $(or ${DATABASE_NAME_KEY}, database-name)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
 export SWAGGER_NAME := $(or ${SWAGGER_NAME}, swagger)
 export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
+export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 
 define QA_DB_NAME
@@ -165,6 +167,8 @@ oc-build-patroni: | print-status build-patroni
 oc-deploy-patroni: | print-status deploy-patroni
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
+oc-build-workers: | print-status build-workers
+oc-deploy-workers: | print-status deploy-workers
 oc-create-db: | print-status create-db
 oc-build-web: | print-status build-web
 oc-deploy-web: | print-status deploy-web
@@ -250,6 +254,10 @@ init-api:
 	test -n $(API_INIT_GC_NOTIFY_URL)
 	test -n $(API_INIT_GC_NOTIFY_API_KEY)
 	test -n $(API_INIT_GC_NOTIFY_TO_ADDRESS)
+	test -n $(API_INIT_ZEEBE_ADDRESS)
+	test -n $(API_INIT_ZEEBE_CLIENT_ID)
+	test -n $(API_INIT_ZEEBE_CLIENT_SECRET)
+	test -n $(API_INIT_ZEEBE_AUTHORIZATION_SERVER_URL)
 	@oc -n $(NAMESPACE) process -f openshift/api-pre-req.yml \
 		-p NAME=api -p BCeID_WEB_SERVICE_ONLINE_SERVICE_ID=$(API_INIT_BCeID_WEB_SERVICE_ONLINE_SERVICE_ID) \
 		-p BCeID_WEB_SERVICE_REQUESTER_USER_GUID=$(API_INIT_BCeID_WEB_SERVICE_REQUESTER_USER_GUID) \
@@ -275,6 +283,10 @@ init-api:
 		-p GC_NOTIFY_URL=$(API_INIT_GC_NOTIFY_URL) \
 		-p GC_NOTIFY_API_KEY=$(API_INIT_GC_NOTIFY_API_KEY) \
 		-p GC_NOTIFY_TO_ADDRESS=$(API_INIT_GC_NOTIFY_TO_ADDRESS) \
+		-p ZEEBE_ADDRESS=$(API_INIT_ZEEBE_ADDRESS) \
+		-p ZEEBE_CLIENT_ID=$(API_INIT_ZEEBE_CLIENT_ID) \
+		-p ZEEBE_CLIENT_SECRET=$(API_INIT_ZEEBE_CLIENT_SECRET) \
+		-p ZEEBE_AUTHORIZATION_SERVER_URL=$(API_INIT_ZEEBE_AUTHORIZATION_SERVER_URL) \
 		| oc -n $(NAMESPACE) apply -f -
 
 init-zone-b-sftp-secret:
@@ -306,6 +318,15 @@ build-api:
 	@echo "+\n++ BUILDING API with tag: $(BUILD_TAG)\n+"
 	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/api/Dockerfile -p NAME=$(API) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(API) --wait
+
+build-workers:
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(BUILD_TAG)"
+	test -n "$(WORKERS)"
+	@echo "+\n++ BUILDING WORKERS with tag: $(BUILD_TAG)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-16" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="artifacts.developer.gov.bc.ca/redhat-docker-remote/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/backend -p DOCKER_FILE_PATH=apps/workers/Dockerfile -p NAME=$(WORKERS) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WORKERS) --wait
 
 build-web:
 	test -n "$(BUILD_REF)"
@@ -376,6 +397,25 @@ deploy-api:
 		-p SWAGGER_NAME=$(SWAGGER_NAME) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
+
+deploy-workers:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_TAG)"
+	test -n "$(WORKERS_BUILD_REF)"
+	test -n "$(DB_SERVICE_NAME)"
+	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(WORKERS)"
+	@echo "+\n++ Deploying Workers with tag: $(BUILD_TAG)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \
+		-p NAME=$(WORKERS) \
+		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
+		-p DB_SERVICE=$(DB_SERVICE_NAME) \
+		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_TAG)" \
+		-p BUILD_TAG=$(BUILD_TAG) \
+		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
+		| oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(WORKERS))
 
 deploy-web:
 	test -n "$(NAMESPACE)"

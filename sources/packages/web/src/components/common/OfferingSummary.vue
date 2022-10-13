@@ -13,7 +13,7 @@
           data-cy="searchBox"
           @keyup.enter="searchOfferingTable"
           prepend-inner-icon="mdi-magnify"
-          hide-details
+          hide-details="auto"
         />
         <v-btn
           v-if="isInstitutionUser"

@@ -15,7 +15,7 @@
             data-cy="searchCriteria"
             @keyup.enter="searchCOE"
             prepend-inner-icon="mdi-magnify"
-            hide-details
+            hide-details="auto"
           />
         </template>
       </body-header>
@@ -31,7 +31,7 @@
             @page="pageEvent"
             @sort="sortEvent"
           >
-            <Column field="fullName" header="Name" sortable="true">
+            <Column field="fullName" header="Name" :sortable="true">
               <template #body="slotProps">
                 <span>{{ slotProps.data.fullName }}</span>
               </template>
@@ -52,7 +52,7 @@
                 </span>
               </template></Column
             >
-            <Column field="coeStatus" header="Status" sortable="true">
+            <Column field="coeStatus" header="Status" :sortable="true">
               <template #body="slotProps">
                 <status-chip-c-o-e :status="slotProps.data.coeStatus" />
               </template>

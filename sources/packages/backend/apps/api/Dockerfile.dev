@@ -1,5 +1,5 @@
 # Base Image
-FROM node:16.13.0
+FROM node:16.17.0-alpine3.16
 
 LABEL maintainer="BC GOV"
 

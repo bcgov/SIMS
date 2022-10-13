@@ -30,7 +30,7 @@
         <Column
           field="restrictionCategory"
           header="Category"
-          sortable="true"
+          :sortable="true"
         ></Column>
         <Column field="description" header="Reason">
           <template #body="slotProps">{{
@@ -73,16 +73,14 @@
       </DataTable>
     </content-group>
   </full-page-container>
-  <ViewRestrictionModal
+  <view-restriction-modal
     ref="viewRestriction"
     :restrictionData="studentRestriction"
-    @submitResolutionData="resolveRestriction"
     :allowedRole="Role.StudentResolveRestriction"
   />
-  <AddStudentRestrictionModal
+  <add-student-restriction-modal
     ref="addRestriction"
     :entityType="RestrictionEntityType.Student"
-    @submitRestrictionData="createNewRestriction"
     :allowedRole="Role.StudentAddRestriction"
   />
 </template>
@@ -126,8 +124,12 @@ export default {
     const studentRestrictions = ref();
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
-    const viewRestriction = ref({} as ModalDialog<void>);
-    const addRestriction = ref({} as ModalDialog<void>);
+    const viewRestriction = ref(
+      {} as ModalDialog<RestrictionDetailAPIOutDTO | boolean>,
+    );
+    const addRestriction = ref(
+      {} as ModalDialog<AssignRestrictionAPIInDTO | boolean>,
+    );
     const studentRestriction = ref();
     const snackBar = useSnackBar();
 
@@ -150,8 +152,13 @@ export default {
           studentRestriction.value.updatedAt,
         );
       }
-
-      await viewRestriction.value.showModal();
+      const viewStudentRestrictionData =
+        await viewRestriction.value.showModal();
+      if (viewStudentRestrictionData) {
+        resolveRestriction(
+          viewStudentRestrictionData as RestrictionDetailAPIOutDTO,
+        );
+      }
     };
 
     const resolveRestriction = async (data: RestrictionDetailAPIOutDTO) => {
@@ -174,7 +181,12 @@ export default {
     };
 
     const addStudentRestriction = async () => {
-      await addRestriction.value.showModal();
+      const addStudentRestrictionData = await addRestriction.value.showModal();
+      if (addStudentRestrictionData) {
+        createNewRestriction(
+          addStudentRestrictionData as AssignRestrictionAPIInDTO,
+        );
+      }
     };
 
     const createNewRestriction = async (data: AssignRestrictionAPIInDTO) => {
@@ -203,10 +215,8 @@ export default {
       viewStudentRestriction,
       viewRestriction,
       showModal,
-      resolveRestriction,
       addRestriction,
       addStudentRestriction,
-      createNewRestriction,
       RestrictionEntityType,
       LayoutTemplates,
       Role,

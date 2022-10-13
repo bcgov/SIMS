@@ -18,7 +18,7 @@
           data-cy="searchExceptions"
           @keyup.enter="searchExceptions"
           prepend-inner-icon="mdi-magnify"
-          hide-details
+          hide-details="auto"
         >
         </v-text-field>
       </template>

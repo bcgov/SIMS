@@ -54,6 +54,8 @@ export class AssessmentControllerService {
    * @param incomeVerifications available income verifications associated with
    * the application associated with the supporting users.
    * @returns object where every user is a property.
+   * @deprecated moved to workers.
+   * TODO: to be removed.
    */
   flattenSupportingUsersArray(
     supportingUsers: SupportingUser[],
@@ -96,6 +98,8 @@ export class AssessmentControllerService {
    * to execute the student appeal request submission.
    * @param appealRequests approved student appeal requests.
    * @returns object where every student appeal request is a property.
+   * @deprecated moved to workers.
+   * TODO: to be removed.
    */
   flattenStudentAppeals(
     appealRequests: StudentAppealRequest[],

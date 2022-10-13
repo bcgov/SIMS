@@ -19,9 +19,9 @@ jobs:
           echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
           echo OC CLI Version: $(oc version)
 
-  # Build the API
+  # Build Web, SIMS-Api and Workers
   build:
-    name: Build API and APP
+    name: Build Web, SIMS-Api and Workers
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged == true}}
     env:
@@ -43,17 +43,21 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-      # Build the api images
-      - name: Build API Images
+      # Build the images
+      - name: Build SIMS-API Image
         working-directory: "./devops"
         run: |
           make oc-build-api
-      - name: Build APP/Front-end Images
+      - name: Build Workers Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-workers
+      - name: Build Web/Frontend Image
         working-directory: "./devops"
         run: |
           make oc-build-web
 
-  # Deploy API/App images in Dev
+  # Deploy Web, SIMS-Api and Workers
   deployDev:
     name: Deploy App, API, and DB to DEV environment
     runs-on: ubuntu-latest
@@ -97,12 +101,18 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-      # Deploy the api
-      - name: Deploy API
+      # Deploy SIMS-Api
+      - name: Deploy SIMS-API
         working-directory: "./devops/"
         run: |
           make oc-deploy-api
-      - name: Deploy APP
+      # Deploy Workers
+      - name: Deploy Workers
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-workers
+      # Deploy Deploy Web/Frontend
+      - name: Deploy Web/Frontend
         working-directory: "./devops/"
         run: |
           make oc-deploy-web

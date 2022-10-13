@@ -13,14 +13,14 @@
         >
           <template #user-name>
             <v-text-field
-              hide-details
+              hide-details="auto"
               v-model="userInfo.displayName"
               disabled
               class="mr-3 bceid-input"
               density="compact"
               variant="outlined"
               :label="userNameLabel"
-              :rules="[(v) => !!v || 'Basic BCeID user Id is required']"
+              :rules="[(v) => !!v || 'Basic BCeID user Id is required.']"
             />
           </template>
         </institution-user-management>

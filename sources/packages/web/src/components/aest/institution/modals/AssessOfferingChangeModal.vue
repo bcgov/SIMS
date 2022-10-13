@@ -18,7 +18,7 @@
             v-model="assessOfferingData.assessmentNotes"
             variant="outlined"
             label="Notes"
-            :rules="[(v) => !!v || 'Notes is required']"
+            :rules="[checkNotesLengthRule]"
             required
           ></v-textarea>
         </v-form>
@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog } from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import { ref, reactive } from "vue";
 import { OfferingStatus, VForm, Role } from "@/types";
 import { OfferingChangeAssessmentAPIInDTO } from "@/services/http/dto";
@@ -52,6 +52,7 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 export default {
   components: { ModalDialogBase, CheckPermissionRole },
   setup() {
+    const { checkNotesLengthRule } = useRules();
     const {
       showDialog,
       showModal: showModalInternal,
@@ -111,6 +112,7 @@ export default {
       submitLabel,
       showWarning,
       Role,
+      checkNotesLengthRule,
     };
   },
 };

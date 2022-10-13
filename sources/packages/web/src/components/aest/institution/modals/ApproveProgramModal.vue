@@ -20,18 +20,14 @@
           placeholder="yyyy-MM-dd"
           v-model="formModel.effectiveEndDate"
           variant="outlined"
-          :rules="[
-            (v) =>
-              v.match(/^\d{4}-\d{2}-\d{2}$/) ||
-              'Effective end date is not in right format',
-          ]"
+          :rules="[checkStringDateFormatRule]"
         />
         <v-textarea
           label="Notes"
           placeholder="Long text..."
           v-model="formModel.approvedNote"
           variant="outlined"
-          :rules="[(v) => !!v || 'Notes is required']"
+          :rules="[checkNotesLengthRule]"
         />
       </template>
       <template #footer>
@@ -54,7 +50,7 @@
 <script lang="ts">
 import { ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog } from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { ApproveProgramAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -74,6 +70,7 @@ export default {
     },
   },
   setup() {
+    const { checkNotesLengthRule, checkStringDateFormatRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       ApproveProgramAPIInDTO | boolean
     >();
@@ -106,6 +103,8 @@ export default {
       formModel,
       approveProgramForm,
       Role,
+      checkNotesLengthRule,
+      checkStringDateFormatRule,
     };
   },
 };
