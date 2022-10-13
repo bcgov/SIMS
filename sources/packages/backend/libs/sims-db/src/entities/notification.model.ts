@@ -37,10 +37,10 @@ export class Notification extends RecordDataModel {
   })
   templateId: string;
   /**
-   * GC notification payload.
+   * Message notification payload.
    */
   @Column({
-    name: "gc_notify_payload",
+    name: "message_payload",
     type: "jsonb",
     nullable: false,
   })
