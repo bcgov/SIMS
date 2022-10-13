@@ -55,7 +55,7 @@
     "ssh2-sftp-client": "^7.1.0",
     "swagger-ui-express": "^4.3.0",
     "typeorm": "^0.3.7",
-    "zeebe-node": "^8.1.0"
+    "zeebe-node": "^8.1.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.1.4",
