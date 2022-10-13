@@ -19,7 +19,7 @@ import {
   REPORTED_INCOME,
   SUPPORTING_USER_ID,
   TAX_YEAR,
-} from "../workflow-variables";
+} from "@sims/services";
 
 @Controller()
 export class CRAIntegrationController {

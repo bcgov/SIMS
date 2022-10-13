@@ -4,9 +4,10 @@ import { WorkersModule } from "./workers.module";
 import { ZeebeTransportStrategy } from "./zeebe/zeebe-transport-strategy";
 
 async function bootstrap() {
-  const workers = await NestFactory.createMicroservice(WorkersModule, {
-    strategy: new ZeebeTransportStrategy(),
+  const workers = await NestFactory.create(WorkersModule);
+  workers.connectMicroservice({
+    strategy: workers.get(ZeebeTransportStrategy),
   });
-  await workers.listen();
+  await workers.startAllMicroservices();
 }
 bootstrap();

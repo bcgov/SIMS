@@ -1,3 +1,4 @@
+import { Injectable } from "@nestjs/common";
 import {
   CustomTransportStrategy,
   Server,
@@ -9,17 +10,20 @@ import { ZBClient, ZBWorkerOptions } from "zeebe-node";
  * Zeebe strategy to stablish the connectivity and create all workers.
  * @see https://docs.camunda.io/docs/0.25/components/zeebe/basics/job-workers.
  */
+@Injectable()
 export class ZeebeTransportStrategy
   extends Server
   implements CustomTransportStrategy
 {
-  private zeebeClient: ZBClient;
+  constructor(private readonly zeebeClient: ZBClient) {
+    super();
+  }
+
   /**
    * Identify all Zeebe workers in the controllers and create the
    * respective Zeebe workers to handle all the jobs.
    */
   async listen(callback: () => void) {
-    this.zeebeClient = new ZBClient();
     const handlers = this.getHandlers();
     handlers.forEach((handler: MessageHandler, taskType: string) => {
       const { extras } = handler;

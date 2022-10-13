@@ -7,7 +7,7 @@ import {
   ProgramInfoRequestJobHeaderDTO,
   ProgramInfoRequestJobOutDTO,
 } from "..";
-import { APPLICATION_ID } from "../workflow-variables";
+import { APPLICATION_ID } from "@sims/services";
 import { APPLICATION_NOT_FOUND } from "../error-code-constants";
 
 @Controller()

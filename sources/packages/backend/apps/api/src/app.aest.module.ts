@@ -72,6 +72,7 @@ import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
 import { InstitutionUserControllerService } from "./route-controllers/institution-user/institution-user.controller.service";
+import { WorkflowClientService } from "@sims/services";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -95,6 +96,7 @@ import { InstitutionUserControllerService } from "./route-controllers/institutio
     RestrictionAESTController,
   ],
   providers: [
+    WorkflowClientService,
     InstitutionRestrictionService,
     SupportingUserService,
     ApplicationService,

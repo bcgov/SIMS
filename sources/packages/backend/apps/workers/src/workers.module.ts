@@ -14,9 +14,11 @@ import {
   SupportingUserService,
   CRAIncomeVerificationService,
 } from "./services";
+import { ZeebeTransportStrategy } from "./zeebe";
+import { ZeebeModule } from "@sims/services";
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, ZeebeModule.forRoot()],
   controllers: [
     AssessmentController,
     ApplicationController,
@@ -25,6 +27,7 @@ import {
     CRAIntegrationController,
   ],
   providers: [
+    ZeebeTransportStrategy,
     StudentAssessmentService,
     ApplicationService,
     ApplicationExceptionService,

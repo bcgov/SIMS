@@ -53,6 +53,7 @@ import { LoggerModule } from "./logger/logger.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
 import { StudentAccountApplicationsService } from "./services/student-account-applications/student-account-applications.service";
 import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
+import { WorkflowClientService } from "@sims/services";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -69,6 +70,7 @@ import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.co
     ATBCStudentController,
   ],
   providers: [
+    WorkflowClientService,
     ApplicationService,
     FormService,
     StudentService,

@@ -55,6 +55,7 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { EducationProgramOfferingValidationService } from "./services/education-program-offering/education-program-offering-validation.service";
+import { WorkflowClientService } from "@sims/services";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -70,6 +71,7 @@ import { EducationProgramOfferingValidationService } from "./services/education-
     EducationProgramOfferingInstitutionsController,
   ],
   providers: [
+    WorkflowClientService,
     FormService,
     ConfigService,
     DesignationAgreementService,

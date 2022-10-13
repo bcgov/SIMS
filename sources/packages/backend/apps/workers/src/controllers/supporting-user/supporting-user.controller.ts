@@ -12,7 +12,7 @@ import {
   CreateSupportingUsersJobInDTO,
   CreateSupportingUsersJobOutDTO,
 } from "..";
-import { APPLICATION_ID, SUPPORTING_USERS_TYPES } from "../workflow-variables";
+import { APPLICATION_ID, SUPPORTING_USERS_TYPES } from "@sims/services";
 import { SUPPORTING_USER_NOT_FOUND } from "../error-code-constants";
 import { filterObjectProperties } from "../../utilities";
 

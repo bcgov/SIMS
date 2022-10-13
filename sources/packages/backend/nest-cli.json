@@ -52,6 +52,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/db-migrations/tsconfig.app.json"
       }
+    },
+    "services": {
+      "type": "library",
+      "root": "libs/services",
+      "entryFile": "index",
+      "sourceRoot": "libs/services/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/services/tsconfig.lib.json"
+      }
     }
   },
   "monorepo": true,

@@ -49,12 +49,14 @@ import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
+import { ZeebeModule } from "@sims/services";
 
 @Module({
   imports: [
     LoggerModule,
     DatabaseModule,
     AuthModule,
+    ZeebeModule.forRoot(),
     CraIntegrationModule,
     MSFAAIntegrationModule,
     SFASIntegrationModule,

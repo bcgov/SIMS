@@ -21,7 +21,7 @@ import {
   SupportingUserType,
 } from "@sims/sims-db";
 import { filterObjectProperties } from "../../utilities";
-import { ASSESSMENT_ID } from "../workflow-variables";
+import { ASSESSMENT_ID } from "@sims/services";
 import { ASSESSMENT_NOT_FOUND } from "apps/api/src/services";
 
 @Controller()

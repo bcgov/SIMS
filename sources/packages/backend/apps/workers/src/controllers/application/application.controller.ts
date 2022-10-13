@@ -16,7 +16,7 @@ import {
   ApplicationUpdateStatusJobHeaderDTO,
   ApplicationUpdateStatusJobInDTO,
 } from "..";
-import { APPLICATION_ID } from "../workflow-variables";
+import { APPLICATION_ID } from "@sims/services";
 import { ApplicationExceptionStatus } from "@sims/sims-db";
 import {
   APPLICATION_NOT_FOUND,
