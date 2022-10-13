@@ -1,6 +1,6 @@
 @import "./global-style-variables.scss";
 html * {
-  font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif, "primeicons";
+  font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
   font-style: $font-style-normal;
   line-height: 20px;
 }
@@ -329,10 +329,9 @@ html * {
 .content-group-info {
   background-color: $default-background;
   border: 2px solid $common-border-color !important;
+  font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
 }
 
 .collapsible .card-header.bg-default {
   border-left: 8px solid $brand-blue;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
 }
