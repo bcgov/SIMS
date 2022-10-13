@@ -428,6 +428,15 @@
   min-height: $image-min-height;
 }
 
+.person-adding-file-to-folder-background {
+  background-image: url("../images/person-adding-file-to-folder.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 100%;
+  height: 100%;
+  min-height: $image-min-height;
+}
+
 .muted-content {
   color: $color-muted;
 }
