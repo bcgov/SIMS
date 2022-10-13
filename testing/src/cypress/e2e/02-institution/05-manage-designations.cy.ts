@@ -8,7 +8,7 @@ const manageDesignationObject = new ManageDesignationsObject();
 const institutionHelperActions = new InstitutionHelperActions();
 const manageInstitutionObject = new ManageInstitutionObject();
 
-describe.skip("Manage Designations", () => {
+describe("Manage Designations", () => {
   before(() => {
     institutionHelperActions.loginIntoInstitutionSingleLocation();
     dashboardInstitutionObject.manageInstitutionButton().click();
@@ -16,10 +16,14 @@ describe.skip("Manage Designations", () => {
   });
 
   it("Verify that user redirect to institution manage designation page", () => {
+    dashboardInstitutionObject.manageInstitutionButton().click();
+    manageDesignationObject.manageDesignationButton().click();
     manageDesignationObject.designationAgreementsText().should("be.visible");
   });
 
   it("Verify that user redirect to correct url of institution manage designation", () => {
+    dashboardInstitutionObject.manageInstitutionButton().click();
+    manageDesignationObject.manageDesignationButton().click();
     cy.url().should("contain", "/manage-designation");
   });
 
@@ -108,5 +112,50 @@ describe("Designation Details", () => {
     manageDesignationObject.manageUsersHyperlink().click({ force: true });
     manageInstitutionObject.manageUsers().should("be.visible");
     cy.url().should("contain", "/manage-users");
+  });
+});
+
+describe("Request Designation", () => {
+  before(() => {
+    institutionHelperActions.loginIntoInstitutionSingleLocation();
+  });
+
+  beforeEach(() => {
+    dashboardInstitutionObject.manageInstitutionButton().click();
+    manageDesignationObject.manageDesignationButton().click();
+    manageDesignationObject.requestDesignationButton().click();
+  });
+
+  it("Clicking on manage locations should navigate to locations page", () => {
+    manageDesignationObject.manageLocationsHyperlink().click();
+    dashboardInstitutionObject.allLocationsText().should("be.visible");
+  });
+
+  it("Clicking on cancel should navigate back to manage designations page", () => {
+    manageDesignationObject.cancelAgreementButton().scrollIntoView().click();
+    manageDesignationObject.designationAgreementsText().should("be.visible");
+  });
+
+  it.skip("Request a new designation", () => {
+    cy.url().should("contain", "manage-designation/request");
+    manageDesignationObject.requestForDesignationCheckBox().check();
+    manageDesignationObject.eligibilityOfficerName().type("Test User I");
+    manageDesignationObject.eligibilityOfficerPosition().type("SIMS Officer I");
+    manageDesignationObject
+      .eligibilityOfficerEmail()
+      .type("testuser@testuser.ca");
+    manageDesignationObject.eligibilityOfficerPhone().type("1234567890");
+
+    manageDesignationObject.enrolmentOfficerName().type("Test User II");
+    manageDesignationObject.enrolmentOfficerPosition().type("SIMS Officer II");
+    manageDesignationObject
+      .enrolmentOfficerEmail()
+      .type("testuser2@testuser.ca");
+    manageDesignationObject.enrolmentOfficerPhone().type("1234567890");
+    manageDesignationObject.scheduleACheckbox().click();
+    manageDesignationObject.scheduleBCheckbox().click();
+    manageDesignationObject.scheduleDCheckbox().click();
+    manageDesignationObject.agreementAcceptedCheckbox().click();
+    manageDesignationObject.submitAgreementButton().click();
   });
 });

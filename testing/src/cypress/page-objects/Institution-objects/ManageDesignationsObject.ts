@@ -1,3 +1,5 @@
+import { contains } from "cypress/types/jquery";
+
 export default class ManageDesignationsObject {
   manageDesignationButton() {
     return cy.contains("Manage Designation");
@@ -57,5 +59,73 @@ export default class ManageDesignationsObject {
 
   manageUsersHyperlink() {
     return cy.contains("manage users");
+  }
+
+  requestDesignationButton() {
+    return cy.contains("Request designation");
+  }
+
+  requestDesignationHeader() {
+    return cy.contains("Request Designation");
+  }
+
+  requestForDesignationCheckBox() {
+    return cy.get("[data-cy='requestForDesignationCheckBox']").eq(0);
+  }
+
+  eligibilityOfficerName() {
+    return cy.get("[data-cy='eligibilityOfficerName']");
+  }
+
+  eligibilityOfficerPosition() {
+    return cy.get("[data-cy='eligibilityOfficerPosition']");
+  }
+
+  eligibilityOfficerEmail() {
+    return cy.get("[data-cy='eligibilityOfficerEmail']");
+  }
+
+  eligibilityOfficerPhone() {
+    return cy.get("[data-cy='eligibilityOfficerPhone']");
+  }
+
+  enrolmentOfficerName() {
+    return cy.get("[data-cy='enrolmentOfficerName']");
+  }
+
+  enrolmentOfficerPosition() {
+    return cy.get("[data-cy='enrolmentOfficerPosition']");
+  }
+
+  enrolmentOfficerEmail() {
+    return cy.get("[data-cy='enrolmentOfficerEmail']");
+  }
+
+  enrolmentOfficerPhone() {
+    return cy.get("[data-cy='enrolmentOfficerPhone']");
+  }
+
+  scheduleACheckbox() {
+    return cy.get("[data-cy='scheduleA']");
+  }
+
+  scheduleBCheckbox() {
+    return cy.get("[data-cy='scheduleB']");
+  }
+
+  scheduleDCheckbox() {
+    return cy.get("[data-cy='scheduleD']");
+  }
+
+  agreementAcceptedCheckbox() {
+    return cy.get("[data-cy='agreementAccepted']");
+  }
+
+  submitAgreementButton() {
+    return cy.contains("Submit");
+  }
+
+  cancelAgreementButton() {
+    return cy.contains("Cancel");
   }
 }
