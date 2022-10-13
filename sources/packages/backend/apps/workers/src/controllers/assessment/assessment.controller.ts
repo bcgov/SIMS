@@ -52,7 +52,7 @@ export class AssessmentController {
     if (!assessment) {
       return job.error(ASSESSMENT_NOT_FOUND, "Assessment not found.");
     }
-    const assessmentDTO = this.createAssessmentDTO(assessment);
+    const assessmentDTO = this.transformToAssessmentDTO(assessment);
     const outputVariables = filterObjectProperties(
       assessmentDTO,
       job.customHeaders,
@@ -67,7 +67,7 @@ export class AssessmentController {
    * @returns well-known object that represents the universe of possible
    * information that can be later filtered.
    */
-  private createAssessmentDTO(
+  private transformToAssessmentDTO(
     assessment: StudentAssessment,
   ): ApplicationAssessmentWorkerOutDTO {
     const application = assessment.application;

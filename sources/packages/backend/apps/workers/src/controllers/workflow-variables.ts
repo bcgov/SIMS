@@ -35,3 +35,10 @@ export const TAX_YEAR = "taxYear";
  * Input parameter for cra-integration-income-verification.
  */
 export const REPORTED_INCOME = "reportedIncome";
+/**
+ * Created during the income verification workflow execution and
+ * used to monitor if the response from the CRA was received.
+ * Workflows: cra-integration-income-verification.
+ * Declared inside cra-integration-income-verification.
+ */
+export const INCOME_VERIFICATION_ID = "incomeVerificationId";

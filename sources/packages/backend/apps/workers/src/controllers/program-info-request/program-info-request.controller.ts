@@ -55,7 +55,7 @@ export class ProgramInfoRequestController {
       });
     }
     return job.fail(
-      "PIR not updated as expected. It was expected that at least one record was updated.",
+      "PIR was not updated as expected. It was expected that at least one record was updated. Either application was not found or the PIR status was already set.",
     );
   }
 }

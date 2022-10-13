@@ -44,9 +44,13 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
   /**
    * Create the supporting users of provided types.
    * @param applicationId application to have the supporting users created.
-   * @param supportingUserTypes types to be create. This method accepts, for instance,
+   * @param supportingUserTypes types to be created. This method accepts, for instance,
    * - ['Parent', 'Parent']: two parents will be created;
+   * - ['Partner']: one partner will be created.
    * - ['Partner', 'Parent']: one parent and one partner will be created.
+   * - ['Parent', 'Parent', 'Partner', 'Partner']: multiple parents and multiples partners.
+   * These examples represent what this method can do and are not necessarily
+   * the current business logic.
    * @returns created supporting users.
    */
   async createSupportingUsers(

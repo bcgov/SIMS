@@ -15,6 +15,7 @@ import {
 } from "..";
 import {
   APPLICATION_ID,
+  INCOME_VERIFICATION_ID,
   REPORTED_INCOME,
   SUPPORTING_USER_ID,
   TAX_YEAR,
@@ -26,6 +27,10 @@ export class CRAIntegrationController {
     private readonly incomeVerificationService: CRAIncomeVerificationService,
   ) {}
 
+  /**
+   * Create the record to be sent to CRA for income verification.
+   * @returns created income verification id.
+   */
   @ZeebeWorker("create-income-request", {
     fetchVariable: [
       APPLICATION_ID,
@@ -34,7 +39,7 @@ export class CRAIntegrationController {
       REPORTED_INCOME,
     ],
   })
-  async createSupportingUsers(
+  async createIncomeRequest(
     job: Readonly<
       ZeebeJob<
         CreateIncomeRequestJobInDTO,
@@ -54,10 +59,15 @@ export class CRAIntegrationController {
     return job.complete({ incomeVerificationId: identifier.id });
   }
 
+  /**
+   * Checks if the income verification was completed.
+   * @returns true if income verification was completed,
+   * otherwise, false.
+   */
   @ZeebeWorker("check-income-request", {
-    fetchVariable: ["incomeVerificationId"],
+    fetchVariable: [INCOME_VERIFICATION_ID],
   })
-  async checkSupportingUserResponse(
+  async checkIncomeRequest(
     job: Readonly<
       ZeebeJob<
         CheckIncomeRequestJobInDTO,
