@@ -30,13 +30,12 @@ export class NotificationService extends RecordDataModelService<Notification> {
     messagePayload: unknown,
     auditUserId: number,
   ): Promise<Notification> {
-    const now = new Date();
     const notification = new Notification();
     notification.templateId = templateId;
     notification.user = { id: userId } as User;
     notification.creator = { id: auditUserId } as User;
     notification.messagePayload = messagePayload;
-    notification.createdAt = now;
+    notification.createdAt = new Date();
     notification.message = { id: messageType } as Message;
     return this.repo.save(notification);
   }
@@ -47,12 +46,11 @@ export class NotificationService extends RecordDataModelService<Notification> {
    * @returns result of the record updated.
    */
   async updateNotification(notificationId: number): Promise<UpdateResult> {
-    const now = new Date();
     return this.repo.update(
       {
         id: notificationId,
       },
-      { dateSent: now },
+      { dateSent: new Date() },
     );
   }
 }

@@ -12,10 +12,16 @@ CREATE TABLE IF NOT EXISTS sims.messages (
         NULL
 );
 
+INSERT INTO
+    sims.messages(id, description)
+VALUES
+    (1, 'Student File Upload'),
+    (2, 'Ministry File Upload');
+
 -- Comments for table and column
 COMMENT ON TABLE sims.messages IS 'Table to store messages.';
 
-COMMENT ON COLUMN sims.messages.id IS 'Auto-generated sequential primary key column.';
+COMMENT ON COLUMN sims.messages.id IS 'Primary key column.';
 
 COMMENT ON COLUMN sims.notes.description IS 'Description of a message.';
 

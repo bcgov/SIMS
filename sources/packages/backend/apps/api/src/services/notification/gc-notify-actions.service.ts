@@ -67,6 +67,8 @@ export class GCNotifyActionsService {
   /**
    * Sends an email notification to the student when the Ministry uploads a file to his account.
    * @param notification input parameters to generate the notification.
+   * @param userId id of the user who will receive the message.
+   * @param auditUserId id of the user creating the notification.
    * @returns GC Notify API call response.
    */
   async sendMinistryFileUploadNotification(
