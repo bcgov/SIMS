@@ -1,12 +1,12 @@
-CREATE TABLE IF NOT EXISTS notifications (
+CREATE TABLE IF NOT EXISTS sims.notifications (
     id SERIAL PRIMARY KEY,
     -- Reference Columns
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    template_id VARCHAR(1000) NOT NULL,
+    user_id INT REFERENCES users(id),
+    template_id UUID NOT NULL,
     message_id INT REFERENCES messages(id) ON DELETE CASCADE,
-    gc_notify_payload jsonb NOT NULL,
-    date_sent timestamp without time zone,
-    date_read timestamp without time zone,
+    message_payload jsonb NOT NULL,
+    date_sent timestamp with time zone,
+    date_read timestamp with time zone,
     -- Audit columns
     created_at timestamp without time zone NOT NULL DEFAULT now(),
     updated_at timestamp without time zone NOT NULL DEFAULT now(),
@@ -26,6 +26,8 @@ COMMENT ON COLUMN notifications.id IS 'Auto-generated sequential primary key col
 COMMENT ON COLUMN notifications.user_id IS 'Foreign key reference to the users table.';
 
 COMMENT ON COLUMN notifications.message_id IS 'Foreign key reference to the messages table.';
+
+COMMENT ON COLUMN notifications.message_payload IS 'JSON data containing message payload.';
 
 COMMENT ON COLUMN applications.created_at IS 'Record creation timestamp.';
 

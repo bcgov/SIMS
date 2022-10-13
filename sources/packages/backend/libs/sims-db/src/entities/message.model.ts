@@ -1,8 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 
 @Entity({
-  name: "messages",
+  name: TableNames.Messages,
 })
 export class Message extends RecordDataModel {
   /**

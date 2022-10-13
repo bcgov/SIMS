@@ -3,21 +3,25 @@ import {
   Entity,
   JoinColumn,
   OneToOne,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ColumnNames } from "../constant";
+import { ColumnNames, TableNames } from "../constant";
 import { Message } from "./message.model";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
 
 @Entity({
-  name: "notifications",
+  name: TableNames.Notifications,
 })
 export class Notification extends RecordDataModel {
   /**
-   * Auto-generated sequential primary key column.
+   *  Primary key column.
    */
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({
+    name: "id",
+    nullable: false,
+  })
   id: number;
   /**
    * User associated with this notification.
@@ -60,9 +64,9 @@ export class Notification extends RecordDataModel {
   @Column({
     name: "date_sent",
     type: "timestamptz",
-    nullable: false,
+    nullable: true,
   })
-  dateSent: Date;
+  dateSent?: Date;
   /**
    * Date Read Column
    */
@@ -71,7 +75,7 @@ export class Notification extends RecordDataModel {
     type: "timestamptz",
     nullable: true,
   })
-  dateRead: Date;
+  dateRead?: Date;
 }
 
 /**

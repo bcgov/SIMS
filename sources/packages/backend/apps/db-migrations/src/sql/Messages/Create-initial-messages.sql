@@ -2,9 +2,5 @@
 INSERT INTO
     sims.messages(id, description)
 VALUES
-    (1, 'Student File Upload');
-
-INSERT INTO
-    sims.messages(id, description)
-VALUES
+    (1, 'Student File Upload'),
     (2, 'Ministry File Upload');
