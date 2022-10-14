@@ -30,13 +30,18 @@
               </v-btn>
             </div>
           </content-group></v-col
-        ><v-col cols="3"
-          ><v-img
+        >
+        <v-col cols="3">
+          <v-img
             height="260"
             class="mt-8"
             alt="An illustration of a woman working at a desk with her laptop. Illustration by Storyset."
-            src="@/assets/images/happy-parent.svg" /></v-col></v-row></v-card-text
-  ></v-card>
+            src="@/assets/images/happy-parent.svg"
+          />
+        </v-col>
+      </v-row>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script lang="ts">
