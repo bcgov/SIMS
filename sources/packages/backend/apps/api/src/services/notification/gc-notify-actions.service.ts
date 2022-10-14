@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { NotificationMessageType } from "@sims/sims-db";
-import { EntityManager } from "typeorm";
 import { getExtendedDateFormat, getPSTPDTDateTime } from "../../utilities";
 import {
   MINISTRY_FILE_UPLOAD_TEMPLATE_ID,
@@ -9,9 +8,7 @@ import {
 import {
   GCNotifyResult,
   MinistryStudentFileUploadNotification,
-  MinistryStudentFileUploadPersonalization,
   StudentFileUploadNotification,
-  StudentFileUploadPersonalization,
 } from "./gc-notify.model";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";

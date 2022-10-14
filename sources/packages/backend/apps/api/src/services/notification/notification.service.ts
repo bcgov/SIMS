@@ -6,7 +6,7 @@ import {
   NotificationMessage,
   NotificationMessageType,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, UpdateResult } from "typeorm";
+import { DataSource, UpdateResult } from "typeorm";
 import {
   GCNotifyResult,
   StudentFileUploadPersonalization,
