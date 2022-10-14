@@ -46,6 +46,7 @@ export class AssessmentController {
       ZeebeJob<AssessmentDataWorkerInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
+    // TODO: check for workflow instance id to avoid workflow concurrent execution.
     const assessment = await this.studentAssessmentService.getById(
       job.variables.assessmentId,
     );
