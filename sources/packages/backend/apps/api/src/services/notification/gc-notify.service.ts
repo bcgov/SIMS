@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "..";
 import axios, { AxiosError } from "axios";
-import { GCNotifyResult, RequestPayload } from "./gc-notify.model";
+import { GCNotifyResult } from "./gc-notify.model";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { GCNotify } from "../../types";
