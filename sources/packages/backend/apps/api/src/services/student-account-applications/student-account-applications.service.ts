@@ -11,7 +11,7 @@ import {
   StudentAccountApplicationCreateModel,
 } from "./student-account-applications.models";
 import { StudentService } from "../student/student.service";
-import { CustomNamedError, getISODateOnlyString } from "../../utilities";
+import { CustomNamedError } from "../../utilities";
 import { STUDENT_ACCOUNT_APPLICATION_NOT_FOUND } from "../../constants";
 
 @Injectable()
@@ -131,7 +131,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       lastName: studentProfile.lastName,
       givenNames: studentProfile.firstName,
       email: studentProfile.email,
-      birthdate: getISODateOnlyString(studentProfile.dateOfBirth),
+      birthdate: studentProfile.dateOfBirth,
       gender: studentProfile.gender,
     };
 

@@ -1,5 +1,5 @@
 import {
-  IsDate,
+  IsDateString,
   IsNotEmpty,
   IsOptional,
   IsPositive,
@@ -32,8 +32,8 @@ export class CreateInstitutionAPIInDTO {
   website: string;
   @IsNotEmpty()
   regulatingBody: string;
-  @IsDate()
-  establishedDate: Date;
+  @IsDateString()
+  establishedDate: string;
   @IsPositive()
   institutionType: number;
   //Institutions Primary Contact Information
@@ -97,8 +97,8 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   website: string;
   @IsNotEmpty()
   regulatingBody: string;
-  @IsDate()
-  establishedDate: Date;
+  @IsDateString()
+  establishedDate: string;
   @IsPositive()
   institutionType: number;
 }
@@ -109,7 +109,7 @@ export class InstitutionProfileAPIOutDTO extends InstitutionContactAPIOutDTO {
   primaryEmail: string;
   website: string;
   regulatingBody: string;
-  establishedDate: Date;
+  establishedDate: string;
   institutionType: number;
 }
 

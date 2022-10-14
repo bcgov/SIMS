@@ -1,13 +1,13 @@
 import { AddressInfo } from "@sims/sims-db";
 
 export interface UpdateInstitution {
-  operatingName: string;
-  primaryPhone: string;
-  primaryEmail: string;
-  website: string;
-  regulatingBody: string;
-  establishedDate: Date;
-  institutionType: number;
+  operatingName?: string;
+  primaryPhone?: string;
+  primaryEmail?: string;
+  website?: string;
+  regulatingBody?: string;
+  establishedDate?: string;
+  institutionType?: number;
   primaryContactEmail: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
@@ -34,7 +34,7 @@ export interface InstitutionFormModel {
   primaryEmail: string;
   website: string;
   regulatingBody: string;
-  establishedDate: Date;
+  establishedDate: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;

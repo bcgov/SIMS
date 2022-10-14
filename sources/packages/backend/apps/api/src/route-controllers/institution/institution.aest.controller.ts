@@ -137,6 +137,7 @@ export class InstitutionAESTController extends BaseController {
       institutionId,
       userToken.userId,
       payload,
+      { allowFullUpdate: true },
     );
   }
 

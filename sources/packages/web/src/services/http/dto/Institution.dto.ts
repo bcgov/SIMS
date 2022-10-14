@@ -27,7 +27,7 @@ export interface InstitutionProfileAPIOutDTO
   primaryEmail: string;
   website: string;
   regulatingBody: string;
-  establishedDate: Date;
+  establishedDate: string;
   institutionType: number;
 }
 
@@ -37,7 +37,7 @@ export interface InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   primaryEmail: string;
   website: string;
   regulatingBody: string;
-  establishedDate: Date;
+  establishedDate: string;
   institutionType: number;
 }
 
@@ -90,7 +90,7 @@ export interface CreateInstitutionAPIInDTO {
   primaryEmail: string;
   website: string;
   regulatingBody: string;
-  establishedDate: Date;
+  establishedDate: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;

@@ -7,6 +7,7 @@ import {
 import { AddressInfo } from "@sims/sims-db";
 import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
+import { getISODateOnlyString } from "../../utilities";
 
 /**
  * Service/Provider for Institutions controller to wrap the common methods.
@@ -48,7 +49,7 @@ export class InstitutionControllerService {
       regulatingBody: institutionDetail.regulatingBody,
       institutionType: institutionDetail.institutionType.id,
       institutionTypeName: institutionDetail.institutionType.name,
-      establishedDate: institutionDetail.establishedDate,
+      establishedDate: getISODateOnlyString(institutionDetail.establishedDate),
       formattedEstablishedDate: getExtendedDateFormat(
         institutionDetail.establishedDate,
       ),

@@ -43,7 +43,6 @@ import {
   dateDifference,
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
-  getISODateOnlyString,
 } from "../../utilities";
 import { OFFERING_NOT_VALID } from "../../constants";
 import {
@@ -415,8 +414,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         totalFundedWeeks: calculatedBreaks.totalFundedWeeks,
         unfundedStudyPeriodDays: calculatedBreaks.unfundedStudyPeriodDays,
         studyBreaks: calculatedBreaks.studyBreaks?.map((studyBreak) => ({
-          breakStartDate: getISODateOnlyString(studyBreak.breakStartDate),
-          breakEndDate: getISODateOnlyString(studyBreak.breakEndDate),
+          breakStartDate: studyBreak.breakStartDate,
+          breakEndDate: studyBreak.breakEndDate,
           breakDays: studyBreak.breakDays,
           eligibleBreakDays: studyBreak.eligibleBreakDays,
           ineligibleBreakDays: studyBreak.ineligibleBreakDays,
