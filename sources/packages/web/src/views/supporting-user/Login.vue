@@ -1,9 +1,9 @@
 <template>
   <v-card elevation="2" class="mx-auto mt-15" max-width="730px">
     <v-card-text>
-      <v-row
-        ><v-col cols="9"
-          ><v-card-text>
+      <v-row class="pt-2 pb-4 px-2">
+        <v-col cols="9">
+          <v-card-text class="pa-0">
             <h1 class="category-header-large primary-color">
               Welcome to StudentAid BC
             </h1>
@@ -31,10 +31,10 @@
             </div>
           </content-group>
         </v-col>
-        <v-col cols="3">
+        <v-col cols="3" align-self="end">
           <v-img
             height="260"
-            class="mt-8"
+            class="mt-8 mb-n6"
             alt="An illustration of a woman working at a desk with her laptop. Illustration by Storyset."
             src="@/assets/images/happy-parent.svg"
           />
