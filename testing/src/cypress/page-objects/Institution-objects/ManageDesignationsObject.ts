@@ -1,5 +1,3 @@
-import { contains } from "cypress/types/jquery";
-
 export default class ManageDesignationsObject {
   manageDesignationButton() {
     return cy.contains("Manage Designation");
