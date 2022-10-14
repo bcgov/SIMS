@@ -33,7 +33,7 @@ export interface StudentFileUploadNotification {
   documentPurpose: string;
 }
 
-export interface StudentFileUploadPersonalisation {
+export interface StudentFileUploadPersonalization {
   givenNames: string;
   lastName: string;
   dob: string;
@@ -48,7 +48,7 @@ export interface MinistryStudentFileUploadNotification {
   toAddress: string;
 }
 
-export interface MinistryStudentFileUploadPersonalisation {
+export interface MinistryStudentFileUploadPersonalization {
   givenNames: string;
   lastName: string;
 }

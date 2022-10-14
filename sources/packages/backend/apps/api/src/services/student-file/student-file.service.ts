@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -124,7 +124,9 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     uniqueFileNames: string[],
     fileOrigin: FileOriginType,
     groupName: string,
-    sendNotification?: () => Promise<GCNotifyResult>,
+    sendNotification?: (
+      entityManager: EntityManager,
+    ) => Promise<GCNotifyResult>,
     metadata?: StudentFileMetadata,
   ): Promise<UpdateResult> {
     let updateResult: UpdateResult;
@@ -146,7 +148,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       // Executes the send notification inside the transaction to allow the rollback
       // of the DB updates in the case of the notification failure.
       if (sendNotification) {
-        await sendNotification();
+        await sendNotification(transactionalEntityManager);
       }
     });
     return updateResult;
