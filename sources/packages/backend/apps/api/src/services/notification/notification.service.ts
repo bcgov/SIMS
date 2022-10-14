@@ -43,7 +43,6 @@ export class NotificationService extends RecordDataModelService<Notification> {
     notification.user = { id: userId } as User;
     notification.creator = { id: auditUserId } as User;
     notification.messagePayload = messagePayload;
-    notification.createdAt = new Date();
     notification.notificationMessage = {
       id: messageType,
     } as NotificationMessage;
