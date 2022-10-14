@@ -84,9 +84,9 @@ export default {
         case props.showBasicBCeIDMessage:
           return "No such Business account has been found with BCeID. Please login with your Business BCeId.";
         case props.showDisabledUserMessage:
-          return "Disabled user - you don't have access to the system. Please contact Administrator for more information.";
+          return "Your access was disabled. Please contact your institution's admin to enable your access.";
         case props.showUnknownUserMessage:
-          return "The user was validated successfully but is not currently allowed to have access to this application. Please contact the Administrator for more information.";
+          return "Your BCeID User ID is not authorized to access our system yet. If you are using a Basic BCeID User ID, please contact Designat@gov.bc.ca for authorization. If you are using a Business BCeID User ID, please contact your institution's admin to add you as a new user. For newly approved Business BCeID accounts, please fully complete the steps to activate your Business BCeID first.";
         default:
           return false;
       }
