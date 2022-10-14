@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS sims.notifications (
     id SERIAL PRIMARY KEY,
     -- Reference Columns
-    user_id INT REFERENCES users(id),
+    user_id INT REFERENCES sims.users(id),
     template_id UUID NOT NULL,
     notification_message_id INT REFERENCES sims.notification_messages(id),
     message_payload jsonb NOT NULL,
