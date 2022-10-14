@@ -5,9 +5,9 @@ import Authorization, {
 
 const institutionHelperActions = new InstitutionHelperActions();
 
-const USERNAME = institutionHelperActions.getUserNameForApiTest();
-const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
-const TOKEN_URL = institutionHelperActions.getApiUrlForKeyCloakToken();
+const USERNAME = institutionHelperActions.getUserNameForAPITest();
+const PASSWORD = institutionHelperActions.getUserPasswordForAPITest();
+const TOKEN_URL = institutionHelperActions.getAPIURLForKeyCloakToken();
 
 async function createOrUpdateInstitutionLocation(
   token: string,
@@ -28,11 +28,11 @@ async function createOrUpdateInstitutionLocation(
   let status: number;
   if (create) {
     method = "POST";
-    url = institutionHelperActions.getApiForLocationCreationOrUpdate();
+    url = institutionHelperActions.getAPIForLocationCreationOrUpdate();
     status = 201;
   } else {
     method = "PATCH";
-    url = `${institutionHelperActions.getApiForLocationCreationOrUpdate()}/1`;
+    url = `${institutionHelperActions.getAPIForLocationCreationOrUpdate()}/1`;
     status = 200;
   }
   if (canadian) {
@@ -91,8 +91,8 @@ describe("[Institution Create/Update] Verify location create/update", () => {
   const uniqueId4 = institutionHelperActions.getUniqueId();
 
   before(async () => {
-    const authorizer = new Authorization();
-    token = await authorizer.getAuthToken(
+    const authorization = new Authorization();
+    token = await authorization.getAuthToken(
       USERNAME,
       PASSWORD,
       ClientId.Institution,
