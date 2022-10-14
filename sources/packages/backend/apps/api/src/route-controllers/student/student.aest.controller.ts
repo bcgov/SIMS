@@ -72,6 +72,7 @@ import {
   SIN_VALIDATION_RECORD_NOT_FOUND,
 } from "../../constants";
 import { Role } from "../../auth/roles.enum";
+import { EntityManager } from "typeorm";
 
 /**
  * Student controller for AEST Client.

@@ -67,6 +67,7 @@ import {
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
 } from "../../constants";
+import { EntityManager } from "typeorm";
 
 /**
  * Student controller for Student Client.

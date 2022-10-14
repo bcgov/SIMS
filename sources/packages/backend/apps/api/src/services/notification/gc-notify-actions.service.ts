@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { NotificationMessageType } from "@sims/sims-db";
+import { EntityManager } from "typeorm";
 import { getExtendedDateFormat, getPSTPDTDateTime } from "../../utilities";
 import {
   MINISTRY_FILE_UPLOAD_TEMPLATE_ID,
@@ -10,7 +11,7 @@ import {
   MinistryStudentFileUploadNotification,
   MinistryStudentFileUploadPersonalization,
   StudentFileUploadNotification,
-  StudentFileUploadPersonalisation,
+  StudentFileUploadPersonalization,
 } from "./gc-notify.model";
 import { GCNotifyService } from "./gc-notify.service";
 import { NotificationService } from "./notification.service";
@@ -55,13 +56,7 @@ export class GCNotifyActionsService {
       payload,
       auditUserId,
     );
-    const gcNotifyResult =
-      await this.gcNotifyService.sendEmailNotification<StudentFileUploadPersonalisation>(
-        payload,
-      );
-    // Update date sent column in notification table after sending email notification successfully.
-    await this.notificationService.updateNotification(notificationSaved.id);
-    return gcNotifyResult;
+    return this.notificationService.sendEmailNotification(notificationSaved.id);
   }
 
   /**
@@ -95,13 +90,7 @@ export class GCNotifyActionsService {
       auditUserId,
     );
 
-    const gcNotifyResult =
-      await this.gcNotifyService.sendEmailNotification<MinistryStudentFileUploadPersonalization>(
-        payload,
-      );
-    // Update date sent column in notification table after sending email notification successfully.
-    await this.notificationService.updateNotification(notificationSaved.id);
-    return gcNotifyResult;
+    return this.notificationService.sendEmailNotification(notificationSaved.id);
   }
 
   /**

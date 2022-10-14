@@ -6,11 +6,19 @@ import {
   NotificationMessage,
   NotificationMessageType,
 } from "@sims/sims-db";
-import { DataSource, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, UpdateResult } from "typeorm";
+import {
+  GCNotifyResult,
+  StudentFileUploadPersonalization,
+} from "./gc-notify.model";
+import { GCNotifyService } from "./gc-notify.service";
 
 @Injectable()
 export class NotificationService extends RecordDataModelService<Notification> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    private readonly gcNotifyService: GCNotifyService,
+  ) {
     super(dataSource.getRepository(Notification));
   }
 
@@ -39,6 +47,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
     notification.notificationMessage = {
       id: messageType,
     } as NotificationMessage;
+
     return this.repo.save(notification);
   }
 
@@ -54,5 +63,33 @@ export class NotificationService extends RecordDataModelService<Notification> {
       },
       { dateSent: new Date() },
     );
+  }
+
+  /**
+   * Invokes the sendEmailNotification method of the GC Notification service.
+   * @param notificationId notification id used to retrieve the payload that will be passed
+   * as a parameter to the sendMailNotification method.
+   * @returns GC Notify API call response.
+   */
+  async sendEmailNotification(notificationId: number): Promise<GCNotifyResult> {
+    const notification = await this.repo.findOne({
+      select: {
+        id: true,
+        messagePayload: true,
+      },
+      where: {
+        id: notificationId,
+      },
+    });
+    // call GC Notify send email method.
+    const gcNotifyResult =
+      await this.gcNotifyService.sendEmailNotification<StudentFileUploadPersonalization>(
+        notification.messagePayload,
+      );
+
+    // Update date sent column in notification table after sending email notification successfully.
+    await this.updateNotification(notification.id);
+
+    return gcNotifyResult;
   }
 }
