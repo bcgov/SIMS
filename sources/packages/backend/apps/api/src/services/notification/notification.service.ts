@@ -7,10 +7,7 @@ import {
   NotificationMessageType,
 } from "@sims/sims-db";
 import { DataSource, UpdateResult } from "typeorm";
-import {
-  GCNotifyResult,
-  StudentFileUploadPersonalization,
-} from "./gc-notify.model";
+import { GCNotifyResult } from "./gc-notify.model";
 import { GCNotifyService } from "./gc-notify.service";
 
 @Injectable()
