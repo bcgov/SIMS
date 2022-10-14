@@ -52,6 +52,6 @@ export const TableNames = {
   ApplicationExceptionRequests: "application_exception_requests",
   DisbursementReceipts: "disbursement_receipts",
   DisbursementReceiptValues: "disbursement_receipt_values",
-  Messages: "messages",
+  Messages: "notification_messages",
   Notifications: "notifications",
 };

@@ -34,6 +34,7 @@ import {
   CRAIncomeVerificationService,
   SupportingUserService,
   NotificationService,
+  NotificationMessageService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -108,6 +109,7 @@ import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.co
     CRAIncomeVerificationService,
     SupportingUserService,
     NotificationService,
+    NotificationMessageService,
   ],
 })
 export class AppStudentsModule {}

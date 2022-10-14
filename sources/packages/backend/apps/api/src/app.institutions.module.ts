@@ -34,6 +34,7 @@ import {
   SFASIndividualService,
   EducationProgramOfferingImportCSVService,
   NotificationService,
+  NotificationMessageService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -113,6 +114,7 @@ import { EducationProgramOfferingValidationService } from "./services/education-
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
     NotificationService,
+    NotificationMessageService,
   ],
 })
 export class AppInstitutionsModule {}

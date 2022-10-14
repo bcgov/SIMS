@@ -22,4 +22,12 @@ export class NotificationMessage extends RecordDataModel {
     nullable: false,
   })
   description: string;
+  /**
+   * Template id.
+   */
+  @Column({
+    name: "template_id",
+    nullable: false,
+  })
+  templateId: string;
 }

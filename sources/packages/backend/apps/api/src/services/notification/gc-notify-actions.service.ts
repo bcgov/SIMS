@@ -1,10 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { NotificationMessageType } from "@sims/sims-db";
 import { getExtendedDateFormat, getPSTPDTDateTime } from "../../utilities";
-import {
-  MINISTRY_FILE_UPLOAD_TEMPLATE_ID,
-  STUDENT_FILE_UPLOAD_TEMPLATE_ID,
-} from "../../utilities/system-configurations-constants";
+import { NotificationMessageService } from "../notification-message/notification-message.service";
 import {
   GCNotifyResult,
   MinistryStudentFileUploadNotification,
@@ -18,6 +15,7 @@ export class GCNotifyActionsService {
   constructor(
     private readonly gcNotifyService: GCNotifyService,
     private readonly notificationService: NotificationService,
+    private readonly notificationMessageService: NotificationMessageService,
   ) {}
 
   /**
@@ -33,9 +31,12 @@ export class GCNotifyActionsService {
     userId: number,
     auditUserId: number,
   ): Promise<GCNotifyResult> {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.StudentFileUpload,
+    );
     const payload = {
       email_address: this.gcNotifyService.ministryToAddress(),
-      template_id: STUDENT_FILE_UPLOAD_TEMPLATE_ID,
+      template_id: templateId,
       personalisation: {
         givenNames: notification.firstName ?? "",
         lastName: notification.lastName,
@@ -49,7 +50,6 @@ export class GCNotifyActionsService {
     const notificationSaved = await this.notificationService.saveNotification(
       userId,
       NotificationMessageType.StudentFileUpload,
-      STUDENT_FILE_UPLOAD_TEMPLATE_ID,
       payload,
       auditUserId,
     );
@@ -68,9 +68,12 @@ export class GCNotifyActionsService {
     userId: number,
     auditUserId: number,
   ): Promise<GCNotifyResult> {
+    const templateId = await this.notificationMessageService.getTemplateId(
+      NotificationMessageType.MinistryFileUpload,
+    );
     const payload = {
       email_address: notification.toAddress,
-      template_id: MINISTRY_FILE_UPLOAD_TEMPLATE_ID,
+      template_id: templateId,
       personalisation: {
         givenNames: notification.firstName ?? "",
         lastName: notification.lastName,
@@ -82,7 +85,6 @@ export class GCNotifyActionsService {
     const notificationSaved = await this.notificationService.saveNotification(
       userId,
       NotificationMessageType.MinistryFileUpload,
-      MINISTRY_FILE_UPLOAD_TEMPLATE_ID,
       payload,
       auditUserId,
     );

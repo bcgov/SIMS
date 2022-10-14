@@ -29,14 +29,6 @@ export class Notification extends RecordDataModel {
   })
   user: User;
   /**
-   * Template id.
-   */
-  @Column({
-    name: "template_id",
-    nullable: false,
-  })
-  templateId: string;
-  /**
    * Message notification payload.
    */
   @Column({

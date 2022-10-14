@@ -29,6 +29,7 @@ import {
   SFASIndividualService,
   EducationProgramOfferingValidationService,
   NotificationService,
+  NotificationMessageService,
 } from "./services";
 import {
   UserController,
@@ -124,6 +125,7 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     SFASIndividualService,
     EducationProgramOfferingValidationService,
     NotificationService,
+    NotificationMessageService,
   ],
 })
 export class AppModule {}

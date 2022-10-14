@@ -31,12 +31,10 @@ export class NotificationService extends RecordDataModelService<Notification> {
   async saveNotification(
     userId: number,
     messageType: NotificationMessageType,
-    templateId: string,
     messagePayload: unknown,
     auditUserId: number,
   ): Promise<Notification> {
     const notification = new Notification();
-    notification.templateId = templateId;
     notification.user = { id: userId } as User;
     notification.creator = { id: auditUserId } as User;
     notification.messagePayload = messagePayload;
