@@ -22,7 +22,7 @@ export class GCNotifyService {
    * @param payload
    * @returns GC Notify API call response.
    */
-  async sendEmailNotification<T>(payload: unknown): Promise<GCNotifyResult> {
+  async sendEmailNotification(payload: unknown): Promise<GCNotifyResult> {
     try {
       const response = await axios.post(this.gcNotifyConfig.url, payload, {
         headers: {

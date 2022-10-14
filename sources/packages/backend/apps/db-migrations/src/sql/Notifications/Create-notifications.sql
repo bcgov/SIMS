@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS sims.notifications (
     id SERIAL PRIMARY KEY,
-    -- Reference Columns
     user_id INT REFERENCES sims.users(id),
     template_id UUID NOT NULL,
     notification_message_id INT REFERENCES sims.notification_messages(id),
@@ -10,10 +9,10 @@ CREATE TABLE IF NOT EXISTS sims.notifications (
     -- Audit columns
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
-    creator INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
+    creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
     SET
         NULL,
-        modifier INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
+        modifier INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
     SET
         NULL
 );

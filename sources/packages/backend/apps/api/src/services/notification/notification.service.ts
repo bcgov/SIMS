@@ -81,10 +81,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
       },
     });
     // Call GC Notify send email method.
-    const gcNotifyResult =
-      await this.gcNotifyService.sendEmailNotification<StudentFileUploadPersonalization>(
-        notification.messagePayload,
-      );
+    const gcNotifyResult = await this.gcNotifyService.sendEmailNotification(
+      notification.messagePayload,
+    );
 
     // Update date sent column in notification table after sending email notification successfully.
     await this.updateNotification(notification.id);
