@@ -80,7 +80,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
         id: notificationId,
       },
     });
-    // call GC Notify send email method.
+    // Call GC Notify send email method.
     const gcNotifyResult =
       await this.gcNotifyService.sendEmailNotification<StudentFileUploadPersonalization>(
         notification.messagePayload,
