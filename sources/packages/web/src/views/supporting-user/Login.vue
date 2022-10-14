@@ -3,7 +3,7 @@
     <v-card-text>
       <v-row
         ><v-col cols="9"
-          ><v-card-header>
+          ><v-card-text>
             <h1 class="category-header-large primary-color">
               Welcome to StudentAid BC
             </h1>
@@ -11,7 +11,7 @@
               Login or sign up to submit supporting information for student
               applications.
             </p>
-          </v-card-header>
+          </v-card-text>
           <content-group>
             <h3 class="category-header-medium primary-color">
               Login or sign up
@@ -29,8 +29,8 @@
                 Login / Sign up with BCSC
               </v-btn>
             </div>
-          </content-group></v-col
-        >
+          </content-group>
+        </v-col>
         <v-col cols="3">
           <v-img
             height="260"
