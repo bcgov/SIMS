@@ -22,7 +22,7 @@
       ],
       "content": "Welcome!",
       "refreshOnChange": false,
-      "customClass": "category-header-large primary-color",
+      "customClass": "category-header-x-large primary-color",
       "hidden": false,
       "modalEdit": false,
       "key": "html",
