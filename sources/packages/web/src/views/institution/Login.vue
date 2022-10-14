@@ -7,37 +7,25 @@
             Welcome to StudentAid BC
           </h1>
           <p class="mb-5">
-            Login or sign up here to manage your institution account.
+            Manage your institution account using your Business or Basic BCeID
+            User ID. Learn how to setup and access your account
+            <a
+              rel="noopener"
+              target="_blank"
+              href="https://studentaidbc.ca/policy-and-procedures/partner-portal-information"
+              >here</a
+            >.
           </p>
           <content-group>
-            <v-row>
-              <v-col>
-                <h3 class="category-header-medium primary-color">Login</h3>
-                <p class="sign-in-description">
-                  For returning users—login using your BCeID.
-                </p>
-                <v-btn
-                  color="primary"
-                  @click="login"
-                  prepend-icon="fa:fa fa-user"
-                >
-                  Login with BCeID
-                </v-btn>
-              </v-col>
-              <v-col
-                ><h3 class="category-header-medium primary-color">Sign up</h3>
-                <p class="sign-in-description">
-                  For new users—sign up using your BCeID.
-                </p>
-                <v-btn
-                  color="primary"
-                  @click="login"
-                  prepend-icon="fa:fa fa-user-plus"
-                >
-                  Sign Up with BCeID
-                </v-btn></v-col
-              >
-            </v-row>
+            <h3 class="category-header-medium primary-color">
+              Login or register
+            </h3>
+            <p class="sign-in-description">
+              No account? Please register through the BCeID website below.
+            </p>
+            <v-btn color="primary" @click="login" prepend-icon="fa:fa fa-user">
+              Login / Register with BCeID
+            </v-btn>
           </content-group>
         </v-col>
         <v-col
@@ -107,8 +95,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.sign-in-description {
-  max-width: 180px;
-}
-</style>
