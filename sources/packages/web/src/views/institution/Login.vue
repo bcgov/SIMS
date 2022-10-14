@@ -4,7 +4,7 @@
       <v-row>
         <v-col md="9">
           <h1 class="category-header-large primary-color">
-            Welcome to StudentAid BC!
+            Welcome to StudentAid BC
           </h1>
           <p class="mb-5">
             Manage your institution account using your Business or Basic BCeID
