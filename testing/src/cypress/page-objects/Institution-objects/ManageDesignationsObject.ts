@@ -10,7 +10,7 @@ export default class ManageDesignationsObject {
   }
 
   viewDesignationButton() {
-    return cy.contains("View");
+    return cy.contains("[data-cy='viewDesignation']");
   }
 
   viewDesignationText() {
@@ -62,11 +62,11 @@ export default class ManageDesignationsObject {
   }
 
   requestDesignationButton() {
-    return cy.contains("Request designation");
+    return cy.get("[data-cy='requestForDesignation']");
   }
 
   requestDesignationHeader() {
-    return cy.contains("Request Designation");
+    return cy.get("Request Designation");
   }
 
   requestForDesignationCheckBox() {

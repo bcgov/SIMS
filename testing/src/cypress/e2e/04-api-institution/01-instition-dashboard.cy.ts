@@ -8,16 +8,16 @@ const INSTITUTION_DETAILS_SINGLE_LOCATION =
   institutionHelperActions.getInstitutionDetailsSingleLocation();
 const USER_DETAILS_SINGLE_LOCATION =
   institutionHelperActions.getUserDetailsSingleLocation();
-const API_URL = institutionHelperActions.getApiUrlForTest();
-const TOKEN_URL = institutionHelperActions.getApiUrlForKeyCloakToken();
-const USERNAME = institutionHelperActions.getUserNameForApiTest();
-const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
+const API_URL = institutionHelperActions.getAPIURLForTest();
+const TOKEN_URL = institutionHelperActions.getAPIURLForKeyCloakToken();
+const USERNAME = institutionHelperActions.getUserNameForAPITest();
+const PASSWORD = institutionHelperActions.getUserPasswordForAPITest();
 
 describe("[Institution Dashboard APIs] - Institution with single location", () => {
   let token: string;
   before(async () => {
-    const authorizer = new Authorization();
-    token = await authorizer.getAuthToken(
+    const authorization = new Authorization();
+    token = await authorization.getAuthToken(
       USERNAME,
       PASSWORD,
       ClientId.Institution,
