@@ -14,7 +14,6 @@ import {
 } from "@sims/sims-db";
 import { Brackets, DataSource, IsNull, UpdateResult } from "typeorm";
 import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
-import { WorkflowActionsService } from "..";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -24,6 +23,7 @@ import {
   AssessmentHistory,
   StudentAssessmentStatus,
 } from "./student-assessment.models";
+import { WorkflowClientService } from "@sims/services";
 
 /**
  * Manages the student assessment related operations.
@@ -32,7 +32,7 @@ import {
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
   constructor(
     dataSource: DataSource,
-    private readonly workflow: WorkflowActionsService,
+    private readonly workflowClientService: WorkflowClientService,
   ) {
     super(dataSource.getRepository(StudentAssessment));
   }
@@ -298,7 +298,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       );
     }
 
-    await this.workflow.startApplicationAssessment(
+    await this.workflowClientService.startApplicationAssessment(
       assessment.application.data.workflowName,
       assessment.id,
     );

@@ -6,6 +6,7 @@ import {
   ProgramInfoRequestController,
   SupportingUserController,
   CRAIntegrationController,
+  DisbursementController,
 } from "./controllers";
 import {
   StudentAssessmentService,
@@ -13,6 +14,7 @@ import {
   ApplicationExceptionService,
   SupportingUserService,
   CRAIncomeVerificationService,
+  DisbursementScheduleService,
 } from "./services";
 import { ZeebeTransportStrategy } from "./zeebe";
 import { ZeebeModule } from "@sims/services";
@@ -25,6 +27,7 @@ import { ZeebeModule } from "@sims/services";
     ProgramInfoRequestController,
     SupportingUserController,
     CRAIntegrationController,
+    DisbursementController,
   ],
   providers: [
     ZeebeTransportStrategy,
@@ -33,6 +36,7 @@ import { ZeebeModule } from "@sims/services";
     ApplicationExceptionService,
     SupportingUserService,
     CRAIncomeVerificationService,
+    DisbursementScheduleService,
   ],
 })
 export class WorkersModule {}

@@ -81,7 +81,7 @@ export class ApplicationController {
   ): Promise<MustReturnJobActionAcknowledgement> {
     const application = await this.applicationService.getApplicationById(
       job.variables.applicationId,
-      { loadDynamicData: false },
+      { loadDynamicData: true },
     );
     if (!application) {
       return job.error(APPLICATION_NOT_FOUND, "Application id not found.");

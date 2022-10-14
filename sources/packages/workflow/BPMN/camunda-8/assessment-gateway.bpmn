@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Web Modeler" exporterVersion="31cade0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.0.0" camunda:diagramRelationId="f874f098-96b6-491d-81ec-ecf7a0d8c67a">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.2.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.0.0" camunda:diagramRelationId="f874f098-96b6-491d-81ec-ecf7a0d8c67a">
   <bpmn:collaboration id="Collaboration_0z9wj8q">
-    <bpmn:participant id="application-in-progress" name="Application in progress" processRef="assessment-gateway" />
+    <bpmn:participant id="application-in-progress" name="Assessment" processRef="assessment-gateway" />
     <bpmn:group id="Group_1k2osho" categoryValueRef="CategoryValue_1yy7g02" />
     <bpmn:group id="Group_19tqt3y" categoryValueRef="CategoryValue_1l89ztr" />
     <bpmn:group id="Group_0uz5ydc" categoryValueRef="CategoryValue_0xs06g4" />
@@ -9,53 +9,157 @@
   </bpmn:collaboration>
   <bpmn:process id="assessment-gateway" isExecutable="true">
     <bpmn:laneSet id="LaneSet_07shl28">
-      <bpmn:lane id="Lane_0lvs868">
-        <bpmn:flowNodeRef>assessment-start-event</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>load-assessment-data-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>first-assessment-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>update-application-status-to-in-progress-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>verify-application-exceptions-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_04wt04t</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>verify-application-exceptions-status-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>verify-application-exceptions-pending-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_15lqlgc</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>verify-application-exceptions-retry-timer</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>in-progress-main-parallel-info-gathering-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>application-exception-end-event</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1jdrla2</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>needs-pir-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>program-info-not-required-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>parents-verification-has-sin-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>parents-verification-has-dependant-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_00m8zji</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>create-supporting-users-for-parents-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1mg1n21</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_0vft251</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>retrieve-supporting-info-for-parent-1-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>retrieve-supporting-info-for-parent-2-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>parent-2-income-verification-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>parent-1-income-verification-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_0ny5tkb</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_0b7tdao</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_00mly8t</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_05k6rp7</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_176fysj</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>create-supporting-user-for-the-partner-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>retrieve-supporting-info-for-partner-activity</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>partner-income-verification-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_0jc5bz6</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>student-income-verification-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0gqegca</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>program-info-required-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>pir-pending-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>pir-retry-timer</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>pir-pending-event-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_1ybuc35</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_03gbgqa</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>pir-pending-declined-complted-gateway</bpmn:flowNodeRef>
+      <bpmn:lane id="Lane_1bfd2e9" name="Assessment/reassessment calculation">
+        <bpmn:flowNodeRef>Activity_0bbdewz</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0mtgfbi</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_0lvs868" name="Applications In Progress">
         <bpmn:flowNodeRef>pir-declined-end-event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1hgcddi</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>pir-pending-declined-complted-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_03gbgqa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1ybuc35</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>pir-pending-event-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>pir-retry-timer</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>pir-pending-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>program-info-required-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>program-info-not-required-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>needs-pir-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>student-income-verification-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>partner-income-verification-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>retrieve-supporting-info-for-partner-activity</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>create-supporting-user-for-the-partner-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_176fysj</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_05k6rp7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_00mly8t</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0b7tdao</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0ny5tkb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>parent-1-income-verification-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>parent-2-income-verification-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>retrieve-supporting-info-for-parent-2-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>retrieve-supporting-info-for-parent-1-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0vft251</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1mg1n21</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>create-supporting-users-for-parents-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>parents-verification-has-dependant-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>parents-verification-has-sin-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1jdrla2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>application-exception-end-event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>in-progress-main-parallel-info-gathering-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verify-application-exceptions-retry-timer</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_15lqlgc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verify-application-exceptions-pending-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verify-application-exceptions-status-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_04wt04t</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verify-application-exceptions-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>update-application-status-to-in-progress-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>first-assessment-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>load-assessment-data-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>assessment-start-event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0jc5bz6</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
+    <bpmn:sequenceFlow id="Flow_0ozt4pg" name="Reassessment" sourceRef="first-assessment-gateway" targetRef="Activity_0bbdewz">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType != "Original assessment"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="pir-pending-completed-flow" name="Completed" sourceRef="pir-pending-declined-complted-gateway" targetRef="Gateway_1hgcddi">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Completed"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0im6s57" sourceRef="Gateway_03gbgqa" targetRef="pir-pending-declined-complted-gateway" />
+    <bpmn:sequenceFlow id="Flow_0cxn3c5" sourceRef="Event_1ybuc35" targetRef="Gateway_03gbgqa" />
+    <bpmn:sequenceFlow id="Flow_0joyxdn" sourceRef="pir-pending-event-gateway" targetRef="Event_1ybuc35" />
+    <bpmn:sequenceFlow id="Flow_1ds5r8m" sourceRef="pir-pending-event-gateway" targetRef="pir-retry-timer" />
+    <bpmn:sequenceFlow id="pir-completed-flow" name="Yes" sourceRef="pir-pending-gateway" targetRef="Gateway_03gbgqa">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus != "Required"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="pir-not-completed-flow" name="No" sourceRef="pir-pending-gateway" targetRef="pir-pending-event-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Required"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0guy66a" sourceRef="program-info-required-task" targetRef="pir-pending-gateway" />
+    <bpmn:sequenceFlow id="Flow_1sze0w6" sourceRef="pir-retry-timer" targetRef="program-info-required-task" />
+    <bpmn:sequenceFlow id="Flow_06144it" sourceRef="program-info-not-required-task" targetRef="Gateway_1hgcddi" />
+    <bpmn:sequenceFlow id="has-offering-flow" name="PIR not required" sourceRef="needs-pir-gateway" targetRef="program-info-not-required-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=selectedOffering != null</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="needs-pir-flow" name="Needs PIR" sourceRef="needs-pir-gateway" targetRef="program-info-required-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=selectedOffering = null</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1s8wnxz" sourceRef="Gateway_1hgcddi" targetRef="Gateway_0jc5bz6" />
+    <bpmn:sequenceFlow id="Flow_1ef3map" sourceRef="assessment-start-event" targetRef="load-assessment-data-task" />
+    <bpmn:sequenceFlow id="Flow_0rxxozm" sourceRef="load-assessment-data-task" targetRef="first-assessment-gateway" />
+    <bpmn:sequenceFlow id="assessment-flow" name="Assessment" sourceRef="first-assessment-gateway" targetRef="update-application-status-to-in-progress-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType = "Original assessment"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0g1n1dk" sourceRef="update-application-status-to-in-progress-task" targetRef="verify-application-exceptions-task" />
+    <bpmn:sequenceFlow id="verify-application-exceptions-retry-timer-flow" sourceRef="verify-application-exceptions-retry-timer" targetRef="verify-application-exceptions-task" />
+    <bpmn:sequenceFlow id="Flow_04f30nk" sourceRef="verify-application-exceptions-task" targetRef="Gateway_04wt04t" />
+    <bpmn:sequenceFlow id="verify-application-exceptions-pending-flow" name="Pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-pending-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Pending"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="verify-application-exceptions-not-pending-flow" name="Not pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-status-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus != "Pending"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ws0afg" sourceRef="Event_15lqlgc" targetRef="verify-application-exceptions-status-gateway" />
+    <bpmn:sequenceFlow id="verify-application-exceptions-status-denied-flow" name="Declined" sourceRef="verify-application-exceptions-status-gateway" targetRef="application-exception-end-event">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Declined"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="verify-application-exceptions-status-approved-flow" name="Approved" sourceRef="verify-application-exceptions-status-gateway" targetRef="in-progress-main-parallel-info-gathering-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Approved"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1v0ju0g" sourceRef="verify-application-exceptions-pending-gateway" targetRef="Event_15lqlgc" />
+    <bpmn:sequenceFlow id="Flow_10lg2ud" sourceRef="verify-application-exceptions-pending-gateway" targetRef="verify-application-exceptions-retry-timer" />
+    <bpmn:sequenceFlow id="Flow_1a980l7" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="needs-pir-gateway" />
+    <bpmn:sequenceFlow id="Flow_0v2i46e" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="Gateway_05k6rp7" />
+    <bpmn:sequenceFlow id="Flow_18xo3dr" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="parents-verification-has-dependant-gateway" />
+    <bpmn:sequenceFlow id="Flow_18qbsu1" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="student-income-verification-task" />
+    <bpmn:sequenceFlow id="Flow_0jrbmj3" sourceRef="partner-income-verification-task" targetRef="Gateway_1jdrla2" />
+    <bpmn:sequenceFlow id="Flow_1u0qixu" name="No" sourceRef="Gateway_05k6rp7" targetRef="Gateway_1jdrla2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=relationshipStatus != "married"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1gii09j" name="Partner do not have SIN" sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isYourSpouseACanadianCitizen != "yes"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1rn6agw" sourceRef="Gateway_1jdrla2" targetRef="Gateway_0jc5bz6" />
+    <bpmn:sequenceFlow id="parents-verification-dependantstatus-dependant-flow" name="Dependant" sourceRef="parents-verification-has-dependant-gateway" targetRef="parents-verification-has-sin-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=dependantstatus = "dependant"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="parents-verification-has-sin-gateway-no-flow" name="Parents do not have SIN" sourceRef="parents-verification-has-sin-gateway" targetRef="Gateway_0ny5tkb">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber != "yes"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="parents-verification-has-sin-gateway-yes-flow" name="Parents have SIN" sourceRef="parents-verification-has-sin-gateway" targetRef="create-supporting-users-for-parents-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber = "yes"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="parents-verification-dependantstatus-independant-flow" name="Independant" sourceRef="parents-verification-has-dependant-gateway" targetRef="Gateway_0ny5tkb">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=dependantstatus != "dependant"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0dii2b3" sourceRef="create-supporting-users-for-parents-task" targetRef="Gateway_1mg1n21" />
+    <bpmn:sequenceFlow id="Flow_1u5ion6" sourceRef="Gateway_1mg1n21" targetRef="retrieve-supporting-info-for-parent-1-task" />
+    <bpmn:sequenceFlow id="Flow_1cd204k" sourceRef="Gateway_1mg1n21" targetRef="Gateway_0vft251" />
+    <bpmn:sequenceFlow id="Flow_1lbai2h" name="Yes" sourceRef="Gateway_0vft251" targetRef="retrieve-supporting-info-for-parent-2-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=numberOfParents = 2</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0bo0mn4" name="No" sourceRef="Gateway_0vft251" targetRef="Gateway_00mly8t">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=numberOfParents != 2</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1g59sq3" sourceRef="retrieve-supporting-info-for-parent-1-task" targetRef="parent-1-income-verification-task" />
+    <bpmn:sequenceFlow id="Flow_0l30wbo" sourceRef="retrieve-supporting-info-for-parent-2-task" targetRef="parent-2-income-verification-task" />
+    <bpmn:sequenceFlow id="Flow_1j7i68d" sourceRef="parent-2-income-verification-task" targetRef="Gateway_00mly8t" />
+    <bpmn:sequenceFlow id="Flow_11q8vuj" sourceRef="parent-1-income-verification-task" targetRef="Gateway_0b7tdao" />
+    <bpmn:sequenceFlow id="Flow_0kjnr9t" sourceRef="Gateway_0b7tdao" targetRef="Gateway_0ny5tkb" />
+    <bpmn:sequenceFlow id="Flow_1uh1kyu" sourceRef="Gateway_0ny5tkb" targetRef="Gateway_0jc5bz6" />
+    <bpmn:sequenceFlow id="Flow_19wmdao" sourceRef="Gateway_00mly8t" targetRef="Gateway_0b7tdao" />
+    <bpmn:sequenceFlow id="Flow_0emvz6f" name="Yes" sourceRef="Gateway_05k6rp7" targetRef="Gateway_176fysj">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=relationshipStatus = "married"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_14701yl" name="Has valid SIN" sourceRef="Gateway_176fysj" targetRef="create-supporting-user-for-the-partner-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isYourSpouseACanadianCitizen = "yes"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_03zfrkx" sourceRef="create-supporting-user-for-the-partner-task" targetRef="retrieve-supporting-info-for-partner-activity" />
+    <bpmn:sequenceFlow id="Flow_1wde0bi" sourceRef="retrieve-supporting-info-for-partner-activity" targetRef="partner-income-verification-task" />
+    <bpmn:sequenceFlow id="Flow_1mbspca" sourceRef="student-income-verification-task" targetRef="Gateway_0jc5bz6" />
+    <bpmn:sequenceFlow id="pir-pending-declined-flow" name="Declined" sourceRef="pir-pending-declined-complted-gateway" targetRef="pir-declined-end-event">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Declined"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:startEvent id="assessment-start-event">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -93,6 +197,72 @@
           <zeebe:header key="selectedLocation" value="$.data.selectedLocation" />
           <zeebe:header key="supportingUserPartnerTotalIncome" value="$.supportingUsers.Partner1.supportingData.totalIncome" />
           <zeebe:header key="applicationId" value="$.applicationId" />
+          <zeebe:header key="estimatedSpouseIncome" value="$.data.estimatedSpouseIncome" />
+          <zeebe:header key="pleaseProvideAnEstimationOfYourParentsIncome" value="$.data.pleaseProvideAnEstimationOfYourParentsIncome" />
+          <zeebe:header key="whenDidYouGraduateOrLeaveHighSchool" value="$.data.whenDidYouGraduateOrLeaveHighSchool" />
+          <zeebe:header key="livingathomeRent" value="$.data.livingathomeRent" />
+          <zeebe:header key="transportationCost" value="$.data.transportationCost" />
+          <zeebe:header key="indigenousStatus" value="$.data.indigenousStatus" />
+          <zeebe:header key="hasDependents" value="$.data.hasDependents" />
+          <zeebe:header key="livingWithParents" value="$.data.livingWithParents" />
+          <zeebe:header key="daycareCosts12YearsOrOver" value="$.data.daycareCosts12YearsOrOver" />
+          <zeebe:header key="daycareCosts11YearsOrUnder" value="$.data.daycareCosts11YearsOrUnder" />
+          <zeebe:header key="childSupportAndOrSpousalSupport" value="$.data.childsupportCosts" />
+          <zeebe:header key="voluntaryContributions" value="$.data.parentvoluntarycontributionsCosts" />
+          <zeebe:header key="scholarshipAmount" value="$.data.scholarshipsreceviedCosts" />
+          <zeebe:header key="youthInCare" value="$.data.youthInCare" />
+          <zeebe:header key="programYear" value="$.programYear.programYear" />
+          <zeebe:header key="programLocation" value="BC" />
+          <zeebe:header key="studentPDStatus" value="$.student.studentPDStatus" />
+          <zeebe:header key="institutionLocationProvince" value="$.location.institutionLocationProvince" />
+          <zeebe:header key="institutionType" value="$.institution.institutionType" />
+          <zeebe:header key="programLength" value="$.program.programLength" />
+          <zeebe:header key="programCredentialType" value="$.program.programCredentialType" />
+          <zeebe:header key="offeringIntensity" value="$.offering.offeringIntensity" />
+          <zeebe:header key="offeringDelivered" value="$.offering.offeringDelivered" />
+          <zeebe:header key="breakEndDate" value="$.offering.breakEndDate" />
+          <zeebe:header key="breakStartDate" value="$.offering.breakStartDate" />
+          <zeebe:header key="studyEndDate" value="$.offering.studyEndDate" />
+          <zeebe:header key="studyStartDate" value="$.offering.studyStartDate" />
+          <zeebe:header key="programRelatedCosts" value="$.offering.programRelatedCosts" />
+          <zeebe:header key="actualTuitionCosts" value="$.offering.actualTuitionCosts" />
+          <zeebe:header key="mandatoryFees" value="$.offering.mandatoryFees" />
+          <zeebe:header key="exceptionalExpenses" value="$.offering.exceptionalExpenses" />
+          <zeebe:header key="parent1SupportingUserId" value="$.supportingUsers.Parent1.id" />
+          <zeebe:header key="parent1Contributions" value="$.supportingUsers.Parent1.supportingdata.parentalContributions" />
+          <zeebe:header key="parent1CppEmployment" value="$.supportingUsers.Parent1.supportingdata.cppLine30800" />
+          <zeebe:header key="parent1CppSelfemploymentOther" value="$.supportingUsers.Parent1.supportingdata.cppLine31000" />
+          <zeebe:header key="parent1DependentTable" value="$.supportingUsers.Parent1.supportingdata.parentDependentTable" />
+          <zeebe:header key="parent1Ei" value="$.supportingUsers.Parent1.supportingdata.eiLine31200" />
+          <zeebe:header key="parent1NetAssests" value="$.supportingUsers.Parent1.supportingdata.foreignAssets" />
+          <zeebe:header key="parent1Tax" value="$.supportingUsers.Parent1.supportingdata.totalIncomeTaxLine43500" />
+          <zeebe:header key="supportingUserParent1TotalIncome" value="$.supportingUsers.Parent1.supportingdata.totalIncome" />
+          <zeebe:header key="parent2SupportingUserId" value="$.supportingUsers.Parent2.id" />
+          <zeebe:header key="parent2Contributions" value="$.supportingUsers.Parent2.supportingdata.parentalContributions" />
+          <zeebe:header key="parent2CppEmployment" value="$.supportingUsers.Parent2.supportingdata.cppLine30800" />
+          <zeebe:header key="parent2CppSelfemploymentOther" value="$.supportingUsers.Parent2.supportingdata.cppLine31000" />
+          <zeebe:header key="parent2DependentTable" value="$.supportingUsers.Parent2.supportingdata.parentDependentTable" />
+          <zeebe:header key="parent2Ei" value="$.supportingUsers.Parent2.supportingdata.eiLine31200" />
+          <zeebe:header key="parent2NetAssests" value="$.supportingUsers.Parent2.supportingdata.foreignAssets" />
+          <zeebe:header key="parent2Tax" value="$.supportingUsers.Parent2.supportingdata.totalIncomeTaxLine43500" />
+          <zeebe:header key="supportingUserParent2TotalIncome" value="$.supportingUsers.Parent2.supportingdata.totalIncome" />
+          <zeebe:header key="partnerSupportingUserId" value="$.supportingUsers.Partner1.id" />
+          <zeebe:header key="livingWithPartner" value="$.supportingUsers.Partner1.supportingdata.partnerLivingWithStudent" />
+          <zeebe:header key="partnerChildSpousalSupportCost" value="$.supportingUsers.Partner1.supportingdata.partnerChildSpousalSupportCost" />
+          <zeebe:header key="partnerDisabilityAssistance" value="$.supportingUsers.Partner1.supportingdata.partnerTotalIncomeAssistance" />
+          <zeebe:header key="partnerEmploymentInsuranceBenefits" value="$.supportingUsers.Partner1.supportingdata.partnerTotalEmploymentInsurance" />
+          <zeebe:header key="partnerLoanPayment" value="$.supportingUsers.Partner1.supportingdata.partnerTotalStudentLoan" />
+          <zeebe:header key="partnerPermanentDisabilityBenefits" value="$.supportingUsers.Partner1.supportingdata.partnerTotalPDBenefits" />
+          <zeebe:header key="partnerStudentStudyWeeks" value="$.supportingUsers.Partner1.supportingdata.partnerStudentStudyWeeks" />
+          <zeebe:header key="studentCRAReportedIncome" value="$.student.craReportedIncome" />
+          <zeebe:header key="studentTaxYear" value="$.student.taxYear" />
+          <zeebe:header key="parent1CRAReportedIncome" value="$.supportingUsers.Parent1.craReportedIncome" />
+          <zeebe:header key="parent2CRAReportedIncome" value="$.supportingUsers.Parent2.craReportedIncome" />
+          <zeebe:header key="partnerCRAReportedIncome" value="$.supportingUsers.Partner1.craReportedIncome" />
+          <zeebe:header key="studentIncomeAppealData" value="$.appeals.studentIncomeAppeal.submittedData" />
+          <zeebe:header key="partnerIncomeAppealData" value="$.appeals.partnerIncomeAppeal.submittedData" />
+          <zeebe:header key="courseLoad" value="$.offering.courseLoad" />
+          <zeebe:header key="weeks" value="$.offering.studyBreaks.totalFundedWeeks" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1ef3map</bpmn:incoming>
@@ -101,7 +271,7 @@
     <bpmn:exclusiveGateway id="first-assessment-gateway" name="First Assessment?">
       <bpmn:incoming>Flow_0rxxozm</bpmn:incoming>
       <bpmn:outgoing>assessment-flow</bpmn:outgoing>
-      <bpmn:outgoing>reassessment-flow</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ozt4pg</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="update-application-status-to-in-progress-task" name="Update Application Status to &#39;In Progress&#39;">
       <bpmn:extensionElements>
@@ -166,21 +336,6 @@
       <bpmn:incoming>Flow_0jrbmj3</bpmn:incoming>
       <bpmn:outgoing>Flow_1rn6agw</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="needs-pir-gateway">
-      <bpmn:incoming>Flow_1a980l7</bpmn:incoming>
-      <bpmn:outgoing>needs-pir-flow</bpmn:outgoing>
-      <bpmn:outgoing>has-offering-flow</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="program-info-not-required-task" name="Program Info not required">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="program-info-request" />
-        <zeebe:taskHeaders>
-          <zeebe:header key="programInfoStatus" value="Not Required" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>has-offering-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_0dwjfv0</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="parents-verification-has-sin-gateway">
       <bpmn:incoming>parents-verification-dependantstatus-dependant-flow</bpmn:incoming>
       <bpmn:outgoing>parents-verification-has-sin-gateway-no-flow</bpmn:outgoing>
@@ -191,9 +346,6 @@
       <bpmn:outgoing>parents-verification-dependantstatus-dependant-flow</bpmn:outgoing>
       <bpmn:outgoing>parents-verification-dependantstatus-independant-flow</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="Event_00m8zji">
-      <bpmn:incoming>reassessment-flow</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:serviceTask id="create-supporting-users-for-parents-task" name="Create supporting users for parent/parents">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="create-supporting-users" />
@@ -319,14 +471,6 @@
       <bpmn:incoming>Flow_1wde0bi</bpmn:incoming>
       <bpmn:outgoing>Flow_0jrbmj3</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:parallelGateway id="Gateway_0jc5bz6">
-      <bpmn:incoming>Flow_1rn6agw</bpmn:incoming>
-      <bpmn:incoming>Flow_1uh1kyu</bpmn:incoming>
-      <bpmn:incoming>Flow_1mbspca</bpmn:incoming>
-      <bpmn:incoming>Flow_0dwjfv0</bpmn:incoming>
-      <bpmn:incoming>pir-pending-completed-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_1w5pc9q</bpmn:outgoing>
-    </bpmn:parallelGateway>
     <bpmn:callActivity id="student-income-verification-task" name="Student Income Verification">
       <bpmn:extensionElements>
         <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
@@ -338,9 +482,21 @@
       <bpmn:incoming>Flow_18qbsu1</bpmn:incoming>
       <bpmn:outgoing>Flow_1mbspca</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:endEvent id="Event_0gqegca">
-      <bpmn:incoming>Flow_1w5pc9q</bpmn:incoming>
-    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="needs-pir-gateway">
+      <bpmn:incoming>Flow_1a980l7</bpmn:incoming>
+      <bpmn:outgoing>needs-pir-flow</bpmn:outgoing>
+      <bpmn:outgoing>has-offering-flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="program-info-not-required-task" name="Program Info not required">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="program-info-request" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="programInfoStatus" value="Not Required" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>has-offering-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_06144it</bpmn:outgoing>
+    </bpmn:serviceTask>
     <bpmn:serviceTask id="program-info-required-task" name="Program Info required">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="program-info-request" />
@@ -384,110 +540,34 @@
       <bpmn:outgoing>pir-pending-completed-flow</bpmn:outgoing>
       <bpmn:outgoing>pir-pending-declined-flow</bpmn:outgoing>
     </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1hgcddi">
+      <bpmn:incoming>Flow_06144it</bpmn:incoming>
+      <bpmn:incoming>pir-pending-completed-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s8wnxz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
     <bpmn:endEvent id="pir-declined-end-event">
       <bpmn:incoming>pir-pending-declined-flow</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1ef3map" sourceRef="assessment-start-event" targetRef="load-assessment-data-task" />
-    <bpmn:sequenceFlow id="Flow_0rxxozm" sourceRef="load-assessment-data-task" targetRef="first-assessment-gateway" />
-    <bpmn:sequenceFlow id="assessment-flow" name="Assessment" sourceRef="first-assessment-gateway" targetRef="update-application-status-to-in-progress-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType = "Original assessment"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="reassessment-flow" name="Reassessment" sourceRef="first-assessment-gateway" targetRef="Event_00m8zji">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType != "Original assessment"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0g1n1dk" sourceRef="update-application-status-to-in-progress-task" targetRef="verify-application-exceptions-task" />
-    <bpmn:sequenceFlow id="verify-application-exceptions-retry-timer-flow" sourceRef="verify-application-exceptions-retry-timer" targetRef="verify-application-exceptions-task" />
-    <bpmn:sequenceFlow id="Flow_04f30nk" sourceRef="verify-application-exceptions-task" targetRef="Gateway_04wt04t" />
-    <bpmn:sequenceFlow id="verify-application-exceptions-pending-flow" name="Pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-pending-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Pending"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="verify-application-exceptions-not-pending-flow" name="Not pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-status-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus != "Pending"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0ws0afg" sourceRef="Event_15lqlgc" targetRef="verify-application-exceptions-status-gateway" />
-    <bpmn:sequenceFlow id="verify-application-exceptions-status-denied-flow" name="Declined" sourceRef="verify-application-exceptions-status-gateway" targetRef="application-exception-end-event">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Declined"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="verify-application-exceptions-status-approved-flow" name="Approved" sourceRef="verify-application-exceptions-status-gateway" targetRef="in-progress-main-parallel-info-gathering-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Approved"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1v0ju0g" sourceRef="verify-application-exceptions-pending-gateway" targetRef="Event_15lqlgc" />
-    <bpmn:sequenceFlow id="Flow_10lg2ud" sourceRef="verify-application-exceptions-pending-gateway" targetRef="verify-application-exceptions-retry-timer" />
-    <bpmn:sequenceFlow id="Flow_1a980l7" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="needs-pir-gateway" />
-    <bpmn:sequenceFlow id="Flow_0v2i46e" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="Gateway_05k6rp7" />
-    <bpmn:sequenceFlow id="Flow_18xo3dr" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="parents-verification-has-dependant-gateway" />
-    <bpmn:sequenceFlow id="Flow_18qbsu1" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="student-income-verification-task" />
-    <bpmn:sequenceFlow id="Flow_0jrbmj3" sourceRef="partner-income-verification-task" targetRef="Gateway_1jdrla2" />
-    <bpmn:sequenceFlow id="Flow_1u0qixu" name="No" sourceRef="Gateway_05k6rp7" targetRef="Gateway_1jdrla2">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=relationshipStatus != "married"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1gii09j" name="Partner do not have SIN" sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isYourSpouseACanadianCitizen != "yes"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1rn6agw" sourceRef="Gateway_1jdrla2" targetRef="Gateway_0jc5bz6" />
-    <bpmn:sequenceFlow id="needs-pir-flow" name="Needs PIR" sourceRef="needs-pir-gateway" targetRef="program-info-required-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=selectedOffering = null</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="has-offering-flow" name="PIR not required" sourceRef="needs-pir-gateway" targetRef="program-info-not-required-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=selectedOffering != null</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0dwjfv0" sourceRef="program-info-not-required-task" targetRef="Gateway_0jc5bz6" />
-    <bpmn:sequenceFlow id="parents-verification-dependantstatus-dependant-flow" name="Dependant" sourceRef="parents-verification-has-dependant-gateway" targetRef="parents-verification-has-sin-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=dependantstatus = "dependant"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="parents-verification-has-sin-gateway-no-flow" name="Parents do not have SIN" sourceRef="parents-verification-has-sin-gateway" targetRef="Gateway_0ny5tkb">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber != "yes"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="parents-verification-has-sin-gateway-yes-flow" name="Parents have SIN" sourceRef="parents-verification-has-sin-gateway" targetRef="create-supporting-users-for-parents-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber = "yes"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="parents-verification-dependantstatus-independant-flow" name="Independant" sourceRef="parents-verification-has-dependant-gateway" targetRef="Gateway_0ny5tkb">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=dependantstatus != "dependant"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0dii2b3" sourceRef="create-supporting-users-for-parents-task" targetRef="Gateway_1mg1n21" />
-    <bpmn:sequenceFlow id="Flow_1u5ion6" sourceRef="Gateway_1mg1n21" targetRef="retrieve-supporting-info-for-parent-1-task" />
-    <bpmn:sequenceFlow id="Flow_1cd204k" sourceRef="Gateway_1mg1n21" targetRef="Gateway_0vft251" />
-    <bpmn:sequenceFlow id="Flow_1lbai2h" name="Yes" sourceRef="Gateway_0vft251" targetRef="retrieve-supporting-info-for-parent-2-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=numberOfParents = 2</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0bo0mn4" name="No" sourceRef="Gateway_0vft251" targetRef="Gateway_00mly8t">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=numberOfParents != 2</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1g59sq3" sourceRef="retrieve-supporting-info-for-parent-1-task" targetRef="parent-1-income-verification-task" />
-    <bpmn:sequenceFlow id="Flow_0l30wbo" sourceRef="retrieve-supporting-info-for-parent-2-task" targetRef="parent-2-income-verification-task" />
-    <bpmn:sequenceFlow id="Flow_1j7i68d" sourceRef="parent-2-income-verification-task" targetRef="Gateway_00mly8t" />
-    <bpmn:sequenceFlow id="Flow_11q8vuj" sourceRef="parent-1-income-verification-task" targetRef="Gateway_0b7tdao" />
-    <bpmn:sequenceFlow id="Flow_0kjnr9t" sourceRef="Gateway_0b7tdao" targetRef="Gateway_0ny5tkb" />
-    <bpmn:sequenceFlow id="Flow_1uh1kyu" sourceRef="Gateway_0ny5tkb" targetRef="Gateway_0jc5bz6" />
-    <bpmn:sequenceFlow id="Flow_19wmdao" sourceRef="Gateway_00mly8t" targetRef="Gateway_0b7tdao" />
-    <bpmn:sequenceFlow id="Flow_0emvz6f" name="Yes" sourceRef="Gateway_05k6rp7" targetRef="Gateway_176fysj">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=relationshipStatus = "married"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_14701yl" name="Has valid SIN" sourceRef="Gateway_176fysj" targetRef="create-supporting-user-for-the-partner-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isYourSpouseACanadianCitizen = "yes"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_03zfrkx" sourceRef="create-supporting-user-for-the-partner-task" targetRef="retrieve-supporting-info-for-partner-activity" />
-    <bpmn:sequenceFlow id="Flow_1wde0bi" sourceRef="retrieve-supporting-info-for-partner-activity" targetRef="partner-income-verification-task" />
-    <bpmn:sequenceFlow id="Flow_1mbspca" sourceRef="student-income-verification-task" targetRef="Gateway_0jc5bz6" />
-    <bpmn:sequenceFlow id="pir-pending-completed-flow" name="Completed" sourceRef="pir-pending-declined-complted-gateway" targetRef="Gateway_0jc5bz6">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Completed"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1w5pc9q" sourceRef="Gateway_0jc5bz6" targetRef="Event_0gqegca" />
-    <bpmn:sequenceFlow id="Flow_1sze0w6" sourceRef="pir-retry-timer" targetRef="program-info-required-task" />
-    <bpmn:sequenceFlow id="Flow_0guy66a" sourceRef="program-info-required-task" targetRef="pir-pending-gateway" />
-    <bpmn:sequenceFlow id="pir-not-completed-flow" name="No" sourceRef="pir-pending-gateway" targetRef="pir-pending-event-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Required"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="pir-completed-flow" name="Yes" sourceRef="pir-pending-gateway" targetRef="Gateway_03gbgqa">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus != "Required"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1ds5r8m" sourceRef="pir-pending-event-gateway" targetRef="pir-retry-timer" />
-    <bpmn:sequenceFlow id="Flow_0joyxdn" sourceRef="pir-pending-event-gateway" targetRef="Event_1ybuc35" />
-    <bpmn:sequenceFlow id="Flow_0cxn3c5" sourceRef="Event_1ybuc35" targetRef="Gateway_03gbgqa" />
-    <bpmn:sequenceFlow id="Flow_0im6s57" sourceRef="Gateway_03gbgqa" targetRef="pir-pending-declined-complted-gateway" />
-    <bpmn:sequenceFlow id="pir-pending-declined-flow" name="Declined" sourceRef="pir-pending-declined-complted-gateway" targetRef="pir-declined-end-event">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Declined"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_16d5gro" sourceRef="Gateway_0jc5bz6" targetRef="Activity_0bbdewz" />
+    <bpmn:parallelGateway id="Gateway_0jc5bz6">
+      <bpmn:incoming>Flow_1rn6agw</bpmn:incoming>
+      <bpmn:incoming>Flow_1uh1kyu</bpmn:incoming>
+      <bpmn:incoming>Flow_1mbspca</bpmn:incoming>
+      <bpmn:incoming>Flow_1s8wnxz</bpmn:incoming>
+      <bpmn:outgoing>Flow_16d5gro</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="Activity_0bbdewz" name="Save disbursement">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="save-disbursement-schedules" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ozt4pg</bpmn:incoming>
+      <bpmn:incoming>Flow_16d5gro</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wed99j</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0wed99j" sourceRef="Activity_0bbdewz" targetRef="Event_0mtgfbi" />
+    <bpmn:endEvent id="Event_0mtgfbi">
+      <bpmn:incoming>Flow_0wed99j</bpmn:incoming>
+    </bpmn:endEvent>
   </bpmn:process>
   <bpmn:message id="Message_1clo0eh" name="pir-complete">
     <bpmn:extensionElements>
@@ -515,373 +595,84 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0z9wj8q">
       <bpmndi:BPMNShape id="Participant_0y53svc_di" bpmnElement="application-in-progress" isHorizontal="true">
-        <dc:Bounds x="170" y="80" width="2370" height="1370" />
+        <dc:Bounds x="153" y="120" width="3697" height="1620" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0lvs868_di" bpmnElement="Lane_0lvs868" isHorizontal="true">
-        <dc:Bounds x="200" y="80" width="2340" height="1370" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="assessment-start-event">
-        <dc:Bounds x="233" y="583" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1c0zwzl_di" bpmnElement="load-assessment-data-task">
-        <dc:Bounds x="321" y="561" width="100" height="80" />
+        <dc:Bounds x="183" y="120" width="3667" height="1370" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1c05kxg_di" bpmnElement="first-assessment-gateway" isMarkerVisible="true">
-        <dc:Bounds x="455" y="576" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="437" y="557" width="90" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1f1vf25_di" bpmnElement="update-application-status-to-in-progress-task">
-        <dc:Bounds x="590" y="561" width="100" height="80" />
+      <bpmndi:BPMNShape id="Lane_1bfd2e9_di" bpmnElement="Lane_1bfd2e9" isHorizontal="true">
+        <dc:Bounds x="183" y="1490" width="3667" height="250" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1801h2l" bpmnElement="verify-application-exceptions-task">
-        <dc:Bounds x="730" y="561" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_04wt04t_di" bpmnElement="Gateway_04wt04t" isMarkerVisible="true">
-        <dc:Bounds x="865" y="576" width="50" height="50" />
+      <bpmndi:BPMNEdge id="Flow_0kk35bl_di" bpmnElement="pir-pending-declined-flow">
+        <di:waypoint x="1879" y="289" />
+        <di:waypoint x="1879" y="270" />
+        <di:waypoint x="1962" y="270" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="863" y="625" width="54" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_18nbhar_di" bpmnElement="verify-application-exceptions-status-gateway" isMarkerVisible="true">
-        <dc:Bounds x="1102" y="576" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_13zjxus_di" bpmnElement="verify-application-exceptions-pending-gateway">
-        <dc:Bounds x="971" y="576" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_15lqlgc_di" bpmnElement="Event_15lqlgc">
-        <dc:Bounds x="1044" y="583" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0f2fffe_di" bpmnElement="verify-application-exceptions-retry-timer">
-        <dc:Bounds x="978" y="661" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1472xxr_di" bpmnElement="in-progress-main-parallel-info-gathering-gateway">
-        <dc:Bounds x="1225" y="576" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_016am96_di" bpmnElement="application-exception-end-event">
-        <dc:Bounds x="1109" y="722" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0fi04ur" bpmnElement="Gateway_1jdrla2" isMarkerVisible="true">
-        <dc:Bounds x="1875" y="865" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0ok14a1_di" bpmnElement="needs-pir-gateway" isMarkerVisible="true">
-        <dc:Bounds x="1339" y="335" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0586pn4" bpmnElement="program-info-not-required-task">
-        <dc:Bounds x="1500" y="380" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1rzuwqb" bpmnElement="parents-verification-has-sin-gateway" isMarkerVisible="true">
-        <dc:Bounds x="1391" y="1178" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1rt1s2i_di" bpmnElement="parents-verification-has-dependant-gateway" isMarkerVisible="true">
-        <dc:Bounds x="1303" y="1325" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_00m8zji_di" bpmnElement="Event_00m8zji">
-        <dc:Bounds x="552" y="752" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1vqjy4s_di" bpmnElement="create-supporting-users-for-parents-task">
-        <dc:Bounds x="1480" y="1110" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0h1soz3_di" bpmnElement="Gateway_1mg1n21">
-        <dc:Bounds x="1606" y="1125" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0vft251_di" bpmnElement="Gateway_0vft251" isMarkerVisible="true">
-        <dc:Bounds x="1655" y="1195" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1650" y="1167" width="59" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0mtktoi" bpmnElement="retrieve-supporting-info-for-parent-1-task">
-        <dc:Bounds x="1740" y="1060" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1k3ypvz" bpmnElement="retrieve-supporting-info-for-parent-2-task">
-        <dc:Bounds x="1740" y="1180" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0dtll1x" bpmnElement="parent-2-income-verification-task">
-        <dc:Bounds x="1880" y="1180" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_03h2twt" bpmnElement="parent-1-income-verification-task">
-        <dc:Bounds x="1880" y="1060" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0cru9d8" bpmnElement="Gateway_0ny5tkb" isMarkerVisible="true">
-        <dc:Bounds x="2091" y="1325" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_09hdbny" bpmnElement="Gateway_0b7tdao">
-        <dc:Bounds x="2055" y="1125" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_00mly8t_di" bpmnElement="Gateway_00mly8t" isMarkerVisible="true">
-        <dc:Bounds x="2009" y="1195" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_05k6rp7_di" bpmnElement="Gateway_05k6rp7" isMarkerVisible="true">
-        <dc:Bounds x="1303" y="865" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1331" y="853" width="65" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_166k2o1" bpmnElement="Gateway_176fysj" isMarkerVisible="true">
-        <dc:Bounds x="1365" y="765" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1sauqjd" bpmnElement="create-supporting-user-for-the-partner-task">
-        <dc:Bounds x="1487" y="750" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_02m7l5a" bpmnElement="retrieve-supporting-info-for-partner-activity">
-        <dc:Bounds x="1629" y="750" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1c34e2g" bpmnElement="partner-income-verification-task">
-        <dc:Bounds x="1770" y="750" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0gfaqjk" bpmnElement="Gateway_0jc5bz6">
-        <dc:Bounds x="2325" y="577" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1r6pjw3" bpmnElement="student-income-verification-task">
-        <dc:Bounds x="1610" y="562" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0gqegca_di" bpmnElement="Event_0gqegca">
-        <dc:Bounds x="2432" y="584" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1xl0e41" bpmnElement="program-info-required-task">
-        <dc:Bounds x="1500" y="274" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0wr2q0z" bpmnElement="pir-pending-gateway" isMarkerVisible="true">
-        <dc:Bounds x="1635" y="289" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1688" y="307" width="60" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_067eupg" bpmnElement="pir-retry-timer">
-        <dc:Bounds x="1613" y="208" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0eqleha" bpmnElement="pir-pending-event-gateway">
-        <dc:Bounds x="1705" y="245" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0bp5jx2" bpmnElement="Event_1ybuc35">
-        <dc:Bounds x="1782" y="252" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0aapx4s" bpmnElement="Gateway_03gbgqa" isMarkerVisible="true">
-        <dc:Bounds x="1828" y="289" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_08n3kld_di" bpmnElement="pir-pending-declined-complted-gateway" isMarkerVisible="true">
-        <dc:Bounds x="1904" y="289" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1sbole4_di" bpmnElement="pir-declined-end-event">
-        <dc:Bounds x="2432" y="252" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1ef3map_di" bpmnElement="Flow_1ef3map">
-        <di:waypoint x="269" y="601" />
-        <di:waypoint x="321" y="601" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0rxxozm_di" bpmnElement="Flow_0rxxozm">
-        <di:waypoint x="421" y="601" />
-        <di:waypoint x="455" y="601" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_07vurqq_di" bpmnElement="assessment-flow">
-        <di:waypoint x="505" y="601" />
-        <di:waypoint x="590" y="601" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="511" y="583" width="60" height="14" />
+          <dc:Bounds x="1898" y="253" width="43" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_07y6i5c_di" bpmnElement="reassessment-flow">
-        <di:waypoint x="480" y="626" />
-        <di:waypoint x="480" y="770" />
-        <di:waypoint x="552" y="770" />
+      <bpmndi:BPMNEdge id="Flow_1mbspca_di" bpmnElement="Flow_1mbspca">
+        <di:waypoint x="1710" y="602" />
+        <di:waypoint x="2265" y="602" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wde0bi_di" bpmnElement="Flow_1wde0bi">
+        <di:waypoint x="1729" y="790" />
+        <di:waypoint x="1770" y="790" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03zfrkx_di" bpmnElement="Flow_03zfrkx">
+        <di:waypoint x="1587" y="790" />
+        <di:waypoint x="1629" y="790" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14701yl_di" bpmnElement="Flow_14701yl">
+        <di:waypoint x="1415" y="790" />
+        <di:waypoint x="1487" y="790" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="484" y="675" width="73" height="14" />
+          <dc:Bounds x="1412" y="773" width="67" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0g1n1dk_di" bpmnElement="Flow_0g1n1dk">
-        <di:waypoint x="690" y="601" />
-        <di:waypoint x="730" y="601" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0mjvscf_di" bpmnElement="verify-application-exceptions-retry-timer-flow">
-        <di:waypoint x="978" y="679" />
-        <di:waypoint x="780" y="679" />
-        <di:waypoint x="780" y="641" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_04f30nk_di" bpmnElement="Flow_04f30nk">
-        <di:waypoint x="830" y="601" />
-        <di:waypoint x="865" y="601" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_031ttjr_di" bpmnElement="verify-application-exceptions-pending-flow">
-        <di:waypoint x="915" y="601" />
-        <di:waypoint x="971" y="601" />
+      <bpmndi:BPMNEdge id="Flow_0emvz6f_di" bpmnElement="Flow_0emvz6f">
+        <di:waypoint x="1328" y="865" />
+        <di:waypoint x="1328" y="790" />
+        <di:waypoint x="1365" y="790" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="917" y="587" width="41" height="14" />
+          <dc:Bounds x="1329" y="773" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1a8bc8b_di" bpmnElement="verify-application-exceptions-not-pending-flow">
-        <di:waypoint x="890" y="576" />
-        <di:waypoint x="890" y="540" />
-        <di:waypoint x="1127" y="540" />
-        <di:waypoint x="1127" y="576" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="960" y="522" width="60" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_19wmdao_di" bpmnElement="Flow_19wmdao">
+        <di:waypoint x="2059" y="1220" />
+        <di:waypoint x="2080" y="1220" />
+        <di:waypoint x="2080" y="1175" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ws0afg_di" bpmnElement="Flow_0ws0afg">
-        <di:waypoint x="1080" y="601" />
-        <di:waypoint x="1102" y="601" />
+      <bpmndi:BPMNEdge id="Flow_1uh1kyu_di" bpmnElement="Flow_1uh1kyu">
+        <di:waypoint x="2141" y="1350" />
+        <di:waypoint x="2220" y="1350" />
+        <di:waypoint x="2220" y="602" />
+        <di:waypoint x="2265" y="602" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_10abeca_di" bpmnElement="verify-application-exceptions-status-denied-flow">
-        <di:waypoint x="1127" y="626" />
-        <di:waypoint x="1127" y="722" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1130" y="663" width="43" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_0kjnr9t_di" bpmnElement="Flow_0kjnr9t">
+        <di:waypoint x="2105" y="1150" />
+        <di:waypoint x="2116" y="1150" />
+        <di:waypoint x="2116" y="1325" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1pm5g4l_di" bpmnElement="verify-application-exceptions-status-approved-flow">
-        <di:waypoint x="1152" y="601" />
-        <di:waypoint x="1225" y="601" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1158" y="583" width="47" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_11q8vuj_di" bpmnElement="Flow_11q8vuj">
+        <di:waypoint x="1980" y="1100" />
+        <di:waypoint x="2080" y="1100" />
+        <di:waypoint x="2080" y="1125" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1v0ju0g_di" bpmnElement="Flow_1v0ju0g">
-        <di:waypoint x="1021" y="601" />
-        <di:waypoint x="1044" y="601" />
+      <bpmndi:BPMNEdge id="Flow_1j7i68d_di" bpmnElement="Flow_1j7i68d">
+        <di:waypoint x="1980" y="1220" />
+        <di:waypoint x="2009" y="1220" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_10lg2ud_di" bpmnElement="Flow_10lg2ud">
-        <di:waypoint x="996" y="626" />
-        <di:waypoint x="996" y="661" />
+      <bpmndi:BPMNEdge id="Flow_0l30wbo_di" bpmnElement="Flow_0l30wbo">
+        <di:waypoint x="1840" y="1220" />
+        <di:waypoint x="1880" y="1220" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1a980l7_di" bpmnElement="Flow_1a980l7">
-        <di:waypoint x="1250" y="576" />
-        <di:waypoint x="1250" y="360" />
-        <di:waypoint x="1339" y="360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0v2i46e_di" bpmnElement="Flow_0v2i46e">
-        <di:waypoint x="1250" y="626" />
-        <di:waypoint x="1250" y="890" />
-        <di:waypoint x="1303" y="890" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_18xo3dr_di" bpmnElement="Flow_18xo3dr">
-        <di:waypoint x="1250" y="626" />
-        <di:waypoint x="1250" y="1350" />
-        <di:waypoint x="1303" y="1350" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_18qbsu1_di" bpmnElement="Flow_18qbsu1">
-        <di:waypoint x="1275" y="601" />
-        <di:waypoint x="1610" y="601" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0jrbmj3_di" bpmnElement="Flow_0jrbmj3">
-        <di:waypoint x="1870" y="790" />
-        <di:waypoint x="1900" y="790" />
-        <di:waypoint x="1900" y="865" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1u0qixu_di" bpmnElement="Flow_1u0qixu">
-        <di:waypoint x="1328" y="915" />
-        <di:waypoint x="1328" y="950" />
-        <di:waypoint x="1900" y="950" />
-        <di:waypoint x="1900" y="915" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1336" y="932" width="15" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1gii09j_di" bpmnElement="Flow_1gii09j">
-        <di:waypoint x="1390" y="815" />
-        <di:waypoint x="1390" y="890" />
-        <di:waypoint x="1875" y="890" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1577" y="877" width="70" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1rn6agw_di" bpmnElement="Flow_1rn6agw">
-        <di:waypoint x="1925" y="890" />
-        <di:waypoint x="2270" y="890" />
-        <di:waypoint x="2270" y="602" />
-        <di:waypoint x="2325" y="602" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_11vpdhg_di" bpmnElement="needs-pir-flow">
-        <di:waypoint x="1364" y="335" />
-        <di:waypoint x="1364" y="314" />
-        <di:waypoint x="1500" y="314" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1369" y="297" width="54" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_04jxppm_di" bpmnElement="has-offering-flow">
-        <di:waypoint x="1364" y="385" />
-        <di:waypoint x="1364" y="420" />
-        <di:waypoint x="1500" y="420" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1369" y="404" width="81" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0dwjfv0_di" bpmnElement="Flow_0dwjfv0">
-        <di:waypoint x="1600" y="420" />
-        <di:waypoint x="2300" y="420" />
-        <di:waypoint x="2300" y="602" />
-        <di:waypoint x="2325" y="602" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0j75jrb_di" bpmnElement="parents-verification-dependantstatus-dependant-flow">
-        <di:waypoint x="1328" y="1325" />
-        <di:waypoint x="1328" y="1203" />
-        <di:waypoint x="1391" y="1203" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1329" y="1188" width="54" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_04z5bpg_di" bpmnElement="parents-verification-has-sin-gateway-no-flow">
-        <di:waypoint x="1416" y="1228" />
-        <di:waypoint x="1416" y="1350" />
-        <di:waypoint x="2091" y="1350" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1437" y="1337" width="72" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ecfi2l_di" bpmnElement="parents-verification-has-sin-gateway-yes-flow">
-        <di:waypoint x="1416" y="1178" />
-        <di:waypoint x="1416" y="1150" />
-        <di:waypoint x="1480" y="1150" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1371" y="1130" width="87" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0u84es9_di" bpmnElement="parents-verification-dependantstatus-independant-flow">
-        <di:waypoint x="1328" y="1375" />
-        <di:waypoint x="1328" y="1410" />
-        <di:waypoint x="2116" y="1410" />
-        <di:waypoint x="2116" y="1375" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1355" y="1383" width="62" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0dii2b3_di" bpmnElement="Flow_0dii2b3">
-        <di:waypoint x="1580" y="1150" />
-        <di:waypoint x="1606" y="1150" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1u5ion6_di" bpmnElement="Flow_1u5ion6">
-        <di:waypoint x="1631" y="1125" />
-        <di:waypoint x="1631" y="1100" />
-        <di:waypoint x="1740" y="1100" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1cd204k_di" bpmnElement="Flow_1cd204k">
-        <di:waypoint x="1631" y="1175" />
-        <di:waypoint x="1631" y="1220" />
-        <di:waypoint x="1655" y="1220" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1lbai2h_di" bpmnElement="Flow_1lbai2h">
-        <di:waypoint x="1705" y="1220" />
-        <di:waypoint x="1740" y="1220" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1707" y="1205" width="18" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_1g59sq3_di" bpmnElement="Flow_1g59sq3">
+        <di:waypoint x="1840" y="1100" />
+        <di:waypoint x="1880" y="1100" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0bo0mn4_di" bpmnElement="Flow_0bo0mn4">
         <di:waypoint x="1680" y="1245" />
@@ -892,131 +683,438 @@
           <dc:Bounds x="1682" y="1263" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1g59sq3_di" bpmnElement="Flow_1g59sq3">
-        <di:waypoint x="1840" y="1100" />
-        <di:waypoint x="1880" y="1100" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0l30wbo_di" bpmnElement="Flow_0l30wbo">
-        <di:waypoint x="1840" y="1220" />
-        <di:waypoint x="1880" y="1220" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1j7i68d_di" bpmnElement="Flow_1j7i68d">
-        <di:waypoint x="1980" y="1220" />
-        <di:waypoint x="2009" y="1220" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_11q8vuj_di" bpmnElement="Flow_11q8vuj">
-        <di:waypoint x="1980" y="1100" />
-        <di:waypoint x="2080" y="1100" />
-        <di:waypoint x="2080" y="1125" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0kjnr9t_di" bpmnElement="Flow_0kjnr9t">
-        <di:waypoint x="2105" y="1150" />
-        <di:waypoint x="2116" y="1150" />
-        <di:waypoint x="2116" y="1325" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1uh1kyu_di" bpmnElement="Flow_1uh1kyu">
-        <di:waypoint x="2141" y="1350" />
-        <di:waypoint x="2270" y="1350" />
-        <di:waypoint x="2270" y="602" />
-        <di:waypoint x="2325" y="602" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_19wmdao_di" bpmnElement="Flow_19wmdao">
-        <di:waypoint x="2059" y="1220" />
-        <di:waypoint x="2080" y="1220" />
-        <di:waypoint x="2080" y="1175" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0emvz6f_di" bpmnElement="Flow_0emvz6f">
-        <di:waypoint x="1328" y="865" />
-        <di:waypoint x="1328" y="790" />
-        <di:waypoint x="1365" y="790" />
+      <bpmndi:BPMNEdge id="Flow_1lbai2h_di" bpmnElement="Flow_1lbai2h">
+        <di:waypoint x="1705" y="1220" />
+        <di:waypoint x="1740" y="1220" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1329" y="773" width="18" height="14" />
+          <dc:Bounds x="1707" y="1205" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_14701yl_di" bpmnElement="Flow_14701yl">
-        <di:waypoint x="1415" y="790" />
-        <di:waypoint x="1487" y="790" />
+      <bpmndi:BPMNEdge id="Flow_1cd204k_di" bpmnElement="Flow_1cd204k">
+        <di:waypoint x="1631" y="1175" />
+        <di:waypoint x="1631" y="1220" />
+        <di:waypoint x="1655" y="1220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u5ion6_di" bpmnElement="Flow_1u5ion6">
+        <di:waypoint x="1631" y="1125" />
+        <di:waypoint x="1631" y="1100" />
+        <di:waypoint x="1740" y="1100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dii2b3_di" bpmnElement="Flow_0dii2b3">
+        <di:waypoint x="1580" y="1150" />
+        <di:waypoint x="1606" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0u84es9_di" bpmnElement="parents-verification-dependantstatus-independant-flow">
+        <di:waypoint x="1328" y="1375" />
+        <di:waypoint x="1328" y="1410" />
+        <di:waypoint x="2116" y="1410" />
+        <di:waypoint x="2116" y="1375" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1412" y="773" width="67" height="14" />
+          <dc:Bounds x="1355" y="1383" width="63" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_03zfrkx_di" bpmnElement="Flow_03zfrkx">
-        <di:waypoint x="1587" y="790" />
-        <di:waypoint x="1629" y="790" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1wde0bi_di" bpmnElement="Flow_1wde0bi">
-        <di:waypoint x="1729" y="790" />
-        <di:waypoint x="1770" y="790" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1mbspca_di" bpmnElement="Flow_1mbspca">
-        <di:waypoint x="1710" y="602" />
-        <di:waypoint x="2325" y="602" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_04dns6s_di" bpmnElement="pir-pending-completed-flow">
-        <di:waypoint x="1929" y="339" />
-        <di:waypoint x="1929" y="370" />
-        <di:waypoint x="2350" y="370" />
-        <di:waypoint x="2350" y="577" />
+      <bpmndi:BPMNEdge id="Flow_0ecfi2l_di" bpmnElement="parents-verification-has-sin-gateway-yes-flow">
+        <di:waypoint x="1416" y="1178" />
+        <di:waypoint x="1416" y="1150" />
+        <di:waypoint x="1480" y="1150" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1942" y="354" width="54" height="14" />
+          <dc:Bounds x="1371" y="1130" width="87" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1w5pc9q_di" bpmnElement="Flow_1w5pc9q">
-        <di:waypoint x="2375" y="602" />
-        <di:waypoint x="2432" y="602" />
+      <bpmndi:BPMNEdge id="Flow_04z5bpg_di" bpmnElement="parents-verification-has-sin-gateway-no-flow">
+        <di:waypoint x="1416" y="1228" />
+        <di:waypoint x="1416" y="1350" />
+        <di:waypoint x="2091" y="1350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1437" y="1337" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j75jrb_di" bpmnElement="parents-verification-dependantstatus-dependant-flow">
+        <di:waypoint x="1328" y="1325" />
+        <di:waypoint x="1328" y="1203" />
+        <di:waypoint x="1391" y="1203" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1329" y="1188" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rn6agw_di" bpmnElement="Flow_1rn6agw">
+        <di:waypoint x="1925" y="890" />
+        <di:waypoint x="2220" y="890" />
+        <di:waypoint x="2220" y="602" />
+        <di:waypoint x="2265" y="602" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gii09j_di" bpmnElement="Flow_1gii09j">
+        <di:waypoint x="1390" y="815" />
+        <di:waypoint x="1390" y="890" />
+        <di:waypoint x="1875" y="890" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1577" y="877" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u0qixu_di" bpmnElement="Flow_1u0qixu">
+        <di:waypoint x="1328" y="915" />
+        <di:waypoint x="1328" y="950" />
+        <di:waypoint x="1900" y="950" />
+        <di:waypoint x="1900" y="915" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1336" y="932" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jrbmj3_di" bpmnElement="Flow_0jrbmj3">
+        <di:waypoint x="1870" y="790" />
+        <di:waypoint x="1900" y="790" />
+        <di:waypoint x="1900" y="865" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18qbsu1_di" bpmnElement="Flow_18qbsu1">
+        <di:waypoint x="1275" y="601" />
+        <di:waypoint x="1610" y="601" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18xo3dr_di" bpmnElement="Flow_18xo3dr">
+        <di:waypoint x="1250" y="626" />
+        <di:waypoint x="1250" y="1350" />
+        <di:waypoint x="1303" y="1350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v2i46e_di" bpmnElement="Flow_0v2i46e">
+        <di:waypoint x="1250" y="626" />
+        <di:waypoint x="1250" y="890" />
+        <di:waypoint x="1303" y="890" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a980l7_di" bpmnElement="Flow_1a980l7">
+        <di:waypoint x="1250" y="576" />
+        <di:waypoint x="1250" y="360" />
+        <di:waypoint x="1339" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10lg2ud_di" bpmnElement="Flow_10lg2ud">
+        <di:waypoint x="996" y="626" />
+        <di:waypoint x="996" y="661" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v0ju0g_di" bpmnElement="Flow_1v0ju0g">
+        <di:waypoint x="1021" y="601" />
+        <di:waypoint x="1044" y="601" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pm5g4l_di" bpmnElement="verify-application-exceptions-status-approved-flow">
+        <di:waypoint x="1152" y="601" />
+        <di:waypoint x="1225" y="601" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1158" y="583" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10abeca_di" bpmnElement="verify-application-exceptions-status-denied-flow">
+        <di:waypoint x="1127" y="626" />
+        <di:waypoint x="1127" y="722" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1130" y="663" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ws0afg_di" bpmnElement="Flow_0ws0afg">
+        <di:waypoint x="1080" y="601" />
+        <di:waypoint x="1102" y="601" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a8bc8b_di" bpmnElement="verify-application-exceptions-not-pending-flow">
+        <di:waypoint x="890" y="576" />
+        <di:waypoint x="890" y="540" />
+        <di:waypoint x="1127" y="540" />
+        <di:waypoint x="1127" y="576" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="960" y="522" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_031ttjr_di" bpmnElement="verify-application-exceptions-pending-flow">
+        <di:waypoint x="915" y="601" />
+        <di:waypoint x="971" y="601" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="917" y="587" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04f30nk_di" bpmnElement="Flow_04f30nk">
+        <di:waypoint x="830" y="601" />
+        <di:waypoint x="865" y="601" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mjvscf_di" bpmnElement="verify-application-exceptions-retry-timer-flow">
+        <di:waypoint x="978" y="679" />
+        <di:waypoint x="780" y="679" />
+        <di:waypoint x="780" y="641" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g1n1dk_di" bpmnElement="Flow_0g1n1dk">
+        <di:waypoint x="690" y="601" />
+        <di:waypoint x="730" y="601" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07vurqq_di" bpmnElement="assessment-flow">
+        <di:waypoint x="505" y="601" />
+        <di:waypoint x="590" y="601" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="511" y="583" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rxxozm_di" bpmnElement="Flow_0rxxozm">
+        <di:waypoint x="421" y="601" />
+        <di:waypoint x="455" y="601" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ef3map_di" bpmnElement="Flow_1ef3map">
+        <di:waypoint x="269" y="601" />
+        <di:waypoint x="321" y="601" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s8wnxz_di" bpmnElement="Flow_1s8wnxz">
+        <di:waypoint x="1985" y="360" />
+        <di:waypoint x="2220" y="360" />
+        <di:waypoint x="2220" y="602" />
+        <di:waypoint x="2265" y="602" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11vpdhg_di" bpmnElement="needs-pir-flow">
+        <di:waypoint x="1364" y="335" />
+        <di:waypoint x="1364" y="314" />
+        <di:waypoint x="1450" y="314" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1359" y="297" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04jxppm_di" bpmnElement="has-offering-flow">
+        <di:waypoint x="1364" y="385" />
+        <di:waypoint x="1364" y="420" />
+        <di:waypoint x="1450" y="420" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1354" y="404" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06144it_di" bpmnElement="Flow_06144it">
+        <di:waypoint x="1550" y="420" />
+        <di:waypoint x="1960" y="420" />
+        <di:waypoint x="1960" y="385" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1vq41fx" bpmnElement="Flow_1sze0w6">
-        <di:waypoint x="1613" y="226" />
-        <di:waypoint x="1550" y="226" />
-        <di:waypoint x="1550" y="274" />
+        <di:waypoint x="1563" y="226" />
+        <di:waypoint x="1500" y="226" />
+        <di:waypoint x="1500" y="274" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_19h509o" bpmnElement="Flow_0guy66a">
-        <di:waypoint x="1600" y="314" />
-        <di:waypoint x="1635" y="314" />
+        <di:waypoint x="1550" y="314" />
+        <di:waypoint x="1585" y="314" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0wuxwbg" bpmnElement="pir-not-completed-flow">
-        <di:waypoint x="1660" y="289" />
-        <di:waypoint x="1660" y="270" />
-        <di:waypoint x="1705" y="270" />
+        <di:waypoint x="1610" y="289" />
+        <di:waypoint x="1610" y="270" />
+        <di:waypoint x="1655" y="270" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1662" y="253" width="15" height="14" />
+          <dc:Bounds x="1612" y="253" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0upvdry_di" bpmnElement="pir-completed-flow">
-        <di:waypoint x="1660" y="339" />
-        <di:waypoint x="1660" y="370" />
-        <di:waypoint x="1853" y="370" />
-        <di:waypoint x="1853" y="339" />
+        <di:waypoint x="1610" y="339" />
+        <di:waypoint x="1610" y="370" />
+        <di:waypoint x="1803" y="370" />
+        <di:waypoint x="1803" y="339" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1663" y="354" width="18" height="14" />
+          <dc:Bounds x="1613" y="354" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0vt8krb" bpmnElement="Flow_1ds5r8m">
-        <di:waypoint x="1730" y="245" />
-        <di:waypoint x="1730" y="226" />
-        <di:waypoint x="1649" y="226" />
+        <di:waypoint x="1680" y="245" />
+        <di:waypoint x="1680" y="226" />
+        <di:waypoint x="1599" y="226" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0xk4tav" bpmnElement="Flow_0joyxdn">
-        <di:waypoint x="1755" y="270" />
-        <di:waypoint x="1782" y="270" />
+        <di:waypoint x="1705" y="270" />
+        <di:waypoint x="1732" y="270" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0cxn3c5_di" bpmnElement="Flow_0cxn3c5">
-        <di:waypoint x="1818" y="270" />
-        <di:waypoint x="1853" y="270" />
-        <di:waypoint x="1853" y="289" />
+        <di:waypoint x="1768" y="270" />
+        <di:waypoint x="1803" y="270" />
+        <di:waypoint x="1803" y="289" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0im6s57_di" bpmnElement="Flow_0im6s57">
-        <di:waypoint x="1878" y="314" />
-        <di:waypoint x="1904" y="314" />
+        <di:waypoint x="1828" y="314" />
+        <di:waypoint x="1854" y="314" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0kk35bl_di" bpmnElement="pir-pending-declined-flow">
-        <di:waypoint x="1929" y="289" />
-        <di:waypoint x="1929" y="270" />
-        <di:waypoint x="2432" y="270" />
+      <bpmndi:BPMNEdge id="Flow_04dns6s_di" bpmnElement="pir-pending-completed-flow">
+        <di:waypoint x="1904" y="314" />
+        <di:waypoint x="1960" y="314" />
+        <di:waypoint x="1960" y="335" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1938" y="253" width="43" height="14" />
+          <dc:Bounds x="1903" y="297" width="54" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ozt4pg_di" bpmnElement="Flow_0ozt4pg">
+        <di:waypoint x="480" y="626" />
+        <di:waypoint x="480" y="1620" />
+        <di:waypoint x="2300" y="1620" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="483" y="673" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16d5gro_di" bpmnElement="Flow_16d5gro">
+        <di:waypoint x="2315" y="602" />
+        <di:waypoint x="2340" y="602" />
+        <di:waypoint x="2340" y="1580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wed99j_di" bpmnElement="Flow_0wed99j">
+        <di:waypoint x="2400" y="1620" />
+        <di:waypoint x="2582" y="1620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1sbole4_di" bpmnElement="pir-declined-end-event">
+        <dc:Bounds x="1962" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1hgcddi_di" bpmnElement="Gateway_1hgcddi" isMarkerVisible="true">
+        <dc:Bounds x="1935" y="335" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_08n3kld_di" bpmnElement="pir-pending-declined-complted-gateway" isMarkerVisible="true">
+        <dc:Bounds x="1854" y="289" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0aapx4s" bpmnElement="Gateway_03gbgqa" isMarkerVisible="true">
+        <dc:Bounds x="1778" y="289" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0bp5jx2" bpmnElement="Event_1ybuc35">
+        <dc:Bounds x="1732" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0eqleha" bpmnElement="pir-pending-event-gateway">
+        <dc:Bounds x="1655" y="245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_067eupg" bpmnElement="pir-retry-timer">
+        <dc:Bounds x="1563" y="208" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0wr2q0z" bpmnElement="pir-pending-gateway" isMarkerVisible="true">
+        <dc:Bounds x="1585" y="289" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1638" y="307" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1xl0e41" bpmnElement="program-info-required-task">
+        <dc:Bounds x="1450" y="274" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0586pn4" bpmnElement="program-info-not-required-task">
+        <dc:Bounds x="1450" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0ok14a1_di" bpmnElement="needs-pir-gateway" isMarkerVisible="true">
+        <dc:Bounds x="1339" y="335" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1r6pjw3" bpmnElement="student-income-verification-task">
+        <dc:Bounds x="1610" y="562" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1c34e2g" bpmnElement="partner-income-verification-task">
+        <dc:Bounds x="1770" y="750" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_02m7l5a" bpmnElement="retrieve-supporting-info-for-partner-activity">
+        <dc:Bounds x="1629" y="750" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1sauqjd" bpmnElement="create-supporting-user-for-the-partner-task">
+        <dc:Bounds x="1487" y="750" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_166k2o1" bpmnElement="Gateway_176fysj" isMarkerVisible="true">
+        <dc:Bounds x="1365" y="765" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_05k6rp7_di" bpmnElement="Gateway_05k6rp7" isMarkerVisible="true">
+        <dc:Bounds x="1303" y="865" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1331" y="853" width="65" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_00mly8t_di" bpmnElement="Gateway_00mly8t" isMarkerVisible="true">
+        <dc:Bounds x="2009" y="1195" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_09hdbny" bpmnElement="Gateway_0b7tdao">
+        <dc:Bounds x="2055" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0cru9d8" bpmnElement="Gateway_0ny5tkb" isMarkerVisible="true">
+        <dc:Bounds x="2091" y="1325" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_03h2twt" bpmnElement="parent-1-income-verification-task">
+        <dc:Bounds x="1880" y="1060" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0dtll1x" bpmnElement="parent-2-income-verification-task">
+        <dc:Bounds x="1880" y="1180" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1k3ypvz" bpmnElement="retrieve-supporting-info-for-parent-2-task">
+        <dc:Bounds x="1740" y="1180" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0mtktoi" bpmnElement="retrieve-supporting-info-for-parent-1-task">
+        <dc:Bounds x="1740" y="1060" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0vft251_di" bpmnElement="Gateway_0vft251" isMarkerVisible="true">
+        <dc:Bounds x="1655" y="1195" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1650" y="1167" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0h1soz3_di" bpmnElement="Gateway_1mg1n21">
+        <dc:Bounds x="1606" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1vqjy4s_di" bpmnElement="create-supporting-users-for-parents-task">
+        <dc:Bounds x="1480" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1rt1s2i_di" bpmnElement="parents-verification-has-dependant-gateway" isMarkerVisible="true">
+        <dc:Bounds x="1303" y="1325" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1rzuwqb" bpmnElement="parents-verification-has-sin-gateway" isMarkerVisible="true">
+        <dc:Bounds x="1391" y="1178" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0fi04ur" bpmnElement="Gateway_1jdrla2" isMarkerVisible="true">
+        <dc:Bounds x="1875" y="865" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_016am96_di" bpmnElement="application-exception-end-event">
+        <dc:Bounds x="1109" y="722" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1472xxr_di" bpmnElement="in-progress-main-parallel-info-gathering-gateway">
+        <dc:Bounds x="1225" y="576" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0f2fffe_di" bpmnElement="verify-application-exceptions-retry-timer">
+        <dc:Bounds x="978" y="661" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_15lqlgc_di" bpmnElement="Event_15lqlgc">
+        <dc:Bounds x="1044" y="583" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_13zjxus_di" bpmnElement="verify-application-exceptions-pending-gateway">
+        <dc:Bounds x="971" y="576" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_18nbhar_di" bpmnElement="verify-application-exceptions-status-gateway" isMarkerVisible="true">
+        <dc:Bounds x="1102" y="576" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_04wt04t_di" bpmnElement="Gateway_04wt04t" isMarkerVisible="true">
+        <dc:Bounds x="865" y="576" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="864" y="625" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1801h2l" bpmnElement="verify-application-exceptions-task">
+        <dc:Bounds x="730" y="561" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1f1vf25_di" bpmnElement="update-application-status-to-in-progress-task">
+        <dc:Bounds x="590" y="561" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1c05kxg_di" bpmnElement="first-assessment-gateway" isMarkerVisible="true">
+        <dc:Bounds x="455" y="576" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="437" y="557" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1c0zwzl_di" bpmnElement="load-assessment-data-task">
+        <dc:Bounds x="321" y="561" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="assessment-start-event">
+        <dc:Bounds x="233" y="583" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0gfaqjk" bpmnElement="Gateway_0jc5bz6">
+        <dc:Bounds x="2265" y="577" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1rrwclw" bpmnElement="Activity_0bbdewz">
+        <dc:Bounds x="2300" y="1580" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0mtgfbi_di" bpmnElement="Event_0mtgfbi">
+        <dc:Bounds x="2582" y="1602" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_1k2osho_di" bpmnElement="Group_1k2osho">
         <dc:Bounds x="1290" y="150" width="750" height="340" />
         <bpmndi:BPMNLabel>
@@ -1036,9 +1134,9 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0mw83as" bpmnElement="Group_0ldd4rw">
-        <dc:Bounds x="1290" y="1000" width="900" height="430" />
+        <dc:Bounds x="1290" y="1000" width="880" height="430" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1701" y="1006" width="78" height="27" />
+          <dc:Bounds x="1691" y="1006" width="78" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

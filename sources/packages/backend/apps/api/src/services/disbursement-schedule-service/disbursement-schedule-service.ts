@@ -67,6 +67,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @param assessmentId application id to associate the disbursements.
    * @param disbursements array of disbursements and values to be created.
    * @returns created disbursements.
+   * @deprecated moved to workers.
+   * TODO: to be removed.
    */
   async createDisbursementSchedules(
     assessmentId: number,

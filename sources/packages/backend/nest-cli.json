@@ -61,6 +61,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/services/tsconfig.lib.json"
       }
+    },
+    "utilities": {
+      "type": "library",
+      "root": "libs/utilities",
+      "entryFile": "index",
+      "sourceRoot": "libs/utilities/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/utilities/tsconfig.lib.json"
+      }
     }
   },
   "monorepo": true,

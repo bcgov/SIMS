@@ -24,6 +24,12 @@
       ],
       "@sims/services/*": [
         "libs/services/src/*"
+      ],
+      "@sims/utilities": [
+        "libs/utilities/src"
+      ],
+      "@sims/utilities/*": [
+        "libs/utilities/src/*"
       ]
     }
   }
