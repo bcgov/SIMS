@@ -1590,7 +1590,7 @@
           "labelMargin": "",
           "placeholder": "",
           "description": "",
-          "tooltip": "Tooltip If you have a permant disability, you may apply for a status here, that we will use to help you apply for eligible grants or bursaries in your applications. Please go to <a href='https: //studentaidbc.ca/' target='_blank'>studentaidbc.ca</a> for more information.",
+          "tooltip": "If you have a permanent disability, you may apply for a status here, that we will use to help you apply for eligible grants or bursaries in your applications. Please go to <a href='https://studentaidbc.ca/' target='_blank'>studentaidbc.ca</a> for more information.",
           "prefix": "",
           "suffix": "",
           "widget": {
@@ -1673,7 +1673,7 @@
           "dataGridLabel": false,
           "addons": [],
           "inputType": "text",
-          "id": "ebxxrgi",
+          "id": "eeplqe",
           "defaultValue": ""
         },
         {

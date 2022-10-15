@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-container>
-      <div class="category-header-medium-small mb-4">My received documents</div>
+      <h3 class="category-header-medium-small mb-4">My received documents</h3>
       <div v-if="ministryDocuments.length">
         <div
           class="document-box mb-4"
@@ -25,7 +25,7 @@
           are no documents to display.
         </p>
       </div>
-      <div class="category-header-medium-small mb-4">My uploaded documents</div>
+      <h3 class="category-header-medium-small mb-4">My uploaded documents</h3>
       <div v-if="studentDocuments.length">
         <div
           class="document-box mb-4"

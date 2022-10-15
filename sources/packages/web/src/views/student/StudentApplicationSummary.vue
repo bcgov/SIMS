@@ -93,11 +93,14 @@ export default {
     const setReloadData = () => {
       reloadData.value = true;
     };
-
-    const confirmCancelApplication = async (applicationId: number) => {
+// todo: ann reload
+    const confirmCancelApplication = async (
+      applicationId: number,
+      reload: () => void,
+    ) => {
       if (await cancelApplicationModal.value.showModal(applicationId)) {
         // Reload details.
-        setReloadData();
+        reload();
       }
     };
 

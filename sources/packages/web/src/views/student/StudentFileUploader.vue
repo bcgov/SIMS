@@ -38,7 +38,7 @@ import {
   StudentFileUploaderAPIInDTO,
   StudentFileUploaderInfoAPIInDTO,
 } from "@/services/http/dto/Student.dto";
-import { FormIOForm } from "@/types";
+import { ApiProcessError, FormIOForm } from "@/types";
 
 const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
 export default {
@@ -66,12 +66,18 @@ export default {
         form.submission = {};
         reloadDocuments.value = !reloadDocuments.value;
         snackBar.success("Your documents have been submitted!");
-      } catch (error) {
+        // todo:ann
+      } catch (error: any) {
+        // todo: ann
+        // if (error instanceof ApiProcessError) {
+        //   if (error.errorType === APPLICATION_NOT_FOUND) {
         let errorMessage = "An error happened while submitting your documents.";
         if (error.response?.data?.errorType === APPLICATION_NOT_FOUND) {
           errorMessage = error.response.data.message;
         }
         snackBar.error(errorMessage);
+        //   }
+        // }
       } finally {
         processing.value = false;
       }

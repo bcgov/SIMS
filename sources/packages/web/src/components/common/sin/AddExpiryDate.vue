@@ -2,7 +2,6 @@
   <v-form ref="addExpiryDateForm">
     <modal-dialog-base
       title="Add expiry date"
-      :dialog-type="DialogTypes.question"
       :maxWidth="730"
       :show-dialog="showDialog"
     >

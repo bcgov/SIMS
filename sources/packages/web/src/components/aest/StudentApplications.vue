@@ -103,7 +103,7 @@
                 variant="plain"
                 color="primary"
                 class="label-bold"
-                @click="$emit('openConfirmCancel', slotProps.data.id)"
+                @click="emitCancel(slotProps.data.id)"
                 ><span class="label-bold">Cancel</span>
                 <v-tooltip activator="parent" location="start"
                   >Click To Cancel this Application</v-tooltip
@@ -159,7 +159,7 @@ export default {
       default: false,
     },
   },
-  setup(props: any) {
+  setup(props: any, { emit }) {
     const loading = ref(false);
     const applicationsAndCount = ref(
       {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
@@ -228,6 +228,10 @@ export default {
       },
     );
 
+    const emitCancel = (applicationId: number) => {
+      emit("openConfirmCancel", applicationId, () => reloadApplication());
+    };
+
     return {
       dateOnlyLongString,
       ApplicationStatus,
@@ -245,6 +249,7 @@ export default {
       SINStatusEnum,
       sinValidStatus,
       clientType,
+      emitCancel,
     };
   },
 };

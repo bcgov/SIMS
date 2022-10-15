@@ -17,9 +17,6 @@
           </v-btn>
         </template>
       </formio-container>
-
-      <!-- Action area. -->
-      <div class="mt-4"></div>
     </div>
     <div v-else>
       <body-header
@@ -103,10 +100,6 @@ export default defineComponent({
       }
     };
 
-    const submitStudentRequest = () => {
-      return requestFormData.submit();
-    };
-
     const formLoaded = (form: any) => {
       requestFormData = form;
     };
@@ -145,7 +138,6 @@ export default defineComponent({
     return {
       submitRequest,
       formLoaded,
-      submitStudentRequest,
       appealRequestsForms,
       showRequestForAppeal,
       backToRequestForm,

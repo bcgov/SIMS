@@ -179,11 +179,11 @@
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import { COEStatus, StatusInfo } from "@/types";
-import { PropType, computed } from "vue";
+import { PropType, computed, defineComponent } from "vue";
 import AwardTable from "@/components/common/AwardTable.vue";
 import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
 
-export default {
+export default defineComponent({
   components: { AwardTable, StatusInfoEnrolment },
   props: {
     assessmentAwardData: {
@@ -243,5 +243,5 @@ export default {
       StatusInfo,
     };
   },
-};
+});
 </script>

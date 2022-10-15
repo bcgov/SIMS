@@ -443,15 +443,46 @@
         {
           "components": [
             {
+              "title": "Panel",
+              "labelWidth": "",
+              "labelMargin": "",
+              "theme": "default",
+              "tooltip": "",
+              "customClass": "",
               "collapsible": false,
+              "hidden": false,
               "hideLabel": true,
+              "disabled": false,
+              "modalEdit": false,
               "key": "panel1",
+              "tags": [],
+              "properties": {},
+              "customConditional": "",
+              "conditional": {
+                "json": "",
+                "show": null,
+                "when": null,
+                "eq": ""
+              },
+              "logic": [],
+              "attributes": {},
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
               "type": "panel",
               "label": "Panel",
+              "breadcrumb": "default",
+              "tabindex": "",
               "input": false,
               "tableView": false,
               "components": [
                 {
+                  "customClass": "align-formio-panel",
                   "collapsible": false,
                   "hideLabel": true,
                   "key": "panel3",
@@ -532,13 +563,10 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e8fqawn"
+                      "id": "e4j05fr"
                     },
                     {
                       "label": "HTML",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "tag": "p",
                       "className": "h-75",
                       "attrs": [
                         {
@@ -548,43 +576,24 @@
                       ],
                       "content": "Apply early so that you have time to figure out your finances.",
                       "refreshOnChange": false,
-                      "customClass": "",
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "html5",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": false,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -599,6 +608,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -608,13 +618,27 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "elfpzjr"
+                      "tag": "p",
+                      "id": "eky6ho"
                     },
                     {
                       "label": "Start application",
@@ -689,12 +713,11 @@
                       "block": false,
                       "disableOnInvalid": false,
                       "theme": "primary",
-                      "id": "e6nrqh6"
+                      "id": "ecrwuk7"
                     }
                   ],
                   "placeholder": "",
                   "prefix": "",
-                  "customClass": "",
                   "suffix": "",
                   "multiple": false,
                   "defaultValue": null,
@@ -753,37 +776,30 @@
                   "title": "Panel",
                   "theme": "default",
                   "breadcrumb": "default",
-                  "id": "egb3sqq"
+                  "id": "evmr058"
                 }
               ],
               "placeholder": "",
               "prefix": "",
-              "customClass": "",
               "suffix": "",
               "multiple": false,
               "defaultValue": null,
               "protected": false,
               "unique": false,
               "persistent": false,
-              "hidden": false,
               "clearOnHide": false,
               "refreshOn": "",
               "redrawOn": "",
-              "modalEdit": false,
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
               "errorLabel": "",
-              "tooltip": "",
-              "tabindex": "",
-              "disabled": false,
               "autofocus": false,
               "dbIndex": false,
               "customDefaultValue": "",
               "calculateValue": "",
               "calculateServer": false,
               "widget": null,
-              "attributes": {},
               "validateOn": "change",
               "validate": {
                 "required": false,
@@ -793,31 +809,15 @@
                 "multiple": false,
                 "unique": false
               },
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-              },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
               "allowCalculateOverride": false,
               "encrypted": false,
               "showCharCount": false,
               "showWordCount": false,
-              "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
               "tree": false,
               "lazyLoad": false,
-              "title": "Panel",
-              "theme": "default",
-              "breadcrumb": "default",
-              "id": "ee65jil"
+              "id": "ebd0k7"
             }
           ],
           "width": 6,
@@ -839,11 +839,41 @@
               "tableView": false,
               "components": [
                 {
+                  "title": "Panel",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "theme": "default",
+                  "tooltip": "",
+                  "customClass": "align-formio-panel",
                   "collapsible": false,
+                  "hidden": false,
                   "hideLabel": true,
+                  "disabled": false,
+                  "modalEdit": false,
                   "key": "panel4",
+                  "tags": [],
+                  "properties": {},
+                  "customConditional": "",
+                  "conditional": {
+                    "json": "",
+                    "show": null,
+                    "when": null,
+                    "eq": ""
+                  },
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
                   "type": "panel",
                   "label": "Panel",
+                  "breadcrumb": "default",
+                  "tabindex": "",
                   "input": false,
                   "tableView": false,
                   "components": [
@@ -919,13 +949,10 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "tag": "p",
-                      "id": "e78jdmd"
+                      "id": "eepaxgk"
                     },
                     {
                       "label": "HTML",
-                      "labelWidth": "",
-                      "labelMargin": "",
-                      "tag": "p",
                       "className": "h-75",
                       "attrs": [
                         {
@@ -935,43 +962,24 @@
                       ],
                       "content": "In order to manage your loan, please visit the National Student Loan Service Centre (NSLSC).",
                       "refreshOnChange": false,
-                      "customClass": "",
-                      "hidden": false,
-                      "modalEdit": false,
                       "key": "html6",
-                      "tags": [],
-                      "properties": {},
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                      },
-                      "customConditional": "",
-                      "logic": [],
-                      "attributes": {},
-                      "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
                       "placeholder": "",
                       "prefix": "",
+                      "customClass": "",
                       "suffix": "",
                       "multiple": false,
                       "defaultValue": null,
                       "protected": false,
                       "unique": false,
                       "persistent": false,
+                      "hidden": false,
                       "clearOnHide": true,
                       "refreshOn": "",
                       "redrawOn": "",
+                      "modalEdit": false,
                       "dataGridLabel": false,
                       "labelPosition": "top",
                       "description": "",
@@ -986,6 +994,7 @@
                       "calculateValue": "",
                       "calculateServer": false,
                       "widget": null,
+                      "attributes": {},
                       "validateOn": "change",
                       "validate": {
                         "required": false,
@@ -995,13 +1004,27 @@
                         "multiple": false,
                         "unique": false
                       },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
                       "allowCalculateOverride": false,
                       "encrypted": false,
                       "showCharCount": false,
                       "showWordCount": false,
+                      "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "euscr8r"
+                      "tag": "p",
+                      "id": "ebxl5ft"
                     },
                     {
                       "label": "Manage loan",
@@ -1077,37 +1100,30 @@
                       "block": false,
                       "disableOnInvalid": false,
                       "theme": "primary",
-                      "id": "ej6axi"
+                      "id": "eel1ngo"
                     }
                   ],
                   "placeholder": "",
                   "prefix": "",
-                  "customClass": "",
                   "suffix": "",
                   "multiple": false,
                   "defaultValue": null,
                   "protected": false,
                   "unique": false,
                   "persistent": false,
-                  "hidden": false,
                   "clearOnHide": false,
                   "refreshOn": "",
                   "redrawOn": "",
-                  "modalEdit": false,
                   "dataGridLabel": false,
                   "labelPosition": "top",
                   "description": "",
                   "errorLabel": "",
-                  "tooltip": "",
-                  "tabindex": "",
-                  "disabled": false,
                   "autofocus": false,
                   "dbIndex": false,
                   "customDefaultValue": "",
                   "calculateValue": "",
                   "calculateServer": false,
                   "widget": null,
-                  "attributes": {},
                   "validateOn": "change",
                   "validate": {
                     "required": false,
@@ -1117,31 +1133,15 @@
                     "multiple": false,
                     "unique": false
                   },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
                   "allowCalculateOverride": false,
                   "encrypted": false,
                   "showCharCount": false,
                   "showWordCount": false,
-                  "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
                   "tree": false,
                   "lazyLoad": false,
-                  "title": "Panel",
-                  "theme": "default",
-                  "breadcrumb": "default",
-                  "id": "eak1qr7"
+                  "id": "e6t2w6"
                 }
               ],
               "placeholder": "",

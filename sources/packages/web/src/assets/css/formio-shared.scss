@@ -527,7 +527,7 @@
   max-width: 70px;
 }
 
-// Custom tooltip fot html component(or components without tooltip feature) in formio.
+// Custom tooltip for html component(or components without tooltip feature) in formio.
 .formio-custom-tooltip {
   position: absolute;
   display: inline-flex;
@@ -561,4 +561,22 @@
   border-left: 8px solid $brand-blue;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+}
+
+// Collapsible panel style as per figma.
+.collapsible > div.border {
+  border-width: 0 !important;
+}
+
+.collapsible .card-header {
+  border-bottom-width: 0 !important;
+}
+.collapsible .card-body {
+  border-width: 0px 1px 1px 1px;
+  border-style: solid;
+  border-color: $common-border-color;
+}
+// Align to parallel formio panel (eg, student welcome page).
+.align-formio-panel > div {
+  min-height: 225px;
 }
