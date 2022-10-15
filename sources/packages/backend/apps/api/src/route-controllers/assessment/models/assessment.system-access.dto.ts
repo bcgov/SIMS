@@ -190,8 +190,3 @@ export class CreateDisbursementsDTO {
   @Type(() => DisbursementScheduleDTO)
   schedules: DisbursementScheduleDTO[];
 }
-
-export class UpdateAssessmentStatusDTO {
-  @IsEnum(AssessmentStatus)
-  status: AssessmentStatus;
-}

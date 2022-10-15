@@ -3,6 +3,7 @@ import {
   AssessmentTriggerType,
   SupportingUserType,
   StudyBreaksAndWeeks,
+  AssessmentStatus,
 } from "@sims/sims-db";
 
 export interface AssessmentDataJobInDTO {
@@ -117,4 +118,12 @@ export interface ApplicationAssessmentJobOutDTO {
 export interface SaveAssessmentDataJobInDTO {
   assessmentId: number;
   assessmentData: unknown;
+}
+
+export interface UpdateNOAStatusJobInDTO {
+  assessmentId: number;
+}
+
+export interface UpdateNOAStatusHeaderDTO {
+  status: AssessmentStatus;
 }

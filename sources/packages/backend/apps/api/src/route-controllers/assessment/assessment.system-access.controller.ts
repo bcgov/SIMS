@@ -28,7 +28,6 @@ import {
   ApplicationAssessmentAPIOutDTO,
   CreateDisbursementsDTO,
   UpdateAssessmentDataDTO,
-  UpdateAssessmentStatusDTO,
   UpdateAssessmentWorkflowIdDTO,
   UpdateProgramInfoAPIInDTO,
 } from "./models/assessment.system-access.dto";
@@ -278,32 +277,6 @@ export class AssessmentSystemAccessController extends BaseController {
         default:
           throw error;
       }
-    }
-  }
-
-  /**
-   * Updates the NOA (notice of assessment) approval status.
-   * The NOA status defines if the student needs to provide
-   * his approval to the NOA or not.
-   * @param assessmentId assessment id to be updated.
-   * @param payload status of the NOA approval.
-   */
-  @Patch(":id/noa-approval-status")
-  async updateAssessmentStatus(
-    @Param("id") assessmentId: number,
-    @Body() payload: UpdateAssessmentStatusDTO,
-  ): Promise<void> {
-    const updateResult = await this.assessmentService.updateNOAApprovalStatus(
-      assessmentId,
-      payload.status,
-    );
-
-    // Checks if some record was updated.
-    // If affected is zero it means that the update was not successful.
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        "Not able to update the assessment status with provided data.",
-      );
     }
   }
 }

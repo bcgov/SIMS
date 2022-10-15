@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
+  AssessmentStatus,
   RecordDataModelService,
   StudentAppealStatus,
   StudentAssessment,
@@ -101,6 +102,27 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     return this.repo.update(
       { id: assessmentId, assessmentData: IsNull() },
       { assessmentData },
+    );
+  }
+
+  /**
+   * Updates the NOA (notice of assessment) approval status.
+   * The NOA status defines if the student needs to provide
+   * his approval to the NOA or not.
+   * @param assessmentId assessment id to be updated.
+   * @param status status of the assessment.
+   * @returns update result.
+   */
+  async updateNOAApprovalStatus(
+    assessmentId: number,
+    status: AssessmentStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: assessmentId,
+        noaApprovalStatus: IsNull(),
+      },
+      { noaApprovalStatus: status },
     );
   }
 }

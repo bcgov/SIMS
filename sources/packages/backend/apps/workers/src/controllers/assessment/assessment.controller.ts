@@ -11,6 +11,8 @@ import {
   SaveAssessmentDataJobInDTO,
   StudentAppealRequestJobOutDTO,
   SupportingUserJobOutDTO,
+  UpdateNOAStatusHeaderDTO,
+  UpdateNOAStatusJobInDTO,
 } from "..";
 import { StudentAssessmentService } from "../../services";
 import {
@@ -77,6 +79,28 @@ export class AssessmentController {
     await this.studentAssessmentService.updateAssessmentData(
       job.variables.assessmentId,
       job.variables.assessmentData,
+    );
+    return job.complete();
+  }
+
+  /**
+   * Updates the NOA (Notice of Assessment) status if not updated yet.
+   */
+  @ZeebeWorker("update-noa-status", {
+    fetchVariable: [ASSESSMENT_ID],
+  })
+  async updateNOAStatus(
+    job: Readonly<
+      ZeebeJob<
+        UpdateNOAStatusJobInDTO,
+        UpdateNOAStatusHeaderDTO,
+        IOutputVariables
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    await this.studentAssessmentService.updateNOAApprovalStatus(
+      job.variables.assessmentId,
+      job.customHeaders.status,
     );
     return job.complete();
   }
