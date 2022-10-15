@@ -5,17 +5,17 @@ import {
   StudyBreaksAndWeeks,
 } from "@sims/sims-db";
 
-export interface AssessmentDataWorkerInDTO {
+export interface AssessmentDataJobInDTO {
   assessmentId: number;
 }
 
-export interface ProgramYearWorkerOutDTO {
+export interface ProgramYearJobOutDTO {
   programYear: string;
   startDate: Date;
   endDate: Date;
 }
 
-export interface ApplicationOfferingWorkerOutDTO {
+export interface ApplicationOfferingJobOutDTO {
   id: number;
   studyStartDate: Date;
   studyEndDate: Date;
@@ -29,37 +29,37 @@ export interface ApplicationOfferingWorkerOutDTO {
   studyBreaks: StudyBreaksAndWeeks;
 }
 
-export interface ApplicationProgramWorkerOutDTO {
+export interface ApplicationProgramJobOutDTO {
   programCredentialType: string;
   programLength: string;
 }
 
-export interface ApplicationInstitutionWorkerOutDTO {
+export interface ApplicationInstitutionJobOutDTO {
   institutionType: string;
 }
 
-export interface ApplicationLocationWorkerOutDTO {
+export interface ApplicationLocationJobOutDTO {
   institutionLocationProvince: string;
 }
 
-export interface ApplicationStudentWorkerOutDTO {
+export interface ApplicationStudentJobOutDTO {
   studentPDStatus?: boolean;
   craReportedIncome?: number;
   taxYear?: number;
 }
 
-export interface SupportingUserWorkerOutDTO {
+export interface SupportingUserJobOutDTO {
   id: number;
   supportingUserType: SupportingUserType;
   supportingData?: any;
   craReportedIncome?: number;
 }
 
-export interface StudentAppealRequestWorkerOutDTO {
+export interface StudentAppealRequestJobOutDTO {
   submittedData: unknown;
 }
 
-export interface StudentAppealRequestWorkersOutDTO {
+export interface StudentAppealRequestJobsOutDTO {
   submittedData: unknown;
 }
 
@@ -67,7 +67,7 @@ export interface StudentAppealRequestWorkersOutDTO {
  * Assessment and application information used as a main
  * source of data for assessment workflow process.
  */
-export interface ApplicationAssessmentWorkerOutDTO {
+export interface ApplicationAssessmentJobOutDTO {
   /**
    * Application associated with this application.
    */
@@ -83,33 +83,38 @@ export interface ApplicationAssessmentWorkerOutDTO {
   /**
    * Details of the program year associated with the student application.
    */
-  programYear: ProgramYearWorkerOutDTO;
+  programYear: ProgramYearJobOutDTO;
   /**
    * Offering details for student application.
    */
-  offering: ApplicationOfferingWorkerOutDTO;
+  offering: ApplicationOfferingJobOutDTO;
   /**
    * Program details for student application.
    */
-  program: ApplicationProgramWorkerOutDTO;
+  program: ApplicationProgramJobOutDTO;
   /**
    * Institution details for student application.
    */
-  institution: ApplicationInstitutionWorkerOutDTO;
+  institution: ApplicationInstitutionJobOutDTO;
   /**
    * Location details for student application.
    */
-  location: ApplicationLocationWorkerOutDTO;
+  location: ApplicationLocationJobOutDTO;
   /**
    * Student details for student application.
    */
-  student: ApplicationStudentWorkerOutDTO;
+  student: ApplicationStudentJobOutDTO;
   /**
    * Supporting users associated with this application.
    */
-  supportingUsers: Record<string, SupportingUserWorkerOutDTO>;
+  supportingUsers: Record<string, SupportingUserJobOutDTO>;
   /**
    * Approved student appeals requests.
    */
-  appeals: Record<string, StudentAppealRequestWorkersOutDTO>;
+  appeals: Record<string, StudentAppealRequestJobsOutDTO>;
+}
+
+export interface SaveAssessmentDataJobInDTO {
+  assessmentId: number;
+  assessmentData: unknown;
 }

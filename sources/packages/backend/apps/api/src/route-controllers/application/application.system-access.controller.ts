@@ -89,41 +89,6 @@ export class ApplicationSystemAccessController extends BaseController {
   }
 
   /**
-   * Associates an MSFAA number to the application checking
-   * whatever is needed to create a new MSFAA or use an
-   * existing one instead. The MSFAA are individually associated
-   * considering the offering intensity full-time/part-time.
-   * @param applicationId application id to receive an MSFAA.
-   */
-  @ApiOkResponse({
-    description: "The application was successfully associated with an MSFAA.",
-  })
-  @ApiNotFoundResponse({
-    description:
-      "Student Application is not in the expected status. Applications status must the 'assessment' in order to have an MSFAA associated.",
-  })
-  @ApiUnprocessableEntityResponse({
-    description: `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' for an MSFAA number be assigned.`,
-  })
-  @Patch(":applicationId/msfaa-number")
-  async associateMSFAANumber(
-    @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<void> {
-    try {
-      await this.applicationService.associateMSFAANumber(applicationId);
-    } catch (error) {
-      switch (error.name) {
-        case APPLICATION_NOT_FOUND:
-          throw new NotFoundException(error.message);
-        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          throw error;
-      }
-    }
-  }
-
-  /**
    * Creates a CRA Income Verification record that will be waiting
    * to be send to CRA and receive a response.
    * @param payload information needed to create the CRA Income Verification record.

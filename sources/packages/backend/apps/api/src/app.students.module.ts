@@ -13,7 +13,6 @@ import {
   DisbursementScheduleService,
   InstitutionLocationService,
   EducationProgramService,
-  SequenceControlService,
   StudentFileService,
   MSFAANumberService,
   SFASIndividualService,
@@ -53,7 +52,7 @@ import { LoggerModule } from "./logger/logger.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
 import { StudentAccountApplicationsService } from "./services/student-account-applications/student-account-applications.service";
 import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
-import { WorkflowClientService } from "@sims/services";
+import { WorkflowClientService, SequenceControlService } from "@sims/services";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],

@@ -4,7 +4,7 @@ import {
   StudentAppealStatus,
   StudentAssessment,
 } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { DataSource, IsNull, UpdateResult } from "typeorm";
 
 /**
  * Manages the student assessment related operations.
@@ -86,5 +86,21 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         assessmentId,
       })
       .getOne();
+  }
+
+  /**
+   * Updates the assessment dynamic data if it was not updated already.
+   * @param assessmentId assessment id to have the data updated.
+   * @param assessmentData dynamic data to be updated.
+   * @returns update result.
+   */
+  async updateAssessmentData(
+    assessmentId: number,
+    assessmentData: unknown,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: assessmentId, assessmentData: IsNull() },
+      { assessmentData },
+    );
   }
 }

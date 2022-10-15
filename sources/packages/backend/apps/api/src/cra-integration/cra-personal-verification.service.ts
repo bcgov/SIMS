@@ -5,10 +5,10 @@ import { InjectLogger } from "../common";
 import { LoggerService } from "../logger/logger.service";
 import {
   CRAIntegrationService,
-  SequenceControlService,
   ConfigService,
   CRAIncomeVerificationService,
 } from "../services";
+import { SequenceControlService } from "@sims/services";
 import { WorkflowActionsService } from "../services/workflow/workflow-actions.service";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";

@@ -12,7 +12,8 @@ import {
   OrderByCondition,
 } from "../../utilities";
 import { DataSource, In, Repository, UpdateResult, Brackets } from "typeorm";
-import { SequenceControlService, StudentRestrictionService } from "..";
+import { SequenceControlService } from "@sims/services";
+import { StudentRestrictionService } from "..";
 import {
   RecordDataModelService,
   Application,

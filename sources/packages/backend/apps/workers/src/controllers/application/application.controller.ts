@@ -15,13 +15,17 @@ import {
   ApplicationExceptionsJobOutDTO,
   ApplicationUpdateStatusJobHeaderDTO,
   ApplicationUpdateStatusJobInDTO,
+  AssignMSFAAJobInDTO,
 } from "..";
 import { APPLICATION_ID } from "@sims/services";
 import { ApplicationExceptionStatus } from "@sims/sims-db";
 import {
+  APPLICATION_MSFAA_ALREADY_ASSOCIATED,
   APPLICATION_NOT_FOUND,
   APPLICATION_STATUS_NOT_UPDATED,
-} from "../error-code-constants";
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+} from "../../constants";
+import { CustomNamedError } from "@sims/utilities";
 
 @Controller()
 export class ApplicationController {
@@ -59,6 +63,38 @@ export class ApplicationController {
       );
     }
     return job.complete();
+  }
+
+  /**
+   * Associates an MSFAA number to the application checking
+   * whatever is needed to create a new MSFAA or use an
+   * existing one instead.
+   */
+  @ZeebeWorker("associate-msfaa", { fetchVariable: [APPLICATION_ID] })
+  async associateMSFAA(
+    job: Readonly<
+      ZeebeJob<AssignMSFAAJobInDTO, ICustomHeaders, IOutputVariables>
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    try {
+      await this.applicationService.associateMSFAANumber(
+        job.variables.applicationId,
+      );
+      return job.complete();
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case APPLICATION_NOT_FOUND:
+          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+            return job.error(error.name, error.message);
+          case APPLICATION_MSFAA_ALREADY_ASSOCIATED:
+            return job.complete();
+        }
+      }
+      return job.fail(
+        `Unexpected error while associating the MSFAA number to the application. ${error}`,
+      );
+    }
   }
 
   /**

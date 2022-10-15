@@ -5,6 +5,12 @@
  */
 export const ASSESSMENT_ID = "assessmentId";
 /**
+ * Assessment dynamic data to be saved to the assessments table.
+ * Workflows: assessment-gateway.
+ * Type: Global variable.
+ */
+export const ASSESSMENT_DATA = "assessmentData";
+/**
  * Created while loading the assessment data.
  * Workflows: assessment-gateway.
  * Type: Global variable.

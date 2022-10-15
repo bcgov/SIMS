@@ -15,9 +15,10 @@ import {
   SupportingUserService,
   CRAIncomeVerificationService,
   DisbursementScheduleService,
+  MSFAANumberService,
 } from "./services";
 import { ZeebeTransportStrategy } from "./zeebe";
-import { ZeebeModule } from "@sims/services";
+import { SequenceControlService, ZeebeModule } from "@sims/services";
 
 @Module({
   imports: [DatabaseModule, ZeebeModule.forRoot()],
@@ -37,6 +38,8 @@ import { ZeebeModule } from "@sims/services";
     SupportingUserService,
     CRAIncomeVerificationService,
     DisbursementScheduleService,
+    SequenceControlService,
+    MSFAANumberService,
   ],
 })
 export class WorkersModule {}

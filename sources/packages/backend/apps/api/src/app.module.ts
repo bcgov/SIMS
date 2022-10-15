@@ -17,7 +17,6 @@ import {
   InstitutionLocationService,
   StudentFileService,
   ProgramYearService,
-  SequenceControlService,
   InstitutionTypeService,
   MSFAANumberService,
   StudentRestrictionService,
@@ -49,7 +48,7 @@ import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
-import { ZeebeModule } from "@sims/services";
+import { ZeebeModule, SequenceControlService } from "@sims/services";
 
 @Module({
   imports: [

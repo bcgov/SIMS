@@ -5,7 +5,6 @@ import {
   ConfigService,
   FormService,
   MSFAANumberService,
-  SequenceControlService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
   StudentFileService,
@@ -22,6 +21,7 @@ import {
   SFASIndividualService,
   EducationProgramOfferingValidationService,
 } from "./services";
+import { SequenceControlService } from "@sims/services";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";

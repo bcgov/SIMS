@@ -1,6 +1,6 @@
 require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
-import { SequenceControlService } from "../../../../../libs/services/src/sequence-control/sequence-control.service";
+import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { MSFAANumberService } from "../../services/msfaa-number/msfaa-number.service";
 import { DatabaseModule } from "@sims/sims-db";
 import * as dayjs from "dayjs";
