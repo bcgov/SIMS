@@ -10,6 +10,7 @@
             Manage your institution account using your Business or Basic BCeID
             User ID. Learn how to setup and access your account
             <a
+              class="primary-color"
               rel="noopener"
               target="_blank"
               href="https://studentaidbc.ca/policy-and-procedures/partner-portal-information"
@@ -20,9 +21,7 @@
             <h3 class="category-header-medium primary-color">
               Login or register
             </h3>
-            <p class="sign-in-description">
-              No account? Please register through the BCeID website below.
-            </p>
+            <p>No account? Please register through the BCeID website below.</p>
             <v-btn color="primary" @click="login" prepend-icon="fa:fa fa-user">
               Login / Register with BCeID
             </v-btn>
