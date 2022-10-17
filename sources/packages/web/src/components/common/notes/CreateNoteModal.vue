@@ -97,7 +97,11 @@ export default defineComponent({
     ): SelectItemType[] => {
       const selectItemsArray: SelectItemType[] = [];
       for (const selectItem in type) {
-        selectItemsArray.push({ title: selectItem, value: selectItem });
+        selectItemsArray.push({
+          title: selectItem,
+          value: type[selectItem],
+        });
+        console.log(selectItem);
       }
       return selectItemsArray;
     };
