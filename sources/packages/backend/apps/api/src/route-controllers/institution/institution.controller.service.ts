@@ -39,7 +39,6 @@ export class InstitutionControllerService {
     const mailingAddress =
       institutionDetail.institutionAddress.mailingAddress ??
       ({} as AddressInfo);
-
     return {
       legalOperatingName: institutionDetail.legalOperatingName,
       operatingName: institutionDetail.operatingName,
