@@ -44,9 +44,11 @@ export default defineComponent({
       showModal: showModalInternal,
     } = useModalDialog<boolean>();
     const snackBar = useSnackBar();
+
     const dialogClosed = () => {
       resolvePromise(false);
     };
+
     let applicationId = 0;
 
     // Show the modal and loads the user information.
@@ -66,13 +68,14 @@ export default defineComponent({
           applicationId,
           payload,
         );
+        resolvePromise(true);
         snackBar.success("Your application is now cancelled!");
       } catch (error) {
         snackBar.error("An error happened while cancelling the Application.");
-      } finally {
-        resolvePromise(true);
+        resolvePromise(false);
       }
     };
+
     return {
       showDialog,
       showModal,

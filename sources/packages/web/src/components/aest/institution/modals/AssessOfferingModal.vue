@@ -1,6 +1,6 @@
 <template>
   <v-form ref="assessOfferingForm">
-    <modal-dialog-base :showDialog="showDialog" :title="title" max-width="730">
+    <modal-dialog-base :showDialog="showDialog" :title="title" :max-width="730">
       <template #content>
         <error-summary :errors="assessOfferingForm.errors" />
         <div class="pb-2">

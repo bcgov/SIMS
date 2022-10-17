@@ -49,7 +49,7 @@ import { PropType, ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules } from "@/composables";
-import { DialogTypes, Role, VForm } from "@/types";
+import { Role, VForm } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { UpdateSINValidationAPIInDTO } from "@/services/http/dto";
 
@@ -96,7 +96,6 @@ export default defineComponent({
       formModel,
       checkNotesLengthRule,
       checkStringDateFormatRule,
-      DialogTypes,
     };
   },
 });

@@ -66,18 +66,15 @@ export default {
         form.submission = {};
         reloadDocuments.value = !reloadDocuments.value;
         snackBar.success("Your documents have been submitted!");
-        // todo:ann
-      } catch (error: any) {
-        // todo: ann
-        // if (error instanceof ApiProcessError) {
-        //   if (error.errorType === APPLICATION_NOT_FOUND) {
-        let errorMessage = "An error happened while submitting your documents.";
-        if (error.response?.data?.errorType === APPLICATION_NOT_FOUND) {
-          errorMessage = error.response.data.message;
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          let errorMessage =
+            "An error happened while submitting your documents.";
+          if (error.errorType === APPLICATION_NOT_FOUND) {
+            errorMessage = error.message;
+            snackBar.error(errorMessage);
+          }
         }
-        snackBar.error(errorMessage);
-        //   }
-        // }
       } finally {
         processing.value = false;
       }

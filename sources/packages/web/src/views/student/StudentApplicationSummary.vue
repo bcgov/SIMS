@@ -10,7 +10,6 @@
     <v-row>
       <v-col cols="12">
         <student-applications
-          :reloadData="reloadData"
           @editApplicationAction="editApplicationAction"
           @openConfirmCancel="confirmCancelApplication"
           @goToApplication="goToApplication"
@@ -90,17 +89,13 @@ export default {
       else goToEditApplication(applicationId);
     };
 
-    const setReloadData = () => {
-      reloadData.value = true;
-    };
-// todo: ann reload
     const confirmCancelApplication = async (
       applicationId: number,
-      reload: () => void,
+      reloadApplicationSummary: () => void,
     ) => {
       if (await cancelApplicationModal.value.showModal(applicationId)) {
         // Reload details.
-        reload();
+        reloadApplicationSummary();
       }
     };
 
@@ -121,7 +116,6 @@ export default {
       showModal,
       showHideCancelApplication,
       reloadData,
-      setReloadData,
       goToApplication,
       cancelApplicationModal,
     };

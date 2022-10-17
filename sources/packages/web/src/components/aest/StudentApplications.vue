@@ -125,7 +125,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref, computed, defineComponent } from "vue";
 import {
   ApplicationStatus,
   DEFAULT_PAGE_LIMIT,
@@ -146,7 +146,7 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 
-export default {
+export default defineComponent({
   components: { StatusChipApplication },
   emits: ["editApplicationAction", "openConfirmCancel", "goToApplication"],
   props: {
@@ -154,12 +154,8 @@ export default {
       type: Number,
       required: false,
     },
-    reloadData: {
-      type: Boolean,
-      default: false,
-    },
   },
-  setup(props: any, { emit }) {
+  setup(props, { emit }) {
     const loading = ref(false);
     const applicationsAndCount = ref(
       {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
@@ -203,9 +199,7 @@ export default {
       await getStudentApplications();
     };
 
-    onMounted(async () => {
-      reloadApplication();
-    });
+    onMounted(reloadApplication);
 
     // pagination sort event callback
     const paginationAndSortEvent = async (event: any) => {
@@ -220,13 +214,6 @@ export default {
       );
       loading.value = false;
     };
-
-    watch(
-      () => props.reloadData,
-      () => {
-        reloadApplication();
-      },
-    );
 
     const emitCancel = (applicationId: number) => {
       emit("openConfirmCancel", applicationId, () => reloadApplication());
@@ -252,5 +239,5 @@ export default {
       emitCancel,
     };
   },
-};
+});
 </script>

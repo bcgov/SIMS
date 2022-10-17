@@ -36,18 +36,13 @@
 </template>
 
 <script lang="ts">
-import { DialogTypes } from "@/types";
-import { ref, watch, computed, defineComponent, PropType } from "vue";
+import { ref, watch, defineComponent } from "vue";
 const dialogClosedEvent = "dialogClosed";
 
 export default defineComponent({
   props: {
     showDialog: {
       type: Boolean,
-      required: true,
-    },
-    dialogType: {
-      type: String as PropType<DialogTypes>,
       required: true,
     },
     title: {
@@ -88,20 +83,7 @@ export default defineComponent({
       },
     );
 
-    const icon = computed(() => {
-      switch (props.dialogType) {
-        case DialogTypes.info:
-          return "mdi-information-outline";
-        case DialogTypes.question:
-          return "mdi-comment-question-outline";
-        case DialogTypes.warning:
-          return "mdi-alert-outline";
-        default:
-          return null;
-      }
-    });
-
-    return { showHideDialog, icon };
+    return { showHideDialog };
   },
 });
 </script>

@@ -8,7 +8,6 @@
       <!-- Content area. -->
       <formio-container
         formName="studentRequestChange"
-        @loaded="formLoaded"
         @submitted="submitRequest"
       >
         <template #actions="{ submit }">
@@ -68,7 +67,6 @@ export default defineComponent({
   },
   setup() {
     const snackBar = useSnackBar();
-    let requestFormData: any = undefined;
     const appealRequestsForms = ref([] as StudentAppealRequest[]);
     let applicationId: number;
     const showRequestForAppeal = computed(
@@ -98,10 +96,6 @@ export default defineComponent({
           snackBar.error(`${errorLabel}. ${errorMessage}`);
         }
       }
-    };
-
-    const formLoaded = (form: any) => {
-      requestFormData = form;
     };
 
     const backToRequestForm = () => {
@@ -137,7 +131,6 @@ export default defineComponent({
 
     return {
       submitRequest,
-      formLoaded,
       appealRequestsForms,
       showRequestForAppeal,
       backToRequestForm,

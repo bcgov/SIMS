@@ -10,13 +10,14 @@
 <script lang="ts">
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { onMounted, reactive } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { StudentService } from "@/services/StudentService";
+import { StudentFormInfo } from "@/types";
 
-export default {
+export default defineComponent({
   setup() {
     const router = useRouter();
-    const formData = reactive({ firstName: "" });
+    const formData = ref<StudentFormInfo>();
     const goToStudentApplication = async () => {
       await router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
@@ -24,8 +25,7 @@ export default {
     };
 
     onMounted(async () => {
-      const studentDetail = await StudentService.shared.getStudentProfile();
-      formData.firstName = studentDetail.firstName;
+      formData.value = await StudentService.shared.getStudentProfile();
     });
 
     return {
@@ -34,5 +34,5 @@ export default {
       formData,
     };
   },
-};
+});
 </script>

@@ -95,14 +95,14 @@
 
 .label-medium {
   font-style: $font-style-normal;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-size: $font-size-xsmall;
   line-height: 18px;
 }
 
 .label-small-bold {
   font-style: $font-style-normal;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-size: 12px;
   line-height: 18px;
 }
@@ -354,7 +354,7 @@
 }
 
 .status-active-restriction .form-status-badge {
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   border-color: $badge-border-warning;
 }
 
@@ -363,7 +363,7 @@
 }
 
 .formio-success-status .form-status-badge {
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   border-color: $badge-border-success;
   text-transform: none;
 }

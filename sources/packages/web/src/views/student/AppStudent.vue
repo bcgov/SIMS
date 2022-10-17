@@ -17,9 +17,14 @@
           :to="{
             name: StudentRoutesConst.STUDENT_DASHBOARD,
           }"
-          prepend-icon="mdi-home-outline"
-          >Home</v-btn
-        >
+          >Home
+          <template #prepend>
+            <v-icon
+              class="mb-1"
+              icon="mdi-home-outline"
+              :size="30"
+            /> </template
+        ></v-btn>
         <v-btn
           v-if="hasAuthenticatedStudentAccount"
           class="nav-item-label"
