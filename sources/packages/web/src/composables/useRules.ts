@@ -31,16 +31,17 @@ export function useRules() {
     return "Expiry end date is required.";
   };
 
-  const checkNullOrEmptyString = (value?: string) => {
+  const checkStringNullOrEmptyRule = (value: string) => {
     if (value) {
-      return value.length != 0;
+      return value.length > 0;
     }
+    return false;
   };
 
   return {
     sinValidationRule,
     checkNotesLengthRule,
     checkStringDateFormatRule,
-    checkNullOrEmptyString,
+    checkStringNullOrEmptyRule,
   };
 }
