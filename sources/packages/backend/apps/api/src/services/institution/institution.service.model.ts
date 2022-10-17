@@ -6,7 +6,7 @@ export interface UpdateInstitution {
   primaryEmail?: string;
   website?: string;
   regulatingBody?: string;
-  establishedDate?: string;
+  establishedDate?: Date;
   institutionType?: number;
   primaryContactEmail: string;
   primaryContactFirstName: string;
@@ -34,7 +34,7 @@ export interface InstitutionFormModel {
   primaryEmail: string;
   website: string;
   regulatingBody: string;
-  establishedDate: string;
+  establishedDate: Date;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;

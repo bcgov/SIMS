@@ -23,7 +23,7 @@ export interface InstitutionProfileForm {
   primaryEmail: string;
   website: string;
   regulatingBody: string;
-  establishedDate: string;
+  establishedDate: Date;
   // Primary Contact
   primaryContactFirstName: string;
   primaryContactLastName: string;
