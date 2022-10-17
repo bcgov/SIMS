@@ -1,4 +1,8 @@
 import {
+  ASSESSMENT_DATA,
+  ASSESSMENT_ID,
+} from "@sims/services/workflow/variables/assessment-gateway";
+import {
   ApplicationData,
   AssessmentTriggerType,
   SupportingUserType,
@@ -7,7 +11,7 @@ import {
 } from "@sims/sims-db";
 
 export interface AssessmentDataJobInDTO {
-  assessmentId: number;
+  [ASSESSMENT_ID]: number;
 }
 
 export interface ProgramYearJobOutDTO {
@@ -116,12 +120,12 @@ export interface ApplicationAssessmentJobOutDTO {
 }
 
 export interface SaveAssessmentDataJobInDTO {
-  assessmentId: number;
-  assessmentData: unknown;
+  [ASSESSMENT_ID]: number;
+  [ASSESSMENT_DATA]: unknown;
 }
 
 export interface UpdateNOAStatusJobInDTO {
-  assessmentId: number;
+  [ASSESSMENT_ID]: number;
 }
 
 export interface UpdateNOAStatusHeaderDTO {

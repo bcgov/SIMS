@@ -1,33 +1,30 @@
-import { Injectable } from "@nestjs/common";
-import { WorkflowService } from "..";
-import { WorkflowStartResult } from "./workflow.models";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
-import { ApplicationExceptionStatus } from "@sims/sims-db";
+import { Injectable, Logger } from "@nestjs/common";
+import { ApplicationExceptionStatus, ProgramInfoStatus } from "@sims/sims-db";
+import { CreateProcessInstanceResponse, Duration, ZBClient } from "zeebe-node";
+import {
+  APPLICATION_EXCEPTION_STATUS,
+  PROGRAM_INFO_STATUS,
+} from "./variables/assessment-gateway";
 
 @Injectable()
-export class WorkflowActionsService {
-  constructor(private readonly workflowService: WorkflowService) {}
+export class WorkflowClientService {
+  private readonly logger = new Logger(WorkflowClientService.name);
+
+  constructor(private readonly zeebeClient: ZBClient) {}
 
   /**
    * Starts application assessment.
    * @param workflowName workflow to be started.
    * @param assessmentId student assessment that need to be processed.
    * @returns result of the application start.
-   * @deprecated moved to WorkflowClientService.
    */
   async startApplicationAssessment(
     workflowName: string,
     assessmentId: number,
-  ): Promise<WorkflowStartResult> {
+  ): Promise<CreateProcessInstanceResponse> {
     try {
-      return await this.workflowService.start(workflowName, {
-        variables: {
-          assessmentId: {
-            value: assessmentId,
-            type: "integer",
-          },
-        },
+      return await this.zeebeClient.createProcessInstance(workflowName, {
+        assessmentId,
       });
     } catch (error: unknown) {
       this.logger.error(
@@ -44,21 +41,24 @@ export class WorkflowActionsService {
    * This method is going to send a message to the workflow allowing it to proceed.
    * This message should only be sent once the offering id is provided for the student
    * application.
-   * @param processInstanceId workflow instance to receive the message.
-   * @deprecated moved to WorkflowClientService.
+   * @param applicationId application id that had the PIT completed.
    */
   async sendProgramInfoCompletedMessage(
-    processInstanceId: string,
+    applicationId: number,
+    status: ProgramInfoStatus,
   ): Promise<void> {
     try {
-      await this.workflowService.sendMessage({
-        messageName: "sims-pir-complete",
-        processInstanceId,
-        all: false, // false means that the message is correlated to exactly one entity.
+      await this.zeebeClient.publishMessage({
+        name: "program-info-request-completed",
+        correlationKey: applicationId.toString(),
+        timeToLive: Duration.seconds.of(30),
+        variables: {
+          [PROGRAM_INFO_STATUS]: status,
+        },
       });
     } catch (error: unknown) {
       this.logger.error(
-        `Error while sending Program Info completed message to instance id: ${processInstanceId}`,
+        `Error while sending Program Info completed message to application id: ${applicationId}`,
       );
       this.logger.error(error);
       // The error is not thrown here, as we are failing silently.
@@ -73,65 +73,39 @@ export class WorkflowActionsService {
    * @param incomeVerificationId income verification id that will be appended to the
    * name of the message to uniquely identify it.
    * @return true case a successful call happen, otherwise false.
-   * @deprecated moved to WorkflowClientService.
+   * @deprecated move to WorkflowClientService.
    */
   async sendCRAIncomeVerificationCompletedMessage(
     incomeVerificationId: number,
-  ): Promise<boolean> {
+  ): Promise<void> {
     try {
-      await this.workflowService.sendMessage({
-        messageName: `sims-cra-income-verification-complete-${incomeVerificationId}`,
-        all: false, // false means that the message is correlated to exactly one entity.
+      await this.zeebeClient.publishMessage({
+        name: "program-info-request-completed",
+        correlationKey: incomeVerificationId.toString(),
+        timeToLive: Duration.seconds.of(30),
+        variables: {},
       });
-      return true;
     } catch (error: unknown) {
       this.logger.error(
-        `Error while sending CRA income verification completed message using incomeVerificationId: ${incomeVerificationId}`,
+        `Error while sending CRA income verification completed message using incomeVerificationId: ${incomeVerificationId}.`,
       );
       this.logger.error(error);
       // The error is not thrown here, as we are failing silently.
     }
-
-    return false;
   }
 
   /**
    * delete application assessment.
    * @param assessmentWorkflowId workflow Id to be deleted.
-   * @deprecated moved to WorkflowClientService.
    */
   async deleteApplicationAssessment(
     assessmentWorkflowId: string,
   ): Promise<void> {
     try {
-      await this.workflowService.delete(assessmentWorkflowId);
+      await this.zeebeClient.cancelProcessInstance(assessmentWorkflowId);
     } catch (error: unknown) {
       this.logger.error(
-        `Error while deleting application assessment workflow: ${assessmentWorkflowId}, error: ${error}`,
-      );
-      this.logger.error(error);
-      //The error is not thrown here, as we are failing silently
-    }
-  }
-
-  /**
-   * When Confirmation of Enrollment (COE) needs to be confirmed by the institution user,
-   * the workflows waits until it receives a message that the institution confirms the COE.
-   * This method is going to send a message to the workflow allowing it to proceed.
-   * This message should only be sent when the institution confirmation COE of an Application
-   * @param processInstanceId workflow instance to receive the message.
-   * @deprecated removed from the workflow.
-   */
-  async sendConfirmCOEMessage(processInstanceId: string): Promise<void> {
-    try {
-      await this.workflowService.sendMessage({
-        messageName: "sims-coe-complete",
-        processInstanceId,
-        all: false, // false means that the message is correlated to exactly one entity.
-      });
-    } catch (error: unknown) {
-      this.logger.error(
-        `Error while sending Confirm Confirmation of Enrollment (COE) message to instance id: ${processInstanceId}`,
+        `Error while deleting application assessment workflow: ${assessmentWorkflowId}.`,
       );
       this.logger.error(error);
       //The error is not thrown here, as we are failing silently
@@ -146,15 +120,16 @@ export class WorkflowActionsService {
    * when the data in available on database to be retrieved.
    * @param supportingUserId supporting user id that will be appended to the
    * name of the message to uniquely identify it.
-   * @deprecated move to WorkflowClientService.
    */
   async sendSupportingUsersCompletedMessage(
     supportingUserId: number,
   ): Promise<void> {
     try {
-      await this.workflowService.sendMessage({
-        messageName: `sims-supporting-user-complete-${supportingUserId}`,
-        all: false, // false means that the message is correlated to exactly one entity.
+      await this.zeebeClient.publishMessage({
+        name: "supporting-user-info-received",
+        correlationKey: supportingUserId.toString(),
+        timeToLive: Duration.seconds.of(30),
+        variables: {},
       });
     } catch (error: unknown) {
       this.logger.error(
@@ -178,14 +153,12 @@ export class WorkflowActionsService {
     status: ApplicationExceptionStatus,
   ): Promise<void> {
     try {
-      await this.workflowService.sendMessage({
-        messageName: `sims-application-exception-approval-${applicationExceptionId}`,
-        all: false, // false means that the message is correlated to exactly one entity.
-        processVariables: {
-          exceptionsApprovalStatus: {
-            value: status,
-            type: "string",
-          },
+      await this.zeebeClient.publishMessage({
+        name: "application-exception-verified",
+        correlationKey: applicationExceptionId.toString(),
+        timeToLive: Duration.seconds.of(30),
+        variables: {
+          [APPLICATION_EXCEPTION_STATUS]: status,
         },
       });
     } catch (error: unknown) {
@@ -196,7 +169,4 @@ export class WorkflowActionsService {
       // The error is not thrown here, as we are failing silently.
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

@@ -13,13 +13,13 @@ import {
   CreateIncomeRequestJobInDTO,
   CreateIncomeRequestJobOutDTO,
 } from "..";
+import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
-  APPLICATION_ID,
   INCOME_VERIFICATION_ID,
   REPORTED_INCOME,
   SUPPORTING_USER_ID,
   TAX_YEAR,
-} from "@sims/services";
+} from "@sims/services/workflow/variables/cra-integration-income-verification";
 
 @Controller()
 export class CRAIntegrationController {

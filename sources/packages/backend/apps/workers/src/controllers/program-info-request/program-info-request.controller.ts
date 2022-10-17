@@ -7,8 +7,8 @@ import {
   ProgramInfoRequestJobHeaderDTO,
   ProgramInfoRequestJobOutDTO,
 } from "..";
-import { APPLICATION_ID } from "@sims/services";
 import { APPLICATION_NOT_FOUND } from "../../constants";
+import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 
 @Controller()
 export class ProgramInfoRequestController {

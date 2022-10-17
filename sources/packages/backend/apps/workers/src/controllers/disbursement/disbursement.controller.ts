@@ -7,7 +7,6 @@ import {
   IOutputVariables,
 } from "zeebe-node";
 import { DisbursementScheduleService } from "../../services";
-import { ASSESSMENT_ID } from "@sims/services";
 import { SaveDisbursementSchedulesJobInDTO } from "./disbursement.dto";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -15,6 +14,10 @@ import {
   ASSESSMENT_NOT_FOUND,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
 } from "../../constants";
+import {
+  ASSESSMENT_ID,
+  DISBURSEMENT_SCHEDULES,
+} from "@sims/services/workflow/variables/assessment-gateway";
 
 @Controller()
 export class DisbursementController {
@@ -23,7 +26,7 @@ export class DisbursementController {
   ) {}
 
   @ZeebeWorker("save-disbursement-schedules", {
-    fetchVariable: [ASSESSMENT_ID, "disbursementSchedules"],
+    fetchVariable: [ASSESSMENT_ID, DISBURSEMENT_SCHEDULES],
   })
   async saveDisbursementSchedules(
     job: Readonly<

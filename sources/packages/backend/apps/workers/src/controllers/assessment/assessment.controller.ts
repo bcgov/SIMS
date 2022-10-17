@@ -23,8 +23,11 @@ import {
   SupportingUserType,
 } from "@sims/sims-db";
 import { filterObjectProperties } from "../../utilities";
-import { ASSESSMENT_DATA, ASSESSMENT_ID } from "@sims/services";
 import { ASSESSMENT_NOT_FOUND } from "../../constants";
+import {
+  ASSESSMENT_DATA,
+  ASSESSMENT_ID,
+} from "@sims/services/workflow/variables/assessment-gateway";
 
 @Controller()
 export class AssessmentController {

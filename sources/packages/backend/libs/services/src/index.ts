@@ -1,4 +1,3 @@
 export * from "./zeebe/zeebe.module";
-export * from "./workflow/workflow-actions.service";
-export * from "./workflow/workflow-variables";
+export * from "./workflow/workflow-client.service";
 export * from "./sequence-control/sequence-control.service";

@@ -29,7 +29,7 @@
         <bpmn:flowNodeRef>Gateway_04wt04t</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-application-exceptions-status-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-application-exceptions-pending-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_15lqlgc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>application-exception-verified-message</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-application-exceptions-retry-timer</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>in-progress-main-parallel-info-gathering-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>application-exception-end-event</bpmn:flowNodeRef>
@@ -56,9 +56,9 @@
         <bpmn:flowNodeRef>program-info-not-required-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>program-info-required-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>pir-pending-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>pir-retry-timer</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>program-info-request-timer</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>pir-pending-event-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_1ybuc35</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>program-info-request-completed-message</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_03gbgqa</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>pir-pending-declined-complted-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1hgcddi</bpmn:flowNodeRef>
@@ -73,9 +73,9 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Completed"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0im6s57" sourceRef="Gateway_03gbgqa" targetRef="pir-pending-declined-complted-gateway" />
-    <bpmn:sequenceFlow id="Flow_0cxn3c5" sourceRef="Event_1ybuc35" targetRef="Gateway_03gbgqa" />
-    <bpmn:sequenceFlow id="Flow_0joyxdn" sourceRef="pir-pending-event-gateway" targetRef="Event_1ybuc35" />
-    <bpmn:sequenceFlow id="Flow_1ds5r8m" sourceRef="pir-pending-event-gateway" targetRef="pir-retry-timer" />
+    <bpmn:sequenceFlow id="Flow_0cxn3c5" sourceRef="program-info-request-completed-message" targetRef="Gateway_03gbgqa" />
+    <bpmn:sequenceFlow id="Flow_0joyxdn" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-completed-message" />
+    <bpmn:sequenceFlow id="Flow_1ds5r8m" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-timer" />
     <bpmn:sequenceFlow id="pir-completed-flow" name="Yes" sourceRef="pir-pending-gateway" targetRef="Gateway_03gbgqa">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus != "Required"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -83,7 +83,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Required"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0guy66a" sourceRef="program-info-required-task" targetRef="pir-pending-gateway" />
-    <bpmn:sequenceFlow id="Flow_1sze0w6" sourceRef="pir-retry-timer" targetRef="program-info-required-task" />
+    <bpmn:sequenceFlow id="Flow_1sze0w6" sourceRef="program-info-request-timer" targetRef="program-info-required-task" />
     <bpmn:sequenceFlow id="Flow_06144it" sourceRef="program-info-not-required-task" targetRef="Gateway_1hgcddi" />
     <bpmn:sequenceFlow id="has-offering-flow" name="PIR not required" sourceRef="needs-pir-gateway" targetRef="program-info-not-required-task">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=selectedOffering != null</bpmn:conditionExpression>
@@ -106,14 +106,14 @@
     <bpmn:sequenceFlow id="verify-application-exceptions-not-pending-flow" name="Not pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-status-gateway">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus != "Pending"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0ws0afg" sourceRef="Event_15lqlgc" targetRef="verify-application-exceptions-status-gateway" />
+    <bpmn:sequenceFlow id="Flow_0ws0afg" sourceRef="application-exception-verified-message" targetRef="verify-application-exceptions-status-gateway" />
     <bpmn:sequenceFlow id="verify-application-exceptions-status-denied-flow" name="Declined" sourceRef="verify-application-exceptions-status-gateway" targetRef="application-exception-end-event">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Declined"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="verify-application-exceptions-status-approved-flow" name="Approved" sourceRef="verify-application-exceptions-status-gateway" targetRef="in-progress-main-parallel-info-gathering-gateway">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Approved"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1v0ju0g" sourceRef="verify-application-exceptions-pending-gateway" targetRef="Event_15lqlgc" />
+    <bpmn:sequenceFlow id="Flow_1v0ju0g" sourceRef="verify-application-exceptions-pending-gateway" targetRef="application-exception-verified-message" />
     <bpmn:sequenceFlow id="Flow_10lg2ud" sourceRef="verify-application-exceptions-pending-gateway" targetRef="verify-application-exceptions-retry-timer" />
     <bpmn:sequenceFlow id="Flow_1a980l7" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="needs-pir-gateway" />
     <bpmn:sequenceFlow id="Flow_0v2i46e" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="Gateway_05k6rp7" />
@@ -315,7 +315,7 @@
       <bpmn:outgoing>Flow_1v0ju0g</bpmn:outgoing>
       <bpmn:outgoing>Flow_10lg2ud</bpmn:outgoing>
     </bpmn:eventBasedGateway>
-    <bpmn:intermediateCatchEvent id="Event_15lqlgc">
+    <bpmn:intermediateCatchEvent id="application-exception-verified-message">
       <bpmn:incoming>Flow_1v0ju0g</bpmn:incoming>
       <bpmn:outgoing>Flow_0ws0afg</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1t800lv" messageRef="Message_2t9i9o7" />
@@ -520,7 +520,7 @@
       <bpmn:outgoing>pir-not-completed-flow</bpmn:outgoing>
       <bpmn:outgoing>pir-completed-flow</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateCatchEvent id="pir-retry-timer">
+    <bpmn:intermediateCatchEvent id="program-info-request-timer">
       <bpmn:incoming>Flow_1ds5r8m</bpmn:incoming>
       <bpmn:outgoing>Flow_1sze0w6</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0jk0tgh">
@@ -532,10 +532,10 @@
       <bpmn:outgoing>Flow_0joyxdn</bpmn:outgoing>
       <bpmn:outgoing>Flow_1ds5r8m</bpmn:outgoing>
     </bpmn:eventBasedGateway>
-    <bpmn:intermediateCatchEvent id="Event_1ybuc35">
+    <bpmn:intermediateCatchEvent id="program-info-request-completed-message">
       <bpmn:incoming>Flow_0joyxdn</bpmn:incoming>
       <bpmn:outgoing>Flow_0cxn3c5</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_127fcp3" messageRef="Message_2t9i9o7" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_127fcp3" messageRef="Message_1clo0eh" />
     </bpmn:intermediateCatchEvent>
     <bpmn:exclusiveGateway id="Gateway_03gbgqa">
       <bpmn:incoming>Flow_0cxn3c5</bpmn:incoming>
@@ -612,9 +612,6 @@
     </bpmn:serviceTask>
     <bpmn:serviceTask id="associate-msfaa-task" name="Aassociate MSFAA">
       <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:input source="={&#10;  weeks: weeks,&#10;  tuitionCost: 5009,&#10;  childcareCost: 0,&#10;  livingAllowance: 13609.3,&#10;  totalAssessedCost: 21840.3,&#10;  totalFamilyIncome: 0,&#10;  totalFederalAward: 5533.4,&#10;  otherAllowableCost: 0,&#10;  transportationCost: null,&#10;  secondResidenceCost: 0,&#10;  totalAssessmentNeed: 18444.68,&#10;  booksAndSuppliesCost: 3000,&#10;  totalProvincialAward: 3688.94,&#10;  alimonyOrChildSupport: 0,&#10;  federalAssessmentNeed: 9222.34,&#10;  partnerStudentLoanCost: null,&#10;  exceptionalEducationCost: 222,&#10;  provincialAssessmentNeed: 9222.34,&#10;  totalFederalContribution: 12617.96,&#10;  parentAssessedContribution: 10817.96,&#10;  partnerAssessedContribution: 0,&#10;  totalProvincialContribution: 12617.96,&#10;  studentTotalFederalContribution: 1800,&#10;  studentTotalProvincialContribution: 1800&#10;}" target="assessmentData" />
-        </zeebe:ioMapping>
         <zeebe:taskDefinition type="associate-msfaa" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mayggl</bpmn:incoming>
@@ -658,9 +655,9 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
   </bpmn:process>
-  <bpmn:message id="Message_1clo0eh" name="pir-complete">
+  <bpmn:message id="Message_1clo0eh" name="program-info-request-completed">
     <bpmn:extensionElements>
-      <zeebe:subscription correlationKey="=pir-complete" />
+      <zeebe:subscription correlationKey="=applicationId" />
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmn:message id="Message_2t9i9o7" name="application-exception-verified">
@@ -681,6 +678,11 @@
   <bpmn:category id="Category_0hu5pfr">
     <bpmn:categoryValue id="CategoryValue_1mp96t6" value="Parents Income Verification" />
   </bpmn:category>
+  <bpmn:message id="Message_3tg2nna" name="Message_3tg2nna">
+    <bpmn:extensionElements>
+      <zeebe:subscription />
+    </bpmn:extensionElements>
+  </bpmn:message>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0z9wj8q">
       <bpmndi:BPMNShape id="Participant_0y53svc_di" bpmnElement="application-in-progress" isHorizontal="true">
@@ -695,6 +697,20 @@
         <dc:Bounds x="183" y="1490" width="3127" height="290" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0hmh3m7_di" bpmnElement="Flow_0hmh3m7">
+        <di:waypoint x="3100" y="1680" />
+        <di:waypoint x="3160" y="1680" />
+        <di:waypoint x="3160" y="1635" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p1lgm7_di" bpmnElement="Flow_0p1lgm7">
+        <di:waypoint x="3100" y="1560" />
+        <di:waypoint x="3160" y="1560" />
+        <di:waypoint x="3160" y="1585" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v9csm7_di" bpmnElement="Flow_1v9csm7">
+        <di:waypoint x="2940" y="1560" />
+        <di:waypoint x="3000" y="1560" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0z518wc_di" bpmnElement="Flow_0z518wc">
         <di:waypoint x="3185" y="1610" />
         <di:waypoint x="3242" y="1610" />
@@ -1067,20 +1083,6 @@
           <dc:Bounds x="483" y="673" width="73" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1v9csm7_di" bpmnElement="Flow_1v9csm7">
-        <di:waypoint x="2940" y="1560" />
-        <di:waypoint x="3000" y="1560" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0p1lgm7_di" bpmnElement="Flow_0p1lgm7">
-        <di:waypoint x="3100" y="1560" />
-        <di:waypoint x="3160" y="1560" />
-        <di:waypoint x="3160" y="1585" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0hmh3m7_di" bpmnElement="Flow_0hmh3m7">
-        <di:waypoint x="3100" y="1680" />
-        <di:waypoint x="3160" y="1680" />
-        <di:waypoint x="3160" y="1635" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="assessment-start-event">
         <dc:Bounds x="233" y="583" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -1114,7 +1116,7 @@
       <bpmndi:BPMNShape id="Gateway_13zjxus_di" bpmnElement="verify-application-exceptions-pending-gateway">
         <dc:Bounds x="971" y="576" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_15lqlgc_di" bpmnElement="Event_15lqlgc">
+      <bpmndi:BPMNShape id="Event_15lqlgc_di" bpmnElement="application-exception-verified-message">
         <dc:Bounds x="1044" y="583" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0f2fffe_di" bpmnElement="verify-application-exceptions-retry-timer">
@@ -1215,13 +1217,13 @@
           <dc:Bounds x="1638" y="307" width="60" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_067eupg" bpmnElement="pir-retry-timer">
+      <bpmndi:BPMNShape id="BPMNShape_067eupg" bpmnElement="program-info-request-timer">
         <dc:Bounds x="1563" y="208" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0eqleha" bpmnElement="pir-pending-event-gateway">
         <dc:Bounds x="1655" y="245" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0bp5jx2" bpmnElement="Event_1ybuc35">
+      <bpmndi:BPMNShape id="BPMNShape_0bp5jx2" bpmnElement="program-info-request-completed-message">
         <dc:Bounds x="1732" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0aapx4s" bpmnElement="Gateway_03gbgqa" isMarkerVisible="true">

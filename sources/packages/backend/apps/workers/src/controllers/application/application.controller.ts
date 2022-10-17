@@ -17,7 +17,6 @@ import {
   ApplicationUpdateStatusJobInDTO,
   AssignMSFAAJobInDTO,
 } from "..";
-import { APPLICATION_ID } from "@sims/services";
 import { ApplicationExceptionStatus } from "@sims/sims-db";
 import {
   APPLICATION_MSFAA_ALREADY_ASSOCIATED,
@@ -26,6 +25,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../../constants";
 import { CustomNamedError } from "@sims/utilities";
+import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 
 @Controller()
 export class ApplicationController {

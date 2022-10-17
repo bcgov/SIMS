@@ -20,8 +20,6 @@ import {
   StudentFile,
   ProgramYear,
   PIRDeniedReason,
-  MSFAANumber,
-  OfferingIntensity,
   StudentAssessment,
   AssessmentTriggerType,
   User,
@@ -33,7 +31,6 @@ import {
   ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
   ApplicationSubmissionResult,
 } from "./application.models";
-import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { MSFAANumberService } from "../msfaa-number/msfaa-number.service";
 import {
   CustomNamedError,
@@ -59,6 +56,7 @@ import {
   PIR_REQUEST_NOT_FOUND_ERROR,
   OFFERING_NOT_VALID,
 } from "../../constants";
+import { WorkflowClientService } from "@sims/services";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -84,7 +82,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
     private readonly fileService: StudentFileService,
-    private readonly workflow: WorkflowActionsService,
+    private readonly workflowClientService: WorkflowClientService,
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
@@ -269,7 +267,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
     // Deleting the existing workflow, if there is one.
     if (application.currentAssessment.assessmentWorkflowId) {
-      await this.workflow.deleteApplicationAssessment(
+      await this.workflowClientService.deleteApplicationAssessment(
         application.currentAssessment.assessmentWorkflowId,
       );
     }

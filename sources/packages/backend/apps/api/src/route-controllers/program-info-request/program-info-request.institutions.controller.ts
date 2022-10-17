@@ -27,7 +27,6 @@ import { IUserToken } from "../../auth/userToken.interface";
 import {
   ApplicationService,
   EducationProgramOfferingService,
-  WorkflowActionsService,
   PIRDeniedReasonService,
 } from "../../services";
 import {
@@ -50,6 +49,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import { WorkflowClientService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
@@ -59,7 +59,7 @@ import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 export class ProgramInfoRequestInstitutionsController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly workflowService: WorkflowActionsService,
+    private readonly workflowClientService: WorkflowClientService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly pirDeniedReasonService: PIRDeniedReasonService,
   ) {
@@ -175,7 +175,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           payload.otherReasonDesc,
         );
       if (application.currentAssessment.assessmentWorkflowId) {
-        await this.workflowService.deleteApplicationAssessment(
+        await this.workflowClientService.deleteApplicationAssessment(
           application.currentAssessment.assessmentWorkflowId,
         );
       }

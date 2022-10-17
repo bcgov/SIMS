@@ -20,8 +20,6 @@ import {
   DatabaseConstraintNames,
   PostgresDriverError,
 } from "@sims/sims-db";
-import { WorkflowActionsService } from "../workflow/workflow-actions.service";
-import { WorkflowStartResult } from "../workflow/workflow.models";
 import {
   DataSource,
   QueryFailedError,
@@ -58,12 +56,14 @@ import { EducationProgramOfferingValidationService } from "./education-program-o
 import * as os from "os";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
+import { WorkflowClientService } from "@sims/services";
+import { CreateProcessInstanceResponse } from "zeebe-node";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly workflowActionsService: WorkflowActionsService,
+    private readonly workflowClientService: WorkflowClientService,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
@@ -1023,7 +1023,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   private async startOfferingChangeAssessments(
     applications: ApplicationAssessmentSummary[],
   ): Promise<void> {
-    const promises: Promise<void | WorkflowStartResult>[] = [];
+    const promises: Promise<void | CreateProcessInstanceResponse>[] = [];
     // Used to limit the number of asynchronous operations
     // that will start at the same time based on length of cpus.
     // TODO: Currently the parallel processing is limited logical CPU core count but this approach
@@ -1034,14 +1034,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       // Only running workflow instances can be deleted.
       if (application.assessmentWorkflowId && !application.hasAssessmentData) {
         const deleteAssessmentPromise =
-          this.workflowActionsService.deleteApplicationAssessment(
+          this.workflowClientService.deleteApplicationAssessment(
             application.assessmentWorkflowId,
           );
         promises.push(deleteAssessmentPromise);
       }
       if (application.applicationStatus === ApplicationStatus.completed) {
         const startAssessmentPromise =
-          this.workflowActionsService.startApplicationAssessment(
+          this.workflowClientService.startApplicationAssessment(
             application.workflowName,
             application.currentAssessment.id,
           );

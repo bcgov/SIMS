@@ -373,16 +373,6 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       payload.coeDenyReasonId,
       payload.otherReasonDesc,
     );
-
-    if (
-      disbursementSchedule.studentAssessment.application.applicationStatus ===
-        ApplicationStatus.enrollment &&
-      disbursementSchedule.studentAssessment.assessmentWorkflowId
-    ) {
-      await this.workflow.deleteApplicationAssessment(
-        disbursementSchedule.studentAssessment.assessmentWorkflowId,
-      );
-    }
   }
 
   /**
