@@ -20,9 +20,7 @@
           :items="noteTypeItems"
           v-model="formModel.noteType"
           variant="outlined"
-          :rules="[
-            (v) => checkStringNullOrEmptyRule(v) || 'Note type is required',
-          ]" />
+          :rules="[(v) => checkStringNullOrEmptyRule(v, 'Note type')]" />
         <v-textarea
           label="Note body"
           placeholder="Long text..."
