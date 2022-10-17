@@ -51,13 +51,6 @@
           :autoLayout="true"
           :value="institutions"
         >
-          <Column field="legalName" header="Legal Name" :sortable="true">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.legalName }}
-              </div>
-            </template>
-          </Column>
           <Column
             field="operatingName"
             header="Operating Name"
@@ -69,6 +62,13 @@
               </div>
             </template>
           </Column>
+          <Column field="legalName" header="Legal Name" :sortable="true">
+            <template #body="slotProps">
+              <div class="p-text-capitalize">
+                {{ slotProps.data.legalName }}
+              </div>
+            </template>
+          </Column>
           <Column field="address" header="Address">
             <template #body="slotProps">
               <div class="p-text-capitalize">
@@ -76,7 +76,7 @@
               </div>
             </template>
           </Column>
-          <Column>
+          <Column header="Action">
             <template #body="slotProps">
               <v-btn
                 color="primary"

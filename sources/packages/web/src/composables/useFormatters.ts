@@ -6,10 +6,12 @@ import { SINValidStatus } from "@/store/modules/student/student";
 import { Address, InstitutionUserRoles, SINStatusEnum } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useRules } from "@/composables";
 dayjs.extend(customParseFormat);
 
 const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
+const { checkNullOrEmptyString } = useRules();
 
 /**
  * Helpers to adjust how values are shown in the UI.
@@ -150,6 +152,18 @@ export function useFormatters() {
   };
 
   /**
+   * Converts an empty or null string to '-', else return the actual string.
+   * @param value string.
+   * @returns '-' or the actual string'.
+   */
+  const emptyStringFiller = (value?: string): string | undefined => {
+    if (checkNullOrEmptyString(value)) {
+      return DEFAULT_EMPTY_VALUE;
+    }
+    return value;
+  };
+
+  /**
    * Converts a boolean to a Yes/No description value.
    * @param boolValue value to be converted to Yes/No.
    * @returns Yes, No or a default empty value case not a expected flag value as Y or N.
@@ -212,5 +226,6 @@ export function useFormatters() {
     sinDisplayFormat,
     getISODateOnlyString,
     institutionUserRoleToDisplay,
+    emptyStringFiller,
   };
 }

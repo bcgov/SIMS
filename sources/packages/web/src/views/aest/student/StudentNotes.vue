@@ -1,11 +1,7 @@
 <template>
-  <full-page-container
-    :layout-template="LayoutTemplates.Centered"
-    :full-width="true"
-  >
-    <v-row class="my-2 pl-0">
-      <v-col cols="3" class="category-header-large">Notes</v-col>
-      <v-col>
+  <div class="mt-9">
+    <body-header title="Notes">
+      <template #actions>
         <v-btn-toggle
           v-model="toggleNotes"
           mandatory
@@ -32,8 +28,8 @@
             >{{ item }}</v-btn
           >
         </v-btn-toggle>
-      </v-col>
-    </v-row>
+      </template></body-header
+    >
     <notes
       title="Past Notes"
       :entityType="NoteEntityType.Student"
@@ -41,7 +37,7 @@
       @submitData="addNote"
       :allowedRole="Role.StudentCreateNote"
     ></notes>
-  </full-page-container>
+  </div>
 </template>
 
 <script lang="ts">

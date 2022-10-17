@@ -763,7 +763,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   /**
    * Service to add note for an Institution.
-   * @param institutionId
+   * @param institutionId institution to have the note added.
    * @param noteType note type.
    * @param noteDescription note description.
    * @param auditUserId user that should be considered the one that is causing the changes.
@@ -795,6 +795,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param noteDescription note description.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager transactional entity manager.
+   * @return saved Note.
    */
   async createInstitutionNote(
     institutionId: number,
@@ -804,13 +805,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     entityManager: EntityManager,
   ): Promise<Note> {
     const auditUser = { id: auditUserId } as User;
-    // Create the note to be associated with the student.
+    // Create the note to be associated with the institution.
     const newNote = new Note();
     newNote.description = noteDescription;
     newNote.noteType = noteType;
     newNote.creator = auditUser;
     const savedNote = await entityManager.getRepository(Note).save(newNote);
-    // Associate the created note with the student.
+    // Associate the created note with the institution.
     await entityManager
       .getRepository(Institution)
       .createQueryBuilder()
