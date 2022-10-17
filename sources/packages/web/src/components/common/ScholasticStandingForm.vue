@@ -21,6 +21,7 @@ import {
   ActiveApplicationDataAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "@/services/http/dto";
+import { FormIOForm } from "@/types";
 
 interface ScholasticStanding
   extends ScholasticStandingSubmittedDetailsAPIOutDTO {
@@ -65,8 +66,8 @@ export default {
       { immediate: true },
     );
 
-    const submitted = (args: ScholasticStanding) => {
-      context.emit("submit", args);
+    const submitted = (form: FormIOForm<ScholasticStanding>) => {
+      context.emit("submit", form.data);
     };
 
     const cancel = () => {
