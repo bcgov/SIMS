@@ -48,6 +48,8 @@ import {
   Student,
   SupportingUser,
   User,
+  Notification,
+  NotificationMessage,
 } from "./entities";
 
 @Module({
@@ -102,6 +104,8 @@ import {
         Student,
         SupportingUser,
         User,
+        Notification,
+        NotificationMessage,
       ],
     }),
   ],
