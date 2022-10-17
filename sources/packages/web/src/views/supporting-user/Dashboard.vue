@@ -1,9 +1,9 @@
 <template>
   <full-page-container>
-    <formio
+    <formio-container
       formName="supportingusersdashboard"
       @customEvent="customEventCallback"
-    ></formio>
+    ></formio-container>
   </full-page-container>
 </template>
 
