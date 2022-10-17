@@ -101,7 +101,6 @@ export default defineComponent({
           title: selectItem,
           value: type[selectItem],
         });
-        console.log(selectItem);
       }
       return selectItemsArray;
     };
