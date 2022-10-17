@@ -76,6 +76,7 @@
   line-height: $line-height-header-sm;
 }
 
+/**Typography styles for small header**/
 .header-text-small {
   @extend .text-small;
   font-weight: $font-weight-bold;
