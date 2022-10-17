@@ -15,7 +15,15 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     super(dataSource.getRepository(StudentAssessment));
   }
 
+  /**
+   * Gets the consolidated assessment including the assessment itself, application
+   * dynamic data, supporting users, income and more. Contains all data needed to execute
+   * an assessment or reassessment.
+   * @param assessmentId assessment to have the data retrieve.
+   * @returns consolidated assessment information.
+   */
   async getById(assessmentId: number): Promise<StudentAssessment> {
+    // TODO: To be converted to object query.
     return this.repo
       .createQueryBuilder("assessment")
       .select([
