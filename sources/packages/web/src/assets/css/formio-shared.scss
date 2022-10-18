@@ -581,3 +581,9 @@
 .align-formio-panel > div {
   min-height: 225px;
 }
+
+// Style for formio href.
+.formio-href {
+  font-family: "BCSans-bold";
+  color: $brand-blue;
+}

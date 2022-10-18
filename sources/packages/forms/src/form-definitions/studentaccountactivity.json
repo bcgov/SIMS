@@ -299,7 +299,7 @@
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
-                      "id": "e7d7d4b00000000000000000000000000000000000000000000000",
+                      "id": "e7d7d4b000000000000000000000000000000000000000000000000000",
                       "placeholder": "",
                       "prefix": "",
                       "customClass": "",
@@ -779,7 +779,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "For StudentAid BC restrictions, please refer to the <a href=\"https://studentaidbc.ca/help-centre\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"primary-color\">StudentAid BC Help Centre.</a>",
+                  "content": "  For StudentAid BC restrictions, please refer to the\r\n    <a\r\n      href=\"https://studentaidbc.ca/help-centre\"\r\n      target=\"_blank\"\r\n      rel=\"noopener noreferrer\"\r\n       class=\"formio-href\"\r\n       >StudentAid BC Help Centre.</a\r\n    >",
                   "refreshOnChange": false,
                   "customClass": "",
                   "hidden": false,
@@ -847,7 +847,7 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "e7qzgaf"
+                  "id": "ek4myu"
                 },
                 {
                   "label": "HTML",
@@ -861,7 +861,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "For National Student Loans Centre restrictions, please refer to the <a  class=\"primary-color\" href=\"https://www.csnpe-nslsc.canada.ca\" target=\"_blank\" rel=\"noopener noreferrer\">National Student Loan Service Centre.</a>",
+                  "content": "  For National Student Loans Centre restrictions, please refer to the\r\n    <a\r\n     class=\"formio-href\"\r\n     href=\"https://www.csnpe-nslsc.canada.ca\"\r\n      target=\"_blank\"\r\n      rel=\"noopener noreferrer\"\r\n      >National Student Loan Service Centre.</a\r\n    >",
                   "refreshOnChange": false,
                   "customClass": "",
                   "hidden": false,
@@ -929,7 +929,7 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "eerf5vf"
+                  "id": "e1ua83"
                 },
                 {
                   "label": "Content",
