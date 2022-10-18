@@ -155,10 +155,7 @@ export function useFormatters() {
    * @returns '-' or the actual string.
    */
   const emptyStringFiller = (value?: string): string => {
-    if (value && value.length > 0) {
-      return value;
-    }
-    return DEFAULT_EMPTY_VALUE;
+    return value ? value : DEFAULT_EMPTY_VALUE;
   };
 
   /**
