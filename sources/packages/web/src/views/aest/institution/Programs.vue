@@ -69,7 +69,7 @@
               :status="slotProps.data.programStatus"
             ></status-chip-program> </template
         ></Column>
-        <Column>
+        <Column header="Action">
           <template #body="slotProps">
             <v-btn
               variant="outlined"

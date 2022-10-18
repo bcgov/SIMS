@@ -25,7 +25,7 @@
       />
     </v-col>
     <v-col md="4">
-      <title-value propertyTitle="Description" />
+      <title-value propertyTitle="Offering" />
       <p class="label-value muted-content clearfix">
         <span
           v-if="

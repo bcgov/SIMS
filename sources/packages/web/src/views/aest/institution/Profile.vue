@@ -86,7 +86,11 @@
         />
         <title-value
           propertyTitle="Address 2"
-          :propertyValue="institutionProfileDetail.mailingAddress?.addressLine2"
+          :propertyValue="
+            emptyStringFiller(
+              institutionProfileDetail.mailingAddress?.addressLine2,
+            )
+          "
         />
         <title-value
           propertyTitle="City"
@@ -119,6 +123,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
+import { useFormatters } from "@/composables";
 
 export default {
   components: { CheckPermissionRole },
@@ -130,6 +135,7 @@ export default {
   },
   setup(props: any) {
     const institutionProfileDetail = ref({} as InstitutionDetailAPIOutDTO);
+    const { emptyStringFiller } = useFormatters();
     const router = useRouter();
     onMounted(async () => {
       institutionProfileDetail.value =
@@ -146,6 +152,7 @@ export default {
       institutionProfileDetail,
       editProfile,
       Role,
+      emptyStringFiller,
     };
   },
 };
