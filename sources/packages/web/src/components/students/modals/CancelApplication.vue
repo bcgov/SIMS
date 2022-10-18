@@ -1,7 +1,6 @@
 <template>
   <modal-dialog-base
     title="Cancel application"
-    :dialog-type="DialogTypes.question"
     :showDialog="showDialog"
     :max-width="730"
   >
@@ -26,11 +25,7 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useSnackBar } from "@/composables";
 import { ApplicationService } from "@/services/ApplicationService";
-import {
-  ApplicationStatus,
-  ApplicationStatusToBeUpdatedDto,
-  DialogTypes,
-} from "@/types";
+import { ApplicationStatus, ApplicationStatusToBeUpdatedDto } from "@/types";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -81,7 +76,6 @@ export default defineComponent({
       showModal,
       dialogClosed,
       cancelApplication,
-      DialogTypes,
     };
   },
 });
