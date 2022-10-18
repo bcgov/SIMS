@@ -1,6 +1,6 @@
 <template>
   <modal-dialog-base
-    max-width="730"
+    :max-width="730"
     title="Apply for a permanent disability status"
     :showDialog="showDialog"
   >
