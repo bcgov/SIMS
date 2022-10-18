@@ -843,21 +843,22 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async updateInstitution(
     institutionId: number,
     auditUserId: number,
-    updateInstitution: Partial<UpdateInstitution>,
+    updateInstitution: UpdateInstitution,
+    options?: { allowFullUpdate: boolean },
   ): Promise<Institution> {
     const institution = new Institution();
     institution.id = institutionId;
-
-    institution.operatingName = updateInstitution.operatingName;
-    institution.primaryPhone = updateInstitution.primaryPhone;
-    institution.primaryEmail = updateInstitution.primaryEmail;
-    institution.website = updateInstitution.website;
-    institution.regulatingBody = updateInstitution.regulatingBody;
-    institution.establishedDate = updateInstitution.establishedDate;
-    institution.institutionType = {
-      id: updateInstitution.institutionType,
-    } as InstitutionType;
-
+    if (options?.allowFullUpdate) {
+      institution.operatingName = updateInstitution.operatingName;
+      institution.primaryPhone = updateInstitution.primaryPhone;
+      institution.primaryEmail = updateInstitution.primaryEmail;
+      institution.website = updateInstitution.website;
+      institution.regulatingBody = updateInstitution.regulatingBody;
+      institution.establishedDate = updateInstitution.establishedDate;
+      institution.institutionType = {
+        id: updateInstitution.institutionType,
+      } as InstitutionType;
+    }
     institution.institutionPrimaryContact = {
       firstName: updateInstitution.primaryContactFirstName,
       lastName: updateInstitution.primaryContactLastName,
