@@ -39,6 +39,8 @@ import {
   InstitutionRestrictionService,
   EducationProgramOfferingValidationService,
   DisbursementReceiptService,
+  NotificationService,
+  NotificationMessageService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -145,6 +147,8 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     EducationProgramOfferingControllerService,
     EducationProgramOfferingValidationService,
     DisbursementReceiptService,
+    NotificationService,
+    NotificationMessageService,
   ],
 })
 export class AppAESTModule {}

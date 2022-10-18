@@ -33,6 +33,7 @@
           <template #body="slotProps">
             <v-btn
               color="primary"
+              data-cy="viewDesignation"
               @click="goToViewDesignation(slotProps.data.designationId)"
             >
               View

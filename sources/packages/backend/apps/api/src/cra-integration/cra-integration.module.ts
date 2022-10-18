@@ -22,6 +22,8 @@ import {
   RestrictionService,
   EducationProgramOfferingService,
   EducationProgramOfferingValidationService,
+  NotificationService,
+  NotificationMessageService,
 } from "../services";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 
@@ -51,6 +53,8 @@ import { SequenceControlService, WorkflowClientService } from "@sims/services";
     EducationProgramOfferingService,
     EducationProgramOfferingValidationService,
     WorkflowClientService,
+    NotificationService,
+    NotificationMessageService,
   ],
   exports: [
     CRAPersonalVerificationService,

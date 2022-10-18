@@ -9,29 +9,29 @@ export default class InstitutionHelperActions {
   getBaseUrlAndLoginCredentialsInstitution(): string[] {
     //TODO to have conditional returns basing on the type of the institution like single location or of multiple locations.
     return [
-      this.getLoginUrlForTestEnv(),
+      this.getLoginURLForTestEnv(),
       this.getUserNameSingleLocation(),
       this.getUserPasswordSingleLocation(),
     ];
   }
 
-  getBaseUrlForTestEnv() {
+  getBaseURLForTestEnv() {
     return Cypress.env("TEST").BASE_URL;
   }
 
-  getLoginUrlForTestEnv() {
-    return `${this.getBaseUrlForTestEnv()}${
+  getLoginURLForTestEnv() {
+    return `${this.getBaseURLForTestEnv()}${
       Cypress.env("ENDPOINTS").INSTITUTION_LOGIN
     }`;
   }
 
-  getApiUrlForTest() {
-    return `${this.getBaseUrlForTestEnv()}${
+  getAPIURLForTest() {
+    return `${this.getBaseURLForTestEnv()}${
       Cypress.env("ENDPOINTS").INSTITUTIONS_API
     }`;
   }
 
-  getApiUrlForKeyCloakToken() {
+  getAPIURLForKeyCloakToken() {
     return Cypress.env("TEST").KEY_CLOAK_URL;
   }
 
@@ -43,11 +43,11 @@ export default class InstitutionHelperActions {
     return Cypress.env("TEST").USER_PASSWORD_SINGLE_LOCATION;
   }
 
-  getUserNameForApiTest() {
+  getUserNameForAPITest() {
     return Cypress.env("TEST").USERNAME_API_TEST;
   }
 
-  getUserPasswordForApiTest() {
+  getUserPasswordForAPITest() {
     return Cypress.env("TEST").USER_PASSWORD_API_TEST;
   }
 
@@ -59,14 +59,20 @@ export default class InstitutionHelperActions {
     return InstitutionData.institutionWithSingleLocation;
   }
 
-  getApiForLocationCreationOrUpdate() {
-    return `${this.getBaseUrlForTestEnv()}${
+  getAPIForLocationCreationOrUpdate() {
+    return `${this.getBaseURLForTestEnv()}${
       Cypress.env("ENDPOINTS").CREATE_INSTITUTION_LOCATION
     }`;
   }
 
-  getApiForGetAllInstitutionLocation() {
-    return `${this.getBaseUrlForTestEnv()}${
+  getAPIForDesignationAgreement() {
+    return `${this.getBaseURLForTestEnv()}${
+      Cypress.env("ENDPOINTS").DESIGNATION_AGREEMENT
+    }`;
+  }
+
+  getAPIForGetAllInstitutionLocation() {
+    return `${this.getBaseURLForTestEnv()}${
       Cypress.env("ENDPOINTS").GET_INSTITUTION_LOCATIONS
     }`;
   }
@@ -96,7 +102,7 @@ export default class InstitutionHelperActions {
 
   async getUniqueInstitutionCode(token: string) {
     let newInstitutionLocationCode = this.getRandomInstitutionCode();
-    const url = this.getApiForGetAllInstitutionLocation();
+    const url = this.getAPIForGetAllInstitutionLocation();
     const settings = {
       headers: { Authorization: `Bearer ${token}` },
     };

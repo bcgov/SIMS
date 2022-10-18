@@ -58,3 +58,5 @@ export * from "./student-account-applications/student-account-applications.model
 export * from "./education-program-offering/education-program-offering-import-csv.service";
 export * from "./education-program-offering/education-program-offering-validation.models";
 export * from "./education-program-offering/education-program-offering-validation.service";
+export * from "./notification/notification.service";
+export * from "./notification-message/notification-message.service";

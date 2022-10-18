@@ -20,6 +20,8 @@ import {
   StudentService,
   SFASIndividualService,
   EducationProgramOfferingValidationService,
+  NotificationService,
+  NotificationMessageService,
 } from "./services";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { SupportingUserSupportingUsersController } from "./route-controllers";
@@ -52,6 +54,8 @@ import { LoggerModule } from "./logger/logger.module";
     SFASIndividualService,
     EducationProgramOfferingValidationService,
     WorkflowClientService,
+    NotificationService,
+    NotificationMessageService,
   ],
 })
 export class AppSupportingUsersModule {}

@@ -32,6 +32,8 @@ import {
   StudentScholasticStandingsService,
   CRAIncomeVerificationService,
   SupportingUserService,
+  NotificationService,
+  NotificationMessageService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -107,6 +109,8 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     StudentScholasticStandingsService,
     CRAIncomeVerificationService,
     SupportingUserService,
+    NotificationService,
+    NotificationMessageService,
   ],
 })
 export class AppStudentsModule {}

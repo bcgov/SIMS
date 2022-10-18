@@ -32,6 +32,8 @@ import {
   StudentService,
   SFASIndividualService,
   EducationProgramOfferingImportCSVService,
+  NotificationService,
+  NotificationMessageService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -112,6 +114,8 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     SFASIndividualService,
     EducationProgramOfferingImportCSVService,
     EducationProgramOfferingValidationService,
+    NotificationService,
+    NotificationMessageService,
   ],
 })
 export class AppInstitutionsModule {}

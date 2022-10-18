@@ -199,11 +199,15 @@ export class StudentAESTController extends BaseController {
     // This method will be executed alongside with the transaction during the
     // execution of the method updateStudentFiles.
     const sendFileUploadNotification = () =>
-      this.gcNotifyActionsService.sendMinistryFileUploadNotification({
-        firstName: student.user.firstName,
-        lastName: student.user.lastName,
-        toAddress: student.user.email,
-      });
+      this.gcNotifyActionsService.sendMinistryFileUploadNotification(
+        {
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          toAddress: student.user.email,
+        },
+        student.user.id,
+        userToken.userId,
+      );
     // Updates the previously temporary uploaded files.
     await this.fileService.updateStudentFiles(
       studentId,

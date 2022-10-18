@@ -6,7 +6,12 @@
         @click="goToDashboard"
       ></BCLogo>
       <v-spacer></v-spacer>
-      <v-btn v-if="isAuthenticated" class="mr-5" text @click="goToDashboard"
+      <v-btn
+        v-if="isAuthenticated"
+        class="mr-5"
+        text
+        @click="goToDashboard"
+        prepend-icon="mdi-home-outline"
         >Home</v-btn
       >
       <v-menu v-if="isAuthenticated">

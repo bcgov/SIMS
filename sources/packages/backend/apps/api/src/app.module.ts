@@ -27,6 +27,8 @@ import {
   StudentService,
   SFASIndividualService,
   EducationProgramOfferingValidationService,
+  NotificationService,
+  NotificationMessageService,
 } from "./services";
 import {
   UserController,
@@ -127,6 +129,8 @@ import {
     StudentService,
     SFASIndividualService,
     EducationProgramOfferingValidationService,
+    NotificationService,
+    NotificationMessageService,
     WorkflowClientService,
   ],
 })
