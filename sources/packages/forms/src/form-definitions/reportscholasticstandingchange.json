@@ -102,7 +102,7 @@
           "value": ""
         }
       ],
-      "content": "  <span class=\"label-bold\">Application #: </span\r\n  ><span class=\"label-value\">{{ data.applicationNumber }}</span\r\n  ><span class=\"muted-content label-value\"> | </span\r\n  ><span class=\"label-bold\">Location: </span\r\n  ><span class=\"label-value\">{{ data.applicationLocationName }}</span>",
+      "content": "<span class=\"label-bold\">Application #: </span\r\n  ><span class=\"label-value\">{{ data.applicationNumber }}</span\r\n  ><span class=\"muted-content label-value\"> | </span\r\n  ><span class=\"label-bold\">Location: </span\r\n  ><span class=\"label-value\">{{ data.applicationLocationName }}</span>",
       "refreshOnChange": true,
       "customClass": "",
       "hidden": false,
