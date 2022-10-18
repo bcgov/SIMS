@@ -46,7 +46,7 @@ import { ModalDialog, useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
-import { computed, defineComponent, ref, watch } from "vue";
+import { defineComponent, ref } from "vue";
 import { ApplicationStatus, AssessmentStatus, ClientIdType } from "@/types";
 import CancelApplication from "@/components/students/modals/CancelApplication.vue";
 import { useRouter } from "vue-router";
@@ -71,13 +71,12 @@ export default defineComponent({
     const cancelApplicationModal = ref({} as ModalDialog<boolean>);
     const assessment = ref<AssessmentNOAAPIOutDTO>();
     const snackBar = useSnackBar();
-    const viewOnly = ref(false);
+    const viewOnly = ref(true);
 
     const assessmentData = (
-      noaApprovalStatus: AssessmentStatus,
       applicationStatus: ApplicationStatus,
+      noaApprovalStatus: AssessmentStatus,
     ) => {
-      console.log(viewOnly.value, "+++++++++++++++paraent");
       viewOnly.value = !(
         applicationStatus === ApplicationStatus.assessment &&
         noaApprovalStatus === AssessmentStatus.required

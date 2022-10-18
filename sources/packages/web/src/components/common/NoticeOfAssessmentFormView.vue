@@ -24,36 +24,28 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const initialData = ref<NoticeOfAssessment>();
+    const initialData = ref<NoticeOfAssessment>({} as NoticeOfAssessment);
 
-    // onMounted(async () => {});
-    // ann : to chached  forms
+    onMounted(async () => {
+      const assessment =
+        await StudentAssessmentsService.shared.getAssessmentNOA(
+          props.assessmentId,
+        );
+      initialData.value = { ...assessment, viewOnly: props.viewOnly };
+      emit(
+        "assessmentData",
+        initialData.value?.applicationStatus,
+        initialData.value.noaApprovalStatus,
+      );
+    });
 
     watch(
-      () => [props.assessmentId, props.viewOnly],
-      async () => {
-        const assessment =
-          await StudentAssessmentsService.shared.getAssessmentNOA(
-            props.assessmentId,
-          );
-        initialData.value = { ...assessment, viewOnly: props.viewOnly };
-        // emit(
-        //   "assessmentData",
-        //   initialData.value?.applicationStatus,
-        //   initialData.value.noaApprovalStatus,
-        // );
-        // initialData.value = {
-        //   ...(initialData.value as NoticeOfAssessment),
-        //   viewOnly: props.viewOnly,
-        // };
-        console.log(initialData?.value, props.viewOnly);
-        emit(
-          "assessmentData",
-          initialData.value?.applicationStatus,
-          initialData.value.noaApprovalStatus,
-        );
+      () => props.viewOnly,
+      () => {
+        initialData.value.viewOnly = props.viewOnly;
       },
     );
+
     return {
       initialData,
     };
