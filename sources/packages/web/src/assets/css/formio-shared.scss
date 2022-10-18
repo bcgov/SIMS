@@ -581,6 +581,9 @@
   border-style: solid;
   border-color: $common-border-color;
 }
+.collapsible i::before {
+  color: $brand-blue;
+}
 // Align to parallel formio panel (eg, student welcome page).
 .align-formio-panel > div {
   min-height: 225px;
