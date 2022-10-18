@@ -1,11 +1,35 @@
 import { Module } from "@nestjs/common";
-import { AssessmentController } from "./controllers/assessment/assessment.controller";
-import { StudentAssessmentService } from "./services/student-assessment/student-assessment.service";
 import { DatabaseModule } from "@sims/sims-db";
+import {
+  AssessmentController,
+  ApplicationController,
+  ProgramInfoRequestController,
+  SupportingUserController,
+  CRAIntegrationController,
+} from "./controllers";
+import {
+  StudentAssessmentService,
+  ApplicationService,
+  ApplicationExceptionService,
+  SupportingUserService,
+  CRAIncomeVerificationService,
+} from "./services";
 
 @Module({
   imports: [DatabaseModule],
-  controllers: [AssessmentController],
-  providers: [StudentAssessmentService],
+  controllers: [
+    AssessmentController,
+    ApplicationController,
+    ProgramInfoRequestController,
+    SupportingUserController,
+    CRAIntegrationController,
+  ],
+  providers: [
+    StudentAssessmentService,
+    ApplicationService,
+    ApplicationExceptionService,
+    SupportingUserService,
+    CRAIncomeVerificationService,
+  ],
 })
 export class WorkersModule {}

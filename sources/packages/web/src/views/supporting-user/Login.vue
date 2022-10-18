@@ -1,40 +1,46 @@
 <template>
-  <v-card elevation="2" class="mx-auto mt-15" max-width="690px" outlined>
-    <v-card-header>
-      <v-card-header-text>
-        <v-card-title class="my-6 bold-text" style="font-size: 27px"
-          >Welcome to Student Application Supporting Information
-          Portal</v-card-title
-        >
-        <v-card-subtitle>Welcome text goes here…</v-card-subtitle>
-      </v-card-header-text>
-    </v-card-header>
-    <v-card-text
-      >We are using BCSC for authentication. Please click on Login/Register
-      buttons below to start your sign in/sign up.</v-card-text
-    >
-    <v-row class="m-3">
-      <v-col>
-        <v-btn
-          justify-center
-          color="primary"
-          @click="login"
-          class="float-right"
-          prepend-icon="fa:fa fa-user"
-        >
-          Login with BCSC
-        </v-btn>
-      </v-col>
-      <v-col>
-        <v-btn
-          color="primary"
-          @click="login"
-          prepend-icon="mdi-account-star-outline"
-        >
-          Sign Up with BCSC
-        </v-btn>
-      </v-col>
-    </v-row>
+  <v-card elevation="2" class="mx-auto mt-15" max-width="730px">
+    <v-card-text>
+      <v-row class="pt-2 pb-4 px-2">
+        <v-col cols="9">
+          <v-card-text class="pa-0">
+            <h1 class="category-header-large primary-color">
+              Welcome to StudentAid BC
+            </h1>
+            <p class="mb-5">
+              Login or sign up to submit supporting information for student
+              applications.
+            </p>
+          </v-card-text>
+          <content-group>
+            <h3 class="category-header-medium primary-color">
+              Login or sign up
+            </h3>
+            <p class="sign-in-description">
+              Whether you are a new or returning user—login or sign up here
+              using your BC Services Card.
+            </p>
+            <div class="pb-2">
+              <v-btn
+                color="primary"
+                @click="login"
+                prepend-icon="fa:fa fa-user"
+              >
+                Login / Sign up with BCSC
+              </v-btn>
+            </div>
+          </content-group>
+        </v-col>
+        <v-col cols="3" align-self="end">
+          <v-img
+            height="260"
+            class="mt-8 mb-n6"
+            alt="An illustration of a woman working at a desk with her laptop. Illustration by Storyset."
+            src="@/assets/images/happy-parent.svg"
+          />
+        </v-col>
+      </v-row>
+    </v-card-text>
   </v-card>
 </template>
 

@@ -486,9 +486,9 @@ describe("Add New Location and update for the institution", () => {
   const uniqeId1 = institutionHelperActions.getUniqueId();
   const uniqeId2 = institutionHelperActions.getUniqueId();
   const phoneNumber = "1236549871";
-  const USERNAME = institutionHelperActions.getUserNameForApiTest();
-  const PASSWORD = institutionHelperActions.getUserPasswordForApiTest();
-  const TOKEN_URL = institutionHelperActions.getApiUrlForKeyCloakToken();
+  const USERNAME = institutionHelperActions.getUserNameForAPITest();
+  const PASSWORD = institutionHelperActions.getUserPasswordForAPITest();
+  const TOKEN_URL = institutionHelperActions.getAPIURLForKeyCloakToken();
 
   before(async () => {
     const authorizer = new Authorization();
