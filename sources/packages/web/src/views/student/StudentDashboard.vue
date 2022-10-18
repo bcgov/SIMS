@@ -2,7 +2,7 @@
   <student-page-container layout-template="centered">
     <formio-container
       formName="studentWelcomePage"
-      :formData="formData"
+      :formData="studentDetails"
       @customEvent="goToStudentApplication"
     />
   </student-page-container>
@@ -11,13 +11,11 @@
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { useStudentStore } from "@/composables";
-import { ref } from "vue";
 
 export default {
   setup() {
-    const { firstName } = useStudentStore();
+    const { studentDetails } = useStudentStore();
     const router = useRouter();
-    const formData = ref({ firstName: firstName });
 
     const goToStudentApplication = async () => {
       await router.push({
@@ -28,8 +26,7 @@ export default {
     return {
       StudentRoutesConst,
       goToStudentApplication,
-      formData,
-      firstName,
+      studentDetails,
     };
   },
 };

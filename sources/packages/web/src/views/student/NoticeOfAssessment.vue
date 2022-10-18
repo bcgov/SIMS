@@ -33,7 +33,7 @@
     <notice-of-assessment-form-view
       :assessmentId="assessmentId"
       :view-only="viewOnly"
-      @assessmentData="assessmentData"
+      @assessmentDataLoaded="assessmentDataLoaded"
     />
 
     <cancel-application ref="cancelApplicationModal" />
@@ -73,7 +73,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const viewOnly = ref(true);
 
-    const assessmentData = (
+    const assessmentDataLoaded = (
       applicationStatus: ApplicationStatus,
       noaApprovalStatus: AssessmentStatus,
     ) => {
@@ -115,7 +115,7 @@ export default defineComponent({
       viewOnly,
       confirmCancelApplication,
       cancelApplicationModal,
-      assessmentData,
+      assessmentDataLoaded,
     };
   },
 });

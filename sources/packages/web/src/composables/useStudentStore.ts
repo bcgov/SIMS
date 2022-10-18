@@ -3,6 +3,7 @@ import { Store, useStore } from "vuex";
 import {
   SINValidStatus,
   StudentRestriction,
+  StudentState,
 } from "@/store/modules/student/student";
 
 export function useStudentStore(rootStore?: Store<any>) {
@@ -39,8 +40,8 @@ export function useStudentStore(rootStore?: Store<any>) {
     return store.getters["student/getRestrictions"];
   });
 
-  const firstName = computed<string>(() => {
-    return store.getters["student/firstName"];
+  const studentDetails = computed<StudentState>(() => {
+    return store.getters["student/studentDetails"];
   });
 
   return {
@@ -52,6 +53,6 @@ export function useStudentStore(rootStore?: Store<any>) {
     hasRestrictionError,
     hasRestrictionWarning,
     activeRestrictions,
-    firstName,
+    studentDetails,
   };
 }

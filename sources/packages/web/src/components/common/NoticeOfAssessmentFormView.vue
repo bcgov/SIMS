@@ -12,7 +12,7 @@ interface NoticeOfAssessment extends AssessmentNOAAPIOutDTO {
 }
 
 export default defineComponent({
-  emits: ["assessmentData"],
+  emits: ["assessmentDataLoaded"],
   props: {
     assessmentId: {
       type: Number,
@@ -24,7 +24,7 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const initialData = ref<NoticeOfAssessment>({} as NoticeOfAssessment);
+    const initialData = ref({} as NoticeOfAssessment);
 
     onMounted(async () => {
       const assessment =
@@ -33,7 +33,7 @@ export default defineComponent({
         );
       initialData.value = { ...assessment, viewOnly: props.viewOnly };
       emit(
-        "assessmentData",
+        "assessmentDataLoaded",
         initialData.value?.applicationStatus,
         initialData.value.noaApprovalStatus,
       );
