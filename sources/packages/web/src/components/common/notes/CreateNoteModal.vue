@@ -20,7 +20,7 @@
           :items="noteTypeItems"
           v-model="formModel.noteType"
           variant="outlined"
-          :rules="[(v) => !!v || 'Note type is required.']" />
+          :rules="[(v) => checkNullOrEmptyRule(v, 'Note type')]" />
         <v-textarea
           label="Note body"
           placeholder="Long text..."
@@ -73,7 +73,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { checkNotesLengthRule } = useRules();
+    const { checkNotesLengthRule, checkNullOrEmptyRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       NoteAPIInDTO | boolean
     >();
@@ -95,7 +95,10 @@ export default defineComponent({
     ): SelectItemType[] => {
       const selectItemsArray: SelectItemType[] = [];
       for (const selectItem in type) {
-        selectItemsArray.push({ title: selectItem, value: selectItem });
+        selectItemsArray.push({
+          title: selectItem,
+          value: type[selectItem],
+        });
       }
       return selectItemsArray;
     };
@@ -127,6 +130,7 @@ export default defineComponent({
       addNewNoteForm,
       noteTypeItems,
       checkNotesLengthRule,
+      checkNullOrEmptyRule,
     };
   },
 });
