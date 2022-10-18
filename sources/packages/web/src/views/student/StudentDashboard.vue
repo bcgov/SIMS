@@ -10,29 +10,27 @@
 <script lang="ts">
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { onMounted, ref, defineComponent } from "vue";
-import { StudentService } from "@/services/StudentService";
-import { StudentFormInfo } from "@/types";
+import { useStudentStore } from "@/composables";
+import { ref } from "vue";
 
-export default defineComponent({
+export default {
   setup() {
+    const { firstName } = useStudentStore();
     const router = useRouter();
-    const formData = ref<StudentFormInfo>();
+    const formData = ref({ firstName: firstName });
+
     const goToStudentApplication = async () => {
       await router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
       });
     };
 
-    onMounted(async () => {
-      formData.value = await StudentService.shared.getStudentProfile();
-    });
-
     return {
       StudentRoutesConst,
       goToStudentApplication,
       formData,
+      firstName,
     };
   },
-});
+};
 </script>

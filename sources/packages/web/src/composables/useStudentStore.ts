@@ -39,6 +39,10 @@ export function useStudentStore(rootStore?: Store<any>) {
     return store.getters["student/getRestrictions"];
   });
 
+  const firstName = computed<string>(() => {
+    return store.getters["student/firstName"];
+  });
+
   return {
     updateProfileData,
     sinValidStatus,
@@ -48,5 +52,6 @@ export function useStudentStore(rootStore?: Store<any>) {
     hasRestrictionError,
     hasRestrictionWarning,
     activeRestrictions,
+    firstName,
   };
 }

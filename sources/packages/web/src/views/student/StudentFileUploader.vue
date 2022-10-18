@@ -67,14 +67,13 @@ export default {
         reloadDocuments.value = !reloadDocuments.value;
         snackBar.success("Your documents have been submitted!");
       } catch (error: unknown) {
+        let errorMessage = "An error happened while submitting your documents.";
         if (error instanceof ApiProcessError) {
-          let errorMessage =
-            "An error happened while submitting your documents.";
           if (error.errorType === APPLICATION_NOT_FOUND) {
             errorMessage = error.message;
-            snackBar.error(errorMessage);
           }
         }
+        snackBar.error(errorMessage);
       } finally {
         processing.value = false;
       }

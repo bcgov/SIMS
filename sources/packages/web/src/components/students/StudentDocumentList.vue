@@ -2,7 +2,7 @@
   <v-card>
     <v-container>
       <h3 class="category-header-medium-small mb-4">My received documents</h3>
-      <div v-if="ministryDocuments.length">
+      <template v-if="ministryDocuments.length">
         <div
           class="document-box mb-4"
           v-for="ministryDocument in ministryDocuments"
@@ -18,15 +18,15 @@
             <span>{{ ministryDocument.fileName }}</span>
           </div>
         </div>
-      </div>
-      <div v-else>
+      </template>
+      <template v-else>
         <p>
           Your documents from StudentAid BC are shown here. At the moment there
           are no documents to display.
         </p>
-      </div>
+      </template>
       <h3 class="category-header-medium-small mb-4">My uploaded documents</h3>
-      <div v-if="studentDocuments.length">
+      <template v-if="studentDocuments.length">
         <div
           class="document-box mb-4"
           v-for="studentDocument in studentDocuments"
@@ -42,10 +42,10 @@
             <span>{{ studentDocument.fileName }}</span>
           </div>
         </div>
-      </div>
-      <div v-else>
+      </template>
+      <template v-else>
         <p>You have no documents uploaded at this time.</p>
-      </div>
+      </template>
     </v-container>
   </v-card>
 </template>

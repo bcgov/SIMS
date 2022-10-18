@@ -33,7 +33,9 @@
     <notice-of-assessment-form-view
       :assessmentId="assessmentId"
       :view-only="viewOnly"
+      @assessmentData="assessmentData"
     />
+
     <cancel-application ref="cancelApplicationModal" />
   </student-page-container>
 </template>
@@ -69,40 +71,30 @@ export default defineComponent({
     const cancelApplicationModal = ref({} as ModalDialog<boolean>);
     const assessment = ref<AssessmentNOAAPIOutDTO>();
     const snackBar = useSnackBar();
-    const setAssessment = async () => {
-      assessment.value =
-        await StudentAssessmentsService.shared.getAssessmentNOA(
-          props.assessmentId,
-        );
+    const viewOnly = ref(false);
+
+    const assessmentData = (
+      noaApprovalStatus: AssessmentStatus,
+      applicationStatus: ApplicationStatus,
+    ) => {
+      console.log(viewOnly.value, "+++++++++++++++paraent");
+      viewOnly.value = !(
+        applicationStatus === ApplicationStatus.assessment &&
+        noaApprovalStatus === AssessmentStatus.required
+      );
     };
+
     const confirmAssessment = async () => {
       try {
         await StudentAssessmentsService.shared.confirmAssessmentNOA(
           props.assessmentId,
         );
-        await setAssessment();
+        viewOnly.value = true;
         snackBar.success("Confirmation of Assessment completed successfully!");
       } catch (error) {
         snackBar.error("An error happened while confirming the assessment.");
       }
     };
-
-    watch(
-      () => props.assessmentId,
-      async () => {
-        await setAssessment();
-      },
-      { immediate: true },
-    );
-
-    const viewOnly = computed(
-      () =>
-        !(
-          assessment.value?.applicationStatus ===
-            ApplicationStatus.assessment &&
-          assessment.value?.noaApprovalStatus === AssessmentStatus.required
-        ),
-    );
 
     const confirmCancelApplication = async () => {
       if (await cancelApplicationModal.value.showModal(props.applicationId)) {
@@ -124,6 +116,7 @@ export default defineComponent({
       viewOnly,
       confirmCancelApplication,
       cancelApplicationModal,
+      assessmentData,
     };
   },
 });

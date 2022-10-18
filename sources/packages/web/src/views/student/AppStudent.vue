@@ -1,7 +1,5 @@
 <template>
   <IdleTimeChecker :clientIdType="ClientIdType.Student">
-    <!-- Adding overflow:visible to allow the use of the Prime Vue
-  floating menu while Vuetify component is not ready.  -->
     <v-app-bar color="white">
       <b-c-logo subtitle="Student Application" @click="logoClick" />
       <v-spacer />

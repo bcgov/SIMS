@@ -195,11 +195,11 @@ export default defineComponent({
         );
     };
 
-    const reloadApplication = async () => {
+    const reloadApplications = async () => {
       await getStudentApplications();
     };
 
-    onMounted(reloadApplication);
+    onMounted(reloadApplications);
 
     // pagination sort event callback
     const paginationAndSortEvent = async (event: any) => {
@@ -216,7 +216,7 @@ export default defineComponent({
     };
 
     const emitCancel = (applicationId: number) => {
-      emit("openConfirmCancel", applicationId, () => reloadApplication());
+      emit("openConfirmCancel", applicationId, () => reloadApplications());
     };
 
     return {
@@ -232,7 +232,7 @@ export default defineComponent({
       defaultSortOrder,
       StudentApplicationFields,
       ClientIdType,
-      reloadApplication,
+      reloadApplications,
       SINStatusEnum,
       sinValidStatus,
       clientType,

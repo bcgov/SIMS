@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { watch, defineComponent, ref } from "vue";
+import { watch, defineComponent, ref, onMounted } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
 
@@ -12,6 +12,7 @@ interface NoticeOfAssessment extends AssessmentNOAAPIOutDTO {
 }
 
 export default defineComponent({
+  emits: ["assessmentData"],
   props: {
     assessmentId: {
       type: Number,
@@ -22,8 +23,12 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const initialData = ref<NoticeOfAssessment>();
+
+    // onMounted(async () => {});
+    // ann : to chached  forms
+
     watch(
       () => [props.assessmentId, props.viewOnly],
       async () => {
@@ -32,10 +37,23 @@ export default defineComponent({
             props.assessmentId,
           );
         initialData.value = { ...assessment, viewOnly: props.viewOnly };
+        // emit(
+        //   "assessmentData",
+        //   initialData.value?.applicationStatus,
+        //   initialData.value.noaApprovalStatus,
+        // );
+        // initialData.value = {
+        //   ...(initialData.value as NoticeOfAssessment),
+        //   viewOnly: props.viewOnly,
+        // };
+        console.log(initialData?.value, props.viewOnly);
+        emit(
+          "assessmentData",
+          initialData.value?.applicationStatus,
+          initialData.value.noaApprovalStatus,
+        );
       },
-      { immediate: true },
     );
-
     return {
       initialData,
     };

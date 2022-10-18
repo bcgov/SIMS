@@ -56,7 +56,7 @@ export default defineComponent({
       applicationId = id;
 
       // Call the modal method to show the modal.
-      return showModalInternal(applicationId);
+      return showModalInternal();
     };
 
     const cancelApplication = async () => {
