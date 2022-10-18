@@ -23,7 +23,7 @@ import {
   EducationProgramOfferingService,
   EducationProgramOfferingValidationService,
 } from "../services";
-import { SequenceControlService } from "@sims/services";
+import { SequenceControlService, WorkflowClientService } from "@sims/services";
 
 @Module({
   imports: [AuthModule],
@@ -50,6 +50,7 @@ import { SequenceControlService } from "@sims/services";
     StudentRestrictionService,
     EducationProgramOfferingService,
     EducationProgramOfferingValidationService,
+    WorkflowClientService,
   ],
   exports: [
     CRAPersonalVerificationService,

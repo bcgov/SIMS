@@ -48,7 +48,11 @@ import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
-import { ZeebeModule, SequenceControlService } from "@sims/services";
+import {
+  ZeebeModule,
+  SequenceControlService,
+  WorkflowClientService,
+} from "@sims/services";
 
 @Module({
   imports: [
@@ -123,6 +127,7 @@ import { ZeebeModule, SequenceControlService } from "@sims/services";
     StudentService,
     SFASIndividualService,
     EducationProgramOfferingValidationService,
+    WorkflowClientService,
   ],
 })
 export class AppModule {}

@@ -35,7 +35,11 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
   CustomNamedError,
 } from "../../utilities";
-import { Application, AssessmentTriggerType } from "@sims/sims-db";
+import {
+  Application,
+  AssessmentTriggerType,
+  ProgramInfoStatus,
+} from "@sims/sims-db";
 import {
   OFFERING_INTENSITY_MISMATCH,
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
@@ -175,8 +179,10 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           payload.otherReasonDesc,
         );
       if (application.currentAssessment.assessmentWorkflowId) {
-        await this.workflowClientService.deleteApplicationAssessment(
-          application.currentAssessment.assessmentWorkflowId,
+        // Send a message to inform the workflow of the declined PIR.
+        await this.workflowClientService.sendProgramInfoCompletedMessage(
+          applicationId,
+          ProgramInfoStatus.declined,
         );
       }
     } catch (error: unknown) {
@@ -245,16 +251,16 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
         offering.studyEndDate,
       );
       // Complete PIR.
-      const updatedApplication =
-        await this.applicationService.setOfferingForProgramInfoRequest(
-          applicationId,
-          locationId,
-          offering.id,
-          userToken.userId,
-        );
+      await this.applicationService.setOfferingForProgramInfoRequest(
+        applicationId,
+        locationId,
+        offering.id,
+        userToken.userId,
+      );
       // Send a message to allow the workflow to proceed.
-      await this.workflowService.sendProgramInfoCompletedMessage(
-        updatedApplication.currentAssessment.assessmentWorkflowId,
+      await this.workflowClientService.sendProgramInfoCompletedMessage(
+        applicationId,
+        ProgramInfoStatus.completed,
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {

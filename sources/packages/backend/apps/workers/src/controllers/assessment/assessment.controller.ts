@@ -8,6 +8,8 @@ import {
 } from "zeebe-node";
 import {
   ApplicationAssessmentJobOutDTO,
+  AssessmentDataJobInDTO,
+  AssociateWorkflowInstanceJobInDTO,
   SaveAssessmentDataJobInDTO,
   StudentAppealRequestJobOutDTO,
   SupportingUserJobOutDTO,
@@ -23,17 +25,59 @@ import {
   SupportingUserType,
 } from "@sims/sims-db";
 import { filterObjectProperties } from "../../utilities";
-import { ASSESSMENT_NOT_FOUND } from "../../constants";
+import {
+  ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
+  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ASSESSMENT_NOT_FOUND,
+} from "../../constants";
 import {
   ASSESSMENT_DATA,
   ASSESSMENT_ID,
 } from "@sims/services/workflow/variables/assessment-gateway";
+import { CustomNamedError } from "@sims/utilities";
 
 @Controller()
 export class AssessmentController {
   constructor(
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {}
+
+  /**
+   * Associates the workflow instance if the assessment is not associated already.
+   */
+  @ZeebeWorker("associate-workflow-instance", {
+    fetchVariable: [ASSESSMENT_ID],
+  })
+  async associateWorkflowInstance(
+    job: Readonly<
+      ZeebeJob<
+        AssociateWorkflowInstanceJobInDTO,
+        ICustomHeaders,
+        IOutputVariables
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    try {
+      await this.studentAssessmentService.associateWorkflowId(
+        job.variables.assessmentId,
+        job.processInstanceKey,
+      );
+      return job.complete();
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW:
+            return job.complete();
+          case ASSESSMENT_NOT_FOUND:
+          case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            return job.error(error.name, error.message);
+        }
+      }
+      return job.fail(
+        `Not able to associate the assessment id ${job.variables.assessmentId} with the workflow instance id ${job.processInstanceKey}. ${error}`,
+      );
+    }
+  }
 
   /**
    * Loads consolidated assessment including the assessment itself, application
@@ -46,14 +90,13 @@ export class AssessmentController {
    * @returns filtered consolidated information.
    */
   @ZeebeWorker("load-assessment-consolidated-data", {
-    fetchVariable: [ASSESSMENT_ID],
+    fetchVariable: [ASSESSMENT_ID, "associateWorkflowInstanceId"],
   })
   async loadAssessmentConsolidatedData(
     job: Readonly<
-      ZeebeJob<SaveAssessmentDataJobInDTO, ICustomHeaders, IOutputVariables>
+      ZeebeJob<AssessmentDataJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    // TODO: check for workflow instance id to avoid workflow concurrent execution.
     const assessment = await this.studentAssessmentService.getById(
       job.variables.assessmentId,
     );

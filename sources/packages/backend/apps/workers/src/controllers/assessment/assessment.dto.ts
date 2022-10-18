@@ -10,6 +10,10 @@ import {
   AssessmentStatus,
 } from "@sims/sims-db";
 
+export interface AssociateWorkflowInstanceJobInDTO {
+  [ASSESSMENT_ID]: number;
+}
+
 export interface AssessmentDataJobInDTO {
   [ASSESSMENT_ID]: number;
 }
@@ -126,6 +130,10 @@ export interface SaveAssessmentDataJobInDTO {
 
 export interface UpdateNOAStatusJobInDTO {
   [ASSESSMENT_ID]: number;
+}
+
+export interface UpdateNOAStatusHeaderDTO {
+  status: AssessmentStatus;
 }
 
 export interface UpdateNOAStatusHeaderDTO {
