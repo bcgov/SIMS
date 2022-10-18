@@ -490,17 +490,17 @@
           "label": "HTML",
           "labelWidth": "",
           "labelMargin": "",
-          "tag": "p",
-          "className": "w-100",
+          "tag": "div",
+          "className": "alert alert-info fa fa-circle-info w-100 ",
           "attrs": [
             {
               "attr": "",
               "value": ""
             }
           ],
-          "content": "  <div\r\n    class=\"v-alert v-theme--light text-info v-alert--density-default v-alert--variant-outlined\"\r\n    role=\"alert\"\r\n  >\r\n    <div class=\"v-alert__prepend\">\r\n      <i\r\n        class=\"fa fa-circle-info v-icon notranslate v-theme--light v-icon--size-default\"\r\n        aria-hidden=\"true\"\r\n      ></i>\r\n    </div>\r\n    <div class=\"v-alert__content\">\r\n      <div class=\"v-alert-title\">\r\n        <div class=\"label-bold-normal\">Updating read-only information</div>\r\n      </div>\r\n      <div class=\"v-row\">\r\n        <div class=\"v-col v-col-10\">\r\n          <div class=\"label-value-normal\">\r\n            The read-only information above is retrieved from your BCeID account\r\n            and it is not possible to change it here. If any read-only\r\n            information needs to be changed, please visit\r\n            <a\r\n              href=\"https://www.bceid.ca/\"\r\n              target=\"_blank\"\r\n              rel=\"noopener noreferrer\"\r\n            >\r\n              <strong> bceid.ca. </strong>\r\n            </a>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>",
+          "content": "<strong class=\"ml-2\">Updating read-only information</strong>\r\n<br />\r\n<span>\r\n  The read-only information above is retrieved from your BCeID account and\r\n  it is not possible to change it here. If any read-only information needs\r\n  to be changed, please visit\r\n  <a href=\"https://www.bceid.ca/\" target=\"_blank\" rel=\"noopener noreferrer\">\r\n    <strong> bceid.ca. </strong>\r\n  </a>\r\n</span>",
           "refreshOnChange": false,
-          "customClass": "",
+          "customClass": "banner-info",
           "hidden": false,
           "modalEdit": false,
           "key": "html5",
@@ -566,7 +566,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "e65lld"
+          "id": "evhegp"
         }
       ],
       "placeholder": "",
