@@ -152,7 +152,7 @@ export function useFormatters() {
   /**
    * Converts an empty or null string to '-', else return the actual string.
    * @param value string.
-   * @returns '-' or the actual string'.
+   * @returns '-' or the actual string.
    */
   const emptyStringFiller = (value?: string): string => {
     if (value && value.length > 0) {
