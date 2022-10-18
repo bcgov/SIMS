@@ -42,16 +42,15 @@
 </template>
 
 <script lang="ts">
-import { computed } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { LayoutTemplates } from "@/types";
 
-export default {
+export default defineComponent({
   props: {
     layoutTemplate: {
-      type: String,
+      type: String as PropType<LayoutTemplates>,
       required: false,
       default: LayoutTemplates.CenteredCard,
-      validator: (val: string) => val in LayoutTemplates,
     },
     fullWidth: {
       type: Boolean,
@@ -59,11 +58,11 @@ export default {
       default: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const widthClass = computed(() => {
       return props.fullWidth ? "" : "full-page-container-size";
     });
     return { LayoutTemplates, widthClass };
   },
-};
+});
 </script>

@@ -69,20 +69,21 @@
   line-height: $line-height-header-lg;
 }
 
-/**Typography styles for extra small header**/
-.extra-small {
+/**Typography styles for small header**/
+.text-small {
   font-style: $font-style-normal;
   font-size: $font-header-small;
   line-height: $line-height-header-sm;
 }
 
-.header-extra-small {
-  @extend .extra-small;
+/**Typography styles for small header**/
+.header-text-small {
+  @extend .text-small;
   font-weight: $font-weight-bold;
 }
 
-.value-extra-small {
-  @extend .extra-small;
+.value-text-small {
+  @extend .text-small;
   font-weight: $font-weight-normal;
 }
 
@@ -95,16 +96,33 @@
 
 .label-medium {
   font-style: $font-style-normal;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-size: $font-size-xsmall;
   line-height: 18px;
 }
 
-.label-small {
+.label-small-bold {
   font-style: $font-style-normal;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-size: 12px;
   line-height: 18px;
+}
+
+/**Typography styles for extra small header**/
+.extra-small {
+  font-style: $font-style-normal;
+  font-size: $font-size-xsmall;
+  line-height: $line-height-header-xsm;
+}
+
+.header-extra-small {
+  @extend .extra-small;
+  font-weight: $font-weight-bold;
+}
+
+.value-extra-small {
+  @extend .extra-small;
+  font-weight: $font-weight-normal;
 }
 
 .ff-form-container .alert-success {
@@ -133,8 +151,14 @@
   padding-left: 20px;
 }
 
-.align-bullets ul {
+.align-bullets ul,
+.align-bullets ol {
   padding-left: 20px;
+}
+
+.align-bullets ul li,
+.align-bullets ol li {
+  line-height: $line-height-header-md !important;
 }
 
 /**Todo: formio-component-content styles must be removed once content component is
@@ -331,7 +355,7 @@
 }
 
 .status-active-restriction .form-status-badge {
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   border-color: $badge-border-warning;
 }
 
@@ -340,7 +364,7 @@
 }
 
 .formio-success-status .form-status-badge {
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   border-color: $badge-border-success;
   text-transform: none;
 }
@@ -444,7 +468,7 @@
 }
 
 .ff-form-container .formio-panel-bg-secondary .card-body {
-  background-color: $color-background;
+  background-color: $default-background;
 }
 // CSS to override data grid table style.
 .ff-form-container .formio-datagrid-unset .table-bordered td,
@@ -489,6 +513,81 @@
 
 // Squared bordered style for formio md-6 col.
 .formio-bordered-column .col-md-6 {
-  border: 1px solid #e8e8e8;
+  border: 1px solid $common-border-color;
   border-radius: 0px;
+}
+
+// Formio table style as per figma.
+.formio-bordered table {
+  border: 1px solid $common-border-color;
+}
+
+// Formio figma style for the nth child (like total).
+.formio-table-last-col-background table tbody tr:last-child {
+  background-color: $default-background;
+}
+
+// Formio table style for alignment.
+.formio-bordered table tbody tr td {
+  max-width: 70px;
+}
+
+// Custom tooltip for html component(or components without tooltip feature) in formio.
+.formio-custom-tooltip {
+  position: absolute;
+  display: inline-flex;
+}
+
+.formio-custom-tooltip:before {
+  content: "\f059";
+  font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif, "FontAwesome";
+  color: $brand-grey;
+  font-size: 16px;
+  padding: 0 10px;
+}
+
+.formio-custom-tooltip .tooltip-text {
+  visibility: hidden;
+  background-color: rgba(#424242, 0.85);
+  color: #eeeeee;
+  padding: 0.5em;
+  border-radius: 4px;
+  opacity: 1;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.formio-custom-tooltip:hover .tooltip-text {
+  visibility: visible;
+}
+
+// Collapsible panel style as per figma.
+.collapsible .card-header.bg-default {
+  border-left: 8px solid $brand-blue;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+// Collapsible panel style as per figma.
+.collapsible > div.border {
+  border-width: 0 !important;
+}
+
+.collapsible .card-header {
+  border-bottom-width: 0 !important;
+}
+.collapsible .card-body {
+  border-width: 0px 1px 1px 1px;
+  border-style: solid;
+  border-color: $common-border-color;
+}
+// Align to parallel formio panel (eg, student welcome page).
+.align-formio-panel > div {
+  min-height: 225px;
+}
+
+// Style for formio href.
+.formio-href {
+  font-family: "BCSans-bold", "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
+  color: $brand-blue;
 }

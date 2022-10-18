@@ -55,7 +55,7 @@ export default defineComponent({
     iconColor: {
       type: String,
       required: false,
-      default: "default",
+      default: "black",
     },
   },
 });

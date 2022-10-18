@@ -21,4 +21,8 @@ export const getters: GetterTree<StudentState, RootState> = {
         restriction.type === RestrictionNotificationType.Error,
     );
   },
+
+  studentDetails(state: StudentState): StudentState {
+    return state;
+  },
 };

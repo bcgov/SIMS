@@ -1,20 +1,19 @@
 {
   "title": "Student Request Change",
+  "display": "form",
+  "type": "form",
   "name": "studentRequestChange",
   "path": "studentrequestchange",
-  "type": "form",
-  "display": "form",
   "tags": [
     "common"
   ],
-  "owner": "dheepak.ramanathan@gov.bc.ca",
   "components": [
     {
       "label": "Form title",
       "labelWidth": "",
       "labelMargin": "",
-      "tag": "p",
-      "className": "",
+      "tag": "h3",
+      "className": "category-header-large primary-color",
       "attrs": [
         {
           "attr": "",
@@ -23,7 +22,7 @@
       ],
       "content": "When to request change",
       "refreshOnChange": false,
-      "customClass": "category-header-large primary-color",
+      "customClass": "",
       "hidden": false,
       "modalEdit": false,
       "key": "formTitle",
@@ -48,6 +47,7 @@
       },
       "type": "htmlelement",
       "input": false,
+      "tableView": false,
       "placeholder": "",
       "prefix": "",
       "suffix": "",
@@ -59,7 +59,6 @@
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
-      "tableView": false,
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
@@ -89,7 +88,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "enlg79"
+      "id": "esj83ig"
     },
     {
       "label": "Description",
@@ -689,8 +688,5 @@
       "id": "e6z1qd9",
       "addons": []
     }
-  ],
-  "created": "2022-03-18T22:58:22.442Z",
-  "modified": "2022-03-23T18:32:11.499Z",
-  "machineName": "studentRequestChange"
+  ]
 }

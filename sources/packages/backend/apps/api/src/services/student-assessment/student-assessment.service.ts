@@ -125,7 +125,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .createQueryBuilder("assessment")
       .select([
         "assessment.assessmentData",
+        "assessment.noaApprovalStatus",
         "application.applicationNumber",
+        "application.applicationStatus",
         "student.id",
         "user.firstName",
         "user.lastName",

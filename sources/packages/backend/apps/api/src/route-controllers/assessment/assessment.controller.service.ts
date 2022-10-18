@@ -21,8 +21,6 @@ import {
 import {
   StudentAssessmentService,
   DisbursementReceiptService,
-  EducationProgramOfferingService,
-  ApplicationExceptionService,
   StudentAppealService,
   StudentScholasticStandingsService,
 } from "../../services";
@@ -41,8 +39,6 @@ export class AssessmentControllerService {
   constructor(
     private readonly assessmentService: StudentAssessmentService,
     private readonly disbursementReceiptService: DisbursementReceiptService,
-    private readonly educationProgramOfferingService: EducationProgramOfferingService,
-    private readonly applicationExceptionService: ApplicationExceptionService,
     private readonly studentAppealService: StudentAppealService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
   ) {}
@@ -147,6 +143,8 @@ export class AssessmentControllerService {
 
     return {
       assessment: assessment.assessmentData,
+      noaApprovalStatus: assessment.noaApprovalStatus,
+      applicationStatus: assessment.application.applicationStatus,
       applicationNumber: assessment.application.applicationNumber,
       fullName: getUserFullName(assessment.application.student.user),
       programName: assessment.offering.educationProgram.name,

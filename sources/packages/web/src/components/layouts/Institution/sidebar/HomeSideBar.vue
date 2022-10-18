@@ -1,9 +1,9 @@
 <template>
-  <v-navigation-drawer app color="background" permanent>
+  <v-navigation-drawer app color="default" permanent>
     <v-list
-      active-class="active-sidebar-item"
+      active-class="active-list-item"
       density="compact"
-      bg-color="background"
+      bg-color="default"
       active-color="primary"
       class="no-wrap"
       :items="items"

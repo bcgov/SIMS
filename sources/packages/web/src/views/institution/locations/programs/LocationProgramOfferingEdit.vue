@@ -18,7 +18,12 @@
                   >Edit Actions</v-btn
                 >
               </template>
-              <v-list>
+              <v-list
+                active-class="active-list-item"
+                density="compact"
+                bg-color="default"
+                active-color="primary"
+              >
                 <template v-for="(item, index) in items" :key="index">
                   <v-list-item :value="index">
                     <v-list-item-title @click="item.command">

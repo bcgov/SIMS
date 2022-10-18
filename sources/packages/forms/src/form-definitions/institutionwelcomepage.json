@@ -64,7 +64,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "<h1 class=\"category-header-x-large primary-color\">Welcome to your account!</h1>\n<p class=\"formio-text mt-4\">\n  <strong>New users</strong> can follow the steps listed below to get started.\n</p>\n<p class=\"formio-text\">\n  <strong>Returning users</strong> can use the left-hand navigation \nto do things like confirm enrolment or report a change.\n</p>",
+                  "content": "<h1 class=\"category-header-x-large primary-color\">Welcome to your account!</h1>\n<p class=\"mt-4\">\n  <strong>New users</strong> can follow the steps listed below to get started.\n</p>\n<p>\n  <strong>Returning users</strong> can use the left-hand navigation \nto do things like confirm enrolment or report a change.\n</p>",
                   "refreshOnChange": false,
                   "customClass": "",
                   "hidden": false,
@@ -132,7 +132,7 @@
                   "showWordCount": false,
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "epsfk75"
+                  "id": "eo7etjo"
                 }
               ],
               "width": 8,
@@ -465,7 +465,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "exrj12t"
+          "id": "exckjf"
         },
         {
           "label": "Columns",
