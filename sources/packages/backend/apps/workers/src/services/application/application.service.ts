@@ -54,18 +54,28 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * will be affected.
    * @param applicationId application to have the PIR updated.
    * @param pirStatus status to be updated.
+   * @param locationId location selected by the student.
+   * @param pirProgram optional program selected by the student.
+   * When not provided the PIR will be required to be completed by
+   * the institution.
    * @returns update result.
    */
   async updateProgramInfoStatus(
     applicationId: number,
     pirStatus: ProgramInfoStatus,
+    locationId: number,
+    pirProgram?: number,
   ): Promise<UpdateResult> {
     return this.repo.update(
       {
         id: applicationId,
         pirStatus: IsNull(),
       },
-      { pirStatus },
+      {
+        pirStatus,
+        location: { id: locationId },
+        pirProgram: { id: pirProgram },
+      },
     );
   }
 

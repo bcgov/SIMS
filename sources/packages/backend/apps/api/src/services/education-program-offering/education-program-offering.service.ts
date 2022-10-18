@@ -499,6 +499,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     return this.repo
       .createQueryBuilder("offerings")
       .select([
+        "offerings.id",
         "location.id",
         "offerings.studyStartDate",
         "offerings.studyEndDate",

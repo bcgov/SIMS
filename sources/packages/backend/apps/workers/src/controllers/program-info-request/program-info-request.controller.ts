@@ -8,7 +8,11 @@ import {
   ProgramInfoRequestJobOutDTO,
 } from "..";
 import { APPLICATION_NOT_FOUND } from "../../constants";
-import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
+import {
+  APPLICATION_ID,
+  SELECTED_LOCATION,
+  SELECTED_PROGRAM,
+} from "@sims/services/workflow/variables/assessment-gateway";
 
 @Controller()
 export class ProgramInfoRequestController {
@@ -19,7 +23,9 @@ export class ProgramInfoRequestController {
    * application returning the its most updated status.
    * @returns most updated status of the PIR.
    */
-  @ZeebeWorker("program-info-request", { fetchVariable: [APPLICATION_ID] })
+  @ZeebeWorker("program-info-request", {
+    fetchVariable: [APPLICATION_ID, SELECTED_LOCATION, SELECTED_PROGRAM],
+  })
   async updateApplicationStatus(
     job: Readonly<
       ZeebeJob<
@@ -48,6 +54,8 @@ export class ProgramInfoRequestController {
     const updateResult = await this.applicationService.updateProgramInfoStatus(
       job.variables.applicationId,
       job.customHeaders.programInfoStatus,
+      job.variables.selectedLocation,
+      job.variables.selectedProgram,
     );
     if (updateResult.affected) {
       return job.complete({

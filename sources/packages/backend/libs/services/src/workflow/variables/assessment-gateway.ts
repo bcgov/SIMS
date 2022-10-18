@@ -12,6 +12,16 @@ export const ASSESSMENT_DATA = "assessmentData";
  */
 export const APPLICATION_ID = "applicationId";
 /**
+ * Institution location id selected by the student for
+ * the application.
+ */
+export const SELECTED_LOCATION = "selectedLocation";
+/**
+ * Institution offering program id if selected by the student.
+ * If not selected a PIR will be needed.
+ */
+export const SELECTED_PROGRAM = "selectedProgram";
+/**
  * Created during the student application exception verifications
  * executed by the Ministry.
  * Declared inside assessment-gateway and updated during the regular timer
