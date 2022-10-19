@@ -1,7 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { DataSource, EntityManager } from "typeorm";
-import { RecordDataModelService, SequenceControl } from "@sims/sims-db";
-import { configureIdleTransactionSessionTimeout } from "@sims/sims-db";
+import {
+  RecordDataModelService,
+  SequenceControl,
+  configureIdleTransactionSessionTimeout,
+} from "@sims/sims-db";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.

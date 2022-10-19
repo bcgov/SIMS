@@ -99,15 +99,14 @@
     <bpmn:sequenceFlow id="Flow_0e9728l" sourceRef="load-assessment-data-task" targetRef="Event_1qp0tlo" />
     <bpmn:sequenceFlow id="Flow_1jdhbms" sourceRef="StartEvent_1" targetRef="load-assessment-data-task" />
     <bpmn:textAnnotation id="TextAnnotation_1g2a6p0">
-      <bpmn:text>Loads all the assessment data needed to process a student application.
-Optionally associates the the workflow instance id to the assessment that had the data load.</bpmn:text>
+      <bpmn:text>Loads all the assessment data needed to process a student application.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0p97obe" sourceRef="load-assessment-data-task" targetRef="TextAnnotation_1g2a6p0" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="load-assessment-consolidated-data">
       <bpmndi:BPMNShape id="TextAnnotation_1g2a6p0_di" bpmnElement="TextAnnotation_1g2a6p0">
-        <dc:Bounds x="390" y="80" width="360" height="70" />
+        <dc:Bounds x="390" y="80" width="222" height="41" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1jdhbms_di" bpmnElement="Flow_1jdhbms">
@@ -130,7 +129,7 @@ Optionally associates the the workflow instance id to the assessment that had th
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0p97obe_di" bpmnElement="Association_0p97obe">
         <di:waypoint x="376" y="167" />
-        <di:waypoint x="391" y="150" />
+        <di:waypoint x="417" y="121" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

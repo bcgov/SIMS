@@ -25,7 +25,6 @@ import {
   User,
   ApplicationData,
 } from "@sims/sims-db";
-import { SequenceControlService } from "@sims/services";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
   ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
@@ -56,7 +55,7 @@ import {
   PIR_REQUEST_NOT_FOUND_ERROR,
   OFFERING_NOT_VALID,
 } from "../../constants";
-import { WorkflowClientService } from "@sims/services";
+import { SequenceControlService, WorkflowClientService } from "@sims/services";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =

@@ -9,7 +9,7 @@ import {
   RecordDataModelService,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-import { DataSource, In, IsNull, UpdateResult } from "typeorm";
+import { DataSource, In, UpdateResult } from "typeorm";
 import { MSFAANumberService } from "..";
 import {
   APPLICATION_MSFAA_ALREADY_ASSOCIATED,

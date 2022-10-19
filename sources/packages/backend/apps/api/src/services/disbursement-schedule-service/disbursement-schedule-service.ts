@@ -9,7 +9,6 @@ import {
   PaginatedResults,
   OrderByCondition,
 } from "../../utilities";
-import { mapFromRawAndEntities } from "@sims/sims-db";
 import { DataSource, In, Repository, UpdateResult, Brackets } from "typeorm";
 import { SequenceControlService } from "@sims/services";
 import { StudentRestrictionService } from "..";
@@ -23,6 +22,7 @@ import {
   StudentAssessment,
   User,
   RestrictionActionType,
+  mapFromRawAndEntities,
 } from "@sims/sims-db";
 import {
   ECertDisbursementSchedule,

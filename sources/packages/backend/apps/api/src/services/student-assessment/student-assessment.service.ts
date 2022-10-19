@@ -10,9 +10,9 @@ import {
   ProgramInfoStatus,
   StudentAssessment,
   User,
+  mapFromRawAndEntities,
 } from "@sims/sims-db";
 import { Brackets, DataSource, IsNull, UpdateResult } from "typeorm";
-import { mapFromRawAndEntities } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
