@@ -115,6 +115,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * whatever is needed to create a new MSFAA or use an
    * existing one instead.
    * @param applicationId application id to receive an MSFAA.
+   * @returns application saved with the MSFAA associated.
    */
   async associateMSFAANumber(applicationId: number): Promise<Application> {
     const application = await this.repo.findOne({

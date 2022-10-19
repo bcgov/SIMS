@@ -26,13 +26,12 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * Associates the workflow instance if the assessment is not associated already.
    * @param assessmentId assessment id.
    * @param assessmentWorkflowId workflow instance id.
-   * @returns update result.
    */
   async associateWorkflowId(
     assessmentId: number,
     assessmentWorkflowId: string,
   ): Promise<void> {
-    this.dataSource.transaction(async (entityManager) => {
+    return this.dataSource.transaction(async (entityManager) => {
       const assessmentRepo = entityManager.getRepository(StudentAssessment);
       const assessment = await assessmentRepo.findOne({
         where: { id: assessmentId },

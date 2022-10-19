@@ -27,6 +27,9 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   /**
    * Creates a new MSFAA record with a new number for the specified student.
    * @param studentId student to have a new MSFAA record created.
+   * @param referenceApplicationId reference application id.
+   * @param offeringIntensity offering intensity since the MSFAA are calculated
+   * individually based on, for instance, the Part time/Full time.
    * @returns Created MSFAA record.
    */
   async createMSFAANumber(

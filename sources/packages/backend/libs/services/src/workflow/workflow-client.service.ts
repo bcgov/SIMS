@@ -42,6 +42,7 @@ export class WorkflowClientService {
    * This message should only be sent once the offering id is provided for the student
    * application.
    * @param applicationId application id that had the PIT completed.
+   * @param status: PIR status needed by the workflow to decide how to proceed.
    */
   async sendProgramInfoCompletedMessage(
     applicationId: number,
@@ -72,7 +73,6 @@ export class WorkflowClientService {
    * when the data in available on database to be retrieved.
    * @param incomeVerificationId income verification id that will be appended to the
    * name of the message to uniquely identify it.
-   * @return true case a successful call happen, otherwise false.
    */
   async sendCRAIncomeVerificationCompletedMessage(
     incomeVerificationId: number,
