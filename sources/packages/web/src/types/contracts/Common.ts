@@ -14,13 +14,14 @@ export interface MenuModel {
  *  Interface for Menu.
  */
 export interface MenuItemModel {
-  title: string;
+  title?: string;
   props?: {
     prependIcon?: string;
     to?: RouteLocationRaw;
   };
   type?: string;
   children?: MenuItemModel[];
+  command?: () => void;
 }
 
 export interface Address {

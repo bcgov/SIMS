@@ -89,7 +89,7 @@ export default {
         }),
       },
       {
-        label: "Designation",
+        label: "Designations",
         value: "designation-tab",
         icon: "fa:far fa-bookmark",
         command: () => ({

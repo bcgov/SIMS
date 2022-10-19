@@ -12,8 +12,8 @@
       "label": "HTML",
       "labelWidth": "",
       "labelMargin": "",
-      "tag": "p",
-      "className": "",
+      "tag": "h2",
+      "className": "category-header-large primary-color",
       "attrs": [
         {
           "attr": "",
@@ -22,7 +22,7 @@
       ],
       "content": "Upload your documents",
       "refreshOnChange": false,
-      "customClass": "category-header-large primary-color",
+      "customClass": "",
       "hidden": false,
       "modalEdit": false,
       "key": "html",
@@ -88,7 +88,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "e07g3g"
+      "id": "eolm7fo"
     },
     {
       "label": "HTML",
@@ -903,9 +903,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "privateDownload": false,
-          "id": "ev6zpfu",
-          "options": "",
-          "fileKey": ""
+          "id": "efyo3kb"
         }
       ],
       "placeholder": "",
@@ -1193,7 +1191,7 @@
       "id": "esjn24a"
     },
     {
-      "label": "Submit documents",
+      "label": "Submit",
       "labelWidth": "",
       "labelMargin": "",
       "action": "submit",
@@ -1206,9 +1204,9 @@
       "shortcut": "",
       "description": "",
       "tooltip": "",
-      "customClass": "float-right",
+      "customClass": "",
       "tabindex": "",
-      "disableOnInvalid": true,
+      "disableOnInvalid": false,
       "hidden": false,
       "autofocus": false,
       "disabled": false,
@@ -1236,7 +1234,6 @@
       },
       "type": "button",
       "input": true,
-      "saveOnEnter": false,
       "placeholder": "",
       "prefix": "",
       "suffix": "",
@@ -1274,7 +1271,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "eh665"
+      "id": "e7bgwce"
     },
     {
       "label": "applicationId",

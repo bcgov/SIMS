@@ -5,20 +5,17 @@
     </template>
 
     <div v-if="showRequestForAppeal">
-      <!-- content area -->
-      <div>
-        <formio
-          formName="studentrequestchange"
-          @loaded="formLoaded"
-          @submitted="submitRequest"
-        ></formio>
-      </div>
-      <!-- action area -->
-      <div class="mt-4">
-        <v-btn @click="submitStudentRequest" color="primary" class="float-right"
-          >Next</v-btn
-        >
-      </div>
+      <!-- Content area. -->
+      <formio-container
+        formName="studentRequestChange"
+        @submitted="submitRequest"
+      >
+        <template #actions="{ submit }">
+          <v-btn @click="submit" color="primary" class="float-right">
+            Next
+          </v-btn>
+        </template>
+      </formio-container>
     </div>
     <div v-else>
       <body-header
@@ -26,21 +23,20 @@
         subTitle="StudentAid BC will review your application change after you submit the fields below."
       ></body-header>
       <appeal-requests-form
-        :studentAppealRequests="appealRequestsForms"
+        :student-appeal-requests="appealRequestsForms"
         @submitted="submitAppeal"
       >
         <template #actions="{ submit }">
-          <v-row justify="center" class="m-2">
-            <v-btn
-              color="primary"
-              variant="outlined"
-              class="mr-2"
-              @click="backToRequestForm"
-              >Cancel</v-btn
-            >
-            <v-btn color="primary" class="ml-2" @click="submit"
-              >Submit</v-btn
-            ></v-row
+          <v-btn
+            color="primary"
+            variant="outlined"
+            class="mr-2"
+            @click="backToRequestForm"
+            >Back
+          </v-btn>
+
+          <v-btn color="primary" class="ml-2 float-right" @click="submit"
+            >Submit for review</v-btn
           >
         </template>
       </appeal-requests-form>
@@ -48,8 +44,8 @@
   </student-page-container>
 </template>
 <script lang="ts">
-import { computed, ref } from "vue";
-import { ApiProcessError, StudentAppealRequest } from "@/types";
+import { computed, ref, defineComponent } from "vue";
+import { ApiProcessError, FormIOForm, StudentAppealRequest } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
@@ -65,27 +61,28 @@ interface StudentRequestSelectedForms {
   formNames: string[];
 }
 
-export default {
+export default defineComponent({
   components: {
     AppealRequestsForm,
   },
   setup() {
     const snackBar = useSnackBar();
-    let requestFormData: any = undefined;
     const appealRequestsForms = ref([] as StudentAppealRequest[]);
     let applicationId: number;
     const showRequestForAppeal = computed(
       () => appealRequestsForms.value.length === 0,
     );
 
-    const submitRequest = async (data: StudentRequestSelectedForms) => {
+    const submitRequest = async (
+      form: FormIOForm<StudentRequestSelectedForms>,
+    ) => {
       try {
         const application =
           await ApplicationService.shared.getApplicationForRequestChange(
-            data.applicationNumber,
+            form.data.applicationNumber,
           );
         applicationId = application.id;
-        appealRequestsForms.value = data.formNames.map(
+        appealRequestsForms.value = form.data.formNames.map(
           (formName) => ({ formName } as StudentAppealRequest),
         );
       } catch (error) {
@@ -99,14 +96,6 @@ export default {
           snackBar.error(`${errorLabel}. ${errorMessage}`);
         }
       }
-    };
-
-    const submitStudentRequest = () => {
-      return requestFormData.submit();
-    };
-
-    const formLoaded = (form: any) => {
-      requestFormData = form;
     };
 
     const backToRequestForm = () => {
@@ -142,13 +131,11 @@ export default {
 
     return {
       submitRequest,
-      formLoaded,
-      submitStudentRequest,
       appealRequestsForms,
       showRequestForAppeal,
       backToRequestForm,
       submitAppeal,
     };
   },
-};
+});
 </script>

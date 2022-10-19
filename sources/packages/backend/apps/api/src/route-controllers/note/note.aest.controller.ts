@@ -7,7 +7,6 @@ import {
   Query,
   ParseIntPipe,
   NotFoundException,
-  ParseEnumPipe,
 } from "@nestjs/common";
 import { StudentService, InstitutionService } from "../../services";
 import BaseController from "../BaseController";
@@ -18,7 +17,6 @@ import {
   NoteAPIOutDTO,
   NoteAPIInDTO,
   transformToNoteDTO,
-  transformToNoteEntity,
 } from "./models/note.dto";
 import {
   AllowAuthorizedParty,
@@ -81,7 +79,7 @@ export class NoteAESTController extends BaseController {
   @Get("institution/:institutionId")
   async getInstitutionDetails(
     @Param("institutionId", ParseIntPipe) institutionId: number,
-    @Query("noteType", new ParseEnumPipe(NoteType)) noteType: NoteType,
+    @Query("noteType") noteType: NoteType,
   ): Promise<NoteAPIOutDTO[]> {
     const institution =
       this.institutionService.getBasicInstitutionDetailById(institutionId);
@@ -114,10 +112,11 @@ export class NoteAESTController extends BaseController {
     if (!institution) {
       throw new NotFoundException("Institution not found.");
     }
-    const institutionNote = transformToNoteEntity(payload, userToken.userId);
-    const note = await this.institutionService.saveInstitutionNote(
+    const note = await this.institutionService.addInstitutionNote(
       institutionId,
-      institutionNote,
+      payload.noteType,
+      payload.description,
+      userToken.userId,
     );
     return { id: note.id };
   }

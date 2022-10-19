@@ -1,7 +1,9 @@
 import { StudentAssessmentStatus } from "../../../services/student-assessment/student-assessment.models";
 import {
   ApplicationExceptionStatus,
+  ApplicationStatus,
   Assessment,
+  AssessmentStatus,
   AssessmentTriggerType,
   OfferingIntensity,
   OfferingStatus,
@@ -60,6 +62,8 @@ export class AssessmentNOAAPIOutDTO {
   offeringStudyEndDate: string;
   msfaaNumber: string;
   disbursement: Record<string, string | number>;
+  noaApprovalStatus: AssessmentStatus;
+  applicationStatus: ApplicationStatus;
 }
 
 export class AwardDetailsAPIOutDTO {

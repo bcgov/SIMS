@@ -1,10 +1,5 @@
 import { IsEnum, IsNotEmpty, MaxLength } from "class-validator";
-import {
-  Note,
-  NoteType,
-  NOTE_DESCRIPTION_MAX_LENGTH,
-  User,
-} from "@sims/sims-db";
+import { Note, NoteType, NOTE_DESCRIPTION_MAX_LENGTH } from "@sims/sims-db";
 
 /**
  * Base DTO for note.
@@ -41,21 +36,4 @@ export const transformToNoteDTO = (note: Note): NoteAPIOutDTO => {
     lastName: note.creator.lastName,
     createdAt: note.createdAt,
   };
-};
-
-/**
- * Util to transform DTO to note entity model.
- * @param note
- * @param userId
- * @returns notes
- */
-export const transformToNoteEntity = (
-  note: NoteAPIInDTO,
-  userId: number,
-): Note => {
-  return {
-    noteType: note.noteType,
-    description: note.description,
-    creator: { id: userId } as User,
-  } as Note;
 };

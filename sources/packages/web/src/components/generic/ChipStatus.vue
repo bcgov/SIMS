@@ -1,7 +1,7 @@
 <template>
   <v-chip :color="chipColor" variant="outlined"
     ><v-icon :color="iconColor" icon="fa:fa fa-circle" size="15" />
-    <span class="mx-1 default-color"> {{ label ?? status }}</span>
+    <span class="mx-1 black-color"> {{ label ?? status }}</span>
   </v-chip>
 </template>
 <script lang="ts">
@@ -44,7 +44,7 @@ export default {
         case StatusChipTypes.Error:
           return "error";
         case StatusChipTypes.Default:
-          return "default";
+          return "black";
         default:
           return "";
       }

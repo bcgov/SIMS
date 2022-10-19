@@ -1,20 +1,19 @@
 <template>
   <modal-dialog-base
-    dialogType="question"
+    :max-width="730"
     title="Apply for a permanent disability status"
     :showDialog="showDialog"
   >
     <template v-slot:content>
       <p>
-        If you’re eligible, you may receive funding for provincial and federal
-        grants/bursaries. Your information will be sent to Assistive Technology
-        BC (ATBC).
+        If you're eligible, you may receive funding for provincial and federal
+        grants/bursaries. <strong>Would you like to continue?.</strong>
       </p>
     </template>
     <template v-slot:footer>
       <footer-buttons
-        primaryLabel="Yes"
-        secondaryLabel="No"
+        primaryLabel="Apply now"
+        secondaryLabel="Cancel"
         @primaryClick="requestPD(true)"
         @secondaryClick="requestPD(false)"
       />

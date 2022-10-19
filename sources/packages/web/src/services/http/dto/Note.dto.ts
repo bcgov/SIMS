@@ -1,4 +1,4 @@
-import { StudentNoteType } from "@/types";
+import { InstitutionNoteType, StudentNoteType } from "@/types";
 
 /**
  * Base DTO for note.
@@ -12,7 +12,7 @@ export interface NoteAPIInDTO {
  * Notes detail DTO. This is used for view only purpose.
  */
 export interface NoteAPIOutDTO {
-  noteType: StudentNoteType;
+  noteType: StudentNoteType | InstitutionNoteType;
   description: string;
   firstName: string;
   lastName: string;

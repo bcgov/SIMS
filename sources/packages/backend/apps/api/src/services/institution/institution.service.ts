@@ -11,7 +11,7 @@ import {
   Note,
   NoteType,
 } from "@sims/sims-db";
-import { DataSource, IsNull, Repository } from "typeorm";
+import { DataSource, EntityManager, IsNull, Repository } from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
 import { BCeIDService } from "../bceid/bceid.service";
 import { AccountDetails } from "../bceid/account-details.model";
@@ -762,6 +762,66 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   /**
+   * Service to add note for an Institution.
+   * @param institutionId institution to have the note added.
+   * @param noteType note type.
+   * @param noteDescription note description.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns saved Note.
+   */
+  async addInstitutionNote(
+    institutionId: number,
+    noteType: NoteType,
+    noteDescription: string,
+    auditUserId: number,
+  ): Promise<Note> {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      return this.createInstitutionNote(
+        institutionId,
+        noteType,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
+    });
+  }
+
+  /**
+   * Creates a new note and associate it with the institution.
+   * This method is most likely to be used alongside with some other
+   * DB data changes and must be executed in a DB transaction.
+   * @param institutionId institution to have the note associated.
+   * @param noteType note type.
+   * @param noteDescription note description.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager transactional entity manager.
+   * @return saved Note.
+   */
+  async createInstitutionNote(
+    institutionId: number,
+    noteType: NoteType,
+    noteDescription: string,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<Note> {
+    const auditUser = { id: auditUserId } as User;
+    // Create the note to be associated with the institution.
+    const newNote = new Note();
+    newNote.description = noteDescription;
+    newNote.noteType = noteType;
+    newNote.creator = auditUser;
+    const savedNote = await entityManager.getRepository(Note).save(newNote);
+    // Associate the created note with the institution.
+    await entityManager
+      .getRepository(Institution)
+      .createQueryBuilder()
+      .relation(Institution, "notes")
+      .of({ id: institutionId } as Institution)
+      .add(savedNote);
+    return newNote;
+  }
+
+  /**
    * Service to get the admin roles .
    * @returns Admin roles.
    */
@@ -783,21 +843,22 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async updateInstitution(
     institutionId: number,
     auditUserId: number,
-    updateInstitution: Partial<UpdateInstitution>,
+    updateInstitution: UpdateInstitution,
+    options?: { allowFullUpdate: boolean },
   ): Promise<Institution> {
     const institution = new Institution();
     institution.id = institutionId;
-
-    institution.operatingName = updateInstitution.operatingName;
-    institution.primaryPhone = updateInstitution.primaryPhone;
-    institution.primaryEmail = updateInstitution.primaryEmail;
-    institution.website = updateInstitution.website;
-    institution.regulatingBody = updateInstitution.regulatingBody;
-    institution.establishedDate = updateInstitution.establishedDate;
-    institution.institutionType = {
-      id: updateInstitution.institutionType,
-    } as InstitutionType;
-
+    if (options?.allowFullUpdate) {
+      institution.operatingName = updateInstitution.operatingName;
+      institution.primaryPhone = updateInstitution.primaryPhone;
+      institution.primaryEmail = updateInstitution.primaryEmail;
+      institution.website = updateInstitution.website;
+      institution.regulatingBody = updateInstitution.regulatingBody;
+      institution.establishedDate = updateInstitution.establishedDate;
+      institution.institutionType = {
+        id: updateInstitution.institutionType,
+      } as InstitutionType;
+    }
     institution.institutionPrimaryContact = {
       firstName: updateInstitution.primaryContactFirstName,
       lastName: updateInstitution.primaryContactLastName,

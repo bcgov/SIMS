@@ -1,6 +1,8 @@
 import {
   ApplicationExceptionStatus,
+  ApplicationStatus,
   Assessment,
+  AssessmentStatus,
   AssessmentTriggerType,
   OfferingIntensity,
   StudentAppealStatus,
@@ -49,6 +51,8 @@ export interface AssessmentNOAAPIOutDTO {
   offeringStudyEndDate: string;
   msfaaNumber: string;
   disbursement: any;
+  noaApprovalStatus: AssessmentStatus;
+  applicationStatus: ApplicationStatus;
 }
 
 export interface AwardDetailsAPIOutDTO {

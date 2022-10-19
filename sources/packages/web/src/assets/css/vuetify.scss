@@ -103,7 +103,7 @@
   color: $banner-color-warning;
 }
 
-.default-color {
+.black-color {
   color: $brand-black;
 }
 .error-color {
@@ -132,7 +132,7 @@
 }
 
 // v-btn toggle background color for notes, to match with Figma.
-.btn-toggle button:not(.v-btn--selected) {
+.btn-toggle button:not(.selected-btn-toggle) {
   color: $color-white !important;
   background: $brand-grey !important;
 }
