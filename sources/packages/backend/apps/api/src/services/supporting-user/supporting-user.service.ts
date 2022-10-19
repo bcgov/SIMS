@@ -8,7 +8,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { removeWhiteSpaces } from "../../utilities/string-utils";
-import { configureIdleTransactionSessionTimeout } from "../../utilities/database";
+import { configureIdleTransactionSessionTimeout } from "@sims/sims-db";
 import { SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA } from "./constants";

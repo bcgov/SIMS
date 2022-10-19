@@ -25,6 +25,9 @@ export class DisbursementController {
     private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {}
 
+  /**
+   * Saves the disbursements schedules (1 or 2) and its values for grants and loans.
+   */
   @ZeebeWorker("save-disbursement-schedules", {
     fetchVariable: [ASSESSMENT_ID, DISBURSEMENT_SCHEDULES],
   })

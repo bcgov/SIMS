@@ -470,13 +470,6 @@
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1ef3map</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="associate-workflow-instance-task" name="Associate workflow instance">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="associate-workflow-instance" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1ef3map</bpmn:incoming>
-      <bpmn:outgoing>Flow_1wrj7fh</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1btetiq" sourceRef="Activity_1nsp43k" targetRef="save-disbursement-task" />
     <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
     <bpmn:sequenceFlow id="Flow_0p1lgm7" sourceRef="update-noa-status-to-required-task" targetRef="Gateway_04wql0w" />
@@ -594,6 +587,13 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType != "Original assessment"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1wrj7fh" sourceRef="associate-workflow-instance-task" targetRef="load-assessment-data-task" />
+    <bpmn:serviceTask id="associate-workflow-instance-task" name="Associate workflow instance">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="associate-workflow-instance" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ef3map</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wrj7fh</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:message id="Message_1clo0eh" name="program-info-request-completed">
     <bpmn:extensionElements>
@@ -711,7 +711,7 @@
         <di:waypoint x="1555" y="790" />
         <di:waypoint x="1627" y="790" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1552" y="773" width="67" height="14" />
+          <dc:Bounds x="876" y="753" width="67" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0emvz6f_di" bpmnElement="Flow_0emvz6f">
@@ -933,7 +933,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ef3map_di" bpmnElement="Flow_1ef3map">
         <di:waypoint x="278" y="602" />
-        <di:waypoint x="324" y="602" />
+        <di:waypoint x="320" y="602" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1s8wnxz_di" bpmnElement="Flow_1s8wnxz">
         <di:waypoint x="2125" y="360" />
@@ -1023,7 +1023,7 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1wrj7fh_di" bpmnElement="Flow_1wrj7fh">
-        <di:waypoint x="424" y="601" />
+        <di:waypoint x="420" y="601" />
         <di:waypoint x="461" y="601" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Gateway_1c05kxg_di" bpmnElement="first-assessment-gateway" isMarkerVisible="true">
@@ -1220,7 +1220,7 @@
         <dc:Bounds x="242" y="584" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_11aa2j4_di" bpmnElement="associate-workflow-instance-task">
-        <dc:Bounds x="324" y="562" width="100" height="80" />
+        <dc:Bounds x="320" y="562" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_1k2osho_di" bpmnElement="Group_1k2osho">
         <dc:Bounds x="1430" y="150" width="750" height="340" />

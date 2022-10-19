@@ -50,8 +50,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Updates the Program Information Request (PIR) for the first time.
-   * If the PIR is already set the update will be ignore and no rows
-   * will be affected.
    * @param applicationId application to have the PIR updated.
    * @param pirStatus status to be updated.
    * @param locationId location selected by the student.
@@ -69,7 +67,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.update(
       {
         id: applicationId,
-        pirStatus: IsNull(),
       },
       {
         pirStatus,

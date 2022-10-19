@@ -22,13 +22,13 @@ import {
 import { StudentAppealRequestsService } from "../student-appeal-request/student-appeal-request.service";
 import {
   FieldSortOrder,
-  mapFromRawAndEntities,
   PaginatedResults,
   PaginationOptions,
   SortPriority,
   OrderByCondition,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
+import { mapFromRawAndEntities } from "@sims/sims-db";
 import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,

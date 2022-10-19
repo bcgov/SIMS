@@ -1,9 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { DataSource, EntityManager } from "typeorm";
 import { RecordDataModelService, SequenceControl } from "@sims/sims-db";
-import { InjectLogger } from "../../../../apps/api/src/common";
-import { LoggerService } from "../../../../apps/api/src/logger/logger.service";
-import { configureIdleTransactionSessionTimeout } from "../../../../apps/api/src/utilities/database";
+import { configureIdleTransactionSessionTimeout } from "@sims/sims-db";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -19,6 +17,8 @@ const TRANSACTION_IDLE_TIMEOUT_SECONDS = 30;
  */
 @Injectable()
 export class SequenceControlService extends RecordDataModelService<SequenceControl> {
+  private readonly logger = new Logger(SequenceControlService.name);
+
   constructor(private readonly dataSource: DataSource) {
     super(dataSource.getRepository(SequenceControl));
   }
@@ -134,7 +134,4 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       throw error;
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

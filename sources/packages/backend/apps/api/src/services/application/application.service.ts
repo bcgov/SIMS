@@ -25,7 +25,7 @@ import {
   User,
   ApplicationData,
 } from "@sims/sims-db";
-import { SequenceControlService } from "../../../../../libs/services/src/sequence-control/sequence-control.service";
+import { SequenceControlService } from "@sims/services";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
   ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,

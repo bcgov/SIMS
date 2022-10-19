@@ -51,19 +51,14 @@ export class ProgramInfoRequestController {
         programInfoStatus: application.pirStatus,
       });
     }
-    const updateResult = await this.applicationService.updateProgramInfoStatus(
+    await this.applicationService.updateProgramInfoStatus(
       job.variables.applicationId,
       job.customHeaders.programInfoStatus,
       job.variables.selectedLocation,
       job.variables.selectedProgram,
     );
-    if (updateResult.affected) {
-      return job.complete({
-        programInfoStatus: job.customHeaders.programInfoStatus,
-      });
-    }
-    return job.fail(
-      "PIR was not updated as expected. It was expected that at least one record was updated. Either application was not found or the PIR status was already set.",
-    );
+    return job.complete({
+      programInfoStatus: job.customHeaders.programInfoStatus,
+    });
   }
 }

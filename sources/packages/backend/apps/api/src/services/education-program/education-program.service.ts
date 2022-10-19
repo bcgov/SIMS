@@ -18,13 +18,13 @@ import {
   EducationProgramsSummary,
 } from "./education-program.service.models";
 import {
-  getRawCount,
   sortProgramsColumnMap,
   PaginationOptions,
   PaginatedResults,
   SortPriority,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
+import { getRawCount } from "@sims/sims-db";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
 

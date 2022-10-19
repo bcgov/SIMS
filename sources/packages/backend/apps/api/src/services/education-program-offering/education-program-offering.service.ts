@@ -36,11 +36,11 @@ import {
   sortOfferingsColumnMap,
   PaginationOptions,
   PaginatedResults,
-  mapFromRawAndEntities,
   dateDifference,
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
 } from "../../utilities";
+import { mapFromRawAndEntities } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { OFFERING_NOT_VALID } from "../../constants";
 import {

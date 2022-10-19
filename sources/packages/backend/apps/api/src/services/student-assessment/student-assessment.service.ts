@@ -12,7 +12,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { Brackets, DataSource, IsNull, UpdateResult } from "typeorm";
-import { mapFromRawAndEntities } from "../../utilities";
+import { mapFromRawAndEntities } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
@@ -250,26 +250,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         id: assessmentId,
       },
       { assessmentData, assessmentDate: new Date() },
-    );
-  }
-
-  /**
-   * Updates the NOA (notice of assessment) approval status.
-   * The NOA status defines if the student needs to provide
-   * his approval to the NOA or not.
-   * @param assessmentId assessment id to be updated.
-   * @param status status of the assessment.
-   * @returns update result.
-   */
-  async updateNOAApprovalStatus(
-    assessmentId: number,
-    status: AssessmentStatus,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: assessmentId,
-      },
-      { noaApprovalStatus: status },
     );
   }
 
