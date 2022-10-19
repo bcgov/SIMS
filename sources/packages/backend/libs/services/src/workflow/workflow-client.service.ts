@@ -146,7 +146,6 @@ export class WorkflowClientService {
    * this message is received with the approval or denial from the Ministry user.
    * @param applicationExceptionId exception id to send the message.
    * @param status approval or denial status.
-   * @deprecated move to WorkflowClientService.
    */
   async sendApplicationExceptionApproval(
     applicationExceptionId: number,

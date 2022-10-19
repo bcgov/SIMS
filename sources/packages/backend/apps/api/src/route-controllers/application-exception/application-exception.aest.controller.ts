@@ -45,6 +45,7 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { Role } from "../../auth/roles.enum";
+import { WorkflowClientService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -53,7 +54,7 @@ import { Role } from "../../auth/roles.enum";
 export class ApplicationExceptionAESTController extends BaseController {
   constructor(
     private readonly applicationExceptionService: ApplicationExceptionService,
-    private readonly workflowActionsService: WorkflowActionsService,
+    private readonly workflowClientService: WorkflowClientService,
   ) {
     super();
   }
@@ -116,7 +117,7 @@ export class ApplicationExceptionAESTController extends BaseController {
           payload.noteDescription,
           userToken.userId,
         );
-      await this.workflowActionsService.sendApplicationExceptionApproval(
+      await this.workflowClientService.sendApplicationExceptionApproval(
         updatedException.id,
         updatedException.exceptionStatus,
       );

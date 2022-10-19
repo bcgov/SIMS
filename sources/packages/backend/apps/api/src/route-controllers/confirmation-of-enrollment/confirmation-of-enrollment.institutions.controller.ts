@@ -311,19 +311,6 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       disbursementSchedule.studentAssessment.application.applicationStatus,
       payload.tuitionRemittanceAmount,
     );
-
-    /** Send COE confirmation message only for first COE.
-     ** Note: If first COE is completed, then application status is moved to Completed.
-     ** In that case, COE confirmation message will not be sent for second COE.
-     */
-    if (
-      disbursementSchedule.studentAssessment.application.applicationStatus ===
-      ApplicationStatus.enrollment
-    ) {
-      await this.workflow.sendConfirmCOEMessage(
-        disbursementSchedule.studentAssessment.assessmentWorkflowId,
-      );
-    }
   }
 
   /**
