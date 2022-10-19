@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   NotFoundException,
   Param,
   UnprocessableEntityException,
@@ -23,7 +22,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import {
-  ApplicationAssessmentAPIOutDTO,
   UpdateAssessmentDataDTO,
   UpdateAssessmentWorkflowIdDTO,
   UpdateProgramInfoAPIInDTO,
