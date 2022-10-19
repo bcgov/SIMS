@@ -19,7 +19,6 @@ import {
   ApplicationData,
   AssessmentTriggerType,
   DisbursementValueType,
-  AssessmentStatus,
   SupportingUserType,
   StudyBreaksAndWeeks,
 } from "@sims/sims-db";

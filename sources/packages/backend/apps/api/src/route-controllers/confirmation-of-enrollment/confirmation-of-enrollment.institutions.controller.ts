@@ -23,11 +23,7 @@ import {
   COEDeniedReasonService,
   DisbursementScheduleService,
 } from "../../services";
-import {
-  ApplicationStatus,
-  DisbursementSchedule,
-  DisbursementValueType,
-} from "@sims/sims-db";
+import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   getDateOnlyFormat,

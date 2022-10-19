@@ -73,7 +73,6 @@ export class WorkflowClientService {
    * @param incomeVerificationId income verification id that will be appended to the
    * name of the message to uniquely identify it.
    * @return true case a successful call happen, otherwise false.
-   * @deprecated move to WorkflowClientService.
    */
   async sendCRAIncomeVerificationCompletedMessage(
     incomeVerificationId: number,

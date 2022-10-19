@@ -11,10 +11,8 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
-  APPLICATION_NOT_FOUND,
   ConfigService,
   CRAIncomeVerificationService,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   SupportingUserService,
 } from "../../services";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
@@ -29,13 +27,11 @@ import {
 import { ClientTypeBaseRoute, IConfig } from "../../types";
 import {
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { IUserToken } from "../../auth/userToken.interface";
-import { ApplicationStatus } from "@sims/sims-db";
 
 /**
  * Allow system access to the application data.

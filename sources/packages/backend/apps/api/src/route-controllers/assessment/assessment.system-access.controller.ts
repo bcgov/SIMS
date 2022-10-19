@@ -241,42 +241,4 @@ export class AssessmentSystemAccessController extends BaseController {
       );
     }
   }
-
-  /**
-   * Create the disbursements for an assessment/reassessment.
-   * Creates the disbursements and values altogether.
-   * @param assessmentId application id to associate the disbursements.
-   * @param payload array of disbursements and values to be created.
-   * @returns created disbursements ids.
-   */
-  @Post(":assessmentId/disbursements")
-  @ApiNotFoundResponse({
-    description: "Assessment id was not found.",
-  })
-  @ApiUnprocessableEntityResponse({
-    description:
-      "The disbursement information is already present or either the assessment or the application is not in the correct state.",
-  })
-  async createDisbursement(
-    @Param("assessmentId") assessmentId: number,
-    @Body() payload: CreateDisbursementsDTO,
-  ): Promise<number[]> {
-    try {
-      const disbursements =
-        await this.disbursementScheduleService.createDisbursementSchedules(
-          assessmentId,
-          payload.schedules,
-        );
-      return disbursements.map((disbursement) => disbursement.id);
-    } catch (error) {
-      switch (error.name) {
-        case ASSESSMENT_NOT_FOUND:
-          throw new NotFoundException(error.message);
-        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          throw error;
-      }
-    }
-  }
 }
