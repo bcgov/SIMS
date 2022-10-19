@@ -7,12 +7,12 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   KeycloakService,
   MSFAANumberService,
-  SequenceControlService,
   StudentFileService,
   TokensService,
   WorkflowActionsService,
   WorkflowService,
-} from "..";
+} from "../../../../api/src/services";
+import { SequenceControlService } from "@sims/services";
 import { DataSource, Repository } from "typeorm";
 import {
   DatabaseModule,
@@ -22,15 +22,15 @@ import {
   RelationshipStatus,
   Student,
 } from "@sims/sims-db";
-import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
-import { createFakeApplication } from "../../testHelpers/fake-entities/application-fake";
+import { createMockedJwtService } from "../../../../api/src/testHelpers/mocked-providers/jwt-service-mock";
+import { createFakeApplication } from "../../../../api/src/testHelpers/fake-entities/application-fake";
 import {
   createFakeEducationProgramOffering,
   createFakeMSFAANumber,
   createFakeStudent,
   createFakeStudentAssessment,
-} from "../../testHelpers/fake-entities";
-import { MAX_MSFAA_VALID_DAYS } from "../../utilities/system-configurations-constants";
+} from "../../../../api/src/testHelpers/fake-entities";
+import { MAX_MSFAA_VALID_DAYS } from "../../../../api/src/utilities/system-configurations-constants";
 import * as dayjs from "dayjs";
 
 const createFakeApplicationInAssessment = (student: Student): Application => {

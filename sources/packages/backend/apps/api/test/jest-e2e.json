@@ -14,6 +14,8 @@
     "@sims/sims-db/(.*)": "<rootDir>/../../libs/sims-db/src/$1",
     "@sims/sims-db": "<rootDir>/../../libs/sims-db/src",
     "@sims/services/(.*)": "<rootDir>/../../libs/services/src/$1",
-    "@sims/services": "<rootDir>/../../libs/services/src"
+    "@sims/services": "<rootDir>/../../libs/services/src",
+    "@sims/utilities/(.*)": "<rootDir>/../../libs/utilities/src/$1",
+    "@sims/utilities": "<rootDir>/../../libs/utilities/src"
   }
 }
