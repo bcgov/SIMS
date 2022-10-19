@@ -1,6 +1,6 @@
 <template>
   <full-page-container>
-    <p class="category-header-large primary-color">Search for application</p>
+    <h1 class="category-header-large primary-color">Search for application</h1>
     <p>
       To provide your supporting information, please search for the application
       by entering the requested information below. All fields are mandatory and
@@ -90,7 +90,7 @@
             color="secondary"
             size="23"
           />
-          {{ submitting ? "Submitting..." : "Submit application" }}
+          {{ submitting ? "Submitting..." : "Submit form" }}
         </v-btn>
       </v-col>
     </v-row>

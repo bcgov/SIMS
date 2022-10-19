@@ -593,8 +593,47 @@
 }
 
 .restrictions-details {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 19px;
+  font-style: $font-style-normal;
+  font-weight: $font-weight-normal;
+  font-size: $font-size-xsmall;
+  line-height: $line-height-header-xsm;
 }
+
+/* Grid for info with icon to the left */
+.info-grid-icon {
+  grid-area: icon;
+  font-size: 24px;
+  color: $banner-color-info;
+}
+
+.info-grid-header {
+  grid-area: header;
+  font-style: $font-style-normal;
+  font-weight: $font-weight-bold;
+  font-size: $font-header-small;
+  line-height: $line-height-header-sm;
+  color: $secondary-header-color;
+}
+
+.info-grid-text {
+  grid-area: info;
+}
+
+.info-grid-container {
+  display: grid;
+  grid-template-areas:
+    "icon header"
+    "icon info";
+  grid-template-columns: 20px 1fr;
+  column-gap: 20px;
+  border: none !important;
+}
+
+.info-grid-text > a {
+  font-weight: $font-weight-bold;
+}
+
+.info-grid-container > * {
+  border: none !important;
+}
+/* End of Grid for info with icon to the left */
