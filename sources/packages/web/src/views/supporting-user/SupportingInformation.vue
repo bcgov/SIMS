@@ -1,14 +1,12 @@
 <template>
   <full-page-container>
     <content-group class="mb-4">
-      <p class="category-header-medium primary-color">
-        Student Application Information
-      </p>
+      <p class="category-header-large primary-color">Search for application</p>
       <p>
-        Please enter below the information to search for the application that
-        you will be providing supporting information. All the fields are
-        mandatory and must match exactly the information provided on the student
-        application.
+        To provide your supporting information, please search for the
+        application by entering the requested information below. All fields are
+        mandatory and must match exactly with the information provided on the
+        student application.
       </p>
       <v-row>
         <v-col>
