@@ -1,7 +1,6 @@
 <template>
   <modal-dialog-base
     title="Edit application"
-    :dialog-type="DialogTypes.question"
     :showDialog="showDialog"
     :max-width="730"
   >
@@ -23,7 +22,6 @@
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
-import { DialogTypes } from "@/types";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -43,7 +41,6 @@ export default defineComponent({
       showModal,
       dialogClosed,
       editApplication,
-      DialogTypes,
     };
   },
 });
