@@ -10,7 +10,7 @@ import {
   NoteType,
   Institution,
 } from "@sims/sims-db";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Service layer for institution Restriction.

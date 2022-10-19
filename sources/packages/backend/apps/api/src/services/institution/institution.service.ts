@@ -19,8 +19,8 @@ import {
   sortUsersColumnMap,
   PaginationOptions,
   transformAddressDetails,
-  CustomNamedError,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   UpdateInstitution,
   InstitutionFormModel,

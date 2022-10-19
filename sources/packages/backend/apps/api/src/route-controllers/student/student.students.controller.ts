@@ -51,13 +51,13 @@ import { Response } from "express";
 import { StudentControllerService } from "..";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
-  CustomNamedError,
   defaultFileFilter,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
   PaginatedResults,
   uploadLimits,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { FileOriginType, IdentityProviders } from "@sims/sims-db";
 import { FileCreateAPIOutDTO } from "../models/common.dto";
 import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";

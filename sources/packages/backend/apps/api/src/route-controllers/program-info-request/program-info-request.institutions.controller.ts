@@ -33,8 +33,8 @@ import {
   getUserFullName,
   getISODateOnlyString,
   PIR_OR_DATE_OVERLAP_ERROR,
-  CustomNamedError,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   Application,
   AssessmentTriggerType,

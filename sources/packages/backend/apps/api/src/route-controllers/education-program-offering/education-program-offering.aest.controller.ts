@@ -41,7 +41,7 @@ import {
   OfferingsPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { Role } from "../../auth/roles.enum";
 
 /**

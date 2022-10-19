@@ -51,12 +51,12 @@ import {
 } from "./models/education-program-offering.dto";
 import {
   csvFileFilter,
-  CustomNamedError,
   MAX_UPLOAD_FILES,
   OFFERING_BULK_UPLOAD_MAX_FILE_SIZE,
   OFFERING_BULK_UPLOAD_MAX_UPLOAD_PARTS,
   uploadLimits,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { EducationProgramOfferingImportCSVService } from "../../services/education-program-offering/education-program-offering-import-csv.service";
 import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";

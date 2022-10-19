@@ -9,7 +9,7 @@ import {
 import { validateSync, ValidationError } from "class-validator";
 import { plainToClass } from "class-transformer";
 import { flattenErrors } from "../../utilities/class-validation";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../constants";
 
 /**

@@ -16,12 +16,12 @@ import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
-  CustomNamedError,
   getDateOnly,
   getUTCNow,
   removeWhiteSpaces,
   transformAddressDetails,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   CreateStudentUserInfo,
   StudentInfo,

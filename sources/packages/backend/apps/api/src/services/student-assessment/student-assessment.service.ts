@@ -8,12 +8,12 @@ import {
   EducationProgram,
   InstitutionLocation,
   ProgramInfoStatus,
-  StudentAppealStatus,
   StudentAssessment,
   User,
 } from "@sims/sims-db";
 import { Brackets, DataSource, IsNull, UpdateResult } from "typeorm";
-import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
+import { mapFromRawAndEntities } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,

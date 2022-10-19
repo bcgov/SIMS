@@ -23,8 +23,8 @@ import {
   PaginationOptions,
   PaginatedResults,
   SortPriority,
-  CustomNamedError,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
 

@@ -33,7 +33,6 @@ import {
 } from "./application.models";
 import { MSFAANumberService } from "../msfaa-number/msfaa-number.service";
 import {
-  CustomNamedError,
   dateDifference,
   COE_WINDOW,
   PIR_DENIED_REASON_OTHER_ID,
@@ -45,6 +44,7 @@ import {
   FieldSortOrder,
   OrderByCondition,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";

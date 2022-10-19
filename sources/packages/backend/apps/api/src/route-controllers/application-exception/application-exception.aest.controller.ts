@@ -30,7 +30,8 @@ import {
   UpdateApplicationExceptionAPIInDTO,
 } from "./models/application-exception.dto";
 import { IUserToken } from "../../auth/userToken.interface";
-import { CustomNamedError, getUserFullName } from "../../utilities";
+import { getUserFullName } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
