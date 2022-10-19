@@ -7,7 +7,7 @@
       <p>
         Please enter below the information to search for the application that
         you will be providing supporting information. All the fields are
-        mandatory and must macth exactly the information provided on the student
+        mandatory and must match exactly the information provided on the student
         application.
       </p>
       <v-row>
@@ -56,16 +56,57 @@
       :data="initialData"
       :readOnly="submitting"
       @submitted="submitted"
+      @loaded="formLoaded"
     ></formio>
+    <v-row v-if="showNav">
+      <v-col>
+        <v-btn
+          color="primary"
+          v-show="!isFirstPage"
+          variant="outlined"
+          data-cy="previousSection"
+          @click="wizardGoPrevious"
+          >Previous section</v-btn
+        >
+      </v-col>
+      <v-col>
+        <v-btn
+          class="float-right"
+          color="primary"
+          v-show="!isLastPage"
+          @click="wizardGoNext"
+          >Next section</v-btn
+        >
+        <v-btn
+          class="float-right"
+          :disabled="!isLastPage || submitting"
+          v-show="!isFirstPage"
+          color="primary"
+          @click="wizardSubmit()"
+        >
+          <v-progress-circular
+            v-if="submitting"
+            class="mr-3"
+            bg-color="white"
+            indeterminate
+            color="secondary"
+            size="23"
+          />
+          {{ submitting ? "Submitting..." : "Submit application" }}
+        </v-btn>
+      </v-col>
+    </v-row>
   </full-page-container>
 </template>
 
 <script lang="ts">
+import { WizardNavigationEvent } from "@/types";
+import { useFormioUtils } from "@/composables";
 import { useRouter } from "vue-router";
 import { useAuthBCSC, useFormatters, useSnackBar } from "@/composables";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
-import { ref } from "vue";
+import { ref, SetupContext } from "vue";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
@@ -80,7 +121,7 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props: any, context: SetupContext) {
     const router = useRouter();
     const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
@@ -91,6 +132,53 @@ export default {
     const studentsLastName = ref("");
     const studentsDateOfBirth = ref();
     const initialData = ref();
+    const formioUtils = useFormioUtils();
+    const isFirstPage = ref(true);
+    const isLastPage = ref(false);
+    const showNav = ref(false);
+    let formInstance: any;
+
+    const wizardSubmit = () => {
+      formInstance.submit();
+    };
+
+    const formLoaded = async (form: any) => {
+      showNav.value = true;
+      // Emit formLoadedCallback event to the parent, so that parent can
+      // perform the parent specific logic inside parent on
+      // form is loaded
+      context.emit("formLoadedCallback", form);
+      formInstance = form;
+      // Disable internal submit button.
+      formioUtils.disableWizardButtons(formInstance);
+      formInstance.options.buttonSettings.showSubmit = false;
+      // Handle the navigation using the breadcrumbs.
+      formInstance.on("wizardPageSelected", (page: any, index: number) => {
+        isFirstPage.value = index === 0;
+        isLastPage.value = formInstance.isLastPage();
+        // Event to set isInFirstPage, current page and isInLastPage to parent
+        context.emit(
+          "pageChanged",
+          isFirstPage.value,
+          formInstance.page,
+          isLastPage.value,
+        );
+      });
+      // Handle the navigation using next/prev buttons.
+      const prevNextNavigation = (navigation: WizardNavigationEvent) => {
+        isFirstPage.value = navigation.page === 0;
+        isLastPage.value = formInstance.isLastPage();
+        // Event to set isInFirstPage, current page and isInLastPage to parent
+        context.emit(
+          "pageChanged",
+          isFirstPage.value,
+          formInstance.page,
+          isLastPage.value,
+        );
+      };
+      formInstance.on("prevPage", prevNextNavigation);
+      formInstance.on("nextPage", prevNextNavigation);
+    };
 
     const setInitialData = (programYearStartDate: Date) => {
       initialData.value = {
@@ -205,6 +293,14 @@ export default {
       }
     };
 
+    const wizardGoPrevious = () => {
+      formInstance.prevPage();
+    };
+
+    const wizardGoNext = () => {
+      formInstance.nextPage();
+    };
+
     return {
       formName,
       initialData,
@@ -214,6 +310,13 @@ export default {
       studentsDateOfBirth,
       studentsLastName,
       applicationSearch,
+      wizardGoNext,
+      wizardGoPrevious,
+      wizardSubmit,
+      formLoaded,
+      isFirstPage,
+      isLastPage,
+      showNav,
     };
   },
 };
