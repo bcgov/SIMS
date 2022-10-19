@@ -100,10 +100,13 @@
 </template>
 
 <script lang="ts">
-import { WizardNavigationEvent } from "@/types";
-import { useFormioUtils } from "@/composables";
 import { useRouter } from "vue-router";
-import { useAuthBCSC, useFormatters, useSnackBar } from "@/composables";
+import {
+  useAuthBCSC,
+  useFormatters,
+  useSnackBar,
+  useFormioUtils,
+} from "@/composables";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
 import { ref, SetupContext } from "vue";
@@ -112,6 +115,7 @@ import {
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
+  WizardNavigationEvent,
 } from "@/types";
 
 export default {
