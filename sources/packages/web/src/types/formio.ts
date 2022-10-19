@@ -12,6 +12,12 @@ export interface FormIOForm<T = any> {
   ) => boolean;
   submit: () => any;
   submission: unknown;
+  options: any;
+  on: (event: any, callback: (page: any, index: number) => any) => any;
+  isLastPage: () => boolean;
+  page: any;
+  prevPage: any;
+  nextPage: any;
 }
 
 /**

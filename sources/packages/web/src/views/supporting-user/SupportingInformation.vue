@@ -107,23 +107,25 @@ import {
 } from "@/composables";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
-import { ref, SetupContext } from "vue";
+import { PropType, ref, defineComponent } from "vue";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
   WizardNavigationEvent,
+  SupportingUserType,
+  FormIOForm,
 } from "@/types";
 
-export default {
+export default defineComponent({
   props: {
     supportingUserType: {
-      type: String,
+      type: Object as PropType<SupportingUserType>,
       required: true,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(props, context) {
     const router = useRouter();
     const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
@@ -138,7 +140,7 @@ export default {
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const showNav = ref(false);
-    let formInstance: any;
+    let formInstance: FormIOForm;
 
     const wizardSubmit = () => {
       formInstance.submit();
@@ -321,5 +323,5 @@ export default {
       showNav,
     };
   },
-};
+});
 </script>
