@@ -8,7 +8,6 @@ import {
 } from "@nestjs/common";
 import {
   ASSESSMENT_NOT_FOUND,
-  DisbursementScheduleService,
   StudentAssessmentService,
   InstitutionLocationService,
   EducationProgramService,
@@ -28,7 +27,6 @@ import {
 } from "./models/assessment.system-access.dto";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
-import { AssessmentControllerService } from "..";
 import { IUserToken } from "../../auth/userToken.interface";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
@@ -37,8 +35,6 @@ import { IUserToken } from "../../auth/userToken.interface";
 export class AssessmentSystemAccessController extends BaseController {
   constructor(
     private readonly assessmentService: StudentAssessmentService,
-    private readonly disbursementScheduleService: DisbursementScheduleService,
-    private readonly assessmentControllerService: AssessmentControllerService,
     private readonly locationService: InstitutionLocationService,
     private readonly programService: EducationProgramService,
   ) {
