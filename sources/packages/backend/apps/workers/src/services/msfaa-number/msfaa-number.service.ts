@@ -120,47 +120,4 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       dayjs(endDate).diff(startDate, "days") < MAX_MSFAA_VALID_DAYS
     );
   }
-
-  /**
-   * Fetches the MSFAA number records which are not sent for request.
-   * This can be retrieved by checking for date_requested column as null
-   * in the MSFAANumber table.
-   * @returns the records of the MSFAANumber table.
-   */
-  async getPendingMSFAARequest(
-    offeringIntensity: OfferingIntensity,
-  ): Promise<MSFAANumber[]> {
-    return this.repo
-      .createQueryBuilder("msfaaNumber")
-      .select([
-        "msfaaNumber.id",
-        "students.id",
-        "referenceApplication.id",
-        "msfaaNumber.msfaaNumber",
-        "sinValidation.id",
-        "sinValidation.sin",
-        "institutionLocation.institutionCode",
-        "students.birthDate",
-        "referenceApplication.relationshipStatus",
-        "users.lastName",
-        "users.firstName",
-        "students.gender",
-        "students.contactInfo",
-        "users.email",
-        "currentAssessment.id",
-        "offering.offeringIntensity",
-      ])
-      .innerJoin("msfaaNumber.student", "students")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .innerJoin("students.user", "users")
-      .innerJoin("msfaaNumber.referenceApplication", "referenceApplication")
-      .innerJoin("referenceApplication.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "offering")
-      .innerJoin("offering.institutionLocation", "institutionLocation")
-      .where("msfaaNumber.dateRequested is null")
-      .andWhere("offering.offeringIntensity = :offeringIntensity", {
-        offeringIntensity,
-      })
-      .getMany();
-  }
 }
