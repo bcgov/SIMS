@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import {
-  CustomNamedError,
   DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
   addDays,
   COE_WINDOW,
@@ -18,25 +17,18 @@ import {
   RecordDataModelService,
   Application,
   ApplicationStatus,
-  AssessmentTriggerType,
   COEStatus,
   DisbursementSchedule,
-  DisbursementValue,
   OfferingIntensity,
   StudentAssessment,
   User,
   RestrictionActionType,
 } from "@sims/sims-db";
 import {
-  Disbursement,
   ECertDisbursementSchedule,
   EnrollmentPeriod,
 } from "./disbursement-schedule.models";
 import * as dayjs from "dayjs";
-import {
-  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-  ASSESSMENT_NOT_FOUND,
-} from "../student-assessment/student-assessment.constants";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
