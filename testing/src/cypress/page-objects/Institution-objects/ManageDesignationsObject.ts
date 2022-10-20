@@ -60,7 +60,7 @@ export default class ManageDesignationsObject {
   }
 
   requestDesignationButton() {
-    return cy.get("[data-cy='requestForDesignation']");
+    return cy.get("[data-cy='requestDesignation']");
   }
 
   requestDesignationHeader() {
