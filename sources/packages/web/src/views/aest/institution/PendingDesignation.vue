@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator title="Institutions" subTitle="Designations" />
     </template>
@@ -48,7 +48,7 @@
                 :status="slotProps.data.designationStatus"
               /> </template
           ></Column>
-          <Column>
+          <Column header="Action">
             <template #body="slotProps">
               <v-btn
                 variant="outlined"

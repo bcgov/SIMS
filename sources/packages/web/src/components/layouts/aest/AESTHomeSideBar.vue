@@ -84,7 +84,7 @@ export default {
       {
         title: "Exceptions",
         props: {
-          prependIcon: "mdi-alert-circle-outline",
+          prependIcon: "mdi-check-circle-outline",
           to: {
             name: AESTRoutesConst.APPLICATION_EXCEPTIONS_PENDING,
           },

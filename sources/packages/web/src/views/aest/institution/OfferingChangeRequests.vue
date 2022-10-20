@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator
         title="Institution requests"
