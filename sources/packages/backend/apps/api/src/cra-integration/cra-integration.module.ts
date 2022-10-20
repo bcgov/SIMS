@@ -6,7 +6,6 @@ import {
   CRAIntegrationService,
   CRAPersonalVerificationService,
   MSFAANumberService,
-  SequenceControlService,
   SshService,
   StudentFileService,
   StudentService,
@@ -26,6 +25,7 @@ import {
   NotificationService,
   NotificationMessageService,
 } from "../services";
+import { SequenceControlService, WorkflowClientService } from "@sims/services";
 
 @Module({
   imports: [AuthModule],
@@ -52,6 +52,7 @@ import {
     StudentRestrictionService,
     EducationProgramOfferingService,
     EducationProgramOfferingValidationService,
+    WorkflowClientService,
     NotificationService,
     NotificationMessageService,
   ],

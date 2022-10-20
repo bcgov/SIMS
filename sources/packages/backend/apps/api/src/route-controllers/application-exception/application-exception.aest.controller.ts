@@ -9,10 +9,7 @@ import {
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import {
-  ApplicationExceptionService,
-  WorkflowActionsService,
-} from "../../services";
+import { ApplicationExceptionService } from "../../services";
 import {
   AllowAuthorizedParty,
   Groups,
@@ -33,7 +30,8 @@ import {
   UpdateApplicationExceptionAPIInDTO,
 } from "./models/application-exception.dto";
 import { IUserToken } from "../../auth/userToken.interface";
-import { CustomNamedError, getUserFullName } from "../../utilities";
+import { getUserFullName } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
@@ -45,6 +43,7 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { Role } from "../../auth/roles.enum";
+import { WorkflowClientService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -53,7 +52,7 @@ import { Role } from "../../auth/roles.enum";
 export class ApplicationExceptionAESTController extends BaseController {
   constructor(
     private readonly applicationExceptionService: ApplicationExceptionService,
-    private readonly workflowActionsService: WorkflowActionsService,
+    private readonly workflowClientService: WorkflowClientService,
   ) {
     super();
   }
@@ -116,7 +115,7 @@ export class ApplicationExceptionAESTController extends BaseController {
           payload.noteDescription,
           userToken.userId,
         );
-      await this.workflowActionsService.sendApplicationExceptionApproval(
+      await this.workflowClientService.sendApplicationExceptionApproval(
         updatedException.id,
         updatedException.exceptionStatus,
       );

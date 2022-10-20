@@ -8,3 +8,5 @@ export * from "./supporting-user/supporting-user.controller";
 export * from "./supporting-user/supporting-user.dto";
 export * from "./cra-integration/cra-integration.controller";
 export * from "./cra-integration/cra-integration.dto";
+export * from "./disbursement/disbursement.controller";
+export * from "./disbursement/disbursement.dto";

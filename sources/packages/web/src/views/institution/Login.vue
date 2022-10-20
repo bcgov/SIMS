@@ -22,7 +22,12 @@
               Login or register
             </h3>
             <p>No account? Please register through the BCeID website below.</p>
-            <v-btn color="primary" @click="login" prepend-icon="fa:fa fa-user">
+            <v-btn
+              data-cy="login"
+              color="primary"
+              @click="login"
+              prepend-icon="fa:fa fa-user"
+            >
               Login / Register with BCeID
             </v-btn>
           </content-group>

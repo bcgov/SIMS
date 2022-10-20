@@ -30,7 +30,7 @@ import {
   StudentScholasticStandingsService,
 } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import BaseController from "../BaseController";
 import { FormNames } from "../../services/form/constants";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../constants";

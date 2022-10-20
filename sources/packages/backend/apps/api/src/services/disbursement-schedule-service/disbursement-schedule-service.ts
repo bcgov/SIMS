@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import {
-  CustomNamedError,
   DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
   addDays,
   COE_WINDOW,
@@ -8,34 +7,28 @@ import {
   PaginationOptions,
   FieldSortOrder,
   PaginatedResults,
-  mapFromRawAndEntities,
   OrderByCondition,
 } from "../../utilities";
 import { DataSource, In, Repository, UpdateResult, Brackets } from "typeorm";
-import { SequenceControlService, StudentRestrictionService } from "..";
+import { SequenceControlService } from "@sims/services";
+import { StudentRestrictionService } from "..";
 import {
   RecordDataModelService,
   Application,
   ApplicationStatus,
-  AssessmentTriggerType,
   COEStatus,
   DisbursementSchedule,
-  DisbursementValue,
   OfferingIntensity,
   StudentAssessment,
   User,
   RestrictionActionType,
+  mapFromRawAndEntities,
 } from "@sims/sims-db";
 import {
-  Disbursement,
   ECertDisbursementSchedule,
   EnrollmentPeriod,
 } from "./disbursement-schedule.models";
 import * as dayjs from "dayjs";
-import {
-  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-  ASSESSMENT_NOT_FOUND,
-} from "../student-assessment/student-assessment.constants";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -53,91 +46,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
     this.assessmentRepo = dataSource.getRepository(StudentAssessment);
-  }
-
-  /**
-   * Create the disbursements while the application is 'In Progress'.
-   * Ensures that the application do not have any disbursements records
-   * and creates the disbursements and values altogether.
-   * ! This methods should be called for the first time when the
-   * ! disbursements are being added to the Student Application.
-   * ! Once the Student Application already has disbursements, another
-   * ! scenarios must be considered, for instance, if some amount of money
-   * ! was already released to the student.
-   * @param assessmentId application id to associate the disbursements.
-   * @param disbursements array of disbursements and values to be created.
-   * @returns created disbursements.
-   */
-  async createDisbursementSchedules(
-    assessmentId: number,
-    disbursements: Disbursement[],
-  ): Promise<DisbursementSchedule[]> {
-    const assessment = await this.assessmentRepo
-      .createQueryBuilder("assessment")
-      .select([
-        "assessment.id",
-        "assessment.triggerType",
-        "application.id",
-        "application.applicationStatus",
-        "disbursementSchedules.id",
-      ])
-      .innerJoin("assessment.application", "application")
-      .leftJoin("assessment.disbursementSchedules", "disbursementSchedules")
-      .where("assessment.id = :assessmentId", { assessmentId })
-      .getOne();
-
-    if (!assessment) {
-      throw new CustomNamedError(
-        "Student assessment not found.",
-        ASSESSMENT_NOT_FOUND,
-      );
-    }
-
-    if (
-      assessment.triggerType === AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.inProgress
-    ) {
-      throw new CustomNamedError(
-        `Student Assessment and Student Application are not in the expected status. Expecting assessment status '${AssessmentTriggerType.OriginalAssessment}' when the application status is '${ApplicationStatus.inProgress}'.`,
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-      );
-    }
-
-    if (
-      assessment.triggerType !== AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.completed
-    ) {
-      throw new CustomNamedError(
-        `Student Assessment and Student Application are not in the expected status. Expecting application status '${ApplicationStatus.completed}' when the assessment status is not '${AssessmentTriggerType.OriginalAssessment}'.`,
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-      );
-    }
-
-    if (assessment.disbursementSchedules?.length > 0) {
-      throw new CustomNamedError(
-        `Disbursements were already created for this Student Assessment.`,
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
-      );
-    }
-
-    for (const disbursement of disbursements) {
-      const newDisbursement = new DisbursementSchedule();
-      newDisbursement.disbursementDate = disbursement.disbursementDate;
-      newDisbursement.negotiatedExpiryDate = disbursement.negotiatedExpiryDate;
-      newDisbursement.disbursementValues = disbursement.disbursements.map(
-        (disbursementValue) => {
-          const newValue = new DisbursementValue();
-          newValue.valueType = disbursementValue.valueType;
-          newValue.valueCode = disbursementValue.valueCode;
-          newValue.valueAmount = disbursementValue.valueAmount.toString();
-          return newValue;
-        },
-      );
-      assessment.disbursementSchedules.push(newDisbursement);
-    }
-
-    await this.assessmentRepo.save(assessment);
-    return assessment.disbursementSchedules;
   }
 
   /**

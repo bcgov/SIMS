@@ -8,7 +8,7 @@
     </template>
     <template #alerts>
       <restriction-banner v-if="!hideRestriction" />
-      <CheckValidSINBanner />
+      <check-valid-s-i-n-banner />
     </template>
     <slot></slot>
   </full-page-container>
@@ -17,15 +17,15 @@
 import RestrictionBanner from "@/components/students/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import { LayoutTemplates } from "@/types";
+import { PropType, defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   components: { RestrictionBanner, CheckValidSINBanner },
   props: {
     layoutTemplate: {
-      type: String,
+      type: String as PropType<LayoutTemplates>,
       required: false,
       default: LayoutTemplates.CenteredCard,
-      validator: (val: string) => val in LayoutTemplates,
     },
     fullWidth: {
       type: Boolean,
@@ -38,5 +38,5 @@ export default {
       default: false,
     },
   },
-};
+});
 </script>

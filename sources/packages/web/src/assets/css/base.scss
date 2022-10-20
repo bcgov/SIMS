@@ -1,17 +1,17 @@
 @import "./global-style-variables.scss";
 html * {
-  font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif, "primeicons";
+  font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
   font-style: $font-style-normal;
   line-height: 20px;
 }
 // todo: when all v-navigation-drawer is updated, remove this class.
 .body-background {
-  background: $color-background;
+  background: $default-background;
 }
 
 .bold-text {
   font-style: $font-style-normal;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   line-height: 36px;
   letter-spacing: -0.2px;
   color: $brand-blue;
@@ -216,12 +216,12 @@ html * {
 }
 
 // Active sidebar class to match with Figma.
-.active-sidebar-item.v-list-item--active > .v-list-item__overlay {
+.active-list-item.v-list-item--active > .v-list-item__overlay {
   opacity: 0 !important;
 }
 
 // Active sidebar class to match with Figma.
-.active-sidebar-item .v-list-item-title {
+.active-list-item .v-list-item-title {
   @extend .label-bold;
 }
 
@@ -327,6 +327,6 @@ html * {
 }
 
 .content-group-info {
-  background-color: $color-background;
+  background-color: $default-background;
   border: 2px solid $common-border-color !important;
 }

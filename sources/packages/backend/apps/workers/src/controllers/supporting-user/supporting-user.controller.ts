@@ -12,9 +12,13 @@ import {
   CreateSupportingUsersJobInDTO,
   CreateSupportingUsersJobOutDTO,
 } from "..";
-import { APPLICATION_ID, SUPPORTING_USERS_TYPES } from "../workflow-variables";
-import { SUPPORTING_USER_NOT_FOUND } from "../error-code-constants";
 import { filterObjectProperties } from "../../utilities";
+import { SUPPORTING_USER_NOT_FOUND } from "../../constants";
+import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
+import {
+  SUPPORTING_USERS_TYPES,
+  SUPPORTING_USER_ID,
+} from "@sims/services/workflow/variables/supporting-user-information-request";
 
 @Controller()
 export class SupportingUserController {
@@ -51,7 +55,7 @@ export class SupportingUserController {
   }
 
   @ZeebeWorker("load-supporting-user-data", {
-    fetchVariable: [APPLICATION_ID, "supportingUserId"],
+    fetchVariable: [APPLICATION_ID, SUPPORTING_USER_ID],
   })
   async checkSupportingUserResponse(
     job: Readonly<

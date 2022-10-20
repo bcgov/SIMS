@@ -15,7 +15,8 @@ import {
 } from "../../esdc-integration/sin-validation/models/sin-validation-models";
 import { StudentService } from "../student/student.service";
 import { SINValidationFileResponse } from "./sin-validation.service.models";
-import { CustomNamedError, removeWhiteSpaces } from "../../utilities";
+import { removeWhiteSpaces } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   SIN_VALIDATION_RECORD_INVALID_OPERATION,
   SIN_VALIDATION_RECORD_NOT_FOUND,

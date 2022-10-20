@@ -1,36 +1,54 @@
 <template>
-  <formio formName="noticeofassessment" :data="initialData"></formio>
+  <formio-container formName="noticeOfAssessment" :formData="initialData" />
 </template>
 
 <script lang="ts">
-import { ref, watch } from "vue";
+import { watch, defineComponent, ref, onMounted } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
 
-export default {
+interface NoticeOfAssessment extends AssessmentNOAAPIOutDTO {
+  viewOnly?: boolean;
+}
+
+export default defineComponent({
+  emits: ["assessmentDataLoaded"],
   props: {
     assessmentId: {
       type: Number,
       required: true,
     },
+    viewOnly: {
+      type: Boolean,
+      required: false,
+    },
   },
-  setup(props: any) {
-    const initialData = ref({} as AssessmentNOAAPIOutDTO);
+  setup(props, { emit }) {
+    const initialData = ref({} as NoticeOfAssessment);
+
+    onMounted(async () => {
+      const assessment =
+        await StudentAssessmentsService.shared.getAssessmentNOA(
+          props.assessmentId,
+        );
+      initialData.value = { ...assessment, viewOnly: props.viewOnly };
+      emit(
+        "assessmentDataLoaded",
+        initialData.value?.applicationStatus,
+        initialData.value.noaApprovalStatus,
+      );
+    });
 
     watch(
-      () => props.assessmentId,
-      async () => {
-        initialData.value =
-          await StudentAssessmentsService.shared.getAssessmentNOA(
-            props.assessmentId,
-          );
+      () => props.viewOnly,
+      () => {
+        initialData.value.viewOnly = props.viewOnly;
       },
-      { immediate: true },
     );
 
     return {
       initialData,
     };
   },
-};
+});
 </script>

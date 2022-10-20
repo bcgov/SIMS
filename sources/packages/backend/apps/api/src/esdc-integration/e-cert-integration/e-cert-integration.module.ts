@@ -3,7 +3,6 @@ import { AuthModule } from "../../auth/auth.module";
 import {
   ConfigService,
   DisbursementScheduleService,
-  SequenceControlService,
   SshService,
   StudentRestrictionService,
   DisbursementScheduleErrorsService,
@@ -11,6 +10,7 @@ import {
   StudentService,
   SFASIndividualService,
 } from "../../services";
+import { SequenceControlService } from "@sims/services";
 import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
 import { ECertFullTimeFileHeader } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-header";

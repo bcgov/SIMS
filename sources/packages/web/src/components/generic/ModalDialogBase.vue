@@ -36,25 +36,14 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, computed, SetupContext } from "vue";
+import { ref, watch, defineComponent } from "vue";
 const dialogClosedEvent = "dialogClosed";
 
-enum DialogTypes {
-  info = "info",
-  question = "question",
-  warning = "warning",
-}
-
-export default {
+export default defineComponent({
   props: {
     showDialog: {
       type: Boolean,
       required: true,
-    },
-    dialogType: {
-      type: String,
-      required: true,
-      validator: (val: string) => val in DialogTypes,
     },
     title: {
       type: String,
@@ -74,7 +63,7 @@ export default {
     },
   },
   emits: [dialogClosedEvent],
-  setup(props: any, context: SetupContext) {
+  setup(props, context) {
     const showHideDialog = ref(false);
     watch(
       () => props.showDialog,
@@ -94,20 +83,7 @@ export default {
       },
     );
 
-    const icon = computed(() => {
-      switch (props.dialogType) {
-        case DialogTypes.info:
-          return "mdi-information-outline";
-        case DialogTypes.question:
-          return "mdi-comment-question-outline";
-        case DialogTypes.warning:
-          return "mdi-alert-outline";
-        default:
-          return null;
-      }
-    });
-
-    return { showHideDialog, icon };
+    return { showHideDialog };
   },
-};
+});
 </script>

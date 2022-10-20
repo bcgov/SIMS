@@ -11,6 +11,7 @@ export interface FormIOForm<T = any> {
     silent: boolean,
   ) => boolean;
   submit: () => any;
+  submission: unknown;
 }
 
 /**

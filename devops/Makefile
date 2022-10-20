@@ -658,3 +658,7 @@ deploy-forms:
 	--build-arg FORMS_SA_PASSWORD=$(FORMS_SA_PASSWORD_DEPLOY) \
 	-t form-deployment ../sources/packages/forms \
 	&& docker run -it form-deployment
+
+deploy-camunda-definitions:
+	cd ../sources/packages/workflow \
+	&& npm run deploy

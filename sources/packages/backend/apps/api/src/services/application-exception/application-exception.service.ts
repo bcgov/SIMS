@@ -12,12 +12,12 @@ import {
   User,
 } from "@sims/sims-db";
 import {
-  CustomNamedError,
   FieldSortOrder,
   OrderByCondition,
   PaginatedResults,
   PaginationOptions,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,

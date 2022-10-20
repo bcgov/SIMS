@@ -18,10 +18,8 @@ import { AllowAuthorizedParty, Groups, Roles } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ReportService, FormService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
-import {
-  getFileNameAsCurrentTimestamp,
-  CustomNamedError,
-} from "../../utilities";
+import { getFileNameAsCurrentTimestamp } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import BaseController from "../BaseController";
 import { ReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";

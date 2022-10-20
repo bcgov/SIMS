@@ -10,7 +10,7 @@
     <scholastic-standing-form
       :initialData="initialData"
       :readOnly="false"
-      @submitted="submit"
+      @submit="submit"
       :processing="processing"
       @cancel="goBack"
     />

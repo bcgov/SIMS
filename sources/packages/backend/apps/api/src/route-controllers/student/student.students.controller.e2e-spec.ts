@@ -15,6 +15,7 @@ import * as request from "supertest";
 import { ATBCCreateClientResponse } from "../../types";
 import { AuthModule } from "../../auth/auth.module";
 import { AppStudentsModule } from "../../app.students.module";
+import { createMockedZeebeModule } from "../../testHelpers/mocked-providers/zeebe-client-mock";
 
 jest.setTimeout(15000);
 
@@ -36,7 +37,12 @@ describe("Test ATBC Controller", () => {
     );
     accesstoken = token.access_token;
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule, AuthModule, AppStudentsModule],
+      imports: [
+        DatabaseModule,
+        AuthModule,
+        AppStudentsModule,
+        createMockedZeebeModule(),
+      ],
     }).compile();
     userService = await moduleFixture.get(UserService);
     atbcService = await moduleFixture.get(ATBCService);

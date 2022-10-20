@@ -6,6 +6,7 @@ import {
   ProgramInfoRequestController,
   SupportingUserController,
   CRAIntegrationController,
+  DisbursementController,
 } from "./controllers";
 import {
   StudentAssessmentService,
@@ -13,23 +14,32 @@ import {
   ApplicationExceptionService,
   SupportingUserService,
   CRAIncomeVerificationService,
+  DisbursementScheduleService,
+  MSFAANumberService,
 } from "./services";
+import { ZeebeTransportStrategy } from "./zeebe";
+import { SequenceControlService, ZeebeModule } from "@sims/services";
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, ZeebeModule.forRoot()],
   controllers: [
     AssessmentController,
     ApplicationController,
     ProgramInfoRequestController,
     SupportingUserController,
     CRAIntegrationController,
+    DisbursementController,
   ],
   providers: [
+    ZeebeTransportStrategy,
     StudentAssessmentService,
     ApplicationService,
     ApplicationExceptionService,
     SupportingUserService,
     CRAIncomeVerificationService,
+    DisbursementScheduleService,
+    SequenceControlService,
+    MSFAANumberService,
   ],
 })
 export class WorkersModule {}

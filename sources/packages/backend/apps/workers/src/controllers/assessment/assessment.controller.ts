@@ -7,10 +7,14 @@ import {
   IOutputVariables,
 } from "zeebe-node";
 import {
-  ApplicationAssessmentWorkerOutDTO,
-  AssessmentDataWorkerInDTO,
-  StudentAppealRequestWorkersOutDTO,
-  SupportingUserWorkerOutDTO,
+  ApplicationAssessmentJobOutDTO,
+  AssessmentDataJobInDTO,
+  AssociateWorkflowInstanceJobInDTO,
+  SaveAssessmentDataJobInDTO,
+  StudentAppealRequestJobOutDTO,
+  SupportingUserJobOutDTO,
+  UpdateNOAStatusHeaderDTO,
+  UpdateNOAStatusJobInDTO,
 } from "..";
 import { StudentAssessmentService } from "../../services";
 import {
@@ -21,14 +25,59 @@ import {
   SupportingUserType,
 } from "@sims/sims-db";
 import { filterObjectProperties } from "../../utilities";
-import { ASSESSMENT_ID } from "../workflow-variables";
-import { ASSESSMENT_NOT_FOUND } from "apps/api/src/services";
+import {
+  ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
+  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ASSESSMENT_NOT_FOUND,
+} from "../../constants";
+import {
+  ASSESSMENT_DATA,
+  ASSESSMENT_ID,
+} from "@sims/services/workflow/variables/assessment-gateway";
+import { CustomNamedError } from "@sims/utilities";
 
 @Controller()
 export class AssessmentController {
   constructor(
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {}
+
+  /**
+   * Associates the workflow instance if the assessment is not associated already.
+   */
+  @ZeebeWorker("associate-workflow-instance", {
+    fetchVariable: [ASSESSMENT_ID],
+  })
+  async associateWorkflowInstance(
+    job: Readonly<
+      ZeebeJob<
+        AssociateWorkflowInstanceJobInDTO,
+        ICustomHeaders,
+        IOutputVariables
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    try {
+      await this.studentAssessmentService.associateWorkflowId(
+        job.variables.assessmentId,
+        job.processInstanceKey,
+      );
+      return job.complete();
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW:
+            return job.complete();
+          case ASSESSMENT_NOT_FOUND:
+          case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            return job.error(error.name, error.message);
+        }
+      }
+      return job.fail(
+        `Not able to associate the assessment id ${job.variables.assessmentId} with the workflow instance id ${job.processInstanceKey}. ${error}`,
+      );
+    }
+  }
 
   /**
    * Loads consolidated assessment including the assessment itself, application
@@ -40,10 +89,12 @@ export class AssessmentController {
    * received through the job custom headers.
    * @returns filtered consolidated information.
    */
-  @ZeebeWorker("load-assessment-data", { fetchVariable: [ASSESSMENT_ID] })
-  async loadAssessmentData(
+  @ZeebeWorker("load-assessment-consolidated-data", {
+    fetchVariable: [ASSESSMENT_ID, "associateWorkflowInstanceId"],
+  })
+  async loadAssessmentConsolidatedData(
     job: Readonly<
-      ZeebeJob<AssessmentDataWorkerInDTO, ICustomHeaders, IOutputVariables>
+      ZeebeJob<AssessmentDataJobInDTO, ICustomHeaders, IOutputVariables>
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     const assessment = await this.studentAssessmentService.getById(
@@ -61,6 +112,46 @@ export class AssessmentController {
   }
 
   /**
+   * Updates the assessment dynamic data if it was not updated already.
+   */
+  @ZeebeWorker("save-assessment-data", {
+    fetchVariable: [ASSESSMENT_ID, ASSESSMENT_DATA],
+  })
+  async saveAssessmentData(
+    job: Readonly<
+      ZeebeJob<SaveAssessmentDataJobInDTO, ICustomHeaders, IOutputVariables>
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    await this.studentAssessmentService.updateAssessmentData(
+      job.variables.assessmentId,
+      job.variables.assessmentData,
+    );
+    return job.complete();
+  }
+
+  /**
+   * Updates the NOA (Notice of Assessment) status if not updated yet.
+   */
+  @ZeebeWorker("update-noa-status", {
+    fetchVariable: [ASSESSMENT_ID],
+  })
+  async updateNOAStatus(
+    job: Readonly<
+      ZeebeJob<
+        UpdateNOAStatusJobInDTO,
+        UpdateNOAStatusHeaderDTO,
+        IOutputVariables
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    await this.studentAssessmentService.updateNOAApprovalStatus(
+      job.variables.assessmentId,
+      job.customHeaders.status,
+    );
+    return job.complete();
+  }
+
+  /**
    * Creates a well-known object that represents the universe of possible
    * information that can be later filtered.
    * @param assessment assessment to be converted.
@@ -69,7 +160,7 @@ export class AssessmentController {
    */
   private transformToAssessmentDTO(
     assessment: StudentAssessment,
-  ): ApplicationAssessmentWorkerOutDTO {
+  ): ApplicationAssessmentJobOutDTO {
     const application = assessment.application;
     const [studentCRAIncome] = application.craIncomeVerifications?.filter(
       (verification) => verification.supportingUserId === null,
@@ -137,7 +228,7 @@ export class AssessmentController {
   flattenSupportingUsersArray(
     supportingUsers: SupportingUser[],
     incomeVerifications?: CRAIncomeVerification[],
-  ): Record<string, SupportingUserWorkerOutDTO> {
+  ): Record<string, SupportingUserJobOutDTO> {
     if (!supportingUsers?.length) {
       return null;
     }
@@ -146,7 +237,7 @@ export class AssessmentController {
     // Object to be returned.
     const flattenedSupportingUsers = {} as Record<
       string,
-      SupportingUserWorkerOutDTO
+      SupportingUserJobOutDTO
     >;
     // Filter and process by type to have the items ordered also by the type (Parent1, Parent2, Partner1).
     Object.keys(SupportingUserType).forEach((supportingUserType) => {
@@ -180,14 +271,14 @@ export class AssessmentController {
    */
   flattenStudentAppeals(
     appealRequests: StudentAppealRequest[],
-  ): Record<string, StudentAppealRequestWorkersOutDTO> {
+  ): Record<string, StudentAppealRequestJobOutDTO> {
     if (!appealRequests?.length) {
       return null;
     }
     // Object to be returned.
     const flattenedAppealRequests = {} as Record<
       string,
-      StudentAppealRequestWorkersOutDTO
+      StudentAppealRequestJobOutDTO
     >;
     appealRequests.forEach((appealRequest) => {
       flattenedAppealRequests[appealRequest.submittedFormName] = {

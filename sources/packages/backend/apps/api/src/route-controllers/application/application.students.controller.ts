@@ -16,7 +16,6 @@ import {
   ApplicationService,
   FormService,
   StudentService,
-  WorkflowActionsService,
   ProgramYearService,
   APPLICATION_DRAFT_NOT_FOUND,
   MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
@@ -63,6 +62,7 @@ import {
 } from "@nestjs/swagger";
 import { ApplicationControllerService } from "./application.controller.service";
 import { InProgressApplicationDetailsAPIOutDTO } from "./models/application.system.dto";
+import { WorkflowClientService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -72,7 +72,7 @@ export class ApplicationStudentsController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
-    private readonly workflowService: WorkflowActionsService,
+    private readonly workflowClientService: WorkflowClientService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
     private readonly offeringService: EducationProgramOfferingService,
@@ -360,7 +360,7 @@ export class ApplicationStudentsController extends BaseController {
       studentApplication.currentAssessment?.assessmentWorkflowId
     ) {
       // Calling the API to stop assessment process
-      await this.workflowService.deleteApplicationAssessment(
+      await this.workflowClientService.deleteApplicationAssessment(
         studentApplication.currentAssessment.assessmentWorkflowId,
       );
     }

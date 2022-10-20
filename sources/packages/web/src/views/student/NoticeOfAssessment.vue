@@ -2,34 +2,59 @@
   <student-page-container>
     <template #header>
       <header-navigator
-        title="Application details"
-        subTitle="Notice of Assessment"
+        title="View assessment"
+        subTitle="Assessment"
         :routeLocation="{
-          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          name: StudentRoutesConst.ASSESSMENT_AWARD_VIEW,
           params: {
-            id: applicationId,
+            applicationId: applicationId,
+            assessmentId: assessmentId,
           },
         }"
-      />
+        ><template #buttons v-if="!viewOnly">
+          <v-row class="p-0 m-0">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              data-cy="cancelApplication"
+              @click="confirmCancelApplication"
+              >Cancel application</v-btn
+            ><v-btn
+              class="ml-2"
+              color="primary"
+              data-cy="AcceptAssessment"
+              @click="confirmAssessment()"
+              >Accept assessment</v-btn
+            >
+          </v-row>
+        </template>
+      </header-navigator>
     </template>
-    <notice-of-assessment-form-view :assessmentId="assessmentId" />
-    <v-row class="justify-center mt-4">
-      <v-btn color="primary" @click="confirmAssessment()">
-        Confirmation of assessment
-      </v-btn>
-    </v-row>
+    <notice-of-assessment-form-view
+      :assessmentId="assessmentId"
+      :view-only="viewOnly"
+      @assessmentDataLoaded="assessmentDataLoaded"
+    />
+
+    <cancel-application ref="cancelApplicationModal" />
   </student-page-container>
 </template>
 
 <script lang="ts">
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
-import { useSnackBar } from "@/composables";
+import { ModalDialog, useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
+import { defineComponent, ref } from "vue";
+import { ApplicationStatus, AssessmentStatus, ClientIdType } from "@/types";
+import CancelApplication from "@/components/students/modals/CancelApplication.vue";
+import { useRouter } from "vue-router";
 
-export default {
+export default defineComponent({
   components: {
     NoticeOfAssessmentFormView,
+    CancelApplication,
   },
   props: {
     applicationId: {
@@ -41,20 +66,57 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
+    const router = useRouter();
+    const cancelApplicationModal = ref({} as ModalDialog<boolean>);
+    const assessment = ref<AssessmentNOAAPIOutDTO>();
     const snackBar = useSnackBar();
+    const viewOnly = ref(true);
+
+    const assessmentDataLoaded = (
+      applicationStatus: ApplicationStatus,
+      noaApprovalStatus: AssessmentStatus,
+    ) => {
+      viewOnly.value = !(
+        applicationStatus === ApplicationStatus.assessment &&
+        noaApprovalStatus === AssessmentStatus.required
+      );
+    };
+
     const confirmAssessment = async () => {
       try {
         await StudentAssessmentsService.shared.confirmAssessmentNOA(
           props.assessmentId,
         );
+        viewOnly.value = true;
         snackBar.success("Confirmation of Assessment completed successfully!");
       } catch (error) {
         snackBar.error("An error happened while confirming the assessment.");
       }
     };
 
-    return { confirmAssessment, StudentRoutesConst };
+    const confirmCancelApplication = async () => {
+      if (await cancelApplicationModal.value.showModal(props.applicationId)) {
+        return router.push({
+          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          params: {
+            id: props.applicationId,
+          },
+        });
+      }
+    };
+    return {
+      confirmAssessment,
+      StudentRoutesConst,
+      assessment,
+      ApplicationStatus,
+      AssessmentStatus,
+      ClientIdType,
+      viewOnly,
+      confirmCancelApplication,
+      cancelApplicationModal,
+      assessmentDataLoaded,
+    };
   },
-};
+});
 </script>

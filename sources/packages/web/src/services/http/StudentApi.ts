@@ -93,10 +93,14 @@ export class StudentApi extends HttpBaseClient {
   async saveStudentFiles(
     studentFilesPayload: StudentFileUploaderAPIInDTO,
   ): Promise<void> {
-    await this.patchCall<StudentFileUploaderAPIInDTO>(
-      this.addClientRoot("student/save-uploaded-files"),
-      studentFilesPayload,
-    );
+    try {
+      await this.patchCall<StudentFileUploaderAPIInDTO>(
+        this.addClientRoot("student/save-uploaded-files"),
+        studentFilesPayload,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   /**

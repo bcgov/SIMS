@@ -19,7 +19,6 @@ import {
   ApplicationData,
   AssessmentTriggerType,
   DisbursementValueType,
-  AssessmentStatus,
   SupportingUserType,
   StudyBreaksAndWeeks,
 } from "@sims/sims-db";
@@ -189,9 +188,4 @@ export class CreateDisbursementsDTO {
   @ValidateNested({ each: true })
   @Type(() => DisbursementScheduleDTO)
   schedules: DisbursementScheduleDTO[];
-}
-
-export class UpdateAssessmentStatusDTO {
-  @IsEnum(AssessmentStatus)
-  status: AssessmentStatus;
 }

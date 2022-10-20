@@ -3,10 +3,10 @@ import { LoggerService } from "../../logger/logger.service";
 import { Injectable } from "@nestjs/common";
 import {
   ConfigService,
-  SequenceControlService,
   SINValidationService,
   StudentService,
 } from "../../services";
+import { SequenceControlService } from "@sims/services";
 import { ESDCIntegrationConfig } from "../../types";
 import { SINValidationIntegrationService } from "./sin-validation-integration.service";
 import { SINValidation, Student } from "@sims/sims-db";

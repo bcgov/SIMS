@@ -11,6 +11,7 @@ import {
   ProgramStatus,
   ProgramYear,
   InstitutionLocation,
+  getRawCount,
 } from "@sims/sims-db";
 import { DataSource, In, Repository } from "typeorm";
 import {
@@ -18,13 +19,12 @@ import {
   EducationProgramsSummary,
 } from "./education-program.service.models";
 import {
-  getRawCount,
   sortProgramsColumnMap,
   PaginationOptions,
   PaginatedResults,
   SortPriority,
-  CustomNamedError,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 import { EDUCATION_PROGRAM_NOT_FOUND } from "../../constants";
 

@@ -4,13 +4,13 @@ import {
   DisbursementScheduleService,
   DisbursementReceiptService,
   SshService,
-  SequenceControlService,
   StudentRestrictionService,
   RestrictionService,
   ReportService,
   StudentService,
   SFASIndividualService,
 } from "../../services";
+import { SequenceControlService } from "@sims/services";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt-integration.service";
 import { DisbursementReceiptProcessingService } from "./disbursement-receipt-processing.service";
 import { DisbursementReceiptRequestService } from "./disbursement-receipt-request.service";
