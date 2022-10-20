@@ -1,5 +1,3 @@
-import { contains } from "cypress/types/jquery";
-
 export default class LoginInstitutionObject {
   loginScreenWelcome() {
     return cy.get(".category-header-large");
