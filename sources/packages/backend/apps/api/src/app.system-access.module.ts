@@ -7,7 +7,6 @@ import {
   ConfigService,
   DisbursementScheduleService,
   EducationProgramOfferingService,
-  SequenceControlService,
   StudentAssessmentService,
   StudentRestrictionService,
   WorkflowActionsService,
@@ -70,6 +69,7 @@ import { DisbursementReceiptIntegrationService } from "./esdc-integration/disbur
 import { DisbursementReceiptRequestService } from "./esdc-integration/disbursement-receipt-integration/disbursement-receipt-request.service";
 import { FedRestrictionProcessingService } from "./esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
+import { WorkflowClientService, SequenceControlService } from "@sims/services";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule, SINValidationModule],
@@ -86,6 +86,7 @@ import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restric
     FedRestrictionsIntegrationSystemAccessController,
   ],
   providers: [
+    WorkflowClientService,
     ATBCService,
     StudentService,
     ConfigService,

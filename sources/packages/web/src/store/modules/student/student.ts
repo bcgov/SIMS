@@ -15,12 +15,14 @@ export class StudentState {
   hasStudentAccount = false;
   sinValidStatus: SINValidStatus = new SINValidStatus();
   restrictions: StudentRestriction[] = [];
+  firstName = "";
 }
 
 const state: StudentState = {
   hasStudentAccount: false,
   sinValidStatus: new SINValidStatus(),
   restrictions: [],
+  firstName: "",
 };
 
 const namespaced = true;

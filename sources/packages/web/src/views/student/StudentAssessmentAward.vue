@@ -36,7 +36,7 @@
           <h2 class="category-header-medium primary-color">
             How to receive your award
           </h2>
-          <p class="default-color my-3">
+          <p class="black-color my-3">
             Please visit the
             <strong>National Student Loan Service Centre (NSLSC)</strong>
             to collect your awarded funds. It may take time to process if you do

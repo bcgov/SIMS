@@ -3,7 +3,7 @@
 
 .content-header {
   color: $brand-black;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-size: 17px;
   line-height: 22px;
   font-style: $font-style-normal;
@@ -16,4 +16,3 @@
   line-height: 21px;
   font-style: $font-style-normal;
 }
-

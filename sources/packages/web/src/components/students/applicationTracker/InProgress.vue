@@ -8,7 +8,7 @@
     background-color="error-bg"
     ><template #content
       ><strong>Reason from your institution:</strong>
-      {{ applicationDetails.PIRDeniedReason }}. Please contact the Financial Aid
+      {{ applicationDetails.pirDeniedReason }}. Please contact the Financial Aid
       Officer from your institution for more information. You will need to edit
       your application for it to be processed again.</template
     ></application-status-tracker-banner

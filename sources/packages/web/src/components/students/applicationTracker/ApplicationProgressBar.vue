@@ -21,7 +21,7 @@
         <template #tick-label="{ tick, index }">
           <span
             v-if="index === trackerApplicationStatus"
-            class="label-bold default-color"
+            class="label-bold black-color"
             >{{ tick.label }}
             <v-icon
               v-if="hasDeclinedCard"
@@ -30,9 +30,7 @@
               color="danger"
               class="pl-4"
           /></span>
-          <span class="label-value default-color" v-else
-            >{{ tick.label }}
-          </span>
+          <span class="label-value black-color" v-else>{{ tick.label }} </span>
         </template>
       </v-slider>
 
@@ -124,9 +122,7 @@ export default defineComponent({
     );
 
     const thumbColor = computed(() =>
-      props.applicationStatus === ApplicationStatus.draft
-        ? "default"
-        : "warning",
+      props.applicationStatus === ApplicationStatus.draft ? "black" : "warning",
     );
 
     const thumbSize = computed(() =>

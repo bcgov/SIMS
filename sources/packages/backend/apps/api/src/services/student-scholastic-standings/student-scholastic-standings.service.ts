@@ -13,7 +13,7 @@ import {
   StudentRestriction,
   User,
 } from "@sims/sims-db";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,

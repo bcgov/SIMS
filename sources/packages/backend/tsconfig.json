@@ -18,6 +18,18 @@
       ],
       "@sims/sims-db/*": [
         "libs/sims-db/src/*"
+      ],
+      "@sims/services": [
+        "libs/services/src"
+      ],
+      "@sims/services/*": [
+        "libs/services/src/*"
+      ],
+      "@sims/utilities": [
+        "libs/utilities/src"
+      ],
+      "@sims/utilities/*": [
+        "libs/utilities/src/*"
       ]
     }
   }

@@ -5,11 +5,10 @@ import { InjectLogger } from "../common";
 import { LoggerService } from "../logger/logger.service";
 import {
   CRAIntegrationService,
-  SequenceControlService,
   ConfigService,
   CRAIncomeVerificationService,
 } from "../services";
-import { WorkflowActionsService } from "../services/workflow/workflow-actions.service";
+import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 import {
@@ -39,7 +38,7 @@ export class CRAPersonalVerificationService {
     private readonly configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly incomeVerificationService: CRAIncomeVerificationService,
-    private readonly workflowService: WorkflowActionsService,
+    private readonly workflowClientService: WorkflowClientService,
     config: ConfigService,
   ) {
     this.ftpResponseFolder =
@@ -344,7 +343,7 @@ export class CRAPersonalVerificationService {
     }
 
     // Send a message to the associated workflow to proceed.
-    await this.workflowService.sendCRAIncomeVerificationCompletedMessage(
+    await this.workflowClientService.sendCRAIncomeVerificationCompletedMessage(
       verificationId,
     );
   }

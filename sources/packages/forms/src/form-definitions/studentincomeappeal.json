@@ -12,8 +12,8 @@
       "label": "Income",
       "labelWidth": "",
       "labelMargin": "",
-      "tag": "p",
-      "className": "",
+      "tag": "h3",
+      "className": "category-header-medium primary-color",
       "attrs": [
         {
           "attr": "",
@@ -22,7 +22,7 @@
       ],
       "content": "New income",
       "refreshOnChange": false,
-      "customClass": "category-header-medium primary-color",
+      "customClass": "",
       "hidden": false,
       "modalEdit": false,
       "key": "newIncome",
@@ -88,7 +88,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "addons": [],
-      "id": "eb9tmg9"
+      "id": "eg5zawe"
     },
     {
       "title": "Income panel",

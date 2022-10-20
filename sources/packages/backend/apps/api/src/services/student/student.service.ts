@@ -16,12 +16,11 @@ import { StudentUserToken } from "../../auth/userToken.interface";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
-  CustomNamedError,
-  getDateOnly,
   getUTCNow,
   removeWhiteSpaces,
   transformAddressDetails,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   CreateStudentUserInfo,
   StudentInfo,
@@ -164,7 +163,7 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     student.user = user;
-    student.birthDate = getDateOnly(userInfo.birthdate);
+    student.birthDate = new Date(userInfo.birthdate);
     student.gender = userInfo.gender;
     student.contactInfo = {
       address: transformAddressDetails(studentInfo),
@@ -400,7 +399,7 @@ export class StudentService extends RecordDataModelService<Student> {
       studentToken.givenNames !== studentToSync.user.firstName
     ) {
       const sinValidation = new SINValidation();
-      studentToSync.birthDate = getDateOnly(studentToken.birthdate);
+      studentToSync.birthDate = new Date(studentToken.birthdate);
       studentToSync.user.lastName = studentToken.lastName;
       studentToSync.user.firstName = studentToken.givenNames;
       sinValidation.student = studentToSync;

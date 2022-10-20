@@ -1,18 +1,65 @@
 import { Injectable } from "@nestjs/common";
 import {
+  AssessmentStatus,
   RecordDataModelService,
   StudentAppealStatus,
   StudentAssessment,
 } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { CustomNamedError } from "@sims/utilities";
+import { DataSource, IsNull, UpdateResult } from "typeorm";
+import {
+  ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
+  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ASSESSMENT_NOT_FOUND,
+} from "../../constants";
 
 /**
  * Manages the student assessment related operations.
  */
 @Injectable()
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
-  constructor(dataSource: DataSource) {
+  constructor(private readonly dataSource: DataSource) {
     super(dataSource.getRepository(StudentAssessment));
+  }
+
+  /**
+   * Associates the workflow instance if the assessment is not associated already.
+   * @param assessmentId assessment id.
+   * @param assessmentWorkflowId workflow instance id.
+   */
+  async associateWorkflowId(
+    assessmentId: number,
+    assessmentWorkflowId: string,
+  ): Promise<void> {
+    return this.dataSource.transaction(async (entityManager) => {
+      const assessmentRepo = entityManager.getRepository(StudentAssessment);
+      const assessment = await assessmentRepo.findOne({
+        where: { id: assessmentId },
+        lock: { mode: "pessimistic_write" },
+      });
+      if (!assessment) {
+        throw new CustomNamedError(
+          ASSESSMENT_NOT_FOUND,
+          "Assessment id was not found.",
+        );
+      }
+      if (!assessment.assessmentWorkflowId) {
+        // Assessment is available to be associated with the workflow instance id.
+        await assessmentRepo.update(assessmentId, { assessmentWorkflowId });
+        return;
+      }
+      if (assessment.assessmentWorkflowId !== assessmentWorkflowId) {
+        throw new CustomNamedError(
+          ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+          `The assessment is already associated with another workflow instance. Current associated instance id ${assessment.assessmentWorkflowId}.`,
+        );
+      }
+      // The workflow was already associated with the workflow, no need to update it again.
+      throw new CustomNamedError(
+        ASSESSMENT_ALREADY_ASSOCIATED_TO_WORKFLOW,
+        `The assessment is already associated to the workflow.`,
+      );
+    });
   }
 
   /**
@@ -86,5 +133,42 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         assessmentId,
       })
       .getOne();
+  }
+
+  /**
+   * Updates the assessment dynamic data if it was not updated already.
+   * @param assessmentId assessment id to have the data updated.
+   * @param assessmentData dynamic data to be updated.
+   * @returns update result.
+   */
+  async updateAssessmentData(
+    assessmentId: number,
+    assessmentData: unknown,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: assessmentId, assessmentData: IsNull() },
+      { assessmentData },
+    );
+  }
+
+  /**
+   * Updates the NOA (notice of assessment) approval status.
+   * The NOA status defines if the student needs to provide
+   * his approval to the NOA or not.
+   * @param assessmentId assessment id to be updated.
+   * @param status status of the assessment.
+   * @returns update result.
+   */
+  async updateNOAApprovalStatus(
+    assessmentId: number,
+    status: AssessmentStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: assessmentId,
+        noaApprovalStatus: IsNull(),
+      },
+      { noaApprovalStatus: status },
+    );
   }
 }

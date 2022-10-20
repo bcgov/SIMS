@@ -65,6 +65,7 @@ export class Institution extends RecordDataModel {
 
   @Column({
     name: "established_date",
+    type: "date",
   })
   establishedDate: Date;
 

@@ -34,7 +34,8 @@ import {
   StudentAppealApprovalAPIInDTO,
   StudentAppealPendingSummaryAPIOutDTO,
 } from "./models/student-appeal.dto";
-import { CustomNamedError, getUserFullName } from "../../utilities";
+import { getUserFullName } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   STUDENT_APPEAL_INVALID_OPERATION,

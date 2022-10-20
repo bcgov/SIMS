@@ -53,7 +53,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     // The assessment trigger types for which the request form must be visible by default.
     const assessmentRequestTypes = [

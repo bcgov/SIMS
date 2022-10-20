@@ -141,7 +141,7 @@ FILE_NAME= cypress.env.json
 FILE_PATH= SIMS\testing\functional\tests\cypress.env.json
 
 # Zeebe
-ZEEBE_ADDRESS=
+ZEEBE_ADDRESS=localhost:26500
 ZEEBE_CLIENT_ID=
 ZEEBE_CLIENT_SECRET=
 ZEEBE_AUTHORIZATION_SERVER_URL=

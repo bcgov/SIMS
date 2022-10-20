@@ -13,9 +13,9 @@ import {
 import {
   PaginationOptions,
   PaginatedResults,
-  CustomNamedError,
   getUserFullName,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { InstitutionUser } from "@sims/sims-db";
 import {
   CreateInstitutionUserAPIInDTO,

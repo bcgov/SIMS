@@ -17,7 +17,7 @@
             size="23"
           ></v-icon>
         </v-col>
-        <v-col class="label-bold default-color">{{
+        <v-col class="label-bold black-color">{{
           snackBarChoices.content
         }}</v-col>
       </v-row>
@@ -26,7 +26,7 @@
       <v-icon
         icon="fa:fa fa-close"
         size="23"
-        class="default-color"
+        class="black-color"
         @click="snackBarChoices.show = false"
       ></v-icon>
     </template>

@@ -1,10 +1,10 @@
 require("../../../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
-import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
+import { SequenceControlService } from "@sims/services";
 import { MSFAANumberService } from "../../services/msfaa-number/msfaa-number.service";
 import { DatabaseModule } from "@sims/sims-db";
 import * as dayjs from "dayjs";
-import { MAX_MSFAA_VALID_DAYS } from "../../utilities";
+import { MAX_MSFAA_VALID_DAYS } from "@sims/utilities";
 
 describe("MSFAANumberService", () => {
   let service: MSFAANumberService;

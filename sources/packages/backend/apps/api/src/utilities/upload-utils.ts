@@ -3,9 +3,9 @@ import * as path from "path";
 
 const MAX_FILE_SIZE = +process.env.FILE_UPLOAD_MAX_FILE_SIZE;
 const ALLOWED_FILE_EXTENSIONS =
-  process.env.FILE_UPLOAD_ALLOWED_EXTENSIONS.split(",").map((value) =>
+  process.env.FILE_UPLOAD_ALLOWED_EXTENSIONS?.split(",").map((value) =>
     value.toLowerCase().trim(),
-  );
+  ) ?? [];
 
 /**
  * Set an upload limits configuration for multer (node.js middleware).

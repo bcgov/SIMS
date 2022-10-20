@@ -37,7 +37,8 @@ import {
   StudentAccountApplicationApprovalAPIInDTO,
   StudentAccountApplicationSummaryAPIOutDTO,
 } from "./models/student-account-application.dto";
-import { CustomNamedError, getUserFullName } from "../../utilities";
+import { getUserFullName } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   STUDENT_ACCOUNT_APPLICATION_NOT_FOUND,

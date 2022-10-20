@@ -73,7 +73,6 @@ export class StudentAssessment extends RecordDataModel {
    */
   @Column({
     name: "assessment_workflow_id",
-    type: "uuid",
     nullable: true,
   })
   assessmentWorkflowId?: string;

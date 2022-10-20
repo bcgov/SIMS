@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.2.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.0.0">
+  <bpmn:process id="load-assessment-consolidated-data" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements />
+      <bpmn:outgoing>Flow_1jdhbms</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="load-assessment-data-task" name="Load assessment consolidated data">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="load-assessment-consolidated-data" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="assessmentTriggerType" value="$.triggerType" />
+          <zeebe:header key="isYourSpouseACanadianCitizen" value="$.data.isYourSpouseACanadianCitizen" />
+          <zeebe:header key="doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber" value="$.data.doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber" />
+          <zeebe:header key="numberOfParents" value="$.data.numberOfParents" />
+          <zeebe:header key="dependantstatus" value="$.data.dependantstatus" />
+          <zeebe:header key="programYearStartDate" value="$.programYear.startDate" />
+          <zeebe:header key="relationshipStatus" value="$.data.relationshipStatus" />
+          <zeebe:header key="taxReturnIncome" value="$.data.taxReturnIncome" />
+          <zeebe:header key="selectedProgram" value="$.data.selectedProgram" />
+          <zeebe:header key="selectedOffering" value="$.data.selectedOffering" />
+          <zeebe:header key="selectedLocation" value="$.data.selectedLocation" />
+          <zeebe:header key="supportingUserPartnerTotalIncome" value="$.supportingUsers.Partner1.supportingData.totalIncome" />
+          <zeebe:header key="applicationId" value="$.applicationId" />
+          <zeebe:header key="estimatedSpouseIncome" value="$.data.estimatedSpouseIncome" />
+          <zeebe:header key="pleaseProvideAnEstimationOfYourParentsIncome" value="$.data.pleaseProvideAnEstimationOfYourParentsIncome" />
+          <zeebe:header key="whenDidYouGraduateOrLeaveHighSchool" value="$.data.whenDidYouGraduateOrLeaveHighSchool" />
+          <zeebe:header key="livingathomeRent" value="$.data.livingathomeRent" />
+          <zeebe:header key="transportationCost" value="$.data.transportationCost" />
+          <zeebe:header key="indigenousStatus" value="$.data.indigenousStatus" />
+          <zeebe:header key="hasDependents" value="$.data.hasDependents" />
+          <zeebe:header key="livingWithParents" value="$.data.livingWithParents" />
+          <zeebe:header key="daycareCosts12YearsOrOver" value="$.data.daycareCosts12YearsOrOver" />
+          <zeebe:header key="daycareCosts11YearsOrUnder" value="$.data.daycareCosts11YearsOrUnder" />
+          <zeebe:header key="childSupportAndOrSpousalSupport" value="$.data.childsupportCosts" />
+          <zeebe:header key="voluntaryContributions" value="$.data.parentvoluntarycontributionsCosts" />
+          <zeebe:header key="scholarshipAmount" value="$.data.scholarshipsreceviedCosts" />
+          <zeebe:header key="youthInCare" value="$.data.youthInCare" />
+          <zeebe:header key="programYear" value="$.programYear.programYear" />
+          <zeebe:header key="programLocation" value="BC" />
+          <zeebe:header key="studentPDStatus" value="$.student.studentPDStatus" />
+          <zeebe:header key="institutionLocationProvince" value="$.location.institutionLocationProvince" />
+          <zeebe:header key="institutionType" value="$.institution.institutionType" />
+          <zeebe:header key="programLength" value="$.program.programLength" />
+          <zeebe:header key="programCredentialType" value="$.program.programCredentialType" />
+          <zeebe:header key="offeringIntensity" value="$.offering.offeringIntensity" />
+          <zeebe:header key="offeringDelivered" value="$.offering.offeringDelivered" />
+          <zeebe:header key="breakEndDate" value="$.offering.breakEndDate" />
+          <zeebe:header key="breakStartDate" value="$.offering.breakStartDate" />
+          <zeebe:header key="studyEndDate" value="$.offering.studyEndDate" />
+          <zeebe:header key="studyStartDate" value="$.offering.studyStartDate" />
+          <zeebe:header key="programRelatedCosts" value="$.offering.programRelatedCosts" />
+          <zeebe:header key="actualTuitionCosts" value="$.offering.actualTuitionCosts" />
+          <zeebe:header key="mandatoryFees" value="$.offering.mandatoryFees" />
+          <zeebe:header key="exceptionalExpenses" value="$.offering.exceptionalExpenses" />
+          <zeebe:header key="parent1SupportingUserId" value="$.supportingUsers.Parent1.id" />
+          <zeebe:header key="parent1Contributions" value="$.supportingUsers.Parent1.supportingdata.parentalContributions" />
+          <zeebe:header key="parent1CppEmployment" value="$.supportingUsers.Parent1.supportingdata.cppLine30800" />
+          <zeebe:header key="parent1CppSelfemploymentOther" value="$.supportingUsers.Parent1.supportingdata.cppLine31000" />
+          <zeebe:header key="parent1DependentTable" value="$.supportingUsers.Parent1.supportingdata.parentDependentTable" />
+          <zeebe:header key="parent1Ei" value="$.supportingUsers.Parent1.supportingdata.eiLine31200" />
+          <zeebe:header key="parent1NetAssests" value="$.supportingUsers.Parent1.supportingdata.foreignAssets" />
+          <zeebe:header key="parent1Tax" value="$.supportingUsers.Parent1.supportingdata.totalIncomeTaxLine43500" />
+          <zeebe:header key="supportingUserParent1TotalIncome" value="$.supportingUsers.Parent1.supportingdata.totalIncome" />
+          <zeebe:header key="parent2SupportingUserId" value="$.supportingUsers.Parent2.id" />
+          <zeebe:header key="parent2Contributions" value="$.supportingUsers.Parent2.supportingdata.parentalContributions" />
+          <zeebe:header key="parent2CppEmployment" value="$.supportingUsers.Parent2.supportingdata.cppLine30800" />
+          <zeebe:header key="parent2CppSelfemploymentOther" value="$.supportingUsers.Parent2.supportingdata.cppLine31000" />
+          <zeebe:header key="parent2DependentTable" value="$.supportingUsers.Parent2.supportingdata.parentDependentTable" />
+          <zeebe:header key="parent2Ei" value="$.supportingUsers.Parent2.supportingdata.eiLine31200" />
+          <zeebe:header key="parent2NetAssests" value="$.supportingUsers.Parent2.supportingdata.foreignAssets" />
+          <zeebe:header key="parent2Tax" value="$.supportingUsers.Parent2.supportingdata.totalIncomeTaxLine43500" />
+          <zeebe:header key="supportingUserParent2TotalIncome" value="$.supportingUsers.Parent2.supportingdata.totalIncome" />
+          <zeebe:header key="partnerSupportingUserId" value="$.supportingUsers.Partner1.id" />
+          <zeebe:header key="livingWithPartner" value="$.supportingUsers.Partner1.supportingdata.partnerLivingWithStudent" />
+          <zeebe:header key="partnerChildSpousalSupportCost" value="$.supportingUsers.Partner1.supportingdata.partnerChildSpousalSupportCost" />
+          <zeebe:header key="partnerDisabilityAssistance" value="$.supportingUsers.Partner1.supportingdata.partnerTotalIncomeAssistance" />
+          <zeebe:header key="partnerEmploymentInsuranceBenefits" value="$.supportingUsers.Partner1.supportingdata.partnerTotalEmploymentInsurance" />
+          <zeebe:header key="partnerLoanPayment" value="$.supportingUsers.Partner1.supportingdata.partnerTotalStudentLoan" />
+          <zeebe:header key="partnerPermanentDisabilityBenefits" value="$.supportingUsers.Partner1.supportingdata.partnerTotalPDBenefits" />
+          <zeebe:header key="partnerStudentStudyWeeks" value="$.supportingUsers.Partner1.supportingdata.partnerStudentStudyWeeks" />
+          <zeebe:header key="studentCRAReportedIncome" value="$.student.craReportedIncome" />
+          <zeebe:header key="studentTaxYear" value="$.student.taxYear" />
+          <zeebe:header key="parent1CRAReportedIncome" value="$.supportingUsers.Parent1.craReportedIncome" />
+          <zeebe:header key="parent2CRAReportedIncome" value="$.supportingUsers.Parent2.craReportedIncome" />
+          <zeebe:header key="partnerCRAReportedIncome" value="$.supportingUsers.Partner1.craReportedIncome" />
+          <zeebe:header key="studentIncomeAppealData" value="$.appeals.studentIncomeAppeal.submittedData" />
+          <zeebe:header key="partnerIncomeAppealData" value="$.appeals.partnerIncomeAppeal.submittedData" />
+          <zeebe:header key="courseLoad" value="$.offering.courseLoad" />
+          <zeebe:header key="weeks" value="$.offering.studyBreaks.totalFundedWeeks" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>
+      <bpmn:outgoing>Flow_0e9728l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1qp0tlo">
+      <bpmn:incoming>Flow_0e9728l</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0e9728l" sourceRef="load-assessment-data-task" targetRef="Event_1qp0tlo" />
+    <bpmn:sequenceFlow id="Flow_1jdhbms" sourceRef="StartEvent_1" targetRef="load-assessment-data-task" />
+    <bpmn:textAnnotation id="TextAnnotation_1g2a6p0">
+      <bpmn:text>Loads all the assessment data needed to process a student application.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0p97obe" sourceRef="load-assessment-data-task" targetRef="TextAnnotation_1g2a6p0" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="load-assessment-consolidated-data">
+      <bpmndi:BPMNShape id="TextAnnotation_1g2a6p0_di" bpmnElement="TextAnnotation_1g2a6p0">
+        <dc:Bounds x="390" y="80" width="222" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1jdhbms_di" bpmnElement="Flow_1jdhbms">
+        <di:waypoint x="215" y="207" />
+        <di:waypoint x="290" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e9728l_di" bpmnElement="Flow_0e9728l">
+        <di:waypoint x="390" y="207" />
+        <di:waypoint x="442" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="189" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1c0zwzl_di" bpmnElement="load-assessment-data-task">
+        <dc:Bounds x="290" y="167" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1qp0tlo_di" bpmnElement="Event_1qp0tlo">
+        <dc:Bounds x="442" y="189" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0p97obe_di" bpmnElement="Association_0p97obe">
+        <di:waypoint x="376" y="167" />
+        <di:waypoint x="417" y="121" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
