@@ -14,10 +14,25 @@ jobs:
     runs-on: ubuntu-latest
     environment: DEV
     env:
-      ZEEBE_ADDRESS: ${{ secrets.ZEEBE_ADDRESS }}
       RESOURCES_FOLDER: ${{ github.event.inputs.RESOURCES_FOLDER }}
+      ZEEBE_ADDRESS: ${{ secrets.ZEEBE_ADDRESS }}
+      ZEEBE_AUTHORIZATION_SERVER_URL: ${{ secrets.ZEEBE_AUTHORIZATION_SERVER_URL }}
+      ZEEBE_CLIENT_ID: ${{ secrets.ZEEBE_CLIENT_ID }}
+      ZEEBE_CLIENT_SECRET: ${{ secrets.ZEEBE_CLIENT_SECRET }}
     steps:
-      - name: Print env
+      - name: Print env variables
         run: |
           echo ZEEBE_ADDRESS: $ZEEBE_ADDRESS
           echo RESOURCES_FOLDER: $RESOURCES_FOLDER
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+      - name: Setup Nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+      - name: Downloading packages
+        working-directory: "./sources/packages/workflow"
+        run: npm ci
+      - name: Executing deployment
+        working-directory: "./sources/packages/workflow"
+        run: npm run deploy
