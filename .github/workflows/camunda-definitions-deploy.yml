@@ -3,18 +3,21 @@ name: Deploy BPMNs and DMNs to Camunda
 on:
   workflow_dispatch:
     inputs:
-      RESOURCES_FOLDER:
+      resourcesFolder:
         description: "Folder with the resources to be deployed"
         required: true
         default: "BPMN/camunda-8"
+      environment:
+        required: true
+        type: environment
 
 jobs:
   deploy:
     name: Deploy Camunda resources
     runs-on: ubuntu-latest
-    environment: DEV
+    environment: ${{ github.event.inputs.environment }}
     env:
-      RESOURCES_FOLDER: ${{ github.event.inputs.RESOURCES_FOLDER }}
+      RESOURCES_FOLDER: ${{ github.event.inputs.resourcesFolder }}
       ZEEBE_ADDRESS: ${{ secrets.ZEEBE_ADDRESS }}
       ZEEBE_AUTHORIZATION_SERVER_URL: ${{ secrets.ZEEBE_AUTHORIZATION_SERVER_URL }}
       ZEEBE_CLIENT_ID: ${{ secrets.ZEEBE_CLIENT_ID }}
@@ -34,5 +37,6 @@ jobs:
         working-directory: "./sources/packages/workflow"
         run: npm ci
       - name: Executing deployment
-        working-directory: "./sources/packages/workflow"
-        run: npm run deploy
+        working-directory: "./devops/"
+        run: |
+          make deploy-camunda-definitions
