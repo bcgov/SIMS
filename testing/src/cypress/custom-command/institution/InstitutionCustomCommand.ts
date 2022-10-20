@@ -4,7 +4,10 @@ export default class InstitutionCustomCommand {
   loginWithCredentials(username: string, password: string) {
     const loginInstitutionObject = new LoginInstitutionObject();
 
-    loginInstitutionObject.loginWithBCEID().should("be.visible").click();
+    loginInstitutionObject
+      .loginOrRegisterWithBCEID()
+      .should("be.visible")
+      .click();
     loginInstitutionObject.loginInWithBCEIDtext().should("be.visible");
 
     loginInstitutionObject
