@@ -11,10 +11,8 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
-  APPLICATION_NOT_FOUND,
   ConfigService,
   CRAIncomeVerificationService,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   SupportingUserService,
 } from "../../services";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
@@ -29,13 +27,11 @@ import {
 import { ClientTypeBaseRoute, IConfig } from "../../types";
 import {
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { IUserToken } from "../../auth/userToken.interface";
-import { ApplicationStatus } from "@sims/sims-db";
 
 /**
  * Allow system access to the application data.
@@ -85,41 +81,6 @@ export class ApplicationSystemAccessController extends BaseController {
       throw new UnprocessableEntityException(
         "Not able to update the overall Application status with provided data.",
       );
-    }
-  }
-
-  /**
-   * Associates an MSFAA number to the application checking
-   * whatever is needed to create a new MSFAA or use an
-   * existing one instead. The MSFAA are individually associated
-   * considering the offering intensity full-time/part-time.
-   * @param applicationId application id to receive an MSFAA.
-   */
-  @ApiOkResponse({
-    description: "The application was successfully associated with an MSFAA.",
-  })
-  @ApiNotFoundResponse({
-    description:
-      "Student Application is not in the expected status. Applications status must the 'assessment' in order to have an MSFAA associated.",
-  })
-  @ApiUnprocessableEntityResponse({
-    description: `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' for an MSFAA number be assigned.`,
-  })
-  @Patch(":applicationId/msfaa-number")
-  async associateMSFAANumber(
-    @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<void> {
-    try {
-      await this.applicationService.associateMSFAANumber(applicationId);
-    } catch (error) {
-      switch (error.name) {
-        case APPLICATION_NOT_FOUND:
-          throw new NotFoundException(error.message);
-        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          throw error;
-      }
     }
   }
 

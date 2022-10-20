@@ -4,11 +4,8 @@ import { MSFAANumber, OfferingIntensity } from "@sims/sims-db";
 import { LoggerService } from "../../logger/logger.service";
 import { getUTCNow, getISODateOnlyString } from "../../utilities";
 import { EntityManager } from "typeorm";
-import {
-  ConfigService,
-  MSFAANumberService,
-  SequenceControlService,
-} from "../../services";
+import { ConfigService, MSFAANumberService } from "../../services";
+import { SequenceControlService } from "@sims/services";
 import {
   MSFAARecord,
   MSFAAUploadResult,

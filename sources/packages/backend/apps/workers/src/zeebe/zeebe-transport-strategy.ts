@@ -1,25 +1,37 @@
+import { Injectable, Logger } from "@nestjs/common";
 import {
   CustomTransportStrategy,
   Server,
   MessageHandler,
 } from "@nestjs/microservices";
-import { ZBClient, ZBWorkerOptions } from "zeebe-node";
+import {
+  ICustomHeaders,
+  IInputVariables,
+  IOutputVariables,
+  MustReturnJobActionAcknowledgement,
+  ZBClient,
+  ZBWorkerOptions,
+  ZeebeJob,
+} from "zeebe-node";
 
 /**
  * Zeebe strategy to stablish the connectivity and create all workers.
  * @see https://docs.camunda.io/docs/0.25/components/zeebe/basics/job-workers.
  */
+@Injectable()
 export class ZeebeTransportStrategy
   extends Server
   implements CustomTransportStrategy
 {
-  private zeebeClient: ZBClient;
+  constructor(private readonly zeebeClient: ZBClient) {
+    super();
+  }
+
   /**
    * Identify all Zeebe workers in the controllers and create the
    * respective Zeebe workers to handle all the jobs.
    */
   async listen(callback: () => void) {
-    this.zeebeClient = new ZBClient();
     const handlers = this.getHandlers();
     handlers.forEach((handler: MessageHandler, taskType: string) => {
       const { extras } = handler;
@@ -30,10 +42,36 @@ export class ZeebeTransportStrategy
         // be retrieved from the workflow as per Camunda best practices.
         fetchVariable: workerOptions?.fetchVariable ?? [],
         taskType,
-        taskHandler: async (job) => handler(job),
+        taskHandler: async (job) => this.workerHandlerWrapper(handler, job),
       });
     });
     callback();
+  }
+
+  /**
+   * Wrapper to allow global handling of all the jobs executed.
+   * @param jobHandler job method to be executed.
+   * @param job job information.
+   * @returns job result.
+   */
+  private async workerHandlerWrapper(
+    jobHandler: MessageHandler,
+    job: Readonly<ZeebeJob<IInputVariables, ICustomHeaders, IOutputVariables>>,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
+    jobLogger.log(
+      `Starting job for processInstanceKey ${job.processInstanceKey}. Retries left: ${job.retries}.`,
+    );
+    try {
+      return await jobHandler(job);
+    } catch (error: unknown) {
+      jobLogger.error(
+        `Unhandled exception while processing job ${job.type} from processInstanceKey ${job.processInstanceKey}`,
+      );
+      jobLogger.error(job);
+      jobLogger.error(error);
+      return job.fail(`Unhandled exception. ${error}`);
+    }
   }
 
   /**

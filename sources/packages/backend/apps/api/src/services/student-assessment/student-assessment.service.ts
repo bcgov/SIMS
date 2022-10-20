@@ -8,13 +8,12 @@ import {
   EducationProgram,
   InstitutionLocation,
   ProgramInfoStatus,
-  StudentAppealStatus,
   StudentAssessment,
   User,
+  mapFromRawAndEntities,
 } from "@sims/sims-db";
 import { Brackets, DataSource, IsNull, UpdateResult } from "typeorm";
-import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
-import { WorkflowActionsService } from "..";
+import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -24,6 +23,7 @@ import {
   AssessmentHistory,
   StudentAssessmentStatus,
 } from "./student-assessment.models";
+import { WorkflowClientService } from "@sims/services";
 
 /**
  * Manages the student assessment related operations.
@@ -32,81 +32,9 @@ import {
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
   constructor(
     dataSource: DataSource,
-    private readonly workflow: WorkflowActionsService,
+    private readonly workflowClientService: WorkflowClientService,
   ) {
     super(dataSource.getRepository(StudentAssessment));
-  }
-
-  /**
-   * Get the assessment and the related application information.
-   * * This method is used by the the assessment workflow as a main source
-   * * of information for the assessment/reassessment and the application.
-   * @param assessmentId assessment id .
-   * @returns assessment and the related application information.
-   */
-  async getById(assessmentId: number): Promise<StudentAssessment> {
-    return this.repo
-      .createQueryBuilder("assessment")
-      .select([
-        "assessment.id",
-        "assessment.triggerType",
-        "application.id",
-        "application.data",
-        "programYear.programYear",
-        "programYear.startDate",
-        "programYear.endDate",
-        "offering.id",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "offering.actualTuitionCosts",
-        "offering.programRelatedCosts",
-        "offering.mandatoryFees",
-        "offering.exceptionalExpenses",
-        "offering.offeringDelivered",
-        "offering.offeringIntensity",
-        "offering.courseLoad",
-        "offering.studyBreaks",
-        "educationProgram.id",
-        "educationProgram.credentialType",
-        "educationProgram.completionYears",
-        "institution.id",
-        "institutionType.name",
-        "student.id",
-        "student.studentPDVerified",
-        "supportingUser.id",
-        "supportingUser.supportingUserType",
-        "supportingUser.supportingData",
-        "craIncomeVerification.id",
-        "craIncomeVerification.craReportedIncome",
-        "craIncomeVerification.taxYear",
-        "craIncomeVerification.supportingUser.id",
-        "studentAppeal.id",
-        "appealRequest.id",
-        "institutionLocation.data",
-        "appealRequest.submittedFormName",
-        "appealRequest.submittedData",
-      ])
-      .innerJoin("assessment.application", "application")
-      .innerJoin("application.programYear", "programYear")
-      .innerJoin("application.student", "student")
-      .leftJoin("assessment.offering", "offering")
-      .leftJoin("offering.institutionLocation", "institutionLocation")
-      .leftJoin("offering.educationProgram", "educationProgram")
-      .leftJoin("institutionLocation.institution", "institution")
-      .leftJoin("institution.institutionType", "institutionType")
-      .leftJoin("application.supportingUsers", "supportingUser")
-      .leftJoin("assessment.studentAppeal", "studentAppeal")
-      .leftJoin(
-        "studentAppeal.appealRequests",
-        "appealRequest",
-        "appealRequest.appealStatus = :appealStatus",
-        { appealStatus: StudentAppealStatus.Approved },
-      )
-      .leftJoin("application.craIncomeVerifications", "craIncomeVerification")
-      .where("assessment.id = :assessmentId", {
-        assessmentId,
-      })
-      .getOne();
   }
 
   /**
@@ -300,7 +228,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       );
     }
 
-    await this.workflow.startApplicationAssessment(
+    await this.workflowClientService.startApplicationAssessment(
       assessment.application.data.workflowName,
       assessment.id,
     );
@@ -322,26 +250,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         id: assessmentId,
       },
       { assessmentData, assessmentDate: new Date() },
-    );
-  }
-
-  /**
-   * Updates the NOA (notice of assessment) approval status.
-   * The NOA status defines if the student needs to provide
-   * his approval to the NOA or not.
-   * @param assessmentId assessment id to be updated.
-   * @param status status of the assessment.
-   * @returns update result.
-   */
-  async updateNOAApprovalStatus(
-    assessmentId: number,
-    status: AssessmentStatus,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: assessmentId,
-      },
-      { noaApprovalStatus: status },
     );
   }
 

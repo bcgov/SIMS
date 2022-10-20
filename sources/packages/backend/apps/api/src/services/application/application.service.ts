@@ -20,23 +20,18 @@ import {
   StudentFile,
   ProgramYear,
   PIRDeniedReason,
-  MSFAANumber,
-  OfferingIntensity,
   StudentAssessment,
   AssessmentTriggerType,
   User,
   ApplicationData,
 } from "@sims/sims-db";
-import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
   ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
   ApplicationSubmissionResult,
 } from "./application.models";
-import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { MSFAANumberService } from "../msfaa-number/msfaa-number.service";
 import {
-  CustomNamedError,
   dateDifference,
   COE_WINDOW,
   PIR_DENIED_REASON_OTHER_ID,
@@ -48,6 +43,7 @@ import {
   FieldSortOrder,
   OrderByCondition,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
@@ -59,6 +55,7 @@ import {
   PIR_REQUEST_NOT_FOUND_ERROR,
   OFFERING_NOT_VALID,
 } from "../../constants";
+import { SequenceControlService, WorkflowClientService } from "@sims/services";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -84,7 +81,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
     private readonly fileService: StudentFileService,
-    private readonly workflow: WorkflowActionsService,
+    private readonly workflowClientService: WorkflowClientService,
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
@@ -269,7 +266,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
     // Deleting the existing workflow, if there is one.
     if (application.currentAssessment.assessmentWorkflowId) {
-      await this.workflow.deleteApplicationAssessment(
+      await this.workflowClientService.deleteApplicationAssessment(
         application.currentAssessment.assessmentWorkflowId,
       );
     }
@@ -1041,130 +1038,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   withinValidCOEWindow(offeringStartDate: Date): boolean {
     return dateDifference(new Date(), offeringStartDate) <= COE_WINDOW;
-  }
-
-  /**
-   * Associates an MSFAA number to the application checking
-   * whatever is needed to create a new MSFAA or use an
-   * existing one instead.
-   * @param applicationId application id to receive an MSFAA.
-   */
-  async associateMSFAANumber(applicationId: number): Promise<Application> {
-    const application = await this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.id",
-        "application.applicationStatus",
-        "student.id",
-        "currentAssessment.id",
-        "offering.id",
-        "offering.offeringIntensity",
-      ])
-      .innerJoin("application.student", "student")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "offering")
-      .where("application.id =:applicationId", { applicationId })
-      .getOne();
-
-    if (!application) {
-      throw new CustomNamedError(
-        "Student Application not found or one of its associations is missing.",
-        APPLICATION_NOT_FOUND,
-      );
-    }
-
-    if (application.applicationStatus !== ApplicationStatus.assessment) {
-      throw new CustomNamedError(
-        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' for an MSFAA number be assigned.`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-      );
-    }
-
-    let msfaaNumberId: number;
-
-    // Checks if there is an MSFAA that could be considered valid.
-    const existingValidMSFAANumber =
-      await this.msfaaNumberService.getCurrentValidMSFAANumber(
-        application.student.id,
-        application.currentAssessment.offering.offeringIntensity,
-      );
-    if (existingValidMSFAANumber) {
-      // Reuse the MSFAA that is still valid and avoid creating a new one.
-      msfaaNumberId = existingValidMSFAANumber.id;
-    } else {
-      // Get previously completed and signed application for the student
-      // to determine if an existing MSFAA is still valid.
-      const previousSignedApplication =
-        await this.getPreviouslySignedApplication(
-          application.student.id,
-          application.currentAssessment.offering.offeringIntensity,
-        );
-
-      let hasValidMSFAANumber = false;
-      if (previousSignedApplication) {
-        const [originalAssessment] =
-          previousSignedApplication.studentAssessments;
-        // checks if the MSFAA number is still valid.
-        hasValidMSFAANumber = this.msfaaNumberService.isMSFAANumberValid(
-          // Previously signed and completed application offering end date in considered the start date.
-          originalAssessment.offering.studyEndDate,
-          // Start date of the offering of the current application is considered the end date.
-          originalAssessment.offering.studyStartDate,
-        );
-      }
-
-      if (hasValidMSFAANumber) {
-        // Reuse the MSFAA number.
-        msfaaNumberId = previousSignedApplication.msfaaNumber.id;
-      } else {
-        // Create a new MSFAA number case the previous one is no longer valid.
-        const newMSFAANumber = await this.msfaaNumberService.createMSFAANumber(
-          application.student.id,
-          applicationId,
-          application.currentAssessment.offering.offeringIntensity,
-        );
-        msfaaNumberId = newMSFAANumber.id;
-      }
-    }
-
-    // Associate the MSFAA number with the application.
-    application.msfaaNumber = { id: msfaaNumberId } as MSFAANumber;
-
-    return this.repo.save(application);
-  }
-
-  /**
-   * Gets the application that has an MSFAA signed date.
-   * @param studentId student id to filter the applications.
-   * @param offeringIntensity MSFAA are generated individually for full-time/part-time
-   * applications. The offering intensity is used to differentiate between them.
-   * @returns previous signed application if exists, otherwise null.
-   */
-  async getPreviouslySignedApplication(
-    studentId: number,
-    offeringIntensity: OfferingIntensity,
-  ): Promise<Application> {
-    return this.repo
-      .createQueryBuilder("applications")
-      .select(["applications.id", "msfaaNumbers.id", "offerings.studyEndDate"])
-      .innerJoin("applications.studentAssessments", "assessment")
-      .innerJoin("assessment.offering", "offerings")
-      .innerJoin("applications.msfaaNumber", "msfaaNumbers")
-      .innerJoin("applications.student", "students")
-      .where("applications.applicationStatus = :completedStatus", {
-        completedStatus: ApplicationStatus.completed,
-      })
-      .andWhere("assessment.triggerType = :triggerType", {
-        triggerType: AssessmentTriggerType.OriginalAssessment,
-      })
-      .andWhere("students.id = :studentId", { studentId })
-      .andWhere("msfaaNumbers.dateSigned is not null")
-      .andWhere("msfaaNumbers.offeringIntensity = :offeringIntensity", {
-        offeringIntensity,
-      })
-      .orderBy("offerings.studyEndDate", "DESC")
-      .limit(1)
-      .getOne();
   }
 
   /**

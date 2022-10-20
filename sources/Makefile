@@ -125,4 +125,15 @@ local-db:
 	@echo "Make: Shelling into database workspace ..."
 	@docker-compose -f docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) -W $(POSTGRES_DB)
 
+# Build and run Camunda locally.
+camunda:
+	@echo "Create Camunda locally (Zeebe, Operate, Tasklist, and Elasticsearch)..."
+	@echo "- Use user and password as 'demo' to login to Operate."
+	@echo "- Use Zeebe address env variable as 'ZEEBE_ADDRESS=localhost:26500' to connect to the local environment."
+	@echo "- Use endpoint http://localhost:26500 to deploy to the local environment from the desktop modeler."
+	@docker-compose -f camunda-docker-compose-core.yml up -d
 
+# Stops Camunda locally.
+camunda-stop:
+	@echo "Stopping Camunda locally..."
+	@docker-compose -f camunda-docker-compose-core.yml down

@@ -50,7 +50,6 @@ import {
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
-  CustomNamedError,
   defaultFileFilter,
   getISODateOnlyString,
   MAX_UPLOAD_FILES,
@@ -58,6 +57,7 @@ import {
   MINISTRY_FILE_UPLOAD_GROUP_NAME,
   uploadLimits,
 } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import { StudentControllerService } from "..";
 import { FileOriginType, Student } from "@sims/sims-db";

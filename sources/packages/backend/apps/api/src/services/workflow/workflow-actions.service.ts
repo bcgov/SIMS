@@ -14,6 +14,7 @@ export class WorkflowActionsService {
    * @param workflowName workflow to be started.
    * @param assessmentId student assessment that need to be processed.
    * @returns result of the application start.
+   * @deprecated moved to WorkflowClientService.
    */
   async startApplicationAssessment(
     workflowName: string,
@@ -44,6 +45,7 @@ export class WorkflowActionsService {
    * This message should only be sent once the offering id is provided for the student
    * application.
    * @param processInstanceId workflow instance to receive the message.
+   * @deprecated moved to WorkflowClientService.
    */
   async sendProgramInfoCompletedMessage(
     processInstanceId: string,
@@ -71,6 +73,7 @@ export class WorkflowActionsService {
    * @param incomeVerificationId income verification id that will be appended to the
    * name of the message to uniquely identify it.
    * @return true case a successful call happen, otherwise false.
+   * @deprecated moved to WorkflowClientService.
    */
   async sendCRAIncomeVerificationCompletedMessage(
     incomeVerificationId: number,
@@ -95,6 +98,7 @@ export class WorkflowActionsService {
   /**
    * delete application assessment.
    * @param assessmentWorkflowId workflow Id to be deleted.
+   * @deprecated moved to WorkflowClientService.
    */
   async deleteApplicationAssessment(
     assessmentWorkflowId: string,
@@ -116,6 +120,7 @@ export class WorkflowActionsService {
    * This method is going to send a message to the workflow allowing it to proceed.
    * This message should only be sent when the institution confirmation COE of an Application
    * @param processInstanceId workflow instance to receive the message.
+   * @deprecated removed from the workflow.
    */
   async sendConfirmCOEMessage(processInstanceId: string): Promise<void> {
     try {
@@ -141,6 +146,7 @@ export class WorkflowActionsService {
    * when the data in available on database to be retrieved.
    * @param supportingUserId supporting user id that will be appended to the
    * name of the message to uniquely identify it.
+   * @deprecated move to WorkflowClientService.
    */
   async sendSupportingUsersCompletedMessage(
     supportingUserId: number,
@@ -165,6 +171,7 @@ export class WorkflowActionsService {
    * this message is received with the approval or denial from the Ministry user.
    * @param applicationExceptionId exception id to send the message.
    * @param status approval or denial status.
+   * @deprecated move to WorkflowClientService.
    */
   async sendApplicationExceptionApproval(
     applicationExceptionId: number,

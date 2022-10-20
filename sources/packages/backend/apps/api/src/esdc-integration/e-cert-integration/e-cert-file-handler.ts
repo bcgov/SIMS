@@ -5,8 +5,8 @@ import {
   ConfigService,
   DisbursementScheduleErrorsService,
   DisbursementScheduleService,
-  SequenceControlService,
 } from "../../services";
+import { SequenceControlService } from "@sims/services";
 import {
   ECERT_FULL_TIME_FILE_CODE,
   ECERT_PART_TIME_FILE_CODE,

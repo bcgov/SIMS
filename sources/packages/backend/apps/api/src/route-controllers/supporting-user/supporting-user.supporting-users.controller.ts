@@ -14,7 +14,6 @@ import {
   FormService,
   SupportingUserService,
   UserService,
-  WorkflowActionsService,
 } from "../../services";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -40,6 +39,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { WorkflowClientService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.supportingUsers)
 @Controller("supporting-user")
@@ -50,7 +50,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly userService: UserService,
     private readonly formService: FormService,
-    private readonly workflowActionsService: WorkflowActionsService,
+    private readonly workflowClientService: WorkflowClientService,
   ) {
     super();
   }
@@ -242,7 +242,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
         },
       );
 
-      await this.workflowActionsService.sendSupportingUsersCompletedMessage(
+      await this.workflowClientService.sendSupportingUsersCompletedMessage(
         updatedUser.id,
       );
     } catch (error) {

@@ -23,11 +23,7 @@ import {
   COEDeniedReasonService,
   DisbursementScheduleService,
 } from "../../services";
-import {
-  ApplicationStatus,
-  DisbursementSchedule,
-  DisbursementValueType,
-} from "@sims/sims-db";
+import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   getDateOnlyFormat,
@@ -311,19 +307,6 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       disbursementSchedule.studentAssessment.application.applicationStatus,
       payload.tuitionRemittanceAmount,
     );
-
-    /** Send COE confirmation message only for first COE.
-     ** Note: If first COE is completed, then application status is moved to Completed.
-     ** In that case, COE confirmation message will not be sent for second COE.
-     */
-    if (
-      disbursementSchedule.studentAssessment.application.applicationStatus ===
-      ApplicationStatus.enrollment
-    ) {
-      await this.workflow.sendConfirmCOEMessage(
-        disbursementSchedule.studentAssessment.assessmentWorkflowId,
-      );
-    }
   }
 
   /**
@@ -373,16 +356,6 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       payload.coeDenyReasonId,
       payload.otherReasonDesc,
     );
-
-    if (
-      disbursementSchedule.studentAssessment.application.applicationStatus ===
-        ApplicationStatus.enrollment &&
-      disbursementSchedule.studentAssessment.assessmentWorkflowId
-    ) {
-      await this.workflow.deleteApplicationAssessment(
-        disbursementSchedule.studentAssessment.assessmentWorkflowId,
-      );
-    }
   }
 
   /**

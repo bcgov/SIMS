@@ -7,8 +7,12 @@ import {
   ProgramInfoRequestJobHeaderDTO,
   ProgramInfoRequestJobOutDTO,
 } from "..";
-import { APPLICATION_ID } from "../workflow-variables";
-import { APPLICATION_NOT_FOUND } from "../error-code-constants";
+import { APPLICATION_NOT_FOUND } from "../../constants";
+import {
+  APPLICATION_ID,
+  SELECTED_LOCATION,
+  SELECTED_PROGRAM,
+} from "@sims/services/workflow/variables/assessment-gateway";
 
 @Controller()
 export class ProgramInfoRequestController {
@@ -19,7 +23,9 @@ export class ProgramInfoRequestController {
    * application returning the its most updated status.
    * @returns most updated status of the PIR.
    */
-  @ZeebeWorker("program-info-request", { fetchVariable: [APPLICATION_ID] })
+  @ZeebeWorker("program-info-request", {
+    fetchVariable: [APPLICATION_ID, SELECTED_LOCATION, SELECTED_PROGRAM],
+  })
   async updateApplicationStatus(
     job: Readonly<
       ZeebeJob<
@@ -45,17 +51,14 @@ export class ProgramInfoRequestController {
         programInfoStatus: application.pirStatus,
       });
     }
-    const updateResult = await this.applicationService.updateProgramInfoStatus(
+    await this.applicationService.updateProgramInfoStatus(
       job.variables.applicationId,
       job.customHeaders.programInfoStatus,
+      job.variables.selectedLocation,
+      job.variables.selectedProgram,
     );
-    if (updateResult.affected) {
-      return job.complete({
-        programInfoStatus: job.customHeaders.programInfoStatus,
-      });
-    }
-    return job.fail(
-      "PIR was not updated as expected. It was expected that at least one record was updated. Either application was not found or the PIR status was already set.",
-    );
+    return job.complete({
+      programInfoStatus: job.customHeaders.programInfoStatus,
+    });
   }
 }

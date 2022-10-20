@@ -12,7 +12,6 @@ import {
   EducationProgramOfferingService,
   KeycloakService,
   MSFAANumberService,
-  SequenceControlService,
   StudentFileService,
   StudentRestrictionService,
   SupportingUserService,
@@ -20,6 +19,7 @@ import {
   WorkflowActionsService,
   WorkflowService,
 } from "../../services";
+import { SequenceControlService } from "@sims/services";
 import { createFakeApplication } from "../../testHelpers/fake-entities/application-fake";
 import { setGlobalPipes } from "../../utilities/auth-utils";
 import { DataSource, Repository } from "typeorm";

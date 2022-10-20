@@ -14,7 +14,6 @@ export * from "./application/application.service";
 export * from "./institution-location/institution-location.service";
 export * from "./forms-flow/forms-flow.service";
 export * from "./ssh/ssh.service";
-export * from "./sequence-control/sequence-control.service";
 export * from "../cra-integration/cra-integration.service";
 export * from "./cra-income-verification/cra-income-verification.service";
 export * from "../cra-integration/cra-personal-verification.service";

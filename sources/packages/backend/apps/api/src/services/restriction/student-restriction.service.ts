@@ -12,7 +12,7 @@ import {
   RestrictionActionType,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, SelectQueryBuilder } from "typeorm";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { RestrictionService } from "./restriction.service";
 import { StudentService } from "../student/student.service";
 import { RestrictionCode } from "./models/restriction.model";
