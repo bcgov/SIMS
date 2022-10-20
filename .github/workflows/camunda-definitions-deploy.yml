@@ -1,0 +1,23 @@
+name: Deploy BPMNs and DMNs to Camunda
+
+on:
+  workflow_dispatch:
+    inputs:
+      RESOURCES_FOLDER:
+        description: "Folder with the resources to be deployed"
+        required: true
+        default: "BPMN/camunda-8"
+
+jobs:
+  deploy:
+    name: Deploy Camunda resources
+    runs-on: ubuntu-latest
+    environment: DEV
+    env:
+      ZEEBE_ADDRESS: ${{ secrets.ZEEBE_ADDRESS }}
+      RESOURCES_FOLDER: ${{ github.event.inputs.RESOURCES_FOLDER }}
+    steps:
+      - name: Print env
+        run: |
+          echo ZEEBE_ADDRESS: $ZEEBE_ADDRESS
+          echo RESOURCES_FOLDER: $RESOURCES_FOLDER
