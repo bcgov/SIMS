@@ -6,13 +6,19 @@ import {
   CRAIncomeVerification,
   SupportingUser,
 } from "@sims/sims-db";
+import { ConfigService } from "..";
+import { WorkflowClientService } from "@sims/services";
 
 /**
  * Service layer for CRA income verifications.
  */
 @Injectable()
 export class CRAIncomeVerificationService extends RecordDataModelService<CRAIncomeVerification> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    private readonly configService: ConfigService,
+    private readonly workflowClientService: WorkflowClientService,
+  ) {
     super(dataSource.getRepository(CRAIncomeVerification));
   }
 
@@ -44,6 +50,40 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
       } as SupportingUser;
     }
     return this.repo.insert(newVerification);
+  }
+
+  /**
+   * This method allows the simulation of a complete cycle of the CRA send/response
+   * process that allows the workflow to proceed without the need of the actual
+   * CRA verification happens. This is enabled based in a environment variable,
+   * that is by default disabled and should be enabled only for DEV purposes on
+   * local developer machine or on an environment where the CRA process is not enabled.
+   * !This code should not be executed on production.
+   * @param verificationId CRA verification id waiting to be processed.
+   * @returns update result.
+   */
+  async checkForCRAIncomeVerificationBypass(
+    verificationId: number,
+  ): Promise<void> {
+    if (!this.configService.env.bypassCRAIncomeVerification) {
+      return;
+    }
+    const now = new Date();
+    await this.repo.update(
+      { id: verificationId, dateReceived: IsNull() },
+      {
+        dateSent: now,
+        dateReceived: now,
+        fileSent: "DUMMY_BYPASS_CRA_SENT_FILE.txt",
+        fileReceived: "DUMMY_BYPASS_CRA_RECEIVED_FILE.txt",
+        matchStatusCode: "01",
+        requestStatusCode: "01",
+        inactiveCode: "00",
+      },
+    );
+    await this.workflowClientService.sendCRAIncomeVerificationCompletedMessage(
+      verificationId,
+    );
   }
 
   /**

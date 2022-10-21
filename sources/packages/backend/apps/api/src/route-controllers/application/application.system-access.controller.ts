@@ -85,37 +85,6 @@ export class ApplicationSystemAccessController extends BaseController {
   }
 
   /**
-   * Creates a CRA Income Verification record that will be waiting
-   * to be send to CRA and receive a response.
-   * @param payload information needed to create the CRA Income Verification record.
-   * @returns the id of the new CRA Verification record created.
-   */
-  @Post(":applicationId/income-verification")
-  async createIncomeVerification(
-    @Param("applicationId", ParseIntPipe) applicationId: number,
-    @Body() payload: CreateIncomeVerificationAPIInDTO,
-  ): Promise<number> {
-    const incomeVerification =
-      await this.incomeVerificationService.createIncomeVerification(
-        applicationId,
-        payload.taxYear,
-        payload.reportedIncome,
-        payload.supportingUserId,
-      );
-
-    if (this.config.bypassCRAIncomeVerification) {
-      // Call the async method but do not block the response allowing the API
-      // to return the value to the workflow and send the message to bypass
-      // the CRA verification.
-      this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
-        incomeVerification.id,
-      );
-    }
-
-    return incomeVerification.id;
-  }
-
-  /**
    * Gets the CRA income verification associated with the application.
    * The records could be related to a student income or some other
    * supporting user (e.g. parent/partner).

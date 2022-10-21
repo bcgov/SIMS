@@ -93,36 +93,6 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
   }
 
   /**
-   * Creates a CRA Income Verification record that will be waiting
-   * to be send to CRA and receive a response.
-   * @param applicationId related application id that contains the
-   * student information that will be used to send the data to CRA.
-   * @param taxYear tax year to retrieve the income information.
-   * @param reportedIncome income reported by the user in the Student
-   * Application. This is the income that will be verified on CRA.
-   * @param [supportingUserId] when the income is not related to the
-   * student itself it will belong to a supporting user (e.g. parent/partner).
-   * @returns income Verification record created.
-   */
-  async createIncomeVerification(
-    applicationId: number,
-    taxYear: number,
-    reportedIncome: number,
-    supportingUserId?: number,
-  ): Promise<CRAIncomeVerification> {
-    const newVerification = new CRAIncomeVerification();
-    newVerification.application = { id: applicationId } as Application;
-    newVerification.taxYear = taxYear;
-    newVerification.reportedIncome = reportedIncome;
-    if (supportingUserId) {
-      newVerification.supportingUser = {
-        id: supportingUserId,
-      } as SupportingUser;
-    }
-    return this.repo.save(newVerification);
-  }
-
-  /**
    * Once the CRA request file is created, updates the fields
    * with the information about the generated file and the
    * date that the file was uploaded.

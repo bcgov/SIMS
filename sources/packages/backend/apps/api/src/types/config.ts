@@ -13,14 +13,6 @@ export interface IConfig {
   ATBCIntegration: ATBCIntegrationConfig;
   ESDCIntegration: ESDCIntegrationConfig;
   SFASIntegrationConfig: SFASIntegrationConfig;
-  /**
-   * When defined as true, allows the simulation of a complete cycle of the
-   * CRA send/response process that allows the workflow to proceed without
-   * the need for the actual CRA verification happens. By default, it should be
-   * disabled, and should be enabled only for DEV purposes on local developer
-   * machine on an environment where the CRA process is not enabled.
-   */
-  bypassCRAIncomeVerification: boolean;
   /** This is a flag to bypass the validations which blocks the application flow at local environment due to the environmental constraints
    *  like absence of camunda engine etc.
    *  This flag should not be present in any other environment other than local.

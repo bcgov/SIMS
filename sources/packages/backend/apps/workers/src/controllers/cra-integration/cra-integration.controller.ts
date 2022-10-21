@@ -56,6 +56,11 @@ export class CRAIntegrationController {
         job.variables.supportingUserId,
       );
     const [identifier] = incomeRequest.identifiers;
+
+    await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
+      identifier.id,
+    );
+
     return job.complete({ incomeVerificationId: identifier.id });
   }
 

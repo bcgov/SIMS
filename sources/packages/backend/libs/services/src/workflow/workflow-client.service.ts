@@ -78,12 +78,13 @@ export class WorkflowClientService {
     incomeVerificationId: number,
   ): Promise<void> {
     try {
-      await this.zeebeClient.publishMessage({
-        name: "program-info-request-completed",
+      const result = await this.zeebeClient.publishMessage({
+        name: "income-verified",
         correlationKey: incomeVerificationId.toString(),
         timeToLive: Duration.seconds.of(30),
         variables: {},
       });
+      console.log(result);
     } catch (error: unknown) {
       this.logger.error(
         `Error while sending CRA income verification completed message using incomeVerificationId: ${incomeVerificationId}.`,
