@@ -101,7 +101,7 @@ export class StudentAESTController extends BaseController {
    */
   @Get(":studentId/documents")
   async getAESTStudentFiles(
-    @Param("studentId") studentId: number,
+    @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<AESTStudentFileAPIOutDTO[]> {
     const studentDocuments = await this.fileService.getStudentUploadedFiles(
       studentId,
@@ -154,7 +154,7 @@ export class StudentAESTController extends BaseController {
   )
   async uploadFile(
     @UserToken() userToken: IUserToken,
-    @Param("studentId") studentId: number,
+    @Param("studentId", ParseIntPipe) studentId: number,
     @UploadedFile() file: Express.Multer.File,
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
@@ -188,7 +188,7 @@ export class StudentAESTController extends BaseController {
   @ApiNotFoundResponse({ description: "Student not found." })
   async saveStudentUploadedFiles(
     @UserToken() userToken: IUserToken,
-    @Param("studentId") studentId: number,
+    @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: AESTFileUploadToStudentAPIInDTO,
   ): Promise<void> {
     const student = await this.studentService.getStudentById(studentId);
@@ -247,7 +247,7 @@ export class StudentAESTController extends BaseController {
   @Get(":studentId")
   @ApiNotFoundResponse({ description: "Not able to find the student." })
   async getStudentProfile(
-    @Param("studentId") studentId: number,
+    @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<AESTStudentProfileAPIOutDTO> {
     const [student, studentRestrictions] = await Promise.all([
       this.studentControllerService.getStudentProfile(studentId),
@@ -272,7 +272,7 @@ export class StudentAESTController extends BaseController {
   @Get(":studentId/application-summary")
   @ApiNotFoundResponse({ description: "Student does not exists." })
   async getStudentApplicationSummary(
-    @Param("studentId") studentId: number,
+    @Param("studentId", ParseIntPipe) studentId: number,
     @Query() pagination: ApplicationPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
     const studentExists = await this.studentService.studentExists(studentId);

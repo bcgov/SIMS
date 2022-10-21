@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseEnumPipe,
   Patch,
   Post,
   UnprocessableEntityException,
@@ -75,7 +76,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
   })
   async getApplicationDetails(
     @UserToken() userToken: IUserToken,
-    @Param("supportingUserType") supportingUserType: SupportingUserType,
+    @Param("supportingUserType", new ParseEnumPipe(SupportingUserType))
+    supportingUserType: SupportingUserType,
     @Body() payload: ApplicationIdentifierApiInDTO,
   ): Promise<ApplicationApiOutDTO> {
     const application =
@@ -133,7 +135,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
   @ApiBadRequestResponse({ description: "Invalid request." })
   async updateSupportingInformation(
     @UserToken() userToken: IUserToken,
-    @Param("supportingUserType") supportingUserType: SupportingUserType,
+    @Param("supportingUserType", new ParseEnumPipe(SupportingUserType))
+    supportingUserType: SupportingUserType,
     @Body() payload: UpdateSupportingUserApiInDTO,
   ): Promise<void> {
     // Regardless of the API call is successful or not, create/update

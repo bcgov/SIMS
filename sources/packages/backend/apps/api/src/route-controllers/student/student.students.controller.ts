@@ -247,7 +247,6 @@ export class StudentStudentsController extends BaseController {
    * during form submission, the temporary files
    * (saved during the upload) are update to its proper
    * group,file_origin and add the metadata (if available).
-   * @param userToken authentication token.
    * @Body list of files to be be saved.
    */
   @Patch("save-uploaded-files")

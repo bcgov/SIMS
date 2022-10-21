@@ -1,4 +1,10 @@
-import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+} from "@nestjs/common";
 import { SupportingUserService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
@@ -26,7 +32,7 @@ export class SupportingUserAESTController {
    */
   @Get("application/:applicationId")
   async getSupportingUsersOfAnApplication(
-    @Param("applicationId") applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ApplicationSupportingUsersApiOutDTO[]> {
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUsersByApplicationId(
@@ -50,7 +56,7 @@ export class SupportingUserAESTController {
       "Supporting user details not found or Supporting user has not submitted the form.",
   })
   async getSupportingUserFormDetails(
-    @Param("supportingUserId") supportingUserId: number,
+    @Param("supportingUserId", ParseIntPipe) supportingUserId: number,
   ): Promise<SupportingUserFormDataApiOutDTO> {
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUsersDetails(

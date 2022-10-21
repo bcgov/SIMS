@@ -14,7 +14,6 @@ import {
   StudentRestrictionService,
   InstitutionRestrictionService,
   RestrictionService,
-  StudentService,
   InstitutionService,
   RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_PROVINCIAL,
@@ -59,7 +58,6 @@ export class RestrictionAESTController extends BaseController {
   constructor(
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
-    private readonly studentService: StudentService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,
     private readonly institutionService: InstitutionService,
   ) {
