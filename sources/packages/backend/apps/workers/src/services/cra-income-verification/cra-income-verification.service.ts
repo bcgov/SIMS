@@ -60,7 +60,6 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
    * local developer machine or on an environment where the CRA process is not enabled.
    * !This code should not be executed on production.
    * @param verificationId CRA verification id waiting to be processed.
-   * @returns update result.
    */
   async checkForCRAIncomeVerificationBypass(
     verificationId: number,
