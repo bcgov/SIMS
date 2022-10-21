@@ -25,7 +25,7 @@ export enum MaxJobsToActivate {
   Medium = 5,
   /**
    * Used for operations where the regular execution, considering
-   * all the activated jobs, could take a second ou a couple of seconds.
+   * all the activated jobs, could take a second or a couple of seconds.
    */
   Normal = 10,
   /**
