@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ApplicationExceptionStatus, ProgramInfoStatus } from "@sims/sims-db";
-import { CreateProcessInstanceResponse, Duration, ZBClient } from "zeebe-node";
+import { CreateProcessInstanceResponse, ZBClient } from "zeebe-node";
 import { ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE } from "../constants";
 import {
   APPLICATION_EXCEPTION_STATUS,

@@ -21,7 +21,6 @@ import {
   UpdateApplicationStatusAPIInDTO,
   SupportingUserDetailsAPIOutDTO,
   CreateSupportingUsersAPIInDTO,
-  CreateIncomeVerificationAPIInDTO,
   CRAVerificationIncomeDetailsAPIOutDTO,
 } from "./models/application.system.dto";
 import { ClientTypeBaseRoute, IConfig } from "../../types";
