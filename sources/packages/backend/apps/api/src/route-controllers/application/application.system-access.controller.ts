@@ -21,7 +21,6 @@ import {
   UpdateApplicationStatusAPIInDTO,
   SupportingUserDetailsAPIOutDTO,
   CreateSupportingUsersAPIInDTO,
-  CreateIncomeVerificationAPIInDTO,
   CRAVerificationIncomeDetailsAPIOutDTO,
 } from "./models/application.system.dto";
 import { ClientTypeBaseRoute, IConfig } from "../../types";
@@ -82,37 +81,6 @@ export class ApplicationSystemAccessController extends BaseController {
         "Not able to update the overall Application status with provided data.",
       );
     }
-  }
-
-  /**
-   * Creates a CRA Income Verification record that will be waiting
-   * to be send to CRA and receive a response.
-   * @param payload information needed to create the CRA Income Verification record.
-   * @returns the id of the new CRA Verification record created.
-   */
-  @Post(":applicationId/income-verification")
-  async createIncomeVerification(
-    @Param("applicationId", ParseIntPipe) applicationId: number,
-    @Body() payload: CreateIncomeVerificationAPIInDTO,
-  ): Promise<number> {
-    const incomeVerification =
-      await this.incomeVerificationService.createIncomeVerification(
-        applicationId,
-        payload.taxYear,
-        payload.reportedIncome,
-        payload.supportingUserId,
-      );
-
-    if (this.config.bypassCRAIncomeVerification) {
-      // Call the async method but do not block the response allowing the API
-      // to return the value to the workflow and send the message to bypass
-      // the CRA verification.
-      this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
-        incomeVerification.id,
-      );
-    }
-
-    return incomeVerification.id;
   }
 
   /**

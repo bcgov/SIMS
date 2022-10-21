@@ -1,3 +1,6 @@
+# Set time zone for the same expected from Openshift.
+TZ=UTC
+
 # Project Specific Env
 PROJECT_NAME=sims
 ENVIRONMENT=local
@@ -112,7 +115,12 @@ ZONE_B_SFTP_SERVER_PORT=
 ZONE_B_SFTP_USER_NAME=
 ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE=
 ZONE_B_SFTP_PRIVATE_KEY=
-BYPASS_CRA_INCOME_VERIFICATION=
+# When defined as true, allows the simulation of a complete cycle of the
+# CRA send/response process that allows the workflow to proceed without
+# the need for the actual CRA verification happens. By default, it should be
+# disabled, and should be enabled only for DEV purposes on local developer
+# machine or on an environment where the CRA process is not enabled.
+BYPASS_CRA_INCOME_VERIFICATION=false
 #ESDC Integration
 ESDC_REQUEST_FOLDER=
 ESDC_RESPONSE_FOLDER=
