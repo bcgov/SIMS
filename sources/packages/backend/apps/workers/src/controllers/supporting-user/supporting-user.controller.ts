@@ -58,7 +58,7 @@ export class SupportingUserController {
 
   @ZeebeWorker("load-supporting-user-data", {
     fetchVariable: [APPLICATION_ID, SUPPORTING_USER_ID],
-    maxJobsToActivate: MaxJobsToActivate.Hight,
+    maxJobsToActivate: MaxJobsToActivate.High,
   })
   async checkSupportingUserResponse(
     job: Readonly<
