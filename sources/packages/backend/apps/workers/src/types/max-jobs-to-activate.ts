@@ -19,7 +19,7 @@ export enum MaxJobsToActivate {
   Low = 3,
   /**
    * Used for a more granular option between Low and Normal. As a general recommendation
-   * the Low should be used only for extremity heavy or complex operations, please consider
+   * the Low should be used only for extremely heavy or complex operations, please consider
    * using this as a first option unless Low is really required.
    */
   Medium = 5,
