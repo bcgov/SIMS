@@ -7,7 +7,7 @@
     <bpmn:group id="Group_0uz5ydc" categoryValueRef="CategoryValue_0xs06g4" />
     <bpmn:group id="Group_0ldd4rw" categoryValueRef="CategoryValue_1mp96t6" />
   </bpmn:collaboration>
-  <bpmn:process id="assessment-gateway" isExecutable="true">
+  <bpmn:process id="assessment-gateway" name="Assessment Gateway" isExecutable="true">
     <bpmn:laneSet id="LaneSet_07shl28">
       <bpmn:lane id="Lane_0lvs868" name="Applications In Progress">
         <bpmn:flowNodeRef>first-assessment-gateway</bpmn:flowNodeRef>
