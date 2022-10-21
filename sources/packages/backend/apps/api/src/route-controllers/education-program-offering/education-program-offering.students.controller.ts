@@ -1,7 +1,9 @@
 import {
   Controller,
+  DefaultValuePipe,
   Get,
   Param,
+  ParseBoolPipe,
   ParseIntPipe,
   Query,
   UnprocessableEntityException,
@@ -53,7 +55,8 @@ export class EducationProgramOfferingStudentsController extends BaseController {
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programId", ParseIntPipe) programId: number,
     @Param("programYearId", ParseIntPipe) programYearId: number,
-    @Query("includeInActivePY") includeInActivePY = false,
+    @Query("includeInActivePY", new DefaultValuePipe(false), ParseBoolPipe)
+    includeInActivePY: boolean,
     @Query("offeringIntensity") offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
     return this.educationProgramOfferingControllerService.getProgramOfferingsOptionsList(

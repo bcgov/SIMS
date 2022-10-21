@@ -274,7 +274,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programId", ParseIntPipe) programId: number,
     @Param("programYearId", ParseIntPipe) programYearId: number,
-    @Query("includeInActivePY") includeInActivePY = false,
+    @Query("includeInActivePY", new DefaultValuePipe(false), ParseBoolPipe)
+    includeInActivePY: boolean,
     @Query("offeringIntensity") offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
     return this.educationProgramOfferingControllerService.getProgramOfferingsOptionsList(

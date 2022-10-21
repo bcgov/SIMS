@@ -4,6 +4,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -102,7 +103,7 @@ export class InstitutionAESTController extends BaseController {
    */
   @Get(":institutionId")
   async getInstitutionDetailById(
-    @Param("institutionId") institutionId: number,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
   ): Promise<InstitutionDetailAPIOutDTO> {
     const institutionDetail =
       await this.institutionControllerService.getInstitutionDetail(
@@ -124,7 +125,7 @@ export class InstitutionAESTController extends BaseController {
   @Roles(Role.InstitutionEditProfile)
   @Patch(":institutionId")
   async updateInstitution(
-    @Param("institutionId") institutionId: number,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
     @Body() payload: InstitutionProfileAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
@@ -148,7 +149,7 @@ export class InstitutionAESTController extends BaseController {
    */
   @Get(":institutionId/basic-details")
   async getBasicInstitutionInfoById(
-    @Param("institutionId") institutionId: number,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
   ): Promise<InstitutionBasicAPIOutDTO> {
     const institutionDetail =
       await this.institutionService.getBasicInstitutionDetailById(
@@ -172,7 +173,7 @@ export class InstitutionAESTController extends BaseController {
    */
   @Get(":institutionId/locations")
   async getAllInstitutionLocations(
-    @Param("institutionId") institutionId: number,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
   ): Promise<InstitutionLocationAPIOutDTO[]> {
     // get all institution locations with designation statuses.
     return this.locationControllerService.getInstitutionLocations(

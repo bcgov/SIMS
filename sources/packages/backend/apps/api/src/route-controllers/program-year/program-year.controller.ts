@@ -1,4 +1,10 @@
-import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+} from "@nestjs/common";
 import { ProgramYearService } from "../../services";
 import { OptionItem } from "../../types";
 import BaseController from "../BaseController";
@@ -33,7 +39,7 @@ export class ProgramYearController extends BaseController {
 
   @Get(":id/active")
   async getActiveProgramYearById(
-    @Param("id") programYearId: number,
+    @Param("id", ParseIntPipe) programYearId: number,
   ): Promise<ProgramYearDto> {
     const programYear = await this.programYearService.getActiveProgramYear(
       programYearId,

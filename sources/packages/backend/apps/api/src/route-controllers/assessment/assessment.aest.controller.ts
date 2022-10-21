@@ -116,7 +116,7 @@ export class AssessmentAESTController extends BaseController {
     description: "Notice of assessment data is not present.",
   })
   async getAssessmentNOA(
-    @Param("assessmentId") assessmentId: number,
+    @Param("assessmentId", ParseIntPipe) assessmentId: number,
   ): Promise<AssessmentNOAAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentNOA(assessmentId);
   }

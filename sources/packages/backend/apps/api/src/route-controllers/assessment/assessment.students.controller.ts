@@ -59,7 +59,7 @@ export class AssessmentStudentsController extends BaseController {
     description: "Notice of assessment data is not present.",
   })
   async getAssessmentNOA(
-    @Param("assessmentId") assessmentId: number,
+    @Param("assessmentId", ParseIntPipe) assessmentId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<AssessmentNOAAPIOutDTO> {
     return this.assessmentControllerService.getAssessmentNOA(
@@ -80,7 +80,7 @@ export class AssessmentStudentsController extends BaseController {
   })
   @Patch(":assessmentId/confirm-assessment")
   async confirmAssessmentNOA(
-    @Param("assessmentId") assessmentId: number,
+    @Param("assessmentId", ParseIntPipe) assessmentId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<void> {
     try {
