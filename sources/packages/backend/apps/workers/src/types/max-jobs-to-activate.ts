@@ -8,34 +8,34 @@
  */
 export enum MaxJobsToActivate {
   /**
-   * Default value when not provided.
-   * Please avoid using it unless it is really required.
+   * Minimum recommended value.
    */
-  Minimum = 1,
+  Minimum = 5,
   /**
    * Used for more complex operations, for instance, when multiples interactions
    * with the DB are needed in order to the worker finish the job.
    */
-  Low = 3,
+  Low = 10,
   /**
    * Used for a more granular option between Low and Normal. As a general recommendation
    * the Low should be used only for extremely heavy or complex operations, please consider
    * using this as a first option unless Low is really required.
    */
-  Medium = 5,
+  Medium = 20,
   /**
+   * Default value when not provided.
    * Used for operations where the regular execution, considering
    * all the activated jobs, could take a second or a couple of seconds.
    */
-  Normal = 10,
+  Normal = 32,
   /**
    * Used for simple operations where the regular execution, considering
    * all the activated jobs, could take few milliseconds to a second or slightly more.
    */
-  Hight = 15,
+  High = 48,
   /**
    * Used for really simple operations where the regular execution, considering
    * all the activated jobs, should not take more than few milliseconds.
    */
-  Maximum = 30,
+  Maximum = 64,
 }
