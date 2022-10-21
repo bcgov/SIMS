@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.2.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.0.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
   <bpmn:process id="load-assessment-consolidated-data" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:extensionElements />
@@ -105,18 +105,6 @@
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="load-assessment-consolidated-data">
-      <bpmndi:BPMNShape id="TextAnnotation_1g2a6p0_di" bpmnElement="TextAnnotation_1g2a6p0">
-        <dc:Bounds x="390" y="80" width="222" height="41" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1jdhbms_di" bpmnElement="Flow_1jdhbms">
-        <di:waypoint x="215" y="207" />
-        <di:waypoint x="290" y="207" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0e9728l_di" bpmnElement="Flow_0e9728l">
-        <di:waypoint x="390" y="207" />
-        <di:waypoint x="442" y="207" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="189" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -127,6 +115,18 @@
       <bpmndi:BPMNShape id="Event_1qp0tlo_di" bpmnElement="Event_1qp0tlo">
         <dc:Bounds x="442" y="189" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1g2a6p0_di" bpmnElement="TextAnnotation_1g2a6p0">
+        <dc:Bounds x="390" y="80" width="222" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0e9728l_di" bpmnElement="Flow_0e9728l">
+        <di:waypoint x="390" y="207" />
+        <di:waypoint x="442" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jdhbms_di" bpmnElement="Flow_1jdhbms">
+        <di:waypoint x="215" y="207" />
+        <di:waypoint x="290" y="207" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0p97obe_di" bpmnElement="Association_0p97obe">
         <di:waypoint x="376" y="167" />
         <di:waypoint x="417" y="121" />
