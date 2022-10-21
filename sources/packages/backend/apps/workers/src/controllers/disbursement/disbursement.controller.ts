@@ -18,6 +18,7 @@ import {
   ASSESSMENT_ID,
   DISBURSEMENT_SCHEDULES,
 } from "@sims/services/workflow/variables/assessment-gateway";
+import { MaxJobsToActivate } from "../../types";
 
 @Controller()
 export class DisbursementController {
@@ -30,6 +31,7 @@ export class DisbursementController {
    */
   @ZeebeWorker("save-disbursement-schedules", {
     fetchVariable: [ASSESSMENT_ID, DISBURSEMENT_SCHEDULES],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
   })
   async saveDisbursementSchedules(
     job: Readonly<

@@ -20,6 +20,7 @@ import {
   SUPPORTING_USER_ID,
   TAX_YEAR,
 } from "@sims/services/workflow/variables/cra-integration-income-verification";
+import { MaxJobsToActivate } from "../../types";
 
 @Controller()
 export class CRAIntegrationController {
@@ -38,6 +39,7 @@ export class CRAIntegrationController {
       TAX_YEAR,
       REPORTED_INCOME,
     ],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
   })
   async createIncomeRequest(
     job: Readonly<
@@ -71,6 +73,7 @@ export class CRAIntegrationController {
    */
   @ZeebeWorker("check-income-request", {
     fetchVariable: [INCOME_VERIFICATION_ID],
+    maxJobsToActivate: MaxJobsToActivate.Maximum,
   })
   async checkIncomeRequest(
     job: Readonly<

@@ -26,6 +26,7 @@ import {
 } from "../../constants";
 import { CustomNamedError } from "@sims/utilities";
 import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
+import { MaxJobsToActivate } from "../../types";
 
 @Controller()
 export class ApplicationController {
@@ -41,7 +42,10 @@ export class ApplicationController {
    * @returns reports only that the job was completed without returning any
    * output variables.
    */
-  @ZeebeWorker("update-application-status", { fetchVariable: [APPLICATION_ID] })
+  @ZeebeWorker("update-application-status", {
+    fetchVariable: [APPLICATION_ID],
+    maxJobsToActivate: MaxJobsToActivate.Maximum,
+  })
   async updateApplicationStatus(
     job: Readonly<
       ZeebeJob<
@@ -70,7 +74,10 @@ export class ApplicationController {
    * whatever is needed to create a new MSFAA or use an
    * existing one instead.
    */
-  @ZeebeWorker("associate-msfaa", { fetchVariable: [APPLICATION_ID] })
+  @ZeebeWorker("associate-msfaa", {
+    fetchVariable: [APPLICATION_ID],
+    maxJobsToActivate: MaxJobsToActivate.Low,
+  })
   async associateMSFAA(
     job: Readonly<
       ZeebeJob<AssignMSFAAJobInDTO, ICustomHeaders, IOutputVariables>
@@ -105,6 +112,7 @@ export class ApplicationController {
    */
   @ZeebeWorker("verify-application-exceptions", {
     fetchVariable: [APPLICATION_ID],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
   })
   async verifyApplicationExceptions(
     job: Readonly<

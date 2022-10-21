@@ -13,6 +13,7 @@ import {
   SELECTED_LOCATION,
   SELECTED_PROGRAM,
 } from "@sims/services/workflow/variables/assessment-gateway";
+import { MaxJobsToActivate } from "../../types";
 
 @Controller()
 export class ProgramInfoRequestController {
@@ -25,6 +26,7 @@ export class ProgramInfoRequestController {
    */
   @ZeebeWorker("program-info-request", {
     fetchVariable: [APPLICATION_ID, SELECTED_LOCATION, SELECTED_PROGRAM],
+    maxJobsToActivate: MaxJobsToActivate.Hight,
   })
   async updateApplicationStatus(
     job: Readonly<
