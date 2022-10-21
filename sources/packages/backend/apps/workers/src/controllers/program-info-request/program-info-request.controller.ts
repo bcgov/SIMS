@@ -26,7 +26,7 @@ export class ProgramInfoRequestController {
    */
   @ZeebeWorker("program-info-request", {
     fetchVariable: [APPLICATION_ID, SELECTED_LOCATION, SELECTED_PROGRAM],
-    maxJobsToActivate: MaxJobsToActivate.Hight,
+    maxJobsToActivate: MaxJobsToActivate.High,
   })
   async updateApplicationStatus(
     job: Readonly<
