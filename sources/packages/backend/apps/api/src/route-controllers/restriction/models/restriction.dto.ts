@@ -73,3 +73,8 @@ export class StudentRestrictionAPIOutDTO {
    */
   type: RestrictionNotificationType;
 }
+
+export class RestrictionCategoryParamAPIInDTO {
+  @MaxLength(50)
+  restrictionCategory: string;
+}

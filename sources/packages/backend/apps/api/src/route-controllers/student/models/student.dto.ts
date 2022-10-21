@@ -236,3 +236,8 @@ export class UpdateSINValidationAPIInDTO {
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
 }
+
+export class UniqueFileNameParamAPIInDTO {
+  @MaxLength(500)
+  uniqueFileName: string;
+}

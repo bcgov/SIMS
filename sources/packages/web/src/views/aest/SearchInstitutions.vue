@@ -124,12 +124,17 @@ export default {
       if (!validationResult.valid) {
         return;
       }
-      institutions.value = await InstitutionService.shared.searchInstitutions(
-        legalName.value,
-        operatingName.value,
-      );
-      if (institutions.value.length === 0) {
-        snackBar.warn("No Institutions found for the given search criteria.");
+      try {
+        institutions.value = await InstitutionService.shared.searchInstitutions(
+          legalName.value,
+          operatingName.value,
+        );
+
+        if (institutions.value.length === 0) {
+          snackBar.warn("No Institutions found for the given search criteria.");
+        }
+      } catch {
+        snackBar.error("An error happened during the institution search.");
       }
     };
     const institutionsFound = computed(() => {

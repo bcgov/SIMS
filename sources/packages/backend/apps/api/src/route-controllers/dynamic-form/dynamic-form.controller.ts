@@ -4,6 +4,12 @@ import { FormService } from "../../services";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags } from "@nestjs/swagger";
+import { MaxLength } from "class-validator";
+
+class FormNameParamAPIInDTO {
+  @MaxLength(200)
+  formName: string;
+}
 
 @AllowAuthorizedParty(
   AuthorizedParties.institution,
@@ -23,7 +29,7 @@ export class DynamicFormController extends BaseController {
     return this.formService.list();
   }
   @Get(":formName")
-  async getForm(@Param("formName") formName: string): Promise<any> {
-    return this.formService.fetch(formName);
+  async getForm(@Param() formNameParam: FormNameParamAPIInDTO): Promise<any> {
+    return this.formService.fetch(formNameParam.formName);
   }
 }

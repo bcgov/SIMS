@@ -45,6 +45,7 @@ import {
   CreateSINValidationAPIInDTO,
   SearchStudentAPIOutDTO,
   SINValidationsAPIOutDTO,
+  UniqueFileNameParamAPIInDTO,
   UpdateSINValidationAPIInDTO,
 } from "./models/student.dto";
 import { Response } from "express";
@@ -124,12 +125,12 @@ export class StudentAESTController extends BaseController {
   @Get("files/:uniqueFileName")
   @ApiNotFoundResponse({ description: "Requested file was not found." })
   async getUploadedFile(
-    @Param("uniqueFileName") uniqueFileName: string,
+    @Param() uniqueFileNameParam: UniqueFileNameParamAPIInDTO,
     @Res() response: Response,
   ): Promise<void> {
     await this.studentControllerService.writeFileToResponse(
       response,
-      uniqueFileName,
+      uniqueFileNameParam.uniqueFileName,
     );
   }
 

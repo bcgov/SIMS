@@ -26,6 +26,7 @@ import {
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
   AESTCreateInstitutionFormAPIInDTO,
+  SearchInstitutionQueryAPIInDTO,
 } from "./models/institution.dto";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
@@ -64,17 +65,19 @@ export class InstitutionAESTController extends BaseController {
    */
   @Get("search")
   async searchInstitutions(
-    @Query("legalName") legalName: string,
-    @Query("operatingName") operatingName: string,
+    @Query() searchInstitutionQuery: SearchInstitutionQueryAPIInDTO,
   ): Promise<SearchInstitutionAPIOutDTO[]> {
-    if (!legalName && !operatingName) {
+    if (
+      !searchInstitutionQuery.legalName &&
+      !searchInstitutionQuery.operatingName
+    ) {
       throw new UnprocessableEntityException(
         "Search with at least one search criteria",
       );
     }
     const searchInstitutions = await this.institutionService.searchInstitution(
-      legalName,
-      operatingName,
+      searchInstitutionQuery.legalName,
+      searchInstitutionQuery.operatingName,
     );
     return searchInstitutions.map((eachInstitution: Institution) => {
       const mailingAddress =

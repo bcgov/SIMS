@@ -1,4 +1,4 @@
-import { IsObject, IsOptional, IsPositive } from "class-validator";
+import { IsObject, IsOptional, IsPositive, MaxLength } from "class-validator";
 import {
   ApplicationStatus,
   ProgramInfoStatus,
@@ -109,4 +109,9 @@ export interface ApplicationWithProgramYearDto {
 export enum SuccessWaitingStatus {
   Success = "Success",
   Waiting = "Waiting",
+}
+
+export class ApplicationNumberParamAPIInDTO {
+  @MaxLength(10)
+  applicationNumber: string;
 }

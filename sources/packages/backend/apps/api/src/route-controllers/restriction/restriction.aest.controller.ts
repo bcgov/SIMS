@@ -34,6 +34,7 @@ import {
   ResolveRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   RestrictionStatusAPIOutDTO,
+  RestrictionCategoryParamAPIInDTO,
 } from "./models/restriction.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
@@ -109,11 +110,11 @@ export class RestrictionAESTController extends BaseController {
    */
   @Get("category/:restrictionCategory/reasons")
   async getReasonsOptionsList(
-    @Param("restrictionCategory") restrictionCategory: string,
+    @Param() restrictionCategoryParam: RestrictionCategoryParamAPIInDTO,
   ): Promise<OptionItemAPIOutDTO[]> {
     const reasons =
       await this.restrictionService.getRestrictionReasonsByCategory(
-        restrictionCategory,
+        restrictionCategoryParam.restrictionCategory,
       );
     return reasons.map((reason) => ({
       id: reason.id,

@@ -39,6 +39,7 @@ import {
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   ApplicationIdentifiersDTO,
+  ApplicationNumberParamAPIInDTO,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -436,13 +437,13 @@ export class ApplicationStudentsController extends BaseController {
   })
   @Get(":applicationNumber/appeal")
   async getApplicationToRequestAppeal(
-    @Param("applicationNumber") applicationNumber: string,
+    @Param() applicationNumberParam: ApplicationNumberParamAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<ApplicationIdentifiersDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
         userToken.userId,
-        applicationNumber,
+        applicationNumberParam.applicationNumber,
       );
     if (!application) {
       throw new NotFoundException(

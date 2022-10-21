@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsPositive,
+  MaxLength,
   ValidateNested,
 } from "class-validator";
 import { OmitType } from "@nestjs/mapped-types";
@@ -140,4 +141,13 @@ export class SearchInstitutionAPIOutDTO {
   legalName: string;
   operatingName: string;
   address: AddressAPIOutDTO;
+}
+
+export class SearchInstitutionQueryAPIInDTO {
+  @IsOptional()
+  @MaxLength(64)
+  legalName?: string;
+  @IsOptional()
+  @MaxLength(64)
+  operatingName?: string;
 }
