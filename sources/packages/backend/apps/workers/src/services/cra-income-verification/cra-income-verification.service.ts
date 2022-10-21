@@ -65,7 +65,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
   async checkForCRAIncomeVerificationBypass(
     verificationId: number,
   ): Promise<void> {
-    if (!this.configService.env.bypassCRAIncomeVerification) {
+    if (this.configService.env.bypassCRAIncomeVerification !== true) {
       return;
     }
     const now = new Date();
