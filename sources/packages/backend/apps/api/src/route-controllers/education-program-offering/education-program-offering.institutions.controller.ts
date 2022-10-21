@@ -56,6 +56,7 @@ import {
   OFFERING_BULK_UPLOAD_MAX_UPLOAD_PARTS,
   uploadLimits,
 } from "../../utilities";
+import { ParseEnumQueryPipe } from "../../utilities/class-validation";
 import { CustomNamedError } from "@sims/utilities";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { EducationProgramOfferingImportCSVService } from "../../services/education-program-offering/education-program-offering-import-csv.service";
@@ -276,7 +277,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Param("programYearId", ParseIntPipe) programYearId: number,
     @Query("includeInActivePY", new DefaultValuePipe(false), ParseBoolPipe)
     includeInActivePY: boolean,
-    @Query("offeringIntensity") offeringIntensity?: OfferingIntensity,
+    @Query("offeringIntensity", new ParseEnumQueryPipe(OfferingIntensity))
+    offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
     return this.educationProgramOfferingControllerService.getProgramOfferingsOptionsList(
       locationId,

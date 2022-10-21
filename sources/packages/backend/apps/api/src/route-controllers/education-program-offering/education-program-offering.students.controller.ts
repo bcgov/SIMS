@@ -22,6 +22,7 @@ import BaseController from "../BaseController";
 import { OfferingStartDateAPIOutDTO } from "./models/education-program-offering.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
+import { ParseEnumQueryPipe } from "../../utilities/class-validation";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("education-program-offering")
@@ -57,7 +58,8 @@ export class EducationProgramOfferingStudentsController extends BaseController {
     @Param("programYearId", ParseIntPipe) programYearId: number,
     @Query("includeInActivePY", new DefaultValuePipe(false), ParseBoolPipe)
     includeInActivePY: boolean,
-    @Query("offeringIntensity") offeringIntensity?: OfferingIntensity,
+    @Query("offeringIntensity", new ParseEnumQueryPipe(OfferingIntensity))
+    offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
     return this.educationProgramOfferingControllerService.getProgramOfferingsOptionsList(
       locationId,
