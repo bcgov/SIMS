@@ -5,14 +5,11 @@ import {
   ApplicationStatus,
   AssessmentStatus,
   AssessmentTriggerType,
-  EducationProgram,
-  InstitutionLocation,
-  ProgramInfoStatus,
   StudentAssessment,
   User,
   mapFromRawAndEntities,
 } from "@sims/sims-db";
-import { Brackets, DataSource, IsNull, UpdateResult } from "typeorm";
+import { Brackets, DataSource } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,

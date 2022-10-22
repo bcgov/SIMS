@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import {
   RecordDataModelService,
-  Application,
   SupportingUser,
   SupportingUserType,
   User,

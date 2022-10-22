@@ -2,9 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Brackets, DataSource } from "typeorm";
 import {
   RecordDataModelService,
-  Application,
   ApplicationException,
-  ApplicationExceptionRequest,
   ApplicationExceptionStatus,
   Note,
   NoteType,
