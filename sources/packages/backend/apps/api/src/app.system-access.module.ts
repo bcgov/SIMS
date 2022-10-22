@@ -9,8 +9,6 @@ import {
   EducationProgramOfferingService,
   StudentAssessmentService,
   StudentRestrictionService,
-  WorkflowActionsService,
-  WorkflowService,
   RestrictionService,
   SupportingUserService,
   CRAIncomeVerificationService,
@@ -37,9 +35,7 @@ import {
   StudentScholasticStandingsService,
 } from "./services";
 import {
-  ApplicationExceptionSystemAccessController,
   AssessmentControllerService,
-  AssessmentSystemAccessController,
   ApplicationSystemAccessController,
   CRAIntegrationSystemAccessController,
   MSFAAIntegrationSystemAccessController,
@@ -74,8 +70,6 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule, SINValidationModule],
   controllers: [
-    AssessmentSystemAccessController,
-    ApplicationExceptionSystemAccessController,
     ATBCSystemAccessController,
     SINValidationSystemAccessController,
     ApplicationSystemAccessController,
@@ -90,8 +84,6 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     ATBCService,
     StudentService,
     ConfigService,
-    WorkflowActionsService,
-    WorkflowService,
     StudentAssessmentService,
     EducationProgramOfferingService,
     DisbursementScheduleService,

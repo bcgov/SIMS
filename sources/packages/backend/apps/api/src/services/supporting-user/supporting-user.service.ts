@@ -21,26 +21,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
   }
 
   /**
-   * Creates a new supporting user with minimal information
-   * required to allow the supporting user (e.g. parent/partner)
-   * to populate the remaining columns later.
-   * @param applicationId application id that requires supporting
-   * information.
-   * @param supportingUserType type of the user that need provide
-   * the supporting information for a particular application.
-   * @returns newly created supporting user with minimal information.
-   */
-  async createSupportingUser(
-    applicationId: number,
-    supportingUserType: SupportingUserType,
-  ): Promise<SupportingUser> {
-    const newSupportingUser = new SupportingUser();
-    newSupportingUser.application = { id: applicationId } as Application;
-    newSupportingUser.supportingUserType = supportingUserType;
-    return this.repo.save(newSupportingUser);
-  }
-
-  /**
    * Updates supporting user (e.g. parent/partner).
    * @param applicationId application id to be used to search
    * for the record to be update.
@@ -121,23 +101,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     } finally {
       await queryRunner.release();
     }
-  }
-
-  /**
-   * Gets the supporting user (e.g. parent/partner) associated
-   * with the particular Student Application.
-   * @param applicationId application that contains
-   * the income verification.
-   * @param supportingUserId supporting user id.
-   * @returns supporting user.
-   */
-  async getSupportingUserById(
-    applicationId: number,
-    supportingUserId: number,
-  ): Promise<SupportingUser> {
-    return this.repo.findOne({
-      where: { id: supportingUserId, application: { id: applicationId } },
-    });
   }
 
   /**

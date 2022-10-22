@@ -117,72 +117,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Updates Program Information Request (PIR) related data.
-   * @param assessmentId assessment id to be updated.
-      * @param auditUserId user that should be considered the one that is
-   * causing the changes.
-   * @param locationId location id related to the offering.
-   * @param status status of the program information request.
-
-   * @param programId program id related to the application.
-   * When the application is required for PIR this program is used to assign
-   * offering on PIR confirmation.
-   * @returns program info update result.
-   */
-  async updateProgramInfo(
-    assessmentId: number,
-    auditUserId: number,
-    locationId: number,
-    status: ProgramInfoStatus,
-    programId?: number,
-  ): Promise<StudentAssessment> {
-    const assessment = await this.repo
-      .createQueryBuilder("assessment")
-      .select(["assessment.id", "application.id", "student.id"])
-      .innerJoin("assessment.application", "application")
-      .innerJoin("application.student", "student")
-      .where("assessment.id = :assessmentId", { assessmentId })
-      .getOne();
-
-    if (!assessment) {
-      throw new CustomNamedError(
-        `Not able to find the assessment id ${assessmentId}`,
-        ASSESSMENT_NOT_FOUND,
-      );
-    }
-    const auditUser = { id: auditUserId } as User;
-    assessment.application.location = {
-      id: locationId,
-    } as InstitutionLocation;
-    assessment.application.pirProgram = { id: programId } as EducationProgram;
-    assessment.application.pirStatus = status;
-    assessment.application.modifier = auditUser;
-    assessment.modifier = auditUser;
-
-    return this.repo.save(assessment);
-  }
-
-  /**
-   * Updates the assessment workflowId.
-   * The workflow id on the assessment table must be null otherwise
-   * the update will not be performed. Avoiding the update prevents
-   * that two different workflow instances try to process the same
-   * assessment.
-   * @param assessmentId assessment id to be updated.
-   * @param assessmentWorkflowId workflowId to be updated.
-   * @returns update result.
-   */
-  async updateWorkflowId(
-    assessmentId: number,
-    assessmentWorkflowId: string,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      { id: assessmentId, assessmentWorkflowId: IsNull() },
-      { assessmentWorkflowId },
-    );
-  }
-
-  /**
    * Starts the assessment workflow of one Student Application.
    * @param assessmentId Student assessment that need to be processed.
    */
@@ -231,25 +165,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     await this.workflowClientService.startApplicationAssessment(
       assessment.application.data.workflowName,
       assessment.id,
-    );
-  }
-
-  /**
-   * Updates the assessment data resulted from the
-   * assessment workflow process.
-   * @param assessmentId assessment to be updated.
-   * @param assessmentData data to be persisted.
-   * @returns update result.
-   */
-  async updateAssessmentData(
-    assessmentId: number,
-    assessmentData: any,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: assessmentId,
-      },
-      { assessmentData, assessmentDate: new Date() },
     );
   }
 
