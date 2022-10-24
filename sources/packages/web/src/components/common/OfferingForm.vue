@@ -1,6 +1,6 @@
 <template>
   <formio-container
-    formName="educationProgramOffering"
+    formName="educationprogramoffering"
     :formData="formData"
     @submitted="saveOffering"
   >

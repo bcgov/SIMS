@@ -3,7 +3,7 @@
     <modal-dialog-base
       :showDialog="showDialog"
       title="Confirm enrolment"
-      max-width="730"
+      :max-width="730"
     >
       <template #content>
         <error-summary :errors="confirmCOE.errors" />

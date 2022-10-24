@@ -3,7 +3,7 @@
     <modal-dialog-base
       title="View restriction"
       :showDialog="showDialog"
-      min-width="730"
+      :min-width="730"
     >
       <template #content>
         <error-summary :errors="viewRestrictionForm.errors" />

@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, reactive } from "vue";
+import { onMounted, ref } from "vue";
 import { useFormatters, useDesignationAgreement } from "@/composables";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import {
@@ -38,9 +38,8 @@ export default {
   setup(props: any) {
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
-    const designationModel = reactive({
-      viewMode: DesignationFormViewModes.viewOnly,
-    } as DesignationModel);
+
+    const designationModel = ref({} as DesignationModel);
 
     onMounted(async () => {
       const designation =
@@ -48,16 +47,17 @@ export default {
           props.designationAgreementId,
         );
 
-      designationModel.institutionName = designation.institutionName;
-      designationModel.institutionType = designation.institutionType;
-      designationModel.isBCPrivate = designation.isBCPrivate;
-      designationModel.designationStatus = designation.designationStatus;
-      designationModel.designationStatusClass = mapDesignationChipStatus(
-        designation.designationStatus,
-      );
-      designationModel.dynamicData = designation.submittedData;
-      designationModel.locations = designation.locationsDesignations.map(
-        (location) => ({
+      designationModel.value = {
+        institutionName: designation.institutionName,
+        institutionType: designation.institutionType,
+        isBCPrivate: designation.isBCPrivate,
+        designationStatus: designation.designationStatus,
+        viewMode: DesignationFormViewModes.viewOnly,
+        designationStatusClass: mapDesignationChipStatus(
+          designation.designationStatus,
+        ),
+        dynamicData: designation.submittedData,
+        locations: designation.locationsDesignations.map((location) => ({
           locationId: location.locationId,
           locationName: location.locationName,
           requestForDesignation: location.requested,
@@ -65,8 +65,8 @@ export default {
           locationAddress: formatter.getFormattedAddress(
             location.locationData.address,
           ),
-        }),
-      );
+        })),
+      };
     });
 
     return { designationModel, InstitutionRoutesConst };

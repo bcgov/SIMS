@@ -2,11 +2,11 @@
   <formio-container
     formName="designationAgreementDetails"
     :formData="model"
-    :readOnly="readOnly"
+    :readOnly="viewOnly"
     @submitted="submitDesignation"
     @render="formRender"
   >
-    <template #actions="{ submit }" v-if="!(viewOnly || hideFooter)">
+    <template #actions="{ submit }" v-if="!viewOnly">
       <footer-buttons
         :processing="processing"
         primaryLabel="Submit"
@@ -17,27 +17,24 @@
 </template>
 
 <script lang="ts">
-import { SetupContext, computed } from "vue";
+import { SetupContext, PropType } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { RouteHelper } from "@/helpers";
-import {
-  DesignationModel,
-  DesignationFormViewModes,
-} from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
+import { DesignationModel } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 
 export default {
   emits: ["submitDesignation", "cancel"],
   props: {
     model: {
-      type: Object,
+      type: Object as PropType<DesignationModel>,
       required: true,
     },
     viewOnly: {
       type: Boolean,
       required: false,
     },
-    hideFooter: {
+    processing: {
       type: Boolean,
       required: false,
     },
@@ -62,15 +59,11 @@ export default {
       context.emit("submitDesignation", model);
     };
 
-    const readOnly = computed(() => {
-      return props.model.viewMode === DesignationFormViewModes.viewOnly;
-    });
-
     const cancel = () => {
       context.emit("cancel");
     };
 
-    return { formRender, submitDesignation, readOnly, cancel };
+    return { formRender, submitDesignation, cancel };
   },
 };
 </script>
