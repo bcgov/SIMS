@@ -1,12 +1,13 @@
 <template>
   <full-page-container>
-    <h1 class="category-header-large primary-color">Search for application</h1>
-    <p>
-      To provide your supporting information, please search for the application
+    <body-header
+      title="Search for application"
+      subTitle="To provide your supporting information, please search for the application
       by entering the requested information below. All fields are mandatory and
       must match exactly with the information provided on the student
-      application.
-    </p>
+      application."
+    >
+    </body-header>
     <content-group class="mb-4">
       <v-row>
         <v-col>
@@ -64,7 +65,7 @@
           variant="outlined"
           data-cy="previousSection"
           @click="wizardGoPrevious"
-          >Previous section</v-btn
+          >Previous step</v-btn
         >
       </v-col>
       <v-col>
@@ -73,7 +74,7 @@
           color="primary"
           v-show="!isLastPage"
           @click="wizardGoNext"
-          >Next section</v-btn
+          >Next step</v-btn
         >
         <v-btn
           class="float-right"
@@ -81,15 +82,8 @@
           v-show="!isFirstPage"
           color="primary"
           @click="wizardSubmit()"
+          :loading="submitting"
         >
-          <v-progress-circular
-            v-if="submitting"
-            class="mr-3"
-            bg-color="white"
-            indeterminate
-            color="secondary"
-            size="23"
-          />
           {{ submitting ? "Submitting..." : "Submit form" }}
         </v-btn>
       </v-col>
@@ -125,7 +119,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, context) {
+  setup(props) {
     const router = useRouter();
     const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
@@ -148,37 +142,14 @@ export default defineComponent({
 
     const formLoaded = async (form: any) => {
       showNav.value = true;
-      // Emit formLoadedCallback event to the parent, so that parent can
-      // perform the parent specific logic inside parent on
-      // form is loaded
-      context.emit("formLoadedCallback", form);
       formInstance = form;
       // Disable internal submit button.
       formioUtils.disableWizardButtons(formInstance);
       formInstance.options.buttonSettings.showSubmit = false;
-      // Handle the navigation using the breadcrumbs.
-      formInstance.on("wizardPageSelected", (page: any, index: number) => {
-        isFirstPage.value = index === 0;
-        isLastPage.value = formInstance.isLastPage();
-        // Event to set isInFirstPage, current page and isInLastPage to parent
-        context.emit(
-          "pageChanged",
-          isFirstPage.value,
-          formInstance.page,
-          isLastPage.value,
-        );
-      });
       // Handle the navigation using next/prev buttons.
       const prevNextNavigation = (navigation: WizardNavigationEvent) => {
         isFirstPage.value = navigation.page === 0;
         isLastPage.value = formInstance.isLastPage();
-        // Event to set isInFirstPage, current page and isInLastPage to parent
-        context.emit(
-          "pageChanged",
-          isFirstPage.value,
-          formInstance.page,
-          isLastPage.value,
-        );
       };
       formInstance.on("prevPage", prevNextNavigation);
       formInstance.on("nextPage", prevNextNavigation);
