@@ -9,8 +9,6 @@ import {
   MSFAANumberService,
   StudentFileService,
   TokensService,
-  WorkflowActionsService,
-  WorkflowService,
 } from "../../../../api/src/services";
 import { SequenceControlService } from "@sims/services";
 import { DataSource, Repository } from "typeorm";
@@ -62,8 +60,6 @@ describe.skip("ApplicationService", () => {
         StudentFileService,
         EducationProgramOfferingService,
         SequenceControlService,
-        WorkflowActionsService,
-        WorkflowService,
         MSFAANumberService,
         KeycloakService,
         ConfigService,

@@ -22,20 +22,6 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     super(dataSource.getRepository(InstitutionLocation));
   }
 
-  async getInstitutionLocationById(id: number): Promise<InstitutionLocation> {
-    return this.repo
-      .createQueryBuilder("location")
-      .select([
-        "location.name",
-        "location.data",
-        "location.id",
-        "institution.id",
-      ])
-      .innerJoin("location.institution", "institution")
-      .where("location.id = :id", { id })
-      .getOne();
-  }
-
   /**
    * Save institution location.
    * @param institutionId institution to which the location

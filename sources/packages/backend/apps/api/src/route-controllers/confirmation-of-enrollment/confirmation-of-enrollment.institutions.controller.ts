@@ -19,7 +19,6 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   ApplicationService,
-  WorkflowActionsService,
   COEDeniedReasonService,
   DisbursementScheduleService,
 } from "../../services";
@@ -78,7 +77,6 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
   constructor(
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly applicationService: ApplicationService,
-    private readonly workflow: WorkflowActionsService,
     private readonly deniedCOEReasonService: COEDeniedReasonService,
   ) {
     super();
