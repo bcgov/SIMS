@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsPositive,
   MaxLength,
+  ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { OmitType } from "@nestjs/mapped-types";
@@ -147,10 +148,18 @@ export class SearchInstitutionAPIOutDTO {
 }
 
 export class SearchInstitutionQueryAPIInDTO {
-  @IsOptional()
+  @ValidateIf(
+    (input: SearchInstitutionQueryAPIInDTO) =>
+      !!(input.legalName || !input.operatingName),
+  )
+  @IsNotEmpty()
   @MaxLength(LEGAL_OPERATING_NAME_MAX_LENGTH)
   legalName?: string;
-  @IsOptional()
+  @ValidateIf(
+    (input: SearchInstitutionQueryAPIInDTO) =>
+      !!(input.operatingName || !input.legalName),
+  )
+  @IsNotEmpty()
   @MaxLength(OPERATING_NAME_MAX_LENGTH)
   operatingName?: string;
 }

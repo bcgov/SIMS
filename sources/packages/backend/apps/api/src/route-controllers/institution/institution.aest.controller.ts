@@ -8,7 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  UnprocessableEntityException,
 } from "@nestjs/common";
 import { InstitutionService } from "../../services";
 import { AddressInfo, Institution } from "@sims/sims-db";
@@ -67,14 +66,6 @@ export class InstitutionAESTController extends BaseController {
   async searchInstitutions(
     @Query() searchInstitutionQuery: SearchInstitutionQueryAPIInDTO,
   ): Promise<SearchInstitutionAPIOutDTO[]> {
-    if (
-      !searchInstitutionQuery.legalName &&
-      !searchInstitutionQuery.operatingName
-    ) {
-      throw new UnprocessableEntityException(
-        "Search with at least one search criteria",
-      );
-    }
     const searchInstitutions = await this.institutionService.searchInstitution(
       searchInstitutionQuery.legalName,
       searchInstitutionQuery.operatingName,
