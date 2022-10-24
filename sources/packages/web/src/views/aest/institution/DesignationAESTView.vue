@@ -196,10 +196,10 @@ export default {
             props.designationId,
             response as UpdateDesignationDto,
           );
-          await loadDesignation();
           snackBar.success(
             `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
           );
+          await loadDesignation();
         } catch (error) {
           snackBar.error(
             "Unexpected error while approving/declining the designation.",
