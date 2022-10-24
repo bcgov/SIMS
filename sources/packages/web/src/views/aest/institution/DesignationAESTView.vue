@@ -193,7 +193,9 @@ export default {
             return designationLocation;
           });
       }
-      const response = await approveDenyDesignationModal.value.showModal();
+      const response = await approveDenyDesignationModal.value.showModal(
+        updateDesignationModel.value,
+      );
       //Update designation only on a submit action.
       if (response) {
         try {
