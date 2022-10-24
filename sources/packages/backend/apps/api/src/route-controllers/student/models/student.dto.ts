@@ -249,6 +249,7 @@ export class UpdateSINValidationAPIInDTO {
 }
 
 export class UniqueFileNameParamAPIInDTO {
+  @IsNotEmpty()
   @MaxLength(FILE_NAME_MAX_LENGTH)
   uniqueFileName: string;
 }
