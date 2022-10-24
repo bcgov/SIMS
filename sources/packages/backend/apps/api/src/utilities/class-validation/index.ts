@@ -7,4 +7,3 @@ export * from "./custom-validators/period-min-length";
 export * from "./custom-validators/period-max-length";
 export * from "./validation-utils";
 export * from "./custom-validators/is-date-after";
-export * from "./custom-validators/custom-validation-pipe";

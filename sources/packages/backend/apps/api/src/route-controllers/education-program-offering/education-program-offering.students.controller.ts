@@ -22,7 +22,7 @@ import BaseController from "../BaseController";
 import { OfferingStartDateAPIOutDTO } from "./models/education-program-offering.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramOfferingControllerService } from "./education-program-offering.controller.service";
-import { ParseEnumQueryPipe } from "../../utilities/class-validation";
+import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("education-program-offering")

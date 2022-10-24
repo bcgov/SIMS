@@ -16,6 +16,11 @@ import {
   AddressDetailsAPIOutDTO,
 } from "../../models/common.dto";
 
+import {
+  OPERATING_NAME_MAX_LENGTH,
+  LEGAL_OPERATING_NAME_MAX_LENGTH,
+} from "@sims/sims-db";
+
 /**
  * DTO for institution creation by the institution user during the on board process
  * when the institution profile and the admin user must be created altogether.
@@ -145,9 +150,9 @@ export class SearchInstitutionAPIOutDTO {
 
 export class SearchInstitutionQueryAPIInDTO {
   @IsOptional()
-  @MaxLength(64)
+  @MaxLength(LEGAL_OPERATING_NAME_MAX_LENGTH)
   legalName?: string;
   @IsOptional()
-  @MaxLength(64)
+  @MaxLength(OPERATING_NAME_MAX_LENGTH)
   operatingName?: string;
 }

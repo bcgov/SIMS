@@ -7,7 +7,7 @@ import {
 
 /**
  * Custom validation pipe extended from ParseEnumPipe(Nest JS)
- * to allow nullable values and validates the only if
+ * to allow nullable values and validates only if
  * value is present.
  *
  * This validation pipe is exclusively made for

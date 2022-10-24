@@ -2,6 +2,13 @@ import { IsEnum, IsIn, IsOptional, Max, MaxLength, Min } from "class-validator";
 import { FieldSortOrder } from "../../utilities";
 
 /**
+ * Max length value is currently assumed from sum of
+ ** user first and last name in database which could be
+ ** largest possible search text.
+ */
+const PAGINATION_SEARCH_MAX_LENGTH = 200;
+
+/**
  * Common parameters used when an API result
  * must enable pagination and search options.
  */
@@ -29,12 +36,9 @@ abstract class PaginationOptionsAPIInDTO {
   pageLimit: number;
   /**
    * Criteria to be used to filter the records.
-   ** Max length value is currently assumed from sum of
-   ** user first and last name in database which could be
-   ** largest possible search text.
    */
   @IsOptional()
-  @MaxLength(200)
+  @MaxLength(PAGINATION_SEARCH_MAX_LENGTH)
   searchCriteria?: string;
 }
 

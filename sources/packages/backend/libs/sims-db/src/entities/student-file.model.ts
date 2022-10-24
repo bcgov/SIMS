@@ -10,6 +10,8 @@ import { RecordDataModel } from "./record.model";
 import { FileOriginType, StudentFileMetadata } from "./student-file.type";
 import { Student } from "./student.model";
 
+export const FILE_NAME_MAX_LENGTH = 500;
+
 /**
  * Stores files information and content from any
  * uploaded file related to a student.
@@ -30,6 +32,7 @@ export class StudentFile extends RecordDataModel {
    */
   @Column({
     name: "unique_file_name",
+    length: FILE_NAME_MAX_LENGTH,
   })
   uniqueFileName: string;
   /**

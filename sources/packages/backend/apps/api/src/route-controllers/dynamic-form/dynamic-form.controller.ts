@@ -4,12 +4,7 @@ import { FormService } from "../../services";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags } from "@nestjs/swagger";
-import { MaxLength } from "class-validator";
-
-class FormNameParamAPIInDTO {
-  @MaxLength(200)
-  formName: string;
-}
+import { FormNameParamAPIInDTO } from "./models/form.dto";
 
 @AllowAuthorizedParty(
   AuthorizedParties.institution,

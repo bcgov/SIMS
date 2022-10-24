@@ -28,6 +28,8 @@ import { ProgramYear } from "./program-year.model";
 import { StudentAssessment } from "./student-assessment.model";
 import { ApplicationException } from "./application-exceptions.model";
 
+export const APPLICATION_NUMBER_LENGTH = 10;
+
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {
   @PrimaryGeneratedColumn()
@@ -50,6 +52,7 @@ export class Application extends RecordDataModel {
    */
   @Column({
     name: "application_number",
+    length: APPLICATION_NUMBER_LENGTH,
   })
   applicationNumber: string;
   /**

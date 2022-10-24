@@ -16,6 +16,7 @@ import {
   ApplicationStatus,
   FileOriginType,
   NOTE_DESCRIPTION_MAX_LENGTH,
+  FILE_NAME_MAX_LENGTH,
 } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
@@ -238,6 +239,6 @@ export class UpdateSINValidationAPIInDTO {
 }
 
 export class UniqueFileNameParamAPIInDTO {
-  @MaxLength(500)
+  @MaxLength(FILE_NAME_MAX_LENGTH)
   uniqueFileName: string;
 }

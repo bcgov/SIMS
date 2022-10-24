@@ -56,7 +56,7 @@ import {
   OFFERING_BULK_UPLOAD_MAX_UPLOAD_PARTS,
   uploadLimits,
 } from "../../utilities";
-import { ParseEnumQueryPipe } from "../../utilities/class-validation";
+import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
 import { CustomNamedError } from "@sims/utilities";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { EducationProgramOfferingImportCSVService } from "../../services/education-program-offering/education-program-offering-import-csv.service";
