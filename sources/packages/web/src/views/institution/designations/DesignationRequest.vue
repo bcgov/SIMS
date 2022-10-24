@@ -75,10 +75,6 @@ export default {
         isBCPrivate: institutionState.value.isBCPrivate,
         viewMode: DesignationFormViewModes.submission,
         locations: designationModelLocations,
-        dynamicData: {
-          legalAuthorityName: userFullName.value,
-          legalAuthorityEmailAddress: userEmail.value,
-        },
       };
 
       if (isLegalSigningAuthority) {
