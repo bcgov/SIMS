@@ -8,14 +8,12 @@ import {
 } from "class-validator";
 import { OmitType } from "@nestjs/mapped-types";
 import { Type } from "class-transformer";
-
 import { DesignationStatus } from "../../../route-controllers/institution-locations/models/institution-location.dto";
 import {
   AddressDetailsAPIInDTO,
   AddressAPIOutDTO,
   AddressDetailsAPIOutDTO,
 } from "../../models/common.dto";
-
 import {
   OPERATING_NAME_MAX_LENGTH,
   LEGAL_OPERATING_NAME_MAX_LENGTH,
