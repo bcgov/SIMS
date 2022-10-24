@@ -4,10 +4,10 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
-  UnprocessableEntityException,
 } from "@nestjs/common";
 import { InstitutionService } from "../../services";
 import { AddressInfo, Institution } from "@sims/sims-db";
@@ -25,6 +25,7 @@ import {
   SearchInstitutionAPIOutDTO,
   InstitutionBasicAPIOutDTO,
   AESTCreateInstitutionFormAPIInDTO,
+  SearchInstitutionQueryAPIInDTO,
 } from "./models/institution.dto";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
@@ -63,17 +64,11 @@ export class InstitutionAESTController extends BaseController {
    */
   @Get("search")
   async searchInstitutions(
-    @Query("legalName") legalName: string,
-    @Query("operatingName") operatingName: string,
+    @Query() searchInstitutionQuery: SearchInstitutionQueryAPIInDTO,
   ): Promise<SearchInstitutionAPIOutDTO[]> {
-    if (!legalName && !operatingName) {
-      throw new UnprocessableEntityException(
-        "Search with at least one search criteria",
-      );
-    }
     const searchInstitutions = await this.institutionService.searchInstitution(
-      legalName,
-      operatingName,
+      searchInstitutionQuery.legalName,
+      searchInstitutionQuery.operatingName,
     );
     return searchInstitutions.map((eachInstitution: Institution) => {
       const mailingAddress =
@@ -102,7 +97,7 @@ export class InstitutionAESTController extends BaseController {
    */
   @Get(":institutionId")
   async getInstitutionDetailById(
-    @Param("institutionId") institutionId: number,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
   ): Promise<InstitutionDetailAPIOutDTO> {
     const institutionDetail =
       await this.institutionControllerService.getInstitutionDetail(
@@ -124,7 +119,7 @@ export class InstitutionAESTController extends BaseController {
   @Roles(Role.InstitutionEditProfile)
   @Patch(":institutionId")
   async updateInstitution(
-    @Param("institutionId") institutionId: number,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
     @Body() payload: InstitutionProfileAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
@@ -148,7 +143,7 @@ export class InstitutionAESTController extends BaseController {
    */
   @Get(":institutionId/basic-details")
   async getBasicInstitutionInfoById(
-    @Param("institutionId") institutionId: number,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
   ): Promise<InstitutionBasicAPIOutDTO> {
     const institutionDetail =
       await this.institutionService.getBasicInstitutionDetailById(
@@ -172,7 +167,7 @@ export class InstitutionAESTController extends BaseController {
    */
   @Get(":institutionId/locations")
   async getAllInstitutionLocations(
-    @Param("institutionId") institutionId: number,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
   ): Promise<InstitutionLocationAPIOutDTO[]> {
     // get all institution locations with designation statuses.
     return this.locationControllerService.getInstitutionLocations(

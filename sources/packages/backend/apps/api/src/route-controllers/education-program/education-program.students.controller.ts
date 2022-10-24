@@ -73,7 +73,7 @@ export class EducationProgramStudentsController extends BaseController {
       new DefaultValuePipe(false),
       ParseBoolPipe,
     )
-    isIncludeInActiveProgramYear,
+    isIncludeInActiveProgramYear: boolean,
   ): Promise<OptionItemAPIOutDTO[]> {
     const programs = await this.programService.getProgramsForLocation(
       locationId,

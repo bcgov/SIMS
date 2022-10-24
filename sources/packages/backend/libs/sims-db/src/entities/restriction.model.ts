@@ -5,6 +5,8 @@ import { RestrictionType } from ".";
 import { RestrictionNotificationType } from "./restriction-notification-type.type";
 import { RestrictionActionType } from "./restriction-action-type.type";
 
+export const RESTRICTION_CATEGORY_MAX_LENGTH = 50;
+
 /**
  * Entity for restrictions
  */
@@ -30,6 +32,7 @@ export class Restriction extends RecordDataModel {
   @Column({
     name: "restriction_category",
     nullable: false,
+    length: RESTRICTION_CATEGORY_MAX_LENGTH,
   })
   restrictionCategory: string;
   /**

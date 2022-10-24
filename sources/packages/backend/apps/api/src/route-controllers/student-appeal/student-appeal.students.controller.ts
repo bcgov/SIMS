@@ -77,7 +77,7 @@ export class StudentAppealStudentsController extends BaseController {
   })
   @Post("application/:applicationId")
   async submitStudentAppeal(
-    @Param("applicationId") applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @Body() payload: StudentAppealAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {

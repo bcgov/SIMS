@@ -17,6 +17,9 @@ import { Note } from ".";
 import { AddressInfo } from "./address.type";
 import { PrimaryContact } from "./primary-contact.type";
 
+export const OPERATING_NAME_MAX_LENGTH = 64;
+export const LEGAL_OPERATING_NAME_MAX_LENGTH = 64;
+
 export interface InstitutionAddress {
   mailingAddress: AddressInfo;
 }
@@ -35,12 +38,14 @@ export class Institution extends RecordDataModel {
 
   @Column({
     name: "legal_operating_name",
+    length: LEGAL_OPERATING_NAME_MAX_LENGTH,
   })
   legalOperatingName: string;
 
   @Column({
     name: "operating_name",
     nullable: true,
+    length: OPERATING_NAME_MAX_LENGTH,
   })
   operatingName: string;
 

@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, Patch } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+} from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { InstitutionLocationService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -42,7 +49,7 @@ export class InstitutionLocationAESTController extends BaseController {
   @Get(":locationId")
   @ApiNotFoundResponse({ description: "Institution Location not found." })
   async getInstitutionLocation(
-    @Param("locationId") locationId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
   ): Promise<InstitutionLocationDetailsAPIOutDTO> {
     // Get particular institution location.
     return this.locationControllerService.getInstitutionLocation(locationId);
@@ -56,7 +63,7 @@ export class InstitutionLocationAESTController extends BaseController {
   @Roles(Role.InstitutionEditLocationDetails)
   @Patch(":locationId")
   async update(
-    @Param("locationId") locationId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
     @Body() payload: AESTInstitutionLocationAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {

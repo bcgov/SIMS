@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   UnprocessableEntityException,
 } from "@nestjs/common";
@@ -107,7 +108,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
   @Get(":designationId")
   async getDesignationAgreement(
     @UserToken() userToken: IInstitutionUserToken,
-    @Param("designationId") designationId: number,
+    @Param("designationId", ParseIntPipe) designationId: number,
   ): Promise<GetDesignationAgreementDto> {
     return this.designationAgreementControllerService.getDesignationAgreement(
       designationId,

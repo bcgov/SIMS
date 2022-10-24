@@ -29,6 +29,7 @@ import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
 
 /**
  * Controller for Notes.
@@ -56,7 +57,7 @@ export class NoteAESTController extends BaseController {
   @Get("student/:studentId")
   async getStudentDetails(
     @Param("studentId", ParseIntPipe) studentId: number,
-    @Query("noteType") noteType: NoteType,
+    @Query("noteType", new ParseEnumQueryPipe(NoteType)) noteType?: NoteType,
   ): Promise<NoteAPIOutDTO[]> {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
@@ -79,7 +80,7 @@ export class NoteAESTController extends BaseController {
   @Get("institution/:institutionId")
   async getInstitutionDetails(
     @Param("institutionId", ParseIntPipe) institutionId: number,
-    @Query("noteType") noteType: NoteType,
+    @Query("noteType", new ParseEnumQueryPipe(NoteType)) noteType?: NoteType,
   ): Promise<NoteAPIOutDTO[]> {
     const institution =
       this.institutionService.getBasicInstitutionDetailById(institutionId);

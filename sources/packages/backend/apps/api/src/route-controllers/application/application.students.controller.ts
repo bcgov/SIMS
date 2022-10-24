@@ -11,6 +11,8 @@ import {
   UnprocessableEntityException,
   Query,
   ParseIntPipe,
+  DefaultValuePipe,
+  ParseBoolPipe,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -37,6 +39,7 @@ import {
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   ApplicationIdentifiersDTO,
+  ApplicationNumberParamAPIInDTO,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -93,7 +96,7 @@ export class ApplicationStudentsController extends BaseController {
     description: "Application id not found.",
   })
   async getByApplicationId(
-    @Param("id") applicationId: number,
+    @Param("id", ParseIntPipe) applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<GetApplicationDataDto> {
     const application = await this.applicationService.getApplicationByIdAndUser(
@@ -154,7 +157,7 @@ export class ApplicationStudentsController extends BaseController {
   })
   async submitApplication(
     @Body() payload: SaveApplicationDto,
-    @Param("applicationId") applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
     await this.applicationControllerService.offeringIntensityRestrictionCheck(
@@ -304,7 +307,7 @@ export class ApplicationStudentsController extends BaseController {
   @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
   async updateDraftApplication(
     @Body() payload: SaveApplicationDto,
-    @Param("applicationId") applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
     try {
@@ -339,7 +342,7 @@ export class ApplicationStudentsController extends BaseController {
   @Patch(":applicationId/status")
   async updateStudentApplicationStatus(
     @UserToken() userToken: IUserToken,
-    @Param("applicationId") applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @Body() payload: ApplicationStatusToBeUpdatedDto,
   ): Promise<void> {
     const studentApplication =
@@ -390,8 +393,9 @@ export class ApplicationStudentsController extends BaseController {
   @Get(":applicationId/program-year")
   async programYearOfApplication(
     @UserToken() userToken: IUserToken,
-    @Param("applicationId") applicationId: number,
-    @Query("includeInActivePY") includeInActivePY?: boolean,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @Query("includeInActivePY", new DefaultValuePipe(false), ParseBoolPipe)
+    includeInActivePY: boolean,
   ): Promise<ApplicationWithProgramYearDto> {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
@@ -433,13 +437,13 @@ export class ApplicationStudentsController extends BaseController {
   })
   @Get(":applicationNumber/appeal")
   async getApplicationToRequestAppeal(
-    @Param("applicationNumber") applicationNumber: string,
+    @Param() applicationNumberParam: ApplicationNumberParamAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<ApplicationIdentifiersDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
         userToken.userId,
-        applicationNumber,
+        applicationNumberParam.applicationNumber,
       );
     if (!application) {
       throw new NotFoundException(

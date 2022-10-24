@@ -115,7 +115,7 @@ export class StudentAppealAESTController extends BaseController {
       `some appeal request is already in a state different than '${StudentAppealStatus.Pending}'.`,
   })
   async approveStudentAppealRequests(
-    @Param("appealId") appealId: number,
+    @Param("appealId", ParseIntPipe) appealId: number,
     @Body() payload: StudentAppealApprovalAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {

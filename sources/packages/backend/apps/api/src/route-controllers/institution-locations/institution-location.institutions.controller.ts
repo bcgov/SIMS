@@ -2,10 +2,12 @@ import {
   BadRequestException,
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   NotFoundException,
   Param,
   ParseBoolPipe,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -110,7 +112,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @IsInstitutionAdmin()
   @Patch(":locationId")
   async update(
-    @Param("locationId") locationId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
     @Body() payload: InstitutionLocationPrimaryContactAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
@@ -132,9 +134,10 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @HasLocationAccess("locationId")
   @Get(":locationId/active-applications")
   async getActiveApplications(
-    @Param("locationId") locationId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
     @Query() pagination: ApplicationStatusPaginationOptionsAPIInDTO,
-    @Query("archived", ParseBoolPipe) archived: boolean,
+    @Query("archived", new DefaultValuePipe(false), ParseBoolPipe)
+    archived: boolean,
   ): Promise<PaginatedResultsAPIOutDTO<ActiveApplicationSummaryAPIOutDTO>> {
     const applications = await this.applicationService.getActiveApplications(
       locationId,
@@ -175,7 +178,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @Get(":locationId")
   @ApiNotFoundResponse({ description: "Institution Location not found." })
   async getInstitutionLocation(
-    @Param("locationId") locationId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationDetailsAPIOutDTO> {
     // Get particular institution location.
@@ -208,8 +211,8 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @HasLocationAccess("locationId")
   @Get(":locationId/active-application/:applicationId")
   async getActiveApplication(
-    @Param("locationId") locationId: number,
-    @Param("applicationId") applicationId: number,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ActiveApplicationDataAPIOutDTO> {
     const application = await this.applicationService.getActiveApplication(
       applicationId,
