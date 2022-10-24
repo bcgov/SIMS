@@ -1,0 +1,31 @@
+name: Deploy Form.io definitions to Form.io server
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: environment
+
+jobs:
+  deploy:
+    name: Deploy Form.io definitions
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    env:
+      FORMS_URL: ${{ secrets.FORMS_URL }}
+      FORMS_SA_USER_NAME: ${{ secrets.FORMS_SA_USER_NAME }}
+      FORMS_SA_PASSWORD: ${{ secrets.FORMS_SA_PASSWORD }}
+    steps:
+      - name: Checkout Target Branch
+        uses: actions/checkout@v3
+      - name: Setup Nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+      - name: Downloading packages
+        working-directory: "./sources/packages/forms"
+        run: npm ci
+      - name: Executing deployment
+        working-directory: "./sources/packages/forms"
+        run: npm run deploy
