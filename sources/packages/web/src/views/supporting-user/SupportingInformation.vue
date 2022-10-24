@@ -115,7 +115,7 @@ import {
 export default defineComponent({
   props: {
     supportingUserType: {
-      type: Object as PropType<SupportingUserType>,
+      type: String as PropType<SupportingUserType>,
       required: true,
     },
   },
@@ -140,7 +140,7 @@ export default defineComponent({
       formInstance.submit();
     };
 
-    const formLoaded = async (form: any) => {
+    const formLoaded = async (form: FormIOForm) => {
       showNav.value = true;
       formInstance = form;
       // Disable internal submit button.

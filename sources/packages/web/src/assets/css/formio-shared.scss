@@ -608,11 +608,8 @@
 
 .info-grid-header {
   grid-area: header;
-  font-style: $font-style-normal;
-  font-weight: $font-weight-bold;
-  font-size: $font-header-small;
-  line-height: $line-height-header-sm;
-  color: $secondary-header-color;
+  @extend .category-header-medium-small;
+  @extend .secondary-color;
 }
 
 .info-grid-text {
@@ -627,10 +624,6 @@
   grid-template-columns: 20px 1fr;
   column-gap: 20px;
   border: none !important;
-}
-
-.info-grid-text > a {
-  font-weight: $font-weight-bold;
 }
 
 .info-grid-container > * {
