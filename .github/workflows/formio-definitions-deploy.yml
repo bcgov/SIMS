@@ -10,7 +10,7 @@ on:
     inputs:
       environment:
         required: true
-        type: environment
+        type: string
 
 jobs:
   deploy:
