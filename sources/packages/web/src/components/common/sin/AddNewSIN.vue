@@ -3,7 +3,7 @@
     <modal-dialog-base
       title="Add a new SIN"
       :showDialog="showDialog"
-      max-width="730"
+      :max-width="730"
     >
       <template #content>
         <error-summary :errors="addNewSINForm.errors" />
