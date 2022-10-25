@@ -23,7 +23,7 @@
             <v-btn
               v-if="isAuthenticated"
               variant="text"
-              prepend-icon="fa:fa fa-edit"
+              prepend-icon="fa:far fa-edit"
               :disabled="notAllowed"
               @click="
                 $router.push({
@@ -37,7 +37,8 @@
         <v-menu v-if="isAuthenticated">
           <template v-slot:activator="{ props }">
             <v-btn
-              class="mr-5"
+              class="nav-item-label"
+              rounded="xl"
               icon="fa:fa fa-user"
               variant="outlined"
               elevation="1"
@@ -46,11 +47,9 @@
             ></v-btn>
           </template>
           <v-list>
-            <v-list-item :value="menuItem.label">
-              <v-list-item-title>
-                <v-list-item-title @click="menuItem.command">
-                  <span class="label-bold">{{ menuItem.label }}</span>
-                </v-list-item-title>
+            <v-list-item :value="menuItem.label" @click="menuItem.command">
+              <v-list-item-title @click="menuItem.command">
+                <span class="label-bold">{{ menuItem.label }}</span>
               </v-list-item-title>
             </v-list-item>
           </v-list>

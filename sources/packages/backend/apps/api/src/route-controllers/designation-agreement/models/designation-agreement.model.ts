@@ -2,6 +2,7 @@ import {
   DesignationAgreementStatus,
   InstitutionLocationData,
 } from "@sims/sims-db";
+import { IsBoolean, Min } from "class-validator";
 
 /**
  * This DTO contains dynamic data that must
@@ -55,22 +56,12 @@ export interface PendingDesignationDto extends GetDesignationAgreementsDto {
   legalOperatingName: string;
 }
 
-export interface UpdateDesignationLocation {
+export class UpdateDesignationLocation {
+  @Min(1)
   locationId: number;
+  @IsBoolean()
   approved: boolean;
 }
-/**
- * DTO Object to Approve/Deny a designation agreement.
- * startDate, endDate and locationsDesignations used only for approval.
- */
-export interface UpdateDesignationDto {
-  designationStatus: DesignationAgreementStatus;
-  startDate?: Date;
-  endDate?: Date;
-  locationsDesignations?: UpdateDesignationLocation[];
-  note: string;
-}
-
 /**
  * startDate, endDate and locationsDesignations used only for approval.
  */

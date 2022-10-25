@@ -3,7 +3,6 @@
     <body-header
       title="File Uploads"
       :recordsCount="studentFileUploads?.length"
-      class="m-1"
     >
       <template #actions>
         <check-permission-role :role="Role.StudentUploadFile">

@@ -1,7 +1,7 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Institutions" subTitle="Designations" />
+      <header-navigator title="Institution requests" subTitle="Designations" />
     </template>
     <body-header
       title="Pending Designations"

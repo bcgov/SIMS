@@ -30,8 +30,8 @@ import {
   GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
   PendingDesignationDto,
-  UpdateDesignationDto,
 } from "./models/designation-agreement.model";
+import { UpdateDesignationAPIInDto } from "./models/designation-agreement.dto";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
@@ -122,7 +122,7 @@ export class DesignationAgreementAESTController extends BaseController {
   @Patch(":designationId")
   async updateDesignationAgreement(
     @Param("designationId", ParseIntPipe) designationId: number,
-    @Body() payload: UpdateDesignationDto,
+    @Body() payload: UpdateDesignationAPIInDto,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     const designation =

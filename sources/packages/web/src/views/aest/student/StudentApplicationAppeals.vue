@@ -7,7 +7,6 @@
       title="Requested appeals"
       :recordsCount="applicationAppeals.results?.length"
       subTitle="Make a determination on requested change(s) that may require a reassessment"
-      class="m-1"
     >
       <template #actions>
         <v-text-field

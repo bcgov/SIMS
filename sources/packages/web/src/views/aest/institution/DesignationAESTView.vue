@@ -1,12 +1,12 @@
 <template>
-  <div class="p-m-4">
-    <header-navigator
-      :title="navigationTitle"
-      subTitle="View designation agreement"
-      :routeLocation="routeLocation"
-    >
-      <template #buttons>
-        <v-row class="p-0 m-0">
+  <full-page-container layout-template="centered-card-tab">
+    <template #header>
+      <header-navigator
+        :title="navigationTitle"
+        subTitle="View designation agreement"
+        :routeLocation="routeLocation"
+      >
+        <template #buttons>
           <check-permission-role
             :role="Role.InstitutionApproveDeclineDesignation"
           >
@@ -31,20 +31,20 @@
               >
             </template>
           </check-permission-role>
-        </v-row>
-      </template>
-    </header-navigator>
-    <full-page-container class="mt-4">
-      <designation-agreement-form
-        :model="designationFormModel"
-        :view-only="true"
-      ></designation-agreement-form>
-    </full-page-container>
-    <approve-deny-designation
+        </template>
+      </header-navigator>
+    </template>
+
+    <designation-agreement-form
+      :model="designationFormModel"
+      :view-only="true"
+    ></designation-agreement-form>
+
+    <approve-deny-designation-modal
       ref="approveDenyDesignationModal"
       :designation="updateDesignationModel"
     />
-  </div>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -69,15 +69,15 @@ import {
   DesignationFormViewModes,
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import ApproveDenyDesignation from "@/views/aest/institution/ApproveDenyDesignation.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
+import ApproveDenyDesignationModal from "@/components/aest/institution/modals/ApproveDenyDesignationModal.vue";
 
 export default {
   components: {
     DesignationAgreementForm,
-    ApproveDenyDesignation,
     CheckPermissionRole,
+    ApproveDenyDesignationModal,
   },
   props: {
     designationId: {
