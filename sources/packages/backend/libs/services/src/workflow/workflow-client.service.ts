@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ApplicationExceptionStatus, ProgramInfoStatus } from "@sims/sims-db";
-import { CreateProcessInstanceResponse, Duration, ZBClient } from "zeebe-node";
+import { CreateProcessInstanceResponse, ZBClient } from "zeebe-node";
+import { ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE } from "../constants";
 import {
   APPLICATION_EXCEPTION_STATUS,
   PROGRAM_INFO_STATUS,
@@ -52,7 +53,7 @@ export class WorkflowClientService {
       await this.zeebeClient.publishMessage({
         name: "program-info-request-completed",
         correlationKey: applicationId.toString(),
-        timeToLive: Duration.seconds.of(30),
+        timeToLive: ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE,
         variables: {
           [PROGRAM_INFO_STATUS]: status,
         },
@@ -79,9 +80,9 @@ export class WorkflowClientService {
   ): Promise<void> {
     try {
       await this.zeebeClient.publishMessage({
-        name: "program-info-request-completed",
+        name: "income-verified",
         correlationKey: incomeVerificationId.toString(),
-        timeToLive: Duration.seconds.of(30),
+        timeToLive: ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE,
         variables: {},
       });
     } catch (error: unknown) {
@@ -127,7 +128,7 @@ export class WorkflowClientService {
       await this.zeebeClient.publishMessage({
         name: "supporting-user-info-received",
         correlationKey: supportingUserId.toString(),
-        timeToLive: Duration.seconds.of(30),
+        timeToLive: ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE,
         variables: {},
       });
     } catch (error: unknown) {
@@ -154,7 +155,7 @@ export class WorkflowClientService {
       await this.zeebeClient.publishMessage({
         name: "application-exception-verified",
         correlationKey: applicationExceptionId.toString(),
-        timeToLive: Duration.seconds.of(30),
+        timeToLive: ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE,
         variables: {
           [APPLICATION_EXCEPTION_STATUS]: status,
         },

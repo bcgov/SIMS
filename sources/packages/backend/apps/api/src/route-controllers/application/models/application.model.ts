@@ -1,4 +1,4 @@
-import { IsObject, IsOptional, IsPositive } from "class-validator";
+import { IsObject, IsOptional, IsPositive, Length } from "class-validator";
 import {
   ApplicationStatus,
   ProgramInfoStatus,
@@ -6,6 +6,7 @@ import {
   COEStatus,
   ApplicationData,
   OfferingIntensity,
+  APPLICATION_NUMBER_LENGTH,
 } from "@sims/sims-db";
 
 export class SaveApplicationDto {
@@ -109,4 +110,9 @@ export interface ApplicationWithProgramYearDto {
 export enum SuccessWaitingStatus {
   Success = "Success",
   Waiting = "Waiting",
+}
+
+export class ApplicationNumberParamAPIInDTO {
+  @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
+  applicationNumber: string;
 }

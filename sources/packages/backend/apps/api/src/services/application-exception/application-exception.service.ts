@@ -2,9 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Brackets, DataSource } from "typeorm";
 import {
   RecordDataModelService,
-  Application,
   ApplicationException,
-  ApplicationExceptionRequest,
   ApplicationExceptionStatus,
   Note,
   NoteType,
@@ -31,35 +29,6 @@ import {
 export class ApplicationExceptionService extends RecordDataModelService<ApplicationException> {
   constructor(private readonly dataSource: DataSource) {
     super(dataSource.getRepository(ApplicationException));
-  }
-
-  /**
-   * Creates student application exceptions to be assessed by the Ministry.
-   * Exceptions are detected during full-time/part-time application submissions
-   * and are usually related to documents uploaded that must be reviewed.
-   * @param applicationId application that contains the exceptions.
-   * @param exceptionNames unique identifier names for the exceptions.
-   * @param auditUserId user that should be considered the one that is
-   * causing the changes.
-   * @returns created exception.
-   * @deprecated moved to the workers.
-   * TODO: to be removed, only workers will create exceptions.
-   */
-  async createException(
-    applicationId: number,
-    exceptionNames: string[],
-    auditUserId: number,
-  ): Promise<ApplicationException> {
-    const creator = { id: auditUserId } as User;
-    const newException = new ApplicationException();
-    newException.application = { id: applicationId } as Application;
-    newException.creator = creator;
-    newException.exceptionStatus = ApplicationExceptionStatus.Pending;
-    newException.exceptionRequests = exceptionNames.map(
-      (exceptionName) =>
-        ({ exceptionName, creator } as ApplicationExceptionRequest),
-    );
-    return this.repo.save(newException);
   }
 
   /**

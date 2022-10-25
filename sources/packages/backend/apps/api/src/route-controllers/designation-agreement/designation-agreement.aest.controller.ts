@@ -8,6 +8,8 @@ import {
   Query,
   BadRequestException,
   UnprocessableEntityException,
+  ParseIntPipe,
+  ParseEnumPipe,
 } from "@nestjs/common";
 import {
   DesignationAgreementService,
@@ -59,7 +61,7 @@ export class DesignationAgreementAESTController extends BaseController {
    */
   @Get(":designationId")
   async getDesignationAgreement(
-    @Param("designationId") designationId: number,
+    @Param("designationId", ParseIntPipe) designationId: number,
   ): Promise<GetDesignationAgreementDto> {
     return this.designationAgreementControllerService.getDesignationAgreement(
       designationId,
@@ -75,7 +77,7 @@ export class DesignationAgreementAESTController extends BaseController {
    */
   @Get("institution/:institutionId")
   async getDesignationAgreements(
-    @Param("institutionId") institutionId: number,
+    @Param("institutionId", ParseIntPipe) institutionId: number,
   ): Promise<GetDesignationAgreementsDto[]> {
     return this.designationAgreementControllerService.getDesignationAgreements(
       institutionId,
@@ -90,14 +92,10 @@ export class DesignationAgreementAESTController extends BaseController {
    */
   @Get("status/:designationStatus")
   async getDesignationAgreementByStatus(
-    @Param("designationStatus") designationStatus: DesignationAgreementStatus,
+    @Param("designationStatus", new ParseEnumPipe(DesignationAgreementStatus))
+    designationStatus: DesignationAgreementStatus,
     @Query(PaginationParams.SearchCriteria) searchCriteria: string,
   ): Promise<PendingDesignationDto[]> {
-    if (
-      !Object.values(DesignationAgreementStatus).includes(designationStatus)
-    ) {
-      throw new NotFoundException("Invalid designation agreement status.");
-    }
     const pendingDesignations =
       await this.designationAgreementService.getDesignationAgreementsByStatus(
         designationStatus,
@@ -125,7 +123,7 @@ export class DesignationAgreementAESTController extends BaseController {
   @Roles(Role.InstitutionApproveDeclineDesignation)
   @Patch(":designationId")
   async updateDesignationAgreement(
-    @Param("designationId") designationId: number,
+    @Param("designationId", ParseIntPipe) designationId: number,
     @Body() payload: UpdateDesignationDto,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {

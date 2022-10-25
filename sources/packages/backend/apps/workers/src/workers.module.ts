@@ -16,9 +16,14 @@ import {
   CRAIncomeVerificationService,
   DisbursementScheduleService,
   MSFAANumberService,
+  ConfigService,
 } from "./services";
 import { ZeebeTransportStrategy } from "./zeebe";
-import { SequenceControlService, ZeebeModule } from "@sims/services";
+import {
+  SequenceControlService,
+  WorkflowClientService,
+  ZeebeModule,
+} from "@sims/services";
 
 @Module({
   imports: [DatabaseModule, ZeebeModule.forRoot()],
@@ -31,7 +36,9 @@ import { SequenceControlService, ZeebeModule } from "@sims/services";
     DisbursementController,
   ],
   providers: [
+    ConfigService,
     ZeebeTransportStrategy,
+    WorkflowClientService,
     StudentAssessmentService,
     ApplicationService,
     ApplicationExceptionService,

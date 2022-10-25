@@ -35,6 +35,7 @@ import {
   ASSESSMENT_ID,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { CustomNamedError } from "@sims/utilities";
+import { MaxJobsToActivate } from "../../types";
 
 @Controller()
 export class AssessmentController {
@@ -47,6 +48,7 @@ export class AssessmentController {
    */
   @ZeebeWorker("associate-workflow-instance", {
     fetchVariable: [ASSESSMENT_ID],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
   })
   async associateWorkflowInstance(
     job: Readonly<
@@ -90,7 +92,8 @@ export class AssessmentController {
    * @returns filtered consolidated information.
    */
   @ZeebeWorker("load-assessment-consolidated-data", {
-    fetchVariable: [ASSESSMENT_ID, "associateWorkflowInstanceId"],
+    fetchVariable: [ASSESSMENT_ID],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
   })
   async loadAssessmentConsolidatedData(
     job: Readonly<
@@ -116,6 +119,7 @@ export class AssessmentController {
    */
   @ZeebeWorker("save-assessment-data", {
     fetchVariable: [ASSESSMENT_ID, ASSESSMENT_DATA],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
   })
   async saveAssessmentData(
     job: Readonly<
@@ -134,6 +138,7 @@ export class AssessmentController {
    */
   @ZeebeWorker("update-noa-status", {
     fetchVariable: [ASSESSMENT_ID],
+    maxJobsToActivate: MaxJobsToActivate.Maximum,
   })
   async updateNOAStatus(
     job: Readonly<

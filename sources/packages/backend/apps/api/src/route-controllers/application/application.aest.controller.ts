@@ -1,4 +1,10 @@
-import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+} from "@nestjs/common";
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
 import { GetApplicationBaseDTO } from "./models/application.model";
@@ -31,7 +37,7 @@ export class ApplicationAESTController extends BaseController {
   @ApiOkResponse({ description: "Application details fetched." })
   @ApiNotFoundResponse({ description: "Application not found." })
   async getApplication(
-    @Param("applicationId") applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<GetApplicationBaseDTO> {
     const application = await this.applicationService.getApplicationByIdAndUser(
       applicationId,

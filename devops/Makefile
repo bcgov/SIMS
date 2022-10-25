@@ -390,7 +390,6 @@ deploy-api:
 		-p FORMS_FLOW_API_URL=$(FORMS_FLOW_API_URL) \
 		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
-		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
 		-p BYPASS_APPLICATION_SUBMIT_VALIDATIONS=$(BYPASS_APPLICATION_SUBMIT_VALIDATIONS) \
 		-p SWAGGER_ENABLED=$(SWAGGER_ENABLED) \
 		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
@@ -406,6 +405,7 @@ deploy-workers:
 	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(DATABASE_NAME_KEY)"
 	test -n "$(WORKERS)"
+	test -n "$(BYPASS_CRA_INCOME_VERIFICATION)"
 	@echo "+\n++ Deploying Workers with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \
 		-p NAME=$(WORKERS) \
@@ -414,6 +414,7 @@ deploy-workers:
 		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_TAG)" \
 		-p BUILD_TAG=$(BUILD_TAG) \
 		-p DATABASE_NAME_KEY=$(DATABASE_NAME_KEY) \
+		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WORKERS))
 
@@ -649,16 +650,3 @@ db-backup-deploy-delete-mongodb:
 # The below PVCs are not deleted.
 # pvc/$(BACKUP_MONGODB_APP_NAME)-pvc
 # pvc/$(BACKUP_MONGODB_APP_NAME)-verification-pvc
-
-deploy-forms:
-	test -n "$(FORMS_URL_DEPLOY)"
-	docker build \
-	--build-arg FORMS_URL=$(FORMS_URL_DEPLOY) \
-	--build-arg FORMS_SA_USER_NAME=$(FORMS_SA_USER_NAME_DEPLOY) \
-	--build-arg FORMS_SA_PASSWORD=$(FORMS_SA_PASSWORD_DEPLOY) \
-	-t form-deployment ../sources/packages/forms \
-	&& docker run -it form-deployment
-
-deploy-camunda-definitions:
-	cd ../sources/packages/workflow \
-	&& npm run deploy

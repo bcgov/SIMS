@@ -37,6 +37,5 @@ jobs:
         working-directory: "./sources/packages/workflow"
         run: npm ci
       - name: Executing deployment
-        working-directory: "./devops/"
-        run: |
-          make deploy-camunda-definitions
+        working-directory: "./sources/packages/workflow"
+        run: npm run deploy
