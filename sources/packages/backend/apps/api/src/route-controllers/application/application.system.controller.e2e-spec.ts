@@ -16,8 +16,6 @@ import {
   StudentRestrictionService,
   SupportingUserService,
   TokensService,
-  WorkflowActionsService,
-  WorkflowService,
 } from "../../services";
 import { SequenceControlService } from "@sims/services";
 import { createFakeApplication } from "../../testHelpers/fake-entities/application-fake";
@@ -68,8 +66,6 @@ describe.skip("Test system-access/application Controller", () => {
         StudentFileService,
         EducationProgramOfferingService,
         SequenceControlService,
-        WorkflowActionsService,
-        WorkflowService,
         KeycloakService,
         ConfigService,
         TokensService,

@@ -34,10 +34,11 @@ export class InstitutionUserApi extends HttpBaseClient {
     paginationOptions: PaginationOptions,
     institutionId?: number,
   ): Promise<PaginatedResults<InstitutionUserAPIOutDTO>> {
-    let url = "institution-user?";
-    if (AuthService.shared.authClientType === ClientIdType.AEST) {
-      url += `institutionId=${institutionId}&`;
-    }
+    let url = `institution-user${
+      AuthService.shared.authClientType === ClientIdType.AEST
+        ? `/institution/${institutionId}`
+        : ""
+    }?`;
     url += getPaginationQueryString(paginationOptions);
     return this.getCallTyped<PaginatedResults<InstitutionUserAPIOutDTO>>(
       this.addClientRoot(url),

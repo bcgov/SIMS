@@ -44,6 +44,7 @@ import {
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
+  UniqueFileNameParamAPIInDTO,
   UpdateStudentAPIInDTO,
 } from "./models/student.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
@@ -199,12 +200,12 @@ export class StudentStudentsController extends BaseController {
   })
   async getUploadedFile(
     @UserToken() studentUserToken: StudentUserToken,
-    @Param("uniqueFileName") uniqueFileName: string,
+    @Param() uniqueFileNameParam: UniqueFileNameParamAPIInDTO,
     @Res() response: Response,
   ): Promise<void> {
     await this.studentControllerService.writeFileToResponse(
       response,
-      uniqueFileName,
+      uniqueFileNameParam.uniqueFileName,
       studentUserToken.studentId,
     );
   }
@@ -247,7 +248,6 @@ export class StudentStudentsController extends BaseController {
    * during form submission, the temporary files
    * (saved during the upload) are update to its proper
    * group,file_origin and add the metadata (if available).
-   * @param userToken authentication token.
    * @Body list of files to be be saved.
    */
   @Patch("save-uploaded-files")

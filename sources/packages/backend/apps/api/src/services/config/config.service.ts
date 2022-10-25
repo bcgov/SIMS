@@ -5,8 +5,6 @@ import { IConfig } from "../../types/config";
 export class ConfigService {
   getConfig(): IConfig {
     return {
-      bypassCRAIncomeVerification:
-        process.env.BYPASS_CRA_INCOME_VERIFICATION === "true",
       auth: {
         url: process.env.KEYCLOAK_AUTH_URL,
         realm: process.env.KEYCLOAK_REALM,

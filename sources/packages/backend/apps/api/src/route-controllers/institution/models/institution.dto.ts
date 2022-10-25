@@ -3,17 +3,22 @@ import {
   IsNotEmpty,
   IsOptional,
   IsPositive,
+  MaxLength,
+  ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { OmitType } from "@nestjs/mapped-types";
 import { Type } from "class-transformer";
-
 import { DesignationStatus } from "../../../route-controllers/institution-locations/models/institution-location.dto";
 import {
   AddressDetailsAPIInDTO,
   AddressAPIOutDTO,
   AddressDetailsAPIOutDTO,
 } from "../../models/common.dto";
+import {
+  OPERATING_NAME_MAX_LENGTH,
+  LEGAL_OPERATING_NAME_MAX_LENGTH,
+} from "@sims/sims-db";
 
 /**
  * DTO for institution creation by the institution user during the on board process
@@ -140,4 +145,21 @@ export class SearchInstitutionAPIOutDTO {
   legalName: string;
   operatingName: string;
   address: AddressAPIOutDTO;
+}
+
+export class SearchInstitutionQueryAPIInDTO {
+  @ValidateIf(
+    (input: SearchInstitutionQueryAPIInDTO) =>
+      !!(input.legalName || !input.operatingName),
+  )
+  @IsNotEmpty()
+  @MaxLength(LEGAL_OPERATING_NAME_MAX_LENGTH)
+  legalName?: string;
+  @ValidateIf(
+    (input: SearchInstitutionQueryAPIInDTO) =>
+      !!(input.operatingName || !input.legalName),
+  )
+  @IsNotEmpty()
+  @MaxLength(OPERATING_NAME_MAX_LENGTH)
+  operatingName?: string;
 }
