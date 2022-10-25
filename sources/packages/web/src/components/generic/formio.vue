@@ -150,7 +150,6 @@ export default {
       () => {
         updateFormSubmissionData();
       },
-      { deep: true },
     );
 
     watch(

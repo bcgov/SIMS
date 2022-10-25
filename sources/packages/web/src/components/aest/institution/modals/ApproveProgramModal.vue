@@ -3,7 +3,7 @@
     <modal-dialog-base
       title="Approve program"
       :showDialog="showDialog"
-      max-width="730"
+      :max-width="730"
     >
       <template #content>
         <error-summary :errors="approveProgramForm.errors" />

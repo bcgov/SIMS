@@ -4,7 +4,7 @@
     @dialogClosed="dialogClosed"
     :title="title"
     :subTitle="subTitle"
-    maxWidth="730"
+    :maxWidth="730"
   >
     <template v-slot:content>
       <div v-if="showWarning">
