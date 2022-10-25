@@ -6,6 +6,11 @@ on:
       environment:
         required: true
         type: environment
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: environment
 
 jobs:
   deploy:
