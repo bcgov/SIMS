@@ -12,6 +12,28 @@ export interface FormIOForm<T = any> {
   ) => boolean;
   submit: () => any;
   submission: unknown;
+  options: FormIOFormOptions;
+  on: (
+    event: string,
+    callback: (page: WizardNavigationEvent) => void,
+  ) => unknown;
+  isLastPage: () => boolean;
+  prevPage: () => WizardNavigationEvent;
+  nextPage: () => WizardNavigationEvent;
+}
+
+/**
+ * Options object type.
+ */
+export interface FormIOFormOptions {
+  buttonSettings: FormIOFormOptionsButtonSettings;
+}
+
+/**
+ * ButtonSettings object type.
+ */
+export interface FormIOFormOptionsButtonSettings {
+  showSubmit: boolean;
 }
 
 /**

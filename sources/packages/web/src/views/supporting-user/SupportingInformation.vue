@@ -1,15 +1,14 @@
 <template>
   <full-page-container>
+    <body-header
+      title="Search for application"
+      subTitle="To provide your supporting information, please search for the application
+      by entering the requested information below. All fields are mandatory and
+      must match exactly with the information provided on the student
+      application."
+    >
+    </body-header>
     <content-group class="mb-4">
-      <p class="category-header-medium primary-color">
-        Student Application Information
-      </p>
-      <p>
-        Please enter below the information to search for the application that
-        you will be providing supporting information. All the fields are
-        mandatory and must macth exactly the information provided on the student
-        application.
-      </p>
       <v-row>
         <v-col>
           <v-text-field
@@ -56,31 +55,71 @@
       :data="initialData"
       :readOnly="submitting"
       @submitted="submitted"
+      @loaded="formLoaded"
     ></formio>
+    <v-row v-if="showNav">
+      <v-col>
+        <v-btn
+          color="primary"
+          v-show="!isFirstPage"
+          variant="outlined"
+          data-cy="previousSection"
+          @click="wizardGoPrevious"
+          >Previous step</v-btn
+        >
+      </v-col>
+      <v-col>
+        <v-btn
+          class="float-right"
+          color="primary"
+          v-show="!isLastPage"
+          @click="wizardGoNext"
+          >Next step</v-btn
+        >
+        <v-btn
+          class="float-right"
+          :disabled="!isLastPage || submitting"
+          v-show="!isFirstPage"
+          color="primary"
+          @click="wizardSubmit()"
+          :loading="submitting"
+        >
+          {{ submitting ? "Submitting..." : "Submit form" }}
+        </v-btn>
+      </v-col>
+    </v-row>
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { useAuthBCSC, useFormatters, useSnackBar } from "@/composables";
+import {
+  useAuthBCSC,
+  useFormatters,
+  useSnackBar,
+  useFormioUtils,
+} from "@/composables";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
-import { ref } from "vue";
+import { PropType, ref, defineComponent } from "vue";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
+  WizardNavigationEvent,
+  SupportingUserType,
+  FormIOForm,
 } from "@/types";
 
-export default {
+export default defineComponent({
   props: {
     supportingUserType: {
-      type: String,
+      type: String as PropType<SupportingUserType>,
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
@@ -91,6 +130,30 @@ export default {
     const studentsLastName = ref("");
     const studentsDateOfBirth = ref();
     const initialData = ref();
+    const formioUtils = useFormioUtils();
+    const isFirstPage = ref(true);
+    const isLastPage = ref(false);
+    const showNav = ref(false);
+    let formInstance: FormIOForm;
+
+    const wizardSubmit = () => {
+      formInstance.submit();
+    };
+
+    const formLoaded = async (form: FormIOForm) => {
+      showNav.value = true;
+      formInstance = form;
+      // Disable internal submit button.
+      formioUtils.disableWizardButtons(formInstance);
+      formInstance.options.buttonSettings.showSubmit = false;
+      // Handle the navigation using next/prev buttons.
+      const prevNextNavigation = (navigation: WizardNavigationEvent) => {
+        isFirstPage.value = navigation.page === 0;
+        isLastPage.value = formInstance.isLastPage();
+      };
+      formInstance.on("prevPage", prevNextNavigation);
+      formInstance.on("nextPage", prevNextNavigation);
+    };
 
     const setInitialData = (programYearStartDate: Date) => {
       initialData.value = {
@@ -205,6 +268,14 @@ export default {
       }
     };
 
+    const wizardGoPrevious = () => {
+      formInstance.prevPage();
+    };
+
+    const wizardGoNext = () => {
+      formInstance.nextPage();
+    };
+
     return {
       formName,
       initialData,
@@ -214,7 +285,14 @@ export default {
       studentsDateOfBirth,
       studentsLastName,
       applicationSearch,
+      wizardGoNext,
+      wizardGoPrevious,
+      wizardSubmit,
+      formLoaded,
+      isFirstPage,
+      isLastPage,
+      showNav,
     };
   },
-};
+});
 </script>
