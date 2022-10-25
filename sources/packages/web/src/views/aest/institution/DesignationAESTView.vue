@@ -35,12 +35,9 @@
       </template>
     </header-navigator>
     <full-page-container class="mt-4">
-      <!-- Form.io is not reactively binding the property readOnly. Hence loading the form only after API call is completed. -->
-      <!-- If the readOnly value change after DOM(form) is mounted, form does not respond to it.  -->
       <designation-agreement-form
-        v-if="modelLoaded"
         :model="designationFormModel"
-        :hide-footer="true"
+        :view-only="true"
       ></designation-agreement-form>
     </full-page-container>
     <approve-deny-designation
@@ -51,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, reactive, ref, computed } from "vue";
+import { onMounted, ref, computed } from "vue";
 import {
   useFormatters,
   useDesignationAgreement,
@@ -96,17 +93,21 @@ export default {
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
     const designationAgreement = ref({} as GetDesignationAgreementDto);
-    const designationFormModel = reactive({} as DesignationModel);
+    const designationFormModel = ref({} as DesignationModel);
     const snackBar = useSnackBar();
+
     const showActionButtons = computed(
       () =>
-        designationFormModel.designationStatus !==
+        designationFormModel.value.designationStatus !==
         DesignationAgreementStatus.Declined,
     );
+
     const approveDenyDesignationModal = ref(
       {} as ModalDialog<UpdateDesignationDto | boolean>,
     );
+
     const updateDesignationModel = ref({} as UpdateDesignationDto);
+
     const routeLocation = computed(() =>
       props.institutionId
         ? {
@@ -115,45 +116,39 @@ export default {
           }
         : { name: AESTRoutesConst.PENDING_DESIGNATIONS },
     );
+
     const navigationTitle = computed(() =>
       props.institutionId ? "Manage designations" : "Pending designations",
     );
-    const modelLoaded = ref(false);
 
     const loadDesignation = async () => {
       designationAgreement.value =
         await DesignationAgreementService.shared.getDesignationAgreement(
           props.designationId,
         );
-
-      designationFormModel.institutionName =
-        designationAgreement.value.institutionName;
-      designationFormModel.institutionType =
-        designationAgreement.value.institutionType;
-      designationFormModel.isBCPrivate = designationAgreement.value.isBCPrivate;
-      designationFormModel.viewMode = DesignationFormViewModes.viewOnly;
-      designationFormModel.designationStatus =
-        designationAgreement.value.designationStatus;
-      designationFormModel.designationStatusClass = mapDesignationChipStatus(
-        designationAgreement.value.designationStatus,
-      );
-      designationFormModel.dynamicData =
-        designationAgreement.value.submittedData;
-      designationFormModel.locations =
-        designationAgreement.value.locationsDesignations.map((location) => ({
-          locationId: location.locationId,
-          locationName: location.locationName,
-          requestForDesignation: location.requested,
-          approvedForDesignation: location.approved,
-          locationAddress: formatter.getFormattedAddress(
-            location.locationData.address,
-          ),
-        }));
-      modelLoaded.value = true;
+      designationFormModel.value = {
+        ...designationAgreement.value,
+        viewMode: DesignationFormViewModes.viewOnly,
+        designationStatusClass: mapDesignationChipStatus(
+          designationAgreement.value.designationStatus,
+        ),
+        dynamicData: designationAgreement.value.submittedData,
+        locations: designationAgreement.value.locationsDesignations.map(
+          (location) => ({
+            locationId: location.locationId,
+            locationName: location.locationName,
+            requestForDesignation: location.requested,
+            approvedForDesignation: location.approved,
+            locationAddress: formatter.getFormattedAddress(
+              location.locationData.address,
+            ),
+          }),
+        ),
+      };
+      designationFormModel.value.viewMode = DesignationFormViewModes.viewOnly;
     };
-    onMounted(async () => {
-      await loadDesignation();
-    });
+
+    onMounted(loadDesignation);
 
     const updateDesignation = async (
       designationStatus: DesignationAgreementStatus,
@@ -226,7 +221,6 @@ export default {
       DesignationAgreementStatus,
       updateDesignation,
       showActionButtons,
-      modelLoaded,
       Role,
     };
   },

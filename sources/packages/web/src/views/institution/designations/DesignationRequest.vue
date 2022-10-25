@@ -11,12 +11,13 @@
       :model="designationModel"
       @submitDesignation="submitDesignation"
       @cancel="goBack"
+      :processing="processing"
     ></designation-agreement-form>
   </full-page-container>
 </template>
 
 <script lang="ts">
-import { onMounted, reactive } from "vue";
+import { onMounted, ref } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
   useFormatters,
@@ -39,6 +40,7 @@ import { FormIOForm } from "@/types";
 export default {
   components: { DesignationAgreementForm },
   setup() {
+    const processing = ref(false);
     const router = useRouter();
     const goBackRouteParams = {
       name: InstitutionRoutesConst.MANAGE_DESIGNATION,
@@ -49,26 +51,13 @@ export default {
     const { institutionState } = useInstitutionState();
     const { userFullName, userEmail, isLegalSigningAuthority } =
       useInstitutionAuth();
-
-    const designationModel = reactive({} as DesignationModel);
-    designationModel.institutionName =
-      institutionState.value.legalOperatingName;
-    designationModel.institutionType = institutionState.value.institutionType;
-    designationModel.isBCPrivate = institutionState.value.isBCPrivate;
-    designationModel.viewMode = DesignationFormViewModes.submission;
-    if (isLegalSigningAuthority) {
-      // Only populates the signing officer data
-      // if the current user is has the proper role.
-      designationModel.dynamicData = {
-        legalAuthorityName: userFullName.value,
-        legalAuthorityEmailAddress: userEmail.value,
-      };
-    }
+    const designationModel = ref({} as DesignationModel);
 
     onMounted(async () => {
       const locations =
         await InstitutionService.shared.getAllInstitutionLocations();
-      designationModel.locations = locations.map(
+
+      const designationModelLocations = locations.map(
         (location) =>
           ({
             locationId: location.id,
@@ -79,6 +68,23 @@ export default {
             requestForDesignation: false,
           } as DesignationLocationsListItem),
       );
+
+      designationModel.value = {
+        institutionName: institutionState.value.legalOperatingName,
+        institutionType: institutionState.value.institutionType,
+        isBCPrivate: institutionState.value.isBCPrivate,
+        viewMode: DesignationFormViewModes.submission,
+        locations: designationModelLocations,
+      };
+
+      if (isLegalSigningAuthority) {
+        // Only populates the signing officer data
+        // if the current user is has the proper role.
+        designationModel.value.dynamicData = {
+          legalAuthorityName: userFullName.value,
+          legalAuthorityEmailAddress: userEmail.value,
+        };
+      }
     });
 
     const goBack = () => {
@@ -87,6 +93,7 @@ export default {
 
     const submitDesignation = async (form: FormIOForm<DesignationModel>) => {
       try {
+        processing.value = true;
         await DesignationAgreementService.shared.submitDesignationAgreement({
           dynamicData: form.data.dynamicData,
           locations: form.data.locations.map(
@@ -102,6 +109,8 @@ export default {
         snackBar.error(
           "An unexpected error happened during the designation agreement submission.",
         );
+      } finally {
+        processing.value = false;
       }
     };
 
@@ -111,6 +120,7 @@ export default {
       InstitutionRoutesConst,
       goBackRouteParams,
       goBack,
+      processing,
     };
   },
 };

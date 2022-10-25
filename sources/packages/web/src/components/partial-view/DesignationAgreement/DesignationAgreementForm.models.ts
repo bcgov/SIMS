@@ -35,7 +35,7 @@ export interface DesignationModel {
   // is declared below. The declared data is part of the
   // dynamic but it need be provided to the form when the
   // form is in submission mode.
-  dynamicData: {
+  dynamicData?: {
     legalAuthorityName: string;
     legalAuthorityEmailAddress: string;
   };
@@ -43,6 +43,6 @@ export interface DesignationModel {
   // Non BC Privates will have less information
   // displayed on the form.
   isBCPrivate: boolean;
-  designationStatus: DesignationAgreementStatus;
-  designationStatusClass: string;
+  designationStatus?: DesignationAgreementStatus;
+  designationStatusClass?: string;
 }
