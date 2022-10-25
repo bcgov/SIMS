@@ -64,7 +64,7 @@
       </DataTable>
     </content-group>
     <formio-modal-dialog
-      max-width="730"
+      :max-width="730"
       ref="fileUploadModal"
       title="Upload file"
       :formData="initialData"

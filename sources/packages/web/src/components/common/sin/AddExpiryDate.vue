@@ -18,6 +18,7 @@
           label="Expiry date"
           class="mt-2"
           placeholder="yyyy-MM-dd"
+          type="date"
           v-model="formModel.expiryDate"
           variant="outlined"
           :rules="[checkStringDateFormatRule]" />

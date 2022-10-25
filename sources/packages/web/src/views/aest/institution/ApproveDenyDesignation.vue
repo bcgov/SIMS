@@ -4,7 +4,7 @@
       <template #content>
         <error-summary :errors="approveDenyDesignation.errors" />
         <span class="label-value">{{ subTitle }} </span>
-        <content-group class="my-3">
+        <content-group class="my-3" v-if="showApprovalContent">
           <span class="label-bold color-blue">Effective dates</span>
           <v-row
             ><v-col
@@ -47,8 +47,15 @@
                       hide-details="auto" /></v-col
                 ></v-row>
               </v-list-item-title>
-            </v-list-item> </template
-        ></content-group>
+            </v-list-item> </template></content-group
+        ><v-textarea
+          class="mt-4"
+          label="Notes"
+          placeholder="Long text..."
+          v-model="formModel.note"
+          variant="outlined"
+          :rules="[checkNotesLengthRule]"
+        />
       </template>
       <template #footer>
         <check-permission-role
@@ -102,13 +109,13 @@ export default {
       if (
         designation.designationStatus === DesignationAgreementStatus.Approved
       ) {
-        title.value = "Approve for reassessment";
+        title.value = "Approve designation";
         subTitle.value =
           "Outline the reasoning for accepting this designation. The notes will be added to the institution profile.";
         submitLabel.value = "Approve designation now";
         showApprovalContent.value = true;
       } else {
-        title.value = "Decline for reassessment";
+        title.value = "Decline designation";
         subTitle.value =
           "Outline the reasoning for declining this designation. The notes will be added to the institution profile.";
         submitLabel.value = "Decline designation now";

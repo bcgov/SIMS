@@ -3,7 +3,7 @@
     <modal-dialog-base
       title="Create new note"
       :showDialog="showDialog"
-      max-width="730"
+      :max-width="730"
     >
       <template #content>
         <error-summary :errors="addNewNoteForm.errors" />
