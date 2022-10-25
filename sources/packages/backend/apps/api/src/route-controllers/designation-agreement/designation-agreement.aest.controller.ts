@@ -151,15 +151,6 @@ export class DesignationAgreementAESTController extends BaseController {
         );
       }
     }
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.ApproveDenyDesignations,
-      payload,
-    );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to update designation agreement due to an invalid request.",
-      );
-    }
     await this.designationAgreementService.updateDesignation(
       designationId,
       designation.institution.id,
