@@ -58,8 +58,8 @@ export class SFASPartTimeApplicationsService
     sin: string,
     birthDate: Date,
     lastName: string,
-    studyStartDate: Date,
-    studyEndDate: Date,
+    studyStartDate: string,
+    studyEndDate: string,
   ): Promise<SFASPartTimeApplications> {
     return this.repo
       .createQueryBuilder("sfasPTApplication")

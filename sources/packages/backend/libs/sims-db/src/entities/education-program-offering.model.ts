@@ -12,7 +12,6 @@ import { EducationProgram } from "./education-program.model";
 import { InstitutionLocation } from "./institution-location.model";
 import { OfferingTypes, User, OfferingStatus, Note } from ".";
 import { OfferingIntensity } from "./offering-intensity.type";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * Max value the offering name can have. By DB definition it is defined as
@@ -46,9 +45,8 @@ export class EducationProgramOffering extends RecordDataModel {
     name: "study_start_date",
     type: "date",
     nullable: true,
-    transformer: dateOnlyTransformer,
   })
-  studyStartDate: Date;
+  studyStartDate: string;
   /**
    * Offering Study end date
    */
@@ -56,9 +54,8 @@ export class EducationProgramOffering extends RecordDataModel {
     name: "study_end_date",
     type: "date",
     nullable: true,
-    transformer: dateOnlyTransformer,
   })
-  studyEndDate: Date;
+  studyEndDate: string;
   /**
    * Offering Actual Tuition Costs
    */

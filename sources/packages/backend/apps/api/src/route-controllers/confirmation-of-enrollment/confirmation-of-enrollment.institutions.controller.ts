@@ -29,7 +29,6 @@ import {
   COE_WINDOW,
   getCOEDeniedReason,
   COE_DENIED_REASON_OTHER_ID,
-  getExtendedDateFormat,
   getISODateOnlyString,
   getTotalDisbursementAmount,
   credentialTypeToDisplay,
@@ -183,7 +182,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       applicationCOEStatus: disbursementSchedule.coeStatus,
       applicationId: disbursementSchedule.studentAssessment.application.id,
       applicationWithinCOEWindow: this.applicationService.withinValidCOEWindow(
-        disbursementSchedule.disbursementDate,
+        new Date(disbursementSchedule.disbursementDate),
       ),
       applicationLocationId: offering.institutionLocation.id,
       applicationDeniedReason: getCOEDeniedReason(disbursementSchedule),
@@ -193,9 +192,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       })),
       applicationPIRStatus:
         disbursementSchedule.studentAssessment.application.pirStatus,
-      disbursementDate: getExtendedDateFormat(
-        disbursementSchedule.disbursementDate,
-      ),
+      disbursementDate: disbursementSchedule.disbursementDate,
       applicationProgramCredential: credentialTypeToDisplay(
         offering.educationProgram.credentialType,
       ),
@@ -247,7 +244,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
 
     if (
       !this.applicationService.withinValidCOEWindow(
-        disbursementSchedule.disbursementDate,
+        new Date(disbursementSchedule.disbursementDate),
       )
     ) {
       throw new UnprocessableEntityException(

@@ -62,8 +62,8 @@ export class SFASApplicationService
     sin: string,
     birthDate: Date,
     lastName: string,
-    studyStartDate: Date,
-    studyEndDate: Date,
+    studyStartDate: string,
+    studyEndDate: string,
   ): Promise<SFASApplication> {
     return this.repo
       .createQueryBuilder("sfasApplication")

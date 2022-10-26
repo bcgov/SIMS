@@ -14,8 +14,8 @@ export interface GetDesignationAgreementDto {
   designationId: number;
   designationStatus: DesignationAgreementStatus;
   locationsDesignations: LocationsDesignationsDto[];
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   submittedData: any;
   institutionId: number;
   institutionName: string;
@@ -36,8 +36,8 @@ export interface GetDesignationAgreementsDto {
   designationId: number;
   designationStatus: DesignationAgreementStatus;
   submittedDate: Date;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface PendingDesignationDto extends GetDesignationAgreementsDto {
@@ -78,8 +78,8 @@ export interface UpdateDesignationLocationDto {
  */
 export interface UpdateDesignationDto {
   designationStatus: DesignationAgreementStatus;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: string;
+  endDate?: string;
   locationsDesignations?: UpdateDesignationLocationDto[];
   note: string;
 }

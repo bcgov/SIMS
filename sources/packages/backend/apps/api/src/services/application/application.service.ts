@@ -1145,8 +1145,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   async validatePIRAndDateOverlap(
     userId: number,
-    studyStartDate: Date,
-    studyEndDate: Date,
+    studyStartDate: string,
+    studyEndDate: string,
     currentApplicationId: number,
   ): Promise<Application> {
     return this.repo
@@ -1172,11 +1172,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
           qb.where("offering.id is NULL")
             .orWhere(
               "offering.studyStartDate BETWEEN :studyStartDate AND :studyEndDate",
-              { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+              { studyStartDate, studyEndDate },
             )
             .orWhere(
               "offering.studyEndDate BETWEEN :studyStartDate AND :studyEndDate",
-              { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+              { studyStartDate, studyEndDate },
             )
             .orWhere(
               " :studyStartDate BETWEEN offering.studyStartDate AND offering.studyEndDate",
@@ -1256,8 +1256,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     userId: number,
     sin: string,
     birthDate: Date,
-    studyStartDate: Date,
-    studyEndDate: Date,
+    studyStartDate: string,
+    studyEndDate: string,
   ): Promise<void> {
     if (!this.config.bypassApplicationSubmitValidations) {
       const existingOverlapApplication = this.validatePIRAndDateOverlap(

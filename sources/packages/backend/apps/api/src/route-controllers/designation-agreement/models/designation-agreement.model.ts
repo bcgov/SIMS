@@ -26,8 +26,8 @@ export interface GetDesignationAgreementDto {
   designationStatus: DesignationAgreementStatus;
   locationsDesignations: LocationsDesignationsDto[];
   submittedData: any;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   institutionId: number;
   institutionName: string;
   institutionType: string;
@@ -65,8 +65,8 @@ export interface UpdateDesignationLocation {
  */
 export interface UpdateDesignationDto {
   designationStatus: DesignationAgreementStatus;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: string;
+  endDate?: string;
   locationsDesignations?: UpdateDesignationLocation[];
   note: string;
 }
@@ -76,8 +76,8 @@ export interface UpdateDesignationDto {
  */
 export interface UpdateDesignation {
   designationStatus: DesignationAgreementStatus;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: string;
+  endDate?: string;
   locationsDesignations?: UpdateDesignationLocation[];
   note: string;
 }

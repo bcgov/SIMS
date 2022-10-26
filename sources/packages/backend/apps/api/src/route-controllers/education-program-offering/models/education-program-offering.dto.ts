@@ -146,7 +146,7 @@ export class EducationProgramOfferingSummaryAPIOutDTO {
 }
 
 export class OfferingStartDateAPIOutDTO {
-  studyStartDate: Date;
+  studyStartDate: string;
 }
 
 /**

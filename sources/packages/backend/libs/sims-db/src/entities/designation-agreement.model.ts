@@ -14,7 +14,6 @@ import {
   User,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
@@ -86,10 +85,9 @@ export class DesignationAgreement extends RecordDataModel {
   @Column({
     name: "start_date",
     type: "date",
-    transformer: dateOnlyTransformer,
     nullable: true,
   })
-  startDate?: Date;
+  startDate?: string;
   /**
    * Date that the designation agreement stops to be considered active.
    * This date will be defined by the Ministry once the designation
@@ -98,10 +96,9 @@ export class DesignationAgreement extends RecordDataModel {
   @Column({
     name: "end_date",
     type: "date",
-    transformer: dateOnlyTransformer,
     nullable: true,
   })
-  endDate?: Date;
+  endDate?: string;
   /**
    * Ministry user that approved or declined the designation agreement.
    */
