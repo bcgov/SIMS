@@ -8,8 +8,8 @@ import {
   IsDate,
   IsEnum,
   IsNotEmpty,
-  IsOptional,
   MaxLength,
+  ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { UpdateDesignationLocation } from "./designation-agreement.model";
@@ -21,13 +21,22 @@ import { UpdateDesignationLocation } from "./designation-agreement.model";
 export class UpdateDesignationAPIInDto {
   @IsEnum(DesignationAgreementStatus)
   designationStatus: DesignationAgreementStatus;
-  @IsOptional()
+  @ValidateIf(
+    (value) => value.designationStatus === DesignationAgreementStatus.Approved,
+  )
+  @IsNotEmpty()
   @IsDate()
   startDate?: Date;
-  @IsOptional()
+  @ValidateIf(
+    (value) => value.designationStatus === DesignationAgreementStatus.Approved,
+  )
+  @IsNotEmpty()
   @IsDate()
   endDate?: Date;
-  @IsOptional()
+  @ValidateIf(
+    (value) => value.designationStatus === DesignationAgreementStatus.Approved,
+  )
+  @IsNotEmpty()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateDesignationLocation)

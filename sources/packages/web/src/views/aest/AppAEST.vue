@@ -79,7 +79,7 @@ export default {
   setup() {
     const { executeLogout } = useAuth();
     const { isAuthenticated } = useAuth();
-    const toggleNav = ref("toggle-nav");
+    const toggleNav = ref();
     const logoff = async () => {
       await executeLogout(ClientIdType.AEST);
     };

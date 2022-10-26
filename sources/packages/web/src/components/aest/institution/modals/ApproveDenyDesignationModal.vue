@@ -1,14 +1,9 @@
 <template>
   <v-form ref="approveDenyDesignation">
-    <modal-dialog-base
-      :showDialog="showDialog"
-      :title="title"
-      :max-width="730"
-      scrollable
-    >
+    <modal-dialog-base :showDialog="showDialog" :title="title" :max-width="730">
       <template #content>
         <error-summary :errors="approveDenyDesignation.errors" />
-        <span class="label-value">{{ subTitle }} </span>
+        <p class="label-value">{{ subTitle }}</p>
         <content-group class="my-3" v-if="showApprovalContent">
           <h4 class="label-bold color-blue">Effective dates</h4>
           <v-row
@@ -84,11 +79,11 @@ import {
 import { useModalDialog, useRules } from "@/composables";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role, VForm } from "@/types";
-import { ref, reactive } from "vue";
+import { ref, reactive, defineComponent } from "vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 
-export default {
+export default defineComponent({
   components: {
     ModalDialogBase,
     CheckPermissionRole,
@@ -172,5 +167,5 @@ export default {
       formModel,
     };
   },
-};
+});
 </script>
