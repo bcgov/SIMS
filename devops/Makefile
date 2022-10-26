@@ -230,10 +230,12 @@ build-patroni:
 	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH)  -p NAME=patroni -p TAG="12-latest" -p BASE_IMAGE_NAME=postgres -p BASE_IMAGE_TAG="12" -p SOURCE_REPOSITORY_URL="https://github.com/BCDevOps/platform-services.git" -p SOURCE_REPOSITORY_REF="master" -p SOURCE_CONTEXT_DIR="apps/pgsql/patroni/docker" | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/patroni --wait
 
-init-api:
-	@echo "++\n Init Api in $(NAMESPACE) \n++"
-	@oc -n $(NAMESPACE) process -f openshift/api-pre-req.yml \
-		-p NAME=api -p BCeID_WEB_SERVICE_ONLINE_SERVICE_ID=$(API_INIT_BCeID_WEB_SERVICE_ONLINE_SERVICE_ID) \
+init-secrets:
+	@echo "++\n Deploy SIMS Creds Secrets $(NAMESPACE) \n++"
+	@oc -n $(NAMESPACE) process -f openshift/init-secrets.yml \
+		-p NAME=sims-creds \
+		-p SECRET_NAME=$(API_INIT_SECRET_NAME) \
+		-p BCeID_WEB_SERVICE_ONLINE_SERVICE_ID=$(API_INIT_BCeID_WEB_SERVICE_ONLINE_SERVICE_ID) \
 		-p BCeID_WEB_SERVICE_REQUESTER_USER_GUID=$(API_INIT_BCeID_WEB_SERVICE_REQUESTER_USER_GUID) \
 		-p BCeID_WEB_SERVICE_AUTH_USER_NAME=$(API_INIT_BCeID_WEB_SERVICE_AUTH_USER_NAME) \
 		-p BCeID_WEB_SERVICE_AUTH_USER_PASSWORD=$(API_INIT_REQ_BCeID_WEB_SERVICE_AUTH_USER_PASSWORD) \
@@ -343,11 +345,13 @@ deploy-api:
 	test -n "$(ATBC_ENDPOINT)"
 	test -n "$(DATABASE_NAME_KEY)"
 	test -n "$(API)"
+	test -n "$(API_SECRET_NAME)"
 	test -n "$(SWAGGER_NAME)"
 	test -n "$(API_PORT)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
+		-p API_SECRET_NAME=$(API_SECRET_NAME) \
 		-p HOST_NAME=$(HOST) \
 		-p PORT=$(API_PORT) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
@@ -378,11 +382,13 @@ deploy-workers:
 	test -n "$(WORKERS_BUILD_REF)"
 	test -n "$(DB_SERVICE_NAME)"
 	test -n "$(DATABASE_NAME_KEY)"
+	test -n "$(WORKERS_SECRET_NAME)"
 	test -n "$(WORKERS)"
 	test -n "$(BYPASS_CRA_INCOME_VERIFICATION)"
 	@echo "+\n++ Deploying Workers with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \
 		-p NAME=$(WORKERS) \
+		-p WORKERS_SECRET_NAME=$(WORKERS_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p DB_SERVICE=$(DB_SERVICE_NAME) \
 		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_TAG)" \
