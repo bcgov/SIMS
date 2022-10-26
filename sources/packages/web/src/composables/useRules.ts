@@ -39,7 +39,7 @@ export function useRules() {
   };
 
   const checkOnlyDigitsRule = (value: string, fieldName: string) => {
-    if (value !== "" && !/^\d+$/.test(value)) {
+    if (!/^\d+$/.test(value)) {
       return `${fieldName} is invalid.`;
     }
     return true;
