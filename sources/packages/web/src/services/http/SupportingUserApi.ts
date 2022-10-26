@@ -13,21 +13,16 @@ export class SupportingUserApi extends HttpBaseClient {
     supportingUserType: SupportingUserType,
     payload: ApplicationIdentifierApiInDTO,
   ): Promise<ApplicationApiOutDTO> {
+    let response;
     try {
-      const response = await this.apiClient.post(
+      response = await this.postCall(
         this.addClientRoot(`supporting-user/${supportingUserType}/application`),
         payload,
-        this.addAuthHeader(),
       );
-      return response.data;
-    } catch (error) {
-      if (!error.response.data?.errorType) {
-        // If it is an not expected error,
-        // handle it the default way.
-        this.handleRequestError(error);
-      }
-      throw error;
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
     }
+    return response;
   }
 
   public async updateSupportingInformation(
