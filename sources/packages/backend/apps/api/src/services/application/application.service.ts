@@ -1255,7 +1255,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     lastName: string,
     userId: number,
     sin: string,
-    birthDate: Date,
+    birthDate: string,
     studyStartDate: string,
     studyEndDate: string,
   ): Promise<void> {

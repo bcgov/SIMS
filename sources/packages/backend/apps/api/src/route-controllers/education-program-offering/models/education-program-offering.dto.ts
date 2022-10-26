@@ -193,6 +193,7 @@ export class OfferingAssessmentAPIInDTO {
   @IsEnum(OfferingStatus)
   offeringStatus: OfferingStatus;
   @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   assessmentNotes: string;
 }
 

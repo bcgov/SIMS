@@ -60,8 +60,8 @@ export interface StudyBreaksAndWeeksInDTO {
 
 export interface EducationProgramOfferingAPIInDTO {
   offeringName: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
+  studyStartDate: string;
+  studyEndDate: string;
   actualTuitionCosts: number;
   programRelatedCosts: number;
   mandatoryFees: number;
@@ -136,7 +136,7 @@ export interface EducationProgramOfferingSummaryAPIOutDTO {
 }
 
 export interface OfferingStartDateAPIOutDTO {
-  studyStartDate: Date;
+  studyStartDate: string;
 }
 
 /**

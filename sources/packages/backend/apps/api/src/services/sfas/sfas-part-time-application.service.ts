@@ -56,7 +56,7 @@ export class SFASPartTimeApplicationsService
    */
   async validateDateOverlap(
     sin: string,
-    birthDate: Date,
+    birthDate: string,
     lastName: string,
     studyStartDate: string,
     studyEndDate: string,

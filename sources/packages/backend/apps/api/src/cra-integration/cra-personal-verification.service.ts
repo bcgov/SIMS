@@ -143,7 +143,7 @@ export class CRAPersonalVerificationService {
       sin: student.sinValidation.sin,
       surname: student.user.lastName,
       givenName: student.user.firstName,
-      birthDate: student.birthDate,
+      birthDate: new Date(student.birthDate),
       verificationId: student.sinValidation.id,
       freeProjectArea,
     } as CRAPersonRecord;

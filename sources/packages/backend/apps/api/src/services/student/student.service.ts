@@ -19,6 +19,7 @@ import {
   getUTCNow,
   removeWhiteSpaces,
   transformAddressDetails,
+  getISODateOnlyString,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -163,7 +164,7 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     student.user = user;
-    student.birthDate = new Date(userInfo.birthdate);
+    student.birthDate = getISODateOnlyString(new Date(userInfo.birthdate));
     student.gender = userInfo.gender;
     student.contactInfo = {
       address: transformAddressDetails(studentInfo),
@@ -399,7 +400,9 @@ export class StudentService extends RecordDataModelService<Student> {
       studentToken.givenNames !== studentToSync.user.firstName
     ) {
       const sinValidation = new SINValidation();
-      studentToSync.birthDate = new Date(studentToken.birthdate);
+      studentToSync.birthDate = getISODateOnlyString(
+        new Date(studentToken.birthdate),
+      );
       studentToSync.user.lastName = studentToken.lastName;
       studentToSync.user.firstName = studentToken.givenNames;
       sinValidation.student = studentToSync;

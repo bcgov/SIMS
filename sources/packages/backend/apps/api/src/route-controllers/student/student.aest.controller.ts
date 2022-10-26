@@ -379,7 +379,7 @@ export class StudentAESTController extends BaseController {
       await this.sinValidationService.updateSINValidation(
         sinValidationId,
         studentId,
-        new Date(payload.expiryDate),
+        payload.expiryDate,
         payload.noteDescription,
         userToken.userId,
       );

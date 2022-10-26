@@ -10,7 +10,6 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { ContactInfo, Note } from ".";
 import { SINValidation } from "./sin-validation.model";
 
@@ -29,9 +28,8 @@ export class Student extends RecordDataModel {
   @Column({
     name: "birth_date",
     type: "date",
-    transformer: dateOnlyTransformer,
   })
-  birthDate: Date;
+  birthDate: string;
 
   @Column({
     name: "pd_verified",

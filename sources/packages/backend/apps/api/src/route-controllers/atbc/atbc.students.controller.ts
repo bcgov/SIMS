@@ -65,7 +65,7 @@ export class ATBCStudentController extends BaseController {
       firstName: student.user.firstName,
       lastName: student.user.lastName,
       email: student.user.email,
-      birthDate: student.birthDate,
+      birthDate: new Date(student.birthDate),
     };
     // API to create student profile in ATBC.
     const response = await this.atbcService.ATBCCreateClient(payload);

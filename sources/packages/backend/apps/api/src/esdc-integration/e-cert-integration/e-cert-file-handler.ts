@@ -233,7 +233,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       yearOfStudy: offering.yearOfStudy,
       completionYears: offering.educationProgram.completionYears,
       enrollmentConfirmationDate: disbursement.coeUpdatedAt,
-      dateOfBirth: application.student.birthDate,
+      dateOfBirth: new Date(application.student.birthDate),
       lastName: application.student.user.lastName,
       firstName: application.student.user.firstName,
       addressLine1: addressInfo.addressLine1,

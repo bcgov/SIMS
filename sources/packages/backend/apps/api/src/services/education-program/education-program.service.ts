@@ -492,7 +492,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param userId user who is making the changes.
    */
   async approveEducationProgram(
-    effectiveEndDate: Date,
+    effectiveEndDate: string,
     approvalNote: string,
     institutionId: number,
     programId: number,

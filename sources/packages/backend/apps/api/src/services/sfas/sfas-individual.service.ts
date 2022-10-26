@@ -63,7 +63,7 @@ export class SFASIndividualService
    */
   async getPDStatus(
     lastName: string,
-    birthDate: Date,
+    birthDate: string,
     sin: string,
   ): Promise<boolean | null> {
     const individual = await this.repo
