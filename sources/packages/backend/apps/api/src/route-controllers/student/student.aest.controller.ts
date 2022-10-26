@@ -315,7 +315,7 @@ export class StudentAESTController extends BaseController {
       validLastNameCheck: sinValidation.validLastNameCheck,
       validGenderCheck: sinValidation.validGenderCheck,
       temporarySIN: sinValidation.temporarySIN,
-      sinExpiryDate: getISODateOnlyString(sinValidation.sinExpiryDate),
+      sinExpiryDate: sinValidation.sinExpiryDate,
     }));
   }
 
