@@ -104,6 +104,7 @@ import {
   useFormatters,
   useSnackBar,
   useFormioUtils,
+  useRules,
 } from "@/composables";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
@@ -119,7 +120,6 @@ import {
   VForm,
   ApiProcessError,
 } from "@/types";
-import { useRules } from "@/composables";
 
 export default defineComponent({
   props: {
