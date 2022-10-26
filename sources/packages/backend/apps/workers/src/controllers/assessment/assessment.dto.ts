@@ -26,8 +26,8 @@ export interface ProgramYearJobOutDTO {
 
 export interface ApplicationOfferingJobOutDTO {
   id: number;
-  studyStartDate: Date;
-  studyEndDate: Date;
+  studyStartDate: string;
+  studyEndDate: string;
   actualTuitionCosts: number;
   programRelatedCosts: number;
   mandatoryFees: number;
