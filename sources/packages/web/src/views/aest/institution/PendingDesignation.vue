@@ -22,10 +22,7 @@
       </template>
     </body-header>
     <content-group>
-      <toggle-content
-        :toggled="!designations.length"
-        message="There are no pending designation agreements"
-      >
+      <toggle-content :toggled="!designations.length">
         <!-- TODO: While moving to vuetify3, data table search here(non-lazy) can be a OOTB search from vuetify datatable. -->
         <DataTable
           :value="designations"
@@ -61,13 +58,6 @@
             </template>
           </Column>
         </DataTable>
-        <template #image>
-          <v-img
-            height="200"
-            alt="You don't have any agreements yet"
-            src="@/assets/images/designation_summary.svg"
-          />
-        </template>
       </toggle-content>
     </content-group>
   </full-page-container>
