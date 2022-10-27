@@ -10,10 +10,7 @@
       @customEvent="showPDApplicationModal"
     />
   </student-page-container>
-  <p-d-status-application-modal
-    max-width="600"
-    ref="pdStatusApplicationModal"
-  />
+  <p-d-status-application-modal ref="pdStatusApplicationModal" />
 </template>
 
 <script lang="ts">
