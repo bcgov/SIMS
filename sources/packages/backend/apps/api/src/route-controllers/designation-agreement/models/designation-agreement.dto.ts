@@ -22,19 +22,22 @@ export class UpdateDesignationAPIInDto {
   @IsEnum(DesignationAgreementStatus)
   designationStatus: DesignationAgreementStatus;
   @ValidateIf(
-    (value) => value.designationStatus === DesignationAgreementStatus.Approved,
+    (value: UpdateDesignationAPIInDto) =>
+      value.designationStatus === DesignationAgreementStatus.Approved,
   )
   @IsNotEmpty()
   @IsDate()
   startDate?: Date;
   @ValidateIf(
-    (value) => value.designationStatus === DesignationAgreementStatus.Approved,
+    (value: UpdateDesignationAPIInDto) =>
+      value.designationStatus === DesignationAgreementStatus.Approved,
   )
   @IsNotEmpty()
   @IsDate()
   endDate?: Date;
   @ValidateIf(
-    (value) => value.designationStatus === DesignationAgreementStatus.Approved,
+    (value: UpdateDesignationAPIInDto) =>
+      value.designationStatus === DesignationAgreementStatus.Approved,
   )
   @IsNotEmpty()
   @IsArray()

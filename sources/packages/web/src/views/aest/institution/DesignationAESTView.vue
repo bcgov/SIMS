@@ -43,6 +43,7 @@
     <approve-deny-designation-modal
       ref="approveDenyDesignationModal"
       :designation="updateDesignationModel"
+      :processing="processing"
     />
   </full-page-container>
 </template>
@@ -94,6 +95,7 @@ export default {
     const { mapDesignationChipStatus } = useDesignationAgreement();
     const designationAgreement = ref({} as GetDesignationAgreementDto);
     const designationFormModel = ref({} as DesignationModel);
+    const processing = ref(false);
     const snackBar = useSnackBar();
 
     const showActionButtons = computed(
@@ -194,6 +196,7 @@ export default {
       //Update designation only on a submit action.
       if (response) {
         try {
+          processing.value = true;
           await DesignationAgreementService.shared.updateDesignationAgreement(
             props.designationId,
             response as UpdateDesignationDto,
@@ -206,6 +209,8 @@ export default {
           snackBar.error(
             "Unexpected error while approving/declining the designation.",
           );
+        } finally {
+          processing.value = false;
         }
       }
       //If cancel click from approval modal, Update data must be cleared.
@@ -222,6 +227,7 @@ export default {
       updateDesignation,
       showActionButtons,
       Role,
+      processing,
     };
   },
 };
