@@ -1,10 +1,6 @@
 <template>
   <v-form ref="declineProgramForm">
-    <modal-dialog-base
-      title="Decline program"
-      :showDialog="showDialog"
-      :max-width="730"
-    >
+    <modal-dialog-base title="Decline program" :showDialog="showDialog">
       <template #content>
         <error-summary :errors="declineProgramForm.errors" />
         <div class="pb-2">
