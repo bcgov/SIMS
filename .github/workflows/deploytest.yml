@@ -23,6 +23,7 @@ jobs:
   deployTest:
     name: Deploy Web, SIMS-Api, Workers, and DB to TEST environment
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     env:
       BUILD_ID: ${{ github.event.inputs.buildId }}
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
