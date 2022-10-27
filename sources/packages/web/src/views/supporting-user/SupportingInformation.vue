@@ -32,7 +32,7 @@
               variant="outlined"
               v-model="studentsLastName"
               data-cy="studentsLastName"
-              :rules="[(v) => checkNullOrEmptyRule(v, 'Name')]"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Last name')]"
               hide-details="auto"
             />
           </v-col>
@@ -44,7 +44,7 @@
               v-model="studentsDateOfBirth"
               data-cy="studentsDateOfBirth"
               type="date"
-              :rules="[(v) => checkNullOrEmptyRule(v, 'Date')]"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Date of birth')]"
               hide-details="auto"
             />
           </v-col>
