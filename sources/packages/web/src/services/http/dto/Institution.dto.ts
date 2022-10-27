@@ -44,6 +44,7 @@ export interface InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
 export interface InstitutionDetailAPIOutDTO
   extends InstitutionProfileAPIOutDTO {
   legalOperatingName: string;
+  // TODO: Need to be removed. Not removed here as it fails to compile the cypress code.
   formattedEstablishedDate?: string;
   institutionTypeName?: string;
   isBCPrivate?: boolean;
@@ -57,6 +58,7 @@ export interface InstitutionDetailAPIOutDTO
 
 export interface InstitutionDetailAPIInDTO extends InstitutionProfileAPIInDTO {
   legalOperatingName: string;
+  // TODO: Need to be removed. Not removed here as it fails to compile the cypress code.
   formattedEstablishedDate?: string;
   institutionTypeName?: string;
   isBCPrivate?: boolean;

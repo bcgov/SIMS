@@ -35,9 +35,8 @@ export class FederalRestriction {
   @Column({
     name: "birth_date",
     type: "date",
-    transformer: dateOnlyTransformer,
   })
-  birthDate: Date;
+  birthDate: string;
   /**
    * SIN of the student.
    */

@@ -97,8 +97,8 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    */
   async updateReceivedFile(
     msfaaNumber: string,
-    dateSigned: Date,
-    serviceProviderReceivedDate: Date,
+    dateSigned: string,
+    serviceProviderReceivedDate: string,
   ): Promise<UpdateResult> {
     if (!dateSigned || !serviceProviderReceivedDate) {
       throw new Error(
@@ -131,7 +131,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    */
   async updateCancelledReceivedFile(
     msfaaNumber: string,
-    cancelledDate: Date,
+    cancelledDate: string,
     newIssuingProvince: string,
   ): Promise<UpdateResult> {
     if (!cancelledDate || !newIssuingProvince) {

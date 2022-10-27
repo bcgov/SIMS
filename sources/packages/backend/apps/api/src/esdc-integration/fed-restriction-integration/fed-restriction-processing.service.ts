@@ -11,7 +11,10 @@ import { ESDCIntegrationConfig } from "../../types";
 import * as os from "os";
 import { DataSource, InsertResult } from "typeorm";
 import { FederalRestriction, Restriction } from "@sims/sims-db";
-import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "../../utilities";
+import {
+  FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT,
+  getISODateOnlyString,
+} from "../../utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 
@@ -183,7 +186,12 @@ export class FedRestrictionProcessingService {
           const newRestriction = new FederalRestriction();
           newRestriction.lastName = restriction.surname;
           newRestriction.sin = restriction.sin;
-          newRestriction.birthDate = restriction.dateOfBirth;
+          // The insert of federal restriction always comes from an external source through integration.
+          // Hence birth date is parsed as date object from external source as their date format
+          // may not be necessarily ISO date format.
+          newRestriction.birthDate = getISODateOnlyString(
+            restriction.dateOfBirth,
+          );
           newRestriction.restriction = restrictionRecord;
           restrictionsToInsert.push(newRestriction);
         }
