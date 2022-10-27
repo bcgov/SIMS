@@ -116,7 +116,7 @@ jobs:
     name: Deploy BPMNs and DMNs to Camunda
     needs:
       - deployTest
-    uses: ./.github/workflows/camunda-definitions-deploy.yml
+    uses: ./.github/workflows/deploy-camunda-definitions.yml
     secrets: inherit
     with:
       resourcesFolder: ${{ github.event.inputs.resourcesFolder }}
@@ -126,7 +126,7 @@ jobs:
     name: Deploy Form.io definitions
     needs:
       - deployTest
-    uses: ./.github/workflows/formio-definitions-deploy.yml
+    uses: ./.github/workflows/deploy-formio-definitions.yml
     secrets: inherit
     with:
       environment: ${{ github.event.inputs.environment }}
