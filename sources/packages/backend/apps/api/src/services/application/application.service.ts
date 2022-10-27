@@ -1107,7 +1107,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getApplicationForSupportingUser(
     applicationNumber: string,
     lastName: string,
-    birthDate: Date,
+    birthDate: string,
   ): Promise<Application> {
     return this.repo
       .createQueryBuilder("application")

@@ -20,8 +20,8 @@ export interface AssessmentDataJobInDTO {
 
 export interface ProgramYearJobOutDTO {
   programYear: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
 }
 
 export interface ApplicationOfferingJobOutDTO {

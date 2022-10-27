@@ -173,7 +173,7 @@ export class CRAPersonalVerificationService {
         sin: craIncomeVerification.supportingUser.sin,
         surname: craIncomeVerification.supportingUser.user.lastName,
         givenName: craIncomeVerification.supportingUser.user.firstName,
-        birthDate: craIncomeVerification.supportingUser.birthDate,
+        birthDate: new Date(craIncomeVerification.supportingUser.birthDate),
         freeProjectArea,
       } as CRAPersonRecord;
     }

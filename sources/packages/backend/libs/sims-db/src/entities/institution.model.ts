@@ -72,7 +72,7 @@ export class Institution extends RecordDataModel {
     name: "established_date",
     type: "date",
   })
-  establishedDate: Date;
+  establishedDate: string;
 
   @Column({
     name: "primary_contact",
@@ -87,7 +87,7 @@ export class Institution extends RecordDataModel {
   })
   institutionAddress: InstitutionAddress;
 
-  @OneToMany((type) => InstitutionUser, (user) => user.institution, {
+  @OneToMany(() => InstitutionUser, (user) => user.institution, {
     eager: false,
     cascade: false,
   })

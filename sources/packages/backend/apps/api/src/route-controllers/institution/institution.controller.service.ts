@@ -1,9 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InstitutionService, InstitutionTypeService } from "../../services";
-import {
-  INSTITUTION_TYPE_BC_PRIVATE,
-  getExtendedDateFormat,
-} from "../../utilities";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities";
 import { AddressInfo } from "@sims/sims-db";
 import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
@@ -49,9 +46,6 @@ export class InstitutionControllerService {
       institutionType: institutionDetail.institutionType.id,
       institutionTypeName: institutionDetail.institutionType.name,
       establishedDate: institutionDetail.establishedDate,
-      formattedEstablishedDate: getExtendedDateFormat(
-        institutionDetail.establishedDate,
-      ),
       primaryContactEmail: institutionDetail.institutionPrimaryContact.email,
       primaryContactFirstName:
         institutionDetail.institutionPrimaryContact.firstName,
