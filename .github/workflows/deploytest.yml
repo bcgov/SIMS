@@ -19,9 +19,6 @@ on:
         required: true
         type: environment
 
-env:
-  APP_NAME: sims
-
 jobs:
   deployTest:
     name: Deploy Web, SIMS-Api, Workers, and DB to TEST environment
@@ -48,9 +45,9 @@ jobs:
       WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       API_PORT: ${{ secrets.API_PORT }}
       WEB_PORT: ${{ secrets.WEB_PORT }}
-      API: ${{ format('{0}api-{1}', secrets.HOST_PREFIX, $APP_NAME) }}
-      WEB: ${{ format('{0}web-{1}', secrets.HOST_PREFIX, $APP_NAME) }}
-      WORKERS: ${{ format('{0}workers-{1}', secrets.HOST_PREFIX, $APP_NAME) }}
+      API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}
+      WEB: ${{ format('{0}web-sims', secrets.HOST_PREFIX) }}
+      WORKERS: ${{ format('{0}workers-sims', secrets.HOST_PREFIX) }}
       SWAGGER_NAME: ${{ format('{0}swagger', secrets.HOST_PREFIX) }}
       DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
     steps:
