@@ -22,6 +22,7 @@
                 (v) => checkNullOrEmptyRule(v, applicationNumberLabel),
                 (v) => checkOnlyDigitsRule(v, applicationNumberLabel),
               ]"
+              hide-details="auto"
             />
           </v-col>
           <v-col>
@@ -32,6 +33,7 @@
               v-model="studentsLastName"
               data-cy="studentsLastName"
               :rules="[(v) => checkNullOrEmptyRule(v, studentsLastNameLabel)]"
+              hide-details="auto"
             />
           </v-col>
           <v-col>
@@ -45,6 +47,7 @@
               :rules="[
                 (v) => checkNullOrEmptyRule(v, studentsDateOfBirthLabel),
               ]"
+              hide-details="auto"
             />
           </v-col>
           <v-col
