@@ -1,10 +1,6 @@
 <template>
   <v-form ref="addExpiryDateForm">
-    <modal-dialog-base
-      title="Add expiry date"
-      :show-dialog="showDialog"
-      :max-width="730"
-    >
+    <modal-dialog-base title="Add expiry date" :show-dialog="showDialog">
       <template #content>
         <error-summary :errors="addExpiryDateForm.errors" />
         <div class="pb-2">

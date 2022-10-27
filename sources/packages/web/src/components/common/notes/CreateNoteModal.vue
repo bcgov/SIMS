@@ -1,10 +1,6 @@
 <template>
   <v-form ref="addNewNoteForm">
-    <modal-dialog-base
-      title="Create new note"
-      :showDialog="showDialog"
-      :max-width="730"
-    >
+    <modal-dialog-base title="Create new note" :showDialog="showDialog">
       <template #content>
         <error-summary :errors="addNewNoteForm.errors" />
         <div class="pb-2">

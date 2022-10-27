@@ -1,9 +1,5 @@
 <template>
-  <modal-dialog-base
-    title="Cancel application"
-    :showDialog="showDialog"
-    :max-width="730"
-  >
+  <modal-dialog-base title="Cancel application" :showDialog="showDialog">
     <template #content>
       Cancelling your application will stop your application from going forward.
       After cancelling, you can still view your application but will not be able

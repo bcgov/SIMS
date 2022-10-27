@@ -1,6 +1,6 @@
 <template>
   <v-form ref="approveDenyDesignation">
-    <modal-dialog-base :showDialog="showDialog" :title="title" :max-width="730">
+    <modal-dialog-base :showDialog="showDialog" :title="title">
       <template #content>
         <error-summary :errors="approveDenyDesignation.errors" />
         <p class="label-value">{{ subTitle }}</p>

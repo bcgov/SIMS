@@ -1,7 +1,6 @@
 <template>
   <v-form ref="denyCOE">
     <modal-dialog-base
-      :max-width="730"
       :showDialog="showDialog"
       @dialogClosed="dialogClosed"
       title="Decline enrolment"

@@ -46,7 +46,6 @@
         text="This will allow the student to access the system using a Basic BCeID account instead of a BC Services Card. Please note that their SIN will be validated with ESDC (Employment and Social Development Canada)."
         okLabel="Create account now"
         ref="createStudentAccountModal"
-        :max-width="730"
         :disablePrimaryButton="notAllowed"
       ></confirm-modal>
       <confirm-modal
@@ -54,7 +53,6 @@
         text="Denying the request means that the student will not be able to access the system using a Basic BCeID."
         ref="declineStudentAccountModal"
         okLabel="Deny request now"
-        :max-width="730"
         :disablePrimaryButton="notAllowed"
       ></confirm-modal>
     </template>

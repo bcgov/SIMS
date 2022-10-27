@@ -1,10 +1,6 @@
 <template>
   <v-form ref="viewRestrictionForm">
-    <modal-dialog-base
-      title="View restriction"
-      :showDialog="showDialog"
-      :min-width="730"
-    >
+    <modal-dialog-base title="View restriction" :showDialog="showDialog">
       <template #content>
         <error-summary :errors="viewRestrictionForm.errors" />
         <h4

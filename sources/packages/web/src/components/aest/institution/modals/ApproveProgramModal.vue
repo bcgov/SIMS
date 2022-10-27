@@ -1,10 +1,6 @@
 <template>
   <v-form ref="approveProgramForm">
-    <modal-dialog-base
-      title="Approve program"
-      :showDialog="showDialog"
-      :max-width="730"
-    >
+    <modal-dialog-base title="Approve program" :showDialog="showDialog">
       <template #content>
         <error-summary :errors="approveProgramForm.errors" />
         <div class="pb-2">
