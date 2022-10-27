@@ -8,47 +8,54 @@
       application."
     >
     </body-header>
-    <content-group class="mb-4">
-      <v-row>
-        <v-col>
-          <v-text-field
-            density="compact"
-            label="Application number"
-            variant="outlined"
-            v-model="applicationNumber"
-            data-cy="applicationNumber"
-            type="number"
-            :rules="[(v) => /\d+/.test(v) || 'Invalid application number']"
-          />
-        </v-col>
-        <v-col>
-          <v-text-field
-            density="compact"
-            label="Student's last name"
-            variant="outlined"
-            v-model="studentsLastName"
-            data-cy="studentsLastName"
-            :rules="[(v) => !!v || 'Student\'s last name required']"
-          />
-        </v-col>
-        <v-col>
-          <v-text-field
-            density="compact"
-            label="Student's date of birth"
-            variant="outlined"
-            v-model="studentsDateOfBirth"
-            data-cy="studentsDateOfBirth"
-            type="date"
-            :rules="[(v) => !!v || 'Student\'s date of birth required']"
-          />
-        </v-col>
-        <v-col
-          ><v-btn color="primary" @click="applicationSearch"
-            >Search</v-btn
-          ></v-col
-        >
-      </v-row>
-    </content-group>
+    <v-form ref="searchApplicationsForm">
+      <content-group class="mb-4">
+        <v-row>
+          <v-col>
+            <v-text-field
+              density="compact"
+              label="Application number"
+              variant="outlined"
+              v-model="applicationNumber"
+              data-cy="applicationNumber"
+              :rules="[
+                (v) => checkNullOrEmptyRule(v, 'Number'),
+                (v) => checkOnlyDigitsRule(v, 'Number'),
+              ]"
+              hide-details="auto"
+            />
+          </v-col>
+          <v-col>
+            <v-text-field
+              density="compact"
+              label="Student's last name"
+              variant="outlined"
+              v-model="studentsLastName"
+              data-cy="studentsLastName"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Last name')]"
+              hide-details="auto"
+            />
+          </v-col>
+          <v-col>
+            <v-text-field
+              density="compact"
+              label="Student's date of birth"
+              variant="outlined"
+              v-model="studentsDateOfBirth"
+              data-cy="studentsDateOfBirth"
+              type="date"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Date of birth')]"
+              hide-details="auto"
+            />
+          </v-col>
+          <v-col
+            ><v-btn color="primary" @click="applicationSearch"
+              >Search</v-btn
+            ></v-col
+          >
+        </v-row>
+      </content-group>
+    </v-form>
     <formio
       v-if="formName"
       :formName="formName"
@@ -98,6 +105,7 @@ import {
   useFormatters,
   useSnackBar,
   useFormioUtils,
+  useRules,
 } from "@/composables";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
@@ -110,6 +118,8 @@ import {
   WizardNavigationEvent,
   SupportingUserType,
   FormIOForm,
+  VForm,
+  ApiProcessError,
 } from "@/types";
 
 export default defineComponent({
@@ -135,6 +145,8 @@ export default defineComponent({
     const isLastPage = ref(false);
     const showNav = ref(false);
     let formInstance: FormIOForm;
+    const searchApplicationsForm = ref({} as VForm);
+    const { checkOnlyDigitsRule, checkNullOrEmptyRule } = useRules();
 
     const wizardSubmit = () => {
       formInstance.submit();
@@ -177,17 +189,8 @@ export default defineComponent({
     });
 
     const applicationSearch = async () => {
-      if (
-        !applicationNumber.value ||
-        !studentsLastName.value ||
-        !studentsDateOfBirth.value
-      ) {
-        snackBar.warn("Please complete all the mandatory fields.");
-        return;
-      }
-
-      if (isNaN(Date.parse(studentsDateOfBirth.value))) {
-        snackBar.warn("Please check the Student's Date Of Birth.");
+      const validationResult = await searchApplicationsForm.value.validate();
+      if (!validationResult.valid) {
         return;
       }
 
@@ -199,21 +202,21 @@ export default defineComponent({
           );
         setInitialData(searchResult.programYearStartDate);
         formName.value = searchResult.formName;
-      } catch (error) {
+      } catch (error: unknown) {
         formName.value = null;
-        switch (error.response.data.errorType) {
-          case STUDENT_APPLICATION_NOT_FOUND:
-            snackBar.warn(
-              `Application not found. ${error.response.data.message}`,
-            );
-            break;
-          case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
-            snackBar.error(
-              `The student cannot act as a supporting user for its own application.
-              ${error.response.data.message}`,
-              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-            );
-            break;
+        if (error instanceof ApiProcessError) {
+          switch (error.errorType) {
+            case STUDENT_APPLICATION_NOT_FOUND:
+              snackBar.warn(`Application not found. ${error.message}`);
+              break;
+            case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
+              snackBar.error(
+                `The student cannot act as a supporting user for its own application.
+                ${error.message}`,
+                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
+              );
+              break;
+          }
         }
       }
     };
@@ -228,40 +231,42 @@ export default defineComponent({
 
         snackBar.success("Supporting data submitted with success.");
         router.push({ name: SupportingUserRoutesConst.DASHBOARD });
-      } catch (error) {
-        switch (error.response.data.errorType) {
-          case STUDENT_APPLICATION_NOT_FOUND:
-            snackBar.error(
-              error.response.data.message,
-              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-            );
-            break;
-          case SUPPORTING_USER_ALREADY_PROVIDED_DATA:
-            snackBar.warn(
-              `User already provided data.
-              ${error.response.data.message}`,
-              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-            );
-            break;
-          case SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA:
-            snackBar.warn(
-              `Not expecting data for a ${props.supportingUserType}.
-              ${error.response.data.message}`,
-              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-            );
-            break;
-          case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
-            snackBar.error(
-              `The student cannot act as a supporting user for its own application. ${error.response.data.message}`,
-              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-            );
-            break;
-          default:
-            snackBar.error(
-              "Unexpected error while submitting the supporting data.",
-              snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-            );
-            break;
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          switch (error.errorType) {
+            case STUDENT_APPLICATION_NOT_FOUND:
+              snackBar.error(
+                error.message,
+                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
+              );
+              break;
+            case SUPPORTING_USER_ALREADY_PROVIDED_DATA:
+              snackBar.warn(
+                `User already provided data.
+                ${error.message}`,
+                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
+              );
+              break;
+            case SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA:
+              snackBar.warn(
+                `Not expecting data for a ${props.supportingUserType}.
+                ${error.message}`,
+                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
+              );
+              break;
+            case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
+              snackBar.error(
+                `The student cannot act as a supporting user for its own application. ${error.message}`,
+                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
+              );
+              break;
+            default:
+              snackBar.error(
+                "Unexpected error while submitting the supporting data.",
+                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
+              );
+              break;
+          }
         }
       } finally {
         submitting.value = false;
@@ -292,6 +297,9 @@ export default defineComponent({
       isFirstPage,
       isLastPage,
       showNav,
+      checkOnlyDigitsRule,
+      checkNullOrEmptyRule,
+      searchApplicationsForm,
     };
   },
 });
