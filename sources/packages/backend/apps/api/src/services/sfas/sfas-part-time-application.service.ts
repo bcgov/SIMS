@@ -3,7 +3,7 @@ import { DataSource, Brackets } from "typeorm";
 import { DataModelService, SFASPartTimeApplications } from "@sims/sims-db";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
-import { getUTC } from "../../utilities";
+import { getUTC, getISODateOnlyString } from "../../utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
 import { SFASPartTimeApplicationRecord } from "../../sfas-integration/sfas-files/sfas-part-time-application-record";
@@ -33,12 +33,15 @@ export class SFASPartTimeApplicationsService
     record: SFASRecordIdentification,
     extractedDate: Date,
   ): Promise<void> {
+    // The insert of SFAS record always comes from an external source through integration.
+    // Hence all the date fields are parsed as date object from external source as their date format
+    // may not be necessarily ISO date format.
     const sfasApplication = new SFASPartTimeApplicationRecord(record.line);
     const application = new SFASPartTimeApplications();
     application.individualId = sfasApplication.individualId;
     application.id = sfasApplication.applicationId;
-    application.startDate = sfasApplication.startDate;
-    application.endDate = sfasApplication.endDate;
+    application.startDate = getISODateOnlyString(sfasApplication.startDate);
+    application.endDate = getISODateOnlyString(sfasApplication.endDate);
     application.CSGPAward = sfasApplication.CSGPAward;
     application.SBSDAward = sfasApplication.SBSDAward;
     application.extractedAt = getUTC(extractedDate);

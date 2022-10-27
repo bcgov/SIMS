@@ -1,7 +1,6 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { BaseSFASApplicationModel } from "./base-sfas-application.model";
 import { TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * Data related to a Part Time Student Application on SFAS that came from SAIL
@@ -21,9 +20,8 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     name: "start_date",
     type: "date",
     nullable: true,
-    transformer: dateOnlyTransformer,
   })
-  startDate?: Date;
+  startDate?: string;
   /**
    * Educational Program End date (Sail_extract_data.educ_end_dte).
    */
@@ -31,9 +29,8 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     name: "end_date",
     type: "date",
     nullable: true,
-    transformer: dateOnlyTransformer,
   })
-  endDate?: Date;
+  endDate?: string;
   /**
    * CSGP Award Amount (sail_extract_data.sail_csgp_award_amt).
    */

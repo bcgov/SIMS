@@ -1,7 +1,6 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { BaseModel } from ".";
 import { TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * Data related to an individual/student in SFAS.
@@ -36,9 +35,8 @@ export class SFASIndividual extends BaseModel {
     name: "birth_date",
     type: "date",
     nullable: false,
-    transformer: dateOnlyTransformer,
   })
-  birthDate: Date;
+  birthDate: string;
   /**
    * Social Insurance Number for the student (individual.sin).
    */
@@ -70,9 +68,8 @@ export class SFASIndividual extends BaseModel {
     name: "msfaa_signed_date",
     nullable: true,
     type: "date",
-    transformer: dateOnlyTransformer,
   })
-  msfaaSignedDate?: Date;
+  msfaaSignedDate?: string;
   /**
    * Total Nurses Education Bursary (special_program_award.program_awd_cents, award_cde = "SP04").
    */

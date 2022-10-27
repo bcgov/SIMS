@@ -3,7 +3,7 @@ import { DataSource, Brackets } from "typeorm";
 import { DataModelService, SFASApplication } from "@sims/sims-db";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
-import { getUTC } from "../../utilities";
+import { getUTC, getISODateOnlyString } from "../../utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
 import { SFASApplicationRecord } from "../../sfas-integration/sfas-files/sfas-application-record";
@@ -29,12 +29,15 @@ export class SFASApplicationService
     record: SFASRecordIdentification,
     extractedDate: Date,
   ): Promise<void> {
+    // The insert of SFAS application always comes from an external source through integration.
+    // Hence all the date fields are parsed as date object from external source as their date format
+    // may not be necessarily ISO date format.
     const sfasApplication = new SFASApplicationRecord(record.line);
     const application = new SFASApplication();
     application.id = sfasApplication.applicationId;
     application.individualId = sfasApplication.individualId;
-    application.startDate = sfasApplication.startDate;
-    application.endDate = sfasApplication.endDate;
+    application.startDate = getISODateOnlyString(sfasApplication.startDate);
+    application.endDate = getISODateOnlyString(sfasApplication.endDate);
     application.programYearId = sfasApplication.programYearId;
     application.bslAward = sfasApplication.bslAward;
     application.cslAward = sfasApplication.cslAward;
@@ -45,7 +48,9 @@ export class SFASApplicationService
     application.csgdAward = sfasApplication.csgdAward;
     application.csgpAward = sfasApplication.csgpAward;
     application.sbsdAward = sfasApplication.sbsdAward;
-    application.applicationCancelDate = sfasApplication.applicationCancelDate;
+    application.applicationCancelDate = getISODateOnlyString(
+      sfasApplication.applicationCancelDate,
+    );
     application.extractedAt = getUTC(extractedDate);
     await this.repo.save(application, { reload: false, transaction: false });
   }

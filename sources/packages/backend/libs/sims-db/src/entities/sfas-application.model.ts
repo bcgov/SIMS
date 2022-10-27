@@ -1,7 +1,6 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { BaseSFASApplicationModel } from "./base-sfas-application.model";
 import { TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * Data related to a Student Application on SFAS.
@@ -20,9 +19,8 @@ export class SFASApplication extends BaseSFASApplicationModel {
     name: "start_date",
     type: "date",
     nullable: true,
-    transformer: dateOnlyTransformer,
   })
-  startDate?: Date;
+  startDate?: string;
   /**
    * Educational Program End date (application_assessment.educ_period_end_dte).
    */
@@ -30,9 +28,8 @@ export class SFASApplication extends BaseSFASApplicationModel {
     name: "end_date",
     type: "date",
     nullable: true,
-    transformer: dateOnlyTransformer,
   })
-  endDate?: Date;
+  endDate?: string;
   /**
    * Program year (application.program_yr_id).
    * Example: 20202021.
@@ -121,9 +118,8 @@ export class SFASApplication extends BaseSFASApplicationModel {
     name: "application_cancel_date",
     type: "date",
     nullable: true,
-    transformer: dateOnlyTransformer,
   })
-  applicationCancelDate?: Date;
+  applicationCancelDate?: string;
   /**
    * Date that the record was extracted from SFAS.
    */

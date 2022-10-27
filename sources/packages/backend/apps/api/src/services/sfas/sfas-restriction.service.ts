@@ -3,7 +3,7 @@ import { DataSource } from "typeorm";
 import { DataModelService, SFASRestriction } from "@sims/sims-db";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
-import { getUTC } from "../../utilities";
+import { getUTC, getISODateOnlyString } from "../../utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
 import { SFASRestrictionRecord } from "../../sfas-integration/sfas-files/sfas-restriction-record";
@@ -31,13 +31,18 @@ export class SFASRestrictionService
     record: SFASRecordIdentification,
     extractedDate: Date,
   ): Promise<void> {
+    // The insert of SFAS record always comes from an external source through integration.
+    // Hence all the date fields are parsed as date object from external source as their date format
+    // may not be necessarily ISO date format.
     const sfasRestriction = new SFASRestrictionRecord(record.line);
     const restriction = new SFASRestriction();
     restriction.id = sfasRestriction.restrictionId;
     restriction.individualId = sfasRestriction.individualId;
     restriction.code = sfasRestriction.code;
-    restriction.effectiveDate = sfasRestriction.effectiveDate;
-    restriction.removalDate = sfasRestriction.removalDate;
+    restriction.effectiveDate = getISODateOnlyString(
+      sfasRestriction.effectiveDate,
+    );
+    restriction.removalDate = getISODateOnlyString(sfasRestriction.removalDate);
     restriction.extractedAt = getUTC(extractedDate);
     await this.repo.save(restriction, { reload: false, transaction: false });
   }
