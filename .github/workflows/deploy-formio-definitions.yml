@@ -1,4 +1,4 @@
-name: Deploy Form.io definitions to Form.io server
+name: Deploy Form.io resources
 
 on:
   workflow_dispatch:
