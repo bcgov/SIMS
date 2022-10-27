@@ -1,4 +1,4 @@
-name: Build and Deploy in OpenShift
+name: Build and Deploy to OpenShift/Camunda
 
 on:
   pull_request:
