@@ -14,13 +14,13 @@
           <v-col>
             <v-text-field
               density="compact"
-              :label="applicationNumberLabel"
+              label="Application number"
               variant="outlined"
               v-model="applicationNumber"
               data-cy="applicationNumber"
               :rules="[
-                (v) => checkNullOrEmptyRule(v, applicationNumberLabel),
-                (v) => checkOnlyDigitsRule(v, applicationNumberLabel),
+                (v) => checkNullOrEmptyRule(v, 'Number'),
+                (v) => checkOnlyDigitsRule(v, 'Number'),
               ]"
               hide-details="auto"
             />
@@ -28,25 +28,23 @@
           <v-col>
             <v-text-field
               density="compact"
-              :label="studentsLastNameLabel"
+              label="Student's last name"
               variant="outlined"
               v-model="studentsLastName"
               data-cy="studentsLastName"
-              :rules="[(v) => checkNullOrEmptyRule(v, studentsLastNameLabel)]"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Name')]"
               hide-details="auto"
             />
           </v-col>
           <v-col>
             <v-text-field
               density="compact"
-              :label="studentsDateOfBirthLabel"
+              label="Student's date of birth"
               variant="outlined"
               v-model="studentsDateOfBirth"
               data-cy="studentsDateOfBirth"
               type="date"
-              :rules="[
-                (v) => checkNullOrEmptyRule(v, studentsDateOfBirthLabel),
-              ]"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Date')]"
               hide-details="auto"
             />
           </v-col>
@@ -149,9 +147,6 @@ export default defineComponent({
     let formInstance: FormIOForm;
     const searchApplicationsForm = ref({} as VForm);
     const { checkOnlyDigitsRule, checkNullOrEmptyRule } = useRules();
-    const applicationNumberLabel = "Application number";
-    const studentsLastNameLabel = "Student's last name";
-    const studentsDateOfBirthLabel = "Student's date of birth";
 
     const wizardSubmit = () => {
       formInstance.submit();
@@ -305,9 +300,6 @@ export default defineComponent({
       checkOnlyDigitsRule,
       checkNullOrEmptyRule,
       searchApplicationsForm,
-      applicationNumberLabel,
-      studentsLastNameLabel,
-      studentsDateOfBirthLabel,
     };
   },
 });
