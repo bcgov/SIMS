@@ -1,10 +1,6 @@
 <template>
   <v-form ref="addNewSINForm">
-    <modal-dialog-base
-      title="Add a new SIN"
-      :showDialog="showDialog"
-      :max-width="730"
-    >
+    <modal-dialog-base title="Add a new SIN" :showDialog="showDialog">
       <template #content>
         <error-summary :errors="addNewSINForm.errors" />
         <div class="pb-5">

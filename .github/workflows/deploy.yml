@@ -61,6 +61,7 @@ jobs:
   deployDev:
     name: Deploy App, API, and DB to DEV environment
     runs-on: ubuntu-latest
+    environment: DEV
     if: ${{ github.event.pull_request.merged == true && github.base_ref != 'prod' && github.base_ref != 'test'}}
     env:
       BUILD_ID: ${{ github.event.number }}
@@ -81,6 +82,8 @@ jobs:
       BYPASS_APPLICATION_SUBMIT_VALIDATIONS: true
       SWAGGER_ENABLED: true
       APPLICATION_ARCHIVE_DAYS: 43
+      API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
     needs:
       - build
     steps:

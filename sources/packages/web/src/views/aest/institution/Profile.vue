@@ -81,11 +81,11 @@
       <p class="category-header-medium mt-5">Mailing address</p>
       <content-group>
         <title-value
-          propertyTitle="Address 1"
+          propertyTitle="Address line 1"
           :propertyValue="institutionProfileDetail.mailingAddress?.addressLine1"
         />
         <title-value
-          propertyTitle="Address 2"
+          propertyTitle="Address line 2"
           :propertyValue="
             emptyStringFiller(
               institutionProfileDetail.mailingAddress?.addressLine2,

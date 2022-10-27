@@ -1,10 +1,6 @@
 <template>
   <v-form ref="approveProgramForm">
-    <modal-dialog-base
-      title="Approve program"
-      :showDialog="showDialog"
-      :max-width="730"
-    >
+    <modal-dialog-base title="Approve program" :showDialog="showDialog">
       <template #content>
         <error-summary :errors="approveProgramForm.errors" />
         <div class="pb-2">
@@ -17,7 +13,7 @@
         <v-text-field
           label="Effective end date"
           class="mt-2"
-          placeholder="yyyy-MM-dd"
+          type="date"
           v-model="formModel.effectiveEndDate"
           variant="outlined"
           :rules="[checkStringDateFormatRule]"

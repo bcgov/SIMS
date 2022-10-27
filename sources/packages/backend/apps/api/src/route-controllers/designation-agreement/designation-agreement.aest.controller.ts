@@ -6,7 +6,6 @@ import {
   Patch,
   Body,
   Query,
-  BadRequestException,
   UnprocessableEntityException,
   ParseIntPipe,
   ParseEnumPipe,
@@ -16,7 +15,6 @@ import {
   FormService,
   InstitutionLocationService,
 } from "../../services";
-import { FormNames } from "../../services/form/constants";
 import { DesignationAgreementStatus } from "@sims/sims-db";
 import { getISODateOnlyString, PaginationParams } from "../../utilities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -32,8 +30,8 @@ import {
   GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
   PendingDesignationDto,
-  UpdateDesignationDto,
 } from "./models/designation-agreement.model";
+import { UpdateDesignationAPIInDto } from "./models/designation-agreement.dto";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
@@ -124,7 +122,7 @@ export class DesignationAgreementAESTController extends BaseController {
   @Patch(":designationId")
   async updateDesignationAgreement(
     @Param("designationId", ParseIntPipe) designationId: number,
-    @Body() payload: UpdateDesignationDto,
+    @Body() payload: UpdateDesignationAPIInDto,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     const designation =
@@ -150,15 +148,6 @@ export class DesignationAgreementAESTController extends BaseController {
           "One or more locations provided does not belong to designation institution.",
         );
       }
-    }
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.ApproveDenyDesignations,
-      payload,
-    );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to update designation agreement due to an invalid request.",
-      );
     }
     await this.designationAgreementService.updateDesignation(
       designationId,

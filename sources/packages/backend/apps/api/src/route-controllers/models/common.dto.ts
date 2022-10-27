@@ -52,17 +52,23 @@ export class AddressDetailsAPIInDTO {
   @IsNotEmpty()
   postalCode: string;
   // provinceState will only have value when selectedCountry is 'canada'.
-  @ValidateIf((value) => value.selectedCountry === COUNTRY_CANADA)
+  @ValidateIf(
+    (value: AddressDetailsAPIInDTO) => value.selectedCountry === COUNTRY_CANADA,
+  )
   @IsNotEmpty()
   provinceState?: string;
   // This property will have canada postal code.
   // This property is for dry run validation, this is not saved in db.
-  @ValidateIf((value) => value.selectedCountry === COUNTRY_CANADA)
+  @ValidateIf(
+    (value: AddressDetailsAPIInDTO) => value.selectedCountry === COUNTRY_CANADA,
+  )
   @IsNotEmpty()
   canadaPostalCode?: string;
   // This property will have postal code for countries other than Canada.
   // This property is for dry run validation, this is not saved in db.
-  @ValidateIf((value) => value.selectedCountry === OTHER_COUNTRY)
+  @ValidateIf(
+    (value: AddressDetailsAPIInDTO) => value.selectedCountry === OTHER_COUNTRY,
+  )
   @IsNotEmpty()
   otherPostalCode?: string;
   // Dropdown value, it will have either "canada" or "other".
@@ -71,7 +77,9 @@ export class AddressDetailsAPIInDTO {
   selectedCountry?: string;
   // When "other" is selected in selectedCountry, then this property will have a value.
   // This property is for dry run validation, this is not saved in db.
-  @ValidateIf((value) => value.selectedCountry === OTHER_COUNTRY)
+  @ValidateIf(
+    (value: AddressDetailsAPIInDTO) => value.selectedCountry === OTHER_COUNTRY,
+  )
   @IsNotEmpty()
   otherCountry?: string;
 }

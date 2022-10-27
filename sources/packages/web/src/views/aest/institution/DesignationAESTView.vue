@@ -1,12 +1,12 @@
 <template>
-  <div class="p-m-4">
-    <header-navigator
-      :title="navigationTitle"
-      subTitle="View designation agreement"
-      :routeLocation="routeLocation"
-    >
-      <template #buttons>
-        <v-row class="p-0 m-0">
+  <full-page-container layout-template="centered-card-tab">
+    <template #header>
+      <header-navigator
+        :title="navigationTitle"
+        subTitle="View designation agreement"
+        :routeLocation="routeLocation"
+      >
+        <template #buttons>
           <check-permission-role
             :role="Role.InstitutionApproveDeclineDesignation"
           >
@@ -31,20 +31,21 @@
               >
             </template>
           </check-permission-role>
-        </v-row>
-      </template>
-    </header-navigator>
-    <full-page-container class="mt-4">
-      <designation-agreement-form
-        :model="designationFormModel"
-        :view-only="true"
-      ></designation-agreement-form>
-    </full-page-container>
-    <approve-deny-designation
+        </template>
+      </header-navigator>
+    </template>
+
+    <designation-agreement-form
+      :model="designationFormModel"
+      :view-only="true"
+    ></designation-agreement-form>
+
+    <approve-deny-designation-modal
       ref="approveDenyDesignationModal"
       :designation="updateDesignationModel"
+      :processing="processing"
     />
-  </div>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -69,15 +70,15 @@ import {
   DesignationFormViewModes,
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import ApproveDenyDesignation from "@/views/aest/institution/ApproveDenyDesignation.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
+import ApproveDenyDesignationModal from "@/components/aest/institution/modals/ApproveDenyDesignationModal.vue";
 
 export default {
   components: {
     DesignationAgreementForm,
-    ApproveDenyDesignation,
     CheckPermissionRole,
+    ApproveDenyDesignationModal,
   },
   props: {
     designationId: {
@@ -94,6 +95,7 @@ export default {
     const { mapDesignationChipStatus } = useDesignationAgreement();
     const designationAgreement = ref({} as GetDesignationAgreementDto);
     const designationFormModel = ref({} as DesignationModel);
+    const processing = ref(false);
     const snackBar = useSnackBar();
 
     const showActionButtons = computed(
@@ -188,10 +190,13 @@ export default {
             return designationLocation;
           });
       }
-      const response = await approveDenyDesignationModal.value.showModal();
+      const response = await approveDenyDesignationModal.value.showModal(
+        updateDesignationModel.value,
+      );
       //Update designation only on a submit action.
       if (response) {
         try {
+          processing.value = true;
           await DesignationAgreementService.shared.updateDesignationAgreement(
             props.designationId,
             response as UpdateDesignationDto,
@@ -204,6 +209,8 @@ export default {
           snackBar.error(
             "Unexpected error while approving/declining the designation.",
           );
+        } finally {
+          processing.value = false;
         }
       }
       //If cancel click from approval modal, Update data must be cleared.
@@ -220,6 +227,7 @@ export default {
       updateDesignation,
       showActionButtons,
       Role,
+      processing,
     };
   },
 };

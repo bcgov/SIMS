@@ -1,9 +1,5 @@
 <template>
-  <modal-dialog-base
-    title="Edit application"
-    :showDialog="showDialog"
-    :max-width="730"
-  >
+  <modal-dialog-base title="Edit application" :showDialog="showDialog">
     <template #content>
       Editing your application will result in a new assessment, which could
       delay your application. <strong>Are you sure you want to proceed?</strong>

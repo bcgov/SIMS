@@ -49,22 +49,22 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${ZEEBE_ADDRESS_KEY}
-                      name: ${API_SECRET_NAME}
+                      name: ${WORKERS_SECRET_NAME}
                 - name: ZEEBE_CLIENT_ID
                   valueFrom:
                     secretKeyRef:
                       key: ${ZEEBE_CLIENT_ID_KEY}
-                      name: ${API_SECRET_NAME}
+                      name: ${WORKERS_SECRET_NAME}
                 - name: ZEEBE_CLIENT_SECRET
                   valueFrom:
                     secretKeyRef:
                       key: ${ZEEBE_CLIENT_SECRET_KEY}
-                      name: ${API_SECRET_NAME}
+                      name: ${WORKERS_SECRET_NAME}
                 - name: ZEEBE_AUTHORIZATION_SERVER_URL
                   valueFrom:
                     secretKeyRef:
                       key: ${ZEEBE_AUTHORIZATION_SERVER_URL_KEY}
-                      name: ${API_SECRET_NAME}
+                      name: ${WORKERS_SECRET_NAME}
                 - name: BYPASS_CRA_INCOME_VERIFICATION
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
@@ -114,8 +114,8 @@ parameters:
     value: "production"
   - name: BUILD_TAG
     value: "0"
-  - name: API_SECRET_NAME
-    value: sims-api-creds
+  - name: WORKERS_SECRET_NAME
+    require: true
   - name: ATBC_LOGIN_ENDPOINT
     require: true
   - name: ZEEBE_ADDRESS_KEY

@@ -1,10 +1,6 @@
 <template>
   <v-form ref="confirmCOE">
-    <modal-dialog-base
-      :showDialog="showDialog"
-      title="Confirm enrolment"
-      :max-width="730"
-    >
+    <modal-dialog-base :showDialog="showDialog" title="Confirm enrolment">
       <template #content>
         <error-summary :errors="confirmCOE.errors" />
         <p class="category-header-medium">
