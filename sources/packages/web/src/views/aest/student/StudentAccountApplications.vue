@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator title="Student requests" subTitle="Accounts" />
     </template>
@@ -26,7 +26,7 @@
             </template>
           </Column>
           <Column header="Name" field="fullName" bodyClass="w-100"></Column>
-          <Column header="Actions">
+          <Column header="Action">
             <template #body="slotProps">
               <v-btn
                 color="primary"

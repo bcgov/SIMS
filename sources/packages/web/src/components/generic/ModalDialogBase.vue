@@ -40,6 +40,7 @@ import { ref, watch, defineComponent } from "vue";
 const dialogClosedEvent = "dialogClosed";
 
 export default defineComponent({
+  emits: [dialogClosedEvent],
   props: {
     showDialog: {
       type: Boolean,
@@ -52,17 +53,18 @@ export default defineComponent({
     maxWidth: {
       type: Number,
       required: false,
+      default: 730,
     },
     minWidth: {
       type: Number,
       required: false,
+      default: 730,
     },
     subTitle: {
       type: String,
       required: false,
     },
   },
-  emits: [dialogClosedEvent],
   setup(props, context) {
     const showHideDialog = ref(false);
     watch(

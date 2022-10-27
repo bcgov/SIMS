@@ -1,13 +1,12 @@
 <template>
-  <full-page-container>
+  <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Students" subTitle="Exceptions" />
+      <header-navigator title="Student requests" subTitle="Exceptions" />
     </template>
     <body-header
       title="Requested exceptions"
       :recordsCount="applicationExceptions.results?.length"
       subTitle="Make a determination on application submitted with exceptions."
-      class="m-1"
     >
       <template #actions>
         <v-text-field

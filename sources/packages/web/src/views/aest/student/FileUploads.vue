@@ -3,7 +3,6 @@
     <body-header
       title="File Uploads"
       :recordsCount="studentFileUploads?.length"
-      class="m-1"
     >
       <template #actions>
         <check-permission-role :role="Role.StudentUploadFile">
@@ -22,49 +21,51 @@
       </template>
     </body-header>
     <content-group>
-      <DataTable
-        :value="studentFileUploads"
-        :paginator="true"
-        :rows="DEFAULT_PAGE_LIMIT"
-        :rowsPerPageOptions="PAGINATION_LIST"
-      >
-        <template #empty>
-          <p class="text-center font-weight-bold">No records found.</p>
-        </template>
-        <Column
-          field="groupName"
-          header="Document Purpose"
-          sortable="true"
-        ></Column>
-        <Column field="metadata" header="Application #">
-          <template #body="slotProps">{{
-            slotProps.data.metadata?.applicationNumber
-              ? slotProps.data.metadata.applicationNumber
-              : "-"
-          }}</template></Column
+      <toggle-content :toggled="!studentFileUploads.length">
+        <DataTable
+          :value="studentFileUploads"
+          :paginator="true"
+          :rows="DEFAULT_PAGE_LIMIT"
+          :rowsPerPageOptions="PAGINATION_LIST"
         >
-        <Column field="updatedAt" header="Date Submitted"
-          ><template #body="slotProps">{{
-            dateOnlyLongString(slotProps.data.updatedAt)
-          }}</template></Column
-        >
-        <Column field="updatedAt" header="File">
-          <template #body="slotProps">
-            <div
-              class="file-label"
-              @click="fileUtils.downloadStudentDocument(slotProps.data)"
-            >
-              <span class="mr-4">
-                <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
-              ></span>
-              <span>{{ slotProps.data.fileName }}</span>
-            </div>
-          </template></Column
-        >
-      </DataTable>
+          <template #empty>
+            <p class="text-center font-weight-bold">No records found.</p>
+          </template>
+          <Column
+            field="groupName"
+            header="Document Purpose"
+            :sortable="true"
+          ></Column>
+          <Column field="metadata" header="Application #">
+            <template #body="slotProps">{{
+              slotProps.data.metadata?.applicationNumber
+                ? slotProps.data.metadata.applicationNumber
+                : "-"
+            }}</template></Column
+          >
+          <Column field="updatedAt" header="Date Submitted"
+            ><template #body="slotProps">{{
+              dateOnlyLongString(slotProps.data.updatedAt)
+            }}</template></Column
+          >
+          <Column field="updatedAt" header="File">
+            <template #body="slotProps">
+              <div
+                class="file-label"
+                @click="fileUtils.downloadStudentDocument(slotProps.data)"
+              >
+                <span class="mr-4">
+                  <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
+                ></span>
+                <span>{{ slotProps.data.fileName }}</span>
+              </div>
+            </template></Column
+          >
+        </DataTable>
+      </toggle-content>
     </content-group>
     <formio-modal-dialog
-      max-width="730"
+      :max-width="730"
       ref="fileUploadModal"
       title="Upload file"
       :formData="initialData"

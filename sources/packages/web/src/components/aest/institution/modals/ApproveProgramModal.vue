@@ -17,7 +17,7 @@
         <v-text-field
           label="Effective end date"
           class="mt-2"
-          placeholder="yyyy-MM-dd"
+          type="date"
           v-model="formModel.effectiveEndDate"
           variant="outlined"
           :rules="[checkStringDateFormatRule]"

@@ -427,7 +427,6 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE,
         components: {
           default: ProfileCreate,
-          sidebar: AESTHomeSideBar,
         },
         meta: {
           clientType: ClientIdType.AEST,

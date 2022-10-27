@@ -41,13 +41,6 @@
           </template>
         </Column>
       </DataTable>
-      <template #image>
-        <v-img
-          height="200"
-          alt="You don't have any agreements yet"
-          src="@/assets/images/designation_summary.svg"
-        />
-      </template>
     </toggle-content>
   </content-group>
 </template>

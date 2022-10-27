@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator title="Student requests" subTitle="Appeals" />
     </template>
@@ -7,7 +7,6 @@
       title="Requested appeals"
       :recordsCount="applicationAppeals.results?.length"
       subTitle="Make a determination on requested change(s) that may require a reassessment"
-      class="m-1"
     >
       <template #actions>
         <v-text-field
