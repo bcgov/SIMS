@@ -1,4 +1,4 @@
-name: Deploy to TEST in OpenShift
+name: Deploy to OpenShift/Camunda
 
 on:
   workflow_dispatch:
@@ -18,9 +18,37 @@ on:
       environment:
         required: true
         type: environment
+      deployCamundaDefinitions:
+        description: "Deploy Camunda BPMN/DMN from main"
+        type: boolean
+        default: true
+      deployFormioDefinitions:
+        description: "Deploy Form.io forms from main"
+        type: boolean
+        default: true
+  workflow_call:
+    inputs:
+      buildRef:
+        required: true
+        type: string
+      buildId:
+        required: true
+        type: string
+      resourcesFolder:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+      deployCamundaDefinitions:
+        type: boolean
+        default: false
+      deployFormioDefinitions:
+        type: boolean
+        default: false
 
 jobs:
-  deployTest:
+  deploy:
     name: Deploy Web, SIMS-Api, Workers, and DB to TEST environment
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
@@ -84,6 +112,7 @@ jobs:
         run: |
           make oc-deploy-web
   deployCamundaDefinitions:
+    if: ${{ github.event.inputs.deployCamundaDefinitions == true }}
     name: Deploy BPMNs and DMNs to Camunda
     needs:
       - deployTest
@@ -93,6 +122,7 @@ jobs:
       resourcesFolder: ${{ github.event.inputs.resourcesFolder }}
       environment: ${{ github.event.inputs.environment }}
   deployFormioDefinitions:
+    if: ${{ github.event.inputs.deployFormioDefinitions == true }}
     name: Deploy Form.io definitions
     needs:
       - deployTest
