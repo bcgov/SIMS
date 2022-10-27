@@ -19,16 +19,19 @@ on:
         required: true
         type: environment
 
+env:
+  APP_NAME: sims
+
 jobs:
   deployTest:
     name: Deploy Web, SIMS-Api, Workers, and DB to TEST environment
     runs-on: ubuntu-latest
     env:
       BUILD_ID: ${{ github.event.inputs.buildId }}
-      NAMESPACE: 0c27fb-test
+      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
       BUILD_NAMESPACE: 0c27fb-tools
       BUILD_REF: ${{ github.event.inputs.buildRef }}
-      HOST_PREFIX: test-
+      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       KEYCLOAK_REALM: "jxoe2o46"
       KEYCLOAK_AUTH_URL: "https://test.oidc.gov.bc.ca/auth/"
       BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
@@ -43,6 +46,13 @@ jobs:
       BYPASS_APPLICATION_SUBMIT_VALIDATIONS: true
       API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      API_PORT: ${{ secrets.API_PORT }}
+      WEB_PORT: ${{ secrets.WEB_PORT }}
+      API: ${{ format('{0}api-{1}', secrets.HOST_PREFIX, $APP_NAME) }}
+      WEB: ${{ format('{0}web-{1}', secrets.HOST_PREFIX, $APP_NAME) }}
+      WORKERS: ${{ format('{0}workers-{1}', secrets.HOST_PREFIX, $APP_NAME) }}
+      SWAGGER_NAME: ${{ format('{0}swagger', secrets.HOST_PREFIX) }}
+      DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
     steps:
       - name: Print env
         run: |
