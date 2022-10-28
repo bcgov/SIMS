@@ -49,7 +49,7 @@ on:
 
 jobs:
   deploy:
-    if: ${{ github.event.inputs.deployCamundaDefinitions == 'true' }}
+    if: ${{ github.event.inputs.deployCamundaDefinitions == "true" }}
     name: Deploy Web, SIMS-Api, Workers, and DB
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
