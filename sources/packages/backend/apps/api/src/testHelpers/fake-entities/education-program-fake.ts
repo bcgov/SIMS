@@ -6,7 +6,7 @@ import {
   ProgramStatus,
   ProgramIntensity,
 } from "@sims/sims-db";
-import { createFakeInstitution } from "./institution-fake";
+import { createFakeInstitution } from "@sims/test-utils";
 
 export function createFakeEducationProgram(
   institution?: Institution,

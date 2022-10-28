@@ -1,6 +1,6 @@
 import * as faker from "faker";
 import { Student, User } from "@sims/sims-db";
-import { createFakeUser } from "./user-fake";
+import { createFakeUser } from "@sims/test-utils";
 
 export function createFakeStudent(user?: User): Student {
   const student = new Student();
