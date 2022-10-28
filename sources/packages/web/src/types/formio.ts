@@ -15,11 +15,12 @@ export interface FormIOForm<T = any> {
   options: FormIOFormOptions;
   on: (
     event: string,
-    callback: (page: WizardNavigationEvent) => void,
+    callback: (page: WizardNavigationEvent, index: number) => void,
   ) => unknown;
   isLastPage: () => boolean;
   prevPage: () => WizardNavigationEvent;
   nextPage: () => WizardNavigationEvent;
+  page: WizardNavigationEvent;
 }
 
 /**
