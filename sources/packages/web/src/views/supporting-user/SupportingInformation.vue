@@ -72,7 +72,7 @@
           variant="outlined"
           data-cy="previousSection"
           @click="wizardGoPrevious"
-          >Previous step</v-btn
+          >Back</v-btn
         >
       </v-col>
       <v-col>
@@ -158,6 +158,14 @@ export default defineComponent({
       // Disable internal submit button.
       formioUtils.disableWizardButtons(formInstance);
       formInstance.options.buttonSettings.showSubmit = false;
+      // Handle the navigation using the breadcrumbs.
+      formInstance.on(
+        "wizardPageSelected",
+        (_page: WizardNavigationEvent, index: number) => {
+          isFirstPage.value = index === 0;
+          isLastPage.value = formInstance.isLastPage();
+        },
+      );
       // Handle the navigation using next/prev buttons.
       const prevNextNavigation = (navigation: WizardNavigationEvent) => {
         isFirstPage.value = navigation.page === 0;
@@ -217,6 +225,10 @@ export default defineComponent({
               );
               break;
           }
+        } else {
+          snackBar.error(
+            "An unexpected error happened while searching for the application.",
+          );
         }
       }
     };
@@ -267,6 +279,10 @@ export default defineComponent({
               );
               break;
           }
+        } else {
+          snackBar.error(
+            "An unexpected error happened while submitting supporting data.",
+          );
         }
       } finally {
         submitting.value = false;
