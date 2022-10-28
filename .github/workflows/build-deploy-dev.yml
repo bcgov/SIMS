@@ -24,7 +24,7 @@ jobs:
   build:
     name: Build Web, SIMS-Api and Workers
     runs-on: ubuntu-latest
-    #if: ${{ github.event.pull_request.merged == true}}
+    if: ${{ github.event.pull_request.merged == true}}
     env:
       BUILD_ID: ${{ github.event.number }}
       BUILD_NAMESPACE: 0c27fb-tools
