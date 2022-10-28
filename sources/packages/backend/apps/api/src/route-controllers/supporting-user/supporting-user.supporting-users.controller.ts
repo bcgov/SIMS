@@ -33,7 +33,7 @@ import {
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
-import { getSupportingUserForm, getISODateOnlyString } from "../../utilities";
+import { getSupportingUserForm } from "../../utilities";
 import {
   ApiBadRequestResponse,
   ApiTags,
@@ -238,7 +238,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
         {
           contactInfo,
           sin: payload.sin,
-          birthDate: getISODateOnlyString(new Date(userToken.birthdate)),
+          birthDate: userToken.birthdate,
           gender: userToken.gender,
           supportingData: payload.supportingData,
           userId: user.id,

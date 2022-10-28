@@ -400,9 +400,7 @@ export class StudentService extends RecordDataModelService<Student> {
       studentToken.givenNames !== studentToSync.user.firstName
     ) {
       const sinValidation = new SINValidation();
-      studentToSync.birthDate = getISODateOnlyString(
-        new Date(studentToken.birthdate),
-      );
+      studentToSync.birthDate = studentToken.birthdate;
       studentToSync.user.lastName = studentToken.lastName;
       studentToSync.user.firstName = studentToken.givenNames;
       sinValidation.student = studentToSync;
