@@ -7,10 +7,10 @@ on:
       - main
 
 jobs:
-  environment: DEV
   # Print variables for logging and debugging purposes
   checkEnv:
     name: Check Env variables
+    environment: DEV
     runs-on: ubuntu-latest
     steps:
       - name: Print Env Vars
@@ -23,6 +23,7 @@ jobs:
   # Build Web, SIMS-Api and Workers
   build:
     name: Build Web, SIMS-Api and Workers
+    environment: DEV
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged == true}}
     env:
