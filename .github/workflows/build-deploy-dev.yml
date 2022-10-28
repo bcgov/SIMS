@@ -5,9 +5,9 @@ on:
     types: [opened, reopened, synchronize, closed]
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
+  environment: DEV
   # Print variables for logging and debugging purposes
   checkEnv:
     name: Check Env variables
@@ -68,7 +68,7 @@ jobs:
       buildRef: ${{ github.base_ref }}
       buildId: ${{ github.event.number }}
       resourcesFolder: "BPMN/camunda-8"
-      environment: "DEV"
+      environment: DEV
       deployCamundaDefinitions: "false"
       deployFormioDefinitions: "false"
     secrets: inherit
