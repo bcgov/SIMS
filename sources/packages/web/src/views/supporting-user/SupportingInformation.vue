@@ -72,7 +72,7 @@
           variant="outlined"
           data-cy="previousSection"
           @click="wizardGoPrevious"
-          >Previous step</v-btn
+          >Back</v-btn
         >
       </v-col>
       <v-col>
@@ -129,7 +129,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  setup(props, context) {
     const router = useRouter();
     const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
@@ -158,13 +158,41 @@ export default defineComponent({
       // Disable internal submit button.
       formioUtils.disableWizardButtons(formInstance);
       formInstance.options.buttonSettings.showSubmit = false;
+      // Handle the navigation using the breadcrumbs.
+      formInstance.on(
+        "wizardPageSelected",
+        (page: WizardNavigationEvent, index: number) => {
+          isFirstPage.value = index === 0;
+          isLastPage.value = formInstance.isLastPage();
+          // Event to set isInFirstPage, current page and isInLastPage to parent
+          context.emit(
+            "pageChanged",
+            isFirstPage.value,
+            formInstance.page,
+            isLastPage.value,
+          );
+        },
+      );
       // Handle the navigation using next/prev buttons.
       const prevNextNavigation = (navigation: WizardNavigationEvent) => {
         isFirstPage.value = navigation.page === 0;
         isLastPage.value = formInstance.isLastPage();
+        // Event to set isInFirstPage, current page and isInLastPage to parent
+        context.emit(
+          "pageChanged",
+          isFirstPage.value,
+          formInstance.page,
+          isLastPage.value,
+        );
       };
       formInstance.on("prevPage", prevNextNavigation);
       formInstance.on("nextPage", prevNextNavigation);
+      context.emit(
+        "pageChanged",
+        isFirstPage.value,
+        formInstance.page,
+        isLastPage.value,
+      );
     };
 
     const setInitialData = (programYearStartDate: Date) => {
