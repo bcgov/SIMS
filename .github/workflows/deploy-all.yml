@@ -119,16 +119,16 @@ jobs:
     needs:
       - deploy
     uses: ./.github/workflows/deploy-camunda-definitions.yml
-    secrets: inherit
     with:
       resourcesFolder: ${{ github.event.inputs.resourcesFolder }}
       environment: ${{ github.event.inputs.environment }}
+    secrets: inherit
   deployFormioDefinitions:
     if: ${{ github.event.inputs.deployFormioDefinitions == 'true' }}
     name: Deploy Form.io definitions
     needs:
       - deploy
     uses: ./.github/workflows/deploy-formio-definitions.yml
-    secrets: inherit
     with:
       environment: ${{ github.event.inputs.environment }}
+    secrets: inherit

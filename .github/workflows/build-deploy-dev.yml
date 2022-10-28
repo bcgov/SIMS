@@ -63,7 +63,6 @@ jobs:
     needs:
       - build
     uses: ./.github/workflows/deploy-all.yml
-    secrets: inherit
     with:
       buildRef: ${{ github.base_ref }}
       buildId: ${{ github.event.number }}
@@ -71,3 +70,4 @@ jobs:
       environment: "DEV"
       deployCamundaDefinitions: false
       deployFormioDefinitions: false
+    secrets: inherit
