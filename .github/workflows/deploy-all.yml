@@ -49,7 +49,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy Web, SIMS-Api, Workers, and DB to TEST environment
+    name: Deploy Web, SIMS-Api, Workers, and DB
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     env:
@@ -112,21 +112,21 @@ jobs:
         run: |
           make oc-deploy-web
   deployCamundaDefinitions:
-    if: ${{ github.event.inputs.deployCamundaDefinitions == true }}
+    if: ${{ github.event.inputs.deployCamundaDefinitions == 'true' }}
     name: Deploy BPMNs and DMNs to Camunda
     needs:
-      - deployTest
-    uses: ./.github/workflows/camunda-definitions-deploy.yml
+      - deploy
+    uses: ./.github/workflows/deploy-camunda-definitions.yml
     secrets: inherit
     with:
       resourcesFolder: ${{ github.event.inputs.resourcesFolder }}
       environment: ${{ github.event.inputs.environment }}
   deployFormioDefinitions:
-    if: ${{ github.event.inputs.deployFormioDefinitions == true }}
+    if: ${{ github.event.inputs.deployFormioDefinitions == 'true' }}
     name: Deploy Form.io definitions
     needs:
-      - deployTest
-    uses: ./.github/workflows/formio-definitions-deploy.yml
+      - deploy
+    uses: ./.github/workflows/deploy-formio-definitions.yml
     secrets: inherit
     with:
       environment: ${{ github.event.inputs.environment }}
