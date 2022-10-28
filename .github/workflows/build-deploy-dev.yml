@@ -68,6 +68,6 @@ jobs:
       buildRef: ${{ github.base_ref }}
       buildId: ${{ github.event.number }}
       resourcesFolder: "BPMN/camunda-8"
-      environment: DEV
+      environment: "DEV"
       deployCamundaDefinitions: false
       deployFormioDefinitions: false
