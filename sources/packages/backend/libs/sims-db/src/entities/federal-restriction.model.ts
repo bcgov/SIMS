@@ -8,7 +8,6 @@ import {
 } from "typeorm";
 import { Restriction } from ".";
 import { ColumnNames, TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * Represents the current snapshot of all federal restrictions
