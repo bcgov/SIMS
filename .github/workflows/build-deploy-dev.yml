@@ -5,6 +5,7 @@ on:
     types: [opened, reopened, synchronize, closed]
     branches:
       - main
+  workflow_call:
 
 jobs:
   # Print variables for logging and debugging purposes
