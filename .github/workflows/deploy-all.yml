@@ -49,7 +49,7 @@ on:
 
 jobs:
   deploy:
-    if: ${{ github.event.inputs.deployCamundaDefinitions == true }}
+    if: ${{ github.event.inputs.deployCamundaDefinitions == 'true' }}
     name: Deploy Web, SIMS-Api, Workers, and DB
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
@@ -113,7 +113,7 @@ jobs:
         run: |
           make oc-deploy-web
   deployCamundaDefinitions:
-    if: ${{ github.event.inputs.deployCamundaDefinitions == true }}
+    if: ${{ github.event.inputs.deployCamundaDefinitions == 'true' }}
     name: Deploy BPMNs and DMNs to Camunda
     needs:
       - deploy
@@ -123,7 +123,7 @@ jobs:
       resourcesFolder: ${{ github.event.inputs.resourcesFolder }}
       environment: ${{ github.event.inputs.environment }}
   deployFormioDefinitions:
-    if: ${{ github.event.inputs.deployFormioDefinitions == true }}
+    if: ${{ github.event.inputs.deployFormioDefinitions == 'true' }}
     name: Deploy Form.io definitions
     needs:
       - deploy
