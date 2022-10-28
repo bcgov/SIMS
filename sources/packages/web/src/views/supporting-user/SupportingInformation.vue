@@ -129,7 +129,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, context) {
+  setup(props) {
     const router = useRouter();
     const snackBar = useSnackBar();
     const { dateOnlyLongString } = useFormatters();
@@ -161,29 +161,15 @@ export default defineComponent({
       // Handle the navigation using the breadcrumbs.
       formInstance.on(
         "wizardPageSelected",
-        (page: WizardNavigationEvent, index: number) => {
+        (_page: WizardNavigationEvent, index: number) => {
           isFirstPage.value = index === 0;
           isLastPage.value = formInstance.isLastPage();
-          // Event to set isInFirstPage, current page and isInLastPage to parent.
-          context.emit(
-            "pageChanged",
-            isFirstPage.value,
-            formInstance.page,
-            isLastPage.value,
-          );
         },
       );
       // Handle the navigation using next/prev buttons.
       const prevNextNavigation = (navigation: WizardNavigationEvent) => {
         isFirstPage.value = navigation.page === 0;
         isLastPage.value = formInstance.isLastPage();
-        // Event to set isInFirstPage, current page and isInLastPage to parent.
-        context.emit(
-          "pageChanged",
-          isFirstPage.value,
-          formInstance.page,
-          isLastPage.value,
-        );
       };
       formInstance.on("prevPage", prevNextNavigation);
       formInstance.on("nextPage", prevNextNavigation);
