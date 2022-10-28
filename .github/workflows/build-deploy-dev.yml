@@ -61,8 +61,6 @@ jobs:
   deployDev:
     name: Deploy App, API, and DB to DEV environment
     runs-on: ubuntu-latest
-    environment: DEV
-    if: ${{ github.event.pull_request.merged == true && github.base_ref != 'prod' && github.base_ref != 'test'}}
     needs:
       - build
     uses: ./.github/workflows/deploy-all.yml
