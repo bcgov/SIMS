@@ -5,6 +5,7 @@ import {
   MSFAANumber,
   OfferingIntensity,
 } from "@sims/sims-db";
+import { getISODateOnlyString } from "../../utilities";
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -97,8 +98,8 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    */
   async updateReceivedFile(
     msfaaNumber: string,
-    dateSigned: string,
-    serviceProviderReceivedDate: string,
+    dateSigned: Date,
+    serviceProviderReceivedDate: Date,
   ): Promise<UpdateResult> {
     if (!dateSigned || !serviceProviderReceivedDate) {
       throw new Error(
@@ -113,8 +114,10 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         serviceProviderReceivedDate: IsNull(),
       },
       {
-        dateSigned,
-        serviceProviderReceivedDate,
+        dateSigned: getISODateOnlyString(dateSigned),
+        serviceProviderReceivedDate: getISODateOnlyString(
+          serviceProviderReceivedDate,
+        ),
       },
     );
   }
@@ -131,7 +134,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    */
   async updateCancelledReceivedFile(
     msfaaNumber: string,
-    cancelledDate: string,
+    cancelledDate: Date,
     newIssuingProvince: string,
   ): Promise<UpdateResult> {
     if (!cancelledDate || !newIssuingProvince) {
@@ -147,7 +150,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         newIssuingProvince: IsNull(),
       },
       {
-        cancelledDate,
+        cancelledDate: getISODateOnlyString(cancelledDate),
         newIssuingProvince,
       },
     );

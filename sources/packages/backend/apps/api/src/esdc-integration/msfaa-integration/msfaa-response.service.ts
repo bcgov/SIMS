@@ -6,7 +6,6 @@ import { MSFAASFTPResponseFile } from "./models/msfaa-integration.model";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAIntegrationService } from "./msfaa-integration.service";
-import { getISODateOnlyString } from "../../utilities";
 
 @Injectable()
 export class MSFAAResponseService {
@@ -108,8 +107,8 @@ export class MSFAAResponseService {
     // may not be necessarily ISO date format.
     const updateResult = await this.msfaaNumberService.updateReceivedFile(
       receivedRecord.msfaaNumber,
-      getISODateOnlyString(receivedRecord.borrowerSignedDate),
-      getISODateOnlyString(receivedRecord.serviceProviderReceivedDate),
+      receivedRecord.borrowerSignedDate,
+      receivedRecord.serviceProviderReceivedDate,
     );
 
     // Expected to update 1 and only 1 record.
@@ -135,7 +134,7 @@ export class MSFAAResponseService {
     const updateResult =
       await this.msfaaNumberService.updateCancelledReceivedFile(
         cancelledRecord.msfaaNumber,
-        getISODateOnlyString(cancelledRecord.cancelledDate),
+        cancelledRecord.cancelledDate,
         cancelledRecord.newIssusingProvince,
       );
 
