@@ -10,8 +10,8 @@ import {
 import { APPLICATION_NOT_FOUND } from "../../constants";
 import {
   APPLICATION_ID,
-  SELECTED_LOCATION,
-  SELECTED_PROGRAM,
+  STUDENT_DATA_SELECTED_LOCATION,
+  STUDENT_DATA_SELECTED_PROGRAM,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
 
@@ -25,7 +25,11 @@ export class ProgramInfoRequestController {
    * @returns most updated status of the PIR.
    */
   @ZeebeWorker("program-info-request", {
-    fetchVariable: [APPLICATION_ID, SELECTED_LOCATION, SELECTED_PROGRAM],
+    fetchVariable: [
+      APPLICATION_ID,
+      STUDENT_DATA_SELECTED_LOCATION,
+      STUDENT_DATA_SELECTED_PROGRAM,
+    ],
     maxJobsToActivate: MaxJobsToActivate.High,
   })
   async updateApplicationStatus(
@@ -56,8 +60,8 @@ export class ProgramInfoRequestController {
     await this.applicationService.updateProgramInfoStatus(
       job.variables.applicationId,
       job.customHeaders.programInfoStatus,
-      job.variables.selectedLocation,
-      job.variables.selectedProgram,
+      job.variables.studentDataSelectedLocation,
+      job.variables.studentDataSelectedProgram,
     );
     return job.complete({
       programInfoStatus: job.customHeaders.programInfoStatus,

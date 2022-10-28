@@ -15,12 +15,12 @@ export const APPLICATION_ID = "applicationId";
  * Institution location id selected by the student for
  * the application.
  */
-export const SELECTED_LOCATION = "selectedLocation";
+export const STUDENT_DATA_SELECTED_LOCATION = "studentDataSelectedLocation";
 /**
  * Institution offering program id if selected by the student.
  * If not selected a PIR will be needed.
  */
-export const SELECTED_PROGRAM = "selectedProgram";
+export const STUDENT_DATA_SELECTED_PROGRAM = "studentDataSelectedProgram";
 /**
  * Created during the student application exception verifications
  * executed by the Ministry.

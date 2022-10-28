@@ -19,3 +19,8 @@ export const REPORTED_INCOME = "reportedIncome";
  * Declared inside cra-integration-income-verification.
  */
 export const INCOME_VERIFICATION_ID = "incomeVerificationId";
+/**
+ * After an income verification is created this variable reports if the
+ * response was already received from the ESDC.
+ */
+export const INCOME_VERIFICATION_COMPLETED = "incomeVerificationCompleted";
