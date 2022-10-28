@@ -62,14 +62,67 @@ jobs:
   # Deploy Web, SIMS-Api and Workers
   deployDev:
     name: Deploy Web, SIMS-Api and Workers to DEV environment
+    runs-on: ubuntu-latest
+    environment: DEV
     needs:
       - build
-    uses: ./.github/workflows/deploy-all.yml
-    with:
-      buildRef: ${{ github.base_ref }}
-      buildId: ${{ github.event.number }}
-      resourcesFolder: "BPMN/camunda-8"
-      environment: DEV
-      deployCamundaDefinitions: "false"
-      deployFormioDefinitions: "false"
-    secrets: inherit
+    env:
+      BUILD_ID: ${{ github.event.number }}
+      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+      BUILD_REF: ${{ github.base_ref }}
+      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+      BUILD_NAMESPACE: 0c27fb-tools
+      KEYCLOAK_REALM: "jxoe2o46"
+      KEYCLOAK_AUTH_URL: ${{ secrets.KEYCLOAK_AUTH_URL }}
+      BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
+      FORMS_URL: ${{ secrets.FORMS_URL }}
+      SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
+      RULE_ENGINE_URL: TO_BE_REMOVED
+      FORMS_FLOW_API_URL: TO_BE_REMOVED
+      ATBC_LOGIN_ENDPOINT: ${{ secrets.ATBC_LOGIN_ENDPOINT }}
+      ATBC_ENDPOINT: ${{ secrets.ATBC_ENDPOINT }}
+      SWAGGER_ENABLED: true
+      APPLICATION_ARCHIVE_DAYS: 43
+      BYPASS_APPLICATION_SUBMIT_VALIDATIONS: ${{ secrets.BYPASS_APPLICATION_SUBMIT_VALIDATIONS }}
+      BYPASS_CRA_INCOME_VERIFICATION: ${{ secrets.BYPASS_CRA_INCOME_VERIFICATION }}
+      API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      API_PORT: ${{ secrets.API_PORT }}
+      WEB_PORT: ${{ secrets.WEB_PORT }}
+      API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}
+      WEB: ${{ format('{0}web-sims', secrets.HOST_PREFIX) }}
+      WORKERS: ${{ format('{0}workers-sims', secrets.HOST_PREFIX) }}
+      SWAGGER_NAME: ${{ format('{0}swagger', secrets.HOST_PREFIX) }}
+      DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD ID: $BUILD_ID
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo NAMESPACE: $NAMESPACE
+          echo BRANCH: $BUILD_REF
+          echo HOST_PREFIX: $HOST_PREFIX
+      # Checkout the PR branch
+      - name: Checkout Target Branch
+        uses: actions/checkout@v1
+      # Log in to OpenShift.
+      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
+      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      # Deploy SIMS-Api
+      - name: Deploy SIMS-API
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-api
+      # Deploy Workers
+      - name: Deploy Workers
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-workers
+      # Deploy Deploy Web/Frontend
+      - name: Deploy Web/Frontend
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-web
