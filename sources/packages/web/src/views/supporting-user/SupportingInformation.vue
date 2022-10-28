@@ -164,7 +164,7 @@ export default defineComponent({
         (page: WizardNavigationEvent, index: number) => {
           isFirstPage.value = index === 0;
           isLastPage.value = formInstance.isLastPage();
-          // Event to set isInFirstPage, current page and isInLastPage to parent
+          // Event to set isInFirstPage, current page and isInLastPage to parent.
           context.emit(
             "pageChanged",
             isFirstPage.value,
@@ -177,7 +177,7 @@ export default defineComponent({
       const prevNextNavigation = (navigation: WizardNavigationEvent) => {
         isFirstPage.value = navigation.page === 0;
         isLastPage.value = formInstance.isLastPage();
-        // Event to set isInFirstPage, current page and isInLastPage to parent
+        // Event to set isInFirstPage, current page and isInLastPage to parent.
         context.emit(
           "pageChanged",
           isFirstPage.value,
@@ -187,12 +187,6 @@ export default defineComponent({
       };
       formInstance.on("prevPage", prevNextNavigation);
       formInstance.on("nextPage", prevNextNavigation);
-      context.emit(
-        "pageChanged",
-        isFirstPage.value,
-        formInstance.page,
-        isLastPage.value,
-      );
     };
 
     const setInitialData = (programYearStartDate: Date) => {
