@@ -37,6 +37,7 @@ on:
       resourcesFolder:
         required: true
         type: string
+        default: "BPMN/camunda-8"
       environment:
         required: true
         type: string
@@ -55,21 +56,22 @@ jobs:
     env:
       BUILD_ID: ${{ github.event.inputs.buildId }}
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-      BUILD_NAMESPACE: 0c27fb-tools
       BUILD_REF: ${{ github.event.inputs.buildRef }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+      BUILD_NAMESPACE: 0c27fb-tools
       KEYCLOAK_REALM: "jxoe2o46"
-      KEYCLOAK_AUTH_URL: "https://test.oidc.gov.bc.ca/auth/"
-      BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
-      RULE_ENGINE_URL: "https://test-aest-ffa-bpm.apps.silver.devops.gov.bc.ca/camunda/engine-rest"
-      FORMS_URL: "https://test-aest-ffa-forms.apps.silver.devops.gov.bc.ca"
-      SITE_MINDER_LOGOUT_URL: "https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi"
-      FORMS_FLOW_API_URL: "https://test-aest-ffa-api.apps.silver.devops.gov.bc.ca"
-      ATBC_LOGIN_ENDPOINT: "https://auth.at-bc.ca/api/login"
-      ATBC_ENDPOINT: "https://sabc.at-bc.ca/api"
+      KEYCLOAK_AUTH_URL: ${{ secrets.KEYCLOAK_AUTH_URL }}
+      BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
+      FORMS_URL: ${{ secrets.FORMS_URL }}
+      SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
+      RULE_ENGINE_URL: TO_BE_REMOVED
+      FORMS_FLOW_API_URL: TO_BE_REMOVED
+      ATBC_LOGIN_ENDPOINT: ${{ secrets.ATBC_LOGIN_ENDPOINT }}
+      ATBC_ENDPOINT: ${{ secrets.ATBC_ENDPOINT }}
       SWAGGER_ENABLED: true
       APPLICATION_ARCHIVE_DAYS: 43
-      BYPASS_APPLICATION_SUBMIT_VALIDATIONS: true
+      BYPASS_APPLICATION_SUBMIT_VALIDATIONS: ${{ secrets.BYPASS_APPLICATION_SUBMIT_VALIDATIONS }}
+      BYPASS_CRA_INCOME_VERIFICATION: ${{ secrets.BYPASS_CRA_INCOME_VERIFICATION }}
       API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       API_PORT: ${{ secrets.API_PORT }}
