@@ -8,6 +8,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { DisbursementReceiptModel } from "./disbursement-receipt.model";
+import { getISODateOnlyString } from "../../utilities";
 
 /**
  * Service for disbursement receipts.
@@ -38,7 +39,10 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     let generatedId: number;
     const creator = { id: auditUserId } as User;
     const disbursementReceiptEntity = new DisbursementReceipt();
-    disbursementReceiptEntity.batchRunDate = batchRunDate;
+    // The insert of disbursement receipt always comes from an external source through integration.
+    // Hence all the date fields are parsed as date object from external source as their date format
+    // may not be necessarily ISO date format.
+    disbursementReceiptEntity.batchRunDate = getISODateOnlyString(batchRunDate);
     disbursementReceiptEntity.studentSIN = disbursementReceipt.studentSIN;
     disbursementReceiptEntity.disbursementSchedule = {
       id: disbursementScheduleId,
@@ -48,19 +52,23 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
       disbursementReceipt.totalEntitledDisbursedAmount;
     disbursementReceiptEntity.totalDisbursedAmount =
       disbursementReceipt.totalDisbursedAmount;
-    disbursementReceiptEntity.disburseDate = disbursementReceipt.disburseDate;
+    disbursementReceiptEntity.disburseDate = getISODateOnlyString(
+      disbursementReceipt.disburseDate,
+    );
     disbursementReceiptEntity.disburseAmountStudent =
       disbursementReceipt.disburseAmountStudent;
     disbursementReceiptEntity.disburseAmountInstitution =
       disbursementReceipt.disburseAmountInstitution;
-    disbursementReceiptEntity.dateSignedInstitution =
-      disbursementReceipt.dateSignedInstitution;
+    disbursementReceiptEntity.dateSignedInstitution = getISODateOnlyString(
+      disbursementReceipt.dateSignedInstitution,
+    );
     disbursementReceiptEntity.institutionCode =
       disbursementReceipt.institutionCode;
     disbursementReceiptEntity.disburseMethodStudent =
       disbursementReceipt.disburseMethodStudent;
-    disbursementReceiptEntity.studyPeriodEndDate =
-      disbursementReceipt.studyPeriodEndDate;
+    disbursementReceiptEntity.studyPeriodEndDate = getISODateOnlyString(
+      disbursementReceipt.studyPeriodEndDate,
+    );
     disbursementReceiptEntity.totalEntitledGrantAmount =
       disbursementReceipt.totalEntitledGrantAmount;
     disbursementReceiptEntity.totalDisbursedGrantAmount =

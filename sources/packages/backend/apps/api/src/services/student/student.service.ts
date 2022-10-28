@@ -163,7 +163,7 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     student.user = user;
-    student.birthDate = new Date(userInfo.birthdate);
+    student.birthDate = userInfo.birthdate;
     student.gender = userInfo.gender;
     student.contactInfo = {
       address: transformAddressDetails(studentInfo),
@@ -399,7 +399,7 @@ export class StudentService extends RecordDataModelService<Student> {
       studentToken.givenNames !== studentToSync.user.firstName
     ) {
       const sinValidation = new SINValidation();
-      studentToSync.birthDate = new Date(studentToken.birthdate);
+      studentToSync.birthDate = studentToken.birthdate;
       studentToSync.user.lastName = studentToken.lastName;
       studentToSync.user.firstName = studentToken.givenNames;
       sinValidation.student = studentToSync;

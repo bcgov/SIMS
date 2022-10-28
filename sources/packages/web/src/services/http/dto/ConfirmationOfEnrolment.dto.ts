@@ -7,13 +7,13 @@ export interface ConfirmationOfEnrollmentAPIInDTO {
 
 export interface COESummaryAPIOutDTO {
   applicationNumber: string;
-  studyStartPeriod: Date;
-  studyEndPeriod: Date;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
   applicationId: number;
   coeStatus: COEStatus;
   fullName: string;
   disbursementScheduleId: number;
-  disbursementDate: Date;
+  disbursementDate: string;
 }
 
 export interface ApplicationDetailsForCOEAPIOutDTO {

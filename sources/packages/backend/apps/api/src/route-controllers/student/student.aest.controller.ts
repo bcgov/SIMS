@@ -315,7 +315,7 @@ export class StudentAESTController extends BaseController {
       validLastNameCheck: sinValidation.validLastNameCheck,
       validGenderCheck: sinValidation.validGenderCheck,
       temporarySIN: sinValidation.temporarySIN,
-      sinExpiryDate: getISODateOnlyString(sinValidation.sinExpiryDate),
+      sinExpiryDate: sinValidation.sinExpiryDate,
     }));
   }
 
@@ -379,7 +379,7 @@ export class StudentAESTController extends BaseController {
       await this.sinValidationService.updateSINValidation(
         sinValidationId,
         studentId,
-        new Date(payload.expiryDate),
+        payload.expiryDate,
         payload.noteDescription,
         userToken.userId,
       );

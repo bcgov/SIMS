@@ -5,7 +5,7 @@ import {
 import { Type } from "class-transformer";
 import {
   IsArray,
-  IsDate,
+  IsDateString,
   IsEnum,
   IsNotEmpty,
   MaxLength,
@@ -26,15 +26,15 @@ export class UpdateDesignationAPIInDto {
       value.designationStatus === DesignationAgreementStatus.Approved,
   )
   @IsNotEmpty()
-  @IsDate()
-  startDate?: Date;
+  @IsDateString()
+  startDate?: string;
   @ValidateIf(
     (value: UpdateDesignationAPIInDto) =>
       value.designationStatus === DesignationAgreementStatus.Approved,
   )
   @IsNotEmpty()
-  @IsDate()
-  endDate?: Date;
+  @IsDateString()
+  endDate?: string;
   @ValidateIf(
     (value: UpdateDesignationAPIInDto) =>
       value.designationStatus === DesignationAgreementStatus.Approved,

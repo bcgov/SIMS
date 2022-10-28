@@ -167,7 +167,7 @@ export default defineComponent({
       formInstance.on("nextPage", prevNextNavigation);
     };
 
-    const setInitialData = (programYearStartDate: Date) => {
+    const setInitialData = (programYearStartDate: string) => {
       initialData.value = {
         givenNames: bcscParsedToken.givenNames,
         lastName: bcscParsedToken.lastName,

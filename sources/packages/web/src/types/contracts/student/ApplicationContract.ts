@@ -128,8 +128,8 @@ export interface GetApplicationDataDto extends GetApplicationBaseDTO {
   applicationCOEStatus: COEStatus;
   applicationPIRDeniedReason?: string;
   applicationCOEDeniedReason?: string;
-  programYearStartDate: Date;
-  programYearEndDate: Date;
+  programYearStartDate: string;
+  programYearEndDate: string;
   submittedDate?: Date;
 }
 

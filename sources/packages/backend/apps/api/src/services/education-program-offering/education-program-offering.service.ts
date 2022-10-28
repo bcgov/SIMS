@@ -362,12 +362,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.offeringName;
     if (!hasExistingApplication) {
-      programOffering.studyStartDate = new Date(
-        educationProgramOffering.studyStartDate,
-      );
-      programOffering.studyEndDate = new Date(
-        educationProgramOffering.studyEndDate,
-      );
+      programOffering.studyStartDate = educationProgramOffering.studyStartDate;
+      programOffering.studyEndDate = educationProgramOffering.studyEndDate;
       programOffering.actualTuitionCosts =
         educationProgramOffering.actualTuitionCosts;
       programOffering.programRelatedCosts =

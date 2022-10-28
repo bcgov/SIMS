@@ -41,7 +41,7 @@ export interface SINValidationRecord {
   sin: string;
   firstName: string;
   lastName: string;
-  birthDate: Date;
+  birthDate: string;
   gender: string;
 }
 

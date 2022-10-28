@@ -195,9 +195,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         // checks if the MSFAA number is still valid.
         hasValidMSFAANumber = this.msfaaNumberService.isMSFAANumberValid(
           // Previously signed and completed application offering end date in considered the start date.
-          originalAssessment.offering.studyEndDate,
+          new Date(originalAssessment.offering.studyEndDate),
           // Start date of the offering of the current application is considered the end date.
-          originalAssessment.offering.studyStartDate,
+          new Date(originalAssessment.offering.studyStartDate),
         );
       }
 

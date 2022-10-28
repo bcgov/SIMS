@@ -67,7 +67,7 @@ import {
   MenuType,
   ApproveConfirmEnrollmentModel,
 } from "@/types";
-import { useSnackBar, ModalDialog, useCOE } from "@/composables";
+import { useSnackBar, ModalDialog, useCOE, useFormatters } from "@/composables";
 import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
@@ -97,6 +97,7 @@ export default {
   },
   setup(props: any) {
     const { mapCOEChipStatus } = useCOE();
+    const { dateOnlyLongString } = useFormatters();
     const router = useRouter();
     const snackBar = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
@@ -116,6 +117,9 @@ export default {
         );
       initialData.value.coeStatusClass = mapCOEChipStatus(
         initialData.value.applicationCOEStatus,
+      );
+      initialData.value.disbursementDate = dateOnlyLongString(
+        initialData.value.disbursementDate,
       );
     };
 

@@ -56,7 +56,7 @@ describe("Test ATBC Controller", () => {
     // Create fake student in SIMS DB
     const fakeStudent = new Student();
     fakeStudent.sinConsent = true;
-    fakeStudent.birthDate = faker.date.past(18);
+    fakeStudent.birthDate = faker.date.past(18).toISOString();
     fakeStudent.gender = "F";
     fakeStudent.contactInfo = {
       address: {

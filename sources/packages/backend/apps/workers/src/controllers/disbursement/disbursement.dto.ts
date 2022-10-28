@@ -7,8 +7,8 @@ export interface DisbursementValue {
 }
 
 export interface DisbursementSchedule {
-  disbursementDate: Date;
-  negotiatedExpiryDate: Date;
+  disbursementDate: string;
+  negotiatedExpiryDate: string;
   disbursements: DisbursementValue[];
 }
 

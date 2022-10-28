@@ -94,7 +94,7 @@ export class EducationProgramAESTController extends BaseController {
     @Body() payload: ApproveProgramAPIInDTO,
   ): Promise<void> {
     await this.programService.approveEducationProgram(
-      new Date(payload.effectiveEndDate),
+      payload.effectiveEndDate,
       payload.approvedNote,
       institutionId,
       programId,

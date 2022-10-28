@@ -10,7 +10,6 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
 import { Application, ContactInfo, SupportingUserType } from ".";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * Users that provide supporting information for a Student Application
@@ -49,9 +48,8 @@ export class SupportingUser extends RecordDataModel {
     name: "birth_date",
     type: "date",
     nullable: true,
-    transformer: dateOnlyTransformer,
   })
-  birthDate?: Date;
+  birthDate?: string;
   /**
    * Gender as received from BCSC authentication.
    */

@@ -102,6 +102,9 @@ export class MSFAAResponseService {
   private async processReceivedRecord(
     receivedRecord: MSFAAResponseReceivedRecord,
   ): Promise<void> {
+    // The update of msfaa always comes from an external source through integration.
+    // Hence the date fields are parsed as date object from external source as their date format
+    // may not be necessarily ISO date format.
     const updateResult = await this.msfaaNumberService.updateReceivedFile(
       receivedRecord.msfaaNumber,
       receivedRecord.borrowerSignedDate,
@@ -125,6 +128,9 @@ export class MSFAAResponseService {
   private async processCancelledRecord(
     cancelledRecord: MSFAAResponseCancelledRecord,
   ): Promise<void> {
+    // The update of msfaa always comes from an external source through integration.
+    // Hence the cancelled date is parsed as date object from external source as their date format
+    // may not be necessarily ISO date format.
     const updateResult =
       await this.msfaaNumberService.updateCancelledReceivedFile(
         cancelledRecord.msfaaNumber,

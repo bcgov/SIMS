@@ -146,7 +146,7 @@ export class EducationProgramOfferingSummaryAPIOutDTO {
 }
 
 export class OfferingStartDateAPIOutDTO {
-  studyStartDate: Date;
+  studyStartDate: string;
 }
 
 /**
@@ -193,6 +193,7 @@ export class OfferingAssessmentAPIInDTO {
   @IsEnum(OfferingStatus)
   offeringStatus: OfferingStatus;
   @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   assessmentNotes: string;
 }
 
