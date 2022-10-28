@@ -37,16 +37,15 @@ on:
       resourcesFolder:
         required: true
         type: string
-        default: "BPMN/camunda-8"
       environment:
         required: true
         type: string
       deployCamundaDefinitions:
-        type: boolean
-        default: false
+        required: true
+        type: string
       deployFormioDefinitions:
-        type: boolean
-        default: false
+        required: true
+        type: string
 
 jobs:
   deploy:
