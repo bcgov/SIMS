@@ -36,26 +36,26 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: $BUILD_REF
       - name: Checkout Target Branch
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       # Log in to OpenShift.
       # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
       # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
-      - name: Log in to OpenShift
-        run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-      # Build the images
-      - name: Build SIMS-API Image
-        working-directory: "./devops"
-        run: |
-          make oc-build-api
-      - name: Build Workers Image
-        working-directory: "./devops"
-        run: |
-          make oc-build-workers
-      - name: Build Web/Frontend Image
-        working-directory: "./devops"
-        run: |
-          make oc-build-web
+      # - name: Log in to OpenShift
+      #   run: |
+      #     oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      # # Build the images
+      # - name: Build SIMS-API Image
+      #   working-directory: "./devops"
+      #   run: |
+      #     make oc-build-api
+      # - name: Build Workers Image
+      #   working-directory: "./devops"
+      #   run: |
+      #     make oc-build-workers
+      # - name: Build Web/Frontend Image
+      #   working-directory: "./devops"
+      #   run: |
+      #     make oc-build-web
 
   # Deploy Web, SIMS-Api and Workers
   deployDev:
@@ -67,7 +67,7 @@ jobs:
       buildRef: ${{ github.base_ref }}
       buildId: ${{ github.event.number }}
       resourcesFolder: "BPMN/camunda-8"
-      environment: DEV
+      environment: "DEV"
       deployCamundaDefinitions: "false"
       deployFormioDefinitions: "false"
     secrets: inherit
