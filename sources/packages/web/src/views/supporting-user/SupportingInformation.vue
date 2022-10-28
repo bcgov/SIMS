@@ -245,6 +245,10 @@ export default defineComponent({
               );
               break;
           }
+        } else {
+          snackBar.error(
+            "An unexpected error happened while searching for the application.",
+          );
         }
       }
     };
@@ -295,6 +299,10 @@ export default defineComponent({
               );
               break;
           }
+        } else {
+          snackBar.error(
+            "An unexpected error happened while submitting supporting data.",
+          );
         }
       } finally {
         submitting.value = false;
