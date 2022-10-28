@@ -77,6 +77,7 @@ export class MSFAANumber extends RecordDataModel {
    */
   @Column({
     name: "cancelled_date",
+    type: "date",
     nullable: true,
   })
   cancelledDate?: string;

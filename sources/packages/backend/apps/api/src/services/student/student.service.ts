@@ -19,7 +19,6 @@ import {
   getUTCNow,
   removeWhiteSpaces,
   transformAddressDetails,
-  getISODateOnlyString,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -164,7 +163,7 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     student.user = user;
-    student.birthDate = getISODateOnlyString(new Date(userInfo.birthdate));
+    student.birthDate = userInfo.birthdate;
     student.gender = userInfo.gender;
     student.contactInfo = {
       address: transformAddressDetails(studentInfo),
