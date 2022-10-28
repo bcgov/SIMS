@@ -59,8 +59,7 @@ jobs:
 
   # Deploy Web, SIMS-Api and Workers
   deployDev:
-    name: Deploy App, API, and DB to DEV environment
-    runs-on: ubuntu-latest
+    name: Deploy Web, SIMS-Api and Workers to DEV environment
     needs:
       - build
     uses: ./.github/workflows/deploy-all.yml
