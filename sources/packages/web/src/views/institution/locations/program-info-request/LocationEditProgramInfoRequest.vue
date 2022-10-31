@@ -7,7 +7,6 @@
         subTitle="View Application"
       />
     </template>
-    <!-- TODO: ANN form definition -->
     <formio-container
       formName="programInformationRequest"
       :formData="initialData"

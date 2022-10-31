@@ -1,3 +1,4 @@
+import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
 import {
   ClientIdType,
@@ -38,7 +39,8 @@ export type OfferingFormModel = EducationProgramOfferingAPIOutDTO & {
    */
   hasWILComponent: string;
   clientType?: ClientIdType;
-  offeringStatusToDisplay: OfferingStatus;
+  offeringChipStatus?: StatusChipTypes;
+  offeringStatusToDisplay?: OfferingStatus;
   hasExistingApplication?: boolean;
 };
 

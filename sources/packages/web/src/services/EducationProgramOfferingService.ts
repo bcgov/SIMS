@@ -38,16 +38,26 @@ export class EducationProgramOfferingService {
    * Creates offering.
    * @param locationId offering location.
    * @param programId offering program.
+   * @param validationOnly do not execute the insert. Used to have
+   * all the validations performed, for instance, to check for a possible
+   * waning, without inserting the offering.
+   * @param allowOnlyApproved only automatic approved offerings are allowed
+   * to be created. Offerings not automatically approved requires Ministry further
+   * verification and, when this is set to true, will be reported as errors.
    * @param payload offering data.
    */
   public async createProgramOffering(
     locationId: number,
     programId: number,
+    validationOnly: boolean,
+    allowOnlyApproved: boolean,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
     await ApiClient.EducationProgramOffering.createOffering(
       locationId,
       programId,
+      validationOnly,
+      allowOnlyApproved,
       payload,
     );
   }

@@ -2,30 +2,60 @@
   <formio-container
     formName="educationProgramOffering"
     :formData="formData"
-    @submitted="saveOffering"
+    @submitted="submitOffering"
   >
     <template #actions="{ submit }" v-if="!readOnly">
       <footer-buttons
+        justify="space-between"
         :processing="processing"
         primaryLabel="Submit"
         @primaryClick="submit"
         @secondaryClick="cancel"
-      />
+        class="mx-0"
+      >
+        <template #primary-buttons="{ disabled }">
+          <span>
+            <v-btn
+              :disabled="disabled"
+              variant="elevated"
+              data-cy="offeringValidationButton"
+              color="primary"
+              @click="submit({ validationOnly: true })"
+              prepend-icon="fa:fa fa-check"
+              >Validate
+            </v-btn>
+            <v-btn
+              :disabled="disabled"
+              class="ml-2"
+              variant="elevated"
+              data-cy="offeringSubmitButton"
+              color="primary"
+              @click="submit({ validationOnly: false })"
+              >{{ submitLabel }}
+            </v-btn>
+          </span>
+        </template>
+      </footer-buttons>
     </template>
   </formio-container>
 </template>
 
 <script lang="ts">
 import { FormIOForm, OfferingFormModel } from "@/types";
-import { SetupContext, computed } from "vue";
+import { defineComponent, PropType, computed } from "vue";
 import { useOffering } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
 
-export default {
+interface SubmitArgs {
+  validationOnly: true;
+}
+
+export default defineComponent({
+  emits: ["validateOffering", "saveOffering", "cancel"],
   props: {
     data: {
-      type: Object,
+      type: Object as PropType<OfferingFormModel>,
       required: true,
       default: {} as OfferingFormModel,
     },
@@ -35,20 +65,31 @@ export default {
       required: false,
       default: true,
     },
+    submitLabel: {
+      type: String,
+      required: false,
+      default: "Submit",
+    },
     processing: {
       type: Boolean,
       required: true,
       default: false,
     },
   },
-  emits: ["saveOffering", "cancel"],
-  setup(props: any, context: SetupContext) {
+  setup(props, context) {
     const { mapOfferingChipStatus } = useOffering();
-    const saveOffering = (
+
+    const submitOffering = (
       form: FormIOForm<EducationProgramOfferingAPIInDTO>,
+      args: SubmitArgs,
     ) => {
-      context.emit("saveOffering", form.data);
+      if (args.validationOnly) {
+        context.emit("validateOffering", form.data);
+      } else {
+        context.emit("saveOffering", form.data);
+      }
     };
+
     /**
      * The property clientType is populated for institution because
      * the form.io for education program offering has a logic at it's root level panel
@@ -75,10 +116,10 @@ export default {
     };
 
     return {
-      saveOffering,
+      submitOffering,
       formData,
       cancel,
     };
   },
-};
+});
 </script>

@@ -10,8 +10,10 @@
     <offering-form
       :data="initialData"
       :readOnly="false"
+      @validateOffering="validateOffering"
       @saveOffering="saveOffering"
       :processing="processing"
+      submitLabel="Add offering now"
       @cancel="goBack"
     ></offering-form>
   </full-page-container>
@@ -22,7 +24,11 @@ import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormCreateModel, OfferingStatus } from "@/types";
+import {
+  ApiProcessError,
+  OfferingFormCreateModel,
+  OfferingStatus,
+} from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import {
@@ -31,6 +37,7 @@ import {
 } from "@/services/http/dto";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
+import { OFFERING_VALIDATION_ERROR } from "@/constants";
 
 export default {
   components: {
@@ -87,12 +94,43 @@ export default {
       router.push(routeLocation.value);
     };
 
+    const validateOffering = async (data: EducationProgramOfferingAPIInDTO) => {
+      try {
+        processing.value = true;
+        await EducationProgramOfferingService.shared.createProgramOffering(
+          props.locationId,
+          props.programId,
+          true,
+          false,
+          data,
+        );
+        snackBar.success(
+          "Offering was validated successfully and no warnings were found.",
+        );
+      } catch (error: unknown) {
+        console.log(error);
+        if (
+          error instanceof ApiProcessError &&
+          error.errorType === OFFERING_VALIDATION_ERROR
+        ) {
+          console.log(OFFERING_VALIDATION_ERROR);
+          snackBar.error(JSON.stringify(error.objectInfo));
+          return;
+        }
+        snackBar.error("An error happened while validating the offering.");
+      } finally {
+        processing.value = false;
+      }
+    };
+
     const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
         processing.value = true;
         await EducationProgramOfferingService.shared.createProgramOffering(
           props.locationId,
           props.programId,
+          false,
+          false,
           data,
         );
         snackBar.success("Education Offering created successfully!");
@@ -105,6 +143,7 @@ export default {
     };
 
     return {
+      validateOffering,
       saveOffering,
       initialData,
       InstitutionRoutesConst,

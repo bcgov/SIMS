@@ -22,18 +22,30 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * Creates offering.
    * @param locationId offering location.
    * @param programId offering program.
+   * @param validationOnly do not execute the insert. Used to have
+   * all the validations performed, for instance, to check for a possible
+   * waning, without inserting the offering.
+   * @param allowOnlyApproved only automatic approved offerings are allowed
+   * to be created. Offerings not automatically approved requires Ministry further
+   * verification and, when this is set to true, will be reported as errors.
    * @param payload offering data.
    */
   public async createOffering(
     locationId: number,
     programId: number,
+    validationOnly: boolean,
+    allowOnlyApproved: boolean,
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
-    const url = `education-program-offering/location/${locationId}/education-program/${programId}`;
-    await this.postCall<EducationProgramOfferingAPIInDTO>(
-      this.addClientRoot(url),
-      payload,
-    );
+    try {
+      const url = `education-program-offering/location/${locationId}/education-program/${programId}?validation-only=${validationOnly}&allow-only-approved=${allowOnlyApproved}`;
+      await this.postCall<EducationProgramOfferingAPIInDTO>(
+        this.addClientRoot(url),
+        payload,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   /**

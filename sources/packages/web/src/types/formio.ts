@@ -2,12 +2,12 @@
  * FormIO form. Methods available can be checked on
  * https://help.form.io/developers/form-renderer.
  */
-export interface FormIOForm<T = any> {
+export interface FormIOForm<T = unknown> {
   data: T;
   checkValidity: (
     data: any,
     dirty: boolean,
-    row: any,
+    row: unknown,
     silent: boolean,
   ) => boolean;
   submit: () => any;

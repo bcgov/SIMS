@@ -224,20 +224,23 @@ export class OfferingChangeAssessmentAPIInDTO {
   assessmentNotes: string;
 }
 
+export class OfferingValidationResultAPIOutDTO {
+  offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
+  errors: string[];
+  warnings: ValidationWarningResultAPIOutDTO[];
+}
+
 /**
  * Represents the possible errors that can happen during the
  * offerings bulk insert and provides a detailed description
  * for every record that has an error.
  */
-export class OfferingBulkInsertValidationResultAPIOutDTO {
+export class OfferingBulkInsertValidationResultAPIOutDTO extends OfferingValidationResultAPIOutDTO {
   recordIndex: number;
   locationCode?: string;
   sabcProgramCode?: string;
   startDate?: string;
   endDate?: string;
-  offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
-  errors: string[];
-  warnings: ValidationWarningResultAPIOutDTO[];
 }
 
 /**
