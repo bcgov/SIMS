@@ -91,6 +91,24 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     return query.getOne();
   }
 
+  async getPendingAssessment(
+    generatedDate?: Date,
+  ): Promise<StudentAssessment[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+      },
+      relations: {
+        offering: { institutionLocation: true },
+      },
+      where: {
+        assessmentDate: generatedDate
+          ? generatedDate
+          : new Date(new Date().getDate() - 1),
+      },
+    });
+  }
+
   /**
    * Get the assessments associated with an application.
    * @param applicationId application id.

@@ -23,11 +23,11 @@ export class IERIntegrationSystemAccessController extends BaseController {
    * @returns Processing result log.
    */
   @Post("process-ier-12")
-  async processIncomeVerification(
-    generatedDate: string,
+  async processIER12Request(
+    generatedDate?: Date,
   ): Promise<IER12ResultAPIOutDTO> {
     this.logger.log("Executing IER 12 file generation ...");
-    const uploadResult = await this.ierRequest.ier12FileGenerationRequest(
+    const uploadResult = await this.ierRequest.processIER12Request(
       generatedDate,
     );
     this.logger.log("IER 12 file generation completed.");
