@@ -106,6 +106,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         id: true,
       },
       relations: {
+        application: { student: { user: true } },
         offering: { institutionLocation: true },
       },
       where: {
