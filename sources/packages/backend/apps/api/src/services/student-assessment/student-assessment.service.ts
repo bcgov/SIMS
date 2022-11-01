@@ -9,7 +9,7 @@ import {
   User,
   mapFromRawAndEntities,
 } from "@sims/sims-db";
-import { Brackets, DataSource } from "typeorm";
+import { Between, Brackets, DataSource, LessThan } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
@@ -94,6 +94,13 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   async getPendingAssessment(
     generatedDate?: Date,
   ): Promise<StudentAssessment[]> {
+    const currentDate = new Date();
+    const processingDate = new Date(
+      generatedDate
+        ? generatedDate
+        : currentDate.setDate(currentDate.getDate() - 1),
+    );
+
     return this.repo.find({
       select: {
         id: true,
@@ -102,9 +109,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         offering: { institutionLocation: true },
       },
       where: {
-        assessmentDate: generatedDate
-          ? generatedDate
-          : new Date(new Date().getDate() - 1),
+        assessmentDate: Between(
+          new Date(processingDate.setHours(0, 0, 0, 0)),
+          new Date(processingDate.setDate(processingDate.getDate() + 1)),
+        ),
       },
     });
   }

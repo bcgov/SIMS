@@ -38,9 +38,7 @@ export class IERRequestService {
         uploadedRecords: 0,
       };
     }
-    this.logger.log(
-      `Found ${assessmentRequests.length} assessments on ${generatedDate}.`,
-    );
+    this.logger.log(`Found ${assessmentRequests.length} assessments.`);
   }
 
   @InjectLogger()
