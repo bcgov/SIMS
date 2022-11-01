@@ -43,6 +43,7 @@ import {
   ECertIntegrationSystemAccessController,
   FedRestrictionsIntegrationSystemAccessController,
   ATBCSystemAccessController,
+  IERIntegrationSystemAccessController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -66,6 +67,7 @@ import { DisbursementReceiptRequestService } from "./esdc-integration/disburseme
 import { FedRestrictionProcessingService } from "./esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import { IERRequestService } from "./institution-integration/ier-integration/ier-request.service";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule, SINValidationModule],
@@ -78,6 +80,7 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     SFASIntegrationSystemAccessController,
     ECertIntegrationSystemAccessController,
     FedRestrictionsIntegrationSystemAccessController,
+    IERIntegrationSystemAccessController,
   ],
   providers: [
     WorkflowClientService,
@@ -109,6 +112,7 @@ import { WorkflowClientService, SequenceControlService } from "@sims/services";
     SFASIntegrationService,
     SFASIndividualService,
     SFASRestrictionService,
+    IERRequestService,
     ECertFileHandler,
     DisbursementScheduleErrorsService,
     ECertFullTimeIntegrationService,

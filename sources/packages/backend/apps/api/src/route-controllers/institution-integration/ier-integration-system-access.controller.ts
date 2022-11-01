@@ -3,7 +3,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { InjectLogger } from "../../common";
-import { IERRequestService } from "../../institution-integration/ier-request.service";
+import { IERRequestService } from "../../institution-integration/ier-integration/ier-request.service";
 import { LoggerService } from "../../logger/logger.service";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";

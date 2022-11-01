@@ -1,16 +1,20 @@
-import { InjectLogger } from "../common";
-import { ESDCFileHandler } from "../esdc-integration/esdc-file-handler";
-import { LoggerService } from "../logger/logger.service";
-import { ConfigService, StudentAssessmentService } from "../services";
+import { Injectable } from "@nestjs/common";
+import { InjectLogger } from "../../common";
+import { LoggerService } from "../../logger/logger.service";
+import { ConfigService, StudentAssessmentService } from "../../services";
+import { IERIntegrationConfig } from "../../types";
 import { IERUploadResult } from "./models/ier-integration.model";
 
-export class IERRequestService extends ESDCFileHandler {
+@Injectable()
+export class IERRequestService {
+  ierIntegrationConfig: IERIntegrationConfig;
   constructor(
-    configService: ConfigService,
+    config: ConfigService,
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {
-    super(configService);
+    this.ierIntegrationConfig = config.getConfig().IERIntegrationConfig;
   }
+
   /**
    * 1. Fetches the assessment data for the institution location.
    * 2. Create the Request content for the IER 12 file by populating the
