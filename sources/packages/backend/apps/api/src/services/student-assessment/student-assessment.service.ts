@@ -9,7 +9,7 @@ import {
   User,
   mapFromRawAndEntities,
 } from "@sims/sims-db";
-import { Between, Brackets, DataSource } from "typeorm";
+import { Brackets, DataSource } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
