@@ -21,7 +21,7 @@ import {
   StudentAssessmentStatus,
 } from "./student-assessment.models";
 import { WorkflowClientService } from "@sims/services";
-import { addDays } from "../../utilities";
+import { addDays, dateEqualTo } from "../../utilities";
 
 /**
  * Manages the student assessment related operations.
@@ -105,10 +105,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         offering: { institutionLocation: true },
       },
       where: {
-        assessmentDate: Between(
-          new Date(processingDate.setHours(0, 0, 0, 0)),
-          new Date(processingDate.setDate(processingDate.getDate() + 1)),
-        ),
+        assessmentDate: dateEqualTo(processingDate),
       },
     });
   }
