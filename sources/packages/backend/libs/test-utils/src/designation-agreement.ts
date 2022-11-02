@@ -6,12 +6,14 @@ import {
   InstitutionLocation,
   User,
 } from "@sims/sims-db";
+import * as dayjs from "dayjs";
 import * as faker from "faker";
 
 export function createFakeDesignationAgreement(
   fakeInstitution: Institution,
   fakeUser: User,
   fakeInstitutionLocations: InstitutionLocation[],
+  designationStatus?: DesignationAgreementStatus,
 ): DesignationAgreement {
   const now = new Date();
 
@@ -44,7 +46,7 @@ export function createFakeDesignationAgreement(
     ],
   };
   fakeDesignationAgreement.designationStatus =
-    DesignationAgreementStatus.Pending;
+    designationStatus ?? DesignationAgreementStatus.Pending;
   fakeDesignationAgreement.submittedBy = fakeUser;
   fakeDesignationAgreement.submittedDate = now;
   fakeDesignationAgreement.creator = fakeUser;
@@ -58,5 +60,10 @@ export function createFakeDesignationAgreement(
       newLocation.createdAt = now;
       return newLocation;
     });
+  if (designationStatus === DesignationAgreementStatus.Approved) {
+    fakeDesignationAgreement.startDate = now;
+    fakeDesignationAgreement.endDate = dayjs().add(1, "year").toDate();
+    // save note
+  }
   return fakeDesignationAgreement;
 }

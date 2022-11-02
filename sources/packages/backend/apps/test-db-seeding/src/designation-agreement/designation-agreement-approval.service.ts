@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   DesignationAgreement,
+  DesignationAgreementStatus,
   Institution,
   InstitutionLocation,
   User,
@@ -12,17 +13,20 @@ import {
   createFakeUser,
   createMultipleFakeInstitutionLocations,
 } from "@sims/test-utils";
-
 import { Repository } from "typeorm";
 import {
   DataSeed,
   DataSeedMethod,
   SeedPriorityOrder,
 } from "../test-organizer/data-seed.decorator";
+// notes
+// // todo: 1. check with team, in actual scenario only one pending designation are allowed - during seeding do we need to consider that
+// // todo: 2. if db doesn't exits its is not creating a new DB
+// // todo: make all function even helpers async, if required
 
-@DataSeed("provider", SeedPriorityOrder.Three)
 @Injectable()
-export class DesignationAgreementPendingService {
+@DataSeed("provider", SeedPriorityOrder.Two)
+export class DesignationAgreementApprovalService {
   constructor(
     @InjectRepository(DesignationAgreement)
     private designationAgreementRepo: Repository<DesignationAgreement>,
@@ -32,15 +36,12 @@ export class DesignationAgreementPendingService {
     private userRepo: Repository<User>,
     @InjectRepository(InstitutionLocation)
     private institutionLocationRepo: Repository<InstitutionLocation>,
-  ) {
-    console.log("constructorr --->>>");
-  }
+  ) {}
 
-  @DataSeedMethod("method", SeedPriorityOrder.One)
-  async createApprovalDesignationAgreement(): Promise<void> {
+  @DataSeedMethod("method", SeedPriorityOrder.Two)
+  async createPendingDesignationAgreement(): Promise<void> {
     // Create fake institution.
     const fakeInstitution = createFakeInstitution();
-    // console.log(fakeInstitution, "+++fakeInstitution");
     const createdFakeInstitution = await this.institutionRepo.save(
       fakeInstitution,
     );
@@ -62,40 +63,8 @@ export class DesignationAgreementPendingService {
       createdFakeInstitution,
       createdFakeUser,
       createdFakInstitutionLocations,
+      DesignationAgreementStatus.Approved,
     );
-    // console.log(fakeDesignationAgreement);
-    this.designationAgreementRepo.save(fakeDesignationAgreement);
-    console.info("completed !!");
-  }
-
-  @DataSeedMethod("method")
-  async createApprovalDesignationAgreement1111(): Promise<void> {
-    // Create fake institution.
-    const fakeInstitution = createFakeInstitution();
-    // console.log(fakeInstitution, "+++fakeInstitution");
-    const createdFakeInstitution = await this.institutionRepo.save(
-      fakeInstitution,
-    );
-
-    // Create fake user.
-    const fakeUser = createFakeUser();
-    const createdFakeUser = await this.userRepo.save(fakeUser);
-
-    // Create fake institution locations.
-    const fakeInstitutionLocations = createMultipleFakeInstitutionLocations(
-      fakeInstitution,
-      2,
-    );
-    const createdFakInstitutionLocations =
-      await this.institutionLocationRepo.save(fakeInstitutionLocations);
-
-    // Create fake designation agreement.
-    const fakeDesignationAgreement = createFakeDesignationAgreement(
-      createdFakeInstitution,
-      createdFakeUser,
-      createdFakInstitutionLocations,
-    );
-    // console.log(fakeDesignationAgreement);
     this.designationAgreementRepo.save(fakeDesignationAgreement);
     console.info("completed !!");
   }

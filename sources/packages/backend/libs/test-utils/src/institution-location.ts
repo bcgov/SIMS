@@ -26,7 +26,7 @@ export function createFakeInstitutionLocation(
   return institutionLocation;
 }
 
-export function multipleFakeInstitutionLocations(
+export function createMultipleFakeInstitutionLocations(
   institution: Institution,
   count: number,
 ): InstitutionLocation[] {

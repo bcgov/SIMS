@@ -27,6 +27,7 @@
     "db:seed:test": "node dist/apps/test-db-seeding/main.js"
   },
   "dependencies": {
+    "@golevelup/nestjs-discovery": "^3.0.0",
     "@nestjs/common": "^9.0.3",
     "@nestjs/core": "^9.0.3",
     "@nestjs/jwt": "^9.0.0",
