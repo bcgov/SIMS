@@ -4,25 +4,29 @@
       title="Application already in progress"
       dialogType="warning"
       :showDialog="showDialog"
-      @dialogClosed="dialogClosed"
+      @dialogClosed="closeDialog"
     >
       <template v-slot:content>
         <v-container>
           <form>
-            <p>There is already a draft of an application in progress.</p>
-            <p>Please continue your draft application or cancel it.</p>
+            <p>
+              There is already an application selected with this program year.
+              Please continue with that application or cancel it to start a new
+              application.
+            </p>
           </form>
         </v-container>
       </template>
       <template v-slot:footer>
         <footer-buttons
-          secondaryLabel="Close"
-          :showPrimaryButton="false"
-          @secondaryClick="dialogClosed"
+          primaryLabel="Close"
+          :showSecondaryButton="false"
+          @primaryClick="closeDialog"
         />
       </template>
     </modal-dialog-base>
-    <student-page-container full-width="true">
+
+    <student-page-container container-class="container-max-width ma-auto">
       <template #header>
         <header-navigator
           title="Applications"
@@ -107,7 +111,7 @@ export default {
       });
     });
 
-    const dialogClosed = () => {
+    const closeDialog = () => {
       showDialog.value = false;
     };
     const startApplication = async () => {
@@ -154,7 +158,7 @@ export default {
       initialData,
       showModal,
       showDialog,
-      dialogClosed,
+      closeDialog,
       StudentRoutesConst,
       programYearOptions,
       programYearId,

@@ -2,6 +2,7 @@
   <full-page-container
     :layout-template="layoutTemplate"
     :full-width="fullWidth"
+    :containerClass="containerClass"
   >
     <template #header>
       <slot name="header"></slot>
@@ -31,6 +32,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
+    },
+    containerClass: {
+      type: String,
+      required: false,
+      default: "",
     },
     hideRestriction: {
       type: Boolean,
