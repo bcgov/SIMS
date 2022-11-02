@@ -13,9 +13,28 @@
       :processing="processing"
       @loaded="formLoaded"
       @validateOffering="validateOffering"
-      @saveOffering="saveOffering"
+      @saveOffering="createOffering"
       @cancel="goBack"
     ></offering-form>
+    <confirm-modal
+      title="Offering does not meet policy requirements"
+      cancelLabel="No"
+      okLabel="Yes, proceed"
+      ref="offeringWarningsModal"
+    >
+      <template #content>
+        <p>
+          This offering is ineligible for funding. If you wish to proceed, the
+          offering will be created with a "{{ OfferingStatus.CreationPending }}"
+          status and will require StudentAid BC to review and approve the
+          offering.<br />
+          <strong>Are you sure you want to proceed?</strong>
+        </p>
+        <p>
+          <strong>Note:</strong> you can click "no" and review your offering.
+        </p>
+      </template>
+    </confirm-modal>
   </full-page-container>
 </template>
 
@@ -34,10 +53,18 @@ import {
 import OfferingForm from "@/components/common/OfferingForm.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { OFFERING_VALIDATION_ERROR } from "@/constants";
+import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
+
+enum SaveOfferingResult {
+  success,
+  warning,
+  error,
+}
 
 export default defineComponent({
   components: {
     OfferingForm,
+    ConfirmModal,
   },
   props: {
     locationId: {
@@ -61,6 +88,7 @@ export default defineComponent({
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
     );
+    const offeringWarningsModal = ref({} as ModalDialog<boolean>);
 
     let offeringForm: FormIOForm;
 
@@ -80,19 +108,22 @@ export default defineComponent({
       router.push(routeLocation.value);
     };
 
-    const validateOffering = async (data: EducationProgramOfferingAPIInDTO) => {
+    const saveOfferingData = async (
+      data: EducationProgramOfferingAPIInDTO,
+      validationOnly = true,
+      allowOnlyApproved = true,
+    ): Promise<SaveOfferingResult> => {
       try {
         processing.value = true;
         await EducationProgramOfferingService.shared.createProgramOffering(
           props.locationId,
           props.programId,
-          true,
-          false,
+          validationOnly,
+          allowOnlyApproved,
           data,
         );
-        snackBar.success(
-          "Offering was validated successfully and no warnings were found.",
-        );
+        setComponentValue(offeringForm, "warnings", []);
+        return SaveOfferingResult.success;
       } catch (error: unknown) {
         if (
           error instanceof ApiProcessError &&
@@ -108,39 +139,53 @@ export default defineComponent({
             );
             setComponentValue(offeringForm, "warnings", warningsTypes);
           }
-          return;
+          const [firstWarningBanner] =
+            document.getElementsByClassName("banner-warning");
+          if (firstWarningBanner) {
+            firstWarningBanner.scrollIntoView({
+              behavior: "smooth",
+            });
+          }
+          return SaveOfferingResult.warning;
         }
         snackBar.error(
           "An unexpected error happened while validating the offering.",
         );
+        return SaveOfferingResult.error;
       } finally {
         processing.value = false;
       }
     };
 
-    const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
-      try {
-        processing.value = true;
-        await EducationProgramOfferingService.shared.createProgramOffering(
-          props.locationId,
-          props.programId,
-          false,
-          false,
-          data,
+    const validateOffering = async (data: EducationProgramOfferingAPIInDTO) => {
+      const validationResult = await saveOfferingData(data);
+      if (validationResult === SaveOfferingResult.success) {
+        snackBar.success(
+          "Offering was validated successfully and no warnings were found.",
         );
-        snackBar.success("Education Offering created successfully!");
+      }
+    };
+
+    const createOffering = async (data: EducationProgramOfferingAPIInDTO) => {
+      let saveResult = await saveOfferingData(data, false, true);
+      if (saveResult === SaveOfferingResult.warning) {
+        const proceedWithWarnings =
+          await offeringWarningsModal.value.showModal();
+        if (proceedWithWarnings) {
+          saveResult = await saveOfferingData(data, false, false);
+        }
+      }
+      if (saveResult === SaveOfferingResult.success) {
+        snackBar.success("Offering created.");
         goBack();
-      } catch {
-        snackBar.error("An error happened during the Offering create process.");
-      } finally {
-        processing.value = false;
       }
     };
 
     return {
       formLoaded,
       validateOffering,
-      saveOffering,
+      createOffering,
+      offeringWarningsModal,
       InstitutionRoutesConst,
       OfferingStatus,
       assessOfferingModalRef,

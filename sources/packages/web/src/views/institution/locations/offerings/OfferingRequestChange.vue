@@ -91,7 +91,7 @@ export default {
       initialData.value = {
         ...programOffering,
         hasExistingApplication: false,
-        mode: OfferingFormModes.Readonly,
+        mode: OfferingFormModes.Editable,
       };
     };
     onMounted(async () => {
