@@ -16,6 +16,7 @@
             inset
             class="mr-3"
             v-model="formModel.isAdmin"
+            data-cy="isAdmin"
           ></v-switch>
         </v-col>
         <v-col cols="auto">
@@ -26,6 +27,7 @@
             inset
             color="primary"
             v-model="formModel.isLegalSigningAuthority"
+            data-cy="isLegalSigningAuthority"
           ></v-switch>
         </v-col>
       </v-row>
@@ -39,6 +41,7 @@
   <h3
     class="category-header-medium primary-color mt-4 mb-2"
     v-if="!formModel.isAdmin"
+    data-cy="assignLocationToUser"
   >
     Assign user to locations
   </h3>
@@ -55,6 +58,7 @@
         v-for="location in formModel.locationAuthorizations"
         :key="location.id"
         class="mb-2"
+        data-cy="location"
         ><v-col>
           <div>{{ location.name }}</div>
           {{ location.address }}
@@ -66,6 +70,7 @@
             v-model="location.userAccess"
             color="primary"
             class="mt-2"
+            data-cy="userAccess"
           >
             <v-radio label="User" value="user" color="primary"></v-radio>
             <v-radio label="No access" value="none" color="primary"></v-radio>

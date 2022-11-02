@@ -4,7 +4,7 @@ export default class LoginInstitutionObject {
   }
 
   loginOrRegisterWithBCEID() {
-    return cy.get("login");
+    return cy.get("[data-cy='login']");
   }
 
   loginInWithBCEIDtext() {

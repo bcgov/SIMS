@@ -3,12 +3,12 @@ export default class ManageUsersObject {
     return cy.contains("Manage Users");
   }
 
-  userSummaryMessage() {
-    return cy.contains("User Summary");
+  manageUsersSummary() {
+    return cy.contains("Manage Users");
   }
 
   editButtonFirstRow() {
-    return cy.get("[data-icon='pen']").eq(0);
+    return cy.get("[data-cy='editUser']").eq(0);
   }
 
   editUserPermissions() {
@@ -16,15 +16,35 @@ export default class ManageUsersObject {
   }
 
   cancelButton() {
-    return cy.contains("Cancel");
+    return cy.get("[data-cy='secondaryFooterButton']");
+  }
+
+  addUserNowButton() {
+    return cy.get("[data-cy='primaryFooterButton']");
+  }
+
+  editUserNowButton() {
+    return cy.get("[data-cy='primaryFooterButton']");
   }
 
   addNewUserButton() {
-    return cy.contains("Add New User");
+    return cy.get("[data-cy='addNewUser']");
   }
 
   addUserButton() {
     return cy.contains("Add User");
+  }
+
+  addNewUserModal() {
+    return cy.get("[data-cy='addNewUserModal']");
+  }
+
+  isAdminRadioButton() {
+    return cy.get("[data-cy='isAdmin']");
+  }
+
+  isLegalSigningAuthorityButton() {
+    return cy.get("[data-cy='isLegalSigningAuthority]");
   }
 
   addUserToAccountMessage() {
@@ -44,7 +64,7 @@ export default class ManageUsersObject {
   }
 
   searchButton() {
-    return cy.get(".v-btn.v-btn--elevated").first();
+    return cy.get("[data-cy='searchBox']");
   }
 
   noRecordsFoundMessage() {
@@ -53,5 +73,46 @@ export default class ManageUsersObject {
 
   zeroUserContains() {
     return cy.contains("All Users(0)");
+  }
+
+  getUsersList() {
+    return cy.get("[data-cy='usersList']").get("[role='row']");
+  }
+
+  inputUserIdOnAddUserModal() {
+    return cy.get("[data-cy='inputUserId']");
+  }
+
+  assignLocationToUserText() {
+    return cy.get("[data-cy='assignLocationToUser']");
+  }
+
+  locationsFromAddUserModal() {
+    return cy.get("[data-cy='location']");
+  }
+
+  clickOnEdit(userEmail: string) {
+    cy.get("[data-cy='usersList']")
+      .get("[role='cell']")
+      .contains(userEmail)
+      .parent()
+      .get("[data-cy='editUser']")
+      .click();
+  }
+
+  editUserModal() {
+    return cy.get("[data-cy='editUserModal']");
+  }
+
+  userLocationAccess() {
+    return cy
+      .get("[data-cy='userAccess']")
+      .should("have.attr", "value", "user");
+  }
+
+  userLocationNoAccess() {
+    return cy
+      .get("[data-cy='userAccess']")
+      .should("have.attr", "value", "none");
   }
 }

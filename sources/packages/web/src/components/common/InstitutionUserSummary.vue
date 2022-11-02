@@ -21,6 +21,7 @@
               class="ml-2"
               color="primary"
               :disabled="notAllowed"
+              data-cy="addNewUser"
               @click="openNewUserModal"
               prepend-icon="fa:fa fa-plus-circle"
             >
@@ -43,6 +44,7 @@
       @sort="paginationAndSortEvent($event)"
       :loading="loading"
       breakpoint="1250px"
+      data-cy="usersList"
     >
       <template #empty>
         <p class="text-center font-weight-bold">No records found.</p>
@@ -56,10 +58,13 @@
         :field="UserFields.Email"
         header="Email"
         :sortable="true"
+        data-cy="userEmail"
       ></Column>
       <Column :field="UserFields.UserType" header="User Type">
         <template #body="slotProps">
-          <span class="text-capitalize">{{ slotProps.data.userType }}</span>
+          <span data-cy="userType" class="text-capitalize">{{
+            slotProps.data.userType
+          }}</span>
         </template></Column
       >
       <Column :field="UserFields.Roles" header="Role">
@@ -78,6 +83,7 @@
         ><template #body="slotProps">
           <status-chip-active-user
             :is-active="slotProps.data.isActive"
+            data-cy="userStatus"
           /> </template
       ></Column>
       <Column header="Action"
@@ -90,6 +96,7 @@
                 variant="text"
                 color="primary"
                 append-icon="mdi-pencil-outline"
+                data-cy="editUser"
               >
                 <span class="text-decoration-underline">Edit</span>
               </v-btn>
@@ -103,6 +110,7 @@
                 variant="text"
                 color="primary"
                 append-icon="fa:far fa-user"
+                data-cy="disableUser"
               >
                 <span class="text-decoration-underline">{{
                   slotProps.data.isActive ? "Disable" : "Enable"
