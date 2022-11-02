@@ -73,9 +73,12 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormBaseModel, OfferingStatus } from "@/types";
+import {
+  OfferingFormBaseModel,
+  OfferingFormModes,
+  OfferingStatus,
+} from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import {
@@ -157,23 +160,22 @@ export default {
     );
 
     const loadFormData = async () => {
-      const programDetails =
-        await EducationProgramService.shared.getEducationProgram(
-          props.programId,
-        );
-
       const programOffering =
         await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
           props.locationId,
           props.programId,
           props.offeringId,
         );
+
+      let mode = OfferingFormModes.Editable;
+      if (programOffering.hasExistingApplication) {
+        mode = OfferingFormModes.AssessmentDataReadonly;
+      }
+
       const offeringModel: OfferingFormBaseModel = {
-        programIntensity: programDetails.programIntensity,
-        programDeliveryTypes: programDetails.programDeliveryTypes,
-        hasWILComponent: programDetails.hasWILComponent,
         ...programOffering,
         ...programOffering.breaksAndWeeks,
+        mode,
       };
       initialData.value = offeringModel;
     };

@@ -35,9 +35,12 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormBaseModel, OfferingStatus } from "@/types";
+import {
+  OfferingFormBaseModel,
+  OfferingStatus,
+  OfferingFormModes,
+} from "@/types";
 import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
@@ -79,10 +82,6 @@ export default {
     }));
 
     const loadFormData = async () => {
-      const programDetails =
-        await EducationProgramService.shared.getEducationProgram(
-          props.programId,
-        );
       const programOffering =
         await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
           props.locationId,
@@ -91,10 +90,8 @@ export default {
         );
       initialData.value = {
         ...programOffering,
-        programIntensity: programDetails.programIntensity,
-        programDeliveryTypes: programDetails.programDeliveryTypes,
-        hasWILComponent: programDetails.hasWILComponent,
         hasExistingApplication: false,
+        mode: OfferingFormModes.Readonly,
       };
     };
     onMounted(async () => {

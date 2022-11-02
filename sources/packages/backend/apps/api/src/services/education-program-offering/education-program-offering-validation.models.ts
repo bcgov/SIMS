@@ -180,9 +180,10 @@ export type CalculatedStudyBreaksAndWeeks = StudyBreaksAndWeeks & {
 
 /**
  * Possible warnings unique identifiers.
+ * !These keys are also consumed in the UI to display/hide warning banners.
  */
 export enum OfferingValidationWarnings {
-  InvalidStudyBreakAmountOfDays = "InvalidStudyBreakAmountOfDays",
+  InvalidStudyBreakAmountOfDays = "invalidStudyBreakAmountOfDays",
   InvalidStudyBreaksCombinedThresholdPercentage = "invalidStudyBreaksCombinedThresholdPercentage",
   ProgramOfferingIntensityMismatch = "programOfferingIntensityMismatch",
   ProgramOfferingDeliveryMismatch = "programOfferingDeliveryMismatch",

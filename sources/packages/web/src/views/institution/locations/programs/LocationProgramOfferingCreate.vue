@@ -8,12 +8,12 @@
       />
     </template>
     <offering-form
-      :data="initialData"
+      submitLabel="Add offering now"
       :readOnly="false"
+      :processing="processing"
+      @loaded="formLoaded"
       @validateOffering="validateOffering"
       @saveOffering="saveOffering"
-      :processing="processing"
-      submitLabel="Add offering now"
       @cancel="goBack"
     ></offering-form>
   </full-page-container>
@@ -22,24 +22,20 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { EducationProgramService } from "@/services/EducationProgramService";
-import { onMounted, ref, computed } from "vue";
-import {
-  ApiProcessError,
-  OfferingFormCreateModel,
-  OfferingStatus,
-} from "@/types";
+import { ref, computed, defineComponent } from "vue";
+import { ApiProcessError, FormIOForm, OfferingStatus } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar, ModalDialog } from "@/composables";
+import { useSnackBar, ModalDialog, useFormioUtils } from "@/composables";
 import {
   OfferingAssessmentAPIInDTO,
   EducationProgramOfferingAPIInDTO,
+  OfferingValidationResultAPIOutDTO,
 } from "@/services/http/dto";
 import OfferingForm from "@/components/common/OfferingForm.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { OFFERING_VALIDATION_ERROR } from "@/constants";
 
-export default {
+export default defineComponent({
   components: {
     OfferingForm,
   },
@@ -57,14 +53,20 @@ export default {
       required: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const snackBar = useSnackBar();
     const router = useRouter();
     const processing = ref(false);
-    const initialData = ref({} as OfferingFormCreateModel);
+    const { setComponentValue } = useFormioUtils();
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
     );
+
+    let offeringForm: FormIOForm;
+
+    const formLoaded = (form: FormIOForm) => {
+      offeringForm = form;
+    };
 
     const routeLocation = computed(() => ({
       name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
@@ -73,22 +75,6 @@ export default {
         locationId: props.locationId,
       },
     }));
-
-    const loadFormData = async () => {
-      const programDetails =
-        await EducationProgramService.shared.getEducationProgram(
-          props.programId,
-        );
-      initialData.value = {
-        programIntensity: programDetails.programIntensity,
-        programDeliveryTypes: programDetails.programDeliveryTypes,
-        hasWILComponent: programDetails.hasWILComponent,
-      };
-    };
-
-    onMounted(async () => {
-      await loadFormData();
-    });
 
     const goBack = () => {
       router.push(routeLocation.value);
@@ -108,16 +94,25 @@ export default {
           "Offering was validated successfully and no warnings were found.",
         );
       } catch (error: unknown) {
-        console.log(error);
         if (
           error instanceof ApiProcessError &&
           error.errorType === OFFERING_VALIDATION_ERROR
         ) {
-          console.log(OFFERING_VALIDATION_ERROR);
-          snackBar.error(JSON.stringify(error.objectInfo));
+          const validationResult =
+            error.objectInfo as OfferingValidationResultAPIOutDTO;
+          if (
+            validationResult.offeringStatus === OfferingStatus.CreationPending
+          ) {
+            const warningsTypes = validationResult.warnings.map(
+              (warning) => warning.warningType,
+            );
+            setComponentValue(offeringForm, "warnings", warningsTypes);
+          }
           return;
         }
-        snackBar.error("An error happened while validating the offering.");
+        snackBar.error(
+          "An unexpected error happened while validating the offering.",
+        );
       } finally {
         processing.value = false;
       }
@@ -143,9 +138,9 @@ export default {
     };
 
     return {
+      formLoaded,
       validateOffering,
       saveOffering,
-      initialData,
       InstitutionRoutesConst,
       OfferingStatus,
       assessOfferingModalRef,
@@ -155,5 +150,5 @@ export default {
       goBack,
     };
   },
-};
+});
 </script>

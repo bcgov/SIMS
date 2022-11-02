@@ -23,10 +23,7 @@ class ProgramAllowsOfferingDeliveryConstraint
     args: ValidationArguments,
   ): boolean {
     const offeringModel = args.object as OfferingValidationModel;
-    if (
-      !offeringModel?.programContext?.deliveredOnSite ||
-      !offeringModel?.programContext?.deliveredOnline
-    ) {
+    if (!offeringModel?.programContext) {
       return false;
     }
     switch (deliveryOption) {

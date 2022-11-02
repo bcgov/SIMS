@@ -224,6 +224,10 @@ export class OfferingChangeAssessmentAPIInDTO {
   assessmentNotes: string;
 }
 
+/**
+ * Status of an offering validation during creation or during
+ * an complete update when the status is determined.
+ */
 export class OfferingValidationResultAPIOutDTO {
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];

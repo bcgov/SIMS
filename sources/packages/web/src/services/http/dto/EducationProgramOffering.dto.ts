@@ -164,3 +164,13 @@ export interface ValidationWarningResultAPIOutDTO {
   warningType: string;
   warningMessage: string;
 }
+
+/**
+ * Status of an offering validation during creation or during
+ * an complete update when the status is determined.
+ */
+export interface OfferingValidationResultAPIOutDTO {
+  offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
+  errors: string[];
+  warnings: ValidationWarningResultAPIOutDTO[];
+}

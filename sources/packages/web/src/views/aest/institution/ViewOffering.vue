@@ -50,9 +50,13 @@
 
 <script lang="ts">
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { EducationProgramService } from "@/services/EducationProgramService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormBaseModel, OfferingStatus, Role } from "@/types";
+import {
+  OfferingFormBaseModel,
+  OfferingFormModes,
+  OfferingStatus,
+  Role,
+} from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import { OfferingAssessmentAPIInDTO } from "@/services/http/dto";
@@ -106,10 +110,6 @@ export default {
       () => initialData.value.offeringStatus === OfferingStatus.CreationPending,
     );
     const loadFormData = async () => {
-      const programDetails =
-        await EducationProgramService.shared.getEducationProgram(
-          props.programId,
-        );
       const programOffering =
         await EducationProgramOfferingService.shared.getOfferingDetails(
           props.offeringId,
@@ -117,9 +117,7 @@ export default {
 
       initialData.value = {
         ...programOffering,
-        programIntensity: programDetails.programIntensity,
-        programDeliveryTypes: programDetails.programDeliveryTypes,
-        hasWILComponent: programDetails.hasWILComponent,
+        mode: OfferingFormModes.Readonly,
       };
     };
 

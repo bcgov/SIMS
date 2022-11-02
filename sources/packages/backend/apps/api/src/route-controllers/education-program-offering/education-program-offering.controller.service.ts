@@ -25,7 +25,6 @@ import {
   OfferingValidationResult,
   OfferingValidationModel,
   CreateFromValidatedOfferingError,
-  EducationProgramOfferingValidationService,
 } from "../../services";
 import {
   getISODateOnlyString,

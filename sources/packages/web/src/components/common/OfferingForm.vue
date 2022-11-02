@@ -2,6 +2,7 @@
   <formio-container
     formName="educationProgramOffering"
     :formData="formData"
+    @loaded="$emit('loaded', $event)"
     @submitted="submitOffering"
   >
     <template #actions="{ submit }" v-if="!readOnly">
@@ -44,7 +45,6 @@
 import { FormIOForm, OfferingFormModel } from "@/types";
 import { defineComponent, PropType, computed } from "vue";
 import { useOffering } from "@/composables";
-import { AuthService } from "@/services/AuthService";
 import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
 
 interface SubmitArgs {
@@ -52,7 +52,7 @@ interface SubmitArgs {
 }
 
 export default defineComponent({
-  emits: ["validateOffering", "saveOffering", "cancel"],
+  emits: ["validateOffering", "saveOffering", "loaded", "cancel"],
   props: {
     data: {
       type: Object as PropType<OfferingFormModel>,
@@ -107,7 +107,6 @@ export default defineComponent({
           ? mapOfferingChipStatus(props.data.offeringStatus)
           : undefined,
         offeringStatusToDisplay: props.data.offeringStatus,
-        clientType: AuthService.shared.authClientType,
       }),
     );
 
