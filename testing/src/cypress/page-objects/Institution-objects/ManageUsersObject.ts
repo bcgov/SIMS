@@ -7,10 +7,6 @@ export default class ManageUsersObject {
     return cy.contains("Manage Users");
   }
 
-  editButtonFirstRow() {
-    return cy.get("[data-cy='editUser']").eq(0);
-  }
-
   editUserPermissions() {
     return cy.contains("Edit User Permissions");
   }

@@ -36,7 +36,7 @@ describe("Manage Users", () => {
   });
 
   it("Verify that 'edit user' CTA will open the edit user modal for non-admin", () => {
-    manageUsersObject.editButtonFirstRow();
+    manageUsersObject.clickOnEdit("cypressautomation2@auto.test");
   });
 
   it("Verify that 'Add new user' CTA exists", () => {
@@ -119,7 +119,7 @@ describe("Manage Users - edit user modal", () => {
   });
 
   it("Validate edit user default modal", () => {
-    manageUsersObject.clickOnEdit("email");
+    manageUsersObject.clickOnEdit("cypressautomation2@auto.test");
     manageUsersObject.editUserModal().should("be.visible");
     manageUsersObject.isAdminRadioButton().should("be.checked");
     manageUsersObject.isAdminRadioButton().should("be.unchecked");
@@ -156,7 +156,7 @@ describe("Manage Users - Adding a user", () => {
     manageUsersObject.getUsersList().eq(3);
   });
 
-  it("Validate Edit user ", () => {
+  it("Validate Edit user", () => {
     manageUsersObject.clickOnEdit("cypressautomation2@auto.test");
     manageUsersObject.userLocationAccess().click();
     manageUsersObject.addUserNowButton().click();
