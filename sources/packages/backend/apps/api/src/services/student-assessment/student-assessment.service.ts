@@ -21,6 +21,7 @@ import {
   StudentAssessmentStatus,
 } from "./student-assessment.models";
 import { WorkflowClientService } from "@sims/services";
+import { addDays } from "../../utilities";
 
 /**
  * Manages the student assessment related operations.
@@ -94,13 +95,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   async getPendingAssessment(
     generatedDate?: Date,
   ): Promise<StudentAssessment[]> {
-    const currentDate = new Date();
-    const processingDate = new Date(
-      generatedDate
-        ? generatedDate
-        : currentDate.setDate(currentDate.getDate() - 1),
-    );
-
+    const processingDate = generatedDate ? generatedDate : addDays(-1);
     return this.repo.find({
       select: {
         id: true,

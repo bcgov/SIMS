@@ -161,8 +161,10 @@ export function getDateOnlyFormat(date?: string | Date): string | undefined {
  * @param daysToAdd
  * @returns Date.
  */
-export const addDays = (date: Date | string, daysToAdd: number): Date => {
-  return dayjs(date).add(daysToAdd, "day").toDate();
+export const addDays = (daysToAdd: number, date?: Date | string): Date => {
+  return dayjs(date ? date : new Date())
+    .add(daysToAdd, "day")
+    .toDate();
 };
 
 /**

@@ -285,7 +285,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     enrollmentPeriod: EnrollmentPeriod,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<DisbursementSchedule>> {
-    const coeThresholdDate = addDays(new Date(), COE_WINDOW);
+    const coeThresholdDate = addDays(COE_WINDOW);
     const coeQuery = this.repo
       .createQueryBuilder("disbursementSchedule")
       .select([
