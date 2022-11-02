@@ -110,12 +110,20 @@ export class EducationProgramOfferingService {
    * @param locationId offering location.
    * @param programId offering program.
    * @param offeringId offering to be modified.
+   * @param validationOnly do not execute the insert. Used to have
+   * all the validations performed, for instance, to check for a possible
+   * waning, without inserting the offering.
+   * @param allowOnlyApproved only automatic approved offerings are allowed
+   * to be created. Offerings not automatically approved requires Ministry further
+   * verification and, when this is set to true, will be reported as errors.
    */
   public async updateProgramOffering(
     locationId: number,
     programId: number,
-    offeringId: number,
+    validationOnly: boolean,
+    allowOnlyApproved: boolean,
     payload: EducationProgramOfferingAPIInDTO,
+    offeringId: number,
   ): Promise<void> {
     await ApiClient.EducationProgramOffering.updateProgramOffering(
       locationId,
@@ -123,6 +131,48 @@ export class EducationProgramOfferingService {
       offeringId,
       payload,
     );
+  }
+
+  /**
+   * Create/update an offering.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param validationOnly do not execute the operation. Used to have
+   * all the validations performed, for instance, to check for a possible
+   * waning, without inserting the offering.
+   * @param allowOnlyApproved only automatic approved offerings are allowed
+   * to be persisted. Offerings not automatically approved requires Ministry further
+   * verification and, when this is set to true, will be reported as errors.
+   * @param payload offering data to be created or updated.
+   * @param offeringId if provided, offering to be modified, otherwise a offering
+   * creation will be performed.
+   */
+  public async saveProgramOffering(
+    locationId: number,
+    programId: number,
+    validationOnly: boolean,
+    allowOnlyApproved: boolean,
+    payload: EducationProgramOfferingAPIInDTO,
+    offeringId?: number,
+  ): Promise<void> {
+    if (offeringId) {
+      await this.updateProgramOffering(
+        locationId,
+        programId,
+        validationOnly,
+        allowOnlyApproved,
+        payload,
+        offeringId,
+      );
+    } else {
+      await this.createProgramOffering(
+        locationId,
+        programId,
+        validationOnly,
+        allowOnlyApproved,
+        payload,
+      );
+    }
   }
 
   /**

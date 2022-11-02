@@ -195,8 +195,10 @@ export default {
         await EducationProgramOfferingService.shared.updateProgramOffering(
           props.locationId,
           props.programId,
-          props.offeringId,
+          false,
+          true,
           data,
+          props.offeringId,
         );
         snackBar.success("Education Offering updated successfully!");
         goBack();

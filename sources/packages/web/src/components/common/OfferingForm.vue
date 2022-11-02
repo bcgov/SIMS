@@ -5,16 +5,15 @@
     @loaded="$emit('loaded', $event)"
     @submitted="submitOffering"
   >
-    <template #actions="{ submit }" v-if="!readOnly">
+    <template #actions="{ submit }">
       <footer-buttons
-        justify="space-between"
+        :justify="readOnly ? 'center' : 'space-between'"
         :processing="processing"
-        primaryLabel="Submit"
-        @primaryClick="submit"
+        :showPrimaryButton="false"
         @secondaryClick="cancel"
         class="mx-0"
       >
-        <template #primary-buttons="{ disabled }">
+        <template #primary-buttons="{ disabled }" v-if="!readOnly">
           <span>
             <v-btn
               :disabled="disabled"
