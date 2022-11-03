@@ -49,6 +49,7 @@
     text="There is already a draft of an application in progress. Please continue
         with your draft application or cancel it and start a new application."
     :showSecondaryButton="false"
+    ok-label="Close"
     ref="draftApplicationModal"
   >
   </confirm-modal>
