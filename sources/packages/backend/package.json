@@ -24,7 +24,12 @@
     "migration:run": "node --abort-on-uncaught-exception --require ts-node/register apps/db-migrations/src/main.ts",
     "migration:create": "cd apps/db-migrations/src/migrations && npx typeorm-ts-node-commonjs migration:create",
     "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d apps/db-migrations/src/data-source.ts",
-    "db:seed:test": "node dist/apps/test-db-seeding/main.js"
+    "db:seed:test": "node dist/apps/test-db-seeding/main.js",
+    "//db:seed:test:clean": "Drops the database and all its data. Be careful with this command on production since this command will erase all your database tables and their data.",
+    "db:seed:test:clean": "node dist/apps/test-db-seeding/main.js --task=clean-db"
+  },
+  "scriptsComments": {
+    "db:seed:test:clean": "Drops the database and all its data. Be careful with this command on production since this command will erase all your database tables and their data."
   },
   "dependencies": {
     "@golevelup/nestjs-discovery": "^3.0.0",

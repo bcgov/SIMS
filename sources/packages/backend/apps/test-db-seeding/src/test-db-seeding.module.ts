@@ -12,6 +12,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { DiscoveryModule, MetadataScanner } from "@nestjs/core";
 import { TestOrganizerService } from "./test-organizer/test-organizer.service";
 import { DiscoveryService } from "@golevelup/nestjs-discovery";
+import { CleanDbService } from "./clean-db/clean-db.service";
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { DiscoveryService } from "@golevelup/nestjs-discovery";
     TestOrganizerService,
     DiscoveryService,
     MetadataScanner,
+    CleanDbService,
   ],
 })
 export class TestDbSeedingModule {}
