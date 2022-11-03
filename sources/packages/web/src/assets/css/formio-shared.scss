@@ -428,6 +428,7 @@
 .img-background {
   background-repeat: no-repeat;
   background-size: contain;
+  background-position: 0% 50%;
   width: 100%;
   height: 100%;
 }
@@ -536,6 +537,7 @@
 .formio-custom-tooltip {
   position: absolute;
   display: inline-flex;
+  z-index: 1;
 }
 
 .formio-custom-tooltip:before {
@@ -593,4 +595,8 @@
 .formio-href {
   font-family: "BCSans-bold", "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
   color: $brand-blue;
+  border-bottom: 1px $brand-blue solid;
+  &:hover {
+    text-decoration: none;
+  }
 }
