@@ -53,9 +53,8 @@
     <template #content>
       <v-container>
         <p>
-          There is already an application selected with this program year.
-          Please continue with that application or cancel it to start a new
-          application.
+          There is already a draft of an application in progress. Please
+          continue your draft application or cancel it.
         </p>
       </v-container>
     </template>
