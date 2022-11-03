@@ -24,11 +24,11 @@
         summary="Please be advised if the request is approved, the students who applied for financial aid for this offering will go through a reassessment and it may change their funding amount."
       />
     </template>
-    <offering-form
+    <offering-form-submit
       :data="initialData"
       :readOnly="false"
       @saveOffering="saveOffering"
-    ></offering-form>
+    ></offering-form-submit>
   </full-page-container>
 </template>
 
@@ -45,12 +45,12 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { useSnackBar } from "@/composables";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
-import OfferingForm from "@/components/common/OfferingForm.vue";
+import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
 
 export default {
   components: {
     ProgramOfferingDetailHeader,
-    OfferingForm,
+    OfferingFormSubmit,
   },
   props: {
     locationId: {

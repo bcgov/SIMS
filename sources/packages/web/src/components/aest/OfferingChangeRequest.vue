@@ -5,12 +5,7 @@
 <script lang="ts">
 import { onMounted, ref, SetupContext } from "vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import {
-  OfferingFormBaseModel,
-  OfferingStatus,
-  OfferingRelationType,
-  OfferingFormModes,
-} from "@/types";
+import { OfferingStatus, OfferingRelationType } from "@/types";
 import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
