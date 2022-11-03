@@ -54,7 +54,8 @@
       <v-container>
         <p>
           There is already a draft of an application in progress. Please
-          continue your draft application or cancel it.
+          continue with your draft application or cancel it and start a new
+          application.
         </p>
       </v-container>
     </template>
