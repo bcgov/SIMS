@@ -64,6 +64,7 @@
       submitLabel="Update offering now"
       :data="initialData"
       :formMode="formMode"
+      :submitMode="OfferingSubmitModes.Update"
       :locationId="locationId"
       :programId="programId"
       :offeringId="offeringId"
@@ -77,7 +78,11 @@
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { onMounted, ref, computed } from "vue";
-import { OfferingFormModes, OfferingStatus } from "@/types";
+import {
+  OfferingFormModes,
+  OfferingStatus,
+  OfferingSubmitModes,
+} from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ModalDialog } from "@/composables";
 import {
@@ -194,6 +199,7 @@ export default {
       routeLocation,
       formMode,
       goBack,
+      OfferingSubmitModes,
     };
   },
 };

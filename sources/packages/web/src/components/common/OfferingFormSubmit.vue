@@ -34,6 +34,7 @@ import {
   OfferingFormModel,
   OfferingFormModes,
   OfferingStatus,
+  OfferingSubmitModes,
 } from "@/types";
 import { defineComponent, PropType, ref } from "vue";
 import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
@@ -67,6 +68,10 @@ export default defineComponent({
       type: String as PropType<OfferingFormModes>,
       required: true,
       default: OfferingFormModes.Readonly,
+    },
+    submitMode: {
+      type: String as PropType<OfferingSubmitModes>,
+      required: true,
     },
     submitLabel: {
       type: String,
@@ -111,6 +116,7 @@ export default defineComponent({
           props.programId,
           data,
           { validationOnly, saveOnlyApproved },
+          props.submitMode,
           props.offeringId,
         );
         setFormWarnings([]);

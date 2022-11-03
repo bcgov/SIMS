@@ -335,6 +335,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param locationId location to which the offering
    * belongs to.
    * @param programId program to which the offering belongs to.
+   * @param validationOptions options available to execute
+   * validations prior to create or update an offering.
    * @returns primary identifier of created resource.
    */
   @HasLocationAccess("locationId")
@@ -357,6 +359,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Param("offeringId", ParseIntPipe) offeringId: number,
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programId", ParseIntPipe) programId: number,
+    @Query() validationOptions: OfferingValidationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
@@ -367,6 +370,18 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           programId,
           payload,
         );
+
+      this.educationProgramOfferingControllerService.assertOfferingValidation(
+        offeringValidationModel,
+        validationOptions,
+      );
+
+      if (validationOptions.validationOnly) {
+        // If only the validation was required, avoid changing the data
+        // and allow the API to return a success HTTP response code.
+        return;
+      }
+
       const requestedOffering = await this.programOfferingService.requestChange(
         locationId,
         programId,

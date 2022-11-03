@@ -2,6 +2,7 @@ import ApiClient from "./http/ApiClient";
 import {
   ApiProcessError,
   OfferingIntensity,
+  OfferingSubmitModes,
   OfferingsUploadBulkInsert,
   PaginatedResults,
   PaginationOptions,
@@ -43,7 +44,7 @@ export class EducationProgramOfferingService {
    * @param validationOptions options available to execute validations prior
    * to create or update an offering.
    */
-  public async createProgramOffering(
+  async createProgramOffering(
     locationId: number,
     programId: number,
     payload: EducationProgramOfferingAPIInDTO,
@@ -65,7 +66,7 @@ export class EducationProgramOfferingService {
    * @param paginationOptions pagination options.
    * @returns offering summary results.
    */
-  public async getOfferingsSummary(
+  async getOfferingsSummary(
     locationId: number,
     programId: number,
     paginationOptions: PaginationOptions,
@@ -84,7 +85,7 @@ export class EducationProgramOfferingService {
    * @param offeringId offering.
    * @returns offering details.
    */
-  public async getOfferingDetailsByLocationAndProgram(
+  async getOfferingDetailsByLocationAndProgram(
     locationId: number,
     programId: number,
     offeringId: number,
@@ -134,29 +135,46 @@ export class EducationProgramOfferingService {
    * @param offeringId if provided, offering to be modified, otherwise a offering
    * creation will be performed.
    */
-  public async saveProgramOffering(
+  async saveProgramOffering(
     locationId: number,
     programId: number,
     payload: EducationProgramOfferingAPIInDTO,
     validationOptions: OfferingValidationOptionsAPIInDTO,
+    submitMode: OfferingSubmitModes,
     offeringId?: number,
   ): Promise<void> {
-    if (offeringId) {
-      await this.updateProgramOffering(
-        locationId,
-        programId,
-        offeringId,
-        payload,
-        validationOptions,
-      );
-    } else {
-      await this.createProgramOffering(
+    if (submitMode === OfferingSubmitModes.Create) {
+      return this.createProgramOffering(
         locationId,
         programId,
         payload,
         validationOptions,
       );
     }
+
+    if (!offeringId) {
+      throw new Error(
+        "Offering id was not provided but is is required to complete the submission.",
+      );
+    }
+
+    if (submitMode === OfferingSubmitModes.Update) {
+      return this.updateProgramOffering(
+        locationId,
+        programId,
+        offeringId,
+        payload,
+        validationOptions,
+      );
+    }
+
+    return this.requestChange(
+      locationId,
+      programId,
+      offeringId,
+      payload,
+      validationOptions,
+    );
   }
 
   /**
@@ -170,7 +188,7 @@ export class EducationProgramOfferingService {
    * and not active program year are considered.
    * @returns offerings in client lookup format.
    */
-  public async getProgramOfferingsOptionsList(
+  async getProgramOfferingsOptionsList(
     locationId: number,
     programId: number,
     programYearId: number,
@@ -191,7 +209,7 @@ export class EducationProgramOfferingService {
    * @param offeringId offering id
    * @returns offering with start date value.
    */
-  public async getProgramOfferingStartDate(
+  async getProgramOfferingStartDate(
     offeringId: number,
   ): Promise<OfferingStartDateAPIOutDTO> {
     return ApiClient.EducationProgramOffering.getProgramOfferingStartDate(
@@ -204,7 +222,7 @@ export class EducationProgramOfferingService {
    * @param offeringId offering.
    * @returns offering details.
    */
-  public async getOfferingDetails(
+  async getOfferingDetails(
     offeringId: number,
   ): Promise<EducationProgramOfferingAPIOutDTO> {
     return ApiClient.EducationProgramOffering.getOfferingDetails(offeringId);
@@ -215,7 +233,7 @@ export class EducationProgramOfferingService {
    * @param offeringId
    * @param payload
    */
-  public async assessOffering(
+  async assessOffering(
     offeringId: number,
     payload: OfferingAssessmentAPIInDTO,
   ): Promise<void> {
@@ -230,22 +248,26 @@ export class EducationProgramOfferingService {
    * properties that affect the assessment of student application.
    **During this process a new offering is created by copying the existing
    * offering and modifying the properties required.
-   * @param locationId
-   * @param programId
-   * @param offeringId
-   * @param payload
+   * @param locationId location to which the offering belongs to.
+   * @param programId program to which the offering belongs to.
+   * @param offeringId offering to which change is requested.
+   * @param payload offering data to create the new offering.
+   * @param validationOptions options available to execute
+   * validations prior to create or update an offering.
    */
   async requestChange(
     locationId: number,
     programId: number,
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
+    validationOptions: OfferingValidationOptionsAPIInDTO,
   ): Promise<void> {
     await ApiClient.EducationProgramOffering.requestChange(
       locationId,
       programId,
       offeringId,
       payload,
+      validationOptions,
     );
   }
 

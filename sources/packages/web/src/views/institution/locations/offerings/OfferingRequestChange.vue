@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Program detail"
-        :routeLocation="programDetailRoute"
+        :routeLocation="editLocationOfferingsRoute"
         subTitle="Request to Change"
       />
       <program-offering-detail-header
@@ -25,9 +25,15 @@
       />
     </template>
     <offering-form-submit
+      submitLabel="Request a change now"
       :data="initialData"
-      :readOnly="false"
-      @saveOffering="saveOffering"
+      :formMode="OfferingFormModes.Editable"
+      :submitMode="OfferingSubmitModes.ChangeRequest"
+      :locationId="locationId"
+      :programId="programId"
+      :offeringId="offeringId"
+      @saved="gotToViewLocationPrograms"
+      @cancel="goToEditLocationOfferings"
     ></offering-form-submit>
   </full-page-container>
 </template>
@@ -35,19 +41,19 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { onMounted, ref, computed } from "vue";
-import { OfferingStatus } from "@/types";
+import { onMounted, ref, defineComponent } from "vue";
 import {
-  EducationProgramOfferingAPIInDTO,
-  EducationProgramOfferingAPIOutDTO,
-} from "@/services/http/dto";
+  OfferingFormModes,
+  OfferingStatus,
+  OfferingSubmitModes,
+} from "@/types";
+import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
-import { useSnackBar } from "@/composables";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
 
-export default {
+export default defineComponent({
   components: {
     ProgramOfferingDetailHeader,
     OfferingFormSubmit,
@@ -66,60 +72,51 @@ export default {
       required: true,
     },
   },
-
-  setup(props: any) {
-    const snackBar = useSnackBar();
+  setup(props) {
     const router = useRouter();
     const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
-    const programDetailRoute = computed(() => ({
+    const editLocationOfferingsRoute = {
       name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
       params: {
         programId: props.programId,
         locationId: props.locationId,
         offeringId: props.offeringId,
       },
-    }));
+    };
 
-    const loadFormData = async () => {
+    const goToEditLocationOfferings = () => {
+      router.push(editLocationOfferingsRoute);
+    };
+
+    const gotToViewLocationPrograms = () => {
+      router.push({
+        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+        params: {
+          programId: props.programId,
+          locationId: props.locationId,
+        },
+      });
+    };
+
+    onMounted(async () => {
       initialData.value =
         await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
           props.locationId,
           props.programId,
           props.offeringId,
         );
-    };
-    onMounted(async () => {
-      await loadFormData();
     });
-    const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
-      try {
-        await EducationProgramOfferingService.shared.requestChange(
-          props.locationId,
-          props.programId,
-          props.offeringId,
-          data,
-        );
-        snackBar.success("Request for change has been submitted.");
-        router.push({
-          name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-          params: {
-            programId: props.programId,
-            locationId: props.locationId,
-          },
-        });
-      } catch (error: unknown) {
-        snackBar.error(
-          "An error happened while requesting a change to the offering.",
-        );
-      }
-    };
+
     return {
-      saveOffering,
       initialData,
-      programDetailRoute,
       OfferingStatus,
       BannerTypes,
+      OfferingFormModes,
+      OfferingSubmitModes,
+      editLocationOfferingsRoute,
+      goToEditLocationOfferings,
+      gotToViewLocationPrograms,
     };
   },
-};
+});
 </script>
