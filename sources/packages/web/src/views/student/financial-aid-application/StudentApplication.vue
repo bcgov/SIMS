@@ -44,34 +44,19 @@
       </content-group>
     </v-form>
   </student-page-container>
-  <modal-dialog-base
+  <confirm-modal
     title="Application already in progress"
-    dialogType="warning"
-    :showDialog="showDialog"
-    @dialogClosed="closeDialog"
+    text="There is already a draft of an application in progress. Please continue
+        with your draft application or cancel it and start a new application."
+    :showSecondaryButton="false"
+    ref="draftApplicationModal"
   >
-    <template #content>
-      <v-container>
-        <p>
-          There is already a draft of an application in progress. Please
-          continue with your draft application or cancel it and start a new
-          application.
-        </p>
-      </v-container>
-    </template>
-    <template #footer>
-      <footer-buttons
-        primaryLabel="Close"
-        :showSecondaryButton="false"
-        @primaryClick="closeDialog"
-      />
-    </template>
-  </modal-dialog-base>
+  </confirm-modal>
 </template>
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
-import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useSnackBar, useModalDialog, useRules } from "@/composables";
+import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
+import { useSnackBar, useRules, ModalDialog } from "@/composables";
 import { useRouter } from "vue-router";
 import { VForm, SelectItemType, LayoutTemplates } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -80,29 +65,26 @@ import { ProgramYearService } from "@/services/ProgramYearService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 
 export default defineComponent({
-  components: { ModalDialogBase, ContentGroup },
+  components: { ConfirmModal, ContentGroup },
   setup() {
     const initialData = ref({});
     const router = useRouter();
     const snackBar = useSnackBar();
-    const { showDialog, showModal } = useModalDialog<void>();
     const programYearOptions = ref([] as SelectItemType[]);
-    const programYearId = ref<number>();
+    const programYearId = ref();
     const startApplicationForm = ref({} as VForm);
     const { checkNullOrEmptyRule } = useRules();
+    const draftApplicationModal = ref({} as ModalDialog<boolean>);
 
     onMounted(async () => {
-      const programYearOptionTmp =
-        await ProgramYearService.shared.getProgramYearOptions();
-      programYearOptions.value = programYearOptionTmp.map((yearOption) => ({
+      programYearOptions.value = (
+        await ProgramYearService.shared.getProgramYearOptions()
+      ).map((yearOption) => ({
         title: yearOption.description,
         value: yearOption.id.toString(),
       }));
     });
 
-    const closeDialog = () => {
-      showDialog.value = false;
-    };
     const startApplication = async () => {
       try {
         const validationResult = await startApplicationForm.value.validate();
@@ -117,7 +99,7 @@ export default defineComponent({
               associatedFiles: [],
             });
           if (createDraftResult.draftAlreadyExists) {
-            showDialog.value = true;
+            await draftApplicationModal.value.showModal();
             return;
           }
           const programYear =
@@ -144,9 +126,6 @@ export default defineComponent({
 
     return {
       initialData,
-      showModal,
-      showDialog,
-      closeDialog,
       StudentRoutesConst,
       programYearOptions,
       programYearId,
@@ -154,6 +133,7 @@ export default defineComponent({
       startApplicationForm,
       checkNullOrEmptyRule,
       LayoutTemplates,
+      draftApplicationModal,
     };
   },
 });
