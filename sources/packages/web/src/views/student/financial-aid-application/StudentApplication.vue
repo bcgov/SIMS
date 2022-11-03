@@ -78,7 +78,7 @@
   </v-form>
 </template>
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useSnackBar, useModalDialog, useRules } from "@/composables";
 import { useRouter } from "vue-router";
@@ -88,7 +88,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 
-export default {
+export default defineComponent({
   components: { ModalDialogBase, ContentGroup },
   setup() {
     const initialData = ref({});
@@ -167,5 +167,5 @@ export default {
       checkNullOrEmptyRule,
     };
   },
-};
+});
 </script>
