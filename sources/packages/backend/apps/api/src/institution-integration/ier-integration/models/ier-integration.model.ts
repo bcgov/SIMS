@@ -8,6 +8,16 @@ export interface IERUploadResult {
   uploadedRecords: number;
 }
 
+/**
+ * Represents a single line in a IER file.
+ * When implemented in a derived class this
+ * interface allow the object to be represented
+ * as a formatted fixed string.
+ */
+export interface IERRequestFileLine {
+  getFixedFormat(): string;
+}
+
 export interface IERRecord {
   assessmentId: number;
   applicationNumber: string;
@@ -18,7 +28,7 @@ export interface IERRecord {
   programName: string;
   programDescription: string;
   credentialType: string;
-  cipCode: string;
+  cipCode: number;
   nocCode: string;
   sabcCode: string;
   institutionProgramCode: string;
@@ -32,5 +42,5 @@ export interface IERRecord {
   totalFundedWeeks: number;
   courseLoad: number;
   offeringIntensity: string;
-  fundingType: DisbursementSchedule[];
+  disbursementSchedules: DisbursementSchedule[];
 }

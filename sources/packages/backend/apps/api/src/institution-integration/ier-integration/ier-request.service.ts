@@ -4,6 +4,7 @@ import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { ConfigService, StudentAssessmentService } from "../../services";
 import { IERIntegrationConfig } from "../../types";
+import { IERIntegrationService } from "./ier-integration.service";
 import { IERRecord, IERUploadResult } from "./models/ier-integration.model";
 
 @Injectable()
@@ -11,6 +12,7 @@ export class IERRequestService {
   ierIntegrationConfig: IERIntegrationConfig;
   constructor(
     config: ConfigService,
+    private readonly ierIntegrationService: IERIntegrationService,
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     this.ierIntegrationConfig = config.getConfig().IERIntegrationConfig;
@@ -41,15 +43,38 @@ export class IERRequestService {
       };
     }
     this.logger.log(`Found ${pendingAssessments.length} assessments.`);
-    const fileRecord: Record<string, IERRecord[]> = {};
+    const fileRecords: Record<string, IERRecord[]> = {};
     pendingAssessments.map((pendingAssessment) => {
       const institutionCode =
         pendingAssessment.offering.institutionLocation.institutionCode;
-      if (!fileRecord[institutionCode]) {
-        fileRecord[institutionCode] = [];
+      if (!fileRecords[institutionCode]) {
+        fileRecords[institutionCode] = [];
       }
-      fileRecord[institutionCode].push(this.createIERRecord(pendingAssessment));
+      fileRecords[institutionCode].push(
+        this.createIERRecord(pendingAssessment),
+      );
     });
+
+    //Create records and create the unique file sequence number
+    let uploadResult: IERUploadResult;
+
+    try {
+      this.logger.log("Creating IER request content...");
+      Object.keys(fileRecords).forEach((institutionCode) => {
+        // Create the Request content for the IER file by populating the content.
+        const fileContent = this.ierIntegrationService.createIERRequestContent(
+          fileRecords[institutionCode],
+        );
+        console.log(fileContent);
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error while uploading content for IER Request: ${error}`,
+      );
+      throw error;
+    }
+
+    return uploadResult;
   }
 
   private createIERRecord(pendingAssessment: StudentAssessment): IERRecord {
@@ -69,7 +94,7 @@ export class IERRequestService {
       programName: educationProgram.name,
       programDescription: educationProgram.description,
       credentialType: educationProgram.credentialType,
-      cipCode: educationProgram.cipCode,
+      cipCode: parseFloat(educationProgram.cipCode) * 10000,
       nocCode: educationProgram.nocCode,
       sabcCode: educationProgram.sabcCode,
       institutionProgramCode: educationProgram.institutionProgramCode,
@@ -85,7 +110,7 @@ export class IERRequestService {
       // we have hardcoaded the courseLoad to 100 and offering Intensity to F.
       courseLoad: 100,
       offeringIntensity: "F",
-      fundingType: pendingAssessment.disbursementSchedules,
+      disbursementSchedules: pendingAssessment.disbursementSchedules,
     };
   }
 

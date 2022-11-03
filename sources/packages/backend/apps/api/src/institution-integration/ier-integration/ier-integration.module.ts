@@ -6,6 +6,7 @@ import {
   SshService,
   StudentAssessmentService,
 } from "../../services";
+import { IERIntegrationService } from "./ier-integration.service";
 import { IERRequestService } from "./ier-request.service";
 
 @Module({
@@ -16,6 +17,7 @@ import { IERRequestService } from "./ier-request.service";
     ConfigService,
     IERRequestService,
     WorkflowClientService,
+    IERIntegrationService,
   ],
   exports: [IERRequestService],
 })

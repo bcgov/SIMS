@@ -68,6 +68,7 @@ import { FedRestrictionProcessingService } from "./esdc-integration/fed-restrict
 import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
 import { IERRequestService } from "./institution-integration/ier-integration/ier-request.service";
+import { IERIntegrationService } from "./institution-integration/ier-integration/ier-integration.service";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule, SINValidationModule],
@@ -113,6 +114,7 @@ import { IERRequestService } from "./institution-integration/ier-integration/ier
     SFASIndividualService,
     SFASRestrictionService,
     IERRequestService,
+    IERIntegrationService,
     ECertFileHandler,
     DisbursementScheduleErrorsService,
     ECertFullTimeIntegrationService,
