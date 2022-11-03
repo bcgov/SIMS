@@ -1,8 +1,15 @@
 import { Injectable } from "@nestjs/common";
+import * as Client from "ssh2-sftp-client";
+import { InjectLogger } from "../../common";
+import { LoggerService } from "../../logger/logger.service";
 import { ConfigService, SshService } from "../../services";
 import { IERIntegrationConfig, SFTPConfig } from "../../types";
 import { IERFileDetail } from "./ier-file-detail";
-import { IERRecord, IERRequestFileLine } from "./models/ier-integration.model";
+import {
+  IERRecord,
+  IERRequestFileLine,
+  IERUploadResult,
+} from "./models/ier-integration.model";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -60,4 +67,48 @@ export class IERIntegrationService {
     ierFileLines.push(...fileRecords);
     return ierFileLines;
   }
+
+  /**
+   * Converts the IERFileLines to the final content and upload it.
+   * @param IERFileLines Array of lines to be converted to a formatted fixed size file.
+   * @param remoteFilePath Remote location to upload the file (path + file name).
+   * @returns Upload result.
+   */
+  async uploadContent(
+    ierFileLines: IERRequestFileLine[],
+    remoteFilePath: string,
+  ): Promise<IERUploadResult> {
+    // Generate fixed formatted file.
+    const fixedFormattedLines: string[] = ierFileLines.map(
+      (line: IERRequestFileLine) => line.getFixedFormat(),
+    );
+    const ierFileContent = fixedFormattedLines.join("\r\n");
+
+    // Send the file to ftp.
+    this.logger.log("Creating new SFTP client to start upload...");
+    const client = await this.getClient();
+    try {
+      this.logger.log(`Uploading ${remoteFilePath}`);
+      await client.put(Buffer.from(ierFileContent), remoteFilePath);
+      return {
+        generatedFile: remoteFilePath,
+        uploadedRecords: ierFileLines.length,
+      };
+    } finally {
+      this.logger.log("Finalizing SFTP client...");
+      await SshService.closeQuietly(client);
+      this.logger.log("SFTP client finalized.");
+    }
+  }
+
+  /**
+   * Generates a new connected SFTP client ready to be used.
+   * @returns client
+   */
+  private async getClient(): Promise<Client> {
+    return this.sshService.createClient(this.ftpConfig);
+  }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

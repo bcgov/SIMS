@@ -4,6 +4,7 @@ import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { ConfigService, StudentAssessmentService } from "../../services";
 import { IERIntegrationConfig } from "../../types";
+import { getFileNameAsCurrentTimestamp } from "../../utilities";
 import { IERIntegrationService } from "./ier-integration.service";
 import { IERRecord, IERUploadResult } from "./models/ier-integration.model";
 
@@ -60,12 +61,18 @@ export class IERRequestService {
 
     try {
       this.logger.log("Creating IER request content...");
-      Object.keys(fileRecords).forEach((institutionCode) => {
+      Object.keys(fileRecords).forEach(async (institutionCode) => {
         // Create the Request content for the IER file by populating the content.
         const fileContent = this.ierIntegrationService.createIERRequestContent(
           fileRecords[institutionCode],
         );
-        console.log(fileContent);
+        // Create the request filename with the file path for the each and every institutionCode.
+        const fileInfo = this.createRequestFileName(institutionCode);
+        this.logger.log("Uploading content...");
+        uploadResult = await this.ierIntegrationService.uploadContent(
+          fileContent,
+          fileInfo.filePath,
+        );
       });
     } catch (error) {
       this.logger.error(
@@ -77,6 +84,23 @@ export class IERRequestService {
     return uploadResult;
   }
 
+  /**
+   * Create file name IER records file.
+   * @param reportName Report name to be a part of filename.
+   * @returns Full file path of the file to be saved on the SFTP.
+   */
+  createRequestFileName(institutionCode: string): {
+    fileName: string;
+    filePath: string;
+  } {
+    const timestamp = getFileNameAsCurrentTimestamp();
+    const fileName = `IER_012_${timestamp}.txt`;
+    const filePath = `${this.ierIntegrationConfig.ftpRequestFolder}\\${institutionCode}\\${fileName}`;
+    return {
+      fileName,
+      filePath,
+    };
+  }
   private createIERRecord(pendingAssessment: StudentAssessment): IERRecord {
     const application = pendingAssessment.application;
     const student = application.student;

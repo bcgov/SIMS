@@ -70,8 +70,12 @@ export class IERFileDetail implements IERRequestFileLine {
     record.appendWithEndFiller(this.credentialType, 25, SPACE_FILLER);
     record.append(this.cipCode.toString(), 6);
     record.append(this.nocCode, 4);
-    record.append(this.sabcCode, 4);
-    record.appendWithEndFiller(this.institutionProgramCode, 25, SPACE_FILLER);
+    record.appendWithEndFiller(this.sabcCode ?? "", 4, SPACE_FILLER);
+    record.appendWithEndFiller(
+      this.institutionProgramCode ?? "",
+      25,
+      SPACE_FILLER,
+    );
     record.append(this.programLength.toString(), 1);
     record.appendDate(this.studyStartDate, DATE_FORMAT);
     record.appendDate(this.studyEndDate, DATE_FORMAT);
