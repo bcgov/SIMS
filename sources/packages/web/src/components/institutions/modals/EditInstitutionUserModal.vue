@@ -4,6 +4,7 @@
       :showDialog="showDialog"
       @dialogClosed="dialogClosed"
       title="Edit user"
+      data-cy="editUserModal"
     >
       <template #content>
         <institution-user-management
