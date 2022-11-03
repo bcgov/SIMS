@@ -177,7 +177,11 @@ export default defineComponent({
     };
 
     const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
-      let saveResult = await saveOfferingData(data, false, true);
+      const saveOnlyApproval =
+        props.formMode === OfferingFormModes.AssessmentDataReadonly
+          ? false
+          : true;
+      let saveResult = await saveOfferingData(data, false, saveOnlyApproval);
       if (saveResult === SaveOfferingResult.warning) {
         const proceedWithWarnings =
           await offeringWarningsModal.value.showModal();

@@ -40,7 +40,7 @@ export default {
   //TODO: is enhanced to load header values with it's own API call.
   emits: ["getHeaderDetails"],
   setup(props: any, context: SetupContext) {
-    const initialData = ref({} as OfferingFormBaseModel);
+    const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
 
     onMounted(async () => {
       let offering: EducationProgramOfferingAPIOutDTO;
@@ -55,11 +55,7 @@ export default {
             props.offeringId,
           );
       }
-
-      initialData.value = {
-        ...offering,
-        mode: OfferingFormModes.Editable,
-      };
+      initialData.value = offering;
       context.emit("getHeaderDetails", {
         institutionName: offering.institutionName,
         submittedDate: offering.submittedDate,

@@ -9,18 +9,20 @@ import { getISODateOnlyString, getUserFullName } from "../../../utilities";
 import {
   Allow,
   IsBoolean,
+  IsBooleanString,
   IsEnum,
   IsIn,
   IsNotEmpty,
   IsOptional,
   MaxLength,
 } from "class-validator";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import {
   OfferingDeliveryOptions,
   OfferingValidationWarnings,
   WILComponentOptions,
 } from "../../../services";
+import { ToBoolean } from "../../utils/query-string";
 
 export class StudyBreakAPIOutDTO {
   breakStartDate: string;
@@ -266,8 +268,8 @@ export class OfferingValidationOptionsAPIInDTO {
    * If true, will execute all validations without actually
    * persisting the data.
    */
-  @IsOptional()
   @IsBoolean()
+  @Transform(ToBoolean)
   validationOnly = false;
   /**
    * If true, will persist the data only if the offering will
@@ -275,7 +277,7 @@ export class OfferingValidationOptionsAPIInDTO {
    * will demand a Ministry review (Creation pending) this must
    * be set to false.
    */
-  @IsOptional()
   @IsBoolean()
+  @Transform(ToBoolean)
   saveOnlyApproved = false;
 }

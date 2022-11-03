@@ -36,12 +36,11 @@
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { onMounted, ref, computed } from "vue";
+import { OfferingStatus } from "@/types";
 import {
-  OfferingFormBaseModel,
-  OfferingStatus,
-  OfferingFormModes,
-} from "@/types";
-import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
+  EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingAPIOutDTO,
+} from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { useSnackBar } from "@/composables";
@@ -71,7 +70,7 @@ export default {
   setup(props: any) {
     const snackBar = useSnackBar();
     const router = useRouter();
-    const initialData = ref({} as OfferingFormBaseModel);
+    const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
     const programDetailRoute = computed(() => ({
       name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
       params: {
@@ -82,17 +81,12 @@ export default {
     }));
 
     const loadFormData = async () => {
-      const programOffering =
+      initialData.value =
         await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
           props.locationId,
           props.programId,
           props.offeringId,
         );
-      initialData.value = {
-        ...programOffering,
-        hasExistingApplication: false,
-        mode: OfferingFormModes.Editable,
-      };
     };
     onMounted(async () => {
       await loadFormData();
