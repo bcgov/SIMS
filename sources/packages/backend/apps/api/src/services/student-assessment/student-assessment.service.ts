@@ -99,10 +99,43 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     return this.repo.find({
       select: {
         id: true,
+        application: {
+          id: true,
+          student: {
+            sinValidation: { sin: true },
+            user: { lastName: true, firstName: true },
+            birthDate: true,
+          },
+        },
+        offering: {
+          educationProgram: {
+            name: true,
+            description: true,
+            credentialType: true,
+            cipCode: true,
+            nocCode: true,
+            sabcCode: true,
+            institutionProgramCode: true,
+          },
+          studyStartDate: true,
+          studyEndDate: true,
+          actualTuitionCosts: true,
+          programRelatedCosts: true,
+          mandatoryFees: true,
+          exceptionalExpenses: true,
+          studyBreaks: { totalFundedWeeks: true },
+          courseLoad: true,
+          offeringIntensity: true,
+        },
+        disbursementSchedules: {
+          id: true,
+          disbursementValues: { id: true, valueCode: true },
+        },
       },
       relations: {
-        application: { student: { user: true } },
-        offering: { institutionLocation: true },
+        disbursementSchedules: { disbursementValues: true },
+        application: { student: { sinValidation: true, user: true } },
+        offering: { institutionLocation: true, educationProgram: true },
       },
       where: {
         assessmentDate: dateEqualTo(processingDate),
