@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
+import { StudentAssessment } from "@sims/sims-db";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { ConfigService, StudentAssessmentService } from "../../services";
 import { IERIntegrationConfig } from "../../types";
-import { IERUploadResult } from "./models/ier-integration.model";
+import { IERRecord, IERUploadResult } from "./models/ier-integration.model";
 
 @Injectable()
 export class IERRequestService {
@@ -30,15 +31,62 @@ export class IERRequestService {
     this.logger.log(
       `Retrieving pending assessment on ${generatedDate} for IER 12 request...`,
     );
-    const assessmentRequests =
+    const pendingAssessments =
       await this.studentAssessmentService.getPendingAssessment(generatedDate);
-    if (!assessmentRequests.length) {
+
+    if (!pendingAssessments.length) {
       return {
         generatedFile: "none",
         uploadedRecords: 0,
       };
     }
-    this.logger.log(`Found ${assessmentRequests.length} assessments.`);
+    this.logger.log(`Found ${pendingAssessments.length} assessments.`);
+    const fileRecord: Record<string, IERRecord[]> = {};
+    pendingAssessments.map((pendingAssessment) => {
+      const institutionCode =
+        pendingAssessment.offering.institutionLocation.institutionCode;
+      if (!fileRecord[institutionCode]) {
+        fileRecord[institutionCode] = [];
+      }
+      fileRecord[institutionCode].push(this.createIERRecord(pendingAssessment));
+    });
+  }
+
+  private createIERRecord(pendingAssessment: StudentAssessment): IERRecord {
+    const application = pendingAssessment.application;
+    const student = application.student;
+    const user = student.user;
+    const sinValidation = student.sinValidation;
+    const offering = pendingAssessment.offering;
+    const educationProgram = offering.educationProgram;
+    return {
+      assessmentId: pendingAssessment.id,
+      applicationNumber: application.applicationNumber,
+      sin: sinValidation.sin,
+      studentLastName: user.lastName,
+      studentGivenName: user.firstName,
+      birthDate: student.birthDate,
+      programName: educationProgram.name,
+      programDescription: educationProgram.description,
+      credentialType: educationProgram.credentialType,
+      cipCode: educationProgram.cipCode,
+      nocCode: educationProgram.nocCode,
+      sabcCode: educationProgram.sabcCode,
+      institutionProgramCode: educationProgram.institutionProgramCode,
+      programLength: offering.yearOfStudy,
+      studyStartDate: offering.studyStartDate,
+      studyEndDate: offering.studyEndDate,
+      tuitionFees: offering.actualTuitionCosts,
+      programRelatedCosts: offering.programRelatedCosts,
+      mandatoryFees: offering.mandatoryFees,
+      exceptionExpenses: offering.exceptionalExpenses,
+      totalFundedWeeks: offering.studyBreaks.totalFundedWeeks,
+      // As this implementation is only for FT,
+      // we have hardcoaded the courseLoad to 100 and offering Intensity to F.
+      courseLoad: 100,
+      offeringIntensity: "F",
+      fundingType: pendingAssessment.disbursementSchedules,
+    };
   }
 
   @InjectLogger()

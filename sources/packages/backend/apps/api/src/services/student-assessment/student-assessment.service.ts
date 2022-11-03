@@ -100,7 +100,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       select: {
         id: true,
         application: {
-          id: true,
+          applicationNumber: true,
           student: {
             sinValidation: { sin: true },
             user: { lastName: true, firstName: true },
@@ -117,6 +117,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
             sabcCode: true,
             institutionProgramCode: true,
           },
+          yearOfStudy: true,
           studyStartDate: true,
           studyEndDate: true,
           actualTuitionCosts: true,
