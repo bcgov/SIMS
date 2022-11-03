@@ -8,7 +8,7 @@
       <slot name="details-header"></slot>
     </div>
     <slot name="alerts"></slot>
-    <v-container :fluid="fullWidth" :class="containerClass">
+    <v-container :fluid="fullWidth">
       <template v-if="layoutTemplate === LayoutTemplates.CenteredCard">
         <v-row justify="center">
           <v-card class="mt-4 p-4 w-100" :class="widthClass">
@@ -56,11 +56,6 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
-    },
-    containerClass: {
-      type: String,
-      required: false,
-      default: "",
     },
   },
   setup(props) {

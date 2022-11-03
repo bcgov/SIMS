@@ -1,66 +1,34 @@
 <template>
-  <v-form ref="startApplicationForm">
-    <modal-dialog-base
-      title="Application already in progress"
-      dialogType="warning"
-      :showDialog="showDialog"
-      @dialogClosed="closeDialog"
-    >
-      <template v-slot:content>
-        <v-container>
-          <form>
-            <p>
-              There is already an application selected with this program year.
-              Please continue with that application or cancel it to start a new
-              application.
-            </p>
-          </form>
-        </v-container>
-      </template>
-      <template v-slot:footer>
-        <footer-buttons
-          primaryLabel="Close"
-          :showSecondaryButton="false"
-          @primaryClick="closeDialog"
-        />
-      </template>
-    </modal-dialog-base>
-
-    <student-page-container container-class="container-max-width ma-auto">
-      <template #header>
-        <header-navigator
-          title="Applications"
-          subTitle="Start New Application"
-          :routeLocation="{
-            name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
-          }"
-        >
-          <template #buttons>
-            <start-application />
-          </template>
-        </header-navigator>
-      </template>
+  <student-page-container :layout-template="LayoutTemplates.Centered">
+    <template #header>
+      <header-navigator
+        title="Applications"
+        subTitle="Start New Application"
+        :routeLocation="{
+          name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+        }"
+      >
+      </header-navigator>
+    </template>
+    <v-form ref="startApplicationForm">
       <h2 class="category-header-large primary-color pb-4">
-        Apply for funding
+        Apply for new funding
       </h2>
       <content-group>
-        <div class="category-header-medium-small pa-2">
+        <h3 class="category-header-medium-small pa-2">
           Financial Aid Application
-        </div>
-        <div class="pb-6 px-2">
+        </h3>
+        <p class="px-2">
           Apply to see if you are applicable for provincial or federal loans and
           grant. This is for students attending full-time or part-time
           post-secondary studies.
-        </div>
-        <div class="category-header-medium-small pb-3 px-2">
-          Select program year
-        </div>
+        </p>
         <v-select
           v-model="programYearId"
           :items="programYearOptions"
-          variant="solo"
+          variant="outlined"
           density="compact"
-          label="Select year"
+          label="Select program year"
           class="px-2 pb-4"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Year')]"
           hide-details="auto"
@@ -74,15 +42,38 @@
           >Start Application</v-btn
         >
       </content-group>
-    </student-page-container>
-  </v-form>
+    </v-form>
+  </student-page-container>
+  <modal-dialog-base
+    title="Application already in progress"
+    dialogType="warning"
+    :showDialog="showDialog"
+    @dialogClosed="closeDialog"
+  >
+    <template #content>
+      <v-container>
+        <p>
+          There is already an application selected with this program year.
+          Please continue with that application or cancel it to start a new
+          application.
+        </p>
+      </v-container>
+    </template>
+    <template #footer>
+      <footer-buttons
+        primaryLabel="Close"
+        :showSecondaryButton="false"
+        @primaryClick="closeDialog"
+      />
+    </template>
+  </modal-dialog-base>
 </template>
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useSnackBar, useModalDialog, useRules } from "@/composables";
 import { useRouter } from "vue-router";
-import { VForm, SelectItemType } from "@/types";
+import { VForm, SelectItemType, LayoutTemplates } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
@@ -96,19 +87,17 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const { showDialog, showModal } = useModalDialog<void>();
     const programYearOptions = ref([] as SelectItemType[]);
-    const programYearId = ref();
+    const programYearId = ref<number>();
     const startApplicationForm = ref({} as VForm);
     const { checkNullOrEmptyRule } = useRules();
 
     onMounted(async () => {
       const programYearOptionTmp =
         await ProgramYearService.shared.getProgramYearOptions();
-      programYearOptions.value = programYearOptionTmp.map((yearOption) => {
-        return {
-          title: yearOption.description,
-          value: yearOption.id.toString(),
-        };
-      });
+      programYearOptions.value = programYearOptionTmp.map((yearOption) => ({
+        title: yearOption.description,
+        value: yearOption.id.toString(),
+      }));
     });
 
     const closeDialog = () => {
@@ -121,10 +110,9 @@ export default defineComponent({
           return;
         }
         if (programYearId.value) {
-          const programYearNumberId = Number(programYearId.value);
           const createDraftResult =
             await ApplicationService.shared.createApplicationDraft({
-              programYearId: programYearNumberId,
+              programYearId: programYearId.value,
               data: {},
               associatedFiles: [],
             });
@@ -134,15 +122,15 @@ export default defineComponent({
           }
           const programYear =
             await ProgramYearService.shared.getActiveProgramYear(
-              programYearNumberId,
+              programYearId.value,
             );
           if (programYear) {
             router.push({
               name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
               params: {
                 selectedForm: programYear.formName,
-                programYearId: programYearNumberId,
-                id: Number(createDraftResult.draftId),
+                programYearId: programYearId.value,
+                id: createDraftResult.draftId,
               },
             });
           }
@@ -165,6 +153,7 @@ export default defineComponent({
       startApplication,
       startApplicationForm,
       checkNullOrEmptyRule,
+      LayoutTemplates,
     };
   },
 });
