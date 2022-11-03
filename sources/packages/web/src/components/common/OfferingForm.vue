@@ -5,17 +5,21 @@
     @loaded="$emit('loaded', $event)"
     @submitted="submitOffering"
   >
-    <template #actions="{ submit }">
+    <template
+      #actions="{ submit }"
+      v-if="formMode !== OfferingFormModes.Readonly"
+    >
       <footer-buttons
-        :justify="readOnly ? 'center' : 'space-between'"
+        justify="space-between"
         :processing="processing"
         :showPrimaryButton="false"
         @secondaryClick="cancel"
         class="mx-0"
       >
-        <template #primary-buttons="{ disabled }" v-if="!readOnly">
+        <template #primary-buttons="{ disabled }">
           <span>
             <v-btn
+              v-if="formMode === OfferingFormModes.Editable"
               :disabled="disabled"
               variant="elevated"
               data-cy="offeringValidationButton"
@@ -41,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { FormIOForm, OfferingFormModel } from "@/types";
+import { FormIOForm, OfferingFormModel, OfferingFormModes } from "@/types";
 import { defineComponent, PropType, computed } from "vue";
 import { useOffering } from "@/composables";
 import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
@@ -58,11 +62,10 @@ export default defineComponent({
       required: true,
       default: {} as OfferingFormModel,
     },
-    //For view only purpose where submit action not required.
-    readOnly: {
-      type: Boolean,
-      required: false,
-      default: true,
+    formMode: {
+      type: String as PropType<OfferingFormModes>,
+      required: true,
+      default: OfferingFormModes.Readonly,
     },
     submitLabel: {
       type: String,
@@ -106,6 +109,7 @@ export default defineComponent({
           ? mapOfferingChipStatus(props.data.offeringStatus)
           : undefined,
         offeringStatusToDisplay: props.data.offeringStatus,
+        mode: props.formMode,
       }),
     );
 
@@ -117,6 +121,7 @@ export default defineComponent({
       submitOffering,
       formData,
       cancel,
+      OfferingFormModes,
     };
   },
 });

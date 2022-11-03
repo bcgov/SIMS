@@ -60,13 +60,16 @@
         }"
       />
     </template>
-    <offering-form
+    <offering-form-submit
+      submitLabel="Update offering now"
       :data="initialData"
-      :readOnly="readOnly"
-      @saveOffering="saveOffering"
-      :processing="processing"
+      :formMode="formMode"
+      :locationId="locationId"
+      :programId="programId"
+      :offeringId="offeringId"
+      @saved="goBack"
       @cancel="goBack"
-    ></offering-form>
+    ></offering-form-submit>
   </full-page-container>
 </template>
 
@@ -74,25 +77,21 @@
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { onMounted, ref, computed } from "vue";
-import {
-  OfferingFormBaseModel,
-  OfferingFormModes,
-  OfferingStatus,
-} from "@/types";
+import { OfferingFormModes, OfferingStatus } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar, ModalDialog } from "@/composables";
+import { ModalDialog } from "@/composables";
 import {
-  EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingAPIOutDTO,
   OfferingAssessmentAPIInDTO,
 } from "@/services/http/dto";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
-import OfferingForm from "@/components/common/OfferingForm.vue";
+import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 
 export default {
   components: {
     ProgramOfferingDetailHeader,
-    OfferingForm,
+    OfferingFormSubmit,
   },
   props: {
     locationId: {
@@ -113,9 +112,8 @@ export default {
     },
   },
   setup(props: any) {
-    const processing = ref(false);
-    const snackBar = useSnackBar();
     const router = useRouter();
+    const formMode = ref(OfferingFormModes.Readonly);
     const items = [
       {
         label: "Request Change",
@@ -131,7 +129,7 @@ export default {
         },
       },
     ];
-    const initialData = ref({} as OfferingFormBaseModel);
+    const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
     const assessOfferingModalRef = ref(
       {} as ModalDialog<OfferingAssessmentAPIInDTO | boolean>,
     );
@@ -150,14 +148,13 @@ export default {
         initialData.value.offeringStatus === OfferingStatus.Approved,
     );
 
-    const readOnly = computed(
-      () =>
-        ![
-          OfferingStatus.Approved,
-          OfferingStatus.CreationPending,
-          OfferingStatus.CreationDeclined,
-        ].includes(initialData.value.offeringStatus),
-    );
+    const hasReadonlyStatus = (status: OfferingStatus): boolean => {
+      return ![
+        OfferingStatus.Approved,
+        OfferingStatus.CreationPending,
+        OfferingStatus.CreationDeclined,
+      ].includes(status);
+    };
 
     const loadFormData = async () => {
       const programOffering =
@@ -167,17 +164,15 @@ export default {
           props.offeringId,
         );
 
-      let mode = OfferingFormModes.Editable;
-      if (programOffering.hasExistingApplication) {
-        mode = OfferingFormModes.AssessmentDataReadonly;
+      let mode = OfferingFormModes.Readonly;
+      const isReadonly = hasReadonlyStatus(programOffering.offeringStatus);
+      if (!isReadonly) {
+        mode = programOffering.hasExistingApplication
+          ? OfferingFormModes.AssessmentDataReadonly
+          : OfferingFormModes.Editable;
       }
-
-      const offeringModel: OfferingFormBaseModel = {
-        ...programOffering,
-        ...programOffering.breaksAndWeeks,
-        mode,
-      };
-      initialData.value = offeringModel;
+      formMode.value = mode;
+      initialData.value = programOffering;
     };
 
     onMounted(async () => {
@@ -188,29 +183,7 @@ export default {
       router.push(routeLocation.value);
     };
 
-    const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
-      try {
-        processing.value = true;
-        //Update offering
-        await EducationProgramOfferingService.shared.updateProgramOffering(
-          props.locationId,
-          props.programId,
-          false,
-          true,
-          data,
-          props.offeringId,
-        );
-        snackBar.success("Education Offering updated successfully!");
-        goBack();
-      } catch {
-        snackBar.error("An error happened during the Offering saving process.");
-      } finally {
-        processing.value = false;
-      }
-    };
-
     return {
-      saveOffering,
       initialData,
       InstitutionRoutesConst,
       OfferingStatus,
@@ -219,8 +192,7 @@ export default {
       hasExistingApplication,
       items,
       routeLocation,
-      readOnly,
-      processing,
+      formMode,
       goBack,
     };
   },

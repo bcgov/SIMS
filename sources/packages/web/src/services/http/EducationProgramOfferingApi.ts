@@ -12,6 +12,7 @@ import {
   OfferingStartDateAPIOutDTO,
   OptionItemAPIOutDTO,
   EducationProgramOfferingAPIOutDTO,
+  OfferingValidationOptionsAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
@@ -22,23 +23,20 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * Creates offering.
    * @param locationId offering location.
    * @param programId offering program.
-   * @param validationOnly do not execute the insert. Used to have
-   * all the validations performed, for instance, to check for a possible
-   * waning, without inserting the offering.
-   * @param allowOnlyApproved only automatic approved offerings are allowed
-   * to be created. Offerings not automatically approved requires Ministry further
-   * verification and, when this is set to true, will be reported as errors.
    * @param payload offering data.
+   * @param validationOptions options available to execute
+   * validations prior to create or update an offering.
    */
   public async createOffering(
     locationId: number,
     programId: number,
-    validationOnly: boolean,
-    allowOnlyApproved: boolean,
     payload: EducationProgramOfferingAPIInDTO,
+    validationOptions: OfferingValidationOptionsAPIInDTO,
   ): Promise<void> {
     try {
-      const url = `education-program-offering/location/${locationId}/education-program/${programId}?validation-only=${validationOnly}&allow-only-approved=${allowOnlyApproved}`;
+      const url = `education-program-offering/location/${locationId}/education-program/${programId}?${this.createQueryStringFromValidationOptions(
+        validationOptions,
+      )}`;
       await this.postCall<EducationProgramOfferingAPIInDTO>(
         this.addClientRoot(url),
         payload,
@@ -106,22 +104,44 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    ** An offering which has at least one student aid application submitted
    ** cannot be modified further except the offering name. In such cases
    ** the offering must be requested for change.
-   * @param payload offering data to be updated.
    * @param locationId offering location.
    * @param programId offering program.
    * @param offeringId offering to be modified.
+   * @param validationOptions options available to execute validations prior
+   * to create or update an offering.
+   * @param payload offering data to be updated.
+   * validations prior to create or update an offering.
    */
   public async updateProgramOffering(
     locationId: number,
     programId: number,
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
+    validationOptions: OfferingValidationOptionsAPIInDTO,
   ): Promise<void> {
-    const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
-    await this.patchCall<EducationProgramOfferingAPIInDTO>(
-      this.addClientRoot(url),
-      payload,
-    );
+    try {
+      const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}?${this.createQueryStringFromValidationOptions(
+        validationOptions,
+      )}`;
+      await this.patchCall<EducationProgramOfferingAPIInDTO>(
+        this.addClientRoot(url),
+        payload,
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
+  }
+
+  /**
+   * Creates the query string used to provide
+   * offering validation options.
+   * @param validationOptions validation options.
+   * @returns query string with validation options.
+   */
+  private createQueryStringFromValidationOptions(
+    validationOptions: OfferingValidationOptionsAPIInDTO,
+  ) {
+    return `validationOnly=${validationOptions.validationOnly}&saveOnlyApproved=${validationOptions.saveOnlyApproved}`;
   }
 
   /**

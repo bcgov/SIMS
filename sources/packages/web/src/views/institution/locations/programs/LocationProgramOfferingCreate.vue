@@ -9,9 +9,11 @@
     </template>
     <offering-form-submit
       submitLabel="Add offering now"
+      :formMode="OfferingFormModes.Editable"
       :processing="processing"
       :locationId="locationId"
       :programId="programId"
+      @saved="goBack"
       @cancel="goBack"
     ></offering-form-submit>
   </full-page-container>
@@ -20,7 +22,7 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { ref, computed, defineComponent } from "vue";
-import { OfferingStatus } from "@/types";
+import { OfferingFormModes, OfferingStatus } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
@@ -66,6 +68,7 @@ export default defineComponent({
       routeLocation,
       processing,
       goBack,
+      OfferingFormModes,
     };
   },
 });

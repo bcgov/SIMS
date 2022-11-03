@@ -256,3 +256,26 @@ export class ValidationWarningResultAPIOutDTO {
   warningType: OfferingValidationWarnings;
   warningMessage: string;
 }
+
+/**
+ * Options available to execute validations prior
+ * to create or update an offering.
+ */
+export class OfferingValidationOptionsAPIInDTO {
+  /**
+   * If true, will execute all validations without actually
+   * persisting the data.
+   */
+  @IsOptional()
+  @IsBoolean()
+  validationOnly = false;
+  /**
+   * If true, will persist the data only if the offering will
+   * be automatically approved. To allow saving offerings that
+   * will demand a Ministry review (Creation pending) this must
+   * be set to false.
+   */
+  @IsOptional()
+  @IsBoolean()
+  saveOnlyApproved = false;
+}

@@ -8,6 +8,7 @@ import {
   OFFERING_CREATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR,
+  OFFERING_VALIDATION_ERROR,
 } from "../../constants";
 import {
   OfferingCSVModel,
@@ -25,6 +26,7 @@ import {
   OfferingValidationResult,
   OfferingValidationModel,
   CreateFromValidatedOfferingError,
+  EducationProgramOfferingValidationService,
 } from "../../services";
 import {
   getISODateOnlyString,
@@ -39,6 +41,8 @@ import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   OfferingBulkInsertValidationResultAPIOutDTO,
+  OfferingValidationOptionsAPIInDTO,
+  OfferingValidationResultAPIOutDTO,
 } from "./models/education-program-offering.dto";
 
 @Injectable()
@@ -46,6 +50,7 @@ export class EducationProgramOfferingControllerService {
   constructor(
     private readonly offeringService: EducationProgramOfferingService,
     private readonly programService: EducationProgramService,
+    private readonly offeringValidationService: EducationProgramOfferingValidationService,
   ) {}
 
   /**
@@ -168,6 +173,41 @@ export class EducationProgramOfferingControllerService {
       studyBreaks: payload.breaksAndWeeks?.studyBreaks,
       programContext: program,
     };
+  }
+
+  /**
+   * Checks the validation offering model and the validations options
+   * to determine if an exception must be raised with the validation details.
+   * @param offeringValidationModel offering validation model.
+   * @param validationOptions options to determine if an exception must be raised.
+   */
+  assertOfferingValidation(
+    offeringValidationModel: OfferingValidationModel,
+    validationOptions: OfferingValidationOptionsAPIInDTO,
+  ) {
+    const offeringValidation =
+      this.offeringValidationService.validateOfferingModel(
+        offeringValidationModel,
+        true,
+      );
+
+    if (
+      offeringValidation.offeringStatus !== OfferingStatus.Approved &&
+      (validationOptions.validationOnly || validationOptions.saveOnlyApproved)
+    ) {
+      const validationDTO: OfferingValidationResultAPIOutDTO = {
+        offeringStatus: offeringValidation.offeringStatus,
+        errors: offeringValidation.errors,
+        warnings: offeringValidation.warnings,
+      };
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "The offering has invalid data. Either an error or a warning was found during the offering validation.",
+          OFFERING_VALIDATION_ERROR,
+          validationDTO,
+        ),
+      );
+    }
   }
 
   /**

@@ -1,7 +1,7 @@
 <template>
   <offering-form
     :submitLabel="submitLabel"
-    :readOnly="false"
+    :formMode="formMode"
     :processing="processing"
     :data="data"
     @loaded="formLoaded"
@@ -32,6 +32,7 @@ import {
   ApiProcessError,
   FormIOForm,
   OfferingFormModel,
+  OfferingFormModes,
   OfferingStatus,
 } from "@/types";
 import { defineComponent, PropType, ref } from "vue";
@@ -55,12 +56,17 @@ const FORMIO_WARNINGS_HIDDEN_FIELD_KEY = "warnings";
 
 export default defineComponent({
   components: { OfferingForm, ConfirmModal },
-  emits: ["cancel"],
+  emits: ["cancel", "saved"],
   props: {
     data: {
       type: Object as PropType<OfferingFormModel>,
       required: true,
       default: {} as OfferingFormModel,
+    },
+    formMode: {
+      type: String as PropType<OfferingFormModes>,
+      required: true,
+      default: OfferingFormModes.Readonly,
     },
     submitLabel: {
       type: String,
@@ -80,7 +86,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props) {
+  setup(props, context) {
     const snackBar = useSnackBar();
     const { setComponentValue } = useFormioUtils();
     const processing = ref(false);
@@ -96,16 +102,15 @@ export default defineComponent({
     const saveOfferingData = async (
       data: EducationProgramOfferingAPIInDTO,
       validationOnly = true,
-      allowOnlyApproved = true,
+      saveOnlyApproved = true,
     ): Promise<SaveOfferingResult> => {
       try {
         processing.value = true;
         await EducationProgramOfferingService.shared.saveProgramOffering(
           props.locationId,
           props.programId,
-          validationOnly,
-          allowOnlyApproved,
           data,
+          { validationOnly, saveOnlyApproved },
           props.offeringId,
         );
         setFormWarnings([]);
@@ -125,7 +130,6 @@ export default defineComponent({
             );
             setFormWarnings(warningsTypes);
           }
-
           return SaveOfferingResult.warning;
         }
         snackBar.error(
@@ -138,8 +142,7 @@ export default defineComponent({
     };
 
     /**
-     * Set on form.io the array of warnings used to display the
-     * warnings banners.
+     * Set on form.io the array of warnings used to display the warnings banners.
      */
     const setFormWarnings = (warningsTypes: string[]) => {
       setComponentValue(
@@ -149,6 +152,9 @@ export default defineComponent({
       );
     };
 
+    /**
+     * Move the screen to the first warning banner, is any.
+     */
     const scrollToWarningBanner = () => {
       const [firstWarningBanner] =
         document.getElementsByClassName("banner-warning");
@@ -182,7 +188,8 @@ export default defineComponent({
         }
       }
       if (saveResult === SaveOfferingResult.success) {
-        snackBar.success("Offering created.");
+        snackBar.success("Offering saved.");
+        context.emit("saved");
       }
     };
 

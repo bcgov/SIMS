@@ -29,11 +29,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
-import {
-  OfferingIntensity,
-  OfferingStatus,
-  OfferingTypes,
-} from "@sims/sims-db";
+import { OfferingIntensity, OfferingTypes } from "@sims/sims-db";
 import {
   CreateFromValidatedOfferingError,
   EducationProgramOfferingService,
@@ -51,7 +47,7 @@ import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
-  OfferingValidationResultAPIOutDTO,
+  OfferingValidationOptionsAPIInDTO,
   transformToProgramOfferingDTO,
 } from "./models/education-program-offering.dto";
 import {
@@ -69,7 +65,6 @@ import { EducationProgramOfferingValidationService } from "../../services/educat
 import {
   OFFERING_VALIDATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CSV_PARSE_ERROR,
-  OFFERING_VALIDATION_ERROR,
 } from "../../constants";
 import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
 
@@ -82,7 +77,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
     private readonly educationProgramOfferingImportCSVService: EducationProgramOfferingImportCSVService,
     private readonly educationProgramOfferingValidationService: EducationProgramOfferingValidationService,
-    private readonly offeringValidationService: EducationProgramOfferingValidationService,
   ) {
     super();
   }
@@ -92,12 +86,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param payload offering data.
    * @param locationId offering location.
    * @param programId offering program.
-   * @param validationOnly do not execute the insert. Used to have
-   * all the validations performed, for instance, to check for a possible
-   * waning, without inserting the offering.
-   * @param allowOnlyApproved only automatic approved offerings are allowed
-   * to be created. Offerings not automatically approved requires Ministry further
-   * verification and, when this is set to true, will be reported as errors.
+   * @param validationOptions options available to execute
+   * validations prior to create or update an offering.
    * @returns primary identifier of the created offering.
    */
   @HasLocationAccess("locationId")
@@ -116,10 +106,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Body() payload: EducationProgramOfferingAPIInDTO,
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programId", ParseIntPipe) programId: number,
-    @Query("validation-only", new DefaultValuePipe(false), ParseBoolPipe)
-    validationOnly: boolean,
-    @Query("allow-only-approved", new DefaultValuePipe(true), ParseBoolPipe)
-    allowOnlyApproved: boolean,
+    @Query() validationOptions: OfferingValidationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO | undefined> {
     try {
@@ -131,31 +118,12 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           payload,
         );
 
-      const offeringValidation =
-        this.offeringValidationService.validateOfferingModel(
-          offeringValidationModel,
-          true,
-        );
+      this.educationProgramOfferingControllerService.assertOfferingValidation(
+        offeringValidationModel,
+        validationOptions,
+      );
 
-      if (
-        offeringValidation.offeringStatus !== OfferingStatus.Approved &&
-        (validationOnly || allowOnlyApproved)
-      ) {
-        const validationDTO: OfferingValidationResultAPIOutDTO = {
-          offeringStatus: offeringValidation.offeringStatus,
-          errors: offeringValidation.errors,
-          warnings: offeringValidation.warnings,
-        };
-        throw new UnprocessableEntityException(
-          new ApiProcessError(
-            "The offering has invalid data. Either an error or a warning was found during the offering validation.",
-            OFFERING_VALIDATION_ERROR,
-            validationDTO,
-          ),
-        );
-      }
-
-      if (validationOnly) {
+      if (validationOptions.validationOnly) {
         // If only the validation was required, avoid changing the data
         // and allow the API to return a success HTTP response code.
         return;
@@ -187,6 +155,8 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param locationId offering location.
    * @param programId offering program.
    * @param offeringId offering to be modified.
+   * @param validationOptions options available to execute
+   * validations prior to create or update an offering.
    */
   @HasLocationAccess("locationId")
   @ApiUnprocessableEntityResponse({
@@ -204,6 +174,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programId", ParseIntPipe) programId: number,
     @Param("offeringId", ParseIntPipe) offeringId: number,
+    @Query() validationOptions: OfferingValidationOptionsAPIInDTO,
   ): Promise<void> {
     const offering = await this.programOfferingService.getProgramOffering(
       locationId,
@@ -225,6 +196,18 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           programId,
           payload,
         );
+
+      this.educationProgramOfferingControllerService.assertOfferingValidation(
+        offeringValidationModel,
+        validationOptions,
+      );
+
+      if (validationOptions.validationOnly) {
+        // If only the validation was required, avoid changing the data
+        // and allow the API to return a success HTTP response code.
+        return;
+      }
+
       await this.programOfferingService.updateEducationProgramOffering(
         offeringId,
         offeringValidationModel,
