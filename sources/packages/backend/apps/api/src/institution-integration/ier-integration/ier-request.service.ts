@@ -45,7 +45,7 @@ export class IERRequestService {
     }
     this.logger.log(`Found ${pendingAssessments.length} assessments.`);
     const fileRecords: Record<string, IERRecord[]> = {};
-    pendingAssessments.map((pendingAssessment) => {
+    pendingAssessments.forEach((pendingAssessment) => {
       const institutionCode =
         pendingAssessment.offering.institutionLocation.institutionCode;
       if (!fileRecords[institutionCode]) {
