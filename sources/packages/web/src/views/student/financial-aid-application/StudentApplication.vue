@@ -12,7 +12,7 @@
     </template>
     <v-form ref="startApplicationForm">
       <h2 class="category-header-large primary-color pb-4">
-        Apply for new funding
+        Apply for funding
       </h2>
       <content-group>
         <h3 class="category-header-medium-small pa-2">
