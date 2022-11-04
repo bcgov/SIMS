@@ -3,13 +3,10 @@ import {
   OfferingStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
-  EducationProgramOffering,
 } from "@sims/sims-db";
-import { getISODateOnlyString, getUserFullName } from "../../../utilities";
 import {
   Allow,
   IsBoolean,
-  IsBooleanString,
   IsEnum,
   IsIn,
   IsNotEmpty,
@@ -134,6 +131,7 @@ export class EducationProgramOfferingAPIOutDTO {
   hasExistingApplication?: boolean;
   locationName?: string;
   institutionName?: string;
+  warnings: string[];
 }
 
 export class EducationProgramOfferingSummaryAPIOutDTO {
@@ -150,46 +148,6 @@ export class EducationProgramOfferingSummaryAPIOutDTO {
 export class OfferingStartDateAPIOutDTO {
   studyStartDate: string;
 }
-
-/**
- * Transformation util for Program Offering.
- * @param offering
- * @param hasExistingApplication is the offering linked to any application.
- * @returns program offering.
- */
-export const transformToProgramOfferingDTO = (
-  offering: EducationProgramOffering,
-  hasExistingApplication?: boolean,
-): EducationProgramOfferingAPIOutDTO => {
-  return {
-    id: offering.id,
-    offeringName: offering.name,
-    studyStartDate: getISODateOnlyString(offering.studyStartDate),
-    studyEndDate: getISODateOnlyString(offering.studyEndDate),
-    actualTuitionCosts: offering.actualTuitionCosts,
-    programRelatedCosts: offering.programRelatedCosts,
-    mandatoryFees: offering.mandatoryFees,
-    exceptionalExpenses: offering.exceptionalExpenses,
-    offeringDelivered: offering.offeringDelivered,
-    lacksStudyBreaks: offering.lacksStudyBreaks,
-    offeringIntensity: offering.offeringIntensity,
-    yearOfStudy: offering.yearOfStudy,
-    showYearOfStudy: offering.showYearOfStudy,
-    hasOfferingWILComponent: offering.hasOfferingWILComponent,
-    offeringWILComponentType: offering.offeringWILType,
-    breaksAndWeeks: offering.studyBreaks,
-    offeringDeclaration: offering.offeringDeclaration,
-    submittedDate: offering.submittedDate,
-    offeringStatus: offering.offeringStatus,
-    offeringType: offering.offeringType,
-    locationName: offering.institutionLocation.name,
-    institutionName: offering.institutionLocation.institution.operatingName,
-    assessedBy: getUserFullName(offering.assessedBy),
-    assessedDate: offering.assessedDate,
-    courseLoad: offering.courseLoad,
-    hasExistingApplication,
-  };
-};
 
 export class OfferingAssessmentAPIInDTO {
   @IsEnum(OfferingStatus)

@@ -48,7 +48,6 @@ import {
   EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   OfferingValidationOptionsAPIInDTO,
-  transformToProgramOfferingDTO,
 } from "./models/education-program-offering.dto";
 import {
   csvFileFilter,
@@ -285,7 +284,10 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         "Not able to find an Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
-    return transformToProgramOfferingDTO(offering, hasExistingApplication);
+    return this.educationProgramOfferingControllerService.transformToProgramOfferingDTO(
+      offering,
+      hasExistingApplication,
+    );
   }
 
   /**

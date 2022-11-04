@@ -16,6 +16,7 @@ import {
 } from "../../services/education-program-offering/education-program-offering-import-csv.models";
 import { ApiProcessError } from "../../types";
 import {
+  EducationProgramOffering,
   OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
@@ -31,6 +32,7 @@ import {
 import {
   getISODateOnlyString,
   getOfferingNameAndPeriod,
+  getUserFullName,
 } from "../../utilities";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import {
@@ -39,6 +41,7 @@ import {
 } from "../models/pagination.dto";
 import {
   EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   OfferingBulkInsertValidationResultAPIOutDTO,
   OfferingValidationOptionsAPIInDTO,
@@ -318,5 +321,52 @@ export class EducationProgramOfferingControllerService {
         validationResults,
       ),
     );
+  }
+
+  /**
+   * Transformation util for Program Offering.
+   * @param offering
+   * @param hasExistingApplication is the offering linked to any application.
+   * @returns program offering.
+   */
+  async transformToProgramOfferingDTO(
+    offering: EducationProgramOffering,
+    hasExistingApplication?: boolean,
+  ): Promise<EducationProgramOfferingAPIOutDTO> {
+    const validatedOffering = await this.offeringService.validateOfferingById(
+      offering.id,
+    );
+
+    return {
+      id: offering.id,
+      offeringName: offering.name,
+      studyStartDate: getISODateOnlyString(offering.studyStartDate),
+      studyEndDate: getISODateOnlyString(offering.studyEndDate),
+      actualTuitionCosts: offering.actualTuitionCosts,
+      programRelatedCosts: offering.programRelatedCosts,
+      mandatoryFees: offering.mandatoryFees,
+      exceptionalExpenses: offering.exceptionalExpenses,
+      offeringDelivered: offering.offeringDelivered,
+      lacksStudyBreaks: offering.lacksStudyBreaks,
+      offeringIntensity: offering.offeringIntensity,
+      yearOfStudy: offering.yearOfStudy,
+      showYearOfStudy: offering.showYearOfStudy,
+      hasOfferingWILComponent: offering.hasOfferingWILComponent,
+      offeringWILComponentType: offering.offeringWILType,
+      breaksAndWeeks: offering.studyBreaks,
+      offeringDeclaration: offering.offeringDeclaration,
+      submittedDate: offering.submittedDate,
+      offeringStatus: offering.offeringStatus,
+      offeringType: offering.offeringType,
+      locationName: offering.institutionLocation.name,
+      institutionName: offering.institutionLocation.institution.operatingName,
+      assessedBy: getUserFullName(offering.assessedBy),
+      assessedDate: offering.assessedDate,
+      courseLoad: offering.courseLoad,
+      hasExistingApplication,
+      warnings: validatedOffering.warnings.map(
+        (warning) => warning.warningType,
+      ),
+    };
   }
 }

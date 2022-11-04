@@ -50,6 +50,8 @@ import {
   OfferingStudyBreakCalculationContext,
   OfferingValidationResult,
   OfferingValidationModel,
+  OfferingDeliveryOptions,
+  WILComponentOptions,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import * as os from "os";
@@ -419,6 +421,115 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       };
     }
     return programOffering;
+  }
+
+  /**
+   * Retrieves from the database the offering data needed
+   * to perform all the validations.
+   * @param offeringId offering id.
+   * @returns offering data required to perform the validations.
+   */
+  async validateOfferingById(
+    offeringId: number,
+  ): Promise<OfferingValidationResult> {
+    const validationModel = await this.createValidationModelFromOfferingId(
+      offeringId,
+    );
+    return this.offeringValidationService.validateOfferingModel(
+      validationModel,
+    );
+  }
+
+  /**
+   * Converts an offering entity model to the validation model.
+   * @param offeringId offering id.
+   * @returns offering validation model.
+   */
+  private async createValidationModelFromOfferingId(
+    offeringId: number,
+  ): Promise<OfferingValidationModel> {
+    const offering = await this.getOfferingForValidation(offeringId);
+    if (!offering) {
+      throw new Error("Offering was not found.");
+    }
+    const offeringValidationModel = new OfferingValidationModel();
+    offeringValidationModel.offeringName = offering.name;
+    offeringValidationModel.studyStartDate = offering.studyStartDate;
+    offeringValidationModel.studyEndDate = offering.studyEndDate;
+    offeringValidationModel.actualTuitionCosts = offering.actualTuitionCosts;
+    offeringValidationModel.programRelatedCosts = offering.programRelatedCosts;
+    offeringValidationModel.mandatoryFees = offering.mandatoryFees;
+    offeringValidationModel.exceptionalExpenses = offering.exceptionalExpenses;
+    offeringValidationModel.offeringDelivered =
+      offering.offeringDelivered as OfferingDeliveryOptions;
+    offeringValidationModel.lacksStudyBreaks = offering.lacksStudyBreaks;
+    offeringValidationModel.offeringType = offering.offeringType;
+    offeringValidationModel.programContext = offering.educationProgram;
+    offeringValidationModel.locationId = offering.institutionLocation.id;
+    offeringValidationModel.offeringIntensity = offering.offeringIntensity;
+    offeringValidationModel.yearOfStudy = offering.yearOfStudy;
+    offeringValidationModel.showYearOfStudy = offering.showYearOfStudy;
+    offeringValidationModel.hasOfferingWILComponent =
+      offering.hasOfferingWILComponent as WILComponentOptions;
+    offeringValidationModel.offeringWILComponentType = offering.offeringWILType;
+    offeringValidationModel.offeringDeclaration = offering.offeringDeclaration;
+    offeringValidationModel.offeringType = offering.offeringType;
+    offeringValidationModel.courseLoad = offering.courseLoad;
+    offeringValidationModel.studyBreaks = offering.studyBreaks.studyBreaks;
+    return offeringValidationModel;
+  }
+
+  /**
+   * Get an offering with all the expected data to a complete
+   * validation be performed.
+   * @param offeringId offering to have the data selected.
+   * @returns offering with data to be validated.
+   */
+  async getOfferingForValidation(
+    offeringId: number,
+  ): Promise<EducationProgramOffering> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        name: true,
+        studyStartDate: true,
+        studyEndDate: true,
+        actualTuitionCosts: true,
+        programRelatedCosts: true,
+        mandatoryFees: true,
+        exceptionalExpenses: true,
+        offeringDelivered: true,
+        lacksStudyBreaks: true,
+        offeringType: true,
+        educationProgram: {
+          id: true,
+          programIntensity: true,
+          hasWILComponent: true,
+          deliveredOnSite: true,
+          deliveredOnline: true,
+        },
+        institutionLocation: {
+          id: true,
+        },
+        offeringIntensity: true,
+        yearOfStudy: true,
+        showYearOfStudy: true,
+        hasOfferingWILComponent: true,
+        offeringWILType: true,
+        offeringDeclaration: true,
+        courseLoad: true,
+        studyBreaks: {
+          studyBreaks: true,
+        },
+      },
+      relations: {
+        institutionLocation: true,
+        educationProgram: true,
+      },
+      where: {
+        id: offeringId,
+      },
+    });
   }
 
   /**
