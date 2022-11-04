@@ -55,7 +55,16 @@ interface SubmitArgs {
 }
 
 export default defineComponent({
-  emits: ["validateOffering", "saveOffering", "loaded", "cancel"],
+  emits: {
+    validateOffering: (data: EducationProgramOfferingAPIInDTO) => {
+      return !!data;
+    },
+    saveOffering: (data: EducationProgramOfferingAPIInDTO) => {
+      return !!data;
+    },
+    loaded: null,
+    cancel: null,
+  },
   props: {
     data: {
       type: Object as PropType<OfferingFormModel>,

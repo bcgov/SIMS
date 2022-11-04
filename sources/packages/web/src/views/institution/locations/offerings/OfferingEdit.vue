@@ -64,11 +64,9 @@
       submitLabel="Update offering now"
       :data="initialData"
       :formMode="formMode"
-      :submitMode="OfferingSubmitModes.Update"
       :locationId="locationId"
       :programId="programId"
-      :offeringId="offeringId"
-      @saved="goBack"
+      @submit="submit"
       @cancel="goBack"
     ></offering-form-submit>
   </full-page-container>
@@ -78,20 +76,18 @@
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { onMounted, ref, computed } from "vue";
-import {
-  OfferingFormModes,
-  OfferingStatus,
-  OfferingSubmitModes,
-} from "@/types";
+import { OfferingFormModes, OfferingStatus } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ModalDialog } from "@/composables";
 import {
+  EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
   OfferingAssessmentAPIInDTO,
 } from "@/services/http/dto";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
+import { useSnackBar } from "@/composables";
 
 export default {
   components: {
@@ -118,6 +114,8 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+    const snackBar = useSnackBar();
+    const processing = ref(false);
     const formMode = ref(OfferingFormModes.Readonly);
     const items = [
       {
@@ -184,6 +182,26 @@ export default {
       await loadFormData();
     });
 
+    const submit = async (data: EducationProgramOfferingAPIInDTO) => {
+      try {
+        processing.value = true;
+        await EducationProgramOfferingService.shared.updateProgramOffering(
+          props.locationId,
+          props.programId,
+          props.offeringId,
+          data,
+        );
+        snackBar.success("Offering updated.");
+        goBack();
+      } catch {
+        snackBar.error(
+          "Unexpected error happened while creating the offering.",
+        );
+      } finally {
+        processing.value = false;
+      }
+    };
+
     const goBack = () => {
       router.push(routeLocation.value);
     };
@@ -198,8 +216,9 @@ export default {
       items,
       routeLocation,
       formMode,
+      processing,
+      submit,
       goBack,
-      OfferingSubmitModes,
     };
   },
 };

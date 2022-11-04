@@ -103,11 +103,5 @@ export const OFFERING_VALIDATION_CSV_CONTENT_FORMAT_ERROR =
 export const OFFERING_CREATION_CRITICAL_ERROR =
   "OFFERING_CREATION_CRITICAL_ERROR";
 
-/**
- * The offering has invalid data. Either an error or a warning was
- * found during the offering validation.
- */
-export const OFFERING_VALIDATION_ERROR = "OFFERING_VALIDATION_ERROR";
-
 export const STUDENT_SIN_CONSENT_NOT_CHECKED =
   "STUDENT_SIN_CONSENT_NOT_CHECKED";

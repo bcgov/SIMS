@@ -13,13 +13,12 @@ import {
   IsOptional,
   MaxLength,
 } from "class-validator";
-import { Transform, Type } from "class-transformer";
+import { Type } from "class-transformer";
 import {
   OfferingDeliveryOptions,
   OfferingValidationWarnings,
   WILComponentOptions,
 } from "../../../services";
-import { ToBoolean } from "../../utils/query-string";
 
 export class StudyBreakAPIOutDTO {
   breakStartDate: string;
@@ -185,13 +184,14 @@ export class OfferingChangeAssessmentAPIInDTO {
 }
 
 /**
- * Status of an offering validation during creation or during
- * an complete update when the status is determined.
+ * Offering validation result including study breaks
+ * calculations that also supports the validation process.
  */
 export class OfferingValidationResultAPIOutDTO {
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
   warnings: ValidationWarningResultAPIOutDTO[];
+  breaksAndWeeks: StudyBreaksAndWeeksAPIOutDTO;
 }
 
 /**
@@ -199,12 +199,15 @@ export class OfferingValidationResultAPIOutDTO {
  * offerings bulk insert and provides a detailed description
  * for every record that has an error.
  */
-export class OfferingBulkInsertValidationResultAPIOutDTO extends OfferingValidationResultAPIOutDTO {
+export class OfferingBulkInsertValidationResultAPIOutDTO {
   recordIndex: number;
   locationCode?: string;
   sabcProgramCode?: string;
   startDate?: string;
   endDate?: string;
+  offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
+  errors: string[];
+  warnings: ValidationWarningResultAPIOutDTO[];
 }
 
 /**
@@ -215,27 +218,4 @@ export class OfferingBulkInsertValidationResultAPIOutDTO extends OfferingValidat
 export class ValidationWarningResultAPIOutDTO {
   warningType: OfferingValidationWarnings;
   warningMessage: string;
-}
-
-/**
- * Options available to execute validations prior
- * to create or update an offering.
- */
-export class OfferingValidationOptionsAPIInDTO {
-  /**
-   * If true, will execute all validations without actually
-   * persisting the data.
-   */
-  @IsBoolean()
-  @Transform(ToBoolean)
-  validationOnly = false;
-  /**
-   * If true, will persist the data only if the offering will
-   * be automatically approved. To allow saving offerings that
-   * will demand a Ministry review (Creation pending) this must
-   * be set to false.
-   */
-  @IsBoolean()
-  @Transform(ToBoolean)
-  saveOnlyApproved = false;
 }

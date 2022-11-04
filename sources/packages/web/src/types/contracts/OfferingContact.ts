@@ -83,24 +83,3 @@ export enum OfferingFormModes {
    */
   AssessmentDataReadonly = "assessment-data-readonly",
 }
-
-/**
- * Possible operations executed on an offering that will generate
- * data submission that will create, update or clone it.
- */
-export enum OfferingSubmitModes {
-  /**
-   * Create a new offering.
-   */
-  Create = "create",
-  /**
-   * Offering update. Allowed when the offering was created and no
-   * assessments are using it yet.
-   */
-  Update = "update",
-  /**
-   * Once an offering is already associated with some assessment
-   * and no longer can be directly edited.
-   */
-  ChangeRequest = "change-request",
-}

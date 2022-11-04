@@ -12,7 +12,7 @@ import {
   OfferingStartDateAPIOutDTO,
   OptionItemAPIOutDTO,
   EducationProgramOfferingAPIOutDTO,
-  OfferingValidationOptionsAPIInDTO,
+  OfferingValidationResultAPIOutDTO,
 } from "@/services/http/dto";
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
@@ -20,23 +20,38 @@ import { FileUploadProgressEventArgs } from "@/services/http/common/FileUploadPr
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
+   * Validates an offering payload providing the validation result and
+   * study break calculations also used to perform the validation process.
+   * @param locationId location id.
+   * @param programId program id.
+   * @param payload offering data to be validated.
+   * @returns offering validation result.
+   */
+  async validateOffering(
+    locationId: number,
+    programId: number,
+    payload: EducationProgramOfferingAPIInDTO,
+  ): Promise<OfferingValidationResultAPIOutDTO> {
+    const url = `education-program-offering/location/${locationId}/education-program/${programId}/validation`;
+    return this.postCall<
+      EducationProgramOfferingAPIInDTO,
+      OfferingValidationResultAPIOutDTO
+    >(this.addClientRoot(url), payload);
+  }
+
+  /**
    * Creates offering.
    * @param locationId offering location.
    * @param programId offering program.
    * @param payload offering data.
-   * @param validationOptions options available to execute
-   * validations prior to create or update an offering.
    */
   async createOffering(
     locationId: number,
     programId: number,
     payload: EducationProgramOfferingAPIInDTO,
-    validationOptions: OfferingValidationOptionsAPIInDTO,
   ): Promise<void> {
     try {
-      const url = `education-program-offering/location/${locationId}/education-program/${programId}?${this.createQueryStringFromValidationOptions(
-        validationOptions,
-      )}`;
+      const url = `education-program-offering/location/${locationId}/education-program/${programId}`;
       await this.postCall<EducationProgramOfferingAPIInDTO>(
         this.addClientRoot(url),
         payload,
@@ -107,8 +122,6 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @param locationId offering location.
    * @param programId offering program.
    * @param offeringId offering to be modified.
-   * @param validationOptions options available to execute validations prior
-   * to create or update an offering.
    * @param payload offering data to be updated.
    * validations prior to create or update an offering.
    */
@@ -117,12 +130,9 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     programId: number,
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
-    validationOptions: OfferingValidationOptionsAPIInDTO,
   ): Promise<void> {
     try {
-      const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}?${this.createQueryStringFromValidationOptions(
-        validationOptions,
-      )}`;
+      const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`;
       await this.patchCall<EducationProgramOfferingAPIInDTO>(
         this.addClientRoot(url),
         payload,
@@ -130,18 +140,6 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     } catch (error: unknown) {
       this.handleAPICustomError(error);
     }
-  }
-
-  /**
-   * Creates the query string used to provide
-   * offering validation options.
-   * @param validationOptions validation options.
-   * @returns query string with validation options.
-   */
-  private createQueryStringFromValidationOptions(
-    validationOptions: OfferingValidationOptionsAPIInDTO,
-  ) {
-    return `validationOnly=${validationOptions.validationOnly}&saveOnlyApproved=${validationOptions.saveOnlyApproved}`;
   }
 
   /**
@@ -208,20 +206,15 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @param programId program to which the offering belongs to.
    * @param offeringId offering to which change is requested.
    * @param payload offering data to create the new offering.
-   * @param validationOptions options available to execute
-   * validations prior to create or update an offering.
    */
   async requestChange(
     locationId: number,
     programId: number,
     offeringId: number,
     payload: EducationProgramOfferingAPIInDTO,
-    validationOptions: OfferingValidationOptionsAPIInDTO,
   ): Promise<void> {
     try {
-      const url = `education-program-offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change?${this.createQueryStringFromValidationOptions(
-        validationOptions,
-      )}`;
+      const url = `education-program-offering/${offeringId}/location/${locationId}/education-program/${programId}/request-change`;
       await this.postCall<EducationProgramOfferingAPIInDTO>(
         this.addClientRoot(url),
         payload,

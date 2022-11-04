@@ -29,12 +29,10 @@
 
 <script lang="ts">
 import {
-  ApiProcessError,
   FormIOForm,
   OfferingFormModel,
   OfferingFormModes,
   OfferingStatus,
-  OfferingSubmitModes,
 } from "@/types";
 import { defineComponent, PropType, ref } from "vue";
 import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
@@ -44,20 +42,16 @@ import {
 } from "@/services/http/dto";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { OFFERING_VALIDATION_ERROR } from "@/constants";
 import OfferingForm from "@/components/common/OfferingForm.vue";
-
-enum SaveOfferingResult {
-  success,
-  warning,
-  error,
-}
 
 const FORMIO_WARNINGS_HIDDEN_FIELD_KEY = "warnings";
 
 export default defineComponent({
   components: { OfferingForm, ConfirmModal },
-  emits: ["cancel", "saved"],
+  emits: {
+    cancel: null,
+    submit: null,
+  },
   props: {
     data: {
       type: Object as PropType<OfferingFormModel>,
@@ -68,10 +62,6 @@ export default defineComponent({
       type: String as PropType<OfferingFormModes>,
       required: true,
       default: OfferingFormModes.Readonly,
-    },
-    submitMode: {
-      type: String as PropType<OfferingSubmitModes>,
-      required: true,
     },
     submitLabel: {
       type: String,
@@ -85,10 +75,6 @@ export default defineComponent({
     programId: {
       type: Number,
       required: true,
-    },
-    offeringId: {
-      type: Number,
-      required: false,
     },
   },
   setup(props, context) {
@@ -104,44 +90,22 @@ export default defineComponent({
       offeringForm = form;
     };
 
-    const saveOfferingData = async (
+    const validateOfferingData = async (
       data: EducationProgramOfferingAPIInDTO,
-      validationOnly = true,
-      saveOnlyApproved = true,
-    ): Promise<SaveOfferingResult> => {
+    ): Promise<OfferingValidationResultAPIOutDTO> => {
       try {
         processing.value = true;
-        await EducationProgramOfferingService.shared.saveProgramOffering(
-          props.locationId,
-          props.programId,
-          data,
-          { validationOnly, saveOnlyApproved },
-          props.submitMode,
-          props.offeringId,
+        const validationResult =
+          await EducationProgramOfferingService.shared.validateOffering(
+            props.locationId,
+            props.programId,
+            data,
+          );
+        const warningsTypes = validationResult.warnings.map(
+          (warning) => warning.warningType,
         );
-        setFormWarnings([]);
-        return SaveOfferingResult.success;
-      } catch (error: unknown) {
-        if (
-          error instanceof ApiProcessError &&
-          error.errorType === OFFERING_VALIDATION_ERROR
-        ) {
-          const validationResult =
-            error.objectInfo as OfferingValidationResultAPIOutDTO;
-          if (
-            validationResult.offeringStatus === OfferingStatus.CreationPending
-          ) {
-            const warningsTypes = validationResult.warnings.map(
-              (warning) => warning.warningType,
-            );
-            setFormWarnings(warningsTypes);
-          }
-          return SaveOfferingResult.warning;
-        }
-        snackBar.error(
-          "An unexpected error happened while validating the offering.",
-        );
-        return SaveOfferingResult.error;
+        setFormWarnings(warningsTypes);
+        return validationResult;
       } finally {
         processing.value = false;
       }
@@ -172,34 +136,47 @@ export default defineComponent({
     };
 
     const validateOffering = async (data: EducationProgramOfferingAPIInDTO) => {
-      const validationResult = await saveOfferingData(data);
-      if (validationResult === SaveOfferingResult.success) {
-        snackBar.success(
-          "Offering was validated successfully and no warnings were found.",
+      try {
+        const validationResult = await validateOfferingData(data);
+        if (validationResult.offeringStatus === OfferingStatus.Approved) {
+          snackBar.success(
+            "Offering was validated successfully and no warnings were found.",
+          );
+        } else if (
+          validationResult.offeringStatus === OfferingStatus.CreationPending
+        ) {
+          scrollToWarningBanner();
+        }
+      } catch {
+        snackBar.error(
+          "Unexpected error happened during the offering validation.",
         );
-      } else if (validationResult === SaveOfferingResult.warning) {
-        scrollToWarningBanner();
       }
     };
 
     const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
-      const saveOnlyApproval =
-        props.formMode === OfferingFormModes.AssessmentDataReadonly
-          ? false
-          : true;
-      let saveResult = await saveOfferingData(data, false, saveOnlyApproval);
-      if (saveResult === SaveOfferingResult.warning) {
-        const proceedWithWarnings =
-          await offeringWarningsModal.value.showModal();
-        if (proceedWithWarnings) {
-          saveResult = await saveOfferingData(data, false, false);
-        } else {
-          scrollToWarningBanner();
+      try {
+        const validationResult = await validateOfferingData(data);
+        if (
+          validationResult.offeringStatus === OfferingStatus.CreationPending
+        ) {
+          const proceedWithWarnings =
+            await offeringWarningsModal.value.showModal();
+          if (proceedWithWarnings) {
+            // There are warnings but the user agreed to proceed.
+            context.emit("submit", data);
+          } else {
+            scrollToWarningBanner();
+          }
         }
-      }
-      if (saveResult === SaveOfferingResult.success) {
-        snackBar.success("Offering saved.");
-        context.emit("saved");
+        if (validationResult.offeringStatus === OfferingStatus.Approved) {
+          // The offering is ready to be automatically approved.
+          context.emit("submit", data);
+        }
+      } catch {
+        snackBar.error(
+          "Unexpected error while validating the offering to be saved.",
+        );
       }
     };
 

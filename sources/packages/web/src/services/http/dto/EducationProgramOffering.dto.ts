@@ -174,22 +174,3 @@ export interface OfferingValidationResultAPIOutDTO {
   errors: string[];
   warnings: ValidationWarningResultAPIOutDTO[];
 }
-
-/**
- * Options available to execute validations prior
- * to create or update an offering.
- */
-export interface OfferingValidationOptionsAPIInDTO {
-  /**
-   * If true, will execute all validations without actually
-   * persisting the data.
-   */
-  validationOnly: boolean;
-  /**
-   * Only automatic approved offerings are allowed to be persisted.
-   * Offerings not automatically approved requires Ministry further
-   * verification and, when this is set to true, will be reported as errors.
-   * offering data to be created or updated.
-   */
-  saveOnlyApproved: boolean;
-}

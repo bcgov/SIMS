@@ -4,6 +4,8 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseBoolPipe,
@@ -47,7 +49,7 @@ import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
-  OfferingValidationOptionsAPIInDTO,
+  OfferingValidationResultAPIOutDTO,
 } from "./models/education-program-offering.dto";
 import {
   csvFileFilter,
@@ -76,8 +78,67 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     private readonly educationProgramOfferingControllerService: EducationProgramOfferingControllerService,
     private readonly educationProgramOfferingImportCSVService: EducationProgramOfferingImportCSVService,
     private readonly educationProgramOfferingValidationService: EducationProgramOfferingValidationService,
+    private readonly offeringValidationService: EducationProgramOfferingValidationService,
   ) {
     super();
+  }
+
+  /**
+   * Validates an offering payload providing the validation result and
+   * study break calculations also used to perform the validation process.
+   * Return a 200 HTTP status instead of 201 to indicate that the operation
+   * was completed with success but no resource was created.
+   * @param locationId location id.
+   * @param programId program id.
+   * @param payload offering data to be validated.
+   * @returns offering validation result.
+   */
+  @HasLocationAccess("locationId")
+  @ApiNotFoundResponse({
+    description: "Not able to find the program in the provided location.",
+  })
+  @Post("location/:locationId/education-program/:programId/validation")
+  @HttpCode(HttpStatus.OK)
+  async validateOffering(
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
+    @Body() payload: EducationProgramOfferingAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<OfferingValidationResultAPIOutDTO> {
+    const offeringValidationModel =
+      await this.educationProgramOfferingControllerService.buildOfferingValidationModel(
+        userToken.authorizations.institutionId,
+        locationId,
+        programId,
+        payload,
+      );
+
+    const offeringValidation =
+      this.offeringValidationService.validateOfferingModel(
+        offeringValidationModel,
+        true,
+      );
+
+    const calculatedStudyBreaks =
+      EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks(
+        offeringValidationModel,
+      );
+
+    return {
+      offeringStatus: offeringValidation.offeringStatus,
+      errors: offeringValidation.errors,
+      warnings: offeringValidation.warnings,
+      breaksAndWeeks: {
+        fundedStudyPeriodDays: calculatedStudyBreaks.fundedStudyPeriodDays,
+        totalDays: calculatedStudyBreaks.totalDays,
+        totalFundedWeeks: calculatedStudyBreaks.totalFundedWeeks,
+        unfundedStudyPeriodDays: calculatedStudyBreaks.unfundedStudyPeriodDays,
+        studyBreaks: calculatedStudyBreaks.studyBreaks?.map((studyBreak) => ({
+          breakStartDate: studyBreak.breakStartDate,
+          breakEndDate: studyBreak.breakEndDate,
+        })),
+      },
+    };
   }
 
   /**
@@ -85,8 +146,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param payload offering data.
    * @param locationId offering location.
    * @param programId offering program.
-   * @param validationOptions options available to execute
-   * validations prior to create or update an offering.
    * @returns primary identifier of the created offering.
    */
   @HasLocationAccess("locationId")
@@ -105,7 +164,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Body() payload: EducationProgramOfferingAPIInDTO,
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programId", ParseIntPipe) programId: number,
-    @Query() validationOptions: OfferingValidationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO | undefined> {
     try {
@@ -116,18 +174,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           programId,
           payload,
         );
-
-      this.educationProgramOfferingControllerService.assertOfferingValidation(
-        offeringValidationModel,
-        validationOptions,
-      );
-
-      if (validationOptions.validationOnly) {
-        // If only the validation was required, avoid changing the data
-        // and allow the API to return a success HTTP response code.
-        return;
-      }
-
       const createdProgramOffering =
         await this.programOfferingService.createEducationProgramOffering(
           offeringValidationModel,
@@ -154,8 +200,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param locationId offering location.
    * @param programId offering program.
    * @param offeringId offering to be modified.
-   * @param validationOptions options available to execute
-   * validations prior to create or update an offering.
    */
   @HasLocationAccess("locationId")
   @ApiUnprocessableEntityResponse({
@@ -173,7 +217,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programId", ParseIntPipe) programId: number,
     @Param("offeringId", ParseIntPipe) offeringId: number,
-    @Query() validationOptions: OfferingValidationOptionsAPIInDTO,
   ): Promise<void> {
     const offering = await this.programOfferingService.getProgramOffering(
       locationId,
@@ -195,18 +238,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           programId,
           payload,
         );
-
-      this.educationProgramOfferingControllerService.assertOfferingValidation(
-        offeringValidationModel,
-        validationOptions,
-      );
-
-      if (validationOptions.validationOnly) {
-        // If only the validation was required, avoid changing the data
-        // and allow the API to return a success HTTP response code.
-        return;
-      }
-
       await this.programOfferingService.updateEducationProgramOffering(
         offeringId,
         offeringValidationModel,
@@ -337,8 +368,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param locationId location to which the offering
    * belongs to.
    * @param programId program to which the offering belongs to.
-   * @param validationOptions options available to execute
-   * validations prior to create or update an offering.
    * @returns primary identifier of created resource.
    */
   @HasLocationAccess("locationId")
@@ -361,7 +390,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Param("offeringId", ParseIntPipe) offeringId: number,
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programId", ParseIntPipe) programId: number,
-    @Query() validationOptions: OfferingValidationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
@@ -372,18 +400,6 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           programId,
           payload,
         );
-
-      this.educationProgramOfferingControllerService.assertOfferingValidation(
-        offeringValidationModel,
-        validationOptions,
-      );
-
-      if (validationOptions.validationOnly) {
-        // If only the validation was required, avoid changing the data
-        // and allow the API to return a success HTTP response code.
-        return;
-      }
-
       const requestedOffering = await this.programOfferingService.requestChange(
         locationId,
         programId,

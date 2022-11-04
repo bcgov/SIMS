@@ -28,11 +28,9 @@
       submitLabel="Request a change now"
       :data="initialData"
       :formMode="OfferingFormModes.Editable"
-      :submitMode="OfferingSubmitModes.ChangeRequest"
       :locationId="locationId"
       :programId="programId"
-      :offeringId="offeringId"
-      @saved="gotToViewLocationPrograms"
+      @submit="submit"
       @cancel="goToEditLocationOfferings"
     ></offering-form-submit>
   </full-page-container>
@@ -42,16 +40,16 @@
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { onMounted, ref, defineComponent } from "vue";
+import { OfferingFormModes, OfferingStatus } from "@/types";
 import {
-  OfferingFormModes,
-  OfferingStatus,
-  OfferingSubmitModes,
-} from "@/types";
-import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
+  EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingAPIOutDTO,
+} from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
+import { useSnackBar } from "@/composables";
 
 export default defineComponent({
   components: {
@@ -74,6 +72,8 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
+    const snackBar = useSnackBar();
+    const processing = ref(false);
     const initialData = ref({} as EducationProgramOfferingAPIOutDTO);
     const editLocationOfferingsRoute = {
       name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
@@ -88,16 +88,6 @@ export default defineComponent({
       router.push(editLocationOfferingsRoute);
     };
 
-    const gotToViewLocationPrograms = () => {
-      router.push({
-        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-        params: {
-          programId: props.programId,
-          locationId: props.locationId,
-        },
-      });
-    };
-
     onMounted(async () => {
       initialData.value =
         await EducationProgramOfferingService.shared.getOfferingDetailsByLocationAndProgram(
@@ -107,15 +97,42 @@ export default defineComponent({
         );
     });
 
+    const submit = async (data: EducationProgramOfferingAPIInDTO) => {
+      console.log(data);
+      try {
+        processing.value = true;
+        await EducationProgramOfferingService.shared.updateProgramOffering(
+          props.locationId,
+          props.programId,
+          props.offeringId,
+          data,
+        );
+        snackBar.success("Offering change requested.");
+        router.push({
+          name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+          params: {
+            programId: props.programId,
+            locationId: props.locationId,
+          },
+        });
+      } catch {
+        snackBar.error(
+          "Unexpected error happened while requesting the offering change.",
+        );
+      } finally {
+        processing.value = false;
+      }
+    };
+
     return {
       initialData,
       OfferingStatus,
       BannerTypes,
       OfferingFormModes,
-      OfferingSubmitModes,
       editLocationOfferingsRoute,
       goToEditLocationOfferings,
-      gotToViewLocationPrograms,
+      submit,
+      processing,
     };
   },
 });
