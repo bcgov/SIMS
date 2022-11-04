@@ -101,7 +101,8 @@ export interface EducationProgramOfferingAPIOutDTO {
   offeringType: OfferingTypes;
   offeringWILComponentType?: string;
   showYearOfStudy?: boolean;
-  breaksAndWeeks?: StudyBreaksAndWeeksAPIOutDTO;
+  studyBreaks: StudyBreakAPIOutDTO[];
+  studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
   assessedBy?: string;
   assessedDate?: Date;
   submittedDate: Date;
@@ -109,14 +110,7 @@ export interface EducationProgramOfferingAPIOutDTO {
   hasExistingApplication?: boolean;
   locationName?: string;
   institutionName?: string;
-}
-
-export interface StudyBreaksAndWeeksAPIOutDTO {
-  studyBreaks: StudyBreakAPIOutDTO[];
-  fundedStudyPeriodDays: number;
-  totalDays: number;
-  totalFundedWeeks: number;
-  unfundedStudyPeriodDays: number;
+  warnings: string[];
 }
 
 export interface StudyBreakAPIOutDTO {
@@ -165,6 +159,13 @@ export interface ValidationWarningResultAPIOutDTO {
   warningMessage: string;
 }
 
+export interface StudyPeriodBreakdownAPIOutDTO {
+  fundedStudyPeriodDays: number;
+  totalDays: number;
+  totalFundedWeeks: number;
+  unfundedStudyPeriodDays: number;
+}
+
 /**
  * Status of an offering validation during creation or during
  * an complete update when the status is determined.
@@ -173,4 +174,5 @@ export interface OfferingValidationResultAPIOutDTO {
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
   warnings: ValidationWarningResultAPIOutDTO[];
+  studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
 }

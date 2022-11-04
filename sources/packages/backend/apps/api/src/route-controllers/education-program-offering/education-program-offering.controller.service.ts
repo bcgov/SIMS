@@ -168,7 +168,7 @@ export class EducationProgramOfferingControllerService {
     return {
       ...payload,
       locationId,
-      studyBreaks: payload.breaksAndWeeks?.studyBreaks,
+      studyBreaks: payload.studyBreaks,
       programContext: program,
     };
   }
@@ -313,7 +313,13 @@ export class EducationProgramOfferingControllerService {
       showYearOfStudy: offering.showYearOfStudy,
       hasOfferingWILComponent: offering.hasOfferingWILComponent,
       offeringWILComponentType: offering.offeringWILType,
-      breaksAndWeeks: offering.studyBreaks,
+      studyBreaks: offering.studyBreaks?.studyBreaks,
+      studyPeriodBreakdown: {
+        fundedStudyPeriodDays: offering.studyBreaks?.fundedStudyPeriodDays,
+        totalDays: offering.studyBreaks?.totalDays,
+        totalFundedWeeks: offering.studyBreaks?.totalFundedWeeks,
+        unfundedStudyPeriodDays: offering.studyBreaks?.unfundedStudyPeriodDays,
+      },
       offeringDeclaration: offering.offeringDeclaration,
       submittedDate: offering.submittedDate,
       offeringStatus: offering.offeringStatus,

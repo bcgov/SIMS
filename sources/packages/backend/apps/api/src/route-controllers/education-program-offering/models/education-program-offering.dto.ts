@@ -4,15 +4,7 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
 } from "@sims/sims-db";
-import {
-  Allow,
-  IsBoolean,
-  IsEnum,
-  IsIn,
-  IsNotEmpty,
-  IsOptional,
-  MaxLength,
-} from "class-validator";
+import { Allow, IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 import { Type } from "class-transformer";
 import {
   OfferingDeliveryOptions,
@@ -40,22 +32,7 @@ export class StudyBreaksAndWeeksOutDTO {
   unfundedStudyPeriodDays: number;
 }
 
-export class StudyBreaksAndWeeksInDTO {
-  @Allow()
-  @Type(() => StudyBreakInDTO)
-  studyBreaks: StudyBreakInDTO[];
-  @Allow()
-  fundedStudyPeriodDays: number;
-  @Allow()
-  totalDays: number;
-  @Allow()
-  totalFundedWeeks: number;
-  @Allow()
-  unfundedStudyPeriodDays: number;
-}
-
-export class StudyBreaksAndWeeksAPIOutDTO {
-  studyBreaks: StudyBreakAPIOutDTO[];
+export class StudyPeriodBreakdownAPIOutDTO {
   fundedStudyPeriodDays: number;
   totalDays: number;
   totalFundedWeeks: number;
@@ -93,13 +70,14 @@ export class EducationProgramOfferingAPIInDTO {
   offeringStatus: OfferingStatus;
   @Allow()
   offeringType: OfferingTypes;
-  @IsOptional()
+  @Allow()
   offeringWILComponentType?: string;
-  @IsBoolean()
+  @Allow()
   showYearOfStudy: boolean;
-  @IsOptional()
-  breaksAndWeeks?: StudyBreaksAndWeeksInDTO;
-  @IsOptional()
+  @Allow()
+  @Type(() => StudyBreakInDTO)
+  studyBreaks: StudyBreakInDTO[];
+  @Allow()
   courseLoad?: number;
 }
 
@@ -122,7 +100,8 @@ export class EducationProgramOfferingAPIOutDTO {
   offeringType: OfferingTypes;
   offeringWILComponentType?: string;
   showYearOfStudy?: boolean;
-  breaksAndWeeks?: StudyBreaksAndWeeksAPIOutDTO;
+  studyBreaks: StudyBreakAPIOutDTO[];
+  studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
   assessedBy?: string;
   assessedDate?: Date;
   submittedDate: Date;
@@ -191,7 +170,7 @@ export class OfferingValidationResultAPIOutDTO {
   offeringStatus?: OfferingStatus.Approved | OfferingStatus.CreationPending;
   errors: string[];
   warnings: ValidationWarningResultAPIOutDTO[];
-  breaksAndWeeks: StudyBreaksAndWeeksAPIOutDTO;
+  studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
 }
 
 /**

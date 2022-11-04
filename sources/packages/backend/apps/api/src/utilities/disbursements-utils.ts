@@ -85,3 +85,21 @@ export function combineDecimalPlaces(
   // Combine the decimals into the integer part before returning.
   return roundedValue * multiplier;
 }
+
+/**
+ * Round a number or string to the nearest decimal number with
+ * the specific decimal places.
+ * @param decimalValue decimal value as number or string.
+ * @returns if a valid number, returns the rounded number, otherwise null.
+ */
+export function decimalRound(
+  decimalValue: number | string,
+  decimalPlaces = 2,
+): number | null {
+  const parsedDecimalValue = parseFloat(decimalValue.toString());
+  if (isNaN(parsedDecimalValue)) {
+    return null;
+  }
+  const multiplier = Math.pow(10, decimalPlaces);
+  return Math.round(parsedDecimalValue * multiplier) / multiplier;
+}

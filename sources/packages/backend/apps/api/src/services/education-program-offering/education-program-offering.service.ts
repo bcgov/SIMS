@@ -40,6 +40,7 @@ import {
   dateDifference,
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
+  decimalRound,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { OFFERING_NOT_VALID } from "../../constants";
@@ -437,6 +438,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     );
     return this.offeringValidationService.validateOfferingModel(
       validationModel,
+      true,
     );
   }
 
@@ -1207,25 +1209,29 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   ): CalculatedStudyBreaksAndWeeks {
     let sumOfTotalEligibleBreakDays = 0;
     let sumOfTotalIneligibleBreakDays = 0;
-    const studyBreaks = offering.studyBreaks?.map((eachBreak) => {
-      const newStudyBreak = {} as StudyBreak;
-      newStudyBreak.breakDays = dateDifference(
-        eachBreak.breakEndDate,
-        eachBreak.breakStartDate,
-      );
-      newStudyBreak.breakStartDate = eachBreak.breakStartDate;
-      newStudyBreak.breakEndDate = eachBreak.breakEndDate;
-      newStudyBreak.eligibleBreakDays = Math.min(
-        newStudyBreak.breakDays,
-        OFFERING_STUDY_BREAK_MAX_DAYS,
-      );
-      newStudyBreak.ineligibleBreakDays =
-        newStudyBreak.breakDays - newStudyBreak.eligibleBreakDays;
-      sumOfTotalEligibleBreakDays += newStudyBreak.eligibleBreakDays;
-      sumOfTotalIneligibleBreakDays += newStudyBreak.ineligibleBreakDays;
+    const studyBreaks = offering.studyBreaks
+      ?.filter(
+        (eachBreak) => !!eachBreak.breakStartDate && !!eachBreak.breakEndDate,
+      )
+      .map((eachBreak) => {
+        const newStudyBreak = {} as StudyBreak;
+        newStudyBreak.breakDays = dateDifference(
+          eachBreak.breakEndDate,
+          eachBreak.breakStartDate,
+        );
+        newStudyBreak.breakStartDate = eachBreak.breakStartDate;
+        newStudyBreak.breakEndDate = eachBreak.breakEndDate;
+        newStudyBreak.eligibleBreakDays = Math.min(
+          newStudyBreak.breakDays,
+          OFFERING_STUDY_BREAK_MAX_DAYS,
+        );
+        newStudyBreak.ineligibleBreakDays =
+          newStudyBreak.breakDays - newStudyBreak.eligibleBreakDays;
+        sumOfTotalEligibleBreakDays += newStudyBreak.eligibleBreakDays;
+        sumOfTotalIneligibleBreakDays += newStudyBreak.ineligibleBreakDays;
 
-      return newStudyBreak;
-    });
+        return newStudyBreak;
+      });
 
     // Offering total days.
     const totalDays = dateDifference(
@@ -1255,10 +1261,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     const studyBreaksAndWeeks: CalculatedStudyBreaksAndWeeks = {
       studyBreaks,
-      fundedStudyPeriodDays,
+      fundedStudyPeriodDays: decimalRound(fundedStudyPeriodDays),
       totalDays,
       totalFundedWeeks: Math.ceil(fundedStudyPeriodDays / 7),
-      unfundedStudyPeriodDays,
+      unfundedStudyPeriodDays: decimalRound(unfundedStudyPeriodDays),
       sumOfTotalEligibleBreakDays,
       sumOfTotalIneligibleBreakDays,
       allowableStudyBreaksDaysAmount,

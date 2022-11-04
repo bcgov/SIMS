@@ -128,15 +128,11 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       offeringStatus: offeringValidation.offeringStatus,
       errors: offeringValidation.errors,
       warnings: offeringValidation.warnings,
-      breaksAndWeeks: {
+      studyPeriodBreakdown: {
         fundedStudyPeriodDays: calculatedStudyBreaks.fundedStudyPeriodDays,
         totalDays: calculatedStudyBreaks.totalDays,
         totalFundedWeeks: calculatedStudyBreaks.totalFundedWeeks,
         unfundedStudyPeriodDays: calculatedStudyBreaks.unfundedStudyPeriodDays,
-        studyBreaks: calculatedStudyBreaks.studyBreaks?.map((studyBreak) => ({
-          breakStartDate: studyBreak.breakStartDate,
-          breakEndDate: studyBreak.breakEndDate,
-        })),
       },
     };
   }

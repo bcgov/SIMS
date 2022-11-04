@@ -45,6 +45,7 @@ import { EducationProgramOfferingService } from "@/services/EducationProgramOffe
 import OfferingForm from "@/components/common/OfferingForm.vue";
 
 const FORMIO_WARNINGS_HIDDEN_FIELD_KEY = "warnings";
+const FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY = "studyPeriodBreakdown";
 
 export default defineComponent({
   components: { OfferingForm, ConfirmModal },
@@ -104,22 +105,20 @@ export default defineComponent({
         const warningsTypes = validationResult.warnings.map(
           (warning) => warning.warningType,
         );
-        setFormWarnings(warningsTypes);
+        setComponentValue(
+          offeringForm,
+          FORMIO_WARNINGS_HIDDEN_FIELD_KEY,
+          warningsTypes,
+        );
+        setComponentValue(
+          offeringForm,
+          FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY,
+          validationResult.studyPeriodBreakdown,
+        );
         return validationResult;
       } finally {
         processing.value = false;
       }
-    };
-
-    /**
-     * Set on form.io the array of warnings used to display the warnings banners.
-     */
-    const setFormWarnings = (warningsTypes: string[]) => {
-      setComponentValue(
-        offeringForm,
-        FORMIO_WARNINGS_HIDDEN_FIELD_KEY,
-        warningsTypes,
-      );
     };
 
     /**
