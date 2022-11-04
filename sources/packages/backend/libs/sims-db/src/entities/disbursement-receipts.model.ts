@@ -9,7 +9,6 @@ import {
 } from "typeorm";
 import { DisbursementSchedule, DisbursementReceiptValue } from ".";
 import { ColumnNames, TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
@@ -25,10 +24,9 @@ export class DisbursementReceipt extends RecordDataModel {
   @Column({
     name: "batch_run_date",
     type: "date",
-    transformer: dateOnlyTransformer,
     nullable: false,
   })
-  batchRunDate: Date;
+  batchRunDate: string;
 
   /**
    * SIN number of the student who received the disbursement.
@@ -93,10 +91,9 @@ export class DisbursementReceipt extends RecordDataModel {
   @Column({
     name: "disburse_date",
     type: "date",
-    transformer: dateOnlyTransformer,
     nullable: false,
   })
-  disburseDate: Date;
+  disburseDate: string;
 
   /**
    * Amount disbursed to the student.
@@ -124,10 +121,9 @@ export class DisbursementReceipt extends RecordDataModel {
   @Column({
     name: "date_signed_institution",
     type: "date",
-    transformer: dateOnlyTransformer,
     nullable: false,
   })
-  dateSignedInstitution: Date;
+  dateSignedInstitution: string;
 
   /**
    * Institution code.
@@ -207,8 +203,7 @@ export class DisbursementReceipt extends RecordDataModel {
   @Column({
     name: "study_period_end_date",
     type: "date",
-    transformer: dateOnlyTransformer,
     nullable: false,
   })
-  studyPeriodEndDate: Date;
+  studyPeriodEndDate: string;
 }

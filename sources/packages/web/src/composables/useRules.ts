@@ -38,10 +38,18 @@ export function useRules() {
     return `${fieldName} is required.`;
   };
 
+  const checkOnlyDigitsRule = (value: string, fieldName: string) => {
+    if (!/^\d+$/.test(value)) {
+      return `${fieldName} is invalid.`;
+    }
+    return true;
+  };
+
   return {
     sinValidationRule,
     checkNotesLengthRule,
     checkStringDateFormatRule,
     checkNullOrEmptyRule,
+    checkOnlyDigitsRule,
   };
 }

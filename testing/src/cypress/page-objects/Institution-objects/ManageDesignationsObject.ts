@@ -8,7 +8,7 @@ export default class ManageDesignationsObject {
   }
 
   viewDesignationButton() {
-    return cy.get("[data-cy='viewDesignation']");
+    return cy.get("[data-cy='viewDesignation']").eq(0);
   }
 
   viewDesignationText() {

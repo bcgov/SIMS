@@ -128,7 +128,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   async updateSINValidation(
     sinValidationId: number,
     studentId: number,
-    expiryDate: Date,
+    expiryDate: string,
     noteDescription: string,
     auditUserId: number,
   ): Promise<SINValidation> {

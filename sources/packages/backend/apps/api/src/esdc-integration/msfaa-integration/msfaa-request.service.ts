@@ -138,7 +138,7 @@ export class MSFAARequestService extends ESDCFileHandler {
       institutionCode:
         pendingMSFAARecords.referenceApplication.currentAssessment.offering
           .institutionLocation.institutionCode,
-      birthDate: pendingMSFAARecords.student.birthDate,
+      birthDate: new Date(pendingMSFAARecords.student.birthDate),
       surname: pendingMSFAARecords.student.user.lastName,
       givenName: pendingMSFAARecords.student.user.firstName,
       gender: pendingMSFAARecords.student.gender,

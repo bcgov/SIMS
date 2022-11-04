@@ -77,7 +77,7 @@ export class ProgramYear extends RecordDataModel {
     name: "start_date",
     type: "date",
   })
-  startDate: Date;
+  startDate: string;
   /**
    * Inclusive end date that this program year
    * should be considered valid.
@@ -86,5 +86,5 @@ export class ProgramYear extends RecordDataModel {
     name: "end_date",
     type: "date",
   })
-  endDate: Date;
+  endDate: string;
 }

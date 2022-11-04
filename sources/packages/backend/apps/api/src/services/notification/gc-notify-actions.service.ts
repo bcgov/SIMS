@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { NotificationMessageType } from "@sims/sims-db";
-import { getExtendedDateFormat, getPSTPDTDateTime } from "../../utilities";
+import { getDateOnlyFormat, getPSTPDTDateTime } from "../../utilities";
 import { NotificationMessageService } from "../notification-message/notification-message.service";
 import {
   GCNotifyResult,
@@ -40,7 +40,7 @@ export class GCNotifyActionsService {
       personalisation: {
         givenNames: notification.firstName ?? "",
         lastName: notification.lastName,
-        dob: getExtendedDateFormat(notification.birthDate),
+        dob: getDateOnlyFormat(notification.birthDate),
         applicationNumber: notification.applicationNumber,
         documentPurpose: notification.documentPurpose,
         date: this.getDateTimeOnPSTTimeZone(),

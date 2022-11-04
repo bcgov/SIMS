@@ -8,7 +8,7 @@ import { ContactInformationAPIOutDTO } from "./Address.dto";
  */
 export interface ApplicationIdentifierApiInDTO {
   applicationNumber: string;
-  studentsDateOfBirth: Date;
+  studentsDateOfBirth: string;
   studentsLastName: string;
 }
 
@@ -29,7 +29,7 @@ export interface UpdateSupportingUserApiInDTO
 }
 
 export interface ApplicationApiOutDTO {
-  programYearStartDate: Date;
+  programYearStartDate: string;
   formName: string;
 }
 
@@ -43,7 +43,7 @@ export interface SupportingUserFormDataApiOutDTO {
   supportingData: any;
   contactInfo: ContactInformationAPIOutDTO;
   sin: string;
-  birthDate: Date;
+  birthDate: string;
   gender: string;
   email: string;
   firstName: string;

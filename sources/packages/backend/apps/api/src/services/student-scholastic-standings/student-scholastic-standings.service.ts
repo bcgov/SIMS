@@ -182,7 +182,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           scholasticStandingData.dateOfCompletion ??
           scholasticStandingData.dateOfWithdrawal;
 
-        offering.studyEndDate = new Date(newStudyEndDate);
+        offering.studyEndDate = newStudyEndDate;
 
         offering.actualTuitionCosts =
           scholasticStandingData.tuition ?? existingOffering.actualTuitionCosts;

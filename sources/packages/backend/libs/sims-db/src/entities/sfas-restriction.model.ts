@@ -1,7 +1,6 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { BaseModel } from ".";
 import { TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * This record contain data related to student’s Provincial Restrictions in SFAS.
@@ -39,9 +38,8 @@ export class SFASRestriction extends BaseModel {
     name: "effective_date",
     type: "date",
     nullable: false,
-    transformer: dateOnlyTransformer,
   })
-  effectiveDate: Date;
+  effectiveDate: string;
   /**
    * Date that this restriction is considered removed and no longer in effect
    * individual_process_control.control_removed_dte (date).
@@ -50,9 +48,8 @@ export class SFASRestriction extends BaseModel {
     name: "removal_date",
     type: "date",
     nullable: true,
-    transformer: dateOnlyTransformer,
   })
-  removalDate?: Date;
+  removalDate?: string;
   /**
    * Date that the record was extracted from SFAS.
    */

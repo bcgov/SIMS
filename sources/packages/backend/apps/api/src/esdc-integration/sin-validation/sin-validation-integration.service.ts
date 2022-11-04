@@ -56,7 +56,7 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<SINVali
       sinRecord.firstName = record.firstName;
       sinRecord.lastName = record.lastName;
       sinRecord.sin = record.sin;
-      sinRecord.birthDate = record.birthDate;
+      sinRecord.birthDate = new Date(record.birthDate);
       sinRecord.referenceIndex = record.sinValidationId;
       sinRecord.gender = getGenderCode(record.gender);
       return sinRecord;

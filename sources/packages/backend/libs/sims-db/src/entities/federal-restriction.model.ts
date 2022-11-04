@@ -8,7 +8,6 @@ import {
 } from "typeorm";
 import { Restriction } from ".";
 import { ColumnNames, TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * Represents the current snapshot of all federal restrictions
@@ -35,9 +34,8 @@ export class FederalRestriction {
   @Column({
     name: "birth_date",
     type: "date",
-    transformer: dateOnlyTransformer,
   })
-  birthDate: Date;
+  birthDate: string;
   /**
    * SIN of the student.
    */

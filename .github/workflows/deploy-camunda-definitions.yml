@@ -1,4 +1,4 @@
-name: Deploy BPMNs and DMNs to Camunda
+name: Deploy Camunda Resources
 
 on:
   workflow_dispatch:

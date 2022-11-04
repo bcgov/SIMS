@@ -48,7 +48,7 @@ export class UpdateSupportingUserApiInDTO {
 }
 
 export class ApplicationApiOutDTO {
-  programYearStartDate: Date;
+  programYearStartDate: string;
   formName: string;
 }
 
@@ -62,7 +62,7 @@ export class SupportingUserFormDataApiOutDTO {
   supportingData: any;
   contactInfo: ContactInfo;
   sin: string;
-  birthDate: Date;
+  birthDate: string;
   gender: string;
   email: string;
   firstName: string;

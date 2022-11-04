@@ -9,7 +9,6 @@ import {
 } from "typeorm";
 import { Note, User, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
 
 export const SIN_MAX_LENGTH = 9;
@@ -88,10 +87,9 @@ export class SINValidation extends RecordDataModel {
   @Column({
     name: "dob_sent",
     type: "date",
-    transformer: dateOnlyTransformer,
     nullable: true,
   })
-  dobSent?: Date;
+  dobSent?: string;
   /**
    * Gender sent in the file sent for SIN validation.
    */
@@ -175,10 +173,9 @@ export class SINValidation extends RecordDataModel {
   @Column({
     name: "sin_expiry_date",
     type: "date",
-    transformer: dateOnlyTransformer,
     nullable: true,
   })
-  sinExpiryDate?: Date;
+  sinExpiryDate?: string;
   /**
    * Student who requires a SIN validation.
    */

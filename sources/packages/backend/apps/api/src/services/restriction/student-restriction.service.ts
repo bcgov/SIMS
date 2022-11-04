@@ -395,7 +395,8 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         .findOne({ where: { id: offeringId }, select: { studyEndDate: true } });
       // Check if the SIN expiry date is later than the offering end date.
       mustCreateSINException =
-        offering.studyEndDate > student.sinValidation.sinExpiryDate;
+        new Date(offering.studyEndDate) >
+        new Date(student.sinValidation.sinExpiryDate);
     }
 
     if (mustCreateSINException) {

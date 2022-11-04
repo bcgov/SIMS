@@ -5,7 +5,7 @@ import { createFakeUser } from "@sims/test-utils";
 export function createFakeStudent(user?: User): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();
-  student.birthDate = faker.date.past(18);
+  student.birthDate = faker.date.past(18).toISOString();
   student.gender = "X";
   student.contactInfo = {
     address: {

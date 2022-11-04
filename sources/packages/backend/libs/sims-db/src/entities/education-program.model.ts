@@ -11,7 +11,6 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { Institution, Note, User, ProgramStatus } from ".";
 import { ProgramIntensity } from "./program-intensity.type";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * The main resource table to store education programs related information.
@@ -172,7 +171,7 @@ export class EducationProgram extends RecordDataModel {
   @RelationId((program: EducationProgram) => program.institution)
   institutionId: number;
 
-  @OneToOne((_) => Institution, { eager: false, cascade: true })
+  @OneToOne(() => Institution, { eager: false, cascade: true })
   @JoinColumn({
     name: "institution_id",
     referencedColumnName: ColumnNames.ID,
@@ -338,9 +337,8 @@ export class EducationProgram extends RecordDataModel {
     name: "effective_end_date",
     type: "date",
     nullable: true,
-    transformer: dateOnlyTransformer,
   })
-  effectiveEndDate?: Date;
+  effectiveEndDate?: string;
 
   /**
    * Education program note.
@@ -374,7 +372,7 @@ export class EducationProgram extends RecordDataModel {
   @RelationId((program: EducationProgram) => program.submittedBy)
   submittedById?: number;
 
-  @ManyToOne((type) => User, { eager: false, nullable: true })
+  @ManyToOne(() => User, { eager: false, nullable: true })
   @JoinColumn({
     name: "submitted_by",
     referencedColumnName: "id",

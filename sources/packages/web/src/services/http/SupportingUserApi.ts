@@ -14,18 +14,12 @@ export class SupportingUserApi extends HttpBaseClient {
     payload: ApplicationIdentifierApiInDTO,
   ): Promise<ApplicationApiOutDTO> {
     try {
-      const response = await this.apiClient.post(
+      return await this.postCall(
         this.addClientRoot(`supporting-user/${supportingUserType}/application`),
         payload,
-        this.addAuthHeader(),
       );
-      return response.data;
-    } catch (error) {
-      if (!error.response.data?.errorType) {
-        // If it is an not expected error,
-        // handle it the default way.
-        this.handleRequestError(error);
-      }
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
       throw error;
     }
   }
@@ -35,17 +29,12 @@ export class SupportingUserApi extends HttpBaseClient {
     payload: UpdateSupportingUserApiInDTO,
   ): Promise<void> {
     try {
-      await this.apiClient.patch(
+      await this.patchCall(
         this.addClientRoot(`supporting-user/${supportingUserType}`),
         payload,
-        this.addAuthHeader(),
       );
     } catch (error) {
-      if (!error.response.data?.errorType) {
-        // If it is an not expected error,
-        // handle it the default way.
-        this.handleRequestError(error);
-      }
+      this.handleAPICustomError(error);
       throw error;
     }
   }

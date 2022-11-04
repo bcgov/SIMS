@@ -27,8 +27,8 @@ export interface GetDesignationAgreementDto {
   designationStatus: DesignationAgreementStatus;
   locationsDesignations: LocationsDesignationsDto[];
   submittedData: any;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   institutionId: number;
   institutionName: string;
   institutionType: string;
@@ -67,8 +67,8 @@ export class UpdateDesignationLocation {
  */
 export interface UpdateDesignation {
   designationStatus: DesignationAgreementStatus;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: string;
+  endDate?: string;
   locationsDesignations?: UpdateDesignationLocation[];
   note: string;
 }

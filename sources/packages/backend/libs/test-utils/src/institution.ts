@@ -10,7 +10,7 @@ export function createFakeInstitution(): Institution {
   institution.primaryEmail = faker.internet.email();
   institution.website = faker.internet.url();
   institution.regulatingBody = "Regulating Body";
-  institution.establishedDate = faker.date.past(20);
+  institution.establishedDate = faker.date.past(20).toISOString();
   institution.institutionType = {
     id: 1,
     name: "BC Private",

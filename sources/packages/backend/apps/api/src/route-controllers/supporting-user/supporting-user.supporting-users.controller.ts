@@ -33,7 +33,7 @@ import {
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
-import { getDateOnly, getSupportingUserForm } from "../../utilities";
+import { getSupportingUserForm } from "../../utilities";
 import {
   ApiBadRequestResponse,
   ApiTags,
@@ -84,7 +84,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
       await this.applicationService.getApplicationForSupportingUser(
         payload.applicationNumber,
         payload.studentsLastName,
-        getDateOnly(payload.studentsDateOfBirth),
+        payload.studentsDateOfBirth,
       );
 
     if (!application) {
@@ -154,7 +154,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
       this.applicationService.getApplicationForSupportingUser(
         payload.applicationNumber,
         payload.studentsLastName,
-        getDateOnly(payload.studentsDateOfBirth),
+        payload.studentsDateOfBirth,
       );
 
     // Wait for both queries to finish.
@@ -238,7 +238,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
         {
           contactInfo,
           sin: payload.sin,
-          birthDate: getDateOnly(userToken.birthdate),
+          birthDate: userToken.birthdate,
           gender: userToken.gender,
           supportingData: payload.supportingData,
           userId: user.id,

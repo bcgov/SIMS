@@ -1,4 +1,4 @@
-name: Build and Deploy in OpenShift
+name: Build and Deploy to OpenShift/Camunda - DEV
 
 on:
   pull_request:
@@ -10,6 +10,7 @@ jobs:
   # Print variables for logging and debugging purposes
   checkEnv:
     name: Check Env variables
+    environment: DEV
     runs-on: ubuntu-latest
     steps:
       - name: Print Env Vars
@@ -22,6 +23,7 @@ jobs:
   # Build Web, SIMS-Api and Workers
   build:
     name: Build Web, SIMS-Api and Workers
+    environment: DEV
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged == true}}
     env:
@@ -36,7 +38,7 @@ jobs:
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: $BUILD_REF
       - name: Checkout Target Branch
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       # Log in to OpenShift.
       # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
       # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
@@ -59,33 +61,39 @@ jobs:
 
   # Deploy Web, SIMS-Api and Workers
   deployDev:
-    name: Deploy App, API, and DB to DEV environment
+    name: Deploy Web, SIMS-Api and Workers to DEV environment
     runs-on: ubuntu-latest
     environment: DEV
-    if: ${{ github.event.pull_request.merged == true && github.base_ref != 'prod' && github.base_ref != 'test'}}
-    env:
-      BUILD_ID: ${{ github.event.number }}
-      NAMESPACE: 0c27fb-dev
-      BUILD_NAMESPACE: 0c27fb-tools
-      BUILD_REF: ${{ github.base_ref }}
-      HOST_PREFIX: dev-
-      KEYCLOAK_REALM: "jxoe2o46"
-      KEYCLOAK_AUTH_URL: "https://dev.oidc.gov.bc.ca/auth/"
-      BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
-      RULE_ENGINE_URL: "https://dev-aest-ffa-bpm.apps.silver.devops.gov.bc.ca/camunda/engine-rest"
-      FORMS_URL: "https://dev-aest-ffa-forms.apps.silver.devops.gov.bc.ca"
-      SITE_MINDER_LOGOUT_URL: "https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi"
-      FORMS_FLOW_API_URL: "https://dev-aest-ffa-api.apps.silver.devops.gov.bc.ca"
-      ATBC_LOGIN_ENDPOINT: "https://auth.at-bc.ca/api/login"
-      ATBC_ENDPOINT: "https://sabc.at-bc.ca/api"
-      BYPASS_CRA_INCOME_VERIFICATION: true
-      BYPASS_APPLICATION_SUBMIT_VALIDATIONS: true
-      SWAGGER_ENABLED: true
-      APPLICATION_ARCHIVE_DAYS: 43
-      API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
-      WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
     needs:
       - build
+    env:
+      BUILD_ID: ${{ github.event.number }}
+      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+      BUILD_REF: ${{ github.base_ref }}
+      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+      BUILD_NAMESPACE: 0c27fb-tools
+      KEYCLOAK_REALM: "jxoe2o46"
+      KEYCLOAK_AUTH_URL: ${{ secrets.KEYCLOAK_AUTH_URL }}
+      BCeID_WEB_SERVICE_WSDL: ${{ secrets.BCeID_WEB_SERVICE_WSDL }}
+      FORMS_URL: ${{ secrets.FORMS_URL }}
+      SITE_MINDER_LOGOUT_URL: ${{ secrets.SITE_MINDER_LOGOUT_URL }}
+      RULE_ENGINE_URL: TO_BE_REMOVED
+      FORMS_FLOW_API_URL: TO_BE_REMOVED
+      ATBC_LOGIN_ENDPOINT: ${{ secrets.ATBC_LOGIN_ENDPOINT }}
+      ATBC_ENDPOINT: ${{ secrets.ATBC_ENDPOINT }}
+      SWAGGER_ENABLED: true
+      APPLICATION_ARCHIVE_DAYS: 43
+      BYPASS_APPLICATION_SUBMIT_VALIDATIONS: ${{ secrets.BYPASS_APPLICATION_SUBMIT_VALIDATIONS }}
+      BYPASS_CRA_INCOME_VERIFICATION: ${{ secrets.BYPASS_CRA_INCOME_VERIFICATION }}
+      API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      API_PORT: ${{ secrets.API_PORT }}
+      WEB_PORT: ${{ secrets.WEB_PORT }}
+      API: ${{ format('{0}api-sims', secrets.HOST_PREFIX) }}
+      WEB: ${{ format('{0}web-sims', secrets.HOST_PREFIX) }}
+      WORKERS: ${{ format('{0}workers-sims', secrets.HOST_PREFIX) }}
+      SWAGGER_NAME: ${{ format('{0}swagger', secrets.HOST_PREFIX) }}
+      DATABASE_NAME_KEY: ${{ secrets.DATABASE_NAME_KEY }}
     steps:
       - name: Print env
         run: |
@@ -97,7 +105,6 @@ jobs:
       # Checkout the PR branch
       - name: Checkout Target Branch
         uses: actions/checkout@v1
-
       # Log in to OpenShift.
       # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
       # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.

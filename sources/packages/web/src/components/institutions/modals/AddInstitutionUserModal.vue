@@ -3,6 +3,7 @@
     <modal-dialog-base
       :showDialog="showDialog"
       @dialogClosed="dialogClosed"
+      data-cy="addNewUserModal"
       title="Add new user"
     >
       <template #content>
@@ -22,6 +23,7 @@
               density="compact"
               variant="outlined"
               label="Business BCeID user Id"
+              data-cy="inputUserId"
               :rules="[(v) => !!v || 'Business BCeID user Id is required.']"
             ></v-autocomplete>
             <!-- Basic BCeID  -->

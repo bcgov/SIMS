@@ -8,7 +8,6 @@ import {
 } from "typeorm";
 import { Application, OfferingIntensity, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
@@ -51,10 +50,9 @@ export class MSFAANumber extends RecordDataModel {
   @Column({
     name: "date_signed",
     type: "date",
-    transformer: dateOnlyTransformer,
     nullable: true,
   })
-  dateSigned?: Date;
+  dateSigned?: string;
   /**
    * Date that the service provider received the signed student MSFAA.
    * This column does not contains time information, so the time
@@ -63,10 +61,9 @@ export class MSFAANumber extends RecordDataModel {
   @Column({
     name: "service_provider_received_date",
     type: "date",
-    transformer: dateOnlyTransformer,
     nullable: true,
   })
-  serviceProviderReceivedDate?: Date;
+  serviceProviderReceivedDate?: string;
   /**
    * Offering Intensity of the reference application.
    */
@@ -80,9 +77,10 @@ export class MSFAANumber extends RecordDataModel {
    */
   @Column({
     name: "cancelled_date",
+    type: "date",
     nullable: true,
   })
-  cancelledDate?: Date;
+  cancelledDate?: string;
   /**
    * Province which issued the new MSFAA number.
    */

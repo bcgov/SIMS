@@ -36,7 +36,7 @@
             />
             <title-value
               propertyTitle="Established date"
-              :propertyValue="institutionProfileDetail.formattedEstablishedDate"
+              :propertyValue="institutionProfileDetail.establishedDate"
             />
           </v-col>
           <v-divider class="mx-4" vertical></v-divider>
@@ -135,11 +135,14 @@ export default {
   },
   setup(props: any) {
     const institutionProfileDetail = ref({} as InstitutionDetailAPIOutDTO);
-    const { emptyStringFiller } = useFormatters();
+    const { emptyStringFiller, dateOnlyLongString } = useFormatters();
     const router = useRouter();
     onMounted(async () => {
       institutionProfileDetail.value =
         await InstitutionService.shared.getDetail(props.institutionId);
+      institutionProfileDetail.value.establishedDate = dateOnlyLongString(
+        institutionProfileDetail.value.establishedDate,
+      );
     });
 
     const editProfile = () => {
