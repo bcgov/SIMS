@@ -6,8 +6,8 @@
     <template #alerts>
       <banner
         :type="BannerTypes.Info"
-        header="How to request a change"
-        summary="For the fields you can't change yourself, please email us with the information you'd like to change."
+        header="How to update information"
+        summary="Please email a request to update the institution profile. For the primary contact or mailing address, you can update it without a request."
       >
         <template #actions>
           <v-btn color="info">Email studentaidbc@gov.bc.ca</v-btn>
