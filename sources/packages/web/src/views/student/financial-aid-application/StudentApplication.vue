@@ -15,9 +15,9 @@
         Apply for funding
       </h2>
       <content-group>
-        <h3 class="category-header-medium-small pa-2">
+        <p class="category-header-medium-small pa-2">
           Financial Aid Application
-        </h3>
+        </p>
         <p class="px-2">
           Apply to see if you are applicable for provincial or federal loans and
           grant. This is for students attending full-time or part-time
