@@ -47,7 +47,7 @@ export class IERFileDetail implements IERRequestFileLine {
                 valueCode,
                 valueAmount:
                   (disbursementValue[valueCode]
-                    ? disbursementValue[valueCode].valueAmount
+                    ? parseInt(disbursementValue[valueCode].valueAmount)
                     : 0) + valueAmount,
               };
               return disbursementValue;
@@ -84,7 +84,11 @@ export class IERFileDetail implements IERRequestFileLine {
     record.append(this.mandatoryFees.toString(), 8);
     record.append(this.exceptionExpenses.toString(), 8);
     record.append(this.totalFundedWeeks.toString(), 2);
-    record.append(this.courseLoad.toString(), 3);
+    record.appendWithEndFiller(
+      this.courseLoad ? this.courseLoad.toString() : "",
+      3,
+      SPACE_FILLER,
+    );
     record.append(this.offeringIntensity, 1);
     return record.toString();
   }

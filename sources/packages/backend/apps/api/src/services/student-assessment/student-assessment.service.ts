@@ -130,7 +130,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         },
         disbursementSchedules: {
           id: true,
-          disbursementValues: { id: true, valueCode: true },
+          disbursementValues: { id: true, valueCode: true, valueAmount: true },
         },
       },
       relations: {

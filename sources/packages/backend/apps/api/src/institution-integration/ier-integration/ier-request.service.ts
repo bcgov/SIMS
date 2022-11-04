@@ -131,8 +131,8 @@ export class IERRequestService {
       exceptionExpenses: offering.exceptionalExpenses,
       totalFundedWeeks: offering.studyBreaks.totalFundedWeeks,
       // As this implementation is only for FT,
-      // we have hardcoaded the courseLoad to 100 and offering Intensity to F.
-      courseLoad: 100,
+      // we have hardcoded the courseLoad to 100 and offering Intensity to F.
+      courseLoad: null,
       offeringIntensity: "F",
       disbursementSchedules: pendingAssessment.disbursementSchedules,
     };

@@ -79,7 +79,7 @@ export class ConfigService {
         ftpReceiveFolder: process.env.SFAS_RECEIVE_FOLDER,
       },
       IERIntegrationConfig: {
-        ftpRequestFolder: process.env.IER_RECEIVE_FOLDER,
+        ftpRequestFolder: process.env.IER_REQUEST_FOLDER,
       },
       bypassApplicationSubmitValidations:
         process.env.BYPASS_APPLICATION_SUBMIT_VALIDATIONS === "true",
