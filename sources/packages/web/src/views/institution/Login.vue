@@ -10,7 +10,7 @@
             Manage your institution account using your Business or Basic BCeID
             User ID. Learn how to setup and access your account
             <a
-              class="primary-color formio-href"
+              class="formio-href"
               rel="noopener"
               target="_blank"
               href="https://studentaidbc.ca/policy-and-procedures/partner-portal-information"
