@@ -7,10 +7,10 @@
       <banner
         :type="BannerTypes.Info"
         header="How to update information"
-        summary="Please email a request to update the institution profile. For the primary contact or mailing address, you can update it without a request."
+        summary="Please send us an email to request a change. For your institution's mailing address, you can update it yourself without emailing a request."
       >
         <template #actions>
-          <v-btn color="info">Email studentaidbc@gov.bc.ca</v-btn>
+          <v-btn color="info">Email designat@gov.bc.ca</v-btn>
         </template>
       </banner>
     </template>
