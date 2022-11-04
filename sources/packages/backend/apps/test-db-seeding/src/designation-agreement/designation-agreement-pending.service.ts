@@ -20,7 +20,7 @@ import {
   SeedPriorityOrder,
 } from "../test-organizer/data-seed.decorator";
 
-@DataSeed("provider", SeedPriorityOrder.Three)
+@DataSeed("provider", SeedPriorityOrder.FirstBatch)
 @Injectable()
 export class DesignationAgreementPendingService {
   constructor(
@@ -32,12 +32,13 @@ export class DesignationAgreementPendingService {
     private userRepo: Repository<User>,
     @InjectRepository(InstitutionLocation)
     private institutionLocationRepo: Repository<InstitutionLocation>,
-  ) {
-    console.log("constructorr --->>>");
-  }
+  ) {}
 
-  @DataSeedMethod("method", SeedPriorityOrder.One)
-  async createApprovalDesignationAgreement(): Promise<void> {
+  /**
+   * Method to seed fake pending designation agreement.
+   */
+  @DataSeedMethod("method")
+  async createPendingDesignationAgreement(): Promise<void> {
     // Create fake institution.
     const fakeInstitution = createFakeInstitution();
     // console.log(fakeInstitution, "+++fakeInstitution");
@@ -68,8 +69,9 @@ export class DesignationAgreementPendingService {
     console.info("completed !!");
   }
 
-  @DataSeedMethod("method")
-  async createApprovalDesignationAgreement1111(): Promise<void> {
+  @DataSeedMethod("method", SeedPriorityOrder.FirstBatch)
+  // todo: ann test method.
+  async createPendingDesignationAgreement111(): Promise<void> {
     // Create fake institution.
     const fakeInstitution = createFakeInstitution();
     // console.log(fakeInstitution, "+++fakeInstitution");

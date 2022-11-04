@@ -1,35 +1,36 @@
 require("../../../env_setup_apps");
 import { NestFactory } from "@nestjs/core";
 import { CleanDbService } from "./clean-db/clean-db.service";
-import { DesignationAgreementApprovalService } from "./designation-agreement/designation-agreement-approval.service";
 import { TestDbSeedingModule } from "./test-db-seeding.module";
 import { TestOrganizerService } from "./test-organizer/test-organizer.service";
+// Clean db command line parameter.
 const CLEAN_DB = "--task=clean-db";
 
 async function bootstrap() {
   const app = await NestFactory.create(TestDbSeedingModule);
 
-  console.log(process.argv, process.argv.length);
+  // Checking for CLEAN_DB parameter.
   if (process.argv.includes(CLEAN_DB) && process.argv.length === 3) {
     // Clean db.
     await app.get(CleanDbService).onModuleInit();
-    console.log("cleaned db");
+    console.info("Database cleaned!!");
     return;
   }
-  // todo: ann update below comment.
-  // todo: ann accept comma seperated.
-  // command: npm run db:seed:test DesignationAgreementApprovalService
-  console.log(process.argv, process.argv.length);
+
+  /**
+   * Checks for db seed class name as parameter. and executes only passed classes.
+   * Multiple class name is passed as a comma separated values
+   * @command example: npm run db:seed:test DesignationAgreementApprovalService,DesignationAgreementPendingService
+   */
   if (process.argv.length === 3) {
     {
       const testClassList = process.argv[2].split(",");
-      console.log(testClassList);
       await app.get(TestOrganizerService).onModuleInit(testClassList);
       return;
     }
-
-    // await app.get(TestOrganizerService).onModuleInit();
-    // await app.get(CleanDbService).onModuleInit();
   }
+
+  // If nothing is passed as a parameter then all test seed services will be executed.
+  // await app.get(TestOrganizerService).onModuleInit();
 }
 bootstrap();

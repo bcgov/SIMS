@@ -61,9 +61,11 @@ export function createFakeDesignationAgreement(
       return newLocation;
     });
   if (designationStatus === DesignationAgreementStatus.Approved) {
-    fakeDesignationAgreement.startDate = now;
-    fakeDesignationAgreement.endDate = dayjs().add(1, "year").toDate();
-    // save note
+    fakeDesignationAgreement.startDate = dayjs().format("MM/DD/YYYY");
+    fakeDesignationAgreement.endDate = dayjs()
+      .add(1, "year")
+      .format("MM/DD/YYYY");
+    // TODO: ANN CHECK save note
   }
   return fakeDesignationAgreement;
 }

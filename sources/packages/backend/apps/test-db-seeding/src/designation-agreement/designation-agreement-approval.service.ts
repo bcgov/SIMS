@@ -25,7 +25,7 @@ import {
 // // todo: make all function even helpers async, if required
 
 @Injectable()
-@DataSeed("provider", SeedPriorityOrder.Two)
+@DataSeed("provider", SeedPriorityOrder.SecondBach)
 export class DesignationAgreementApprovalService {
   constructor(
     @InjectRepository(DesignationAgreement)
@@ -38,8 +38,11 @@ export class DesignationAgreementApprovalService {
     private institutionLocationRepo: Repository<InstitutionLocation>,
   ) {}
 
-  @DataSeedMethod("method", SeedPriorityOrder.Two)
-  async createPendingDesignationAgreement(): Promise<void> {
+  /**
+   * Method to seed fake approved designation agreement.
+   */
+  @DataSeedMethod("method", SeedPriorityOrder.SecondBach)
+  async createApprovalDesignationAgreement(): Promise<void> {
     // Create fake institution.
     const fakeInstitution = createFakeInstitution();
     const createdFakeInstitution = await this.institutionRepo.save(
