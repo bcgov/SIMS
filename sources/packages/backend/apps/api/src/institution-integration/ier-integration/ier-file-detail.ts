@@ -3,7 +3,7 @@ import {
   DATE_FORMAT,
   SPACE_FILLER,
 } from "../../cra-integration/cra-integration.models";
-import { StringBuilder } from "../../utilities";
+import { round, StringBuilder } from "../../utilities";
 import { IERRequestFileLine } from "./models/ier-integration.model";
 
 /**
@@ -47,8 +47,8 @@ export class IERFileDetail implements IERRequestFileLine {
                 valueCode,
                 valueAmount:
                   (disbursementValue[valueCode]
-                    ? parseInt(disbursementValue[valueCode].valueAmount)
-                    : 0) + valueAmount,
+                    ? round(parseInt(disbursementValue[valueCode].valueAmount))
+                    : 0) + round(parseInt(valueAmount)),
               };
               return disbursementValue;
             },
@@ -58,6 +58,7 @@ export class IERFileDetail implements IERRequestFileLine {
         return disbursementValues;
       },
     );
+    const cslf = Object.values(grantType[0]);
     const record = new StringBuilder();
     record.appendWithStartFiller(this.assessmentId, 10, "0");
     record.append(this.applicationNumber, 10);

@@ -3,7 +3,7 @@ import * as Client from "ssh2-sftp-client";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { ConfigService, SshService } from "../../services";
-import { IERIntegrationConfig, SFTPConfig } from "../../types";
+import { SFTPConfig } from "../../types";
 import { IERFileDetail } from "./ier-file-detail";
 import {
   IERRecord,
@@ -19,11 +19,9 @@ import {
  */
 @Injectable()
 export class IERIntegrationService {
-  private readonly ierConfig: IERIntegrationConfig;
   private readonly ftpConfig: SFTPConfig;
 
   constructor(config: ConfigService, private readonly sshService: SshService) {
-    this.ierConfig = config.getConfig().IERIntegrationConfig;
     this.ftpConfig = config.getConfig().zoneBSFTP;
   }
 

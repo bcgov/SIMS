@@ -30,18 +30,19 @@ export class IERRequestService {
    * particular institution is generated.
    * @returns Processing IER 12 request result.
    */
-  async processIER12Request(generatedDate?: Date): Promise<IERUploadResult> {
+  async processIER12Request(generatedDate?: Date): Promise<IERUploadResult[]> {
     this.logger.log(
       `Retrieving pending assessment on ${generatedDate} for IER 12 request...`,
     );
     const pendingAssessments =
       await this.studentAssessmentService.getPendingAssessment(generatedDate);
-
     if (!pendingAssessments.length) {
-      return {
-        generatedFile: "none",
-        uploadedRecords: 0,
-      };
+      return [
+        {
+          generatedFile: "none",
+          uploadedRecords: 0,
+        },
+      ];
     }
     this.logger.log(`Found ${pendingAssessments.length} assessments.`);
     const fileRecords: Record<string, IERRecord[]> = {};
@@ -55,10 +56,8 @@ export class IERRequestService {
         this.createIERRecord(pendingAssessment),
       );
     });
-
     //Create records and create the unique file sequence number
-    let uploadResult: IERUploadResult;
-
+    const uploadResult: IERUploadResult[] = [];
     try {
       this.logger.log("Creating IER request content...");
       Object.keys(fileRecords).forEach(async (institutionCode) => {
@@ -69,9 +68,11 @@ export class IERRequestService {
         // Create the request filename with the file path for the each and every institutionCode.
         const fileInfo = this.createRequestFileName(institutionCode);
         this.logger.log("Uploading content...");
-        uploadResult = await this.ierIntegrationService.uploadContent(
-          fileContent,
-          fileInfo.filePath,
+        uploadResult.push(
+          await this.ierIntegrationService.uploadContent(
+            fileContent,
+            fileInfo.filePath,
+          ),
         );
       });
     } catch (error) {
@@ -80,7 +81,6 @@ export class IERRequestService {
       );
       throw error;
     }
-
     return uploadResult;
   }
 
