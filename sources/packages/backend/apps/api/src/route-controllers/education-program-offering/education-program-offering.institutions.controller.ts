@@ -134,6 +134,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         totalFundedWeeks: calculatedStudyBreaks.totalFundedWeeks,
         unfundedStudyPeriodDays: calculatedStudyBreaks.unfundedStudyPeriodDays,
       },
+      validationDate: new Date(),
     };
   }
 

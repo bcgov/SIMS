@@ -7,6 +7,7 @@
     @loaded="formLoaded"
     @validateOffering="validateOffering"
     @saveOffering="saveOffering"
+    @changed="formChanged"
     @cancel="$emit('cancel')"
   ></offering-form>
   <confirm-modal
@@ -29,6 +30,7 @@
 
 <script lang="ts">
 import {
+  FormIOChangeEvent,
   FormIOForm,
   OfferingFormModel,
   OfferingFormModes,
@@ -39,6 +41,7 @@ import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import {
   EducationProgramOfferingAPIInDTO,
   OfferingValidationResultAPIOutDTO,
+  StudyPeriodBreakdownAPIOutDTO,
 } from "@/services/http/dto";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
@@ -110,15 +113,47 @@ export default defineComponent({
           FORMIO_WARNINGS_HIDDEN_FIELD_KEY,
           warningsTypes,
         );
-        setComponentValue(
-          offeringForm,
-          FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY,
-          validationResult.studyPeriodBreakdown,
-        );
+        setCalculateStudyPeriodBreakdown(validationResult.studyPeriodBreakdown);
         return validationResult;
       } finally {
         processing.value = false;
       }
+    };
+
+    let lastCalculationDate: Date | undefined = undefined;
+    const calculateStudyPeriodBreakdown = async (
+      data: EducationProgramOfferingAPIInDTO,
+    ): Promise<void> => {
+      try {
+        const validationResult =
+          await EducationProgramOfferingService.shared.validateOffering(
+            props.locationId,
+            props.programId,
+            data,
+          );
+        // Update the result only if it is the most updated received.
+        if (
+          !lastCalculationDate ||
+          validationResult.validationDate > lastCalculationDate
+        ) {
+          setCalculateStudyPeriodBreakdown(
+            validationResult.studyPeriodBreakdown,
+          );
+          lastCalculationDate = validationResult.validationDate;
+        }
+      } catch {
+        setCalculateStudyPeriodBreakdown({} as StudyPeriodBreakdownAPIOutDTO);
+      }
+    };
+
+    const setCalculateStudyPeriodBreakdown = (
+      calculatedValues: StudyPeriodBreakdownAPIOutDTO,
+    ) => {
+      setComponentValue(
+        offeringForm,
+        FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY,
+        calculatedValues,
+      );
     };
 
     /**
@@ -179,12 +214,22 @@ export default defineComponent({
       }
     };
 
+    const formChanged = (
+      form: FormIOForm<EducationProgramOfferingAPIInDTO>,
+      event: FormIOChangeEvent,
+    ) => {
+      if (event.changed?.component?.tags?.includes("execute-calculation")) {
+        calculateStudyPeriodBreakdown(form.data);
+      }
+    };
+
     return {
       offeringWarningsModal,
       processing,
       validateOffering,
       saveOffering,
       formLoaded,
+      formChanged,
       OfferingStatus,
     };
   },

@@ -4,6 +4,7 @@
  */
 export interface FormIOForm<T = unknown> {
   data: T;
+  nosubmit: boolean;
   checkValidity: (
     data: any,
     dirty: boolean,
@@ -13,13 +14,11 @@ export interface FormIOForm<T = unknown> {
   submit: () => any;
   submission: unknown;
   options: FormIOFormOptions;
-  on: (
-    event: string,
-    callback: (page: WizardNavigationEvent, index: number) => void,
-  ) => unknown;
+  on: (event: string, callback: unknown) => unknown;
   isLastPage: () => boolean;
   prevPage: () => WizardNavigationEvent;
   nextPage: () => WizardNavigationEvent;
+  redraw: () => void;
   page: WizardNavigationEvent;
 }
 
@@ -28,6 +27,7 @@ export interface FormIOForm<T = unknown> {
  */
 export interface FormIOFormOptions {
   buttonSettings: FormIOFormOptionsButtonSettings;
+  readOnly: boolean;
 }
 
 /**
@@ -53,6 +53,14 @@ export interface FormIOCustomEvent {
   type: FormIOCustomEventTypes;
 }
 
+export interface FormIOChangeEvent {
+  changed: FormIOChangedObject;
+}
+
+export interface FormIOChangedObject {
+  component: FormIOComponent;
+}
+
 /**
  *Enumeration for custom event types emitted from FormIO.
  */
@@ -67,4 +75,10 @@ export enum FormIOCustomEventTypes {
   RouteToParentInformation = "routeToParentInformation",
   RouteToPartnerInformation = "routeToPartnerInformation",
   RouteToProgramInformationRequestSummaryPage = "routeToProgramInformationRequestSummaryPage",
+}
+
+export interface FormIOComponent {
+  id: string;
+  tags: string[];
+  components: FormIOComponent[];
 }

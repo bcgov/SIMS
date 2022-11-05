@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { FormIOForm } from "@/types";
+import { FormIOChangeEvent, FormIOForm } from "@/types";
 import { useFormioUtils } from "@/composables";
 export default defineComponent({
   emits: ["submitted", "loaded", "customEvent", "render", "changed"],
@@ -51,7 +51,7 @@ export default defineComponent({
       context.emit("render");
     };
 
-    const formChanged = (form: FormIOForm, event: any) => {
+    const formChanged = (form: FormIOForm, event: FormIOChangeEvent) => {
       context.emit("changed", form, event);
     };
 

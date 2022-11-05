@@ -175,4 +175,5 @@ export interface OfferingValidationResultAPIOutDTO {
   errors: string[];
   warnings: ValidationWarningResultAPIOutDTO[];
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
+  validationDate: Date;
 }
