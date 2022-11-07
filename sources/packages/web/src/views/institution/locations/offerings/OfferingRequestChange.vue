@@ -101,7 +101,7 @@ export default defineComponent({
       console.log(data);
       try {
         processing.value = true;
-        await EducationProgramOfferingService.shared.updateProgramOffering(
+        await EducationProgramOfferingService.shared.requestChange(
           props.locationId,
           props.programId,
           props.offeringId,

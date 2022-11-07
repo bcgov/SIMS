@@ -42,6 +42,7 @@ import {
   EducationProgramOfferingAPIInDTO,
   OfferingValidationResultAPIOutDTO,
   StudyPeriodBreakdownAPIOutDTO,
+  ValidationWarningResultAPIOutDTO,
 } from "@/services/http/dto";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
@@ -159,13 +160,16 @@ export default defineComponent({
     /**
      * Move the screen to the first warning banner, is any.
      */
-    const scrollToWarningBanner = () => {
-      const [firstWarningBanner] =
-        document.getElementsByClassName("banner-warning");
-      if (firstWarningBanner) {
-        firstWarningBanner.scrollIntoView({
-          behavior: "smooth",
-        });
+    const scrollToWarningBanner = (
+      warnings: ValidationWarningResultAPIOutDTO[],
+    ) => {
+      const [warningToScroll] = warnings;
+      const warningBannerComponent = `formio-component-${warningToScroll.warningType}`;
+      const [warningBanner] = document.getElementsByClassName(
+        warningBannerComponent,
+      );
+      if (warningBanner) {
+        warningBanner.scrollIntoView({ block: "center", behavior: "smooth" });
       }
     };
 
@@ -179,7 +183,7 @@ export default defineComponent({
         } else if (
           validationResult.offeringStatus === OfferingStatus.CreationPending
         ) {
-          scrollToWarningBanner();
+          scrollToWarningBanner(validationResult.warnings);
         }
       } catch {
         snackBar.error(
@@ -200,7 +204,7 @@ export default defineComponent({
             // There are warnings but the user agreed to proceed.
             context.emit("submit", data);
           } else {
-            scrollToWarningBanner();
+            scrollToWarningBanner(validationResult.warnings);
           }
         }
         if (validationResult.offeringStatus === OfferingStatus.Approved) {

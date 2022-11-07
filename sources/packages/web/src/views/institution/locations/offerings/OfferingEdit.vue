@@ -75,7 +75,7 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, defineComponent } from "vue";
 import { OfferingFormModes, OfferingStatus } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ModalDialog } from "@/composables";
@@ -89,7 +89,7 @@ import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { useSnackBar } from "@/composables";
 
-export default {
+export default defineComponent({
   components: {
     ProgramOfferingDetailHeader,
     OfferingFormSubmit,
@@ -112,7 +112,7 @@ export default {
       required: false,
     },
   },
-  setup(props: any) {
+  setup(props) {
     const router = useRouter();
     const snackBar = useSnackBar();
     const processing = ref(false);
@@ -221,5 +221,5 @@ export default {
       goBack,
     };
   },
-};
+});
 </script>
