@@ -3,7 +3,7 @@
     formName="educationProgramOffering"
     :formData="formData"
     @loaded="$emit('loaded', $event)"
-    @changed="$emit('changed', $event, $event)"
+    @changed="(form, event) => $emit('changed', form, event)"
     @submitted="submitOffering"
   >
     <template
