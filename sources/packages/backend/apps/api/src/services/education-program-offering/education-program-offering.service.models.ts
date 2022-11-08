@@ -49,6 +49,6 @@ export class ApplicationAssessmentSummary extends Application {
  * Offering data that can be freely changed and will not affect
  * the assessment in case there is one associated.
  */
-export class EducationProgramOfferingBasicData {
+export interface EducationProgramOfferingBasicData {
   offeringName: string;
 }
