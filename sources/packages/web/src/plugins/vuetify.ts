@@ -29,7 +29,7 @@ export default createVuetify({
           "warning-shade": "#b35600",
           "success-shade": "#0f851f",
           white: "#ffffff",
-          readonly: "#cfd4db",
+          readonly: "#e9ecef",
           border: "#e8e8e8",
           default: "#f5f6f7",
           black: "#333a47",
