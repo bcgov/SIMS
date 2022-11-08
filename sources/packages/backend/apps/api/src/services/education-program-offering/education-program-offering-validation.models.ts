@@ -485,9 +485,12 @@ export class OfferingValidationModel {
   })
   offeringType: OfferingTypes;
   /**
-   * Indicates offering course load.
+   * Indicates the offering course load for part-time application only.
    */
-  @IsOptional()
+  @ValidateIf(
+    (offering: OfferingValidationModel) =>
+      offering.offeringIntensity === OfferingIntensity.partTime,
+  )
   @Min(OFFERING_COURSE_LOAD_MIN_VALUE, {
     message: getMinFormatMessage(
       userFriendlyNames.courseLoad,
