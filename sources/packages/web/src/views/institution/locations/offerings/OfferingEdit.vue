@@ -78,7 +78,7 @@ import { EducationProgramOfferingService } from "@/services/EducationProgramOffe
 import { onMounted, ref, computed, defineComponent } from "vue";
 import { OfferingFormModes, OfferingStatus } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { ModalDialog } from "@/composables";
+import { ModalDialog, useSnackBar } from "@/composables";
 import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
@@ -87,7 +87,6 @@ import {
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
-import { useSnackBar } from "@/composables";
 
 export default defineComponent({
   components: {

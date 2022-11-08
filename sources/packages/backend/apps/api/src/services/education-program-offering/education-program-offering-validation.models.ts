@@ -8,7 +8,6 @@ import {
   IsNotEmptyObject,
   IsNumber,
   IsNumberOptions,
-  IsOptional,
   IsPositive,
   Max,
   MaxLength,

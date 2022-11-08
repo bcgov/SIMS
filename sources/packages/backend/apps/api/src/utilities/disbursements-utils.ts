@@ -89,17 +89,12 @@ export function combineDecimalPlaces(
 /**
  * Round a number or string to the nearest decimal number with
  * the specific decimal places.
- * @param decimalValue decimal value as number or string.
+ * @param decimalValue decimal value to be rounded.
+ * @param decimalPlaces number of decimal places to be considered
+ * for rounding.
  * @returns if a valid number, returns the rounded number, otherwise null.
  */
-export function decimalRound(
-  decimalValue: number | string,
-  decimalPlaces = 2,
-): number | null {
-  const parsedDecimalValue = parseFloat(decimalValue.toString());
-  if (isNaN(parsedDecimalValue)) {
-    return null;
-  }
+export function decimalRound(decimalValue: number, decimalPlaces = 2): number {
   const multiplier = Math.pow(10, decimalPlaces);
-  return Math.round(parsedDecimalValue * multiplier) / multiplier;
+  return Math.round(decimalValue * multiplier) / multiplier;
 }

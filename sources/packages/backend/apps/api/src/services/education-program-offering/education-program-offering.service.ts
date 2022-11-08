@@ -450,9 +450,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
   /**
    * Retrieves from the database the offering data needed
-   * to perform all the validations.
+   * to perform all the validations, process the validation
+   * and return its result.
    * @param offeringId offering id.
-   * @returns offering data required to perform the validations.
+   * @returns offering validation result.
    */
   async validateOfferingById(
     offeringId: number,
@@ -506,7 +507,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * Get an offering with all the expected data to a complete
+   * Gets an offering with all the expected data to a complete
    * validation be performed.
    * @param offeringId offering to have the data selected.
    * @returns offering with data to be validated.
@@ -544,6 +545,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         offeringWILType: true,
         offeringDeclaration: true,
         courseLoad: true,
+        // TODO: change studyBreaks to the unknown type.
         studyBreaks: {
           studyBreaks: true,
         },

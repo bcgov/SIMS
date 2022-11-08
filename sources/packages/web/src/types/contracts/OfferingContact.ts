@@ -63,8 +63,8 @@ export enum OfferingRelationType {
 }
 
 /**
- * Possible modes that the student profile form
- * can be adapted for different scenarios supported.
+ * Possible modes that the offering form can
+ * be adapted for different scenarios supported.
  */
 export enum OfferingFormModes {
   /**
