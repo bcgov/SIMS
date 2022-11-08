@@ -53,9 +53,10 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
 import { StudentAccountApplicationsService } from "./services/student-account-applications/student-account-applications.service";
 import { ATBCStudentController } from "./route-controllers/atbc/atbc.students.controller";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import { QueueRegistryModule } from "@sims/queue";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule],
+  imports: [LoggerModule, DatabaseModule, AuthModule, QueueRegistryModule],
   controllers: [
     ApplicationStudentsController,
     StudentStudentsController,

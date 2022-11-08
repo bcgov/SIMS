@@ -53,6 +53,7 @@ import {
   SequenceControlService,
   WorkflowClientService,
 } from "@sims/services";
+import { QueueRootModule } from "@sims/queue";
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import {
     AppStudentsModule,
     AppSystemAccessModule,
     AppSupportingUsersModule,
+    QueueRootModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,

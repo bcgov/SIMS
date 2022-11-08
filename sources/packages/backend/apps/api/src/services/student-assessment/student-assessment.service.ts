@@ -10,6 +10,8 @@ import {
   mapFromRawAndEntities,
 } from "@sims/sims-db";
 import { Brackets, DataSource } from "typeorm";
+import { InjectQueue } from "@nestjs/bull";
+import { Queue } from "bull";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
@@ -20,7 +22,7 @@ import {
   AssessmentHistory,
   StudentAssessmentStatus,
 } from "./student-assessment.models";
-import { WorkflowClientService } from "@sims/services";
+import { Queues, StartAssessmentQueueInDTO } from "@sims/queue";
 
 /**
  * Manages the student assessment related operations.
@@ -29,7 +31,8 @@ import { WorkflowClientService } from "@sims/services";
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
   constructor(
     dataSource: DataSource,
-    private readonly workflowClientService: WorkflowClientService,
+    @InjectQueue(Queues.StartApplicationAssessment.name)
+    private readonly startAssessmentQueue: Queue<StartAssessmentQueueInDTO>,
   ) {
     super(dataSource.getRepository(StudentAssessment));
   }
@@ -159,10 +162,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       );
     }
 
-    await this.workflowClientService.startApplicationAssessment(
-      assessment.application.data.workflowName,
-      assessment.id,
-    );
+    await this.startAssessmentQueue.add({
+      workflowName: assessment.application.data.workflowName,
+      assessmentId: assessment.id,
+    });
   }
 
   /**

@@ -66,9 +66,16 @@ import { DisbursementReceiptRequestService } from "./esdc-integration/disburseme
 import { FedRestrictionProcessingService } from "./esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { FedRestrictionIntegrationService } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.service";
 import { WorkflowClientService, SequenceControlService } from "@sims/services";
+import { QueueRegistryModule } from "@sims/queue";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule, SINValidationModule],
+  imports: [
+    LoggerModule,
+    DatabaseModule,
+    AuthModule,
+    SINValidationModule,
+    QueueRegistryModule,
+  ],
   controllers: [
     ATBCSystemAccessController,
     SINValidationSystemAccessController,

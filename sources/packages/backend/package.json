@@ -26,6 +26,10 @@
     "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d apps/db-migrations/src/data-source.ts"
   },
   "dependencies": {
+    "@bull-board/api": "^4.6.2",
+    "@bull-board/express": "^4.6.2",
+    "@bull-board/ui": "^4.6.2",
+    "@nestjs/bull": "^0.6.1",
     "@nestjs/common": "^9.0.3",
     "@nestjs/core": "^9.0.3",
     "@nestjs/jwt": "^9.0.0",
@@ -37,6 +41,7 @@
     "@nestjs/typeorm": "^9.0.0",
     "@types/ssh2-sftp-client": "^5.3.1",
     "axios": "^0.27.2",
+    "bull": "^4.10.1",
     "class-transformer": "^0.3.2",
     "class-validator": "^0.13.1",
     "dayjs": "^1.10.4",
@@ -61,6 +66,7 @@
     "@nestjs/cli": "^9.1.4",
     "@nestjs/schematics": "^9.0.3",
     "@nestjs/testing": "^9.1.2",
+    "@types/bull": "^4.10.0",
     "@types/express": "^4.17.8",
     "@types/faker": "^5.1.5",
     "@types/jest": "^26.0.15",
@@ -111,7 +117,8 @@
     "moduleNameMapper": {
       "^@sims/sims-db(|/.*)$": "<rootDir>/libs/sims-db/src/$1",
       "^@sims/services(|/.*)$": "<rootDir>/libs/services/src/$1",
-      "^@sims/utilities(|/.*)$": "<rootDir>/libs/utilities/src/$1"
+      "^@sims/utilities(|/.*)$": "<rootDir>/libs/utilities/src/$1",
+      "^@app/queue(|/.*)$": "<rootDir>/libs/queue/src/$1"
     }
   }
 }

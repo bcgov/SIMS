@@ -70,6 +70,24 @@
       "compilerOptions": {
         "tsConfigPath": "libs/utilities/tsconfig.lib.json"
       }
+    },
+    "queues": {
+      "type": "application",
+      "root": "apps/queues",
+      "entryFile": "main",
+      "sourceRoot": "apps/queues/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/queues/tsconfig.app.json"
+      }
+    },
+    "queue": {
+      "type": "library",
+      "root": "libs/queue",
+      "entryFile": "index",
+      "sourceRoot": "libs/queue/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/queue/tsconfig.lib.json"
+      }
     }
   },
   "monorepo": true,
