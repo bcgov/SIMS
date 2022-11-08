@@ -49,32 +49,10 @@ export class IERFileDetail implements IERRequestFileLine {
   courseLoad: number;
   offeringIntensity: string;
   disbursementSchedules: DisbursementSchedule[];
-  totalGrant: DisbursementValue[];
+  totalGrants: DisbursementValue[];
 
   public getFixedFormat(): string {
-    const grantType = Object.values(
-      this.disbursementSchedules.reduce(
-        (previousDisbursementschedule, { disbursementValues }) => {
-          previousDisbursementschedule.disbursementValues = Object.values(
-            [
-              ...previousDisbursementschedule.disbursementValues,
-              ...disbursementValues,
-            ].reduce((disbursementValue, { valueCode, valueAmount }) => {
-              disbursementValue[valueCode] = {
-                valueCode,
-                valueAmount:
-                  (disbursementValue[valueCode]
-                    ? round(parseInt(disbursementValue[valueCode].valueAmount))
-                    : 0) + round(parseInt(valueAmount)),
-              };
-              return disbursementValue;
-            }, {}),
-          );
-          return previousDisbursementschedule;
-        },
-      ),
-    );
-    this.totalGrant = grantType[1];
+    this.totalGrants = this.getTotalGrantsFromDisbursementSchedule();
     const record = new StringBuilder();
     record.appendWithStartFiller(this.assessmentId, 10, "0");
     record.append(this.applicationNumber, 10);
@@ -123,10 +101,36 @@ export class IERFileDetail implements IERRequestFileLine {
   private populateGrants(valueCode: string) {
     return round(
       parseInt(
-        this.totalGrant.find(
+        this.totalGrants.find(
           (disbursementValue) => (disbursementValue.valueCode = valueCode),
         ).valueAmount,
       ),
     );
+  }
+
+  private getTotalGrantsFromDisbursementSchedule(): DisbursementValue[] {
+    const accumulatedDisbursementSchedule = Object.values(
+      this.disbursementSchedules.reduce(
+        (previousDisbursementschedule, { disbursementValues }) => {
+          previousDisbursementschedule.disbursementValues = Object.values(
+            [
+              ...previousDisbursementschedule.disbursementValues,
+              ...disbursementValues,
+            ].reduce((disbursementValue, { valueCode, valueAmount }) => {
+              disbursementValue[valueCode] = {
+                valueCode,
+                valueAmount:
+                  (disbursementValue[valueCode]
+                    ? round(parseInt(disbursementValue[valueCode].valueAmount))
+                    : 0) + round(parseInt(valueAmount)),
+              };
+              return disbursementValue;
+            }, {}),
+          );
+          return previousDisbursementschedule;
+        },
+      ),
+    );
+    return accumulatedDisbursementSchedule[1];
   }
 }
