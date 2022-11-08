@@ -121,8 +121,12 @@ export class IERFileDetail implements IERRequestFileLine {
   }
 
   private populateGrants(valueCode: string) {
-    return this.totalGrant.find(
-      (disbursementValue) => (disbursementValue.valueCode = valueCode),
-    ).valueAmount;
+    return round(
+      parseInt(
+        this.totalGrant.find(
+          (disbursementValue) => (disbursementValue.valueCode = valueCode),
+        ).valueAmount,
+      ),
+    );
   }
 }
