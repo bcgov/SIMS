@@ -1,6 +1,19 @@
 import { DisbursementSchedule, DisbursementValue } from "@sims/sims-db";
 import {
+  BCAG,
+  BCSG,
+  BCSL,
+  BGPD,
+  CSGD,
+  CSGF,
+  CSGP,
+  CSGT,
+  CSLF,
+  SBSD,
+} from "../../constants";
+import {
   DATE_FORMAT,
+  NUMBER_FILLER,
   SPACE_FILLER,
 } from "../../cra-integration/cra-integration.models";
 import { round, StringBuilder } from "../../utilities";
@@ -36,13 +49,17 @@ export class IERFileDetail implements IERRequestFileLine {
   courseLoad: number;
   offeringIntensity: string;
   disbursementSchedules: DisbursementSchedule[];
+  totalGrant: DisbursementValue[];
 
   public getFixedFormat(): string {
-    const grantType = this.disbursementSchedules.map(
-      (disbursementSchedule: DisbursementSchedule) => {
-        const disbursementValues: DisbursementValue[] = Object.values(
-          disbursementSchedule.disbursementValues.reduce(
-            (disbursementValue, { valueCode, valueAmount }) => {
+    const grantType = Object.values(
+      this.disbursementSchedules.reduce(
+        (previousDisbursementschedule, { disbursementValues }) => {
+          previousDisbursementschedule.disbursementValues = Object.values(
+            [
+              ...previousDisbursementschedule.disbursementValues,
+              ...disbursementValues,
+            ].reduce((disbursementValue, { valueCode, valueAmount }) => {
               disbursementValue[valueCode] = {
                 valueCode,
                 valueAmount:
@@ -51,14 +68,13 @@ export class IERFileDetail implements IERRequestFileLine {
                     : 0) + round(parseInt(valueAmount)),
               };
               return disbursementValue;
-            },
-            {},
-          ),
-        );
-        return disbursementValues;
-      },
+            }, {}),
+          );
+          return previousDisbursementschedule;
+        },
+      ),
     );
-    const cslf = Object.values(grantType[0]);
+    this.totalGrant = grantType[1];
     const record = new StringBuilder();
     record.appendWithStartFiller(this.assessmentId, 10, "0");
     record.append(this.applicationNumber, 10);
@@ -91,6 +107,22 @@ export class IERFileDetail implements IERRequestFileLine {
       SPACE_FILLER,
     );
     record.append(this.offeringIntensity, 1);
+    record.appendWithStartFiller(this.populateGrants(CSLF), 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.populateGrants(CSGP), 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.populateGrants(CSGD), 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.populateGrants(CSGF), 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.populateGrants(CSGT), 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.populateGrants(BCSL), 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.populateGrants(BCAG), 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.populateGrants(BGPD), 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.populateGrants(SBSD), 8, NUMBER_FILLER);
+    record.appendWithStartFiller(this.populateGrants(BCSG), 8, NUMBER_FILLER);
     return record.toString();
+  }
+
+  private populateGrants(valueCode: string) {
+    return this.totalGrant.find(
+      (disbursementValue) => (disbursementValue.valueCode = valueCode),
+    ).valueAmount;
   }
 }
