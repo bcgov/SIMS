@@ -185,12 +185,21 @@ export default defineComponent({
     const submit = async (data: EducationProgramOfferingAPIInDTO) => {
       try {
         processing.value = true;
-        await EducationProgramOfferingService.shared.updateProgramOffering(
-          props.locationId,
-          props.programId,
-          props.offeringId,
-          data,
-        );
+        if (initialData.value.hasExistingApplication) {
+          await EducationProgramOfferingService.shared.updateProgramOfferingBasicInformation(
+            props.locationId,
+            props.programId,
+            props.offeringId,
+            data,
+          );
+        } else {
+          await EducationProgramOfferingService.shared.updateProgramOffering(
+            props.locationId,
+            props.programId,
+            props.offeringId,
+            data,
+          );
+        }
         snackBar.success("Offering updated.");
         goBack();
       } catch {

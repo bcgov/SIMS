@@ -177,3 +177,11 @@ export interface OfferingValidationResultAPIOutDTO {
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
   validationDate: Date;
 }
+
+/**
+ * Offering data that can be freely changed and will not affect
+ * the assessment in case there is one associated.
+ */
+export interface EducationProgramOfferingBasicDataAPIInDTO {
+  offeringName: string;
+}

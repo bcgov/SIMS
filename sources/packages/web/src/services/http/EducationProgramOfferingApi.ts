@@ -13,6 +13,7 @@ import {
   OptionItemAPIOutDTO,
   EducationProgramOfferingAPIOutDTO,
   OfferingValidationResultAPIOutDTO,
+  EducationProgramOfferingBasicDataAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
@@ -123,7 +124,6 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * @param programId offering program.
    * @param offeringId offering to be modified.
    * @param payload offering data to be updated.
-   * validations prior to create or update an offering.
    */
   async updateProgramOffering(
     locationId: number,
@@ -137,6 +137,28 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
         this.addClientRoot(url),
         payload,
       );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
+  }
+
+  /**
+   * Updates offering basic information that can be freely changed
+   * without affecting the assessment.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param offeringId offering to be modified.
+   * @param payload offering data to be updated.
+   */
+  async updateProgramOfferingBasicInformation(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+    payload: EducationProgramOfferingBasicDataAPIInDTO,
+  ): Promise<void> {
+    try {
+      const url = `education-program-offering/location/${locationId}/education-program/${programId}/offering/${offeringId}/basic`;
+      await this.patchCall(this.addClientRoot(url), payload);
     } catch (error: unknown) {
       this.handleAPICustomError(error);
     }

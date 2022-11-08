@@ -18,6 +18,7 @@ import {
   OptionItemAPIOutDTO,
   OfferingBulkInsertValidationResultAPIOutDTO,
   OfferingValidationResultAPIOutDTO,
+  EducationProgramOfferingBasicDataAPIInDTO,
 } from "@/services/http/dto";
 import {
   OFFERING_CREATION_CRITICAL_ERROR,
@@ -129,6 +130,28 @@ export class EducationProgramOfferingService {
     payload: EducationProgramOfferingAPIInDTO,
   ): Promise<void> {
     await ApiClient.EducationProgramOffering.updateProgramOffering(
+      locationId,
+      programId,
+      offeringId,
+      payload,
+    );
+  }
+
+  /**
+   * Updates offering basic information that can be freely changed
+   * without affecting the assessment.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param offeringId offering to be modified.
+   * @param payload offering data to be updated.
+   */
+  async updateProgramOfferingBasicInformation(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+    payload: EducationProgramOfferingBasicDataAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.EducationProgramOffering.updateProgramOfferingBasicInformation(
       locationId,
       programId,
       offeringId,

@@ -44,3 +44,11 @@ export class ApplicationAssessmentSummary extends Application {
   workflowName: string;
   hasAssessmentData: boolean;
 }
+
+/**
+ * Offering data that can be freely changed and wll not affect
+ * the assessment in case there is one associated.
+ */
+export class EducationProgramOfferingBasicData {
+  offeringName: string;
+}

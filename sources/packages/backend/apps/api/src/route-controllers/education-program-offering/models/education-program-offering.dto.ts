@@ -3,6 +3,7 @@ import {
   OfferingStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
+  OFFERING_NAME_MAX_LENGTH,
 } from "@sims/sims-db";
 import { Allow, IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 import { Type } from "class-transformer";
@@ -79,6 +80,16 @@ export class EducationProgramOfferingAPIInDTO {
   studyBreaks: StudyBreakInDTO[];
   @Allow()
   courseLoad?: number;
+}
+
+/**
+ * Offering data that can be freely changed and will not
+ * affect the assessment in case there is one associated.
+ */
+export class EducationProgramOfferingBasicDataAPIInDTO {
+  @IsNotEmpty()
+  @MaxLength(OFFERING_NAME_MAX_LENGTH)
+  offeringName: string;
 }
 
 export class EducationProgramOfferingAPIOutDTO {
@@ -163,7 +174,7 @@ export class OfferingChangeAssessmentAPIInDTO {
 }
 
 /**
- * Offering validation result including study breaks
+ * Offering validation result including study period breakdown
  * calculations that also supports the validation process.
  */
 export class OfferingValidationResultAPIOutDTO {

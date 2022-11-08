@@ -193,6 +193,12 @@ export default defineComponent({
     };
 
     const saveOffering = async (data: EducationProgramOfferingAPIInDTO) => {
+      if (props.formMode === OfferingFormModes.AssessmentDataReadonly) {
+        // No validations are needed to update basic offering data.
+        context.emit("submit", data);
+        return;
+      }
+
       try {
         const validationResult = await validateOfferingData(data);
         if (

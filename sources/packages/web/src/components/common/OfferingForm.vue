@@ -13,7 +13,6 @@
       <footer-buttons
         justify="space-between"
         :processing="processing"
-        :showPrimaryButton="false"
         @secondaryClick="cancel"
         class="mx-0"
       >

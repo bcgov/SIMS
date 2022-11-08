@@ -48,6 +48,7 @@ import { EducationProgramOfferingControllerService } from "./education-program-o
 import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
+  EducationProgramOfferingBasicDataAPIInDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   OfferingValidationResultAPIOutDTO,
 } from "./models/education-program-offering.dto";
@@ -64,6 +65,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { EducationProgramOfferingImportCSVService } from "../../services/education-program-offering/education-program-offering-import-csv.service";
 import { EducationProgramOfferingValidationService } from "../../services/education-program-offering/education-program-offering-validation.service";
 import {
+  OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   OFFERING_VALIDATION_CRITICAL_ERROR,
   OFFERING_VALIDATION_CSV_PARSE_ERROR,
 } from "../../constants";
@@ -162,7 +164,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<PrimaryIdentifierAPIOutDTO | undefined> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
       const offeringValidationModel =
         await this.educationProgramOfferingControllerService.buildOfferingValidationModel(
@@ -202,7 +204,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   @ApiUnprocessableEntityResponse({
     description:
       "Either offering for the program and location is not found " +
-      "or the offering is not in the appropriate status to be updated " +
+      "or the offering is not in the appropriate state to be updated " +
       "or the request is invalid.",
   })
   @Patch(
@@ -241,14 +243,56 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         userToken.userId,
       );
     } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === OFFERING_VALIDATION_CRITICAL_ERROR
-      ) {
-        throw new BadRequestException(error.objectInfo, error.message);
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case OFFERING_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            throw new UnprocessableEntityException(error.message);
+          case OFFERING_VALIDATION_CRITICAL_ERROR:
+            throw new BadRequestException(error.objectInfo, error.message);
+        }
       }
       throw error;
     }
+  }
+
+  /**
+   * Updates offering basic information that can be freely changed
+   * without affecting the assessment.
+   * @param payload offering data to be updated.
+   * @param locationId offering location.
+   * @param programId offering program.
+   * @param offeringId offering to be modified.
+   */
+  @HasLocationAccess("locationId")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Either offering for the program and location is not found or the offering is not in the appropriate status to be updated.",
+  })
+  @Patch(
+    "location/:locationId/education-program/:programId/offering/:offeringId/basic",
+  )
+  async updateProgramOfferingBasicInformation(
+    @UserToken() userToken: IInstitutionUserToken,
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
+    @Param("offeringId", ParseIntPipe) offeringId: number,
+    @Body() payload: EducationProgramOfferingBasicDataAPIInDTO,
+  ): Promise<void> {
+    const offering = await this.programOfferingService.getProgramOffering(
+      locationId,
+      programId,
+      offeringId,
+    );
+    if (!offering) {
+      throw new UnprocessableEntityException(
+        "Either offering for the program and location is not found or the offering is not in the appropriate status to be updated.",
+      );
+    }
+    await this.programOfferingService.updateEducationProgramOfferingBasicData(
+      offeringId,
+      payload,
+      userToken.userId,
+    );
   }
 
   /**
