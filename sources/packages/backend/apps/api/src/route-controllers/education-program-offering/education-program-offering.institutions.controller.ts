@@ -282,6 +282,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
       locationId,
       programId,
       offeringId,
+      true,
     );
     if (!offering) {
       throw new UnprocessableEntityException(
