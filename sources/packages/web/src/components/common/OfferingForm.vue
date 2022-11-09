@@ -117,7 +117,6 @@ export default defineComponent({
         offeringChipStatus: props.data.offeringStatus
           ? mapOfferingChipStatus(props.data.offeringStatus)
           : undefined,
-        offeringStatusToDisplay: props.data.offeringStatus,
         mode: props.formMode,
       }),
     );

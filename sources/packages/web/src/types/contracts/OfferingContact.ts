@@ -1,6 +1,5 @@
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import { EducationProgramOfferingAPIOutDTO } from "@/services/http/dto";
-import { OfferingStatus } from "@/types";
 
 /**
  * Valid Intensity of the Offerings.
@@ -21,7 +20,6 @@ export enum OfferingIntensity {
  */
 export type OfferingFormModel = EducationProgramOfferingAPIOutDTO & {
   offeringChipStatus?: StatusChipTypes;
-  offeringStatusToDisplay?: OfferingStatus;
   mode: OfferingFormModes;
 };
 
@@ -30,7 +28,7 @@ export type OfferingFormModel = EducationProgramOfferingAPIOutDTO & {
  */
 export type OfferingFormBaseModel = Omit<
   OfferingFormModel,
-  "offeringChipStatus" | "offeringStatusToDisplay"
+  "offeringChipStatus"
 >;
 
 /**
