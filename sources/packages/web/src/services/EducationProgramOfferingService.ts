@@ -32,7 +32,7 @@ export class EducationProgramOfferingService {
   // Share Instance
   private static instance: EducationProgramOfferingService;
 
-  public static get shared(): EducationProgramOfferingService {
+  static get shared(): EducationProgramOfferingService {
     return this.instance || (this.instance = new this());
   }
 
@@ -123,7 +123,7 @@ export class EducationProgramOfferingService {
    * @param offeringId offering to be modified.
    * @param payload offering data to be updated.
    */
-  public async updateProgramOffering(
+  async updateProgramOffering(
     locationId: number,
     programId: number,
     offeringId: number,
