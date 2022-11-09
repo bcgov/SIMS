@@ -75,7 +75,8 @@ Create the user into users table
 
 insert into sims.users
 (user_name, email, first_name, last_name, created_at, updated_at, is_active)
-values('fa06d4f6be904e10882085db1b7ac564@bceid','automationuser1@test.com', 'SIMS', 'TEST', now(), now(), true);
+values('fa06d4f6be904e10882085db1b7ac564@bceid','automationuser1@test.com', 'SIMS', 'TEST', now(), now(), true),
+('b7aa48239e1449279aee013dc6e4df23@bceid','automationuser2@test.com', 'SIMS', 'TEST', now(), now(), true);
 
 /*
 Insert the user into institution_users table
@@ -83,7 +84,9 @@ Insert the user into institution_users table
 
 insert into sims.institution_users
 (user_id, institution_id, created_at, updated_at, creator)
-values((select get_user_id('fa06d4f6be904e10882085db1b7ac564@bceid')), (select get_institution_id('AuCo')), now(), now(), (SELECT get_user_id('fa06d4f6be904e10882085db1b7ac564@bceid')));
+values((select get_user_id('fa06d4f6be904e10882085db1b7ac564@bceid')), (select get_institution_id('AuCo')), now(), now(), (SELECT get_user_id('fa06d4f6be904e10882085db1b7ac564@bceid'))),
+((select get_user_id('b7aa48239e1449279aee013dc6e4df23@bceid')), (select get_institution_id('AuCo')), now(), now(), (SELECT get_user_id('b7aa48239e1449279aee013dc6e4df23@bceid')));
+
 
 /*
 Insert the user into institution_users_auth table
