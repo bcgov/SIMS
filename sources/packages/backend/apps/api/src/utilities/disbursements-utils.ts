@@ -87,7 +87,7 @@ export function combineDecimalPlaces(
 }
 
 /**
- * Round a number or string to the nearest decimal number with
+ * Round a number to the nearest decimal number with
  * the specific decimal places.
  * @param decimalValue decimal value to be rounded.
  * @param decimalPlaces number of decimal places to be considered
